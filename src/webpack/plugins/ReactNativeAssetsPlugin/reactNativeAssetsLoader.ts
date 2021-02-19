@@ -114,7 +114,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
           scale
         ): Promise<{
           destination: string;
-          content: string;
+          content: string | Buffer | undefined;
         }> => {
           const scaleFilePath = path.join(dirname, scales[scale].name);
           this.addDependency(scaleFilePath);
@@ -187,7 +187,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
 
                   resolve({
                     destination,
-                    content: results?.toString() ?? '',
+                    content: results,
                   });
                 }
               }
@@ -205,7 +205,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       }
 
       logger.info('Asset emitted:', destination);
-      this.emitFile(destination, content);
+      this.emitFile(destination, content ?? '');
     });
 
     let publicPath = JSON.stringify(
@@ -218,7 +218,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
 
     const hashes = await Promise.all(
       assets.map((asset) =>
-        hasha.async(asset.content, {
+        hasha.async(asset.content?.toString() ?? asset.destination, {
           algorithm: 'md5',
         })
       )
