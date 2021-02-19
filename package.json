@@ -1,0 +1,48 @@
+{
+  "name": "haul-next",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "del dist && babel src --out-dir dist --extensions .js,.ts --source-maps && tsc"
+  },
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "react-native": ">=0.63",
+    "@react-native-community/cli": "^4.14.0",
+    "@react-native-community/cli-types": "^4.10.1"
+  },
+  "dependencies": {
+    "babel-loader": "^8.2.2",
+    "dedent": "^0.7.0",
+    "escape-string-regexp": "^4.0.0",
+    "execa": "^5.0.0",
+    "hasha": "^5.2.2",
+    "image-size": "^0.9.3",
+    "loader-utils": "^2.0.0",
+    "react": "^17.0.1",
+    "schema-utils": "^3.0.0",
+    "tapable": "^2.1.1",
+    "webpack": "^5.22.0",
+    "webpack-cli": "^4.5.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.16",
+    "@babel/core": "^7.12.16",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.13",
+    "@babel/plugin-proposal-optional-chaining": "^7.12.16",
+    "@babel/preset-env": "^7.12.16",
+    "@babel/preset-typescript": "^7.12.16",
+    "@callstack/eslint-config": "^10.2.0",
+    "@react-native-community/cli": "^4.14.0",
+    "@react-native-community/cli-types": "^4.10.1",
+    "@types/dedent": "^0.7.0",
+    "@types/node": "^14.14.28",
+    "del-cli": "^3.0.1",
+    "eslint": "^7.20.0",
+    "react-native": "^0.63.4",
+    "typescript": "^4.1.5"
+  }
+}

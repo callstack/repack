@@ -1,0 +1,290 @@
+import path from 'path';
+import utils, { LoaderContext } from 'loader-utils';
+import { validate as validateSchema } from 'schema-utils';
+import { imageSize } from 'image-size';
+import dedent from 'dedent';
+import hasha from 'hasha';
+import escapeStringRegexp from 'escape-string-regexp';
+import { ISizeCalculationResult } from 'image-size/dist/types/interface';
+import { ReactNativeAssetResolver } from './ReactNativeAssetResolver';
+
+interface Options {
+  platform: string;
+  context: string;
+  bundleToFile?: boolean;
+  outputPath?: string;
+  publicPath?: string;
+}
+
+function getOptions(loaderContext: LoaderContext): Options {
+  const options = utils.getOptions(loaderContext) || {};
+
+  validateSchema(
+    {
+      type: 'object',
+      required: ['platform', 'context'],
+      properties: {
+        platform: {
+          type: 'string',
+        },
+        context: { type: 'string' },
+        bundleToFile: { type: 'boolean' },
+        outputPath: { type: 'string' },
+        publicPath: { type: 'string' },
+      },
+    },
+    options,
+    { name: 'reactNativeAssetsLoader' }
+  );
+
+  return (options as unknown) as Options;
+}
+
+export const raw = true;
+
+export default async function reactNativeAssetsLoader(this: LoaderContext) {
+  this.cacheable();
+
+  const callback = this.async();
+  const logger = this.getLogger('reactNativeAssetsLoader');
+
+  try {
+    const options = getOptions(this);
+    const pathSeparatorPattern = new RegExp(`\\${path.sep}`, 'g');
+    const resourcePath = this.resourcePath;
+    const dirname = path.dirname(resourcePath);
+    // Relative path to context without any ../ due to https://github.com/callstack/haul/issues/474
+    // Assets from from outside of context, should still be placed inside bundle output directory.
+    // Example:
+    //   resourcePath = monorepo/node_modules/my-module/image.png
+    //   dirname      = monorepo/node_modules/my-module
+    //   context      = monorepo/packages/my-app/
+    //   url          = ../../node_modules/my-module (original)
+    // So when we calculate destination for the asset for iOS ('assets' + url + filename),
+    // it will end up outside of `assets` directory, so we have to make sure it's:
+    //   url          = node_modules/my-module (tweaked)
+    const url = path
+      .relative(options.context, dirname)
+      .replace(new RegExp(`^[\\.\\${path.sep}]+`), '');
+    const type = path.extname(resourcePath).replace(/^\./, '');
+    const assetsPath = path.join(
+      'assets',
+      options.bundleToFile ? '' : options.platform
+    );
+    const suffix = `(@\\d+(\\.\\d+)?x)?(\\.(${options.platform}|native))?\\.${type}$`;
+    const filename = path
+      .basename(resourcePath)
+      .replace(new RegExp(suffix), '');
+    const normalizedName =
+      url.length === 0
+        ? filename
+        : `${url.replace(pathSeparatorPattern, '_')}_${filename}`;
+    const longName = `${normalizedName
+      .toLowerCase()
+      .replace(/[^a-z0-9_]/g, '')}.${type}`;
+
+    const files = await new Promise<string[]>((resolve, reject) =>
+      this.fs.readdir(dirname, (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(
+            (results as Array<any> | undefined)?.filter(
+              (result) => typeof result === 'string'
+            ) ?? []
+          );
+        }
+      })
+    );
+    const scales = ReactNativeAssetResolver.collectScales(files, {
+      name: filename,
+      type,
+      platform: options.platform,
+    });
+
+    const scaleKeys = Object.keys(scales).sort(
+      (a, b) =>
+        parseInt(a.replace(/[^\d.]/g, ''), 10) -
+        parseInt(b.replace(/[^\d.]/g, ''), 10)
+    );
+
+    const assets = await Promise.all(
+      scaleKeys.map(
+        (
+          scale
+        ): Promise<{
+          destination: string;
+          content: string;
+        }> => {
+          const scaleFilePath = path.join(dirname, scales[scale].name);
+          this.addDependency(scaleFilePath);
+
+          return new Promise((resolve, reject) =>
+            this.fs.readFile(scaleFilePath, (error, results) => {
+              if (error) {
+                reject(error);
+              } else {
+                let destination;
+
+                if (options.bundleToFile && options.platform === 'android') {
+                  const testXml = /\.(xml)$/;
+                  const testMP4 = /\.(mp4)$/;
+                  const testImages = /\.(png|jpg|gif|webp)$/;
+                  const testFonts = /\.(ttf|otf|ttc)$/;
+
+                  // found font family
+                  if (
+                    testXml.test(longName) &&
+                    results?.indexOf('font-family') !== -1
+                  ) {
+                    destination = 'font';
+                  } else if (testFonts.test(longName)) {
+                    // font extensions
+                    destination = 'font';
+                  } else if (testMP4.test(longName)) {
+                    // video files extensions
+                    destination = 'raw';
+                  } else if (
+                    testImages.test(longName) ||
+                    testXml.test(longName)
+                  ) {
+                    // images extensions
+                    switch (scale) {
+                      case '@0.75x':
+                        destination = 'drawable-ldpi';
+                        break;
+                      case '@1x':
+                        destination = 'drawable-mdpi';
+                        break;
+                      case '@1.5x':
+                        destination = 'drawable-hdpi';
+                        break;
+                      case '@2x':
+                        destination = 'drawable-xhdpi';
+                        break;
+                      case '@3x':
+                        destination = 'drawable-xxhdpi';
+                        break;
+                      case '@4x':
+                        destination = 'drawable-xxxhdpi';
+                        break;
+                      default:
+                        throw new Error(
+                          `Unknown scale ${scale} for ${scaleFilePath}`
+                        );
+                    }
+                  } else {
+                    // everything else is going to RAW
+                    destination = 'raw';
+                  }
+
+                  destination = path.join(destination, longName);
+                } else {
+                  const name = `${filename}${
+                    scale === '@1x' ? '' : scale
+                  }.${type}`;
+                  destination = path.join(assetsPath, url, name);
+
+                  resolve({
+                    destination,
+                    content: results?.toString() ?? '',
+                  });
+                }
+              }
+            })
+          );
+        }
+      )
+    );
+
+    assets.forEach((asset) => {
+      let { destination, content } = asset;
+
+      if (options.outputPath) {
+        destination = path.join(options.outputPath, destination);
+      }
+
+      logger.info('Asset emitted:', destination);
+      this.emitFile(destination, content);
+    });
+
+    let publicPath = JSON.stringify(
+      path.join(assetsPath, url).replace(pathSeparatorPattern, '/')
+    );
+
+    if (options.publicPath) {
+      publicPath = JSON.stringify(path.join(options.publicPath, url));
+    }
+
+    const hashes = await Promise.all(
+      assets.map((asset) =>
+        hasha.async(asset.content, {
+          algorithm: 'md5',
+        })
+      )
+    );
+
+    let info: ISizeCalculationResult | undefined;
+
+    try {
+      info = imageSize(this.resourcePath);
+
+      const match = path
+        .basename(this.resourcePath)
+        .match(new RegExp(`^${escapeStringRegexp(filename)}${suffix}`));
+
+      if (match?.[1]) {
+        const scale = Number(match[1].replace(/[^\d.]/g, ''));
+
+        if (typeof scale === 'number' && Number.isFinite(scale)) {
+          info.width && (info.width /= scale);
+          info.height && (info.height /= scale);
+        }
+      }
+    } catch (e) {
+      // Asset is not an image
+    }
+
+    logger.debug('Asset processed:', {
+      resourcePath,
+      platform: options.platform,
+      context: options.context,
+      url,
+      type,
+      assetsPath,
+      outputPath: options.outputPath,
+      filename,
+      normalizedName,
+      longName,
+      scales,
+      assets: assets.map((asset) => asset.destination),
+      publicPath,
+      width: info?.width,
+      height: info?.height,
+    });
+
+    callback?.(
+      null,
+      dedent`
+      var AssetRegistry = require('react-native/Libraries/Image/AssetRegistry');
+      module.exports = AssetRegistry.registerAsset({
+        __packager_asset: true,
+        scales: ${JSON.stringify(scales)},
+        name: ${JSON.stringify(filename)},
+        type: ${JSON.stringify(type)},
+        hash: ${JSON.stringify(hashes.join())},
+        httpServerLocation: ${publicPath},
+        ${
+          options.bundleToFile
+            ? ''
+            : `fileSystemLocation: ${JSON.stringify(dirname)},`
+        }
+        ${info ? `height: ${info.height},` : ''}
+        ${info ? `width: ${info.width},` : ''}
+      });
+      `
+    );
+  } catch (error) {
+    callback?.(error);
+  }
+}
