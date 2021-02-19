@@ -30,7 +30,6 @@ module.exports = {
   output: {
     path: outputPath,
     filename: outputFilename,
-    clean: true,
   },
   module: {
     rules: [
@@ -61,7 +60,7 @@ module.exports = {
     new LoggerPlugin({
       output: {
         console: true,
-        file: 'build.log'
+        file: path.join(__dirname, 'build.log')
       }
     })
   ]
