@@ -11,7 +11,7 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
   const rawCliOptions = process.env[CLI_OPTIONS_KEY];
   if (!rawCliOptions) {
     if (!config.fallback) {
-      throw new Error();
+      throw new Error('todo');
     }
 
     return config.fallback;

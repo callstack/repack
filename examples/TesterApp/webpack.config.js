@@ -1,6 +1,6 @@
 const { parseCliOptions, getInitializationEntries, getResolveOptions, ReactNativeAssetsPlugin, LoggerPlugin } = require('../..');
 const webpack = require('webpack');
-const path = require('path')
+const path = require('path');
 
 const { dev, mode, context, entry, platform, reactNativePath, outputPath, outputFilename, assetsOutputPath } = parseCliOptions({
   fallback: {
@@ -58,6 +58,9 @@ module.exports = {
       assetsOutputPath
     }),
     new LoggerPlugin({
+      filter: {
+        type: LoggerPlugin.DEBUG_AND_ABOVE
+      },
       output: {
         console: true,
         file: path.join(__dirname, 'build.log')

@@ -48,6 +48,8 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
   const callback = this.async();
   const logger = this.getLogger('reactNativeAssetsLoader');
 
+  logger.debug('Processing:', this.resourcePath);
+
   try {
     const options = getOptions(this);
     const pathSeparatorPattern = new RegExp(`\\${path.sep}`, 'g');
@@ -184,12 +186,12 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
                     scale === '@1x' ? '' : scale
                   }.${type}`;
                   destination = path.join(assetsPath, url, name);
-
-                  resolve({
-                    destination,
-                    content: results,
-                  });
                 }
+
+                resolve({
+                  destination,
+                  content: results,
+                });
               }
             })
           );

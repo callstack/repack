@@ -36,6 +36,7 @@ export class LoggerPlugin implements WebpackPlugin {
   static DEBUG_AND_ABOVE: LogType[] = ['debug', ...LoggerPlugin.INFO_AND_ABOVE];
 
   private fileLogBuffer: string[] = [];
+  private resolvedOutputFile?: string;
 
   constructor(private config: LoggerPluginConfig = {}) {
     if (this.config.output === undefined) {
@@ -139,9 +140,27 @@ export class LoggerPlugin implements WebpackPlugin {
     }
   }
 
+  flushLogs() {
+    if (this.resolvedOutputFile && this.fileLogBuffer.length) {
+      fs.writeFileSync(this.resolvedOutputFile, this.fileLogBuffer.join('\n'));
+      this.fileLogBuffer = [];
+    }
+  }
+
   apply(compiler: webpack.Compiler) {
     // Make sure webpack-cli doesn't print stats by default.
     compiler.options.stats = 'none';
+
+    if (this.config.output?.file) {
+      if (path.isAbsolute(this.config.output.file)) {
+        this.resolvedOutputFile = this.config.output.file;
+      } else {
+        this.resolvedOutputFile = path.join(
+          compiler.options.output.path ?? process.cwd(),
+          this.config.output.file
+        );
+      }
+    }
 
     compiler.hooks.infrastructureLog.tap(
       'LoggerPlugin',
@@ -172,21 +191,19 @@ export class LoggerPlugin implements WebpackPlugin {
       if (statsEntry) {
         this.processEntry(statsEntry);
       }
+      this.flushLogs();
+    });
 
-      if (this.config.output?.file) {
-        let resolvedOutputFile;
-        if (path.isAbsolute(this.config.output.file)) {
-          resolvedOutputFile = this.config.output.file;
-        } else {
-          resolvedOutputFile = path.join(
-            compiler.options.output.path ?? process.cwd(),
-            this.config.output.file
-          );
-        }
-
-        fs.writeFileSync(resolvedOutputFile, this.fileLogBuffer.join('\n'));
-        this.fileLogBuffer = [];
+    process.on('uncaughtException', (error) => {
+      const errorEntry = this.createEntry('LoggerPlugin', 'error', [error]);
+      if (errorEntry) {
+        this.processEntry(errorEntry);
       }
+      this.flushLogs();
+    });
+
+    process.on('exit', () => {
+      this.flushLogs();
     });
   }
 }
