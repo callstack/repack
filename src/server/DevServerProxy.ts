@@ -20,6 +20,13 @@ export class DevServerProxy {
   constructor(private config: DevServerProxyConfig) {}
 
   async runWorker(platform: string, cliOptions: CliOptions) {
+    if (this.workers[platform]) {
+      console.error(
+        `Compiler worker for platform ${platform} is already running`
+      );
+      return;
+    }
+
     const port = await getPort();
     const cliOptionsWithPlatform: CliOptions = {
       ...cliOptions,
@@ -32,26 +39,32 @@ export class DevServerProxy {
       },
     };
 
-    const process = execa.node(
-      path.join(__dirname, './compilerWorker.js'),
-      [cliOptionsWithPlatform.config.webpackConfigPath],
-      {
-        stdio: 'inherit',
-        env: {
-          [CLI_OPTIONS_KEY]: JSON.stringify(cliOptionsWithPlatform),
-        },
-      }
-    );
-
-    if (this.workers[platform]) {
-      console.error(
-        `Compiler worker for platform ${platform} is already running`
+    await new Promise<void>((resolve) => {
+      const process = execa.node(
+        path.join(__dirname, './compilerWorker.js'),
+        [cliOptionsWithPlatform.config.webpackConfigPath],
+        {
+          stdio: 'inherit',
+          env: {
+            [CLI_OPTIONS_KEY]: JSON.stringify(cliOptionsWithPlatform),
+          },
+        }
       );
-    } else {
-      this.workers[platform] = { process, port };
-    }
 
-    // TODO: await compilation results via IPC
+      let isResolved = false;
+
+      process.on('message', (data) => {
+        const { event } = data as { event: 'watchRun' };
+        if (event === 'watchRun') {
+          if (!isResolved) {
+            isResolved = true;
+            resolve();
+          }
+        }
+      });
+
+      this.workers[platform] = { process, port };
+    });
   }
 
   private async forwardRequest(
@@ -73,7 +86,6 @@ export class DevServerProxy {
         // TODO: body
       });
       const payload = await response.buffer();
-      console.log(response.headers.get('Content-Type'), payload.length);
       reply
         .type(response.headers.get('Content-Type') || 'text/plain')
         .send(payload);
@@ -84,6 +96,17 @@ export class DevServerProxy {
     const fastify = getFastifyInstance(this.config);
 
     fastify.get('/status', async () => 'packager-status:running');
+
+    fastify.post('/symbolicate', (request, reply) => {
+      // require('inspector').open(undefined, undefined, true);
+      // 1. figure out platform from stack frames's file
+      // 2. fetch source map
+      // 3. filter out unnecessary frames https://github.com/facebook/metro/blob/a9862e66368cd177884ea1e014801fe0c57ef5d7/packages/metro/src/Server.js#L1042
+      // 4. symbolicate each stack frame https://github.com/facebook/metro/blob/a9862e66368cd177884ea1e014801fe0c57ef5d7/packages/metro/src/Server/symbolicate.js#L57
+      // 5. create code frame
+      // 6. reply
+      // debugger;
+    });
 
     fastify.route({
       method: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],

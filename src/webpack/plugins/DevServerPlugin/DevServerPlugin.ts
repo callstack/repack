@@ -23,10 +23,10 @@ export class DevServerPlugin implements WebpackPlugin {
 
     let server: DevServer | undefined;
 
-    compiler.hooks.watchRun.tap('DevServerPlugin', () => {
+    compiler.hooks.watchRun.tapPromise('DevServerPlugin', async () => {
       if (!server) {
         server = new DevServer(config, compiler);
-        server.run();
+        await server.run();
       }
     });
 
