@@ -22,6 +22,7 @@ const {
   outputFilename,
   assetsOutputPath,
   devServer,
+  sourcemapFilename,
 } = parseCliOptions({
   fallback: {
     platform: 'ios',
@@ -31,6 +32,7 @@ const {
 
 module.exports = {
   mode,
+  devtool: false,
   context,
   entry: [...getInitializationEntries(reactNativePath), entry],
   resolve: {
@@ -74,5 +76,11 @@ module.exports = {
       },
     }),
     new DevServerPlugin(devServer),
+    new webpack.SourceMapDevToolPlugin({
+      test: /\.([jt]sx?|(js)?bundle)$/,
+      filename: sourcemapFilename,
+      noSources: dev,
+      columns: !dev,
+    }),
   ],
 };

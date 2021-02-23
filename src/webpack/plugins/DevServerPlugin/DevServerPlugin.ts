@@ -21,9 +21,13 @@ export class DevServerPlugin implements WebpackPlugin {
     }://${config.host || 'localhost'}:${config.port}`;
     logger.debug('Setting public path to:', compiler.options.output.publicPath);
 
+    let server: DevServer | undefined;
+
     compiler.hooks.watchRun.tap('DevServerPlugin', () => {
-      const server = new DevServer(config, compiler);
-      server.run();
+      if (!server) {
+        server = new DevServer(config, compiler);
+        server.run();
+      }
     });
 
     // TODO: add hooks to compiler to support HMR/React Refresh

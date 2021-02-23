@@ -27,6 +27,7 @@ export const DEFAULT_FALLBACK: WebpackOptionsWithoutPlatform = {
   context: process.cwd(),
   reactNativePath: path.join(process.cwd(), './node_modules/react-native'),
   minimize: false,
+  sourcemapFilename: '[name][ext].map',
 };
 
 export const DEFAULT_PORT = 8081;
@@ -55,7 +56,7 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       entry: entry.startsWith('./') ? entry : `./${entry}`,
       outputPath,
       outputFilename,
-      sourcemapFilename: args.sourcemapOutput,
+      sourcemapFilename: args.sourcemapOutput || fallback.sourcemapFilename,
       assetsOutputPath: args.assetsDest,
       minimize: Boolean(args.minify),
       reactNativePath: cliOptions.config.reactNativePath,
