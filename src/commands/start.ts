@@ -1,12 +1,13 @@
 import path from 'path';
 import { Config } from '@react-native-community/cli-types';
-import webpack from 'webpack';
 import { CliOptions, StartArguments } from '../types';
-import { CLI_OPTIONS_KEY } from '../webpack/utils/parseCliOptions';
+import { DEFAULT_PORT } from '../webpack/utils/parseCliOptions';
+import { DevServerProxy } from '../server';
+// require('inspector').open(undefined, undefined, true);
 
 export function start(_: string[], config: Config, args: StartArguments) {
   const webpackConfigPath = path.join(config.root, 'webpack.config.js');
-  const cliOptions = JSON.stringify({
+  const cliOptions: CliOptions = {
     config: {
       root: config.root,
       reactNativePath: config.reactNativePath,
@@ -14,18 +15,16 @@ export function start(_: string[], config: Config, args: StartArguments) {
     },
     command: 'start',
     arguments: {
-      // TODO: handle ios and android at the same time
-      start: { ...args, platform: 'android' },
+      start: { ...args, platform: '' },
     },
-  } as CliOptions);
+  };
 
-  process.env[CLI_OPTIONS_KEY] = cliOptions;
-
-  const compiler = webpack(require(webpackConfigPath));
-  compiler.watch({}, (error) => {
-    if (error) {
-      console.error(error);
-      process.exit(2);
-    }
+  const devServerProxy = new DevServerProxy({
+    host: args.host,
+    port: args.port ?? DEFAULT_PORT,
+    https: args.https,
+    cert: args.cert,
+    key: args.key,
   });
+  devServerProxy.run(cliOptions);
 }

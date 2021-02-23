@@ -9,7 +9,7 @@ const {
   DevServerPlugin,
   DEFAULT_PORT,
 } = require('../..');
-require('inspector').open(undefined, undefined, true);
+// require('inspector').open(undefined, undefined, true);
 
 const {
   dev,

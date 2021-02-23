@@ -1,6 +1,6 @@
 import webpack from 'webpack';
 import { WebpackPlugin } from '../../../types';
-import { DevServer, DevServerConfig } from './DevServer';
+import { DevServer, DevServerConfig } from '../../../server';
 
 interface DevServerPluginConfig extends DevServerConfig {}
 

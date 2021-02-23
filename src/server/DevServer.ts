@@ -1,25 +1,16 @@
-import {
-  Http2SecureServer,
-  Http2ServerRequest,
-  Http2ServerResponse,
-} from 'http2';
 import path from 'path';
-import { Server } from 'http';
 import { Writable } from 'stream';
-import Fastify, { FastifyInstance } from 'fastify';
 import fastifyExpress from 'fastify-express';
 import devMiddleware, { WebpackDevMiddleware } from 'webpack-dev-middleware';
 import webpack from 'webpack';
-import { DevServerOptions } from '../../../types';
+import { DevServerOptions } from '../types';
+import { FastifyDevServer } from './types';
+import { getFastifyInstance } from './utils/getFastifyInstance';
 
 export interface DevServerConfig extends DevServerOptions {}
 
 export class DevServer {
-  fastify: FastifyInstance<
-    Http2SecureServer | Server,
-    Http2ServerRequest,
-    Http2ServerResponse
-  >;
+  fastify: FastifyDevServer;
   wdm: WebpackDevMiddleware;
 
   constructor(
@@ -34,20 +25,11 @@ export class DevServer {
         callback();
       },
     });
-    const logger = { stream: logStream, level: 'info' };
 
-    if (this.config.https && this.config.cert && this.config.key) {
-      // @ts-ignore
-      this.fastify = Fastify({
-        logger,
-        https: { cert: this.config.cert, key: this.config.key },
-      });
-    } else {
-      // @ts-ignore
-      this.fastify = Fastify({
-        logger,
-      });
-    }
+    this.fastify = getFastifyInstance(this.config, {
+      stream: logStream,
+      level: 'info',
+    });
 
     this.wdm = devMiddleware(this.compiler);
   }
