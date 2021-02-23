@@ -83,6 +83,8 @@ export class DevServerProxy {
   async run(cliOptions: CliOptions) {
     const fastify = getFastifyInstance(this.config);
 
+    fastify.get('/status', async () => 'packager-status:running');
+
     fastify.route({
       method: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
       url: '*',
