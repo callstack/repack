@@ -5,9 +5,15 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "del dist && babel src --out-dir dist --extensions .js,.ts --source-maps && tsc"
+    "clean": "del dist",
+    "babel": "babel src --out-dir dist --extensions .js,.ts --source-maps",
+    "babel:watch": "npm run babel -- --watch",
+    "tsc": "tsc",
+    "tsc:watch": "npm run tsc -- --watch --preserveWatchOutput",
+    "build": "npm run clean && npm run babel && npm run tsc",
+    "build:watch": "npm run clean && concurrently npm:babel:watch npm:tsc:watch"
   },
-  "author": "",
+  "author": "zamotany <zamotany.oss@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
     "react-native": ">=0.63",
@@ -47,6 +53,7 @@
     "@types/express": "^4.17.11",
     "@types/node": "^14.14.28",
     "@types/node-fetch": "^2.5.8",
+    "concurrently": "^6.0.0",
     "del-cli": "^3.0.1",
     "eslint": "^7.20.0",
     "react-native": "^0.63.4",
