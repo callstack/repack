@@ -6,6 +6,7 @@ import webpack from 'webpack';
 import { DevServerOptions } from '../types';
 import { FastifyDevServer } from './types';
 import { getFastifyInstance } from './utils/getFastifyInstance';
+import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 
 export interface DevServerConfig extends DevServerOptions {}
 
@@ -100,6 +101,20 @@ export class DevServer {
         }
       }
     );
+
+    this.fastify.post('/symbolicate', (request, reply) => {
+      const { stack } = JSON.parse(request.body as string) as {
+        stack: ReactNativeStackFrame[];
+      };
+      const platform = Symbolicator.inferPlatformFromStack(stack);
+      if (!platform) {
+        reply.code(400).send();
+      } else {
+        // TODO
+        require('inspector').open(undefined, undefined, true);
+        debugger;
+      }
+    });
 
     this.fastify.get('/message', (_request, reply) => {
       reply.code(404).send();

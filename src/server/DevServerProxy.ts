@@ -6,6 +6,7 @@ import { CliOptions, DevServerOptions, StartArguments } from '../types';
 import { CLI_OPTIONS_KEY } from '../webpack/utils/parseCliOptions';
 import { getFastifyInstance } from './utils/getFastifyInstance';
 import { DevServerReply, DevServerRequest } from './types';
+import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 
 export interface DevServerProxyConfig extends DevServerOptions {}
 
@@ -83,7 +84,7 @@ export class DevServerProxy {
       console.log(`Fetching: ${compilerWorkerUrl}`);
       const response = await fetch(compilerWorkerUrl, {
         method: request.method,
-        // TODO: body
+        body: typeof request.body === 'string' ? request.body : undefined,
       });
       const payload = await response.buffer();
       reply
@@ -98,14 +99,15 @@ export class DevServerProxy {
     fastify.get('/status', async () => 'packager-status:running');
 
     fastify.post('/symbolicate', (request, reply) => {
-      // require('inspector').open(undefined, undefined, true);
-      // 1. figure out platform from stack frames's file
-      // 2. fetch source map
-      // 3. filter out unnecessary frames https://github.com/facebook/metro/blob/a9862e66368cd177884ea1e014801fe0c57ef5d7/packages/metro/src/Server.js#L1042
-      // 4. symbolicate each stack frame https://github.com/facebook/metro/blob/a9862e66368cd177884ea1e014801fe0c57ef5d7/packages/metro/src/Server/symbolicate.js#L57
-      // 5. create code frame
-      // 6. reply
-      // debugger;
+      const { stack } = JSON.parse(request.body as string) as {
+        stack: ReactNativeStackFrame[];
+      };
+      const platform = Symbolicator.inferPlatformFromStack(stack);
+      if (!platform) {
+        reply.code(400).send();
+      } else {
+        this.forwardRequest(platform, request, reply);
+      }
     });
 
     fastify.route({
