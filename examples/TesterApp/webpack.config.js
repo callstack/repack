@@ -1,31 +1,40 @@
-const { parseCliOptions, getInitializationEntries, getResolveOptions, ReactNativeAssetsPlugin, LoggerPlugin } = require('../..');
-const webpack = require('webpack');
 const path = require('path');
+const webpack = require('webpack');
+const {
+  parseCliOptions,
+  getInitializationEntries,
+  getResolveOptions,
+  ReactNativeAssetsPlugin,
+  LoggerPlugin,
+  DevServerPlugin,
+  DEFAULT_PORT,
+} = require('../..');
+require('inspector').open(undefined, undefined, true);
 
-const { dev, mode, context, entry, platform, reactNativePath, outputPath, outputFilename, assetsOutputPath } = parseCliOptions({
+const {
+  dev,
+  mode,
+  context,
+  entry,
+  platform,
+  reactNativePath,
+  outputPath,
+  outputFilename,
+  assetsOutputPath,
+  devServer,
+} = parseCliOptions({
   fallback: {
-    mode: 'development',
-    dev: true,
-    entry: './index.js',
-    outputPath: path.join(__dirname, 'dist'),
-    assetsOutputPath: path.join(__dirname, 'dist'),
-    outputFilename: 'main.js',
     platform: 'ios',
-    context: __dirname,
-    reactNativePath: path.join(__dirname, './node_modules/react-native'),
-    minimize: false,
-  }
+    devServer: { port: DEFAULT_PORT },
+  },
 });
 
 module.exports = {
   mode,
   context,
-  entry: [
-    ...getInitializationEntries(reactNativePath),
-    entry,
-  ],
+  entry: [...getInitializationEntries(reactNativePath), entry],
   resolve: {
-    ...getResolveOptions(platform)
+    ...getResolveOptions(platform),
   },
   output: {
     path: outputPath,
@@ -35,10 +44,10 @@ module.exports = {
     rules: [
       {
         test: /\.[jt]sx?$/,
-        exclude: /node_modules(?!.*[\/\\](react|@react-navigation|@react-native-community|@expo|pretty-format|metro))/,
-        use: 'babel-loader'
-      }
-    ]
+        exclude: /node_modules(?!.*[/\\](react|@react-navigation|@react-native-community|@expo|pretty-format|metro))/,
+        use: 'babel-loader',
+      },
+    ],
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -55,17 +64,15 @@ module.exports = {
       platform,
       context,
       outputPath,
-      assetsOutputPath
+      assetsOutputPath,
+      bundleToFile: !devServer,
     }),
     new LoggerPlugin({
-      filter: {
-        type: LoggerPlugin.DEBUG_AND_ABOVE
-      },
       output: {
         console: true,
-        file: path.join(__dirname, 'build.log')
-      }
-    })
-  ]
+        file: path.join(__dirname, 'build.log'),
+      },
+    }),
+    new DevServerPlugin(devServer),
+  ],
 };
-

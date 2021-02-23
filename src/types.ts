@@ -8,24 +8,38 @@ export interface WebpackPlugin {
   apply(compiler: webpack.Compiler): void;
 }
 
-export interface Arguments {
+export interface CommonArguments {
+  platform: string;
+  resetCache?: boolean;
+}
+
+export interface BundleArguments extends CommonArguments {
   assetsDest?: string;
   entryFile: string;
-  resetCache: boolean;
-  resetGlobalCache: boolean;
-  transformer?: string;
   minify?: boolean;
-  config?: string;
-  platform: string;
   dev: boolean;
   bundleOutput: string;
-  bundleEncoding?: string;
-  maxWorkers?: number;
+  // bundleEncoding?: string;
   sourcemapOutput?: string;
-  sourcemapSourcesRoot?: string;
-  sourcemapUseAbsolutePath: boolean;
-  verbose: boolean;
-  unstableTransformProfile?: string;
+  // sourcemapSourcesRoot?: string;
+  // sourcemapUseAbsolutePath: boolean;
+}
+
+export interface StartArguments extends CommonArguments {
+  cert?: string;
+  host?: string;
+  https?: boolean;
+  key?: string;
+  port?: number;
+  // projectRoot?: string; ??
+}
+
+export interface DevServerOptions {
+  host?: string;
+  port: number;
+  https?: boolean;
+  cert?: string;
+  key?: string;
 }
 
 export interface CliOptions {
@@ -34,7 +48,14 @@ export interface CliOptions {
     reactNativePath: string;
     webpackConfigPath: string;
   };
-  arguments: Arguments;
+  command: 'bundle' | 'start';
+  arguments:
+    | {
+        bundle: BundleArguments;
+      }
+    | {
+        start: StartArguments;
+      };
 }
 
 export interface WebpackOptions {
@@ -49,4 +70,5 @@ export interface WebpackOptions {
   assetsOutputPath?: string;
   minimize: boolean;
   reactNativePath: string;
+  devServer?: DevServerOptions;
 }

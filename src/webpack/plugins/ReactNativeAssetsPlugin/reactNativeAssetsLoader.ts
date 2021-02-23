@@ -58,31 +58,28 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
     // Relative path to context without any ../ due to https://github.com/callstack/haul/issues/474
     // Assets from from outside of context, should still be placed inside bundle output directory.
     // Example:
-    //   resourcePath = monorepo/node_modules/my-module/image.png
-    //   dirname      = monorepo/node_modules/my-module
-    //   context      = monorepo/packages/my-app/
-    //   url          = ../../node_modules/my-module (original)
-    // So when we calculate destination for the asset for iOS ('assets' + url + filename),
+    //   resourcePath    = monorepo/node_modules/my-module/image.png
+    //   dirname         = monorepo/node_modules/my-module
+    //   context         = monorepo/packages/my-app/
+    //   relativeDirname = ../../node_modules/my-module (original)
+    // So when we calculate destination for the asset for iOS ('assets' + relativeDirname + filename),
     // it will end up outside of `assets` directory, so we have to make sure it's:
-    //   url          = node_modules/my-module (tweaked)
-    const url = path
+    //   relativeDirname = node_modules/my-module (tweaked)
+    const relativeDirname = path
       .relative(options.context, dirname)
       .replace(new RegExp(`^[\\.\\${path.sep}]+`), '');
     const type = path.extname(resourcePath).replace(/^\./, '');
-    const assetsPath = path.join(
-      'assets',
-      options.bundleToFile ? '' : options.platform
-    );
+    const assetsPath = 'assets';
     const suffix = `(@\\d+(\\.\\d+)?x)?(\\.(${options.platform}|native))?\\.${type}$`;
     const filename = path
       .basename(resourcePath)
       .replace(new RegExp(suffix), '');
-    const normalizedName =
-      url.length === 0
-        ? filename
-        : `${url.replace(pathSeparatorPattern, '_')}_${filename}`;
-    const longName = `${normalizedName
-      .toLowerCase()
+    // Name with embedded relative dirname eg `node_modules_reactnative_libraries_newappscreen_components_logo.png`
+    const normalizedName = `${(relativeDirname.length === 0
+      ? filename
+      : `${relativeDirname.replace(pathSeparatorPattern, '_')}_${filename}`
+    )
+      .toUpperCase()
       .replace(/[^a-z0-9_]/g, '')}.${type}`;
 
     const files = await new Promise<string[]>((resolve, reject) =>
@@ -136,19 +133,19 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
 
                   // found font family
                   if (
-                    testXml.test(longName) &&
+                    testXml.test(normalizedName) &&
                     results?.indexOf('font-family') !== -1
                   ) {
                     destination = 'font';
-                  } else if (testFonts.test(longName)) {
+                  } else if (testFonts.test(normalizedName)) {
                     // font extensions
                     destination = 'font';
-                  } else if (testMP4.test(longName)) {
+                  } else if (testMP4.test(normalizedName)) {
                     // video files extensions
                     destination = 'raw';
                   } else if (
-                    testImages.test(longName) ||
-                    testXml.test(longName)
+                    testImages.test(normalizedName) ||
+                    testXml.test(normalizedName)
                   ) {
                     // images extensions
                     switch (scale) {
@@ -180,12 +177,12 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
                     destination = 'raw';
                   }
 
-                  destination = path.join(destination, longName);
+                  destination = path.join(destination, normalizedName);
                 } else {
                   const name = `${filename}${
                     scale === '@1x' ? '' : scale
                   }.${type}`;
-                  destination = path.join(assetsPath, url, name);
+                  destination = path.join(assetsPath, relativeDirname, name);
                 }
 
                 resolve({
@@ -210,12 +207,12 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       this.emitFile(destination, content ?? '');
     });
 
-    let publicPath = JSON.stringify(
-      path.join(assetsPath, url).replace(pathSeparatorPattern, '/')
-    );
+    let publicPath = path
+      .join(assetsPath, relativeDirname)
+      .replace(pathSeparatorPattern, '/');
 
     if (options.publicPath) {
-      publicPath = JSON.stringify(path.join(options.publicPath, url));
+      publicPath = path.join(options.publicPath, publicPath);
     }
 
     const hashes = await Promise.all(
@@ -251,13 +248,12 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       resourcePath,
       platform: options.platform,
       context: options.context,
-      url,
+      relativeDirname,
       type,
       assetsPath,
       outputPath: options.outputPath,
       filename,
       normalizedName,
-      longName,
       scales,
       assets: assets.map((asset) => asset.destination),
       publicPath,
@@ -275,7 +271,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
         name: ${JSON.stringify(filename)},
         type: ${JSON.stringify(type)},
         hash: ${JSON.stringify(hashes.join())},
-        httpServerLocation: ${publicPath},
+        httpServerLocation: ${JSON.stringify(publicPath)},
         ${
           options.bundleToFile
             ? ''

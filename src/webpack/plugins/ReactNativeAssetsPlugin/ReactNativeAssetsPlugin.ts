@@ -10,6 +10,7 @@ interface ReactNativeAssetsPluginConfig extends ReactNativeAssetResolverConfig {
   context: string;
   outputPath?: string;
   assetsOutputPath?: string;
+  bundleToFile?: boolean;
 }
 
 export class ReactNativeAssetsPlugin implements WebpackPlugin {
@@ -40,8 +41,7 @@ export class ReactNativeAssetsPlugin implements WebpackPlugin {
             platform: this.config.platform,
             context: this.config.context,
             outputPath,
-            // TODO: make this configurable
-            bundleToFile: true,
+            bundleToFile: this.config.bundleToFile ?? true,
           },
         },
       ],
