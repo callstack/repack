@@ -2,25 +2,29 @@ import path from 'path';
 import execa from 'execa';
 import fetch from 'node-fetch';
 import getPort from 'get-port';
-import { CliOptions, DevServerOptions, StartArguments } from '../types';
+import fastifyGracefulShutdown from 'fastify-graceful-shutdown';
+import { CliOptions, StartArguments } from '../types';
 import { CLI_OPTIONS_KEY } from '../webpack/utils/parseCliOptions';
-import { getFastifyInstance } from './utils/getFastifyInstance';
 import { DevServerReply, DevServerRequest } from './types';
 import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
+import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
 
-export interface DevServerProxyConfig extends DevServerOptions {}
+export interface DevServerProxyConfig extends BaseDevServerConfig {}
 
 export interface CompilerWorker {
   process: execa.ExecaChildProcess;
   port: number;
 }
 
-export class DevServerProxy {
+// TODO: use reporter and pretty-print logs
+export class DevServerProxy extends BaseDevServer {
   workers: Record<string, CompilerWorker> = {};
 
-  constructor(private config: DevServerProxyConfig) {}
+  constructor(config: DevServerProxyConfig, private cliOptions: CliOptions) {
+    super(config);
+  }
 
-  async runWorker(platform: string, cliOptions: CliOptions) {
+  async runWorker(platform: string) {
     if (this.workers[platform]) {
       console.error(
         `Compiler worker for platform ${platform} is already running`
@@ -30,10 +34,10 @@ export class DevServerProxy {
 
     const port = await getPort();
     const cliOptionsWithPlatform: CliOptions = {
-      ...cliOptions,
+      ...this.cliOptions,
       arguments: {
         start: {
-          ...(cliOptions.arguments as { start: StartArguments }).start,
+          ...(this.cliOptions.arguments as { start: StartArguments }).start,
           platform,
           port,
         },
@@ -68,7 +72,7 @@ export class DevServerProxy {
     });
   }
 
-  private async forwardRequest(
+  async forwardRequest(
     platform: string,
     request: DevServerRequest,
     reply: DevServerReply
@@ -93,12 +97,24 @@ export class DevServerProxy {
     }
   }
 
-  async run(cliOptions: CliOptions) {
-    const fastify = getFastifyInstance(this.config);
+  async setup() {
+    await this.fastify.register(fastifyGracefulShutdown);
+    this.fastify.gracefulShutdown((code, cb) => {
+      for (const platform in this.workers) {
+        const worker = this.workers[platform];
+        worker.process.kill(code);
+      }
 
-    fastify.get('/status', async () => 'packager-status:running');
+      console.log(`Shutting down dev server proxy`, {
+        port: this.config.port,
+        code,
+      });
+      cb();
+    });
 
-    fastify.post('/symbolicate', (request, reply) => {
+    await super.setup();
+
+    this.fastify.post('/symbolicate', (request, reply) => {
       const { stack } = JSON.parse(request.body as string) as {
         stack: ReactNativeStackFrame[];
       };
@@ -110,7 +126,7 @@ export class DevServerProxy {
       }
     });
 
-    fastify.route({
+    this.fastify.route({
       method: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
       url: '*',
       schema: {
@@ -124,6 +140,7 @@ export class DevServerProxy {
         },
       },
       handler: async (request, reply) => {
+        // TODO: add debug logging
         const platform = (request.query as { platform?: string } | undefined)
           ?.platform;
         if (!platform) {
@@ -133,7 +150,7 @@ export class DevServerProxy {
             if (this.workers[platform]) {
               await this.forwardRequest(platform, request, reply);
             } else {
-              await this.runWorker(platform, cliOptions);
+              await this.runWorker(platform);
               await this.forwardRequest(platform, request, reply);
             }
           } catch (error) {
@@ -143,12 +160,12 @@ export class DevServerProxy {
         }
       },
     });
+  }
 
+  async run() {
     try {
-      await fastify.listen({
-        port: this.config.port,
-        host: this.config.host,
-      });
+      await this.setup();
+      await super.run();
       console.log('Dev server listening');
     } catch (error) {
       console.error(error);

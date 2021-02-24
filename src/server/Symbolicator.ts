@@ -67,6 +67,7 @@ export class Symbolicator {
   async process(
     stack: ReactNativeStackFrame[]
   ): Promise<SymbolicatorResults | undefined> {
+    // TODO: add debug logging
     const frames: InputStackFrame[] = [];
     for (const frame of stack) {
       const { file } = frame;
@@ -164,6 +165,7 @@ export class Symbolicator {
           fileName: filename,
         };
       } catch (error) {
+        // TODO: use logger
         console.error(error);
       }
 

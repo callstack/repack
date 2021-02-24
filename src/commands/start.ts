@@ -3,7 +3,6 @@ import { Config } from '@react-native-community/cli-types';
 import { CliOptions, StartArguments } from '../types';
 import { DEFAULT_PORT } from '../webpack/utils/parseCliOptions';
 import { DevServerProxy } from '../server';
-// require('inspector').open(undefined, undefined, true);
 
 export function start(_: string[], config: Config, args: StartArguments) {
   const webpackConfigPath = path.join(config.root, 'webpack.config.js');
@@ -19,12 +18,15 @@ export function start(_: string[], config: Config, args: StartArguments) {
     },
   };
 
-  const devServerProxy = new DevServerProxy({
-    host: args.host,
-    port: args.port ?? DEFAULT_PORT,
-    https: args.https,
-    cert: args.cert,
-    key: args.key,
-  });
-  devServerProxy.run(cliOptions);
+  const devServerProxy = new DevServerProxy(
+    {
+      host: args.host,
+      port: args.port ?? DEFAULT_PORT,
+      https: args.https,
+      cert: args.cert,
+      key: args.key,
+    },
+    cliOptions
+  );
+  devServerProxy.run();
 }

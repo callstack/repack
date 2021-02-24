@@ -28,6 +28,7 @@ export interface LoggerPluginConfig {
   };
 }
 
+// TODO: use reporter and pretty-print logs (as long as it's not running as a worker from proxy)
 export class LoggerPlugin implements WebpackPlugin {
   static SUPPORTED_TYPES: string[] = ['debug', 'info', 'warn', 'error'];
   static ERROR_ONLY: LogType[] = ['error'];

@@ -1,24 +1,16 @@
 import { Writable } from 'stream';
 import fastifyExpress from 'fastify-express';
+import fastifyGracefulShutdown from 'fastify-graceful-shutdown';
 import devMiddleware, { WebpackDevMiddleware } from 'webpack-dev-middleware';
 import getFilenameFromUrl from 'webpack-dev-middleware/dist/utils/getFilenameFromUrl';
 import webpack from 'webpack';
-import { DevServerOptions } from '../types';
-import { FastifyDevServer } from './types';
-import { getFastifyInstance } from './utils/getFastifyInstance';
 import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
+import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
 
-export interface DevServerConfig extends DevServerOptions {}
+export interface DevServerConfig extends BaseDevServerConfig {}
 
-export class DevServer {
-  fastify: FastifyDevServer;
-  wdm: WebpackDevMiddleware;
-  symbolicator: Symbolicator;
-
-  constructor(
-    private config: DevServerConfig,
-    private compiler: webpack.Compiler
-  ) {
+export class DevServer extends BaseDevServer {
+  static getLoggerOptions(compiler: webpack.Compiler) {
     const webpackLogger = compiler.getInfrastructureLogger('DevServer');
     const logStream = new Writable({
       write: (chunk, _encoding, callback) => {
@@ -28,10 +20,14 @@ export class DevServer {
       },
     });
 
-    this.fastify = getFastifyInstance(this.config, {
-      stream: logStream,
-      level: 'info',
-    });
+    return { stream: logStream, level: 'info' };
+  }
+
+  wdm: WebpackDevMiddleware;
+  symbolicator: Symbolicator;
+
+  constructor(config: DevServerConfig, private compiler: webpack.Compiler) {
+    super(config, DevServer.getLoggerOptions(compiler));
 
     this.wdm = devMiddleware(this.compiler, {
       mimeTypes: {
@@ -44,10 +40,11 @@ export class DevServer {
       async (fileUrl) => {
         const filename = getFilenameFromUrl(this.wdm.context, fileUrl);
         if (filename) {
+          // TODO: create readFile helper
           const content = await new Promise<string | Buffer>(
             (resolve, reject) =>
               this.wdm.context.outputFileSystem.readFile(
-                `${filename}.map`,
+                `${filename}.map`, // TODO: use sourceMapFilename from compiler
                 (error, content) => {
                   if (error || !content) {
                     reject(error);
@@ -66,17 +63,16 @@ export class DevServer {
     );
   }
 
-  private setupRoutes() {
-    this.fastify.addHook('onRoute', (opts) => {
-      if (/(message|inspector)/.test(opts.path)) {
-        // @ts-ignore
-        opts.logLevel = 'silent';
-      }
+  async setup() {
+    await this.fastify.register(fastifyExpress);
+    await this.fastify.register(fastifyGracefulShutdown);
+    this.fastify.gracefulShutdown((_code, cb) => {
+      cb();
     });
 
-    this.fastify.get('/', async () => {
-      return { status: 'ok' };
-    });
+    this.fastify.use(this.wdm);
+
+    await super.setup();
 
     this.fastify.post('/symbolicate', async (request, reply) => {
       try {
@@ -95,26 +91,12 @@ export class DevServer {
         reply.code(500).send();
       }
     });
-
-    this.fastify.get('/message', (_request, reply) => {
-      reply.code(404).send();
-    });
-
-    this.fastify.get('/inspector/device', (_request, reply) => {
-      reply.code(404).send();
-    });
   }
 
   async run() {
     try {
-      await this.fastify.register(fastifyExpress);
-      this.fastify.use(this.wdm);
-      this.setupRoutes();
-
-      await this.fastify.listen({
-        port: this.config.port,
-        host: this.config.host,
-      });
+      await this.setup();
+      await super.run();
       this.fastify.log.info('Dev server listening');
     } catch (error) {
       this.fastify.log.error(error);
