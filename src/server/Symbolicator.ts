@@ -1,23 +1,48 @@
 import { URL } from 'url';
 import path from 'path';
+import fs from 'fs';
+import { promisify } from 'util';
+import { codeFrameColumns } from '@babel/code-frame';
+import { SourceMapConsumer } from 'source-map';
+
+const readFileAsync = promisify(fs.readFile);
 
 export interface ReactNativeStackFrame {
-  lineNumber: number;
-  column: number;
-  file: string;
+  lineNumber: number | null;
+  column: number | null;
+  file: string | null;
   methodName: string;
 }
 
-// 1. figure out platform from stack frames's file
-// 2. fetch source map
-// 3. filter out unnecessary frames https://github.com/facebook/metro/blob/a9862e66368cd177884ea1e014801fe0c57ef5d7/packages/metro/src/Server.js#L1042
-// 4. symbolicate each stack frame https://github.com/facebook/metro/blob/a9862e66368cd177884ea1e014801fe0c57ef5d7/packages/metro/src/Server/symbolicate.js#L57
-// 5. create code frame
-// 6. reply
+export interface InputStackFrame extends ReactNativeStackFrame {
+  file: string;
+}
+
+export interface StackFrame extends InputStackFrame {
+  collapse: boolean;
+}
+
+export interface CodeFrame {
+  content: string;
+  location: {
+    row: number;
+    column: number;
+  };
+  fileName: string;
+}
+
+export interface SymbolicatorResults {
+  codeFrame: CodeFrame | null;
+  stack: StackFrame[];
+}
 
 export class Symbolicator {
   static inferPlatformFromStack(stack: ReactNativeStackFrame[]) {
     for (const frame of stack) {
+      if (!frame.file) {
+        return;
+      }
+
       const { searchParams, pathname } = new URL(frame.file, 'file://');
       const platform = searchParams.get('platform');
       if (platform) {
@@ -31,161 +56,119 @@ export class Symbolicator {
       }
     }
   }
+
+  sourceMapConsumerCache: Record<string, SourceMapConsumer> = {};
+
+  constructor(
+    private projectRoot: string,
+    private getSourceMap: (fileUrl: string) => Promise<string>
+  ) {}
+
+  async process(
+    stack: ReactNativeStackFrame[]
+  ): Promise<SymbolicatorResults | undefined> {
+    const frames: InputStackFrame[] = [];
+    for (const frame of stack) {
+      const { file } = frame;
+      if (file?.startsWith('http') && !file.endsWith('/debuggerWorker.js')) {
+        frames.push(frame as InputStackFrame);
+      }
+    }
+
+    const processedFrames: StackFrame[] = [];
+    for (const frame of frames) {
+      if (!this.sourceMapConsumerCache[frame.file]) {
+        const rawSourceMap = await this.getSourceMap(frame.file);
+        const sourceMapConsumer = await (() =>
+          new SourceMapConsumer(rawSourceMap))();
+        this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
+      }
+      const processedFrame = this.processFrame(frame);
+      processedFrames.push(processedFrame);
+    }
+
+    return {
+      stack: processedFrames,
+      codeFrame: (await this.getCodeFrame(processedFrames)) ?? null,
+    };
+  }
+
+  private processFrame(frame: InputStackFrame): StackFrame {
+    if (!frame.lineNumber || !frame.column) {
+      return {
+        ...frame,
+        collapse: false,
+      };
+    }
+
+    const consumer = this.sourceMapConsumerCache[frame.file];
+    if (!consumer) {
+      return {
+        ...frame,
+        collapse: false,
+      };
+    }
+
+    const lookup = consumer.originalPositionFor({
+      line: frame.lineNumber,
+      column: frame.column,
+    });
+
+    // If lookup fails, we get the same shape object, but with
+    // all values set to null
+    if (!lookup.source) {
+      // It is better to gracefully return the original frame
+      // than to throw an exception
+      return {
+        ...frame,
+        collapse: false,
+      };
+    }
+
+    return {
+      lineNumber: lookup.line || frame.lineNumber,
+      column: lookup.column || frame.column,
+      file: lookup.source,
+      methodName: lookup.name || frame.methodName,
+      collapse: false,
+    };
+  }
+
+  private async getCodeFrame(
+    processedFrames: StackFrame[]
+  ): Promise<CodeFrame | undefined> {
+    for (const frame of processedFrames) {
+      if (frame.collapse || !frame.lineNumber || !frame.column) {
+        continue;
+      }
+
+      try {
+        const filename = path.join(
+          this.projectRoot,
+          frame.file.replace('webpack://', '')
+        );
+
+        const source = await readFileAsync(filename, 'utf8');
+
+        return {
+          content: codeFrameColumns(
+            source,
+            {
+              start: { column: frame.column, line: frame.lineNumber },
+            },
+            { forceColor: true }
+          ),
+          location: {
+            row: frame.lineNumber,
+            column: frame.column,
+          },
+          fileName: filename,
+        };
+      } catch (error) {
+        console.error(error);
+      }
+
+      return undefined;
+    }
+  }
 }
-
-// async _symbolicate(req: IncomingMessage, res: ServerResponse) {
-//   const getCodeFrame = (urls, symbolicatedStack) => {
-//     for (let i = 0; i < symbolicatedStack.length; i++) {
-//       const {collapse, column, file, lineNumber} = symbolicatedStack[i];
-//       // $FlowFixMe[incompatible-call]
-//       const entryPoint = path.resolve(this._config.projectRoot, file);
-//       if (collapse || lineNumber == null || urls.has(entryPoint)) {
-//         continue;
-//       }
-
-//       try {
-//         return {
-//           content: codeFrameColumns(
-//             fs.readFileSync(entryPoint, 'utf8'),
-//             {
-//               // Metro returns 0 based columns but codeFrameColumns expects 1-based columns
-//               // $FlowFixMe[unsafe-addition]
-//               start: {column: column + 1, line: lineNumber},
-//             },
-//             {forceColor: true},
-//           ),
-//           location: {
-//             row: lineNumber,
-//             column,
-//           },
-//           fileName: file,
-//         };
-//       } catch (error) {
-//         console.error(error);
-//       }
-//     }
-
-//     return null;
-//   };
-
-//   try {
-//     const symbolicatingLogEntry = log(
-//       createActionStartEntry('Symbolicating'),
-//     );
-//     debug('Start symbolication');
-//     /* $FlowFixMe: where is `rawBody` defined? Is it added by the `connect` framework? */
-//     const body = await req.rawBody;
-//     const stack = JSON.parse(body).stack.map(frame => {
-//       if (frame.file && frame.file.includes('://')) {
-//         return {
-//           ...frame,
-//           file: this._config.server.rewriteRequestUrl(frame.file),
-//         };
-//       }
-//       return frame;
-//     });
-//     // In case of multiple bundles / HMR, some stack frames can have different URLs from others
-//     const urls = new Set();
-
-//     stack.forEach(frame => {
-//       const sourceUrl = frame.file;
-//       // Skip `/debuggerWorker.js` which does not need symbolication.
-//       if (
-//         sourceUrl != null &&
-//         !urls.has(sourceUrl) &&
-//         !sourceUrl.endsWith('/debuggerWorker.js') &&
-//         sourceUrl.startsWith('http')
-//       ) {
-//         urls.add(sourceUrl);
-//       }
-//     });
-
-//     debug('Getting source maps for symbolication');
-//     const sourceMaps = await Promise.all(
-//       Array.from(urls.values()).map(this._explodedSourceMapForURL, this),
-//     );
-
-//     debug('Performing fast symbolication');
-//     const symbolicatedStack = await await symbolicate(
-//       stack,
-//       zip(urls.values(), sourceMaps),
-//       this._config,
-//     );
-
-//     debug('Symbolication done');
-//     res.end(
-//       JSON.stringify({
-//         codeFrame: getCodeFrame(urls, symbolicatedStack),
-//         stack: symbolicatedStack,
-//       }),
-//     );
-//     process.nextTick(() => {
-//       log(createActionEndEntry(symbolicatingLogEntry));
-//     });
-//   } catch (error) {
-//     console.error(error.stack || error);
-//     res.statusCode = 500;
-//     res.end(JSON.stringify({error: error.message}));
-//   }
-// }
-
-// async _explodedSourceMapForURL(reqUrl: string): Promise<ExplodedSourceMap> {
-//   const options = parseOptionsFromUrl(
-//     reqUrl,
-//     new Set(this._config.resolver.platforms),
-//     BYTECODE_VERSION,
-//   );
-
-//   const {
-//     entryFile,
-//     transformOptions,
-//     serializerOptions,
-//     graphOptions,
-//     onProgress,
-//   } = splitBundleOptions(options);
-
-//   /**
-//    * `entryFile` is relative to projectRoot, we need to use resolution function
-//    * to find the appropriate file with supported extensions.
-//    */
-//   const resolvedEntryFilePath = await this._resolveRelativePath(entryFile, {
-//     transformOptions,
-//   });
-
-//   const graphId = getGraphId(resolvedEntryFilePath, transformOptions, {
-//     shallow: graphOptions.shallow,
-//     experimentalImportBundleSupport: this._config.transformer
-//       .experimentalImportBundleSupport,
-//   });
-//   let revision;
-//   const revPromise = this._bundler.getRevisionByGraphId(graphId);
-//   if (revPromise == null) {
-//     ({revision} = await this._bundler.initializeGraph(
-//       resolvedEntryFilePath,
-//       transformOptions,
-//       {onProgress, shallow: graphOptions.shallow},
-//     ));
-//   } else {
-//     ({revision} = await this._bundler.updateGraph(await revPromise, false));
-//   }
-
-//   let {prepend, graph} = revision;
-//   if (serializerOptions.modulesOnly) {
-//     prepend = [];
-//   }
-
-//   return getExplodedSourceMap(
-//     [...prepend, ...this._getSortedModules(graph)],
-//     {
-//       processModuleFilter: this._config.serializer.processModuleFilter,
-//     },
-//   );
-// }
-
-// async _resolveRelativePath(filePath, {transformOptions}) {
-//   const resolutionFn = await transformHelpers.getResolveDependencyFn(
-//     this._bundler.getBundler(),
-//     transformOptions.platform,
-//   );
-//   return resolutionFn(`${this._config.projectRoot}/.`, filePath);
-// }

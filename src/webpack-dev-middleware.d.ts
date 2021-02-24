@@ -93,3 +93,12 @@ declare module 'webpack-dev-middleware' {
     }
   }
 }
+
+declare module 'webpack-dev-middleware/dist/utils/getFilenameFromUrl' {
+  import WebpackDevMiddleware from 'webpack-dev-middleware';
+
+  export default function getFilenameFromUrl(
+    context: WebpackDevMiddleware.Context,
+    url: string
+  ): string | undefined;
+}

@@ -1,7 +1,7 @@
-import path from 'path';
 import { Writable } from 'stream';
 import fastifyExpress from 'fastify-express';
 import devMiddleware, { WebpackDevMiddleware } from 'webpack-dev-middleware';
+import getFilenameFromUrl from 'webpack-dev-middleware/dist/utils/getFilenameFromUrl';
 import webpack from 'webpack';
 import { DevServerOptions } from '../types';
 import { FastifyDevServer } from './types';
@@ -13,6 +13,7 @@ export interface DevServerConfig extends DevServerOptions {}
 export class DevServer {
   fastify: FastifyDevServer;
   wdm: WebpackDevMiddleware;
+  symbolicator: Symbolicator;
 
   constructor(
     private config: DevServerConfig,
@@ -32,7 +33,37 @@ export class DevServer {
       level: 'info',
     });
 
-    this.wdm = devMiddleware(this.compiler);
+    this.wdm = devMiddleware(this.compiler, {
+      mimeTypes: {
+        bundle: 'text/javascript',
+      },
+    });
+
+    this.symbolicator = new Symbolicator(
+      this.compiler.context,
+      async (fileUrl) => {
+        const filename = getFilenameFromUrl(this.wdm.context, fileUrl);
+        if (filename) {
+          const content = await new Promise<string | Buffer>(
+            (resolve, reject) =>
+              this.wdm.context.outputFileSystem.readFile(
+                `${filename}.map`,
+                (error, content) => {
+                  if (error || !content) {
+                    reject(error);
+                  } else {
+                    resolve(content);
+                  }
+                }
+              )
+          );
+
+          return content.toString();
+        } else {
+          throw new Error(`Cannot infer filename from url: ${fileUrl}`);
+        }
+      }
+    );
   }
 
   private setupRoutes() {
@@ -47,72 +78,21 @@ export class DevServer {
       return { status: 'ok' };
     });
 
-    this.fastify.get(
-      '/index.bundle',
-      {
-        schema: {
-          querystring: {
-            type: 'object',
-            required: ['platform'],
-            properties: {
-              platform: {
-                type: 'string',
-              },
-              minify: {
-                type: 'boolean',
-              },
-              dev: {
-                type: 'boolean',
-              },
-            },
-          },
-        },
-      },
-      async (request, reply) => {
-        const query = request.query as { platform: string };
-        const filename = path.join(
-          this.compiler.outputPath,
-          `index.${query.platform}.bundle`
-        );
-        try {
-          const bundle = await new Promise<string | Buffer | undefined>(
-            (resolve, reject) =>
-              this.wdm.context.outputFileSystem.readFile(
-                filename,
-                (error, file) => {
-                  if (error) {
-                    reject(error);
-                  } else {
-                    resolve(file);
-                  }
-                }
-              )
-          );
-
-          if (!bundle) {
-            throw null;
-          }
-
-          reply.type('text/javascript').send(bundle);
-        } catch {
-          reply.code(404).send({
-            message: `Bundle not found at ${filename}`,
-          });
+    this.fastify.post('/symbolicate', async (request, reply) => {
+      try {
+        const { stack } = JSON.parse(request.body as string) as {
+          stack: ReactNativeStackFrame[];
+        };
+        const platform = Symbolicator.inferPlatformFromStack(stack);
+        if (!platform) {
+          reply.code(400).send();
+        } else {
+          const results = await this.symbolicator.process(stack);
+          reply.send(results);
         }
-      }
-    );
-
-    this.fastify.post('/symbolicate', (request, reply) => {
-      const { stack } = JSON.parse(request.body as string) as {
-        stack: ReactNativeStackFrame[];
-      };
-      const platform = Symbolicator.inferPlatformFromStack(stack);
-      if (!platform) {
-        reply.code(400).send();
-      } else {
-        // TODO
-        require('inspector').open(undefined, undefined, true);
-        debugger;
+      } catch (error) {
+        this.fastify.log.error(error);
+        reply.code(500).send();
       }
     });
 

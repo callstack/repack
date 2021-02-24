@@ -9,7 +9,6 @@ const {
   DevServerPlugin,
   DEFAULT_PORT,
 } = require('../..');
-// require('inspector').open(undefined, undefined, true);
 
 const {
   dev,
@@ -80,7 +79,8 @@ module.exports = {
       test: /\.([jt]sx?|(js)?bundle)$/,
       filename: sourcemapFilename,
       noSources: dev,
-      columns: !dev,
+      // Uncomment for faster builds but less accurate source maps
+      // columns: false,
     }),
   ],
 };
