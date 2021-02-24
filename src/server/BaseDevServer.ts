@@ -19,7 +19,7 @@ export class BaseDevServer {
     this.fastify = getFastifyInstance(this.config, loggerOptions);
 
     this.fastify.register(fastifyStatic, {
-      root: path.join(__dirname, '../../client'),
+      root: path.join(__dirname, '../client'),
       prefix: '/debugger-ui/',
     });
   }
