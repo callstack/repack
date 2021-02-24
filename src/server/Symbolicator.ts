@@ -79,8 +79,7 @@ export class Symbolicator {
     for (const frame of frames) {
       if (!this.sourceMapConsumerCache[frame.file]) {
         const rawSourceMap = await this.getSourceMap(frame.file);
-        const sourceMapConsumer = await (() =>
-          new SourceMapConsumer(rawSourceMap))();
+        const sourceMapConsumer = await new SourceMapConsumer(rawSourceMap);
         this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
       }
       const processedFrame = this.processFrame(frame);
