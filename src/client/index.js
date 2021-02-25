@@ -11,6 +11,7 @@ import './index.css';
 import blueIcon from './assets/blue-icon.png';
 import grayIcon from './assets/gray-icon.png';
 import orangeIcon from './assets/orange-icon.png';
+import DebuggerWorker from './debuggerWorker.js';
 
 const isMacLike = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform);
 const refreshShortcut = isMacLike ? '⌘R' : 'Ctrl R';
@@ -114,7 +115,7 @@ function connectToDebuggerProxy() {
     // This worker will run the application JavaScript code,
     // making sure that it's run in an environment without a global
     // document, to make it consistent with the JSC executor environment.
-    worker = new Worker('./debuggerWorker.js');
+    worker = new DebuggerWorker();
     worker.onmessage = function (message) {
       ws.send(JSON.stringify(message.data));
     };
@@ -151,7 +152,7 @@ function connectToDebuggerProxy() {
     Page.setState({ status: { type: 'connecting' } });
   };
 
-  ws.onmessage = async function (message) {
+  ws.onmessage = function (message) {
     if (!message.data) {
       return;
     }

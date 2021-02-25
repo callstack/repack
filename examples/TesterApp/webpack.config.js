@@ -78,7 +78,7 @@ module.exports = {
     new webpack.SourceMapDevToolPlugin({
       test: /\.([jt]sx?|(js)?bundle)$/,
       filename: sourcemapFilename,
-      noSources: dev,
+      append: `//# sourceMappingURL=[url]?platform=${platform}`,
       // Uncomment for faster builds but less accurate source maps
       // columns: false,
     }),

@@ -6,17 +6,22 @@ import {
   DevServerLoggerOptions,
   getFastifyInstance,
 } from './utils/getFastifyInstance';
+import { WebSocketServer } from './ws/WebSocketServer';
+import { WebSocketDebuggerHandler } from './ws/WebSocketDebuggerHandler';
 
 export interface BaseDevServerConfig extends DevServerOptions {}
 
 export class BaseDevServer {
   fastify: FastifyDevServer;
+  wsServer: WebSocketServer;
 
   constructor(
     protected config: BaseDevServerConfig,
     loggerOptions?: DevServerLoggerOptions
   ) {
     this.fastify = getFastifyInstance(this.config, loggerOptions);
+    // @ts-ignore
+    this.wsServer = new WebSocketServer({ server: this.fastify.server });
 
     this.fastify.register(fastifyStatic, {
       root: path.join(__dirname, '../client'),
@@ -48,6 +53,8 @@ export class BaseDevServer {
         reply.code(404).send();
       }
     );
+
+    this.wsServer.route('/debugger-proxy', new WebSocketDebuggerHandler());
   }
 
   async run() {

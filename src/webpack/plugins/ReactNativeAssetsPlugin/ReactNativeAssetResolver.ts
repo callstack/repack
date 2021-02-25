@@ -158,7 +158,7 @@ export class ReactNativeAssetResolver {
               file: true,
             };
 
-            logger.info('Asset resolved:', requestPath, '->', resolved);
+            logger.debug('Asset resolved:', requestPath, '->', resolved);
 
             callback(null, resolvedFile);
           }

@@ -1,11 +1,11 @@
-import path from 'path';
 import { Config } from '@react-native-community/cli-types';
 import { CliOptions, StartArguments } from '../types';
 import { DEFAULT_PORT } from '../webpack/utils/parseCliOptions';
 import { DevServerProxy } from '../server';
+import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
 
 export function start(_: string[], config: Config, args: StartArguments) {
-  const webpackConfigPath = path.join(config.root, 'webpack.config.js');
+  const webpackConfigPath = getWebpackConfigPath(config.root);
   const cliOptions: CliOptions = {
     config: {
       root: config.root,
@@ -14,6 +14,7 @@ export function start(_: string[], config: Config, args: StartArguments) {
     },
     command: 'start',
     arguments: {
+      // `platform` is empty, since it will be filled in later by `DevServerProxy`
       start: { ...args, platform: '' },
     },
   };

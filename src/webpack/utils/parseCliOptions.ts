@@ -1,6 +1,7 @@
 import path from 'path';
 import { CliOptions, WebpackOptions } from '../../types';
 
+// TODO: change that once we have a new name
 export const CLI_OPTIONS_KEY = 'HAUL2_CLI_OPTIONS';
 
 export type WebpackOptionsWithoutPlatform = Omit<WebpackOptions, 'platform'>;
@@ -91,5 +92,10 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
     };
   }
 
-  throw new Error('todo: should never happen');
+  throw new Error(
+    `Failed to parse CLI options: ${JSON.stringify({
+      command: cliOptions.command,
+      arguments: Object.keys(cliOptions.arguments),
+    })}`
+  );
 }

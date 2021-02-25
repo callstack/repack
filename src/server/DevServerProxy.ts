@@ -18,7 +18,7 @@ export interface CompilerWorker {
 
 // TODO: use reporter and pretty-print logs
 export class DevServerProxy extends BaseDevServer {
-  workers: Record<string, CompilerWorker> = {};
+  workers: Record<string, Promise<CompilerWorker>> = {};
 
   constructor(config: DevServerProxyConfig, private cliOptions: CliOptions) {
     super(config);
@@ -44,7 +44,7 @@ export class DevServerProxy extends BaseDevServer {
       },
     };
 
-    await new Promise<void>((resolve) => {
+    this.workers[platform] = new Promise((resolve) => {
       const process = execa.node(
         path.join(__dirname, './compilerWorker.js'),
         [cliOptionsWithPlatform.config.webpackConfigPath],
@@ -63,12 +63,13 @@ export class DevServerProxy extends BaseDevServer {
         if (event === 'watchRun') {
           if (!isResolved) {
             isResolved = true;
-            resolve();
+            resolve({
+              port,
+              process,
+            });
           }
         }
       });
-
-      this.workers[platform] = { process, port };
     });
   }
 
@@ -77,7 +78,7 @@ export class DevServerProxy extends BaseDevServer {
     request: DevServerRequest,
     reply: DevServerReply
   ) {
-    const { port } = this.workers[platform];
+    const { port } = await this.workers[platform];
     const host = request.headers[':authority'] || request.headers.host;
     const url = request.headers[':path'] || request.raw.url;
     if (!url || !host) {
@@ -99,9 +100,9 @@ export class DevServerProxy extends BaseDevServer {
 
   async setup() {
     await this.fastify.register(fastifyGracefulShutdown);
-    this.fastify.gracefulShutdown((code, cb) => {
+    this.fastify.gracefulShutdown(async (code, cb) => {
       for (const platform in this.workers) {
-        const worker = this.workers[platform];
+        const worker = await this.workers[platform];
         worker.process.kill(code);
       }
 
@@ -114,7 +115,7 @@ export class DevServerProxy extends BaseDevServer {
 
     await super.setup();
 
-    this.fastify.post('/symbolicate', (request, reply) => {
+    this.fastify.post('/symbolicate', async (request, reply) => {
       const { stack } = JSON.parse(request.body as string) as {
         stack: ReactNativeStackFrame[];
       };
@@ -122,7 +123,7 @@ export class DevServerProxy extends BaseDevServer {
       if (!platform) {
         reply.code(400).send();
       } else {
-        this.forwardRequest(platform, request, reply);
+        await this.forwardRequest(platform, request, reply);
       }
     });
 

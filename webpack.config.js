@@ -19,10 +19,14 @@ module.exports = {
     path: path.join(__dirname, 'dist/client'),
     clean: true,
     filename: 'static/js/[name].[contenthash:8].js',
-    publicPath: '/debugger-ui',
+    publicPath: '/debugger-ui/',
   },
   module: {
     rules: [
+      {
+        test: /debuggerWorker.js$/,
+        use: { loader: 'worker-loader' },
+      },
       {
         test: /\.(ts|js)x?$/,
         loader: 'babel-loader',

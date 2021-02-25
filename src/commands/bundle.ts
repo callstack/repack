@@ -1,12 +1,12 @@
-import path from 'path';
 import { Config } from '@react-native-community/cli-types';
 // @ts-ignore
 import WebpackCLI from 'webpack-cli';
 import { BundleArguments, CliOptions } from '../types';
 import { CLI_OPTIONS_KEY } from '../webpack/utils/parseCliOptions';
+import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
 
 export function bundle(_: string[], config: Config, args: BundleArguments) {
-  const webpackConfigPath = path.join(config.root, 'webpack.config.js');
+  const webpackConfigPath = getWebpackConfigPath(config.root);
   const cliOptions = JSON.stringify({
     config: {
       root: config.root,

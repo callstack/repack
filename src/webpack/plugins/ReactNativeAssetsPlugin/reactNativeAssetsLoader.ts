@@ -203,7 +203,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
         destination = path.join(options.outputPath, destination);
       }
 
-      logger.info('Asset emitted:', destination);
+      logger.debug('Asset emitted:', destination);
       this.emitFile(destination, content ?? '');
     });
 
