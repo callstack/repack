@@ -21,14 +21,12 @@ export class DevServerProxy extends BaseDevServer {
   workers: Record<string, Promise<CompilerWorker>> = {};
 
   constructor(config: DevServerProxyConfig, private cliOptions: CliOptions) {
-    super(config);
+    super(config, { level: 'info' });
   }
 
   async runWorker(platform: string) {
     if (this.workers[platform]) {
-      console.error(
-        `Compiler worker for platform ${platform} is already running`
-      );
+      this.fastify.log.warn('Compiler worker is already running', { platform });
       return;
     }
 
@@ -45,11 +43,12 @@ export class DevServerProxy extends BaseDevServer {
     };
 
     this.workers[platform] = new Promise((resolve) => {
+      this.fastify.log.info('Starting compiler worker', { platform, port });
       const process = execa.node(
         path.join(__dirname, './compilerWorker.js'),
         [cliOptionsWithPlatform.config.webpackConfigPath],
         {
-          stdio: 'inherit',
+          stdio: 'pipe',
           env: {
             [CLI_OPTIONS_KEY]: JSON.stringify(cliOptionsWithPlatform),
           },
@@ -57,6 +56,14 @@ export class DevServerProxy extends BaseDevServer {
       );
 
       let isResolved = false;
+
+      process.stdout?.on('data', (data) => {
+        console.log('got process data on stdout', data);
+      });
+
+      process.stderr?.on('data', (data) => {
+        console.log('got process data on stderr', data);
+      });
 
       process.on('message', (data) => {
         const { event } = data as { event: 'watchRun' };
@@ -84,9 +91,12 @@ export class DevServerProxy extends BaseDevServer {
     if (!url || !host) {
       reply.code(500).send();
     } else {
-      // TODO: better logging
       const compilerWorkerUrl = `http://localhost:${port}${url}`;
-      console.log(`Fetching: ${compilerWorkerUrl}`);
+      this.fastify.log.debug(`Fetching from worker`, {
+        url: compilerWorkerUrl,
+        method: request.method,
+        body: request.body,
+      });
       const response = await fetch(compilerWorkerUrl, {
         method: request.method,
         body: typeof request.body === 'string' ? request.body : undefined,
@@ -106,7 +116,7 @@ export class DevServerProxy extends BaseDevServer {
         worker.process.kill(code);
       }
 
-      console.log(`Shutting down dev server proxy`, {
+      this.fastify.log.info(`Shutting down dev server proxy`, {
         port: this.config.port,
         code,
       });
@@ -141,10 +151,13 @@ export class DevServerProxy extends BaseDevServer {
         },
       },
       handler: async (request, reply) => {
-        // TODO: add debug logging
         const platform = (request.query as { platform?: string } | undefined)
           ?.platform;
+
         if (!platform) {
+          this.fastify.log.warn('Missing platform query param', {
+            query: request.query,
+          });
           reply.code(400).send();
         } else {
           try {
@@ -167,7 +180,7 @@ export class DevServerProxy extends BaseDevServer {
     try {
       await this.setup();
       await super.run();
-      console.log('Dev server listening');
+      this.fastify.log.info('Dev server proxy running');
     } catch (error) {
       console.error(error);
       process.exit(1);

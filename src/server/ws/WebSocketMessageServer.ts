@@ -1,7 +1,3 @@
-/**
- * Based on https://github.com/react-native-community/cli/blob/v4.14.0/packages/cli-server-api/src/websocket/messageSocketServer.ts
- */
-
 import { IncomingMessage } from 'http';
 import { URL } from 'url';
 import WebSocket from 'ws';
@@ -26,32 +22,14 @@ interface ReactNativeMessage {
 type WebSocketWithUpgradeReq = WebSocket & { upgradeReq?: IncomingMessage };
 
 // TODO: better logging
+/**
+ * Class for creating a WebSocket server and sending messages between development server
+ * and the React Native applications.
+ *
+ * Based on: https://github.com/react-native-community/cli/blob/v4.14.0/packages/cli-server-api/src/websocket/messageSocketServer.ts
+ */
 export class WebSocketMessageServer extends WebSocketServer {
   static readonly PROTOCOL_VERSION = 2;
-
-  static parseMessage(
-    data: string,
-    binary: any
-  ): Partial<ReactNativeMessage> | undefined {
-    if (binary) {
-      console.error('Expected text message, got binary!');
-      return undefined;
-    }
-    try {
-      const message = JSON.parse(data) as Partial<ReactNativeMessage>;
-      if (
-        message.version === WebSocketMessageServer.PROTOCOL_VERSION.toString()
-      ) {
-        return message;
-      }
-      console.error(
-        `Received message had wrong protocol version: ${message.version}`
-      );
-    } catch (e) {
-      console.error(`Failed to parse the message as JSON:\n${data}`);
-    }
-    return undefined;
-  }
 
   static isBroadcast(message: Partial<ReactNativeMessage>) {
     return (
@@ -79,17 +57,46 @@ export class WebSocketMessageServer extends WebSocketServer {
   private clients = new Map<string, WebSocketWithUpgradeReq>();
   private nextClientId = 0;
 
-  constructor(devServer: FastifyDevServer) {
-    super(devServer, '/message');
+  /**
+   * Create new instance of WebSocketMessageServer and attach it to the given Fastify instance.
+   * Any logging information, will be passed through standard `fastify.log` API.
+   *
+   * @param fastify Fastify instance to attach the WebSocket server to.
+   */
+  constructor(fastify: FastifyDevServer) {
+    super(fastify, '/message');
+  }
+
+  parseMessage(
+    data: string,
+    binary: any
+  ): Partial<ReactNativeMessage> | undefined {
+    if (binary) {
+      this.fastify.log.error(
+        'Failed to parse message - expected text message, got binary'
+      );
+      return undefined;
+    }
+    try {
+      const message = JSON.parse(data) as Partial<ReactNativeMessage>;
+      if (
+        message.version === WebSocketMessageServer.PROTOCOL_VERSION.toString()
+      ) {
+        return message;
+      }
+      this.fastify.log.error('Received message had wrong protocol version', {
+        message,
+      });
+    } catch (e) {
+      this.fastify.log.error('Failed to parse the message as JSON', { data });
+    }
+    return undefined;
   }
 
   getClientSocket(clientId: string) {
     const socket = this.clients.get(clientId);
     if (socket === undefined) {
-      // TODO: better error
-      throw new Error(
-        `could not find id "${clientId}" while forwarding request`
-      );
+      throw new Error(`Could not find client with id "${clientId}"`);
     }
     return socket;
   }
@@ -109,10 +116,11 @@ export class WebSocketMessageServer extends WebSocketServer {
     };
 
     if (message.id === undefined) {
-      console.error(
-        `Handling message from ${clientId} failed with:\n${error}\n` +
-          `message:\n${JSON.stringify(errorMessage)}`
-      );
+      this.fastify.log.error('Handling message failed', {
+        clientId,
+        error,
+        errorMessage,
+      });
     } else {
       try {
         const socket = this.getClientSocket(clientId);
@@ -123,19 +131,22 @@ export class WebSocketMessageServer extends WebSocketServer {
             id: message.id,
           })
         );
-      } catch (e) {
-        console.error(
-          `Failed to reply to ${clientId} with error:\n${error}` +
-            `\nmessage:\n${JSON.stringify(errorMessage)}` +
-            `\ndue to error: ${e.toString()}`
-        );
+      } catch (error) {
+        this.fastify.log.error('Failed to reply', {
+          clientId,
+          error,
+          errorMessage,
+        });
       }
     }
   }
 
   forwardRequest(clientId: string, message: Partial<ReactNativeMessage>) {
     if (!message.target) {
-      console.error('todo error no message.target');
+      this.fastify.log.error(
+        'Failed to forward request - message.target is missing',
+        { clientId, message }
+      );
       return;
     }
 
@@ -194,7 +205,12 @@ export class WebSocketMessageServer extends WebSocketServer {
         break;
       }
       default:
-        throw new Error(`unknown method: ${message.method}`);
+        throw new Error(
+          `Cannot process server request - unknown method ${JSON.stringify({
+            clientId,
+            message,
+          })}`
+        );
     }
 
     const socket = this.getClientSocket(clientId);
@@ -218,8 +234,10 @@ export class WebSocketMessageServer extends WebSocketServer {
     };
 
     if (this.clients.size === 0) {
-      console.warn(
-        `No apps connected. Sending "${message.method}" to all React Native apps failed. Make sure your app is running in the simulator or on a phone connected via USB.`
+      this.fastify.log.warn(
+        'No apps connected.',
+        `Sending "${message.method}" to all React Native apps failed.`,
+        'Make sure your app is running in the simulator or on a phone connected via USB.'
       );
     }
 
@@ -227,11 +245,12 @@ export class WebSocketMessageServer extends WebSocketServer {
       if (clientId !== broadcasterId) {
         try {
           socket.send(JSON.stringify(forwarded));
-        } catch (e) {
-          console.error(
-            `Failed to send broadcast to client: '${clientId}' ` +
-              `due to:\n ${e.toString()}`
-          );
+        } catch (error) {
+          this.fastify.log.error('Failed to send broadcast', {
+            clientId,
+            error,
+            forwarded,
+          });
         }
       }
     }
@@ -255,14 +274,17 @@ export class WebSocketMessageServer extends WebSocketServer {
     socket.addEventListener('error', onClose);
     socket.addEventListener('close', onClose);
     socket.addEventListener('message', (event) => {
-      const message = WebSocketMessageServer.parseMessage(
+      const message = this.parseMessage(
         event.data,
         // @ts-ignore
         event.binary
       );
 
       if (!message) {
-        console.error('Received message not matching protocol');
+        this.fastify.log.error('Received message not matching protocol', {
+          clientId,
+          message,
+        });
         return;
       }
 
@@ -278,7 +300,12 @@ export class WebSocketMessageServer extends WebSocketServer {
         } else if (WebSocketMessageServer.isResponse(message)) {
           this.forwardResponse(message);
         } else {
-          throw new Error('Invalid message, did not match the protocol');
+          throw new Error(
+            `Invalid message, did not match the protocol ${JSON.stringify({
+              clientId,
+              message,
+            })}`
+          );
         }
       } catch (error) {
         this.handleError(clientId, message, error.toString());

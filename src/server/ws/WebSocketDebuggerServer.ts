@@ -3,33 +3,62 @@ import WebSocket from 'ws';
 import { FastifyDevServer } from '../types';
 import { WebSocketServer } from './WebSocketServer';
 
+/**
+ * Class for creating a WebSocket server and providing a bridge between
+ * debugger UI (Remote JS debugger) and the running React Native application.
+ *
+ * React Native application (aka client) will send and receive messages from the debugger UI
+ * which runs inside a browser.
+ */
 export class WebSocketDebuggerServer extends WebSocketServer {
+  /**
+   * A WebSocket connection with the debugger UI.
+   */
   private debuggerSocket: WebSocket | undefined;
+
+  /**
+   * A WebSocket connection with the client (React Native app).
+   */
   private clientSocket: WebSocket | undefined;
 
-  constructor(devServer: FastifyDevServer) {
-    super(devServer, '/debugger-proxy');
+  /**
+   * Create new instance of WebSocketDebuggerServer and attach it to the given Fastify instance.
+   * Any logging information, will be passed through standard `fastify.log` API.
+   *
+   * @param fastify Fastify instance to attach the WebSocket server to.
+   */
+  constructor(fastify: FastifyDevServer) {
+    super(fastify, '/debugger-proxy');
   }
 
+  /**
+   * Send a message to a given WebSocket connection.
+   *
+   * @param socket WebSocket connection to send the message to.
+   * @param message Message to send.
+   */
   send(socket: WebSocket | undefined, message: string) {
     try {
       socket?.send(message);
     } catch (error) {
-      console.warn('Failed to send data to socket', error);
+      this.fastify.log.warn('Failed to send data to socket:', error);
     }
   }
 
   /**
-   * Called every time new WebSocket connection is established. Each specifies
-   * `role` param, which we use to determine type of connection.
+   * Process new WebSocket connection. The upgrade request should contain `role` query param
+   * for determining the type of the connection.
+   *
+   * @param socket Incoming WebSocket connection.
+   * @param request Upgrade request for the connection.
    */
   onConnection(socket: WebSocket, request: IncomingMessage) {
     const { url = '' } = request;
     if (url.indexOf('role=debugger') >= 0) {
-      console.log('Chrome Remote debugger connected');
+      this.fastify.log.info('Chrome Remote JS debugger connected');
       this.onDebuggerConnection(socket);
     } else if (url.indexOf('role=client') >= 0) {
-      console.log('React Native debugger client connected');
+      this.fastify.log.info('React Native app connected');
       this.onClientConnection(socket);
     } else {
       socket.close(1011, 'Missing role param');
@@ -37,10 +66,10 @@ export class WebSocketDebuggerServer extends WebSocketServer {
   }
 
   /**
-   * New debugger connection handler.
+   * Process new WebSocket connection from Debugger UI (Remote JS Debugger).
+   * If there's already open connection, the new one gets closed automatically.
    *
-   * Note: When debugger is already connected, new connection gets
-   * closed automatically.
+   * @param socket Incoming debugger WebSocket connection.
    */
   onDebuggerConnection(socket: WebSocket) {
     if (this.debuggerSocket) {
@@ -49,7 +78,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
     }
     this.debuggerSocket = socket;
     const onClose = () => {
-      console.log('Chrome Remote debugger disconnected');
+      this.fastify.log.info('Chrome Remote JS debugger disconnected');
       this.debuggerSocket = undefined;
       if (this.clientSocket) {
         this.clientSocket.removeAllListeners();
@@ -64,9 +93,10 @@ export class WebSocketDebuggerServer extends WebSocketServer {
   }
 
   /**
-   * New client connection handler.
+   * Process new WebSocket connection from React Native app (client)
+   * and close any previous connection.
    *
-   * Note: New client automatically closes previous client connection
+   * @param socket Incoming client WebSocket connection.
    */
   onClientConnection(socket: WebSocket) {
     if (this.clientSocket) {
@@ -76,7 +106,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
     }
 
     const onClose = () => {
-      console.log('React Native debugger client disconnected');
+      this.fastify.log.info('React Native app disconnected');
       this.clientSocket = undefined;
       this.send(
         this.debuggerSocket,

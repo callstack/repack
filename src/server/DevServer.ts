@@ -6,6 +6,7 @@ import getFilenameFromUrl from 'webpack-dev-middleware/dist/utils/getFilenameFro
 import webpack from 'webpack';
 import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
+import { readFileFromWdm } from './utils/readFileFromWdm';
 
 export interface DevServerConfig extends BaseDevServerConfig {}
 
@@ -40,20 +41,7 @@ export class DevServer extends BaseDevServer {
       async (fileUrl) => {
         const filename = getFilenameFromUrl(this.wdm.context, fileUrl);
         if (filename) {
-          // TODO: create readFile helper
-          const content = await new Promise<string | Buffer>(
-            (resolve, reject) =>
-              this.wdm.context.outputFileSystem.readFile(
-                `${filename}.map`, // TODO: use sourceMapFilename from compiler
-                (error, content) => {
-                  if (error || !content) {
-                    reject(error);
-                  } else {
-                    resolve(content);
-                  }
-                }
-              )
-          );
+          const content = await readFileFromWdm(this.wdm, filename);
 
           return content.toString();
         } else {
@@ -97,7 +85,7 @@ export class DevServer extends BaseDevServer {
     try {
       await this.setup();
       await super.run();
-      this.fastify.log.info('Dev server listening');
+      this.fastify.log.info('Dev server running');
     } catch (error) {
       this.fastify.log.error(error);
       process.exit(1);
