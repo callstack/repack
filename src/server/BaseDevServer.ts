@@ -6,22 +6,24 @@ import {
   DevServerLoggerOptions,
   getFastifyInstance,
 } from './utils/getFastifyInstance';
-import { WebSocketServer } from './ws/WebSocketServer';
-import { WebSocketDebuggerHandler } from './ws/WebSocketDebuggerHandler';
+import { WebSocketDebuggerServer } from './ws/WebSocketDebuggerServer';
+import { WebSocketMessageServer } from './ws/WebSocketMessageServer';
 
 export interface BaseDevServerConfig extends DevServerOptions {}
 
 export class BaseDevServer {
   fastify: FastifyDevServer;
-  wsServer: WebSocketServer;
+  wsDebuggerServer: WebSocketDebuggerServer;
+  wsMessageServer: WebSocketMessageServer;
 
   constructor(
     protected config: BaseDevServerConfig,
     loggerOptions?: DevServerLoggerOptions
   ) {
     this.fastify = getFastifyInstance(this.config, loggerOptions);
-    // @ts-ignore
-    this.wsServer = new WebSocketServer({ server: this.fastify.server });
+
+    this.wsDebuggerServer = new WebSocketDebuggerServer(this.fastify);
+    this.wsMessageServer = new WebSocketMessageServer(this.fastify);
 
     this.fastify.register(fastifyStatic, {
       root: path.join(__dirname, '../client'),
@@ -36,14 +38,14 @@ export class BaseDevServer {
 
     this.fastify.get('/status', async () => 'packager-status:running');
 
-    // Silence this route
-    this.fastify.get(
-      '/message',
-      { logLevel: 'silent' as any },
-      (_request, reply) => {
-        reply.code(404).send();
-      }
-    );
+    this.fastify.route({
+      method: ['GET', 'POST', 'PUT'],
+      url: '/reload',
+      handler: (_request, reply) => {
+        this.wsMessageServer.broadcast('reload');
+        reply.send('OK');
+      },
+    });
 
     // Silence this route
     this.fastify.get(
@@ -53,8 +55,6 @@ export class BaseDevServer {
         reply.code(404).send();
       }
     );
-
-    this.wsServer.route('/debugger-proxy', new WebSocketDebuggerHandler());
   }
 
   async run() {

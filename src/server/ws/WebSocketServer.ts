@@ -1,33 +1,40 @@
-import { IncomingMessage } from 'http';
+import { IncomingMessage, Server } from 'http';
+import { Socket } from 'net';
+import { URL } from 'url';
 import WebSocket from 'ws';
+import { FastifyDevServer } from '../types';
 
-export interface WebSocketRouteHandler {
-  onConnection(socket: WebSocket, request: IncomingMessage): void;
-}
+export abstract class WebSocketServer {
+  protected server: WebSocket.Server;
 
-export class WebSocketServer {
-  server: WebSocket.Server;
-  private routes: Record<string, WebSocketRouteHandler> = {};
+  constructor(devServer: FastifyDevServer, path: string) {
+    this.server = new WebSocket.Server({
+      noServer: true,
+    });
+    this.server.on('connection', this.onConnection.bind(this));
 
-  constructor(options: WebSocket.ServerOptions) {
-    this.server = new WebSocket.Server(options);
-
-    this.server.on('connection', (socket, request) => {
-      if (request.url) {
-        for (const path in this.routes) {
-          if (request.url.startsWith(path)) {
-            this.routes[path].onConnection(socket, request);
-            return;
-          }
-        }
+    const onUpgrade = (
+      request: IncomingMessage,
+      socket: Socket,
+      head: Buffer
+    ) => {
+      const { pathname } = new URL(request.url || '', 'http://localhost');
+      console.log({ pathname, path });
+      if (pathname === path) {
+        this.server.handleUpgrade(request, socket, head, (webSocket) => {
+          this.server.emit('connection', webSocket, request);
+        });
       }
 
-      // Close socket if no handler was found for it.
-      socket.close();
-    });
+      if (isLastListener) {
+        socket.destroy();
+      }
+    };
+
+    const isLastListener =
+      devServer.server.listeners('upgrade').reverse()[0] === onUpgrade;
+    devServer.server.on('upgrade', onUpgrade);
   }
 
-  route(path: string, handler: WebSocketRouteHandler) {
-    this.routes[path] = handler;
-  }
+  abstract onConnection(socket: WebSocket, request: IncomingMessage): void;
 }

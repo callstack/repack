@@ -1,10 +1,15 @@
 import { IncomingMessage } from 'http';
 import WebSocket from 'ws';
-import { WebSocketRouteHandler } from './WebSocketServer';
+import { FastifyDevServer } from '../types';
+import { WebSocketServer } from './WebSocketServer';
 
-export class WebSocketDebuggerHandler implements WebSocketRouteHandler {
+export class WebSocketDebuggerServer extends WebSocketServer {
   private debuggerSocket: WebSocket | undefined;
   private clientSocket: WebSocket | undefined;
+
+  constructor(devServer: FastifyDevServer) {
+    super(devServer, '/debugger-proxy');
+  }
 
   send(socket: WebSocket | undefined, message: string) {
     try {
@@ -42,9 +47,7 @@ export class WebSocketDebuggerHandler implements WebSocketRouteHandler {
       socket.close(1011, 'Another debugger is already connected');
       return;
     }
-
     this.debuggerSocket = socket;
-
     const onClose = () => {
       console.log('Chrome Remote debugger disconnected');
       this.debuggerSocket = undefined;
@@ -53,7 +56,6 @@ export class WebSocketDebuggerHandler implements WebSocketRouteHandler {
         this.clientSocket.close(1011, 'Debugger was disconnected');
       }
     };
-
     this.debuggerSocket.addEventListener('error', onClose);
     this.debuggerSocket.addEventListener('close', onClose);
     this.debuggerSocket.addEventListener('message', ({ data }) => {
