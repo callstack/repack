@@ -79,7 +79,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       ? filename
       : `${relativeDirname.replace(pathSeparatorPattern, '_')}_${filename}`
     )
-      .toUpperCase()
+      .toLowerCase()
       .replace(/[^a-z0-9_]/g, '')}.${type}`;
 
     const files = await new Promise<string[]>((resolve, reject) =>
