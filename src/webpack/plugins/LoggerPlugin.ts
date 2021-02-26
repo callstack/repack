@@ -1,22 +1,12 @@
-import util from 'util';
 import fs from 'fs';
 import path from 'path';
 import webpack from 'webpack';
-import { WebpackPlugin } from '../../types';
-
-export type LogType = 'debug' | 'info' | 'warn' | 'error';
+import { Reporter } from '../../Reporter';
+import { LogEntry, LogType, WebpackPlugin } from '../../types';
 
 export type GenericFilter = Array<string | RegExp>;
 
-export interface LogEntry {
-  timestamp: number;
-  type: LogType;
-  issuer: string;
-  message: any[];
-}
-
 export interface LoggerPluginConfig {
-  json?: boolean;
   filter?: {
     type?: LogType[];
     issuer?: GenericFilter;
@@ -28,7 +18,6 @@ export interface LoggerPluginConfig {
   };
 }
 
-// TODO: use reporter and pretty-print logs (as long as it's not running as a worker from proxy)
 export class LoggerPlugin implements WebpackPlugin {
   static SUPPORTED_TYPES: string[] = ['debug', 'info', 'warn', 'error'];
   static ERROR_ONLY: LogType[] = ['error'];
@@ -38,6 +27,7 @@ export class LoggerPlugin implements WebpackPlugin {
 
   private fileLogBuffer: string[] = [];
   private resolvedOutputFile?: string;
+  readonly reporter = new Reporter();
 
   constructor(private config: LoggerPluginConfig = {}) {
     if (this.config.output === undefined) {
@@ -100,40 +90,11 @@ export class LoggerPlugin implements WebpackPlugin {
     }
 
     if (this.config.output.console) {
-      if (this.config.json) {
-        console.log(entry);
-      } else {
-        console.log(
-          `[${new Date(entry.timestamp).toISOString()}][${entry.issuer}] <${
-            entry.type
-          }>`,
-          ...entry.message
-        );
-      }
+      this.reporter.process(entry);
     }
 
     if (this.config.output.file) {
-      let data = '';
-      if (this.config.json) {
-        data = JSON.stringify(entry) + '\n';
-      } else {
-        data = `[${new Date(entry.timestamp).toISOString()}][${
-          entry.issuer
-        }] <${entry.type}> `;
-        for (const value of entry.message) {
-          if (typeof value === 'string') {
-            data += value + ' ';
-          } else {
-            data +=
-              util.inspect(value, {
-                colors: false,
-                maxArrayLength: Infinity,
-                depth: null,
-              }) + ' ';
-          }
-        }
-      }
-      this.fileLogBuffer.push(data);
+      this.fileLogBuffer.push(JSON.stringify(entry));
     }
 
     if (this.config.output.listener) {

@@ -72,3 +72,12 @@ export interface WebpackOptions {
   reactNativePath: string;
   devServer?: DevServerOptions;
 }
+
+export type LogType = 'debug' | 'info' | 'warn' | 'error';
+
+export interface LogEntry {
+  timestamp: number;
+  type: LogType;
+  issuer: string;
+  message: any[];
+}

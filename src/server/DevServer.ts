@@ -7,16 +7,18 @@ import webpack from 'webpack';
 import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
 import { readFileFromWdm } from './utils/readFileFromWdm';
+import { transformFastifyLogToLogEntry } from './utils/transformFastifyLogToWebpackLogEntry';
 
 export interface DevServerConfig extends BaseDevServerConfig {}
 
 export class DevServer extends BaseDevServer {
-  static getLoggerOptions(compiler: webpack.Compiler) {
+  private static getLoggerOptions(compiler: webpack.Compiler) {
     const webpackLogger = compiler.getInfrastructureLogger('DevServer');
     const logStream = new Writable({
       write: (chunk, _encoding, callback) => {
         const data = chunk.toString();
-        webpackLogger.info(data);
+        const logEntry = transformFastifyLogToLogEntry(data);
+        webpackLogger[logEntry.type](...logEntry.message);
         callback();
       },
     });
@@ -38,6 +40,7 @@ export class DevServer extends BaseDevServer {
 
     this.symbolicator = new Symbolicator(
       this.compiler.context,
+      this.fastify.log,
       async (fileUrl) => {
         const filename = getFilenameFromUrl(this.wdm.context, fileUrl);
         if (filename) {

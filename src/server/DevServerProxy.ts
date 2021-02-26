@@ -1,13 +1,16 @@
 import path from 'path';
+import { Writable } from 'stream';
 import execa from 'execa';
 import fetch from 'node-fetch';
 import getPort from 'get-port';
 import fastifyGracefulShutdown from 'fastify-graceful-shutdown';
 import { CliOptions, StartArguments } from '../types';
 import { CLI_OPTIONS_KEY } from '../webpack/utils/parseCliOptions';
+import { Reporter } from '../Reporter';
 import { DevServerReply, DevServerRequest } from './types';
 import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
+import { transformFastifyLogToLogEntry } from './utils/transformFastifyLogToWebpackLogEntry';
 
 export interface DevServerProxyConfig extends BaseDevServerConfig {}
 
@@ -16,12 +19,33 @@ export interface CompilerWorker {
   port: number;
 }
 
-// TODO: use reporter and pretty-print logs
 export class DevServerProxy extends BaseDevServer {
+  private static getLoggerOptions(getReporter: () => Reporter) {
+    let reporter: Reporter;
+    const logStream = new Writable({
+      write: (chunk, _encoding, callback) => {
+        if (!reporter) {
+          reporter = getReporter();
+        }
+        const data = chunk.toString();
+        const logEntry = transformFastifyLogToLogEntry(data);
+        logEntry.issuer = 'DevServerProxy';
+        reporter.process(logEntry);
+        callback();
+      },
+    });
+
+    return { stream: logStream, level: 'info' };
+  }
+
   workers: Record<string, Promise<CompilerWorker>> = {};
+  reporter = new Reporter();
 
   constructor(config: DevServerProxyConfig, private cliOptions: CliOptions) {
-    super(config, { level: 'info' });
+    super(
+      config,
+      DevServerProxy.getLoggerOptions(() => this.reporter)
+    );
   }
 
   async runWorker(platform: string) {
@@ -57,12 +81,20 @@ export class DevServerProxy extends BaseDevServer {
 
       let isResolved = false;
 
-      process.stdout?.on('data', (data) => {
-        console.log('got process data on stdout', data);
+      process.stdout?.on('data', (event) => {
+        const data = event.toString().trim();
+        if (data) {
+          const logEntry = JSON.parse(data);
+          this.reporter.process(logEntry);
+        }
       });
 
-      process.stderr?.on('data', (data) => {
-        console.log('got process data on stderr', data);
+      process.stderr?.on('data', (event) => {
+        const data = event.toString().trim();
+        if (data) {
+          const logEntry = JSON.parse(data);
+          this.reporter.process(logEntry);
+        }
       });
 
       process.on('message', (data) => {
@@ -180,7 +212,6 @@ export class DevServerProxy extends BaseDevServer {
     try {
       await this.setup();
       await super.run();
-      this.fastify.log.info('Dev server proxy running');
     } catch (error) {
       console.error(error);
       process.exit(1);

@@ -4,6 +4,7 @@ import fs from 'fs';
 import { promisify } from 'util';
 import { codeFrameColumns } from '@babel/code-frame';
 import { SourceMapConsumer } from 'source-map';
+import { FastifyDevServer } from './types';
 
 const readFileAsync = promisify(fs.readFile);
 
@@ -61,6 +62,7 @@ export class Symbolicator {
 
   constructor(
     private projectRoot: string,
+    private logger: FastifyDevServer['log'],
     private getSourceMap: (fileUrl: string) => Promise<string>
   ) {}
 
@@ -165,8 +167,7 @@ export class Symbolicator {
           fileName: filename,
         };
       } catch (error) {
-        // TODO: use logger
-        console.error(error);
+        this.logger.error(error);
       }
 
       return undefined;

@@ -21,7 +21,6 @@ interface ReactNativeMessage {
 
 type WebSocketWithUpgradeReq = WebSocket & { upgradeReq?: IncomingMessage };
 
-// TODO: better logging
 /**
  * Class for creating a WebSocket server and sending messages between development server
  * and the React Native applications.
