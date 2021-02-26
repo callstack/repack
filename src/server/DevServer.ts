@@ -88,7 +88,6 @@ export class DevServer extends BaseDevServer {
     try {
       await this.setup();
       await super.run();
-      this.fastify.log.info('Dev server running');
     } catch (error) {
       this.fastify.log.error(error);
       process.exit(1);

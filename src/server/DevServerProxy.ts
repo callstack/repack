@@ -3,6 +3,7 @@ import { Writable } from 'stream';
 import execa from 'execa';
 import fetch from 'node-fetch';
 import getPort from 'get-port';
+import split2 from 'split2';
 import fastifyGracefulShutdown from 'fastify-graceful-shutdown';
 import { CliOptions, StartArguments } from '../types';
 import { CLI_OPTIONS_KEY } from '../webpack/utils/parseCliOptions';
@@ -50,7 +51,10 @@ export class DevServerProxy extends BaseDevServer {
 
   async runWorker(platform: string) {
     if (this.workers[platform]) {
-      this.fastify.log.warn('Compiler worker is already running', { platform });
+      this.fastify.log.warn({
+        msg: 'Compiler worker is already running',
+        platform,
+      });
       return;
     }
 
@@ -67,7 +71,11 @@ export class DevServerProxy extends BaseDevServer {
     };
 
     this.workers[platform] = new Promise((resolve) => {
-      this.fastify.log.info('Starting compiler worker', { platform, port });
+      this.fastify.log.info({
+        msg: 'Starting compiler worker',
+        platform,
+        port,
+      });
       const process = execa.node(
         path.join(__dirname, './compilerWorker.js'),
         [cliOptionsWithPlatform.config.webpackConfigPath],
@@ -81,21 +89,24 @@ export class DevServerProxy extends BaseDevServer {
 
       let isResolved = false;
 
-      process.stdout?.on('data', (event) => {
+      const onStdData = (event: string | Buffer) => {
         const data = event.toString().trim();
         if (data) {
-          const logEntry = JSON.parse(data);
-          this.reporter.process(logEntry);
+          try {
+            const logEntry = JSON.parse(data);
+            this.reporter.process(logEntry);
+          } catch {
+            this.fastify.log.error({
+              msg: 'Cannot parse compiler worker message',
+              platform,
+              message: data,
+            });
+          }
         }
-      });
+      };
 
-      process.stderr?.on('data', (event) => {
-        const data = event.toString().trim();
-        if (data) {
-          const logEntry = JSON.parse(data);
-          this.reporter.process(logEntry);
-        }
-      });
+      process.stdout?.pipe(split2()).on('data', onStdData);
+      process.stderr?.pipe(split2()).on('data', onStdData);
 
       process.on('message', (data) => {
         const { event } = data as { event: 'watchRun' };
@@ -124,7 +135,8 @@ export class DevServerProxy extends BaseDevServer {
       reply.code(500).send();
     } else {
       const compilerWorkerUrl = `http://localhost:${port}${url}`;
-      this.fastify.log.debug(`Fetching from worker`, {
+      this.fastify.log.debug({
+        msg: 'Fetching from worker',
         url: compilerWorkerUrl,
         method: request.method,
         body: request.body,
@@ -148,7 +160,8 @@ export class DevServerProxy extends BaseDevServer {
         worker.process.kill(code);
       }
 
-      this.fastify.log.info(`Shutting down dev server proxy`, {
+      this.fastify.log.info({
+        msg: 'Shutting down dev server proxy',
         port: this.config.port,
         code,
       });
@@ -187,7 +200,8 @@ export class DevServerProxy extends BaseDevServer {
           ?.platform;
 
         if (!platform) {
-          this.fastify.log.warn('Missing platform query param', {
+          this.fastify.log.warn({
+            msg: 'Missing platform query param',
             query: request.query,
           });
           reply.code(400).send();

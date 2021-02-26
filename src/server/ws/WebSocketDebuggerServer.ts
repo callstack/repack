@@ -41,7 +41,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
     try {
       socket?.send(message);
     } catch (error) {
-      this.fastify.log.warn('Failed to send data to socket:', error);
+      this.fastify.log.warn({ msg: 'Failed to send data to socket', error });
     }
   }
 
@@ -55,10 +55,10 @@ export class WebSocketDebuggerServer extends WebSocketServer {
   onConnection(socket: WebSocket, request: IncomingMessage) {
     const { url = '' } = request;
     if (url.indexOf('role=debugger') >= 0) {
-      this.fastify.log.info('Chrome Remote JS debugger connected');
+      this.fastify.log.info({ msg: 'Chrome Remote JS debugger connected' });
       this.onDebuggerConnection(socket);
     } else if (url.indexOf('role=client') >= 0) {
-      this.fastify.log.info('React Native app connected');
+      this.fastify.log.info({ msg: 'React Native app connected' });
       this.onClientConnection(socket);
     } else {
       socket.close(1011, 'Missing role param');
@@ -78,7 +78,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
     }
     this.debuggerSocket = socket;
     const onClose = () => {
-      this.fastify.log.info('Chrome Remote JS debugger disconnected');
+      this.fastify.log.info({ msg: 'Chrome Remote JS debugger disconnected' });
       this.debuggerSocket = undefined;
       if (this.clientSocket) {
         this.clientSocket.removeAllListeners();
@@ -106,7 +106,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
     }
 
     const onClose = () => {
-      this.fastify.log.info('React Native app disconnected');
+      this.fastify.log.info({ msg: 'React Native app disconnected' });
       this.clientSocket = undefined;
       this.send(
         this.debuggerSocket,
