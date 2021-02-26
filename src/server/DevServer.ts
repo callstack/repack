@@ -1,4 +1,5 @@
 import { Writable } from 'stream';
+import path from 'path';
 import fastifyExpress from 'fastify-express';
 import fastifyGracefulShutdown from 'fastify-graceful-shutdown';
 import devMiddleware, { WebpackDevMiddleware } from 'webpack-dev-middleware';
@@ -44,9 +45,42 @@ export class DevServer extends BaseDevServer {
       async (fileUrl) => {
         const filename = getFilenameFromUrl(this.wdm.context, fileUrl);
         if (filename) {
-          const content = await readFileFromWdm(this.wdm, filename);
+          const fallbackSourceMapFilename = `${filename}.map`;
+          const bundle = (await readFileFromWdm(this.wdm, filename)).toString();
+          const [, sourceMappingUrl] = /sourceMappingURL=(.+)$/.exec(
+            bundle
+          ) || [undefined, undefined];
+          const [sourceMapBasename] = sourceMappingUrl?.split('?') ?? [
+            undefined,
+          ];
 
-          return content.toString();
+          let sourceMapFilename = fallbackSourceMapFilename;
+          if (sourceMapBasename) {
+            sourceMapFilename = path.join(
+              path.dirname(filename),
+              sourceMapBasename
+            );
+          }
+
+          try {
+            const sourceMap = await readFileFromWdm(
+              this.wdm,
+              sourceMapFilename
+            );
+            return sourceMap.toString();
+          } catch {
+            this.fastify.log.warn({
+              msg:
+                'Failed to read source map from sourceMappingURL, trying fallback',
+              sourceMappingUrl,
+              sourceMapFilename,
+            });
+            const sourceMap = await readFileFromWdm(
+              this.wdm,
+              fallbackSourceMapFilename
+            );
+            return sourceMap.toString();
+          }
         } else {
           throw new Error(`Cannot infer filename from url: ${fileUrl}`);
         }
