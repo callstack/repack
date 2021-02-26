@@ -4,10 +4,10 @@ import execa from 'execa';
 import fetch from 'node-fetch';
 import getPort from 'get-port';
 import split2 from 'split2';
-import fastifyGracefulShutdown from 'fastify-graceful-shutdown';
 import { CliOptions, StartArguments } from '../types';
-import { CLI_OPTIONS_KEY } from '../webpack/utils/parseCliOptions';
+import { CLI_OPTIONS_ENV_KEY } from '../webpack/utils/parseCliOptions';
 import { Reporter } from '../Reporter';
+import { isVerbose, VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
 import { DevServerReply, DevServerRequest } from './types';
 import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
@@ -36,7 +36,7 @@ export class DevServerProxy extends BaseDevServer {
       },
     });
 
-    return { stream: logStream, level: 'info' };
+    return { stream: logStream, level: isVerbose() ? 'debug' : 'info' };
   }
 
   workers: Record<string, Promise<CompilerWorker>> = {};
@@ -71,19 +71,28 @@ export class DevServerProxy extends BaseDevServer {
     };
 
     this.workers[platform] = new Promise((resolve) => {
+      const env = {
+        [CLI_OPTIONS_ENV_KEY]: JSON.stringify(cliOptionsWithPlatform),
+        [WORKER_ENV_KEY]: '1',
+        [VERBOSE_ENV_KEY]: isVerbose() ? '1' : undefined,
+      };
+
       this.fastify.log.info({
         msg: 'Starting compiler worker',
         platform,
         port,
       });
+      this.fastify.log.debug({
+        msg: 'Compiler worker settings',
+        env,
+      });
+
       const process = execa.node(
         path.join(__dirname, './compilerWorker.js'),
         [cliOptionsWithPlatform.config.webpackConfigPath],
         {
           stdio: 'pipe',
-          env: {
-            [CLI_OPTIONS_KEY]: JSON.stringify(cliOptionsWithPlatform),
-          },
+          env,
         }
       );
 
@@ -153,20 +162,21 @@ export class DevServerProxy extends BaseDevServer {
   }
 
   async setup() {
-    await this.fastify.register(fastifyGracefulShutdown);
-    this.fastify.gracefulShutdown(async (code, cb) => {
-      for (const platform in this.workers) {
-        const worker = await this.workers[platform];
-        worker.process.kill(code);
-      }
+    // TODO: figure out if we need it
+    // await this.fastify.register(fastifyGracefulShutdown);
+    // this.fastify.gracefulShutdown(async (code, cb) => {
+    //   for (const platform in this.workers) {
+    //     const worker = await this.workers[platform];
+    //     worker.process.kill(code);
+    //   }
 
-      this.fastify.log.info({
-        msg: 'Shutting down dev server proxy',
-        port: this.config.port,
-        code,
-      });
-      cb();
-    });
+    //   this.fastify.log.info({
+    //     msg: 'Shutting down dev server proxy',
+    //     port: this.config.port,
+    //     code,
+    //   });
+    //   cb();
+    // });
 
     await super.setup();
 

@@ -1,8 +1,9 @@
 import { Config } from '@react-native-community/cli-types';
 // @ts-ignore
 import WebpackCLI from 'webpack-cli';
+import { VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, CliOptions } from '../types';
-import { CLI_OPTIONS_KEY } from '../webpack/utils/parseCliOptions';
+import { CLI_OPTIONS_ENV_KEY } from '../webpack/utils/parseCliOptions';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
 
 export function bundle(_: string[], config: Config, args: BundleArguments) {
@@ -19,7 +20,10 @@ export function bundle(_: string[], config: Config, args: BundleArguments) {
     },
   } as CliOptions);
 
-  process.env[CLI_OPTIONS_KEY] = cliOptions;
+  process.env[CLI_OPTIONS_ENV_KEY] = cliOptions;
+  if (process.argv.includes('--verbose')) {
+    process.env[VERBOSE_ENV_KEY] = '1';
+  }
 
   // TODO: use webpack directly
   const webpackCLI = new WebpackCLI();

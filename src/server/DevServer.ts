@@ -1,10 +1,10 @@
 import { Writable } from 'stream';
 import path from 'path';
 import fastifyExpress from 'fastify-express';
-import fastifyGracefulShutdown from 'fastify-graceful-shutdown';
 import devMiddleware, { WebpackDevMiddleware } from 'webpack-dev-middleware';
 import getFilenameFromUrl from 'webpack-dev-middleware/dist/utils/getFilenameFromUrl';
 import webpack from 'webpack';
+import { isVerbose } from '../env';
 import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
 import { readFileFromWdm } from './utils/readFileFromWdm';
@@ -24,7 +24,7 @@ export class DevServer extends BaseDevServer {
       },
     });
 
-    return { stream: logStream, level: 'info' };
+    return { stream: logStream, level: isVerbose() ? 'debug' : 'info' };
   }
 
   wdm: WebpackDevMiddleware;
@@ -90,10 +90,6 @@ export class DevServer extends BaseDevServer {
 
   async setup() {
     await this.fastify.register(fastifyExpress);
-    await this.fastify.register(fastifyGracefulShutdown);
-    this.fastify.gracefulShutdown((_code, cb) => {
-      cb();
-    });
 
     this.fastify.use(this.wdm);
 

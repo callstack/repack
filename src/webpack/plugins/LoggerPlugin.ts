@@ -7,10 +7,6 @@ import { LogEntry, LogType, WebpackPlugin } from '../../types';
 export type GenericFilter = Array<string | RegExp>;
 
 export interface LoggerPluginConfig {
-  filter?: {
-    type?: LogType[];
-    issuer?: GenericFilter;
-  };
   output?: {
     console?: boolean;
     file?: string;
@@ -19,11 +15,7 @@ export interface LoggerPluginConfig {
 }
 
 export class LoggerPlugin implements WebpackPlugin {
-  static SUPPORTED_TYPES: string[] = ['debug', 'info', 'warn', 'error'];
-  static ERROR_ONLY: LogType[] = ['error'];
-  static WARN_AND_ABOVE: LogType[] = ['warn', ...LoggerPlugin.ERROR_ONLY];
-  static INFO_AND_ABOVE: LogType[] = ['info', ...LoggerPlugin.WARN_AND_ABOVE];
-  static DEBUG_AND_ABOVE: LogType[] = ['debug', ...LoggerPlugin.INFO_AND_ABOVE];
+  private static SUPPORTED_TYPES: string[] = ['debug', 'info', 'warn', 'error'];
 
   private fileLogBuffer: string[] = [];
   private resolvedOutputFile?: string;
@@ -32,9 +24,6 @@ export class LoggerPlugin implements WebpackPlugin {
   constructor(private config: LoggerPluginConfig = {}) {
     if (this.config.output === undefined) {
       this.config.output = { console: true };
-    }
-    if (this.config.filter === undefined) {
-      this.config.filter = { type: LoggerPlugin.INFO_AND_ABOVE };
     }
   }
 
@@ -56,28 +45,6 @@ export class LoggerPlugin implements WebpackPlugin {
     }
 
     return undefined;
-  }
-
-  shouldProcessEntry(entry: LogEntry): boolean {
-    if (
-      this.config.filter?.type &&
-      !this.config.filter?.type.includes(entry.type)
-    ) {
-      return false;
-    }
-
-    if (
-      this.config.filter?.issuer &&
-      !this.config.filter?.issuer.some((pattern) =>
-        typeof pattern === 'string'
-          ? entry.issuer.includes(pattern)
-          : pattern.test(entry.issuer)
-      )
-    ) {
-      return false;
-    }
-
-    return true;
   }
 
   processEntry(entry: LogEntry) {
@@ -128,7 +95,7 @@ export class LoggerPlugin implements WebpackPlugin {
       'LoggerPlugin',
       (issuer, type, args) => {
         const entry = this.createEntry(issuer, type, args);
-        if (entry && this.shouldProcessEntry(entry)) {
+        if (entry) {
           this.processEntry(entry);
         }
         return true;
@@ -139,7 +106,7 @@ export class LoggerPlugin implements WebpackPlugin {
       compilation.hooks.log.intercept({
         call: (issuer, { time, type, args }) => {
           const entry = this.createEntry(issuer, type, args, time);
-          if (entry && this.shouldProcessEntry(entry)) {
+          if (entry) {
             this.processEntry(entry);
           }
         },

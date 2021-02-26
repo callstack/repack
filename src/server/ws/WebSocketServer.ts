@@ -34,10 +34,6 @@ export abstract class WebSocketServer {
       const { pathname } = new URL(request.url || '', 'http://localhost');
 
       if (pathname === path) {
-        this.fastify.log.debug({
-          msg: 'Trying to upgrade connection',
-          pathname,
-        });
         this.server.handleUpgrade(request, socket, head, (webSocket) => {
           this.server.emit('connection', webSocket, request);
         });

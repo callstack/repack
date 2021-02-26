@@ -11,6 +11,7 @@ export interface WebpackPlugin {
 export interface CommonArguments {
   platform: string;
   resetCache?: boolean;
+  verbose?: boolean;
 }
 
 export interface BundleArguments extends CommonArguments {

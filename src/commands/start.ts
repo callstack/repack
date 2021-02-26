@@ -2,6 +2,7 @@ import { Config } from '@react-native-community/cli-types';
 import { CliOptions, StartArguments } from '../types';
 import { DEFAULT_PORT } from '../webpack/utils/parseCliOptions';
 import { DevServerProxy } from '../server';
+import { VERBOSE_ENV_KEY } from '../env';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
 
 export function start(_: string[], config: Config, args: StartArguments) {
@@ -18,6 +19,10 @@ export function start(_: string[], config: Config, args: StartArguments) {
       start: { ...args, platform: '' },
     },
   };
+
+  if (process.argv.includes('--verbose')) {
+    process.env[VERBOSE_ENV_KEY] = '1';
+  }
 
   const devServerProxy = new DevServerProxy(
     {
