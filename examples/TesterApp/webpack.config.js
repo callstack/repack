@@ -34,7 +34,7 @@ module.exports = {
   mode,
   devtool: false,
   context,
-  entry: [...getInitializationEntries(reactNativePath), entry],
+  entry: [...getInitializationEntries(reactNativePath, { hmr: dev }), entry],
   resolve: {
     ...getResolveOptions(platform),
   },
@@ -76,13 +76,13 @@ module.exports = {
       },
     }),
     new DevServerPlugin(devServer),
-    new webpack.SourceMapDevToolPlugin({
-      test: /\.([jt]sx?|(js)?bundle)$/,
-      filename: sourcemapFilename,
-      append: `//# sourceMappingURL=[url]?platform=${platform}`,
-      // Uncomment for faster builds but less accurate source maps
-      // columns: false,
-    }),
+    // new webpack.SourceMapDevToolPlugin({
+    //   test: /\.([jt]sx?|(js)?bundle)$/,
+    //   filename: sourcemapFilename,
+    //   append: `//# sourceMappingURL=[url]?platform=${platform}`,
+    //   // Uncomment for faster builds but less accurate source maps
+    //   // columns: false,
+    // }),
     new webpack.HotModuleReplacementPlugin(),
     new ReactNativeTargetPlugin(),
   ],

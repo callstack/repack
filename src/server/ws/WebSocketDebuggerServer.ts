@@ -58,7 +58,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
       this.fastify.log.info({ msg: 'Chrome Remote JS debugger connected' });
       this.onDebuggerConnection(socket);
     } else if (url.indexOf('role=client') >= 0) {
-      this.fastify.log.info({ msg: 'React Native app connected' });
+      this.fastify.log.info({ msg: 'React Native app connected to debugger' });
       this.onClientConnection(socket);
     } else {
       socket.close(1011, 'Missing role param');
@@ -106,7 +106,9 @@ export class WebSocketDebuggerServer extends WebSocketServer {
     }
 
     const onClose = () => {
-      this.fastify.log.info({ msg: 'React Native app disconnected' });
+      this.fastify.log.info({
+        msg: 'React Native app disconnected from debugger',
+      });
       this.clientSocket = undefined;
       this.send(
         this.debuggerSocket,

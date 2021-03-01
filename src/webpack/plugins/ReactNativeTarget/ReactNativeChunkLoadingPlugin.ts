@@ -45,6 +45,7 @@ export class ReactNativeChunkLoadingPlugin implements WebpackPlugin {
           .for(webpack.RuntimeGlobals.ensureChunkHandlers)
           .tap('ReactNativeChunkLoadingPlugin', (chunk, set) => {
             if (!isEnabledForChunk(chunk)) return;
+            set.add(webpack.RuntimeGlobals.publicPath);
             // set.add(webpack.RuntimeGlobals.loadScript);
             set.add(webpack.RuntimeGlobals.getChunkScriptFilename);
           });
@@ -52,6 +53,7 @@ export class ReactNativeChunkLoadingPlugin implements WebpackPlugin {
           .for(webpack.RuntimeGlobals.hmrDownloadUpdateHandlers)
           .tap('ReactNativeChunkLoadingPlugin', (chunk, set) => {
             if (!isEnabledForChunk(chunk)) return;
+            set.add(webpack.RuntimeGlobals.publicPath);
             // set.add(webpack.RuntimeGlobals.loadScript);
             set.add(webpack.RuntimeGlobals.getChunkUpdateScriptFilename);
             set.add(webpack.RuntimeGlobals.moduleCache);
@@ -62,6 +64,7 @@ export class ReactNativeChunkLoadingPlugin implements WebpackPlugin {
           .for(webpack.RuntimeGlobals.hmrDownloadManifest)
           .tap('ReactNativeChunkLoadingPlugin', (chunk, set) => {
             if (!isEnabledForChunk(chunk)) return;
+            set.add(webpack.RuntimeGlobals.publicPath);
             set.add(webpack.RuntimeGlobals.getUpdateManifestFilename);
           });
 

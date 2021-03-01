@@ -82,3 +82,17 @@ export interface LogEntry {
   issuer: string;
   message: any[];
 }
+
+export interface HMRMessageBody {
+  name: string;
+  time: number;
+  hash: string;
+  warnings: webpack.StatsCompilation['warnings'];
+  errors: webpack.StatsCompilation['errors'];
+  modules: Record<string, string>;
+}
+
+export interface HMRMessage {
+  action: 'building' | 'built' | 'sync';
+  body: HMRMessageBody | null;
+}

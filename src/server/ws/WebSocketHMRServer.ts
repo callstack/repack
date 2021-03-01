@@ -1,6 +1,7 @@
 import WebSocket from 'ws';
 import webpack from 'webpack';
 import { FastifyDevServer } from '../types';
+import { HMRMessage, HMRMessageBody } from '../../types';
 import { WebSocketServer } from './WebSocketServer';
 
 export interface WebSocketHMRServerConfig {
@@ -47,12 +48,12 @@ export class WebSocketHMRServer extends WebSocketServer {
    *
    * @param action Action to send to the clients.
    */
-  sendAction(action: 'building' | 'built' | 'sync') {
+  sendAction(action: HMRMessage['action']) {
     if (!this.clients.length) {
       return;
     }
 
-    let body = null;
+    let body: HMRMessageBody | null = null;
     if (action !== 'building') {
       const stats = this.latestStats?.toJson({
         all: false,
@@ -81,9 +82,9 @@ export class WebSocketHMRServer extends WebSocketServer {
       }
 
       body = {
-        name: stats.name,
-        time: stats.time,
-        hash: stats.hash,
+        name: stats.name ?? '',
+        time: stats.time ?? 0,
+        hash: stats.hash ?? '',
         warnings: stats.warnings || [],
         errors: stats.errors || [],
         modules,

@@ -19,10 +19,19 @@ export abstract class WebSocketServer {
    *
    * @param fastify Fastify instance to which the WebSocket will be attached to.
    * @param path Path on which this WebSocketServer will be accepting connections.
+   * @param wssOptions WebSocket Server options.
    */
-  constructor(protected fastify: FastifyDevServer, path: string) {
+  constructor(
+    protected fastify: FastifyDevServer,
+    path: string,
+    wssOptions: Omit<
+      WebSocket.ServerOptions,
+      'noServer' | 'server' | 'host' | 'port' | 'path'
+    > = {}
+  ) {
     this.server = new WebSocket.Server({
       noServer: true,
+      ...wssOptions,
     });
     this.server.on('connection', this.onConnection.bind(this));
 

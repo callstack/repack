@@ -16,12 +16,24 @@ export class DevServerPlugin implements WebpackPlugin {
     const logger = compiler.getInfrastructureLogger('DevServerPlugin');
 
     // Set public path
+    const host = `${config.host || 'localhost'}:${config.port}`;
     compiler.options.output.publicPath = `${
       config.https ? 'https' : 'http'
-    }://${config.host || 'localhost'}:${config.port}`;
+    }://${host}/`;
     logger.debug('Setting public path to:', compiler.options.output.publicPath);
 
-    // TODO: inject hmr entry with platform-specific compiler's port
+    if (typeof compiler.options.entry !== 'function') {
+      for (const entryKey in compiler.options.entry) {
+        compiler.options.entry[entryKey].import = compiler.options.entry[
+          entryKey
+        ].import?.map((value) => {
+          if (/HMRClient\.js\?host=\[host\]/.test(value)) {
+            return value.replace('[host]', host);
+          }
+          return value;
+        });
+      }
+    }
 
     let server: DevServer | undefined;
 
@@ -31,7 +43,5 @@ export class DevServerPlugin implements WebpackPlugin {
         await server.run();
       }
     });
-
-    // TODO: add hooks to compiler to support HMR/React Refresh
   }
 }
