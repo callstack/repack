@@ -76,13 +76,13 @@ module.exports = {
       },
     }),
     new DevServerPlugin(devServer),
-    // new webpack.SourceMapDevToolPlugin({
-    //   test: /\.([jt]sx?|(js)?bundle)$/,
-    //   filename: sourcemapFilename,
-    //   append: `//# sourceMappingURL=[url]?platform=${platform}`,
-    //   // Uncomment for faster builds but less accurate source maps
-    //   // columns: false,
-    // }),
+    new webpack.SourceMapDevToolPlugin({
+      test: /\.([jt]sx?|(js)?bundle)$/,
+      filename: dev ? '[name][ext].map' : sourcemapFilename,
+      append: `//# sourceMappingURL=[url]?platform=${platform}`,
+      // Uncomment for faster builds but less accurate source maps
+      // columns: false,
+    }),
     new webpack.HotModuleReplacementPlugin(),
     new ReactNativeTargetPlugin(),
   ],
