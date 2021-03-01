@@ -8,6 +8,7 @@ const {
   LoggerPlugin,
   DevServerPlugin,
   DEFAULT_PORT,
+  ReactNativeTargetPlugin,
 } = require('../..');
 
 const {
@@ -82,5 +83,7 @@ module.exports = {
       // Uncomment for faster builds but less accurate source maps
       // columns: false,
     }),
+    new webpack.HotModuleReplacementPlugin(),
+    new ReactNativeTargetPlugin(),
   ],
 };

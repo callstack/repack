@@ -66,9 +66,15 @@ export class Reporter {
 
   constructor(private config: ReporterConfig = {}) {
     this.isWorker = isWorker();
-    this.isVerbose = isVerbose();
+    this.isVerbose = this.config.verbose ?? isVerbose();
     if (!this.isWorker) {
       this.ora = ora('Running...').start();
+    }
+  }
+
+  stop() {
+    if (!this.isWorker && this.ora) {
+      this.ora.stop();
     }
   }
 

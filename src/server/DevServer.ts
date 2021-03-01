@@ -9,6 +9,7 @@ import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
 import { readFileFromWdm } from './utils/readFileFromWdm';
 import { transformFastifyLogToLogEntry } from './utils/transformFastifyLogToWebpackLogEntry';
+import { WebSocketHMRServer } from './ws/WebSocketHMRServer';
 
 export interface DevServerConfig extends BaseDevServerConfig {}
 
@@ -28,6 +29,7 @@ export class DevServer extends BaseDevServer {
   }
 
   wdm: WebpackDevMiddleware;
+  hmrServer: WebSocketHMRServer;
   symbolicator: Symbolicator;
 
   constructor(config: DevServerConfig, private compiler: webpack.Compiler) {
@@ -37,6 +39,10 @@ export class DevServer extends BaseDevServer {
       mimeTypes: {
         bundle: 'text/javascript',
       },
+    });
+
+    this.hmrServer = new WebSocketHMRServer(this.fastify, {
+      compiler: this.compiler,
     });
 
     this.symbolicator = new Symbolicator(

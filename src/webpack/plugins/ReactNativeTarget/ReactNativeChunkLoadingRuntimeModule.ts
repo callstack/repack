@@ -1,21 +1,23 @@
-const { SyncWaterfallHook } = require('tapable');
-const Compilation = require('webpack/lib/Compilation');
-const RuntimeGlobals = require('webpack/lib/RuntimeGlobals');
-const RuntimeModule = require('webpack/lib/RuntimeModule');
-const Template = require('webpack/lib/Template');
-const chunkHasJs = require('webpack/lib/javascript/JavascriptModulesPlugin')
-  .chunkHasJs;
-const compileBooleanMatcher = require('webpack/lib/util/compileBooleanMatcher');
-const {
+// @ts-ignore
+import compileBooleanMatcher from 'webpack/lib/util/compileBooleanMatcher';
+import {
   getEntryInfo,
   needEntryDeferringCode,
-} = require('webpack/lib/web/JsonpHelpers');
+  // @ts-ignore
+} from 'webpack/lib/web/JsonpHelpers';
+import webpack from 'webpack';
+import { SyncWaterfallHook } from 'tapable';
+// @ts-ignore
+import JavascriptHotModuleReplacementRuntime from 'webpack/lib/hmr/JavascriptHotModuleReplacement.runtime.js';
+
+const chunkHasJs = webpack.javascript.JavascriptModulesPlugin.chunkHasJs;
+const Template = webpack.Template;
 
 const compilationHooksMap = new WeakMap();
 
-class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
-  static getCompilationHooks(compilation) {
-    if (!(compilation instanceof Compilation)) {
+export class ReactNativeChunkLoadingRuntimeModule extends webpack.RuntimeModule {
+  static getCompilationHooks(compilation: webpack.Compilation) {
+    if (!(compilation instanceof webpack.Compilation)) {
       throw new TypeError(
         "The 'compilation' argument must be an instance of Compilation"
       );
@@ -23,17 +25,16 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
     let hooks = compilationHooksMap.get(compilation);
     if (hooks === undefined) {
       hooks = {
-        linkPreload: new SyncWaterfallHook(['source', 'chunk']),
-        linkPrefetch: new SyncWaterfallHook(['source', 'chunk']),
+        linkPreload: new SyncWaterfallHook(['source', 'chunk'] as any),
+        linkPrefetch: new SyncWaterfallHook(['source', 'chunk'] as any),
       };
       compilationHooksMap.set(compilation, hooks);
     }
     return hooks;
   }
 
-  constructor(runtimeRequirements) {
-    super('React Native chunk loading', RuntimeModule.STAGE_ATTACH);
-    this._runtimeRequirements = runtimeRequirements;
+  constructor(private runtimeRequirements: Set<string>) {
+    super('React Native chunk loading', webpack.RuntimeModule.STAGE_ATTACH);
   }
 
   generate() {
@@ -53,25 +54,32 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
       linkPreload,
       linkPrefetch,
     } = ReactNativeChunkLoadingRuntimeModule.getCompilationHooks(compilation);
-    const fn = RuntimeGlobals.ensureChunkHandlers;
-    const withLoading = this._runtimeRequirements.has(
-      RuntimeGlobals.ensureChunkHandlers
+
+    if (!chunkGraph) {
+      throw new Error('Chunk graph cannot be empty');
+    }
+
+    const fn = webpack.RuntimeGlobals.ensureChunkHandlers;
+    const withLoading = this.runtimeRequirements.has(
+      webpack.RuntimeGlobals.ensureChunkHandlers
     );
     const withDefer = needEntryDeferringCode(compilation, chunk);
-    const withHmr = this._runtimeRequirements.has(
-      RuntimeGlobals.hmrDownloadUpdateHandlers
+    const withHmr = this.runtimeRequirements.has(
+      webpack.RuntimeGlobals.hmrDownloadUpdateHandlers
     );
-    const withHmrManifest = this._runtimeRequirements.has(
-      RuntimeGlobals.hmrDownloadManifest
+    const withHmrManifest = this.runtimeRequirements.has(
+      webpack.RuntimeGlobals.hmrDownloadManifest
     );
-    const withPrefetch = this._runtimeRequirements.has(
-      RuntimeGlobals.prefetchChunkHandlers
+    const withPrefetch = this.runtimeRequirements.has(
+      webpack.RuntimeGlobals.prefetchChunkHandlers
     );
-    const withPreload = this._runtimeRequirements.has(
-      RuntimeGlobals.preloadChunkHandlers
+    const withPreload = this.runtimeRequirements.has(
+      webpack.RuntimeGlobals.preloadChunkHandlers
     );
-    const entries = getEntryInfo(chunkGraph, chunk, (c) =>
-      chunkHasJs(c, chunkGraph)
+    const entries: Array<string | number> = getEntryInfo(
+      chunkGraph,
+      chunk,
+      (c: webpack.Chunk) => chunkHasJs(c, chunkGraph)
     );
     const chunkLoadingGlobalExpr = `${globalObject}[${JSON.stringify(
       chunkLoadingGlobal
@@ -80,7 +88,7 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
       chunkGraph.getChunkConditionMap(chunk, chunkHasJs)
     );
     return Template.asString([
-      `${RuntimeGlobals.loadScript} = function() {`,
+      `${webpack.RuntimeGlobals.loadScript} = function() {`,
       Template.indent(
         "throw new Error('Missing implementation for __webpack_require__.l');"
       ),
@@ -91,7 +99,7 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
       '// Promise = chunk loading, 0 = chunk loaded',
       'var installedChunks = {',
       Template.indent(
-        chunk.ids.map((id) => `${JSON.stringify(id)}: 0`).join(',\n')
+        chunk.ids?.map((id) => `${JSON.stringify(id)}: 0`).join(',\n') ?? ''
       ),
       '};',
       '',
@@ -109,7 +117,7 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
               hasJsMatcher !== false
                 ? Template.indent([
                     '// React Native chunk loading for javascript',
-                    `var installedChunkData = ${RuntimeGlobals.hasOwnProperty}(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;`,
+                    `var installedChunkData = ${webpack.RuntimeGlobals.hasOwnProperty}(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;`,
                     'if(installedChunkData !== 0) { // 0 means "already installed".',
                     Template.indent([
                       '',
@@ -134,13 +142,13 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
                           'promises.push(installedChunkData[2] = promise);',
                           '',
                           '// start chunk loading',
-                          `var url = ${RuntimeGlobals.getChunkScriptFilename}(chunkId);`,
+                          `var url = ${webpack.RuntimeGlobals.getChunkScriptFilename}(chunkId);`,
                           '// create error before stack unwound to get useful stacktrace later',
                           'var error = new Error();',
                           `var loadingEnded = ${runtimeTemplate.basicFunction(
                             'event',
                             [
-                              `if(${RuntimeGlobals.hasOwnProperty}(installedChunks, chunkId)) {`,
+                              `if(${webpack.RuntimeGlobals.hasOwnProperty}(installedChunks, chunkId)) {`,
                               Template.indent([
                                 'installedChunkData = installedChunks[chunkId];',
                                 'if(installedChunkData !== 0) installedChunks[chunkId] = undefined;',
@@ -159,7 +167,7 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
                               '}',
                             ]
                           )};`,
-                          `${RuntimeGlobals.loadScript}(url, loadingEnded, "chunk-" + chunkId, chunkId);`,
+                          `${webpack.RuntimeGlobals.loadScript}(url, loadingEnded, "chunk-" + chunkId, chunkId);`,
                         ]),
                         '} else installedChunks[chunkId] = 0;',
                       ]),
@@ -175,10 +183,10 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
       // TODO: figure out when this applies
       withPrefetch && hasJsMatcher !== false
         ? `${
-            RuntimeGlobals.prefetchChunkHandlers
+            webpack.RuntimeGlobals.prefetchChunkHandlers
           }.j = ${runtimeTemplate.basicFunction('chunkId', [
             `if((!${
-              RuntimeGlobals.hasOwnProperty
+              webpack.RuntimeGlobals.hasOwnProperty
             }(installedChunks, chunkId) || installedChunks[chunkId] === undefined) && ${
               hasJsMatcher === true ? 'true' : hasJsMatcher('chunkId')
             }) {`,
@@ -192,14 +200,14 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
                         crossOriginLoading
                       )};`
                     : '',
-                  `if (${RuntimeGlobals.scriptNonce}) {`,
+                  `if (${webpack.RuntimeGlobals.scriptNonce}) {`,
                   Template.indent(
-                    `link.setAttribute("nonce", ${RuntimeGlobals.scriptNonce});`
+                    `link.setAttribute("nonce", ${webpack.RuntimeGlobals.scriptNonce});`
                   ),
                   '}',
                   'link.rel = "prefetch";',
                   'link.as = "script";',
-                  `link.href = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.getChunkScriptFilename}(chunkId);`,
+                  `link.href = ${webpack.RuntimeGlobals.publicPath} + ${webpack.RuntimeGlobals.getChunkScriptFilename}(chunkId);`,
                 ]),
                 chunk
               ),
@@ -209,12 +217,13 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
           ])};`
         : '// no prefetching',
       '',
+      // TODO: figure out when this applies
       withPreload && hasJsMatcher !== false
         ? `${
-            RuntimeGlobals.preloadChunkHandlers
+            webpack.RuntimeGlobals.preloadChunkHandlers
           }.j = ${runtimeTemplate.basicFunction('chunkId', [
             `if((!${
-              RuntimeGlobals.hasOwnProperty
+              webpack.RuntimeGlobals.hasOwnProperty
             }(installedChunks, chunkId) || installedChunks[chunkId] === undefined) && ${
               hasJsMatcher === true ? 'true' : hasJsMatcher('chunkId')
             }) {`,
@@ -227,14 +236,14 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
                     ? `link.type = ${JSON.stringify(scriptType)};`
                     : '',
                   "link.charset = 'utf-8';",
-                  `if (${RuntimeGlobals.scriptNonce}) {`,
+                  `if (${webpack.RuntimeGlobals.scriptNonce}) {`,
                   Template.indent(
-                    `link.setAttribute("nonce", ${RuntimeGlobals.scriptNonce});`
+                    `link.setAttribute("nonce", ${webpack.RuntimeGlobals.scriptNonce});`
                   ),
                   '}',
                   'link.rel = "preload";',
                   'link.as = "script";',
-                  `link.href = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.getChunkScriptFilename}(chunkId);`,
+                  `link.href = ${webpack.RuntimeGlobals.publicPath} + ${webpack.RuntimeGlobals.getChunkScriptFilename}(chunkId);`,
                   crossOriginLoading
                     ? Template.asString([
                         "if (link.href.indexOf(window.location.origin + '/') !== 0) {",
@@ -266,7 +275,7 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
                 [
                   'waitingUpdateResolves[chunkId] = resolve;',
                   '// start update chunk loading',
-                  `var url = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.getChunkUpdateScriptFilename}(chunkId);`,
+                  `var url = ${webpack.RuntimeGlobals.publicPath} + ${webpack.RuntimeGlobals.getChunkUpdateScriptFilename}(chunkId);`,
                   '// create error before stack unwound to get useful stacktrace later',
                   'var error = new Error();',
                   `var loadingEnded = ${runtimeTemplate.basicFunction('event', [
@@ -283,7 +292,7 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
                     ]),
                     '}',
                   ])};`,
-                  `${RuntimeGlobals.loadScript}(url, loadingEnded);`,
+                  `${webpack.RuntimeGlobals.loadScript}(url, loadingEnded);`,
                 ]
               )});`,
             ]),
@@ -296,7 +305,7 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
               [
                 'for(var moduleId in moreModules) {',
                 Template.indent([
-                  `if(${RuntimeGlobals.hasOwnProperty}(moreModules, moduleId)) {`,
+                  `if(${webpack.RuntimeGlobals.hasOwnProperty}(moreModules, moduleId)) {`,
                   Template.indent([
                     'currentUpdate[moduleId] = moreModules[moduleId];',
                     'if(currentUpdatedModulesList) currentUpdatedModulesList.push(moduleId);',
@@ -314,27 +323,34 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
               ]
             )};`,
             '',
-            Template.getFunctionContent(
-              require('../hmr/JavascriptHotModuleReplacement.runtime.js')
-            )
+            Template.getFunctionContent(JavascriptHotModuleReplacementRuntime)
               .replace(/\$key\$/g, 'jsonp')
               .replace(/\$installedChunks\$/g, 'installedChunks')
               .replace(/\$loadUpdateChunk\$/g, 'loadUpdateChunk')
-              .replace(/\$moduleCache\$/g, RuntimeGlobals.moduleCache)
-              .replace(/\$moduleFactories\$/g, RuntimeGlobals.moduleFactories)
+              .replace(/\$moduleCache\$/g, webpack.RuntimeGlobals.moduleCache)
+              .replace(
+                /\$moduleFactories\$/g,
+                webpack.RuntimeGlobals.moduleFactories
+              )
               .replace(
                 /\$ensureChunkHandlers\$/g,
-                RuntimeGlobals.ensureChunkHandlers
+                webpack.RuntimeGlobals.ensureChunkHandlers
               )
-              .replace(/\$hasOwnProperty\$/g, RuntimeGlobals.hasOwnProperty)
-              .replace(/\$hmrModuleData\$/g, RuntimeGlobals.hmrModuleData)
+              .replace(
+                /\$hasOwnProperty\$/g,
+                webpack.RuntimeGlobals.hasOwnProperty
+              )
+              .replace(
+                /\$hmrModuleData\$/g,
+                webpack.RuntimeGlobals.hmrModuleData
+              )
               .replace(
                 /\$hmrDownloadUpdateHandlers\$/g,
-                RuntimeGlobals.hmrDownloadUpdateHandlers
+                webpack.RuntimeGlobals.hmrDownloadUpdateHandlers
               )
               .replace(
                 /\$hmrInvalidateModuleHandlers\$/g,
-                RuntimeGlobals.hmrInvalidateModuleHandlers
+                webpack.RuntimeGlobals.hmrInvalidateModuleHandlers
               ),
           ])
         : '// no HMR',
@@ -342,11 +358,11 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
       withHmrManifest
         ? Template.asString([
             `${
-              RuntimeGlobals.hmrDownloadManifest
+              webpack.RuntimeGlobals.hmrDownloadManifest
             } = ${runtimeTemplate.basicFunction('', [
               'if (typeof fetch === "undefined") throw new Error("No browser support: need fetch API");',
-              `return fetch(${RuntimeGlobals.publicPath} + ${
-                RuntimeGlobals.getUpdateManifestFilename
+              `return fetch(${webpack.RuntimeGlobals.publicPath} + ${
+                webpack.RuntimeGlobals.getUpdateManifestFilename
               }()).then(${runtimeTemplate.basicFunction('response', [
                 'if(response.status === 404) return; // no update available',
                 'if(!response.ok) throw new Error("Failed to fetch update manifest " + response.statusText);',
@@ -383,7 +399,7 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
                 'for(;i < chunkIds.length; i++) {',
                 Template.indent([
                   'chunkId = chunkIds[i];',
-                  `if(${RuntimeGlobals.hasOwnProperty}(installedChunks, chunkId) && installedChunks[chunkId]) {`,
+                  `if(${webpack.RuntimeGlobals.hasOwnProperty}(installedChunks, chunkId) && installedChunks[chunkId]) {`,
                   Template.indent(
                     'resolves.push(installedChunks[chunkId][0]);'
                   ),
@@ -393,9 +409,9 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
                 '}',
                 'for(moduleId in moreModules) {',
                 Template.indent([
-                  `if(${RuntimeGlobals.hasOwnProperty}(moreModules, moduleId)) {`,
+                  `if(${webpack.RuntimeGlobals.hasOwnProperty}(moreModules, moduleId)) {`,
                   Template.indent(
-                    `${RuntimeGlobals.moduleFactories}[moduleId] = moreModules[moduleId];`
+                    `${webpack.RuntimeGlobals.moduleFactories}[moduleId] = moreModules[moduleId];`
                   ),
                   '}',
                 ]),
@@ -444,27 +460,29 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
                   'deferredModules.splice(i--, 1);',
                   'result = ' +
                     '__webpack_require__(' +
-                    `${RuntimeGlobals.entryModuleId} = deferredModule[0]);`,
+                    `${webpack.RuntimeGlobals.entryModuleId} = deferredModule[0]);`,
                 ]),
                 '}',
               ]),
               '}',
               'if(deferredModules.length === 0) {',
               Template.indent([
-                `${RuntimeGlobals.startup}();`,
+                `${webpack.RuntimeGlobals.startup}();`,
                 `${
-                  RuntimeGlobals.startup
+                  webpack.RuntimeGlobals.startup
                 } = ${runtimeTemplate.emptyFunction()};`,
               ]),
               '}',
               'return result;',
             ]),
             '}',
-            `var startup = ${RuntimeGlobals.startup};`,
-            `${RuntimeGlobals.startup} = ${runtimeTemplate.basicFunction('', [
+            `var startup = ${webpack.RuntimeGlobals.startup};`,
+            `${
+              webpack.RuntimeGlobals.startup
+            } = ${runtimeTemplate.basicFunction('', [
               '// reset startup function so it can be called again when more startup code is added',
               `${
-                RuntimeGlobals.startup
+                webpack.RuntimeGlobals.startup
               } = startup || (${runtimeTemplate.emptyFunction()});`,
               'return (checkDeferredModules = checkDeferredModulesImpl)();',
             ])};`,
@@ -473,5 +491,3 @@ class ReactNativeChunkLoadingRuntimeModule extends RuntimeModule {
     ]);
   }
 }
-
-module.exports = ReactNativeChunkLoadingRuntimeModule;

@@ -1,26 +1,27 @@
-const RuntimeGlobals = require('webpack/lib/RuntimeGlobals');
-const { needEntryDeferringCode } = require('webpack/lib/web/JsonpHelpers');
-const ReactNativeChunkLoadingRuntimeModule = require('./ReactNativeChunkLoadingRuntime');
+// @ts-ignore
+import { needEntryDeferringCode } from 'webpack/lib/web/JsonpHelpers';
+import webpack from 'webpack';
+import { WebpackPlugin } from '../../../types';
+import { ReactNativeChunkLoadingRuntimeModule } from './ReactNativeChunkLoadingRuntimeModule';
 
-class ReactNativeChunkLoadingPlugin {
-  apply(compiler) {
+export class ReactNativeChunkLoadingPlugin implements WebpackPlugin {
+  apply(compiler: webpack.Compiler) {
     compiler.hooks.thisCompilation.tap(
       'ReactNativeChunkLoadingPlugin',
       (compilation) => {
         const globalChunkLoading = compilation.outputOptions.chunkLoading;
-        const isEnabledForChunk = (chunk) => {
+        const isEnabledForChunk = (chunk: webpack.Chunk) => {
           const options = chunk.getEntryOptions();
-          const chunkLoading =
-            (options && options.chunkLoading) || globalChunkLoading;
+          const chunkLoading = options?.chunkLoading || globalChunkLoading;
           return chunkLoading === 'react-native';
         };
         const onceForChunkSet = new WeakSet();
-        const handler = (chunk, set) => {
+        const handler = (chunk: webpack.Chunk, set: Set<string>) => {
           if (onceForChunkSet.has(chunk)) return;
           onceForChunkSet.add(chunk);
           if (!isEnabledForChunk(chunk)) return;
-          set.add(RuntimeGlobals.moduleFactoriesAddOnly);
-          set.add(RuntimeGlobals.hasOwnProperty);
+          set.add(webpack.RuntimeGlobals.moduleFactoriesAddOnly);
+          set.add(webpack.RuntimeGlobals.hasOwnProperty);
           compilation.addRuntimeModule(
             chunk,
             new ReactNativeChunkLoadingRuntimeModule(set)
@@ -28,40 +29,40 @@ class ReactNativeChunkLoadingPlugin {
         };
 
         compilation.hooks.runtimeRequirementInTree
-          .for(RuntimeGlobals.ensureChunkHandlers)
+          .for(webpack.RuntimeGlobals.ensureChunkHandlers)
           .tap('ReactNativeChunkLoadingPlugin', handler);
         compilation.hooks.runtimeRequirementInTree
-          .for(RuntimeGlobals.hmrDownloadUpdateHandlers)
+          .for(webpack.RuntimeGlobals.hmrDownloadUpdateHandlers)
           .tap('ReactNativeChunkLoadingPlugin', handler);
         compilation.hooks.runtimeRequirementInTree
-          .for(RuntimeGlobals.hmrDownloadManifest)
+          .for(webpack.RuntimeGlobals.hmrDownloadManifest)
           .tap('ReactNativeChunkLoadingPlugin', handler);
         compilation.hooks.runtimeRequirementInTree
-          .for(RuntimeGlobals.baseURI)
+          .for(webpack.RuntimeGlobals.baseURI)
           .tap('ReactNativeChunkLoadingPlugin', handler);
 
         compilation.hooks.runtimeRequirementInTree
-          .for(RuntimeGlobals.ensureChunkHandlers)
+          .for(webpack.RuntimeGlobals.ensureChunkHandlers)
           .tap('ReactNativeChunkLoadingPlugin', (chunk, set) => {
             if (!isEnabledForChunk(chunk)) return;
-            // set.add(RuntimeGlobals.loadScript);
-            set.add(RuntimeGlobals.getChunkScriptFilename);
+            // set.add(webpack.RuntimeGlobals.loadScript);
+            set.add(webpack.RuntimeGlobals.getChunkScriptFilename);
           });
         compilation.hooks.runtimeRequirementInTree
-          .for(RuntimeGlobals.hmrDownloadUpdateHandlers)
+          .for(webpack.RuntimeGlobals.hmrDownloadUpdateHandlers)
           .tap('ReactNativeChunkLoadingPlugin', (chunk, set) => {
             if (!isEnabledForChunk(chunk)) return;
-            // set.add(RuntimeGlobals.loadScript);
-            set.add(RuntimeGlobals.getChunkUpdateScriptFilename);
-            set.add(RuntimeGlobals.moduleCache);
-            set.add(RuntimeGlobals.hmrModuleData);
-            set.add(RuntimeGlobals.moduleFactoriesAddOnly);
+            // set.add(webpack.RuntimeGlobals.loadScript);
+            set.add(webpack.RuntimeGlobals.getChunkUpdateScriptFilename);
+            set.add(webpack.RuntimeGlobals.moduleCache);
+            set.add(webpack.RuntimeGlobals.hmrModuleData);
+            set.add(webpack.RuntimeGlobals.moduleFactoriesAddOnly);
           });
         compilation.hooks.runtimeRequirementInTree
-          .for(RuntimeGlobals.hmrDownloadManifest)
+          .for(webpack.RuntimeGlobals.hmrDownloadManifest)
           .tap('ReactNativeChunkLoadingPlugin', (chunk, set) => {
             if (!isEnabledForChunk(chunk)) return;
-            set.add(RuntimeGlobals.getUpdateManifestFilename);
+            set.add(webpack.RuntimeGlobals.getUpdateManifestFilename);
           });
 
         compilation.hooks.additionalTreeRuntimeRequirements.tap(
@@ -70,9 +71,9 @@ class ReactNativeChunkLoadingPlugin {
             if (!isEnabledForChunk(chunk)) return;
             const withDefer = needEntryDeferringCode(compilation, chunk);
             if (withDefer) {
-              set.add(RuntimeGlobals.startup);
-              set.add(RuntimeGlobals.startupNoDefault);
-              set.add(RuntimeGlobals.require);
+              set.add(webpack.RuntimeGlobals.startup);
+              set.add(webpack.RuntimeGlobals.startupNoDefault);
+              set.add(webpack.RuntimeGlobals.require);
               handler(chunk, set);
             }
           }
@@ -81,5 +82,3 @@ class ReactNativeChunkLoadingPlugin {
     );
   }
 }
-
-module.exports = ReactNativeChunkLoadingPlugin;

@@ -113,6 +113,7 @@ export class LoggerPlugin implements WebpackPlugin {
         this.processEntry(statsEntry);
       }
       this.reporter.flushFileLogs();
+      this.reporter.stop();
     });
 
     process.on('uncaughtException', (error) => {
@@ -121,10 +122,12 @@ export class LoggerPlugin implements WebpackPlugin {
         this.processEntry(errorEntry);
       }
       this.reporter.flushFileLogs();
+      this.reporter.stop();
     });
 
     process.on('exit', () => {
       this.reporter.flushFileLogs();
+      this.reporter.stop();
     });
   }
 }

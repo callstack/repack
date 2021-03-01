@@ -21,6 +21,8 @@ export class DevServerPlugin implements WebpackPlugin {
     }://${config.host || 'localhost'}:${config.port}`;
     logger.debug('Setting public path to:', compiler.options.output.publicPath);
 
+    // TODO: inject hmr entry with platform-specific compiler's port
+
     let server: DevServer | undefined;
 
     compiler.hooks.watchRun.tapPromise('DevServerPlugin', async () => {
