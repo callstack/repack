@@ -1,4 +1,5 @@
 import util from 'util';
+import fs from 'fs';
 import ora, { Ora } from 'ora';
 import colorette from 'colorette';
 import { LogEntry, LogType } from './types';
@@ -60,6 +61,8 @@ export class Reporter {
 
   private ora?: Ora;
   private requestBuffer: Record<number, ReqLogData | undefined> = {};
+  private fileLogBuffer: string[] = [];
+  private outputFilename?: string;
 
   constructor(private config: ReporterConfig = {}) {
     this.isWorker = isWorker();
@@ -69,7 +72,22 @@ export class Reporter {
     }
   }
 
+  enableFileLogging(filename: string) {
+    this.outputFilename = filename;
+  }
+
+  flushFileLogs() {
+    if (this.outputFilename) {
+      fs.writeFileSync(this.outputFilename, this.fileLogBuffer.join('\n'));
+      this.fileLogBuffer = [];
+    }
+  }
+
   process(logEntry: LogEntry) {
+    if (this.outputFilename) {
+      this.fileLogBuffer.push(JSON.stringify(logEntry));
+    }
+
     // Skip debug logs if not in verbose mode
     if (logEntry.type === 'debug' && !this.isVerbose) {
       return;

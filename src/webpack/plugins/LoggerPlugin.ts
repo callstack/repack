@@ -1,4 +1,3 @@
-import fs from 'fs';
 import path from 'path';
 import webpack from 'webpack';
 import { Reporter } from '../../Reporter';
@@ -69,13 +68,6 @@ export class LoggerPlugin implements WebpackPlugin {
     }
   }
 
-  flushLogs() {
-    if (this.resolvedOutputFile && this.fileLogBuffer.length) {
-      fs.writeFileSync(this.resolvedOutputFile, this.fileLogBuffer.join('\n'));
-      this.fileLogBuffer = [];
-    }
-  }
-
   apply(compiler: webpack.Compiler) {
     // Make sure webpack-cli doesn't print stats by default.
     compiler.options.stats = 'none';
@@ -120,7 +112,7 @@ export class LoggerPlugin implements WebpackPlugin {
       if (statsEntry) {
         this.processEntry(statsEntry);
       }
-      this.flushLogs();
+      this.reporter.flushFileLogs();
     });
 
     process.on('uncaughtException', (error) => {
@@ -128,11 +120,11 @@ export class LoggerPlugin implements WebpackPlugin {
       if (errorEntry) {
         this.processEntry(errorEntry);
       }
-      this.flushLogs();
+      this.reporter.flushFileLogs();
     });
 
     process.on('exit', () => {
-      this.flushLogs();
+      this.reporter.flushFileLogs();
     });
   }
 }
