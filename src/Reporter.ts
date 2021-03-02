@@ -148,6 +148,13 @@ export class Reporter {
 
         // Route logs from Fastify (DevServerProxy, DevServer)
         if ((req || res) && reqId !== undefined) {
+          // Disable route logging if not verbose. It would better to do it on per-router/Fastify
+          // level but unless webpack-dev-middleware is migrated to Fastify that's not a feasible solution.
+          // TODO: silence route logs on per-router/Fastify
+          if (!this.isVerbose) {
+            continue;
+          }
+
           if (req) {
             this.requestBuffer[reqId] = req;
             // Logs in the future should have a `res` with the same `reqId`, so we will be
