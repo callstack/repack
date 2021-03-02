@@ -6,12 +6,12 @@ import { WebSocketServer } from './WebSocketServer';
  * Class for creating a WebSocket server for communication with React Native clients.
  *
  */
-export class WebSocketClientServer extends WebSocketServer {
+export class WebSocketDevClientServer extends WebSocketServer {
   private clients = new Map<string, WebSocket>();
   private nextClientId = 0;
 
   /**
-   * Create new instance of WebSocketClientServer and attach it to the given Fastify instance.
+   * Create new instance of WebSocketDevClientServer and attach it to the given Fastify instance.
    * Any logging information, will be passed through standard `fastify.log` API.
    *
    * @param fastify Fastify instance to attach the WebSocket server to.

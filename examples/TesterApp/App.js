@@ -23,9 +23,8 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { raise } from './error';
 
-setTimeout(raise, 2000);
+import { Hello } from './Hello';
 
 const App: () => React$Node = () => {
   return (
@@ -43,8 +42,9 @@ const App: () => React$Node = () => {
             </View>
           )}
           <View style={styles.body}>
+            <Hello />
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
+              <Text style={styles.sectionTitle}>Step One xxx</Text>
               <Text style={styles.sectionDescription}>
                 Edit <Text style={styles.highlight}>App.js</Text> to change this
                 screen and then come back to see your edits.

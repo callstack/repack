@@ -30,6 +30,8 @@ const {
   },
 });
 
+process.env.BABEL_ENV = mode;
+
 module.exports = {
   mode,
   devtool: false,
@@ -69,12 +71,7 @@ module.exports = {
       assetsOutputPath,
       bundleToFile: !devServer,
     }),
-    new LoggerPlugin({
-      output: {
-        console: true,
-        file: path.join(__dirname, 'build.log'),
-      },
-    }),
+    new ReactNativeTargetPlugin(),
     new DevServerPlugin(devServer),
     new webpack.SourceMapDevToolPlugin({
       test: /\.([jt]sx?|(js)?bundle)$/,
@@ -83,7 +80,11 @@ module.exports = {
       // Uncomment for faster builds but less accurate source maps
       // columns: false,
     }),
-    new webpack.HotModuleReplacementPlugin(),
-    new ReactNativeTargetPlugin(),
+    new LoggerPlugin({
+      output: {
+        console: true,
+        file: path.join(__dirname, 'build.log'),
+      },
+    }),
   ],
 };

@@ -1,4 +1,5 @@
 import webpack from 'webpack';
+import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import { WebpackPlugin } from '../../../types';
 import { DevServer, DevServerConfig } from '../../../server';
 
@@ -40,6 +41,11 @@ export class DevServerPlugin implements WebpackPlugin {
         compiler.options.output.publicPath
       ),
       'process.env.__PUBLIC_PATH_HOST__': JSON.stringify(host),
+    }).apply(compiler);
+
+    new webpack.HotModuleReplacementPlugin().apply(compiler);
+    new ReactRefreshPlugin({
+      overlay: false,
     }).apply(compiler);
 
     let server: DevServer | undefined;

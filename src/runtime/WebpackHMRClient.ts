@@ -129,23 +129,26 @@ class HMRClient {
 
   async checkUpdates(update: HMRMessageBody) {
     try {
-      const outdatedModules = await module.hot.check(false);
-      if (!outdatedModules) {
+      const updatedModules = await module.hot.check(false);
+      if (!updatedModules) {
         console.warn('[HMRClient] Cannot find update - full reload needed');
         return;
       }
 
-      const updatedModules = await module.hot.apply({
+      const renewedModules = await module.hot.apply({
         ignoreUnaccepted: true,
         ignoreDeclined: true,
         ignoreErrored: true,
         onUnaccepted: (data) => {
-          console.warn('[HMRClient] Ignored an update to unaccepted module', {
-            chain: data.chain,
-          });
+          console.warn(
+            '[HMRClient] Ignored an update due to unaccepted module',
+            {
+              chain: data.chain,
+            }
+          );
         },
         onDeclined: (data) => {
-          console.warn('[HMRClient] Ignored an update to declined module', {
+          console.warn('[HMRClient] Ignored an update due to declined module', {
             chain: data.chain,
           });
         },
@@ -162,11 +165,20 @@ class HMRClient {
         this.checkUpdates(update);
       }
 
-      const unacceptedModules = outdatedModules.filter((moduleId) => {
-        return updatedModules && updatedModules.indexOf(moduleId) < 0;
+      const unacceptedModules = updatedModules.filter((moduleId) => {
+        return renewedModules && renewedModules.indexOf(moduleId) < 0;
       });
 
-      console.log({ unacceptedModules, updatedModules });
+      if (unacceptedModules.length) {
+        console.warn(
+          '[HMRClient] Not every module was accepted - full reload needed',
+          { unacceptedModules }
+        );
+      } else {
+        console.log('[HMRClient] Renewed modules - app is up to date', {
+          renewedModules,
+        });
+      }
     } catch (error) {
       if (module.hot.status() === 'fail' || module.hot.status() === 'abort') {
         console.warn(

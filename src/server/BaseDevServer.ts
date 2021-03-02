@@ -9,7 +9,7 @@ import {
 import { WebSocketDebuggerServer } from './ws/WebSocketDebuggerServer';
 import { WebSocketMessageServer } from './ws/WebSocketMessageServer';
 import { WebSocketEventsServer } from './ws/WebSocketEventsServer';
-import { WebSocketClientServer } from './ws/WebSocketClientServer';
+import { WebSocketDevClientServer } from './ws/WebSocketDevClientServer';
 
 export interface BaseDevServerConfig extends DevServerOptions {}
 
@@ -18,7 +18,7 @@ export class BaseDevServer {
   wsDebuggerServer: WebSocketDebuggerServer;
   wsMessageServer: WebSocketMessageServer;
   wsEventsServer: WebSocketEventsServer;
-  wsClientServer: WebSocketClientServer;
+  wsClientServer: WebSocketDevClientServer;
 
   constructor(
     protected config: BaseDevServerConfig,
@@ -31,7 +31,7 @@ export class BaseDevServer {
     this.wsEventsServer = new WebSocketEventsServer(this.fastify, {
       webSocketMessageServer: this.wsMessageServer,
     });
-    this.wsClientServer = new WebSocketClientServer(this.fastify);
+    this.wsClientServer = new WebSocketDevClientServer(this.fastify);
 
     this.fastify.register(fastifyStatic, {
       root: path.join(__dirname, '../client'),

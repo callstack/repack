@@ -133,7 +133,7 @@ export class Reporter {
           issuer: issuerOverride,
           ...rest
         } = value as {
-          msg?: string;
+          msg?: string | string[];
           req?: ReqLogData;
           reqId?: number;
           res?: ResLogData;
@@ -186,8 +186,15 @@ export class Reporter {
 
         // Usually non-route logs from Fastify (DevServerProxy, DevServer will have a `msg` field)
         if (msg) {
-          body += Reporter.colorizeText(logEntry.type, msg);
-          body += ' ';
+          if (Array.isArray(msg)) {
+            for (const msgItem of msg) {
+              body += Reporter.colorizeText(logEntry.type, msgItem);
+              body += ' ';
+            }
+          } else {
+            body += Reporter.colorizeText(logEntry.type, msg);
+            body += ' ';
+          }
         }
 
         if (Object.keys(rest).length) {
