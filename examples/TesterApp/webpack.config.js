@@ -39,6 +39,9 @@ module.exports = {
   entry: [...getInitializationEntries(reactNativePath, { hmr: dev }), entry],
   resolve: {
     ...getResolveOptions(platform),
+    alias: {
+      'react-native$': reactNativePath
+    }
   },
   output: {
     path: outputPath,

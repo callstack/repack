@@ -39,6 +39,8 @@ declare var __webpack_require__: { l: Function };
 declare var module: HotModule;
 
 import querystring from 'querystring';
+// @ts-ignore
+import { DevSettings } from 'react-native';
 import type { HMRMessage, HMRMessageBody } from '../types';
 
 class HMRClient {
@@ -46,7 +48,7 @@ class HMRClient {
   socket: WebSocket;
   lastHash = '';
 
-  constructor(host: string) {
+  constructor(host: string, private reload: () => void) {
     this.url = `ws://${host}/__hmr`;
     this.socket = new WebSocket(this.url);
 
@@ -132,31 +134,18 @@ class HMRClient {
       const updatedModules = await module.hot.check(false);
       if (!updatedModules) {
         console.warn('[HMRClient] Cannot find update - full reload needed');
+        this.reload();
         return;
       }
 
       const renewedModules = await module.hot.apply({
-        ignoreUnaccepted: true,
         ignoreDeclined: true,
-        ignoreErrored: true,
-        onUnaccepted: (data) => {
-          console.warn(
-            '[HMRClient] Ignored an update due to unaccepted module',
-            {
-              chain: data.chain,
-            }
-          );
-        },
+        ignoreUnaccepted: false,
+        ignoreErrored: false,
         onDeclined: (data) => {
+          // This module declined update, no need to do anything
           console.warn('[HMRClient] Ignored an update due to declined module', {
             chain: data.chain,
-          });
-        },
-        onErrored: (data) => {
-          console.error(data.error);
-          console.warn('[HMRClient] Ignored an error while updating module', {
-            type: data.type,
-            moduleId: data.moduleId,
           });
         },
       });
@@ -165,6 +154,7 @@ class HMRClient {
         this.checkUpdates(update);
       }
 
+      // Double check to make sure all updated modules were accepted (renewed)
       const unacceptedModules = updatedModules.filter((moduleId) => {
         return renewedModules && renewedModules.indexOf(moduleId) < 0;
       });
@@ -174,6 +164,7 @@ class HMRClient {
           '[HMRClient] Not every module was accepted - full reload needed',
           { unacceptedModules }
         );
+        this.reload();
       } else {
         console.log('[HMRClient] Renewed modules - app is up to date', {
           renewedModules,
@@ -185,7 +176,7 @@ class HMRClient {
           '[HMRClient] Cannot check for update - full reload needed'
         );
         console.warn('[HMRClient]', error);
-        // TODO: do a reload
+        this.reload();
       } else {
         console.warn('[HMRClient] Update check failed', { error });
       }
@@ -228,6 +219,7 @@ if (__resourceQuery) {
       }
     };
 
-    new HMRClient(host);
+    const reload = () => DevSettings.reload();
+    new HMRClient(host, reload);
   }
 }

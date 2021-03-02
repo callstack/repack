@@ -241,8 +241,8 @@ export class WebSocketMessageServer extends WebSocketServer {
     if (this.clients.size === 0) {
       this.fastify.log.warn({
         msg:
-          'No apps connected.' +
-          `Sending "${message.method}" to all React Native apps failed.` +
+          'No apps connected. ' +
+          `Sending "${message.method}" to all React Native apps failed. ` +
           'Make sure your app is running in the simulator or on a phone connected via USB.',
       });
     }
