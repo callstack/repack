@@ -15,7 +15,7 @@ import prettyFormat from 'pretty-format';
  * https://github.com/facebook/react-native/blob/v0.63.4/Libraries/Core/setUpDeveloperTools.js#L51-L69
  */
 
-class ClientLogger {
+class DevServerClient {
   socket?: WebSocket;
   buffer: Array<{ level: string; data: any[] }> = [];
 
@@ -25,12 +25,15 @@ class ClientLogger {
       this.socket = new WebSocket(address);
 
       const onClose = () => {
-        setTimeout(initSocket, 1000);
+        console.warn('Disconnected from the Dev Server.');
+        this.socket = undefined;
       };
 
       this.socket.onclose = onClose;
       this.socket.onerror = onClose;
-      this.socket.onopen = () => this.flushBuffer();
+      this.socket.onopen = () => {
+        this.flushBuffer();
+      };
     };
 
     if (__DEV__ && process.env.__PUBLIC_PATH_HOST__) {
@@ -80,7 +83,7 @@ class ClientLogger {
   }
 }
 
-const clientLogger = new ClientLogger();
+const client = new DevServerClient();
 
 module.exports = {
   setup() {},
@@ -88,6 +91,6 @@ module.exports = {
   disable() {},
   registerBundle() {},
   log(level: string, data: any[]) {
-    clientLogger.log(level, data);
+    client.log(level, data);
   },
 };
