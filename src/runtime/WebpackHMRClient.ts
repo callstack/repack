@@ -39,7 +39,7 @@ declare var __webpack_require__: { l: Function };
 declare var module: HotModule;
 
 import querystring from 'querystring';
-import type { HMRMessage, HMRMessageBody } from '../../types';
+import type { HMRMessage, HMRMessageBody } from '../types';
 
 class HMRClient {
   url: string;

@@ -27,13 +27,20 @@ export class DevServerPlugin implements WebpackPlugin {
         compiler.options.entry[entryKey].import = compiler.options.entry[
           entryKey
         ].import?.map((value) => {
-          if (/HMRClient\.js\?host=\[host\]/.test(value)) {
+          if (/WebpackHMRClient\.js\?host=\[host\]$/.test(value)) {
             return value.replace('[host]', host);
           }
           return value;
         });
       }
     }
+
+    new webpack.DefinePlugin({
+      'process.env.__PUBLIC_PATH__': JSON.stringify(
+        compiler.options.output.publicPath
+      ),
+      'process.env.__PUBLIC_PATH_HOST__': JSON.stringify(host),
+    }).apply(compiler);
 
     let server: DevServer | undefined;
 

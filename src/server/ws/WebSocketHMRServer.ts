@@ -17,7 +17,8 @@ export interface WebSocketHMRServerConfig {
  */
 export class WebSocketHMRServer extends WebSocketServer {
   private latestStats?: webpack.Stats;
-  private clients: WebSocket[] = [];
+  private clients = new Map<string, WebSocket>();
+  private nextClientId = 0;
 
   /**
    * Create new instance of WebSocketHMRServer and attach it to the given Fastify instance.
@@ -49,7 +50,7 @@ export class WebSocketHMRServer extends WebSocketServer {
    * @param action Action to send to the clients.
    */
   sendAction(action: HMRMessage['action']) {
-    if (!this.clients.length) {
+    if (!this.clients.size) {
       return;
     }
 
@@ -96,16 +97,17 @@ export class WebSocketHMRServer extends WebSocketServer {
       body,
     });
 
-    try {
-      for (const socket of this.clients) {
+    for (const [clientId, socket] of this.clients) {
+      try {
         socket.send(event);
+      } catch (error) {
+        this.fastify.log.error({
+          msg: 'Cannot send action to client',
+          action,
+          error,
+          clientId,
+        });
       }
-    } catch (error) {
-      this.fastify.log.error({
-        msg: 'Cannot send action to client',
-        action,
-        error,
-      });
     }
   }
 
@@ -115,20 +117,14 @@ export class WebSocketHMRServer extends WebSocketServer {
    * @param socket Incoming HMR client's WebSocket connection.
    */
   onConnection(socket: WebSocket) {
-    this.fastify.log.info({ msg: 'HMR client connected' });
-    this.clients.push(socket);
+    const clientId = `client#${this.nextClientId++}`;
+    this.clients.set(clientId, socket);
+
+    this.fastify.log.info({ msg: 'HMR client connected', clientId });
 
     const onClose = () => {
-      this.fastify.log.info({ msg: 'HMR client disconnected' });
-      const index = this.clients.indexOf(socket);
-      if (index >= 0) {
-        this.clients.splice(index, 1);
-      } else {
-        this.fastify.log.warn({
-          msg: 'Cannot find client to disconnect',
-          clientsLength: this.clients.length,
-        });
-      }
+      this.fastify.log.info({ msg: 'HMR client disconnected', clientId });
+      this.clients.delete(clientId);
     };
 
     socket.addEventListener('error', onClose);

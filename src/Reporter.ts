@@ -118,20 +118,33 @@ export class Reporter {
 
   private getOutputLogMessage(logEntry: LogEntry) {
     let body = '';
+    let issuer = logEntry.issuer;
     for (const value of logEntry.message) {
       if (typeof value === 'string') {
         body += Reporter.colorizeText(logEntry.type, value);
         body += ' ';
       } else {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { msg, req, reqId, res, responseTime, ...rest } = value as {
+        const {
+          msg,
+          req,
+          reqId,
+          res,
+          responseTime, // eslint-disable-line @typescript-eslint/no-unused-vars
+          issuer: issuerOverride,
+          ...rest
+        } = value as {
           msg?: string;
           req?: ReqLogData;
           reqId?: number;
           res?: ResLogData;
           responseTime?: number;
+          issuer?: string;
           [key: string]: any; // For all unknown fields
         };
+
+        if (issuerOverride) {
+          issuer = issuerOverride;
+        }
 
         // Route logs from Fastify (DevServerProxy, DevServer)
         if ((req || res) && reqId !== undefined) {
@@ -188,7 +201,7 @@ export class Reporter {
 
     return (
       colorette.gray(`[${new Date(logEntry.timestamp).toISOString()}]`) +
-      colorette.bold(`[${logEntry.issuer}]`) +
+      colorette.bold(`[${issuer}]`) +
       ` ${body}`
     );
   }

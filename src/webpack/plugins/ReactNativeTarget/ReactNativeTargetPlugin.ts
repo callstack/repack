@@ -9,6 +9,12 @@ export class ReactNativeTargetPlugin implements WebpackPlugin {
     compiler.options.target = false;
     compiler.options.output.chunkLoading = 'react-native';
     compiler.options.output.globalObject = 'this';
+
+    new webapck.NormalModuleReplacementPlugin(
+      /react-native\/Libraries\/Utilities\/HMRClient\.js$/,
+      require.resolve('../../../runtime/ReactNativeHMRClientStub')
+    ).apply(compiler);
+
     webapck.javascript.EnableChunkLoadingPlugin.setEnabled(
       compiler,
       'react-native'
