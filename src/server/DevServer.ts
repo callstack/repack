@@ -9,7 +9,7 @@ import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
 import { readFileFromWdm } from './utils/readFileFromWdm';
 import { transformFastifyLogToLogEntry } from './utils/transformFastifyLogToWebpackLogEntry';
-import { WebSocketHMRServer } from './ws/WebSocketHMRServer';
+import { WebSocketHMRServer } from './ws';
 
 export interface DevServerConfig extends BaseDevServerConfig {}
 

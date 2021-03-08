@@ -6,10 +6,12 @@ import {
   DevServerLoggerOptions,
   getFastifyInstance,
 } from './utils/getFastifyInstance';
-import { WebSocketDebuggerServer } from './ws/WebSocketDebuggerServer';
-import { WebSocketMessageServer } from './ws/WebSocketMessageServer';
-import { WebSocketEventsServer } from './ws/WebSocketEventsServer';
-import { WebSocketDevClientServer } from './ws/WebSocketDevClientServer';
+import {
+  WebSocketDebuggerServer,
+  WebSocketMessageServer,
+  WebSocketEventsServer,
+  WebSocketDevClientServer,
+} from './ws';
 
 export interface BaseDevServerConfig extends DevServerOptions {}
 

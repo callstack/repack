@@ -13,7 +13,8 @@
     "webpack": "webpack -c webpack.config.js",
     "webpack:watch": "npm run webpack -- --watch",
     "build": "npm run clean && npm run babel && npm run tsc && npm run webpack",
-    "build:watch": "npm run clean && concurrently npm:babel:watch npm:tsc:watch npm:webpack:watch"
+    "build:watch": "npm run clean && concurrently npm:babel:watch npm:tsc:watch npm:webpack:watch",
+    "docs": "typedoc src/index.ts --out docs/api"
   },
   "author": "zamotany <zamotany.oss@gmail.com>",
   "license": "MIT",
@@ -77,6 +78,7 @@
     "mini-css-extract-plugin": "^1.3.8",
     "react-native": "^0.63.4",
     "style-loader": "^2.0.0",
+    "typedoc": "^0.20.28",
     "typescript": "^4.1.5",
     "url-loader": "^4.1.1",
     "worker-loader": "^3.0.8"
