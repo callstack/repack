@@ -40,8 +40,26 @@ declare var module: HotModule;
 
 import querystring from 'querystring';
 // @ts-ignore
-import { DevSettings } from 'react-native';
+import { DevSettings, Platform } from 'react-native';
 import type { HMRMessage, HMRMessageBody } from '../types';
+
+function dismissErrors() {
+  // TODO: figure out why this doesn't work
+  if (Platform.OS === 'ios') {
+    const NativeRedBox = require('react-native/Libraries/NativeModules/specs/NativeRedBox')
+      .default;
+
+    NativeRedBox?.dismiss?.();
+  } else {
+    const NativeExceptionsManager = require('react-native/Libraries/Core/NativeExceptionsManager')
+      .default;
+    console.log(NativeExceptionsManager);
+    NativeExceptionsManager?.dismissRedbox();
+  }
+
+  const LogBoxData = require('react-native/Libraries/LogBox/Data/LogBoxData');
+  LogBoxData.clear();
+}
 
 class HMRClient {
   url: string;
@@ -180,6 +198,7 @@ class HMRClient {
         console.log('[HMRClient] Renewed modules - app is up to date', {
           renewedModules,
         });
+        dismissErrors();
       }
     } catch (error) {
       if (module.hot.status() === 'fail' || module.hot.status() === 'abort') {
