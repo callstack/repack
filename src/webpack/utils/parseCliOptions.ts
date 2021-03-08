@@ -89,6 +89,7 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
         cert: args.cert || undefined,
         key: args.key || undefined,
         context: cliOptions.config.root,
+        platform: args.platform,
       },
     };
   }

@@ -63,6 +63,7 @@ export class Reporter {
   private requestBuffer: Record<number, ReqLogData | undefined> = {};
   private fileLogBuffer: string[] = [];
   private outputFilename?: string;
+  private progress: Record<string, { value: number; label: string }> = {};
 
   constructor(private config: ReporterConfig = {}) {
     this.isWorker = isWorker();
@@ -104,16 +105,39 @@ export class Reporter {
     if (this.isWorker) {
       console.log(JSON.stringify(logEntry));
     } else if (this.ora) {
-      const text = this.getOutputLogMessage(logEntry);
-      // Ignore empty logs
-      if (text) {
-        this.ora.stopAndPersist({
-          symbol: Reporter.getSymbolForType(logEntry.type),
-          text: this.getOutputLogMessage(logEntry),
-        });
-        this.ora.start('Running...');
+      if (this.isProgress(logEntry)) {
+        const {
+          progress: { value, label, platform },
+        } = logEntry.message[0] as {
+          progress: { value: number; label: string; platform: string };
+        };
+        this.progress[platform] = { value, label };
+        this.updateProgress();
+      } else {
+        const text = this.getOutputLogMessage(logEntry);
+        // Ignore empty logs
+        if (text) {
+          this.ora.stopAndPersist({
+            symbol: Reporter.getSymbolForType(logEntry.type),
+            text: this.getOutputLogMessage(logEntry),
+          });
+          this.ora.start('Running...');
+        }
       }
     }
+  }
+
+  private updateProgress() {
+    let text = 'Running: ';
+    for (const platform in this.progress) {
+      const { value, label } = this.progress[platform];
+      text += `(${platform}) ${label} ${Math.round(value * 100)}% `;
+    }
+    this.ora?.start(text);
+  }
+
+  private isProgress(logEntry: LogEntry) {
+    return Boolean(logEntry.message?.[0]?.progress);
   }
 
   private getOutputLogMessage(logEntry: LogEntry) {
@@ -214,7 +238,9 @@ export class Reporter {
     }
 
     return (
-      colorette.gray(`[${new Date(logEntry.timestamp).toISOString()}]`) +
+      colorette.gray(
+        `[${new Date(logEntry.timestamp).toISOString().split('T')[1]}]`
+      ) +
       colorette.bold(`[${issuer}]`) +
       ` ${body}`
     );

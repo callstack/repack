@@ -14,8 +14,13 @@ import { WebSocketHMRServer } from './ws';
 export interface DevServerConfig extends BaseDevServerConfig {}
 
 export class DevServer extends BaseDevServer {
-  private static getLoggerOptions(compiler: webpack.Compiler) {
-    const webpackLogger = compiler.getInfrastructureLogger('DevServer');
+  private static getLoggerOptions(
+    compiler: webpack.Compiler,
+    platform: string
+  ) {
+    const webpackLogger = compiler.getInfrastructureLogger(
+      `DevServer@${platform}`
+    );
     const logStream = new Writable({
       write: (chunk, _encoding, callback) => {
         const data = chunk.toString();
@@ -33,7 +38,7 @@ export class DevServer extends BaseDevServer {
   symbolicator: Symbolicator;
 
   constructor(config: DevServerConfig, private compiler: webpack.Compiler) {
-    super(config, DevServer.getLoggerOptions(compiler));
+    super(config, DevServer.getLoggerOptions(compiler, config.platform));
 
     this.wdm = devMiddleware(this.compiler, {
       mimeTypes: {

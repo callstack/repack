@@ -5,7 +5,8 @@ import { LogEntry, LogType, WebpackPlugin } from '../../types';
 export type GenericFilter = Array<string | RegExp>;
 
 export interface LoggerPluginConfig {
-  compact?: boolean;
+  platform: string;
+  devServer?: boolean;
   output?: {
     console?: boolean;
     file?: string;
@@ -19,7 +20,7 @@ export class LoggerPlugin implements WebpackPlugin {
   private fileLogBuffer: string[] = [];
   readonly reporter = new Reporter();
 
-  constructor(private config: LoggerPluginConfig = {}) {
+  constructor(private config: LoggerPluginConfig) {
     if (this.config.output === undefined) {
       this.config.output = { console: true };
     }
@@ -71,6 +72,23 @@ export class LoggerPlugin implements WebpackPlugin {
     // Make sure webpack-cli doesn't print stats by default.
     compiler.options.stats = 'none';
 
+    if (this.config.devServer) {
+      new webpack.ProgressPlugin((percentage, message) => {
+        const entry = this.createEntry('LoggerPlugin', 'info', [
+          {
+            progress: {
+              value: percentage,
+              label: message,
+              platform: this.config.platform,
+            },
+          },
+        ]);
+        if (entry) {
+          this.processEntry(entry);
+        }
+      }).apply(compiler);
+    }
+
     compiler.hooks.infrastructureLog.tap(
       'LoggerPlugin',
       (issuer, type, args) => {
@@ -94,7 +112,7 @@ export class LoggerPlugin implements WebpackPlugin {
     });
 
     compiler.hooks.done.tap('LoggerPlugin', (stats) => {
-      if (this.config.compact) {
+      if (this.config.devServer) {
         const { time, errors, warnings } = stats.toJson({
           timings: true,
           errors: true,

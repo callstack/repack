@@ -33,6 +33,7 @@ export function start(_: string[], config: Config, args: StartArguments) {
       cert: args.cert,
       key: args.key,
       context: config.root,
+      platform: args.platform,
     },
     cliOptions
   );

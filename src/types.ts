@@ -42,6 +42,7 @@ export interface DevServerOptions {
   cert?: string;
   key?: string;
   context: string;
+  platform: string;
 }
 
 export interface CliOptions {
