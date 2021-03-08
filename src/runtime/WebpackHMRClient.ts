@@ -47,6 +47,10 @@ class HMRClient {
   url: string;
   socket: WebSocket;
   lastHash = '';
+  LoadingView?: {
+    showMessage(text: string, type: 'load' | 'refresh'): void;
+    hide(): void;
+  };
 
   constructor(host: string, private reload: () => void) {
     this.url = `ws://${host}/__hmr`;
@@ -66,6 +70,11 @@ class HMRClient {
 
     this.socket.onmessage = (event) => {
       try {
+        if (!this.LoadingView) {
+          // For some reason, this module has to be lazy loaded, otherwise the app won't render.
+          this.LoadingView = require('react-native/Libraries/Utilities/LoadingView');
+        }
+
         this.processMessage(JSON.parse(event.data.toString()));
       } catch (error) {
         console.warn('[HMRClient] Invalid HMR message', { event, error });
@@ -83,6 +92,7 @@ class HMRClient {
   processMessage(message: HMRMessage) {
     switch (message.action) {
       case 'building':
+        this.LoadingView?.showMessage('Rebuilding...', 'refresh');
         console.log('[HMRClient] Bundle rebuilding', {
           name: message.body?.name,
         });
@@ -131,6 +141,7 @@ class HMRClient {
 
   async checkUpdates(update: HMRMessageBody) {
     try {
+      this.LoadingView?.showMessage('Refreshing...', 'refresh');
       const updatedModules = await module.hot.check(false);
       if (!updatedModules) {
         console.warn('[HMRClient] Cannot find update - full reload needed');
@@ -180,6 +191,8 @@ class HMRClient {
       } else {
         console.warn('[HMRClient] Update check failed', { error });
       }
+    } finally {
+      this.LoadingView?.hide();
     }
   }
 }
