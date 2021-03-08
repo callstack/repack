@@ -32,7 +32,7 @@ export interface StartArguments extends CommonArguments {
   https?: boolean;
   key?: string;
   port?: number;
-  // projectRoot?: string; ??
+  interactive?: boolean;
 }
 
 export interface DevServerOptions {

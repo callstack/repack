@@ -1,3 +1,4 @@
+import readline from 'readline';
 import { Config } from '@react-native-community/cli-types';
 import { CliOptions, StartArguments } from '../types';
 import { DEFAULT_PORT } from '../webpack/utils/parseCliOptions';
@@ -36,4 +37,39 @@ export function start(_: string[], config: Config, args: StartArguments) {
     cliOptions
   );
   devServerProxy.run();
+
+  if (args.interactive) {
+    if (!process.stdin.setRawMode) {
+      devServerProxy.fastify.log.warn({
+        msg: 'Interactive mode is not supported in this environment',
+      });
+    }
+
+    readline.emitKeypressEvents(process.stdin);
+    process.stdin.setRawMode(true);
+
+    process.stdin.on('keypress', (_key, data) => {
+      const { ctrl, name } = data;
+      if (ctrl === true) {
+        switch (name) {
+          case 'c':
+            process.exit();
+            break;
+          case 'z':
+            process.emit('SIGTSTP', 'SIGTSTP');
+            break;
+        }
+      } else if (name === 'r') {
+        devServerProxy.wsMessageServer.broadcast('reload');
+        devServerProxy.fastify.log.info({
+          msg: 'Reloading app',
+        });
+      } else if (name === 'd') {
+        devServerProxy.wsMessageServer.broadcast('devMenu');
+        devServerProxy.fastify.log.info({
+          msg: 'Opening developer menu',
+        });
+      }
+    });
+  }
 }

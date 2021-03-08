@@ -149,13 +149,13 @@ export class WebSocketEventsServer extends WebSocketServer {
   onConnection(socket: WebSocket) {
     const clientId = `client#${this.nextClientId++}`;
     this.clients.set(clientId, socket);
+    this.fastify.log.debug({ msg: 'Events client connected', clientId });
 
     const onClose = () => {
+      this.fastify.log.debug({ msg: 'Events client disconnected', clientId });
       socket.removeAllListeners();
       this.clients.delete(clientId);
     };
-
-    this.fastify.log.info({ msg: 'got event connection', clientId });
 
     socket.addEventListener('error', onClose);
     socket.addEventListener('close', onClose);

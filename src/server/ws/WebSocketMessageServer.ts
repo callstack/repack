@@ -272,8 +272,10 @@ export class WebSocketMessageServer extends WebSocketServer {
     let client: WebSocketWithUpgradeReq = socket;
     client.upgradeReq = request;
     this.clients.set(clientId, client);
+    this.fastify.log.debug({ msg: 'Message client connected', clientId });
 
     const onClose = () => {
+      this.fastify.log.debug({ msg: 'Message client disconnected', clientId });
       socket.removeAllListeners();
       this.clients.delete(clientId);
     };
