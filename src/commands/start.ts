@@ -31,6 +31,7 @@ export function start(_: string[], config: Config, args: StartArguments) {
       https: args.https,
       cert: args.cert,
       key: args.key,
+      context: config.root,
     },
     cliOptions
   );

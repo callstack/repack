@@ -88,6 +88,7 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
         https: args.https,
         cert: args.cert || undefined,
         key: args.key || undefined,
+        context: cliOptions.config.root,
       },
     };
   }

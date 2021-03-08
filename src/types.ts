@@ -41,6 +41,7 @@ export interface DevServerOptions {
   https?: boolean;
   cert?: string;
   key?: string;
+  context: string;
 }
 
 export interface CliOptions {

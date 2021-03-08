@@ -32,6 +32,13 @@ export class WebSocketDebuggerServer extends WebSocketServer {
   }
 
   /**
+   * Check if debugger UI is connected to the WebSocketDebuggerServer.
+   */
+  isDebuggerConnected() {
+    return Boolean(this.debuggerSocket);
+  }
+
+  /**
    * Send a message to a given WebSocket connection.
    *
    * @param socket WebSocket connection to send the message to.
