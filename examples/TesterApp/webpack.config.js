@@ -84,6 +84,7 @@ module.exports = {
       // columns: false,
     }),
     new LoggerPlugin({
+      compact: Boolean(devServer),
       output: {
         console: true,
         file: path.join(__dirname, 'build.log'),

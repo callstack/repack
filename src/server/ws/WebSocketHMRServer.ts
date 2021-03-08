@@ -63,6 +63,8 @@ export class WebSocketHMRServer extends WebSocketServer {
         modules: true,
         timings: true,
         hash: true,
+        errors: true,
+        warnings: true,
       });
 
       if (!stats) {

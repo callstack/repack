@@ -128,17 +128,16 @@ class HMRClient {
         }
 
         if (message.body.errors?.length) {
-          console.error('[HMRClient] Cannot apply update due to errors');
           message.body.errors.forEach((error) => {
-            console.error(error);
+            console.error('Cannot apply update due to error:', error);
           });
+          this.LoadingView?.hide();
           return;
         }
 
         if (message.body.warnings?.length) {
-          console.error('[HMRClient] Bundle contains warnings');
           message.body.warnings.forEach((warning) => {
-            console.error(warning);
+            console.warn('[HMRClient] Bundle contains warnings:', warning);
           });
         }
 

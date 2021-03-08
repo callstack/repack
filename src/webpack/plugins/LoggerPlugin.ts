@@ -1,4 +1,3 @@
-import path from 'path';
 import webpack from 'webpack';
 import { Reporter } from '../../Reporter';
 import { LogEntry, LogType, WebpackPlugin } from '../../types';
@@ -6,6 +5,7 @@ import { LogEntry, LogType, WebpackPlugin } from '../../types';
 export type GenericFilter = Array<string | RegExp>;
 
 export interface LoggerPluginConfig {
+  compact?: boolean;
   output?: {
     console?: boolean;
     file?: string;
@@ -17,7 +17,6 @@ export class LoggerPlugin implements WebpackPlugin {
   private static SUPPORTED_TYPES: string[] = ['debug', 'info', 'warn', 'error'];
 
   private fileLogBuffer: string[] = [];
-  private resolvedOutputFile?: string;
   readonly reporter = new Reporter();
 
   constructor(private config: LoggerPluginConfig = {}) {
@@ -72,17 +71,6 @@ export class LoggerPlugin implements WebpackPlugin {
     // Make sure webpack-cli doesn't print stats by default.
     compiler.options.stats = 'none';
 
-    if (this.config.output?.file) {
-      if (path.isAbsolute(this.config.output.file)) {
-        this.resolvedOutputFile = this.config.output.file;
-      } else {
-        this.resolvedOutputFile = path.join(
-          compiler.options.output.path ?? process.cwd(),
-          this.config.output.file
-        );
-      }
-    }
-
     compiler.hooks.infrastructureLog.tap(
       'LoggerPlugin',
       (issuer, type, args) => {
@@ -106,12 +94,51 @@ export class LoggerPlugin implements WebpackPlugin {
     });
 
     compiler.hooks.done.tap('LoggerPlugin', (stats) => {
-      const statsEntry = this.createEntry('LoggerPlugin', 'info', [
-        stats.toString('all'),
-      ]);
-      if (statsEntry) {
-        this.processEntry(statsEntry);
+      if (this.config.compact) {
+        const { time, errors, warnings } = stats.toJson({
+          timings: true,
+          errors: true,
+          warnings: true,
+        });
+
+        let entires: Array<LogEntry | undefined> = [];
+        if (errors?.length) {
+          entires = [
+            this.createEntry('LoggerPlugin', 'error', [
+              'Failed to build bundle due to errors',
+            ]),
+            ...errors.map((error) =>
+              this.createEntry('LoggerPlugin', 'error', [
+                `Error in "${error.moduleName}": ${error.message}`,
+              ])
+            ),
+          ];
+        } else {
+          entires = [
+            this.createEntry('LoggerPlugin', 'info', [
+              warnings?.length ? 'Bundle built with warnings' : 'Bundle built',
+              { time },
+            ]),
+            ...(warnings?.map((warning) =>
+              this.createEntry('LoggerPlugin', 'warn', [
+                `Warning in "${warning.moduleName}": ${warning.message}`,
+              ])
+            ) ?? []),
+          ];
+        }
+
+        for (const entry of entires.filter(Boolean) as LogEntry[]) {
+          this.processEntry(entry);
+        }
+      } else {
+        const statsEntry = this.createEntry('LoggerPlugin', 'info', [
+          stats.toString('all'),
+        ]);
+        if (statsEntry) {
+          this.processEntry(statsEntry);
+        }
       }
+
       this.reporter.flushFileLogs();
       this.reporter.stop();
     });
