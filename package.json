@@ -1,7 +1,7 @@
 {
-  "name": "haul-next",
+  "name": "cargo-toolkit",
   "version": "0.1.0",
-  "description": "",
+  "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -14,7 +14,7 @@
     "webpack:watch": "npm run webpack -- --watch",
     "build": "npm run clean && npm run babel && npm run tsc && npm run webpack",
     "build:watch": "npm run clean && concurrently npm:babel:watch npm:tsc:watch npm:webpack:watch",
-    "docs": "typedoc src/index.ts --out docs/api"
+    "docs:api": "del docs/api && typedoc src/index.ts --out docs/api"
   },
   "author": "zamotany <zamotany.oss@gmail.com>",
   "license": "MIT",

@@ -8,7 +8,7 @@ const {
   DevServerPlugin,
   DEFAULT_PORT,
   ReactNativeTargetPlugin,
-} = require('cargo-bundler');
+} = require('cargo-toolkit');
 
 /**
  * This is the Webpack configuration file for your React Native project.

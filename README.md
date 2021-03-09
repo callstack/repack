@@ -1,4 +1,4 @@
-<h1 align="center">cargo-bundler</h1>
+<h1 align="center">cargo-toolkit</h1>
 <p align="center">
 A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.
 </p>
@@ -13,9 +13,9 @@ A Webpack-based toolkit to build your React Native application with full support
 [![PRs Welcome][prs-welcome-badge]][prs-welcome]
 [![Code of Conduct][coc-badge]][coc]
 
-`cargo-bundler` is a next generation of [Haul](https://github.com/callstack/haul) - a Webpack-based bundler for React Native applications.
+`cargo-toolkit` is a next generation of [Haul](https://github.com/callstack/haul) - a Webpack-based bundler for React Native applications.
 
-`cargo-bundler` uses Webpack 5 and React Native CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
+`cargo-toolkit` uses Webpack 5 and React Native CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
 
 ## Features
 
@@ -37,43 +37,43 @@ A Webpack-based toolkit to build your React Native application with full support
 
 ## Why & when
 
-The main feature of `cargo-bundler` is Webpack and it's ecosystem of loaders, plugins and support for various features like symlinks, aliases etc. However, because `cargo-bundler` is based on Webpack, it is targeted towards advanced users who already know how to use Webpack and want to leverage Webpack ecosystem.
+The main feature of `cargo-toolkit` is Webpack and it's ecosystem of loaders, plugins and support for various features like symlinks, aliases etc. However, because `cargo-toolkit` is based on Webpack, it is targeted towards advanced users who already know how to use Webpack and want to leverage Webpack ecosystem.
 
 If you're just starting with React Native, it's better to stick with the default solution - Metro, since you probably won't benefit much from switching to Webpack.
 
 ## Design goals
 
-1. `cargo-bundler` was design for the advanced users, as such it exposes _low-level API_ in form of Webpack plugins and utilities, meaning we only give you the tools you need to build React Native application, but the actual configuration and maintenance of said config is on your shoulders.
-2. In order to support wide variety of use cases and give you as much control as possible, `cargo-bundler` is written to allow you to bundle and run development server directly from Webpack CLI as well by using React Native CLI. You can decide which one you want to go with.
-3. Based on our experience with [Haul](https://github.com/callstack/haul), we shift as much responsibility onto you as possible, so that we can develop features, move at reasonable pace and reduce maintenance cost. Therefor, `cargo-bundler` should be used by seasoned React Native developers with at least basic experience with Webpack.
-4. __[Future]__ We plan to use `cargo-bundler` as a foundation for bringing multi-bundle support to React Native, by allowing you to use asynchronous chunks and finally Webpack 5 latest feature - [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669).
+1. `cargo-toolkit` was design for the advanced users, as such it exposes _low-level API_ in form of Webpack plugins and utilities, meaning we only give you the tools you need to build React Native application, but the actual configuration and maintenance of said config is on your shoulders.
+2. In order to support wide variety of use cases and give you as much control as possible, `cargo-toolkit` is written to allow you to bundle and run development server directly from Webpack CLI as well by using React Native CLI. You can decide which one you want to go with.
+3. Based on our experience with [Haul](https://github.com/callstack/haul), we shift as much responsibility onto you as possible, so that we can develop features, move at reasonable pace and reduce maintenance cost. Therefor, `cargo-toolkit` should be used by seasoned React Native developers with at least basic experience with Webpack.
+4. __[Future]__ We plan to use `cargo-toolkit` as a foundation for bringing multi-bundle support to React Native, by allowing you to use asynchronous chunks and finally Webpack 5 latest feature - [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669).
 
 
-## `cargo-bundler` vs Metro
+## `cargo-toolkit` vs Metro
 
-Both Metro and `cargo-bundler` have different approaches for the similar problem - bundling JavaScript code for your React Native application, where Metro is custom-built solution and `cargo-bundler` uses Webpack. As a result there few differences that you should consider when deciding which one to use:
+Both Metro and `cargo-toolkit` have different approaches for the similar problem - bundling JavaScript code for your React Native application, where Metro is custom-built solution and `cargo-toolkit` uses Webpack. As a result there few differences that you should consider when deciding which one to use:
 
 - Metro is slightly faster, since it has less overhead compared to Webpack and it's configuration options, plugin and loader system.
 - Webpack configuration options and ecosystem allows for much greater control and support for advanced use-cases.
-- Metro's Fast Refresh is slightly more flexible compared to Webpack's solution: Hot Module Replacement + React Refresh - some cases require full application reloaded with `cargo-bundler`, but they are supported with Metro.
+- Metro's Fast Refresh is slightly more flexible compared to Webpack's solution: Hot Module Replacement + React Refresh - some cases require full application reloaded with `cargo-toolkit`, but they are supported with Metro.
 
-## `cargo-bundler` vs Haul
+## `cargo-toolkit` vs Haul
 
-`cargo-bundler` is a direct successor to [Haul](https://github.com/callstack/haul). Therefore we took the experience we gained with Haul while making rather major changes in the approach:
+`cargo-toolkit` is a direct successor to [Haul](https://github.com/callstack/haul). Therefore we took the experience we gained with Haul while making rather major changes in the approach:
 
-- `cargo-bundler` has smaller footprint and allows for greater level of customization, since you have access to the Webpack config.
-- `cargo-bundler` supports Hot Module Replacement + React Refresh, whereas Haul does not.
-- `cargo-bundler` doesn't support any kind of multi-bundling __yet__, whereas Haul supports legacy implementation of multi-bundling (though it requires to alter React Native source code, so we don't recommend that).
-- `cargo-bundler` delivers better Developer Experience by providing you with more meaningful logs, easier usage and more customizability.
+- `cargo-toolkit` has smaller footprint and allows for greater level of customization, since you have access to the Webpack config.
+- `cargo-toolkit` supports Hot Module Replacement + React Refresh, whereas Haul does not.
+- `cargo-toolkit` doesn't support any kind of multi-bundling __yet__, whereas Haul supports legacy implementation of multi-bundling (though it requires to alter React Native source code, so we don't recommend that).
+- `cargo-toolkit` delivers better Developer Experience by providing you with more meaningful logs, easier usage and more customizability.
 
 ## Installation & setup
 
-1. Install `cargo-bundler` dependency:
+1. Install `cargo-toolkit` dependency:
 
 ```bash
-npm i -D cargo-bundler
+npm i -D cargo-toolkit
 # or
-yarn add -D cargo-bundler
+yarn add -D cargo-toolkit
 ```
 
 2. Create `webpack.config.js` based on the [template](./templates/webpack.config.js).
@@ -114,11 +114,11 @@ Haul is an open source project and will always remain free to use. If you think 
 [goto-usage-badge]: https://img.shields.io/badge/go%20to-Usage-blue?style=flat-square
 [goto-usage]: #usage
 
-[build-badge]: https://img.shields.io/github/checks-status/callstack/cargo-bundler/main?label=build&style=flat-square
-[build]: https://circleci.com/gh/callstack/cargo-bundler
-[license-badge]: https://img.shields.io/npm/l/cargo-bundler.svg?style=flat-square
-[license]: https://github.com/callstack/cargo-bundler/blob/master/LICENSE
+[build-badge]: https://img.shields.io/github/checks-status/callstack/cargo-toolkit/main?label=build&style=flat-square
+[build]: https://circleci.com/gh/callstack/cargo-toolkit
+[license-badge]: https://img.shields.io/npm/l/cargo-toolkit.svg?style=flat-square
+[license]: https://github.com/callstack/cargo-toolkit/blob/master/LICENSE
 [prs-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
 [prs-welcome]: http://makeapullrequest.com
 [coc-badge]: https://img.shields.io/badge/code%20of-conduct-ff69b4.svg?style=flat-square
-[coc]: https://github.com/callstack/cargo-bundler/blob/master/CODE_OF_CONDUCT.md
+[coc]: https://github.com/callstack/cargo-toolkit/blob/master/CODE_OF_CONDUCT.md
