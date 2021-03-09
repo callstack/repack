@@ -39,38 +39,24 @@ declare var __webpack_require__: { l: Function };
 declare var module: HotModule;
 
 import querystring from 'querystring';
-// @ts-ignore
-import { DevSettings, Platform } from 'react-native';
 import type { HMRMessage, HMRMessageBody } from '../types';
-
-function dismissErrors() {
-  // TODO: figure out why this doesn't work
-  if (Platform.OS === 'ios') {
-    const NativeRedBox = require('react-native/Libraries/NativeModules/specs/NativeRedBox')
-      .default;
-
-    NativeRedBox?.dismiss?.();
-  } else {
-    const NativeExceptionsManager = require('react-native/Libraries/Core/NativeExceptionsManager')
-      .default;
-    console.log(NativeExceptionsManager);
-    NativeExceptionsManager?.dismissRedbox();
-  }
-
-  const LogBoxData = require('react-native/Libraries/LogBox/Data/LogBoxData');
-  LogBoxData.clear();
-}
 
 class HMRClient {
   url: string;
   socket: WebSocket;
   lastHash = '';
-  LoadingView?: {
-    showMessage(text: string, type: 'load' | 'refresh'): void;
-    hide(): void;
-  };
 
-  constructor(host: string, private reload: () => void) {
+  constructor(
+    host: string,
+    private app: {
+      reload: () => void;
+      dismissErrors: () => void;
+      LoadingView: {
+        showMessage(text: string, type: 'load' | 'refresh'): void;
+        hide(): void;
+      };
+    }
+  ) {
     this.url = `ws://${host}/__hmr`;
     this.socket = new WebSocket(this.url);
 
@@ -88,11 +74,6 @@ class HMRClient {
 
     this.socket.onmessage = (event) => {
       try {
-        if (!this.LoadingView) {
-          // For some reason, this module has to be lazy loaded, otherwise the app won't render.
-          this.LoadingView = require('react-native/Libraries/Utilities/LoadingView');
-        }
-
         this.processMessage(JSON.parse(event.data.toString()));
       } catch (error) {
         console.warn('[HMRClient] Invalid HMR message', { event, error });
@@ -110,7 +91,7 @@ class HMRClient {
   processMessage(message: HMRMessage) {
     switch (message.action) {
       case 'building':
-        this.LoadingView?.showMessage('Rebuilding...', 'refresh');
+        this.app.LoadingView.showMessage('Rebuilding...', 'refresh');
         console.log('[HMRClient] Bundle rebuilding', {
           name: message.body?.name,
         });
@@ -131,7 +112,7 @@ class HMRClient {
           message.body.errors.forEach((error) => {
             console.error('Cannot apply update due to error:', error);
           });
-          this.LoadingView?.hide();
+          this.app.LoadingView.hide();
           return;
         }
 
@@ -158,11 +139,11 @@ class HMRClient {
 
   async checkUpdates(update: HMRMessageBody) {
     try {
-      this.LoadingView?.showMessage('Refreshing...', 'refresh');
+      this.app.LoadingView.showMessage('Refreshing...', 'refresh');
       const updatedModules = await module.hot.check(false);
       if (!updatedModules) {
         console.warn('[HMRClient] Cannot find update - full reload needed');
-        this.reload();
+        this.app.reload();
         return;
       }
 
@@ -192,12 +173,12 @@ class HMRClient {
           '[HMRClient] Not every module was accepted - full reload needed',
           { unacceptedModules }
         );
-        this.reload();
+        this.app.reload();
       } else {
         console.log('[HMRClient] Renewed modules - app is up to date', {
           renewedModules,
         });
-        dismissErrors();
+        this.app.dismissErrors();
       }
     } catch (error) {
       if (module.hot.status() === 'fail' || module.hot.status() === 'abort') {
@@ -205,12 +186,12 @@ class HMRClient {
           '[HMRClient] Cannot check for update - full reload needed'
         );
         console.warn('[HMRClient]', error);
-        this.reload();
+        this.app.reload();
       } else {
         console.warn('[HMRClient] Update check failed', { error });
       }
     } finally {
-      this.LoadingView?.hide();
+      this.app.LoadingView.hide();
     }
   }
 }
@@ -250,7 +231,25 @@ if (__resourceQuery) {
       }
     };
 
+    const { DevSettings, Platform } = require('react-native');
+    const LoadingView = require('react-native/Libraries/Utilities/LoadingView');
+
     const reload = () => DevSettings.reload();
-    new HMRClient(host, reload);
+    const dismissErrors = () => {
+      if (Platform.OS === 'ios') {
+        const NativeRedBox = require('react-native/Libraries/NativeModules/specs/NativeRedBox')
+          .default;
+        NativeRedBox?.dismiss?.();
+      } else {
+        const NativeExceptionsManager = require('react-native/Libraries/Core/NativeExceptionsManager')
+          .default;
+        NativeExceptionsManager?.dismissRedbox();
+      }
+
+      const LogBoxData = require('react-native/Libraries/LogBox/Data/LogBoxData');
+      LogBoxData.clear();
+    };
+
+    new HMRClient(host, { reload, dismissErrors, LoadingView });
   }
 }

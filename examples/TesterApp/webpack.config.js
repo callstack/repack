@@ -40,7 +40,7 @@ module.exports = {
   resolve: {
     ...getResolveOptions(platform),
     alias: {
-      'react-native$': reactNativePath
+      'react-native': reactNativePath
     }
   },
   output: {
