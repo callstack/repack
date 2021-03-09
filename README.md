@@ -7,6 +7,8 @@ A Webpack-based toolkit to build your React Native application with full support
 
 [![Go to: Installation][goto-installation-badge]][goto-installation]
 [![Go to: Usage][goto-usage-badge]][goto-usage]
+[![Go to: Usage][goto-api-docs-badge]][goto-api-docs]
+
 
 [![Build Status][build-badge]][build]
 [![MIT License][license-badge]][license]
@@ -103,6 +105,10 @@ Once you've completed [Installation & setup](#installation--setup) you can:
 - Building JavaScript bundle only by running `npx react-native cargo-bundle`.
 - Building JavaScript bundle or starting development server with Webpack CLI by running `npx webpack-cli -c webpack.config.js`.
 
+## API documentation
+
+The API documentation is available at https://callstack.github.io/cargo-bundler/
+
 ## Made with ❤️ at Callstack
 
 Haul is an open source project and will always remain free to use. If you think it's cool, please star it 🌟. [Callstack][callstack-readme-with-love] is a group of React and React Native geeks, contact us at [hello@callstack.com](mailto:hello@callstack.com) if you need any help with these or just want to say hi!
@@ -113,6 +119,8 @@ Haul is an open source project and will always remain free to use. If you think 
 [goto-installation]: #installation--setup
 [goto-usage-badge]: https://img.shields.io/badge/go%20to-Usage-blue?style=flat-square
 [goto-usage]: #usage
+[goto-api-docs-badge]: https://img.shields.io/badge/go%20to-API%20docs-blue?style=flat-square
+[goto-api-docs]: https://callstack.github.io/cargo-bundler/
 
 [build-badge]: https://img.shields.io/github/checks-status/callstack/cargo-toolkit/main?label=build&style=flat-square
 [build]: https://circleci.com/gh/callstack/cargo-toolkit
