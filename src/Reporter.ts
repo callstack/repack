@@ -225,8 +225,7 @@ export class Reporter {
           body +=
             util.inspect(rest, {
               colors: true,
-              maxArrayLength: Infinity,
-              depth: null,
+              depth: 3,
             }) + ' ';
         }
       }
