@@ -8,7 +8,7 @@ const {
   DevServerPlugin,
   DEFAULT_PORT,
   ReactNativeTargetPlugin,
-} = require('../..');
+} = require('cargo-bundler');
 
 /**
  * This is the Webpack configuration file for your React Native project.
@@ -94,9 +94,9 @@ module.exports = {
      * dependency. You might need when using workspaces/monorepos or unconventional project
      * structure. For simple/typical project you won't need it.
      */
-    alias: {
-      'react-native': reactNativePath
-    }
+    // alias: {
+    //   'react-native': reactNativePath
+    // }
   },
   /**
    * Configure output.
