@@ -41,6 +41,14 @@ declare var module: HotModule;
 import querystring from 'querystring';
 import type { HMRMessage, HMRMessageBody } from '../types';
 
+class HmrEvent {
+  target: { src: string };
+
+  constructor(public type: string, src: string) {
+    this.target = { src };
+  }
+}
+
 class HMRClient {
   url: string;
   socket: WebSocket;
@@ -208,14 +216,11 @@ if (__resourceQuery) {
     // TODO: move it somewhere else
     __webpack_require__.l = async (
       url: string,
-      cb: (event?: Event) => void
+      cb: (event?: HmrEvent) => void
     ) => {
       const response = await fetch(url);
       if (!response.ok) {
-        const event = new Event(response.statusText);
-        // @ts-ignore
-        event.target.src = url;
-        cb(event);
+        cb(new HmrEvent(response.statusText, url));
       } else {
         const script = await response.text();
         try {
@@ -223,10 +228,8 @@ if (__resourceQuery) {
           factory.call(this);
           cb();
         } catch (error) {
-          const event = new Event('exec');
-          // @ts-ignore
-          event.target.src = url;
-          cb(event);
+          console.error('[__webpack_require__.l] Error:', error);
+          cb(new HmrEvent('exec', url));
         }
       }
     };

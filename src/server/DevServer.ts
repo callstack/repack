@@ -56,6 +56,14 @@ export class DevServer extends BaseDevServer {
       async (fileUrl) => {
         const filename = getFilenameFromUrl(this.wdm.context, fileUrl);
         if (filename) {
+          return (await readFileFromWdm(this.wdm, filename)).toString();
+        } else {
+          throw new Error(`Cannot infer filename from url: ${fileUrl}`);
+        }
+      },
+      async (fileUrl) => {
+        const filename = getFilenameFromUrl(this.wdm.context, fileUrl);
+        if (filename) {
           const fallbackSourceMapFilename = `${filename}.map`;
           const bundle = (await readFileFromWdm(this.wdm, filename)).toString();
           const [, sourceMappingUrl] = /sourceMappingURL=(.+)$/.exec(
@@ -119,7 +127,10 @@ export class DevServer extends BaseDevServer {
           reply.send(results);
         }
       } catch (error) {
-        this.fastify.log.error(error);
+        this.fastify.log.error({
+          msg: 'Failed to symbolicate',
+          error: error.message,
+        });
         reply.code(500).send();
       }
     });

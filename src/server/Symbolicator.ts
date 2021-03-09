@@ -63,7 +63,8 @@ export class Symbolicator {
   constructor(
     private projectRoot: string,
     private logger: FastifyDevServer['log'],
-    private getSourceMap: (fileUrl: string) => Promise<string>
+    private readFileFromWdm: (fileUrl: string) => Promise<string>,
+    private readSourceMapFromWdm: (fileUrl: string) => Promise<string>
   ) {}
 
   async process(
@@ -81,7 +82,7 @@ export class Symbolicator {
     const processedFrames: StackFrame[] = [];
     for (const frame of frames) {
       if (!this.sourceMapConsumerCache[frame.file]) {
-        const rawSourceMap = await this.getSourceMap(frame.file);
+        const rawSourceMap = await this.readSourceMapFromWdm(frame.file);
         const sourceMapConsumer = await new SourceMapConsumer(rawSourceMap);
         this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
       }
@@ -145,12 +146,22 @@ export class Symbolicator {
       }
 
       try {
-        const filename = path.join(
-          this.projectRoot,
-          frame.file.replace('webpack://', '')
-        );
-
-        const source = await readFileAsync(filename, 'utf8');
+        let filename;
+        let source;
+        if (
+          frame.file.startsWith('http') &&
+          frame.file.includes('index.bundle')
+        ) {
+          // Frame points to the bundle so we need to read bundle from WDM's FS.
+          filename = frame.file;
+          source = await this.readFileFromWdm('/index.bundle');
+        } else {
+          filename = path.join(
+            this.projectRoot,
+            frame.file.replace('webpack://', '')
+          );
+          source = await readFileAsync(filename, 'utf8');
+        }
 
         return {
           content: codeFrameColumns(
@@ -167,7 +178,10 @@ export class Symbolicator {
           fileName: filename,
         };
       } catch (error) {
-        this.logger.error(error);
+        this.logger.error({
+          msg: 'Failed to create code frame',
+          error: error.message,
+        });
       }
 
       return undefined;
