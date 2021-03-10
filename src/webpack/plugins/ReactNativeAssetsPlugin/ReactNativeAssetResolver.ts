@@ -3,8 +3,17 @@ import escapeStringRegexp from 'escape-string-regexp';
 import webpack from 'webpack';
 import { HookMap, SyncHook } from 'tapable';
 
+/**
+ * {@link ReactNativeAssetResolver} configuration options.
+ */
 export interface ReactNativeAssetResolverConfig {
+  /**
+   * Override default test RegExp. If the asset matches the `test` RegExp, it will be process
+   * by the custom React Native asset resolver. Otherwise, the resolution will process normally and
+   * the asset will be handled by Webpack.
+   */
   test?: RegExp;
+  /** Target application platform. */
   platform: string;
 }
 

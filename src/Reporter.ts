@@ -33,11 +33,26 @@ interface ResLogData {
   statusCode: number;
 }
 
+/**
+ * {@link Reporter} configuration options.
+ */
 export interface ReporterConfig {
+  /** Whether to log additional debug messages. */
   verbose?: boolean;
 }
 
+/**
+ * Class that handles all reporting, logging and compilation progress handling.
+ */
 export class Reporter {
+  /**
+   * Get message symbol for given log type.
+   *
+   * @param logType Log type.
+   * @returns String with the symbol.
+   *
+   * @internal
+   */
   static getSymbolForType(logType: LogType) {
     if (IS_SYMBOL_SUPPORTED) {
       return SYMBOLS[logType];
@@ -46,6 +61,15 @@ export class Reporter {
     return FALLBACK_SYMBOLS[logType];
   }
 
+  /**
+   * Apply ANSI colors to given text.
+   *
+   * @param logType Log type for the text, based on which different colors will be applied.
+   * @param text Text to apply the color onto.
+   * @returns Text wrapped in ANSI color sequences.
+   *
+   * @internal
+   */
   static colorizeText(logType: LogType, text: string) {
     if (logType === 'warn') {
       return colorette.yellow(text);
@@ -56,7 +80,9 @@ export class Reporter {
     return text;
   }
 
+  /** Whether reporter is running as a worker. */
   public readonly isWorker: boolean;
+  /** Whether reporter is running in verbose mode. */
   public readonly isVerbose: boolean;
 
   private ora?: Ora;
@@ -65,6 +91,12 @@ export class Reporter {
   private outputFilename?: string;
   private progress: Record<string, { value: number; label: string }> = {};
 
+  /**
+   * Create new instance of Reporter.
+   * If Reporter is running as a non-worker, it will start outputting to terminal.
+   *
+   * @param config Reporter configuration. Defaults to empty object.
+   */
   constructor(private config: ReporterConfig = {}) {
     this.isWorker = isWorker();
     this.isVerbose = this.config.verbose ?? isVerbose();
@@ -73,16 +105,28 @@ export class Reporter {
     }
   }
 
+  /**
+   * Stop reporting and perform cleanup.
+   */
   stop() {
     if (!this.isWorker && this.ora) {
       this.ora.stop();
     }
   }
 
+  /**
+   * Enable reporting to file alongside reporting to terminal.
+   *
+   * @param filename Absolute path to file to which write logs.
+   */
   enableFileLogging(filename: string) {
     this.outputFilename = filename;
   }
 
+  /**
+   * Flush all buffered logs to a file provided that file
+   * reporting was enabled with {@link enableFileLogging}.
+   */
   flushFileLogs() {
     if (this.outputFilename) {
       fs.writeFileSync(this.outputFilename, this.fileLogBuffer.join('\n'));
@@ -90,6 +134,12 @@ export class Reporter {
     }
   }
 
+  /**
+   * Process new log entry and report it to terminal and file if file reporting was enabled with
+   * {@link enableFileLogging}.
+   *
+   * @param logEntry Log entry to process & report.
+   */
   process(logEntry: LogEntry) {
     if (this.outputFilename) {
       this.fileLogBuffer.push(JSON.stringify(logEntry));

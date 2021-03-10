@@ -1,3 +1,11 @@
+/**
+ * Get Webpack's resolve options to properly resolve JavaScript files
+ * that contain `<platform>` or `native` (eg `file.ios.js`) suffixes as well as `react-native` field
+ * in dependencies' `package.json`.
+ *
+ * @param platform Target application platform.
+ * @returns Webpack's resolve options.
+ */
 export function getResolveOptions(platform: string) {
   return {
     /**

@@ -2,7 +2,17 @@ import path from 'path';
 import webpack from 'webpack';
 import { WebpackPlugin } from '../../types';
 
-export interface JavaScriptLooseModeConfig {
+/**
+ * {@link JavaScriptLooseModePlugin} configuration options.
+ */
+export interface JavaScriptLooseModePluginConfig {
+  /**
+   * Pattern for matching modules that should be run in loose mode:
+   * - `boolean` - enables or disables loose mode for all the modules within a bundle,
+   * - `string[]` - enables loose mode for only modules specified within the array,
+   * - `RegExp[]` - enables loose mode for only modules matching any of the regex within the array,
+   * - `(filename: string) => boolean` - enables loose mode for only modules, for which the function returns `true`.
+   */
   include: boolean | Array<string | RegExp> | ((filename: string) => boolean);
 }
 
@@ -12,25 +22,19 @@ export interface JavaScriptLooseModeConfig {
  * might not work in JavaScript Strict mode.
  */
 export class JavaScriptLooseModePlugin implements WebpackPlugin {
-  shouldUseLoosMode: (filename: string) => boolean;
+  private shouldUseLoosMode: (filename: string) => boolean;
 
   /**
    * Constructs new `JavaScriptLooseModePlugin`.
    *
-   * @param config - Plugin config
-   *
-   * @param config.include - Pattern for matching modules that should be run in loose mode:
-   * - `boolean` - enables or disables loose mode for all the modules within a bundle,
-   * - `string[]` - enables loose mode for only modules specified within the array,
-   * - `RegExp[]` - enables loose mode for only modules matching any of the regex within the array,
-   * - `(filename: string) => boolean` - enables loose mode for only modules, for which the function returns `true`.
+   * @param config Plugin configuration options.
    */
-  constructor({ include }: JavaScriptLooseModeConfig) {
-    if (include === true) {
+  constructor(config: JavaScriptLooseModePluginConfig) {
+    if (config.include === true) {
       this.shouldUseLoosMode = () => true;
-    } else if (Array.isArray(include)) {
+    } else if (Array.isArray(config.include)) {
       this.shouldUseLoosMode = (filename: string) => {
-        return (include as Array<string | RegExp>).some((element) => {
+        return (config.include as Array<string | RegExp>).some((element) => {
           if (typeof element === 'string') {
             if (!path.isAbsolute(element)) {
               throw new Error(
@@ -43,13 +47,18 @@ export class JavaScriptLooseModePlugin implements WebpackPlugin {
           return element.test(filename);
         });
       };
-    } else if (typeof include === 'function') {
-      this.shouldUseLoosMode = include;
+    } else if (typeof config.include === 'function') {
+      this.shouldUseLoosMode = config.include;
     } else {
       this.shouldUseLoosMode = () => false;
     }
   }
 
+  /**
+   * Apply the plugin.
+   *
+   * @param compiler Webpack compiler instance.
+   */
   apply(compiler: webpack.Compiler) {
     compiler.hooks.make.tap(
       'JavaScriptLooseModePlugin',

@@ -6,16 +6,52 @@ import {
   ReactNativeAssetResolverConfig,
 } from './ReactNativeAssetResolver';
 
-interface ReactNativeAssetsPluginConfig extends ReactNativeAssetResolverConfig {
+/**
+ * {@link ReactNativeAssetsPlugin} configuration options.
+ */
+export interface ReactNativeAssetsPluginConfig
+  extends ReactNativeAssetResolverConfig {
+  /** Context in which all resolution happens. Usually it's project root directory. */
   context: string;
+  /**
+   * Bundle output path - directory where built bundle will be saved.
+   * If not provided it will be inferred from Webpack configuration.
+   */
   outputPath?: string;
+  /**
+   * Directory where all assets (eg: images, video, audio) should be saved.
+   * If not provided, all assets will be saved in the same directory as {@link outputPath}.
+   */
   assetsOutputPath?: string;
+  /**
+   * Whether the build produces static bundle saved to file or
+   * the bundle will be updated multiple times and resides in memory.
+   *
+   * __When development server is running, `bundleToFile` should be set to `false`.__
+   */
   bundleToFile?: boolean;
 }
 
+/**
+ * Plugin for loading and processing assets (images, audio, video etc) for
+ * React Native applications.
+ *
+ * Assets processing in React Native differs from Web, Node.js or other targets. This plugin allows
+ * you to use assets in the same way as you would do when using Metro.
+ */
 export class ReactNativeAssetsPlugin implements WebpackPlugin {
+  /**
+   * Constructs new `ReactNativeAssetsPlugin`.
+   *
+   * @param config Plugin configuration options.
+   */
   constructor(private config: ReactNativeAssetsPluginConfig) {}
 
+  /**
+   * Apply the plugin.
+   *
+   * @param compiler Webpack compiler instance.
+   */
   apply(compiler: webpack.Compiler) {
     const assetResolver = new ReactNativeAssetResolver(this.config, compiler);
 

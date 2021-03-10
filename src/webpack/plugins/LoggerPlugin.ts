@@ -4,28 +4,59 @@ import { LogEntry, LogType, WebpackPlugin } from '../../types';
 
 export type GenericFilter = Array<string | RegExp>;
 
+/**
+ * {@link LoggerPlugin} configuration options.
+ */
 export interface LoggerPluginConfig {
+  /** Target application platform. */
   platform: string;
+  /** Whether development server is running/enabled. */
   devServer?: boolean;
+  /** Logging output config. */
   output?: {
+    /** Whether to log to console. */
     console?: boolean;
+    /** Absolute path to file to log messages to. */
     file?: string;
+    /** Listener for new messages. */
     listener?: (logEntry: LogEntry) => void;
   };
 }
 
+/**
+ * Logger plugin that handles all logging coming from the Webpack ecosystem, including compilation
+ * progress as well as debug logs from other plugins and resolvers.
+ */
 export class LoggerPlugin implements WebpackPlugin {
   private static SUPPORTED_TYPES: string[] = ['debug', 'info', 'warn', 'error'];
 
-  private fileLogBuffer: string[] = [];
+  /** {@link Reporter} instance used to actually writing logs to terminal/file. */
   readonly reporter = new Reporter();
 
+  /**
+   * Constructs new `LoggerPlugin`.
+   *
+   * @param config Plugin configuration options.
+   */
   constructor(private config: LoggerPluginConfig) {
     if (this.config.output === undefined) {
       this.config.output = { console: true };
     }
+    // TODO: disable console in reporter
+    if (this.config.output.file) {
+      this.reporter.enableFileLogging(this.config.output.file);
+    }
   }
 
+  /**
+   * Create log entry from Webpack log message from {@link WebpackLogger}.
+   *
+   * @param issuer Issuer of the message.
+   * @param type Type of the message.
+   * @param args The body of the message.
+   * @param timestamp Timestamp when the message was recorder.
+   * @returns Log entry object or undefined when if message is invalid.
+   */
   createEntry(
     issuer: string,
     type: string,
@@ -46,6 +77,11 @@ export class LoggerPlugin implements WebpackPlugin {
     return undefined;
   }
 
+  /**
+   * Process log entry and pass it to {@link reporter} instance.
+   *
+   * @param entry Log entry to process
+   */
   processEntry(entry: LogEntry) {
     if (
       !this.config.output?.console &&
@@ -55,19 +91,18 @@ export class LoggerPlugin implements WebpackPlugin {
       return;
     }
 
-    if (this.config.output.console) {
-      this.reporter.process(entry);
-    }
-
-    if (this.config.output.file) {
-      this.fileLogBuffer.push(JSON.stringify(entry));
-    }
+    this.reporter.process(entry);
 
     if (this.config.output.listener) {
       this.config.output.listener(entry);
     }
   }
 
+  /**
+   * Apply the plugin.
+   *
+   * @param compiler Webpack compiler instance.
+   */
   apply(compiler: webpack.Compiler) {
     // Make sure webpack-cli doesn't print stats by default.
     compiler.options.stats = 'none';

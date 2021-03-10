@@ -3,11 +3,29 @@ import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import { WebpackPlugin } from '../../../types';
 import { DevServer, DevServerConfig } from '../../../server';
 
-interface DevServerPluginConfig extends DevServerConfig {}
+/**
+ * {@link DevServerPlugin} configuration options.
+ */
+export interface DevServerPluginConfig extends DevServerConfig {}
 
+/**
+ * Class for running development server that handles serving the built bundle, all assets as well as
+ * providing Hot Module Replacement functionality.
+ */
 export class DevServerPlugin implements WebpackPlugin {
+  /**
+   * Constructs new `DevServerPlugin`.
+   *
+   * @param config Plugin configuration options. If `undefined`, the development server will be
+   * disabled and won't run.
+   */
   constructor(private config?: DevServerPluginConfig) {}
 
+  /**
+   * Apply the plugin.
+   *
+   * @param compiler Webpack compiler instance.
+   */
   apply(compiler: webpack.Compiler) {
     const config = this.config;
     if (!config) {
