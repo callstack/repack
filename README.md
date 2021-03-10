@@ -127,6 +127,6 @@ Haul is an open source project and will always remain free to use. If you think 
 [license-badge]: https://img.shields.io/npm/l/cargo-toolkit.svg?style=flat-square
 [license]: https://github.com/callstack/cargo-toolkit/blob/master/LICENSE
 [prs-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
-[prs-welcome]: http://makeapullrequest.com
+[prs-welcome]: ./CONTRIBUTING.md
 [coc-badge]: https://img.shields.io/badge/code%20of-conduct-ff69b4.svg?style=flat-square
 [coc]: https://github.com/callstack/cargo-toolkit/blob/master/CODE_OF_CONDUCT.md

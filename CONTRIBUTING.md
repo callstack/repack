@@ -1,4 +1,4 @@
-# Contributing to React Native Paper
+# Contributing to `cargo-toolkit`
 
 ## Code of Conduct
 
