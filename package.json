@@ -9,12 +9,16 @@
     "babel": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"src/client/**\"",
     "babel:watch": "npm run babel -- --watch",
     "tsc": "tsc",
-    "tsc:watch": "npm run tsc -- --watch --preserveWatchOutput",
+    "tsc:build": "tsc --build tsconfig.release.json",
+    "tsc:watch": "npm run tsc:build -- --watch --preserveWatchOutput",
+    "lint": "eslint --ext \".js,.ts\" react-native.config.js src templates",
     "webpack": "webpack -c webpack.config.js",
     "webpack:watch": "npm run webpack -- --watch",
     "build": "npm run clean && npm run babel && npm run tsc && npm run webpack",
     "build:watch": "npm run clean && concurrently npm:babel:watch npm:tsc:watch npm:webpack:watch",
-    "docs:api": "del docs && typedoc src/index.ts --out docs"
+    "docs:api": "del docs && typedoc src/index.ts --out docs",
+    "release": "echo \"todo\" && exit 1",
+    "test": "echo \"There are no tests\" && exit 0"
   },
   "author": "zamotany <zamotany.oss@gmail.com>",
   "license": "MIT",

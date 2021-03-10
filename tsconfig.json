@@ -8,7 +8,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
-    "emitDeclarationOnly": true,
+    "noEmit": true,
     "outDir": "dist",
   },
   "include": [

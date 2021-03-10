@@ -8,6 +8,7 @@
 
 /* global __fbBatchedBridge, self, importScripts, postMessage, onmessage: true */
 /* eslint no-unused-vars: 0 */
+/* eslint no-restricted-globals: 0 */
 
 onmessage = (function () {
   var visibilityState;
