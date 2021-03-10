@@ -18,3 +18,12 @@ jobs:
 
       - name: Generate API documentation
         run: npm run docs:api
+
+      - name: push
+        uses: github-actions-x/commit@v2.7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          push-branch: 'main'
+          commit-message: 'docs: update API documentation [auto-generated]'
+          force-add: 'true'
+          files: docs/
