@@ -19,11 +19,11 @@ jobs:
       - name: Generate API documentation
         run: npm run docs:api
 
-      - name: push
-        uses: github-actions-x/commit@v2.7
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          push-branch: 'main'
-          commit-message: 'docs: update API documentation [auto-generated]'
-          force-add: 'true'
-          files: docs/
+          target_branch: gh-pages
+          build_dir: docs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
