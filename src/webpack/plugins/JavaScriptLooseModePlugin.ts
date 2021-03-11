@@ -20,6 +20,8 @@ export interface JavaScriptLooseModePluginConfig {
  * Enable JavaScript loose mode, by removing `use strict` directives from the code.
  * This plugin should only be used for compatibility reasons with Metro, where some libraries
  * might not work in JavaScript Strict mode.
+ *
+ * @category Webpack Plugin
  */
 export class JavaScriptLooseModePlugin implements WebpackPlugin {
   private shouldUseLoosMode: (filename: string) => boolean;

@@ -15,6 +15,7 @@ import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
  * @param args Parsed command line arguments.
  *
  * @internal
+ * @category CLI command
  */
 export function bundle(_: string[], config: Config, args: BundleArguments) {
   const webpackConfigPath = getWebpackConfigPath(config.root);

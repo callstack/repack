@@ -9,6 +9,8 @@ import { WebSocketServer } from './WebSocketServer';
  *
  * React Native application (aka client) will send and receive messages from the debugger UI
  * which runs inside a browser.
+ *
+ * @category Development server
  */
 export class WebSocketDebuggerServer extends WebSocketServer {
   /**

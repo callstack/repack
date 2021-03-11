@@ -1,11 +1,6 @@
-import { Writable } from 'stream';
-import Fastify, { FastifyLoggerOptions } from 'fastify';
+import Fastify from 'fastify';
 import { DevServerOptions } from '../../types';
-import { FastifyDevServer } from '../types';
-
-export interface DevServerLoggerOptions extends FastifyLoggerOptions {
-  stream?: Writable;
-}
+import { DevServerLoggerOptions, FastifyDevServer } from '../types';
 
 export function getFastifyInstance(
   config: DevServerOptions,

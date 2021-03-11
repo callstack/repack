@@ -31,6 +31,13 @@ export const DEFAULT_FALLBACK: WebpackOptionsWithoutPlatform = {
 
 export const DEFAULT_PORT = 8081;
 
+/**
+ *
+ * @param config
+ * @returns
+ *
+ * @category Webpack util
+ */
 export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
   const fallback: WebpackOptions = { ...DEFAULT_FALLBACK, ...config.fallback };
   const rawCliOptions = process.env[CLI_OPTIONS_ENV_KEY];

@@ -5,6 +5,8 @@ import { WebSocketServer } from './WebSocketServer';
 /**
  * Class for creating a WebSocket server for communication with React Native clients.
  * All client logs - logs from React Native application - are processed here.
+ *
+ * @category Development server
  */
 export class WebSocketDevClientServer extends WebSocketServer {
   private clients = new Map<string, WebSocket>();

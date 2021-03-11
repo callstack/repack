@@ -9,6 +9,8 @@ import { ReactNativeChunkLoadingPlugin } from './ReactNativeChunkLoadingPlugin';
  *
  * Globally available APIs differ with React Native and other target's like Web, so there are some
  * tweaks necessary to make the final bundle runnable inside React Native's JavaScript VM.
+ *
+ * @category Webpack Plugin
  */
 export class ReactNativeTargetPlugin implements WebpackPlugin {
   /**

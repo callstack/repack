@@ -1,0 +1,4 @@
+{
+  "out": "docs",
+  "categoryOrder": ["Webpack Plugin", "Development server", "*"]
+}

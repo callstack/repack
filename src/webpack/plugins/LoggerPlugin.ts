@@ -26,6 +26,8 @@ export interface LoggerPluginConfig {
 /**
  * Logger plugin that handles all logging coming from the Webpack ecosystem, including compilation
  * progress as well as debug logs from other plugins and resolvers.
+ *
+ * @category Webpack Plugin
  */
 export class LoggerPlugin implements WebpackPlugin {
   private static SUPPORTED_TYPES: string[] = ['debug', 'info', 'warn', 'error'];

@@ -4,7 +4,13 @@ import {
   Http2ServerRequest,
   Http2ServerResponse,
 } from 'http2';
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { Writable } from 'stream';
+import {
+  FastifyInstance,
+  FastifyLoggerOptions,
+  FastifyReply,
+  FastifyRequest,
+} from 'fastify';
 import { RouteGenericInterface } from 'fastify/types/route';
 
 export type FastifyDevServer = FastifyInstance<
@@ -26,3 +32,12 @@ export type DevServerReply = FastifyReply<
   RouteGenericInterface,
   unknown
 >;
+
+/**
+ * Development server logging configuration.
+ * Apart from 'stream' all other fields come from Fastify types.
+ */
+export interface DevServerLoggerOptions extends FastifyLoggerOptions {
+  /** Stream to write logs to. */
+  stream?: Writable;
+}

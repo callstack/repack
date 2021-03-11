@@ -22,6 +22,8 @@ export interface InitializationEntriesOptions {
  * @param reactNativePath Absolute path to directory with React Native dependency.
  * @param options Additional options that can modify returned entires.
  * @returns Array of entires.
+ *
+ * @category Webpack util
  */
 export function getInitializationEntries(
   reactNativePath: string,

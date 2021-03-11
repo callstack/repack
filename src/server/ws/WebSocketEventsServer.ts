@@ -35,6 +35,8 @@ export interface EventMessage {
  * Class for creating a WebSocket server to process events and reports.
  *
  * Based on: https://github.com/react-native-community/cli/blob/v4.14.0/packages/cli-server-api/src/websocket/eventsSocketServer.ts
+ *
+ * @category Development server
  */
 export class WebSocketEventsServer extends WebSocketServer {
   static readonly PROTOCOL_VERSION = 2;

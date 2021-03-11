@@ -38,6 +38,8 @@ export interface ReactNativeAssetsPluginConfig
  *
  * Assets processing in React Native differs from Web, Node.js or other targets. This plugin allows
  * you to use assets in the same way as you would do when using Metro.
+ *
+ * @category Webpack Plugin
  */
 export class ReactNativeAssetsPlugin implements WebpackPlugin {
   /**

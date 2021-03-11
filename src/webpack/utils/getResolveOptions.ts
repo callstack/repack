@@ -5,6 +5,8 @@
  *
  * @param platform Target application platform.
  * @returns Webpack's resolve options.
+ *
+ * @category Webpack util
  */
 export function getResolveOptions(platform: string) {
   return {

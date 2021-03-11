@@ -16,7 +16,7 @@
     "webpack:watch": "npm run webpack -- --watch",
     "build": "npm run clean && npm run babel && npm run tsc && npm run webpack",
     "build:watch": "npm run clean && concurrently npm:babel:watch npm:tsc:watch npm:webpack:watch",
-    "docs:api": "del docs && typedoc src/index.ts --out docs",
+    "docs:api": "del docs && typedoc src/index.ts",
     "release": "echo \"todo\" && exit 1",
     "test": "echo \"There are no tests\" && exit 0"
   },

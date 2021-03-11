@@ -14,6 +14,8 @@ export interface WebSocketHMRServerConfig {
 
 /**
  * Class for creating a WebSocket server for Hot Module Replacement.
+ *
+ * @category Development server
  */
 export class WebSocketHMRServer extends WebSocketServer {
   private latestStats?: webpack.Stats;

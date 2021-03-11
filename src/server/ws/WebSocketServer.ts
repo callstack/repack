@@ -6,6 +6,8 @@ import { FastifyDevServer } from '../types';
 
 /**
  * Abstract class for providing common logic (eg routing) for all WebSocket servers.
+ *
+ * @category Development server
  */
 export abstract class WebSocketServer {
   /** An instance of the underlying WebSocket server. */

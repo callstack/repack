@@ -10,14 +10,28 @@ import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
 import { readFileFromWdm } from './utils/readFileFromWdm';
 import { transformFastifyLogToLogEntry } from './utils/transformFastifyLogToWebpackLogEntry';
 import { WebSocketHMRServer } from './ws';
+import { DevServerLoggerOptions } from './types';
 
+/**
+ * {@link DevServer} configuration options.
+ */
 export interface DevServerConfig extends BaseDevServerConfig {}
 
+/**
+ * Class for setting up and running development server for React Native application.
+ * It's usually created by the {@link DevServerPlugin}.
+ *
+ * Each `DevServer` instance is platform-specific, for example for `ios` and `android` platforms,
+ * you need 2 `DevServer` running (on different ports). Alternatively you can
+ * use {@link DevServerProxy} to spawn new processes with Webpack compilations for each platform.
+ *
+ * @category Development server
+ */
 export class DevServer extends BaseDevServer {
   private static getLoggerOptions(
     compiler: webpack.Compiler,
     platform: string
-  ) {
+  ): DevServerLoggerOptions {
     const webpackLogger = compiler.getInfrastructureLogger(
       `DevServer@${platform}`
     );
@@ -33,10 +47,19 @@ export class DevServer extends BaseDevServer {
     return { stream: logStream, level: isVerbose() ? 'debug' : 'info' };
   }
 
+  /** [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) instance. */
   wdm: WebpackDevMiddleware;
+  /** HMR WebSocket server instance to allow HMR clients to receive updates. */
   hmrServer: WebSocketHMRServer;
+  /** Symbolicator instance to transform stack traces using Source Maps. */
   symbolicator: Symbolicator;
 
+  /**
+   * Constructs new `DevServer` instance.
+   *
+   * @param config Configuration options.
+   * @param compiler Webpack compiler instance.
+   */
   constructor(config: DevServerConfig, private compiler: webpack.Compiler) {
     super(config, DevServer.getLoggerOptions(compiler, config.platform));
 
@@ -107,6 +130,9 @@ export class DevServer extends BaseDevServer {
     );
   }
 
+  /**
+   * Sets up Fastify plugins and routes.
+   */
   async setup() {
     await this.fastify.register(fastifyExpress);
 
@@ -136,6 +162,9 @@ export class DevServer extends BaseDevServer {
     });
   }
 
+  /**
+   * Runs development server.
+   */
   async run() {
     try {
       await this.setup();

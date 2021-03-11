@@ -32,6 +32,8 @@ type WebSocketWithUpgradeReq = WebSocket & { upgradeReq?: IncomingMessage };
  * and the React Native applications.
  *
  * Based on: https://github.com/react-native-community/cli/blob/v4.14.0/packages/cli-server-api/src/websocket/messageSocketServer.ts
+ *
+ * @category Development server
  */
 export class WebSocketMessageServer extends WebSocketServer {
   static readonly PROTOCOL_VERSION = 2;

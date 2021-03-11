@@ -3,11 +3,8 @@ import fastifyStatic from 'fastify-static';
 import open from 'open';
 import openEditor from 'open-editor';
 import { DevServerOptions } from '../types';
-import { FastifyDevServer } from './types';
-import {
-  DevServerLoggerOptions,
-  getFastifyInstance,
-} from './utils/getFastifyInstance';
+import { DevServerLoggerOptions, FastifyDevServer } from './types';
+import { getFastifyInstance } from './utils/getFastifyInstance';
 import {
   WebSocketDebuggerServer,
   WebSocketMessageServer,
@@ -15,19 +12,43 @@ import {
   WebSocketDevClientServer,
 } from './ws';
 
+/**
+ * {@link BaseDevServer} configuration options.
+ */
 export interface BaseDevServerConfig extends DevServerOptions {}
 
+/**
+ * Base class for all Fastify-based servers.
+ * It handles creation of a Fastify instance, creation of all WebSocket servers and running Fastify.
+ *
+ * @category Development server
+ */
 export class BaseDevServer {
+  /** Configuration options. */
+  protected config: BaseDevServerConfig;
+
+  /** Fastify instance. */
   fastify: FastifyDevServer;
+  /** Debugger server instance. */
   wsDebuggerServer: WebSocketDebuggerServer;
+  /** Message server instance. */
   wsMessageServer: WebSocketMessageServer;
+  /** Events server instance. */
   wsEventsServer: WebSocketEventsServer;
+  /** Server instance for React Native clients. */
   wsClientServer: WebSocketDevClientServer;
 
+  /**
+   * Constructs new `BaseDevServer` instance.
+   *
+   * @param config Configuration options.
+   * @param loggerOptions Logger options.
+   */
   constructor(
-    protected config: BaseDevServerConfig,
+    config: BaseDevServerConfig,
     loggerOptions?: DevServerLoggerOptions
   ) {
+    this.config = config;
     this.fastify = getFastifyInstance(this.config, loggerOptions);
 
     this.wsDebuggerServer = new WebSocketDebuggerServer(this.fastify);
@@ -49,6 +70,12 @@ export class BaseDevServer {
     });
   }
 
+  /**
+   * Sets up common routes.
+   *
+   * All classes that implements {@link BaseDevServer} should call this method before
+   * calling {@link run}.
+   */
   async setup() {
     this.fastify.get('/', async () => {
       return { status: 'ok' };
@@ -149,6 +176,9 @@ export class BaseDevServer {
     );
   }
 
+  /**
+   * Runs Fastify and listens on port and host specified in constructor.
+   */
   async run() {
     await this.fastify.listen({
       port: this.config.port,

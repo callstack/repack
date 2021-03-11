@@ -11,6 +11,8 @@ export interface DevServerPluginConfig extends DevServerConfig {}
 /**
  * Class for running development server that handles serving the built bundle, all assets as well as
  * providing Hot Module Replacement functionality.
+ *
+ * @category Webpack Plugin
  */
 export class DevServerPlugin implements WebpackPlugin {
   /**
