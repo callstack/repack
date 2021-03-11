@@ -31,6 +31,7 @@ A Webpack-based toolkit to build your React Native application with full support
 ### Planned features
 
 - [ ] Flipper support
+- [ ] Hermes support
 - [ ] `webpack-init` command
 - [ ] Web dashboard with logs, compilation statues, bundle explorer, visualizations and more
 - [ ] Asynchronous chunks
