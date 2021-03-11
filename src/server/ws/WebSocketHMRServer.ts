@@ -4,16 +4,16 @@ import { FastifyDevServer } from '../types';
 import { HMRMessage, HMRMessageBody } from '../../types';
 import { WebSocketServer } from './WebSocketServer';
 
+/**
+ * {@link WebSocketHMRServer} configuration options.
+ */
 export interface WebSocketHMRServerConfig {
-  /**
-   * Instance of Webpack compiler.
-   */
+  /** Instance of Webpack compiler */
   compiler: webpack.Compiler;
 }
 
 /**
  * Class for creating a WebSocket server for Hot Module Replacement.
- *
  */
 export class WebSocketHMRServer extends WebSocketServer {
   private latestStats?: webpack.Stats;

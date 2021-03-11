@@ -4,12 +4,18 @@ import WebSocket from 'ws';
 import { FastifyDevServer } from '../types';
 import { WebSocketServer } from './WebSocketServer';
 
-interface ReactNativeIdObject {
+/**
+ * Holds {@link ReactNativeMessage} `id` data.
+ */
+export interface ReactNativeIdObject {
   requestId: string;
   clientId: string;
 }
 
-interface ReactNativeMessage {
+/**
+ * Message representation used by {@link WebSocketMessageServer}.
+ */
+export interface ReactNativeMessage {
   version?: string;
   id?: ReactNativeIdObject;
   method?: string;
@@ -30,6 +36,13 @@ type WebSocketWithUpgradeReq = WebSocket & { upgradeReq?: IncomingMessage };
 export class WebSocketMessageServer extends WebSocketServer {
   static readonly PROTOCOL_VERSION = 2;
 
+  /**
+   * Check if message is a broadcast request.
+   *
+   * @param message Message to check.
+   * @returns True if message is a broadcast request and should be broadcasted
+   * with {@link sendBroadcast}.
+   */
   static isBroadcast(message: Partial<ReactNativeMessage>) {
     return (
       typeof message.method === 'string' &&
@@ -38,12 +51,24 @@ export class WebSocketMessageServer extends WebSocketServer {
     );
   }
 
+  /**
+   * Check if message is a method request.
+   *
+   * @param message Message to check.
+   * @returns True if message is a request.
+   */
   static isRequest(message: Partial<ReactNativeMessage>) {
     return (
       typeof message.method === 'string' && typeof message.target === 'string'
     );
   }
 
+  /**
+   * Check if message is a response with results of performing some request.
+   *
+   * @param message Message to check.
+   * @returns True if message is a response.
+   */
   static isResponse(message: Partial<ReactNativeMessage>) {
     return (
       typeof message.id === 'object' &&
@@ -66,6 +91,13 @@ export class WebSocketMessageServer extends WebSocketServer {
     super(fastify, '/message');
   }
 
+  /**
+   * Parse stringified message into a {@link ReactNativeMessage}.
+   *
+   * @param data Stringified message.
+   * @param binary Additional binary data if any.
+   * @returns Parsed message or `undefined` if parsing failed.
+   */
   parseMessage(
     data: string,
     binary: any
@@ -96,6 +128,13 @@ export class WebSocketMessageServer extends WebSocketServer {
     return undefined;
   }
 
+  /**
+   * Get client's WebSocket connection for given `clientId`.
+   * Throws if no such client is connected.
+   *
+   * @param clientId Id of the client.
+   * @returns WebSocket connection.
+   */
   getClientSocket(clientId: string) {
     const socket = this.clients.get(clientId);
     if (socket === undefined) {
@@ -104,6 +143,14 @@ export class WebSocketMessageServer extends WebSocketServer {
     return socket;
   }
 
+  /**
+   * Process error by sending an error message to the client whose message caused the error
+   * to occur.
+   *
+   * @param clientId Id of the client whose message caused an error.
+   * @param message Original message which caused the error.
+   * @param error Concrete instance of an error that occurred.
+   */
   handleError(
     clientId: string,
     message: Partial<ReactNativeMessage>,
@@ -145,6 +192,13 @@ export class WebSocketMessageServer extends WebSocketServer {
     }
   }
 
+  /**
+   * Send given request `message` to it's designated client's socket based on `message.target`.
+   * The target client must be connected, otherwise it will throw an error.
+   *
+   * @param clientId Id of the client that requested the forward.
+   * @param message Message to forward.
+   */
   forwardRequest(clientId: string, message: Partial<ReactNativeMessage>) {
     if (!message.target) {
       this.fastify.log.error({
@@ -169,6 +223,13 @@ export class WebSocketMessageServer extends WebSocketServer {
     );
   }
 
+  /**
+   * Send given response `message` to it's designated client's socket based
+   * on `message.id.clientId`.
+   * The target client must be connected, otherwise it will throw an error.
+   *
+   * @param message Message to forward.
+   */
   forwardResponse(message: Partial<ReactNativeMessage>) {
     if (!message.id) {
       return;
@@ -185,6 +246,13 @@ export class WebSocketMessageServer extends WebSocketServer {
     );
   }
 
+  /**
+   * Process request message targeted towards this {@link WebSocketMessageServer}
+   * and send back the results.
+   *
+   * @param clientId Id of the client who send the message.
+   * @param message The message to process by the server.
+   */
   processServerRequest(clientId: string, message: Partial<ReactNativeMessage>) {
     let result: string | Record<string, Record<string, string>>;
 
@@ -228,6 +296,12 @@ export class WebSocketMessageServer extends WebSocketServer {
     );
   }
 
+  /**
+   * Broadcast given message to all connected clients.
+   *
+   * @param broadcasterId Id of the client who is broadcasting.
+   * @param message Message to broadcast.
+   */
   sendBroadcast(
     broadcasterId: string | undefined,
     message: Partial<ReactNativeMessage>
@@ -263,10 +337,22 @@ export class WebSocketMessageServer extends WebSocketServer {
     }
   }
 
+  /**
+   * Send method broadcast to all connected clients.
+   *
+   * @param method Method name to broadcast.
+   * @param params Method parameters.
+   */
   broadcast(method: string, params?: Record<string, any>) {
     this.sendBroadcast(undefined, { method, params });
   }
 
+  /**
+   * Process new client's WebSocket connection.
+   *
+   * @param socket Incoming WebSocket connection.
+   * @param request Upgrade request for the connection.
+   */
   onConnection(socket: WebSocket, request: IncomingMessage) {
     const clientId = `client#${this.nextClientId++}`;
     let client: WebSocketWithUpgradeReq = socket;

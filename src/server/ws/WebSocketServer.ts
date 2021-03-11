@@ -8,10 +8,11 @@ import { FastifyDevServer } from '../types';
  * Abstract class for providing common logic (eg routing) for all WebSocket servers.
  */
 export abstract class WebSocketServer {
-  /**
-   * An instance of the underlying WebSocket server.
-   */
+  /** An instance of the underlying WebSocket server. */
   protected server: WebSocket.Server;
+
+  /** Fastify instance from which {@link server} will receive upgrade connections. */
+  protected fastify: FastifyDevServer;
 
   /**
    * Create a new instance of the WebSocketServer.
@@ -22,13 +23,14 @@ export abstract class WebSocketServer {
    * @param wssOptions WebSocket Server options.
    */
   constructor(
-    protected fastify: FastifyDevServer,
+    fastify: FastifyDevServer,
     path: string,
     wssOptions: Omit<
       WebSocket.ServerOptions,
       'noServer' | 'server' | 'host' | 'port' | 'path'
     > = {}
   ) {
+    this.fastify = fastify;
     this.server = new WebSocket.Server({
       noServer: true,
       ...wssOptions,

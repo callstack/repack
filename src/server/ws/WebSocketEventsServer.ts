@@ -4,10 +4,17 @@ import { FastifyDevServer } from '../types';
 import { WebSocketServer } from './WebSocketServer';
 import { WebSocketMessageServer } from './WebSocketMessageServer';
 
+/**
+ * {@link WebSocketEventsServer} configuration options.
+ */
 export interface WebSocketEventsServerConfig {
+  /** Instance of a {@link WebSocketMessageServer} which can be used for broadcasting. */
   webSocketMessageServer: WebSocketMessageServer;
 }
 
+/**
+ * Represents a command that connected clients can send to the {@link WebSocketEventsServer}.
+ */
 export interface Command {
   version: number;
   type: 'command';
@@ -15,6 +22,9 @@ export interface Command {
   params?: any;
 }
 
+/**
+ * Represents an event message.
+ */
 export interface EventMessage {
   error?: Error | string;
   type?: string;
@@ -51,11 +61,12 @@ export class WebSocketEventsServer extends WebSocketServer {
   }
 
   /**
-   * Parse received message.
+   * Parse received command message from connected client.
    *
-   * @param data Stringified message to parse.
+   * @param data Stringified command message to parse.
+   * @returns Parsed command or `undefined` if parsing failed.
    */
-  parseMessage<T extends Object>(data: string): T | undefined {
+  parseMessage(data: string): Command | undefined {
     try {
       const message = JSON.parse(data);
       if (message.version === WebSocketEventsServer.PROTOCOL_VERSION) {
@@ -76,8 +87,10 @@ export class WebSocketEventsServer extends WebSocketServer {
   }
 
   /**
-   * TODO: docs
-   * @param message
+   * Stringify `message` into a format that can be transported as a `string`.
+   *
+   * @param message Message to serialize.
+   * @returns String representation of a `message` or `undefined` if serialization failed.
    */
   serializeMessage(message: EventMessage) {
     let toSerialize = message;
@@ -116,8 +129,9 @@ export class WebSocketEventsServer extends WebSocketServer {
   }
 
   /**
-   * TODO: docs
-   * @param event
+   * Broadcast event to all connected clients.
+   *
+   * @param event Event message to broadcast.
    */
   broadcastEvent(event: EventMessage) {
     if (!this.clients.size) {
@@ -143,8 +157,9 @@ export class WebSocketEventsServer extends WebSocketServer {
   }
 
   /**
-   * TODO: docs
-   * @param socket
+   * Process new client's WebSocket connection.
+   *
+   * @param socket Incoming WebSocket connection.
    */
   onConnection(socket: WebSocket) {
     const clientId = `client#${this.nextClientId++}`;
@@ -160,9 +175,7 @@ export class WebSocketEventsServer extends WebSocketServer {
     socket.addEventListener('error', onClose);
     socket.addEventListener('close', onClose);
     socket.addEventListener('message', (event) => {
-      const message: Command | undefined = this.parseMessage(
-        event.data.toString()
-      );
+      const message = this.parseMessage(event.data.toString());
 
       if (!message) {
         return;

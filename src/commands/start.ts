@@ -6,6 +6,17 @@ import { DevServerProxy } from '../server';
 import { VERBOSE_ENV_KEY } from '../env';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
 
+/**
+ * Start command for React Native CLI.
+ * It runs {@link DevServerProxy} to provide Development Server functionality to React Native apps
+ * in development mode.
+ *
+ * @param _ Original, non-parsed arguments that were provided when running this command.
+ * @param config React Native CLI configuration object.
+ * @param args Parsed command line arguments.
+ *
+ * @internal
+ */
 export function start(_: string[], config: Config, args: StartArguments) {
   const webpackConfigPath = getWebpackConfigPath(config.root);
   const cliOptions: CliOptions = {
