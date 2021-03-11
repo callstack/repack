@@ -1,4 +1,4 @@
-# Contributing to `cargo-toolkit`
+# Contributing to `react-native-webpack-toolkit`
 
 ## Code of Conduct
 
@@ -47,7 +47,7 @@ We use `typescript` for type checking, `eslint` with `prettier` for linting and 
 
 The example TesterApp uses React Native CLI so make sure you have your [environment setup to build native apps](https://reactnative.dev/docs/environment-setup).
 
-You can then use Xcode/Android Studio/Gradle to build application or run `npx react-native cargo-start` and `npx react-native run-ios`/`npx react-native run-android` to start development server and run applications in development mode.
+You can then use Xcode/Android Studio/Gradle to build application or run `npx react-native webpack-start` and `npx react-native run-ios`/`npx react-native run-android` to start development server and run applications in development mode.
 
 ### Working on documentation
 
@@ -65,8 +65,8 @@ NOTE: You must have a `GITHUB_TOKEN` environment variable available. You can cre
 
 ## Reporting issues
 
-You can report issues on our [bug tracker](https://github.com/callstack/cargo-toolkit/issues). Please follow the issue template when opening an issue.
+You can report issues on our [bug tracker](https://github.com/callstack/react-native-webpack-toolkit/issues). Please follow the issue template when opening an issue.
 
 ## License
 
-By contributing to `cargo-toolkit`, you agree that your contributions will be licensed under its **MIT** license.
+By contributing to `react-native-webpack-toolkit`, you agree that your contributions will be licensed under its **MIT** license.

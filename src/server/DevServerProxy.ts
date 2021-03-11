@@ -5,9 +5,13 @@ import fetch from 'node-fetch';
 import getPort from 'get-port';
 import split2 from 'split2';
 import { CliOptions, StartArguments } from '../types';
-import { CLI_OPTIONS_ENV_KEY } from '../webpack/utils/parseCliOptions';
 import { Reporter } from '../Reporter';
-import { isVerbose, VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
+import {
+  CLI_OPTIONS_ENV_KEY,
+  isVerbose,
+  VERBOSE_ENV_KEY,
+  WORKER_ENV_KEY,
+} from '../env';
 import { DevServerReply, DevServerRequest } from './types';
 import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';

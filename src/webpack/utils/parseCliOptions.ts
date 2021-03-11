@@ -1,8 +1,6 @@
 import path from 'path';
+import { CLI_OPTIONS_ENV_KEY } from '../../env';
 import { CliOptions, WebpackOptions } from '../../types';
-
-// TODO: change that once we have a new name
-export const CLI_OPTIONS_ENV_KEY = 'HAUL2_CLI_OPTIONS';
 
 export type WebpackOptionsWithoutPlatform = Omit<WebpackOptions, 'platform'>;
 
