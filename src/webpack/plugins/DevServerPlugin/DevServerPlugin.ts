@@ -43,24 +43,11 @@ export class DevServerPlugin implements WebpackPlugin {
     }://${host}/`;
     logger.debug('Setting public path to:', compiler.options.output.publicPath);
 
-    if (typeof compiler.options.entry !== 'function') {
-      for (const entryKey in compiler.options.entry) {
-        compiler.options.entry[entryKey].import = compiler.options.entry[
-          entryKey
-        ].import?.map((value) => {
-          if (/WebpackHMRClient\.js\?host=\[host\]$/.test(value)) {
-            return value.replace('[host]', host);
-          }
-          return value;
-        });
-      }
-    }
-
     new webpack.DefinePlugin({
       'process.env.__PUBLIC_PATH__': JSON.stringify(
         compiler.options.output.publicPath
       ),
-      'process.env.__PUBLIC_PATH_HOST__': JSON.stringify(host),
+      'process.env.__PUBLIC_PORT__': JSON.stringify(config.port),
     }).apply(compiler);
 
     new webpack.HotModuleReplacementPlugin().apply(compiler);

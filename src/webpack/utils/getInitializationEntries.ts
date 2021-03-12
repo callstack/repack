@@ -43,9 +43,7 @@ export function getInitializationEntries(
   ];
 
   if (hmr) {
-    entries.push(
-      `${require.resolve('../../runtime/WebpackHMRClient')}?host=[host]`
-    );
+    entries.push(require.resolve('../../runtime/WebpackHMRClient'));
   }
 
   return entries;

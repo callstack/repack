@@ -3,6 +3,7 @@
 declare var __DEV__: boolean;
 
 import prettyFormat from 'pretty-format';
+import { getDevServerLocation } from './getDevServerLocation';
 
 /**
  * With Webpack we don't use built-in metro-specific HMR client,
@@ -21,11 +22,14 @@ class DevServerClient {
 
   constructor() {
     const initSocket = () => {
-      const address = `ws://${process.env.__PUBLIC_PATH_HOST__}/__client`;
+      const address = `ws://${getDevServerLocation().host}/__client`;
       this.socket = new WebSocket(address);
 
-      const onClose = () => {
-        console.warn('Disconnected from the Dev Server.');
+      const onClose = (event: Event) => {
+        console.warn(
+          'Disconnected from the Dev Server:',
+          ((event as unknown) as { message: string | null }).message
+        );
         this.socket = undefined;
       };
 
@@ -36,7 +40,7 @@ class DevServerClient {
       };
     };
 
-    if (__DEV__ && process.env.__PUBLIC_PATH_HOST__) {
+    if (__DEV__) {
       initSocket();
     }
   }

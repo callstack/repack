@@ -1,6 +1,9 @@
 /* eslint-env browser */
 /// <reference lib="DOM" />
 
+declare var __DEV__: boolean;
+declare var __webpack_public_path__: string;
+
 interface HMRInfo {
   type: string;
   chain: Array<string | number>;
@@ -33,13 +36,12 @@ interface HotModule {
   };
 }
 
-declare var __resourceQuery: string;
 declare var __webpack_hash__: string;
 declare var __webpack_require__: { l: Function };
 declare var module: HotModule;
 
-import querystring from 'querystring';
 import type { HMRMessage, HMRMessageBody } from '../types';
+import { getDevServerLocation } from './getDevServerLocation';
 
 class HmrEvent {
   target: { src: string };
@@ -55,7 +57,6 @@ class HMRClient {
   lastHash = '';
 
   constructor(
-    host: string,
     private app: {
       reload: () => void;
       dismissErrors: () => void;
@@ -65,19 +66,25 @@ class HMRClient {
       };
     }
   ) {
-    this.url = `ws://${host}/__hmr`;
+    this.url = `ws://${getDevServerLocation().hostname}:${
+      process.env.__PUBLIC_PORT__
+    }/__hmr`;
     this.socket = new WebSocket(this.url);
 
+    console.log('[HMRClient] Connecting...', {
+      url: this.url,
+    });
+
     this.socket.onopen = () => {
-      console.log('[HMRClient] connected');
+      console.log('[HMRClient] Connected');
     };
 
     this.socket.onclose = () => {
-      console.log('[HMRClient] disconnected');
+      console.log('[HMRClient] Disconnected');
     };
 
     this.socket.onerror = (event) => {
-      console.log('[HMRClient] error', event);
+      console.log('[HMRClient] Error', event);
     };
 
     this.socket.onmessage = (event) => {
@@ -204,55 +211,57 @@ class HMRClient {
   }
 }
 
-if (__resourceQuery) {
-  const query = querystring.parse(__resourceQuery.slice(1));
-  const host = query.host as string | undefined | null;
-
-  if (!host) {
-    console.warn(
-      'Host resource query is missing in HMRClient - HMR cannot be initialized.'
-    );
-  } else {
-    // TODO: move it somewhere else
-    __webpack_require__.l = async (
-      url: string,
-      cb: (event?: HmrEvent) => void
-    ) => {
-      const response = await fetch(url);
-      if (!response.ok) {
-        cb(new HmrEvent(response.statusText, url));
-      } else {
-        const script = await response.text();
-        try {
-          const factory = new Function(script);
-          factory.call(this);
-          cb();
-        } catch (error) {
-          console.error('[__webpack_require__.l] Error:', error);
-          cb(new HmrEvent('exec', url));
-        }
+if (__DEV__) {
+  // TODO: move it somewhere else
+  __webpack_require__.l = async (
+    url: string,
+    cb: (event?: HmrEvent) => void
+  ) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+      cb(new HmrEvent(response.statusText, url));
+    } else {
+      const script = await response.text();
+      try {
+        const factory = new Function(script);
+        factory.call(this);
+        cb();
+      } catch (error) {
+        console.error('[__webpack_require__.l] Error:', error);
+        cb(new HmrEvent('exec', url));
       }
-    };
+    }
+  };
 
-    const { DevSettings, Platform } = require('react-native');
-    const LoadingView = require('react-native/Libraries/Utilities/LoadingView');
+  const { DevSettings, Platform } = require('react-native');
+  const LoadingView = require('react-native/Libraries/Utilities/LoadingView');
 
-    const reload = () => DevSettings.reload();
-    const dismissErrors = () => {
-      if (Platform.OS === 'ios') {
-        const NativeRedBox = require('react-native/Libraries/NativeModules/specs/NativeRedBox')
-          .default;
-        NativeRedBox?.dismiss?.();
-      } else {
-        const NativeExceptionsManager = require('react-native/Libraries/Core/NativeExceptionsManager')
-          .default;
-        NativeExceptionsManager?.dismissRedbox();
-      }
+  const reload = () => DevSettings.reload();
+  const dismissErrors = () => {
+    if (Platform.OS === 'ios') {
+      const NativeRedBox = require('react-native/Libraries/NativeModules/specs/NativeRedBox')
+        .default;
+      NativeRedBox?.dismiss?.();
+    } else {
+      const NativeExceptionsManager = require('react-native/Libraries/Core/NativeExceptionsManager')
+        .default;
+      NativeExceptionsManager?.dismissRedbox();
+    }
 
-      const LogBoxData = require('react-native/Libraries/LogBox/Data/LogBoxData');
-      LogBoxData.clear();
-    };
+    const LogBoxData = require('react-native/Libraries/LogBox/Data/LogBoxData');
+    LogBoxData.clear();
+  };
 
-    new HMRClient(host, { reload, dismissErrors, LoadingView });
-  }
+  // We need to teak Webpack's public path, especially for Android, where `localhost`
+  // is not a correct host but eg `10.0.2.2` is.
+  // If the public path doesn't have `localhost` in it, it usually means a custom `host` was
+  // provided, so the replace won't change that.
+  const { hostname } = getDevServerLocation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  __webpack_public_path__ = __webpack_public_path__.replace(
+    'localhost',
+    hostname
+  );
+
+  new HMRClient({ reload, dismissErrors, LoadingView });
 }

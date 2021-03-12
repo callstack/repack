@@ -48,7 +48,6 @@
     "open-editor": "^3.0.0",
     "ora": "^5.3.0",
     "pretty-format": "^26.6.2",
-    "querystring": "^0.2.1",
     "react": "^17.0.1",
     "schema-utils": "^3.0.0",
     "source-map": "^0.7.3",
