@@ -50,7 +50,10 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
   if ('bundle' in cliOptions.arguments) {
     const args = cliOptions.arguments.bundle;
 
-    const outputPath = path.dirname(args.bundleOutput);
+    let outputPath = path.dirname(args.bundleOutput);
+    if (!path.isAbsolute(outputPath)) {
+      outputPath = path.join(cliOptions.config.root, outputPath);
+    }
     const outputFilename = path.basename(args.bundleOutput);
     const entry = args.entryFile;
 

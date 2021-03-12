@@ -1,6 +1,5 @@
 import { Config } from '@react-native-community/cli-types';
-// @ts-ignore
-import WebpackCLI from 'webpack-cli';
+import webpack from 'webpack';
 import { CLI_OPTIONS_ENV_KEY, VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, CliOptions } from '../types';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
@@ -36,12 +35,12 @@ export function bundle(_: string[], config: Config, args: BundleArguments) {
     process.env[VERBOSE_ENV_KEY] = '1';
   }
 
-  // TODO: use webpack directly
-  const webpackCLI = new WebpackCLI();
-  webpackCLI
-    .run(['-c', webpackConfigPath], { from: 'user' })
-    .catch((error: any) => {
+  const compiler = webpack(require(webpackConfigPath));
+
+  compiler.run((error) => {
+    if (error) {
       console.error(error);
-      process.exit(1);
-    });
+      process.exit(2);
+    }
+  });
 }
