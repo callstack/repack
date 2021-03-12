@@ -11,6 +11,14 @@ const {
 } = require('react-native-webpack-toolkit');
 
 /**
+ * More documentation, installation, usage, motivation and differences with Metro is available at:
+ * https://github.com/callstack/react-native-webpack-toolkit/blob/main/README.md
+ *
+ * API documentation for the function and plugins used in this file is available at:
+ * https://callstack.github.io/react-native-webpack-toolkit/
+ */
+
+/**
  * This is the Webpack configuration file for your React Native project.
  * It can be used in 2 ways:
  * - by running React Native CLI eg: `npx react-native start` or `npx react-native bundle`

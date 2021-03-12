@@ -19,6 +19,8 @@ A Webpack-based toolkit to build your React Native application with full support
 
 `react-native-webpack-toolkit` uses Webpack 5 and React Native CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
 
+__Check the base [`webpack.config.js`](./templates/webpack.config.js) template, if you're curious how it all looks like.__
+
 ## Features
 
 - [x] Webpack ecosystem, plugins and utilities
