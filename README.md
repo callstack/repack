@@ -60,7 +60,7 @@ Both Metro and `react-native-webpack-toolkit` have different approaches for the 
 
 - Metro is slightly faster, since it has less overhead compared to Webpack and it's configuration options, plugin and loader system.
 - Webpack configuration options and ecosystem allows for much greater control and support for advanced use-cases.
-- Metro's Fast Refresh is slightly more flexible compared to Webpack's solution: Hot Module Replacement + React Refresh - some cases require full application reloaded with `react-native-webpack-toolkit`, but they are supported with Metro.
+- Metro's Fast Refresh is slightly more flexible compared to Webpack's solution: Hot Module Replacement + React Refresh - some cases require full application reloaded with `react-native-webpack-toolkit`, but they are supported with Metro See: [Known issues](#known-issues).
 
 ## `react-native-webpack-toolkit` vs Haul
 
@@ -111,6 +111,55 @@ Once you've completed [Installation & setup](#installation--setup) you can:
 ## API documentation
 
 The API documentation is available at https://callstack.github.io/react-native-webpack-toolkit/
+
+## Known issues
+
+### Hot Module Replacement / React Refresh
+
+#### 1. Root component used by `AppRegistry.registerComponent` will always require full reload.
+
+With Webpack's Hot Module Replacement, the modules don't refresh themselves, but their parents refresh them, meaning for components `A` -> `B` (`A` renders `B`),
+if you edit `B`, the component `A` will refresh `B`, but if you edit component `A` there's no one to refresh `A`.
+
+The easiest workaround it create additional component that will simply render your previous root component, eg:
+
+```js
+// --- index.js -------------------------------------------
+import React from 'react';
+import { App } from './App';
+
+// Your new root component, make sure it's exported!
+// Editing `Root` will result in full page reload`
+export function Root() {
+  return <App />;
+}
+
+AppRegistry.registerComponent('AppName', () => Root);
+
+// --- App.js ---------------------------------------------
+import React from 'react';
+// -- snip --
+
+// `Root` will refresh `App` so HMR wll work as expected.
+export function App() {
+  // -- snip --
+}
+
+```
+
+#### 2. Stack traces are different after Hot Module Replacement update.
+
+After applying Hot Module replacement update, if the error is throw or `console.log`/`console.error` is called,
+the stack trace that React Native prints will be different - less precise - compared to running the same code after a full reload.
+
+This is due to the fact that HMR updates (which can consist of multiple files and runtime logic) created by Webpack
+have to evaluated at once, so it's impossible for the JavaScript engine to identify which pice of code from HMR update is from which file.
+Instead it will fallback to the name of the file that evaluated the update - `WebpackHMRClient.ts`.
+
+This expected and there's little we can do about it. The stack trace is still correct, but it's less precise.
+
+If you encounter such situation and you need to get the precise stack trace, you can do a full reload
+and reproduce the error or `console.log`/`console.error` call.
 
 ## Made with ❤️ at Callstack
 
