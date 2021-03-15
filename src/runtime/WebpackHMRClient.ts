@@ -223,8 +223,13 @@ if (__DEV__) {
     } else {
       const script = await response.text();
       try {
-        const factory = new Function(script);
-        factory.call(this);
+        // @ts-ignore
+        const globalEvalWithSourceUrl = global.globalEvalWithSourceUrl;
+        if (globalEvalWithSourceUrl) {
+          globalEvalWithSourceUrl(script, null);
+        } else {
+          eval(script);
+        }
         cb();
       } catch (error) {
         console.error('[__webpack_require__.l] Error:', error);
