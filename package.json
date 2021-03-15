@@ -23,9 +23,9 @@
   "author": "zamotany <zamotany.oss@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "react-native": ">=0.63",
     "@react-native-community/cli": "^4.14.0",
-    "@react-native-community/cli-types": "^4.10.1"
+    "@react-native-community/cli-types": "^4.10.1",
+    "react-native": ">=0.63"
   },
   "dependencies": {
     "@babel/code-frame": "^7.12.13",
