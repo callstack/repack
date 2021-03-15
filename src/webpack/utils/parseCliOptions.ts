@@ -77,6 +77,15 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
     const outputFilename = path.basename(args.bundleOutput);
     const entry = args.entryFile;
 
+    let sourcemapFilename = fallback.sourcemapFilename;
+    // Make sure `sourcemapFilename` is relative, otherwise `SourceMapDevToolPlugin` will
+    // throw invalid configuration error.
+    if (args.sourcemapOutput) {
+      sourcemapFilename = path.isAbsolute(args.sourcemapOutput)
+        ? path.relative(outputPath, args.sourcemapOutput)
+        : args.sourcemapOutput;
+    }
+
     return {
       mode: args.dev ? 'development' : 'production',
       dev: args.dev,
@@ -85,7 +94,7 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       entry: entry.startsWith('./') ? entry : `./${entry}`,
       outputPath,
       outputFilename,
-      sourcemapFilename: args.sourcemapOutput || fallback.sourcemapFilename,
+      sourcemapFilename,
       assetsOutputPath: args.assetsDest,
       minimize: Boolean(args.minify),
       reactNativePath: cliOptions.config.reactNativePath,
