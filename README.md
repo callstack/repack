@@ -9,6 +9,8 @@ A Webpack-based toolkit to build your React Native application with full support
 [![Go to: Usage][goto-usage-badge]][goto-usage]
 [![Go to: Usage][goto-api-docs-badge]][goto-api-docs]
 
+[![Go to: Usage][goto-contributing-badge]][goto-contributing]
+[![Go to: Usage][goto-architecture-badge]][goto-architecture]
 
 [![Build Status][build-badge]][build]
 [![MIT License][license-badge]][license]
@@ -173,6 +175,11 @@ and reproduce the error or `console.log`/`console.error` call.
 [goto-usage]: #usage
 [goto-api-docs-badge]: https://img.shields.io/badge/go%20to-API%20docs-blue?style=flat-square
 [goto-api-docs]: https://callstack.github.io/react-native-webpack-toolkit/
+
+[goto-contributing-badge]: https://img.shields.io/badge/go%20to-CONTRIBUTING.md-blue?style=flat-square
+[goto-contributing]: ./CONTRIBUTING.md
+[goto-architecture-badge]: https://img.shields.io/badge/go%20to-ARCHITECTURE.md-blue?style=flat-square
+[goto-architecture]: ./ARCHITECTURE.md
 
 [build-badge]: https://img.shields.io/github/workflow/status/callstack/react-native-webpack-toolkit/CI/main?style=flat-square
 [build]: https://github.com/callstack/react-native-webpack-toolkit/actions/workflows/main.yml
