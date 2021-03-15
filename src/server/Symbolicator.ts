@@ -128,21 +128,28 @@ export class Symbolicator {
       }
     }
 
-    const processedFrames: StackFrame[] = [];
-    for (const frame of frames) {
-      if (!this.sourceMapConsumerCache[frame.file]) {
-        const rawSourceMap = await this.readSourceMapFromWdm(frame.file);
-        const sourceMapConsumer = await new SourceMapConsumer(rawSourceMap);
-        this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
+    try {
+      const processedFrames: StackFrame[] = [];
+      for (const frame of frames) {
+        if (!this.sourceMapConsumerCache[frame.file]) {
+          const rawSourceMap = await this.readSourceMapFromWdm(frame.file);
+          const sourceMapConsumer = await new SourceMapConsumer(rawSourceMap);
+          this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
+        }
+        const processedFrame = this.processFrame(frame);
+        processedFrames.push(processedFrame);
       }
-      const processedFrame = this.processFrame(frame);
-      processedFrames.push(processedFrame);
-    }
 
-    return {
-      stack: processedFrames,
-      codeFrame: (await this.getCodeFrame(processedFrames)) ?? null,
-    };
+      return {
+        stack: processedFrames,
+        codeFrame: (await this.getCodeFrame(processedFrames)) ?? null,
+      };
+    } finally {
+      for (const key in this.sourceMapConsumerCache) {
+        this.sourceMapConsumerCache[key].destroy();
+        delete this.sourceMapConsumerCache[key];
+      }
+    }
   }
 
   private processFrame(frame: InputStackFrame): StackFrame {
