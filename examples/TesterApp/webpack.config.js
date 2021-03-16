@@ -11,6 +11,14 @@ const {
 } = require('../..');
 
 /**
+ * More documentation, installation, usage, motivation and differences with Metro is available at:
+ * https://github.com/callstack/react-native-webpack-toolkit/blob/main/README.md
+ *
+ * The API documentation for the functions and plugins used in this file is available at:
+ * https://callstack.github.io/react-native-webpack-toolkit/
+ */
+
+/**
  * This is the Webpack configuration file for your React Native project.
  * It can be used in 2 ways:
  * - by running React Native CLI eg: `npx react-native start` or `npx react-native bundle`
@@ -91,7 +99,7 @@ module.exports = {
 
     /**
      * Uncomment this to ensure all `react-native*` imports will resolve to the same React Native
-     * dependency. You might need when using workspaces/monorepos or unconventional project
+     * dependency. You might need it when using workspaces/monorepos or unconventional project
      * structure. For simple/typical project you won't need it.
      */
     alias: {
@@ -100,8 +108,8 @@ module.exports = {
   },
   /**
    * Configure output.
-   * Unless you don't care about values passed from React Native CLI, it's recommended to leave it
-   * as it is.
+   * Unless you don't want to use output values passed from React Native CLI, it's recommended to
+   * leave it as it is.
    */
   output: {
     path: outputPath,
