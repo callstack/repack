@@ -1,0 +1,65 @@
+.markdown {
+  @apply px-8 max-w-screen-lg m-auto;
+}
+
+.markdown p,
+.markdown ul,
+.markdown ol,
+.markdown blockquote {
+  @apply my-3;
+}
+
+.markdown h1 {
+  @apply text-4xl leading-snug font-bold border-b border-gray-900 mt-8 mb-4 pb-2;
+}
+
+.markdown h2 {
+  @apply text-3xl leading-snug font-bold border-b border-gray-900 mt-7 mb-3 pb-1;
+}
+
+.markdown h3 {
+  @apply text-2xl leading-snug font-bold mt-6 mb-3 ;
+}
+
+.markdown h4 {
+  @apply text-xl leading-snug font-bold mt-4 mb-2 ;
+}
+
+.markdown h5 {
+  @apply text-lg leading-snug font-bold mt-2 mb-1 ;
+}
+
+.markdown h6 {
+  @apply leading-snug font-bold mt-1 mb-1 ;
+}
+
+.markdown a {
+  @apply inline-block text-primary-300 font-bold transition ease-in duration-200;
+  @apply hover:text-primary-200 hover:underline
+}
+
+.markdown :not(pre) code {
+  @apply bg-auxiliary-dark-100 px-1 rounded-sm;
+}
+
+.markdown pre > code {
+  @apply inline-block w-full py-1 px-3 my-1 rounded;
+}
+
+.markdown ul {
+  @apply list-disc ml-8;
+}
+
+.markdown ol {
+  @apply list-decimal ml-8;
+}
+
+.markdown li  {}
+
+.markdown li > svg {
+  @apply w-4 h-4 inline-block mb-1 text-auxiliary-300;
+}
+
+.markdown hr {
+  @apply mt-4 pb-4 border-auxiliary-dark-100;
+}
