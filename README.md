@@ -13,6 +13,7 @@ A Webpack-based toolkit to build your React Native application with full support
 [![Go to: Usage][goto-architecture-badge]][goto-architecture]
 
 [![Build Status][build-badge]][build]
+[![Version][version-badge]][version]
 [![MIT License][license-badge]][license]
 [![PRs Welcome][prs-welcome-badge]][prs-welcome]
 [![Code of Conduct][coc-badge]][coc]
@@ -183,6 +184,8 @@ and reproduce the error or `console.log`/`console.error` call.
 
 [build-badge]: https://img.shields.io/github/workflow/status/callstack/react-native-webpack-toolkit/CI/main?style=flat-square
 [build]: https://github.com/callstack/react-native-webpack-toolkit/actions/workflows/main.yml
+[version-badge]: https://img.shields.io/npm/v/react-native-webpack-toolkit?style=flat-square
+[version]: https://www.npmjs.com/package/react-native-webpack-toolkit
 [license-badge]: https://img.shields.io/npm/l/react-native-webpack-toolkit.svg?style=flat-square
 [license]: https://github.com/callstack/react-native-webpack-toolkit/blob/master/LICENSE
 [prs-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
