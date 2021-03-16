@@ -35,7 +35,7 @@ __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, 
 
 ### Planned features
 
-- [ ] Flipper support
+- [ ] Flipper support (app connects to Fipper but only 5/8 plugins are supported) 
 - [ ] Hermes support
 - [ ] `webpack-init` command
 - [ ] Web dashboard with logs, compilation statues, bundle explorer, visualizations and more
@@ -45,7 +45,7 @@ __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, 
 
 ## Why & when
 
-The main feature of `react-native-webpack-toolkit` is Webpack and it's ecosystem of loaders, plugins and support for various features like symlinks, aliases etc. However, because `react-native-webpack-toolkit` is based on Webpack, it is targeted towards advanced users who already know how to use Webpack and want to leverage Webpack ecosystem.
+The main feature of `react-native-webpack-toolkit` is Webpack and its ecosystem of loaders, plugins and support for various features like symlinks, aliases etc. However, because `react-native-webpack-toolkit` is based on Webpack, it is targeted towards advanced users who already know how to use Webpack and want to leverage Webpack ecosystem.
 
 If you're just starting with React Native, it's better to stick with the default solution — Metro, since you probably won't benefit much from switching to Webpack.
 
