@@ -6,14 +6,14 @@ We want this community to be friendly and respectful to each other. Please read 
 
 ## Our Development Process
 
-All development is done directly on GitHub and all work is public.
+All development is done directly on GitHub, and all work is public.
 
 ### Development workflow
 
 > **Working on your first pull request?** You can learn how from this *free* series: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
 1. Fork the repo and create your branch from `main` (a guide on [how to fork a repository](https://help.github.com/articles/fork-a-repo/)).
-2. Run `npm i` to install & setup the development environment.
+2. Run `npm i` to install & set up the development environment.
 3. Do the changes you want and test them out in the TesterApp (`examples/TesterApp`) before sending a pull request.
 
 ### Commit message convention
@@ -24,7 +24,7 @@ We follow the [conventional commits specification](https://www.conventionalcommi
 - `feat`: new features, e.g. add Snackbar component.
 - `refactor`: code refactor, e.g. new folder structure for components.
 - `docs`: changes into documentation, e.g. add usage example for Button.
-- `test`: adding or updating tests, eg unit, snapshot testing.
+- `test`: adding or updating tests, e.g. unit, snapshot testing.
 - `chore`: tooling changes, e.g. change circleci config.
 - `BREAKING CHANGE`: for changes that break existing usage, e.g. change API of a component.
 
