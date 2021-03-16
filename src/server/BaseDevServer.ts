@@ -78,7 +78,7 @@ export class BaseDevServer {
    */
   async setup() {
     this.fastify.get('/', async () => {
-      return { status: 'ok' };
+      return 'React Native packager is running';
     });
 
     this.fastify.get('/status', async () => 'packager-status:running');

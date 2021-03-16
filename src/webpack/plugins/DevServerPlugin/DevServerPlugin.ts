@@ -6,7 +6,12 @@ import { DevServer, DevServerConfig } from '../../../server';
 /**
  * {@link DevServerPlugin} configuration options.
  */
-export interface DevServerPluginConfig extends DevServerConfig {}
+export interface DevServerPluginConfig extends DevServerConfig {
+  /**
+   * Whether Hot Module Replacement / React Refresh should be enabled. Defaults to `true`.
+   */
+  hmr?: boolean;
+}
 
 /**
  * Class for running development server that handles serving the built bundle, all assets as well as
@@ -21,7 +26,11 @@ export class DevServerPlugin implements WebpackPlugin {
    * @param config Plugin configuration options. If `undefined`, the development server will be
    * disabled and won't run.
    */
-  constructor(private config?: DevServerPluginConfig) {}
+  constructor(private config?: DevServerPluginConfig) {
+    if (this.config) {
+      this.config.hmr = this.config?.hmr ?? true;
+    }
+  }
 
   /**
    * Apply the plugin.
@@ -50,10 +59,12 @@ export class DevServerPlugin implements WebpackPlugin {
       'process.env.__PUBLIC_PORT__': JSON.stringify(config.port),
     }).apply(compiler);
 
-    new webpack.HotModuleReplacementPlugin().apply(compiler);
-    new ReactRefreshPlugin({
-      overlay: false,
-    }).apply(compiler);
+    if (this.config?.hmr) {
+      new webpack.HotModuleReplacementPlugin().apply(compiler);
+      new ReactRefreshPlugin({
+        overlay: false,
+      }).apply(compiler);
+    }
 
     let server: DevServer | undefined;
 

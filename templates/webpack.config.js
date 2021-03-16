@@ -62,6 +62,13 @@ const {
 });
 
 /**
+ * Enable Hot Module Replacement with React Refresh in development.
+ * Currently React Refresh breaks React Devtools (https://github.com/facebook/react/issues/20377)
+ * so when using Flipper you might want to disable HMR.
+ */
+const hmr = dev;
+
+/**
  * Depending on your Babel configuration you might want to keep it.
  * If you don't use `env` in your Babel config, you can remove it.
  *
@@ -87,7 +94,7 @@ module.exports = {
    * If you don't want to use Hot Module Replacement, set `hmr` option to `false`. By default,
    * HMR will be enabled in development mode.
    */
-  entry: [...getInitializationEntries(reactNativePath, { hmr: dev }), entry],
+  entry: [...getInitializationEntries(reactNativePath, { hmr }), entry],
   resolve: {
     /**
      * `getResolveOptions` returns additional resolution configuration for React Native.
@@ -103,8 +110,8 @@ module.exports = {
      * structure. For simple/typical project you won't need it.
      */
     // alias: {
-    //   'react-native': reactNativePath
-    // }
+    //   'react-native': reactNativePath,
+    // },
   },
   /**
    * Configure output.
@@ -129,7 +136,6 @@ module.exports = {
         test: /\.[jt]sx?$/,
         include: [
           /node_modules(.*[/\\])+react/,
-          /node_modules(.*[/\\])+react/,
           /node_modules(.*[/\\])+@react-navigation/,
           /node_modules(.*[/\\])+@react-native-community/,
           /node_modules(.*[/\\])+@expo/,
@@ -147,7 +153,15 @@ module.exports = {
       {
         test: /\.[jt]sx?$/,
         exclude: /node_modules/,
-        use: 'babel-loader',
+        use: {
+          loader: 'babel-loader',
+          options: {
+            plugins: [
+              /** Add React Refresh transform only when HMR is enabled. */
+              hmr && 'module:react-refresh/babel',
+            ],
+          },
+        },
       },
     ],
   },
@@ -185,7 +199,7 @@ module.exports = {
      * Runs development server when running with React Native CLI start command or if `devServer`
      * was provided as s `fallback`. Passing `undefined` as 1st argument will disable the plugin.
      */
-    new DevServerPlugin(devServer),
+    new DevServerPlugin({ ...devServer, hmr }),
 
     /**
      * Configures Source Maps.

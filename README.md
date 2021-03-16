@@ -32,10 +32,11 @@ __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, 
 - [x] Development server with Remote JS Debugging, Source Map symbolication and HMR support
 - [x] Hot Module Replacement + React Refresh support
 - [x] Reloading application from CLI
+- [x] Flipper support (tested features: Crash Reporter, Logs, Layout, Network, React DevTools with caveat [facebook/react#20377](https://github.com/facebook/react/issues/20377))
 
 ### Planned features
 
-- [ ] Flipper support (app connects to Fipper but only 5/8 plugins are supported) 
+- [ ] Missing Flipper features support (working HMR/React Refresh with React DevTools, Images and Databases) 
 - [ ] Hermes support
 - [ ] `webpack-init` command
 - [ ] Web dashboard with logs, compilation statues, bundle explorer, visualizations and more
@@ -163,6 +164,12 @@ This expected and there's little we can do about it. The stack trace is still co
 
 If you encounter such situation, and you need to get the precise stack trace, you can do a full reload
 and reproduce the error or `console.log`/`console.error` call.
+
+#### 3. React DevTools don't work with Hot Module Replacement / React Refresh
+
+The issue was reported here: [facebook/react#20377](https://github.com/facebook/react/issues/20377). Because we use similar solutions to implement React Refresh, we are affected by the same issue.
+
+For now the workaround is to temporarily disable HMR when debugging with Flipper or React DevTools, then switching it back when Flipper/React DevTools are disconnected.
 
 ## Made with ❤️ at Callstack
 
