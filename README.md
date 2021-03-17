@@ -33,13 +33,14 @@ __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, 
 - [x] Hot Module Replacement + React Refresh support
 - [x] Reloading application from CLI
 - [x] Flipper support (tested features: Crash Reporter, Logs, Layout, Network, React DevTools)
+- [x] Hermes support
 
 ### Planned features
 
-- [ ] Hermes support
+- [ ] Inspecting Hermes with Flipper
+- [ ] Asynchronous chunks
 - [ ] `webpack-init` command
 - [ ] Web dashboard with logs, compilation statues, bundle explorer, visualizations and more
-- [ ] Asynchronous chunks
 - [ ] Tighter integration with React Native CLI
 - [ ] [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669) support
 

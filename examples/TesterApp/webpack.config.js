@@ -6,7 +6,7 @@ const {
   ReactNativeAssetsPlugin,
   LoggerPlugin,
   DevServerPlugin,
-  DEFAULT_PORT,
+  // DEFAULT_PORT,
   ReactNativeTargetPlugin,
 } = require('../..');
 
@@ -57,14 +57,13 @@ const {
      * `PLATFORM=ios npx webpack-cli -c webpack.config.js`
      */
     platform: 'ios',
-    devServer: { port: DEFAULT_PORT },
+    /** Uncomment to start development server when running with Webpack CLI. */
+    // devServer: { port: DEFAULT_PORT },
   },
 });
 
 /**
  * Enable Hot Module Replacement with React Refresh in development.
- * Currently React Refresh breaks React Devtools (https://github.com/facebook/react/issues/20377)
- * so when using Flipper you might want to disable HMR.
  */
 const hmr = dev;
 
@@ -136,11 +135,13 @@ module.exports = {
         test: /\.[jt]sx?$/,
         include: [
           /node_modules(.*[/\\])+react/,
+          /node_modules(.*[/\\])+@react-native/,
           /node_modules(.*[/\\])+@react-navigation/,
           /node_modules(.*[/\\])+@react-native-community/,
           /node_modules(.*[/\\])+@expo/,
           /node_modules(.*[/\\])+pretty-format/,
           /node_modules(.*[/\\])+metro/,
+          /node_modules(.*[/\\])+abort-controller/,
         ],
         use: 'babel-loader',
       },
@@ -156,10 +157,8 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            plugins: [
-              /** Add React Refresh transform only when HMR is enabled. */
-              hmr && 'module:react-refresh/babel',
-            ],
+            /** Add React Refresh transform only when HMR is enabled. */
+            plugins: hmr ? ['module:react-refresh/babel'] : undefined,
           },
         },
       },

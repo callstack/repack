@@ -53,6 +53,10 @@ export const DEFAULT_PORT = 8081;
  * commands. The CLI options will be only available when running with React Native CLI. When running
  * with Webpack CLI, values from `fallback` field from {@link ParseCliOptionsConfig} will be used.
  *
+ * `fallback.mode` and `fallback.dev` values should always go together as a tuple:
+ * `('development', true)` or `('production', false)`. Specifying different values might result in
+ * undefined behavior. You can however omit one and the other will be inferred.
+ *
  * @param config Configuration options.
  * @returns Webpack options to create a valid Webpack configuration with.
  *
@@ -60,6 +64,13 @@ export const DEFAULT_PORT = 8081;
  */
 export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
   const fallback: WebpackOptions = { ...DEFAULT_FALLBACK, ...config.fallback };
+  const { mode, dev } = config.fallback;
+  if (mode !== undefined && dev === undefined) {
+    fallback.dev = mode === 'development';
+  } else if (mode === undefined && dev !== undefined) {
+    fallback.mode = dev ? 'development' : 'production';
+  }
+
   const rawCliOptions = process.env[CLI_OPTIONS_ENV_KEY];
   if (!rawCliOptions) {
     return fallback;
