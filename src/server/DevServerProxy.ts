@@ -277,6 +277,8 @@ export class DevServerProxy extends BaseDevServer {
           this.fastify.log.warn({
             msg: 'Missing platform query param',
             query: request.query,
+            method: request.method,
+            url: request.url,
           });
           reply.code(400).send();
         } else {
