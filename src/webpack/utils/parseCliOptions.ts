@@ -68,7 +68,7 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
   if (mode !== undefined && dev === undefined) {
     fallback.dev = mode === 'development';
   } else if (mode === undefined && dev !== undefined) {
-    fallback.mode = dev ? 'production' : 'development';
+    fallback.mode = dev ? 'development' : 'production';
   }
 
   const rawCliOptions = process.env[CLI_OPTIONS_ENV_KEY];

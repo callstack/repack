@@ -108,9 +108,9 @@ module.exports = {
      * dependency. You might need it when using workspaces/monorepos or unconventional project
      * structure. For simple/typical project you won't need it.
      */
-    // alias: {
-    //   'react-native': reactNativePath,
-    // },
+    alias: {
+      'react-native': reactNativePath,
+    },
   },
   /**
    * Configure output.
