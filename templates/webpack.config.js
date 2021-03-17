@@ -63,8 +63,6 @@ const {
 
 /**
  * Enable Hot Module Replacement with React Refresh in development.
- * Currently React Refresh breaks React Devtools (https://github.com/facebook/react/issues/20377)
- * so when using Flipper you might want to disable HMR.
  */
 const hmr = dev;
 
