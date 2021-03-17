@@ -25,6 +25,7 @@
   },
   "scripts": {
     "clean": "del dist",
+    "prepare": "npm run build",
     "babel": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"src/client/**\"",
     "babel:watch": "npm run babel -- --watch",
     "tsc": "tsc",
