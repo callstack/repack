@@ -12,7 +12,7 @@ export function Hello() {
 
   return (
     <View>
-      <Text>Hello world: {value}</Text>
+      <Text>Hello: {value}</Text>
     </View>
   );
 }

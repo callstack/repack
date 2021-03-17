@@ -134,6 +134,7 @@ module.exports = {
         test: /\.[jt]sx?$/,
         include: [
           /node_modules(.*[/\\])+react/,
+          /node_modules(.*[/\\])+@react-native/,
           /node_modules(.*[/\\])+@react-navigation/,
           /node_modules(.*[/\\])+@react-native-community/,
           /node_modules(.*[/\\])+@expo/,
