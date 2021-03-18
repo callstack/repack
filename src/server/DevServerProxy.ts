@@ -79,7 +79,7 @@ export class DevServerProxy extends BaseDevServer {
   /** Platform to worker mappings. */
   workers: Record<string, Promise<CompilerWorker>> = {};
   /** Reporter instance. */
-  reporter = new Reporter();
+  reporter = new Reporter({ wsEventsServer: this.wsEventsServer });
 
   /**
    * Constructs new `DevServerProxy`.

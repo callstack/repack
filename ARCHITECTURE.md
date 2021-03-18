@@ -110,6 +110,12 @@ the end destination for all logs is `Reporter` instance — this is the place wh
 written to the terminal and/or file. The route that each log takes to get to the reporter instance
 will differ.
 
+The top-level `Reporter` instance will also try to broadcast logs to the connected Flipper instance
+under _React Native_ -> _Logs_ with tag `rnwt_<type>` where `type` can be `debug`, `info`, `warn`
+or `error`. Because of the Flipper tight integration with Metro all `react-native-webpack-toolkit`
+logs will be reported as `verbose` so make sure you sent the filter to include type `Verbose`
+and use searching to filter logs e.g. by typing `rnwt_debug`.
+
 ### Bundling with `(webpack-)bundle` command and Webpack CLI / Running with development server via Webpack CLI
 
 > Read as stack trace, from bottom to the top.
