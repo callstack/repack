@@ -34,6 +34,7 @@ __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, 
 - [x] Reloading application from CLI
 - [x] Flipper support (tested features: Crash Reporter, Logs, Layout, Network, React DevTools)
 - [x] Hermes support
+- [x] Improved development server debugging with logs inside Flipper. 
 
 ### Planned features
 

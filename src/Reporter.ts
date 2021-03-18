@@ -4,6 +4,7 @@ import ora, { Ora } from 'ora';
 import colorette from 'colorette';
 import { LogEntry, LogType } from './types';
 import { isVerbose, isWorker } from './env';
+import { WebSocketEventsServer } from './server';
 
 const IS_SYMBOL_SUPPORTED =
   process.platform !== 'win32' ||
@@ -39,6 +40,7 @@ interface ResLogData {
 export interface ReporterConfig {
   /** Whether to log additional debug messages. */
   verbose?: boolean;
+  wsEventsServer?: WebSocketEventsServer;
 }
 
 /**
@@ -145,16 +147,16 @@ export class Reporter {
       this.fileLogBuffer.push(JSON.stringify(logEntry));
     }
 
-    // Skip debug logs if not in verbose mode
-    if (logEntry.type === 'debug' && !this.isVerbose) {
-      return;
-    }
+    let shouldReportToTerminal = logEntry.type !== 'debug' || this.isVerbose;
+    // Allow to skip broadcasting messages - e.g. if broadcasting fails we don't want to try
+    // to broadcast the failure as there's a high change it will fail again and cause infinite loop.
+    const shouldBroadcast = !logEntry.message?.[0]?._skipBroadcast;
 
     // When reporter is running inside worker, simply stringify the entry
     // and use console to log it to stdout. It will be later caught by DevSeverProxy.
     if (this.isWorker) {
       console.log(JSON.stringify(logEntry));
-    } else if (this.ora) {
+    } else {
       if (this.isProgress(logEntry)) {
         const {
           progress: { value, label, platform },
@@ -164,14 +166,34 @@ export class Reporter {
         this.progress[platform] = { value, label };
         this.updateProgress();
       } else {
-        const text = this.getOutputLogMessage(logEntry);
+        const transformedLogEntry = this.transformLogEntry(logEntry);
         // Ignore empty logs
-        if (text) {
-          this.ora.stopAndPersist({
-            symbol: Reporter.getSymbolForType(logEntry.type),
-            text: this.getOutputLogMessage(logEntry),
-          });
-          this.ora.start('Running...');
+        if (transformedLogEntry) {
+          if (shouldBroadcast) {
+            this.config.wsEventsServer?.broadcastEvent({
+              type: `rnwt_${transformedLogEntry.type}`,
+              data: [
+                transformedLogEntry.issuer,
+                ...transformedLogEntry.message,
+              ],
+            });
+          }
+
+          // Disable route logging if not verbose. It would be better to do it on per-router/Fastify
+          // level but unless webpack-dev-middleware is migrated to Fastify that's not a feasible solution.
+          // TODO: silence route logs on per-router/Fastify
+          if (transformedLogEntry.message[0].request && !this.isVerbose) {
+            shouldReportToTerminal = false;
+          }
+
+          const text = this.getOutputLogMessage(transformedLogEntry);
+          if (shouldReportToTerminal && this.ora) {
+            this.ora.stopAndPersist({
+              symbol: Reporter.getSymbolForType(logEntry.type),
+              text,
+            });
+            this.ora.start('Running...');
+          }
         }
       }
     }
@@ -190,13 +212,12 @@ export class Reporter {
     return Boolean(logEntry.message?.[0]?.progress);
   }
 
-  private getOutputLogMessage(logEntry: LogEntry) {
-    let body = '';
+  private transformLogEntry(logEntry: LogEntry): LogEntry | undefined {
+    const message = [];
     let issuer = logEntry.issuer;
     for (const value of logEntry.message) {
       if (typeof value === 'string') {
-        body += Reporter.colorizeText(logEntry.type, value);
-        body += ' ';
+        message.push(value);
       } else {
         const {
           msg,
@@ -222,13 +243,6 @@ export class Reporter {
 
         // Route logs from Fastify (DevServerProxy, DevServer)
         if ((req || res) && reqId !== undefined) {
-          // Disable route logging if not verbose. It would better to do it on per-router/Fastify
-          // level but unless webpack-dev-middleware is migrated to Fastify that's not a feasible solution.
-          // TODO: silence route logs on per-router/Fastify
-          if (!this.isVerbose) {
-            continue;
-          }
-
           if (req) {
             this.requestBuffer[reqId] = req;
             // Logs in the future should have a `res` with the same `reqId`, so we will be
@@ -239,16 +253,13 @@ export class Reporter {
           if (res) {
             const bufferedReq = this.requestBuffer[reqId];
             if (bufferedReq) {
-              let rawStatus = `${bufferedReq.method} ${res.statusCode}`;
-              let status = colorette.green(rawStatus);
-              if (res.statusCode >= 500) {
-                status = colorette.red(rawStatus);
-              } else if (res.statusCode >= 400) {
-                status = colorette.yellow(rawStatus);
-              }
-
-              body += `${status} ${colorette.gray(bufferedReq.url)}`;
-              body += ' ';
+              message.push({
+                request: {
+                  statusCode: res.statusCode,
+                  method: bufferedReq.method,
+                  url: bufferedReq.url,
+                },
+              });
               // Ignore msg/other data and process next value
               continue;
             } else {
@@ -260,15 +271,51 @@ export class Reporter {
 
         // Usually non-route logs from Fastify (DevServerProxy, DevServer will have a `msg` field)
         if (msg) {
-          if (Array.isArray(msg)) {
-            for (const msgItem of msg) {
-              body += Reporter.colorizeText(logEntry.type, msgItem);
-              body += ' ';
-            }
-          } else {
-            body += Reporter.colorizeText(logEntry.type, msg);
-            body += ' ';
+          message.push(...(Array.isArray(msg) ? msg : [msg]));
+        }
+
+        if (Object.keys(rest).length) {
+          message.push(rest);
+        }
+      }
+    }
+
+    // Ignore empty logs
+    if (!message.length) {
+      return undefined;
+    }
+
+    return {
+      timestamp: logEntry.timestamp,
+      type: logEntry.type,
+      issuer,
+      message,
+    };
+  }
+
+  private getOutputLogMessage(logEntry: LogEntry): string {
+    let body = '';
+    for (const value of logEntry.message) {
+      if (typeof value === 'string') {
+        body += Reporter.colorizeText(logEntry.type, value);
+        body += ' ';
+      } else {
+        const { request, ...rest } = value as {
+          request?: { method: string; statusCode: number; url: string };
+          [key: string]: any; // For all unknown fields
+        };
+
+        if (request) {
+          let rawStatus = `${request.method} ${request.statusCode}`;
+          let status = colorette.green(rawStatus);
+          if (request.statusCode >= 500) {
+            status = colorette.red(rawStatus);
+          } else if (request.statusCode >= 400) {
+            status = colorette.yellow(rawStatus);
           }
+
+          body += `${status} ${colorette.gray(request.url)}`;
+          body += ' ';
         }
 
         if (Object.keys(rest).length) {
@@ -281,16 +328,11 @@ export class Reporter {
       }
     }
 
-    // Ignore empty logs
-    if (!body) {
-      return undefined;
-    }
-
     return (
       colorette.gray(
         `[${new Date(logEntry.timestamp).toISOString().split('T')[1]}]`
       ) +
-      colorette.bold(`[${issuer}]`) +
+      colorette.bold(`[${logEntry.issuer}]`) +
       ` ${body}`
     );
   }
