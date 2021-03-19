@@ -39,7 +39,7 @@ export const DEFAULT_FALLBACK: WebpackOptionsWithoutPlatform = {
   outputPath: path.join(process.cwd(), 'dist'),
   assetsOutputPath: path.join(process.cwd(), 'dist'),
   outputFilename: 'index.bundle',
-  sourcemapFilename: 'index.bundle.map',
+  sourcemapFilename: '[file].map',
   context: process.cwd(),
   reactNativePath: path.join(process.cwd(), './node_modules/react-native'),
   minimize: false,
@@ -136,8 +136,6 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
         https: args.https,
         cert: args.cert || undefined,
         key: args.key || undefined,
-        context: cliOptions.config.root,
-        platform: args.platform,
       },
     };
   }

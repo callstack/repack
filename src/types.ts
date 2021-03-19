@@ -82,10 +82,6 @@ export interface DevServerOptions {
   cert?: string;
   /** Path to certificate key when running server on HTTPS. */
   key?: string;
-  /** Context in which all resolution happens. Usually it's project root directory. */
-  context: string;
-  /** Target application platform. */
-  platform: string;
 }
 
 /**
