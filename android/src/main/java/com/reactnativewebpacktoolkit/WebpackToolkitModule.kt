@@ -12,7 +12,7 @@ class WebpackToolkitModule(reactContext: ReactApplicationContext) : ReactContext
     }
 
     @ReactMethod
-    fun loadChunk(chunkId: String, promise: Promise) {
+    fun loadChunk(chunkId: String, chunkUrl: String, promise: Promise) {
         reactApplicationContext.catalystInstance.loadScriptFromFile("", "", false)
       promise.resolve(null)
     

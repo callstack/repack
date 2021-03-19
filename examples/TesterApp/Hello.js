@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, NativeModules } from 'react-native';
+
+// const Async = React.lazy(
+  import('./Async')
+  //);
 
 export function Hello() {
   const [value, setValue] = useState('not updated');
@@ -7,12 +11,16 @@ export function Hello() {
   useEffect(() => {
     setTimeout(() => {
       setValue('updated');
+      NativeModules.WebpackToolkit.loadChunk('asdf');
     }, 1000);
   });
 
   return (
     <View>
-      <Text>Hello: {value}</Text>
+      <Text>Hello world: {value}</Text>
+      {/* <React.Suspense fallback={<Text>Loading...</Text>}>
+        <Async />
+      </React.Suspense> */}
     </View>
   );
 }
