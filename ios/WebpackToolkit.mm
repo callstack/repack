@@ -16,21 +16,34 @@ RCT_EXPORT_MODULE()
 
 @synthesize bridge = _bridge;
 
-RCT_REMAP_METHOD(loadChunk,
-                 chunkId:(nonnull NSString*)chunkId
-                 chunkUrl:(nonnull NSString*)chunkUrl
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
+                  chunkUrl:(nonnull NSString*)chunkUrl
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
     // Cast `RCTBridge` to `RCTCxxBridge`.
     __weak RCTCxxBridge *weakSelf = (RCTCxxBridge *)_bridge;
     @try
     {
-        [weakSelf executeApplicationScript:[@"console.log('fuck yeah');" dataUsingEncoding:NSUTF8StringEncoding] url:nil async:YES];
-        resolve(nil);
+        if ([chunkUrl hasPrefix:@"http"]) {
+            NSURL *url = [NSURL URLWithString:chunkUrl];
+            NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url
+                                                                     completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                if (error != nil) {
+                    reject(@"error", error.localizedDescription, nil);
+                } else {
+                    [weakSelf executeApplicationScript:data url:url async:YES];
+                    resolve(nil);
+                    
+                }
+            }];
+            [task resume];
+        } else {
+            reject(@"error", @"Non-http chunk URLs are not yet supported", nil);
+        }
     } @catch (NSException * exception)
     {
-        reject(@"error", @"error", nil);
+        reject(@"error", exception.reason, nil);
     }
 }
 

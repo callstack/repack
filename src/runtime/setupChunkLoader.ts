@@ -42,7 +42,7 @@ async function loadAsyncChunk(
   chunkId: string | number
 ) {
   try {
-    await NativeModules.WebpackToolkit.loadChunk(chunkId, url);
+    await NativeModules.WebpackToolkit.loadChunk(chunkId.toString(), url);
   } catch (error) {
     console.error('[loadAsyncChunk] Error:', error);
     cb(new LoadEvent('load', url));

@@ -70,12 +70,6 @@ const {
  */
 const hmr = dev;
 
-
-/**
- * Enable development server in development mode.
- */
-const devServerEnabled = dev;
-
 /**
  * Enable development server in development mode.
  */
