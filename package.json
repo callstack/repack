@@ -4,6 +4,18 @@
   "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "react-native": "",
+  "files": [
+    "dist",
+    "templates",
+    "android",
+    "ios",
+    "react-native.config.js",
+    "react-native-webpack-toolkit.podspec",
+    "!android/build",
+    "!ios/build"
+  ],
+  "homepage": "https://github.com/callstack/react-native-webpack-toolkit",
   "repository": "github:callstack/react-native-webpack-toolkit",
   "keywords": [
     "react-native",
@@ -15,11 +27,6 @@
   ],
   "author": "zamotany <zamotany.oss@gmail.com>",
   "license": "MIT",
-  "files": [
-    "dist/**/*",
-    "templates/**/*",
-    "react-native.config.js"
-  ],
   "engines": {
     "node": ">=12.x"
   },
