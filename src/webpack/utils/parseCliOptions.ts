@@ -43,6 +43,7 @@ export const DEFAULT_FALLBACK: WebpackOptionsWithoutPlatform = {
   context: process.cwd(),
   reactNativePath: path.join(process.cwd(), './node_modules/react-native'),
   minimize: false,
+  outputChunkFilename: '[id].index.bundle',
 };
 
 /** Default development server (proxy) port. */
@@ -106,6 +107,10 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       outputPath,
       outputFilename,
       sourcemapFilename,
+      outputChunkFilename: `${path.relative(
+        outputPath,
+        args.assetsDest ?? outputPath
+      )}/[id].${outputFilename}`,
       assetsOutputPath: args.assetsDest,
       minimize: Boolean(args.minify),
       reactNativePath: cliOptions.config.reactNativePath,
@@ -122,6 +127,7 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       outputPath: fallback.outputPath,
       outputFilename: fallback.outputFilename,
       sourcemapFilename: fallback.sourcemapFilename,
+      outputChunkFilename: fallback.outputChunkFilename,
       assetsOutputPath: undefined,
       minimize: false,
       reactNativePath: cliOptions.config.reactNativePath,

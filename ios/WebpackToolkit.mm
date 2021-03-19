@@ -16,10 +16,11 @@ RCT_EXPORT_MODULE()
 
 @synthesize bridge = _bridge;
 
-RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
-                  chunkUrl:(nonnull NSString*)chunkUrl
-                  withResolver:(RCTPromiseResolveBlock)resolve
-                  withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_REMAP_METHOD(loadChunk,
+                 chunkId:(nonnull NSString*)chunkId
+                 chunkUrl:(nonnull NSString*)chunkUrl
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
 {
     // Cast `RCTBridge` to `RCTCxxBridge`.
     __weak RCTCxxBridge *weakSelf = (RCTCxxBridge *)_bridge;
@@ -39,7 +40,12 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
             }];
             [task resume];
         } else {
-            reject(@"error", @"Non-http chunk URLs are not yet supported", nil);
+            NSString *chunkName = [[chunkUrl lastPathComponent] stringByDeletingPathExtension];
+            NSString *chunkExtension = [chunkUrl pathExtension];
+            NSURL *url = [[NSBundle mainBundle] URLForResource:chunkName withExtension:chunkExtension];
+            NSData *data = [[NSData alloc] initWithContentsOfFile:[url path]];
+            [weakSelf executeApplicationScript:data url:url async:YES];
+            resolve(nil);
         }
     } @catch (NSException * exception)
     {

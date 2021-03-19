@@ -127,6 +127,10 @@ export interface WebpackOptions {
   /** Bundle output filename - name under which built bundle will be saved. */
   outputFilename: string;
   /**
+   * Async chunk output filename inferred from `outputPath`, `outputFilename` and `assetsOutputPath`.
+   */
+  outputChunkFilename: string;
+  /**
    * Source map filename - name under which generated Source Map will be saved.
    * The output directory for the Source Map is the same as {@link outputPath}.
    */

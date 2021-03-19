@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const path = require('path');
 const {
   parseCliOptions,
   getInitializationEntries,
@@ -46,6 +47,7 @@ const {
   reactNativePath,
   outputPath,
   outputFilename,
+  outputChunkFilename,
   assetsOutputPath,
   devServer,
   sourcemapFilename,
@@ -128,6 +130,7 @@ module.exports = {
   output: {
     path: outputPath,
     filename: outputFilename,
+    chunkFilename: outputChunkFilename,
   },
   module: {
     /**
