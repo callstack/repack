@@ -6,7 +6,7 @@ const {
   ReactNativeAssetsPlugin,
   LoggerPlugin,
   DevServerPlugin,
-  // DEFAULT_PORT,
+  DEFAULT_PORT,
   ReactNativeTargetPlugin,
 } = require('../..');
 
@@ -52,13 +52,16 @@ const {
 } = parseCliOptions({
   fallback: {
     /**
+     * Fallback to production when running with Webpack CLI.
+     */
+    mode: 'production',
+    /**
      * Make sure you always specify platform when running with Webpack CLI.
      * Alternatively you could use `process.env.PLATFORM` and run:
      * `PLATFORM=ios npx webpack-cli -c webpack.config.js`
      */
     platform: 'ios',
-    /** Uncomment to start development server when running with Webpack CLI. */
-    // devServer: { port: DEFAULT_PORT },
+    devServer: { port: DEFAULT_PORT },
   },
 });
 
@@ -66,6 +69,11 @@ const {
  * Enable Hot Module Replacement with React Refresh in development.
  */
 const hmr = dev;
+
+/**
+ * Enable development server in development mode.
+ */
+const devServerEnabled = dev;
 
 /**
  * Depending on your Babel configuration you might want to keep it.
@@ -196,9 +204,9 @@ module.exports = {
 
     /**
      * Runs development server when running with React Native CLI start command or if `devServer`
-     * was provided as s `fallback`. Passing `undefined` as 1st argument will disable the plugin.
+     * was provided as s `fallback`.
      */
-    new DevServerPlugin({ ...devServer, hmr }),
+    new DevServerPlugin({ enabled: devServerEnabled, hmr, ...devServer }),
 
     /**
      * Configures Source Maps.
@@ -223,7 +231,7 @@ module.exports = {
      */
     new LoggerPlugin({
       platform,
-      devServer: Boolean(devServer),
+      devServerEnabled,
       output: {
         console: true,
         /**
