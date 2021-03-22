@@ -1,4 +1,4 @@
-import path from 'path';
+// import path from 'path';
 import webpack from 'webpack';
 import { WebpackPlugin } from '../../../types';
 import {
@@ -14,22 +14,14 @@ export interface ReactNativeAssetsPluginConfig
   /** Context in which all resolution happens. Usually it's project root directory. */
   context: string;
   /**
-   * Bundle output path - directory where built bundle will be saved.
-   * If not provided it will be inferred from Webpack configuration.
+   * Output directory where all the assets and bundle will be saved.
+   * If not provided, it will be inferred based on `output.path` from Webpack configuration.
    */
   outputPath?: string;
   /**
-   * Directory where all assets (eg: images, video, audio) should be saved.
-   * If not provided, all assets will be saved in the same directory as {@link outputPath}.
+   * Whether the development server is enabled.
    */
-  assetsOutputPath?: string;
-  /**
-   * Whether the build produces static bundle saved to file or
-   * the bundle will be updated multiple times and resides in memory.
-   *
-   * __When development server is running, `bundleToFile` should be set to `false`.__
-   */
-  bundleToFile?: boolean;
+  devServerEnabled?: boolean;
 }
 
 /**
@@ -57,17 +49,11 @@ export class ReactNativeAssetsPlugin implements WebpackPlugin {
   apply(compiler: webpack.Compiler) {
     const assetResolver = new ReactNativeAssetResolver(this.config, compiler);
 
-    let outputPath: string | undefined;
-    if (this.config.assetsOutputPath) {
-      const baseOutputPath =
-        this.config.outputPath || compiler.options.output.path;
-      if (!baseOutputPath) {
-        throw new Error(
-          '`outputPath` or `output.path` in Webpack config must be specified when using custom `assetsOutputPath`'
-        );
-      }
-
-      outputPath = path.relative(baseOutputPath, this.config.assetsOutputPath);
+    const outputPath = this.config.outputPath || compiler.options.output.path;
+    if (!outputPath) {
+      throw new Error(
+        '`outputPath` or `output.path` in Webpack config must be specified'
+      );
     }
 
     compiler.options.module.rules.push({
@@ -79,7 +65,7 @@ export class ReactNativeAssetsPlugin implements WebpackPlugin {
             platform: this.config.platform,
             context: this.config.context,
             outputPath,
-            bundleToFile: this.config.bundleToFile ?? true,
+            bundleToFile: !this.config.devServerEnabled,
           },
         },
       ],

@@ -46,7 +46,6 @@ const {
   reactNativePath,
   outputPath,
   outputFilename,
-  assetsOutputPath,
   devServer,
   sourcemapFilename,
 } = parseCliOptions({
@@ -191,8 +190,7 @@ module.exports = {
       platform,
       context,
       outputPath,
-      assetsOutputPath,
-      bundleToFile: !devServer,
+      devServerEnabled,
     }),
 
     /**
