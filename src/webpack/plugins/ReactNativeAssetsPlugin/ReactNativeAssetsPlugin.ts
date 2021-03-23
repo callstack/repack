@@ -1,4 +1,3 @@
-// import path from 'path';
 import webpack from 'webpack';
 import { WebpackPlugin } from '../../../types';
 import {
