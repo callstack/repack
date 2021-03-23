@@ -8,6 +8,7 @@ const {
   DevServerPlugin,
   DEFAULT_PORT,
   ReactNativeTargetPlugin,
+  getPublicPath,
 } = require('react-native-webpack-toolkit');
 
 /**
@@ -127,6 +128,11 @@ module.exports = {
   output: {
     path: outputPath,
     filename: outputFilename,
+    chunkFilename: '[name].chunk.bundle',
+    publicPath: getPublicPath({
+      devServerEnabled,
+      ...devServer,
+    }),
   },
   module: {
     /**

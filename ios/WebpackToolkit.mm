@@ -18,39 +18,61 @@ RCT_EXPORT_MODULE()
 
 RCT_REMAP_METHOD(loadChunk,
                  chunkId:(nonnull NSString*)chunkId
-                 chunkUrl:(nonnull NSString*)chunkUrl
+                 chunkUrl:(nonnull NSString*)chunkUrlString
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
     // Cast `RCTBridge` to `RCTCxxBridge`.
-    __weak RCTCxxBridge *weakSelf = (RCTCxxBridge *)_bridge;
+    __weak RCTCxxBridge *bridge = (RCTCxxBridge *)_bridge;
+    
     @try
     {
-        if ([chunkUrl hasPrefix:@"http"]) {
-            NSURL *url = [NSURL URLWithString:chunkUrl];
-            NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url
-                                                                     completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                if (error != nil) {
-                    reject(@"error", error.localizedDescription, nil);
-                } else {
-                    [weakSelf executeApplicationScript:data url:url async:YES];
-                    resolve(nil);
-                    
-                }
-            }];
-            [task resume];
+        NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
+        
+        // Handle http & https
+        if ([[chunkUrl scheme] hasPrefix:@"http"]) {
+            [self loadChunkFromRemote:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
+        } else if ([[chunkUrl scheme] isEqualToString:@"file"]) {
+            [self loadChunkFromFilesystem:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
+            
         } else {
-            NSString *chunkName = [[chunkUrl lastPathComponent] stringByDeletingPathExtension];
-            NSString *chunkExtension = [chunkUrl pathExtension];
-            NSURL *url = [[NSBundle mainBundle] URLForResource:chunkName withExtension:chunkExtension];
-            NSData *data = [[NSData alloc] initWithContentsOfFile:[url path]];
-            [weakSelf executeApplicationScript:data url:url async:YES];
-            resolve(nil);
+            reject(@"error", @"Protocol not supported", nil);
         }
     } @catch (NSException * exception)
     {
         reject(@"error", exception.reason, nil);
     }
+}
+
+- (void)loadChunkFromRemote:(RCTCxxBridge *)bridge
+                        url:(NSURL *)url
+               withResolver:(RCTPromiseResolveBlock)resolve
+               withRejecter:(RCTPromiseRejectBlock)reject
+{
+    NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url
+                                                             completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error != nil) {
+            reject(@"error", error.localizedDescription, nil);
+        } else {
+            [bridge executeApplicationScript:data url:url async:YES];
+            resolve(nil);
+            
+        }
+    }];
+    [task resume];
+}
+
+- (void)loadChunkFromFilesystem:(RCTCxxBridge *)bridge
+                            url:(NSURL *)url
+                   withResolver:(RCTPromiseResolveBlock)resolve
+                   withRejecter:(RCTPromiseRejectBlock)reject
+{
+    NSString *chunkName = [[url lastPathComponent] stringByDeletingPathExtension];
+    NSString *chunkExtension = [url pathExtension];
+    NSURL *filesystemChunkUrl = [[NSBundle mainBundle] URLForResource:chunkName withExtension:chunkExtension];
+    NSData *data = [[NSData alloc] initWithContentsOfFile:[filesystemChunkUrl path]];
+    [bridge executeApplicationScript:data url:url async:YES];
+    resolve(nil);
 }
 
 @end

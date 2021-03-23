@@ -9,6 +9,7 @@ const {
   DevServerPlugin,
   DEFAULT_PORT,
   ReactNativeTargetPlugin,
+  getPublicPath
 } = require('../..');
 
 /**
@@ -85,6 +86,11 @@ const devServerEnabled = dev;
  */
 process.env.BABEL_ENV = mode;
 
+console.log({
+  outputPath,
+  outputFilename
+})
+
 /**
  * Webpack configuration.
  */
@@ -128,6 +134,11 @@ module.exports = {
   output: {
     path: outputPath,
     filename: outputFilename,
+    chunkFilename: '[name].chunk.bundle',
+    publicPath: getPublicPath({
+      devServerEnabled,
+      ...devServer,
+    }),
   },
   module: {
     /**

@@ -50,15 +50,6 @@ export class DevServerPlugin implements WebpackPlugin {
       return;
     }
 
-    const logger = compiler.getInfrastructureLogger('DevServerPlugin');
-
-    // Set public path
-    const host = `${this.config.host || 'localhost'}:${this.config.port}`;
-    compiler.options.output.publicPath = `${
-      this.config.https ? 'https' : 'http'
-    }://${host}/`;
-    logger.debug('Setting public path to:', compiler.options.output.publicPath);
-
     new webpack.DefinePlugin({
       'process.env.__PUBLIC_PATH__': JSON.stringify(
         compiler.options.output.publicPath

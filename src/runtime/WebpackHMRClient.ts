@@ -1,5 +1,5 @@
 /* eslint-env browser */
-/* globals __webpack_hash__ __webpack_public_path__ __DEV__ */
+/* globals __webpack_hash__ __DEV__ */
 
 import type { HMRMessage, HMRMessageBody } from '../types';
 import { getDevServerLocation } from './getDevServerLocation';
@@ -183,17 +183,6 @@ if (__DEV__ && module.hot) {
     const LogBoxData = require('react-native/Libraries/LogBox/Data/LogBoxData');
     LogBoxData.clear();
   };
-
-  // We need to teak Webpack's public path, especially for Android, where `localhost`
-  // is not a correct host but eg `10.0.2.2` is.
-  // If the public path doesn't have `localhost` in it, it usually means a custom `host` was
-  // provided, so the replace won't change that.
-  const { hostname } = getDevServerLocation();
-  // eslint-disable-next-line
-  __webpack_public_path__ = __webpack_public_path__.replace(
-    'localhost',
-    hostname
-  );
 
   new HMRClient({ reload, dismissErrors, LoadingView });
 }
