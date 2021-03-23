@@ -98,6 +98,12 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       sourcemapFilename = path.isAbsolute(args.sourcemapOutput)
         ? path.relative(outputPath, args.sourcemapOutput)
         : args.sourcemapOutput;
+      // Replace the basename with the template, otherwise the compilation will error,
+      // due to multiple assets emitting source map to the same file.
+      sourcemapFilename = path.join(
+        path.dirname(sourcemapFilename),
+        '[file].map'
+      );
     }
 
     return {

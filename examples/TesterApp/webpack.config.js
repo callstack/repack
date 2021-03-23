@@ -9,7 +9,8 @@ const {
   DevServerPlugin,
   DEFAULT_PORT,
   ReactNativeTargetPlugin,
-  getPublicPath
+  getPublicPath,
+  getChunkFilename
 } = require('../..');
 
 /**
@@ -67,14 +68,14 @@ const {
 });
 
 /**
- * Enable Hot Module Replacement with React Refresh in development.
- */
-const hmr = dev;
-
-/**
  * Enable development server in development mode.
  */
 const devServerEnabled = dev;
+
+/**
+ * Enable Hot Module Replacement with React Refresh in when development server is running.
+ */
+const hmr = devServerEnabled;
 
 /**
  * Depending on your Babel configuration you might want to keep it.
@@ -85,11 +86,6 @@ const devServerEnabled = dev;
  * in development mode by Babel.
  */
 process.env.BABEL_ENV = mode;
-
-console.log({
-  outputPath,
-  outputFilename
-})
 
 /**
  * Webpack configuration.
@@ -134,7 +130,10 @@ module.exports = {
   output: {
     path: outputPath,
     filename: outputFilename,
-    chunkFilename: '[name].chunk.bundle',
+    chunkFilename: getChunkFilename({
+      platform,
+      outputFilename,
+    }),
     publicPath: getPublicPath({
       devServerEnabled,
       ...devServer,

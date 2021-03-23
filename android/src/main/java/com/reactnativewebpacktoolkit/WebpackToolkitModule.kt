@@ -17,14 +17,24 @@ class WebpackToolkitModule(reactContext: ReactApplicationContext) : ReactContext
     @ReactMethod
     fun loadChunk(chunkId: String, chunkUrl: String, promise: Promise) {
         val url = URL(chunkUrl)
-        if (chunkUrl.startsWith("http")) {
-            if (loader == null) {
-                loader = RemoteChunkLoader(reactApplicationContext)
-            }
+        when {
+            url.protocol.startsWith("http") -> {
+                if (loader == null) {
+                    loader = RemoteChunkLoader(reactApplicationContext)
+                }
 
-            loader?.load(url, promise)
-        } else {
-            promise.reject(Error("todo"))
+                loader?.load(url, promise)
+            }
+            url.protocol == "file" -> {
+                if (loader == null) {
+                    loader = FileSystemChunkLoader(reactApplicationContext)
+                }
+
+                loader?.load(url, promise)
+            }
+            else -> {
+                promise.reject(Error("todo"))
+            }
         }
     }
 }

@@ -21,8 +21,7 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     try {
-                        // Make sure there's no trailing /
-                        val filename = url.file.replace("/", "")
+                        val filename = url.file.split("/").last()
                         val body = response.body?.string()
 
                         val outputStream = reactContext.openFileOutput(filename, MODE_PRIVATE)
