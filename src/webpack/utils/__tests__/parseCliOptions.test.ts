@@ -54,7 +54,7 @@ describe('parseCliOptions', () => {
         outputPath: '/x/y/z/app',
         platform: 'xyz',
         reactNativePath: '/a/b/c/node_modules/react-native',
-        sourcemapFilename: '../[file].map',
+        sourcemapFilename: '../main.bundle.map',
       });
     });
 

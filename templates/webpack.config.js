@@ -223,14 +223,33 @@ module.exports = {
     }),
 
     /**
-     * Configures Source Maps.
+     * Configures Source Maps for the main bundle based on CLI options received from
+     * React Native CLI or fallback value..
      * It's recommended to leave the default values, unless you know what you're doing.
      * Wrong options might cause symbolication of stack trace inside React Native app
      * to fail - the app will still work, but you might not get Source Map support.
      */
     new webpack.SourceMapDevToolPlugin({
-      test: /\.([jt]sx?|(js)?bundle)$/,
-      filename: dev ? '[file].map' : sourcemapFilename,
+      test: /\.(js)?bundle$/,
+      exclude: /\.chunk\.(js)?bundle$/,
+      filename: sourcemapFilename,
+      append: `//# sourceMappingURL=[url]?platform=${platform}`,
+      /**
+       * Uncomment for faster builds but less accurate Source Maps
+       */
+      // columns: false,
+    }),
+
+    /**
+     * Configures Source Maps for any additional chunks.
+     * It's recommended to leave the default values, unless you know what you're doing.
+     * Wrong options might cause symbolication of stack trace inside React Native app
+     * to fail - the app will still work, but you might not get Source Map support.
+     */
+    new webpack.SourceMapDevToolPlugin({
+      test: /\.(js)?bundle$/,
+      include: /\.chunk\.(js)?bundle$/,
+      filename: '[file].map',
       append: `//# sourceMappingURL=[url]?platform=${platform}`,
       /**
        * Uncomment for faster builds but less accurate Source Maps
