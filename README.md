@@ -39,7 +39,7 @@ __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, 
 ### Planned features
 
 - [ ] Inspecting Hermes with Flipper
-- [ ] Asynchronous chunks
+- [ ] Asynchronous chunks ([#5](https://github.com/callstack/react-native-webpack-toolkit/pull/5))
 - [ ] `webpack-init` command
 - [ ] Web dashboard with logs, compilation statues, bundle explorer, visualizations and more
 - [ ] Tighter integration with React Native CLI
