@@ -14,8 +14,11 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
     override fun load(url: URL, promise: Promise) {
         val request = Request.Builder().url(url).build();
         val callback = object : Callback {
-            override fun onFailure(call: Call, error: IOException) {
-                promise.reject(error)
+            override fun onFailure(call: Call, e: IOException) {
+                promise.reject(
+                        ChunkLoadingError.NetworkFailure.code,
+                        e.message ?: e.toString()
+                )
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -36,10 +39,16 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
                         )
                         promise.resolve(null)
                     } catch (error: Exception) {
-                        promise.reject(error)
+                        promise.reject(
+                                ChunkLoadingError.RemoteEvalFailure.code,
+                                error.message ?: error.toString()
+                        )
                     }
                 } else {
-                    promise.reject("error", "Request failed with non-2xx status code")
+                    promise.reject(
+                            ChunkLoadingError.RequestFailure.code,
+                            "Request should have returned with 200 HTTP status, but instead it received ${response.code}"
+                    )
                 }
             }
         }

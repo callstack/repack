@@ -31,7 +31,7 @@ async function loadHmrUpdate(url: string, cb: LoadCallback) {
       }
       cb();
     } catch (error) {
-      console.error('[loadHmrUpdate] Error:', error);
+      console.error('Loading HMR update chunk failed:', error);
       cb(new LoadEvent('exec', url));
     }
   }
@@ -45,7 +45,11 @@ async function loadAsyncChunk(
   try {
     await NativeModules.WebpackToolkit.loadChunk(chunkId.toString(), url);
   } catch (error) {
-    console.error('[loadAsyncChunk] Error:', error);
+    console.error(
+      'WebpackToolkit.loadChunk invocation failed:',
+      error.message,
+      error.code ? `[${error.code}]` : ''
+    );
     cb(new LoadEvent('load', url));
   }
 }
@@ -73,7 +77,7 @@ __webpack_require__.l = async (
     if (__DEV__ && module.hot) {
       await loadHmrUpdate(url, cb);
     } else {
-      throw new Error('[__webpack_require__.l] Loading HMR update is disabled');
+      throw new Error('Loading HMR update chunks is disabled');
     }
   }
 };

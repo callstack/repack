@@ -10,6 +10,12 @@
 
 @end
 
+typedef NSString *WebpackToolkitError NS_TYPED_ENUM;
+extern WebpackToolkitError const UnsupportedScheme = @"UnsupportedScheme";
+extern WebpackToolkitError const RequestFailure = @"RequestFailure";
+extern WebpackToolkitError const RemoteEvalFailure = @"RemoteEvalFailure";
+extern WebpackToolkitError const FileSystemEvalFailure = @"FileSystemEvalFailure";
+
 @implementation WebpackToolkit
 
 RCT_EXPORT_MODULE()
@@ -24,23 +30,18 @@ RCT_REMAP_METHOD(loadChunk,
 {
     // Cast `RCTBridge` to `RCTCxxBridge`.
     __weak RCTCxxBridge *bridge = (RCTCxxBridge *)_bridge;
+
+    NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
     
-    @try
-    {
-        NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
+    // Handle http & https
+    if ([[chunkUrl scheme] hasPrefix:@"http"]) {
+        [self loadChunkFromRemote:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
+    } else if ([[chunkUrl scheme] isEqualToString:@"file"]) {
+        [self loadChunkFromFilesystem:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
         
-        // Handle http & https
-        if ([[chunkUrl scheme] hasPrefix:@"http"]) {
-            [self loadChunkFromRemote:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
-        } else if ([[chunkUrl scheme] isEqualToString:@"file"]) {
-            [self loadChunkFromFilesystem:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
-            
-        } else {
-            reject(@"error", @"Protocol not supported", nil);
-        }
-    } @catch (NSException * exception)
-    {
-        reject(@"error", exception.reason, nil);
+    } else {
+        reject(UnsupportedScheme,
+               [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", chunkUrlString], nil);
     }
 }
 
@@ -52,10 +53,15 @@ RCT_REMAP_METHOD(loadChunk,
     NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url
                                                              completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error != nil) {
-            reject(@"error", error.localizedDescription, nil);
+            reject(RequestFailure, error.localizedDescription, nil);
         } else {
-            [bridge executeApplicationScript:data url:url async:YES];
-            resolve(nil);
+            @try {
+                [bridge executeApplicationScript:data url:url async:YES];
+                resolve(nil);
+            } @catch (NSException *exception) {
+                reject(RemoteEvalFailure, exception.reason, nil);
+            }
+            
             
         }
     }];
@@ -67,12 +73,17 @@ RCT_REMAP_METHOD(loadChunk,
                    withResolver:(RCTPromiseResolveBlock)resolve
                    withRejecter:(RCTPromiseRejectBlock)reject
 {
-    NSString *chunkName = [[url lastPathComponent] stringByDeletingPathExtension];
-    NSString *chunkExtension = [url pathExtension];
-    NSURL *filesystemChunkUrl = [[NSBundle mainBundle] URLForResource:chunkName withExtension:chunkExtension];
-    NSData *data = [[NSData alloc] initWithContentsOfFile:[filesystemChunkUrl path]];
-    [bridge executeApplicationScript:data url:url async:YES];
-    resolve(nil);
+    @try {
+        NSString *chunkName = [[url lastPathComponent] stringByDeletingPathExtension];
+        NSString *chunkExtension = [url pathExtension];
+        NSURL *filesystemChunkUrl = [[NSBundle mainBundle] URLForResource:chunkName withExtension:chunkExtension];
+        NSData *data = [[NSData alloc] initWithContentsOfFile:[filesystemChunkUrl path]];
+        [bridge executeApplicationScript:data url:url async:YES];
+        resolve(nil);
+    } @catch (NSException *exception) {
+        reject(FileSystemEvalFailure, exception.reason, nil);
+    }
+    
 }
 
 @end

@@ -17,6 +17,9 @@ class WebpackToolkitModule(reactContext: ReactApplicationContext) : ReactContext
     @ReactMethod
     fun loadChunk(chunkId: String, chunkUrl: String, promise: Promise) {
         val url = URL(chunkUrl)
+
+        // Currently, `loadChunk` supports either `RemoteChunkLoader` or `FileSystemChunkLoader`
+        // but not both at the same time - it will likely change in the future.
         when {
             url.protocol.startsWith("http") -> {
                 if (loader == null) {
@@ -33,7 +36,10 @@ class WebpackToolkitModule(reactContext: ReactApplicationContext) : ReactContext
                 loader?.load(url, promise)
             }
             else -> {
-                promise.reject(Error("todo"))
+                promise.reject(
+                        ChunkLoadingError.UnsupportedScheme.code,
+                        "Scheme in URL: '$chunkUrl' is not supported"
+                )
             }
         }
     }
