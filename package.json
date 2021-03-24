@@ -33,7 +33,7 @@
   "scripts": {
     "clean": "del dist",
     "prepare": "npm run build",
-    "babel": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"src/client/**\"",
+    "babel": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"src/client/**\" --ignore \"**/__tests__/**\"",
     "babel:watch": "npm run babel -- --watch",
     "tsc": "tsc",
     "tsc:build": "tsc --build tsconfig.release.json",

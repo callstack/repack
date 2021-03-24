@@ -3,5 +3,8 @@
   "compilerOptions": {
     "noEmit": false,
     "emitDeclarationOnly": true
-  }
+  },
+  "exclude": [
+    "**/__tests__**"
+  ]
 }

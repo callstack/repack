@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parseCliOptions for creating static bundle on Android platform should return fallback values if CLI options are empty 1`] = `
+Object {
+  "context": "/a/b/c",
+  "dev": true,
+  "entry": "./index.js",
+  "minimize": false,
+  "mode": "development",
+  "outputFilename": "index.bundle",
+  "outputPath": "/a/b/c/dist",
+  "platform": "android",
+  "reactNativePath": "/a/b/c/node_modules/react-native",
+  "sourcemapFilename": "[file].map",
+}
+`;
+
+exports[`parseCliOptions for creating static bundle on Android platform should return values based on CLI options - fixture 1 1`] = `
+Object {
+  "context": "/a/b/c",
+  "dev": false,
+  "entry": "./index.js",
+  "minimize": true,
+  "mode": "production",
+  "outputFilename": "../../../assets/react/release/index.android.bundle",
+  "outputPath": "/x/y/z/build/generated/res/react/release",
+  "platform": "android",
+  "reactNativePath": "/a/b/c/node_modules/react-native",
+  "sourcemapFilename": "../../../sourcemaps/react/release/[file].map",
+}
+`;
+
+exports[`parseCliOptions for creating static bundle on iOS platform should return fallback values if CLI options are empty 1`] = `
+Object {
+  "context": "/a/b/c",
+  "dev": true,
+  "entry": "./index.js",
+  "minimize": false,
+  "mode": "development",
+  "outputFilename": "index.bundle",
+  "outputPath": "/a/b/c/dist",
+  "platform": "ios",
+  "reactNativePath": "/a/b/c/node_modules/react-native",
+  "sourcemapFilename": "[file].map",
+}
+`;
+
+exports[`parseCliOptions for creating static bundle on iOS platform should return values based on CLI options - fixture 1 1`] = `
+Object {
+  "context": "/a/b/c",
+  "dev": false,
+  "entry": "./index.js",
+  "minimize": true,
+  "mode": "production",
+  "outputFilename": "../main.jsbundle",
+  "outputPath": "/x/y/z/DerivedData/TesterApp-xxxxxx/Build/Products/Release-iphonesimulator/TesterApp.app",
+  "platform": "ios",
+  "reactNativePath": "/a/b/c/node_modules/react-native",
+  "sourcemapFilename": "[file].map",
+}
+`;
