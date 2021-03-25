@@ -16,7 +16,7 @@ export function Link({
   bold?: boolean;
 }) {
   const finalClassName = cx(
-    'transition ease-in duration-200 flex items-center hover:text-primary-200 cursor-pointer',
+    'transition ease-in duration-200 flex items-center cursor-pointer hover:text-cool-gray-300',
     bold && 'font-bold',
     className
   );

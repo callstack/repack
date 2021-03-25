@@ -1,5 +1,5 @@
 .markdown {
-  @apply px-8 max-w-screen-lg m-auto;
+  @apply px-8 m-auto relative;
 }
 
 .markdown p,
@@ -9,16 +9,32 @@
   @apply my-3;
 }
 
+.markdown p {
+  @apply ml-7;
+}
+
+.markdown li p {
+  @apply m-0;
+}
+
 .markdown h1 {
-  @apply text-4xl leading-snug font-bold border-b border-gray-900 mt-8 mb-4 pb-2;
+  @apply text-4xl leading-snug font-bold border-b border-gray-900 mt-10 mb-4 pb-2;
+}
+
+.markdown h1[id*="function"] + p {
+  @apply font-mono bg-gray-900 py-1 px-2 rounded-sm ml-0;
 }
 
 .markdown h2 {
-  @apply text-3xl leading-snug font-bold border-b border-gray-900 mt-7 mb-3 pb-1;
+  @apply text-3xl leading-snug font-bold border-b border-gray-900 mt-8 mb-3 pb-1;
 }
 
 .markdown h3 {
   @apply text-2xl leading-snug font-bold mt-6 mb-3 ;
+}
+
+.markdown h3 + p {
+  @apply font-mono bg-gray-900 py-1 px-2 rounded-sm ml-0;
 }
 
 .markdown h4 {
@@ -33,13 +49,64 @@
   @apply leading-snug font-bold mt-1 mb-1 ;
 }
 
+.markdown em {
+  @apply font-mono;
+}
+
 .markdown a {
-  @apply inline-block text-primary-300 font-bold transition ease-in duration-200;
-  @apply hover:text-primary-200 hover:underline
+  @apply inline-block text-blue-500 font-bold transition ease-in duration-200 font-mono;
+  @apply hover:text-blue-400 hover:underline
+}
+
+.markdown a[href*="interfaces"] {
+  @apply text-emerald-500 hover:text-emerald-400;
+}
+
+.markdown a[href*="types"] {
+  @apply text-teal-500 hover:text-teal-400;
+}
+
+.markdown a[href*="variables"] {
+  @apply text-orange-500 hover:text-orange-400;
+}
+
+.markdown a[href*="functions"] {
+  @apply text-violet-500 hover:text-violet-400;
+}
+
+.markdown a :global(.icon) {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+  
+  @apply align-middle ml-2 text-blue-800 hover:text-blue-700;
+}
+
+.markdown a :global(.icon-link::before) {
+  content: 'link';
 }
 
 .markdown :not(pre) code {
-  @apply bg-auxiliary-dark-100 px-1 rounded-sm;
+  /* @apply px-1 rounded-sm; */
 }
 
 .markdown pre > code {
@@ -57,9 +124,45 @@
 .markdown li  {}
 
 .markdown li > svg {
-  @apply w-4 h-4 inline-block mb-1 text-auxiliary-300;
+  @apply w-4 h-4 inline-block mb-1;
 }
 
 .markdown hr {
-  @apply mt-4 pb-4 border-auxiliary-dark-100;
+  @apply mt-4 pb-4 border-gray-900;
+}
+
+.markdown table {
+  @apply table border-gray-900 border border-collapse;
+}
+
+.markdown th, .markdown td {
+  @apply border-gray-900 border p-2;
+}
+
+.markdown :global(.sources) p {
+  @apply text-sm text-cool-gray-500 m-0;
+}
+
+.markdown :global(.sources) a {
+  @apply text-blue-800 hover:text-blue-700;
+}
+
+.floatingToc {
+  @apply lg:pr-96;
+}
+
+.floatingToc :global(.toc) {
+  @apply lg:absolute lg:right-0 lg:top-0 lg:bottom-0 lg:w-80;
+}
+
+.floatingToc :global(.toc-content) {
+  @apply lg:sticky lg:top-0 lg:right-0;
+}
+
+.floatingToc :global(.toc-content) h2 {
+  @apply mt-0;
+}
+
+.floatingToc :global(.toc-content) a {
+  @apply text-blue-500 hover:text-blue-400;
 }

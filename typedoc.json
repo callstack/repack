@@ -1,4 +1,7 @@
 {
-  "out": "docs",
-  "categoryOrder": ["Webpack Plugin", "Development server", "*"]
+  "out": "website/data/generated",
+  "categoryOrder": ["Webpack Plugin", "Development server", "*"],
+  "allReflectionsHaveOwnDocument": true,
+  "publicPath": "http://localhost:3000/docs/api/",
+  "hideBreadcrumbs": true
 }

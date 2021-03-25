@@ -8,7 +8,7 @@ import { Link } from './Link';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-black w-full flex flex-col min-h-scree text-auxiliary-100 min-h-screen">
+    <div className="bg-black w-full flex flex-col min-h-scree text-cool-gray-400 min-h-screen">
       <Head>
         <link rel="icon" href="/favicon.ico" />
         <meta
@@ -23,9 +23,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
           href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Open+Sans:wght@400;700&display=swap"
           rel="stylesheet"
         />
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet"
+        />
       </Head>
       <header className="flex justify-center">
-        <div className="container max-w-screen-lg py-4 flex justify-between">
+        {/* <div className="container max-w-screen-lg py-4 flex justify-between">
           <NextLink href="/">
             <a className="text-2xl tracking-wide">
               <span className="text-primary-300">react-native</span>
@@ -44,13 +48,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </a>
             </NextLink>
           </div>
-        </div>
+        </div> */}
       </header>
-      <main className="flex flex-1 justify-center">
-        <div className="container max-w-screen-lg py-10">{children}</div>
+      <main className="flex flex-1 justify-center py-14">
+        <div className="container max-w-screen-xl py-10">{children}</div>
       </main>
-      <footer className="bg-auxiliary-dark-100 h-20 flex justify-center">
-        <div className="container max-w-screen-lg flex justify-between h-full items-center">
+      <footer className="bg-gray-900 h-20 flex justify-center">
+        <div className="container max-w-screen-xl flex justify-between h-full items-center px-6">
           <div className="text-auxiliary-200 flex">
             {'Built with'}
             <Link href="/" external className="mx-1" bold>
