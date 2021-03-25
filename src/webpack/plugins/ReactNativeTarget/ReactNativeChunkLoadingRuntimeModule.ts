@@ -112,11 +112,11 @@ export class ReactNativeChunkLoadingRuntimeModule extends webpack.RuntimeModule 
         : '',
       withLoading
         ? Template.asString([
-            `${fn}.rnl = ${runtimeTemplate.basicFunction(
+            '// React Native: chunk loader',
+            `${fn}.rn_cl = ${runtimeTemplate.basicFunction(
               'chunkId, promises',
               hasJsMatcher !== false
                 ? Template.indent([
-                    '// React Native chunk loading for javascript',
                     `var installedChunkData = ${webpack.RuntimeGlobals.hasOwnProperty}(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;`,
                     'if(installedChunkData !== 0) { // 0 means "already installed".',
                     Template.indent([
@@ -142,7 +142,7 @@ export class ReactNativeChunkLoadingRuntimeModule extends webpack.RuntimeModule 
                           'promises.push(installedChunkData[2] = promise);',
                           '',
                           '// start chunk loading',
-                          `var url = ${webpack.RuntimeGlobals.getChunkScriptFilename}(chunkId);`,
+                          `var url = ${webpack.RuntimeGlobals.publicPath} + ${webpack.RuntimeGlobals.getChunkScriptFilename}(chunkId);`,
                           '// create error before stack unwound to get useful stacktrace later',
                           'var error = new Error();',
                           `var loadingEnded = ${runtimeTemplate.basicFunction(

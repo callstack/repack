@@ -12,6 +12,8 @@ target 'TesterApp' do
     :hermes_enabled => true
   )
 
+  pod 'react-native-webpack-toolkit', :path => '../../..'
+
   target 'TesterAppTests' do
     inherit! :complete
     # Pods for testing

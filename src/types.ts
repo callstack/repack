@@ -131,8 +131,6 @@ export interface WebpackOptions {
    * The output directory for the Source Map is the same as {@link outputPath}.
    */
   sourcemapFilename?: string;
-  /** Directory where all assets (eg: images, video, audio) will be saved. */
-  assetsOutputPath?: string;
   /** Whether to minimize the final bundle. */
   minimize: boolean;
   /** Path to React Native dependency. Usually points to `node_modules/react-native`. */

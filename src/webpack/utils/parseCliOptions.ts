@@ -37,7 +37,6 @@ export const DEFAULT_FALLBACK: WebpackOptionsWithoutPlatform = {
   dev: true,
   entry: './index.js',
   outputPath: path.join(process.cwd(), 'dist'),
-  assetsOutputPath: path.join(process.cwd(), 'dist'),
   outputFilename: 'index.bundle',
   sourcemapFilename: '[file].map',
   context: process.cwd(),
@@ -81,11 +80,15 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
   if ('bundle' in cliOptions.arguments) {
     const args = cliOptions.arguments.bundle;
 
-    let outputPath = path.dirname(args.bundleOutput);
+    const bundleOutputDir = path.dirname(args.bundleOutput);
+    let outputPath = args.assetsDest ?? bundleOutputDir;
     if (!path.isAbsolute(outputPath)) {
       outputPath = path.join(cliOptions.config.root, outputPath);
     }
-    const outputFilename = path.basename(args.bundleOutput);
+    const outputFilename = path.join(
+      path.relative(outputPath, bundleOutputDir),
+      path.basename(args.bundleOutput)
+    );
     const entry = args.entryFile;
 
     let sourcemapFilename = fallback.sourcemapFilename;
@@ -102,11 +105,11 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       dev: args.dev,
       context: cliOptions.config.root,
       platform: args.platform,
-      entry: entry.startsWith('./') ? entry : `./${entry}`,
+      entry:
+        path.isAbsolute(entry) || entry.startsWith('./') ? entry : `./${entry}`,
       outputPath,
       outputFilename,
       sourcemapFilename,
-      assetsOutputPath: args.assetsDest,
       minimize: Boolean(args.minify),
       reactNativePath: cliOptions.config.reactNativePath,
     };
@@ -122,7 +125,6 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       outputPath: fallback.outputPath,
       outputFilename: fallback.outputFilename,
       sourcemapFilename: fallback.sourcemapFilename,
-      assetsOutputPath: undefined,
       minimize: false,
       reactNativePath: cliOptions.config.reactNativePath,
       devServer: {

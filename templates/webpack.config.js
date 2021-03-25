@@ -8,6 +8,8 @@ const {
   DevServerPlugin,
   DEFAULT_PORT,
   ReactNativeTargetPlugin,
+  getPublicPath,
+  getChunkFilename,
 } = require('react-native-webpack-toolkit');
 
 /**
@@ -46,7 +48,6 @@ const {
   reactNativePath,
   outputPath,
   outputFilename,
-  assetsOutputPath,
   devServer,
   sourcemapFilename,
 } = parseCliOptions({
@@ -66,14 +67,14 @@ const {
 });
 
 /**
- * Enable Hot Module Replacement with React Refresh in development.
- */
-const hmr = dev;
-
-/**
  * Enable development server in development mode.
  */
 const devServerEnabled = dev;
+
+/**
+ * Enable Hot Module Replacement with React Refresh in when development server is running.
+ */
+const hmr = devServerEnabled;
 
 /**
  * Depending on your Babel configuration you might want to keep it.
@@ -128,6 +129,14 @@ module.exports = {
   output: {
     path: outputPath,
     filename: outputFilename,
+    chunkFilename: getChunkFilename({
+      platform,
+      outputFilename,
+    }),
+    publicPath: getPublicPath({
+      devServerEnabled,
+      ...devServer,
+    }),
   },
   module: {
     /**
@@ -191,8 +200,7 @@ module.exports = {
       platform,
       context,
       outputPath,
-      assetsOutputPath,
-      bundleToFile: !devServer,
+      devServerEnabled,
     }),
 
     /**
@@ -215,14 +223,33 @@ module.exports = {
     }),
 
     /**
-     * Configures Source Maps.
+     * Configures Source Maps for the main bundle based on CLI options received from
+     * React Native CLI or fallback value..
      * It's recommended to leave the default values, unless you know what you're doing.
      * Wrong options might cause symbolication of stack trace inside React Native app
      * to fail - the app will still work, but you might not get Source Map support.
      */
     new webpack.SourceMapDevToolPlugin({
-      test: /\.([jt]sx?|(js)?bundle)$/,
-      filename: dev ? '[file].map' : sourcemapFilename,
+      test: /\.(js)?bundle$/,
+      exclude: /\.chunk\.(js)?bundle$/,
+      filename: sourcemapFilename,
+      append: `//# sourceMappingURL=[url]?platform=${platform}`,
+      /**
+       * Uncomment for faster builds but less accurate Source Maps
+       */
+      // columns: false,
+    }),
+
+    /**
+     * Configures Source Maps for any additional chunks.
+     * It's recommended to leave the default values, unless you know what you're doing.
+     * Wrong options might cause symbolication of stack trace inside React Native app
+     * to fail - the app will still work, but you might not get Source Map support.
+     */
+    new webpack.SourceMapDevToolPlugin({
+      test: /\.(js)?bundle$/,
+      include: /\.chunk\.(js)?bundle$/,
+      filename: '[file].map',
       append: `//# sourceMappingURL=[url]?platform=${platform}`,
       /**
        * Uncomment for faster builds but less accurate Source Maps

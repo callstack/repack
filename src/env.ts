@@ -1,6 +1,6 @@
-export const WORKER_ENV_KEY = 'RNWT_NEXT_WORKER';
+export const WORKER_ENV_KEY = 'RNWT_WORKER';
 
-export const VERBOSE_ENV_KEY = 'RNWT_NEXT_VERBOSE';
+export const VERBOSE_ENV_KEY = 'RNWT_VERBOSE';
 
 export const CLI_OPTIONS_ENV_KEY = 'RNWT_CLI_OPTIONS';
 
