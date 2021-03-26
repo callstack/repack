@@ -127,12 +127,12 @@
   content: 'link';
 }
 
-.markdown :not(pre) code {
-  /* @apply px-1 rounded-sm; */
+.markdown pre {
+  @apply ml-7;
 }
 
 .markdown pre > code {
-  @apply inline-block w-full py-1 px-3 my-1 rounded;
+  @apply inline-block w-full py-1 px-3 my-1 rounded-sm bg-gray-900;
 }
 
 .markdown ul {
