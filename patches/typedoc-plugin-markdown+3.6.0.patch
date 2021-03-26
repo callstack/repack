@@ -1,3 +1,20 @@
+diff --git a/node_modules/typedoc-plugin-markdown/dist/resources/helpers/reflection-title.js b/node_modules/typedoc-plugin-markdown/dist/resources/helpers/reflection-title.js
+index 2d0ba52..a151002 100644
+--- a/node_modules/typedoc-plugin-markdown/dist/resources/helpers/reflection-title.js
++++ b/node_modules/typedoc-plugin-markdown/dist/resources/helpers/reflection-title.js
+@@ -6,10 +6,10 @@ const escape_1 = require("./escape");
+ function reflectionTitle(shouldEscape = true) {
+     const title = [''];
+     if (this.model && this.model.kindString && this.url !== this.project.url) {
+-        title.push(`${this.model.kindString}: `);
++        title.push(`<span>${this.model.kindString}:</span> `);
+     }
+     if (this.url === this.project.url) {
+-        title.push(theme_1.default.HANDLEBARS.helpers.indexTitle() || this.project.name);
++        title.push('API documentation');
+     }
+     else {
+         title.push(shouldEscape ? escape_1.escape(this.model.name) : this.model.name);
 diff --git a/node_modules/typedoc-plugin-markdown/dist/resources/helpers/returns.js b/node_modules/typedoc-plugin-markdown/dist/resources/helpers/returns.js
 index eec500e..88f92d0 100644
 --- a/node_modules/typedoc-plugin-markdown/dist/resources/helpers/returns.js

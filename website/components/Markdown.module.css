@@ -21,7 +21,29 @@
   @apply text-4xl leading-snug font-bold border-b border-gray-900 mt-10 mb-4 pb-2;
 }
 
-.markdown h1[id*="function"] + p {
+.markdown h1[id*="class"] > span {
+  @apply text-blue-500;
+}
+
+.markdown h1[id*="interface"] > span {
+  @apply text-emerald-500;
+}
+
+.markdown h1[id*="type"] > span {
+  @apply text-teal-500;
+}
+
+.markdown h1[id*="variable"] > span {
+  @apply text-orange-500;
+}
+
+.markdown h1[id*="function"] > span {
+  @apply text-violet-500;
+}
+
+.markdown h1[id*="function"] + p,
+.markdown h1[id*="type-alias"] + p,
+.markdown h1[id*="variable"] + p {
   @apply font-mono bg-gray-900 py-1 px-2 rounded-sm ml-0;
 }
 
@@ -144,7 +166,7 @@
 }
 
 .markdown :global(.sources) a {
-  @apply text-blue-800 hover:text-blue-700;
+  @apply text-gray-500 hover:text-gray-400;
 }
 
 .floatingToc {
@@ -156,7 +178,23 @@
 }
 
 .floatingToc :global(.toc-content) {
-  @apply lg:sticky lg:top-0 lg:right-0;
+  @apply lg:sticky lg:top-0 lg:right-0 lg:max-h-screen lg:overflow-y-auto;
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #18181b;
+}
+
+.floatingToc :global(.toc-content::-webkit-scrollbar) {
+  width: 12px;
+}
+
+.floatingToc :global(.toc-content::-webkit-scrollbar-track) {
+  background: #18181b;
+}
+
+.floatingToc :global(.toc-content::-webkit-scrollbar-thumb) {
+  background-color: #9ca3af;
+  border-radius: 2px;
+  border: 3px solid #18181b;
 }
 
 .floatingToc :global(.toc-content) h2 {
