@@ -36,16 +36,23 @@ export const getStaticProps: GetStaticProps = async ({
 
   return {
     props: {
+      title: mdSource.match(/<div data-title="(.*)"><\/div>/)[1],
       md: html,
     },
   };
 };
 
-export default function ReflectionPage({ md }: { md: string }) {
+export default function ReflectionPage({
+  title,
+  md,
+}: {
+  title: string;
+  md: string;
+}) {
   return (
     <Layout>
       <Head>
-        <title>API docs | react-native-webpack-toolkit</title>
+        <title>{title} | API docs | react-native-webpack-toolkit</title>
       </Head>
       <Link href="/docs/api" className="ml-6" bold>
         <span className="material-icons mt-0.5">arrow_back</span>

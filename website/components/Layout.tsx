@@ -13,11 +13,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <link rel="icon" href="/favicon.ico" />
         <meta
           name="description"
-          content="Learn how to build a personal website using Next.js"
+          content="A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem."
         />
 
-        <meta name="og:title" content="Site title" />
-        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="og:title" content="react-native-webpack-toolkit" />
+        {/* <meta name="twitter:card" content="summary_large_image" /> */}
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
           href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Open+Sans:wght@400;700&display=swap"

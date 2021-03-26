@@ -204,3 +204,7 @@
 .floatingToc :global(.toc-content) a {
   @apply text-blue-500 hover:text-blue-400;
 }
+
+.markdown *[data-title] {
+  @apply hidden;
+}
