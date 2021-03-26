@@ -54,7 +54,7 @@ export default function ReflectionPage({
       <Head>
         <title>{title} | API docs | react-native-webpack-toolkit</title>
       </Head>
-      <Link href="/docs/api" className="ml-6" bold>
+      <Link href="/docs/api" className="ml-8" bold>
         <span className="material-icons mt-0.5">arrow_back</span>
         <span className="hover:underline">Back to listing</span>
       </Link>

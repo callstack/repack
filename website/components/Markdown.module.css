@@ -41,9 +41,9 @@
   @apply text-violet-500;
 }
 
-.markdown h1[id*="function"] + p,
-.markdown h1[id*="type-alias"] + p,
-.markdown h1[id*="variable"] + p {
+.markdown h1[id*="function"] + div + p,
+.markdown h1[id*="type-alias"] + div + p,
+.markdown h1[id*="variable"] + div + p {
   @apply font-mono bg-gray-900 py-1 px-2 rounded-sm ml-0;
 }
 

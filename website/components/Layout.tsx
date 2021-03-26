@@ -28,27 +28,26 @@ export function Layout({ children }: { children: React.ReactNode }) {
           rel="stylesheet"
         />
       </Head>
-      <header className="flex justify-center">
-        {/* <div className="container max-w-screen-lg py-4 flex justify-between">
+      <header className="flex justify-center border-b border-gray-900">
+        <div className="container max-w-screen-xl px-8 py-4 flex justify-between">
           <NextLink href="/">
-            <a className="text-2xl tracking-wide">
-              <span className="text-primary-300">react-native</span>
-              -webpack-toolkit
+            <a className="text-2xl tracking-wide font-bold">
+              react-native-webpack-toolkit
             </a>
           </NextLink>
           <div className="text-xs flex items-center">
             <NextLink href="/docs/api">
-              <a className="px-6 py-2 transition ease-in duration-200 uppercase rounded-full hover:bg-primary-300 hover:text-white border-2 border-primary-300 focus:outline-none">
+              <a className="px-6 py-2 transition ease-in duration-200 uppercase rounded-full border-2 border-cool-gray-400 hover:bg-cool-gray-300 hover:border-cool-gray-300 hover:text-black">
                 API docs
               </a>
             </NextLink>
-            <NextLink href="/">
-              <a className="transition ease-in duration-200 uppercase rounded-full text-primary-300 hover:text-primary-100 focus:outline-none ml-2">
+            <NextLink href="https://github.com/callstack/react-native-webpack-toolkit">
+              <a className="transition ease-in duration-200 uppercase rounded-full text-cool-gray-400 hover:text-cool-gray-300 ml-2">
                 <FontAwesomeIcon className="h-9 w-9" icon={faGithub} />
               </a>
             </NextLink>
           </div>
-        </div> */}
+        </div>
       </header>
       <main className="flex flex-1 justify-center py-14">
         <div className="container max-w-screen-xl py-10">{children}</div>
