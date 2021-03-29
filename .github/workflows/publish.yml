@@ -19,11 +19,19 @@ jobs:
       - name: Generate API documentation
         run: npm run docs:api
 
+      - name: Build website
+        working-directory: ./website
+        run: npm run build
+
+      - name: Export website
+        working-directory: ./website
+        run: npm run export
+
       - name: Deploy to GitHub Pages
         if: success()
         uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
-          build_dir: docs
+          build_dir: website/out
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
