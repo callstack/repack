@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, NativeModules, ActivityIndicator } from 'react-native';
+
+const Async = React.lazy(
+  () => import('./Async')
+);
 
 export function Hello() {
   const [value, setValue] = useState('not updated');
@@ -13,6 +17,10 @@ export function Hello() {
   return (
     <View>
       <Text>Hello world: {value}</Text>
+      <ActivityIndicator />
+      <React.Suspense fallback={<Text>Loading...</Text>}>
+        <Async />
+      </React.Suspense>
     </View>
   );
 }

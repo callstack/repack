@@ -153,6 +153,7 @@ export class WebSocketEventsServer extends WebSocketServer {
           msg: 'Failed to send broadcast to client',
           clientId,
           error,
+          _skipBroadcast: true,
         });
       }
     }

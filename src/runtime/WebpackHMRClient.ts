@@ -1,55 +1,8 @@
 /* eslint-env browser */
-/// <reference lib="DOM" />
-
-declare var __DEV__: boolean;
-declare var __webpack_public_path__: string;
-
-interface HMRInfo {
-  type: string;
-  chain: Array<string | number>;
-  error?: Error;
-  moduleId: string | number;
-}
-
-interface HotModule {
-  hot: {
-    status():
-      | 'idle'
-      | 'check'
-      | 'prepare'
-      | 'ready'
-      | 'dispose'
-      | 'apply'
-      | 'abort'
-      | 'fail';
-    check(autoPlay: boolean): Promise<Array<string | number>>;
-    apply(options: {
-      ignoreUnaccepted?: boolean;
-      ignoreDeclined?: boolean;
-      ignoreErrored?: boolean;
-      onDeclined?: (info: HMRInfo) => void;
-      onUnaccepted?: (info: HMRInfo) => void;
-      onAccepted?: (info: HMRInfo) => void;
-      onDisposed?: (info: HMRInfo) => void;
-      onErrored?: (info: HMRInfo) => void;
-    }): Promise<Array<string | number>>;
-  };
-}
-
-declare var __webpack_hash__: string;
-declare var __webpack_require__: { l: Function };
-declare var module: HotModule;
+/* globals __webpack_hash__ __DEV__ */
 
 import type { HMRMessage, HMRMessageBody } from '../types';
 import { getDevServerLocation } from './getDevServerLocation';
-
-class HmrEvent {
-  target: { src: string };
-
-  constructor(public type: string, src: string) {
-    this.target = { src };
-  }
-}
 
 class HMRClient {
   url: string;
@@ -155,14 +108,14 @@ class HMRClient {
   async checkUpdates(update: HMRMessageBody) {
     try {
       this.app.LoadingView.showMessage('Refreshing...', 'refresh');
-      const updatedModules = await module.hot.check(false);
+      const updatedModules = await module.hot?.check(false);
       if (!updatedModules) {
         console.warn('[HMRClient] Cannot find update - full reload needed');
         this.app.reload();
         return;
       }
 
-      const renewedModules = await module.hot.apply({
+      const renewedModules = await module.hot?.apply({
         ignoreDeclined: true,
         ignoreUnaccepted: false,
         ignoreErrored: false,
@@ -196,7 +149,7 @@ class HMRClient {
         this.app.dismissErrors();
       }
     } catch (error) {
-      if (module.hot.status() === 'fail' || module.hot.status() === 'abort') {
+      if (module.hot?.status() === 'fail' || module.hot?.status() === 'abort') {
         console.warn(
           '[HMRClient] Cannot check for update - full reload needed'
         );
@@ -211,33 +164,7 @@ class HMRClient {
   }
 }
 
-if (__DEV__) {
-  // TODO: move it somewhere else
-  __webpack_require__.l = async (
-    url: string,
-    cb: (event?: HmrEvent) => void
-  ) => {
-    const response = await fetch(url);
-    if (!response.ok) {
-      cb(new HmrEvent(response.statusText, url));
-    } else {
-      const script = await response.text();
-      try {
-        // @ts-ignore
-        const globalEvalWithSourceUrl = global.globalEvalWithSourceUrl;
-        if (globalEvalWithSourceUrl) {
-          globalEvalWithSourceUrl(script, null);
-        } else {
-          eval(script);
-        }
-        cb();
-      } catch (error) {
-        console.error('[__webpack_require__.l] Error:', error);
-        cb(new HmrEvent('exec', url));
-      }
-    }
-  };
-
+if (__DEV__ && module.hot) {
   const { DevSettings, Platform } = require('react-native');
   const LoadingView = require('react-native/Libraries/Utilities/LoadingView');
 
@@ -256,17 +183,6 @@ if (__DEV__) {
     const LogBoxData = require('react-native/Libraries/LogBox/Data/LogBoxData');
     LogBoxData.clear();
   };
-
-  // We need to teak Webpack's public path, especially for Android, where `localhost`
-  // is not a correct host but eg `10.0.2.2` is.
-  // If the public path doesn't have `localhost` in it, it usually means a custom `host` was
-  // provided, so the replace won't change that.
-  const { hostname } = getDevServerLocation();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  __webpack_public_path__ = __webpack_public_path__.replace(
-    'localhost',
-    hostname
-  );
 
   new HMRClient({ reload, dismissErrors, LoadingView });
 }

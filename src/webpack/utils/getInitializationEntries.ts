@@ -40,6 +40,7 @@ export function getInitializationEntries(
     ...getPolyfills(),
     initializeCoreLocation ||
       path.join(reactNativePath, 'Libraries/Core/InitializeCore.js'),
+    require.resolve('../../runtime/setupChunkLoader'),
   ];
 
   if (hmr) {

@@ -8,6 +8,8 @@ const {
   DevServerPlugin,
   DEFAULT_PORT,
   ReactNativeTargetPlugin,
+  getPublicPath,
+  getChunkFilename,
 } = require('react-native-webpack-toolkit');
 
 /**
@@ -46,11 +48,14 @@ const {
   reactNativePath,
   outputPath,
   outputFilename,
-  assetsOutputPath,
   devServer,
   sourcemapFilename,
 } = parseCliOptions({
   fallback: {
+    /**
+     * Fallback to production when running with Webpack CLI.
+     */
+    mode: 'production',
     /**
      * Make sure you always specify platform when running with Webpack CLI.
      * Alternatively you could use `process.env.PLATFORM` and run:
@@ -62,11 +67,14 @@ const {
 });
 
 /**
- * Enable Hot Module Replacement with React Refresh in development.
- * Currently React Refresh breaks React Devtools (https://github.com/facebook/react/issues/20377)
- * so when using Flipper you might want to disable HMR.
+ * Enable development server in development mode.
  */
-const hmr = dev;
+const devServerEnabled = dev;
+
+/**
+ * Enable Hot Module Replacement with React Refresh in when development server is running.
+ */
+const hmr = devServerEnabled;
 
 /**
  * Depending on your Babel configuration you might want to keep it.
@@ -121,6 +129,14 @@ module.exports = {
   output: {
     path: outputPath,
     filename: outputFilename,
+    chunkFilename: getChunkFilename({
+      platform,
+      outputFilename,
+    }),
+    publicPath: getPublicPath({
+      devServerEnabled,
+      ...devServer,
+    }),
   },
   module: {
     /**
@@ -136,11 +152,13 @@ module.exports = {
         test: /\.[jt]sx?$/,
         include: [
           /node_modules(.*[/\\])+react/,
+          /node_modules(.*[/\\])+@react-native/,
           /node_modules(.*[/\\])+@react-navigation/,
           /node_modules(.*[/\\])+@react-native-community/,
           /node_modules(.*[/\\])+@expo/,
           /node_modules(.*[/\\])+pretty-format/,
           /node_modules(.*[/\\])+metro/,
+          /node_modules(.*[/\\])+abort-controller/,
         ],
         use: 'babel-loader',
       },
@@ -156,10 +174,8 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            plugins: [
-              /** Add React Refresh transform only when HMR is enabled. */
-              hmr && 'module:react-refresh/babel',
-            ],
+            /** Add React Refresh transform only when HMR is enabled. */
+            plugins: hmr ? ['module:react-refresh/babel'] : undefined,
           },
         },
       },
@@ -184,8 +200,7 @@ module.exports = {
       platform,
       context,
       outputPath,
-      assetsOutputPath,
-      bundleToFile: !devServer,
+      devServerEnabled,
     }),
 
     /**
@@ -197,19 +212,44 @@ module.exports = {
 
     /**
      * Runs development server when running with React Native CLI start command or if `devServer`
-     * was provided as s `fallback`. Passing `undefined` as 1st argument will disable the plugin.
+     * was provided as s `fallback`.
      */
-    new DevServerPlugin({ ...devServer, hmr }),
+    new DevServerPlugin({
+      enabled: devServerEnabled,
+      hmr,
+      context,
+      platform,
+      ...devServer,
+    }),
 
     /**
-     * Configures Source Maps.
+     * Configures Source Maps for the main bundle based on CLI options received from
+     * React Native CLI or fallback value..
      * It's recommended to leave the default values, unless you know what you're doing.
      * Wrong options might cause symbolication of stack trace inside React Native app
      * to fail - the app will still work, but you might not get Source Map support.
      */
     new webpack.SourceMapDevToolPlugin({
-      test: /\.([jt]sx?|(js)?bundle)$/,
-      filename: dev ? '[file].map' : sourcemapFilename,
+      test: /\.(js)?bundle$/,
+      exclude: /\.chunk\.(js)?bundle$/,
+      filename: sourcemapFilename,
+      append: `//# sourceMappingURL=[url]?platform=${platform}`,
+      /**
+       * Uncomment for faster builds but less accurate Source Maps
+       */
+      // columns: false,
+    }),
+
+    /**
+     * Configures Source Maps for any additional chunks.
+     * It's recommended to leave the default values, unless you know what you're doing.
+     * Wrong options might cause symbolication of stack trace inside React Native app
+     * to fail - the app will still work, but you might not get Source Map support.
+     */
+    new webpack.SourceMapDevToolPlugin({
+      test: /\.(js)?bundle$/,
+      include: /\.chunk\.(js)?bundle$/,
+      filename: '[file].map',
       append: `//# sourceMappingURL=[url]?platform=${platform}`,
       /**
        * Uncomment for faster builds but less accurate Source Maps
@@ -224,7 +264,7 @@ module.exports = {
      */
     new LoggerPlugin({
       platform,
-      devServer: Boolean(devServer),
+      devServerEnabled,
       output: {
         console: true,
         /**

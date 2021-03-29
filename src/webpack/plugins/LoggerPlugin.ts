@@ -11,7 +11,7 @@ export interface LoggerPluginConfig {
   /** Target application platform. */
   platform: string;
   /** Whether development server is running/enabled. */
-  devServer?: boolean;
+  devServerEnabled?: boolean;
   /** Logging output config. */
   output?: {
     /** Whether to log to console. */
@@ -109,7 +109,7 @@ export class LoggerPlugin implements WebpackPlugin {
     // Make sure webpack-cli doesn't print stats by default.
     compiler.options.stats = 'none';
 
-    if (this.config.devServer) {
+    if (this.config.devServerEnabled) {
       new webpack.ProgressPlugin((percentage, message) => {
         const entry = this.createEntry('LoggerPlugin', 'info', [
           {
@@ -149,7 +149,7 @@ export class LoggerPlugin implements WebpackPlugin {
     });
 
     compiler.hooks.done.tap('LoggerPlugin', (stats) => {
-      if (this.config.devServer) {
+      if (this.config.devServerEnabled) {
         const { time, errors, warnings } = stats.toJson({
           timings: true,
           errors: true,

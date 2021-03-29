@@ -29,19 +29,35 @@ __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, 
 - [x] Webpack ecosystem, plugins and utilities
 - [x] Build production bundle for iOS, Android and out-of-tree platforms
 - [x] Build development bundle for iOS, Android and out-of-tree platforms
-- [x] Development server with Remote JS Debugging, Source Map symbolication and HMR support
-- [x] Hot Module Replacement + React Refresh support
-- [x] Reloading application from CLI
-- [x] Flipper support (tested features: Crash Reporter, Logs, Layout, Network, React DevTools with caveat [facebook/react#20377](https://github.com/facebook/react/issues/20377))
+- [x] Development server with support for:
+  - Remote JS debugging
+  - Source Map symbolication 
+  - Hot Module Replacement and React Refresh
+  - Reloading application from CLI using `r` key
+- [x] Built-in Hot Module Replacement + React Refresh support
+- [x] Flipper support:
+  - Crash Reporter,
+  - Application logs
+  - Layout
+  - Network
+  - React DevTools
+  - Development server (debugging/verbose) logs
+- [x] Hermes support:
+  - Running the production/development bundle using Harmes engine
+  - Transforming production bundle into bytecode bundle
+- [x] [Asynchronous chunks support](#asynchronous-chunks):
+  - Dynamic `import()` support with and without `React.lazy()`.
+  - Manual chunks using [`entry` option](https://webpack.js.org/concepts/entry-points/).
 
 ### Planned features
 
-- [ ] Missing Flipper features support (working HMR/React Refresh with React DevTools, Images and Databases) 
-- [ ] Hermes support
+- [ ] `ChunksToHermesBytecodePlugin` plugin to automatically transform async chunks to bytecode format.
+- [ ] Inspecting Hermes with Flipper
 - [ ] `webpack-init` command
-- [ ] Web dashboard with logs, compilation statues, bundle explorer, visualizations and more
-- [ ] Asynchronous chunks
-- [ ] Tighter integration with React Native CLI
+- [ ] Web dashboard / Flipper plugin with:
+  - Logs
+  - Compilations progress, errors and emitted assets
+  - Bundle visualizations
 - [ ] [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669) support
 
 ## Why & when
@@ -116,6 +132,33 @@ Once you've completed [Installation & setup](#installation--setup) you can:
 
 The API documentation is available at [https://callstack.github.io/react-native-webpack-toolkit/](https://callstack.github.io/react-native-webpack-toolkit/).
 
+## Asynchronous chunks
+
+Asynchronous chunks allows you to split your code into separate files using dynamic `import()` or by
+manually declaring them in Webpack configuration using [`entry` option](https://webpack.js.org/concepts/entry-points/).
+
+Each chunk's code will get saved separately from the main bundle inside its own `.chunk.bundle` file and included in the
+final application file (`ipa`/`apk`). Chunks can help you improve startup time by deferring parts of the application
+from being both parsed and evaluated at the start of the app. The chunks code will still be included in the file,
+so the total download size the user will have to download from App Store/Google Play will not shrink.
+
+Asynchronous chunks support requires `react-native-webpack-toolkit` native module to be included in the app
+to download/read and evaluate JavaScript code from chunks. By default, the native module should be auto-linked
+so there's no additional steps for you to perform. The template [`webpack.config.js`](./templates/webpack.config.js)
+is configured to support asynchronous chunks as well. 
+
+### Asynchronous chunks and Hermes
+
+Chunks are fully supported when using Hermes, with one caveat: only the main bundle will be automatically
+transformed into bytecode bundle by Hermes. By default, all chunks will be left as regular JavaScript files.
+
+If you want all files, including chunks, to be transformed into bytecode ones, you will need to add
+additional build task/step to XCode/Gradle configuration to transform chunks with Hermes CLI or create
+a Webpack plugin to transform chunks with Hermes CLI after compilation is finished, but before the
+process exits.
+
+In the future you will be able to use `ChunksToHermesBytecodePlugin` for that.
+
 ## Known issues
 
 ### Hot Module Replacement / React Refresh
@@ -164,12 +207,6 @@ This expected and there's little we can do about it. The stack trace is still co
 
 If you encounter such situation, and you need to get the precise stack trace, you can do a full reload
 and reproduce the error or `console.log`/`console.error` call.
-
-#### 3. React DevTools don't work with Hot Module Replacement / React Refresh
-
-The issue was reported here: [facebook/react#20377](https://github.com/facebook/react/issues/20377). Because we use similar solutions to implement React Refresh, we are affected by the same issue.
-
-For now the workaround is to temporarily disable HMR when debugging with Flipper or React DevTools, then switching it back when Flipper/React DevTools are disconnected.
 
 ## Made with ❤️ at Callstack
 

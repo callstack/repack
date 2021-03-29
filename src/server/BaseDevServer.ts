@@ -15,7 +15,12 @@ import {
 /**
  * {@link BaseDevServer} configuration options.
  */
-export interface BaseDevServerConfig extends DevServerOptions {}
+export interface BaseDevServerConfig extends DevServerOptions {
+  /** Context in which all resolution happens. Usually it's project root directory. */
+  context: string;
+  /** Target application platform. */
+  platform: string;
+}
 
 /**
  * Base class for all Fastify-based servers.

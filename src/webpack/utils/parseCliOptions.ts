@@ -37,9 +37,8 @@ export const DEFAULT_FALLBACK: WebpackOptionsWithoutPlatform = {
   dev: true,
   entry: './index.js',
   outputPath: path.join(process.cwd(), 'dist'),
-  assetsOutputPath: path.join(process.cwd(), 'dist'),
   outputFilename: 'index.bundle',
-  sourcemapFilename: 'index.bundle.map',
+  sourcemapFilename: '[file].map',
   context: process.cwd(),
   reactNativePath: path.join(process.cwd(), './node_modules/react-native'),
   minimize: false,
@@ -53,6 +52,10 @@ export const DEFAULT_PORT = 8081;
  * commands. The CLI options will be only available when running with React Native CLI. When running
  * with Webpack CLI, values from `fallback` field from {@link ParseCliOptionsConfig} will be used.
  *
+ * `fallback.mode` and `fallback.dev` values should always go together as a tuple:
+ * `('development', true)` or `('production', false)`. Specifying different values might result in
+ * undefined behavior. You can however omit one and the other will be inferred.
+ *
  * @param config Configuration options.
  * @returns Webpack options to create a valid Webpack configuration with.
  *
@@ -60,6 +63,13 @@ export const DEFAULT_PORT = 8081;
  */
 export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
   const fallback: WebpackOptions = { ...DEFAULT_FALLBACK, ...config.fallback };
+  const { mode, dev } = config.fallback;
+  if (mode !== undefined && dev === undefined) {
+    fallback.dev = mode === 'development';
+  } else if (mode === undefined && dev !== undefined) {
+    fallback.mode = dev ? 'development' : 'production';
+  }
+
   const rawCliOptions = process.env[CLI_OPTIONS_ENV_KEY];
   if (!rawCliOptions) {
     return fallback;
@@ -70,11 +80,15 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
   if ('bundle' in cliOptions.arguments) {
     const args = cliOptions.arguments.bundle;
 
-    let outputPath = path.dirname(args.bundleOutput);
+    const bundleOutputDir = path.dirname(args.bundleOutput);
+    let outputPath = args.assetsDest ?? bundleOutputDir;
     if (!path.isAbsolute(outputPath)) {
       outputPath = path.join(cliOptions.config.root, outputPath);
     }
-    const outputFilename = path.basename(args.bundleOutput);
+    const outputFilename = path.join(
+      path.relative(outputPath, bundleOutputDir),
+      path.basename(args.bundleOutput)
+    );
     const entry = args.entryFile;
 
     let sourcemapFilename = fallback.sourcemapFilename;
@@ -91,11 +105,11 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       dev: args.dev,
       context: cliOptions.config.root,
       platform: args.platform,
-      entry: entry.startsWith('./') ? entry : `./${entry}`,
+      entry:
+        path.isAbsolute(entry) || entry.startsWith('./') ? entry : `./${entry}`,
       outputPath,
       outputFilename,
       sourcemapFilename,
-      assetsOutputPath: args.assetsDest,
       minimize: Boolean(args.minify),
       reactNativePath: cliOptions.config.reactNativePath,
     };
@@ -111,7 +125,6 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       outputPath: fallback.outputPath,
       outputFilename: fallback.outputFilename,
       sourcemapFilename: fallback.sourcemapFilename,
-      assetsOutputPath: undefined,
       minimize: false,
       reactNativePath: cliOptions.config.reactNativePath,
       devServer: {
@@ -125,8 +138,6 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
         https: args.https,
         cert: args.cert || undefined,
         key: args.key || undefined,
-        context: cliOptions.config.root,
-        platform: args.platform,
       },
     };
   }

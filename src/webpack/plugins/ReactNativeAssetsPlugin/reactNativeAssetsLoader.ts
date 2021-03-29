@@ -197,13 +197,10 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
     );
 
     assets.forEach((asset) => {
-      let { destination, content } = asset;
-
-      if (options.outputPath) {
-        destination = path.join(options.outputPath, destination);
-      }
+      const { destination, content } = asset;
 
       logger.debug('Asset emitted:', destination);
+      // Assets are emitted relatively to `output.path` so we don't want to join with `outputPath`.
       this.emitFile(destination, content ?? '');
     });
 

@@ -201,6 +201,11 @@ export class Symbolicator {
         continue;
       }
 
+      // If the frame points to internal bootstrap/module system logic, skip the code frame.
+      if (/webpack[/\\]runtime[/\\].+\s/.test(frame.file)) {
+        return undefined;
+      }
+
       try {
         let filename;
         let source;
