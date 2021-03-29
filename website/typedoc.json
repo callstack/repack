@@ -1,5 +1,5 @@
 {
-  "out": "website/data/generated",
+  "out": "data/generated",
   "categoryOrder": ["Webpack Plugin", "Development server", "*"],
   "excludePrivate": true,
   "allReflectionsHaveOwnDocument": true,
