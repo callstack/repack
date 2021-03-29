@@ -33,7 +33,9 @@ export default function ApiDocs({ md }: { md: string }) {
       <Head>
         <title>API docs | react-native-webpack-toolkit</title>
       </Head>
-      <Markdown source={md} />
+      <div className="overflow-x-auto">
+        <Markdown source={md} />
+      </div>
     </Layout>
   );
 }

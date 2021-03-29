@@ -1,5 +1,6 @@
 .markdown {
   @apply px-8 m-auto relative;
+  min-width: 500px;
 }
 
 .markdown p,

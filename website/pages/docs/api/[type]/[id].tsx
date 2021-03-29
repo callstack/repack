@@ -58,7 +58,9 @@ export default function ReflectionPage({
         <span className="material-icons mt-0.5">arrow_back</span>
         <span className="hover:underline">Back to listing</span>
       </Link>
-      <Markdown toc="floating" source={md} />
+      <div className="overflow-x-auto">
+        <Markdown toc="floating" source={md} />
+      </div>
     </Layout>
   );
 }
