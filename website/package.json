@@ -10,8 +10,6 @@
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.34",
     "@fortawesome/free-brands-svg-icons": "^5.15.2",
-    "@fortawesome/free-regular-svg-icons": "^5.15.3",
-    "@fortawesome/free-solid-svg-icons": "^5.15.2",
     "@fortawesome/react-fontawesome": "^0.1.14",
     "classnames": "^2.2.6",
     "globby": "^11.0.3",
@@ -27,8 +25,7 @@
     "remark-gfm": "^1.0.0",
     "remark-highlight.js": "^6.0.0",
     "remark-html": "^13.0.1",
-    "remark-rehype": "^8.0.0",
-    "typedoc": "^0.20.32"
+    "remark-rehype": "^8.0.0"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.11",

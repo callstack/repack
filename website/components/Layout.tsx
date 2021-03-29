@@ -3,7 +3,6 @@ import Head from 'next/head';
 import NextLink from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { Link } from './Link';
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -58,18 +57,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
             {'Built with'}
             <Link href="/" external className="mx-1" bold>
               TypeDoc
-              <FontAwesomeIcon
-                className="h-4 w-4 ml-1"
-                icon={faExternalLinkAlt}
-              />
+              <span className="material-icons text-base ml-1">launch</span>
             </Link>
             {'and'}
             <Link href="/" external className="mx-1" bold>
               Next.js
-              <FontAwesomeIcon
-                className="h-4 w-4 ml-1 mr-2"
-                icon={faExternalLinkAlt}
-              />
+              <span className="material-icons text-base ml-1">launch</span>
             </Link>
           </div>
           <div>
