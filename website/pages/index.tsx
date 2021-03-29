@@ -1,6 +1,5 @@
 import React from 'react';
 import Head from 'next/head';
-import Image from 'next/image';
 import NextLink from 'next/link';
 import { Layout } from '../components/Layout';
 
@@ -36,25 +35,31 @@ export default function Home() {
           full support of Webpack ecosystem.
         </h1>
         <div className="flex flex-col sm:flex-row sm:justify-center mt-8">
-          <NextLink href="https://github.com/callstack/react-native-webpack-toolkit#react-native-webpack-toolkit">
-            <a className="inline-flex items-center my-2 mx-2 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-emerald-700 hover:text-cool-gray-200 hover:bg-emerald-600 hover:border-emerald-600">
-              Read more
-              <span className="inline-block material-icons text-xl ml-1">
-                launch
-              </span>
-            </a>
-          </NextLink>
-          <NextLink href="https://github.com/callstack/react-native-webpack-toolkit#installation--setup">
-            <a className="inline-flex items-center my-2 mx-2 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-orange-800 hover:text-cool-gray-200 hover:bg-orange-700 hover:border-orange-700">
-              Get started
-              <span className="inline-block material-icons text-xl ml-1">
-                launch
-              </span>
-            </a>
-          </NextLink>
+          <a
+            href="https://github.com/callstack/react-native-webpack-toolkit#react-native-webpack-toolkit"
+            className="inline-flex items-center my-2 mx-2 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-emerald-700 hover:text-cool-gray-200 hover:bg-emerald-600 hover:border-emerald-600"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Read more
+            <span className="inline-block material-icons text-xl ml-1">
+              launch
+            </span>
+          </a>
+          <a
+            href="https://github.com/callstack/react-native-webpack-toolkit#installation--setup"
+            className="inline-flex items-center my-2 mx-2 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-orange-800 hover:text-cool-gray-200 hover:bg-orange-700 hover:border-orange-700"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Get started
+            <span className="inline-block material-icons text-xl ml-1">
+              launch
+            </span>
+          </a>
         </div>
         <ul className="mt-16 lg:pl-24">
-          <Feature title="Powered by Webpack todo: change">
+          <Feature title="Webpack-powered solution for advanced use cases">
             <div>
               Leverage full Webpack ecosystem of plugins and loaders. Use
               plethora of configuration options to adjust the bundling to your
@@ -91,14 +96,17 @@ export default function Home() {
               support for Hot Module Replacement and React Refresh,
               symnbolication and Remote JavaScript debugging support.
             </div>
-            <NextLink href="https://github.com/callstack/react-native-webpack-toolkit#features">
-              <a className="inline-flex items-center mt-6 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-orange-800 hover:text-cool-gray-200 hover:bg-orange-700 hover:border-orange-700">
-                Check the feature list
-                <span className="inline-block material-icons text-xl ml-1">
-                  launch
-                </span>
-              </a>
-            </NextLink>
+            <a
+              href="https://github.com/callstack/react-native-webpack-toolkit#features"
+              className="inline-flex items-center mt-6 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-orange-800 hover:text-cool-gray-200 hover:bg-orange-700 hover:border-orange-700"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Check the feature list
+              <span className="inline-block material-icons text-xl ml-1">
+                launch
+              </span>
+            </a>
           </Feature>
           <Feature title="Asynchronous chunks support">
             <div>
@@ -107,14 +115,17 @@ export default function Home() {
               code using dynamic <span className="font-mono">import()</span>{' '}
               function or manually declaring them inside your Webpack config.
             </div>
-            <NextLink href="https://github.com/callstack/react-native-webpack-toolkit#asynchronous-chunks">
-              <a className="inline-flex items-center mt-6 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-teal-700 hover:text-cool-gray-200 hover:bg-teal-600 hover:border-teal-600">
-                Read more
-                <span className="inline-block material-icons text-xl ml-1">
-                  launch
-                </span>
-              </a>
-            </NextLink>
+            <a
+              href="https://github.com/callstack/react-native-webpack-toolkit#asynchronous-chunks"
+              className="inline-flex items-center mt-6 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-teal-700 hover:text-cool-gray-200 hover:bg-teal-600 hover:border-teal-600"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Read more
+              <span className="inline-block material-icons text-xl ml-1">
+                launch
+              </span>
+            </a>
           </Feature>
           <Feature title="Configure it your way">
             <div>
@@ -122,14 +133,17 @@ export default function Home() {
               plugins and utilities - to make Webpack-produced bundle compatible
               with React Native.
             </div>
-            <NextLink href="https://github.com/callstack/react-native-webpack-toolkit/blob/main/templates/webpack.config.js">
-              <a className="inline-flex items-center mt-6 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-violet-900 hover:text-cool-gray-200 hover:bg-violet-700 hover:border-violet-700">
-                Check the template
-                <span className="inline-block material-icons text-xl ml-1">
-                  launch
-                </span>
-              </a>
-            </NextLink>
+            <a
+              href="https://github.com/callstack/react-native-webpack-toolkit/blob/main/templates/webpack.config.js"
+              className="inline-flex items-center mt-6 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-violet-900 hover:text-cool-gray-200 hover:bg-violet-700 hover:border-violet-700"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Check the template
+              <span className="inline-block material-icons text-xl ml-1">
+                launch
+              </span>
+            </a>
           </Feature>
         </ul>
       </div>

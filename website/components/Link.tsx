@@ -22,7 +22,12 @@ export function Link({
   );
 
   return external ? (
-    <a href={href.toString()} className={finalClassName}>
+    <a
+      href={href.toString()}
+      className={finalClassName}
+      target="_blank"
+      rel="noreferrer"
+    >
       {children}
     </a>
   ) : (

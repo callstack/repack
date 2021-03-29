@@ -28,7 +28,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
       </Head>
       <header className="border-b border-gray-900">
-        <div className="container max-w-screen-xl px-8 py-4 flex flex-col md:flex-row justify-between">
+        <div className="container m-auto max-w-screen-xl px-8 py-4 flex flex-col md:flex-row justify-between">
           <NextLink href="/">
             <a className="text-2xl tracking-wide font-bold">
               react-native-webpack-toolkit
@@ -40,11 +40,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 API docs
               </a>
             </NextLink>
-            <NextLink href="https://github.com/callstack/react-native-webpack-toolkit">
-              <a className="transition ease-in duration-200 uppercase rounded-full text-cool-gray-400 hover:text-cool-gray-300 ml-2">
-                <FontAwesomeIcon className="h-9 w-9" icon={faGithub} />
-              </a>
-            </NextLink>
+            <a
+              href="https://github.com/callstack/react-native-webpack-toolkit"
+              className="transition ease-in duration-200 uppercase rounded-full text-cool-gray-400 hover:text-cool-gray-300 ml-2"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FontAwesomeIcon className="h-9 w-9" icon={faGithub} />
+            </a>
           </div>
         </div>
       </header>
@@ -55,18 +58,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="container max-w-screen-xl flex flex-col sm:flex-row justify-center sm:justify-between h-full items-center px-1 sm:px-6">
           <div className="text-auxiliary-200 flex">
             {'Built with'}
-            <Link href="/" external className="mx-1" bold>
+            <Link
+              href="https://github.com/TypeStrong/typedoc"
+              external
+              className="mx-1"
+              bold
+            >
               TypeDoc
               <span className="material-icons text-base ml-1">launch</span>
             </Link>
             {'and'}
-            <Link href="/" external className="mx-1" bold>
+            <Link href="https://nextjs.org/" external className="mx-1" bold>
               Next.js
               <span className="material-icons text-base ml-1">launch</span>
             </Link>
           </div>
           <div>
-            <Link href="/" external bold>
+            <Link
+              href="https://github.com/callstack/react-native-webpack-toolkit"
+              external
+              bold
+            >
               <FontAwesomeIcon className="h-5 w-5 mr-2" icon={faGithub} />
               GitHub
             </Link>
