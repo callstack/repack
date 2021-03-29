@@ -18,7 +18,7 @@ const {
  * https://github.com/callstack/react-native-webpack-toolkit/blob/main/README.md
  *
  * The API documentation for the functions and plugins used in this file is available at:
- * https://callstack.github.io/react-native-webpack-toolkit/
+ * https://react-native-webpack-toolkit.netlify.app/
  */
 
 /**
