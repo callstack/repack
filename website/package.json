@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "patch-package",
+    "postinstall": "patch-package && cd .. && npm i --ignore-scripts",
     "prepare": "del data/generated && typedoc --tsconfig ../tsconfig.json ../src/index.ts",
     "dev": "next dev",
     "build": "next build",
