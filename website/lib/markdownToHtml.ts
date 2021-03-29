@@ -23,7 +23,7 @@ export default async function markdownToHtml(markdown: string) {
         node.properties.target = '_blank';
       } else {
         if (location.hostname === 'localhost') {
-          return `${process.env.BASE_PATH}${location.pathname}${location.hash}`;
+          return `${location.pathname}${location.hash}`;
         }
       }
     })
