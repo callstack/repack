@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import Head from 'next/head';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { GetStaticProps } from 'next';
 import { Layout, Markdown } from '../../../components';
 import markdownToHtml from '../../../lib/markdownToHtml';
