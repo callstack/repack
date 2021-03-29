@@ -31,6 +31,7 @@
     "node": ">=12.x"
   },
   "scripts": {
+    "postinstall": "patch-package && cd website && npm i",
     "clean": "del dist",
     "prepare": "npm run build",
     "babel": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"src/client/**\" --ignore \"**/__tests__/**\"",
@@ -38,12 +39,12 @@
     "tsc": "tsc",
     "tsc:build": "tsc --build tsconfig.release.json",
     "tsc:watch": "npm run tsc:build -- --watch --preserveWatchOutput",
-    "lint": "eslint --ext \".js,.ts\" react-native.config.js src templates",
+    "lint": "eslint --ext \".js,.ts\" react-native.config.js src templates website",
     "webpack": "webpack -c webpack.config.js",
     "webpack:watch": "npm run webpack -- --watch",
     "build": "npm run clean && npm run babel && npm run tsc && npm run webpack",
     "build:watch": "npm run clean && concurrently npm:babel:watch npm:tsc:watch npm:webpack:watch",
-    "docs:api": "del docs && typedoc src/index.ts",
+    "docs:api": "del website/data/generated && typedoc src/index.ts",
     "release": "release-it",
     "test": "jest"
   },
@@ -72,6 +73,7 @@
     "open": "^8.0.2",
     "open-editor": "^3.0.0",
     "ora": "^5.3.0",
+    "patch-package": "^6.4.7",
     "pretty-format": "^26.6.2",
     "schema-utils": "^3.0.0",
     "source-map": "^0.7.3",
@@ -112,6 +114,7 @@
     "release-it": "^14.4.1",
     "style-loader": "^2.0.0",
     "typedoc": "^0.20.28",
+    "typedoc-plugin-markdown": "^3.6.0",
     "typescript": "^4.1.5",
     "url-loader": "^4.1.1",
     "webpack-cli": "^4.5.0",

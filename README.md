@@ -130,7 +130,7 @@ Once you've completed [Installation & setup](#installation--setup) you can:
 
 ## API documentation
 
-The API documentation is available at https://callstack.github.io/react-native-webpack-toolkit/
+The API documentation is available at [https://callstack.github.io/react-native-webpack-toolkit/](https://callstack.github.io/react-native-webpack-toolkit/).
 
 ## Asynchronous chunks
 
