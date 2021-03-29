@@ -27,14 +27,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
           rel="stylesheet"
         />
       </Head>
-      <header className="flex justify-center border-b border-gray-900">
-        <div className="container max-w-screen-xl px-8 py-4 flex justify-between">
+      <header className="border-b border-gray-900">
+        <div className="container max-w-screen-xl px-8 py-4 flex flex-col md:flex-row justify-between">
           <NextLink href="/">
             <a className="text-2xl tracking-wide font-bold">
               react-native-webpack-toolkit
             </a>
           </NextLink>
-          <div className="text-xs flex items-center">
+          <div className="text-xs flex items-center mt-8 md:mt-0">
             <NextLink href="/docs/api">
               <a className="px-6 py-2 transition ease-in duration-200 uppercase rounded-full border-2 border-cool-gray-400 hover:bg-cool-gray-300 hover:border-cool-gray-300 hover:text-black">
                 API docs
@@ -52,7 +52,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="container max-w-screen-xl py-10">{children}</div>
       </main>
       <footer className="bg-gray-900 h-20 flex justify-center">
-        <div className="container max-w-screen-xl flex justify-between h-full items-center px-6">
+        <div className="container max-w-screen-xl flex flex-col sm:flex-row justify-center sm:justify-between h-full items-center px-1 sm:px-6">
           <div className="text-auxiliary-200 flex">
             {'Built with'}
             <Link href="/" external className="mx-1" bold>
