@@ -371,3 +371,6 @@ Temporary Items
 
 website/data/generated
 !website/vendor/*/dist
+
+# Local Netlify folder
+.netlify

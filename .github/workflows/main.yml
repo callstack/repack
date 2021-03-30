@@ -59,4 +59,4 @@ jobs:
 
       - name: Deploy website in preview mode
         working-directory: website
-        run: cat data/generated/classes/devserverplugin
+        run: npx netlify deploy --dir=out
