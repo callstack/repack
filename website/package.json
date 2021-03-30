@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "patch-package",
-    "prepare": "del data/generated && typedoc --tsconfig ../tsconfig.json ../src/index.ts",
+    "prepare": "del data/generated && typedoc",
     "dev": "next dev",
     "build": "next build",
     "export": "next export",
@@ -17,7 +16,6 @@
     "classnames": "^2.2.6",
     "globby": "^11.0.3",
     "next": "^10.0.0",
-    "patch-package": "^6.4.7",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-markdown": "^5.0.3",
@@ -42,7 +40,6 @@
     "postcss": "^8.2.8",
     "tailwindcss": "^2.0.3",
     "typedoc": "^0.20.28",
-    "typedoc-plugin-markdown": "3.6.0",
     "typescript": "^4.2.3"
   }
 }

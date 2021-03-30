@@ -1,8 +1,11 @@
 {
   "out": "data/generated",
+  "entryPoints": ["../src/index.ts"],
+  "tsconfig": "../tsconfig.json",
   "categoryOrder": ["Webpack Plugin", "Development server", "*"],
   "excludePrivate": true,
   "allReflectionsHaveOwnDocument": true,
   "publicPath": "http://localhost:3000/docs/api/",
-  "hideBreadcrumbs": true
+  "hideBreadcrumbs": true,
+  "plugin": ["./vendor/typedoc-plugin-markdown"]
 }
