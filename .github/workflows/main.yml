@@ -60,3 +60,6 @@ jobs:
       - name: Deploy website in preview mode
         working-directory: website
         run: npx netlify deploy --dir=out
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
