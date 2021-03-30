@@ -31,6 +31,7 @@
     "node": ">=12.x"
   },
   "scripts": {
+    "postinstall": "cd website && npm i",
     "clean": "del dist",
     "prepare": "npm run build",
     "babel": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"src/client/**\" --ignore \"**/__tests__/**\"",
