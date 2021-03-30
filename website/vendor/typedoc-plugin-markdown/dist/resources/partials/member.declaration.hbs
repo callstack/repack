@@ -1,0 +1,51 @@
+{{{declarationTitle}}}
+
+{{> comment}}
+
+{{#if typeParameters}}
+
+#### Type parameters:
+
+{{#with typeParameters}}
+
+{{{parameterTable 'typeParameters'}}}
+
+{{/with}}
+
+{{/if}}
+
+{{#if type.declaration}}
+
+#### Type declaration:
+
+{{#if type.declaration.signatures}}
+
+{{#each type.declaration.signatures}}
+
+{{> member.signature }}
+
+{{/each}}
+
+{{/if}}
+
+{{#if type.declaration.children}}
+
+{{#if type.declaration}}
+
+{{#with type.declaration}}
+
+{{/with}}
+
+{{/if}}
+
+{{#with type.declaration.children}}
+
+{{{propertyTable ../kind}}}
+
+{{/with}}
+
+{{/if}}
+
+{{/if}}
+
+{{> member.sources}}
