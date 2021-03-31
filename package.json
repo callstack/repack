@@ -1,6 +1,6 @@
 {
   "name": "react-native-webpack-toolkit",
-  "version": "1.0.1-5",
+  "version": "1.0.0",
   "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -103,7 +103,6 @@
     "@types/ws": "^7.4.0",
     "babel-jest": "^26.6.3",
     "concurrently": "^6.0.0",
-    "cpx2": "^3.0.0",
     "css-loader": "^5.0.2",
     "del-cli": "^3.0.1",
     "eslint": "^7.20.0",
