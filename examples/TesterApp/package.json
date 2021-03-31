@@ -5,12 +5,12 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start"
+    "start": "react-native start",
+    "webpack": "../../node_modules/.bin/webpack"
   },
   "dependencies": {
     "react": "17.0.1",
-    "react-native": "0.64.0",
-    "react-native-webpack-toolkit": "^1.0.0"
+    "react-native": "0.64.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -20,8 +20,6 @@
     "eslint": "7.14.0",
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.64.0",
-    "react-test-renderer": "17.0.1",
-    "webpack": "5.22.0",
-    "webpack-cli": "^4.5.0"
+    "react-test-renderer": "17.0.1"
   }
 }

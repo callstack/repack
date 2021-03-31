@@ -11,7 +11,7 @@ const {
   ReactNativeTargetPlugin,
   getPublicPath,
   getChunkFilename
-} = require('react-native-webpack-toolkit');
+} = require('../..');
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
