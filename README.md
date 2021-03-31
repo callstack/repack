@@ -93,12 +93,18 @@ Both Metro and `react-native-webpack-toolkit` have different approaches for the 
 
 ## Installation & setup
 
-1. Install `react-native-webpack-toolkit` dependency:
+### Compatibility table
+
+| `webpack` | `react-native-webpack-toolkit` |
+| --------- | ------------------------------ |
+| `5.22.0`  | `1.0.0`                        |
+
+1. Install necessary dependencies:
 
 ```bash
-npm i -D react-native-webpack-toolkit
+npm i -D webpack@5.22.0 terser-webpack-plugin react-native-webpack-toolkit
 # or
-yarn add -D react-native-webpack-toolkit
+yarn add -D webpack@5.22.0 terser-webpack-plugin react-native-webpack-toolkit
 ```
 
 2. Create `webpack.config.js` based on the [template](./templates/webpack.config.js).

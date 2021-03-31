@@ -1,5 +1,5 @@
-const webpack = require('webpack');
 const path = require('path');
+const webpack = require('webpack');
 const {
   parseCliOptions,
   getInitializationEntries,
@@ -11,7 +11,7 @@ const {
   ReactNativeTargetPlugin,
   getPublicPath,
   getChunkFilename
-} = require('../..');
+} = require('react-native-webpack-toolkit');
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
@@ -51,6 +51,7 @@ const {
   outputFilename,
   devServer,
   sourcemapFilename,
+  minimize,
 } = parseCliOptions({
   fallback: {
     /**
