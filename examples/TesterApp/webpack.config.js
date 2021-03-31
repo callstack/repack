@@ -1,5 +1,5 @@
-const webpack = require('webpack');
 const path = require('path');
+const webpack = require('webpack');
 const {
   parseCliOptions,
   getInitializationEntries,
@@ -51,6 +51,7 @@ const {
   outputFilename,
   devServer,
   sourcemapFilename,
+  minimize,
 } = parseCliOptions({
   fallback: {
     /**

@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prepare": "del data/generated && typedoc",
-    "dev": "next dev",
-    "build": "next build",
+    "generate": "del data/generated && typedoc",
+    "dev": "npm run generate && next dev",
+    "build": "npm run generate && next build",
     "export": "next export",
     "start": "next start"
   },
