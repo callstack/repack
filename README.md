@@ -97,7 +97,7 @@ Both Metro and `react-native-webpack-toolkit` have different approaches for the 
 
 | `webpack` | `react-native-webpack-toolkit` |
 | --------- | ------------------------------ |
-| `5.22.0`  | `1.0.0`                        |
+| `5.22.0`  | `1.0.x`, `1.1.x`               |
 
 1. Install necessary dependencies:
 
