@@ -122,6 +122,31 @@ describe('parseCliOptions', () => {
         const options = parseCliOptions({ fallback: { platform: 'android' } });
         expect(options).toMatchSnapshot();
       });
+
+      it('should return values based on CLI options - fixture 2', () => {
+        process.env[CLI_OPTIONS_ENV_KEY] = JSON.stringify({
+          config: {
+            root: '/a/b/c',
+            reactNativePath: '/a/b/c/node_modules/react-native',
+            webpackConfigPath: '/a/b/c/webpack.config.js',
+          },
+          command: 'bundle',
+          arguments: {
+            bundle: {
+              bundleOutput:
+                '/x/y/z/build/generated/assets/react/release/index.android.bundle',
+              assetsDest: '/x/y/z/build/generated/res/react/release',
+              entryFile: 'index.js',
+              sourcemapOutput:
+                '/x/y/z/build/generated/sourcemaps/react/release/index.android.bundle.map',
+              dev: false,
+              platform: 'android',
+            },
+          },
+        });
+        const options = parseCliOptions({ fallback: { platform: 'android' } });
+        expect(options.minimize).toBe(true);
+      });
     });
   });
 });

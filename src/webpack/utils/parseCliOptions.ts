@@ -110,7 +110,7 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       outputPath,
       outputFilename,
       sourcemapFilename,
-      minimize: Boolean(args.minify),
+      minimize: args.minify ?? !args.dev,
       reactNativePath: cliOptions.config.reactNativePath,
     };
   } else if ('start' in cliOptions.arguments) {
@@ -125,7 +125,7 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       outputPath: fallback.outputPath,
       outputFilename: fallback.outputFilename,
       sourcemapFilename: fallback.sourcemapFilename,
-      minimize: false,
+      minimize: fallback.minimize,
       reactNativePath: cliOptions.config.reactNativePath,
       devServer: {
         host: args.host || undefined,
