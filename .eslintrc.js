@@ -14,5 +14,11 @@ module.exports = {
         jest: true,
       },
     },
+    {
+      files: ['templates/*'],
+      rules: {
+        'import/no-extraneous-dependencies': 0,
+      },
+    },
   ],
 };
