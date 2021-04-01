@@ -11,6 +11,7 @@ const {
   getPublicPath,
   getChunkFilename,
 } = require('react-native-webpack-toolkit');
+const TerserPlugin = require('terser-webpack-plugin');
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
@@ -50,6 +51,7 @@ const {
   outputFilename,
   devServer,
   sourcemapFilename,
+  minimize,
 } = parseCliOptions({
   fallback: {
     /**
@@ -122,7 +124,7 @@ module.exports = {
     // },
   },
   /**
-   * Configure output.
+   * Configures output.
    * Unless you don't want to use output values passed from React Native CLI, it's recommended to
    * leave it as it is.
    */
@@ -137,6 +139,25 @@ module.exports = {
       devServerEnabled,
       ...devServer,
     }),
+  },
+  /**
+   * Configures optimization of the built bundle.
+   */
+  optimization: {
+    /** Enables minification based on values passed from React Native CLI or from fallback. */
+    minimize,
+    /** Configure minimizer to process the bundle. */
+    minimizer: [
+      new TerserPlugin({
+        test: /\.(js)?bundle(\?.*)?$/i,
+        /**
+         * Prevents emitting text file with comments, licenses etc.
+         * If you want to gather in-file licenses, feel free to remove this line or configure it
+         * differently.
+         */
+        extractComments: false,
+      }),
+    ],
   },
   module: {
     /**
@@ -194,7 +215,7 @@ module.exports = {
     }),
 
     /**
-     * This plugin will make sure you can use assets like images, videos, audio.
+     * This plugin makes sure you can use assets like images, videos, audio.
      */
     new ReactNativeAssetsPlugin({
       platform,
@@ -205,7 +226,7 @@ module.exports = {
 
     /**
      * React Native environment (globals and APIs that are available inside JS) differ greatly
-     * from Web or Node.js. This plugin will ensure everything is setup correctly so that features
+     * from Web or Node.js. This plugin ensures everything is setup correctly so that features
      * like Hot Module Replacement will work correctly.
      */
     new ReactNativeTargetPlugin(),
