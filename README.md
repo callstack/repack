@@ -95,7 +95,7 @@ Both Metro and `react-native-webpack-toolkit` have different approaches for the 
 
 ### Compatibility with Webpack
 
-On paper, `react-native-webpack-toolkit` should work with any version of Webpack 5, but we recommend to consult with the compatibility table blow.
+On paper, `react-native-webpack-toolkit` should work with any version of Webpack 5, but we recommend to consult with the compatibility table below.
 The table represents versions of `webpack` for which `react-native-webpack-toolkit` is confirmed to work correctly.
 
 If you don't see your version, give it a go. If it doesn't work, please open an issue.
