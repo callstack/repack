@@ -11,6 +11,7 @@ import {
   WebSocketEventsServer,
   WebSocketDevClientServer,
 } from './ws';
+import { InspectorProxy } from './hermes/InspectorProxy';
 
 /**
  * {@link BaseDevServer} configuration options.
@@ -73,6 +74,8 @@ export class BaseDevServer {
       reply.header('X-Content-Type-Options', 'nosniff');
       return payload;
     });
+
+    new InspectorProxy(this.fastify, this.config);
   }
 
   /**
