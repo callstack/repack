@@ -1,8 +1,5 @@
-import webapck from 'webpack';
-// @ts-ignore
-import ArrayPushCallbackChunkFormatPlugin from 'webpack/lib/javascript/ArrayPushCallbackChunkFormatPlugin';
+import webpack from 'webpack';
 import { WebpackPlugin } from '../../../types';
-import { ReactNativeChunkLoadingPlugin } from './ReactNativeChunkLoadingPlugin';
 
 /**
  * Plugin for tweaking the JavaScript runtime code to account for React Native environment.
@@ -18,21 +15,29 @@ export class ReactNativeTargetPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webapck.Compiler) {
+  apply(compiler: webpack.Compiler) {
     compiler.options.target = false;
-    compiler.options.output.chunkLoading = 'react-native';
+    compiler.options.output.chunkLoading = 'jsonp';
+    compiler.options.output.chunkFormat = 'array-push';
     compiler.options.output.globalObject = 'this';
+    compiler.options.output.chunkLoadingGlobal = 'rnwtLoadChunk';
 
-    webapck.javascript.EnableChunkLoadingPlugin.setEnabled(
-      compiler,
-      'react-native'
-    );
-
-    new webapck.NormalModuleReplacementPlugin(
+    new webpack.NormalModuleReplacementPlugin(
       /react-native\/Libraries\/Utilities\/HMRClient\.js$/,
       require.resolve('../../../runtime/DevServerClient')
     ).apply(compiler);
-    new ArrayPushCallbackChunkFormatPlugin().apply(compiler);
-    new ReactNativeChunkLoadingPlugin().apply(compiler);
+
+    // Overwrite `LoadScriptRuntimeModule.generate` to avoid shipping DOM specific
+    // code in the bundle. `__webpack_require__.l` implementation is provided
+    // in `../../../runtime/setupChunkLoader.ts`.
+    webpack.runtime.LoadScriptRuntimeModule.prototype.generate = function () {
+      return webpack.Template.asString([
+        `${webpack.RuntimeGlobals.loadScript} = function() {`,
+        webpack.Template.indent(
+          "throw new Error('Missing implementation for __webpack_require__.l');"
+        ),
+        '};',
+      ]);
+    };
   }
 }

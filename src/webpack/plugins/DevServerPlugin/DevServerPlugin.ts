@@ -46,10 +46,6 @@ export class DevServerPlugin implements WebpackPlugin {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: webpack.Compiler) {
-    if (!this.config.enabled) {
-      return;
-    }
-
     new webpack.DefinePlugin({
       'process.env.__PUBLIC_PATH__': JSON.stringify(
         compiler.options.output.publicPath
@@ -106,7 +102,7 @@ export class DevServerPlugin implements WebpackPlugin {
     let server: DevServer | undefined;
 
     compiler.hooks.watchRun.tapPromise('DevServerPlugin', async () => {
-      if (!server) {
+      if (!server && this.config.enabled) {
         server = new DevServer(this.config, compiler);
         await server.run();
       }

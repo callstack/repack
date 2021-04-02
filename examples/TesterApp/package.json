@@ -6,7 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "webpack": "../../node_modules/.bin/webpack"
+    "webpack": "../../node_modules/.bin/webpack -c webpack.config.js"
   },
   "dependencies": {
     "react": "17.0.1",
