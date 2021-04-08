@@ -76,7 +76,6 @@ export class BaseDevServer {
       reply.header('X-Content-Type-Options', 'nosniff');
 
       const [pathname] = request.url.split('?');
-      this.fastify.log.info({ msg: 'onSend hook', pathname, url: request.url });
       if (pathname.endsWith('.map')) {
         reply.header('Access-Control-Allow-Origin', 'devtools://devtools');
       }

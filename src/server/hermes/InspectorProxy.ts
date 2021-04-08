@@ -38,10 +38,10 @@ export class InspectorProxy extends WebSocketServer {
   constructor(fastify: FastifyDevServer, private config: InspectorProxyConfig) {
     super(fastify, [WS_DEVICE_URL, WS_DEBUGGER_URL]);
     this.serverHost = `${this.config.host || 'localhost'}:${this.config.port}`;
-    this.initRoutes();
+    this.setup();
   }
 
-  private initRoutes() {
+  private setup() {
     const onSend: OnSendHookHandler<any> = (
       _request,
       reply,
