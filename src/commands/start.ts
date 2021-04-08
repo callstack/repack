@@ -19,7 +19,10 @@ import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
  * @category CLI command
  */
 export function start(_: string[], config: Config, args: StartArguments) {
-  const webpackConfigPath = getWebpackConfigPath(config.root);
+  const webpackConfigPath = getWebpackConfigPath(
+    config.root,
+    args.webpackConfig
+  );
   const cliOptions: CliOptions = {
     config: {
       root: config.root,
