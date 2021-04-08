@@ -33,6 +33,8 @@ export interface CommonArguments {
   resetCache?: boolean;
   /** Whether to log additional debug messages. */
   verbose?: boolean;
+  /** Custom path to Webpack config. */
+  webpackConfig?: string;
 }
 
 /**

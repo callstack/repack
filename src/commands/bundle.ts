@@ -17,7 +17,10 @@ import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
  * @category CLI command
  */
 export function bundle(_: string[], config: Config, args: BundleArguments) {
-  const webpackConfigPath = getWebpackConfigPath(config.root);
+  const webpackConfigPath = getWebpackConfigPath(
+    config.root,
+    args.webpackConfig
+  );
   const cliOptions = JSON.stringify({
     config: {
       root: config.root,
