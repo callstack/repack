@@ -40,11 +40,13 @@ __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, 
   - Application logs
   - Layout
   - Network
+  - Hermes debugger
   - React DevTools
   - Development server (debugging/verbose) logs
 - [x] Hermes support:
   - Running the production/development bundle using Harmes engine
   - Transforming production bundle into bytecode bundle
+  - Inspecting running Hermes engine with Flipper
 - [x] [Asynchronous chunks support](#asynchronous-chunks):
   - Dynamic `import()` support with and without `React.lazy()`.
   - Manual chunks using [`entry` option](https://webpack.js.org/concepts/entry-points/).
@@ -52,7 +54,6 @@ __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, 
 ### Planned features
 
 - [ ] `ChunksToHermesBytecodePlugin` plugin to automatically transform async chunks to bytecode format.
-- [ ] Inspecting Hermes with Flipper
 - [ ] `webpack-init` command
 - [ ] Web dashboard / Flipper plugin with:
   - Logs
