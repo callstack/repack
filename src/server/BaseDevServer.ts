@@ -11,6 +11,7 @@ import {
   WebSocketEventsServer,
   WebSocketDevClientServer,
 } from './ws';
+import { InspectorProxy } from './hermes/InspectorProxy';
 
 /**
  * {@link BaseDevServer} configuration options.
@@ -69,10 +70,18 @@ export class BaseDevServer {
       prefixAvoidTrailingSlash: true,
     });
 
-    this.fastify.addHook('onSend', async (_request, reply, payload) => {
+    // Use onRequest hook to add additional headers. We cannot use onSend
+    // because WDM doesn't use typical Fastify lifecycle and onSend does not get called.
+    this.fastify.addHook('onRequest', async (request, reply) => {
       reply.header('X-Content-Type-Options', 'nosniff');
-      return payload;
+
+      const [pathname] = request.url.split('?');
+      if (pathname.endsWith('.map')) {
+        reply.header('Access-Control-Allow-Origin', 'devtools://devtools');
+      }
     });
+
+    new InspectorProxy(this.fastify, this.config);
   }
 
   /**

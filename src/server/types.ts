@@ -10,6 +10,7 @@ import {
   FastifyLoggerOptions,
   FastifyReply,
   FastifyRequest,
+  onSendHookHandler,
 } from 'fastify';
 import { RouteGenericInterface } from 'fastify/types/route';
 
@@ -31,6 +32,13 @@ export type DevServerReply = FastifyReply<
   Http2ServerResponse,
   RouteGenericInterface,
   unknown
+>;
+
+export type OnSendHookHandler<T> = onSendHookHandler<
+  T,
+  Http2SecureServer | Server,
+  Http2ServerRequest,
+  Http2ServerResponse
 >;
 
 /**

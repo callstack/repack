@@ -26,7 +26,7 @@ export abstract class WebSocketServer {
    */
   constructor(
     fastify: FastifyDevServer,
-    path: string,
+    path: string | string[],
     wssOptions: Omit<
       WebSocket.ServerOptions,
       'noServer' | 'server' | 'host' | 'port' | 'path'
@@ -39,6 +39,8 @@ export abstract class WebSocketServer {
     });
     this.server.on('connection', this.onConnection.bind(this));
 
+    const allowedPaths = Array.isArray(path) ? path : [path];
+
     const onUpgrade = (
       request: IncomingMessage,
       socket: Socket,
@@ -46,7 +48,7 @@ export abstract class WebSocketServer {
     ) => {
       const { pathname } = new URL(request.url || '', 'http://localhost');
 
-      if (pathname === path) {
+      if (allowedPaths.includes(pathname)) {
         this.server.handleUpgrade(request, socket, head, (webSocket) => {
           this.server.emit('connection', webSocket, request);
         });

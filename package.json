@@ -70,6 +70,7 @@
     "hasha": "^5.2.2",
     "image-size": "^0.9.3",
     "loader-utils": "^2.0.0",
+    "metro-inspector-proxy": "^0.64.0",
     "node-fetch": "^2.6.1",
     "open": "^8.0.2",
     "open-editor": "^3.0.0",
