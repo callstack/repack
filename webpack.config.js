@@ -14,9 +14,9 @@ module.exports = {
   mode,
   devtool: mode === 'development' ? 'cheap-module-source-map' : 'source-map',
   context: __dirname,
-  entry: './src/client/index.js',
+  entry: './src/client/debugger-ui/index.js',
   output: {
-    path: path.join(__dirname, 'dist/client'),
+    path: path.join(__dirname, 'dist/client/debugger-ui'),
     clean: true,
     filename: 'static/js/[name].[contenthash:8].js',
     publicPath: '/debugger-ui/',

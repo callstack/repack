@@ -4,9 +4,9 @@ import webpack from 'webpack';
 import { HookMap, SyncHook } from 'tapable';
 
 /**
- * {@link ReactNativeAssetResolver} configuration options.
+ * {@link AssetResolver} configuration options.
  */
-export interface ReactNativeAssetResolverConfig {
+export interface AssetResolverConfig {
   /**
    * Override default test RegExp. If the asset matches the `test` RegExp, it will be process
    * by the custom React Native asset resolver. Otherwise, the resolution will process normally and
@@ -42,7 +42,7 @@ type Resolver = webpack.Compiler['resolverFactory']['hooks']['resolver'] extends
     : never
   : never;
 
-export class ReactNativeAssetResolver {
+export class AssetResolver {
   static DEFAULT_TEST = /\.(aac|aiff|bmp|caf|gif|html|jpeg|jpg|m4a|m4v|mov|mp3|mp4|mpeg|mpg|obj|otf|pdf|png|psd|svg|ttf|wav|webm|webp)$/;
 
   static collectScales(
@@ -83,11 +83,11 @@ export class ReactNativeAssetResolver {
   }
 
   constructor(
-    public readonly config: ReactNativeAssetResolverConfig,
+    public readonly config: AssetResolverConfig,
     private compiler: webpack.Compiler
   ) {
     if (!this.config.test) {
-      this.config.test = ReactNativeAssetResolver.DEFAULT_TEST;
+      this.config.test = AssetResolver.DEFAULT_TEST;
     }
   }
 
@@ -131,7 +131,7 @@ export class ReactNativeAssetResolver {
             let resolved = files.includes(basename) ? requestPath : undefined;
 
             if (!resolved) {
-              const map = ReactNativeAssetResolver.collectScales(files, {
+              const map = AssetResolver.collectScales(files, {
                 name,
                 type,
                 platform,

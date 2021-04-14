@@ -1,16 +1,6 @@
 const webpack = require('webpack');
-const {
-  parseCliOptions,
-  getInitializationEntries,
-  getResolveOptions,
-  ReactNativeAssetsPlugin,
-  LoggerPlugin,
-  DevServerPlugin,
-  DEFAULT_PORT,
-  ReactNativeTargetPlugin,
-  getPublicPath,
-  getChunkFilename,
-} = require('../..');
+const path = require('path');
+const ReactNative = require('../..');
 const TerserPlugin = require('terser-webpack-plugin');
 
 /**
@@ -28,55 +18,27 @@ const TerserPlugin = require('terser-webpack-plugin');
  * - by running Webpack CLI eg: `npx webpack-cli -c webpack.config.js`
  *
  * Depending on which option you chose the output might be different, since when running with
- * React Native CLI most of the values from `parseCliOptions` will be filled in by React Native CLI.
+ * React Native CLI most of the values from `getMode`, `getPlatform`, etc. will be filled in by React Native CLI.
  * However, when running with Webpack CLI, you might want to tweak `fallback` values to your liking.
  *
  * Please refer to the API documentation for list of options, plugins and their descriptions.
  */
 
 /**
- * Get options from React Native CLI when Webpack is run from `react-native start` or `react-native bundle`
- *
- * If you run Webpack using Webpack CLI the default and fallback values will be used - use `fallback`
- * to specify your values if the default's doesn't suit your project.
+ * Get options from React Native CLI when Webpack is run from `react-native start` or `react-native bundle`.
+ * 
+ * If you run Webpack using Webpack CLI, the values from `fallback` will be used - use it
+ * to specify your values, if the defaults don't suit your project.
  */
-const {
-  dev,
-  mode,
-  context,
-  entry,
-  platform,
-  reactNativePath,
-  outputPath,
-  outputFilename,
-  devServer,
-  sourcemapFilename,
-  minimize,
-} = parseCliOptions({
-  fallback: {
-    /**
-     * Fallback to production when running with Webpack CLI.
-     */
-    mode: 'production',
-    /**
-     * Make sure you always specify platform when running with Webpack CLI.
-     * Alternatively you could use `process.env.PLATFORM` and run:
-     * `PLATFORM=ios npx webpack-cli -c webpack.config.js`
-     */
-    platform: 'ios',
-    devServer: { port: DEFAULT_PORT },
-  },
-});
 
-/**
- * Enable development server in development mode.
- */
-const devServerEnabled = dev;
-
-/**
- * Enable Hot Module Replacement with React Refresh in when development server is running.
- */
-const hmr = devServerEnabled;
+const mode = ReactNative.getMode();
+const dev = mode === 'development';
+const context = ReactNative.getContext();
+const entry = ReactNative.getEntry();
+const platform = ReactNative.getPlatform({ fallback: process.env.PLATFORM });
+const minimize = ReactNative.isMinimizeEnabled({ fallback: !dev });
+const devServer = ReactNative.getDevServerOptions();
+const reactNativePath = ReactNative.getReactNativePath();
 
 /**
  * Depending on your Babel configuration you might want to keep it.
@@ -104,7 +66,7 @@ module.exports = {
    * If you don't want to use Hot Module Replacement, set `hmr` option to `false`. By default,
    * HMR will be enabled in development mode.
    */
-  entry: [...getInitializationEntries(reactNativePath, { hmr }), entry],
+  entry: [...ReactNative.getInitializationEntries(reactNativePath, { hmr: devServer.hmr }), entry],
   resolve: {
     /**
      * `getResolveOptions` returns additional resolution configuration for React Native.
@@ -112,7 +74,7 @@ module.exports = {
      * convention and some 3rd-party libraries that specify `react-native` field
      * in their `package.json` might not work correctly.
      */
-    ...getResolveOptions(platform),
+    ...ReactNative.getResolveOptions(platform),
 
     /**
      * Uncomment this to ensure all `react-native*` imports will resolve to the same React Native
@@ -125,20 +87,15 @@ module.exports = {
   },
   /**
    * Configures output.
-   * Unless you don't want to use output values passed from React Native CLI, it's recommended to
-   * leave it as it is.
+   * It's recommended to leave it as it is unless you know what you're doing.
+   // TODO: description
    */
   output: {
-    path: outputPath,
-    filename: outputFilename,
-    chunkFilename: getChunkFilename({
-      platform,
-      outputFilename,
-    }),
-    publicPath: getPublicPath({
-      devServerEnabled,
-      ...devServer,
-    }),
+    clean: true,
+    path: path.join(__dirname, 'build', platform),
+    filename: 'index.bundle',
+    chunkFilename: '[name].chunk.bundle',
+    publicPath: ReactNative.getPublicPath(devServer),
   },
   /**
    * Configures optimization of the built bundle.
@@ -197,7 +154,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             /** Add React Refresh transform only when HMR is enabled. */
-            plugins: hmr ? ['module:react-refresh/babel'] : undefined,
+            plugins: devServer.hmr ? ['module:react-refresh/babel'] : undefined,
           },
         },
       },
@@ -209,20 +166,15 @@ module.exports = {
      * to distinguish between production and development
      */
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(mode),
-      },
       __DEV__: JSON.stringify(dev),
     }),
 
     /**
      * This plugin makes sure you can use assets like images, videos, audio.
      */
-    new ReactNativeAssetsPlugin({
+    new ReactNative.AssetsPlugin({
       platform,
-      context,
-      outputPath,
-      devServerEnabled,
+      devServerEnabled: devServer.enabled,
     }),
 
     /**
@@ -230,16 +182,20 @@ module.exports = {
      * from Web or Node.js. This plugin ensures everything is setup correctly so that features
      * like Hot Module Replacement will work correctly.
      */
-    new ReactNativeTargetPlugin(),
+    new ReactNative.TargetPlugin(),
+
+    /**
+     * TODO
+     */
+    new ReactNative.OutputPlugin({
+      devServerEnabled: devServer.enabled,
+    }),
 
     /**
      * Runs development server when running with React Native CLI start command or if `devServer`
      * was provided as s `fallback`.
      */
-    new DevServerPlugin({
-      enabled: devServerEnabled,
-      hmr,
-      context,
+    new ReactNative.DevServerPlugin({
       platform,
       ...devServer,
     }),
@@ -254,7 +210,7 @@ module.exports = {
     new webpack.SourceMapDevToolPlugin({
       test: /\.(js)?bundle$/,
       exclude: /\.chunk\.(js)?bundle$/,
-      filename: sourcemapFilename,
+      filename: '[file].map',
       append: `//# sourceMappingURL=[url]?platform=${platform}`,
       /**
        * Uncomment for faster builds but less accurate Source Maps
@@ -284,9 +240,9 @@ module.exports = {
      * It's recommended to always have this plugin, otherwise it might be difficult
      * to figure out what's going on when bundling or running development server.
      */
-    new LoggerPlugin({
+    new ReactNative.LoggerPlugin({
       platform,
-      devServerEnabled,
+      devServerEnabled: devServer.enabled,
       output: {
         console: true,
         /**
