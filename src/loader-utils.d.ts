@@ -18,6 +18,7 @@ declare module 'loader-utils' {
   ) => void;
 
   export interface LoaderContext {
+    rootContext: string;
     resourcePath: string;
     fs: webpack.Compiler['inputFileSystem'];
     cacheable(flag?: boolean): void;

@@ -1,5 +1,5 @@
 import webpack from 'webpack';
-import { WebpackPlugin } from '../../../types';
+import { WebpackPlugin } from '../../types';
 
 /**
  * Plugin for tweaking the JavaScript runtime code to account for React Native environment.
@@ -9,7 +9,7 @@ import { WebpackPlugin } from '../../../types';
  *
  * @category Webpack Plugin
  */
-export class ReactNativeTargetPlugin implements WebpackPlugin {
+export class TargetPlugin implements WebpackPlugin {
   /**
    * Apply the plugin.
    *
@@ -24,7 +24,7 @@ export class ReactNativeTargetPlugin implements WebpackPlugin {
 
     new webpack.NormalModuleReplacementPlugin(
       /react-native\/Libraries\/Utilities\/HMRClient\.js$/,
-      require.resolve('../../../runtime/DevServerClient')
+      require.resolve('../../runtime/DevServerClient')
     ).apply(compiler);
 
     // Overwrite `LoadScriptRuntimeModule.generate` to avoid shipping DOM specific
