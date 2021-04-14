@@ -1,6 +1,7 @@
+import { exec } from 'child_process';
 import webpack from 'webpack';
 import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import { WebpackPlugin } from '../../../types';
+import { WebpackLogger, WebpackPlugin } from '../../../types';
 import { DevServer, DevServerConfig } from '../../../server';
 
 type ExtractEntryStaticNormalized<E> = E extends () => Promise<infer U>
@@ -14,7 +15,8 @@ type EntryStaticNormalized = ExtractEntryStaticNormalized<webpack.EntryNormalize
 /**
  * {@link DevServerPlugin} configuration options.
  */
-export interface DevServerPluginConfig extends DevServerConfig {
+export interface DevServerPluginConfig
+  extends Omit<DevServerConfig, 'context'> {
   /** Whether to run development server or not. */
   enabled?: boolean;
   /**
@@ -46,10 +48,10 @@ export class DevServerPlugin implements WebpackPlugin {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: webpack.Compiler) {
+    const logger = compiler.getInfrastructureLogger('DevServerPlugin');
+    this.runAdbReverse(logger);
+
     new webpack.DefinePlugin({
-      'process.env.__PUBLIC_PATH__': JSON.stringify(
-        compiler.options.output.publicPath
-      ),
       'process.env.__PUBLIC_PORT__': JSON.stringify(this.config.port),
     }).apply(compiler);
 
@@ -100,11 +102,29 @@ export class DevServerPlugin implements WebpackPlugin {
     }
 
     let server: DevServer | undefined;
+    const context = compiler.context;
 
     compiler.hooks.watchRun.tapPromise('DevServerPlugin', async () => {
       if (!server && this.config.enabled) {
-        server = new DevServer(this.config, compiler);
+        server = new DevServer({ ...this.config, context }, compiler);
         await server.run();
+      }
+    });
+  }
+
+  private runAdbReverse(logger: WebpackLogger) {
+    // TODO: add support for multiple devices
+    const adbPath = process.env.ANDROID_HOME
+      ? `${process.env.ANDROID_HOME}/platform-tools/adb`
+      : 'adb';
+    const command = `${adbPath} reverse tcp:${this.config.port} tcp:${this.config.port}`;
+    exec(command, (error) => {
+      if (error) {
+        // Get just the error message
+        const message = error.message.split('error:')[1] || error.message;
+        logger.warn(`Failed to run: ${command} - ${message.trim()}`);
+      } else {
+        logger.info(`Successfully run: ${command}`);
       }
     });
   }

@@ -1,5 +1,9 @@
 import webpack from 'webpack';
 
+export interface Fallback<T> {
+  fallback: T | (() => T);
+}
+
 /**
  * Represent interface of Webpack logger.
  * See: https://webpack.js.org/api/logging/
@@ -74,6 +78,8 @@ export interface StartArguments extends CommonArguments {
  * Used by {@link DevServerPlugin}, {@link BaseDevServer}, {@link DevServer} and {@link DevServerProxy}.
  */
 export interface DevServerOptions {
+  /** Whether to start development server. */
+  enabled?: boolean;
   /** Hostname under which to run the development server. Defaults to `localhost`. */
   host?: string;
   /** Port under which to run the development server. See: {@link DEFAULT_PORT}. */
@@ -84,6 +90,8 @@ export interface DevServerOptions {
   cert?: string;
   /** Path to certificate key when running server on HTTPS. */
   key?: string;
+  /** Whether to enable Hot Module Replacement. */
+  hmr?: boolean;
 }
 
 /**
