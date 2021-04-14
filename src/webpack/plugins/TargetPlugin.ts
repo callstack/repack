@@ -24,7 +24,7 @@ export class TargetPlugin implements WebpackPlugin {
 
     new webpack.NormalModuleReplacementPlugin(
       /react-native\/Libraries\/Utilities\/HMRClient\.js$/,
-      require.resolve('../../../runtime/DevServerClient')
+      require.resolve('../../runtime/DevServerClient')
     ).apply(compiler);
 
     // Overwrite `LoadScriptRuntimeModule.generate` to avoid shipping DOM specific

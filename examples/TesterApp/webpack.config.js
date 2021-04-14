@@ -38,6 +38,7 @@ const entry = ReactNative.getEntry();
 const platform = ReactNative.getPlatform({ fallback: process.env.PLATFORM });
 const minimize = ReactNative.isMinimizeEnabled({ fallback: !dev });
 const devServer = ReactNative.getDevServerOptions();
+const reactNativePath = ReactNative.getReactNativePath();
 
 /**
  * Depending on your Babel configuration you might want to keep it.
@@ -176,7 +177,6 @@ module.exports = {
     new ReactNative.AssetsPlugin({
       platform,
       context,
-      outputPath,
       devServerEnabled: devServer.enabled,
     }),
 

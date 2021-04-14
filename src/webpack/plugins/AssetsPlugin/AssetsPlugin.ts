@@ -55,7 +55,7 @@ export class AssetsPlugin implements WebpackPlugin {
       test: assetResolver.config.test,
       use: [
         {
-          loader: require.resolve('./reactNativeAssetsLoader.cjs'),
+          loader: require.resolve('./assetsLoader.cjs'),
           options: {
             platform: this.config.platform,
             context: this.config.context,
