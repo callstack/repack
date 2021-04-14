@@ -1,7 +1,7 @@
 import readline from 'readline';
 import { Config } from '@react-native-community/cli-types';
 import { CliOptions, StartArguments } from '../types';
-import { DEFAULT_PORT } from '../webpack/utils/parseCliOptions';
+import { DEFAULT_PORT } from '../webpack/utils';
 import { DevServerProxy } from '../server';
 import { VERBOSE_ENV_KEY } from '../env';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';

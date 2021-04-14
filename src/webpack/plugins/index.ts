@@ -1,5 +1,5 @@
 export * from './DevServerPlugin';
-export * from './ReactNativeAssetsPlugin';
-export * from './ReactNativeTarget/ReactNativeTargetPlugin';
+export * from './AssetsPlugin';
+export * from './TargetPlugin';
 export * from './JavaScriptLooseModePlugin';
 export * from './LoggerPlugin';

@@ -5,7 +5,7 @@ import { CliOptions, WebpackOptions } from '../../types';
 export type WebpackOptionsWithoutPlatform = Omit<WebpackOptions, 'platform'>;
 
 export type OptionalWebpackOptions = {
-  [K in keyof WebpackOptionsWithoutPlatform]?: WebpackOptions[K];
+  [K in keyof WebpackOptionsWithoutPlatform]?: WebpackOptions[K] | undefined;
 };
 
 /**
@@ -31,6 +31,9 @@ export interface ParseCliOptionsConfig {
   fallback: FallbackWebpackOptions;
 }
 
+/** Default development server (proxy) port. */
+export const DEFAULT_PORT = 8081;
+
 /** Sensible default for Webpack configuration to fallback to, when running with Webpack CLI. */
 export const DEFAULT_FALLBACK: WebpackOptionsWithoutPlatform = {
   mode: 'development',
@@ -42,10 +45,11 @@ export const DEFAULT_FALLBACK: WebpackOptionsWithoutPlatform = {
   context: process.cwd(),
   reactNativePath: path.join(process.cwd(), './node_modules/react-native'),
   minimize: false,
+  devServer: {
+    enabled: false,
+    port: DEFAULT_PORT,
+  },
 };
-
-/** Default development server (proxy) port. */
-export const DEFAULT_PORT = 8081;
 
 /**
  * Parse CLI arguments received from React Native CLI when running {@link start} or {@link bundle}
@@ -112,6 +116,10 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       sourcemapFilename,
       minimize: args.minify ?? !args.dev,
       reactNativePath: cliOptions.config.reactNativePath,
+      devServer: {
+        enabled: false,
+        port: fallback.devServer?.port ?? DEFAULT_PORT,
+      },
     };
   } else if ('start' in cliOptions.arguments) {
     const args = cliOptions.arguments.start;
@@ -128,16 +136,13 @@ export function parseCliOptions(config: ParseCliOptionsConfig): WebpackOptions {
       minimize: fallback.minimize,
       reactNativePath: cliOptions.config.reactNativePath,
       devServer: {
+        enabled: true,
         host: args.host || undefined,
-        port:
-          args.port ??
-          (typeof fallback.devServer === 'boolean' ||
-          fallback.devServer?.port === undefined
-            ? DEFAULT_PORT
-            : fallback.devServer.port),
+        port: args.port ?? fallback.devServer?.port ?? DEFAULT_PORT,
         https: args.https,
         cert: args.cert || undefined,
         key: args.key || undefined,
+        hmr: true,
       },
     };
   }

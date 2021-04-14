@@ -1,5 +1,5 @@
 import { CLI_OPTIONS_ENV_KEY } from '../../../env';
-import { parseCliOptions } from '../parseCliOptions';
+import { parseCliOptions } from '../deprectaed_parseCliOptions';
 
 afterEach(() => {
   delete process.env[CLI_OPTIONS_ENV_KEY];

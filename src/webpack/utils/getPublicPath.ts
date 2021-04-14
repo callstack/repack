@@ -2,9 +2,7 @@ import { DevServerConfig } from '../../server';
 
 /** {@link getPublicPath} options. */
 export interface GetPublicPathOptions
-  extends Pick<DevServerConfig, 'host' | 'https'> {
-  /** Whether the development server is enabled. */
-  devServerEnabled?: boolean;
+  extends Pick<DevServerConfig, 'enabled' | 'host' | 'https'> {
   /** Port under which to run the development server. */
   port?: number;
 }
@@ -18,11 +16,11 @@ export interface GetPublicPathOptions
  * @category Webpack util
  */
 export function getPublicPath(options: GetPublicPathOptions) {
-  const { port, host = 'localhost', https, devServerEnabled } = options;
+  const { port, host = 'localhost', https, enabled } = options;
 
-  if (devServerEnabled) {
+  if (enabled) {
     return `${https ? 'https' : 'http'}://${host}:${port}/`;
   } else {
-    return `file:///`;
+    return `noop:///`;
   }
 }

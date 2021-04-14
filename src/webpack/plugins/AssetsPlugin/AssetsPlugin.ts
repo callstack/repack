@@ -1,15 +1,11 @@
 import webpack from 'webpack';
 import { WebpackPlugin } from '../../../types';
-import {
-  ReactNativeAssetResolver,
-  ReactNativeAssetResolverConfig,
-} from './ReactNativeAssetResolver';
+import { AssetResolver, AssetResolverConfig } from './AssetResolver';
 
 /**
- * {@link ReactNativeAssetsPlugin} configuration options.
+ * {@link AssetsPlugin} configuration options.
  */
-export interface ReactNativeAssetsPluginConfig
-  extends ReactNativeAssetResolverConfig {
+export interface AssetsPluginConfig extends AssetResolverConfig {
   /** Context in which all resolution happens. Usually it's project root directory. */
   context: string;
   /**
@@ -32,13 +28,13 @@ export interface ReactNativeAssetsPluginConfig
  *
  * @category Webpack Plugin
  */
-export class ReactNativeAssetsPlugin implements WebpackPlugin {
+export class AssetsPlugin implements WebpackPlugin {
   /**
-   * Constructs new `ReactNativeAssetsPlugin`.
+   * Constructs new `AssetsPlugin`.
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config: ReactNativeAssetsPluginConfig) {}
+  constructor(private config: AssetsPluginConfig) {}
 
   /**
    * Apply the plugin.
@@ -46,7 +42,7 @@ export class ReactNativeAssetsPlugin implements WebpackPlugin {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: webpack.Compiler) {
-    const assetResolver = new ReactNativeAssetResolver(this.config, compiler);
+    const assetResolver = new AssetResolver(this.config, compiler);
 
     const outputPath = this.config.outputPath || compiler.options.output.path;
     if (!outputPath) {

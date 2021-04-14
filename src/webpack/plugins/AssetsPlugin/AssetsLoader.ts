@@ -6,7 +6,7 @@ import dedent from 'dedent';
 import hasha from 'hasha';
 import escapeStringRegexp from 'escape-string-regexp';
 import { ISizeCalculationResult } from 'image-size/dist/types/interface';
-import { ReactNativeAssetResolver } from './ReactNativeAssetResolver';
+import { AssetResolver } from './AssetResolver';
 
 interface Options {
   platform: string;
@@ -95,7 +95,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
         }
       })
     );
-    const scales = ReactNativeAssetResolver.collectScales(files, {
+    const scales = AssetResolver.collectScales(files, {
       name: filename,
       type,
       platform: options.platform,
