@@ -14,7 +14,8 @@ type EntryStaticNormalized = ExtractEntryStaticNormalized<webpack.EntryNormalize
 /**
  * {@link DevServerPlugin} configuration options.
  */
-export interface DevServerPluginConfig extends DevServerConfig {
+export interface DevServerPluginConfig
+  extends Omit<DevServerConfig, 'context'> {
   /** Whether to run development server or not. */
   enabled?: boolean;
   /**
@@ -100,10 +101,11 @@ export class DevServerPlugin implements WebpackPlugin {
     }
 
     let server: DevServer | undefined;
+    const context = compiler.context;
 
     compiler.hooks.watchRun.tapPromise('DevServerPlugin', async () => {
       if (!server && this.config.enabled) {
-        server = new DevServer(this.config, compiler);
+        server = new DevServer({ ...this.config, context }, compiler);
         await server.run();
       }
     });

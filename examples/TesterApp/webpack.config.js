@@ -165,9 +165,6 @@ module.exports = {
      * to distinguish between production and development
      */
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(mode),
-      },
       __DEV__: JSON.stringify(dev),
     }),
 
@@ -176,7 +173,6 @@ module.exports = {
      */
     new ReactNative.AssetsPlugin({
       platform,
-      context,
       devServerEnabled: devServer.enabled,
     }),
 
@@ -192,7 +188,6 @@ module.exports = {
      * was provided as s `fallback`.
      */
     new ReactNative.DevServerPlugin({
-      context,
       platform,
       ...devServer,
     }),
