@@ -10,9 +10,7 @@ import { AssetResolver } from './AssetResolver';
 
 interface Options {
   platform: string;
-  context: string;
   bundleToFile?: boolean;
-  outputPath?: string;
   publicPath?: string;
 }
 
@@ -27,9 +25,7 @@ function getOptions(loaderContext: LoaderContext): Options {
         platform: {
           type: 'string',
         },
-        context: { type: 'string' },
         bundleToFile: { type: 'boolean' },
-        outputPath: { type: 'string' },
         publicPath: { type: 'string' },
       },
     },
@@ -47,6 +43,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
 
   const callback = this.async();
   const logger = this.getLogger('reactNativeAssetsLoader');
+  const rootContext = this.rootContext;
 
   logger.debug('Processing:', this.resourcePath);
 
@@ -55,18 +52,18 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
     const pathSeparatorPattern = new RegExp(`\\${path.sep}`, 'g');
     const resourcePath = this.resourcePath;
     const dirname = path.dirname(resourcePath);
-    // Relative path to context without any ../ due to https://github.com/callstack/haul/issues/474
-    // Assets from from outside of context, should still be placed inside bundle output directory.
+    // Relative path to rootContext without any ../ due to https://github.com/callstack/haul/issues/474
+    // Assets from from outside of rootContext, should still be placed inside bundle output directory.
     // Example:
     //   resourcePath    = monorepo/node_modules/my-module/image.png
     //   dirname         = monorepo/node_modules/my-module
-    //   context         = monorepo/packages/my-app/
+    //   rootContext     = monorepo/packages/my-app/
     //   relativeDirname = ../../node_modules/my-module (original)
     // So when we calculate destination for the asset for iOS ('assets' + relativeDirname + filename),
     // it will end up outside of `assets` directory, so we have to make sure it's:
     //   relativeDirname = node_modules/my-module (tweaked)
     const relativeDirname = path
-      .relative(options.context, dirname)
+      .relative(rootContext, dirname)
       .replace(new RegExp(`^[\\.\\${path.sep}]+`), '');
     const type = path.extname(resourcePath).replace(/^\./, '');
     const assetsPath = 'assets';
@@ -200,7 +197,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       const { destination, content } = asset;
 
       logger.debug('Asset emitted:', destination);
-      // Assets are emitted relatively to `output.path` so we don't want to join with `outputPath`.
+      // Assets are emitted relatively to `output.path`.
       this.emitFile(destination, content ?? '');
     });
 
@@ -244,11 +241,10 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
     logger.debug('Asset processed:', {
       resourcePath,
       platform: options.platform,
-      context: options.context,
+      rootContext,
       relativeDirname,
       type,
       assetsPath,
-      outputPath: options.outputPath,
       filename,
       normalizedName,
       scales,
