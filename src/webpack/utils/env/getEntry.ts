@@ -1,14 +1,14 @@
 import path from 'path';
 import { Fallback } from '../../../types';
-import { getValueFromFallback } from './internal/getValueFromFallback';
+import { getFallbackFromOptions } from './internal/getFallbackFromOptions';
 import { parseCliOptions } from './internal/parseCliOptions';
 
 export function getEntry(
-  fallback: Fallback<string> = { fallback: './index.js' }
+  options: Fallback<string> = { fallback: './index.js' }
 ): string {
   const cliOptions = parseCliOptions();
   if (!cliOptions) {
-    return getValueFromFallback(fallback);
+    return getFallbackFromOptions(options);
   }
 
   if ('bundle' in cliOptions.arguments) {
@@ -17,6 +17,6 @@ export function getEntry(
       ? entryFile
       : `./${entryFile}`;
   } else {
-    return getValueFromFallback(fallback);
+    return getFallbackFromOptions(options);
   }
 }

@@ -1,11 +1,11 @@
 import { Fallback } from '../../../types';
-import { getValueFromFallback } from './internal/getValueFromFallback';
+import { getFallbackFromOptions } from './internal/getFallbackFromOptions';
 import { parseCliOptions } from './internal/parseCliOptions';
 
-export function getPlatform(fallback: Fallback<string>): string {
+export function getPlatform(options: Fallback<string>): string {
   const cliOptions = parseCliOptions();
   if (!cliOptions) {
-    return getValueFromFallback(fallback);
+    return getFallbackFromOptions(options);
   }
 
   const args =

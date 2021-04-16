@@ -1,13 +1,13 @@
 import { Fallback } from '../../../types';
-import { getValueFromFallback } from './internal/getValueFromFallback';
+import { getFallbackFromOptions } from './internal/getFallbackFromOptions';
 import { parseCliOptions } from './internal/parseCliOptions';
 
 export function getContext(
-  fallback: Fallback<string> = { fallback: process.cwd() }
+  options: Fallback<string> = { fallback: process.cwd() }
 ): string {
   const cliOptions = parseCliOptions();
   if (!cliOptions) {
-    return getValueFromFallback(fallback);
+    return getFallbackFromOptions(options);
   }
 
   return cliOptions.config.root;
