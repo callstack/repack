@@ -123,7 +123,7 @@ export class ReactNativeAssetResolver {
 
             const basename = path.basename(requestPath);
             const name = basename.replace(/\.[^.]+$/, '');
-            const type = path.extname(requestPath);
+            const type = path.extname(requestPath).substring(1);
             const files = ((results as Array<string | Buffer>)?.filter(
               (result) => typeof result === 'string'
             ) ?? []) as string[];
