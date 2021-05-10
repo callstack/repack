@@ -52,7 +52,7 @@ export default function ReflectionPage({
   return (
     <Layout>
       <Head>
-        <title>{title} | API docs | react-native-webpack-toolkit</title>
+        <title>{title} | API docs | @callstack/nativepack</title>
       </Head>
       <Link href="/docs/api" className="ml-8" bold>
         <span className="material-icons mt-0.5">arrow_back</span>

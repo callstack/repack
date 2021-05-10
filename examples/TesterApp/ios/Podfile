@@ -12,7 +12,7 @@ target 'TesterApp' do
     :hermes_enabled => true
   )
 
-  pod 'react-native-webpack-toolkit', :path => '../../..'
+  pod '@callstack/nativepack', :path => '../../..'
 
   target 'TesterAppTests' do
     inherit! :complete
