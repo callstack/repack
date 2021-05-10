@@ -41,7 +41,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </a>
             </NextLink>
             <a
-              href="https://github.com/callstack/@callstack/nativepack"
+              href="https://github.com/callstack/nativepack"
               className="transition ease-in duration-200 uppercase rounded-full text-cool-gray-400 hover:text-cool-gray-300 ml-2"
               target="_blank"
               rel="noreferrer"
@@ -74,11 +74,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </Link>
           </div>
           <div>
-            <Link
-              href="https://github.com/callstack/@callstack/nativepack"
-              external
-              bold
-            >
+            <Link href="https://github.com/callstack/nativepack" external bold>
               <FontAwesomeIcon className="h-5 w-5 mr-2" icon={faGithub} />
               GitHub
             </Link>
