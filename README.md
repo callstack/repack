@@ -232,20 +232,20 @@ and reproduce the error or `console.log`/`console.error` call.
 [goto-usage-badge]: https://img.shields.io/badge/go%20to-Usage-blue?style=flat-square
 [goto-usage]: #usage
 [goto-api-docs-badge]: https://img.shields.io/badge/go%20to-API%20docs-blue?style=flat-square
-[goto-api-docs]: https://@callstack/nativepack.netlify.app/
+[goto-api-docs]: https://react-native-webpack-toolkit.netlify.app
 
 [goto-contributing-badge]: https://img.shields.io/badge/go%20to-CONTRIBUTING.md-blue?style=flat-square
 [goto-contributing]: ./CONTRIBUTING.md
 [goto-architecture-badge]: https://img.shields.io/badge/go%20to-ARCHITECTURE.md-blue?style=flat-square
 [goto-architecture]: ./ARCHITECTURE.md
 
-[build-badge]: https://img.shields.io/github/workflow/status/callstack/@callstack/nativepack/CI/main?style=flat-square
-[build]: https://github.com/callstack/@callstack/nativepack/actions/workflows/main.yml
+[build-badge]: https://img.shields.io/github/workflow/status/callstack/nativepack/CI/main?style=flat-square
+[build]: https://github.com/callstacknativepack/actions/workflows/main.yml
 [version-badge]: https://img.shields.io/npm/v/@callstack/nativepack?style=flat-square
 [version]: https://www.npmjs.com/package/@callstack/nativepack
-[license-badge]: https://img.shields.io/npm/l/@callstack/nativepack.svg?style=flat-square
-[license]: https://github.com/callstack/@callstack/nativepack/blob/master/LICENSE
+[license-badge]: https://img.shields.io/npm/l/@callstack/nativepack?style=flat-square
+[license]: https://github.com/callstack/nativepack/blob/master/LICENSE
 [prs-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
 [prs-welcome]: ./CONTRIBUTING.md
 [coc-badge]: https://img.shields.io/badge/code%20of-conduct-ff69b4.svg?style=flat-square
-[coc]: https://github.com/callstack/@callstack/nativepack/blob/master/CODE_OF_CONDUCT.md
+[coc]: https://github.com/callstack/nativepack/blob/master/CODE_OF_CONDUCT.md
