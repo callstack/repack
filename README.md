@@ -240,7 +240,7 @@ and reproduce the error or `console.log`/`console.error` call.
 [goto-architecture]: ./ARCHITECTURE.md
 
 [build-badge]: https://img.shields.io/github/workflow/status/callstack/nativepack/CI/main?style=flat-square
-[build]: https://github.com/callstacknativepack/actions/workflows/main.yml
+[build]: https://github.com/callstack/nativepack/actions/workflows/main.yml
 [version-badge]: https://img.shields.io/npm/v/@callstack/nativepack?style=flat-square
 [version]: https://www.npmjs.com/package/@callstack/nativepack
 [license-badge]: https://img.shields.io/npm/l/@callstack/nativepack?style=flat-square
