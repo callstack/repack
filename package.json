@@ -30,6 +30,9 @@
   "engines": {
     "node": ">=12.x"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "clean": "del dist",
     "prepare": "npm run build && npm run prepare:website",
