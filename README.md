@@ -113,9 +113,14 @@ npm i -D webpack terser-webpack-plugin babel-loader @callstack/nativepack
 # or
 yarn add -D webpack terser-webpack-plugin babel-loader @callstack/nativepack
 ```
-
-2. Create `webpack.config.js` based on the [template](./templates/webpack.config.js).
-3. Configure XCode/Gradle to use `webpack-bundle`/`webpack-start` commands:
+2. Create `react-native.config.js` (if it doesn't exists) and paste the following content:
+    ```js
+    module.exports = {
+      commands: require('@callstack/nativepack/commands')
+    };
+    ```
+3. Create `webpack.config.js` based on the [template](./templates/webpack.config.js).
+4. Configure XCode/Gradle to use `webpack-bundle`/`webpack-start` commands:
    - XCode: Add `export BUNDLE_COMMAND=webpack-bundle` to **_Bundle React Native code and images_** phase inside **_Build Phases_** in your project XCode config. The final phase should look similar to:
      ```bash
      export NODE_BINARY=node
@@ -130,7 +135,7 @@ yarn add -D webpack terser-webpack-plugin babel-loader @callstack/nativepack
          bundleInDebug: false
      ]
      ```
-4. Now you can build your app for production or run development server with `npx react-native webpack-start` and develop your app.
+5. Now you can build your app for production or run development server with `npx react-native webpack-start` and develop your app.
 
 ## Usage
 

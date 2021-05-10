@@ -10,7 +10,7 @@
     "templates",
     "android",
     "ios",
-    "react-native.config.js",
+    "commands.js",
     "nativepack.podspec",
     "!android/build",
     "!ios/build"

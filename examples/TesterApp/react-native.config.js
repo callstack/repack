@@ -1,3 +1,3 @@
 module.exports = {
-  commands: require('../../react-native.config').commands
+  commands: require('../../commands')
 }
