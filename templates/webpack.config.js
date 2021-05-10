@@ -18,7 +18,7 @@ const TerserPlugin = require('terser-webpack-plugin');
  * https://github.com/callstack/nativepack/blob/main/README.md
  *
  * The API documentation for the functions and plugins used in this file is available at:
- * https://react-native-webpack-toolkit.netlify.app/
+ * https://callstack-nativepack.netlify.app/
  */
 
 /**

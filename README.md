@@ -143,7 +143,7 @@ Once you've completed [Installation & setup](#installation--setup) you can:
 
 ## API documentation
 
-The API documentation is available at [https://react-native-webpack-toolkit.netlify.app/](https://react-native-webpack-toolkit.netlify.app/).
+The API documentation is available at [https://callstack-nativepack.netlify.app/](https://callstack-nativepack.netlify.app/).
 
 ## Asynchronous chunks
 
@@ -232,7 +232,7 @@ and reproduce the error or `console.log`/`console.error` call.
 [goto-usage-badge]: https://img.shields.io/badge/go%20to-Usage-blue?style=flat-square
 [goto-usage]: #usage
 [goto-api-docs-badge]: https://img.shields.io/badge/go%20to-API%20docs-blue?style=flat-square
-[goto-api-docs]: https://react-native-webpack-toolkit.netlify.app
+[goto-api-docs]: https://callstack-nativepack.netlify.app/
 
 [goto-contributing-badge]: https://img.shields.io/badge/go%20to-CONTRIBUTING.md-blue?style=flat-square
 [goto-contributing]: ./CONTRIBUTING.md
