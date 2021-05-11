@@ -29,6 +29,7 @@ export function getResolveOptions(platform: string) {
       '.js',
       '.tsx',
       '.jsx',
+      '.json',
     ],
   };
 }
