@@ -1,4 +1,4 @@
-# Contributing to `react-native-webpack-toolkit`
+# Contributing to `@callstack/nativepack`
 
 ## Code of Conduct
 
@@ -65,8 +65,8 @@ NOTE: You must have a `GITHUB_TOKEN` environment variable available. You can cre
 
 ## Reporting issues
 
-You can report issues on our [bug tracker](https://github.com/callstack/react-native-webpack-toolkit/issues). Please follow the issue template when opening an issue.
+You can report issues on our [bug tracker](https://github.com/callstack/nativepack/issues). Please follow the issue template when opening an issue.
 
 ## License
 
-By contributing to `react-native-webpack-toolkit`, you agree that your contributions will be licensed under its **MIT** license.
+By contributing to `@callstack/nativepack`, you agree that your contributions will be licensed under its **MIT** license.

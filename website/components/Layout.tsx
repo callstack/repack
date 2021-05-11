@@ -15,7 +15,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           content="A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem."
         />
 
-        <meta name="og:title" content="react-native-webpack-toolkit" />
+        <meta name="og:title" content="@callstack/nativepack" />
         {/* <meta name="twitter:card" content="summary_large_image" /> */}
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
@@ -31,7 +31,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="container m-auto max-w-screen-xl px-8 py-4 flex flex-col md:flex-row justify-between">
           <NextLink href="/">
             <a className="text-2xl tracking-wide font-bold">
-              react-native-webpack-toolkit
+              @callstack/nativepack
             </a>
           </NextLink>
           <div className="text-xs flex items-center mt-8 md:mt-0">
@@ -41,7 +41,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </a>
             </NextLink>
             <a
-              href="https://github.com/callstack/react-native-webpack-toolkit"
+              href="https://github.com/callstack/nativepack"
               className="transition ease-in duration-200 uppercase rounded-full text-cool-gray-400 hover:text-cool-gray-300 ml-2"
               target="_blank"
               rel="noreferrer"
@@ -74,11 +74,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </Link>
           </div>
           <div>
-            <Link
-              href="https://github.com/callstack/react-native-webpack-toolkit"
-              external
-              bold
-            >
+            <Link href="https://github.com/callstack/nativepack" external bold>
               <FontAwesomeIcon className="h-5 w-5 mr-2" icon={faGithub} />
               GitHub
             </Link>

@@ -10,15 +10,15 @@ const {
   ReactNativeTargetPlugin,
   getPublicPath,
   getChunkFilename,
-} = require('react-native-webpack-toolkit');
+} = require('@callstack/nativepack');
 const TerserPlugin = require('terser-webpack-plugin');
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
- * https://github.com/callstack/react-native-webpack-toolkit/blob/main/README.md
+ * https://github.com/callstack/nativepack/blob/main/README.md
  *
  * The API documentation for the functions and plugins used in this file is available at:
- * https://react-native-webpack-toolkit.netlify.app/
+ * https://callstack-nativepack.netlify.app/
  */
 
 /**

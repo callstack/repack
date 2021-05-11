@@ -1,5 +1,5 @@
 {
-  "name": "react-native-webpack-toolkit",
+  "name": "@callstack/nativepack",
   "version": "1.3.0",
   "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
   "main": "dist/index.js",
@@ -10,13 +10,13 @@
     "templates",
     "android",
     "ios",
-    "react-native.config.js",
-    "react-native-webpack-toolkit.podspec",
+    "commands.js",
+    "nativepack.podspec",
     "!android/build",
     "!ios/build"
   ],
-  "homepage": "https://github.com/callstack/react-native-webpack-toolkit",
-  "repository": "github:callstack/react-native-webpack-toolkit",
+  "homepage": "https://github.com/callstack/nativepack",
+  "repository": "github:callstack/nativepack",
   "keywords": [
     "react-native",
     "react native",
@@ -30,6 +30,9 @@
   "engines": {
     "node": ">=12.x"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "clean": "del dist",
     "prepare": "npm run build && npm run prepare:website",
@@ -41,11 +44,11 @@
     "tsc:watch": "npm run tsc:build -- --watch --preserveWatchOutput",
     "webpack": "webpack -c webpack.config.js",
     "webpack:watch": "npm run webpack -- --watch",
-    "copy:watch": "sleep 5 && npx cpx --watch \"dist/**\" examples/TesterApp/node_modules/react-native-webpack-toolkit",
+    "copy:watch": "sleep 5 && npx cpx --watch \"dist/**\" examples/TesterApp/node_modules/@callstack/nativepack",
     "build": "npm run clean && npm run babel && npm run tsc && npm run webpack",
     "build:watch": "npm run clean && concurrently npm:babel:watch npm:tsc:watch npm:webpack:watch",
     "release": "release-it",
-    "lint": "eslint --ext \".js,.ts\" react-native.config.js src templates website",
+    "lint": "eslint --ext \".js,.ts\" commands.js src templates website",
     "test": "jest"
   },
   "peerDependencies": {

@@ -16,7 +16,7 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       md: html
-        .replace(/<h1>react-native-webpack-toolkit<\/h1>/, '')
+        .replace(/<h1>@callstack\/nativepack<\/h1>/, '')
         .replace(/<h3>/, '<h2>')
         .replace(/<\/h3>/, '</h2>')
         .replace(/<h2>/, '<h1>')
@@ -29,7 +29,7 @@ export default function ApiDocs({ md }: { md: string }) {
   return (
     <Layout>
       <Head>
-        <title>API docs | react-native-webpack-toolkit</title>
+        <title>API docs | @callstack/nativepack</title>
       </Head>
       <div className="overflow-x-auto">
         <Markdown source={md} />
