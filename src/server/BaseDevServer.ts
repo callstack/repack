@@ -12,6 +12,7 @@ import {
   WebSocketDevClientServer,
 } from './ws';
 import { InspectorProxy } from './hermes/InspectorProxy';
+import { WebSocketRouter } from './ws/WebSocketRouter';
 
 /**
  * {@link BaseDevServer} configuration options.
@@ -35,6 +36,8 @@ export class BaseDevServer {
 
   /** Fastify instance. */
   fastify: FastifyDevServer;
+  /** WebSocket router instance. */
+  wsRouter: WebSocketRouter;
   /** Debugger server instance. */
   wsDebuggerServer: WebSocketDebuggerServer;
   /** Message server instance. */
@@ -57,12 +60,21 @@ export class BaseDevServer {
     this.config = config;
     this.fastify = getFastifyInstance(this.config, loggerOptions);
 
-    this.wsDebuggerServer = new WebSocketDebuggerServer(this.fastify);
-    this.wsMessageServer = new WebSocketMessageServer(this.fastify);
-    this.wsEventsServer = new WebSocketEventsServer(this.fastify, {
-      webSocketMessageServer: this.wsMessageServer,
-    });
-    this.wsClientServer = new WebSocketDevClientServer(this.fastify);
+    this.wsRouter = new WebSocketRouter(this.fastify);
+    this.wsDebuggerServer = this.wsRouter.registerServer(
+      new WebSocketDebuggerServer(this.fastify)
+    );
+    this.wsMessageServer = this.wsRouter.registerServer(
+      new WebSocketMessageServer(this.fastify)
+    );
+    this.wsEventsServer = this.wsRouter.registerServer(
+      new WebSocketEventsServer(this.fastify, {
+        webSocketMessageServer: this.wsMessageServer,
+      })
+    );
+    this.wsClientServer = this.wsRouter.registerServer(
+      new WebSocketDevClientServer(this.fastify)
+    );
 
     this.fastify.register(fastifyStatic, {
       root: path.join(__dirname, '../client'),
@@ -81,7 +93,7 @@ export class BaseDevServer {
       }
     });
 
-    new InspectorProxy(this.fastify, this.config);
+    this.wsRouter.registerServer(new InspectorProxy(this.fastify, this.config));
   }
 
   /**
