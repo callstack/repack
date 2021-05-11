@@ -1,6 +1,5 @@
 import { IncomingMessage } from 'http';
 import { Socket } from 'net';
-import { URL } from 'url';
 import WebSocket from 'ws';
 import { FastifyDevServer } from '../types';
 
@@ -11,10 +10,12 @@ import { FastifyDevServer } from '../types';
  */
 export abstract class WebSocketServer {
   /** An instance of the underlying WebSocket server. */
-  protected server: WebSocket.Server;
+  public readonly server: WebSocket.Server;
 
   /** Fastify instance from which {@link server} will receive upgrade connections. */
   protected fastify: FastifyDevServer;
+
+  public readonly paths: string[];
 
   /**
    * Create a new instance of the WebSocketServer.
@@ -38,34 +39,17 @@ export abstract class WebSocketServer {
       ...wssOptions,
     });
     this.server.on('connection', this.onConnection.bind(this));
+    this.paths = Array.isArray(path) ? path : [path];
+  }
 
-    const allowedPaths = Array.isArray(path) ? path : [path];
+  shouldUpgrade(pathname: string) {
+    return this.paths.includes(pathname);
+  }
 
-    const onUpgrade = (
-      request: IncomingMessage,
-      socket: Socket,
-      head: Buffer
-    ) => {
-      const { pathname } = new URL(request.url || '', 'http://localhost');
-
-      if (allowedPaths.includes(pathname)) {
-        this.server.handleUpgrade(request, socket, head, (webSocket) => {
-          this.server.emit('connection', webSocket, request);
-        });
-      }
-
-      if (isLastListener) {
-        this.fastify.log.debug({
-          msg: 'Destroying socket connection as no was path matched',
-          pathname,
-        });
-        socket.destroy();
-      }
-    };
-
-    const isLastListener =
-      this.fastify.server.listeners('upgrade').reverse()[0] === onUpgrade;
-    this.fastify.server.on('upgrade', onUpgrade);
+  upgrade(request: IncomingMessage, socket: Socket, head: Buffer) {
+    this.server.handleUpgrade(request, socket, head, (webSocket) => {
+      this.server.emit('connection', webSocket, request);
+    });
   }
 
   /**
