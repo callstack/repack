@@ -69,9 +69,11 @@ export class DevServer extends BaseDevServer {
       },
     });
 
-    this.hmrServer = new WebSocketHMRServer(this.fastify, {
-      compiler: this.compiler,
-    });
+    this.hmrServer = this.wsRouter.registerServer(
+      new WebSocketHMRServer(this.fastify, {
+        compiler: this.compiler,
+      })
+    );
 
     this.symbolicator = new Symbolicator(
       this.compiler.context,
