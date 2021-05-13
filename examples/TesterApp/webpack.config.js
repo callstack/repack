@@ -184,6 +184,13 @@ module.exports = {
     new ReactNative.TargetPlugin(),
 
     /**
+     * TODO
+     */
+    new ReactNative.OutputPlugin({
+      devServerEnabled: devServer.enabled,
+    }),
+
+    /**
      * Runs development server when running with React Native CLI start command or if `devServer`
      * was provided as s `fallback`.
      */

@@ -20,7 +20,7 @@ function getOptions(loaderContext: LoaderContext): Options {
   validateSchema(
     {
       type: 'object',
-      required: ['platform', 'context'],
+      required: ['platform'],
       properties: {
         platform: {
           type: 'string',
