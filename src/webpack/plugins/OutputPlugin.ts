@@ -5,26 +5,30 @@ import { CLI_OPTIONS_ENV_KEY } from '../../env';
 import { CliOptions, WebpackLogger, WebpackPlugin } from '../../types';
 
 /**
- * TODO
+ * {@link OutputPlugin} configuration options.
  */
 export interface OutputPluginConfig {
   devServerEnabled?: boolean;
 }
 
 /**
- * TODO
+ * Plugin for copying generated files (bundle, chunks, assets) from Webpack's built location to the
+ * React Native application directory, so that the files can be packed together into the `ipa`/`apk`.
+ *
+ * @category Webpack Plugin
  */
 export class OutputPlugin implements WebpackPlugin {
   /**
-   * TODO
-   * @param config
+   * Constructs new `OutputPlugin`.
+   *
+   * @param config Plugin configuration options.
    */
   constructor(private config: OutputPluginConfig) {}
 
   /**
-   * TODO
-   * @param compiler
-   * @returns
+   * Apply the plugin.
+   *
+   * @param compiler Webpack compiler instance.
    */
   apply(compiler: webpack.Compiler) {
     const cliOptions: CliOptions | null = JSON.parse(
