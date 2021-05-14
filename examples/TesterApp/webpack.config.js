@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
-const ReactNative = require('../..');
+const ReactNative = require('@callstack/nativepack');
 const TerserPlugin = require('terser-webpack-plugin');
 
 /**
