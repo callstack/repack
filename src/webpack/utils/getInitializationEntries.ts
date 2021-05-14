@@ -40,11 +40,11 @@ export function getInitializationEntries(
     ...getPolyfills(),
     initializeCoreLocation ||
       path.join(reactNativePath, 'Libraries/Core/InitializeCore.js'),
-    require.resolve('../../runtime/setupChunkLoader'),
+    require.resolve('../../client/runtime/setupChunkLoader'),
   ];
 
   if (hmr) {
-    entries.push(require.resolve('../../runtime/WebpackHMRClient'));
+    entries.push(require.resolve('../../client/runtime/WebpackHMRClient'));
   }
 
   return entries;
