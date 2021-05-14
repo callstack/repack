@@ -36,6 +36,7 @@ describe('getDevServerOptions', () => {
       enabled: true,
       hmr: true,
       port: DEFAULT_PORT,
+      host: 'localhost',
     });
 
     process.env[CLI_OPTIONS_ENV_KEY] = JSON.stringify({
@@ -52,6 +53,24 @@ describe('getDevServerOptions', () => {
       hmr: false,
       port: 9999,
       host: '0.0.0.0',
+      cert: undefined,
+      https: undefined,
+      key: undefined,
+    });
+
+    process.env[CLI_OPTIONS_ENV_KEY] = JSON.stringify({
+      arguments: {
+        start: {},
+      },
+    });
+
+    expect(
+      getDevServerOptions({ fallback: { hmr: false, host: '1.2.3.4' } })
+    ).toEqual({
+      enabled: true,
+      hmr: false,
+      port: 8081,
+      host: '1.2.3.4',
       cert: undefined,
       https: undefined,
       key: undefined,

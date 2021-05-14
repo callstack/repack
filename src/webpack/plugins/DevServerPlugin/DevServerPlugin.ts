@@ -48,9 +48,6 @@ export class DevServerPlugin implements WebpackPlugin {
    */
   apply(compiler: webpack.Compiler) {
     new webpack.DefinePlugin({
-      'process.env.__PUBLIC_PATH__': JSON.stringify(
-        compiler.options.output.publicPath
-      ),
       'process.env.__PUBLIC_PORT__': JSON.stringify(this.config.port),
     }).apply(compiler);
 
