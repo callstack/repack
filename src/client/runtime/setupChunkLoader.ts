@@ -1,7 +1,7 @@
 /* eslint-env browser */
 /* globals __webpack_require__ __DEV__ */
 
-import { ChunkManager } from '../client/ChunkManager';
+import { ChunkManager } from '../chunks-api';
 import { getDevServerLocation } from './getDevServerLocation';
 
 class LoadEvent {

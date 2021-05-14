@@ -1,1 +1,1 @@
-export * from './dist/client/ChunkManager';
+export * from './dist/client/chunks-api';
