@@ -18,7 +18,9 @@ class ChunkManager {
 
   async resolveChunk(chunkId: string) {
     if (!this.resolver) {
-      throw new Error('No chunk resolver was configured');
+      throw new Error(
+        'No chunk resolver was configured. Did you forget to add `ChunkManager.configureResolver(...)`?'
+      );
     }
 
     if (!this.resolveCache[chunkId]) {

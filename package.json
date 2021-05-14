@@ -11,7 +11,7 @@
     "android",
     "ios",
     "commands.js",
-    "ChunkManager.js",
+    "client.js",
     "nativepack.podspec",
     "!android/build",
     "!ios/build"
