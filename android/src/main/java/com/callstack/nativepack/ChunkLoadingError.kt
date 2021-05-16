@@ -1,4 +1,4 @@
-package com.reactnativewebpacktoolkit
+package com.callstack.nativepack
 
 enum class ChunkLoadingError(val code: String) {
     UnsupportedScheme("UnsupportedScheme"),
