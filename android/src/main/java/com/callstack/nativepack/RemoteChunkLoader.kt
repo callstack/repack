@@ -4,6 +4,7 @@ import android.content.Context.MODE_PRIVATE
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactContext
 import okhttp3.*
+import java.io.File
 import java.io.IOException
 import java.io.OutputStreamWriter
 import java.net.URL
@@ -11,11 +12,16 @@ import java.net.URL
 class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
     private val client = OkHttpClient()
 
-    override fun load(url: URL, promise: Promise) {
-        val request = Request.Builder().url(url).build();
+    private fun getChunkFilePath(hash: String, id: String): String {
+        return "$hash/$id.chunk.bundle"
+    }
+
+    private fun downloadAndCache(path: String, url: URL, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
+        val file = File(path)
+
         val callback = object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                promise.reject(
+                onError(
                         ChunkLoadingError.NetworkFailure.code,
                         e.message ?: e.toString()
                 )
@@ -24,28 +30,22 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     try {
-                        val filename = url.file.split("/").last()
                         val body = response.body?.string()
 
-                        val outputStream = reactContext.openFileOutput(filename, MODE_PRIVATE)
+                        val outputStream = file.outputStream()
                         val writer = OutputStreamWriter(outputStream)
                         writer.write(body)
                         writer.close()
 
-                        reactContext.catalystInstance.loadScriptFromFile(
-                                "${reactContext.filesDir}/${filename}",
-                                url.toString(),
-                                false
-                        )
-                        promise.resolve(null)
+                        onSuccess()
                     } catch (error: Exception) {
-                        promise.reject(
+                        onError(
                                 ChunkLoadingError.RemoteEvalFailure.code,
                                 error.message ?: error.toString()
                         )
                     }
                 } else {
-                    promise.reject(
+                    onError(
                             ChunkLoadingError.RequestFailure.code,
                             "Request should have returned with 200 HTTP status, but instead it received ${response.code}"
                     )
@@ -53,6 +53,28 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
             }
         }
 
-        client.newCall(request).enqueue(callback)
+        if (File(path).exists()) {
+            onSuccess()
+        } else {
+            val request = Request.Builder().url(url).build();
+            client.newCall(request).enqueue(callback)
+        }
+    }
+
+
+    override fun preload(hash: String, id: String, url: URL, promise: Promise) {
+        val path = getChunkFilePath(hash, id)
+        downloadAndCache(path, url, { promise.resolve(null) }, { code, message -> promise.reject(code, message) })
+    }
+
+    override fun load(hash: String, id: String, url: URL, promise: Promise) {
+        val path = getChunkFilePath(hash, id)
+        downloadAndCache(path, url, {
+            reactContext.catalystInstance.loadScriptFromFile(
+                    path,
+                    url.toString(),
+                    false
+            )
+        }, { code, message -> promise.reject(code, message) })
     }
 }

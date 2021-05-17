@@ -15,7 +15,7 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
     }
 
     @ReactMethod
-    fun loadChunk(chunkId: String, chunkUrl: String, promise: Promise) {
+    fun loadChunk(chunkHash: String, chunkId: String, chunkUrl: String, promise: Promise) {
         val url = URL(chunkUrl)
 
         // Currently, `loadChunk` supports either `RemoteChunkLoader` or `FileSystemChunkLoader`
@@ -26,14 +26,14 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
                     loader = RemoteChunkLoader(reactApplicationContext)
                 }
 
-                loader?.load(url, promise)
+                loader?.load(chunkHash, chunkId, url, promise)
             }
             url.protocol == "file" -> {
                 if (loader == null) {
                     loader = FileSystemChunkLoader(reactApplicationContext)
                 }
 
-                loader?.load(url, promise)
+                loader?.load(chunkHash, chunkId, url, promise)
             }
             else -> {
                 promise.reject(
@@ -42,5 +42,28 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
                 )
             }
         }
+    }
+
+    fun preloadChunk(chunkHash: String, chunkId: String, chunkUrl: String, promise: Promise) {
+        val url = URL(chunkUrl)
+        when {
+            url.protocol.startsWith("http") -> {
+                if (loader == null) {
+                    loader = RemoteChunkLoader(reactApplicationContext)
+                }
+
+                loader?.preload(chunkHash, chunkId, url, promise)
+            }
+            else -> {
+                promise.reject(
+                        ChunkLoadingError.UnsupportedScheme.code,
+                        "Scheme in URL: '$chunkUrl' is not supported"
+                )
+            }
+        }
+    }
+
+    fun invalidateChunk(chunkHash: String, chunkId: String, chunkUrl: String, promise: Promise) {
+        // TODO: implement me
     }
 }
