@@ -1,4 +1,4 @@
-package com.reactnativewebpacktoolkit
+package com.callstack.nativepack
 
 import android.content.Context.MODE_PRIVATE
 import com.facebook.react.bridge.Promise

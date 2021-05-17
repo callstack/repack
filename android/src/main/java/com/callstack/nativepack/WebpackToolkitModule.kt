@@ -1,4 +1,4 @@
-package com.reactnativewebpacktoolkit
+package com.callstack.nativepack
 
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
