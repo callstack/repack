@@ -16,8 +16,9 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
         return "$hash/$id.chunk.bundle"
     }
 
-    private fun downloadAndCache(path: String, url: URL, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
-        val file = File(path)
+    private fun downloadAndCache(hash: String, id: String, url: URL, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
+        val path = getChunkFilePath(hash, id)
+        val file = File(reactContext.filesDir, path)
 
         val callback = object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -30,13 +31,14 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     try {
-                        val body = response.body?.string()
+                        File(reactContext.filesDir, hash).mkdir()
+                        file.createNewFile()
 
+                        val body = response.body?.string()
                         val outputStream = file.outputStream()
                         val writer = OutputStreamWriter(outputStream)
                         writer.write(body)
                         writer.close()
-
                         onSuccess()
                     } catch (error: Exception) {
                         onError(
@@ -53,7 +55,7 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
             }
         }
 
-        if (File(path).exists()) {
+        if (file.exists()) {
             onSuccess()
         } else {
             val request = Request.Builder().url(url).build();
@@ -63,15 +65,14 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
 
 
     override fun preload(hash: String, id: String, url: URL, promise: Promise) {
-        val path = getChunkFilePath(hash, id)
-        downloadAndCache(path, url, { promise.resolve(null) }, { code, message -> promise.reject(code, message) })
+        downloadAndCache(hash, id, url, { promise.resolve(null) }, { code, message -> promise.reject(code, message) })
     }
 
     override fun load(hash: String, id: String, url: URL, promise: Promise) {
         val path = getChunkFilePath(hash, id)
-        downloadAndCache(path, url, {
+        downloadAndCache(hash, id, url, {
             reactContext.catalystInstance.loadScriptFromFile(
-                    path,
+                    "${reactContext.filesDir}/${path}",
                     url.toString(),
                     false
             )
