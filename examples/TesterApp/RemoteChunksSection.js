@@ -33,7 +33,6 @@ const RemoteChunksSection = () => {
       <Button
         title={'Invalidate'}
         onPress={async () => {
-          console.log('!@# Invalidate', ChunkManager.invalidateChunks);
           await ChunkManager.invalidateChunks(['remote']);
           setIsPreloaded(false);
         }}
