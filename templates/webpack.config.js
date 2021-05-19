@@ -180,6 +180,7 @@ module.exports = {
           /node_modules(.*[/\\])+pretty-format/,
           /node_modules(.*[/\\])+metro/,
           /node_modules(.*[/\\])+abort-controller/,
+          /node_modules(.*[/\\])+@callstack\/nativepack/,
         ],
         use: 'babel-loader',
       },
