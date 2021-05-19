@@ -9,13 +9,12 @@ import java.io.IOException
 import java.io.OutputStreamWriter
 import java.net.URL
 
-val CHUNKS_DIR = "chunks"
-
 class RemoteChunkLoader(private val reactContext: ReactContext) {
+    private val chunksDirName = "chunks"
     private val client = OkHttpClient()
 
     private fun getChunkFilePath(hash: String, id: String): String {
-        return "${CHUNKS_DIR}/$hash/$id.chunk.bundle"
+        return "${chunksDirName}/$hash/$id.chunk.bundle"
     }
 
     private fun downloadAndCache(hash: String, id: String, url: URL, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
@@ -33,12 +32,12 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     try {
-                        val chunksDir = File(reactContext.filesDir, CHUNKS_DIR)
+                        val chunksDir = File(reactContext.filesDir, chunksDirName)
                         if (!chunksDir.exists()) {
-                            File(reactContext.filesDir, CHUNKS_DIR).mkdir()
+                            File(reactContext.filesDir, chunksDirName).mkdir()
                         }
 
-                        File(reactContext.filesDir, "${CHUNKS_DIR}/${hash}").mkdir()
+                        File(reactContext.filesDir, "${chunksDirName}/${hash}").mkdir()
                         file.createNewFile()
 
                         val body = response.body?.string()
@@ -88,7 +87,7 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
     }
 
     fun invalidate(hash: String) {
-        val file = File(reactContext.filesDir, "${CHUNKS_DIR}/${hash}")
+        val file = File(reactContext.filesDir, "${chunksDirName}/${hash}")
 
         if(file.exists()) {
             file.deleteRecursively()
@@ -96,7 +95,7 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
     }
 
     fun invalidateAll() {
-        val file = File(reactContext.filesDir, CHUNKS_DIR)
+        val file = File(reactContext.filesDir, chunksDirName)
         if(file.exists()) {
             file.deleteRecursively()
         }
