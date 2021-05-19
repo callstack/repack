@@ -93,7 +93,9 @@ module.exports = {
   /**
    * Configures output.
    * It's recommended to leave it as it is unless you know what you're doing.
-   // TODO: description
+   * By default Webpack will emit files into the directory specified under `path`. In order for the
+   * React Native app use them when bundling the `.ipa`/`.apk`, they need to be copied over with
+   * `ReactNative.OutputPlugin`, which is configured by default.
    */
   output: {
     clean: true,
@@ -190,7 +192,11 @@ module.exports = {
     new ReactNative.TargetPlugin(),
 
     /**
-     * TODO
+     * By default Webpack will emit files into `output.path` directory (eg: `<root>/build/ios`),
+     * but in order to for the React Native application to include those files (or a subset of those)
+     * they need to be copied over to correct output directories supplied from React Native CLI
+     * when bundling the code (with `webpack-start` command).
+     * In development mode (when development server is running), this plugin is a no-op.
      */
     new ReactNative.OutputPlugin({
       devServerEnabled: devServer.enabled,
