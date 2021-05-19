@@ -9,11 +9,13 @@ import java.io.IOException
 import java.io.OutputStreamWriter
 import java.net.URL
 
-class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
+val CHUNKS_DIR = "chunks"
+
+class RemoteChunkLoader(private val reactContext: ReactContext) {
     private val client = OkHttpClient()
 
     private fun getChunkFilePath(hash: String, id: String): String {
-        return "$hash/$id.chunk.bundle"
+        return "${CHUNKS_DIR}/$hash/$id.chunk.bundle"
     }
 
     private fun downloadAndCache(hash: String, id: String, url: URL, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
@@ -31,7 +33,12 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     try {
-                        File(reactContext.filesDir, hash).mkdir()
+                        val chunksDir = File(reactContext.filesDir, CHUNKS_DIR)
+                        if (!chunksDir.exists()) {
+                            File(reactContext.filesDir, CHUNKS_DIR).mkdir()
+                        }
+
+                        File(reactContext.filesDir, "${CHUNKS_DIR}/${hash}").mkdir()
                         file.createNewFile()
 
                         val body = response.body?.string()
@@ -64,11 +71,11 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
     }
 
 
-    override fun preload(hash: String, id: String, url: URL, promise: Promise) {
+    fun preload(hash: String, id: String, url: URL, promise: Promise) {
         downloadAndCache(hash, id, url, { promise.resolve(null) }, { code, message -> promise.reject(code, message) })
     }
 
-    override fun load(hash: String, id: String, url: URL, promise: Promise) {
+    fun load(hash: String, id: String, url: URL, promise: Promise) {
         val path = getChunkFilePath(hash, id)
         downloadAndCache(hash, id, url, {
             reactContext.catalystInstance.loadScriptFromFile(
@@ -76,6 +83,22 @@ class RemoteChunkLoader(private val reactContext: ReactContext) : ChunkLoader {
                     url.toString(),
                     false
             )
+            promise.resolve(null)
         }, { code, message -> promise.reject(code, message) })
+    }
+
+    fun invalidate(hash: String) {
+        val file = File(reactContext.filesDir, "${CHUNKS_DIR}/${hash}")
+
+        if(file.exists()) {
+            file.deleteRecursively()
+        }
+    }
+
+    fun invalidateAll() {
+        val file = File(reactContext.filesDir, CHUNKS_DIR)
+        if(file.exists()) {
+            file.deleteRecursively()
+        }
     }
 }

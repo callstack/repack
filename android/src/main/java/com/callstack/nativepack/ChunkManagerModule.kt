@@ -8,7 +8,8 @@ import java.lang.Error
 import java.net.URL
 
 class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-    private var loader: ChunkLoader? = null
+    private val remoteLoader: RemoteChunkLoader = RemoteChunkLoader(reactApplicationContext)
+    private val fileSystemLoader: FileSystemChunkLoader = FileSystemChunkLoader(reactApplicationContext)
 
     override fun getName(): String {
         return "ChunkManager"
@@ -22,18 +23,10 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
         // but not both at the same time - it will likely change in the future.
         when {
             url.protocol.startsWith("http") -> {
-                if (loader == null) {
-                    loader = RemoteChunkLoader(reactApplicationContext)
-                }
-
-                loader?.load(chunkHash, chunkId, url, promise)
+                remoteLoader.load(chunkHash, chunkId, url, promise)
             }
             url.protocol == "file" -> {
-                if (loader == null) {
-                    loader = FileSystemChunkLoader(reactApplicationContext)
-                }
-
-                loader?.load(chunkHash, chunkId, url, promise)
+                fileSystemLoader.load(chunkHash, chunkId, url, promise)
             }
             else -> {
                 promise.reject(
@@ -44,15 +37,12 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
         }
     }
 
+    @ReactMethod
     fun preloadChunk(chunkHash: String, chunkId: String, chunkUrl: String, promise: Promise) {
         val url = URL(chunkUrl)
         when {
             url.protocol.startsWith("http") -> {
-                if (loader == null) {
-                    loader = RemoteChunkLoader(reactApplicationContext)
-                }
-
-                loader?.preload(chunkHash, chunkId, url, promise)
+                remoteLoader.preload(chunkHash, chunkId, url, promise)
             }
             else -> {
                 promise.reject(
@@ -63,7 +53,26 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
         }
     }
 
-    fun invalidateChunk(chunkHash: String, chunkId: String, chunkUrl: String, promise: Promise) {
-        // TODO: implement me
+    @ReactMethod
+    fun invalidateChunks(chunks: ReadableArray, promise: Promise) {
+        if (chunks.size() == 0) {
+            remoteLoader.invalidateAll()
+            promise.resolve(null)
+        } else {
+            try {
+                for (i in 0 until chunks.size()) {
+                    val chunk = chunks.getMap(i)
+                    val hash = chunk.getString("hash") ?: ""
+
+                    remoteLoader.invalidate(hash)
+                }
+                promise.resolve(null)
+            } catch (error: Exception) {
+                promise.reject(
+                        "",
+                        error.message ?: error.toString()
+                )
+            }
+        }
     }
 }

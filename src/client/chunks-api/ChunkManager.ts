@@ -61,12 +61,21 @@ class ChunkManager {
     }
   }
 
-  async invalidateChunk(chunkId: string) {
+  async invalidateChunks(chunksIds: string[] = []) {
     try {
-      const url = await this.resolveChunk(chunkId);
-      const chunkHash = this.getChunkHash(url);
-      delete this.resolveCache[chunkId];
-      await NativeModules.ChunkManager.invalidateChunk(chunkHash, chunkId, url);
+      const chunks = await Promise.all(
+        chunksIds.map(async (chunkId) => {
+          const url = await this.resolveChunk(chunkId);
+          const chunkHash = this.getChunkHash(url);
+          delete this.resolveCache[chunkId];
+
+          return {
+            hash: chunkHash,
+          };
+        })
+      );
+
+      await NativeModules.ChunkManager.invalidateChunks(chunks);
     } catch (error) {
       console.error(
         'ChunkManager.preloadChunk invocation failed:',
