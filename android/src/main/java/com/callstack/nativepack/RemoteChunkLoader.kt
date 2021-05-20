@@ -48,7 +48,7 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
                         onSuccess()
                     } catch (error: Exception) {
                         onError(
-                                ChunkLoadingError.RemoteEvalFailure.code,
+                                ChunkLoadingError.ChunkCachingFailure.code,
                                 error.message ?: error.toString()
                         )
                     }
@@ -77,12 +77,19 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
     fun load(hash: String, id: String, url: URL, promise: Promise) {
         val path = getChunkFilePath(hash, id)
         downloadAndCache(hash, id, url, {
-            reactContext.catalystInstance.loadScriptFromFile(
-                    "${reactContext.filesDir}/${path}",
-                    url.toString(),
-                    false
-            )
-            promise.resolve(null)
+            try {
+                reactContext.catalystInstance.loadScriptFromFile(
+                        "${reactContext.filesDir}/${path}",
+                        url.toString(),
+                        false
+                )
+                promise.resolve(null)
+            } catch (error: Exception) {
+                promise.reject(
+                        ChunkLoadingError.RemoteEvalFailure.code,
+                        error.message ?: error.toString()
+                )
+            }
         }, { code, message -> promise.reject(code, message) })
     }
 

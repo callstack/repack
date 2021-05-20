@@ -70,8 +70,8 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
                 promise.resolve(null)
             } catch (error: Exception) {
                 promise.reject(
-                        "",
-                        error.message ?: error.toString()
+                        ChunkLoadingError.ChunkInvalidationFailure.code,
+                        "Cannot invalidate some of the chunks"
                 )
             }
         }
