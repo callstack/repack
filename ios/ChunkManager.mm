@@ -1,4 +1,4 @@
-#import "WebpackToolkit.h"
+#import "ChunkManager.h"
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 
@@ -16,13 +16,13 @@ extern WebpackToolkitError const RequestFailure = @"RequestFailure";
 extern WebpackToolkitError const RemoteEvalFailure = @"RemoteEvalFailure";
 extern WebpackToolkitError const FileSystemEvalFailure = @"FileSystemEvalFailure";
 
-@implementation WebpackToolkit
+@implementation ChunkManager
 
 RCT_EXPORT_MODULE()
 
 @synthesize bridge = _bridge;
 
-RCT_REMAP_METHOD(loadChunk,
+RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkHash
                  chunkId:(nonnull NSString*)chunkId
                  chunkUrl:(nonnull NSString*)chunkUrlString
                  withResolver:(RCTPromiseResolveBlock)resolve
@@ -35,6 +35,7 @@ RCT_REMAP_METHOD(loadChunk,
     
     // Handle http & https
     if ([[chunkUrl scheme] hasPrefix:@"http"]) {
+        //        downloadAndCache
         [self loadChunkFromRemote:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
     } else if ([[chunkUrl scheme] isEqualToString:@"file"]) {
         [self loadChunkFromFilesystem:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
@@ -43,6 +44,67 @@ RCT_REMAP_METHOD(loadChunk,
         reject(UnsupportedScheme,
                [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", chunkUrlString], nil);
     }
+}
+
+RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkHash
+                 chunkId:(nonnull NSString*)chunkId
+                 chunkUrl:(nonnull NSString*)chunkUrlString
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject) {
+    NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
+    if ([[chunkUrl scheme] hasPrefix:@"http"]) {
+//        downloadAndCache
+    }
+}
+
+RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject) {
+    // TODO: implement
+}
+
+- (void)downloadAndCache:(NSString *)hash
+                  chunkId:(NSString *)chunkId
+                     url:(NSURL *)url
+{
+    NSFileManager* manager = [NSFileManager defaultManager];
+    NSString *rootDirectoryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES).firstObject;
+    rootDirectoryPath = [rootDirectoryPath
+        stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
+    
+    NSString* chunksDirectoryPath = [rootDirectoryPath stringByAppendingPathComponent:@"chunks"];
+    NSString* chunkPath = [chunksDirectoryPath stringByAppendingPathComponent:hash];
+    chunkPath = [chunksDirectoryPath stringByAppendingPathComponent:chunkId];
+    chunkPath = [chunksDirectoryPath stringByAppendingPathExtension:@"chunk.bundle"];
+    if ([manager fileExistsAtPath:chunksDirectoryPath])
+    {
+       // on Success
+    } else {
+        NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url
+                                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if (error != nil) {
+    //            reject(RequestFailure, error.localizedDescription, nil);
+            } else {
+                @try {
+                    // TODO save to the cache
+                
+                    
+                    NSFileManager* manager = [NSFileManager defaultManager];
+                    
+                    [data writeToFile:chunkPath atomically:YES];
+                    // on Success
+                } @catch (NSException *exception) {
+    //                reject(RemoteEvalFailure, exception.reason, nil);
+                    // on Error
+                }
+                
+                
+            }
+        }];
+        [task resume];
+    }
+    
+    
 }
 
 - (void)loadChunkFromRemote:(RCTCxxBridge *)bridge
