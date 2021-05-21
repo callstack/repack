@@ -26,6 +26,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import { Hello } from './Hello';
+import RemoteChunksSection from './RemoteChunksSection';
 
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -78,6 +79,9 @@ const App: () => Node = () => {
           </Section>
           <Section title="Debug">
             <DebugInstructions />
+          </Section>
+          <Section title="Remote chunks">
+            <RemoteChunksSection />
           </Section>
           <Section title="Learn More">
             Read the docs to discover what to do next:
