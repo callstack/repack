@@ -35,8 +35,20 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkHash
     
     // Handle http & https
     if ([[chunkUrl scheme] hasPrefix:@"http"]) {
-        //        downloadAndCache
-        [self loadChunkFromRemote:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
+        [self downloadAndCache:chunkHash chunkId:chunkId chunkUrl:chunkUrl completionHandler:^(NSString *chunkPath, NSError *error) {
+            if(error) {
+                reject(RemoteEvalFailure, error.localizedFailureReason, nil); // FIXME: error code
+            } else {
+                @try {
+                    NSFileManager* manager = [NSFileManager defaultManager];
+                    NSData* data = [manager contentsAtPath:chunkPath];
+                    [bridge executeApplicationScript:data url:chunkUrl async:YES];
+                    resolve(nil);
+                } @catch (NSException *exception) {
+                    reject(RemoteEvalFailure, exception.reason, nil);
+                }
+            }
+        }];
     } else if ([[chunkUrl scheme] isEqualToString:@"file"]) {
         [self loadChunkFromFilesystem:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
         
@@ -53,7 +65,13 @@ RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkHash
                  withRejecter:(RCTPromiseRejectBlock)reject) {
     NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
     if ([[chunkUrl scheme] hasPrefix:@"http"]) {
-//        downloadAndCache
+        [self downloadAndCache:chunkHash chunkId:chunkId chunkUrl:chunkUrl completionHandler:^(NSString *chunkPath, NSError *error) {
+            if(error) {
+                reject(RemoteEvalFailure, error.localizedFailureReason, nil); // FIXME: error code
+            } else {
+                resolve(nil);
+            }
+        }];
     }
 }
 
@@ -65,7 +83,8 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
 
 - (void)downloadAndCache:(NSString *)hash
                   chunkId:(NSString *)chunkId
-                     url:(NSURL *)url
+                chunkUrl:(NSURL *)chunkUrl
+       completionHandler:(void (^)(NSString *chunkPath, NSError *error))completion
 {
     NSFileManager* manager = [NSFileManager defaultManager];
     NSString *rootDirectoryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES).firstObject;
@@ -73,29 +92,37 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
         stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
     
     NSString* chunksDirectoryPath = [rootDirectoryPath stringByAppendingPathComponent:@"chunks"];
-    NSString* chunkPath = [chunksDirectoryPath stringByAppendingPathComponent:hash];
-    chunkPath = [chunksDirectoryPath stringByAppendingPathComponent:chunkId];
-    chunkPath = [chunksDirectoryPath stringByAppendingPathExtension:@"chunk.bundle"];
-    if ([manager fileExistsAtPath:chunksDirectoryPath])
+    NSString* chunkDirectoryPath = [chunksDirectoryPath stringByAppendingPathComponent:hash];
+    NSString* chunkPath = [chunkDirectoryPath stringByAppendingPathComponent:chunkId];
+    chunkPath = [chunkPath stringByAppendingPathExtension:@"chunk.bundle"];
+    if ([manager fileExistsAtPath:chunkPath])
     {
-       // on Success
+        completion(chunkPath, nil);
     } else {
-        NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url
+        NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:chunkUrl
                                                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
             if (error != nil) {
-    //            reject(RequestFailure, error.localizedDescription, nil);
+                completion(chunkPath, error);
             } else {
                 @try {
-                    // TODO save to the cache
-                
+                    NSError *error;
+                    createChunksDirectory(rootDirectoryPath, &error);
                     
-                    NSFileManager* manager = [NSFileManager defaultManager];
+                    [[NSFileManager defaultManager] createDirectoryAtPath:chunkDirectoryPath
+                                              withIntermediateDirectories:YES
+                                                               attributes:nil
+                                                                    error:&error];
                     
-                    [data writeToFile:chunkPath atomically:YES];
-                    // on Success
+                    [data writeToFile:chunkPath options:NSDataWritingAtomic error:&error];
+                    
+                    //FIXME: better error handling
+                    
+                    if (error) {
+                        completion(chunkPath, error);
+                    }
+                    completion(chunkPath, nil);
                 } @catch (NSException *exception) {
-    //                reject(RemoteEvalFailure, exception.reason, nil);
-                    // on Error
+                    completion(chunkPath, nil); // FIXME: send some error
                 }
                 
                 
@@ -104,7 +131,20 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
         [task resume];
     }
     
-    
+}
+
+static void createChunksDirectory(NSString *rootDirectoryPath, NSError **error)
+{
+    NSFileManager* manager = [NSFileManager defaultManager];
+    NSString* chunksDirectoryPath = [rootDirectoryPath stringByAppendingPathComponent:@"chunks"];
+    if (![manager fileExistsAtPath:chunksDirectoryPath])
+    {
+        [[NSFileManager defaultManager] createDirectoryAtPath:chunksDirectoryPath
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil
+                                                        error:error];
+    }
+   
 }
 
 - (void)loadChunkFromRemote:(RCTCxxBridge *)bridge
