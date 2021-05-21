@@ -6,7 +6,7 @@ import java.lang.Exception
 import java.net.URL
 
 class FileSystemChunkLoader(private val reactContext: ReactContext) {
-    fun load(hash: String, id: String, url: URL, promise: Promise) {
+    fun load(url: URL, promise: Promise) {
         try {
             val filename = url.file.split("/").last()
             val assetName = "assets://$filename"
