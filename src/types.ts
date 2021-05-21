@@ -1,5 +1,7 @@
 import webpack from 'webpack';
 
+export type Rule = string | RegExp;
+
 export interface Fallback<T> {
   fallback: T | (() => T);
 }

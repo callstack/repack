@@ -2,13 +2,16 @@ import path from 'path';
 import fs from 'fs-extra';
 import webpack from 'webpack';
 import { CLI_OPTIONS_ENV_KEY } from '../../env';
-import { CliOptions, WebpackLogger, WebpackPlugin } from '../../types';
+import { CliOptions, Rule, WebpackLogger, WebpackPlugin } from '../../types';
 
 /**
  * {@link OutputPlugin} configuration options.
  */
 export interface OutputPluginConfig {
+  /** Whether the development server is enabled and running. */
   devServerEnabled?: boolean;
+  /** Exclude all matching files from being copied over. */
+  exclude?: Rule | Rule[];
 }
 
 /**
@@ -81,7 +84,19 @@ export class OutputPlugin implements WebpackPlugin {
 
       const promises: Promise<void>[] = [];
 
+      const shouldProcess = (assetName: string) =>
+        webpack.ModuleFilenameHelpers.matchObject(
+          {
+            exclude: this.config.exclude,
+          },
+          assetName
+        );
+
       for (const assetName of assetNames) {
+        if (!shouldProcess(assetName)) {
+          continue;
+        }
+
         const relatedSourceMap = compilation.assetsInfo.get(assetName)?.related
           ?.sourceMap;
         const sourcemapName = Array.isArray(relatedSourceMap)

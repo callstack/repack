@@ -1,7 +1,5 @@
 import webpack from 'webpack';
-import { WebpackPlugin } from '../../types';
-
-export type Rule = string | RegExp;
+import { Rule, WebpackPlugin } from '../../types';
 
 /**
  * {@link JavaScriptLooseModePlugin} configuration options.
