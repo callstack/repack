@@ -8,12 +8,12 @@ import { name as appName } from './app.json';
 import { ChunkManager, Chunk } from '../../client';
 
 ChunkManager.configureResolver(async (chunkId) => {
-  // chunkId = eg Async_js
-  if (chunkId === 'remote') {
-    return Chunk.fromRemote(`http://localhost:8080/remote_js`);
-  }
   if (__DEV__) {
     return Chunk.fromDevServer(chunkId);
+  }
+
+  if (chunkId === 'remote') {
+    return Chunk.fromRemote(`http://localhost:8080/remote_js`);
   }
 
   // or: Chunk.fromFileSystem(chunkId)
