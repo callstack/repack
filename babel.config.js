@@ -7,7 +7,7 @@ module.exports = {
   overrides: [
     {
       include: './src/**',
-      exclude: './src/client/**',
+      exclude: './src/client/debugger-ui/**',
       presets: [
         [
           '@babel/preset-env',
@@ -20,7 +20,7 @@ module.exports = {
       ],
     },
     {
-      include: './src/client/**',
+      include: './src/client/debugger-ui/**',
       presets: [
         [
           '@babel/preset-env',

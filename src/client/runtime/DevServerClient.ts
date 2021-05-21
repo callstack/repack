@@ -1,5 +1,4 @@
 /* eslint-env browser */
-/// <reference lib="DOM" />
 declare var __DEV__: boolean;
 
 import prettyFormat from 'pretty-format';

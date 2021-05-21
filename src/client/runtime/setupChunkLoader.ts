@@ -1,8 +1,7 @@
 /* eslint-env browser */
 /* globals __webpack_require__ __DEV__ */
 
-// @ts-ignore
-import { NativeModules } from 'react-native';
+import { ChunkManager } from '../chunks-api';
 import { getDevServerLocation } from './getDevServerLocation';
 
 class LoadEvent {
@@ -43,13 +42,8 @@ async function loadAsyncChunk(
   chunkId: string | number
 ) {
   try {
-    await NativeModules.WebpackToolkit.loadChunk(chunkId.toString(), url);
+    await ChunkManager.loadChunk(chunkId.toString());
   } catch (error) {
-    console.error(
-      'WebpackToolkit.loadChunk invocation failed:',
-      error.message,
-      error.code ? `[${error.code}]` : ''
-    );
     cb(new LoadEvent('load', url));
   }
 }

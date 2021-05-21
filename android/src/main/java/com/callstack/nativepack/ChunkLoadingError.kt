@@ -5,5 +5,7 @@ enum class ChunkLoadingError(val code: String) {
     FileSystemEvalFailure("FileSystemEvalFailure"),
     NetworkFailure("NetworkFailure"),
     RequestFailure("RequestFailure"),
-    RemoteEvalFailure("FileSystemEvalFailure"),
+    RemoteEvalFailure("RemoteEvalFailure"),
+    ChunkInvalidationFailure("ChunkInvalidationFailure"),
+    ChunkCachingFailure("ChunkCachingFailure"),
 }
