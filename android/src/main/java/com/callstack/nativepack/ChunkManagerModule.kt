@@ -75,14 +75,15 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
     }
 
     @ReactMethod
-    fun invalidateChunks(chunkIds: Array<String>, promise: Promise) {
+    fun invalidateChunks(chunkIds: ReadableArray, promise: Promise) {
         runInBackground {
-            if (chunkIds.isEmpty()) {
+            if (chunkIds.size() == 0) {
                 remoteLoader.invalidateAll()
                 promise.resolve(null)
             } else {
                 try {
-                    for (chunkId in chunkIds) {
+                    for (i in 0 until chunkIds.size()) {
+                        val chunkId = chunkIds.getString(i)
                         remoteLoader.invalidate(chunkId)
                     }
                     promise.resolve(null)
