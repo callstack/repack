@@ -56,7 +56,8 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
     @ReactMethod
     fun preloadChunk(chunkId: String, chunkUrl: String, fetch: Boolean, promise: Promise) {
         if (!fetch) {
-            // DO NOTHING
+            // Do nothing, chunk is already preloaded
+            promise.resolve(null);
         } else {
             runInBackground {
                 val url = URL(chunkUrl)
