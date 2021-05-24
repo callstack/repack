@@ -78,7 +78,26 @@ RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkHash
 RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject) {
-    // TODO: implement
+    
+    // TODO: refactor out getting path to util
+    NSFileManager* manager = [NSFileManager defaultManager];
+    NSString *rootDirectoryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES).firstObject;
+    rootDirectoryPath = [rootDirectoryPath
+        stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
+    NSString* chunksDirectoryPath = [rootDirectoryPath stringByAppendingPathComponent:@"chunks"];
+    
+    // TODO: handle errors
+    NSError *removeChunksError;
+    if (chunks.count == 0) {
+        [manager removeItemAtPath:chunksDirectoryPath error:&removeChunksError];
+    } else {
+        for (int i=0;i<chunks.count;i++) {
+            NSString *chunkHash = [chunks[i] valueForKey:@"hash"];
+            NSString * chunkFilePath = [chunksDirectoryPath stringByAppendingPathComponent:chunkHash];
+            [manager removeItemAtPath:chunkFilePath error:&removeChunksError];
+        }
+    }
+    
 }
 
 - (void)downloadAndCache:(NSString *)hash
