@@ -35,7 +35,7 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
     
     // Handle http & https
     if ([[chunkUrl scheme] hasPrefix:@"http"]) {
-        [self downloadAndCache:chunkId chunkUrl:chunkUrl fetch:fetch completionHandler:^(NSString *chunkPath, NSError *error) {
+        [self downloadAndCache:chunkId chunkUrl:chunkUrl completionHandler:^(NSString *chunkPath, NSError *error) {
             if(error) {
                 reject(RemoteEvalFailure, error.localizedFailureReason, nil); // FIXME: error code
             } else {
@@ -65,7 +65,7 @@ RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
                  withRejecter:(RCTPromiseRejectBlock)reject) {
     NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
     if ([[chunkUrl scheme] hasPrefix:@"http"]) {
-        [self downloadAndCache:chunkId chunkUrl:chunkUrl fetch:fetch completionHandler:^(NSString *chunkPath, NSError *error) {
+        [self downloadAndCache:chunkId chunkUrl:chunkUrl completionHandler:^(NSString *chunkPath, NSError *error) {
             if(error) {
                 reject(RemoteEvalFailure, error.localizedFailureReason, nil); // FIXME: error code
             } else {
@@ -101,7 +101,6 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
 
 - (void)downloadAndCache:(NSString *)chunkId
                 chunkUrl:(NSURL *)chunkUrl
-                   fetch:(BOOL*)fetch
        completionHandler:(void (^)(NSString *chunkPath, NSError *error))completion
 {
     NSFileManager* manager = [NSFileManager defaultManager];
