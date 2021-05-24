@@ -27,9 +27,6 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
 
     @ReactMethod
     fun loadChunk(chunkId: String, chunkUrl: String, fetch: Boolean, promise: Promise) {
-//    fun loadChunk(chunkHash: String, chunkId: String, chunkUrl: String, promise: Promise) {
-
-        // TODO: consider fetch argument
         runInBackground {
             val url = URL(chunkUrl)
 
@@ -37,7 +34,11 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
             // but not both at the same time - it will likely change in the future.
             when {
                 url.protocol.startsWith("http") -> {
-                    remoteLoader.load(chunkId, url, promise)
+                    if (fetch) {
+                        remoteLoader.load(chunkId, url, promise)
+                    } else {
+                        remoteLoader.loadChunkIntoMemory(chunkId, url, promise)
+                    }
                 }
                 url.protocol == "file" -> {
                     fileSystemLoader.load(url, promise)
