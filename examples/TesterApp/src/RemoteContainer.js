@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { Button, Text } from 'react-native';
-import { ChunkManager } from '../../client';
+import { Button, Text, View } from 'react-native';
+import { ChunkManager } from '../../../client';
 
+const RemoteChunkId = 'remote';
 const Remote = React.lazy(() =>
   import(/* webpackChunkName: "remote" */ './Remote')
 );
 
-const RemoteChunksSection = () => {
+export const RemoteContainer = () => {
   const [isPreloaded, setIsPreloaded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
-    <>
+    <View>
       {isLoaded ? (
         <React.Suspense fallback={<Text>Loading...</Text>}>
           <Remote />
@@ -22,7 +23,7 @@ const RemoteChunksSection = () => {
             title={isPreloaded ? 'Preloaded' : 'Preload chunk'}
             disabled={isPreloaded}
             onPress={async () => {
-              await ChunkManager.preloadChunk('remote');
+              await ChunkManager.preloadChunk(RemoteChunkId);
               setIsPreloaded(true);
             }}
           />
@@ -33,12 +34,10 @@ const RemoteChunksSection = () => {
       <Button
         title={'Invalidate'}
         onPress={async () => {
-          await ChunkManager.invalidateChunks(['remote']);
+          await ChunkManager.invalidateChunks([RemoteChunkId]);
           setIsPreloaded(false);
         }}
       />
-    </>
+    </View>
   );
 };
-
-export default RemoteChunksSection;
