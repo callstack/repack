@@ -26,7 +26,10 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
     }
 
     @ReactMethod
-    fun loadChunk(chunkHash: String, chunkId: String, chunkUrl: String, promise: Promise) {
+    fun loadChunk(chunkId: String, chunkUrl: String, fetch: Boolean, promise: Promise) {
+//    fun loadChunk(chunkHash: String, chunkId: String, chunkUrl: String, promise: Promise) {
+
+        // TODO: consider fetch argument
         runInBackground {
             val url = URL(chunkUrl)
 
@@ -34,10 +37,10 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
             // but not both at the same time - it will likely change in the future.
             when {
                 url.protocol.startsWith("http") -> {
-                    remoteLoader.load(chunkHash, chunkId, url, promise)
+                    remoteLoader.load(chunkId, url, promise)
                 }
                 url.protocol == "file" -> {
-                    fileSystemLoader.load(chunkHash, chunkId, url, promise)
+                    fileSystemLoader.load(url, promise)
                 }
                 else -> {
                     promise.reject(
@@ -50,36 +53,37 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
     }
 
     @ReactMethod
-    fun preloadChunk(chunkHash: String, chunkId: String, chunkUrl: String, promise: Promise) {
-        runInBackground {
-            val url = URL(chunkUrl)
-            when {
-                url.protocol.startsWith("http") -> {
-                    remoteLoader.preload(chunkHash, chunkId, url, promise)
-                }
-                else -> {
-                    promise.reject(
-                            ChunkLoadingError.UnsupportedScheme.code,
-                            "Scheme in URL: '$chunkUrl' is not supported"
-                    )
+    fun preloadChunk(chunkId: String, chunkUrl: String, fetch: Boolean, promise: Promise) {
+        if (!fetch) {
+            // DO NOTHING
+        } else {
+            runInBackground {
+                val url = URL(chunkUrl)
+                when {
+                    url.protocol.startsWith("http") -> {
+                        remoteLoader.preload(chunkId, url, promise)
+                    }
+                    else -> {
+                        promise.reject(
+                                ChunkLoadingError.UnsupportedScheme.code,
+                                "Scheme in URL: '$chunkUrl' is not supported"
+                        )
+                    }
                 }
             }
         }
     }
 
     @ReactMethod
-    fun invalidateChunks(chunks: ReadableArray, promise: Promise) {
+    fun invalidateChunks(chunkIds: Array<String>, promise: Promise) {
         runInBackground {
-            if (chunks.size() == 0) {
+            if (chunkIds.isEmpty()) {
                 remoteLoader.invalidateAll()
                 promise.resolve(null)
             } else {
                 try {
-                    for (i in 0 until chunks.size()) {
-                        val chunk = chunks.getMap(i)
-                        val hash = chunk.getString("hash") ?: ""
-
-                        remoteLoader.invalidate(hash)
+                    for (chunkId in chunkIds) {
+                        remoteLoader.invalidate(chunkId)
                     }
                     promise.resolve(null)
                 } catch (error: Exception) {
