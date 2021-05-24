@@ -22,9 +22,9 @@ RCT_EXPORT_MODULE()
 
 @synthesize bridge = _bridge;
 
-RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkHash
-                 chunkId:(nonnull NSString*)chunkId
+RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
                  chunkUrl:(nonnull NSString*)chunkUrlString
+                 fetch:(BOOL*)fetch
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -35,7 +35,7 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkHash
     
     // Handle http & https
     if ([[chunkUrl scheme] hasPrefix:@"http"]) {
-        [self downloadAndCache:chunkHash chunkId:chunkId chunkUrl:chunkUrl completionHandler:^(NSString *chunkPath, NSError *error) {
+        [self downloadAndCache:chunkId chunkUrl:chunkUrl fetch:fetch completionHandler:^(NSString *chunkPath, NSError *error) {
             if(error) {
                 reject(RemoteEvalFailure, error.localizedFailureReason, nil); // FIXME: error code
             } else {
@@ -58,14 +58,14 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkHash
     }
 }
 
-RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkHash
-                 chunkId:(nonnull NSString*)chunkId
+RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
                  chunkUrl:(nonnull NSString*)chunkUrlString
+                 fetch: (BOOL*)fetch
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject) {
     NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
     if ([[chunkUrl scheme] hasPrefix:@"http"]) {
-        [self downloadAndCache:chunkHash chunkId:chunkId chunkUrl:chunkUrl completionHandler:^(NSString *chunkPath, NSError *error) {
+        [self downloadAndCache:chunkId chunkUrl:chunkUrl fetch:fetch completionHandler:^(NSString *chunkPath, NSError *error) {
             if(error) {
                 reject(RemoteEvalFailure, error.localizedFailureReason, nil); // FIXME: error code
             } else {
@@ -92,17 +92,16 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
         [manager removeItemAtPath:chunksDirectoryPath error:&removeChunksError];
     } else {
         for (int i=0;i<chunks.count;i++) {
-            NSString *chunkHash = [chunks[i] valueForKey:@"hash"];
-            NSString * chunkFilePath = [chunksDirectoryPath stringByAppendingPathComponent:chunkHash];
+            NSString * chunkFilePath = [chunksDirectoryPath stringByAppendingPathComponent: [NSString stringWithFormat:@"%@.chunk.bundle", chunks[i]]];
             [manager removeItemAtPath:chunkFilePath error:&removeChunksError];
         }
     }
     
 }
 
-- (void)downloadAndCache:(NSString *)hash
-                  chunkId:(NSString *)chunkId
+- (void)downloadAndCache:(NSString *)chunkId
                 chunkUrl:(NSURL *)chunkUrl
+                   fetch:(BOOL*)fetch
        completionHandler:(void (^)(NSString *chunkPath, NSError *error))completion
 {
     NSFileManager* manager = [NSFileManager defaultManager];
@@ -111,8 +110,7 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
         stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
     
     NSString* chunksDirectoryPath = [rootDirectoryPath stringByAppendingPathComponent:@"chunks"];
-    NSString* chunkDirectoryPath = [chunksDirectoryPath stringByAppendingPathComponent:hash];
-    NSString* chunkPath = [chunkDirectoryPath stringByAppendingPathComponent:chunkId];
+    NSString* chunkPath = [chunksDirectoryPath stringByAppendingPathComponent:chunkId];
     chunkPath = [chunkPath stringByAppendingPathExtension:@"chunk.bundle"];
     if ([manager fileExistsAtPath:chunkPath])
     {
@@ -127,7 +125,7 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
                     NSError *error;
                     createChunksDirectory(rootDirectoryPath, &error);
                     
-                    [[NSFileManager defaultManager] createDirectoryAtPath:chunkDirectoryPath
+                    [[NSFileManager defaultManager] createDirectoryAtPath:chunksDirectoryPath
                                               withIntermediateDirectories:YES
                                                                attributes:nil
                                                                     error:&error];
