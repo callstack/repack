@@ -37,7 +37,7 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
                     if (fetch) {
                         remoteLoader.load(chunkId, url, promise)
                     } else {
-                        remoteLoader.loadChunkIntoMemory(chunkId, url, promise)
+                        remoteLoader.execute(chunkId, url, promise)
                     }
                 }
                 url.protocol == "file" -> {

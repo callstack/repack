@@ -1,6 +1,5 @@
 package com.callstack.nativepack
 
-import android.content.Context.MODE_PRIVATE
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactContext
 import okhttp3.*
@@ -68,7 +67,7 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
         }
     }
 
-    fun loadChunkIntoMemory(chunkId: String, url: URL, promise: Promise) {
+    fun execute(chunkId: String, url: URL, promise: Promise) {
         try {
             val path = getChunkFilePath(chunkId)
             reactContext.catalystInstance.loadScriptFromFile(
@@ -91,9 +90,8 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
     }
 
     fun load(id: String, url: URL, promise: Promise) {
-//        val path = getChunkFilePath(id)
         downloadAndCache(id, url, {
-            this.loadChunkIntoMemory(id, url, promise)
+            execute(id, url, promise)
         }, { code, message -> promise.reject(code, message) })
     }
 
