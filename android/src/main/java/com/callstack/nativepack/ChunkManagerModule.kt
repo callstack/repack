@@ -1,11 +1,11 @@
 package com.callstack.nativepack
 
+import android.os.Handler
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.Promise
-import java.lang.Error
 import java.net.URL
 
 class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -16,63 +16,85 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
         return "ChunkManager"
     }
 
-    @ReactMethod
-    fun loadChunk(chunkHash: String, chunkId: String, chunkUrl: String, promise: Promise) {
-        val url = URL(chunkUrl)
-
-        // Currently, `loadChunk` supports either `RemoteChunkLoader` or `FileSystemChunkLoader`
-        // but not both at the same time - it will likely change in the future.
-        when {
-            url.protocol.startsWith("http") -> {
-                remoteLoader.load(chunkHash, chunkId, url, promise)
-            }
-            url.protocol == "file" -> {
-                fileSystemLoader.load(chunkHash, chunkId, url, promise)
-            }
-            else -> {
-                promise.reject(
-                        ChunkLoadingError.UnsupportedScheme.code,
-                        "Scheme in URL: '$chunkUrl' is not supported"
-                )
-            }
+    private fun runInBackground(fn: () -> Unit) {
+        val handler = Handler()
+        val runnable = Runnable {
+            fn()
         }
+        handler.postDelayed(runnable, 0)
+
     }
 
     @ReactMethod
-    fun preloadChunk(chunkHash: String, chunkId: String, chunkUrl: String, promise: Promise) {
-        val url = URL(chunkUrl)
-        when {
-            url.protocol.startsWith("http") -> {
-                remoteLoader.preload(chunkHash, chunkId, url, promise)
-            }
-            else -> {
-                promise.reject(
-                        ChunkLoadingError.UnsupportedScheme.code,
-                        "Scheme in URL: '$chunkUrl' is not supported"
-                )
-            }
-        }
-    }
+    fun loadChunk(chunkId: String, chunkUrl: String, fetch: Boolean, promise: Promise) {
+        runInBackground {
+            val url = URL(chunkUrl)
 
-    @ReactMethod
-    fun invalidateChunks(chunks: ReadableArray, promise: Promise) {
-        if (chunks.size() == 0) {
-            remoteLoader.invalidateAll()
-            promise.resolve(null)
-        } else {
-            try {
-                for (i in 0 until chunks.size()) {
-                    val chunk = chunks.getMap(i)
-                    val hash = chunk.getString("hash") ?: ""
-
-                    remoteLoader.invalidate(hash)
+            // Currently, `loadChunk` supports either `RemoteChunkLoader` or `FileSystemChunkLoader`
+            // but not both at the same time - it will likely change in the future.
+            when {
+                url.protocol.startsWith("http") -> {
+                    if (fetch) {
+                        remoteLoader.load(chunkId, url, promise)
+                    } else {
+                        remoteLoader.execute(chunkId, url, promise)
+                    }
                 }
+                url.protocol == "file" -> {
+                    fileSystemLoader.load(url, promise)
+                }
+                else -> {
+                    promise.reject(
+                            ChunkLoadingError.UnsupportedScheme.code,
+                            "Scheme in URL: '$chunkUrl' is not supported"
+                    )
+                }
+            }
+        }
+    }
+
+    @ReactMethod
+    fun preloadChunk(chunkId: String, chunkUrl: String, fetch: Boolean, promise: Promise) {
+        if (!fetch) {
+            // Do nothing, chunk is already preloaded
+            promise.resolve(null);
+        } else {
+            runInBackground {
+                val url = URL(chunkUrl)
+                when {
+                    url.protocol.startsWith("http") -> {
+                        remoteLoader.preload(chunkId, url, promise)
+                    }
+                    else -> {
+                        promise.reject(
+                                ChunkLoadingError.UnsupportedScheme.code,
+                                "Scheme in URL: '$chunkUrl' is not supported"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @ReactMethod
+    fun invalidateChunks(chunkIds: ReadableArray, promise: Promise) {
+        runInBackground {
+            if (chunkIds.size() == 0) {
+                remoteLoader.invalidateAll()
                 promise.resolve(null)
-            } catch (error: Exception) {
-                promise.reject(
-                        ChunkLoadingError.ChunkInvalidationFailure.code,
-                        "Cannot invalidate some of the chunks"
-                )
+            } else {
+                try {
+                    for (i in 0 until chunkIds.size()) {
+                        val chunkId = chunkIds.getString(i)
+                        remoteLoader.invalidate(chunkId)
+                    }
+                    promise.resolve(null)
+                } catch (error: Exception) {
+                    promise.reject(
+                            ChunkLoadingError.ChunkInvalidationFailure.code,
+                            "Cannot invalidate some of the chunks"
+                    )
+                }
             }
         }
     }

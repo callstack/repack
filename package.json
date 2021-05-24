@@ -1,6 +1,6 @@
 {
   "name": "@callstack/nativepack",
-  "version": "1.4.1",
+  "version": "2.0.0-beta.2",
   "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,8 +11,8 @@
     "android",
     "ios",
     "commands.js",
+    "callstack-nativepack.podspec",
     "client.js",
-    "nativepack.podspec",
     "!android/build",
     "!ios/build"
   ],
