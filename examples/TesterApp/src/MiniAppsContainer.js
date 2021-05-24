@@ -17,6 +17,7 @@ export function MiniAppsContainer() {
     await ChunkManager.invalidateChunks(['miniapp']);
     miniAppContent.current = undefined;
     setIsInstalled(false);
+    setIsVisible(false);
   }, []);
 
   const toggle = useCallback(() => {
