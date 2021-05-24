@@ -64,7 +64,7 @@ class ChunkManager {
   async resolveChunk(
     chunkId: string
   ): Promise<{ url: string; fetch: boolean }> {
-    this.initCache();
+    await this.initCache();
 
     const url = await this.chunkResolver!(chunkId);
     let fetch = false;
