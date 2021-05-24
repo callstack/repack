@@ -1,4 +1,5 @@
 import { AppRegistry } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ChunkManager, Chunk } from '../../client';
 import App from './src/App';
 import { name as appName } from './app.json';
@@ -16,7 +17,7 @@ ChunkManager.configure({
 
     // or: Chunk.fromFileSystem(chunkId)
     return Chunk.fromRemote(`http://localhost:9999/chunks/${chunkId}`);
-  }
+  },
 });
 
 AppRegistry.registerComponent(appName, () => App);
