@@ -11,6 +11,7 @@ import { Colors, Header } from 'react-native/Libraries/NewAppScreen';
 import { RemoteContainer } from './RemoteContainer';
 import { AsyncContainer } from './AsyncContainer';
 import { Section } from './Section';
+import { MiniAppsContainer } from './MiniAppsContainer';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -35,6 +36,9 @@ const App = () => {
           </Section>
           <Section title="Remote chunks">
             <RemoteContainer />
+          </Section>
+          <Section title="Mini-apps">
+            <MiniAppsContainer />
           </Section>
         </View>
       </ScrollView>
