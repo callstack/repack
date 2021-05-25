@@ -11,7 +11,7 @@
     "android",
     "ios",
     "commands.js",
-    "nativepack.podspec",
+    "callstack-nativepack.podspec",
     "!android/build",
     "!ios/build"
   ],
