@@ -23,14 +23,14 @@ RCT_EXPORT_MODULE()
 @synthesize bridge = _bridge;
 
 RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
-                 chunkUrl:(nonnull NSString*)chunkUrlString
-                 fetch:(BOOL*)fetch
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
+                  chunkUrl:(nonnull NSString*)chunkUrlString
+                  fetch:(BOOL*)fetch
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
     // Cast `RCTBridge` to `RCTCxxBridge`.
     __weak RCTCxxBridge *bridge = (RCTCxxBridge *)_bridge;
-
+    
     NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
     
     // Handle http & https
@@ -46,7 +46,7 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
         } else {
             [self execute:bridge chunkId:chunkId url:chunkUrl withResolver:resolve withRejecter:reject];
         }
-
+        
     } else if ([[chunkUrl scheme] isEqualToString:@"file"]) {
         [self loadChunkFromFilesystem:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
         
@@ -57,10 +57,10 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
 }
 
 RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
-                 chunkUrl:(nonnull NSString*)chunkUrlString
-                 fetch: (BOOL*)fetch
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject) {
+                  chunkUrl:(nonnull NSString*)chunkUrlString
+                  fetch: (BOOL*)fetch
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject) {
     if (!fetch) {
         // Do nothing, chunk is already preloaded
         resolve(nil);
@@ -79,12 +79,12 @@ RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
                    [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", chunkUrlString], nil);
         }
     }
-
+    
 }
 
 RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject) {
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject) {
     NSFileManager* manager = [NSFileManager defaultManager];
     
     // TODO: handle errors
@@ -100,20 +100,20 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
 }
 
 - (void)execute:(RCTCxxBridge *)bridge
-      chunkId:(NSString *)chunkId
+        chunkId:(NSString *)chunkId
             url:(NSURL *)url
    withResolver:(RCTPromiseResolveBlock)resolve
    withRejecter:(RCTPromiseRejectBlock)reject
-    {
-        NSString *chunkPath = [self getChunkFilePath:chunkId];
-        @try {
-            NSFileManager* manager = [NSFileManager defaultManager];
-            NSData* data = [manager contentsAtPath:chunkPath];
-            [bridge executeApplicationScript:data url:url async:YES];
-            resolve(nil);
-        } @catch (NSException *exception) {
-            reject(RemoteEvalFailure, exception.reason, nil);
-        }
+{
+    NSString *chunkPath = [self getChunkFilePath:chunkId];
+    @try {
+        NSFileManager* manager = [NSFileManager defaultManager];
+        NSData* data = [manager contentsAtPath:chunkPath];
+        [bridge executeApplicationScript:data url:url async:YES];
+        resolve(nil);
+    } @catch (NSException *exception) {
+        reject(RemoteEvalFailure, exception.reason, nil);
+    }
 }
 
 - (NSString *)getChunksDirectoryPath {
@@ -135,7 +135,7 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
     NSFileManager* manager = [NSFileManager defaultManager];
     NSString *rootDirectoryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES).firstObject;
     rootDirectoryPath = [rootDirectoryPath
-        stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
+                         stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
     
     NSString* chunksDirectoryPath = [self getChunksDirectoryPath];
     if ([manager fileExistsAtPath:chunkPath])
@@ -186,7 +186,7 @@ static void createChunksDirectory(NSString *chunksDirectoryPath, NSError **error
                                                    attributes:nil
                                                         error:error];
     }
-   
+    
 }
 
 - (void)loadChunkFromFilesystem:(RCTCxxBridge *)bridge
