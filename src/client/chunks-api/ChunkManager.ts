@@ -1,41 +1,90 @@
 // @ts-ignore
 import { NativeModules } from 'react-native';
-import { sha256 } from 'hash.js';
 
-type ChunkResolver = (chunkId: string) => Promise<string>;
+const CACHE_KEY = 'NativePack.ChunkManager.Cache';
+
+interface Cache {
+  urls: Record<string, string>;
+}
+
+export type ChunkResolver = (chunkId: string) => Promise<string>;
+
+export interface StorageApi {
+  getItem: (key: string) => Promise<string | null | undefined>;
+  setItem: (key: string, value: string) => Promise<void>;
+  removeItem: (key: string) => Promise<void>;
+}
+
+export interface ChunkManagerConfig {
+  storage: StorageApi;
+  chunkResolver: ChunkResolver;
+}
 
 class ChunkManager {
-  resolveCache: Record<string, string> = {};
-  private resolver?: ChunkResolver;
+  private cache?: Cache;
+  private chunkResolver?: ChunkResolver;
+  private storage?: StorageApi;
 
-  configureResolver(fn: ChunkResolver) {
-    this.resolver = fn;
+  configure(config: ChunkManagerConfig) {
+    this.storage = config.storage;
+    this.chunkResolver = config.chunkResolver;
   }
 
-  private getChunkHash(url: string) {
-    return sha256().update(url).digest('hex').substr(0, 32);
-  }
-
-  async resolveChunk(chunkId: string) {
-    if (!this.resolver) {
+  private assertConfig() {
+    if (!this.chunkResolver) {
       throw new Error(
-        'No chunk resolver was configured. Did you forget to add `ChunkManager.configureResolver(...)`?'
+        'No chunk resolver was provided. Did you forget to add `ChunkManager.configure(...)`?'
       );
     }
 
-    if (!this.resolveCache[chunkId]) {
-      const location = await this.resolver(chunkId);
-      this.resolveCache[chunkId] = location;
+    if (!this.storage) {
+      throw new Error(
+        'No storage implementation was provided. Did you forget to add `ChunkManager.configure(...)`?'
+      );
+    }
+  }
+
+  private async initCache() {
+    this.assertConfig();
+
+    if (!this.cache) {
+      const cache: Cache | null | undefined = JSON.parse(
+        (await this.storage!.getItem(CACHE_KEY)) ?? 'null'
+      );
+      this.cache = { urls: {}, ...cache };
+    }
+  }
+
+  private async saveCache() {
+    this.assertConfig();
+
+    await this.storage!.setItem(CACHE_KEY, JSON.stringify(this.cache));
+  }
+
+  async resolveChunk(
+    chunkId: string
+  ): Promise<{ url: string; fetch: boolean }> {
+    await this.initCache();
+
+    const url = await this.chunkResolver!(chunkId);
+    let fetch = false;
+
+    if (!this.cache!.urls[chunkId] || this.cache!.urls[chunkId] !== url) {
+      fetch = true;
+      this.cache!.urls[chunkId] = url;
+      await this.storage!.setItem(CACHE_KEY, JSON.stringify(this.cache));
     }
 
-    return this.resolveCache[chunkId];
+    return {
+      url: this.cache!.urls[chunkId],
+      fetch,
+    };
   }
 
   async loadChunk(chunkId: string) {
     try {
-      const url = await this.resolveChunk(chunkId);
-      const chunkHash = this.getChunkHash(url);
-      await NativeModules.ChunkManager.loadChunk(chunkHash, chunkId, url);
+      const { url, fetch } = await this.resolveChunk(chunkId);
+      await NativeModules.ChunkManager.loadChunk(chunkId, url, fetch);
     } catch (error) {
       console.error(
         'ChunkManager.loadChunk invocation failed:',
@@ -48,9 +97,8 @@ class ChunkManager {
 
   async preloadChunk(chunkId: string) {
     try {
-      const url = await this.resolveChunk(chunkId);
-      const chunkHash = this.getChunkHash(url);
-      await NativeModules.ChunkManager.preloadChunk(chunkHash, chunkId, url);
+      const { url, fetch } = await this.resolveChunk(chunkId);
+      await NativeModules.ChunkManager.preloadChunk(chunkId, url, fetch);
     } catch (error) {
       console.error(
         'ChunkManager.preloadChunk invocation failed:',
@@ -63,19 +111,15 @@ class ChunkManager {
 
   async invalidateChunks(chunksIds: string[] = []) {
     try {
-      const chunks = await Promise.all(
-        chunksIds.map(async (chunkId) => {
-          const url = await this.resolveChunk(chunkId);
-          const chunkHash = this.getChunkHash(url);
-          delete this.resolveCache[chunkId];
+      await this.initCache();
+      const ids = chunksIds ?? Object.keys(this.cache!.urls);
 
-          return {
-            hash: chunkHash,
-          };
-        })
-      );
+      for (const chunkId of ids) {
+        delete this.cache?.urls[chunkId];
+      }
+      await this.saveCache();
 
-      await NativeModules.ChunkManager.invalidateChunks(chunks);
+      await NativeModules.ChunkManager.invalidateChunks(ids);
     } catch (error) {
       console.error(
         'ChunkManager.preloadChunk invocation failed:',
