@@ -24,11 +24,13 @@ async function loadHmrUpdate(url: string, cb: LoadCallback) {
     try {
       // @ts-ignore
       const globalEvalWithSourceUrl = global.globalEvalWithSourceUrl;
-      if (globalEvalWithSourceUrl) {
-        globalEvalWithSourceUrl(script, null);
-      } else {
-        eval(script);
-      }
+      (function () {
+        if (globalEvalWithSourceUrl) {
+          globalEvalWithSourceUrl(script, null);
+        } else {
+          eval(script);
+        }
+      }.call(global));
       cb();
     } catch (error) {
       console.error('Loading HMR update chunk failed:', error);
