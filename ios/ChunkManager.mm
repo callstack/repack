@@ -25,7 +25,7 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
                   chunkUrl:(nonnull NSString*)chunkUrlString
-                  fetch:(BOOL*)fetch
+                  fetch:(BOOL)fetch
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -59,7 +59,7 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
 
 RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
                   chunkUrl:(nonnull NSString*)chunkUrlString
-                  fetch: (BOOL*)fetch
+                  fetch:(BOOL)fetch
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject) {
     if (!fetch) {
@@ -87,13 +87,17 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject) {
     NSFileManager* manager = [NSFileManager defaultManager];
+    NSString* chunksDirecotryPath = [self getChunksDirectoryPath];
     
     NSError *error;
-    if (chunks.count == 0) {
-        [manager removeItemAtPath:[self getChunksDirectoryPath] error:&error];
+    if (chunks.count == 0 && [manager fileExistsAtPath:chunksDirecotryPath]) {
+        [manager removeItemAtPath:chunksDirecotryPath error:&error];
     } else {
         for (int i = 0; i < chunks.count; i++) {
-            [manager removeItemAtPath:[self getChunkFilePath:chunks[i]] error:&error];
+            NSString* chunkFilePath = [self getChunkFilePath:chunks[i]];
+            if ([manager fileExistsAtPath:chunkFilePath]) {
+                [manager removeItemAtPath:[self getChunkFilePath:chunks[i]] error:&error];
+            }
             if (error != nil) {
                 break;
             }
