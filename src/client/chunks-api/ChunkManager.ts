@@ -122,7 +122,7 @@ class ChunkManager {
       await NativeModules.ChunkManager.invalidateChunks(ids);
     } catch (error) {
       console.error(
-        'ChunkManager.preloadChunk invocation failed:',
+        'ChunkManager.invalidateChunks invocation failed:',
         error.message,
         error.code ? `[${error.code}]` : ''
       );
