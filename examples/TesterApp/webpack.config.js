@@ -1,7 +1,7 @@
-const webpack = require('webpack');
 const path = require('path');
-const ReactNative = require('../..');
+const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const ReactNative = require('../..');
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
@@ -26,12 +26,12 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 /**
  * Get options from React Native CLI when Webpack is run from `react-native start` or `react-native bundle`.
- * 
+ *
  * If you run Webpack using Webpack CLI, the values from `fallback` will be used - use it
  * to specify your values, if the defaults don't suit your project.
  */
 
-const mode = ReactNative.getMode();
+const mode = ReactNative.getMode({ fallback: 'development' });
 const dev = mode === 'development';
 const context = ReactNative.getContext();
 const entry = ReactNative.getEntry();
@@ -66,7 +66,12 @@ module.exports = {
    * If you don't want to use Hot Module Replacement, set `hmr` option to `false`. By default,
    * HMR will be enabled in development mode.
    */
-  entry: [...ReactNative.getInitializationEntries(reactNativePath, { hmr: devServer.hmr }), entry],
+  entry: [
+    ...ReactNative.getInitializationEntries(reactNativePath, {
+      hmr: devServer.hmr,
+    }),
+    entry,
+  ],
   resolve: {
     /**
      * `getResolveOptions` returns additional resolution configuration for React Native.
@@ -195,6 +200,8 @@ module.exports = {
      */
     new ReactNative.OutputPlugin({
       devServerEnabled: devServer.enabled,
+      localChunks: [/Async/],
+      remoteChunksOutput: path.join(__dirname, 'build', platform, 'remote'),
     }),
 
     /**

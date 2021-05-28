@@ -39,5 +39,25 @@ export class TargetPlugin implements WebpackPlugin {
         '};',
       ]);
     };
+
+    compiler.hooks.emit.tapPromise('TargetPlugin', async (compilation) => {
+      for (const chunk of compilation.chunks) {
+        const manifest = {
+          id: chunk.id,
+          name: chunk.name,
+          files: [...chunk.files],
+          auxiliaryFiles: [...chunk.auxiliaryFiles],
+        };
+
+        if (manifest.files.length) {
+          const manifestFile = `${manifest.files[0]}.json`;
+          chunk.auxiliaryFiles.add(manifestFile);
+          compilation.emitAsset(
+            manifestFile,
+            new webpack.sources.RawSource(JSON.stringify(manifest))
+          );
+        }
+      }
+    });
   }
 }
