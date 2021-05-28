@@ -59,12 +59,8 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
             }
         }
 
-        if (file.exists()) {
-            onSuccess()
-        } else {
-            val request = Request.Builder().url(url).build();
-            client.newCall(request).enqueue(callback)
-        }
+        val request = Request.Builder().url(url).build();
+        client.newCall(request).enqueue(callback)
     }
 
     fun execute(chunkId: String, url: URL, promise: Promise) {
