@@ -1,11 +1,15 @@
 import { AppRegistry } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ChunkManager, Chunk } from '../../client';
 import App from './src/App';
 import { name as appName } from './app.json';
 
 ChunkManager.configure({
-  storage: AsyncStorage,
+  storage: {
+    getItem: () => Promise.resolve(),
+    setItem: () => Promise.resolve(),
+    removeItem: () => {},
+  },
   chunkResolver: async (chunkId) => {
     if (__DEV__) {
       return Chunk.fromDevServer(chunkId);
