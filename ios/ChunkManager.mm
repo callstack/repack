@@ -38,7 +38,7 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
     if ([[chunkUrl scheme] hasPrefix:@"http"]) {
         if (fetch) {
             [self downloadAndCache:chunkId chunkUrl:chunkUrl completionHandler:^(NSError *error) {
-                if(error) {
+                if (error) {
                     reject(ChunkDownloadFailure, error.localizedFailureReason, nil);
                 } else {
                     [self execute:bridge chunkId:chunkId url:chunkUrl withResolver:resolve withRejecter:reject];
@@ -145,31 +145,25 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
        completionHandler:(void (^)(NSError *error))callback
 {
     NSString *chunkFilePath = [self getChunkFilePath:chunkId];
-    NSFileManager* manager = [NSFileManager defaultManager];
     NSString* chunksDirectoryPath = [self getChunksDirectoryPath];
     
-    if ([manager fileExistsAtPath:chunkFilePath]) {
-        callback(nil);
-    } else {
-        NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:chunkUrl
-                                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-            if (error != nil) {
+    NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:chunkUrl
+                                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error != nil) {
+            callback(error);
+        } else {
+            @try {
+                [self createChunksDirectory:chunksDirectoryPath];
+                [data writeToFile:chunkFilePath options:NSDataWritingAtomic error:&error];
+                callback(nil);
+            } @catch (NSError *error) {
                 callback(error);
-            } else {
-                @try {
-                    [self createChunksDirectory:chunksDirectoryPath];
-                    [data writeToFile:chunkFilePath options:NSDataWritingAtomic error:&error];
-                    callback(nil);
-                } @catch (NSError *error) {
-                    callback(error);
-                }
-                
-                
             }
-        }];
-        [task resume];
-    }
-    
+            
+            
+        }
+    }];
+    [task resume];    
 }
 
 - (void)createChunksDirectory:(NSString *)chunksDirectoryPath
