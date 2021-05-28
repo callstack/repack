@@ -49,7 +49,9 @@ export class DevServerPlugin implements WebpackPlugin {
    */
   apply(compiler: webpack.Compiler) {
     const logger = compiler.getInfrastructureLogger('DevServerPlugin');
-    this.runAdbReverse(logger);
+    if (this.config.enabled && this.config.platform === 'android') {
+      this.runAdbReverse(logger);
+    }
 
     new webpack.DefinePlugin({
       'process.env.__PUBLIC_PORT__': JSON.stringify(this.config.port),
