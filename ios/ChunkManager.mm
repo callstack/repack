@@ -65,11 +65,11 @@ RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 {
-    [self runInBackground:^(){
-        if (!fetch) {
-            // Do nothing, chunk is already preloaded
-            resolve(nil);
-        } else {
+    if (!fetch) {
+        // Do nothing, chunk is already preloaded
+        resolve(nil);
+    } else {
+        [self runInBackground:^(){
             NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
             if ([[chunkUrl scheme] hasPrefix:@"http"]) {
                 [self downloadAndCache:chunkId chunkUrl:chunkUrl completionHandler:^(NSError *error) {
@@ -83,8 +83,8 @@ RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
                 reject(UnsupportedScheme,
                        [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", chunkUrlString], nil);
             }
-        }
-    }];
+        }];
+    }
 }
 
 RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
