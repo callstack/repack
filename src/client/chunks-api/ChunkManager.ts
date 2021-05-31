@@ -1,3 +1,5 @@
+/* globals __DEV__, __CHUNKS__, __webpack_public_path__, __webpack_get_script_filename__ */
+
 // @ts-ignore
 import { NativeModules } from 'react-native';
 
@@ -7,7 +9,18 @@ interface Cache {
   urls: Record<string, string>;
 }
 
-export type ChunkResolver = (chunkId: string) => Promise<string>;
+export interface RemoteChunkLocation {
+  url: string;
+  /**
+   * Whether not to add chunk's default extension by default. If your chunk has different
+   * extension than `.chunk.bundle` you should set this flag to `true` and add extension to the `url`.
+   */
+  excludeExtension?: boolean;
+}
+
+export type RemoteChunkResolver = (
+  chunkId: string
+) => Promise<RemoteChunkLocation>;
 
 export interface StorageApi {
   getItem: (key: string) => Promise<string | null | undefined>;
@@ -16,49 +29,31 @@ export interface StorageApi {
 }
 
 export interface ChunkManagerConfig {
-  storage: StorageApi;
-  chunkResolver: ChunkResolver;
+  storage?: StorageApi;
+  resolveRemoteChunk?: RemoteChunkResolver;
 }
 
 class ChunkManager {
   private cache?: Cache;
-  private chunkResolver?: ChunkResolver;
+  private resolveRemoteChunk?: RemoteChunkResolver;
   private storage?: StorageApi;
 
   configure(config: ChunkManagerConfig) {
     this.storage = config.storage;
-    this.chunkResolver = config.chunkResolver;
-  }
-
-  private assertConfig() {
-    if (!this.chunkResolver) {
-      throw new Error(
-        'No chunk resolver was provided. Did you forget to add `ChunkManager.configure(...)`?'
-      );
-    }
-
-    if (!this.storage) {
-      throw new Error(
-        'No storage implementation was provided. Did you forget to add `ChunkManager.configure(...)`?'
-      );
-    }
+    this.resolveRemoteChunk = config.resolveRemoteChunk;
   }
 
   private async initCache() {
-    this.assertConfig();
-
     if (!this.cache) {
       const cache: Cache | null | undefined = JSON.parse(
-        (await this.storage!.getItem(CACHE_KEY)) ?? 'null'
+        (await this.storage?.getItem(CACHE_KEY)) ?? 'null'
       );
       this.cache = { urls: {}, ...cache };
     }
   }
 
   private async saveCache() {
-    this.assertConfig();
-
-    await this.storage!.setItem(CACHE_KEY, JSON.stringify(this.cache));
+    await this.storage?.setItem(CACHE_KEY, JSON.stringify(this.cache));
   }
 
   async resolveChunk(
@@ -66,13 +61,30 @@ class ChunkManager {
   ): Promise<{ url: string; fetch: boolean }> {
     await this.initCache();
 
-    const url = await this.chunkResolver!(chunkId);
     let fetch = false;
+    let url: string | undefined;
+
+    if (__DEV__) {
+      url = Chunk.fromDevServer(chunkId);
+    } else if (__CHUNKS__?.['local']?.includes(chunkId)) {
+      url = Chunk.fromFileSystem(chunkId);
+    } else {
+      if (!this.resolveRemoteChunk) {
+        throw new Error(
+          'No remote chunk resolver was provided. Did you forget to add `ChunkManager.configure({ resolveRemoteChunk: ... })`?'
+        );
+      }
+
+      const location = await this.resolveRemoteChunk(chunkId);
+      url = Chunk.fromRemote(location.url, {
+        excludeExtension: location.excludeExtension,
+      });
+    }
 
     if (!this.cache!.urls[chunkId] || this.cache!.urls[chunkId] !== url) {
       fetch = true;
       this.cache!.urls[chunkId] = url;
-      await this.storage!.setItem(CACHE_KEY, JSON.stringify(this.cache));
+      await this.saveCache();
     }
 
     return {
@@ -133,3 +145,21 @@ class ChunkManager {
 
 const ChunkManagerInstance = new ChunkManager();
 export { ChunkManagerInstance as ChunkManager };
+
+export const Chunk = {
+  fromDevServer(chunkId: string) {
+    return `${__webpack_public_path__}${__webpack_get_script_filename__(
+      chunkId
+    )}`;
+  },
+  fromFileSystem(chunkId: string) {
+    return __webpack_get_script_filename__(`file:///${chunkId}`);
+  },
+  fromRemote(url: string, options: { excludeExtension?: boolean } = {}) {
+    if (options.excludeExtension) {
+      return url;
+    }
+
+    return __webpack_get_script_filename__(url);
+  },
+};
