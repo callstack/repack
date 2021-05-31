@@ -5,8 +5,9 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start",
-    "webpack": "../../node_modules/.bin/webpack -c webpack.config.js"
+    "start": "react-native webpack-start",
+    "build": "react-native webpack-bundle --entry-file index.js --bundle-output ./dist/index.bundle --dev=false",
+    "webpack": "PLATFORM=ios ../../node_modules/.bin/webpack -c webpack.config.js"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.15.4",
