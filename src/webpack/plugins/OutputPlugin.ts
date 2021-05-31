@@ -105,7 +105,6 @@ export class OutputPlugin implements WebpackPlugin {
 
     compiler.hooks.compilation.tap('OutputPlugin', (compilation) => {
       compilation.hooks.afterProcessAssets.tap('OutputPlugin', (assets) => {
-        // require('inspector').open(undefined, undefined, true);
         entryGroup = compilation.chunkGroups.find((group) => group.isInitial());
         const sharedChunks = new Set<webpack.Chunk>();
         let entryChunk: webpack.Chunk | undefined;
@@ -158,7 +157,9 @@ export class OutputPlugin implements WebpackPlugin {
         const mainBundleSource = assets[mainBundleAssetName];
         assets[mainBundleAssetName] = new webpack.sources.ConcatSource(
           `var __CHUNKS__=${JSON.stringify({
-            local: localChunks.map((localChunk) => localChunk.id),
+            local: localChunks.map(
+              (localChunk) => localChunk.name ?? localChunk.id
+            ),
           })};\n`,
           mainBundleSource
         );

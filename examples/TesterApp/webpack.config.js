@@ -122,6 +122,7 @@ module.exports = {
         extractComments: false,
       }),
     ],
+    chunkIds: 'named',
   },
   module: {
     /**
