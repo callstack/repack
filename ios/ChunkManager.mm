@@ -29,87 +29,93 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 {
-    // Cast `RCTBridge` to `RCTCxxBridge`.
-    __weak RCTCxxBridge *bridge = (RCTCxxBridge *)_bridge;
-    
-    NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
-    
-    // Handle http & https
-    if ([[chunkUrl scheme] hasPrefix:@"http"]) {
-        if (fetch) {
-            [self downloadAndCache:chunkId chunkUrl:chunkUrl completionHandler:^(NSError *error) {
-                if (error) {
-                    reject(ChunkDownloadFailure, error.localizedFailureReason, nil);
-                } else {
-                    [self execute:bridge chunkId:chunkId url:chunkUrl withResolver:resolve withRejecter:reject];
-                }
-            }];
+    [self runInBackground:^(){
+        // Cast `RCTBridge` to `RCTCxxBridge`.
+        __weak RCTCxxBridge *bridge = (RCTCxxBridge *)_bridge;
+        
+        NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
+        
+        // Handle http & https
+        if ([[chunkUrl scheme] hasPrefix:@"http"]) {
+            if (fetch) {
+                [self downloadAndCache:chunkId chunkUrl:chunkUrl completionHandler:^(NSError *error) {
+                    if (error) {
+                        reject(ChunkDownloadFailure, error.localizedFailureReason, nil);
+                    } else {
+                        [self execute:bridge chunkId:chunkId url:chunkUrl withResolver:resolve withRejecter:reject];
+                    }
+                }];
+            } else {
+                [self execute:bridge chunkId:chunkId url:chunkUrl withResolver:resolve withRejecter:reject];
+            }
+            
+        } else if ([[chunkUrl scheme] isEqualToString:@"file"]) {
+            [self executeFromFilesystem:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
+            
         } else {
-            [self execute:bridge chunkId:chunkId url:chunkUrl withResolver:resolve withRejecter:reject];
+            reject(UnsupportedScheme,
+                   [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", chunkUrlString], nil);
         }
-        
-    } else if ([[chunkUrl scheme] isEqualToString:@"file"]) {
-        [self executeFromFilesystem:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
-        
-    } else {
-        reject(UnsupportedScheme,
-               [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", chunkUrlString], nil);
-    }
+    }];
 }
 
 RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
                   chunkUrl:(nonnull NSString*)chunkUrlString
                   fetch:(BOOL)fetch
                   withResolver:(RCTPromiseResolveBlock)resolve
-                  withRejecter:(RCTPromiseRejectBlock)reject) {
-    if (!fetch) {
-        // Do nothing, chunk is already preloaded
-        resolve(nil);
-    } else {
-        NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
-        if ([[chunkUrl scheme] hasPrefix:@"http"]) {
-            [self downloadAndCache:chunkId chunkUrl:chunkUrl completionHandler:^(NSError *error) {
-                if (error) {
-                    reject(ChunkDownloadFailure, error.localizedFailureReason, nil);
-                } else {
-                    resolve(nil);
-                }
-            }];
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+{
+    [self runInBackground:^(){
+        if (!fetch) {
+            // Do nothing, chunk is already preloaded
+            resolve(nil);
         } else {
-            reject(UnsupportedScheme,
-                   [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", chunkUrlString], nil);
+            NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
+            if ([[chunkUrl scheme] hasPrefix:@"http"]) {
+                [self downloadAndCache:chunkId chunkUrl:chunkUrl completionHandler:^(NSError *error) {
+                    if (error) {
+                        reject(ChunkDownloadFailure, error.localizedFailureReason, nil);
+                    } else {
+                        resolve(nil);
+                    }
+                }];
+            } else {
+                reject(UnsupportedScheme,
+                       [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", chunkUrlString], nil);
+            }
         }
-    }
-    
+    }];
 }
 
 RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
                   withResolver:(RCTPromiseResolveBlock)resolve
-                  withRejecter:(RCTPromiseRejectBlock)reject) {
-    NSFileManager* manager = [NSFileManager defaultManager];
-    NSString* chunksDirecotryPath = [self getChunksDirectoryPath];
-    
-    NSError *error;
-    if (chunks.count == 0 && [manager fileExistsAtPath:chunksDirecotryPath]) {
-        [manager removeItemAtPath:chunksDirecotryPath error:&error];
-    } else {
-        for (int i = 0; i < chunks.count; i++) {
-            NSString* chunkFilePath = [self getChunkFilePath:chunks[i]];
-            if ([manager fileExistsAtPath:chunkFilePath]) {
-                [manager removeItemAtPath:[self getChunkFilePath:chunks[i]] error:&error];
-            }
-            if (error != nil) {
-                break;
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+{
+    [self runInBackground:^(){
+        NSFileManager* manager = [NSFileManager defaultManager];
+        NSString* chunksDirecotryPath = [self getChunksDirectoryPath];
+        
+        NSError *error;
+        if (chunks.count == 0 && [manager fileExistsAtPath:chunksDirecotryPath]) {
+            [manager removeItemAtPath:chunksDirecotryPath error:&error];
+        } else {
+            for (int i = 0; i < chunks.count; i++) {
+                NSString* chunkFilePath = [self getChunkFilePath:chunks[i]];
+                if ([manager fileExistsAtPath:chunkFilePath]) {
+                    [manager removeItemAtPath:[self getChunkFilePath:chunks[i]] error:&error];
+                }
+                if (error != nil) {
+                    break;
+                }
             }
         }
-    }
-    
-    if (error != nil) {
-        reject(InvalidationFailure, error.localizedDescription, nil);
-    } else {
-        resolve(nil);
-    }
-    
+        
+        if (error != nil) {
+            reject(InvalidationFailure, error.localizedDescription, nil);
+        } else {
+            resolve(nil);
+        }
+    }];
 }
 
 - (void)execute:(RCTCxxBridge *)bridge
@@ -200,6 +206,11 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
         reject(CodeExecutionFromFileSystemFailure, error.localizedDescription, nil);
     }
     
+}
+
+- (void)runInBackground:(void(^)())callback
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback);
 }
 
 @end
