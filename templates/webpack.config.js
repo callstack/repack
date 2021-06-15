@@ -1,14 +1,14 @@
 const path = require('path');
 const webpack = require('webpack');
-const ReactNative = require('@callstack/nativepack');
+const ReactNative = require('@callstack/repack');
 const TerserPlugin = require('terser-webpack-plugin');
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
- * https://github.com/callstack/nativepack/blob/main/README.md
+ * https://github.com/callstack/repack/blob/main/README.md
  *
  * The API documentation for the functions and plugins used in this file is available at:
- * https://callstack-nativepack.netlify.app/
+ * https://callstack-repack.netlify.app/
  */
 
 /**
@@ -144,7 +144,7 @@ module.exports = {
           /node_modules(.*[/\\])+pretty-format/,
           /node_modules(.*[/\\])+metro/,
           /node_modules(.*[/\\])+abort-controller/,
-          /node_modules(.*[/\\])+@callstack[/\\]nativepack/,
+          /node_modules(.*[/\\])+@callstack[/\\]repack/,
         ],
         use: 'babel-loader',
       },

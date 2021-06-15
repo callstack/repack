@@ -1,4 +1,4 @@
-package com.callstack.nativepack
+package com.callstack.repack
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

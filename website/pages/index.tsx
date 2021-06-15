@@ -27,7 +27,7 @@ export default function Home() {
   return (
     <Layout>
       <Head>
-        <title>@callstack/nativepack</title>
+        <title>Re.pack</title>
       </Head>
       <div className="px-4">
         <h1 className="text-center text-3xl italic tracking-wide xl:px-80">
@@ -36,7 +36,7 @@ export default function Home() {
         </h1>
         <div className="flex flex-col sm:flex-row sm:justify-center mt-8">
           <a
-            href="https://github.com/callstack/nativepack#@callstack/nativepack"
+            href="https://github.com/callstack/repack"
             className="inline-flex items-center my-2 mx-2 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-emerald-700 hover:text-cool-gray-200 hover:bg-emerald-600 hover:border-emerald-600"
             target="_blank"
             rel="noreferrer"
@@ -47,7 +47,7 @@ export default function Home() {
             </span>
           </a>
           <a
-            href="https://github.com/callstack/nativepack#installation--setup"
+            href="https://github.com/callstack/repack#installation--setup"
             className="inline-flex items-center my-2 mx-2 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-orange-800 hover:text-cool-gray-200 hover:bg-orange-700 hover:border-orange-700"
             target="_blank"
             rel="noreferrer"
@@ -97,7 +97,7 @@ export default function Home() {
               symnbolication and Remote JavaScript debugging support.
             </div>
             <a
-              href="https://github.com/callstack/nativepack#features"
+              href="https://github.com/callstack/repack#features"
               className="inline-flex items-center mt-6 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-orange-800 hover:text-cool-gray-200 hover:bg-orange-700 hover:border-orange-700"
               target="_blank"
               rel="noreferrer"
@@ -116,7 +116,7 @@ export default function Home() {
               function or manually declaring them inside your Webpack config.
             </div>
             <a
-              href="https://github.com/callstack/nativepack#asynchronous-chunks"
+              href="https://github.com/callstack/repack#asynchronous-chunks"
               className="inline-flex items-center mt-6 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-teal-700 hover:text-cool-gray-200 hover:bg-teal-600 hover:border-teal-600"
               target="_blank"
               rel="noreferrer"
@@ -134,7 +134,7 @@ export default function Home() {
               with React Native.
             </div>
             <a
-              href="https://github.com/callstack/nativepack/blob/main/templates/webpack.config.js"
+              href="https://github.com/callstack/repack/blob/main/templates/webpack.config.js"
               className="inline-flex items-center mt-6 px-3 py-2 transition ease-in duration-200 rounded-sm font-bold border border-violet-900 hover:text-cool-gray-200 hover:bg-violet-700 hover:border-violet-700"
               target="_blank"
               rel="noreferrer"

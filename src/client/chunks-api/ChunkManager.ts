@@ -3,9 +3,7 @@
 // @ts-ignore
 import { NativeModules } from 'react-native';
 
-const CACHE_KEY = `NativePack.ChunkManager.Cache.${
-  __DEV__ ? 'debug' : 'release'
-}`;
+const CACHE_KEY = `Repack.ChunkManager.Cache.${__DEV__ ? 'debug' : 'release'}`;
 
 interface Cache {
   urls: Record<string, string>;

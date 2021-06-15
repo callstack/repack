@@ -1,4 +1,6 @@
-<h1 align="center">@callstack/nativepack</h1>
+<p align="center">
+  <img src="./logo.png">
+</p>
 <p align="center">
 A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.
 </p>
@@ -18,9 +20,9 @@ A Webpack-based toolkit to build your React Native application with full support
 [![PRs Welcome][prs-welcome-badge]][prs-welcome]
 [![Code of Conduct][coc-badge]][coc]
 
-`@callstack/nativepack` is a next generation of [Haul](https://github.com/callstack/haul) — a Webpack-based bundler for React Native applications.
+Re.pack is a next generation of [Haul](https://github.com/callstack/haul) — a Webpack-based bundler for React Native applications.
 
-`@callstack/nativepack` uses Webpack 5 and React Native CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
+Re.pack uses Webpack 5 and React Native CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
 
 __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, if you're curious how it all looks like.__
 
@@ -63,60 +65,40 @@ __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, 
 
 ## Why & when
 
-The main feature of `@callstack/nativepack` is Webpack and its ecosystem of loaders, plugins and support for various features like symlinks, aliases etc. However, because `@callstack/nativepack` is based on Webpack, it is targeted towards advanced users who already know how to use Webpack and want to leverage Webpack ecosystem.
+The main feature of Re.pack is Webpack and its ecosystem of loaders, plugins and support for various features like symlinks, aliases etc. However, because Re.pack is based on Webpack, it is targeted towards advanced users who already know how to use Webpack and want to leverage Webpack ecosystem.
 
 If you're just starting with React Native, it's better to stick with the default solution — Metro, since you probably won't benefit much from switching to Webpack.
 
-## Design goals
-
-1. `@callstack/nativepack` was design for the advanced users, as such it exposes _low-level API_ in form of Webpack plugins and utilities, meaning we only give you the tools you need to build React Native application, but the actual configuration and maintenance of said config is on your shoulders.
-2. To support wide variety of use cases and give you as much control as possible, `@callstack/nativepack` is written to allow you to bundle and run development server directly from Webpack CLI as well by using React Native CLI. You can pick one you want to go with.
-3. Based on our experience with [Haul](https://github.com/callstack/haul), we shift as much responsibility onto you as possible, so that we can develop features, move at reasonable pace and reduce maintenance cost. Therefor, `@callstack/nativepack` should be used by seasoned React Native developers with at least basic experience with Webpack.
-4. __[Future]__ We plan to use `@callstack/nativepack` as a foundation for bringing multi-bundle support to React Native, by allowing you to use asynchronous chunks and finally Webpack 5 latest feature — [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669).
-
-
-## `@callstack/nativepack` vs Metro
-
-Both Metro and `@callstack/nativepack` have different approaches for the similar problem — bundling JavaScript code for your React Native application, where Metro is custom-built solution and `@callstack/nativepack` uses Webpack. As a result there few differences that you should consider when deciding the solution to use:
-
-- Metro is slightly faster, since it has less overhead compared to Webpack, and it's configuration options, plugin and loader system.
-- Webpack configuration options and ecosystem allows for much greater control and support for advanced use-cases.
-- Metro's Fast Refresh is slightly more flexible compared to Webpack's solution: Hot Module Replacement + React Refresh — some cases require full application reloaded with `@callstack/nativepack`, but they are supported with Metro See: [Known issues](#known-issues).
-
-## `@callstack/nativepack` vs Haul
-
-`@callstack/nativepack` is a direct successor to [Haul](https://github.com/callstack/haul). Therefore we took the experience we gained with Haul while making rather major changes in the approach:
-
-- `@callstack/nativepack` has smaller footprint and allows for greater level of customization, since you have access to the Webpack config.
-- `@callstack/nativepack` supports Hot Module Replacement + React Refresh, whereas Haul does not.
-- `@callstack/nativepack` doesn't support any kind of multi-bundling __yet__, whereas Haul supports legacy implementation of multi-bundling (though it requires to alter React Native source code, so we don't recommend that).
-- `@callstack/nativepack` delivers better Developer Experience by providing you with more meaningful logs, easier usage and more customizability.
+You can read more about design goals and comparisons here: [About Re.pack](https://github.com/callstack/nativepack/discussions/43)
 
 ## Installation & setup
 
 ### Compatibility with Webpack
 
-On paper, `@callstack/nativepack` should work with any version of Webpack 5, but we recommend to consult with the compatibility table below.
-The table represents versions of `webpack` for which `@callstack/nativepack` is confirmed to work correctly.
+On paper, Re.pack should work with any version of Webpack 5, but we recommend to consult with the compatibility table below.
+The table represents versions of `webpack` for which Re.pack is confirmed to work correctly.
 
 If you don't see your version, give it a go. If it doesn't work, please open an issue.
 
-| `webpack`  | `@callstack/nativepack`   |
-| ---------- | ------------------------- |
-| `5.22.0`   | `1.0.x`, `1.1.x`, `1.2.x` |
-| `>=5.29.0` | `1.2.x`,                  |
+
+| `webpack`  | `@callstack/repack`     | `@callstack/nativepack`*  |
+|------------|-------------------------|---------------------------|
+| `5.22.0`   |                         | `1.0.x`, `1.1.x`, `1.2.x` |
+| `>=5.29.0` | `1.4.3`, `2.0.0-beta.x` | `1.2.x`, `1.3.x`, `1.4.x` |
+
+> \* `@callstack/repack` is rebranded `@callstack/nativepack` - they are both the same project.
 
 1. Install necessary dependencies:
 
 ```bash
-npm i -D webpack terser-webpack-plugin babel-loader @callstack/nativepack
+npm i -D webpack terser-webpack-plugin babel-loader @callstack/repack
 # or
-yarn add -D webpack terser-webpack-plugin babel-loader @callstack/nativepack
+yarn add -D webpack terser-webpack-plugin babel-loader @callstack/repack
 ```
 2. Create `react-native.config.js` (if it doesn't exists) and paste the following content:
     ```js
     module.exports = {
-      commands: require('@callstack/nativepack/commands')
+      commands: require('@callstack/repack/commands')
     };
     ```
 3. Create `webpack.config.js` based on the [template](./templates/webpack.config.js).
@@ -146,89 +128,15 @@ Once you've completed [Installation & setup](#installation--setup) you can:
 - Create JavaScript bundle only by running `npx react-native webpack-bundle`.
 - Create JavaScript bundle or start development server with Webpack CLI by running `npx webpack-cli -c webpack.config.js`.
 
-## API documentation
+## Documentation
 
-The API documentation is available at [https://callstack-nativepack.netlify.app/](https://callstack-nativepack.netlify.app/).
-
-## Asynchronous chunks
-
-Asynchronous chunks allows you to split your code into separate files using dynamic `import()` or by
-manually declaring them in Webpack configuration using [`entry` option](https://webpack.js.org/concepts/entry-points/).
-
-Each chunk's code will get saved separately from the main bundle inside its own `.chunk.bundle` file and included in the
-final application file (`ipa`/`apk`). Chunks can help you improve startup time by deferring parts of the application
-from being both parsed and evaluated at the start of the app. The chunks code will still be included in the file,
-so the total download size the user will have to download from App Store/Google Play will not shrink.
-
-Asynchronous chunks support requires `@callstack/nativepack` native module to be included in the app
-to download/read and evaluate JavaScript code from chunks. By default, the native module should be auto-linked
-so there's no additional steps for you to perform. The template [`webpack.config.js`](./templates/webpack.config.js)
-is configured to support asynchronous chunks as well. 
-
-### Asynchronous chunks and Hermes
-
-Chunks are fully supported when using Hermes, with one caveat: only the main bundle will be automatically
-transformed into bytecode bundle by Hermes. By default, all chunks will be left as regular JavaScript files.
-
-If you want all files, including chunks, to be transformed into bytecode ones, you will need to add
-additional build task/step to XCode/Gradle configuration to transform chunks with Hermes CLI or create
-a Webpack plugin to transform chunks with Hermes CLI after compilation is finished, but before the
-process exits.
-
-In the future you will be able to use `ChunksToHermesBytecodePlugin` for that.
-
-## Known issues
-
-### Hot Module Replacement / React Refresh
-
-#### 1. Root component used by `AppRegistry.registerComponent` will always require full reload.
-
-With Webpack's Hot Module Replacement, the modules don't refresh themselves, but their parents refresh them, meaning for components `A` -> `B` (`A` renders `B`),
-if you edit `B`, the component `A` will refresh `B`, but if you edit component `A` there's no one to refresh `A`.
-
-The easiest workaround it create additional component that will simply render your previous root component, eg:
-
-```js
-// --- index.js -------------------------------------------
-import React from 'react';
-import { App } from './App';
-
-// Your new root component, make sure it's exported!
-// Editing `Root` will result in full page reload`
-export function Root() {
-  return <App />;
-}
-
-AppRegistry.registerComponent('AppName', () => Root);
-
-// --- App.js ---------------------------------------------
-import React from 'react';
-// -- snip --
-
-// `Root` will refresh `App` so HMR wll work as expected.
-export function App() {
-  // -- snip --
-}
-
-```
-
-#### 2. Stack traces are different after Hot Module Replacement update.
-
-After applying Hot Module replacement update, if the error is throw or `console.log`/`console.error` is called,
-the stack trace that React Native prints will be different — less precise — compared to running the same code after a full reload.
-
-It's because HMR updates (which can consist of multiple files and runtime logic) created by Webpack
-have to evaluated at once, so it's impossible for the JavaScript engine to identify from which file each pice of code from HMR update is.
-Instead it will fallback to the name of the file that evaluated the update — `WebpackHMRClient.ts`.
-
-This expected and there's little we can do about it. The stack trace is still correct, but it's less precise.
-
-If you encounter such situation, and you need to get the precise stack trace, you can do a full reload
-and reproduce the error or `console.log`/`console.error` call.
+- [API documentation](https://callstack-repack.netlify.app/)
+- [Known issues & limitations](https://github.com/callstack/nativepack/discussions/44)
+- [Code splitting](https://github.com/callstack/nativepack/discussions/45)
 
 ## Made with ❤️ at Callstack
 
-`@callstack/nativepack` is an open source project and will always remain free to use. If you think it's cool, please star it 🌟. [Callstack][callstack-readme-with-love] is a group of React and React Native geeks, contact us at [hello@callstack.com](mailto:hello@callstack.com) if you need any help with these or just want to say hi!
+`@callstack/repack` is an open source project and will always remain free to use. If you think it's cool, please star it 🌟. [Callstack][callstack-readme-with-love] is a group of React and React Native geeks, contact us at [hello@callstack.com](mailto:hello@callstack.com) if you need any help with these or just want to say hi!
 
 <!-- badges -->
 [callstack-readme-with-love]: https://callstack.com/?utm_source=github.com&utm_medium=referral&utm_campaign=react-native-paper&utm_term=readme-with-love
@@ -237,20 +145,20 @@ and reproduce the error or `console.log`/`console.error` call.
 [goto-usage-badge]: https://img.shields.io/badge/go%20to-Usage-blue?style=flat-square
 [goto-usage]: #usage
 [goto-api-docs-badge]: https://img.shields.io/badge/go%20to-API%20docs-blue?style=flat-square
-[goto-api-docs]: https://callstack-nativepack.netlify.app/
+[goto-api-docs]: https://callstack-repack.netlify.app/
 
 [goto-contributing-badge]: https://img.shields.io/badge/go%20to-CONTRIBUTING.md-blue?style=flat-square
 [goto-contributing]: ./CONTRIBUTING.md
 [goto-architecture-badge]: https://img.shields.io/badge/go%20to-ARCHITECTURE.md-blue?style=flat-square
 [goto-architecture]: ./ARCHITECTURE.md
 
-[build-badge]: https://img.shields.io/github/workflow/status/callstack/nativepack/CI/main?style=flat-square
-[build]: https://github.com/callstack/nativepack/actions/workflows/main.yml
-[version-badge]: https://img.shields.io/npm/v/@callstack/nativepack?style=flat-square
-[version]: https://www.npmjs.com/package/@callstack/nativepack
-[license-badge]: https://img.shields.io/npm/l/@callstack/nativepack?style=flat-square
-[license]: https://github.com/callstack/nativepack/blob/master/LICENSE
+[build-badge]: https://img.shields.io/github/workflow/status/callstack/repack/CI/main?style=flat-square
+[build]: https://github.com/callstack/repack/actions/workflows/main.yml
+[version-badge]: https://img.shields.io/npm/v/@callstack/repack?style=flat-square
+[version]: https://www.npmjs.com/package/@callstack/repack
+[license-badge]: https://img.shields.io/npm/l/@callstack/repack?style=flat-square
+[license]: https://github.com/callstack/repack/blob/master/LICENSE
 [prs-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
 [prs-welcome]: ./CONTRIBUTING.md
 [coc-badge]: https://img.shields.io/badge/code%20of-conduct-ff69b4.svg?style=flat-square
-[coc]: https://github.com/callstack/nativepack/blob/master/CODE_OF_CONDUCT.md
+[coc]: https://github.com/callstack/repack/blob/master/CODE_OF_CONDUCT.md

@@ -1,4 +1,4 @@
-package com.callstack.nativepack
+package com.callstack.repack
 
 import android.os.Handler
 import com.facebook.react.bridge.ReactApplicationContext

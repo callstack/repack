@@ -12,7 +12,7 @@ target 'TesterApp' do
     :hermes_enabled => true
   )
 
-  pod 'callstack-nativepack', :path => '../../..'
+  pod 'callstack-repack', :path => '../../..'
 
   target 'TesterAppTests' do
     inherit! :complete

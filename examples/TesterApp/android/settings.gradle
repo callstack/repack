@@ -2,5 +2,5 @@ rootProject.name = 'TesterApp'
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
 //
-include ':callstacknativepack'
-project(':callstacknativepack').projectDir = new File(rootProject.projectDir, '../../../android')
+include ':callstackrepack'
+project(':callstackrepack').projectDir = new File(rootProject.projectDir, '../../../android')

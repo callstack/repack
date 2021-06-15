@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, View, Image } from 'react-native';
+import { View, Image } from 'react-native';
+import { Text } from './Text';
 import img from './callstack-dark.png';
 
 export default function MiniApp() {

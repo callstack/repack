@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Text, View } from 'react-native';
+import { Button, View } from 'react-native';
 import { ChunkManager } from '../../../client';
+import { Text } from './Text';
 
 const RemoteChunkId = 'remote';
 const Remote = React.lazy(() =>

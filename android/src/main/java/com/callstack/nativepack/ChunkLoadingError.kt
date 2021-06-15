@@ -1,4 +1,4 @@
-package com.callstack.nativepack
+package com.callstack.repack
 
 enum class ChunkLoadingError(val code: String) {
     UnsupportedScheme("UnsupportedScheme"),

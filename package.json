@@ -1,5 +1,5 @@
 {
-  "name": "@callstack/nativepack",
+  "name": "@callstack/repack",
   "version": "2.0.0-beta.6",
   "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
   "main": "dist/index.js",
@@ -11,13 +11,13 @@
     "android",
     "ios",
     "commands.js",
-    "callstack-nativepack.podspec",
+    "callstack-repack.podspec",
     "client.js",
     "!android/build",
     "!ios/build"
   ],
-  "homepage": "https://github.com/callstack/nativepack",
-  "repository": "github:callstack/nativepack",
+  "homepage": "https://github.com/callstack/repack",
+  "repository": "github:callstack/repack",
   "keywords": [
     "react-native",
     "react native",
@@ -45,7 +45,6 @@
     "tsc:watch": "npm run tsc:build -- --watch --preserveWatchOutput",
     "webpack": "webpack -c webpack.config.js",
     "webpack:watch": "npm run webpack -- --watch",
-    "copy:watch": "sleep 5 && npx cpx --watch \"dist/**\" examples/TesterApp/node_modules/@callstack/nativepack",
     "build": "npm run clean && npm run babel && npm run tsc:build && npm run webpack",
     "build:watch": "npm run clean && concurrently npm:babel:watch npm:tsc:watch npm:webpack:watch",
     "release": "release-it",

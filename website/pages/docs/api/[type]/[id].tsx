@@ -52,7 +52,7 @@ export default function ReflectionPage({
   return (
     <Layout>
       <Head>
-        <title>{title} | API docs | @callstack/nativepack</title>
+        <title>{title} | API docs | Re.pack</title>
       </Head>
       <Link href="/docs/api" className="ml-8" bold>
         <span className="material-icons mt-0.5">arrow_back</span>

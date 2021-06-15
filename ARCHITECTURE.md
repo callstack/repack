@@ -1,27 +1,27 @@
 # Architecture
 
-This document describes the high-level architecture of `@callstack/nativepack`.
+This document describes the high-level architecture of Re.pack.
 If you want to familiarize yourself with the code base, you are just in the right place!
 
 Before you start, make sure you've gone through the [README](./README.md).
 
-Feel free to jump between this document and [API documentation](https://callstack-nativepack.netlify.app/)
+Feel free to jump between this document and [API documentation](https://callstack-repack.netlify.app/)
 for an additional context on configuration, parameters and types.
 
 ## General overview
 
-There are 2 ways to look at the content of the `@callstack/nativepack`:
+There are 2 ways to look at the content of the Re.pack:
 
 - by command that are exposed to React Native CLI
 - by Webpack plugins and utilities
 
 Here's a chart that represents both aspect of the codebase:
 
-![Overview of @callstack/nativepack codebase](./overview.png)
+![Overview of Re.pack codebase](./overview.png)
 
 ## Structure
 
-The following list describes the components that create `@callstack/nativepack`:
+The following list describes the components that create Re.pack:
 
 - `public/` — Public assets for Debugger UI.
 - `templates/` — Templates for files to initialize a new project.
@@ -76,7 +76,7 @@ Check [`parseCliOptions` section](#parseclioptions) for details on configuration
 
 ## `parseCliOptions`
 
-To support the common use-case, which is to run `@callstack/nativepack` using
+To support the common use-case, which is to run Re.pack using
 React Native CLI, we need to be able to pass CLI options passed to the command (eg: when running
 `npx react-native webpack-start`) to the Webpack configuration. The problem is, that Webpack configuration
 must be an object with all the required fields already filled in.
@@ -105,14 +105,14 @@ values directly into Webpack configuration file or read it from somewhere else (
   
 ## Logging
 
-Depending on how you run `@callstack/nativepack` the logging works slightly differently, but
+Depending on how you run Re.pack the logging works slightly differently, but
 the end destination for all logs is `Reporter` instance — this is the place where all logs are
 written to the terminal and/or file. The route that each log takes to get to the reporter instance
 will differ.
 
 The top-level `Reporter` instance will also try to broadcast logs to the connected Flipper instance
 under _React Native_ -> _Logs_ with tag `rnwt_<type>` where `type` can be `debug`, `info`, `warn`
-or `error`. Because of the Flipper tight integration with Metro all `@callstack/nativepack`
+or `error`. Because of the Flipper tight integration with Metro all Re.pack
 logs will be reported as `verbose` so make sure you sent the filter to include type `Verbose`
 and use searching to filter logs e.g. by typing `rnwt_debug`.
 
