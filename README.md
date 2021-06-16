@@ -84,7 +84,7 @@ If you don't see your version, give it a go. If it doesn't work, please open an 
 | `webpack`  | `@callstack/repack`     | `@callstack/nativepack`*  |
 |------------|-------------------------|---------------------------|
 | `5.22.0`   |                         | `1.0.x`, `1.1.x`, `1.2.x` |
-| `>=5.29.0` | `1.4.3`, `2.0.0-beta.x` | `1.2.x`, `1.3.x`, `1.4.x` |
+| `>=5.29.0` | `2.0.0-beta.x`          | `1.2.x`, `1.3.x`, `1.4.x` |
 
 > \* `@callstack/repack` is rebranded `@callstack/nativepack` - they are both the same project.
 
