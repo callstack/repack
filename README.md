@@ -49,9 +49,9 @@ __Check the base [`webpack.config.js`](./templates/webpack.config.js) template, 
   - Running the production/development bundle using Harmes engine
   - Transforming production bundle into bytecode bundle
   - Inspecting running Hermes engine with Flipper
-- [x] [Asynchronous chunks support](#asynchronous-chunks):
-  - Dynamic `import()` support with and without `React.lazy()`.
-  - Manual chunks using [`entry` option](https://webpack.js.org/concepts/entry-points/).
+- [x] [Code splitting](https://github.com/callstack/nativepack/discussions/45) (__experimental__):
+  - Dynamic `import()` support with and without `React.lazy()` (recommended).
+  - Manual chunks using [`entry` option](https://webpack.js.org/concepts/entry-points/) (only for advanced users).
 
 ### Planned features
 
@@ -82,9 +82,9 @@ If you don't see your version, give it a go. If it doesn't work, please open an 
 
 
 | `webpack`  | `@callstack/repack`     | `@callstack/nativepack`*  |
-|------------|-------------------------|---------------------------|
+| ---------- | ----------------------- | ------------------------- |
 | `5.22.0`   |                         | `1.0.x`, `1.1.x`, `1.2.x` |
-| `>=5.29.0` | `2.0.0-beta.x`          | `1.2.x`, `1.3.x`, `1.4.x` |
+| `>=5.29.0` | `1.4.3`, `2.0.0-beta.x` | `1.2.x`, `1.3.x`, `1.4.x` |
 
 > \* `@callstack/repack` is rebranded `@callstack/nativepack` - they are both the same project.
 
