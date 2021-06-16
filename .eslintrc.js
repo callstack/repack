@@ -9,13 +9,6 @@ module.exports = {
       },
     },
     {
-      files: ['src/client/ui/dashboard/**'],
-      extends: '@callstack/eslint-config/react',
-      rules: {
-        'import/no-extraneous-dependencies': 0,
-      },
-    },
-    {
       files: ['jest.setup.js'],
       env: {
         jest: true,

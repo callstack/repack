@@ -98,7 +98,7 @@ export class BaseDevServer {
    */
   async setup() {
     await this.fastify.register(fastifyStatic, {
-      root: path.join(__dirname, '../client/ui/debugger'),
+      root: path.join(__dirname, '../../apps/debugger-ui/dist'),
       prefix: '/debugger-ui',
       prefixAvoidTrailingSlash: true,
     });

@@ -246,7 +246,7 @@ export class DevServerProxy extends BaseDevServer {
     await super.setup();
 
     await this.fastify.register(fastifyStatic, {
-      root: path.join(__dirname, '../client/ui/dashboard'),
+      root: path.join(__dirname, '../../apps/dashboard/dist'),
       prefix: '/dashboard',
       decorateReply: false,
       prefixAvoidTrailingSlash: true,
