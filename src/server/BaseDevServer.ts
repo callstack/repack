@@ -76,12 +76,6 @@ export class BaseDevServer {
       new WebSocketDevClientServer(this.fastify)
     );
 
-    this.fastify.register(fastifyStatic, {
-      root: path.join(__dirname, '../client/debugger-ui'),
-      prefix: '/debugger-ui',
-      prefixAvoidTrailingSlash: true,
-    });
-
     // Use onRequest hook to add additional headers. We cannot use onSend
     // because WDM doesn't use typical Fastify lifecycle and onSend does not get called.
     this.fastify.addHook('onRequest', async (request, reply) => {
@@ -103,6 +97,12 @@ export class BaseDevServer {
    * calling {@link run}.
    */
   async setup() {
+    await this.fastify.register(fastifyStatic, {
+      root: path.join(__dirname, '../client/ui/debugger'),
+      prefix: '/debugger-ui',
+      prefixAvoidTrailingSlash: true,
+    });
+
     this.fastify.get('/', async () => {
       return 'React Native packager is running';
     });
