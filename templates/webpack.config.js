@@ -8,7 +8,7 @@ const TerserPlugin = require('terser-webpack-plugin');
  * https://github.com/callstack/repack/blob/main/README.md
  *
  * The API documentation for the functions and plugins used in this file is available at:
- * https://callstack-repack.netlify.app/
+ * https://re-pack.netlify.app/
  */
 
 /**

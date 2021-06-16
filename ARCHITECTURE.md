@@ -5,7 +5,7 @@ If you want to familiarize yourself with the code base, you are just in the righ
 
 Before you start, make sure you've gone through the [README](./README.md).
 
-Feel free to jump between this document and [API documentation](https://callstack-repack.netlify.app/)
+Feel free to jump between this document and [API documentation](https://re-pack.netlify.app/)
 for an additional context on configuration, parameters and types.
 
 ## General overview

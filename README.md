@@ -130,7 +130,7 @@ Once you've completed [Installation & setup](#installation--setup) you can:
 
 ## Documentation
 
-- [API documentation](https://callstack-repack.netlify.app/)
+- [API documentation](https://re-pack.netlify.app/)
 - [Known issues & limitations](https://github.com/callstack/nativepack/discussions/44)
 - [Code splitting](https://github.com/callstack/nativepack/discussions/45)
 
@@ -145,7 +145,7 @@ Once you've completed [Installation & setup](#installation--setup) you can:
 [goto-usage-badge]: https://img.shields.io/badge/go%20to-Usage-blue?style=flat-square
 [goto-usage]: #usage
 [goto-api-docs-badge]: https://img.shields.io/badge/go%20to-API%20docs-blue?style=flat-square
-[goto-api-docs]: https://callstack-repack.netlify.app/
+[goto-api-docs]: https://re-pack.netlify.app/
 
 [goto-contributing-badge]: https://img.shields.io/badge/go%20to-CONTRIBUTING.md-blue?style=flat-square
 [goto-contributing]: ./CONTRIBUTING.md
