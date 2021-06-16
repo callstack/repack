@@ -3,6 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 /**
  * Webpack config for building client dashboard including debugger UI.
@@ -115,6 +116,9 @@ module.exports = [
               loader: 'css-loader',
               options: { importLoaders: 1 },
             },
+            {
+              loader: 'postcss-loader',
+            },
           ],
           sideEffects: true,
         },
@@ -128,6 +132,14 @@ module.exports = [
       new MiniCssExtractPlugin({
         filename: 'static/css/[name].[contenthash:8].css',
         chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+      }),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: 'public/dashboard/static/',
+            to: 'static/',
+          },
+        ],
       }),
     ],
   },
