@@ -9,7 +9,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="bg-black w-full flex flex-col min-h-scree text-cool-gray-400 min-h-screen">
       <Head>
-        <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/site.webmanifest" />
         <meta
           name="description"
           content="A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem."
@@ -30,7 +47,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <header className="border-b border-gray-900">
         <div className="container m-auto max-w-screen-xl px-8 py-4 flex flex-col md:flex-row justify-between">
           <NextLink href="/">
-            <a className="text-2xl tracking-wide font-bold">Re.pack</a>
+            <a className="text-2xl tracking-wide font-bold">
+              <img className="w-52" src="/logo.svg" alt="Re.pack" />
+            </a>
           </NextLink>
           <div className="text-xs flex items-center mt-8 md:mt-0">
             <NextLink href="/docs/api">
