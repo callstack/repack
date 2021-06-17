@@ -252,6 +252,12 @@ export class DevServerProxy extends BaseDevServer {
       prefixAvoidTrailingSlash: true,
     });
 
+    this.fastify.get('/api/platforms', async () => {
+      return {
+        platforms: Object.keys(this.workers),
+      };
+    });
+
     this.fastify.post('/symbolicate', async (request, reply) => {
       const { stack } = JSON.parse(request.body as string) as {
         stack: ReactNativeStackFrame[];

@@ -8,17 +8,20 @@ interface Tab {
 
 interface Props {
   tabs: Tab[];
+  welcome: React.ComponentType;
 }
 
-export function Layout({ tabs }: Props) {
-  const [activeTab, setActiveTab] = useState(tabs[0]);
-  const Body = activeTab.body;
+export function Layout({ tabs, welcome }: Props) {
+  const [activeTab, setActiveTab] = useState<Tab | undefined>();
+  const Body = activeTab?.body ?? welcome;
 
   return (
     <div className="bg-black pl-80 min-h-screen">
       <nav className="w-80 h-screen fixed top-0 left-0 border-r-2 border-gray-800 flex flex-col">
         <div className="py-6 px-8">
-          <img src="/dashboard/static/media/logo.svg" alt="Re.pack" />
+          <a href="/dashboard">
+            <img src="/dashboard/static/media/logo.svg" alt="Re.pack" />
+          </a>
         </div>
         <div className="mt-20">
           {useMemo(
@@ -26,7 +29,7 @@ export function Layout({ tabs }: Props) {
               tabs.map((tab) => (
                 <NavButton
                   key={tab.label}
-                  active={tab.label === activeTab.label}
+                  active={tab.label === activeTab?.label}
                   onClick={() => {
                     setActiveTab(tab);
                   }}
@@ -38,7 +41,7 @@ export function Layout({ tabs }: Props) {
           )}
         </div>
       </nav>
-      <main className="text-gray-200 py-6 px-8">
+      <main className="text-gray-200 py-6 px-14">
         <Body />
       </main>
     </div>
@@ -58,7 +61,7 @@ function NavButton({
     <button
       onClick={onClick}
       className={cx(
-        'px-8 py-4 my-1 text-gray-200 w-full text-left text-xl border-l-8 border-gray-800',
+        'px-8 py-4 my-1 text-gray-200 w-full text-left text-xl border-l-8 border-gray-800 focus:outline-none',
         active && 'bg-gray-800 font-medium'
       )}
     >

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Artifacts } from './components/Artifacts';
+import { Artifacts } from './screens/artifacts/Artifacts';
 import { Layout } from './components/Layout';
+import { Welcome } from './screens/welcome/Welcome';
 
 const tabs = [
   {
@@ -10,5 +11,5 @@ const tabs = [
 ];
 
 export const App = () => {
-  return <Layout tabs={tabs} />;
+  return <Layout tabs={tabs} welcome={Welcome} />;
 };
