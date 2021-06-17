@@ -1,0 +1,26 @@
+{
+  "name": "debugger-ui",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "webpack -c webpack.config.js",
+    "build:watch": "npm run build -- --watch",
+    "lint": "eslint --ext src"
+  },
+  "devDependencies": {
+    "babel-loader": "^8.2.2",
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.5",
+    "@callstack/eslint-config": "^10.2.0",
+    "css-loader": "^5.2.6",
+    "eslint": "^7.28.0",
+    "html-webpack-plugin": "^5.3.1",
+    "mini-css-extract-plugin": "^1.6.0",
+    "terser-webpack-plugin": "^5.1.3",
+    "url-loader": "^4.1.1",
+    "webpack": "5.39.1",
+    "webpack-cli": "^4.7.2",
+    "worker-loader": "^3.0.8"
+  }
+}
