@@ -6,7 +6,8 @@
     "prepare": "npm run build",
     "build": "webpack -c webpack.config.js",
     "build:watch": "npm run build -- --watch",
-    "lint": "eslint --ext src"
+    "lint": "eslint --ext \".ts,.tsx\" src",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "core-js": "^3.14.0",
