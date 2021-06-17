@@ -1,3 +1,3 @@
 module.exports = {
-  commands: require('../../commands')
+  commands: require('../../packages/repack/commands')
 }
