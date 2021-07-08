@@ -24,7 +24,7 @@ Re.pack is a next generation of [Haul](https://github.com/callstack/haul) — a 
 
 Re.pack uses Webpack 5 and React Native CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
 
-__Check the base [`webpack.config.js`](./templates/webpack.config.js) template, if you're curious how it all looks like.__
+__Check the base [`webpack.config.js`](https://github.com/callstack/repack/blob/main/templates/webpack.config.js) template, if you're curious how it all looks like.__
 
 ## Features
 
@@ -101,7 +101,7 @@ yarn add -D webpack terser-webpack-plugin babel-loader @callstack/repack
       commands: require('@callstack/repack/commands')
     };
     ```
-3. Create `webpack.config.js` based on the [template](./templates/webpack.config.js).
+3. Create `webpack.config.js` based on the [template](https://github.com/callstack/repack/blob/main/templates/webpack.config.js).
 4. Configure XCode/Gradle to use `webpack-bundle`/`webpack-start` commands:
    - XCode: Add `export BUNDLE_COMMAND=webpack-bundle` to **_Bundle React Native code and images_** phase inside **_Build Phases_** in your project XCode config. The final phase should look similar to:
      ```bash

@@ -7,6 +7,7 @@
     "lint": "yarn workspaces run lint",
     "tsc": "yarn workspaces run tsc",
     "test": "yarn workspaces run test",
+    "release": "yarn prepare && cp README.md packages/repack && yarn workspace @callstack/repack run release",
     "example:start": "yarn workspace TesterApp run start",
     "example:build": "yarn workspace TesterApp run build"
   }
