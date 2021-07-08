@@ -114,8 +114,7 @@ export class DevServer extends BaseDevServer {
             return sourceMap.toString();
           } catch {
             this.fastify.log.warn({
-              msg:
-                'Failed to read source map from sourceMappingURL, trying fallback',
+              msg: 'Failed to read source map from sourceMappingURL, trying fallback',
               sourceMappingUrl,
               sourceMapFilename,
             });
@@ -140,43 +139,6 @@ export class DevServer extends BaseDevServer {
 
     await this.fastify.register(fastifyExpress);
     this.fastify.use(this.wdm);
-
-    this.fastify.get('/api/artifacts', async (request, reply) => {
-      const assets = Object.keys(
-        this.wdm.context.stats?.compilation.assets ?? {}
-      );
-      reply.send({
-        assets,
-      });
-    });
-
-    this.fastify.get('/api/artifacts/:artifactsId', async (request, reply) => {
-      const { artifactsId } = request.params as { artifactsId: string };
-      try {
-        const file = await new Promise<string | undefined>((resolve, reject) =>
-          this.wdm.context.outputFileSystem.readFile(
-            path.join(
-              this.wdm.context.stats?.compilation.options.output.path ?? '',
-              artifactsId
-            ),
-            (error, data) => {
-              if (error) {
-                reject(error);
-              } else {
-                resolve(data?.toString());
-              }
-            }
-          )
-        );
-        if (file) {
-          reply.send({ artifact: file });
-        } else {
-          reply.code(404).send();
-        }
-      } catch (error) {
-        reply.code(500).send();
-      }
-    });
 
     this.fastify.post('/symbolicate', async (request, reply) => {
       try {

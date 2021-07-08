@@ -19,6 +19,7 @@ jobs:
           node-version: 14
 
       - name: Install dependencies
+        working-directory: website
         run: npm i
 
       - name: Build & export website

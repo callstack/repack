@@ -1,7 +1,7 @@
 const path = require('path');
-const webpack = require('../../packages/repack/node_modules/webpack');
-const TerserPlugin = require('../../packages/repack/node_modules/terser-webpack-plugin');
-const ReactNative = require('../../packages/repack');
+const webpack = require('webpack');
+const TerserPlugin = require('terser-webpack-plugin');
+const ReactNative = require('@callstack/repack');
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
@@ -147,7 +147,7 @@ module.exports = {
           /node_modules(.*[/\\])+abort-controller/,
           /node_modules(.*[/\\])+@callstack\/repack/,
         ],
-        use: require.resolve('../../packages/repack/node_modules/babel-loader'),
+        use: 'babel-loader',
       },
       /**
        * Here you can adjust loader that will process your files.
@@ -159,9 +159,7 @@ module.exports = {
         test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         use: {
-          loader: require.resolve(
-            '../../packages/repack/node_modules/babel-loader'
-          ),
+          loader: 'babel-loader',
           options: {
             /** Add React Refresh transform only when HMR is enabled. */
             plugins: devServer.hmr ? ['module:react-refresh/babel'] : undefined,
