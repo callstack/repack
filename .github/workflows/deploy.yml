@@ -17,8 +17,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14
-
+      
       - name: Install dependencies
+        run: yarn    
+
+      - name: Install website dependencies
         working-directory: website
         run: npm i
 
