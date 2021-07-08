@@ -171,12 +171,12 @@ if (__DEV__ && module.hot) {
   const reload = () => DevSettings.reload();
   const dismissErrors = () => {
     if (Platform.OS === 'ios') {
-      const NativeRedBox = require('react-native/Libraries/NativeModules/specs/NativeRedBox')
-        .default;
+      const NativeRedBox =
+        require('react-native/Libraries/NativeModules/specs/NativeRedBox').default;
       NativeRedBox?.dismiss?.();
     } else {
-      const NativeExceptionsManager = require('react-native/Libraries/Core/NativeExceptionsManager')
-        .default;
+      const NativeExceptionsManager =
+        require('react-native/Libraries/Core/NativeExceptionsManager').default;
       NativeExceptionsManager?.dismissRedbox();
     }
 

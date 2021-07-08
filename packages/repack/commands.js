@@ -1,6 +1,6 @@
 const path = require('path');
-const RnCliStartCommand = require('@react-native-community/cli/build/commands/start/start')
-  .default;
+const RnCliStartCommand =
+  require('@react-native-community/cli/build/commands/start/start').default;
 
 const webpackConfigOption = {
   name: '--webpackConfig <path>',
@@ -11,13 +11,14 @@ const webpackConfigOption = {
 module.exports = [
   {
     name: 'webpack-bundle',
-    options: require('@react-native-community/cli/build/commands/bundle/bundleCommandLineArgs').default.concat(
-      {
-        name: '--verbose',
-        description: 'Enables verbose logging',
-      },
-      webpackConfigOption
-    ),
+    options:
+      require('@react-native-community/cli/build/commands/bundle/bundleCommandLineArgs').default.concat(
+        {
+          name: '--verbose',
+          description: 'Enables verbose logging',
+        },
+        webpackConfigOption
+      ),
     func: require('./dist/commands/bundle').bundle,
   },
   {

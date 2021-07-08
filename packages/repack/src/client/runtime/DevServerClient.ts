@@ -27,7 +27,7 @@ class DevServerClient {
       const onClose = (event: Event) => {
         console.warn(
           'Disconnected from the Dev Server:',
-          ((event as unknown) as { message: string | null }).message
+          (event as unknown as { message: string | null }).message
         );
         this.socket = undefined;
       };

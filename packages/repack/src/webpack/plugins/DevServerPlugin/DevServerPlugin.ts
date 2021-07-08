@@ -10,7 +10,8 @@ type ExtractEntryStaticNormalized<E> = E extends () => Promise<infer U>
   ? E
   : never;
 
-type EntryStaticNormalized = ExtractEntryStaticNormalized<webpack.EntryNormalized>;
+type EntryStaticNormalized =
+  ExtractEntryStaticNormalized<webpack.EntryNormalized>;
 
 /**
  * {@link DevServerPlugin} configuration options.

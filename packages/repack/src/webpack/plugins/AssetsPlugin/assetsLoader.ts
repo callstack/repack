@@ -33,7 +33,7 @@ function getOptions(loaderContext: LoaderContext): Options {
     { name: 'reactNativeAssetsLoader' }
   );
 
-  return (options as unknown) as Options;
+  return options as unknown as Options;
 }
 
 export const raw = true;

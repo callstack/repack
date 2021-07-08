@@ -32,18 +32,20 @@ interface CollectOptions {
 
 // Resolver is not directly exposed from webpack types so we need to do some TS trickery to
 // get the type.
-type Resolver = webpack.Compiler['resolverFactory']['hooks']['resolver'] extends HookMap<
-  infer H
->
-  ? H extends SyncHook<infer S>
-    ? S extends any[]
-      ? S[0]
+type Resolver =
+  webpack.Compiler['resolverFactory']['hooks']['resolver'] extends HookMap<
+    infer H
+  >
+    ? H extends SyncHook<infer S>
+      ? S extends any[]
+        ? S[0]
+        : never
       : never
-    : never
-  : never;
+    : never;
 
 export class AssetResolver {
-  static DEFAULT_TEST = /\.(aac|aiff|bmp|caf|gif|html|jpeg|jpg|m4a|m4v|mov|mp3|mp4|mpeg|mpg|obj|otf|pdf|png|psd|svg|ttf|wav|webm|webp)$/;
+  static DEFAULT_TEST =
+    /\.(aac|aiff|bmp|caf|gif|html|jpeg|jpg|m4a|m4v|mov|mp3|mp4|mpeg|mpg|obj|otf|pdf|png|psd|svg|ttf|wav|webm|webp)$/;
 
   static collectScales(
     files: string[],

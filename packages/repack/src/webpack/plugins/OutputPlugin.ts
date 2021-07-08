@@ -252,8 +252,8 @@ export class OutputPlugin implements WebpackPlugin {
   ) {
     const promises = [];
     const [bundleFile] = [...chunk.files];
-    const relatedSourceMap = compilation.assetsInfo.get(bundleFile)?.related
-      ?.sourceMap;
+    const relatedSourceMap =
+      compilation.assetsInfo.get(bundleFile)?.related?.sourceMap;
     const sourceMapFile = Array.isArray(relatedSourceMap)
       ? relatedSourceMap[0]
       : relatedSourceMap;
@@ -282,8 +282,8 @@ export class OutputPlugin implements WebpackPlugin {
   ) {
     const promises = [];
     const [chunkFile] = [...chunk.files];
-    const relatedSourceMap = compilation.assetsInfo.get(chunkFile)?.related
-      ?.sourceMap;
+    const relatedSourceMap =
+      compilation.assetsInfo.get(chunkFile)?.related?.sourceMap;
     const sourceMapFile = Array.isArray(relatedSourceMap)
       ? relatedSourceMap[0]
       : relatedSourceMap;
