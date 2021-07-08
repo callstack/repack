@@ -1,3 +1,6 @@
 {
-  "workspaces": [""]
+  "workspaces": ["./packages/*"],
+  "scripts": {
+    "prepare": "npm run prepare --workspaces"
+  }
 }

@@ -41,7 +41,7 @@ export function Layout({ tabs, welcome }: Props) {
           )}
         </div>
       </nav>
-      <main className="text-gray-200 py-6 px-14">
+      <main className="text-gray-200 py-6 px-14 min-h-screen flex flex-col">
         <Body />
       </main>
     </div>
