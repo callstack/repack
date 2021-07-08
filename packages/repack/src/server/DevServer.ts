@@ -136,11 +136,47 @@ export class DevServer extends BaseDevServer {
    * Sets up Fastify plugins and routes.
    */
   async setup() {
-    await this.fastify.register(fastifyExpress);
+    await super.setup();
 
+    await this.fastify.register(fastifyExpress);
     this.fastify.use(this.wdm);
 
-    await super.setup();
+    this.fastify.get('/api/artifacts', async (request, reply) => {
+      const assets = Object.keys(
+        this.wdm.context.stats?.compilation.assets ?? {}
+      );
+      reply.send({
+        assets,
+      });
+    });
+
+    this.fastify.get('/api/artifacts/:artifactsId', async (request, reply) => {
+      const { artifactsId } = request.params as { artifactsId: string };
+      try {
+        const file = await new Promise<string | undefined>((resolve, reject) =>
+          this.wdm.context.outputFileSystem.readFile(
+            path.join(
+              this.wdm.context.stats?.compilation.options.output.path ?? '',
+              artifactsId
+            ),
+            (error, data) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(data?.toString());
+              }
+            }
+          )
+        );
+        if (file) {
+          reply.send({ artifact: file });
+        } else {
+          reply.code(404).send();
+        }
+      } catch (error) {
+        reply.code(500).send();
+      }
+    });
 
     this.fastify.post('/symbolicate', async (request, reply) => {
       try {

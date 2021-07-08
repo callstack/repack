@@ -374,3 +374,5 @@ website/data/generated
 
 # Local Netlify folder
 .netlify
+
+first-party

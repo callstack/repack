@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -14,9 +13,9 @@ module.exports = {
   mode,
   devtool: mode === 'development' ? 'cheap-module-source-map' : 'source-map',
   context: __dirname,
-  entry: './src/client/debugger-ui/index.js',
+  entry: './src/index.js',
   output: {
-    path: path.join(__dirname, 'dist/client/debugger-ui'),
+    path: path.join(__dirname, 'dist'),
     clean: true,
     filename: 'static/js/[name].[contenthash:8].js',
     publicPath: '/debugger-ui/',

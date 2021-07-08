@@ -45,12 +45,8 @@ const Page = (window.Page = {
   },
 
   render() {
-    const {
-      isDark,
-      isPriorityMaintained,
-      status,
-      visibilityState,
-    } = Page.state;
+    const { isDark, isPriorityMaintained, status, visibilityState } =
+      Page.state;
 
     const statusNode = document.getElementById('status');
     switch (status.type) {
@@ -89,9 +85,8 @@ const Page = (window.Page = {
     darkCheckbox.checked = isDark;
     localStorage.setItem('darkTheme', isDark ? 'on' : '');
 
-    const maintainPriorityCheckbox = document.getElementById(
-      'maintain-priority'
-    );
+    const maintainPriorityCheckbox =
+      document.getElementById('maintain-priority');
     maintainPriorityCheckbox.checked = isPriorityMaintained;
     localStorage.setItem('maintainPriority', isPriorityMaintained ? 'on' : '');
   },

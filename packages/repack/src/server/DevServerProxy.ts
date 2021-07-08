@@ -4,6 +4,7 @@ import execa from 'execa';
 import fetch from 'node-fetch';
 import getPort from 'get-port';
 import split2 from 'split2';
+import fastifyStatic from 'fastify-static';
 import { CliOptions, StartArguments } from '../types';
 import { Reporter } from '../Reporter';
 import {
@@ -243,6 +244,19 @@ export class DevServerProxy extends BaseDevServer {
     // });
 
     await super.setup();
+
+    await this.fastify.register(fastifyStatic, {
+      root: path.join(__dirname, '../../first-party/dashboard'),
+      prefix: '/dashboard',
+      decorateReply: false,
+      prefixAvoidTrailingSlash: true,
+    });
+
+    this.fastify.get('/api/platforms', async () => {
+      return {
+        platforms: Object.keys(this.workers),
+      };
+    });
 
     this.fastify.post('/symbolicate', async (request, reply) => {
       const { stack } = JSON.parse(request.body as string) as {
