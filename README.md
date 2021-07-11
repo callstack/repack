@@ -20,9 +20,9 @@ A Webpack-based toolkit to build your React Native application with full support
 [![PRs Welcome][prs-welcome-badge]][prs-welcome]
 [![Code of Conduct][coc-badge]][coc]
 
-Re.pack is a next generation of [Haul](https://github.com/callstack/haul) — a Webpack-based bundler for React Native applications.
+Re.Pack is a next generation of [Haul](https://github.com/callstack/haul) — a Webpack-based bundler for React Native applications.
 
-Re.pack uses Webpack 5 and React Native CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
+Re.Pack uses Webpack 5 and React Native CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
 
 __Check the base [`webpack.config.js`](https://github.com/callstack/repack/blob/main/templates/webpack.config.js) template, if you're curious how it all looks like.__
 
@@ -65,18 +65,18 @@ __Check the base [`webpack.config.js`](https://github.com/callstack/repack/blob/
 
 ## Why & when
 
-The main feature of Re.pack is Webpack and its ecosystem of loaders, plugins and support for various features like symlinks, aliases etc. However, because Re.pack is based on Webpack, it is targeted towards advanced users who already know how to use Webpack and want to leverage Webpack ecosystem.
+The main feature of Re.Pack is Webpack and its ecosystem of loaders, plugins and support for various features like symlinks, aliases etc. However, because Re.Pack is based on Webpack, it is targeted towards advanced users who already know how to use Webpack and want to leverage Webpack ecosystem.
 
 If you're just starting with React Native, it's better to stick with the default solution — Metro, since you probably won't benefit much from switching to Webpack.
 
-You can read more about design goals and comparisons here: [About Re.pack](https://github.com/callstack/nativepack/discussions/43)
+You can read more about design goals and comparisons here: [About Re.Pack](https://github.com/callstack/nativepack/discussions/43)
 
 ## Installation & setup
 
 ### Compatibility with Webpack
 
-On paper, Re.pack should work with any version of Webpack 5, but we recommend to consult with the compatibility table below.
-The table represents versions of `webpack` for which Re.pack is confirmed to work correctly.
+On paper, Re.Pack should work with any version of Webpack 5, but we recommend to consult with the compatibility table below.
+The table represents versions of `webpack` for which Re.Pack is confirmed to work correctly.
 
 If you don't see your version, give it a go. If it doesn't work, please open an issue.
 

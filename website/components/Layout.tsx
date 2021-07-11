@@ -32,7 +32,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           content="A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem."
         />
 
-        <meta name="og:title" content="Re.pack" />
+        <meta name="og:title" content="Re.Pack" />
         {/* <meta name="twitter:card" content="summary_large_image" /> */}
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
@@ -48,7 +48,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="container m-auto max-w-screen-xl px-8 py-4 flex flex-col md:flex-row justify-between">
           <NextLink href="/">
             <a className="text-2xl tracking-wide font-bold">
-              <img className="w-52" src="/logo.svg" alt="Re.pack" />
+              <img className="w-52" src="/logo.svg" alt="Re.Pack" />
             </a>
           </NextLink>
           <div className="text-xs flex items-center mt-8 md:mt-0">

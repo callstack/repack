@@ -27,7 +27,7 @@ export default function Home() {
   return (
     <Layout>
       <Head>
-        <title>Re.pack</title>
+        <title>Re.Pack</title>
       </Head>
       <div className="px-4">
         <h1 className="text-center text-3xl italic tracking-wide xl:px-80">

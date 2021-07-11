@@ -1,4 +1,4 @@
-# Contributing to Re.pack
+# Contributing to Re.Pack
 
 ## Code of Conduct
 
@@ -74,4 +74,4 @@ You can report issues on our [bug tracker](https://github.com/callstack/repack/i
 
 ## License
 
-By contributing to Re.pack, you agree that your contributions will be licensed under its **MIT** license.
+By contributing to Re.Pack, you agree that your contributions will be licensed under its **MIT** license.
