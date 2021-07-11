@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { Button, View } from 'react-native';
-import { ChunkManager } from '../../../packages/repack/client';
+import { ChunkManager } from '@callstack/repack/client';
 
 export function MiniAppsContainer() {
   const [isInstalled, setIsInstalled] = useState(false);

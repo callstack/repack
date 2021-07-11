@@ -1,5 +1,5 @@
 import { AppRegistry } from 'react-native';
-import { ChunkManager } from '../../packages/repack/client';
+import { ChunkManager } from '@callstack/repack/client';
 import App from './src/App';
 import { name as appName } from './app.json';
 

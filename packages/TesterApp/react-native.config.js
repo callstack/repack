@@ -1,3 +1,3 @@
 module.exports = {
-  commands: require('../../packages/repack/commands')
-}
+  commands: require('@callstack/repack/commands'),
+};

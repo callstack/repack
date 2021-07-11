@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, View } from 'react-native';
-import { ChunkManager } from '../../../packages/repack/client';
+import { ChunkManager } from '@callstack/repack/client';
 import { Text } from './Text';
 
 const RemoteChunkId = 'remote';
