@@ -25,16 +25,14 @@ jobs:
           node-version: ${{ matrix.node_version }}
 
       - name: Install dependencies
-        run: npm i
+        run: yarn
 
       - name: Lint
-        run: npm run lint
+        run: yarn lint
         
       - name: Type check
-        run: npm run tsc
+        run: yarn tsc
         
       - name: Run tests
-        run: npm run test
-        
-      - name: Verify client dashboard builds
-        run: npm run webpack
+        run: yarn test
+

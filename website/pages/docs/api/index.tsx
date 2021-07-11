@@ -16,7 +16,7 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       md: html
-        .replace(/<h1>Re.pack<\/h1>/, '')
+        .replace(/<h1>Re.Pack<\/h1>/, '')
         .replace(/<h3>/, '<h2>')
         .replace(/<\/h3>/, '</h2>')
         .replace(/<h2>/, '<h1>')

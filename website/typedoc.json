@@ -1,7 +1,7 @@
 {
   "out": "data/generated",
-  "entryPoints": ["../src/index.ts"],
-  "tsconfig": "../tsconfig.json",
+  "entryPoints": ["../packages/repack/src/index.ts"],
+  "tsconfig": "../packages/repack/tsconfig.json",
   "categoryOrder": ["Webpack Plugin", "Development server", "*"],
   "excludePrivate": true,
   "allReflectionsHaveOwnDocument": true,
