@@ -260,7 +260,7 @@ module.exports = {
          * Uncomment for having logs stored in a file to this specific compilation.
          * Compilation for each platform gets it's own log file.
          */
-        // file: path.join(__dirname, '${build}.${platform}.log`),
+        // file: path.join(__dirname, `${mode}.${platform}.log`),
       },
     }),
   ],
