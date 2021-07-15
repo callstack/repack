@@ -124,6 +124,7 @@ yarn add -D webpack terser-webpack-plugin babel-loader @callstack/repack
 Once you've completed [Installation & setup](#installation--setup) you can:
 
 - Build your application for production using XCode/Android Studio/Gradle/Fastlane or whichever tool you use.
+- Install your application by installing pods + `npx react-native run-ios` or `npx react-native run-android`.
 - Develop your application by starting development server with `npx react-native webpack-start`.
 - Create JavaScript bundle only by running `npx react-native webpack-bundle --entry-file index.js --bundle-output ./dist/index.bundle --dev=false`.
 - Create JavaScript bundle or start development server with Webpack CLI by running `PLATFORM=(ios|android) npx webpack-cli -c webpack.config.js`.
