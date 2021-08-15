@@ -1,3 +1,4 @@
+import path from 'path';
 import webpack from 'webpack';
 import { WebpackPlugin } from '../../types';
 
@@ -24,7 +25,14 @@ export class TargetPlugin implements WebpackPlugin {
 
     new webpack.NormalModuleReplacementPlugin(
       /react-native\/Libraries\/Utilities\/HMRClient\.js$/,
-      require.resolve('../../client/runtime/DevServerClient')
+      function (resource) {
+        const request = require.resolve('../../client/runtime/DevServerClient');
+        const context = path.dirname(request);
+        resource.request = request;
+        resource.context = context;
+        resource.createData.resource = request;
+        resource.createData.context = context;
+      }
     ).apply(compiler);
 
     // Overwrite `LoadScriptRuntimeModule.generate` to avoid shipping DOM specific
