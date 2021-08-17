@@ -1,9 +1,9 @@
 import path from 'path';
 import { Writable } from 'stream';
 import execa from 'execa';
-import fetch from 'node-fetch';
 import getPort from 'get-port';
 import split2 from 'split2';
+import fastifyReplyFrom from 'fastify-reply-from';
 import { CliOptions, StartArguments } from '../types';
 import { Reporter } from '../Reporter';
 import {
@@ -211,14 +211,7 @@ export class DevServerProxy extends BaseDevServer {
         method: request.method,
         body: request.body,
       });
-      const response = await fetch(compilerWorkerUrl, {
-        method: request.method,
-        body: typeof request.body === 'string' ? request.body : undefined,
-      });
-      const payload = await response.buffer();
-      reply
-        .type(response.headers.get('Content-Type') || 'text/plain')
-        .send(payload);
+      return reply.from(compilerWorkerUrl);
     }
   }
 
@@ -244,6 +237,13 @@ export class DevServerProxy extends BaseDevServer {
 
     await super.setup();
 
+    this.fastify.register(fastifyReplyFrom, {
+      undici: {
+        headersTimeout: 5 * 60 * 1000,
+        bodyTimeout: 5 * 60 * 1000,
+      },
+    });
+
     this.fastify.post('/symbolicate', async (request, reply) => {
       const { stack } = JSON.parse(request.body as string) as {
         stack: ReactNativeStackFrame[];
@@ -252,7 +252,7 @@ export class DevServerProxy extends BaseDevServer {
       if (!platform) {
         reply.code(400).send();
       } else {
-        await this.forwardRequest(platform, request, reply);
+        return this.forwardRequest(platform, request, reply);
       }
     });
 
@@ -283,12 +283,11 @@ export class DevServerProxy extends BaseDevServer {
           reply.code(400).send();
         } else {
           try {
-            if (this.workers[platform]) {
-              await this.forwardRequest(platform, request, reply);
-            } else {
+            if (!this.workers[platform]) {
               await this.runWorker(platform);
-              await this.forwardRequest(platform, request, reply);
             }
+
+            return this.forwardRequest(platform, request, reply);
           } catch (error) {
             console.error(error);
             reply.code(500).send();
