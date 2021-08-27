@@ -15,7 +15,7 @@ const TerserPlugin = require('terser-webpack-plugin');
  * This is the Webpack configuration file for your React Native project.
  * It can be used in 2 ways:
  * - by running React Native CLI eg: `npx react-native start` or `npx react-native bundle`
- * - by running Webpack CLI eg: `npx webpack-cli -c webpack.config.js`
+ * - by running Webpack CLI eg: `PLATFORM=(ios|android) npx webpack-cli -c webpack.config.js`
  *
  * Depending on which option you chose the output might be different, since when running with
  * React Native CLI most of the values from `getMode`, `getPlatform`, etc. will be filled in by React Native CLI.
@@ -195,7 +195,7 @@ module.exports = {
      * By default Webpack will emit files into `output.path` directory (eg: `<root>/build/ios`),
      * but in order to for the React Native application to include those files (or a subset of those)
      * they need to be copied over to correct output directories supplied from React Native CLI
-     * when bundling the code (with `webpack-start` command).
+     * when bundling the code (with `webpack-bundle` command).
      * In development mode (when development server is running), this plugin is a no-op.
      */
     new ReactNative.OutputPlugin({
