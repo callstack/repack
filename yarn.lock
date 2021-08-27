@@ -1906,14 +1906,6 @@
   resolved "https://registry.npmjs.org/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
-"@types/node-fetch@^2.5.8":
-  version "2.5.11"
-  resolved "https://registry.npmjs.org/@types/node-fetch/-/node-fetch-2.5.11.tgz#ce22a2e65fc8999f4dbdb7ddbbcf187d755169e4"
-  integrity sha512-2upCKaqVZETDRb8A2VTaRymqFBEgH8u6yr96b/u3+1uQEPDRo3mJLEiPk7vdXBHRtjwkjqzFYMJXrt0Z9QsYjQ==
-  dependencies:
-    "@types/node" "*"
-    form-data "^3.0.0"
-
 "@types/node@*":
   version "16.0.1"
   resolved "https://registry.npmjs.org/@types/node/-/node-16.0.1.tgz#70cedfda26af7a2ca073fdcc9beb2fff4aa693f8"
@@ -4047,7 +4039,7 @@ encoding-negotiator@^2.0.1:
   resolved "https://registry.npmjs.org/encoding-negotiator/-/encoding-negotiator-2.0.1.tgz#79871bb5473b81f6a0670e8de5303fb5ee0868a3"
   integrity sha512-GSK7qphNR4iPcejfAlZxKDoz3xMhnspwImK+Af5WhePS9jUpK/Oh7rUdyENWu+9rgDflOCTmAojBsgsvM8neAQ==
 
-end-of-stream@^1.1.0:
+end-of-stream@^1.1.0, end-of-stream@^1.4.4:
   version "1.4.4"
   resolved "https://registry.npmjs.org/end-of-stream/-/end-of-stream-1.4.4.tgz#5ae64a5f45057baf3626ec14da0ca5e4b2431eb0"
   integrity sha512-+uw1inIHVPQoaVuHzRyXd21icM+cnt4CzD5rW+NC1wjOUSTOs+Te7FOv7AhN7vS9x/oIyhLP5PR1H+phQAHu5Q==
@@ -4678,6 +4670,19 @@ fastify-plugin@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/fastify-plugin/-/fastify-plugin-3.0.0.tgz#cf1b8c8098e3b5a7c8c30e6aeb06903370c054ca"
   integrity sha512-ZdCvKEEd92DNLps5n0v231Bha8bkz1DjnPP/aEz37rz/q42Z5JVLmgnqR4DYuNn3NXAO3IDCPyRvgvxtJ4Ym4w==
+
+fastify-reply-from@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.npmjs.org/fastify-reply-from/-/fastify-reply-from-6.0.1.tgz#ab0e1a1299d6ad0d087957d33b8fca53159118aa"
+  integrity sha512-tSs5mRau2I3JDHdk7cETNlVIPXVYB7lpoZzWEsfffUwJq6E4c5Kq3jS1LUwOs5rYwRzXgnbVYpemuP4CzyGOVw==
+  dependencies:
+    end-of-stream "^1.4.4"
+    fastify-plugin "^3.0.0"
+    http-errors "^1.8.0"
+    pump "^3.0.0"
+    semver "^7.3.5"
+    tiny-lru "^7.0.6"
+    undici "^4.0.0"
 
 fastify-static@^4.0.1:
   version "4.2.2"
@@ -5396,6 +5401,17 @@ http-errors@1.7.2:
     depd "~1.1.2"
     inherits "2.0.3"
     setprototypeof "1.1.1"
+    statuses ">= 1.5.0 < 2"
+    toidentifier "1.0.0"
+
+http-errors@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.npmjs.org/http-errors/-/http-errors-1.8.0.tgz#75d1bbe497e1044f51e4ee9e704a62f28d336507"
+  integrity sha512-4I8r0C5JDhT5VkvI47QktDW75rNlGVsUf/8hzjCC/wkWI/jdTRmBb9aI7erSG82r1bjKY3F6k28WnsVxB1C73A==
+  dependencies:
+    depd "~1.1.2"
+    inherits "2.0.4"
+    setprototypeof "1.2.0"
     statuses ">= 1.5.0 < 2"
     toidentifier "1.0.0"
 
@@ -9111,6 +9127,11 @@ setprototypeof@1.1.1:
   resolved "https://registry.npmjs.org/setprototypeof/-/setprototypeof-1.1.1.tgz#7e95acb24aa92f5885e0abef5ba131330d4ae683"
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
 
+setprototypeof@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.npmjs.org/setprototypeof/-/setprototypeof-1.2.0.tgz#66c9a24a73f9fc28cbe66b09fed3d33dcaf1b424"
+  integrity sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==
+
 shallow-clone@^3.0.0:
   version "3.0.1"
   resolved "https://registry.npmjs.org/shallow-clone/-/shallow-clone-3.0.1.tgz#8f2981ad92531f55035b01fb230769a40e02efa3"
@@ -9715,7 +9736,7 @@ through@2, "through@>=2.2.7 <3", through@^2.3.6:
   resolved "https://registry.npmjs.org/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
-tiny-lru@^7.0.0:
+tiny-lru@^7.0.0, tiny-lru@^7.0.6:
   version "7.0.6"
   resolved "https://registry.npmjs.org/tiny-lru/-/tiny-lru-7.0.6.tgz#b0c3cdede1e5882aa2d1ae21cb2ceccf2a331f24"
   integrity sha512-zNYO0Kvgn5rXzWpL0y3RS09sMK67eGaQj9805jlK9G6pSadfriTczzLHFXa/xcW4mIRfmlB9HyQ/+SgL0V1uow==
@@ -9942,6 +9963,11 @@ unbox-primitive@^1.0.1:
     has-bigints "^1.0.1"
     has-symbols "^1.0.2"
     which-boxed-primitive "^1.0.2"
+
+undici@^4.0.0:
+  version "4.5.0"
+  resolved "https://registry.npmjs.org/undici/-/undici-4.5.0.tgz#87d42cfe2c363fb14f278b0a0043b436ee2b5dd7"
+  integrity sha512-N2e4eDS+rv6qljPP+RMlTZXSS4O6V9LuyIvDT9btweBOPMjUAe5k+u4JfJdbGe8WFjJMhqmOu6dR8tSY0XqNgw==
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"
