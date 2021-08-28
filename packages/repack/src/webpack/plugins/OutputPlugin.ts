@@ -1,8 +1,8 @@
 import path from 'path';
-import fs from 'fs-extra';
 import webpack from 'webpack';
 import { CLI_OPTIONS_ENV_KEY } from '../../env';
-import { CliOptions, Rule, WebpackLogger, WebpackPlugin } from '../../types';
+import { CliOptions, Rule, WebpackPlugin } from '../../types';
+import { AssetsCopyProcessor } from './utils/AssetsCopyProcessor';
 
 /**
  * {@link OutputPlugin} configuration options.
@@ -64,6 +64,7 @@ export class OutputPlugin implements WebpackPlugin {
     if (!path.isAbsolute(bundleOutput)) {
       bundleOutput = path.join(cliOptions.config.root, bundleOutput);
     }
+    const bundleOutputDir = path.dirname(bundleOutput);
 
     if (!sourcemapOutput) {
       sourcemapOutput = `${bundleOutput}.map`;
@@ -73,7 +74,7 @@ export class OutputPlugin implements WebpackPlugin {
     }
 
     if (!assetsDest) {
-      assetsDest = path.dirname(bundleOutput);
+      assetsDest = bundleOutputDir;
     }
 
     let remoteChunksOutput = this.config.remoteChunksOutput;
@@ -172,156 +173,42 @@ export class OutputPlugin implements WebpackPlugin {
         throw new Error('Cannot infer output path from compilation');
       }
 
-      const promises: Promise<void>[] = [];
+      const localAssetsCopyProcessor = new AssetsCopyProcessor({
+        compilation,
+        outputPath,
+        bundleOutput,
+        bundleOutputDir,
+        sourcemapOutput,
+        assetsDest,
+        logger,
+      });
+      const remoteAssetsCopyProcessor = new AssetsCopyProcessor({
+        compilation,
+        outputPath,
+        bundleOutput: '',
+        bundleOutputDir: remoteChunksOutput ?? '',
+        sourcemapOutput: '',
+        assetsDest: remoteChunksOutput ?? '',
+        logger,
+      });
 
       for (const chunk of localChunks) {
         // Process entry chunk
-        if (entryGroup?.chunks[0] === chunk) {
-          promises.push(
-            ...this.processEntryChunkFiles(
-              compilation,
-              chunk,
-              outputPath,
-              bundleOutput,
-              sourcemapOutput,
-              logger
-            )
-          );
-        } else {
-          promises.push(
-            ...this.processChunkFiles(
-              compilation,
-              chunk,
-              outputPath,
-              assetsDest,
-              logger
-            )
-          );
-        }
-
-        promises.push(
-          ...this.processChunkAuxiliaryFiles(
-            chunk,
-            outputPath,
-            assetsDest,
-            logger
-          )
-        );
+        localAssetsCopyProcessor.enqueueChunk(chunk, {
+          isEntry: entryGroup?.chunks[0] === chunk,
+        });
       }
 
       if (remoteChunksOutput) {
         for (const chunk of remoteChunks) {
-          promises.push(
-            ...this.processChunkFiles(
-              compilation,
-              chunk,
-              outputPath,
-              remoteChunksOutput,
-              logger
-            )
-          );
-
-          promises.push(
-            ...this.processChunkAuxiliaryFiles(
-              chunk,
-              outputPath,
-              remoteChunksOutput,
-              logger
-            )
-          );
+          remoteAssetsCopyProcessor.enqueueChunk(chunk, { isEntry: false });
         }
       }
 
-      await Promise.all(promises);
+      await Promise.all([
+        ...localAssetsCopyProcessor.execute(),
+        ...remoteAssetsCopyProcessor.execute(),
+      ]);
     });
-  }
-
-  private async copyAsset(from: string, to: string, logger: WebpackLogger) {
-    logger.debug('Copying asset:', from, 'to:', to);
-    await fs.ensureDir(path.dirname(to));
-    await fs.copyFile(from, to);
-  }
-
-  private processEntryChunkFiles(
-    compilation: webpack.Compilation,
-    chunk: webpack.Chunk,
-    outputPath: string,
-    bundleOutput: string,
-    sourcemapOutput: string,
-    logger: WebpackLogger
-  ) {
-    const promises = [];
-    const [bundleFile] = [...chunk.files];
-    const relatedSourceMap =
-      compilation.assetsInfo.get(bundleFile)?.related?.sourceMap;
-    const sourceMapFile = Array.isArray(relatedSourceMap)
-      ? relatedSourceMap[0]
-      : relatedSourceMap;
-    promises.push(
-      this.copyAsset(path.join(outputPath, bundleFile), bundleOutput, logger)
-    );
-    if (sourceMapFile) {
-      promises.push(
-        this.copyAsset(
-          path.join(outputPath, sourceMapFile),
-          sourcemapOutput,
-          logger
-        )
-      );
-    }
-
-    return promises;
-  }
-
-  private processChunkFiles(
-    compilation: webpack.Compilation,
-    chunk: webpack.Chunk,
-    outputPath: string,
-    assetsDest: string,
-    logger: WebpackLogger
-  ) {
-    const promises = [];
-    const [chunkFile] = [...chunk.files];
-    const relatedSourceMap =
-      compilation.assetsInfo.get(chunkFile)?.related?.sourceMap;
-    const sourceMapFile = Array.isArray(relatedSourceMap)
-      ? relatedSourceMap[0]
-      : relatedSourceMap;
-    promises.push(
-      this.copyAsset(
-        path.join(outputPath, chunkFile),
-        path.join(assetsDest, chunkFile),
-        logger
-      )
-    );
-    if (sourceMapFile) {
-      promises.push(
-        this.copyAsset(
-          path.join(outputPath, sourceMapFile),
-          path.join(assetsDest, sourceMapFile),
-          logger
-        )
-      );
-    }
-
-    return promises;
-  }
-
-  private processChunkAuxiliaryFiles(
-    chunk: webpack.Chunk,
-    outputPath: string,
-    assetsDest: string,
-    logger: WebpackLogger
-  ) {
-    const assets = [...chunk.auxiliaryFiles].filter(
-      (file) => !/\.map$/.test(file)
-    );
-    return assets.map((asset) =>
-      this.copyAsset(
-        path.join(outputPath, asset),
-        path.join(assetsDest, asset),
-        logger
-      )
-    );
   }
 }
