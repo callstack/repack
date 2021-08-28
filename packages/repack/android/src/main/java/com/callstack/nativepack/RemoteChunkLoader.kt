@@ -91,11 +91,13 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
         }, { code, message -> promise.reject(code, message) })
     }
 
-    fun invalidate(chunkId: String) {
-        val file = File(reactContext.filesDir, getChunkFilePath(chunkId))
+    fun invalidate(chunkId: String?) {
+        if (chunkId != null) {
+            val file = File(reactContext.filesDir, getChunkFilePath(chunkId))
 
-        if(file.exists()) {
-            file.delete()
+            if (file.exists()) {
+                file.delete()
+            }
         }
     }
 
