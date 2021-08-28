@@ -2,15 +2,19 @@
   "name": "TesterApp",
   "version": "0.0.1",
   "private": true,
+  "workspaces": {
+    "nohoist": ["react-native", "react-native/**"]
+  },
   "scripts": {
     "prepare": "exit 0",
     "test": "exit 0",
     "lint": "exit 0",
     "tsc": "exit 0",
+    "build": "exit 0",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native webpack-start",
-    "build": "react-native webpack-bundle --entry-file index.js --bundle-output ./dist/index.bundle --dev=false",
+    "bundle": "react-native webpack-bundle --entry-file index.js --bundle-output ./dist/index.bundle --dev=false",
     "webpack": "PLATFORM=ios webpack -c webpack.config.js"
   },
   "dependencies": {
