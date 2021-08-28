@@ -1,6 +1,6 @@
 buildscript {
   // Buildscript is evaluated before everything else so we can't use getExtOrDefault
-  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['WebpackToolkit_kotlinVersion']
+  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['RePack_kotlinVersion']
 
   repositories {
     google()
@@ -18,11 +18,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 def getExtOrDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['WebpackToolkit_' + name]
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['RePack_' + name]
 }
 
 def getExtOrIntegerDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['WebpackToolkit_' + name]).toInteger()
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['RePack_' + name]).toInteger()
 }
 
 android {
@@ -126,6 +126,7 @@ def kotlin_version = getExtOrDefault('kotlinVersion')
 dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
-  implementation "com.squareup.okhttp3:okhttp:4.9.0"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation "com.squareup.okhttp3:okhttp:4.9.0"
+  implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.0"
 }
