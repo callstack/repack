@@ -2,15 +2,8 @@
 /* globals __webpack_require__ __DEV__ */
 
 import { ChunkManager } from '../chunks-api';
+import { LoadEvent } from '../shared/LoadEvent';
 import { getDevServerLocation } from './getDevServerLocation';
-
-class LoadEvent {
-  target: { src: string };
-
-  constructor(public type: string, src: string) {
-    this.target = { src };
-  }
-}
 
 type LoadCallback = (event?: LoadEvent) => void;
 
@@ -33,7 +26,7 @@ async function loadHmrUpdate(url: string, cb: LoadCallback) {
       cb();
     } catch (error) {
       console.error('Loading HMR update chunk failed:', error);
-      cb(new LoadEvent('exec', url));
+      cb(new LoadEvent('exec', url, error));
     }
   }
 }
@@ -46,7 +39,7 @@ async function loadAsyncChunk(
   try {
     await ChunkManager.loadChunk(chunkId.toString());
   } catch (error) {
-    cb(new LoadEvent('load', url));
+    cb(error);
   }
 }
 
