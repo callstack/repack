@@ -2,6 +2,7 @@
 
 // @ts-ignore
 import { NativeModules } from 'react-native';
+import { LoadEvent } from '../shared/LoadEvent';
 
 const CACHE_KEY = `Repack.ChunkManager.Cache.${__DEV__ ? 'debug' : 'release'}`;
 
@@ -94,8 +95,17 @@ class ChunkManager {
   }
 
   async loadChunk(chunkId: string) {
+    let url;
+    let fetch;
     try {
-      const { url, fetch } = await this.resolveChunk(chunkId);
+      const resolved = await this.resolveChunk(chunkId);
+      url = resolved.url;
+      fetch = resolved.fetch;
+    } catch (error) {
+      throw new LoadEvent('resolution', chunkId, error);
+    }
+
+    try {
       await NativeModules.ChunkManager.loadChunk(chunkId, url, fetch);
     } catch (error) {
       console.error(
@@ -103,13 +113,22 @@ class ChunkManager {
         error.message,
         error.code ? `[${error.code}]` : ''
       );
-      throw error;
+      throw new LoadEvent('load', url, error);
     }
   }
 
   async preloadChunk(chunkId: string) {
+    let url;
+    let fetch;
     try {
-      const { url, fetch } = await this.resolveChunk(chunkId);
+      const resolved = await this.resolveChunk(chunkId);
+      url = resolved.url;
+      fetch = resolved.fetch;
+    } catch (error) {
+      throw new LoadEvent('resolution', chunkId, error);
+    }
+
+    try {
       await NativeModules.ChunkManager.preloadChunk(chunkId, url, fetch);
     } catch (error) {
       console.error(
@@ -117,7 +136,7 @@ class ChunkManager {
         error.message,
         error.code ? `[${error.code}]` : ''
       );
-      throw error;
+      throw new LoadEvent('load', url, error);
     }
   }
 
