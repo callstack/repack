@@ -1,0 +1,40 @@
+.header {
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.tagline {
+  color: rgb(245, 246, 247);
+  font-weight: 700;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.button {
+  color: rgb(245, 246, 247);
+  border-width: 2px;
+  margin: 0 6px;
+}
+
+.button:hover {
+  color: rgb(0, 0, 0);
+  background-color: rgb(245, 246, 247);
+  border-color: rgb(245, 246, 247);
+}
+
+.banner {
+  padding: 0 20rem 2rem;
+  fill: red;
+}
+
+@media screen and (max-width: 996px) {
+  .banner {
+    padding: 0 2rem 2rem;
+  }
+}
