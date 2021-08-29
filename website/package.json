@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "generate": "del docs/api && yarn --cwd ../packages/repack typedoc && mv docs/api/README.md docs/api/index.md",
+    "generate": "del docs/api && yarn --cwd ../packages/repack typedoc && mv ./docs/api/README.md ./docs/api/index.md",
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",

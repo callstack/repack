@@ -1,5 +1,5 @@
 {
-  "out": "../../website2/docs/api",
+  "out": "../../website/docs/api",
   "entryPoints": ["./src/index.ts"],
   "tsconfig": "./tsconfig.json",
   "categoryOrder": ["Webpack Plugin", "Development server", "*"],
