@@ -8,6 +8,7 @@ export class AssetsCopyProcessor {
 
   constructor(
     public readonly config: {
+      platform: string;
       compilation: webpack.Compilation;
       outputPath: string;
       bundleOutput: string;
@@ -33,6 +34,7 @@ export class AssetsCopyProcessor {
       sourcemapOutput,
       bundleOutputDir,
       assetsDest,
+      platform,
     } = this.config;
     const sourcemapOutputDir = path.dirname(sourcemapOutput);
 
@@ -46,7 +48,12 @@ export class AssetsCopyProcessor {
     this.queue.push(() =>
       this.copyAsset(
         path.join(outputPath, chunkFile),
-        isEntry ? bundleOutput : path.join(bundleOutputDir, chunkFile)
+        isEntry
+          ? bundleOutput
+          : path.join(
+              platform === 'ios' ? assetsDest : bundleOutputDir,
+              chunkFile
+            )
       )
     );
 
@@ -56,7 +63,10 @@ export class AssetsCopyProcessor {
           path.join(outputPath, sourceMapFile),
           isEntry
             ? sourcemapOutput
-            : path.join(sourcemapOutputDir, sourceMapFile)
+            : path.join(
+                platform === 'ios' ? assetsDest : sourcemapOutputDir,
+                sourceMapFile
+              )
         )
       );
     }
@@ -82,7 +92,7 @@ export class AssetsCopyProcessor {
         (asset) => () =>
           this.copyAsset(
             path.join(outputPath, asset),
-            path.join(bundleOutputDir, asset)
+            path.join(platform === 'ios' ? assetsDest : bundleOutputDir, asset)
           )
       )
     );

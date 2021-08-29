@@ -18,8 +18,111 @@ class FsMock {
 }
 
 describe('AssetsCopyProcessor', () => {
+  describe('for ios', () => {
+    const acpConfigStub = {
+      platform: 'ios',
+      compilation: {
+        assetsInfo: new Map([
+          [
+            'index.bundle',
+            {
+              related: {
+                sourceMap: 'index.bundle.map',
+              },
+            },
+          ],
+          [
+            'src_Async_js.chunk.bundle',
+            {
+              related: {
+                sourceMap: 'src_Async_js.chunk.bundle.map',
+              },
+            },
+          ],
+        ]),
+      } as unknown as webpack.Compilation,
+      outputPath: '/dist',
+      bundleOutput: '/target/ios/build/Release-iphonesimulator/main.jsbundle',
+      bundleOutputDir: '/target/ios/build/Release-iphonesimulator',
+      sourcemapOutput:
+        '/target/ios/build/Release-iphonesimulator/main.jsbundle.map',
+      assetsDest: '/target/ios/build/Release-iphonesimulator/App.app',
+      logger: { debug: jest.fn() } as unknown as WebpackLogger,
+    };
+
+    it("should copy entry chunk's files into correct directories", async () => {
+      const fs = new FsMock();
+      const acp = new AssetsCopyProcessor(acpConfigStub, fs);
+      acp.enqueueChunk(
+        {
+          files: ['index.bundle'],
+          auxiliaryFiles: [
+            'assets/node_modules/react-native/libraries/newappscreen/components/logo.png',
+            'index.bundle.map',
+          ],
+        } as unknown as webpack.Chunk,
+        { isEntry: true }
+      );
+      await Promise.all(acp.execute());
+
+      expect(fs.ensuredDirs).toEqual([
+        '/target/ios/build/Release-iphonesimulator',
+        '/target/ios/build/Release-iphonesimulator/App.app/assets/node_modules/react-native/libraries/newappscreen/components',
+      ]);
+      expect(fs.copiedFiles).toEqual([
+        [
+          '/dist/index.bundle',
+          '/target/ios/build/Release-iphonesimulator/main.jsbundle',
+        ],
+        [
+          '/dist/index.bundle.map',
+          '/target/ios/build/Release-iphonesimulator/main.jsbundle.map',
+        ],
+        [
+          '/dist/assets/node_modules/react-native/libraries/newappscreen/components/logo.png',
+          '/target/ios/build/Release-iphonesimulator/App.app/assets/node_modules/react-native/libraries/newappscreen/components/logo.png',
+        ],
+      ]);
+    });
+
+    it("should copy regular chunk's files into correct directories", async () => {
+      const fs = new FsMock();
+      const acp = new AssetsCopyProcessor(acpConfigStub, fs);
+      acp.enqueueChunk(
+        {
+          files: ['src_Async_js.chunk.bundle'],
+          auxiliaryFiles: [
+            'src_Async_js.chunk.bundle.map',
+            'src_Async_js.chunk.bundle.json',
+          ],
+        } as unknown as webpack.Chunk,
+        { isEntry: false }
+      );
+      await Promise.all(acp.execute());
+
+      expect(fs.ensuredDirs).toEqual([
+        '/target/ios/build/Release-iphonesimulator/App.app',
+      ]);
+      expect(fs.copiedFiles).toEqual([
+        [
+          '/dist/src_Async_js.chunk.bundle',
+          '/target/ios/build/Release-iphonesimulator/App.app/src_Async_js.chunk.bundle',
+        ],
+        [
+          '/dist/src_Async_js.chunk.bundle.map',
+          '/target/ios/build/Release-iphonesimulator/App.app/src_Async_js.chunk.bundle.map',
+        ],
+        [
+          '/dist/src_Async_js.chunk.bundle.json',
+          '/target/ios/build/Release-iphonesimulator/App.app/src_Async_js.chunk.bundle.json',
+        ],
+      ]);
+    });
+  });
+
   describe('for android', () => {
     const acpConfigStub = {
+      platform: 'android',
       compilation: {
         assetsInfo: new Map([
           [

@@ -8,6 +8,8 @@ import { AssetsCopyProcessor } from './utils/AssetsCopyProcessor';
  * {@link OutputPlugin} configuration options.
  */
 export interface OutputPluginConfig {
+  /** Target application platform. */
+  platform: string;
   /** Whether the development server is enabled and running. */
   devServerEnabled?: boolean;
   /**
@@ -36,7 +38,11 @@ export class OutputPlugin implements WebpackPlugin {
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config: OutputPluginConfig) {}
+  constructor(private config: OutputPluginConfig) {
+    if (!this.config.platform) {
+      throw new Error('Missing `platform` option in `OutputPlugin`');
+    }
+  }
 
   /**
    * Apply the plugin.
@@ -174,6 +180,7 @@ export class OutputPlugin implements WebpackPlugin {
       }
 
       const localAssetsCopyProcessor = new AssetsCopyProcessor({
+        platform: this.config.platform,
         compilation,
         outputPath,
         bundleOutput,
@@ -183,6 +190,7 @@ export class OutputPlugin implements WebpackPlugin {
         logger,
       });
       const remoteAssetsCopyProcessor = new AssetsCopyProcessor({
+        platform: this.config.platform,
         compilation,
         outputPath,
         bundleOutput: '',
