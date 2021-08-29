@@ -42,6 +42,6 @@
   "devDependencies": {
     "@callstack/eslint-config": "^11.0.0",
     "eslint": "^7.32.0",
-    "netlify": "^8.0.0"
+    "netlify-cli": "^6.7.7"
   }
 }
