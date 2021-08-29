@@ -3,16 +3,12 @@ import clsx from 'clsx';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import useThemeContext from '@theme/hooks/useThemeContext';
 import HomepageFeatures from '../components/HomepageFeatures';
 import Banner from '../../static/img/banner.svg';
 import styles from './index.module.css';
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
-  const { isDarkTheme } = useThemeContext();
-
-  console.log({ isDarkTheme });
 
   return (
     <header className={clsx('hero hero--primary', styles.header)}>

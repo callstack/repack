@@ -23,15 +23,15 @@ jobs:
 
       - name: Install website dependencies
         working-directory: website
-        run: npm i
+        run: yarn
 
-      - name: Build & export website
+      - name: Build website
         working-directory: website
-        run: npm run build && npm run export
+        run: yarn generate && yarn build
 
       - name: Deploy website in preview mode
         working-directory: website
-        run: npx netlify deploy --dir=out
+        run: yarn netlify deploy --dir=build
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
