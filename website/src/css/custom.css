@@ -1,10 +1,7 @@
 :root {
-  --ifm-color-primary-dark: rgb(33, 175, 144);
-  --ifm-color-primary-darker: rgb(31, 165, 136);
-  --ifm-color-primary-darkest: rgb(26, 136, 112);
-  --ifm-color-primary-light: rgb(70, 203, 174);
-  --ifm-color-primary-lighter: rgb(102, 212, 189);
-  --ifm-color-primary-lightest: rgb(146, 224, 208);
+  --ifm-color-primary-dark: rgb(0, 215, 188);
+  --ifm-color-primary-darker: rgb(0, 191, 168);
+  --ifm-color-primary-darkest: rgb(0, 167, 147);
   --ifm-code-font-size: 95%;
 }
 
@@ -14,7 +11,7 @@ html[data-theme="light"] {
 }
 
 html[data-theme="dark"] {
-  --ifm-color-primary: rgb(95, 132, 255);
+  --ifm-color-primary: rgb(0, 239, 210);
 }
 
 .docusaurus-highlight-code-line {
@@ -34,6 +31,9 @@ html[data-theme="light"] .footer--dark {
 
 html[data-theme="dark"] .footer--dark {
   --ifm-footer-background-color: var(--ifm-navbar-background-color);
+}
+html[data-theme="dark"] .hero--primary {
+  --ifm-hero-background-color: rgba(0, 0, 0, 0.4);
 }
 
 .pagination-nav__link {

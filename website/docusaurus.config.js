@@ -14,6 +14,9 @@ module.exports = {
   organizationName: 'Callstack',
   projectName: 'Re.Pack',
   themeConfig: {
+    colorMode: {
+      defaultMode: 'dark',
+    },
     navbar: {
       logo: {
         alt: 'Re.Pack Logo',

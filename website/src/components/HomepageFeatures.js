@@ -1,16 +1,48 @@
 import React from 'react';
 import clsx from 'clsx';
+import FileBundle from '../../static/img/undraw_file_bundle_xl7g.svg';
+import ProgressiveApp from '../../static/img/undraw_progressive_app_m9ms.svg';
+import BugFixing from '../../static/img/undraw_bug_fixing_oc7a.svg';
+import DeveloperActivity from '../../static/img/undraw_developer_activity_bv83.svg';
+import CloudSync from '../../static/img/undraw_cloud_sync_re_02p1.svg';
+import SetPreferences from '../../static/img/undraw_set_preferences_kwia.svg';
 import styles from './HomepageFeatures.module.css';
 
-function Feature({ title, description }) {
-  return (
-    <div className={clsx('col col--4')}>
-      <div className="padding-horiz--md">
+function Feature({
+  title,
+  description,
+  Svg,
+  leftClassName,
+  rightClassName,
+  inverted,
+}) {
+  const items = [
+    <div
+      key="FeatureLeft"
+      className={clsx(
+        'col padding-horiz--lg',
+        styles.graphicContainer,
+        leftClassName
+      )}
+    >
+      {Svg ? <Svg className={styles.graphic} /> : null}
+    </div>,
+    <div
+      key="FeatureRight"
+      className={clsx(
+        'col padding-horiz--lg',
+        styles.featureContent,
+        rightClassName
+      )}
+    >
+      <div>
         <h2>{title}</h2>
         <p>{description}</p>
       </div>
-    </div>
-  );
+    </div>,
+  ];
+
+  return inverted ? [...items].reverse() : items;
 }
 
 export default function HomepageFeatures() {
@@ -22,14 +54,26 @@ export default function HomepageFeatures() {
             title="Webpack-powered solution for advanced use cases"
             description={
               <>
-                Leverage full Webpack ecosystem of plugins and loaders. Use
-                plethora of configuration options to adjust the bundling to your
-                needs. Take modules resolution into your hand and freely use
-                functionalities like symlinks or unconventional project&apos;s
-                structure.
+                {
+                  'Leverage full Webpack ecosystem of plugins and loaders. Use plethora of '
+                }
+                <a
+                  className={clsx('button button--link', styles.link)}
+                  href="/docs/configuration/webpack-config"
+                >
+                  configuration options
+                </a>
+                {' to adjust the bundling to your needs. Take modules resolution into your hand ' +
+                  'and freely use functionalities like symlinks or ' +
+                  "unconventional project's structure."}
               </>
             }
+            Svg={FileBundle}
+            leftClassName="col--4"
+            rightClassName="col--6"
           />
+        </div>
+        <div className="row margin-top--xl">
           <Feature
             title="Develop and bundle for any platform"
             description={
@@ -39,7 +83,12 @@ export default function HomepageFeatures() {
                 platform. Everything is configurable, nothing is hardcoded.
               </>
             }
+            Svg={ProgressiveApp}
+            leftClassName="col--6"
+            rightClassName="col--6"
           />
+        </div>
+        <div className="row margin-top--xl">
           <Feature
             title="Built-in Flipper support"
             description={
@@ -49,9 +98,13 @@ export default function HomepageFeatures() {
                 Network, Crashes and more.
               </>
             }
+            Svg={BugFixing}
+            leftClassName="col--4"
+            rightClassName="col--6"
+            inverted
           />
         </div>
-        <div className="row">
+        <div className="row margin-top--xl">
           <Feature
             title="Fully-featured development server"
             description={
@@ -61,27 +114,54 @@ export default function HomepageFeatures() {
                 symnbolication and Remote JavaScript debugging support.
               </>
             }
+            Svg={DeveloperActivity}
+            leftClassName="col--4"
+            rightClassName="col--6"
           />
+        </div>
+        <div className="row margin-top--xl">
           <Feature
             title="Asynchronous chunks support"
             description={
               <>
-                Use asynchronous chunks to split your bundle into multiple files
-                and load them on-demand improve initial loading times. Split
-                your code using dynamic import() function or manually declaring
-                them inside your Webpack config.
+                {'Use asynchronous chunks to split your bundle into multiple files' +
+                  'and load them on-demand improve initial loading times. Split' +
+                  'your code using dynamic import() function or manually declaring' +
+                  'them inside your '}
+                <a
+                  className={clsx('button button--link', styles.link)}
+                  href="/docs/configuration/webpack-config"
+                >
+                  Webpack config
+                </a>
+                .
               </>
             }
+            Svg={CloudSync}
+            leftClassName="col--4"
+            rightClassName="col--6 col--offset-2"
+            inverted
           />
+        </div>
+        <div className="row margin-top--xl">
           <Feature
             title="Configure it your way"
             description={
               <>
-                Take full control over the Webpack configuration. Use our APIs -
-                plugins and utilities - to make Webpack-produced bundle
-                compatible with React Native.
+                {'Take full control over the '}
+                <a
+                  className={clsx('button button--link', styles.link)}
+                  href="/docs/configuration/webpack-config"
+                >
+                  Webpack configuration
+                </a>
+                . Use our APIs - plugins and utilities - to make
+                Webpack-produced bundle compatible with React Native.
               </>
             }
+            Svg={SetPreferences}
+            leftClassName="col--6"
+            rightClassName="col--6"
           />
         </div>
       </div>

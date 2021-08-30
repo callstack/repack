@@ -8,33 +8,31 @@
 .tagline {
   color: rgb(245, 246, 247);
   font-weight: 700;
+  text-align: left;
 }
 
 .buttons {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .button {
-  color: rgb(245, 246, 247);
   border-width: 2px;
-  margin: 0 6px;
+  margin: 0 10px 0 0;
 }
 
-.button:hover {
-  color: rgb(0, 0, 0);
-  background-color: rgb(245, 246, 247);
-  border-color: rgb(245, 246, 247);
+.bannerGraphic {
+  max-width: 400px;
+  max-height: 400px;
 }
 
-.banner {
-  padding: 0 20rem 2rem;
-  fill: red;
+.secondButton:not(:hover) {
+  color: rgb(245, 246, 247) !important;
 }
 
 @media screen and (max-width: 996px) {
-  .banner {
-    padding: 0 2rem 2rem;
+  .bannerGraphic {
+    display: none;
   }
 }
