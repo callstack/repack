@@ -71,67 +71,15 @@ If you're just starting with React Native, it's better to stick with the default
 
 You can read more about design goals and comparisons here: [About Re.Pack](https://github.com/callstack/nativepack/discussions/43)
 
-## Installation & setup
-
-### Compatibility with Webpack
-
-On paper, Re.Pack should work with any version of Webpack 5, but we recommend to consult with the compatibility table below.
-The table represents versions of `webpack` for which Re.Pack is confirmed to work correctly.
-
-If you don't see your version, give it a go. If it doesn't work, please open an issue.
-
-
-| `webpack`  | `@callstack/repack`     | `@callstack/nativepack`*  |
-| ---------- | ----------------------- | ------------------------- |
-| `5.22.0`   |                         | `1.0.x`, `1.1.x`, `1.2.x` |
-| `>=5.29.0` | `2.0.0-beta.x`          | `1.2.x`, `1.3.x`, `1.4.x` |
-
-> \* `@callstack/repack` is rebranded `@callstack/nativepack` - they are both the same project.
-
-1. Install necessary dependencies:
-
-```bash
-npm i -D webpack terser-webpack-plugin babel-loader @callstack/repack
-# or
-yarn add -D webpack terser-webpack-plugin babel-loader @callstack/repack
-```
-2. Create `react-native.config.js` (if it doesn't exists) and paste the following content:
-    ```js
-    module.exports = {
-      commands: require('@callstack/repack/commands')
-    };
-    ```
-3. Create `webpack.config.js` based on the [template](https://github.com/callstack/repack/blob/main/templates/webpack.config.js).
-4. Configure XCode/Gradle to use `webpack-bundle`/`webpack-start` commands:
-   - XCode: Add `export BUNDLE_COMMAND=webpack-bundle` to **_Bundle React Native code and images_** phase inside **_Build Phases_** in your project XCode config. The final phase should look similar to:
-     ```bash
-     export NODE_BINARY=node
-     export BUNDLE_COMMAND=webpack-bundle
-     ../node_modules/react-native/scripts/react-native-xcode.sh
-     ```
-   - Gradle: Add `bundleCommand: "webpack-bundle"` setting to `project.ext.react` inside `android/app/build.gradle` file, so it looks similar to:
-     ```groovy
-     project.ext.react = [
-         enableHermes: false,  // clean and rebuild if changing
-         bundleCommand: "webpack-bundle",
-         bundleInDebug: false
-     ]
-     ```
-5. Now you can build your app for production or run development server with `npx react-native webpack-start` and develop your app.
-
-## Usage
-
-Once you've completed [Installation & setup](#installation--setup) you can:
-
-- Build your application for production using XCode/Android Studio/Gradle/Fastlane or whichever tool you use.
-- Install your application by installing pods + `npx react-native run-ios` or `npx react-native run-android`.
-- Develop your application by starting development server with `npx react-native webpack-start`.
-- Create JavaScript bundle only by running `npx react-native webpack-bundle --entry-file index.js --bundle-output ./dist/index.bundle --dev=false`.
-- Create JavaScript bundle or start development server with Webpack CLI by running `PLATFORM=(ios|android) npx webpack-cli -c webpack.config.js`.
-
 ## Documentation
 
-- [API documentation](https://re-pack.netlify.app/)
+The documentation is available at: https://re-pack.netlify.app/
+
+You can also use the following links to jump to specific topics:
+
+- [Getting Started](https://re-pack.netlify.app/docs/getting-started)
+- [Configuration](https://re-pack.netlify.app/docs/configuration/webpack-config)
+- [API documentation](https://re-pack.netlify.app/docs/api/index)
 - [Known issues & limitations](https://github.com/callstack/nativepack/discussions/44)
 - [Code splitting](https://github.com/callstack/nativepack/discussions/45)
 
