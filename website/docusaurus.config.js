@@ -62,7 +62,7 @@ module.exports = {
           items: [
             {
               label: 'Getting Started',
-              to: '/docs/getting-started/installation',
+              to: '/docs/getting-started',
             },
             {
               label: 'Configuration',
