@@ -200,6 +200,7 @@ module.exports = {
      * In development mode (when development server is running), this plugin is a no-op.
      */
     new ReactNative.OutputPlugin({
+      platform,
       devServerEnabled: devServer.enabled,
       localChunks: [/Async/],
       remoteChunksOutput: path.join(__dirname, 'build', platform, 'remote'),

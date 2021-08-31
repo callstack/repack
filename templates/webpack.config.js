@@ -199,6 +199,7 @@ module.exports = {
      * In development mode (when development server is running), this plugin is a no-op.
      */
     new ReactNative.OutputPlugin({
+      platform,
       devServerEnabled: devServer.enabled,
     }),
 
