@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "generate:api": "del docs/api && yarn --cwd ../packages/repack typedoc && mv ./docs/api/README.md ./docs/api/index.md",
-    "generate:diff": "git diff nativepack:templates/webpack.config.js main:templates/webpack.config.js > tmp/repack_1-2.diff",
+    "generate:diff": "mkdir -p tmp && git diff nativepack:templates/webpack.config.js main:templates/webpack.config.js > tmp/repack_1-2.diff",
     "generate": "yarn generate:api && yarn generate:diff",
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
