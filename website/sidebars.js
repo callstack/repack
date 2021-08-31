@@ -3,7 +3,16 @@ module.exports = {
     {
       type: 'category',
       label: 'Documentation',
-      items: ['about', 'getting-started', 'known-issues'],
+      items: [
+        'about',
+        'getting-started',
+        'known-issues',
+        {
+          type: 'category',
+          label: 'Migration guides',
+          items: ['migration-guides/repack-v1-to-v2'],
+        },
+      ],
     },
   ],
   configuration: [
