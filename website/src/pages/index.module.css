@@ -1,0 +1,48 @@
+.header {
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.tagline {
+  color: rgb(245, 246, 247);
+  font-weight: 700;
+  text-align: left;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.button {
+  border-width: 2px;
+  margin: 0 10px 0 0;
+}
+
+.bannerGraphic {
+  max-width: 400px;
+  max-height: 400px;
+}
+
+.secondButton:not(:hover) {
+  color: rgb(245, 246, 247) !important;
+}
+
+@media screen and (max-width: 996px) {
+  .bannerGraphic {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .buttons {
+    flex-direction: column;
+  }
+
+  .button {
+    margin: 0 0 10px 0;
+  }
+}

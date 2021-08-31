@@ -1,0 +1,37 @@
+.features {
+  display: flex;
+  align-items: center;
+  padding: 4rem 0;
+  width: 100%;
+}
+
+.graphic {
+  width: 300px;
+  height: 300px;
+}
+
+.graphicContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+@media screen and (max-width: 996px) {
+  .graphicContainer {
+    justify-content: flex-start;
+  }
+}
+
+.featureContent {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.link {
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+  vertical-align: inherit;
+}
