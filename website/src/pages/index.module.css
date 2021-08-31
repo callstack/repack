@@ -36,3 +36,13 @@
     display: none;
   }
 }
+
+@media screen and (max-width: 500px) {
+  .buttons {
+    flex-direction: column;
+  }
+
+  .button {
+    margin: 0 0 10px 0;
+  }
+}

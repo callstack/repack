@@ -37,7 +37,11 @@ If you don't see your version, give it a go. If it doesn't work, please open an 
 | `5.22.0`   |                     | `1.0.x`, `1.1.x`, `1.2.x` |
 | `>=5.29.0` | `2.0.0-beta.x`      | `1.2.x`, `1.3.x`, `1.4.x` |
 
-> \* `@callstack/repack` is rebranded `@callstack/nativepack` - they are both the same project.
+:::info
+
+\* `@callstack/repack` is rebranded `@callstack/nativepack` - they are both the same project.
+
+:::
 
 ## Installation
 
@@ -120,7 +124,11 @@ When developing your application, you want to run Re.Pack's development server t
 react-native webpack-start
 ```
 
-> You can pass the same CLI options to `react-native webpack-start` as you would to `react-native start`.
+:::tip
+
+You can pass the same CLI options to `react-native webpack-start` as you would to `react-native start`.
+
+:::
 
 The 2nd option, is to use Webpack CLI:
 
@@ -130,7 +138,11 @@ PLATFORM=(ios|android) webpack-cli -c webpack.config.js
 
 Make sure you have `webpack-cli` installed in your project. When running with Webpack CLI, you run a development server for a single platform - e.g. either `ios` or `android`.
 
-> If you want to develop for multiple platforms at once, please use `react-native webpack-start`.
+:::info
+
+If you want to develop for multiple platforms at once, please use `react-native webpack-start`.
+
+:::
 
 ### Bundling the app
 
@@ -141,8 +153,11 @@ If you want to create bundle (development or production), **the recommended way 
 ```bash
 react-native webpack-bundle
 ```
+:::tip
 
-> You can pass the same CLI options to `react-native webpack-bundle` as you would to `react-native bundle`.
+You can pass the same CLI options to `react-native webpack-bundle` as you would to `react-native bundle`.
+
+:::
 
 The 2nd option, is to use Webpack CLI:
 
@@ -152,12 +167,8 @@ PLATFORM=(ios|android) webpack-cli -c webpack.config.js
 
 Make sure you have `webpack-cli` installed in your project.
 
-> Using Webpack CLI is recommended **only for advanced users**, who have previous experience with Webpack. 
+:::caution
 
+Using Webpack CLI is recommended **only for advanced users**, who have previous experience with Webpack. 
 
-
-
-
-
-
-
+:::

@@ -13,7 +13,11 @@ By default, when running `react-native webpack-start` or `react-native webpack-b
 
 Where `<root>` is your project's root directory.
 
-> The paths above are the same ones that normal Webpack CLI looks for Webpack configuration.
+:::info
+
+The paths above are the same ones that normal Webpack CLI looks for Webpack configuration.
+
+:::
 
 If you want to store Webpack config in different place, you can provide custom path:
 
@@ -21,7 +25,11 @@ If you want to store Webpack config in different place, you can provide custom p
 - `react-native webpack-bundle --webpackConfig <path>`
 - `webpack-cli -c <path>`
 
-> If the `<path>` is relative, then it will be resolved based on root directory detected by React Native CLI, which usually should point to your project's root directory.
+:::info
+
+If the `<path>` is relative, then it will be resolved based on root directory detected by React Native CLI, which usually should point to your project's root directory.
+
+:::
 
 ## Webpack config template
 
@@ -65,9 +73,13 @@ Additionally to let you use React Native CLI in form of `react-native webpack-st
 - [getPublicPath](/docs/api/functions/getPublicPath)
 - [getResolveOptions](/docs/api/functions/getResolveOptions)
 
-> It entirely possible not to use the functions above, but **it's highly recommended to leave them**.
+:::caution
 
-If you're planning on using Webpack CLI to run development server or bundle your application instead of replying on React Native CLI, then you might want to look into providing `fallback` values to each of these functions, for example:
+It entirely possible not to use the functions above, but **it's highly recommended to leave them**.
+
+:::
+
+If you're planning on using Webpack CLI to run development server or bundle your application instead of relying on React Native CLI, then you might want to look into providing `fallback` values to each of these functions, for example:
 
 ```js
 const context = ReactNative.getContext({ fallback: __dirname });
@@ -75,4 +87,8 @@ const context = ReactNative.getContext({ fallback: __dirname });
 
 Those `fallback` values are only used when Webpack compilation is created by Webpack CLI instead of React Native CLI.
 
-> It's highly recommended to use React Native CLI and `react-native webpack-start` or `react-native webpack-bundle` commands unless you have previous experience with Webpack and you know what you're doing.
+:::caution
+
+It's highly recommended to use React Native CLI and `react-native webpack-start` or `react-native webpack-bundle` commands unless you have previous experience with Webpack and you know what you're doing.
+
+:::

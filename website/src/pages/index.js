@@ -38,7 +38,7 @@ function HomepageHeader() {
                     : 'button--secondary',
                   styles.button
                 )}
-                to="/docs/getting-started"
+                to="/docs/about"
               >
                 Read docs
               </Link>

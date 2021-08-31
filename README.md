@@ -63,20 +63,13 @@ __Check the base [`webpack.config.js`](https://github.com/callstack/repack/blob/
   - Bundle visualizations
 - [ ] [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669) support
 
-## Why & when
-
-The main feature of Re.Pack is Webpack and its ecosystem of loaders, plugins and support for various features like symlinks, aliases etc. However, because Re.Pack is based on Webpack, it is targeted towards advanced users who already know how to use Webpack and want to leverage Webpack ecosystem.
-
-If you're just starting with React Native, it's better to stick with the default solution — Metro, since you probably won't benefit much from switching to Webpack.
-
-You can read more about design goals and comparisons here: [About Re.Pack](https://github.com/callstack/nativepack/discussions/43)
-
 ## Documentation
 
 The documentation is available at: https://re-pack.netlify.app/
 
 You can also use the following links to jump to specific topics:
 
+- [About Re.Pack](https://re-pack.netlify.app/docs/about)
 - [Getting Started](https://re-pack.netlify.app/docs/getting-started)
 - [Configuration](https://re-pack.netlify.app/docs/configuration/webpack-config)
 - [API documentation](https://re-pack.netlify.app/docs/api/index)
