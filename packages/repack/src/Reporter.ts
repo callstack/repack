@@ -171,7 +171,7 @@ export class Reporter {
         if (transformedLogEntry) {
           if (shouldBroadcast) {
             this.config.wsEventsServer?.broadcastEvent({
-              type: `rnwt_${transformedLogEntry.type}`,
+              type: `repack_${transformedLogEntry.type}`,
               data: [
                 transformedLogEntry.issuer,
                 ...transformedLogEntry.message,
