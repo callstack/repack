@@ -22,7 +22,7 @@
     "@react-native-async-storage/async-storage": "^1.15.4",
     "lodash.throttle": "^4.1.1",
     "react": "17.0.1",
-    "react-native": "0.64.0"
+    "react-native": "^0.64.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
