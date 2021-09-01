@@ -38,9 +38,15 @@ module.exports = {
         },
         {
           type: 'doc',
-          docId: 'api/index',
+          docId: 'api/react-native/index',
           position: 'left',
-          label: 'API',
+          label: 'React Native API',
+        },
+        {
+          type: 'doc',
+          docId: 'api/node/index',
+          position: 'left',
+          label: 'Node API',
         },
         // {
         //   to: '/blog',
@@ -69,8 +75,12 @@ module.exports = {
               to: '/docs/configuration/webpack-config',
             },
             {
-              label: 'API',
-              to: '/docs/api/index',
+              label: 'React native API',
+              to: '/docs/api/react-native/index',
+            },
+            {
+              label: 'Node API',
+              to: '/docs/api/node/index',
             },
           ],
         },

@@ -1,10 +1,10 @@
 {
-  "out": "../../website/docs/api",
+  "out": "../../website/docs/api/node",
   "entryPoints": ["./src/index.ts"],
   "tsconfig": "./tsconfig.json",
   "categoryOrder": ["Webpack Plugin", "Development server", "*"],
   "readme": "none",
-  "name": "Re.Pack APIs",
+  "name": "Re.Pack Node APIs",
   "excludePrivate": true,
   "allReflectionsHaveOwnDocument": true,
   "hideBreadcrumbs": true

@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "generate:api": "del docs/api && yarn --cwd ../packages/repack typedoc && mv ./docs/api/README.md ./docs/api/index.md",
+    "generate:clean": "del docs/api",
+    "generate:api:node": "yarn --cwd ../packages/repack typedoc --options typedoc.node.json && mv ./docs/api/node/README.md ./docs/api/node/index.md",
+    "generate:api:react-native": "yarn --cwd ../packages/repack typedoc --options typedoc.react-native.json && mv ./docs/api/react-native/README.md ./docs/api/react-native/index.md",
     "generate:diff": "mkdir -p tmp && git diff origin/nativepack:templates/webpack.config.js origin/main:templates/webpack.config.js > tmp/repack_1-2.diff",
-    "generate": "yarn generate:api && yarn generate:diff",
+    "generate": "yarn generate:clean && yarn generate:api:node && yarn generate:api:react-native && yarn generate:diff",
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
