@@ -18,8 +18,8 @@ All development is done directly on GitHub, and all work is public.
 > **Working on your first pull request?** You can learn how from this *free* series: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
 1. Fork the repo and create your branch from `main` (a guide on [how to fork a repository](https://help.github.com/articles/fork-a-repo/)).
-2. Run `npm i` to install & set up the development environment.
-3. Do the changes you want and test them out in the TesterApp (`examples/TesterApp`) before sending a pull request.
+2. Run `yarn install` to install & set up the development environment.
+3. Do the changes you want and test them out in the TesterApp (`packages/TesterApp`) before sending a pull request.
 
 ### Commit message convention
 
@@ -52,11 +52,11 @@ We use `typescript` for type checking, `eslint` with `prettier` for linting and 
 
 The example TesterApp uses React Native CLI so make sure you have your [environment setup to build native apps](https://reactnative.dev/docs/environment-setup).
 
-You can then use Xcode/Android Studio/Gradle to build application or run `npx react-native webpack-start` and `npx react-native run-ios`/`npx react-native run-android` to start development server and run applications in development mode. You can also use `yarn example:start`/`yarn example:build` from the root directory.
+You can then use Xcode/Android Studio/Gradle to build application or run `yarn react-native webpack-start` and `yarn react-native run-ios`/`yarn react-native run-android` to start development server and run applications in development mode. You can also use `yarn example:start`/`yarn example:build` from the root directory.
 
 ### Working on documentation
 
-The documentation is automatically generated from the [TypeScript](https://www.typescriptlang.org/) types and in-code documentation comments using [TypeDoc](https://typedoc.org/).
+The documentation is automatically generated from the [TypeScript](https://www.typescriptlang.org/) types and in-code documentation comments using [TypeDoc](https://typedoc.org/). The documentation is a part of the website, which is stored in `website` directory and uses Docusaurus v2.
 
 ### Publishing a release
 
