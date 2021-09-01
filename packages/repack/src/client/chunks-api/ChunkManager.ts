@@ -10,7 +10,17 @@ interface Cache {
   urls: Record<string, string>;
 }
 
+/**
+ * Interface specifying where a remote chunk is hosted.
+ * It represents the output of {@link RemoteChunkResolver} function used by {@link ChunkManager}.
+ */
 export interface RemoteChunkLocation {
+  /**
+   * A URL to remote location, where to download a chunk from.
+   *
+   * Example: for `chunkId: 'TeacherModule'` the `url` can look like this:
+   * `https://myapp.com/assets/TeacherModule`.
+   */
   url: string;
   /**
    * Whether not to add chunk's default extension by default. If your chunk has different
@@ -19,22 +29,50 @@ export interface RemoteChunkLocation {
   excludeExtension?: boolean;
 }
 
+/**
+ * Defines a function to resolve remote chunk's URL used in {@link ChunkManagerConfig}.
+ * It's an async function which should return an object with `url` to a remote location
+ * from where {@link ChunkManager} will download the chunk.
+ */
 export type RemoteChunkResolver = (
   chunkId: string
 ) => Promise<RemoteChunkLocation>;
 
+/**
+ * Interface for storage backend used in {@link ChunkManagerConfig}.
+ * The interface is modelled on Async Storage from `react-native-community`.
+ */
 export interface StorageApi {
+  /** Gets the data for the key. */
   getItem: (key: string) => Promise<string | null | undefined>;
+  /** Sets the item value based on the key. */
   setItem: (key: string, value: string) => Promise<void>;
+  /** Removes the item based on the key. */
   removeItem: (key: string) => Promise<void>;
 }
 
+/**
+ * Configuration options for {@link ChunkManager}.
+ */
 export interface ChunkManagerConfig {
+  /**
+   * Optional: A storage backend to cache resolved URLs for chunks.
+   * The stored data is used to detect if URL to previously downloaded
+   * chunk hasn't changed to avoid over-fetching the chunk.
+   * If the perviously resolved URL matches new URL, the chunk won't be downloaded
+   * again and the previously downloaded chunk will be executed instead.
+   */
   storage?: StorageApi;
-  resolveRemoteChunk?: RemoteChunkResolver;
+
+  /**
+   * An async function to resolve URL to remote chunks hosted on remove servers.
+   * You can use remote config, feature flags or A/B testing inside this function
+   * return different URLs based on this logic.
+   */
+  resolveRemoteChunk: RemoteChunkResolver;
 }
 
-class ChunkManager {
+class ChunkManagerBackend {
   private cache?: Cache;
   private resolveRemoteChunk?: RemoteChunkResolver;
   private storage?: StorageApi;
@@ -162,23 +200,150 @@ class ChunkManager {
   }
 }
 
-const ChunkManagerInstance = new ChunkManager();
-export { ChunkManagerInstance as ChunkManager };
+/**
+ * A manager to ease resolving, downloading and executing additional code from async chunks or
+ * any arbitrary JavaScript files.
+ *
+ * This API is only useful if you are working with any form of Code Splitting.
+ *
+ * Example of using this API with async chunks:
+ * ```js
+ * import * as React from 'react';
+ * import { ChunkManager } from '@callstack/repack/client';
+ *
+ * ChunkManager.configure({
+ *   resolveRemoteChunk: async (chunkId) => {
+ *     return {
+ *       url: `http://domain.exaple/apps/${chunkId}`,
+ *     };
+ *   };
+ * });
+ *
+ * // ChunkManager.loadChunk is called internally when running `import()`
+ * const TeacherModule = React.lazy(() => import('./Teacher.js'));
+ * const StudentModule = React.lazy(() => import('./Student.js'));
+ *
+ * export function App({ role }) {
+ *   if (role === 'teacher') {
+ *     return <TeacherModule />;
+ *   }
+ *
+ *   return <StudentModule />
+ * }
+ * ```
+ */
+export class ChunkManager {
+  /**
+   * A instance of `ChunkManagerBackend`.
+   * Should not be used directly.
+   *
+   * @internal
+   */
+  private static backend = new ChunkManagerBackend();
 
-export const Chunk = {
-  fromDevServer(chunkId: string) {
+  /**
+   * Configures `ChunkManager` to be able to resolve location of additional
+   * chunks (or arbitrary code) in production.
+   * Optionally, it also allows to set up caching to avoid over-fetching of chunks.
+   *
+   * @param config Configuration options.
+   */
+  static configure(config: ChunkManagerConfig) {
+    ChunkManager.backend.configure(config);
+  }
+
+  /**
+   * Resolves a URL to a given chunks and  whether to download a chunk
+   * or reuse previously downloaded one.
+   *
+   * @param chunkId Id of the chunk.
+   * @returns Promise with chunk's URL as `url` and a boolean `fetch` whether to download a chunk
+   * or reuse previously downloaded one.
+   */
+  static async resolveChunk(chunkId: string) {
+    return ChunkManager.backend.resolveChunk(chunkId);
+  }
+
+  /**
+   * Resolves given chunk's location, download and execute it.
+   *
+   * This function can be awaited for error handling, but after the functions resolves,
+   * it should **not be assumed that the code was executed**.
+   *
+   * The execution of the code is handled internally by threading in React Native.
+   *
+   * @param chunkId Id of the chunk.
+   */
+  static async loadChunk(chunkId: string) {
+    return ChunkManager.backend.loadChunk(chunkId);
+  }
+
+  /**
+   * Resolves given chunk's location and download it without executing.
+   *
+   * This function can be awaited to detect if the chunk was downloaded and for error handling.
+   *
+   * @param chunkId Id of the chunk.
+   */
+  static async preloadChunk(chunkId: string) {
+    return ChunkManager.backend.preloadChunk(chunkId);
+  }
+
+  /**
+   * Clears the cache (if configured in {@link ChunkManager.configure}) and removes downloaded
+   * files for given chunks from the filesystem.
+   *
+   * This function can be awaited to detect if the chunks were invalidated and for error handling.
+   *
+   * @param chunksIds Array of chunk Ids to clear from cache and remove from filesystem.
+   */
+  static async invalidateChunks(chunksIds: string[] = []) {
+    return ChunkManager.backend.invalidateChunks(chunksIds);
+  }
+}
+
+/**
+ * A helper class to ease the creation of of chunk based on it's location.
+ *
+ * **You should not need to use this.**
+ *
+ * @internal
+ */
+export class Chunk {
+  /**
+   * Creates definition for a chunk hosted on development server.
+   *
+   * @param chunkId Id of the chunk.
+   * @returns Chunk definition.
+   */
+  static fromDevServer(chunkId: string) {
     return `${__webpack_public_path__}${__webpack_get_script_filename__(
       chunkId
     )}`;
-  },
-  fromFileSystem(chunkId: string) {
+  }
+
+  /**
+   * Creates definition for a chunk stored on filesystem on the target mobile device.
+   *
+   * @param chunkId Id of the chunk.
+   * @returns Chunk definition.
+   */
+  static fromFileSystem(chunkId: string) {
     return __webpack_get_script_filename__(`file:///${chunkId}`);
-  },
-  fromRemote(url: string, options: { excludeExtension?: boolean } = {}) {
+  }
+
+  /**
+   * Creates definition for a chunk hosted on a remote server.
+   *
+   * @param url A URL to remote location where the chunk is stored.
+   * @param options Additional options.
+   * @returns Chunk definition.
+   */
+  static fromRemote(url: string, options: { excludeExtension?: boolean } = {}) {
     if (options.excludeExtension) {
       return url;
     }
 
     return __webpack_get_script_filename__(url);
-  },
-};
+  }
+}

@@ -6,7 +6,7 @@ Before diving deep into Re.Pack and introducing it into project, it's important 
 
 React Native environment and Browser environment have differences. React Native needs to run additional JS setup/init code so that it's usable at all. There's a great discrepancy between available APIs. In React Native we also have platform specific files — e.g.: `.ios.js`, `.android.js` and so on.
 
-Putting all of the above together, makes Webpack **unable to produce bundle** at all due to build errors and then the **bundle produced by Webpack is unusable** by default.
+Putting all the above together, makes Webpack **unable to produce bundle** at all due to build errors and then the **bundle produced by Webpack is unusable** by default.
 
 Therefore, we need to make changes to Webpack configuration and change how and what Webpack puts into the final bundle. All these necessary changes are encapsulated inside Re.Pack in form of Webpack plugins.
 
@@ -54,7 +54,7 @@ Re.Pack is a direct successor to [Haul](https://github.com/callstack/haul). Ther
 
 - Re.Pack has smaller footprint and allows for greater level of customization, since you have direct access to the Webpack config.
 - Re.Pack supports Hot Module Replacement + React Refresh, whereas Haul does not.
-- Haul supports legacy implementation of multi-bundling (though it requires to alter React Native source code, so we don't recommend that), where as Re.Pack supports code splitting and in the future [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669).
+- Haul supports legacy implementation of multi-bundling (though it requires to alter React Native source code, so we don't recommend that), whereas Re.Pack supports code splitting and in the future [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669).
 - Re.Pack delivers better Developer Experience by providing you with more meaningful logs, easier usage and more customizability.
 
 ## Re.Pack vs `@callstack/nativepack`
