@@ -6,8 +6,8 @@ import dedent from 'dedent';
 import hasha from 'hasha';
 import escapeStringRegexp from 'escape-string-regexp';
 import { ISizeCalculationResult } from 'image-size/dist/types/interface';
-import { AssetResolver } from './AssetResolver';
-import { getAssetExtensionsRegExp } from './assetExtensions';
+import { AssetResolver } from '../plugins/AssetsResolverPlugin/AssetResolver';
+import { getAssetExtensionsRegExp } from '../utils/assetExtensions';
 
 interface Options {
   platform: string;
@@ -288,6 +288,6 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       `
     );
   } catch (error) {
-    callback?.(error);
+    callback?.(error as Error);
   }
 }

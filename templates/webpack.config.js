@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
-const ReactNative = require('@callstack/repack');
 const TerserPlugin = require('terser-webpack-plugin');
+const ReactNative = require('@callstack/repack');
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
@@ -31,7 +31,7 @@ const TerserPlugin = require('terser-webpack-plugin');
  * to specify your values, if the defaults don't suit your project.
  */
 
-const mode = ReactNative.getMode();
+const mode = ReactNative.getMode({ fallback: 'development' });
 const dev = mode === 'development';
 const context = ReactNative.getContext();
 const entry = ReactNative.getEntry();
@@ -165,6 +165,34 @@ module.exports = {
           },
         },
       },
+      /**
+       * This loader handles all static assets (images, video, audio and others), so that you can
+       * use (reference) them inside your application.
+       *
+       * If you wan to handle specific asset type manually, filter out the extension
+       * from `ASSET_EXTENSIONS`, for example:
+       * ```
+       * ReactNative.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+       * ```
+       */
+      {
+        test: ReactNative.getAssetExtensionsRegExp(
+          ReactNative.ASSET_EXTENSIONS
+        ),
+        use: {
+          loader: '@callstack/repack/assets-loader',
+          options: {
+            platform,
+            devServerEnabled: devServer.enabled,
+            /**
+             * Defines which assets are scalable - which assets can have
+             * scale suffixes: `@1x`, `@2x` and so on.
+             * By default all images are scalable.
+             */
+            scalableAssetExtensions: ReactNative.SCALABLE_ASSETS,
+          },
+        },
+      },
     ],
   },
   plugins: [
@@ -177,11 +205,11 @@ module.exports = {
     }),
 
     /**
-     * This plugin makes sure you can use assets like images, videos, audio.
+     * This plugin makes sure the resolution for assets like images works with scales,
+     * for example: `image@1x.png`, `image@2x.png`.
      */
-    new ReactNative.AssetsPlugin({
+    new ReactNative.AssetsResolverPlugin({
       platform,
-      devServerEnabled: devServer.enabled,
     }),
 
     /**

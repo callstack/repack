@@ -1,14 +1,14 @@
 import webpack from 'webpack';
-import { WebpackPlugin } from '../../../types';
+import { WebpackPlugin } from '../../types';
 import {
   ASSET_EXTENSIONS,
   getAssetExtensionsRegExp,
   SCALABLE_ASSETS,
-} from './assetExtensions';
-import { AssetResolver, AssetResolverConfig } from './AssetResolver';
-
-/** A path to a Re.Pack's asset loader. */
-export const ASSET_LOADER = require.resolve('./assetsLoader.cjs');
+} from '../utils/assetExtensions';
+import {
+  AssetResolver,
+  AssetResolverConfig,
+} from './AssetsResolverPlugin/AssetResolver';
 
 /**
  * {@link AssetsPlugin} configuration options.
@@ -34,6 +34,9 @@ export interface AssetsPluginConfig extends AssetResolverConfig {
  *
  * Assets processing in React Native differs from Web, Node.js or other targets. This plugin allows
  * you to use assets in the same way as you would do when using Metro.
+ *
+ * @deprecated Use dedicated rule with `@callstack/repack/assets-loader` and `AssetsResolverPlugin`.
+ * More information can be found here: https://github.com/callstack/repack/pull/81
  *
  * @category Webpack Plugin
  */
@@ -63,7 +66,7 @@ export class AssetsPlugin implements WebpackPlugin {
         test: getAssetExtensionsRegExp(assetResolver.config.extensions!),
         use: [
           {
-            loader: ASSET_LOADER,
+            loader: require.resolve('../../../assets-loader.js'),
             options: {
               platform: this.config.platform,
               scalableAssetExtensions: SCALABLE_ASSETS,

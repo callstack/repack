@@ -2,7 +2,7 @@ import path from 'path';
 import escapeStringRegexp from 'escape-string-regexp';
 import webpack from 'webpack';
 import { HookMap, SyncHook } from 'tapable';
-import { getAssetExtensionsRegExp } from './assetExtensions';
+import { getAssetExtensionsRegExp } from '../../utils/assetExtensions';
 
 /**
  * {@link AssetResolver} configuration options.
