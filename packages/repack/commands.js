@@ -1,6 +1,43 @@
 const path = require('path');
-const RnCliStartCommand =
-  require('@react-native-community/cli/build/commands/start/start').default;
+const { createRequire } = require('module');
+
+function getReactNativeCliPath() {
+  let cliPath;
+
+  try {
+    cliPath = path.dirname(require.resolve('@react-native-community/cli'));
+  } catch {
+    // NOOP
+  }
+
+  try {
+    cliPath = path.dirname(
+      require.resolve('react-native/node_modules/@react-native-community/cli')
+    );
+  } catch {
+    // NOOP
+  }
+
+  try {
+    const rnRequire = createRequire(require.resolve('react-native'));
+    cliPath = path.dirname(rnRequire.resolve('@react-native-community/cli'));
+  } catch {
+    // NOOP
+  }
+
+  if (!cliPath) {
+    throw new Error('Cannot resolve @react-native-community/cli package');
+  }
+
+  return cliPath;
+}
+
+const {
+  projectCommands: cliCommands,
+} = require(`${getReactNativeCliPath()}/commands`);
+
+const startCommand = cliCommands.find((command) => command.name === 'start');
+const bundleCommand = cliCommands.find((command) => command.name === 'bundle');
 
 const webpackConfigOption = {
   name: '--webpackConfig <path>',
@@ -11,20 +48,20 @@ const webpackConfigOption = {
 module.exports = [
   {
     name: 'webpack-bundle',
-    options:
-      require('@react-native-community/cli/build/commands/bundle/bundleCommandLineArgs').default.concat(
-        {
-          name: '--verbose',
-          description: 'Enables verbose logging',
-        },
-        webpackConfigOption
-      ),
+    description: bundleCommand.description,
+    options: bundleCommand.options.concat(
+      {
+        name: '--verbose',
+        description: 'Enables verbose logging',
+      },
+      webpackConfigOption
+    ),
     func: require('./dist/commands/bundle').bundle,
   },
   {
     name: 'webpack-start',
-    options: RnCliStartCommand.options.concat(webpackConfigOption),
-    description: RnCliStartCommand.description,
+    options: startCommand.options.concat(webpackConfigOption),
+    description: startCommand.description,
     func: require('./dist/commands/start').start,
   },
 ];
