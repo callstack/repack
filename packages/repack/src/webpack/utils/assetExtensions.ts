@@ -12,7 +12,7 @@ export const SCALABLE_ASSETS = [
   'tiff',
 ];
 
-/** Extensions array of all supported assets by Re.Pack's {@link AssetResolver}. */
+/** Extensions array of all supported assets by Re.Pack's Assets loader. */
 export const ASSET_EXTENSIONS = [
   ...SCALABLE_ASSETS,
   // Video formats
