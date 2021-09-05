@@ -6,13 +6,11 @@ By default, Re.Pack's [Assets loader](/docs/configuration/loaders/assets-loader)
 
 To render SVGs in your application, you first need to add [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) native module to your application.
 
-Please follow the installation instructions from `react-native-svg` here: https://github.com/react-native-svg/react-native-svg#installation
+Please follow this installation instructions here: https://github.com/react-native-svg/react-native-svg#installation
 
 ## Exclude SVG from Re.Pack's Assets loader
 
-Now that you have `react-native-svg` installed and linked into the application, you need to tell
-Webpack not to use Re.Pack's [Assets loader](/docs/configuration/loaders/assets-loader) from processing
-SVGs, since you will process them manually later.
+Now that you have [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) installed and linked into the application, you need to tell Webpack **not to use** Re.Pack's [Assets loader](/docs/configuration/loaders/assets-loader) from processing SVGs, since you will process them manually later.
 
 Go to your Webpack configuration and apply the following diff:
 
@@ -28,15 +26,11 @@ Go to your Webpack configuration and apply the following diff:
 
 :::tip
 
-If you don't have Re.Pack's Assets loader rule in your Webpack config, read [this guide](/docs/configuration/loaders/assets-loader#migrating-from-assetsplugin)
-first and then come back here.
+If you don't have Re.Pack's Assets loader rule in your Webpack config, read [this guide](/docs/configuration/loaders/assets-loader#migrating-from-assetsplugin) first.
 
 :::
 
-Now there are 2 ways of rendering `.svg` files:
-
-- Using `@svgr/webpack`
-- Using Webpack's asset modules — `asset/source`
+Now you need to tell Webpack how to handle `.svg` files.
 
 ## Using `@svgr/webpack`
 
@@ -54,7 +48,7 @@ export function MyComponent() {
 
 ### Setup
 
-To use SVGR, you need to add additional rule to process SVGs with `@svgr/webpack` loader.
+To use SVGR, you need to add an additional rule to process SVGs with `@svgr/webpack` loader.
 
 Go to your Webpack configuration and apply the following diff:
 
@@ -156,7 +150,7 @@ module.exports = {
 };
 ```
 
-Now you can import the XML of your SVG in you code and render it using `SvgXml` or `SvgUri` from [`react-native-svg`](https://github.com/react-native-svg/react-native-svg).
+Now you can import the XML of your SVG in you code and render it using `SvgXml` from [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) or `SvgUri` if you chose `asset/inline` type.
 
 :::info
 
@@ -169,7 +163,7 @@ If you want to inline SVGs as data URI, use `asset/inline` in the rule:
       },
 ```
 
-Remember to use `SvgUri` from inlined SVGs.
+Remember to use `SvgUri` for inlined SVGs instead of `SvgXml`.
 
 :::
 
