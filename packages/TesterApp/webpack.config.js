@@ -8,7 +8,7 @@ const ReactNative = require('@callstack/repack');
  * https://github.com/callstack/repack/blob/main/README.md
  *
  * The API documentation for the functions and plugins used in this file is available at:
- * https://callstack-repack.netlify.app/
+ * https://re-pack.netlify.app/
  */
 
 /**
@@ -166,6 +166,46 @@ module.exports = {
           },
         },
       },
+      /**
+       * This loader handles all static assets (images, video, audio and others), so that you can
+       * use (reference) them inside your application.
+       *
+       * If you wan to handle specific asset type manually, filter out the extension
+       * from `ASSET_EXTENSIONS`, for example:
+       * ```
+       * ReactNative.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+       * ```
+       */
+      {
+        test: ReactNative.getAssetExtensionsRegExp(
+          ReactNative.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+        ),
+        use: {
+          loader: '@callstack/repack/assets-loader',
+          options: {
+            platform,
+            devServerEnabled: devServer.enabled,
+            /**
+             * Defines which assets are scalable - which assets can have
+             * scale suffixes: `@1x`, `@2x` and so on.
+             * By default all images are scalable.
+             */
+            scalableAssetExtensions: ReactNative.SCALABLE_ASSETS,
+          },
+        },
+      },
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: '@svgr/webpack',
+            options: {
+              native: true,
+              dimensions: false,
+            },
+          },
+        ],
+      },
     ],
   },
   plugins: [
@@ -178,11 +218,11 @@ module.exports = {
     }),
 
     /**
-     * This plugin makes sure you can use assets like images, videos, audio.
+     * This plugin makes sure the resolution for assets like images works with scales,
+     * for example: `image@1x.png`, `image@2x.png`.
      */
-    new ReactNative.AssetsPlugin({
+    new ReactNative.AssetsResolverPlugin({
       platform,
-      devServerEnabled: devServer.enabled,
     }),
 
     /**

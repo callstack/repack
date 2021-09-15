@@ -12,6 +12,7 @@
     "ios",
     "commands.js",
     "client.js",
+    "assets-loader.js",
     "callstack-repack.podspec",
     "!android/build",
     "!ios/build"

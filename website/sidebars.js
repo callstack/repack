@@ -45,6 +45,16 @@ module.exports = {
     },
     {
       type: 'category',
+      label: 'Loaders',
+      items: ['configuration/loaders/assets-loader'],
+    },
+    {
+      type: 'category',
+      label: 'Guides',
+      items: ['configuration/guides/svg'],
+    },
+    {
+      type: 'category',
       label: 'Functions',
       items: [
         'api/node/functions/getContext',

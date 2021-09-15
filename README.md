@@ -85,9 +85,9 @@ Like the project? ⚛️ [Join the team](https://callstack.com/careers/?utm_camp
 <!-- badges -->
 [callstack-readme-with-love]: https://callstack.com/?utm_source=github.com&utm_medium=referral&utm_campaign=react-native-paper&utm_term=readme-with-love
 [goto-installation-badge]: https://img.shields.io/badge/go%20to-Installation-blue?style=flat-square
-[goto-installation]: #installation--setup
+[goto-installation]: https://re-pack.netlify.app/docs/getting-started#installation
 [goto-usage-badge]: https://img.shields.io/badge/go%20to-Usage-blue?style=flat-square
-[goto-usage]: #usage
+[goto-usage]: https://re-pack.netlify.app/docs/getting-started#usage
 [goto-api-docs-badge]: https://img.shields.io/badge/go%20to-API%20docs-blue?style=flat-square
 [goto-api-docs]: https://re-pack.netlify.app/
 
