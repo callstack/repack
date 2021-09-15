@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { Colors, Header } from 'react-native/Libraries/NewAppScreen';
+import DeveloperActivitySvg from './undraw_Developer_activity_re_39tg.svg';
 
 import { RemoteContainer } from './RemoteContainer';
 import { AsyncContainer } from './AsyncContainer';
@@ -31,6 +32,7 @@ const App = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}
         >
+          <DeveloperActivitySvg width="100%" height="400" />
           <Section title="Async chunk">
             <AsyncContainer />
           </Section>

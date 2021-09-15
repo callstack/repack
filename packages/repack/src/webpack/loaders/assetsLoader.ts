@@ -6,11 +6,13 @@ import dedent from 'dedent';
 import hasha from 'hasha';
 import escapeStringRegexp from 'escape-string-regexp';
 import { ISizeCalculationResult } from 'image-size/dist/types/interface';
-import { AssetResolver } from './AssetResolver';
+import { AssetResolver } from '../plugins/AssetsResolverPlugin/AssetResolver';
+import { getAssetExtensionsRegExp } from '../utils/assetExtensions';
 
 interface Options {
   platform: string;
-  bundleToFile?: boolean;
+  scalableAssetExtensions: string[];
+  devServerEnabled?: boolean;
   publicPath?: string;
 }
 
@@ -20,12 +22,15 @@ function getOptions(loaderContext: LoaderContext): Options {
   validateSchema(
     {
       type: 'object',
-      required: ['platform'],
+      required: ['platform', 'scalableAssetExtensions'],
       properties: {
         platform: {
           type: 'string',
         },
-        bundleToFile: { type: 'boolean' },
+        scalableAssetExtensions: {
+          type: 'array',
+        },
+        devServerEnabled: { type: 'boolean' },
         publicPath: { type: 'string' },
       },
     },
@@ -92,11 +97,15 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
         }
       })
     );
-    const scales = AssetResolver.collectScales(files, {
-      name: filename,
-      type,
-      platform: options.platform,
-    });
+    const scales = AssetResolver.collectScales(
+      getAssetExtensionsRegExp(options.scalableAssetExtensions),
+      files,
+      {
+        name: filename,
+        type,
+        platform: options.platform,
+      }
+    );
 
     const scaleKeys = Object.keys(scales).sort(
       (a, b) =>
@@ -122,7 +131,10 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
               } else {
                 let destination;
 
-                if (options.bundleToFile && options.platform === 'android') {
+                if (
+                  !options.devServerEnabled &&
+                  options.platform === 'android'
+                ) {
                   const testXml = /\.(xml)$/;
                   const testMP4 = /\.(mp4)$/;
                   const testImages = /\.(png|jpg|gif|webp)$/;
@@ -266,9 +278,9 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
         hash: ${JSON.stringify(hashes.join())},
         httpServerLocation: ${JSON.stringify(publicPath)},
         ${
-          options.bundleToFile
-            ? ''
-            : `fileSystemLocation: ${JSON.stringify(dirname)},`
+          options.devServerEnabled
+            ? `fileSystemLocation: ${JSON.stringify(dirname)},`
+            : ''
         }
         ${info ? `height: ${info.height},` : ''}
         ${info ? `width: ${info.width},` : ''}
@@ -276,6 +288,6 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       `
     );
   } catch (error) {
-    callback?.(error);
+    callback?.(error as Error);
   }
 }

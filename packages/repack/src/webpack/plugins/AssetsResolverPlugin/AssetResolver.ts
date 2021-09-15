@@ -2,17 +2,25 @@ import path from 'path';
 import escapeStringRegexp from 'escape-string-regexp';
 import webpack from 'webpack';
 import { HookMap, SyncHook } from 'tapable';
+import { getAssetExtensionsRegExp } from '../../utils/assetExtensions';
 
 /**
  * {@link AssetResolver} configuration options.
  */
 export interface AssetResolverConfig {
   /**
-   * Override default test RegExp. If the asset matches the `test` RegExp, it will be process
+   * Override default asset extensions. If the asset matches one of the extensions, it will be process
    * by the custom React Native asset resolver. Otherwise, the resolution will process normally and
    * the asset will be handled by Webpack.
    */
-  test?: RegExp;
+  extensions?: string[];
+
+  /**
+   * Override default scalable extensions, which processes only scalable assets like images
+   * to create a map of DPI variants of the asset.
+   */
+  scalableExtensions?: string[];
+
   /** Target application platform. */
   platform: string;
 }
@@ -44,15 +52,12 @@ type Resolver =
     : never;
 
 export class AssetResolver {
-  static DEFAULT_TEST =
-    /\.(aac|aiff|bmp|caf|gif|html|jpeg|jpg|m4a|m4v|mov|mp3|mp4|mpeg|mpg|obj|otf|pdf|png|psd|svg|ttf|wav|webm|webp)$/;
-
   static collectScales(
+    scalableTestRegex: RegExp,
     files: string[],
     { name, type, platform }: CollectOptions
   ): CollectedScales {
-    // TODO: make it configurable
-    const regex = /^(bmp|gif|jpg|jpeg|png|psd|tiff|webp|svg)$/.test(type)
+    const regex = scalableTestRegex.test(type)
       ? new RegExp(
           `^${escapeStringRegexp(
             name
@@ -87,15 +92,14 @@ export class AssetResolver {
   constructor(
     public readonly config: AssetResolverConfig,
     private compiler: webpack.Compiler
-  ) {
-    if (!this.config.test) {
-      this.config.test = AssetResolver.DEFAULT_TEST;
-    }
-  }
+  ) {}
 
   apply(resolver: Resolver) {
     const platform = this.config.platform;
-    const test = this.config.test!;
+    const test = getAssetExtensionsRegExp(this.config.extensions!);
+    const scalableTest = getAssetExtensionsRegExp(
+      this.config.scalableExtensions!
+    );
 
     const logger = this.compiler.getInfrastructureLogger(
       'ReactNativeAssetResolver'
@@ -133,7 +137,7 @@ export class AssetResolver {
             let resolved = files.includes(basename) ? requestPath : undefined;
 
             if (!resolved) {
-              const map = AssetResolver.collectScales(files, {
+              const map = AssetResolver.collectScales(scalableTest, files, {
                 name,
                 type,
                 platform,
