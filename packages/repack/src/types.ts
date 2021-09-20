@@ -82,7 +82,7 @@ export interface StartArguments extends CommonArguments {
 export interface DevServerOptions {
   /** Whether to start development server. */
   enabled?: boolean;
-  /** Hostname under which to run the development server. Defaults to `localhost`. */
+  /** Hostname under which to run the development server. */
   host?: string;
   /** Port under which to run the development server. See: {@link DEFAULT_PORT}. */
   port: number;
