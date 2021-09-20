@@ -24,7 +24,7 @@ export class TargetPlugin implements WebpackPlugin {
     compiler.options.output.chunkLoadingGlobal = 'rnwtLoadChunk';
 
     new webpack.NormalModuleReplacementPlugin(
-      /react-native\/Libraries\/Utilities\/HMRClient\.js$/,
+      /react-native([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/,
       function (resource) {
         const request = require.resolve('../../client/runtime/DevServerClient');
         const context = path.dirname(request);

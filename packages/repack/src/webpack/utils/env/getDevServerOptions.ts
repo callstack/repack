@@ -35,7 +35,7 @@ export function getDevServerOptions(
     return {
       enabled: true,
       hmr: getFallbackFromOptions(options).hmr ?? true,
-      host: host || getFallbackFromOptions(options).host || 'localhost',
+      host: host || getFallbackFromOptions(options).host,
       port: port ?? getFallbackFromOptions(options).port ?? DEFAULT_PORT,
       https,
       cert,
