@@ -46,7 +46,7 @@ __Check the base [`webpack.config.js`](https://github.com/callstack/repack/blob/
   - React DevTools
   - Development server (debugging/verbose) logs
 - [x] Hermes support:
-  - Running the production/development bundle using Harmes engine
+  - Running the production/development bundle using Hermes engine
   - Transforming production bundle into bytecode bundle
   - Inspecting running Hermes engine with Flipper
 - [x] [Code splitting](https://github.com/callstack/nativepack/discussions/45) (__experimental__):
