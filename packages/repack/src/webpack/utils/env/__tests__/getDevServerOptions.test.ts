@@ -36,7 +36,6 @@ describe('getDevServerOptions', () => {
       enabled: true,
       hmr: true,
       port: DEFAULT_PORT,
-      host: 'localhost',
     });
 
     process.env[CLI_OPTIONS_ENV_KEY] = JSON.stringify({
