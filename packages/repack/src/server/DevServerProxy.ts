@@ -77,7 +77,7 @@ export class DevServerProxy extends BaseDevServer {
   }
 
   /** Platform to worker mappings. */
-  workers: Record<string, Promise<CompilerWorker>> = {};
+  workers: Record<string, Promise<CompilerWorker> | undefined> = {};
   /** Reporter instance. */
   reporter = new Reporter({ wsEventsServer: this.wsEventsServer });
 
@@ -198,7 +198,11 @@ export class DevServerProxy extends BaseDevServer {
     request: DevServerRequest,
     reply: DevServerReply
   ) {
-    const { port } = await this.workers[platform];
+    if (!this.workers[platform]) {
+      await this.runWorker(platform);
+    }
+
+    const { port } = await (this.workers[platform] as Promise<CompilerWorker>);
     const host = request.headers[':authority'] || request.headers.host;
     const url = request.headers[':path'] || request.raw.url;
     if (!url || !host) {
@@ -211,7 +215,7 @@ export class DevServerProxy extends BaseDevServer {
         method: request.method,
         body: request.body,
       });
-      return reply.from(compilerWorkerUrl);
+      reply.from(compilerWorkerUrl);
     }
   }
 
@@ -252,8 +256,10 @@ export class DevServerProxy extends BaseDevServer {
       if (!platform) {
         reply.code(400).send();
       } else {
-        return this.forwardRequest(platform, request, reply);
+        await this.forwardRequest(platform, request, reply);
       }
+
+      return reply;
     });
 
     this.fastify.route({
@@ -283,16 +289,14 @@ export class DevServerProxy extends BaseDevServer {
           reply.code(400).send();
         } else {
           try {
-            if (!this.workers[platform]) {
-              await this.runWorker(platform);
-            }
-
-            return this.forwardRequest(platform, request, reply);
+            await this.forwardRequest(platform, request, reply);
           } catch (error) {
             console.error(error);
             reply.code(500).send();
           }
         }
+
+        return reply;
       },
     });
   }
