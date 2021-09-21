@@ -1,4 +1,4 @@
-/* globals __DEV__, __CHUNKS__, __webpack_public_path__, __webpack_get_script_filename__ */
+/* globals __DEV__, __webpack_public_path__, __webpack_get_script_filename__ */
 
 // @ts-ignore
 import { NativeModules } from 'react-native';
@@ -70,15 +70,25 @@ export interface ChunkManagerConfig {
    * return different URLs based on this logic.
    */
   resolveRemoteChunk: RemoteChunkResolver;
+
+  /**
+   * Forces `ChunkManager` to always use `resolveRemoteChunk` function to resolve location
+   * of a chunk, regardless if the chunk is marked as local chunk or if the development server
+   * is running.
+   */
+  forceRemoteChunkResolution?: boolean;
 }
 
 class ChunkManagerBackend {
   private cache?: Cache;
   private resolveRemoteChunk?: RemoteChunkResolver;
   private storage?: StorageApi;
+  private forceRemoteChunkResolution = false;
 
   configure(config: ChunkManagerConfig) {
     this.storage = config.storage;
+    this.forceRemoteChunkResolution =
+      config.forceRemoteChunkResolution ?? false;
     this.resolveRemoteChunk = config.resolveRemoteChunk;
   }
 
@@ -103,9 +113,12 @@ class ChunkManagerBackend {
     let fetch = false;
     let url: string | undefined;
 
-    if (__DEV__) {
+    if (__DEV__ && !this.forceRemoteChunkResolution) {
       url = Chunk.fromDevServer(chunkId);
-    } else if (__CHUNKS__?.['local']?.includes(chunkId)) {
+    } else if (
+      global.__CHUNKS__?.['local']?.includes(chunkId) &&
+      !this.forceRemoteChunkResolution
+    ) {
       url = Chunk.fromFileSystem(chunkId);
     } else {
       if (!this.resolveRemoteChunk) {
@@ -140,16 +153,21 @@ class ChunkManagerBackend {
       url = resolved.url;
       fetch = resolved.fetch;
     } catch (error) {
+      console.error(
+        'ChunkManager.resolveChunk error:',
+        (error as Error).message
+      );
       throw new LoadEvent('resolution', chunkId, error);
     }
 
     try {
       await NativeModules.ChunkManager.loadChunk(chunkId, url, fetch);
     } catch (error) {
+      const { message, code } = error as Error & { code: string };
       console.error(
         'ChunkManager.loadChunk invocation failed:',
-        error.message,
-        error.code ? `[${error.code}]` : ''
+        message,
+        code ? `[${code}]` : ''
       );
       throw new LoadEvent('load', url, error);
     }
@@ -163,16 +181,21 @@ class ChunkManagerBackend {
       url = resolved.url;
       fetch = resolved.fetch;
     } catch (error) {
+      console.error(
+        'ChunkManager.resolveChunk error:',
+        (error as Error).message
+      );
       throw new LoadEvent('resolution', chunkId, error);
     }
 
     try {
       await NativeModules.ChunkManager.preloadChunk(chunkId, url, fetch);
     } catch (error) {
+      const { message, code } = error as Error & { code: string };
       console.error(
         'ChunkManager.preloadChunk invocation failed:',
-        error.message,
-        error.code ? `[${error.code}]` : ''
+        message,
+        code ? `[${code}]` : ''
       );
       throw new LoadEvent('load', url, error);
     }
@@ -190,10 +213,11 @@ class ChunkManagerBackend {
 
       await NativeModules.ChunkManager.invalidateChunks(ids);
     } catch (error) {
+      const { message, code } = error as Error & { code: string };
       console.error(
         'ChunkManager.invalidateChunks invocation failed:',
-        error.message,
-        error.code ? `[${error.code}]` : ''
+        message,
+        code ? `[${code}]` : ''
       );
       throw error;
     }
@@ -203,6 +227,12 @@ class ChunkManagerBackend {
 /**
  * A manager to ease resolving, downloading and executing additional code from async chunks or
  * any arbitrary JavaScript files.
+ *
+ * - In development mode, all chunks will be resolved and downloaded from the Development server.
+ * - In production mode, local chunks will be resolved and loaded from filesystem and remote
+ * chunks will be resolved and downloaded based on the `resolveRemoteChunk` function.
+ * - You can force all resolution, regardless of the mode, to go through `resolveRemoteChunk`
+ * function by setting `forceRemoteChunkResolution: true` in `ChunkManager.configure(...)`.
  *
  * This API is only useful if you are working with any form of Code Splitting.
  *
@@ -216,7 +246,7 @@ class ChunkManagerBackend {
  *     return {
  *       url: `http://domain.exaple/apps/${chunkId}`,
  *     };
- *   };
+ *   },
  * });
  *
  * // ChunkManager.loadChunk is called internally when running `import()`
