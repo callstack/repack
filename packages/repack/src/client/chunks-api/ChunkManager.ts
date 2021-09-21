@@ -228,7 +228,7 @@ class ChunkManagerBackend {
  * A manager to ease resolving, downloading and executing additional code from async chunks or
  * any arbitrary JavaScript files.
  *
- * - In development mode, all chunks will be resolved and downloaded from Development server.
+ * - In development mode, all chunks will be resolved and downloaded from the Development server.
  * - In production mode, local chunks will be resolved and loaded from filesystem and remote
  * chunks will be resolved and downloaded based on the `resolveRemoteChunk` function.
  * - You can force all resolution, regardless of the mode, to go through `resolveRemoteChunk`
