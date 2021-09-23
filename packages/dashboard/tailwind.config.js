@@ -17,6 +17,7 @@ module.exports = {
       blue: colors.blue,
 
       dark: {
+        100: 'rgb(10, 11, 11)',
         200: 'rgb(16, 17, 17)',
         300: 'rgb(23, 24, 25)',
         400: 'rgb(51, 52, 53)',

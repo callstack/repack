@@ -2,7 +2,7 @@ import * as React from 'react';
 import { NavBar } from './NavBar';
 
 interface Props {
-  children?: React.ReactElement[];
+  children?: React.ReactNode;
 }
 
 export function AppLayout({ children }: Props) {

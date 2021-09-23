@@ -6,7 +6,11 @@ export function Artifacts() {
   return (
     <PageLayout title="Artifacts">
       <div className="flex flex-col items-center">
-        <img className="w-1/2" src={underConstruction} />
+        <img
+          className="w-1/2"
+          src={underConstruction}
+          alt="Under construction illustration"
+        />
         <span className="text-gray-200 mt-8 text-lg">Under construction</span>
       </div>
     </PageLayout>

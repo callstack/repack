@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
+// const CopyPlugin = require('copy-webpack-plugin');
 
 /**
  * Webpack config for building client dashboard including debugger UI.
@@ -54,6 +54,22 @@ module.exports = {
           },
           {
             loader: 'postcss-loader',
+          },
+        ],
+        sideEffects: true,
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+          },
+          {
+            loader: 'css-loader',
+            options: { importLoaders: 1 },
+          },
+          {
+            loader: 'sass-loader',
           },
         ],
         sideEffects: true,
