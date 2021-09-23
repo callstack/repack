@@ -49,6 +49,7 @@ export interface CommonArguments {
  * @internal
  */
 export interface BundleArguments extends CommonArguments {
+  done?: (err?: Error) => void;
   assetsDest?: string;
   entryFile: string;
   minify?: boolean;

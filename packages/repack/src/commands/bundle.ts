@@ -38,6 +38,10 @@ export function bundle(_: string[], config: Config, args: BundleArguments) {
     process.env[VERBOSE_ENV_KEY] = '1';
   }
 
+  /**
+   * force nodejs to invalidate the webpack config to ensure the bundling works as expected.
+   */
+  delete require.cache[require.resolve(webpackConfigPath)];
   const compiler = webpack(require(webpackConfigPath));
 
   compiler.run((error) => {
@@ -45,5 +49,9 @@ export function bundle(_: string[], config: Config, args: BundleArguments) {
       console.error(error);
       process.exit(2);
     }
+
+    compiler.close((closeErr) => {
+      typeof args.done === 'function' && args.done(closeErr);
+    });
   });
 }
