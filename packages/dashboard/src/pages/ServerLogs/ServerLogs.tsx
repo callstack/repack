@@ -2,12 +2,15 @@ import * as React from 'react';
 import { Console, Hook, Unhook } from 'console-feed';
 import { Message } from 'console-feed/lib/definitions/Component';
 import { PageLayout } from '../../components/PageLayout';
+import { useDevServerConnection } from '../../hooks/useDevServerConnection';
 import { ActionsBar } from './ActionsBar';
 import './ServerLogs.scss';
 
 const MAX_LOGS_COUNT = 500;
+const STORAGE_KEY = 'Re.Pack.ServerLogs';
+const BOTTOM_ACTION_BAR_THRESHOLD = 15;
 
-const customConsole = {
+const serverConsole = {
   log() {},
   info() {},
   warn() {},
@@ -16,35 +19,85 @@ const customConsole = {
 } as typeof console;
 
 export function ServerLogs() {
-  const [logs, setLogs] = React.useState<Message[]>([]);
+  const [logs, setLogs] = React.useState<Message[]>(
+    JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '[]')
+  );
+  const shouldScrollToBottom = React.useRef(true);
 
   const clearLogs = React.useCallback(() => {
     setLogs([]);
+    sessionStorage.removeItem(STORAGE_KEY);
   }, []);
+
+  const scrollToBottom = React.useCallback(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, []);
+
+  const scrollToTop = React.useCallback(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const connection = useDevServerConnection();
+
+  React.useEffect(() => {
+    const subscription = connection.subscribe({
+      next: (event) => {
+        if (event.type === 'message' && event.payload.kind === 'server-log') {
+          const [log, ...rest] = event.payload.log.message;
+          const args = [];
+          if ('msg' in log) {
+            const { msg, ...payload } = log;
+            args.push(msg, payload, ...rest);
+          } else {
+            args.push(log, ...rest);
+          }
+
+          serverConsole[event.payload.log.type](
+            `[${
+              new Date(event.payload.log.timestamp).toISOString().split('T')[1]
+            }] ${event.payload.log.issuer}:`,
+            ...args
+          );
+        }
+      },
+    });
+
+    return () => subscription.unsubscribe();
+  }, [connection]);
 
   React.useEffect(() => {
     Hook(
-      customConsole as any,
-      (log) => setLogs((currLogs) => [...currLogs, log as Message]),
+      serverConsole as any,
+      (log) => {
+        setLogs((currLogs) => {
+          const logs = [...currLogs, log as Message];
+          sessionStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+          return logs;
+        });
+      },
       false
     );
 
-    setTimeout(() => {
-      for (let i = 0; i < MAX_LOGS_COUNT / 5; i++) {
-        customConsole.log('[07:39:29.881Z] hello world', i);
-        customConsole.info('[07:39:30.881Z] hello world', i);
-        customConsole.warn('[07:39:31.881Z] hello world', i);
-        customConsole.error('[07:39:32.881Z] hello world', i);
-        customConsole.debug('[07:39:33.881Z] hello world', i, {
-          payload: { msg: 'Re.Pack' },
-          i,
-        });
-      }
-    }, 100);
-
     return () => {
-      Unhook(customConsole as any);
+      Unhook(serverConsole as any);
     };
+  }, []);
+
+  React.useEffect(() => {
+    if (shouldScrollToBottom.current) {
+      scrollToBottom();
+    }
+  }, [scrollToBottom, logs]);
+
+  React.useEffect(() => {
+    const onScroll = () => {
+      shouldScrollToBottom.current =
+        window.scrollY + window.innerHeight + 100 >= document.body.scrollHeight;
+    };
+
+    window.addEventListener('scroll', onScroll);
+
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
@@ -54,7 +107,7 @@ export function ServerLogs() {
           label={`Showing last ${MAX_LOGS_COUNT} logs.`}
           position="top"
           onClear={clearLogs}
-          onScroll={() => {}}
+          onScroll={scrollToBottom}
         />
         <Console
           logs={logs}
@@ -82,12 +135,12 @@ export function ServerLogs() {
             []
           )}
         />
-        {logs.length > 20 ? (
+        {logs.length > BOTTOM_ACTION_BAR_THRESHOLD ? (
           <ActionsBar
             label={`Showing last ${MAX_LOGS_COUNT} logs.`}
             position="bottom"
             onClear={clearLogs}
-            onScroll={() => {}}
+            onScroll={scrollToTop}
           />
         ) : null}
       </div>

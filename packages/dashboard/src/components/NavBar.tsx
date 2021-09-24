@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import repackLogo from '../assets/repack_logo.svg';
+import { ConnectionStatus } from './ConnectionStatus';
 import { NavLink } from './NavLink';
 
 export function NavBar() {
@@ -28,7 +29,9 @@ export function NavBar() {
           icon={<span className="material-icons mr-2">source</span>}
         />
       </div>
-      {/* TODO: connection status */}
+      <div className="flex flex-col flex-grow justify-end pb-8">
+        <ConnectionStatus />
+      </div>
     </nav>
   );
 }

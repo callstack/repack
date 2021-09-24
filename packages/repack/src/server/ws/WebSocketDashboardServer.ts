@@ -25,7 +25,7 @@ export class WebSocketDashboardServer extends WebSocketServer {
     for (const [, socket] of this.clients.entries()) {
       try {
         socket.send(message);
-      } catch (error) {
+      } catch {
         // NOOP
       }
     }

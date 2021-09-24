@@ -149,7 +149,7 @@ export class Reporter {
       this.fileLogBuffer.push(JSON.stringify(logEntry));
     }
 
-    let shouldReportToTerminal = logEntry.type !== 'debug' || this.isVerbose;
+    let shouldReport = logEntry.type !== 'debug' || this.isVerbose;
     // Allow to skip broadcasting messages - e.g. if broadcasting fails we don't want to try
     // to broadcast the failure as there's a high change it will fail again and cause infinite loop.
     const shouldBroadcast = !logEntry.message?.[0]?._skipBroadcast;
@@ -167,6 +167,10 @@ export class Reporter {
         };
         this.progress[platform] = { value, label };
         this.updateProgress();
+
+        this.config.wsDashboardServer?.send(
+          JSON.stringify({ kind: 'progress', value, label, platform })
+        );
       } else {
         const transformedLogEntry = this.transformLogEntry(logEntry);
         // Ignore empty logs
@@ -185,19 +189,17 @@ export class Reporter {
           // level but unless webpack-dev-middleware is migrated to Fastify that's not a feasible solution.
           // TODO: silence route logs on per-router/Fastify
           if (transformedLogEntry.message[0].request && !this.isVerbose) {
-            shouldReportToTerminal = false;
+            shouldReport = false;
           }
 
-          if (shouldReportToTerminal) {
+          if (shouldReport) {
             this.config.wsDashboardServer?.send(
-              JSON.stringify(
-                JSON.stringify({ kind: 'server-log', log: logEntry })
-              )
+              JSON.stringify({ kind: 'server-log', log: logEntry })
             );
           }
 
           const text = this.getOutputLogMessage(transformedLogEntry);
-          if (shouldReportToTerminal && this.ora) {
+          if (shouldReport && this.ora) {
             this.ora.stopAndPersist({
               symbol: Reporter.getSymbolForType(logEntry.type),
               text,
