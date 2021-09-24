@@ -47,7 +47,11 @@ export function ServerLogs() {
           const args = [];
           if ('msg' in log) {
             const { msg, ...payload } = log;
-            args.push(msg, payload, ...rest);
+            if (Array.isArray(msg)) {
+              args.push(...msg, payload, ...rest);
+            } else {
+              args.push(msg, payload, ...rest);
+            }
           } else {
             args.push(log, ...rest);
           }
