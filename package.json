@@ -1,6 +1,13 @@
 {
   "private": true,
-  "workspaces": ["./packages/*"],
+  "workspaces": {
+    "packages": [
+      "./packages/repack",
+      "./packages/TesterApp",
+      "./packages/debugger-ui",
+      "./packages/dashboard"
+    ]
+  },
   "scripts": {
     "prepare": "yarn workspaces run prepare",
     "build": "yarn workspaces run build",
@@ -9,6 +16,6 @@
     "test": "yarn workspaces run test",
     "release": "yarn prepare && cp README.md packages/repack && yarn workspace @callstack/repack run release",
     "example:start": "yarn workspace TesterApp run start",
-    "example:build": "yarn workspace TesterApp run build"
+    "example:bundle": "yarn workspace TesterApp run bundle"
   }
 }

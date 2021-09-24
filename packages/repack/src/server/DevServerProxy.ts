@@ -16,6 +16,7 @@ import { DevServerReply, DevServerRequest } from './types';
 import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
 import { transformFastifyLogToLogEntry } from './utils/transformFastifyLogToWebpackLogEntry';
+import { WebSocketDashboardServer } from './ws/WebSocketDashboardServer';
 
 /**
  * {@link DevServerProxy} configuration options.
@@ -78,8 +79,14 @@ export class DevServerProxy extends BaseDevServer {
 
   /** Platform to worker mappings. */
   workers: Record<string, Promise<CompilerWorker> | undefined> = {};
+  wsDashboardServer = this.wsRouter.registerServer(
+    new WebSocketDashboardServer(this.fastify)
+  );
   /** Reporter instance. */
-  reporter = new Reporter({ wsEventsServer: this.wsEventsServer });
+  reporter = new Reporter({
+    wsEventsServer: this.wsEventsServer,
+    wsDashboardServer: this.wsDashboardServer,
+  });
 
   /**
    * Constructs new `DevServerProxy`.

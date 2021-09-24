@@ -5,6 +5,7 @@ import colorette from 'colorette';
 import { LogEntry, LogType } from './types';
 import { isVerbose, isWorker } from './env';
 import { WebSocketEventsServer } from './server';
+import { WebSocketDashboardServer } from './server/ws/WebSocketDashboardServer';
 
 const IS_SYMBOL_SUPPORTED =
   process.platform !== 'win32' ||
@@ -41,6 +42,7 @@ export interface ReporterConfig {
   /** Whether to log additional debug messages. */
   verbose?: boolean;
   wsEventsServer?: WebSocketEventsServer;
+  wsDashboardServer?: WebSocketDashboardServer;
 }
 
 /**
@@ -184,6 +186,14 @@ export class Reporter {
           // TODO: silence route logs on per-router/Fastify
           if (transformedLogEntry.message[0].request && !this.isVerbose) {
             shouldReportToTerminal = false;
+          }
+
+          if (shouldReportToTerminal) {
+            this.config.wsDashboardServer?.send(
+              JSON.stringify(
+                JSON.stringify({ kind: 'server-log', log: logEntry })
+              )
+            );
           }
 
           const text = this.getOutputLogMessage(transformedLogEntry);
