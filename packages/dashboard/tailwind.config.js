@@ -27,6 +27,10 @@ module.exports = {
         500: 'rgb(0, 239, 210)',
       },
     },
+    fontFamily: {
+      sans: ['Poppins', 'sans-serif'],
+      mono: ['Roboto Mono', 'monospace'],
+    },
   },
   variants: {
     extend: {
