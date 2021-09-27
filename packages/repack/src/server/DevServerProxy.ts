@@ -3,6 +3,7 @@ import { Writable } from 'stream';
 import execa from 'execa';
 import getPort from 'get-port';
 import split2 from 'split2';
+import fastifyStatic from 'fastify-static';
 import fastifyReplyFrom from 'fastify-reply-from';
 import { CliOptions, StartArguments } from '../types';
 import { Reporter } from '../Reporter';
@@ -259,6 +260,13 @@ export class DevServerProxy extends BaseDevServer {
     // });
 
     await super.setup();
+
+    await this.fastify.register(fastifyStatic, {
+      root: path.join(__dirname, '../../first-party/dashboard'),
+      prefix: '/dashboard',
+      prefixAvoidTrailingSlash: true,
+      decorateReply: false,
+    });
 
     this.fastify.register(fastifyReplyFrom, {
       undici: {
