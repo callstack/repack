@@ -26,7 +26,6 @@ export function createWebSocketObservable(address: string) {
       }
 
       socket = undefined;
-      console.log(retries);
       if (retries > 0) {
         retries--;
         setTimeout(() => initConnection(), 5000);

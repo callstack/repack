@@ -348,6 +348,11 @@ export class DevServerProxy extends BaseDevServer {
     try {
       await this.setup();
       await super.run();
+      this.fastify.log.info({
+        msg: `Dashboard available at: http${this.config.https ? 's' : ''}://${
+          this.config.host || 'localhost'
+        }:${this.config.port}/dashboard`,
+      });
     } catch (error) {
       console.error(error);
       process.exit(1);
