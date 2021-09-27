@@ -183,6 +183,18 @@ export class DevServerProxy extends BaseDevServer {
         if (event === 'watchRun') {
           if (!isResolved) {
             isResolved = true;
+
+            this.wsDashboardServer.send(
+              JSON.stringify({
+                kind: 'compilation',
+                event: {
+                  name: 'watchRun',
+                  port,
+                  platform,
+                },
+              })
+            );
+
             resolve({
               port,
               process,
@@ -253,6 +265,19 @@ export class DevServerProxy extends BaseDevServer {
         headersTimeout: 5 * 60 * 1000,
         bodyTimeout: 5 * 60 * 1000,
       },
+    });
+
+    this.fastify.get('/api/dashboard/platforms', async () => {
+      const platforms = await Promise.all(
+        Object.keys(this.workers).map(async (platform) => ({
+          id: platform,
+          port: (await this.workers[platform])?.port,
+        }))
+      );
+
+      return {
+        platforms,
+      };
     });
 
     this.fastify.post('/symbolicate', async (request, reply) => {

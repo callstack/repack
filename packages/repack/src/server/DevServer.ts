@@ -11,6 +11,7 @@ import { readFileFromWdm } from './utils/readFileFromWdm';
 import { transformFastifyLogToLogEntry } from './utils/transformFastifyLogToWebpackLogEntry';
 import { WebSocketHMRServer } from './ws';
 import { DevServerLoggerOptions } from './types';
+import { WebSocketDashboardServer } from './ws/WebSocketDashboardServer';
 
 /**
  * {@link DevServer} configuration options.
@@ -51,6 +52,8 @@ export class DevServer extends BaseDevServer {
   wdm: WebpackDevMiddleware;
   /** HMR WebSocket server instance to allow HMR clients to receive updates. */
   hmrServer: WebSocketHMRServer;
+  /** TODO */
+  wsDashboardServer: WebSocketDashboardServer;
   /** Symbolicator instance to transform stack traces using Source Maps. */
   symbolicator: Symbolicator;
 
@@ -73,6 +76,10 @@ export class DevServer extends BaseDevServer {
       new WebSocketHMRServer(this.fastify, {
         compiler: this.compiler,
       })
+    );
+
+    this.wsDashboardServer = this.wsRouter.registerServer(
+      new WebSocketDashboardServer(this.fastify, { compiler: this.compiler })
     );
 
     this.symbolicator = new Symbolicator(
@@ -155,9 +162,32 @@ export class DevServer extends BaseDevServer {
       } catch (error) {
         this.fastify.log.error({
           msg: 'Failed to symbolicate',
-          error: error.message,
+          error: (error as Error).message,
         });
         reply.code(500).send();
+      }
+    });
+
+    let lastStats: webpack.Stats | undefined;
+    this.compiler.hooks.done.tap('DevServer', (stats) => {
+      lastStats = stats;
+    });
+    this.fastify.get('/api/dashboard/stats', (_, reply) => {
+      if (lastStats)
+        reply.send(
+          lastStats.toJson({
+            preset: 'summary',
+            assets: true,
+            builtAt: true,
+            chunks: true,
+            chunkModules: false,
+            errors: true,
+            warnings: true,
+            timings: true,
+          })
+        );
+      else {
+        reply.code(404).send();
       }
     });
   }

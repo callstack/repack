@@ -1,6 +1,11 @@
 import WebSocket from 'ws';
+import webpack from 'webpack';
 import { FastifyDevServer } from '../types';
 import { WebSocketServer } from './WebSocketServer';
+
+interface WebSocketDashboardServerConfig {
+  compiler?: webpack.Compiler;
+}
 
 /**
  * TODO
@@ -17,8 +22,36 @@ export class WebSocketDashboardServer extends WebSocketServer {
    *
    * @param fastify Fastify instance to attach the WebSocket server to.
    */
-  constructor(fastify: FastifyDevServer) {
+  constructor(
+    fastify: FastifyDevServer,
+    private config?: WebSocketDashboardServerConfig
+  ) {
     super(fastify, '/api/dashboard');
+
+    if (this.config) {
+      this.config.compiler?.hooks.invalid.tap(
+        'WebSocketDashboardServer',
+        () => {
+          this.send(
+            JSON.stringify({
+              kind: 'compilation',
+              event: { name: 'invalid' },
+            })
+          );
+        }
+      );
+
+      this.config.compiler?.hooks.done.tap('WebSocketDashboardServer', () => {
+        this.send(
+          JSON.stringify({
+            kind: 'compilation',
+            event: {
+              name: 'done',
+            },
+          })
+        );
+      });
+    }
   }
 
   send(message: string) {

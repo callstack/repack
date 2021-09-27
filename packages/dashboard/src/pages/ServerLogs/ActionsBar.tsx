@@ -17,7 +17,7 @@ export function ActionsBar({ label, onClear, onScroll, position }: Props) {
         position === 'top' ? 'items-end' : 'items-start'
       )}
     >
-      <span className="mr-4 italic text-sm text-gray-400">{label}</span>
+      <span className="mr-4 text-xs text-gray-400">{label}</span>
       <div className="flex flex-row">
         <Button onClick={onClear} className="mr-1">
           <span className="material-icons mr-2 text-xl">delete</span>

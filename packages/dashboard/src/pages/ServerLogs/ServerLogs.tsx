@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Console, Hook, Unhook } from 'console-feed';
 import { Message } from 'console-feed/lib/definitions/Component';
 import { PageLayout } from '../../components/PageLayout';
-import { useDevServerConnection } from '../../hooks/useDevServerConnection';
+import { useDevServer } from '../../hooks/useDevServer';
 import { ActionsBar } from './ActionsBar';
 import './ServerLogs.scss';
 
@@ -37,15 +37,15 @@ export function ServerLogs() {
     window.scrollTo(0, 0);
   }, []);
 
-  const connection = useDevServerConnection();
+  const { getProxyConnection } = useDevServer();
 
   React.useEffect(() => {
-    const subscription = connection.subscribe({
+    const subscription = getProxyConnection().subscribe({
       next: (event) => {
         if (event.type === 'message' && event.payload.kind === 'server-log') {
           const [log, ...rest] = event.payload.log.message;
           const args = [];
-          if ('msg' in log) {
+          if (typeof log !== 'string' && 'msg' in log) {
             const { msg, ...payload } = log;
             if (Array.isArray(msg)) {
               args.push(...msg, payload, ...rest);
@@ -67,7 +67,7 @@ export function ServerLogs() {
     });
 
     return () => subscription.unsubscribe();
-  }, [connection]);
+  }, [getProxyConnection]);
 
   React.useEffect(() => {
     Hook(

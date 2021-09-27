@@ -1,15 +1,15 @@
 import * as React from 'react';
 import cx from 'classnames';
-import { useDevServerConnection } from '../hooks/useDevServerConnection';
+import { useDevServer } from '../hooks/useDevServer';
 
 export function ConnectionStatus() {
   const [status, setStatus] = React.useState<
     'connected' | 'connecting' | 'disconnected'
   >('connecting');
-  const connection = useDevServerConnection();
+  const { getProxyConnection } = useDevServer();
 
   React.useEffect(() => {
-    const subscription = connection.subscribe({
+    const subscription = getProxyConnection().subscribe({
       next: (event) => {
         if (event.type === 'init') {
           setStatus('connecting');
@@ -28,7 +28,7 @@ export function ConnectionStatus() {
     });
 
     return () => subscription.unsubscribe();
-  }, [connection]);
+  }, [getProxyConnection]);
 
   return (
     <div className="px-8">
