@@ -52,7 +52,7 @@ export class DevServer extends BaseDevServer {
   wdm: WebpackDevMiddleware;
   /** HMR WebSocket server instance to allow HMR clients to receive updates. */
   hmrServer: WebSocketHMRServer;
-  /** TODO */
+  /** Dashboard WebSocket server instance to provide events to dashboard web client. */
   wsDashboardServer: WebSocketDashboardServer;
   /** Symbolicator instance to transform stack traces using Source Maps. */
   symbolicator: Symbolicator;

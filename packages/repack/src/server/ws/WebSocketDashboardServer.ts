@@ -3,12 +3,18 @@ import webpack from 'webpack';
 import { FastifyDevServer } from '../types';
 import { WebSocketServer } from './WebSocketServer';
 
+/**
+ * {@link WebSocketDashboardServer} configuration options.
+ */
 interface WebSocketDashboardServerConfig {
+  /** Instance of Webpack compiler */
   compiler?: webpack.Compiler;
 }
 
 /**
- * TODO
+ * Class for creating a WebSocket server for Dashboard client.
+ * It's used by built-in Dashboard web-app to receive compilation
+ * events, logs and other necessary messages.
  *
  * @category Development server
  */
@@ -54,6 +60,11 @@ export class WebSocketDashboardServer extends WebSocketServer {
     }
   }
 
+  /**
+   * Send message to all connected Dashboard clients.
+   *
+   * @param message Stringified message to sent.
+   */
   send(message: string) {
     for (const [, socket] of this.clients.entries()) {
       try {
