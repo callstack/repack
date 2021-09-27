@@ -3,12 +3,13 @@ import { Console, Hook, Unhook } from 'console-feed';
 import { Message } from 'console-feed/lib/definitions/Component';
 import { PageLayout } from '../../components/PageLayout';
 import { useDevServer } from '../../hooks/useDevServer';
+import { useServerLogs } from '../../hooks/useServerLogs';
 import { Admonition } from '../../components/Admonition';
+import { LogEntry } from '../../types';
 import { ActionsBar } from './ActionsBar';
 import './ServerLogs.scss';
 
 const MAX_LOGS_COUNT = 500;
-const STORAGE_KEY = 'Re.Pack.ServerLogs';
 const BOTTOM_ACTION_BAR_THRESHOLD = 15;
 
 const serverConsole = {
@@ -20,14 +21,13 @@ const serverConsole = {
 } as typeof console;
 
 export function ServerLogs() {
-  const [logs, setLogs] = React.useState<Message[]>(
-    JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '[]')
-  );
+  const { getProxyConnection } = useDevServer();
+  const { data: bufferedLogs, loading } = useServerLogs();
+  const [logs, setLogs] = React.useState<Message[]>([]);
   const shouldScrollToBottom = React.useRef(true);
 
   const clearLogs = React.useCallback(() => {
     setLogs([]);
-    sessionStorage.removeItem(STORAGE_KEY);
   }, []);
 
   const scrollToBottom = React.useCallback(() => {
@@ -38,47 +38,51 @@ export function ServerLogs() {
     window.scrollTo(0, 0);
   }, []);
 
-  const { getProxyConnection } = useDevServer();
+  const processLog = React.useCallback((log: LogEntry) => {
+    const [arg0, ...rest] = log.message;
+    const args = [];
+    if (typeof arg0 !== 'string' && 'msg' in arg0) {
+      const { msg, ...payload } = arg0;
+      if (Array.isArray(msg)) {
+        args.push(...msg, payload, ...rest);
+      } else {
+        args.push(msg, payload, ...rest);
+      }
+    } else {
+      args.push(arg0, ...rest);
+    }
+
+    serverConsole[log.type](
+      `[${new Date(log.timestamp).toISOString().split('T')[1]}] ${log.issuer}:`,
+      ...args
+    );
+  }, []);
+
+  React.useEffect(() => {
+    if (!loading) {
+      for (const log of bufferedLogs ?? []) {
+        processLog(log);
+      }
+    }
+  }, [bufferedLogs, loading, processLog]);
 
   React.useEffect(() => {
     const subscription = getProxyConnection().subscribe({
       next: (event) => {
         if (event.type === 'message' && event.payload.kind === 'server-log') {
-          const [log, ...rest] = event.payload.log.message;
-          const args = [];
-          if (typeof log !== 'string' && 'msg' in log) {
-            const { msg, ...payload } = log;
-            if (Array.isArray(msg)) {
-              args.push(...msg, payload, ...rest);
-            } else {
-              args.push(msg, payload, ...rest);
-            }
-          } else {
-            args.push(log, ...rest);
-          }
-
-          serverConsole[event.payload.log.type](
-            `[${
-              new Date(event.payload.log.timestamp).toISOString().split('T')[1]
-            }] ${event.payload.log.issuer}:`,
-            ...args
-          );
+          processLog(event.payload.log);
         }
       },
     });
 
     return () => subscription.unsubscribe();
-  }, [getProxyConnection]);
+  }, [getProxyConnection, processLog]);
 
   React.useEffect(() => {
     Hook(
       serverConsole as any,
       (log) => {
-        setLogs((currLogs) => {
-          const logs = [...currLogs, log as Message];
-          sessionStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
-          return logs;
-        });
+        setLogs((currLogs) => [...currLogs, log as Message]);
       },
       false
     );
@@ -110,7 +114,12 @@ export function ServerLogs() {
   return (
     <PageLayout title="Server logs">
       <div className="ConsoleFeed flex flex-col">
-        {!hasLogs ? (
+        {loading ? (
+          <Admonition type="progress" className="mt-2">
+            Checking logs on the Development server.
+          </Admonition>
+        ) : null}
+        {!hasLogs && !loading ? (
           <Admonition type="info" className="mt-2">
             There are no logs yet.
           </Admonition>

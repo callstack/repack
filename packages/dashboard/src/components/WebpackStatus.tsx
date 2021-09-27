@@ -16,7 +16,6 @@ export function WebpackStatus({ className }: Props) {
     const subscription = getProxyConnection().subscribe({
       next: (event) => {
         if (event.type === 'message' && event.payload.kind === 'progress') {
-          console.log(event.payload);
           let { value, label, platform } = event.payload;
           if (!label || value >= 1) {
             label = 'idle';

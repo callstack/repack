@@ -6,7 +6,7 @@ import {
   getCompilerWebSocketUrl,
 } from '../../constants';
 import { fetchPlatforms } from '../../utils/fetchPlatforms';
-import { DevServerMessage } from './types';
+import { DevServerMessage } from '../../types';
 import { Context } from './Context';
 import { createWebSocketObservable } from './utils/createWebSocketObservable';
 

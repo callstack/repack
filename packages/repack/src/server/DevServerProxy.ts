@@ -261,8 +261,12 @@ export class DevServerProxy extends BaseDevServer {
 
     await super.setup();
 
+    const dashboardPublicDir = path.join(
+      __dirname,
+      '../../first-party/dashboard'
+    );
     await this.fastify.register(fastifyStatic, {
-      root: path.join(__dirname, '../../first-party/dashboard'),
+      root: dashboardPublicDir,
       prefix: '/dashboard',
       prefixAvoidTrailingSlash: true,
       decorateReply: false,
@@ -273,6 +277,10 @@ export class DevServerProxy extends BaseDevServer {
         headersTimeout: 5 * 60 * 1000,
         bodyTimeout: 5 * 60 * 1000,
       },
+    });
+
+    this.fastify.get('/dashboard/:page', (_, reply) => {
+      reply.sendFile('index.html', dashboardPublicDir);
     });
 
     this.fastify.get('/api/dashboard/platforms', async () => {
@@ -286,6 +294,12 @@ export class DevServerProxy extends BaseDevServer {
       return {
         platforms,
       };
+    });
+
+    this.fastify.get('/api/dashboard/server-logs', (_, reply) => {
+      reply.send({
+        logs: this.reporter.getLogBuffer(),
+      });
     });
 
     this.fastify.post('/symbolicate', async (request, reply) => {

@@ -94,6 +94,7 @@ export class Reporter {
   private fileLogBuffer: string[] = [];
   private outputFilename?: string;
   private progress: Record<string, { value: number; label: string }> = {};
+  private logBuffer: LogEntry[] = [];
 
   /**
    * Create new instance of Reporter.
@@ -107,6 +108,15 @@ export class Reporter {
     if (!this.isWorker) {
       this.ora = ora('Running...').start();
     }
+  }
+
+  /**
+   * Get buffered server logs.
+   *
+   * @returns Array of server log entries.
+   */
+  getLogBuffer(): LogEntry[] {
+    return this.logBuffer;
   }
 
   /**
@@ -193,6 +203,7 @@ export class Reporter {
           }
 
           if (shouldReport) {
+            this.logBuffer = this.logBuffer.concat(logEntry).slice(-500);
             this.config.wsDashboardServer?.send(
               JSON.stringify({ kind: 'server-log', log: logEntry })
             );

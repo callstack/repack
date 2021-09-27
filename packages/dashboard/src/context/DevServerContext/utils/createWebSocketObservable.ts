@@ -1,6 +1,6 @@
 /* global ZenObservable */
 import Observable from 'zen-observable';
-import { DevServerMessage, WebSocketMessage } from '../types';
+import { DevServerMessage, WebSocketMessage } from '../../../types';
 
 export function createWebSocketObservable(address: string) {
   let retries = 5;

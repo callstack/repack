@@ -18,12 +18,7 @@ export type DevServerMessage =
       payload:
         | {
             kind: 'server-log';
-            log: {
-              issuer: string;
-              message: any[];
-              timestamp: number;
-              type: 'debug' | 'info' | 'warn' | 'error';
-            };
+            log: LogEntry;
           }
         | {
             kind: 'progress';
@@ -50,3 +45,10 @@ export interface DevServerContext {
   getCompilerConnection: (platform: string) => Observable<DevServerMessage>;
   getProxyConnection: () => Observable<DevServerMessage>;
 }
+
+export type LogEntry = {
+  issuer: string;
+  message: any[];
+  timestamp: number;
+  type: 'debug' | 'info' | 'warn' | 'error';
+};
