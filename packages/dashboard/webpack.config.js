@@ -1,11 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// const CopyPlugin = require('copy-webpack-plugin');
-
-/**
- * Webpack config for building client dashboard including debugger UI.
- */
+const CopyPlugin = require('copy-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
 
@@ -85,14 +81,14 @@ module.exports = {
       filename: 'static/css/[name].[contenthash:8].css',
       chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
     }),
-    // new CopyPlugin({
-    //   patterns: [
-    //     {
-    //       from: 'public/static/',
-    //       to: 'static/',
-    //     },
-    //   ],
-    // }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: 'public/static/',
+          to: 'static/',
+        },
+      ],
+    }),
   ],
   devServer: {
     static: {
