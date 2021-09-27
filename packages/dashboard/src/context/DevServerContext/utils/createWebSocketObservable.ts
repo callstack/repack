@@ -3,6 +3,7 @@ import Observable from 'zen-observable';
 import { DevServerMessage, WebSocketMessage } from '../types';
 
 export function createWebSocketObservable(address: string) {
+  let retries = 5;
   let socket: WebSocket | undefined;
   let observers: Array<ZenObservable.SubscriptionObserver<WebSocketMessage>> =
     [];
@@ -25,7 +26,15 @@ export function createWebSocketObservable(address: string) {
       }
 
       socket = undefined;
-      setTimeout(() => initConnection(), 5000);
+      console.log(retries);
+      if (retries > 0) {
+        retries--;
+        setTimeout(() => initConnection(), 5000);
+      } else {
+        for (const observer of observers) {
+          observer.complete();
+        }
+      }
     });
 
     socket.addEventListener('error', (error) => {

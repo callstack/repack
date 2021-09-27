@@ -11,8 +11,10 @@ import { Context } from './Context';
 import { createWebSocketObservable } from './utils/createWebSocketObservable';
 
 export function DevServerProvider({ children }: { children: React.ReactNode }) {
-  const proxyRef = React.useRef(
-    createWebSocketObservable(`${DEV_SERVER_WS_URL}${DASHBOARD_API_PATH}`)
+  const proxy = React.useMemo(
+    () =>
+      createWebSocketObservable(`${DEV_SERVER_WS_URL}${DASHBOARD_API_PATH}`),
+    []
   );
   const [compilers, setCompilers] = React.useState<
     Record<string, Observable<DevServerMessage>>
@@ -43,7 +45,7 @@ export function DevServerProvider({ children }: { children: React.ReactNode }) {
   }, [createCompilerConnection]);
 
   React.useEffect(() => {
-    proxyRef.current.subscribe({
+    proxy.subscribe({
       next: (value) => {
         if (
           value.type === 'message' &&
@@ -53,19 +55,23 @@ export function DevServerProvider({ children }: { children: React.ReactNode }) {
           const { port, platform } = value.payload.event;
           createCompilerConnection(platform, port);
         }
+
+        if (value.type === 'close') {
+          setCompilers({});
+        }
       },
     });
-  }, [createCompilerConnection]);
+  }, [createCompilerConnection, proxy]);
 
   return (
     <Context.Provider
       value={React.useMemo(
         () => ({
           getPlatforms: () => Object.keys(compilers),
-          getProxyConnection: () => proxyRef.current,
+          getProxyConnection: () => proxy,
           getCompilerConnection: (platform) => compilers[platform],
         }),
-        [compilers]
+        [compilers, proxy]
       )}
     >
       {children}

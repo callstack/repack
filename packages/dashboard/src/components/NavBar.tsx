@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import repackLogo from '../assets/repack_logo.svg';
 import { ConnectionStatus } from './ConnectionStatus';
 import { NavLink } from './NavLink';
+import { WebpackStatus } from './WebpackStatus';
 
 export function NavBar() {
   return (
@@ -30,6 +31,7 @@ export function NavBar() {
         />
       </div>
       <div className="flex flex-col flex-grow justify-end pb-8">
+        <WebpackStatus className="mb-2" />
         <ConnectionStatus />
       </div>
     </nav>
