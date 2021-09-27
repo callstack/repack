@@ -1,7 +1,8 @@
 import * as React from 'react';
+import byteSize from 'byte-size';
 import { DEV_SERVER_HTTP_URL } from '../../constants';
 import { useStats } from '../../hooks/useStats';
-import byteSize from 'byte-size';
+import { Admonition } from '../../components/Admonition';
 
 interface Props {
   platform: string;
@@ -38,6 +39,12 @@ export function PlatformArtifacts({ platform }: Props) {
           </span>
         ) : null}
       </div>
+      {loading ? (
+        <Admonition type="info" className="mt-2">
+          The artifacts will be displayed shortly, once the compilation is
+          finished.
+        </Admonition>
+      ) : null}
       <ol className="mt-1">
         {React.useMemo(
           () =>
@@ -55,7 +62,9 @@ export function PlatformArtifacts({ platform }: Props) {
                   <div className="font-mono font-medium truncate">
                     {asset.name}
                   </div>
-                  <div className="ml-4 text-sm text-gray-400 whitespace-nowrap">{byteSize(asset.size).toString()}</div>
+                  <div className="ml-4 text-sm text-gray-400 whitespace-nowrap">
+                    {byteSize(asset.size).toString()}
+                  </div>
                   <div className="flex flex-grow flex-row justify-end items-center">
                     <span className="material-icons ml-6">open_in_new</span>
                   </div>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Admonition } from '../../components/Admonition';
 import { PageLayout } from '../../components/PageLayout';
 import { useDevServer } from '../../hooks/useDevServer';
 import { PlatformArtifacts } from './PlatformArtifacts';
@@ -18,6 +19,12 @@ export function Artifacts() {
             )),
           [getPlatforms]
         )}
+        {!getPlatforms().length ? (
+          <Admonition type="info">
+            There are no Webpack compilations. Request a bundle through your
+            React Native application first.
+          </Admonition>
+        ) : null}
       </div>
     </PageLayout>
   );

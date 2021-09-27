@@ -3,6 +3,7 @@ import { Console, Hook, Unhook } from 'console-feed';
 import { Message } from 'console-feed/lib/definitions/Component';
 import { PageLayout } from '../../components/PageLayout';
 import { useDevServer } from '../../hooks/useDevServer';
+import { Admonition } from '../../components/Admonition';
 import { ActionsBar } from './ActionsBar';
 import './ServerLogs.scss';
 
@@ -104,15 +105,28 @@ export function ServerLogs() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const hasLogs = logs.length > 0;
+
   return (
     <PageLayout title="Server logs">
       <div className="ConsoleFeed flex flex-col">
-        <ActionsBar
-          label={`Showing last ${MAX_LOGS_COUNT} logs.`}
-          position="top"
-          onClear={clearLogs}
-          onScroll={scrollToBottom}
-        />
+        {!hasLogs ? (
+          <Admonition type="info" className="mt-2">
+            There are no logs yet.
+          </Admonition>
+        ) : null}
+        {React.useMemo(
+          () =>
+            hasLogs ? (
+              <ActionsBar
+                label={`Showing last ${MAX_LOGS_COUNT} logs.`}
+                position="top"
+                onClear={clearLogs}
+                onScroll={scrollToBottom}
+              />
+            ) : null,
+          [clearLogs, hasLogs, scrollToBottom]
+        )}
         <Console
           logs={logs}
           variant="dark"
