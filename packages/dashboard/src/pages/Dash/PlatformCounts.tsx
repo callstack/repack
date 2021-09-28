@@ -22,11 +22,8 @@ export function PlatformCounts({ stats }: Props) {
                   (acc, chunk) => acc.concat(...chunk.auxiliaryFiles),
                   [] as string[]
                 )
-                .filter(
-                  (asset) =>
-                    !asset.endsWith('.bundle.map') &&
-                    !asset.endsWith('.bundle.json')
-                ).length,
+                .filter((asset) => !/\.(js)?bundle\.(map|json)$/.test(asset))
+                .length,
             [stats.chunks]
           )}
         </span>

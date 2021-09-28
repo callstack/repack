@@ -15,8 +15,7 @@ export function PlatformSizes({ stats }: Props) {
       stats.assets.filter(
         (asset) =>
           asset.type === 'asset' &&
-          !asset.name.endsWith('.bundle.map') &&
-          !asset.name.endsWith('.bundle.json')
+          !/\.(js)?bundle\.(map|json)$/.test(asset.name)
       ),
     [stats.assets]
   );
@@ -29,10 +28,7 @@ export function PlatformSizes({ stats }: Props) {
   const modules = React.useMemo(
     () =>
       publicAssets
-        .filter(
-          (asset) =>
-            asset.name.endsWith('.bundle') || asset.name.endsWith('.js')
-        )
+        .filter((asset) => /\.((js)?bundle|js)$/.test(asset.name))
         .reduce((acc, asset) => acc + asset.size, 0),
     [publicAssets]
   );

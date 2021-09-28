@@ -65,7 +65,6 @@ export interface Stats {
     initial: boolean;
     entry: boolean;
     recorded: boolean;
-    // reason?: string;
     size: number;
     sizes: Record<string, number>;
     names: string[];
@@ -74,14 +73,6 @@ export interface Stats {
     files: string[];
     auxiliaryFiles: string[];
     hash: string;
-    // childrenByOrder?: Record<string, (string | number)[]>;
-    // id?: string | number;
-    // siblings?: (string | number)[];
-    // parents?: (string | number)[];
-    // children?: (string | number)[];
-    // modules?: StatsModule[];
-    // filteredModules?: number;
-    // origins?: StatsChunkOrigin[];
   }>;
   assets: Array<{
     type: string;
