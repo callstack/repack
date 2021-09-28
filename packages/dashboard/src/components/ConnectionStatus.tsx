@@ -6,7 +6,13 @@ export function ConnectionStatus() {
   const [status, setStatus] = React.useState<
     'connected' | 'connecting' | 'disconnected'
   >('connecting');
-  const { getProxyConnection } = useDevServer();
+  const [showRetry, setShowRetry] = React.useState(false);
+  const { getProxyConnection, tryReconnecting } = useDevServer();
+
+  const retry = React.useCallback(() => {
+    setShowRetry(false);
+    tryReconnecting();
+  }, [tryReconnecting]);
 
   React.useEffect(() => {
     const subscription = getProxyConnection().subscribe({
@@ -16,7 +22,10 @@ export function ConnectionStatus() {
         } else if (event.type === 'open' || event.type === 'message') {
           setStatus('connected');
         } else if (event.type === 'close') {
-          setStatus('disconnected');
+          if (event.retriesLeft === 0) {
+            setStatus('disconnected');
+            setShowRetry(true);
+          }
         }
       },
       complete: () => {
@@ -45,6 +54,14 @@ export function ConnectionStatus() {
           {status[0].toUpperCase()}
           {status.slice(1)}
         </span>
+        {showRetry ? (
+          <button
+            className="ml-4 material-icons text-gray-400 hover:text-gray-200 transition ease-in duration-100"
+            onClick={retry}
+          >
+            refresh
+          </button>
+        ) : null}
       </div>
     </div>
   );

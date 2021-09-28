@@ -10,7 +10,7 @@ export function createWebSocketObservable(address: string) {
 
   const initConnection = () => {
     for (const observer of observers) {
-      observer.next({ type: 'init' });
+      observer.next({ type: 'init', retriesLeft: retries - 1 });
     }
     socket = new WebSocket(address);
 
@@ -22,12 +22,12 @@ export function createWebSocketObservable(address: string) {
 
     socket.addEventListener('close', () => {
       for (const observer of observers) {
-        observer.next({ type: 'close' });
+        observer.next({ type: 'close', retriesLeft: retries - 1 });
       }
 
       socket = undefined;
+      retries--;
       if (retries > 0) {
-        retries--;
         setTimeout(() => initConnection(), 5000);
       } else {
         for (const observer of observers) {

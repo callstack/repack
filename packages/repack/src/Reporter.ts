@@ -171,15 +171,20 @@ export class Reporter {
     } else {
       if (this.isProgress(logEntry)) {
         const {
-          progress: { value, label, platform },
+          progress: { value, label, platform, message },
         } = logEntry.message[0] as {
-          progress: { value: number; label: string; platform: string };
+          progress: {
+            value: number;
+            label: string;
+            platform: string;
+            message: string;
+          };
         };
         this.progress[platform] = { value, label };
         this.updateProgress();
 
         this.config.wsDashboardServer?.send(
-          JSON.stringify({ kind: 'progress', value, label, platform })
+          JSON.stringify({ kind: 'progress', value, label, platform, message })
         );
       } else {
         const transformedLogEntry = this.transformLogEntry(logEntry);

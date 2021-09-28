@@ -11,10 +11,12 @@ import { Context } from './Context';
 import { createWebSocketObservable } from './utils/createWebSocketObservable';
 
 export function DevServerProvider({ children }: { children: React.ReactNode }) {
+  const [attemptCounter, setAttemptCounter] = React.useState(0);
   const proxy = React.useMemo(
     () =>
       createWebSocketObservable(`${DEV_SERVER_WS_URL}${DASHBOARD_API_PATH}`),
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [attemptCounter]
   );
   const [compilers, setCompilers] = React.useState<
     Record<string, Observable<DevServerMessage>>
@@ -32,6 +34,10 @@ export function DevServerProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  const tryReconnecting = React.useCallback(() => {
+    setAttemptCounter((attempt) => attempt + 1);
+  }, []);
+
   React.useEffect(() => {
     (async () => {
       try {
@@ -42,7 +48,7 @@ export function DevServerProvider({ children }: { children: React.ReactNode }) {
         console.error(error);
       }
     })();
-  }, [createCompilerConnection]);
+  }, [attemptCounter, createCompilerConnection]);
 
   React.useEffect(() => {
     proxy.subscribe({
@@ -67,11 +73,12 @@ export function DevServerProvider({ children }: { children: React.ReactNode }) {
     <Context.Provider
       value={React.useMemo(
         () => ({
+          tryReconnecting,
           getPlatforms: () => Object.keys(compilers),
           getProxyConnection: () => proxy,
           getCompilerConnection: (platform) => compilers[platform],
         }),
-        [compilers, proxy]
+        [compilers, proxy, tryReconnecting]
       )}
     >
       {children}

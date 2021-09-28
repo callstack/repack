@@ -52,15 +52,12 @@ __Check the base [`webpack.config.js`](https://github.com/callstack/repack/blob/
 - [x] [Code splitting](https://github.com/callstack/nativepack/discussions/45) (__experimental__):
   - Dynamic `import()` support with and without `React.lazy()` (recommended).
   - Manual chunks using [`entry` option](https://webpack.js.org/concepts/entry-points/) (only for advanced users).
+- [x] Web Dashboard with compilation status, server logs and artifacts.
 
 ### Planned features
 
 - [ ] `ChunksToHermesBytecodePlugin` plugin to automatically transform async chunks to bytecode format.
 - [ ] `webpack-init` command
-- [ ] Web dashboard / Flipper plugin with:
-  - Logs
-  - Compilations progress, errors and emitted assets
-  - Bundle visualizations
 - [ ] [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669) support
 
 ## Documentation

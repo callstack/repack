@@ -21,8 +21,8 @@ export function Artifacts() {
         )}
         {!getPlatforms().length ? (
           <Admonition type="info">
-            There are no Webpack compilations. Request a bundle through your
-            React Native application first.
+            There are no Webpack compilations. Request a bundle from your React
+            Native application first.
           </Admonition>
         ) : null}
       </div>

@@ -110,12 +110,13 @@ export class LoggerPlugin implements WebpackPlugin {
     compiler.options.stats = 'none';
 
     if (this.config.devServerEnabled) {
-      new webpack.ProgressPlugin((percentage, message) => {
+      new webpack.ProgressPlugin((percentage, message, text) => {
         const entry = this.createEntry('LoggerPlugin', 'info', [
           {
             progress: {
               value: percentage,
               label: message,
+              message: text,
               platform: this.config.platform,
             },
           },
