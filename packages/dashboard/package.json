@@ -12,7 +12,8 @@
     "build": "NODE_ENV=production webpack -c webpack.config.js",
     "start": "webpack serve",
     "lint": "eslint --ext \".ts,.tsx\" src",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "test": "exit 0"
   },
   "dependencies": {
     "byte-size": "^8.1.0",
