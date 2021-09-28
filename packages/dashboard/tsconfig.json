@@ -11,7 +11,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*.tsx"
