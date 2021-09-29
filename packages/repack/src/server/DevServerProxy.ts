@@ -3,6 +3,7 @@ import { Writable } from 'stream';
 import execa from 'execa';
 import getPort from 'get-port';
 import split2 from 'split2';
+import fastifyStatic from 'fastify-static';
 import fastifyReplyFrom from 'fastify-reply-from';
 import { CliOptions, StartArguments } from '../types';
 import { Reporter } from '../Reporter';
@@ -16,6 +17,7 @@ import { DevServerReply, DevServerRequest } from './types';
 import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
 import { transformFastifyLogToLogEntry } from './utils/transformFastifyLogToWebpackLogEntry';
+import { WebSocketDashboardServer } from './ws/WebSocketDashboardServer';
 
 /**
  * {@link DevServerProxy} configuration options.
@@ -78,8 +80,14 @@ export class DevServerProxy extends BaseDevServer {
 
   /** Platform to worker mappings. */
   workers: Record<string, Promise<CompilerWorker> | undefined> = {};
+  wsDashboardServer = this.wsRouter.registerServer(
+    new WebSocketDashboardServer(this.fastify)
+  );
   /** Reporter instance. */
-  reporter = new Reporter({ wsEventsServer: this.wsEventsServer });
+  reporter = new Reporter({
+    wsEventsServer: this.wsEventsServer,
+    wsDashboardServer: this.wsDashboardServer,
+  });
 
   /**
    * Constructs new `DevServerProxy`.
@@ -176,6 +184,18 @@ export class DevServerProxy extends BaseDevServer {
         if (event === 'watchRun') {
           if (!isResolved) {
             isResolved = true;
+
+            this.wsDashboardServer.send(
+              JSON.stringify({
+                kind: 'compilation',
+                event: {
+                  name: 'watchRun',
+                  port,
+                  platform,
+                },
+              })
+            );
+
             resolve({
               port,
               process,
@@ -241,11 +261,45 @@ export class DevServerProxy extends BaseDevServer {
 
     await super.setup();
 
+    const dashboardPublicDir = path.join(
+      __dirname,
+      '../../first-party/dashboard'
+    );
+    await this.fastify.register(fastifyStatic, {
+      root: dashboardPublicDir,
+      prefix: '/dashboard',
+      prefixAvoidTrailingSlash: true,
+      decorateReply: false,
+    });
+
     this.fastify.register(fastifyReplyFrom, {
       undici: {
         headersTimeout: 5 * 60 * 1000,
         bodyTimeout: 5 * 60 * 1000,
       },
+    });
+
+    this.fastify.get('/dashboard/:page', (_, reply) => {
+      reply.sendFile('index.html', dashboardPublicDir);
+    });
+
+    this.fastify.get('/api/dashboard/platforms', async () => {
+      const platforms = await Promise.all(
+        Object.keys(this.workers).map(async (platform) => ({
+          id: platform,
+          port: (await this.workers[platform])?.port,
+        }))
+      );
+
+      return {
+        platforms,
+      };
+    });
+
+    this.fastify.get('/api/dashboard/server-logs', (_, reply) => {
+      reply.send({
+        logs: this.reporter.getLogBuffer(),
+      });
     });
 
     this.fastify.post('/symbolicate', async (request, reply) => {
@@ -308,6 +362,11 @@ export class DevServerProxy extends BaseDevServer {
     try {
       await this.setup();
       await super.run();
+      this.fastify.log.info({
+        msg: `Dashboard available at: http${this.config.https ? 's' : ''}://${
+          this.config.host || 'localhost'
+        }:${this.config.port}/dashboard`,
+      });
     } catch (error) {
       console.error(error);
       process.exit(1);

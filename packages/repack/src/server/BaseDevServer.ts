@@ -169,7 +169,7 @@ export class BaseDevServer {
         } catch (error) {
           this.fastify.log.error({
             msg: 'Failed to open stack frame in editor',
-            error: error.message,
+            error: (error as Error).message,
           });
           reply.code(400).send();
         }

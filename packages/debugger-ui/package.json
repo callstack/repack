@@ -2,6 +2,9 @@
   "name": "debugger-ui",
   "private": true,
   "version": "1.0.0",
+  "workspaces": {
+    "nohoist": ["**"]
+  },
   "scripts": {
     "prepare": "yarn build",
     "build": "webpack -c webpack.config.js",

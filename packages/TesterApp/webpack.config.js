@@ -88,6 +88,7 @@ module.exports = {
      */
     alias: {
       'react-native': reactNativePath,
+      '@babel/runtime': path.join(__dirname, 'node_modules/@babel/runtime'),
     },
   },
   /**

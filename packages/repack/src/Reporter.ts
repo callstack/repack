@@ -5,6 +5,7 @@ import colorette from 'colorette';
 import { LogEntry, LogType } from './types';
 import { isVerbose, isWorker } from './env';
 import { WebSocketEventsServer } from './server';
+import { WebSocketDashboardServer } from './server/ws/WebSocketDashboardServer';
 
 const IS_SYMBOL_SUPPORTED =
   process.platform !== 'win32' ||
@@ -41,6 +42,7 @@ export interface ReporterConfig {
   /** Whether to log additional debug messages. */
   verbose?: boolean;
   wsEventsServer?: WebSocketEventsServer;
+  wsDashboardServer?: WebSocketDashboardServer;
 }
 
 /**
@@ -92,6 +94,7 @@ export class Reporter {
   private fileLogBuffer: string[] = [];
   private outputFilename?: string;
   private progress: Record<string, { value: number; label: string }> = {};
+  private logBuffer: LogEntry[] = [];
 
   /**
    * Create new instance of Reporter.
@@ -105,6 +108,15 @@ export class Reporter {
     if (!this.isWorker) {
       this.ora = ora('Running...').start();
     }
+  }
+
+  /**
+   * Get buffered server logs.
+   *
+   * @returns Array of server log entries.
+   */
+  getLogBuffer(): LogEntry[] {
+    return this.logBuffer;
   }
 
   /**
@@ -147,7 +159,7 @@ export class Reporter {
       this.fileLogBuffer.push(JSON.stringify(logEntry));
     }
 
-    let shouldReportToTerminal = logEntry.type !== 'debug' || this.isVerbose;
+    let shouldReport = logEntry.type !== 'debug' || this.isVerbose;
     // Allow to skip broadcasting messages - e.g. if broadcasting fails we don't want to try
     // to broadcast the failure as there's a high change it will fail again and cause infinite loop.
     const shouldBroadcast = !logEntry.message?.[0]?._skipBroadcast;
@@ -159,12 +171,21 @@ export class Reporter {
     } else {
       if (this.isProgress(logEntry)) {
         const {
-          progress: { value, label, platform },
+          progress: { value, label, platform, message },
         } = logEntry.message[0] as {
-          progress: { value: number; label: string; platform: string };
+          progress: {
+            value: number;
+            label: string;
+            platform: string;
+            message: string;
+          };
         };
         this.progress[platform] = { value, label };
         this.updateProgress();
+
+        this.config.wsDashboardServer?.send(
+          JSON.stringify({ kind: 'progress', value, label, platform, message })
+        );
       } else {
         const transformedLogEntry = this.transformLogEntry(logEntry);
         // Ignore empty logs
@@ -183,11 +204,18 @@ export class Reporter {
           // level but unless webpack-dev-middleware is migrated to Fastify that's not a feasible solution.
           // TODO: silence route logs on per-router/Fastify
           if (transformedLogEntry.message[0].request && !this.isVerbose) {
-            shouldReportToTerminal = false;
+            shouldReport = false;
+          }
+
+          if (shouldReport) {
+            this.logBuffer = this.logBuffer.concat(logEntry).slice(-500);
+            this.config.wsDashboardServer?.send(
+              JSON.stringify({ kind: 'server-log', log: logEntry })
+            );
           }
 
           const text = this.getOutputLogMessage(transformedLogEntry);
-          if (shouldReportToTerminal && this.ora) {
+          if (shouldReport && this.ora) {
             this.ora.stopAndPersist({
               symbol: Reporter.getSymbolForType(logEntry.type),
               text,
