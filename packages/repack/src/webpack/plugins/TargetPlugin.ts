@@ -2,6 +2,36 @@ import path from 'path';
 import webpack from 'webpack';
 import { WebpackPlugin } from '../../types';
 
+const REPACK_BOOTSTRAP = `
+/******** Re.Pack bootstrap *********************************************/
+/******/
+/******/  /* ensure self is defined */
+/******/  var self = self || this || new Function("return this")() || ({});
+/******/
+/******/  /* ensure repack object is defined */
+/******/  var __repack__ = self["__repack__"] = __repack__ || self["__repack__"] || {
+/******/    loadChunk: function() { throw new Error("Missing implementation for __repack__.loadChunk"); },
+/******/    execChunkCallback: [],
+/******/  };
+/******/
+/******/  /* inject repack to callback for chunk loading */
+/******/  !function() {
+/******/    function repackLoadChunkCallback(parentPush, data) {
+/******/      if (parentPush) parentPush(data);
+/******/      var chunkIds = data[0];
+/******/      var i = 0;
+/******/      for(; i < chunkIds.length; i++) {
+/******/        __repack__.execChunkCallback.push(chunkIds[i]);
+/******/      }
+/******/    }
+/******/
+/******/    var chunkLoadingGlobal = self["loadChunkCallback"] = self["loadChunkCallback"] || [];
+/******/    chunkLoadingGlobal.push = repackLoadChunkCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/  }();
+/******/
+/************************************************************************/
+`;
+
 /**
  * Plugin for tweaking the JavaScript runtime code to account for React Native environment.
  *
@@ -48,20 +78,24 @@ export class TargetPlugin implements WebpackPlugin {
       ]);
     };
 
+    const renderBootstrap =
+      webpack.javascript.JavascriptModulesPlugin.prototype.renderBootstrap;
+    webpack.javascript.JavascriptModulesPlugin.prototype.renderBootstrap =
+      function (...args) {
+        const result = renderBootstrap.call(this, ...args);
+        result.afterStartup.push('');
+        result.afterStartup.push('// Re.Pack after startup');
+        result.afterStartup.push(
+          `__repack__.execChunkCallback.push("${args[0].chunk.id}")`
+        );
+        return result;
+      };
+
     compiler.hooks.environment.tap('TargetPlugin', () => {
       new webpack.BannerPlugin({
         raw: true,
         entryOnly: true,
-        banner: [
-          '/******** Re.Pack environment setup for React Native ********************/',
-          '/******/',
-          '/******/  var self = self || this || new Function("return this")() || ({});',
-          '/******/  var __repack__ = __repack__ || self.__repack__ || {};',
-          '/******/  self.__repack__ = __repack__;',
-          '/******/  __repack__.loadChunk = __repack__.loadChunk || function() { throw new Error("Missing implementation for __repack__.loadChunk"); };',
-          '/******/',
-          '/************************************************************************/',
-        ].join('\n'),
+        banner: REPACK_BOOTSTRAP,
       }).apply(compiler);
     });
 

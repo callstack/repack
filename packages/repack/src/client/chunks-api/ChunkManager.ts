@@ -1,5 +1,6 @@
-/* globals __DEV__, __webpack_public_path__, __webpack_get_script_filename__ */
+/* globals __DEV__, __webpack_public_path__, __webpack_get_script_filename__, __repack__ */
 
+import EventEmitter from 'events';
 // @ts-ignore
 import { NativeModules } from 'react-native';
 import { LoadEvent } from '../shared/LoadEvent';
@@ -84,12 +85,24 @@ class ChunkManagerBackend {
   private resolveRemoteChunk?: RemoteChunkResolver;
   private storage?: StorageApi;
   private forceRemoteChunkResolution = false;
+  private eventEmitter = new EventEmitter();
 
   configure(config: ChunkManagerConfig) {
     this.storage = config.storage;
     this.forceRemoteChunkResolution =
       config.forceRemoteChunkResolution ?? false;
     this.resolveRemoteChunk = config.resolveRemoteChunk;
+
+    __repack__.execChunkCallback.push = ((
+      parentPush: typeof Array.prototype.push,
+      ...data: string[]
+    ) => {
+      this.eventEmitter.emit('loaded', data[0]);
+      return parentPush(...data);
+    }).bind(
+      null,
+      __repack__.execChunkCallback.push.bind(__repack__.execChunkCallback)
+    );
   }
 
   private async initCache() {
@@ -162,7 +175,15 @@ class ChunkManagerBackend {
     }
 
     try {
+      const loadedPromise = new Promise<void>((resolve) => {
+        this.eventEmitter.once('loaded', (data: string) => {
+          if (data === chunkId) {
+            resolve();
+          }
+        });
+      });
       await NativeModules.ChunkManager.loadChunk(chunkId, url, fetch);
+      await loadedPromise;
     } catch (error) {
       const { message, code } = error as Error & { code: string };
       console.error(
