@@ -35,8 +35,8 @@ export function PlatformSizes({ stats }: Props) {
 
   const getColor = React.useCallback((size: number) => {
     return cx({
-      'text-green-500': size < 10 * MB_AS_BYTES,
-      'text-yellow-500': size < 20 * MB_AS_BYTES,
+      'text-green-500': size <= 10 * MB_AS_BYTES,
+      'text-yellow-500': size > 10 * MB_AS_BYTES && size <= 20 * MB_AS_BYTES,
       'text-red-500': size > 20 * MB_AS_BYTES,
     });
   }, []);
