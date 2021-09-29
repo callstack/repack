@@ -406,7 +406,7 @@ export class WebSocketMessageServer extends WebSocketServer {
           );
         }
       } catch (error) {
-        this.handleError(clientId, message, error.toString());
+        this.handleError(clientId, message, error as Error);
       }
     });
   }
