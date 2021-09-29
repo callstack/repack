@@ -1,5 +1,5 @@
 /* eslint-env browser */
-/* globals __webpack_require__ __DEV__ */
+/* globals __repack__ __DEV__ */
 
 import { ChunkManager } from '../chunks-api';
 import { LoadEvent } from '../shared/LoadEvent';
@@ -39,7 +39,7 @@ async function loadAsyncChunk(
   try {
     await ChunkManager.loadChunk(chunkId.toString());
   } catch (error) {
-    cb(error);
+    cb(error as LoadEvent);
   }
 }
 
@@ -54,7 +54,7 @@ __webpack_public_path__ = __webpack_public_path__.replace(
   hostname
 );
 
-__webpack_require__.l = async (
+__repack__.loadChunk = async (
   url: string,
   cb: (event?: LoadEvent) => void,
   chunkName?: string,

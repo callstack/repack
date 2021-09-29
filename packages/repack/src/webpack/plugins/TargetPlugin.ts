@@ -20,8 +20,8 @@ export class TargetPlugin implements WebpackPlugin {
     compiler.options.target = false;
     compiler.options.output.chunkLoading = 'jsonp';
     compiler.options.output.chunkFormat = 'array-push';
-    compiler.options.output.globalObject = 'this';
-    compiler.options.output.chunkLoadingGlobal = 'rnwtLoadChunk';
+    compiler.options.output.globalObject = 'self';
+    compiler.options.output.chunkLoadingGlobal = 'loadChunkCallback';
 
     new webpack.NormalModuleReplacementPlugin(
       /react-native([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/,
@@ -42,11 +42,28 @@ export class TargetPlugin implements WebpackPlugin {
       return webpack.Template.asString([
         `${webpack.RuntimeGlobals.loadScript} = function() {`,
         webpack.Template.indent(
-          "throw new Error('Missing implementation for __webpack_require__.l');"
+          'return __repack__.loadChunk.apply(this, arguments);'
         ),
         '};',
       ]);
     };
+
+    compiler.hooks.environment.tap('TargetPlugin', () => {
+      new webpack.BannerPlugin({
+        raw: true,
+        entryOnly: true,
+        banner: [
+          '/******** Re.Pack environment setup for React Native ********************/',
+          '/******/',
+          '/******/  var self = self || this || new Function("return this")() || ({});',
+          '/******/  var __repack__ = __repack__ || self.__repack__ || {};',
+          '/******/  self.__repack__ = __repack__;',
+          '/******/  __repack__.loadChunk = __repack__.loadChunk || function() { throw new Error("Missing implementation for __repack__.loadChunk"); };',
+          '/******/',
+          '/************************************************************************/',
+        ].join('\n'),
+      }).apply(compiler);
+    });
 
     compiler.hooks.compilation.tap('TargetPlugin', (compilation) => {
       compilation.hooks.afterProcessAssets.tap('TargetPlugin', () => {
