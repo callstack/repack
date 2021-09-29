@@ -115,6 +115,7 @@ class ChunkManagerBackend {
 
     if (__DEV__ && !this.forceRemoteChunkResolution) {
       url = Chunk.fromDevServer(chunkId);
+      fetch = true;
     } else if (
       global.__CHUNKS__?.['local']?.includes(chunkId) &&
       !this.forceRemoteChunkResolution
