@@ -8,7 +8,7 @@ module.exports = {
     {
       exclude: [
         './src/client/api',
-        './src/client/setup',
+        './src/client/setup/{*.ts, modules, utils}',
         './src/client/shared',
       ],
       presets: [
