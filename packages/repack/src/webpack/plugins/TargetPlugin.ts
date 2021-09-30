@@ -1,36 +1,7 @@
 import path from 'path';
 import webpack from 'webpack';
+import { getRepackBootstrap } from '../../client/setup/inline/getRepackBootstrap';
 import { WebpackPlugin } from '../../types';
-
-const REPACK_BOOTSTRAP = `
-/******** Re.Pack bootstrap *********************************************/
-/******/
-/******/  /* ensure self is defined */
-/******/  var self = self || this || new Function("return this")() || ({});
-/******/
-/******/  /* ensure repack object is defined */
-/******/  var __repack__ = self["__repack__"] = __repack__ || self["__repack__"] || {
-/******/    loadChunk: function() { throw new Error("Missing implementation for __repack__.loadChunk"); },
-/******/    execChunkCallback: [],
-/******/  };
-/******/
-/******/  /* inject repack to callback for chunk loading */
-/******/  !function() {
-/******/    function repackLoadChunkCallback(parentPush, data) {
-/******/      if (parentPush) parentPush(data);
-/******/      var chunkIds = data[0];
-/******/      var i = 0;
-/******/      for(; i < chunkIds.length; i++) {
-/******/        __repack__.execChunkCallback.push(chunkIds[i]);
-/******/      }
-/******/    }
-/******/
-/******/    var chunkLoadingGlobal = self["loadChunkCallback"] = self["loadChunkCallback"] || [];
-/******/    chunkLoadingGlobal.push = repackLoadChunkCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
-/******/  }();
-/******/
-/************************************************************************/
-`;
 
 /**
  * Plugin for tweaking the JavaScript runtime code to account for React Native environment.
@@ -56,7 +27,9 @@ export class TargetPlugin implements WebpackPlugin {
     new webpack.NormalModuleReplacementPlugin(
       /react-native([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/,
       function (resource) {
-        const request = require.resolve('../../client/runtime/DevServerClient');
+        const request = require.resolve(
+          '../../client/setup/modules/DevServerClient'
+        );
         const context = path.dirname(request);
         resource.request = request;
         resource.context = context;
@@ -95,7 +68,9 @@ export class TargetPlugin implements WebpackPlugin {
       new webpack.BannerPlugin({
         raw: true,
         entryOnly: true,
-        banner: REPACK_BOOTSTRAP,
+        banner: getRepackBootstrap({
+          chunkLoadingGlobal: compiler.options.output.chunkLoadingGlobal!,
+        }),
       }).apply(compiler);
     });
 

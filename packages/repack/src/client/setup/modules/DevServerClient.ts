@@ -2,7 +2,7 @@
 declare var __DEV__: boolean;
 
 import prettyFormat from 'pretty-format';
-import { getDevServerLocation } from './getDevServerLocation';
+import { getDevServerLocation } from '../utils/getDevServerLocation';
 
 /**
  * With Webpack we don't use built-in metro-specific HMR client,

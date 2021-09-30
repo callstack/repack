@@ -1,9 +1,9 @@
 /* eslint-env browser */
 /* globals __repack__ __DEV__ */
 
-import { ChunkManager } from '../chunks-api';
+import { ChunkManager } from '../api';
 import { LoadEvent } from '../shared/LoadEvent';
-import { getDevServerLocation } from './getDevServerLocation';
+import { getDevServerLocation } from './utils/getDevServerLocation';
 
 type LoadCallback = (event?: LoadEvent) => void;
 
