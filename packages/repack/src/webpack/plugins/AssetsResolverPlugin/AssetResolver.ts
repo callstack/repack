@@ -61,7 +61,9 @@ export class AssetResolver {
       ? new RegExp(
           `^${escapeStringRegexp(
             name
-          )}(@\\d+(\\.\\d+)?x)?(\\.(${platform}|native))?\\.${type}$`
+          )}(@\\d+(\\.\\d+)?x)?(\\.(${platform}|native))?${escapeStringRegexp(
+            type
+          )}$`
         )
       : new RegExp(
           `^${escapeStringRegexp(name)}(\\.(${platform}|native))?\\.${type}$`
@@ -129,7 +131,7 @@ export class AssetResolver {
 
             const basename = path.basename(requestPath);
             const name = basename.replace(/\.[^.]+$/, '');
-            const type = path.extname(requestPath).substring(1);
+            const type = path.extname(requestPath);
             const files = ((results as Array<string | Buffer>)?.filter(
               (result) => typeof result === 'string'
             ) ?? []) as string[];
