@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Admonition } from '../../components/Admonition';
 import { PageLayout } from '../../components/PageLayout';
 import { useDevServer } from '../../hooks/useDevServer';
+import { CompilationTrigger } from './CompilationTrigger';
 import { PlatformCompilation } from './PlatformCompilation';
 import { PlatformDash } from './PlatformDash';
 
@@ -11,7 +12,8 @@ export function Dash() {
 
   return (
     <PageLayout title="Dash">
-      <div className="flex flex-row flex-wrap">
+      <CompilationTrigger />
+      <div className="mt-8 flex flex-row flex-wrap">
         {!platforms.length ? (
           <Admonition type="info" className="mt-2">
             There are no compilations yet. Start Re.Pack development server and
