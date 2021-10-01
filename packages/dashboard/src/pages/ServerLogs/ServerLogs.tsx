@@ -124,18 +124,17 @@ export function ServerLogs() {
             There are no logs yet.
           </Admonition>
         ) : null}
-        {React.useMemo(
-          () =>
-            hasLogs ? (
-              <ActionsBar
-                label={`Showing last ${MAX_LOGS_COUNT} logs.`}
-                position="top"
-                onClear={clearLogs}
-                onScroll={scrollToBottom}
-              />
-            ) : null,
-          [clearLogs, hasLogs, scrollToBottom]
-        )}
+        {hasLogs ? (
+          <ActionsBar
+            label={`Showing last ${Math.min(
+              logs.length,
+              MAX_LOGS_COUNT
+            )} logs.`}
+            position="top"
+            onClear={clearLogs}
+            onScroll={scrollToBottom}
+          />
+        ) : null}
         <Console
           logs={logs}
           variant="dark"
@@ -164,7 +163,10 @@ export function ServerLogs() {
         />
         {logs.length > BOTTOM_ACTION_BAR_THRESHOLD ? (
           <ActionsBar
-            label={`Showing last ${MAX_LOGS_COUNT} logs.`}
+            label={`Showing last ${Math.min(
+              logs.length,
+              MAX_LOGS_COUNT
+            )} logs.`}
             position="bottom"
             onClear={clearLogs}
             onScroll={scrollToTop}
