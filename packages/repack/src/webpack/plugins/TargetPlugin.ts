@@ -44,7 +44,7 @@ export class TargetPlugin implements WebpackPlugin {
       return webpack.Template.asString([
         `${webpack.RuntimeGlobals.loadScript} = function(u, c, n, i) {`,
         webpack.Template.indent(
-          `return __repack__.loadChunk.apply(this, u, c, n, i, "${this.chunk.id}");`
+          `return __repack__.loadChunk.call(this, u, c, n, i, "${this.chunk.id}");`
         ),
         '};',
       ]);
