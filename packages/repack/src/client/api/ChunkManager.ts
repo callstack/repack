@@ -1,5 +1,6 @@
-/* globals __DEV__, __webpack_public_path__, __webpack_get_script_filename__ */
+/* globals __DEV__, __webpack_public_path__, __webpack_get_script_filename__, __repack__ */
 
+import EventEmitter from 'events';
 // @ts-ignore
 import { NativeModules } from 'react-native';
 import { LoadEvent } from '../shared/LoadEvent';
@@ -35,7 +36,8 @@ export interface RemoteChunkLocation {
  * from where {@link ChunkManager} will download the chunk.
  */
 export type RemoteChunkResolver = (
-  chunkId: string
+  chunkId: string,
+  parentChunkId?: string
 ) => Promise<RemoteChunkLocation>;
 
 /**
@@ -84,12 +86,24 @@ class ChunkManagerBackend {
   private resolveRemoteChunk?: RemoteChunkResolver;
   private storage?: StorageApi;
   private forceRemoteChunkResolution = false;
+  private eventEmitter = new EventEmitter();
 
   configure(config: ChunkManagerConfig) {
     this.storage = config.storage;
     this.forceRemoteChunkResolution =
       config.forceRemoteChunkResolution ?? false;
     this.resolveRemoteChunk = config.resolveRemoteChunk;
+
+    __repack__.loadChunkCallback.push = ((
+      parentPush: typeof Array.prototype.push,
+      ...data: string[]
+    ) => {
+      this.eventEmitter.emit('loaded', data[0]);
+      return parentPush(...data);
+    }).bind(
+      null,
+      __repack__.loadChunkCallback.push.bind(__repack__.loadChunkCallback)
+    );
   }
 
   private async initCache() {
@@ -106,7 +120,8 @@ class ChunkManagerBackend {
   }
 
   async resolveChunk(
-    chunkId: string
+    chunkId: string,
+    parentChunkId?: string
   ): Promise<{ url: string; fetch: boolean }> {
     await this.initCache();
 
@@ -128,7 +143,7 @@ class ChunkManagerBackend {
         );
       }
 
-      const location = await this.resolveRemoteChunk(chunkId);
+      const location = await this.resolveRemoteChunk(chunkId, parentChunkId);
       url = Chunk.fromRemote(location.url, {
         excludeExtension: location.excludeExtension,
       });
@@ -146,11 +161,11 @@ class ChunkManagerBackend {
     };
   }
 
-  async loadChunk(chunkId: string) {
+  async loadChunk(chunkId: string, parentChunkId?: string) {
     let url;
     let fetch;
     try {
-      const resolved = await this.resolveChunk(chunkId);
+      const resolved = await this.resolveChunk(chunkId, parentChunkId);
       url = resolved.url;
       fetch = resolved.fetch;
     } catch (error) {
@@ -162,7 +177,15 @@ class ChunkManagerBackend {
     }
 
     try {
+      const loadedPromise = new Promise<void>((resolve) => {
+        this.eventEmitter.once('loaded', (data: string) => {
+          if (data === chunkId) {
+            resolve();
+          }
+        });
+      });
       await NativeModules.ChunkManager.loadChunk(chunkId, url, fetch);
+      await loadedPromise;
     } catch (error) {
       const { message, code } = error as Error & { code: string };
       console.error(
@@ -297,16 +320,15 @@ export class ChunkManager {
 
   /**
    * Resolves given chunk's location, download and execute it.
-   *
-   * This function can be awaited for error handling, but after the functions resolves,
-   * it should **not be assumed that the code was executed**.
+   * Once the returned Promise is resolved, the code should have been evaluated.
    *
    * The execution of the code is handled internally by threading in React Native.
    *
    * @param chunkId Id of the chunk.
+   * @param parentChunkId Id of the parent chunk.
    */
-  static async loadChunk(chunkId: string) {
-    return ChunkManager.backend.loadChunk(chunkId);
+  static async loadChunk(chunkId: string, parentChunkId?: string) {
+    return ChunkManager.backend.loadChunk(chunkId, parentChunkId);
   }
 
   /**

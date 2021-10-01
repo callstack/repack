@@ -1,5 +1,6 @@
 import path from 'path';
 import webpack from 'webpack';
+import { getRepackBootstrap } from '../../client/setup/inline/getRepackBootstrap';
 import { WebpackPlugin } from '../../types';
 
 /**
@@ -20,13 +21,14 @@ export class TargetPlugin implements WebpackPlugin {
     compiler.options.target = false;
     compiler.options.output.chunkLoading = 'jsonp';
     compiler.options.output.chunkFormat = 'array-push';
-    compiler.options.output.globalObject = 'this';
-    compiler.options.output.chunkLoadingGlobal = 'rnwtLoadChunk';
+    compiler.options.output.globalObject = 'self';
 
     new webpack.NormalModuleReplacementPlugin(
       /react-native([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/,
       function (resource) {
-        const request = require.resolve('../../client/runtime/DevServerClient');
+        const request = require.resolve(
+          '../../client/setup/modules/DevServerClient'
+        );
         const context = path.dirname(request);
         resource.request = request;
         resource.context = context;
@@ -40,13 +42,36 @@ export class TargetPlugin implements WebpackPlugin {
     // in `../../../runtime/setupChunkLoader.ts`.
     webpack.runtime.LoadScriptRuntimeModule.prototype.generate = function () {
       return webpack.Template.asString([
-        `${webpack.RuntimeGlobals.loadScript} = function() {`,
+        `${webpack.RuntimeGlobals.loadScript} = function(u, c, n, i) {`,
         webpack.Template.indent(
-          "throw new Error('Missing implementation for __webpack_require__.l');"
+          `return __repack__.loadChunk.call(this, u, c, n, i, "${this.chunk.id}");`
         ),
         '};',
       ]);
     };
+
+    const renderBootstrap =
+      webpack.javascript.JavascriptModulesPlugin.prototype.renderBootstrap;
+    webpack.javascript.JavascriptModulesPlugin.prototype.renderBootstrap =
+      function (...args) {
+        const result = renderBootstrap.call(this, ...args);
+        result.afterStartup.push('');
+        result.afterStartup.push('// Re.Pack after startup');
+        result.afterStartup.push(
+          `__repack__.loadChunkCallback.push("${args[0].chunk.id}")`
+        );
+        return result;
+      };
+
+    compiler.hooks.environment.tap('TargetPlugin', () => {
+      new webpack.BannerPlugin({
+        raw: true,
+        entryOnly: true,
+        banner: getRepackBootstrap({
+          chunkLoadingGlobal: compiler.options.output.chunkLoadingGlobal!,
+        }),
+      }).apply(compiler);
+    });
 
     compiler.hooks.compilation.tap('TargetPlugin', (compilation) => {
       compilation.hooks.afterProcessAssets.tap('TargetPlugin', () => {

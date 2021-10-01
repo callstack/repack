@@ -241,7 +241,7 @@ export class Symbolicator {
       } catch (error) {
         this.logger.error({
           msg: 'Failed to create code frame',
-          error: error.message,
+          error: (error as Error).message,
         });
       }
 

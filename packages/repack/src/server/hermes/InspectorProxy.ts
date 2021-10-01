@@ -148,9 +148,9 @@ export class InspectorProxy extends WebSocketServer {
     } catch (error) {
       this.fastify.log.error({
         msg: 'Failed to establish connection with Hermes device',
-        error: error.message,
+        error: (error as Error).message,
       });
-      socket.close(1011, error);
+      socket.close(1011, (error as Error).toString());
     }
   }
 }

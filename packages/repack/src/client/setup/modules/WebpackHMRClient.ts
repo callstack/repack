@@ -1,8 +1,8 @@
 /* eslint-env browser */
 /* globals __webpack_hash__ __DEV__ */
 
-import type { HMRMessage, HMRMessageBody } from '../../types';
-import { getDevServerLocation } from './getDevServerLocation';
+import type { HMRMessage, HMRMessageBody } from '../../../types';
+import { getDevServerLocation } from '../utils/getDevServerLocation';
 
 class HMRClient {
   url: string;

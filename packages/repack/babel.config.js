@@ -7,8 +7,8 @@ module.exports = {
   overrides: [
     {
       exclude: [
-        './src/client/chunks-api',
-        './src/client/runtime',
+        './src/client/api',
+        './src/client/setup/{*.ts, modules, utils}',
         './src/client/shared',
       ],
       presets: [

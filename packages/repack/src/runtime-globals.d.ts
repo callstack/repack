@@ -4,6 +4,7 @@ declare var __DEV__: boolean;
 declare var __CHUNKS__: { local?: Array<string | number | null> } | undefined;
 declare var __webpack_public_path__: string;
 declare var __webpack_get_script_filename__: (script: string) => string;
+declare var __repack__: { loadChunk: Function; loadChunkCallback: string[] };
 
 interface HMRInfo {
   type: string;
