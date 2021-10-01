@@ -36,7 +36,8 @@ export interface RemoteChunkLocation {
  * from where {@link ChunkManager} will download the chunk.
  */
 export type RemoteChunkResolver = (
-  chunkId: string
+  chunkId: string,
+  parentChunkId?: string
 ) => Promise<RemoteChunkLocation>;
 
 /**
@@ -93,7 +94,7 @@ class ChunkManagerBackend {
       config.forceRemoteChunkResolution ?? false;
     this.resolveRemoteChunk = config.resolveRemoteChunk;
 
-    __repack__.execChunkCallback.push = ((
+    __repack__.loadChunkCallback.push = ((
       parentPush: typeof Array.prototype.push,
       ...data: string[]
     ) => {
@@ -101,7 +102,7 @@ class ChunkManagerBackend {
       return parentPush(...data);
     }).bind(
       null,
-      __repack__.execChunkCallback.push.bind(__repack__.execChunkCallback)
+      __repack__.loadChunkCallback.push.bind(__repack__.loadChunkCallback)
     );
   }
 
@@ -119,7 +120,8 @@ class ChunkManagerBackend {
   }
 
   async resolveChunk(
-    chunkId: string
+    chunkId: string,
+    parentChunkId?: string
   ): Promise<{ url: string; fetch: boolean }> {
     await this.initCache();
 
@@ -141,7 +143,7 @@ class ChunkManagerBackend {
         );
       }
 
-      const location = await this.resolveRemoteChunk(chunkId);
+      const location = await this.resolveRemoteChunk(chunkId, parentChunkId);
       url = Chunk.fromRemote(location.url, {
         excludeExtension: location.excludeExtension,
       });
@@ -159,11 +161,11 @@ class ChunkManagerBackend {
     };
   }
 
-  async loadChunk(chunkId: string) {
+  async loadChunk(chunkId: string, parentChunkId?: string) {
     let url;
     let fetch;
     try {
-      const resolved = await this.resolveChunk(chunkId);
+      const resolved = await this.resolveChunk(chunkId, parentChunkId);
       url = resolved.url;
       fetch = resolved.fetch;
     } catch (error) {
@@ -325,9 +327,10 @@ export class ChunkManager {
    * The execution of the code is handled internally by threading in React Native.
    *
    * @param chunkId Id of the chunk.
+   * @param parentChunkId Id of the parent chunk.
    */
-  static async loadChunk(chunkId: string) {
-    return ChunkManager.backend.loadChunk(chunkId);
+  static async loadChunk(chunkId: string, parentChunkId?: string) {
+    return ChunkManager.backend.loadChunk(chunkId, parentChunkId);
   }
 
   /**

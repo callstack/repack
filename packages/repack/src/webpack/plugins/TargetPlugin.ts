@@ -22,7 +22,6 @@ export class TargetPlugin implements WebpackPlugin {
     compiler.options.output.chunkLoading = 'jsonp';
     compiler.options.output.chunkFormat = 'array-push';
     compiler.options.output.globalObject = 'self';
-    compiler.options.output.chunkLoadingGlobal = 'loadChunkCallback';
 
     new webpack.NormalModuleReplacementPlugin(
       /react-native([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/,
@@ -43,9 +42,9 @@ export class TargetPlugin implements WebpackPlugin {
     // in `../../../runtime/setupChunkLoader.ts`.
     webpack.runtime.LoadScriptRuntimeModule.prototype.generate = function () {
       return webpack.Template.asString([
-        `${webpack.RuntimeGlobals.loadScript} = function() {`,
+        `${webpack.RuntimeGlobals.loadScript} = function(u, c, n, i) {`,
         webpack.Template.indent(
-          'return __repack__.loadChunk.apply(this, arguments);'
+          `return __repack__.loadChunk.apply(this, u, c, n, i, "${this.chunk.id}");`
         ),
         '};',
       ]);
@@ -59,7 +58,7 @@ export class TargetPlugin implements WebpackPlugin {
         result.afterStartup.push('');
         result.afterStartup.push('// Re.Pack after startup');
         result.afterStartup.push(
-          `__repack__.execChunkCallback.push("${args[0].chunk.id}")`
+          `__repack__.loadChunkCallback.push("${args[0].chunk.id}")`
         );
         return result;
       };

@@ -11,7 +11,7 @@ export const getRepackBootstrap = ({
 /******/  /* ensure repack object is defined */
 /******/  var __repack__ = self["__repack__"] = __repack__ || self["__repack__"] || {
 /******/    loadChunk: function() { throw new Error("Missing implementation for __repack__.loadChunk"); },
-/******/    execChunkCallback: [],
+/******/    loadChunkCallback: [],
 /******/  };
 /******/
 /******/  /* inject repack to callback for chunk loading */
@@ -21,7 +21,7 @@ export const getRepackBootstrap = ({
 /******/      var chunkIds = data[0];
 /******/      var i = 0;
 /******/      for(; i < chunkIds.length; i++) {
-/******/        __repack__.execChunkCallback.push(chunkIds[i]);
+/******/        __repack__.loadChunkCallback.push(chunkIds[i]);
 /******/      }
 /******/    }
 /******/
