@@ -320,9 +320,7 @@ export class ChunkManager {
 
   /**
    * Resolves given chunk's location, download and execute it.
-   *
-   * This function can be awaited for error handling, but after the functions resolves,
-   * it should **not be assumed that the code was executed**.
+   * Once the returned Promise is resolved, the code should have been evaluated.
    *
    * The execution of the code is handled internally by threading in React Native.
    *
