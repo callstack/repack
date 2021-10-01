@@ -1,6 +1,6 @@
 {
   "out": "../../website/docs/api/react-native",
-  "entryPoints": ["./src/client/chunks-api/index.ts"],
+  "entryPoints": ["./src/client/api/index.ts"],
   "tsconfig": "./tsconfig.json",
   "readme": "none",
   "name": "Re.Pack React Native APIs",
