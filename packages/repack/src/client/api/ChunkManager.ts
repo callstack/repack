@@ -1,39 +1,94 @@
-/* globals __DEV__, __webpack_public_path__, __webpack_get_script_filename__, __repack__ */
+/* globals __DEV__, __webpack_public_path__, __webpack_get_script_filename__, __repack__, Headers, FormData */
 
 import EventEmitter from 'events';
 // @ts-ignore
 import { NativeModules } from 'react-native';
 import { LoadEvent } from '../shared/LoadEvent';
 
-const CACHE_KEY = `Repack.ChunkManager.Cache.${__DEV__ ? 'debug' : 'release'}`;
+const CACHE_KEY = `Repack.ChunkManager.Cache.v2.${
+  __DEV__ ? 'debug' : 'release'
+}`;
 
-interface Cache {
-  urls: Record<string, string>;
+interface ChunkConfig {
+  method: 'GET' | 'POST';
+  url: string;
+  fetch: boolean;
+  query?: string;
+  headers?: Record<string, string>;
+  body?: string;
 }
 
+type Cache = Record<string, ChunkConfig>;
+
 /**
- * Interface specifying where a remote chunk is hosted.
+ * Interface specifying how to fetch a remote chunk.
  * It represents the output of {@link RemoteChunkResolver} function used by {@link ChunkManager}.
  */
 export interface RemoteChunkLocation {
   /**
-   * A URL to remote location, where to download a chunk from.
+   * A path-only URL to remote location, where to download a chunk from.
+   *
+   * Changing this field for the same chunk, will cause cache invalidation for that chunk
+   * and a fresh version will be downloaded.
    *
    * Example: for `chunkId: 'TeacherModule'` the `url` can look like this:
    * `https://myapp.com/assets/TeacherModule`.
+   *
+   * **Passing query params might lead to unexpected results. To pass query params use `query` field.**
    */
   url: string;
+
   /**
    * Whether not to add chunk's default extension by default. If your chunk has different
    * extension than `.chunk.bundle` you should set this flag to `true` and add extension to the `url`.
    */
   excludeExtension?: boolean;
+
+  /**
+   * Query params to append when building the final URL.
+   *
+   * Changing this field for the same chunk, will cause cache invalidation for that chunk
+   * and a fresh version will be downloaded.
+   */
+  query?: string | Record<string, string> | URLSearchParams;
+
+  /**
+   * Headers to pass to a remote chunk's fetch request.
+   *
+   * When passing `body`, make sure add content `content-type` header, otherwise `text/plain`
+   * will be used.
+   *
+   * Changing this field for the same chunk, will cause cache invalidation for that chunk
+   * and a fresh version will be downloaded.
+   */
+  headers?: Record<string, string> | Headers;
+
+  /**
+   * HTTP method used to fetch remote chunk.
+   *
+   * Passing `body` with method `GET` is a no-op. Use `POST` to send `body` data.
+   *
+   * Changing this field for the same chunk, will cause cache invalidation for that chunk
+   * and a fresh version will be downloaded.
+   */
+  method?: 'GET' | 'POST';
+
+  /**
+   * HTTP body for a remote chunk's fetch request.
+   *
+   * When passing `body`, make sure the `method` is set to `POST` and a correct
+   * `content-type` header is provided.
+   *
+   * Changing this field for the same chunk, will cause cache invalidation for that chunk
+   * and a fresh version will be downloaded.
+   */
+  body?: FormData | URLSearchParams | string | null;
 }
 
 /**
- * Defines a function to resolve remote chunk's URL used in {@link ChunkManagerConfig}.
- * It's an async function which should return an object with `url` to a remote location
- * from where {@link ChunkManager} will download the chunk.
+ * Defines a function to resolve remote chunk used in {@link ChunkManagerConfig}.
+ * It's an async function which should return an object with defining how {@link ChunkManager}
+ * should fetch a remote chunk. All fields describing the chunk are listed in {@link RemoteChunkLocation}.
  */
 export type RemoteChunkResolver = (
   chunkId: string,
@@ -109,9 +164,9 @@ class ChunkManagerBackend {
   private async initCache() {
     if (!this.cache) {
       const cache: Cache | null | undefined = JSON.parse(
-        (await this.storage?.getItem(CACHE_KEY)) ?? 'null'
+        (await this.storage?.getItem(CACHE_KEY)) ?? '{}'
       );
-      this.cache = { urls: {}, ...cache };
+      this.cache = cache ?? undefined;
     }
   }
 
@@ -122,11 +177,15 @@ class ChunkManagerBackend {
   async resolveChunk(
     chunkId: string,
     parentChunkId?: string
-  ): Promise<{ url: string; fetch: boolean }> {
+  ): Promise<ChunkConfig> {
     await this.initCache();
 
+    let method: ChunkConfig['method'] = 'GET';
+    let url: ChunkConfig['url'];
     let fetch = false;
-    let url: string | undefined;
+    let query: ChunkConfig['query'];
+    let body: ChunkConfig['body'];
+    let headers: ChunkConfig['headers'];
 
     if (__DEV__ && !this.forceRemoteChunkResolution) {
       url = Chunk.fromDevServer(chunkId);
@@ -143,31 +202,87 @@ class ChunkManagerBackend {
         );
       }
 
-      const location = await this.resolveRemoteChunk(chunkId, parentChunkId);
-      url = Chunk.fromRemote(location.url, {
-        excludeExtension: location.excludeExtension,
+      const config = await this.resolveRemoteChunk(chunkId, parentChunkId);
+      method = config.method ?? method;
+      url = Chunk.fromRemote(config.url, {
+        excludeExtension: config.excludeExtension,
       });
+
+      if (config.query instanceof URLSearchParams) {
+        query = config.query.toString();
+      } else if (typeof config.query === 'string') {
+        query = config.query;
+      } else if (config.query) {
+        query = Object.entries(config.query)
+          .reduce(
+            (acc, [key, value]) => [...acc, `${key}=${value}`],
+            [] as string[]
+          )
+          .join('&');
+      }
+
+      if (config.headers instanceof Headers) {
+        config.headers.forEach((value, key) => {
+          headers = headers ?? {};
+          headers[key.toLowerCase()] = value;
+        });
+      } else if (config.headers) {
+        headers = Object.entries(config.headers).reduce(
+          (acc, [key, value]) => ({
+            ...acc,
+            [key.toLowerCase()]: value,
+          }),
+          {}
+        );
+      }
+
+      if (config.body instanceof FormData) {
+        const tempBody: Record<string, string> = {};
+        config.body.forEach((value, key) => {
+          if (typeof value === 'string') {
+            tempBody[key] = value;
+          } else {
+            console.warn(
+              'ChunkManager.resolveChunk does not support File as FormData key in body'
+            );
+          }
+        });
+        body = JSON.stringify(tempBody);
+      } else if (config.body instanceof URLSearchParams) {
+        const tempBody: Record<string, string> = {};
+        config.body.forEach((value, key) => {
+          tempBody[key] = value;
+        });
+        body = JSON.stringify(tempBody);
+      } else {
+        body = config.body ?? undefined;
+      }
     }
 
-    if (!this.cache!.urls[chunkId] || this.cache!.urls[chunkId] !== url) {
+    if (
+      !this.cache![chunkId] ||
+      this.cache![chunkId].url !== url ||
+      this.cache![chunkId].query !== query
+    ) {
       fetch = true;
-      this.cache!.urls[chunkId] = url;
+      this.cache![chunkId] = {
+        url,
+        fetch,
+        method,
+        query,
+        body,
+        headers,
+      };
       await this.saveCache();
     }
 
-    return {
-      url: this.cache!.urls[chunkId],
-      fetch,
-    };
+    return this.cache![chunkId];
   }
 
   async loadChunk(chunkId: string, parentChunkId?: string) {
-    let url;
-    let fetch;
+    let config: ChunkConfig;
     try {
-      const resolved = await this.resolveChunk(chunkId, parentChunkId);
-      url = resolved.url;
-      fetch = resolved.fetch;
+      config = await this.resolveChunk(chunkId, parentChunkId);
     } catch (error) {
       console.error(
         'ChunkManager.resolveChunk error:',
@@ -184,26 +299,24 @@ class ChunkManagerBackend {
           }
         });
       });
-      await NativeModules.ChunkManager.loadChunk(chunkId, url, fetch);
+      await NativeModules.ChunkManager.loadChunk(chunkId, config);
       await loadedPromise;
     } catch (error) {
       const { message, code } = error as Error & { code: string };
       console.error(
         'ChunkManager.loadChunk invocation failed:',
         message,
-        code ? `[${code}]` : ''
+        code ? `[${code}]` : '',
+        config
       );
-      throw new LoadEvent('load', url, error);
+      throw new LoadEvent('load', config.url, error);
     }
   }
 
-  async preloadChunk(chunkId: string) {
-    let url;
-    let fetch;
+  async preloadChunk(chunkId: string, parentChunkId?: string) {
+    let config: ChunkConfig;
     try {
-      const resolved = await this.resolveChunk(chunkId);
-      url = resolved.url;
-      fetch = resolved.fetch;
+      config = await this.resolveChunk(chunkId, parentChunkId);
     } catch (error) {
       console.error(
         'ChunkManager.resolveChunk error:',
@@ -213,15 +326,16 @@ class ChunkManagerBackend {
     }
 
     try {
-      await NativeModules.ChunkManager.preloadChunk(chunkId, url, fetch);
+      await NativeModules.ChunkManager.preloadChunk(chunkId, config);
     } catch (error) {
       const { message, code } = error as Error & { code: string };
       console.error(
         'ChunkManager.preloadChunk invocation failed:',
         message,
-        code ? `[${code}]` : ''
+        code ? `[${code}]` : '',
+        config
       );
-      throw new LoadEvent('load', url, error);
+      throw new LoadEvent('load', config.url, error);
     }
   }
 
@@ -231,7 +345,7 @@ class ChunkManagerBackend {
       const ids = chunksIds ?? Object.keys(this.cache!.urls);
 
       for (const chunkId of ids) {
-        delete this.cache?.urls[chunkId];
+        delete this.cache![chunkId];
       }
       await this.saveCache();
 
