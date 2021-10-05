@@ -47,7 +47,12 @@ const webpackConfigOption = {
     const {
       getWebpackConfigPath,
     } = require('./dist/commands/utils/getWebpackConfigPath');
-    return getWebpackConfigPath(config.root);
+
+    try {
+      return getWebpackConfigPath(config.root);
+    } catch {
+      return '';
+    }
   },
 };
 
