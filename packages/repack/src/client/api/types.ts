@@ -116,11 +116,23 @@ export interface ChunkManagerConfig {
   forceRemoteChunkResolution?: boolean;
 }
 
+/**
+ * Internal representation of Chunk config specifying it's remote location
+ * and the data necessary to fetch it.
+ * 
+ * @internal
+ */
 export interface ChunkConfig {
+  /** HTTP method. */
   method: 'GET' | 'POST';
+  /** Path-only URL to a chunk's remote location. */
   url: string;
+  /** Whether to fetch chunk from the network or use cached one. */
   fetch: boolean;
+  /** Query params. */
   query?: string;
+  /** Request headers. */
   headers?: Record<string, string>;
+  /** Request body. */
   body?: string;
 }
