@@ -119,7 +119,7 @@ export interface ChunkManagerConfig {
 /**
  * Internal representation of Chunk config specifying it's remote location
  * and the data necessary to fetch it.
- * 
+ *
  * @internal
  */
 export interface ChunkConfig {
