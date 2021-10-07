@@ -82,6 +82,7 @@ export class AssetsCopyProcessor {
           chunkSource,
           'utf-8'
         );
+        await this.filesystem.ensureDir(path.dirname(bundleDestination));
         await this.filesystem.writeFile(
           bundleDestination,
           bundleContent.replace(
@@ -107,6 +108,7 @@ export class AssetsCopyProcessor {
             sourceMapSource,
             'utf-8'
           );
+          await this.filesystem.ensureDir(path.dirname(sourceMapDestination));
           await this.filesystem.writeFile(
             sourceMapDestination,
             sourceMapContent.replace(
@@ -140,33 +142,39 @@ export class AssetsCopyProcessor {
     const [manifest] = [...chunk.auxiliaryFiles].filter((file) =>
       /\.bundle\.json$/.test(file)
     );
-    const manifestSource = path.join(outputPath, manifest);
-    const manifestDestination = path.join(
-      platform === 'ios' ? assetsDest : bundleOutputDir,
-      isEntry ? `${path.basename(bundleDestination)}.json` : manifest
-    );
-
-    // If chunk is an entry chunk, meaning it's a main bundle,
-    // adjust chunk and source map names inside the manifest (e.g: `index.bundle` -> `main.jsbundle`,
-    // `index.bundle.map` -> `main.jsbundle.map`).
-    // Otherwise, simply copy the manifest.
-    if (isEntry) {
-      this.queue.push(async () => {
-        const manifestContent = await this.filesystem.readFile(
-          manifestSource,
-          'utf-8'
-        );
-        await this.filesystem.writeFile(
-          manifestDestination,
-          manifestContent
-            .replace(chunkFile, path.basename(bundleDestination))
-            .replace(sourceMapFile ?? /.^/, path.basename(sourceMapDestination))
-        );
-      });
-    } else {
-      this.queue.push(() =>
-        this.copyAsset(manifestSource, manifestDestination)
+    if (manifest) {
+      const manifestSource = path.join(outputPath, manifest);
+      const manifestDestination = path.join(
+        platform === 'ios' ? assetsDest : bundleOutputDir,
+        isEntry ? `${path.basename(bundleDestination)}.json` : manifest
       );
+
+      // If chunk is an entry chunk, meaning it's a main bundle,
+      // adjust chunk and source map names inside the manifest (e.g: `index.bundle` -> `main.jsbundle`,
+      // `index.bundle.map` -> `main.jsbundle.map`).
+      // Otherwise, simply copy the manifest.
+      if (isEntry) {
+        this.queue.push(async () => {
+          const manifestContent = await this.filesystem.readFile(
+            manifestSource,
+            'utf-8'
+          );
+          await this.filesystem.ensureDir(path.dirname(manifestDestination));
+          await this.filesystem.writeFile(
+            manifestDestination,
+            manifestContent
+              .replace(chunkFile, path.basename(bundleDestination))
+              .replace(
+                sourceMapFile ?? /.^/,
+                path.basename(sourceMapDestination)
+              )
+          );
+        });
+      } else {
+        this.queue.push(() =>
+          this.copyAsset(manifestSource, manifestDestination)
+        );
+      }
     }
   }
 
