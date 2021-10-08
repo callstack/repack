@@ -317,7 +317,7 @@ ChunkManager.configure({
 
 :::info
 
-It is possible to invalidate the cache manually using [`ChunkManager.invalidateChunks(...)`](...api/react-native/classes/ChunkManager#invalidatechunks) API,
+It is possible to invalidate the cache manually using [`ChunkManager.invalidateChunks(...)`](../api/react-native/classes/ChunkManager#invalidatechunks) API,
 which removes the chunk from both filesystem and from the `storage`.
 
 :::
