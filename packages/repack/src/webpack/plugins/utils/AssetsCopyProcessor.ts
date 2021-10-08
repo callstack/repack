@@ -39,7 +39,9 @@ export class AssetsCopyProcessor {
       assetsDest,
       platform,
     } = this.config;
-    const sourcemapOutputDir = path.dirname(sourcemapOutput);
+    const sourcemapOutputDir = sourcemapOutput
+      ? path.dirname(sourcemapOutput)
+      : bundleOutputDir;
 
     // Chunk bundle e.g: `index.bundle`, `src_App_js.chunk.bundle`
     const [chunkFile] = [...chunk.files];
