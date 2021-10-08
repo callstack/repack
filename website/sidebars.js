@@ -31,6 +31,11 @@ module.exports = {
         'known-issues',
         {
           type: 'category',
+          label: 'Guides',
+          items: ['guides/code-splitting'],
+        },
+        {
+          type: 'category',
           label: 'Migration guides',
           items: ['migration-guides/repack-v1-to-v2'],
         },
