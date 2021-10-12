@@ -20,7 +20,76 @@ Use [Glossary of terms](./glossary) to better understand the content of this doc
 
 ## Generic usage
 
-TODO
+On a high-level, all functionalities that enable to use Webpack's Code Splitting, are powered by
+Re.Pack's [`ChunkManager`](../api/react-native/classes/ChunkManager).
+
+This APIs consists of the JavaScript part and the native part.
+
+The [`ChunkManager`](../api/react-native/classes/ChunkManager) has function which allows to:
+
+1. Download and execute the chunk - [`loadChunk`](../api/react-native/classes/ChunkManager#loadchunk)
+2. Download the chunk (without executing immediately) - [`preloadChunk`](../api/react-native/classes/ChunkManager#preloadchunk)
+3. Resolve chunk location - [`resolveChunk`](../api/react-native/classes/ChunkManager#resolvechunk)
+4. Invalidate chunk's cache - [`invalidateChunks`](../api/react-native/classes/ChunkManager#invalidatechunks)
+
+In order to provide this functionalities [`ChunkManager`](../api/react-native/classes/ChunkManager)
+has to be configured to be able to resolve remote chunks/scripts/containers:
+
+```js
+ChunkManager.configure({
+  storage: AsyncStorage, // Optional: enables caching
+  resolveRemoteChunk: async (chunkId, parentChunkId) => {
+    // Resolve or provide a URL to download the
+    // remote chunk/script/container from.
+    return {
+      url: `http://domain.com/${chunkId}`,
+    };
+  },
+});
+```
+
+If the `storage` is provided, the returned `url` from `resolveRemoteChunk` will be used for
+cache management. You can read more about it in [Caching and Versioning](./caching-versioning).
+
+:::info
+
+Despite the name, [`ChunkManager`](../api/react-native/classes/ChunkManager) is also used when
+loading [scripts](#scripts) and containers from [Module Federation](#module-federation).
+
+:::
+
+Under the hood, the process could be summarized as follows:
+
+1. `ChunkManager.loadChunk(...)` gets called, either:
+   - Automatically by the dynamic `import(...)` function handled by Webpack, when using [Async chunks approach](#async-chunks)
+   - Manually when using [Scripts approach](#scripts) or [Module Federation](#module-federation)
+2. `ChunkManager.loadChunk(...)` is called `chunkId` and `parentChunkId` arguments, which are either provided by:
+   - Webpack, based on it's internal naming logic or a [magic comment: `webpackChunkName`](https://webpack.js.org/migrate/5/#using--webpackchunkname--)
+   - Manually
+3. `ChunkManager.loadChunk(...)` resolves the chunk location using `ChunkManager.resolveChunk(...)`.
+4. The resolution:
+   - In development: resolves all chunks to the development server location for better developer
+   experience, unless `forceRemoteChunkResolution` is set to `true`.
+   - In production:
+     - For remote chunks/scripts/containers (default): calls `resolveRemoteChunk` and compares the
+     returned `url` value with the one stored in `storage` (if provided):
+       - If the values are equal: the native module will **not** download a new version,
+       but execute already stored one
+       - If the values are not equal, or `storage` was not provided,
+       or the chunk was never downloaded before: the native module will download a chunk and execute
+       it
+     - For local chunks only: resolves chunk to the filesystem location
+5. The resolution info is passed to the native module, which downloads (unless a chunk is a local one)
+and executes the file.
+6. Once the code has been executed the `Promise` returned by `ChunkManager.loadChunk(...)` gets
+resolved.
+
+:::info
+
+[`ChunkManager.preloadChunk(...)`](../api/react-native/classes/ChunkManager#preloadchunk) follows
+the same behavior except for #5, where it downloads the file but doesn't execute it.
+
+:::
 
 ## Approaches
 

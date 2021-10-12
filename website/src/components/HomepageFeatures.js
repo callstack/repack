@@ -75,15 +75,23 @@ export default function HomepageFeatures() {
         </div>
         <div className="row margin-top--xl">
           <Feature
-            title="Develop and bundle for any platform"
+            title="Code Splitting support"
             description={
               <>
-                Develop your application for any platform. Use built-in support
-                for Android and iOS or bring support for your out-of-tree
-                platform. Everything is configurable, nothing is hardcoded.
+                {'Use '}
+                <a
+                  className={clsx('button button--link', styles.link)}
+                  href="/docs/code-splitting/concepts"
+                >
+                  Code Splitting
+                </a>
+                {' to split your bundle into multiple files ' +
+                  'and load them on-demand to improve initial loading times or to dynamically ' +
+                  'deliver features. Split your code using dynamic import() function or by ' +
+                  'using Module Federation.'}
               </>
             }
-            Svg={ProgressiveApp}
+            Svg={CloudSync}
             leftClassName="col--6"
             rightClassName="col--6"
           />
@@ -121,23 +129,15 @@ export default function HomepageFeatures() {
         </div>
         <div className="row margin-top--xl">
           <Feature
-            title="Asynchronous chunks support"
+            title="Develop and bundle for any platform"
             description={
               <>
-                {'Use asynchronous chunks to split your bundle into multiple files' +
-                  'and load them on-demand improve initial loading times. Split' +
-                  'your code using dynamic import() function or manually declaring' +
-                  'them inside your '}
-                <a
-                  className={clsx('button button--link', styles.link)}
-                  href="/docs/configuration/webpack-config"
-                >
-                  Webpack config
-                </a>
-                .
+                Develop your application for any platform. Use built-in support
+                for Android and iOS or bring support for your out-of-tree
+                platform. Everything is configurable, nothing is hardcoded.
               </>
             }
-            Svg={CloudSync}
+            Svg={ProgressiveApp}
             leftClassName="col--4"
             rightClassName="col--6 col--offset-2"
             inverted
