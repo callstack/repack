@@ -31,8 +31,16 @@ module.exports = {
         'known-issues',
         {
           type: 'category',
-          label: 'Guides',
-          items: ['guides/code-splitting'],
+          label: 'Code Splitting',
+          items: [
+            'code-splitting/concepts',
+            'code-splitting/usage',
+            'code-splitting/glossary',
+            'code-splitting/guide-async-chunks',
+            'code-splitting/caching-versioning',
+            'code-splitting/react-navigation',
+            'code-splitting/code-push',
+          ],
         },
         {
           type: 'category',
