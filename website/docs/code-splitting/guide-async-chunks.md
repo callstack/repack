@@ -132,6 +132,15 @@ AppRegistry.registerComponent(appName, () => App);
 This code will allow Re.Pack's [`ChunkManager`](../api/react-native/classes/ChunkManager) to
 actually locate your chunks for the student and the teacher, and download them.
 
+When bundling for production/release, all remote chunks, including `student.chunk.bundle` and
+`teacher.chunk.bundle` will be copied to `<projectRoot>/build/<platform>/remote` by default.
+You should upload files from this directory to a remote server or a CDN from where `ChunkManager`
+will download them.
+
+You can change remote chunks output directory using
+[`remoteChunksOutput`](http://localhost:3000/docs/api/node/interfaces/OutputPluginConfig#remotechunksoutput)
+in [`OutputPlugin`](http://localhost:3000/docs/api/node/classes/OutputPlugin) configuration.
+
 ## Local vs remote chunks
 
 By default all async chunks are remote chunks, meaning they are hosted on a remote server (e.g: CDN)
@@ -143,6 +152,15 @@ download when installing your application.
 
 Local chunks should only be used if you know that the majority of users will need them or if you
 want to have *pre-built* features/modules.
+
+:::info
+
+Local chunks will not be copied into `<projectRoot>/build/<platform>/remote` (or directory specified
+in [`remoteChunksOutput`](http://localhost:3000/docs/api/node/interfaces/OutputPluginConfig#remotechunksoutput)).
+They will be automatically copied to appropriate locations by
+[`OutputPlugin`](http://localhost:3000/docs/api/node/classes/OutputPlugin).
+
+:::
 
 To mark a chunk as a local chunk, you need to add it's name or a RegExp matching the chunk's name to
 [`OutputPlugin`'s `localChunks` option](../api/node/interfaces/OutputPluginConfig#localchunks) in

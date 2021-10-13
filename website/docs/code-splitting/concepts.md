@@ -28,6 +28,13 @@ Code Splitting with Re.Pack is not designed to add new features dynamically with
 regular App Store or Play store release. It can be used to deliver fixes or tweaks to additional
 (split) code, similarly to Code Push, but you should not add new features with it.
 
+:::caution
+
+Using Code Splitting to deliver new features without a regular App Store release is likely
+going to violate Apple's App Store Terms and your application might be rejected or banned.
+
+:::
+
 :::tip
 
 You should provide access to all the features for the App Store review process. 

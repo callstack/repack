@@ -143,6 +143,13 @@ function App() {
 }
 ```
 
+For each file in the dynamic `import(...)` function a new chunk will be created - those chunks will
+be a remote chunks by default and they will be copied to `<projectRoot>/build/<platform>/remote` by
+default. All chunks in this directory should be uploaded to the remote server or a CDN.
+You can change this directory using
+[`remoteChunksOutput`](http://localhost:3000/docs/api/node/interfaces/OutputPluginConfig#remotechunksoutput)
+in [`OutputPlugin`](http://localhost:3000/docs/api/node/classes/OutputPlugin) configuration.
+
 :::tip
 
 To learn more or use async chunks in your project, check out our [dedicated Async chunks guide](./guide-async-chunks).
