@@ -14,7 +14,7 @@ So to answer the question:
 
 :::info
 
-Re.Pack is what makes Webpack and Webpack-produced bundle usable in React Native application. Additionally, Re.Pack is what allows us to use Code Splitting powered by Webpack inside React Native applications.
+Re.Pack is what makes Webpack and Webpack-produced bundle usable in React Native application. Additionally, Re.Pack is what allows us to use [Code Splitting](./code-splitting/concepts) powered by Webpack inside React Native applications.
 
 :::
 

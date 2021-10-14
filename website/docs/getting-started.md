@@ -22,7 +22,7 @@ If you're using older versions of React Native, you can still try using Re.Pack,
 
 Officially, Re.Pack doesn't support Expo. It might be possible to use Re.Pack in Expo projects, but it would require more work and setup. We welcome anyone who would like to contribute and bring Expo support to Re.Pack.
 
-Additionally, in order to use Code Splitting functionality, Re.Pack provides a native module which should be compiled into your application. This means that with Expo you won't be able to use it.
+Additionally, in order to use [Code Splitting](./code-splitting/concepts) functionality, Re.Pack provides a native module which should be compiled into your application. This means that with Expo you won't be able to use it.
 
 ## Compatibility with Webpack
 
