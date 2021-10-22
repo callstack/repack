@@ -111,66 +111,80 @@ export class OutputPlugin implements WebpackPlugin {
     const remoteChunks: webpack.Chunk[] = [];
 
     compiler.hooks.compilation.tap('OutputPlugin', (compilation) => {
-      compilation.hooks.afterProcessAssets.tap('OutputPlugin', (assets) => {
-        entryGroup = compilation.chunkGroups.find((group) => group.isInitial());
-        const sharedChunks = new Set<webpack.Chunk>();
-        let entryChunk: webpack.Chunk | undefined;
+      compilation.hooks.processAssets.tap(
+        {
+          name: 'OutputPlugin',
+          stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
+        },
+        () => {
+          entryGroup = compilation.chunkGroups.find((group) =>
+            group.isInitial()
+          );
+          const sharedChunks = new Set<webpack.Chunk>();
+          let entryChunk: webpack.Chunk | undefined;
 
-        for (const chunk of compilation.chunks) {
-          // Do not process shared chunks right now.
-          if (sharedChunks.has(chunk)) {
-            continue;
+          for (const chunk of compilation.chunks) {
+            // Do not process shared chunks right now.
+            if (sharedChunks.has(chunk)) {
+              continue;
+            }
+
+            [...chunk.getAllInitialChunks()]
+              .filter((sharedChunk) => sharedChunk !== chunk)
+              .forEach((sharedChunk) => {
+                sharedChunks.add(sharedChunk);
+              });
+
+            // Entry chunk
+            if (entryGroup?.chunks[0] === chunk) {
+              entryChunk = chunk;
+              localChunks.push(chunk);
+            } else if (isLocalChunk(chunk.name ?? chunk.id?.toString())) {
+              localChunks.push(chunk);
+            } else {
+              remoteChunks.push(chunk);
+            }
           }
 
-          [...chunk.getAllInitialChunks()]
-            .filter((sharedChunk) => sharedChunk !== chunk)
-            .forEach((sharedChunk) => {
-              sharedChunks.add(sharedChunk);
+          // Process shared chunks to add them either as local or remote chunk.
+          for (const sharedChunk of sharedChunks) {
+            const isUsedByLocalChunk = localChunks.some((localChunk) => {
+              return [...localChunk.getAllInitialChunks()].includes(
+                sharedChunk
+              );
             });
-
-          // Entry chunk
-          if (entryGroup?.chunks[0] === chunk) {
-            entryChunk = chunk;
-            localChunks.push(chunk);
-          } else if (isLocalChunk(chunk.name ?? chunk.id?.toString())) {
-            localChunks.push(chunk);
-          } else {
-            remoteChunks.push(chunk);
+            if (
+              isUsedByLocalChunk ||
+              isLocalChunk(sharedChunk.name ?? sharedChunk.id?.toString())
+            ) {
+              localChunks.push(sharedChunk);
+            } else {
+              remoteChunks.push(sharedChunk);
+            }
           }
-        }
 
-        // Process shared chunks to add them either as local or remote chunk.
-        for (const sharedChunk of sharedChunks) {
-          const isUsedByLocalChunk = localChunks.some((localChunk) => {
-            return [...localChunk.getAllInitialChunks()].includes(sharedChunk);
-          });
-          if (
-            isUsedByLocalChunk ||
-            isLocalChunk(sharedChunk.name ?? sharedChunk.id?.toString())
-          ) {
-            localChunks.push(sharedChunk);
-          } else {
-            remoteChunks.push(sharedChunk);
+          if (!entryChunk) {
+            throw new Error(
+              'Cannot infer entry chunk - this should have not happened.'
+            );
           }
-        }
 
-        if (!entryChunk) {
-          throw new Error(
-            'Cannot infer entry chunk - this should have not happened.'
+          const mainBundleAssetName = [...entryChunk.files][0];
+          compilation.updateAsset(
+            mainBundleAssetName,
+            (source) =>
+              new webpack.sources.ConcatSource(
+                `var __CHUNKS__=${JSON.stringify({
+                  local: localChunks.map(
+                    (localChunk) => localChunk.name ?? localChunk.id
+                  ),
+                })};`,
+                '\n',
+                source
+              )
           );
         }
-
-        const mainBundleAssetName = [...entryChunk.files][0];
-        const mainBundleSource = assets[mainBundleAssetName];
-        assets[mainBundleAssetName] = new webpack.sources.ConcatSource(
-          `var __CHUNKS__=${JSON.stringify({
-            local: localChunks.map(
-              (localChunk) => localChunk.name ?? localChunk.id
-            ),
-          })};\n`,
-          mainBundleSource
-        );
-      });
+      );
     });
 
     compiler.hooks.afterEmit.tapPromise('OutputPlugin', async (compilation) => {
