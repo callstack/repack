@@ -224,11 +224,13 @@ module.exports = {
      * but in order to for the React Native application to include those files (or a subset of those)
      * they need to be copied over to correct output directories supplied from React Native CLI
      * when bundling the code (with `webpack-bundle` command).
+     * All remote chunks will be placed under `remoteChunksOutput` directory (eg: `<root>/build/<platform>/remote` by default).
      * In development mode (when development server is running), this plugin is a no-op.
      */
     new ReactNative.OutputPlugin({
       platform,
       devServerEnabled: devServer.enabled,
+      remoteChunksOutput: path.join(__dirname, 'build', platform, 'remote'),
     }),
 
     /**
