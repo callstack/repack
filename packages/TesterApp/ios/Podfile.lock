@@ -1,6 +1,6 @@
 PODS:
   - boost-for-react-native (1.63.0)
-  - callstack-repack (2.3.1):
+  - callstack-repack (2.4.2):
     - React-Core
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
@@ -461,11 +461,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  callstack-repack: cf0f4607f2595a0a88218ee350497c4dcad60acd
+  callstack-repack: 69bed058b305cea0b105f8b2aac49a78dcbec4b4
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   FBLazyVector: e686045572151edef46010a6f819ade377dfeb4b
-  FBReactNativeSpec: c481317069fa68db5eb24447b09d558b6c0d2da2
+  FBReactNativeSpec: 63e99f3442c4ac39bf9cf8e29cf605b54cba9f22
   Flipper: d3da1aa199aad94455ae725e9f3aa43f3ec17021
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Folly: 755929a4f851b2fb2c347d533a23f191b008554c
@@ -504,6 +504,6 @@ SPEC CHECKSUMS:
   Yoga: 575c581c63e0d35c9a83f4b46d01d63abc1100ac
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 24c4f862874da50a036ffc0dce1997b2a5bad911
+PODFILE CHECKSUM: 9630125acad0bd283badc4830ec78335cc2646a4
 
 COCOAPODS: 1.10.1

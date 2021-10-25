@@ -167,6 +167,7 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:config.url];
     request.HTTPMethod = [config.method uppercaseString];
+    request.timeoutInterval = [config.timeout doubleValue];
     
     for (NSString *key in config.headers) {
         NSString *value = config.headers[key];

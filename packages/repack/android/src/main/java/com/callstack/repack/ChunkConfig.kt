@@ -14,6 +14,7 @@ data class ChunkConfig(
         val fetch: Boolean,
         val method: String,
         val body: RequestBody?,
+        val timeout: Int,
         val headers: Headers
 ) {
     companion object {
@@ -26,6 +27,7 @@ data class ChunkConfig(
             val query = value.getString("query")
             val bodyString = value.getString("body")
             val headersMap = value.getMap("headers")
+            val timeout = value.getInt("timeout") ?: throw Error("ChunkManagerModule.load ChunkMissing timeout")
 
             val url = URL(if (query != null) {
                 "$urlString?$query"
@@ -53,6 +55,7 @@ data class ChunkConfig(
                     fetch,
                     method,
                     body,
+                    timeout,
                     headers.build()
             )
         }

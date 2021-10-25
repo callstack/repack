@@ -10,6 +10,7 @@
 @property (readonly) BOOL fetch;
 @property (readonly, nullable) NSData *body;
 @property (readonly, nullable) NSDictionary *headers;
+@property (readonly, nonnull) NSNumber *timeout;
 
 + (nonnull ChunkConfig *)fromConfigDictionary:(nonnull NSDictionary *)config
                           withChunkId:(nonnull NSString*)chunkId;
@@ -20,7 +21,8 @@
                      withQuery:(nullable NSString*)query
                      withFetch:(BOOL)fetch
                    withHeaders:(nullable NSDictionary *)headers
-                      withBody:(nullable NSData *)body;
+                      withBody:(nullable NSData *)body
+                   withTimeout:(nonnull NSNumber *)timeout;
 
 @end
 

@@ -6,6 +6,7 @@ import okhttp3.*
 import java.io.File
 import java.io.IOException
 import java.io.OutputStreamWriter
+import java.util.concurrent.TimeUnit
 
 class RemoteChunkLoader(private val reactContext: ReactContext) {
     private val chunksDirName = "chunks"
@@ -13,6 +14,16 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
 
     private fun getChunkFilePath(id: String): String {
         return "${chunksDirName}/$id.chunk.bundle"
+    }
+
+    private fun createClientPerRequest(config: ChunkConfig): OkHttpClient {
+        val clientPerRequestBuilder = client.newBuilder();
+        config.timeout?.let {
+            clientPerRequestBuilder.connectTimeout(it.toLong(), TimeUnit.MILLISECONDS);
+            clientPerRequestBuilder.readTimeout(it.toLong(), TimeUnit.MILLISECONDS)
+        }
+
+        return clientPerRequestBuilder.build()
     }
 
     private fun downloadAndCache(config: ChunkConfig, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
@@ -57,6 +68,8 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
                 }
             }
         }
+
+        val clientPerRequest = createClientPerRequest(config)
         var request = Request.Builder()
                 .url(config.url)
                 .headers(config.headers)
@@ -66,7 +79,7 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
             request = request.post(config.body)
         }
 
-        client.newCall(request.build()).enqueue(callback)
+        clientPerRequest.newCall(request.build()).enqueue(callback)
     }
 
     fun execute(config: ChunkConfig, promise: Promise) {

@@ -1,4 +1,4 @@
-import { ChunkManagerBackend } from '../ChunkManagerBackend';
+import { ChunkManagerBackend, DEFAULT_TIMEOUT } from '../ChunkManagerBackend';
 
 class FakeCache {
   data: Record<string, string> = {};
@@ -37,6 +37,7 @@ describe('ChunkManager', () => {
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
       method: 'GET',
+      timeout: DEFAULT_TIMEOUT,
     });
 
     const { fetch } = await manager.resolveChunk('src_App_js', 'main');
@@ -58,6 +59,7 @@ describe('ChunkManager', () => {
       url: 'http://domain.ext/subpath/src_App_js.chunk.bundle',
       fetch: true,
       method: 'GET',
+      timeout: DEFAULT_TIMEOUT,
     });
   });
 
@@ -82,6 +84,7 @@ describe('ChunkManager', () => {
       url: 'http://domain.ext/src_App_js.js',
       fetch: true,
       method: 'GET',
+      timeout: DEFAULT_TIMEOUT,
     });
   });
 
@@ -110,6 +113,7 @@ describe('ChunkManager', () => {
       fetch: true,
       method: 'GET',
       query: 'accessCode=1234&accessUid=asdf',
+      timeout: DEFAULT_TIMEOUT,
     });
 
     manager.configure({
@@ -153,6 +157,7 @@ describe('ChunkManager', () => {
       fetch: true,
       method: 'GET',
       headers: { 'x-hello': 'world' },
+      timeout: DEFAULT_TIMEOUT,
     });
 
     manager.configure({
@@ -176,6 +181,7 @@ describe('ChunkManager', () => {
       fetch: true,
       method: 'GET',
       headers: { 'x-hello': 'world', 'x-changed': 'true' },
+      timeout: DEFAULT_TIMEOUT,
     });
   });
 
@@ -202,6 +208,7 @@ describe('ChunkManager', () => {
       fetch: true,
       method: 'POST',
       body: 'hello_world',
+      timeout: DEFAULT_TIMEOUT,
     });
 
     manager.configure({
@@ -223,6 +230,7 @@ describe('ChunkManager', () => {
       fetch: true,
       method: 'POST',
       body: 'message',
+      timeout: DEFAULT_TIMEOUT,
     });
   });
 });
