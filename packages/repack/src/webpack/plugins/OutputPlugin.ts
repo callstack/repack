@@ -98,13 +98,14 @@ export class OutputPlugin implements WebpackPlugin {
       remoteChunksOutput,
     });
 
-    const isLocalChunk = (chunkId: string): boolean =>
-      webpack.ModuleFilenameHelpers.matchObject(
+    const isLocalChunk = (chunkId: string): boolean => {
+      return webpack.ModuleFilenameHelpers.matchObject(
         {
-          include: this.config.localChunks,
+          include: this.config.localChunks ?? [],
         },
         chunkId
       );
+    };
 
     let entryGroup: webpack.Compilation['chunkGroups'][0] | undefined;
     const localChunks: webpack.Chunk[] = [];
