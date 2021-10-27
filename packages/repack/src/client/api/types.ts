@@ -136,12 +136,12 @@ export interface ChunkConfig {
   url: string;
   /** Whether to fetch chunk from the network or use cached one. */
   fetch: boolean;
+  /** Custom timeout for chunk fetch requests. */
+  timeout: number;
   /** Query params. */
   query?: string;
   /** Request headers. */
   headers?: Record<string, string>;
   /** Request body. */
   body?: string;
-  /** Custom timeout for chunk fetch requests. */
-  timeout?: number;
 }
