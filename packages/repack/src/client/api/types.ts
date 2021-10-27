@@ -63,8 +63,11 @@ export interface RemoteChunkLocation {
    * and a fresh version will be downloaded.
    */
   body?: FormData | URLSearchParams | string | null;
+
   /**
-   * Request timeout for iOS and on Android is both connectionTimeout and readTimeout.
+   * Custom timeout for chunk fetch requests. Defaults to 30s.
+   * On iOS this `timeout` is used as a `timeoutInterval`
+   * On Android this `timeout``is used as a `readTimeout` and `connectionTimeout`.
    */
   timeout?: number;
 }
@@ -139,6 +142,6 @@ export interface ChunkConfig {
   headers?: Record<string, string>;
   /** Request body. */
   body?: string;
-  /** Request timeout on iOS and on Android both connectTimeout and readTimeout. */
+  /** Custom timeout for chunk fetch requests. */
   timeout?: number;
 }

@@ -18,10 +18,8 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
 
     private fun createClientPerRequest(config: ChunkConfig): OkHttpClient {
         val clientPerRequestBuilder = client.newBuilder();
-        config.timeout?.let {
-            clientPerRequestBuilder.connectTimeout(it.toLong(), TimeUnit.MILLISECONDS);
-            clientPerRequestBuilder.readTimeout(it.toLong(), TimeUnit.MILLISECONDS)
-        }
+        clientPerRequestBuilder.connectTimeout(config.timeout.toLong(), TimeUnit.MILLISECONDS);
+        clientPerRequestBuilder.readTimeout(config.timeout.toLong(), TimeUnit.MILLISECONDS)
 
         return clientPerRequestBuilder.build()
     }

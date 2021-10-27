@@ -27,8 +27,8 @@
     if (!method) {
         @throw [NSError errorWithDomain:@"Missing method" code:2 userInfo:nil];
     }
-
-     if (!timeout) {
+    
+    if (!timeout) {
         @throw [NSError errorWithDomain:@"Missing timeout" code:3 userInfo:nil];
     }
     
@@ -42,7 +42,7 @@
                                     withFetch:config[@"fetch"]
                                   withHeaders:config[@"headers"]
                                      withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
-                                     withTimeout:config[@"timeout"]];
+                                  withTimeout:config[@"timeout"]];
 }
 
 - (id)init
@@ -54,13 +54,13 @@
 }
 
 - (ChunkConfig *)initWithChunk:(NSString *)chunkId
-                    withURL:(NSURL *)url
+                       withURL:(NSURL *)url
                     withMethod:(NSString *)method
-                    withQuery:(NSString *)query
-                    withFetch:(BOOL)fetch
-                    withHeaders:(nullable NSDictionary *)headers
-                    withBody:(nullable NSData *)body
-                    withTimeout:(nonnull NSNumber *)timeout
+                     withQuery:(NSString *)query
+                     withFetch:(BOOL)fetch
+                   withHeaders:(nullable NSDictionary *)headers
+                      withBody:(nullable NSData *)body
+                   withTimeout:(nonnull NSNumber *)timeout
 {
     _chunkId = chunkId;
     _url = url;
