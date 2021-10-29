@@ -67,7 +67,7 @@ export interface RemoteChunkLocation {
   /**
    * Custom timeout for chunk fetch requests. Defaults to 30s.
    * On iOS this `timeout` is used as a `timeoutInterval`
-   * On Android this `timeout``is used as a `readTimeout` and `connectionTimeout`.
+   * On Android this `timeout` is used as a `readTimeout` and `connectionTimeout`.
    */
   timeout?: number;
 
