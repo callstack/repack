@@ -72,7 +72,10 @@ export interface RemoteChunkLocation {
   timeout?: number;
 
   /**
-   * If chunk's URL is an absolute path should be set to `true`. Defaults to `false`.
+   * Flag indicating whether the URL is an absolute FileSystem URL on a target device.
+   * Useful if you're using custom code to download the chunk and you want `ChunkManager` to
+   * execute it only from a custom FileSystem path. 
+   * Defaults to `false`.
    */
   absolute?: boolean;
 }
