@@ -143,7 +143,7 @@ export interface ChunkConfig {
   fetch: boolean;
   /** Custom timeout for chunk fetch requests. */
   timeout: number;
-  /** Whether chunk's url is an absolute path. */
+  /** Whether chunk's URL is an absolute FileSystem URL on a target device. */
   absolute: boolean;
   /** Query params. */
   query?: string;
