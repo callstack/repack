@@ -101,7 +101,7 @@ export class OutputPlugin implements WebpackPlugin {
     const isLocalChunk = (chunkId: string): boolean =>
       webpack.ModuleFilenameHelpers.matchObject(
         {
-          include: this.config.localChunks,
+          include: this.config.localChunks ?? [],
         },
         chunkId
       );

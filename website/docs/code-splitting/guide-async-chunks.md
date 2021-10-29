@@ -138,8 +138,8 @@ You should upload files from this directory to a remote server or a CDN from whe
 will download them.
 
 You can change remote chunks output directory using
-[`remoteChunksOutput`](http://localhost:3000/docs/api/node/interfaces/OutputPluginConfig#remotechunksoutput)
-in [`OutputPlugin`](http://localhost:3000/docs/api/node/classes/OutputPlugin) configuration.
+[`remoteChunksOutput`](../api/node/interfaces/OutputPluginConfig#remotechunksoutput)
+in [`OutputPlugin`](../api/node/classes/OutputPlugin) configuration.
 
 ## Local vs remote chunks
 
@@ -156,9 +156,9 @@ want to have *pre-built* features/modules.
 :::info
 
 Local chunks will not be copied into `<projectRoot>/build/<platform>/remote` (or directory specified
-in [`remoteChunksOutput`](http://localhost:3000/docs/api/node/interfaces/OutputPluginConfig#remotechunksoutput)).
+in [`remoteChunksOutput`](../api/node/interfaces/OutputPluginConfig#remotechunksoutput)).
 They will be automatically copied to appropriate locations by
-[`OutputPlugin`](http://localhost:3000/docs/api/node/classes/OutputPlugin).
+[`OutputPlugin`](../api/node/classes/OutputPlugin).
 
 :::
 
