@@ -36,7 +36,7 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
                     }
                 }
                 config.url.protocol == "file" -> {
-                    fileSystemLoader.load(config.url, promise)
+                    fileSystemLoader.load(config, promise)
                 }
                 else -> {
                     promise.reject(

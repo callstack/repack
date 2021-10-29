@@ -63,6 +63,21 @@ export interface RemoteChunkLocation {
    * and a fresh version will be downloaded.
    */
   body?: FormData | URLSearchParams | string | null;
+
+  /**
+   * Custom timeout for chunk fetch requests. Defaults to 30s.
+   * On iOS this `timeout` is used as a `timeoutInterval`
+   * On Android this `timeout` is used as a `readTimeout` and `connectionTimeout`.
+   */
+  timeout?: number;
+
+  /**
+   * Flag indicating whether the URL is an absolute FileSystem URL on a target device.
+   * Useful if you're using custom code to download the chunk and you want `ChunkManager` to
+   * execute it only from a custom FileSystem path.
+   * Defaults to `false`.
+   */
+  absolute?: boolean;
 }
 
 /**
@@ -129,6 +144,10 @@ export interface ChunkConfig {
   url: string;
   /** Whether to fetch chunk from the network or use cached one. */
   fetch: boolean;
+  /** Custom timeout for chunk fetch requests. */
+  timeout: number;
+  /** Whether chunk's URL is an absolute FileSystem URL on a target device. */
+  absolute: boolean;
   /** Query params. */
   query?: string;
   /** Request headers. */

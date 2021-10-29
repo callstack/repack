@@ -377,3 +377,6 @@ website/data/generated
 
 first-party
 packages/repack/README.md
+packages/*/android/.idea/
+packages/repack/gradle*
+packages/repack/android/gradle*

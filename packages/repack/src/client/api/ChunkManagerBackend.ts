@@ -15,6 +15,8 @@ const CACHE_KEY = `Repack.ChunkManager.Cache.v2.${
   __DEV__ ? 'debug' : 'release'
 }`;
 
+export const DEFAULT_TIMEOUT = 30000; // 30s
+
 type Cache = Record<string, Omit<ChunkConfig, 'fetch'>>;
 
 export class ChunkManagerBackend {
@@ -66,9 +68,11 @@ export class ChunkManagerBackend {
     let method: ChunkConfig['method'] = 'GET';
     let url: ChunkConfig['url'];
     let fetch = false;
+    let absolute = false;
     let query: ChunkConfig['query'];
     let body: ChunkConfig['body'];
     let headers: ChunkConfig['headers'];
+    let timeout: ChunkConfig['timeout'] = DEFAULT_TIMEOUT;
 
     if (__DEV__ && !this.forceRemoteChunkResolution) {
       url = Chunk.fromDevServer(chunkId);
@@ -86,6 +90,7 @@ export class ChunkManagerBackend {
       }
 
       const config = await this.resolveRemoteChunk(chunkId, parentChunkId);
+      timeout = config.timeout ?? timeout;
       method = config.method ?? method;
       url = Chunk.fromRemote(config.url, {
         excludeExtension: config.excludeExtension,
@@ -156,6 +161,8 @@ export class ChunkManagerBackend {
         query,
         body,
         headers,
+        timeout,
+        absolute,
       };
       await this.saveCache();
     }
