@@ -8,6 +8,7 @@
 @synthesize method = _method;
 @synthesize query = _query;
 @synthesize fetch = _fetch;
+@synthesize absolute = _absolute;
 @synthesize body = _body;
 @synthesize headers = _headers;
 @synthesize timeout = _timeout;
@@ -40,6 +41,7 @@
                                    withMethod:method
                                     withQuery:query
                                     withFetch:config[@"fetch"]
+                                 withAbsolute:config[@"absolute"]
                                   withHeaders:config[@"headers"]
                                      withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
                                   withTimeout:config[@"timeout"]];
@@ -58,6 +60,7 @@
                     withMethod:(NSString *)method
                      withQuery:(NSString *)query
                      withFetch:(BOOL)fetch
+                  withAbsolute:(BOOL)absolute
                    withHeaders:(nullable NSDictionary *)headers
                       withBody:(nullable NSData *)body
                    withTimeout:(nonnull NSNumber *)timeout
@@ -67,6 +70,7 @@
     _method = method;
     _query = query;
     _fetch = fetch;
+    _absolute = absolute;
     _body = body;
     _headers = headers;
     _timeout = timeout;

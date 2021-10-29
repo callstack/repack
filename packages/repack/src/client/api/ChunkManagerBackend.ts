@@ -68,6 +68,7 @@ export class ChunkManagerBackend {
     let method: ChunkConfig['method'] = 'GET';
     let url: ChunkConfig['url'];
     let fetch = false;
+    let absolute = false;
     let query: ChunkConfig['query'];
     let body: ChunkConfig['body'];
     let headers: ChunkConfig['headers'];
@@ -161,6 +162,7 @@ export class ChunkManagerBackend {
         body,
         headers,
         timeout,
+        absolute,
       };
       await this.saveCache();
     }

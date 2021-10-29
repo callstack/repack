@@ -36,6 +36,7 @@ describe('ChunkManager', () => {
     expect(config).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
+      absolute: false,
       method: 'GET',
       timeout: DEFAULT_TIMEOUT,
     });
@@ -58,6 +59,7 @@ describe('ChunkManager', () => {
     expect(newConfig).toEqual({
       url: 'http://domain.ext/subpath/src_App_js.chunk.bundle',
       fetch: true,
+      absolute: false,
       method: 'GET',
       timeout: DEFAULT_TIMEOUT,
     });
@@ -83,6 +85,7 @@ describe('ChunkManager', () => {
     expect(config).toEqual({
       url: 'http://domain.ext/src_App_js.js',
       fetch: true,
+      absolute: false,
       method: 'GET',
       timeout: DEFAULT_TIMEOUT,
     });
@@ -111,6 +114,7 @@ describe('ChunkManager', () => {
     expect(config).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
+      absolute: false,
       method: 'GET',
       query: 'accessCode=1234&accessUid=asdf',
       timeout: DEFAULT_TIMEOUT,
@@ -155,6 +159,7 @@ describe('ChunkManager', () => {
     expect(config).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
+      absolute: false,
       method: 'GET',
       headers: { 'x-hello': 'world' },
       timeout: DEFAULT_TIMEOUT,
@@ -179,6 +184,7 @@ describe('ChunkManager', () => {
     expect(newConfig).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
+      absolute: false,
       method: 'GET',
       headers: { 'x-hello': 'world', 'x-changed': 'true' },
       timeout: DEFAULT_TIMEOUT,
@@ -206,6 +212,7 @@ describe('ChunkManager', () => {
     expect(config).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
+      absolute: false,
       method: 'POST',
       body: 'hello_world',
       timeout: DEFAULT_TIMEOUT,
@@ -228,6 +235,7 @@ describe('ChunkManager', () => {
     expect(newConfig).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
+      absolute: false,
       method: 'POST',
       body: 'message',
       timeout: DEFAULT_TIMEOUT,

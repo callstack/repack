@@ -12,6 +12,7 @@ data class ChunkConfig(
         val url: URL,
         val query: String?,
         val fetch: Boolean,
+        val absolute: Boolean,
         val method: String,
         val body: RequestBody?,
         val timeout: Int,
@@ -24,6 +25,7 @@ data class ChunkConfig(
             val method = value.getString("method")
                     ?: throw Error("ChunkManagerModule.load ChunkMissing method")
             val fetch = value.getBoolean("fetch")
+            val absolute = value.getBoolean("absolute")
             val query = value.getString("query")
             val bodyString = value.getString("body")
             val headersMap = value.getMap("headers")
@@ -53,6 +55,7 @@ data class ChunkConfig(
                     url,
                     query,
                     fetch,
+                    absolute,
                     method,
                     body,
                     timeout,

@@ -6,11 +6,17 @@ import java.lang.Exception
 import java.net.URL
 
 class FileSystemChunkLoader(private val reactContext: ReactContext) {
-    fun load(url: URL, promise: Promise) {
+    fun load(config: ChunkConfig, promise: Promise) {
         try {
-            val filename = url.file.split("/").last()
-            val assetName = "assets://$filename"
-            reactContext.catalystInstance.loadScriptFromAssets(reactContext.assets, assetName, false)
+            if (config.absolute) {
+                val path = config.url.path
+                reactContext.catalystInstance.loadScriptFromFile(path, path, false);
+            } else {
+                val filename = config.url.file.split("/").last()
+                val assetName = "assets://$filename"
+                reactContext.catalystInstance.loadScriptFromAssets(reactContext.assets, assetName, false)
+            }
+
         } catch (error: Exception) {
             promise.reject(
                     ChunkLoadingError.FileSystemEvalFailure.code,

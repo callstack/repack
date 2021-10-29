@@ -56,7 +56,7 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
             
         } else if ([[config.url scheme] isEqualToString:@"file"]) {
             [self executeFromFilesystem:bridge
-                                    url:config.url
+                                 config:config
                            withResolver:resolve
                            withRejecter:reject];
         } else {
@@ -199,7 +199,7 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
             
         }
     }];
-    [task resume];    
+    [task resume];
 }
 
 - (void)createChunksDirectory:(NSString *)chunksDirectoryPath
@@ -221,14 +221,22 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
 }
 
 - (void)executeFromFilesystem:(RCTCxxBridge *)bridge
-                          url:(NSURL *)url
+                       config:(ChunkConfig *)config
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject
 {
+    NSURL *url = config.url;
     @try {
         NSString *chunkName = [[url lastPathComponent] stringByDeletingPathExtension];
         NSString *chunkExtension = [url pathExtension];
-        NSURL *filesystemChunkUrl = [[NSBundle mainBundle] URLForResource:chunkName withExtension:chunkExtension];
+        NSURL *filesystemChunkUrl = nil;
+        if (config.absolute) {
+            if ([[NSFileManager defaultManager] fileExistsAtPath:[url path]]) {
+                filesystemChunkUrl = url;
+            }
+        } else {
+            filesystemChunkUrl = [[NSBundle mainBundle] URLForResource:chunkName withExtension:chunkExtension];
+        }
         NSData *data = [[NSData alloc] initWithContentsOfFile:[filesystemChunkUrl path]];
         [bridge executeApplicationScript:data url:url async:YES];
         resolve(nil);

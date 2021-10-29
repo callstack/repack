@@ -70,6 +70,11 @@ export interface RemoteChunkLocation {
    * On Android this `timeout``is used as a `readTimeout` and `connectionTimeout`.
    */
   timeout?: number;
+
+  /**
+   * If chunk's URL is an absolute path should be set to `true`. Defaults to `false`.
+   */
+  absolute?: boolean;
 }
 
 /**
@@ -138,6 +143,8 @@ export interface ChunkConfig {
   fetch: boolean;
   /** Custom timeout for chunk fetch requests. */
   timeout: number;
+  /** Whether chunk's url is an absolute path. */
+  absolute: boolean;
   /** Query params. */
   query?: string;
   /** Request headers. */
