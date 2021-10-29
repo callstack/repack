@@ -6,7 +6,6 @@ import okhttp3.*
 import java.io.File
 import java.io.IOException
 import java.io.OutputStreamWriter
-import java.net.URL
 
 class RemoteChunkLoader(private val reactContext: ReactContext) {
     private val chunksDirName = "chunks"
@@ -16,8 +15,8 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
         return "${chunksDirName}/$id.chunk.bundle"
     }
 
-    private fun downloadAndCache(id: String, url: URL, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
-        val path = getChunkFilePath(id)
+    private fun downloadAndCache(config: ChunkConfig, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
+        val path = getChunkFilePath(config.id)
         val file = File(reactContext.filesDir, path)
 
         val callback = object : Callback {
@@ -58,17 +57,24 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
                 }
             }
         }
+        var request = Request.Builder()
+                .url(config.url)
+                .headers(config.headers)
 
-        val request = Request.Builder().url(url).build();
-        client.newCall(request).enqueue(callback)
+
+        if (config.method == "POST" && config.body != null) {
+            request = request.post(config.body)
+        }
+
+        client.newCall(request.build()).enqueue(callback)
     }
 
-    fun execute(chunkId: String, url: URL, promise: Promise) {
+    fun execute(config: ChunkConfig, promise: Promise) {
         try {
-            val path = getChunkFilePath(chunkId)
+            val path = getChunkFilePath(config.id)
             reactContext.catalystInstance.loadScriptFromFile(
                     "${reactContext.filesDir}/${path}",
-                    url.toString(),
+                    config.url.toString(),
                     false
             )
             promise.resolve(null)
@@ -81,13 +87,13 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
     }
 
 
-    fun preload(id: String, url: URL, promise: Promise) {
-        downloadAndCache(id, url, { promise.resolve(null) }, { code, message -> promise.reject(code, message) })
+    fun preload(config: ChunkConfig, promise: Promise) {
+        downloadAndCache(config, { promise.resolve(null) }, { code, message -> promise.reject(code, message) })
     }
 
-    fun load(id: String, url: URL, promise: Promise) {
-        downloadAndCache(id, url, {
-            execute(id, url, promise)
+    fun load(config: ChunkConfig, promise: Promise) {
+        downloadAndCache(config, {
+            execute(config, promise)
         }, { code, message -> promise.reject(code, message) })
     }
 
@@ -103,7 +109,7 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
 
     fun invalidateAll() {
         val file = File(reactContext.filesDir, chunksDirName)
-        if(file.exists()) {
+        if (file.exists()) {
             file.deleteRecursively()
         }
     }

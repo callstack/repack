@@ -1,4 +1,6 @@
 #import "ChunkManager.h"
+#import "ChunkConfig.h"
+#import "ErrorCodes.h"
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 
@@ -10,12 +12,6 @@
 
 @end
 
-typedef NSString *ChunkManagerError NS_TYPED_ENUM;
-extern ChunkManagerError const CodeExecutionFailure = @"CodeExecutionFailure";
-extern ChunkManagerError const CodeExecutionFromFileSystemFailure = @"CodeExecutionFromFileSystemFailure";
-extern ChunkManagerError const InvalidationFailure = @"InvalidationFailure";
-extern ChunkManagerError const ChunkDownloadFailure = @"ChunkDownloadFailure";
-extern ChunkManagerError const UnsupportedScheme = @"UnsupportedScheme";
 
 @implementation ChunkManager
 
@@ -24,8 +20,7 @@ RCT_EXPORT_MODULE()
 @synthesize bridge = _bridge;
 
 RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
-                  chunkUrl:(nonnull NSString*)chunkUrlString
-                  fetch:(BOOL)fetch
+                  config:(nonnull NSDictionary*)configDictionary
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -33,46 +28,64 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
         // Cast `RCTBridge` to `RCTCxxBridge`.
         __weak RCTCxxBridge *bridge = (RCTCxxBridge *)_bridge;
         
-        NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
+        ChunkConfig *config;
+        @try {
+            config = [ChunkConfig fromConfigDictionary:configDictionary withChunkId:chunkId];
+        } @catch (NSError *error) {
+            reject(ChunkConfigError, error.localizedDescription, nil);
+            return;
+        }
         
         // Handle http & https
-        if ([[chunkUrl scheme] hasPrefix:@"http"]) {
-            if (fetch) {
-                [self downloadAndCache:chunkId chunkUrl:chunkUrl completionHandler:^(NSError *error) {
+        if ([[config.url scheme] hasPrefix:@"http"]) {
+            if (config.fetch) {
+                [self downloadAndCache:config completionHandler:^(NSError *error) {
                     if (error) {
                         reject(ChunkDownloadFailure, error.localizedFailureReason, nil);
                     } else {
-                        [self execute:bridge chunkId:chunkId url:chunkUrl withResolver:resolve withRejecter:reject];
+                        [self execute:bridge
+                              chunkId:config.chunkId
+                                  url:config.url
+                         withResolver:resolve
+                         withRejecter:reject];
                     }
                 }];
             } else {
-                [self execute:bridge chunkId:chunkId url:chunkUrl withResolver:resolve withRejecter:reject];
+                [self execute:bridge chunkId:chunkId url:config.url withResolver:resolve withRejecter:reject];
             }
             
-        } else if ([[chunkUrl scheme] isEqualToString:@"file"]) {
-            [self executeFromFilesystem:bridge url:chunkUrl withResolver:resolve withRejecter:reject];
-            
+        } else if ([[config.url scheme] isEqualToString:@"file"]) {
+            [self executeFromFilesystem:bridge
+                                    url:config.url
+                           withResolver:resolve
+                           withRejecter:reject];
         } else {
             reject(UnsupportedScheme,
-                   [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", chunkUrlString], nil);
+                   [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", config.url.absoluteString], nil);
         }
     }];
 }
 
 RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
-                  chunkUrl:(nonnull NSString*)chunkUrlString
-                  fetch:(BOOL)fetch
+                  config:(nonnull NSDictionary*)configDictionary
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 {
-    if (!fetch) {
+    ChunkConfig *config;
+    @try {
+        config = [ChunkConfig fromConfigDictionary:configDictionary withChunkId:chunkId];
+    } @catch (NSError *error) {
+        reject(ChunkConfigError, error.localizedDescription, nil);
+        return;
+    }
+    
+    if (!config.fetch) {
         // Do nothing, chunk is already preloaded
         resolve(nil);
     } else {
         [self runInBackground:^(){
-            NSURL *chunkUrl = [NSURL URLWithString:chunkUrlString];
-            if ([[chunkUrl scheme] hasPrefix:@"http"]) {
-                [self downloadAndCache:chunkId chunkUrl:chunkUrl completionHandler:^(NSError *error) {
+            if ([[config.url scheme] hasPrefix:@"http"]) {
+                [self downloadAndCache:config completionHandler:^(NSError *error) {
                     if (error) {
                         reject(ChunkDownloadFailure, error.localizedFailureReason, nil);
                     } else {
@@ -81,7 +94,7 @@ RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
                 }];
             } else {
                 reject(UnsupportedScheme,
-                       [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", chunkUrlString], nil);
+                       [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", config.url.absoluteString], nil);
             }
         }];
     }
@@ -146,15 +159,31 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
     return [chunkPath stringByAppendingPathExtension:@"chunk.bundle"];
 }
 
-- (void)downloadAndCache:(NSString *)chunkId
-                chunkUrl:(NSURL *)chunkUrl
+- (void)downloadAndCache:(ChunkConfig *)config
        completionHandler:(void (^)(NSError *error))callback
 {
-    NSString *chunkFilePath = [self getChunkFilePath:chunkId];
+    NSString *chunkFilePath = [self getChunkFilePath:config.chunkId];
     NSString* chunksDirectoryPath = [self getChunksDirectoryPath];
     
-    NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:chunkUrl
-                                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:config.url];
+    request.HTTPMethod = [config.method uppercaseString];
+    
+    for (NSString *key in config.headers) {
+        NSString *value = config.headers[key];
+        if (value) {
+            [request setValue:value forHTTPHeaderField:key];
+        }
+    }
+    
+    if ([request.HTTPMethod isEqualToString:@"POST"]) {
+        request.HTTPBody = config.body;
+    }
+    if (request.HTTPBody && ![request valueForHTTPHeaderField:@"content-type"]) {
+        [request setValue:@"text/plain" forHTTPHeaderField:@"content-type"];
+    }
+    
+    NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request
+                                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error != nil) {
             callback(error);
         } else {
