@@ -36,12 +36,15 @@
     NSURLComponents *urlComponents = [NSURLComponents componentsWithString:urlString];
     urlComponents.query = query;
     
+    BOOL fetch = [config[@"fetch"] boolValue];
+    BOOL absolute = [config[@"absolute"] boolValue];
+    
     return [[ChunkConfig alloc] initWithChunk:chunkId
                                       withURL:urlComponents.URL
                                    withMethod:method
                                     withQuery:query
-                                    withFetch:config[@"fetch"]
-                                 withAbsolute:config[@"absolute"]
+                                    withFetch:fetch
+                                 withAbsolute:absolute
                                   withHeaders:config[@"headers"]
                                      withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
                                   withTimeout:config[@"timeout"]];
