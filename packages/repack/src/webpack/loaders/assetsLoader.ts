@@ -7,7 +7,6 @@ import hasha from 'hasha';
 import escapeStringRegexp from 'escape-string-regexp';
 import { ISizeCalculationResult } from 'image-size/dist/types/interface';
 import { AssetResolver } from '../plugins/AssetsResolverPlugin/AssetResolver';
-import { getAssetExtensionsRegExp } from '../utils/assetExtensions';
 
 interface Options {
   platform: string;
@@ -98,7 +97,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       })
     );
     const scales = AssetResolver.collectScales(
-      getAssetExtensionsRegExp(options.scalableAssetExtensions),
+      options.scalableAssetExtensions,
       files,
       {
         name: filename,

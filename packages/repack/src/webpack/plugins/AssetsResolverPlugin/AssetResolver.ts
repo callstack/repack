@@ -53,15 +53,15 @@ type Resolver =
 
 export class AssetResolver {
   static collectScales(
-    scalableTestRegex: RegExp,
+    scalableAssetExtensions: string[],
     files: string[],
     { name, type, platform }: CollectOptions
   ): CollectedScales {
-    const regex = scalableTestRegex.test(type)
+    const regex = scalableAssetExtensions.includes(type)
       ? new RegExp(
           `^${escapeStringRegexp(
             name
-          )}(@\\d+(\\.\\d+)?x)?(\\.(${platform}|native))?${escapeStringRegexp(
+          )}(@\\d+(\\.\\d+)?x)?(\\.(${platform}|native))?.${escapeStringRegexp(
             type
           )}$`
         )
@@ -99,9 +99,6 @@ export class AssetResolver {
   apply(resolver: Resolver) {
     const platform = this.config.platform;
     const test = getAssetExtensionsRegExp(this.config.extensions!);
-    const scalableTest = getAssetExtensionsRegExp(
-      this.config.scalableExtensions!
-    );
 
     const logger = this.compiler.getInfrastructureLogger(
       'ReactNativeAssetResolver'
@@ -131,7 +128,7 @@ export class AssetResolver {
 
             const basename = path.basename(requestPath);
             const name = basename.replace(/\.[^.]+$/, '');
-            const type = path.extname(requestPath);
+            const type = path.extname(requestPath).substring(1);
             const files = ((results as Array<string | Buffer>)?.filter(
               (result) => typeof result === 'string'
             ) ?? []) as string[];
@@ -139,11 +136,15 @@ export class AssetResolver {
             let resolved = files.includes(basename) ? requestPath : undefined;
 
             if (!resolved) {
-              const map = AssetResolver.collectScales(scalableTest, files, {
-                name,
-                type,
-                platform,
-              });
+              const map = AssetResolver.collectScales(
+                this.config.scalableExtensions!,
+                files,
+                {
+                  name,
+                  type,
+                  platform,
+                }
+              );
               const key = map['@1x']
                 ? '@1x'
                 : Object.keys(map).sort(
