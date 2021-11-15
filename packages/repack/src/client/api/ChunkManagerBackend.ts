@@ -90,6 +90,7 @@ export class ChunkManagerBackend {
       }
 
       const config = await this.resolveRemoteChunk(chunkId, parentChunkId);
+      absolute = config.absolute ?? absolute;
       timeout = config.timeout ?? timeout;
       method = config.method ?? method;
       url = Chunk.fromRemote(config.url, {

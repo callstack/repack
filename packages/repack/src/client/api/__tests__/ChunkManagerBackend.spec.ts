@@ -241,4 +241,32 @@ describe('ChunkManager', () => {
       timeout: DEFAULT_TIMEOUT,
     });
   });
+
+  it('should resolve with absolute path', async () => {
+    const manager = new ChunkManagerBackend({});
+    const cache = new FakeCache();
+
+    manager.configure({
+      storage: cache,
+      resolveRemoteChunk: async (chunkId, parentChunkId) => {
+        expect(parentChunkId).toEqual('main');
+
+        return {
+          fetch: true,
+          url: `file://absolute/directory/${chunkId}`,
+          method: 'POST',
+          absolute: true,
+        };
+      },
+    });
+
+    const config = await manager.resolveChunk('src_App_js', 'main');
+    expect(config).toEqual({
+      url: 'file://absolute/directory/src_App_js.chunk.bundle',
+      fetch: true,
+      absolute: true,
+      method: 'POST',
+      timeout: DEFAULT_TIMEOUT,
+    });
+  });
 });
