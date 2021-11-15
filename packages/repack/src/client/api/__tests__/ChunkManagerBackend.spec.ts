@@ -241,6 +241,7 @@ describe('ChunkManager', () => {
       timeout: DEFAULT_TIMEOUT,
     });
   });
+
   it('should resolve with absolute path', async () => {
     const manager = new ChunkManagerBackend({});
     const cache = new FakeCache();
