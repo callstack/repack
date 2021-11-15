@@ -16,7 +16,7 @@ class FileSystemChunkLoader(private val reactContext: ReactContext) {
                 val assetName = "assets://$filename"
                 reactContext.catalystInstance.loadScriptFromAssets(reactContext.assets, assetName, false)
             }
-
+            promise.resolve(null);
         } catch (error: Exception) {
             promise.reject(
                     ChunkLoadingError.FileSystemEvalFailure.code,
