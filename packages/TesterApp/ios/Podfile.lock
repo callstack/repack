@@ -1,6 +1,6 @@
 PODS:
   - boost-for-react-native (1.63.0)
-  - callstack-repack (2.4.2):
+  - callstack-repack (2.5.1):
     - React-Core
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
@@ -461,11 +461,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  callstack-repack: 69bed058b305cea0b105f8b2aac49a78dcbec4b4
+  callstack-repack: 6ad4ee385be3feab2095af1e5031d8b292c641b6
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   FBLazyVector: e686045572151edef46010a6f819ade377dfeb4b
-  FBReactNativeSpec: 63e99f3442c4ac39bf9cf8e29cf605b54cba9f22
+  FBReactNativeSpec: fcd45dbbdb21f2f5d8c80eeeb3e2b8a708b0ffa7
   Flipper: d3da1aa199aad94455ae725e9f3aa43f3ec17021
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Folly: 755929a4f851b2fb2c347d533a23f191b008554c
