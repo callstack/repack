@@ -55,7 +55,7 @@ export class DevServerPlugin implements WebpackPlugin {
     }
 
     new webpack.DefinePlugin({
-      'process.env.__PUBLIC_PORT__': JSON.stringify(this.config.port),
+      __PUBLIC_PORT__: JSON.stringify(this.config.port),
     }).apply(compiler);
 
     if (this.config?.hmr) {

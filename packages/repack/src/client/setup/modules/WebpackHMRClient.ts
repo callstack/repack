@@ -1,5 +1,5 @@
 /* eslint-env browser */
-/* globals __webpack_hash__ __DEV__ */
+/* globals __webpack_hash__ __DEV__, __PUBLIC_PORT__ */
 
 import type { HMRMessage, HMRMessageBody } from '../../../types';
 import { getDevServerLocation } from '../utils/getDevServerLocation';
@@ -19,9 +19,9 @@ class HMRClient {
       };
     }
   ) {
-    this.url = `ws://${getDevServerLocation().hostname}:${
-      process.env.__PUBLIC_PORT__
-    }/__hmr`;
+    this.url = `ws://${
+      getDevServerLocation().hostname
+    }:${__PUBLIC_PORT__}/__hmr`;
     this.socket = new WebSocket(this.url);
 
     console.log('[HMRClient] Connecting...', {
