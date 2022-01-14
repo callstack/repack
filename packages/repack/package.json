@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -33,6 +33,7 @@
     "node": ">=12.x"
   },
   "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "scripts": {
