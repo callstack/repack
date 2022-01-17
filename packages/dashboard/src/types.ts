@@ -43,6 +43,11 @@ export type DevServerMessage =
           };
     };
 
+export type ProxyMessage = {
+  kind: 'server-log';
+  log: LogEntry;
+};
+
 export interface DevServerContext {
   tryReconnecting: () => void;
   getPlatforms: () => string[];
