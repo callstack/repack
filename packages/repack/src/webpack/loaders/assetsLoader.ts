@@ -112,6 +112,9 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
         parseInt(b.replace(/[^\d.]/g, ''), 10)
     );
 
+    const scaleNumbers = scaleKeys.map((scale) =>
+      parseInt(scale.replace(/[^\d.]/g, ''), 10)
+    );
     const assets = await Promise.all(
       scaleKeys.map(
         (
@@ -271,7 +274,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       var AssetRegistry = require('react-native/Libraries/Image/AssetRegistry');
       module.exports = AssetRegistry.registerAsset({
         __packager_asset: true,
-        scales: ${JSON.stringify(scales)},
+        scales: ${JSON.stringify(scaleNumbers)},
         name: ${JSON.stringify(filename)},
         type: ${JSON.stringify(type)},
         hash: ${JSON.stringify(hashes.join())},
