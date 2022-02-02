@@ -6,7 +6,7 @@ import { useRootService } from '../context/RootMachineContext';
 export function ConnectionStatus() {
   const [rootState] = useRootService();
   const [proxyConnectionState, send] = useActor(
-    rootState.context.proxyConnectionRef
+    rootState.context.proxyConnectionRef!
   );
   const status = proxyConnectionState.context.uiState;
   const retry = React.useCallback(() => {

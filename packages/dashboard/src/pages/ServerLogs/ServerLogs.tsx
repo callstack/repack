@@ -1,34 +1,27 @@
 import * as React from 'react';
-import { Console, Hook, Unhook } from 'console-feed';
+import { Console } from 'console-feed';
 import { Message } from 'console-feed/lib/definitions/Component';
+import parse from 'console-feed/lib/Hook/parse';
+import { Encode as encode } from 'console-feed/lib/Transform';
+import { useActor } from '@xstate/react';
 import { PageLayout } from '../../components/PageLayout';
-import { useDevServer } from '../../hooks/useDevServer';
-import { useServerLogs } from '../../hooks/useServerLogs';
 import { Admonition } from '../../components/Admonition';
 import { LogEntry } from '../../types';
+import { useRootService } from '../../context/RootMachineContext';
+import { LogsFeed } from '../../components/LogsFeed';
 import { ActionsBar } from './ActionsBar';
 import './ServerLogs.scss';
 
-const MAX_LOGS_COUNT = 500;
 const BOTTOM_ACTION_BAR_THRESHOLD = 15;
 
-const serverConsole = {
-  log() {},
-  info() {},
-  warn() {},
-  error() {},
-  debug() {},
-} as typeof console;
-
 export function ServerLogs() {
-  const { getProxyConnection } = useDevServer();
-  const { data: bufferedLogs, loading } = useServerLogs();
-  const [logs, setLogs] = React.useState<Message[]>([]);
+  const [rootState] = useRootService();
+  const [state, send] = useActor(rootState.context.serverLogsRef!);
   const shouldScrollToBottom = React.useRef(true);
 
   const clearLogs = React.useCallback(() => {
-    setLogs([]);
-  }, []);
+    send({ type: 'CLEAR_LOGS' });
+  }, [send]);
 
   const scrollToBottom = React.useCallback(() => {
     window.scrollTo(0, document.body.scrollHeight);
@@ -52,45 +45,22 @@ export function ServerLogs() {
       args.push(arg0, ...rest);
     }
 
-    serverConsole[log.type](
+    const parsed = parse(log.type, [
       `[${new Date(log.timestamp).toISOString().split('T')[1]}] ${log.issuer}:`,
-      ...args
-    );
+      ...args,
+    ]);
+
+    const [encoded] = encode(parsed) as [Message];
+    return encoded;
   }, []);
 
-  React.useEffect(() => {
-    if (!loading) {
-      for (const log of bufferedLogs ?? []) {
-        processLog(log);
-      }
-    }
-  }, [bufferedLogs, loading, processLog]);
-
-  React.useEffect(() => {
-    const subscription = getProxyConnection().subscribe({
-      next: (event) => {
-        if (event.type === 'message' && event.payload.kind === 'server-log') {
-          processLog(event.payload.log);
-        }
-      },
-    });
-
-    return () => subscription.unsubscribe();
-  }, [getProxyConnection, processLog]);
-
-  React.useEffect(() => {
-    Hook(
-      serverConsole as any,
-      (log) => {
-        setLogs((currLogs) => [...currLogs, log as Message]);
-      },
-      false
-    );
-
-    return () => {
-      Unhook(serverConsole as any);
-    };
-  }, []);
+  const logs = React.useMemo(
+    () => state.context.logs.map((log) => processLog(log)),
+    [processLog, state.context.logs]
+  );
+  const logsLimit = state.context.logsLimit;
+  const hasLogs = logs.length > 0;
+  const loading = state.matches('loading');
 
   React.useEffect(() => {
     if (shouldScrollToBottom.current) {
@@ -109,10 +79,9 @@ export function ServerLogs() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const hasLogs = logs.length > 0;
-
   return (
     <PageLayout title="Server logs">
+      <LogsFeed />
       <div className="ConsoleFeed flex flex-col">
         {loading ? (
           <Admonition type="progress" className="mt-2">
@@ -126,10 +95,7 @@ export function ServerLogs() {
         ) : null}
         {hasLogs ? (
           <ActionsBar
-            label={`Showing last ${Math.min(
-              logs.length,
-              MAX_LOGS_COUNT
-            )} logs.`}
+            label={`Showing last ${Math.min(logs.length, logsLimit)} logs.`}
             position="top"
             onClear={clearLogs}
             onScroll={scrollToBottom}
@@ -163,10 +129,7 @@ export function ServerLogs() {
         />
         {logs.length > BOTTOM_ACTION_BAR_THRESHOLD ? (
           <ActionsBar
-            label={`Showing last ${Math.min(
-              logs.length,
-              MAX_LOGS_COUNT
-            )} logs.`}
+            label={`Showing last ${Math.min(logs.length, logsLimit)} logs.`}
             position="bottom"
             onClear={clearLogs}
             onScroll={scrollToTop}

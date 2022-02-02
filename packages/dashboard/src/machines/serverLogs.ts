@@ -6,12 +6,17 @@ const { assign } = actions;
 
 export interface ServerLogsContext {
   logs: LogEntry[];
+  logsLimit: number;
 }
 
-export type ServerLogsEvent = {
-  type: 'PROXY_CONNECTION.SERVER_LOG';
-  log: LogEntry;
-};
+export type ServerLogsEvent =
+  | {
+      type: 'PROXY_CONNECTION.SERVER_LOG';
+      log: LogEntry;
+    }
+  | {
+      type: 'CLEAR_LOGS';
+    };
 
 export const serverLogsMachine = createMachine<
   ServerLogsContext,
@@ -23,6 +28,7 @@ export const serverLogsMachine = createMachine<
     strict: true,
     context: {
       logs: [],
+      logsLimit: 500,
     },
     states: {
       loading: {
@@ -31,10 +37,23 @@ export const serverLogsMachine = createMachine<
           onDone: {
             target: 'listening',
             actions: assign({
-              logs: (context, event: DoneInvokeEvent<LogEntry[]>) =>
-                context.logs
-                  .concat(event.data)
-                  .sort((a, b) => a.timestamp - b.timestamp),
+              logs: (context, event: DoneInvokeEvent<LogEntry[]>) => {
+                if (event.type !== 'done.invoke.fetchBufferedLogs') {
+                  return context.logs;
+                }
+
+                return context.logs
+                  .concat(...event.data)
+                  .sort((a, b) => a.timestamp - b.timestamp)
+                  .filter((log, index, array) => {
+                    const hasDuplicate = array.some(
+                      (otherLog, otherIndex) =>
+                        otherLog.timestamp === log.timestamp &&
+                        otherIndex !== index
+                    );
+                    return !hasDuplicate;
+                  });
+              },
             }),
           },
           onError: {
@@ -43,14 +62,17 @@ export const serverLogsMachine = createMachine<
         },
         on: {
           'PROXY_CONNECTION.SERVER_LOG': {
-            actions: 'pushServerLog',
+            actions: 'pushLog',
           },
         },
       },
       listening: {
         on: {
           'PROXY_CONNECTION.SERVER_LOG': {
-            actions: 'pushServerLog',
+            actions: 'pushLog',
+          },
+          CLEAR_LOGS: {
+            actions: 'clearLogs',
           },
         },
       },
@@ -58,11 +80,14 @@ export const serverLogsMachine = createMachine<
   },
   {
     actions: {
-      pushServerLog: assign({
+      pushLog: assign({
         logs: (context, event) =>
           event.type === 'PROXY_CONNECTION.SERVER_LOG'
-            ? context.logs.concat(event.log)
+            ? context.logs.concat(event.log).slice(-context.logsLimit)
             : context.logs,
+      }),
+      clearLogs: assign({
+        logs: (_) => [],
       }),
     },
     services: {
