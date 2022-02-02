@@ -2,7 +2,7 @@
 //  File.swift
 //  TesterApp
 //
-//  Created by Paweł Trysła on 12/03/2021.
+//  Created by Tomasz Krzyżowski on 01/02/2022.
 //
 
 import Foundation
