@@ -36,7 +36,7 @@ const dev = mode === 'development';
 const context = ReactNative.getContext();
 const entry = ReactNative.getEntry();
 const platform = ReactNative.getPlatform({ fallback: process.env.PLATFORM });
-const minimize = true;
+const minimize = ReactNative.isMinimizeEnabled({ fallback: !dev });
 const devServer = ReactNative.getDevServerOptions();
 const reactNativePath = ReactNative.getReactNativePath();
 
