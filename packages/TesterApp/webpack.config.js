@@ -36,7 +36,7 @@ const dev = mode === 'development';
 const context = ReactNative.getContext();
 const entry = ReactNative.getEntry();
 const platform = ReactNative.getPlatform({ fallback: process.env.PLATFORM });
-const minimize = ReactNative.isMinimizeEnabled({ fallback: !dev });
+const minimize = true;
 const devServer = ReactNative.getDevServerOptions();
 const reactNativePath = ReactNative.getReactNativePath();
 
@@ -121,6 +121,11 @@ module.exports = {
          * differently.
          */
         extractComments: false,
+        terserOptions: {
+          format: {
+            comments: false,
+          },
+        },
       }),
     ],
     chunkIds: 'named',
