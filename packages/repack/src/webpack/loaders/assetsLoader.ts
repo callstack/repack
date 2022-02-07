@@ -113,7 +113,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
     );
 
     const scaleNumbers = scaleKeys.map((scale) =>
-      parseInt(scale.replace(/[^\d.]/g, ''), 10)
+      parseFloat(scale.replace(/[^\d.]/g, ''))
     );
     const assets = await Promise.all(
       scaleKeys.map(
