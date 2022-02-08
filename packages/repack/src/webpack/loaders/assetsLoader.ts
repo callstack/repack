@@ -108,8 +108,8 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
 
     const scaleKeys = Object.keys(scales).sort(
       (a, b) =>
-        parseInt(a.replace(/[^\d.]/g, ''), 10) -
-        parseInt(b.replace(/[^\d.]/g, ''), 10)
+        parseFloat(a.replace(/[^\d.]/g, '')) -
+        parseFloat(b.replace(/[^\d.]/g, ''))
     );
 
     const scaleNumbers = scaleKeys.map((scale) =>
