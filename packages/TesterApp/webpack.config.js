@@ -121,6 +121,11 @@ module.exports = {
          * differently.
          */
         extractComments: false,
+        terserOptions: {
+          format: {
+            comments: false,
+          },
+        },
       }),
     ],
     chunkIds: 'named',
