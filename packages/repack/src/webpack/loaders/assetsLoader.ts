@@ -4,14 +4,18 @@ import { validate as validateSchema } from 'schema-utils';
 import { imageSize } from 'image-size';
 import dedent from 'dedent';
 import hasha from 'hasha';
+import mimeTypes from 'mime-types';
 import escapeStringRegexp from 'escape-string-regexp';
 import { ISizeCalculationResult } from 'image-size/dist/types/interface';
 import { AssetResolver } from '../plugins/AssetsResolverPlugin/AssetResolver';
+
+const URIRegEx = /^data:([^;,]+)?((?:;[^;,]+)*?)(?:;(base64))?,(.*)$/i;
 
 interface Options {
   platform: string;
   scalableAssetExtensions: string[];
   devServerEnabled?: boolean;
+  inline?: boolean;
   publicPath?: string;
 }
 
@@ -29,6 +33,7 @@ function getOptions(loaderContext: LoaderContext): Options {
         scalableAssetExtensions: {
           type: 'array',
         },
+        inline: { type: 'boolean' },
         devServerEnabled: { type: 'boolean' },
         publicPath: { type: 'string' },
       },
@@ -208,12 +213,30 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
     );
 
     assets.forEach((asset) => {
+      if (options.inline) {
+        return;
+      }
       const { destination, content } = asset;
 
       logger.debug('Asset emitted:', destination);
       // Assets are emitted relatively to `output.path`.
       this.emitFile(destination, content ?? '');
     });
+
+    if (options.inline) {
+      const { content } = assets[assets.length - 1];
+      if (content) {
+        callback?.(
+          null,
+          dedent`
+        module.exports = ${JSON.stringify(
+          inlineAssetLoader(content, resourcePath)
+        )}
+      `
+        );
+      }
+      return;
+    }
 
     let publicPath = path
       .join(assetsPath, relativeDirname)
@@ -292,4 +315,62 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
   } catch (error) {
     callback?.(error as Error);
   }
+}
+
+const decodeDataUriContent = (encoding: string, content: string) => {
+  const isBase64 = encoding === 'base64';
+  return isBase64
+    ? Buffer.from(content, 'base64')
+    : Buffer.from(decodeURIComponent(content), 'ascii');
+};
+
+function inlineAssetLoader(content: string | Buffer, resource: string) {
+  const ext = path.extname(resource);
+  const match = URIRegEx.exec(resource);
+  let resultMimeType: string | boolean;
+  let mimeType: string;
+  let parameters: string;
+  let encodedContent: string;
+  let encoding: boolean | string;
+  if (match) {
+    mimeType = match[1] || '';
+    parameters = match[2] || '';
+    encoding = match[3] || false;
+    encodedContent = match[4] || '';
+  }
+
+  if (mimeType! !== undefined) {
+    resultMimeType = mimeType + parameters!;
+  } else if (ext) {
+    resultMimeType = mimeTypes.lookup(ext);
+  }
+
+  if (typeof resultMimeType! !== 'string') {
+    throw new Error(
+      "DataUrl can't be generated automatically, " +
+        `because there is no mimetype for "${ext}" in mimetype database. ` +
+        'Either pass a mimetype via "generator.mimetype" or ' +
+        'use type: "asset/resource" to create a resource file instead of a DataUrl'
+    );
+  }
+
+  let finalEncodedContent: string;
+  if (
+    encoding! === 'base64' &&
+    decodeDataUriContent(encoding, encodedContent!).equals(
+      content instanceof Buffer
+        ? content
+        : decodeDataUriContent(encoding, content)
+    )
+  ) {
+    finalEncodedContent = encodedContent!;
+  } else {
+    finalEncodedContent =
+      content instanceof Buffer ? content.toString('base64') : content;
+  }
+
+  const encodedSource = `data:${resultMimeType};base64,${finalEncodedContent}`;
+  return {
+    uri: encodedSource,
+  };
 }
