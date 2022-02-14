@@ -9,7 +9,7 @@
   },
   "scripts": {
     "prepare": "npm run build",
-    "build": "NODE_ENV=production webpack -c webpack.config.js",
+    "build": "cross-env NODE_ENV=production webpack -c webpack.config.js",
     "start": "webpack serve",
     "lint": "eslint --ext \".ts,.tsx\" src",
     "typecheck": "tsc",
@@ -43,6 +43,7 @@
     "autoprefixer": "^10.3.5",
     "babel-loader": "^8.2.2",
     "copy-webpack-plugin": "^9.0.1",
+    "cross-env": "^7.0.3",
     "css-loader": "^6.3.0",
     "eslint": "^7.32.0",
     "file-loader": "^6.2.0",

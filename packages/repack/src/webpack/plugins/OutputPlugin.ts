@@ -24,6 +24,10 @@ export interface OutputPluginConfig {
    * the main/index bundle and other local chunks.
    */
   remoteChunksOutput?: string;
+  /**
+   * The entry chunk name, 'main' by default.
+   */
+  entry?: string;
 }
 
 /**
@@ -107,6 +111,8 @@ export class OutputPlugin implements WebpackPlugin {
       );
 
     let entryGroup: webpack.Compilation['chunkGroups'][0] | undefined;
+    let entryChunk: webpack.Chunk | undefined;
+    const entryChunkName = this.config.entry ?? 'main';
     const localChunks: webpack.Chunk[] = [];
     const remoteChunks: webpack.Chunk[] = [];
 
@@ -120,8 +126,10 @@ export class OutputPlugin implements WebpackPlugin {
           entryGroup = compilation.chunkGroups.find((group) =>
             group.isInitial()
           );
+          entryChunk = entryGroup?.chunks.find(
+            (chunk) => chunk.name === entryChunkName
+          );
           const sharedChunks = new Set<webpack.Chunk>();
-          let entryChunk: webpack.Chunk | undefined;
 
           for (const chunk of compilation.chunks) {
             // Do not process shared chunks right now.
@@ -136,8 +144,7 @@ export class OutputPlugin implements WebpackPlugin {
               });
 
             // Entry chunk
-            if (entryGroup?.chunks[0] === chunk) {
-              entryChunk = chunk;
+            if (entryChunk && entryChunk === chunk) {
               localChunks.push(chunk);
             } else if (isLocalChunk(chunk.name ?? chunk.id?.toString())) {
               localChunks.push(chunk);
@@ -217,7 +224,7 @@ export class OutputPlugin implements WebpackPlugin {
       for (const chunk of localChunks) {
         // Process entry chunk
         localAssetsCopyProcessor.enqueueChunk(chunk, {
-          isEntry: entryGroup?.chunks[0] === chunk,
+          isEntry: entryChunk === chunk,
         });
       }
 
