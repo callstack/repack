@@ -176,7 +176,7 @@ export class OutputPlugin implements WebpackPlugin {
               new webpack.sources.ConcatSource(
                 `var __CHUNKS__=${JSON.stringify({
                   local: localChunks.map(
-                    (localChunk) => localChunk.name ?? localChunk.id
+                    (localChunk) => localChunk.name ?? localChunk.id?.toString()
                   ),
                 })};`,
                 '\n',
