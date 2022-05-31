@@ -15,7 +15,7 @@ module.exports = {
   context: __dirname,
   entry: './src/index.js',
   output: {
-    path: path.join(__dirname, '../repack/first-party/debugger-ui'),
+    path: path.join(__dirname, 'dist'),
     clean: true,
     filename: 'static/js/[name].[contenthash:8].js',
     publicPath: '/debugger-ui/',

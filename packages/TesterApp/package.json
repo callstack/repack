@@ -9,11 +9,6 @@
     ]
   },
   "scripts": {
-    "prepare": "exit 0",
-    "test": "exit 0",
-    "lint": "exit 0",
-    "tsc": "exit 0",
-    "build": "exit 0",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native webpack-start",

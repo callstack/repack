@@ -37,7 +37,6 @@
     "access": "public"
   },
   "scripts": {
-    "prepare": "yarn build",
     "clean": "del dist",
     "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"**/__tests__/**\"",
     "build:js:watch": "yarn build:js --watch",

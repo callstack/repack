@@ -9,13 +9,15 @@
     ]
   },
   "scripts": {
-    "prepare": "yarn workspaces run prepare",
-    "build": "yarn workspaces run build",
-    "lint": "yarn workspaces run lint",
-    "tsc": "yarn workspaces run tsc",
-    "test": "yarn workspaces run test",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
     "release": "yarn prepare && cp README.md packages/repack && yarn workspace @callstack/repack run release",
     "example:start": "yarn workspace TesterApp run start",
     "example:bundle": "yarn workspace TesterApp run bundle"
+  },
+  "dependencies": {
+    "turbo": "^1.2.14"
   }
 }

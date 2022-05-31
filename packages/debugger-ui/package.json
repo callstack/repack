@@ -6,12 +6,9 @@
     "nohoist": ["**"]
   },
   "scripts": {
-    "prepare": "yarn build",
     "build": "webpack -c webpack.config.js",
     "build:watch": "yarn build --watch",
-    "lint": "eslint src",
-    "test": "exit 0",
-    "tsc": "exit 0"
+    "lint": "eslint src"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
