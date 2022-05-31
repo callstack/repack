@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
