@@ -324,7 +324,7 @@ const decodeDataUriContent = (encoding: string, content: string) => {
     : Buffer.from(decodeURIComponent(content), 'ascii');
 };
 
-function inlineAssetLoader(content: string | Buffer, resource: string) {
+function inlineAsset(content: string | Buffer, resource: string) {
   const ext = path.extname(resource);
   const match = URIRegEx.exec(resource);
   let resultMimeType: string | boolean;
