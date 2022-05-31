@@ -6,6 +6,7 @@ import { LogEntry, LogType } from './types';
 import { isVerbose, isWorker } from './env';
 import { WebSocketEventsServer } from './server';
 import { WebSocketDashboardServer } from './server/ws/WebSocketDashboardServer';
+import { MultipartResponse } from './server/MultipartResponse';
 
 const IS_SYMBOL_SUPPORTED =
   process.platform !== 'win32' ||
@@ -95,6 +96,7 @@ export class Reporter {
   private outputFilename?: string;
   private progress: Record<string, { value: number; label: string }> = {};
   private logBuffer: LogEntry[] = [];
+  private responses: Record<string, MultipartResponse> = {};
 
   /**
    * Create new instance of Reporter.
@@ -108,6 +110,13 @@ export class Reporter {
     if (!this.isWorker) {
       this.ora = ora('Running...').start();
     }
+  }
+
+  /**
+   * attach bundle request for later use.
+   */
+  attachResponse(res: MultipartResponse, platform: string) {
+    this.responses[platform] = res;
   }
 
   /**
@@ -186,6 +195,23 @@ export class Reporter {
         this.config.wsDashboardServer?.send(
           JSON.stringify({ kind: 'progress', value, label, platform, message })
         );
+
+        /**
+         * notifiy the client of the bundling progress if it's a bundle request.
+         */
+        if (this.responses[platform]) {
+          const prettyProgress = this.getPrettyProgress(message);
+
+          if (prettyProgress && prettyProgress.length >= 3) {
+            this.responses[platform].writeChunk(
+              { 'Content-Type': 'application/json' },
+              JSON.stringify({
+                done: prettyProgress[1],
+                total: prettyProgress[2],
+              })
+            );
+          }
+        }
       } else {
         const transformedLogEntry = this.transformLogEntry(logEntry);
         // Ignore empty logs
@@ -225,6 +251,20 @@ export class Reporter {
         }
       }
     }
+  }
+
+  /**
+   * get done & total from progress message
+   * rawProgress examples: "4/8 entries 47/78 dependencies 8/36 modules"
+   * @param rawProgress
+   * @param type
+   * @returns
+   */
+  getPrettyProgress(
+    rawProgress: string,
+    type: 'entries' | 'dependencies' | 'modules' = 'modules'
+  ) {
+    return new RegExp(`(\\d+)\\/(\\d+) ${type}`).exec(rawProgress);
   }
 
   private updateProgress() {
