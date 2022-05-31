@@ -18,6 +18,7 @@ import { ReactNativeStackFrame, Symbolicator } from './Symbolicator';
 import { BaseDevServer, BaseDevServerConfig } from './BaseDevServer';
 import { transformFastifyLogToLogEntry } from './utils/transformFastifyLogToWebpackLogEntry';
 import { WebSocketDashboardServer } from './ws/WebSocketDashboardServer';
+import { MultipartResponse } from './MultipartResponse';
 
 /**
  * {@link DevServerProxy} configuration options.
@@ -216,7 +217,8 @@ export class DevServerProxy extends BaseDevServer {
   async forwardRequest(
     platform: string,
     request: DevServerRequest,
-    reply: DevServerReply
+    reply: DevServerReply,
+    multipartRes?: MultipartResponse
   ) {
     if (!this.workers[platform]) {
       await this.runWorker(platform);
@@ -235,7 +237,41 @@ export class DevServerProxy extends BaseDevServer {
         method: request.method,
         body: request.body,
       });
-      reply.from(compilerWorkerUrl);
+      /**
+       * send bundle in multipart/mixed form if the request is bundle request
+       * else directly reply the reponse
+       */
+      if (multipartRes) {
+        reply.from(compilerWorkerUrl, {
+          onResponse: (req, reply, res) => {
+            if (multipartRes) {
+              let chunks: Buffer;
+
+              res.on('data', (chunk) => {
+                if (chunks) {
+                  chunks = Buffer.concat([chunks, chunk]);
+                } else {
+                  chunks = Buffer.from(chunk);
+                }
+              });
+
+              res.on('close', () => {
+                multipartRes.setHeader(
+                  'Content-Type',
+                  'application/javascript; charset=UTF-8'
+                );
+                multipartRes.setHeader(
+                  'Content-Length',
+                  String(Buffer.byteLength(chunks))
+                );
+                multipartRes.end(chunks);
+              });
+            }
+          },
+        });
+      } else {
+        reply.from(compilerWorkerUrl);
+      }
     }
   }
 
@@ -332,6 +368,15 @@ export class DevServerProxy extends BaseDevServer {
       handler: async (request, reply) => {
         const platform = (request.query as { platform?: string } | undefined)
           ?.platform;
+        //@ts-ignore
+        const multipartRes = MultipartResponse.wrap(request, reply);
+
+        /**
+         * attach the response to enable progress report on the client.
+         */
+        if (platform && multipartRes) {
+          this.reporter.attachResponse(multipartRes, platform);
+        }
 
         if (!platform) {
           this.fastify.log.warn({
@@ -343,7 +388,7 @@ export class DevServerProxy extends BaseDevServer {
           reply.code(400).send();
         } else {
           try {
-            await this.forwardRequest(platform, request, reply);
+            await this.forwardRequest(platform, request, reply, multipartRes);
           } catch (error) {
             console.error(error);
             reply.code(500).send();
