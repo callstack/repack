@@ -1,5 +1,6 @@
 import { Worker } from 'worker_threads';
 import path from 'path';
+import mimeTypes from 'mime-types';
 import { CompilerOptions } from '@callstack/repack-dev-server';
 import type { CliOptions, StartArguments } from '../types';
 
@@ -28,11 +29,29 @@ export function getWebpackDevServerAdapter(
       listeners[platform] = [];
     }
 
-    worker.on('message', (value) => {
-      // set cache
-      console.log(value);
-      notifyListeners();
-    });
+    worker.on(
+      'message',
+      (
+        value:
+          | { event: 'watchRun' | 'invalid' }
+          | {
+              event: 'done';
+              assets: Array<{ filename: string; data: Uint8Array }>;
+            }
+      ) => {
+        if (value.event === 'done') {
+          cache[platform] = value.assets.reduce(
+            (acc, { filename, data }) => ({
+              ...acc,
+              [filename]: Buffer.from(data),
+            }),
+            {}
+          );
+
+          notifyListeners();
+        }
+      }
+    );
 
     worker.on('error', (error) => {
       notifyListeners(error);
@@ -43,6 +62,18 @@ export function getWebpackDevServerAdapter(
     });
 
     return worker;
+  }
+
+  function getMimeType(
+    filename: string,
+    _platform: string,
+    _data: string | Buffer
+  ) {
+    if (filename.endsWith('.bundle')) {
+      return 'text/javascript';
+    }
+
+    return mimeTypes.lookup(filename) || 'text/plain';
   }
 
   async function getAsset(
@@ -82,5 +113,6 @@ export function getWebpackDevServerAdapter(
 
   return {
     getAsset,
+    getMimeType,
   };
 }

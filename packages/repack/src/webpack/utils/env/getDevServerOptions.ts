@@ -1,4 +1,5 @@
-import { DevServerOptions, Fallback } from '../../../types';
+import type { DevServerOptions } from '@callstack/repack-dev-server';
+import type { Fallback } from '../../../types';
 import { getFallbackFromOptions } from './internal/getFallbackFromOptions';
 import { parseCliOptions } from './internal/parseCliOptions';
 
@@ -27,19 +28,15 @@ export function getDevServerOptions(
   if ('bundle' in cliOptions.arguments) {
     return {
       port: DEFAULT_PORT,
-      enabled: false,
       ...getFallbackFromOptions(options),
     };
   } else {
     const { host, port, https, cert, key } = cliOptions.arguments.start;
     return {
-      enabled: true,
       hmr: getFallbackFromOptions(options).hmr ?? true,
       host: host || getFallbackFromOptions(options).host,
       port: port ?? getFallbackFromOptions(options).port ?? DEFAULT_PORT,
-      https,
-      cert,
-      key,
+      https: https ? { cert, key } : undefined,
     };
   }
 }

@@ -19,6 +19,11 @@ export interface CompilerOptions {
     platform: string,
     sendProgress?: SendProgress
   ) => Promise<string | Buffer>;
+  getMimeType: (
+    filename: string,
+    platform: string,
+    data: string | Buffer
+  ) => string;
 }
 
 async function compilerPlugin(
@@ -39,8 +44,9 @@ async function compilerPlugin(
     }
 
     const asset = await options.compiler.getAsset(file, platform);
+    const mimeType = options.compiler.getMimeType(file, platform, asset);
 
-    return this.code(200).type('text/javascript').send(asset);
+    return this.code(200).type(mimeType).send(asset);
   }
 
   instance.decorateReply('sendBundleAsset', sendBundleAsset);

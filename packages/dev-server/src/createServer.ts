@@ -1,14 +1,9 @@
 import Fastify, { FastifyServerOptions } from 'fastify';
 import fastifySensible from '@fastify/sensible';
 import compilerPlugin, { CompilerOptions } from './plugins/compiler';
+import type { DevServerOptions } from './types';
 
-export interface DevServerConfig {
-  port: number;
-  host?: string;
-  https?: {
-    cert?: string;
-    key?: string;
-  };
+export interface DevServerConfig extends DevServerOptions {
   messages?: {
     hello?: string;
     status?: string;

@@ -41,7 +41,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
   const isVerbose = process.argv.includes('--verbose');
   const reporter = new Reporter();
-  const { getAsset } = getWebpackDevServerAdapter(cliOptions);
+  const { getAsset, getMimeType } = getWebpackDevServerAdapter(cliOptions);
 
   const { listen, instance } = await createServer({
     host: args.host,
@@ -56,6 +56,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       level: isVerbose ? 'trace' : 'info',
       stream: new Writable({
         write: (chunk, _encoding, callback) => {
+          // TODO: route logs are not emitted
           const data = chunk.toString();
           const logEntry = transformFastifyLogToLogEntry(data);
           logEntry.issuer = 'DevServer';
@@ -66,6 +67,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     },
     compiler: {
       getAsset,
+      getMimeType,
     },
   });
 
@@ -106,3 +108,20 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     });
   }
 }
+
+// private runAdbReverse(logger: WebpackLogger) {
+//   // TODO: add support for multiple devices
+//   const adbPath = process.env.ANDROID_HOME
+//     ? `${process.env.ANDROID_HOME}/platform-tools/adb`
+//     : 'adb';
+//   const command = `${adbPath} reverse tcp:${this.config.port} tcp:${this.config.port}`;
+//   exec(command, (error) => {
+//     if (error) {
+//       // Get just the error message
+//       const message = error.message.split('error:')[1] || error.message;
+//       logger.warn(`Failed to run: ${command} - ${message.trim()}`);
+//     } else {
+//       logger.info(`Successfully run: ${command}`);
+//     }
+//   });
+// }

@@ -1,9 +1,7 @@
-import { exec } from 'child_process';
 import webpack from 'webpack';
 import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import { WebpackLogger, WebpackPlugin } from '../../../types';
-// @ts-ignore
-import { DevServer, DevServerConfig } from '../../../server'; // eslint-disable-line
+import type { DevServerOptions } from '@callstack/repack-dev-server';
+import type { WebpackPlugin } from '../../types';
 
 type ExtractEntryStaticNormalized<E> = E extends () => Promise<infer U>
   ? U
@@ -15,17 +13,9 @@ type EntryStaticNormalized =
   ExtractEntryStaticNormalized<webpack.EntryNormalized>;
 
 /**
- * {@link DevServerPlugin} configuration options.
+ * {@link DevelopmentPlugin} configuration options.
  */
-export interface DevServerPluginConfig
-  extends Omit<DevServerConfig, 'context'> {
-  /** Whether to run development server or not. */
-  enabled?: boolean;
-  /**
-   * Whether Hot Module Replacement / React Refresh should be enabled. Defaults to `true`.
-   */
-  hmr?: boolean;
-}
+export interface DevelopmentPluginConfig extends DevServerOptions {}
 
 /**
  * Class for running development server that handles serving the built bundle, all assets as well as
@@ -33,16 +23,13 @@ export interface DevServerPluginConfig
  *
  * @category Webpack Plugin
  */
-export class DevServerPlugin implements WebpackPlugin {
+export class DevelopmentPlugin implements WebpackPlugin {
   /**
-   * Constructs new `DevServerPlugin`.
+   * Constructs new `DevelopmentPlugin`.
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config: DevServerPluginConfig) {
-    this.config.hmr = this.config?.hmr ?? true;
-    this.config.enabled = this.config.enabled ?? true;
-  }
+  constructor(private config?: DevelopmentPluginConfig) {}
 
   /**
    * Apply the plugin.
@@ -50,9 +37,8 @@ export class DevServerPlugin implements WebpackPlugin {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: webpack.Compiler) {
-    const logger = compiler.getInfrastructureLogger('DevServerPlugin');
-    if (this.config.enabled && this.config.platform === 'android') {
-      this.runAdbReverse(logger);
+    if (!this.config) {
+      return;
     }
 
     new webpack.DefinePlugin({
@@ -104,32 +90,5 @@ export class DevServerPlugin implements WebpackPlugin {
         };
       }
     }
-
-    let server: DevServer | undefined;
-    const context = compiler.context;
-
-    compiler.hooks.watchRun.tapPromise('DevServerPlugin', async () => {
-      if (!server && this.config.enabled) {
-        server = new DevServer({ ...this.config, context }, compiler);
-        await server.run();
-      }
-    });
-  }
-
-  private runAdbReverse(logger: WebpackLogger) {
-    // TODO: add support for multiple devices
-    const adbPath = process.env.ANDROID_HOME
-      ? `${process.env.ANDROID_HOME}/platform-tools/adb`
-      : 'adb';
-    const command = `${adbPath} reverse tcp:${this.config.port} tcp:${this.config.port}`;
-    exec(command, (error) => {
-      if (error) {
-        // Get just the error message
-        const message = error.message.split('error:')[1] || error.message;
-        logger.warn(`Failed to run: ${command} - ${message.trim()}`);
-      } else {
-        logger.info(`Successfully run: ${command}`);
-      }
-    });
   }
 }

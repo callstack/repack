@@ -1,4 +1,4 @@
-export * from './DevServerPlugin';
+export * from './DevelopmentPlugin';
 export * from './AssetsPlugin';
 export * from './TargetPlugin';
 export * from './JavaScriptLooseModePlugin';

@@ -75,31 +75,6 @@ export interface StartArguments extends CommonArguments {
 }
 
 /**
- * Development server configuration options.
- *
- * Used by {@link DevServerPlugin}, {@link BaseDevServer}, {@link DevServer} and {@link DevServerProxy}.
- */
-export interface DevServerOptions {
-  /** Whether to start development server. */
-  enabled?: boolean;
-  /**
-   * Hostname or IP address under which to run the development server.
-   * When left unspecified, it will listen on all available network interfaces, similarly to listening on '0.0.0.0'.
-   */
-  host?: string;
-  /** Port under which to run the development server. See: {@link DEFAULT_PORT}. */
-  port: number;
-  /** Whether to run server on HTTPS instead of HTTP. */
-  https?: boolean;
-  /** Path to certificate when running server on HTTPS. */
-  cert?: string;
-  /** Path to certificate key when running server on HTTPS. */
-  key?: string;
-  /** Whether to enable Hot Module Replacement. */
-  hmr?: boolean;
-}
-
-/**
  * Holds all information used by {@link parseCliOptions}.
  *
  * @internal
@@ -152,11 +127,12 @@ export interface WebpackOptions {
   reactNativePath: string;
   /**
    * Development server configuration options.
+   * TODO: update docs
    * Used by {@link DevServerPlugin}, {@link BaseDevServer}, {@link DevServer} and {@link DevServerProxy}.
    *
    * If `undefined`, then development server should not be run.
    */
-  devServer?: DevServerOptions;
+  devServer?: any;
 }
 
 /** Log message type. */
@@ -174,6 +150,7 @@ export interface LogEntry {
   message: any[];
 }
 
+// TODO: move to dev-server
 /**
  * Represent Hot Module Replacement Update body.
  * Used by {@link WebSocketHMRServer} and `WebpackHMRClient`.
@@ -189,6 +166,7 @@ export interface HMRMessageBody {
   modules: Record<string, string>;
 }
 
+// TODO: move to dev-server
 /**
  * Represent Hot Module Replacement Update message.
  * Used by {@link WebSocketHMRServer} and `WebpackHMRClient`.
