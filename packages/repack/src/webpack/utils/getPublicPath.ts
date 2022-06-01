@@ -1,4 +1,5 @@
-import { DevServerConfig } from '../../server';
+//@ts-ignore
+import { DevServerConfig } from '../../server';// eslint-disable-line
 
 /** {@link getPublicPath} options. */
 export interface GetPublicPathOptions

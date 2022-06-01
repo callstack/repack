@@ -4,9 +4,9 @@ import ora, { Ora } from 'ora';
 import colorette from 'colorette';
 import { LogEntry, LogType } from './types';
 import { isVerbose, isWorker } from './env';
-import { WebSocketEventsServer } from './server';
-import { WebSocketDashboardServer } from './server/ws/WebSocketDashboardServer';
-import { MultipartResponse } from './server/MultipartResponse';
+// import { WebSocketEventsServer } from './server';
+// import { WebSocketDashboardServer } from './server/ws/WebSocketDashboardServer';
+// import { MultipartResponse } from './server/MultipartResponse';
 
 const IS_SYMBOL_SUPPORTED =
   process.platform !== 'win32' ||
@@ -42,8 +42,8 @@ interface ResLogData {
 export interface ReporterConfig {
   /** Whether to log additional debug messages. */
   verbose?: boolean;
-  wsEventsServer?: WebSocketEventsServer;
-  wsDashboardServer?: WebSocketDashboardServer;
+  // wsEventsServer?: WebSocketEventsServer;
+  // wsDashboardServer?: WebSocketDashboardServer;
 }
 
 /**
@@ -96,7 +96,7 @@ export class Reporter {
   private outputFilename?: string;
   private progress: Record<string, { value: number; label: string }> = {};
   private logBuffer: LogEntry[] = [];
-  private responses: Record<string, MultipartResponse> = {};
+  // private responses: Record<string, MultipartResponse> = {};
 
   /**
    * Create new instance of Reporter.
@@ -115,9 +115,9 @@ export class Reporter {
   /**
    * attach bundle request for later use.
    */
-  attachResponse(res: MultipartResponse, platform: string) {
-    this.responses[platform] = res;
-  }
+  // attachResponse(res: MultipartResponse, platform: string) {
+  //   this.responses[platform] = res;
+  // }
 
   /**
    * Get buffered server logs.
@@ -180,7 +180,7 @@ export class Reporter {
     } else {
       if (this.isProgress(logEntry)) {
         const {
-          progress: { value, label, platform, message },
+          progress: { value, label, platform /* , message */ },
         } = logEntry.message[0] as {
           progress: {
             value: number;
@@ -192,38 +192,38 @@ export class Reporter {
         this.progress[platform] = { value, label };
         this.updateProgress();
 
-        this.config.wsDashboardServer?.send(
-          JSON.stringify({ kind: 'progress', value, label, platform, message })
-        );
+        // this.config.wsDashboardServer?.send(
+        //   JSON.stringify({ kind: 'progress', value, label, platform, message })
+        // );
 
         /**
          * notifiy the client of the bundling progress if it's a bundle request.
          */
-        if (this.responses[platform]) {
-          const prettyProgress = this.getPrettyProgress(message);
+        // if (this.responses[platform]) {
+        //   const prettyProgress = this.getPrettyProgress(message);
 
-          if (prettyProgress && prettyProgress.length >= 3) {
-            this.responses[platform].writeChunk(
-              { 'Content-Type': 'application/json' },
-              JSON.stringify({
-                done: prettyProgress[1],
-                total: prettyProgress[2],
-              })
-            );
-          }
-        }
+        //   if (prettyProgress && prettyProgress.length >= 3) {
+        //     this.responses[platform].writeChunk(
+        //       { 'Content-Type': 'application/json' },
+        //       JSON.stringify({
+        //         done: prettyProgress[1],
+        //         total: prettyProgress[2],
+        //       })
+        //     );
+        //   }
+        // }
       } else {
         const transformedLogEntry = this.transformLogEntry(logEntry);
         // Ignore empty logs
         if (transformedLogEntry) {
           if (shouldBroadcast) {
-            this.config.wsEventsServer?.broadcastEvent({
-              type: `repack_${transformedLogEntry.type}`,
-              data: [
-                transformedLogEntry.issuer,
-                ...transformedLogEntry.message,
-              ],
-            });
+            // this.config.wsEventsServer?.broadcastEvent({
+            //   type: `repack_${transformedLogEntry.type}`,
+            //   data: [
+            //     transformedLogEntry.issuer,
+            //     ...transformedLogEntry.message,
+            //   ],
+            // });
           }
 
           // Disable route logging if not verbose. It would be better to do it on per-router/Fastify
@@ -235,9 +235,9 @@ export class Reporter {
 
           if (shouldReport) {
             this.logBuffer = this.logBuffer.concat(logEntry).slice(-500);
-            this.config.wsDashboardServer?.send(
-              JSON.stringify({ kind: 'server-log', log: logEntry })
-            );
+            // this.config.wsDashboardServer?.send(
+            //   JSON.stringify({ kind: 'server-log', log: logEntry })
+            // );
           }
 
           const text = this.getOutputLogMessage(transformedLogEntry);

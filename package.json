@@ -2,6 +2,7 @@
   "private": true,
   "workspaces": {
     "packages": [
+      "./packages/dev-server",
       "./packages/repack",
       "./packages/TesterApp",
       "./packages/debugger-ui",

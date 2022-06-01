@@ -2,7 +2,8 @@ import { exec } from 'child_process';
 import webpack from 'webpack';
 import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import { WebpackLogger, WebpackPlugin } from '../../../types';
-import { DevServer, DevServerConfig } from '../../../server';
+// @ts-ignore
+import { DevServer, DevServerConfig } from '../../../server'; // eslint-disable-line
 
 type ExtractEntryStaticNormalized<E> = E extends () => Promise<infer U>
   ? U

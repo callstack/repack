@@ -1,0 +1,36 @@
+{
+  "name": "@callstack/repack-dev-server",
+  "license": "MIT",
+  "version": "1.0.0",
+  "main": "dist/index",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "del dist",
+    "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"**/__tests__/**\"",
+    "build:js:watch": "yarn build:js --watch",
+    "build:ts": "tsc --emitDeclarationOnly",
+    "build:ts:watch": "yarn build:ts --watch --preserveWatchOutput",
+    "build": "yarn clean && yarn build:js && yarn build:ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --ext \".js,.ts\" src"
+  },
+  "dependencies": {
+    "@babel/code-frame": "^7.16.7",
+    "fastify": "^3.29.0",
+    "fastify-plugin": "^3.0.1",
+    "@fastify/sensible": "^4.1.0",
+    "source-map": "^0.7.3",
+    "ws": "^8.7.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-typescript": "^7.17.12",
+    "@callstack/eslint-config": "^12.0.2",
+    "@types/node": "14",
+    "del-cli": "^4.0.1",
+    "eslint": "^8.16.0",
+    "typescript": "^4.7.2"
+  }
+}

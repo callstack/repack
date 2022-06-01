@@ -1,14 +1,17 @@
 import readline from 'readline';
+import { Writable } from 'stream';
 import { Config } from '@react-native-community/cli-types';
+import { createServer } from '@callstack/repack-dev-server';
 import { CliOptions, StartArguments } from '../types';
 import { DEFAULT_PORT } from '../webpack/utils';
-import { DevServerProxy } from '../server';
-import { VERBOSE_ENV_KEY } from '../env';
+import { Reporter } from '../Reporter';
+import { getWebpackDevServerAdapter } from '../webpack/getWebpackDevServerAdapter';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
+import { transformFastifyLogToLogEntry } from './utils/transformFastifyLogToWebpackLogEntry';
 
 /**
  * Start command for React Native CLI.
- * It runs {@link DevServerProxy} to provide Development Server functionality to React Native apps
+ * It runs `@callstack/repack-dev-server` to provide Development Server functionality to React Native apps
  * in development mode.
  *
  * @param _ Original, non-parsed arguments that were provided when running this command.
@@ -18,7 +21,7 @@ import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
  * @internal
  * @category CLI command
  */
-export function start(_: string[], config: Config, args: StartArguments) {
+export async function start(_: string[], config: Config, args: StartArguments) {
   const webpackConfigPath = getWebpackConfigPath(
     config.root,
     args.webpackConfig
@@ -36,27 +39,41 @@ export function start(_: string[], config: Config, args: StartArguments) {
     },
   };
 
-  if (process.argv.includes('--verbose')) {
-    process.env[VERBOSE_ENV_KEY] = '1';
-  }
+  const isVerbose = process.argv.includes('--verbose');
+  const reporter = new Reporter();
+  const { getAsset } = getWebpackDevServerAdapter(cliOptions);
 
-  const devServerProxy = new DevServerProxy(
-    {
-      host: args.host,
-      port: args.port ?? DEFAULT_PORT,
-      https: args.https,
-      cert: args.cert,
-      key: args.key,
-      context: config.root,
-      platform: args.platform,
+  const { listen, instance } = await createServer({
+    host: args.host,
+    port: args.port ?? DEFAULT_PORT,
+    https: args.https
+      ? {
+          cert: args.cert,
+          key: args.key,
+        }
+      : undefined,
+    logger: {
+      level: isVerbose ? 'trace' : 'info',
+      stream: new Writable({
+        write: (chunk, _encoding, callback) => {
+          const data = chunk.toString();
+          const logEntry = transformFastifyLogToLogEntry(data);
+          logEntry.issuer = 'DevServer';
+          reporter.process(logEntry);
+          callback();
+        },
+      }),
     },
-    cliOptions
-  );
-  devServerProxy.run();
+    compiler: {
+      getAsset,
+    },
+  });
+
+  await listen();
 
   if (args.interactive) {
     if (!process.stdin.setRawMode) {
-      devServerProxy.fastify.log.warn({
+      instance.log.warn({
         msg: 'Interactive mode is not supported in this environment',
       });
     }
@@ -76,15 +93,15 @@ export function start(_: string[], config: Config, args: StartArguments) {
             break;
         }
       } else if (name === 'r') {
-        devServerProxy.wsMessageServer.broadcast('reload');
-        devServerProxy.fastify.log.info({
-          msg: 'Reloading app',
-        });
+        // devServerProxy.wsMessageServer.broadcast('reload');
+        // devServerProxy.fastify.log.info({
+        //   msg: 'Reloading app',
+        // });
       } else if (name === 'd') {
-        devServerProxy.wsMessageServer.broadcast('devMenu');
-        devServerProxy.fastify.log.info({
-          msg: 'Opening developer menu',
-        });
+        // devServerProxy.wsMessageServer.broadcast('devMenu');
+        // devServerProxy.fastify.log.info({
+        //   msg: 'Opening developer menu',
+        // });
       }
     });
   }
