@@ -4,4 +4,4 @@ export * from './commands/bundle';
 export * from './commands/start';
 // export * from './server';
 export * from './types';
-export * from './Reporter';
+export * from './logging';

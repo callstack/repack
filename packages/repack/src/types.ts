@@ -135,21 +135,6 @@ export interface WebpackOptions {
   devServer?: any;
 }
 
-/** Log message type. */
-export type LogType = 'debug' | 'info' | 'warn' | 'error';
-
-/**
- * Represent log message with all necessary data.
- *
- * @internal
- */
-export interface LogEntry {
-  timestamp: number;
-  type: LogType;
-  issuer: string;
-  message: any[];
-}
-
 // TODO: move to dev-server
 /**
  * Represent Hot Module Replacement Update body.

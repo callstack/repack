@@ -16,11 +16,12 @@ export function getDevServerOptions(
   options: Fallback<DeepOptional<DevServerOptions>> = {
     fallback: { port: DEFAULT_PORT },
   }
-): DevServerOptions {
+): DevServerOptions & { enabled: boolean } {
   const cliOptions = parseCliOptions();
   if (!cliOptions) {
     return {
       port: DEFAULT_PORT,
+      enabled: false,
       ...getFallbackFromOptions(options),
     };
   }
@@ -28,11 +29,13 @@ export function getDevServerOptions(
   if ('bundle' in cliOptions.arguments) {
     return {
       port: DEFAULT_PORT,
+      enabled: false,
       ...getFallbackFromOptions(options),
     };
   } else {
     const { host, port, https, cert, key } = cliOptions.arguments.start;
     return {
+      enabled: true,
       hmr: getFallbackFromOptions(options).hmr ?? true,
       host: host || getFallbackFromOptions(options).host,
       port: port ?? getFallbackFromOptions(options).port ?? DEFAULT_PORT,

@@ -15,8 +15,8 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "release": "yarn prepare && cp README.md packages/repack && yarn workspace @callstack/repack run release",
-    "example:start": "yarn workspace TesterApp run start",
-    "example:bundle": "yarn workspace TesterApp run bundle"
+    "example:start": "turbo run build && yarn workspace TesterApp run start",
+    "example:bundle": "turbo run build && yarn workspace TesterApp run bundle"
   },
   "dependencies": {
     "turbo": "^1.2.14"

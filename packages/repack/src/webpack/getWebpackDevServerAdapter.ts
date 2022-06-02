@@ -1,27 +1,65 @@
 import { Worker } from 'worker_threads';
 import path from 'path';
 import mimeTypes from 'mime-types';
-import { CompilerOptions } from '@callstack/repack-dev-server';
+import type { CompilerOptions } from '@callstack/repack-dev-server';
 import type { CliOptions, StartArguments } from '../types';
+import type { LogType, Reporter } from '../logging';
+import { CLI_OPTIONS_ENV_KEY, VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
 
 export function getWebpackDevServerAdapter(
-  cliOptions: CliOptions
+  cliOptions: CliOptions,
+  reporter: Reporter,
+  isVerbose?: boolean
 ): CompilerOptions {
   const workers: Record<string, Worker> = {};
   const cache: Record<string, Record<string, string | Buffer>> = {};
   const listeners: Record<string, Array<(error?: Error) => void>> = {};
 
   function spawnWorker(platform: string) {
-    const worker = new Worker(path.join(__dirname, './webpackWorker.js'), {
-      workerData: {
-        ...cliOptions,
-        arguments: {
-          start: {
-            ...(cliOptions.arguments as { start: StartArguments }).start,
-            platform,
-          },
+    const workerData = {
+      ...cliOptions,
+      arguments: {
+        start: {
+          ...(cliOptions.arguments as { start: StartArguments }).start,
+          platform,
         },
       },
+    };
+
+    const worker = new Worker(path.join(__dirname, './webpackWorker.js'), {
+      stdout: true,
+      stderr: true,
+      env: {
+        [CLI_OPTIONS_ENV_KEY]: JSON.stringify(workerData),
+        [WORKER_ENV_KEY]: '1',
+        [VERBOSE_ENV_KEY]: isVerbose ? '1' : undefined,
+      },
+      workerData,
+    });
+
+    function onStdChunk(chunk: string | Buffer, fallbackType: LogType) {
+      const data = chunk.toString().trim();
+      if (data) {
+        try {
+          const log = JSON.parse(data);
+          reporter.process(log);
+        } catch {
+          reporter.process({
+            timestamp: Date.now(),
+            type: fallbackType,
+            issuer: 'WebpackCompilerWorker',
+            message: [data],
+          });
+        }
+      }
+    }
+
+    worker.stdout.on('data', (chunk) => {
+      onStdChunk(chunk, 'info');
+    });
+
+    worker.stderr.on('data', (chunk) => {
+      onStdChunk(chunk, 'info');
     });
 
     function notifyListeners(error?: Error) {

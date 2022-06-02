@@ -2,11 +2,9 @@ import { workerData, parentPort } from 'worker_threads';
 import path from 'path';
 import webpack from 'webpack';
 import memfs from 'memfs';
-import { CLI_OPTIONS_ENV_KEY } from '../env';
 import type { CliOptions } from '../types';
 
 const cliOptions = workerData as CliOptions;
-process.env[CLI_OPTIONS_ENV_KEY] = JSON.stringify(cliOptions);
 
 const webpackConfig = require(cliOptions.config
   .webpackConfigPath) as webpack.Configuration;

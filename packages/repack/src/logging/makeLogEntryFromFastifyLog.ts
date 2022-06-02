@@ -1,6 +1,6 @@
-import { LogEntry, LogType } from '../../types';
+import type { LogEntry, LogType } from './types';
 
-export function transformFastifyLogToLogEntry(data: string): LogEntry {
+export function makeLogEntryFromFastifyLog(data: string): LogEntry {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { level, time, pid, hostname, ...rest } = JSON.parse(data);
 

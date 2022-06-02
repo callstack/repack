@@ -4,10 +4,14 @@ import { Config } from '@react-native-community/cli-types';
 import { createServer } from '@callstack/repack-dev-server';
 import { CliOptions, StartArguments } from '../types';
 import { DEFAULT_PORT } from '../webpack/utils';
-import { Reporter } from '../Reporter';
+import {
+  composeReporters,
+  ConsoleReporter,
+  BroadcastReporter,
+  makeLogEntryFromFastifyLog,
+} from '../logging';
 import { getWebpackDevServerAdapter } from '../webpack/getWebpackDevServerAdapter';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
-import { transformFastifyLogToLogEntry } from './utils/transformFastifyLogToWebpackLogEntry';
 
 /**
  * Start command for React Native CLI.
@@ -40,8 +44,16 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   };
 
   const isVerbose = process.argv.includes('--verbose');
-  const reporter = new Reporter();
-  const { getAsset, getMimeType } = getWebpackDevServerAdapter(cliOptions);
+  const reporter = composeReporters([
+    new ConsoleReporter({
+      isVerbose,
+    }),
+    new BroadcastReporter({}),
+  ]);
+  const { getAsset, getMimeType } = getWebpackDevServerAdapter(
+    cliOptions,
+    reporter
+  );
 
   const { listen, instance } = await createServer({
     host: args.host,
@@ -58,7 +70,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         write: (chunk, _encoding, callback) => {
           // TODO: route logs are not emitted
           const data = chunk.toString();
-          const logEntry = transformFastifyLogToLogEntry(data);
+          const logEntry = makeLogEntryFromFastifyLog(data);
           logEntry.issuer = 'DevServer';
           reporter.process(logEntry);
           callback();
