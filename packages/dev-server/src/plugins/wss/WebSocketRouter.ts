@@ -1,6 +1,6 @@
-import { IncomingMessage } from 'http';
-import { Socket } from 'net';
-import { FastifyDevServer } from '../types';
+import type { IncomingMessage } from 'http';
+import type { Socket } from 'net';
+import type { FastifyInstance } from 'fastify';
 import { WebSocketServer } from './WebSocketServer';
 
 /**
@@ -23,7 +23,7 @@ export class WebSocketRouter {
    *
    * @param fastify Fastify instance to attach the WebSocket router to.
    */
-  constructor(private fastify: FastifyDevServer) {
+  constructor(private fastify: FastifyInstance) {
     this.fastify.server.on(
       'upgrade',
       (request: IncomingMessage, socket: Socket, head: Buffer) => {

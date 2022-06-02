@@ -1,7 +1,7 @@
-import { IncomingMessage } from 'http';
-import { Socket } from 'net';
+import type { IncomingMessage } from 'http';
+import type { Socket } from 'net';
 import WebSocket from 'ws';
-import { FastifyDevServer } from '../types';
+import type { FastifyInstance } from 'fastify';
 
 /**
  * Abstract class for providing common logic (eg routing) for all WebSocket servers.
@@ -13,7 +13,7 @@ export abstract class WebSocketServer {
   public readonly server: WebSocket.Server;
 
   /** Fastify instance from which {@link server} will receive upgrade connections. */
-  protected fastify: FastifyDevServer;
+  protected fastify: FastifyInstance;
 
   public readonly paths: string[];
 
@@ -26,7 +26,7 @@ export abstract class WebSocketServer {
    * @param wssOptions WebSocket Server options.
    */
   constructor(
-    fastify: FastifyDevServer,
+    fastify: FastifyInstance,
     path: string | string[],
     wssOptions: Omit<
       WebSocket.ServerOptions,

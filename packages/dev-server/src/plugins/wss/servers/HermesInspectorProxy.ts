@@ -1,11 +1,11 @@
-import { IncomingMessage } from 'http';
+import type { IncomingMessage } from 'http';
 import { URL } from 'url';
 import WebSocket from 'ws';
 // @ts-ignore
 import Device from 'metro-inspector-proxy/src/Device';
-import { BaseDevServerConfig } from '../BaseDevServer';
-import { FastifyDevServer, OnSendHookHandler } from '../types';
-import { WebSocketServer } from '../ws';
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { WebSocketServer } from '../WebSocketServer';
+import { DevServerOptions } from '../../../types';
 
 const WS_DEVICE_URL = '/inspector/device';
 const WS_DEBUGGER_URL = '/inspector/debug';
@@ -28,25 +28,29 @@ interface Page {
   vm?: string;
 }
 
-export interface InspectorProxyConfig extends BaseDevServerConfig {}
+export interface InspectorProxyConfig extends DevServerOptions {}
 
-export class InspectorProxy extends WebSocketServer {
+export class HermesInspectorProxy extends WebSocketServer {
   private devices = new Map<number, Device>();
   private deviceCounter = 0;
   public readonly serverHost: string;
 
-  constructor(fastify: FastifyDevServer, private config: InspectorProxyConfig) {
+  constructor(
+    fastify: FastifyInstance,
+    private rootDir: string,
+    private config: InspectorProxyConfig
+  ) {
     super(fastify, [WS_DEVICE_URL, WS_DEBUGGER_URL]);
     this.serverHost = `${this.config.host || 'localhost'}:${this.config.port}`;
     this.setup();
   }
 
   private setup() {
-    const onSend: OnSendHookHandler<any> = (
-      _request,
-      reply,
-      _payload,
-      done
+    const onSend = (
+      _request: FastifyRequest,
+      reply: FastifyReply,
+      _payload: unknown,
+      done: () => void
     ) => {
       reply.headers({
         'Content-Type': 'application/json; charset=UTF-8',
@@ -115,7 +119,7 @@ export class InspectorProxy extends WebSocketServer {
 
         this.devices.set(
           deviceId,
-          new Device(deviceId, deviceName, appName, socket, this.config.context)
+          new Device(deviceId, deviceName, appName, socket, this.rootDir)
         );
 
         this.fastify.log.info({ msg: 'Hermes device connected', deviceId });

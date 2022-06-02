@@ -1,2 +1,2 @@
-export { default } from './compiler';
-export type { CompilerOptions } from './compiler';
+export { default } from './compilerPlugin';
+export * from './types';

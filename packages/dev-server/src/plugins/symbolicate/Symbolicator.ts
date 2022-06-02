@@ -1,56 +1,15 @@
 import { URL } from 'url';
-import path from 'path';
-import fs from 'fs';
-import { promisify } from 'util';
 import { codeFrameColumns } from '@babel/code-frame';
 import { SourceMapConsumer } from 'source-map';
-import { FastifyLoggerInstance } from 'fastify';
-
-const readFileAsync = promisify(fs.readFile);
-
-/**
- * Raw React Native stack frame.
- */
-export interface ReactNativeStackFrame {
-  lineNumber: number | null;
-  column: number | null;
-  file: string | null;
-  methodName: string;
-}
-
-/**
- * React Native stack frame used as input when processing by {@link Symbolicator}.
- */
-export interface InputStackFrame extends ReactNativeStackFrame {
-  file: string;
-}
-
-/**
- * Final symbolicated stack frame.
- */
-export interface StackFrame extends InputStackFrame {
-  collapse: boolean;
-}
-
-/**
- * Represents [@babel/core-frame](https://babeljs.io/docs/en/babel-code-frame).
- */
-export interface CodeFrame {
-  content: string;
-  location: {
-    row: number;
-    column: number;
-  };
-  fileName: string;
-}
-
-/**
- * Represents results of running {@link process} method on {@link Symbolicator} instance.
- */
-export interface SymbolicatorResults {
-  codeFrame: CodeFrame | null;
-  stack: StackFrame[];
-}
+import type { FastifyLoggerInstance } from 'fastify';
+import type {
+  CodeFrame,
+  InputStackFrame,
+  ReactNativeStackFrame,
+  StackFrame,
+  SymbolicateOptions,
+  SymbolicatorResults,
+} from './types';
 
 /**
  * Class for transforming stack traces from React Native application with using Source Map.
@@ -95,16 +54,15 @@ export class Symbolicator {
   /**
    * Constructs new `Symbolicator` instance.
    *
-   * @param projectRoot Absolute path to root directory of the project.
+   * @param rootDir Absolute path to root directory of the project.
    * @param logger Fastify logger instance.
-   * @param readFileFromWdm Function to read arbitrary file from webpack-dev-middleware.
-   * @param readSourceMapFromWdm Function to read Source Map file from webpack-dev-middleware.
+   * @param getSourceFile TODO
+   * @param getSourceMap TODO
    */
   constructor(
-    private projectRoot: string,
+    private rootDir: string,
     private logger: FastifyLoggerInstance,
-    private readFileFromWdm: (fileUrl: string) => Promise<string>,
-    private readSourceMapFromWdm: (fileUrl: string) => Promise<string>
+    private options: SymbolicateOptions
   ) {}
 
   /**
@@ -132,7 +90,7 @@ export class Symbolicator {
       const processedFrames: StackFrame[] = [];
       for (const frame of frames) {
         if (!this.sourceMapConsumerCache[frame.file]) {
-          const rawSourceMap = await this.readSourceMapFromWdm(frame.file);
+          const rawSourceMap = await this.options.getSourceMap(frame.file);
           const sourceMapConsumer = await new SourceMapConsumer(rawSourceMap);
           this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
         }
@@ -201,32 +159,14 @@ export class Symbolicator {
         continue;
       }
 
-      // If the frame points to internal bootstrap/module system logic, skip the code frame.
-      if (/webpack[/\\]runtime[/\\].+\s/.test(frame.file)) {
+      if (!this.options.includeFrame(frame)) {
         return undefined;
       }
 
       try {
-        let filename;
-        let source;
-        if (
-          frame.file.startsWith('http') &&
-          frame.file.includes('index.bundle')
-        ) {
-          // Frame points to the bundle so we need to read bundle from WDM's FS.
-          filename = frame.file;
-          source = await this.readFileFromWdm('/index.bundle');
-        } else {
-          filename = path.join(
-            this.projectRoot,
-            frame.file.replace('webpack://', '')
-          );
-          source = await readFileAsync(filename, 'utf8');
-        }
-
         return {
           content: codeFrameColumns(
-            source,
+            await this.options.getSourceFile(frame.file),
             {
               start: { column: frame.column, line: frame.lineNumber },
             },
@@ -236,7 +176,7 @@ export class Symbolicator {
             row: frame.lineNumber,
             column: frame.column,
           },
-          fileName: filename,
+          fileName: frame.file,
         };
       } catch (error) {
         this.logger.error({

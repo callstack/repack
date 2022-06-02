@@ -16,9 +16,13 @@
   },
   "dependencies": {
     "@babel/code-frame": "^7.16.7",
+    "@fastify/sensible": "^4.1.0",
     "fastify": "^3.29.0",
     "fastify-plugin": "^3.0.1",
-    "@fastify/sensible": "^4.1.0",
+    "metro-inspector-proxy": "^0.71.0",
+    "open": "^8.4.0",
+    "open-editor": "^4.0.0",
+    "pretty-format": "^28.1.0",
     "source-map": "^0.7.3",
     "ws": "^8.7.0"
   },

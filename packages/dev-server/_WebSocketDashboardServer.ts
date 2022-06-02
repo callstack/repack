@@ -1,6 +1,5 @@
 import WebSocket from 'ws';
 import webpack from 'webpack';
-import { FastifyDevServer } from '../types';
 import { WebSocketServer } from './WebSocketServer';
 
 /**

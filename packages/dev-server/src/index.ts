@@ -1,3 +1,4 @@
 export * from './createServer';
-export type { CompilerOptions } from './plugins/compiler';
+export * from './plugins/compiler';
+export * from './plugins/symbolicate';
 export * from './types';

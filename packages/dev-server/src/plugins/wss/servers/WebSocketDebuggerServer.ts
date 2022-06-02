@@ -1,7 +1,7 @@
-import { IncomingMessage } from 'http';
+import type { IncomingMessage } from 'http';
+import type { FastifyInstance } from 'fastify';
 import WebSocket from 'ws';
-import { FastifyDevServer } from '../types';
-import { WebSocketServer } from './WebSocketServer';
+import { WebSocketServer } from '../WebSocketServer';
 
 /**
  * Class for creating a WebSocket server and providing a bridge between
@@ -29,7 +29,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
    *
    * @param fastify Fastify instance to attach the WebSocket server to.
    */
-  constructor(fastify: FastifyDevServer) {
+  constructor(fastify: FastifyInstance) {
     super(fastify, '/debugger-proxy');
   }
 

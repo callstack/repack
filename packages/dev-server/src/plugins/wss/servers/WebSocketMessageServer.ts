@@ -1,8 +1,8 @@
-import { IncomingMessage } from 'http';
+import type { IncomingMessage } from 'http';
 import { URL } from 'url';
+import type { FastifyInstance } from 'fastify';
 import WebSocket from 'ws';
-import { FastifyDevServer } from '../types';
-import { WebSocketServer } from './WebSocketServer';
+import { WebSocketServer } from '../WebSocketServer';
 
 /**
  * Holds {@link ReactNativeMessage} `id` data.
@@ -89,7 +89,7 @@ export class WebSocketMessageServer extends WebSocketServer {
    *
    * @param fastify Fastify instance to attach the WebSocket server to.
    */
-  constructor(fastify: FastifyDevServer) {
+  constructor(fastify: FastifyInstance) {
     super(fastify, '/message');
   }
 

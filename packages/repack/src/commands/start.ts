@@ -50,20 +50,21 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     }),
     new BroadcastReporter({}),
   ]);
-  const { getAsset, getMimeType } = getWebpackDevServerAdapter(
-    cliOptions,
-    reporter
-  );
+  const { getAsset, getMimeType, getSourceFile, getSourceMap, includeFrame } =
+    getWebpackDevServerAdapter(cliOptions, reporter);
 
   const { listen, instance } = await createServer({
-    host: args.host,
-    port: args.port ?? DEFAULT_PORT,
-    https: args.https
-      ? {
-          cert: args.cert,
-          key: args.key,
-        }
-      : undefined,
+    rootDir: cliOptions.config.root,
+    server: {
+      host: args.host,
+      port: args.port ?? DEFAULT_PORT,
+      https: args.https
+        ? {
+            cert: args.cert,
+            key: args.key,
+          }
+        : undefined,
+    },
     logger: {
       level: isVerbose ? 'trace' : 'info',
       stream: new Writable({
@@ -80,6 +81,11 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     compiler: {
       getAsset,
       getMimeType,
+    },
+    symbolicate: {
+      includeFrame,
+      getSourceFile,
+      getSourceMap,
     },
   });
 

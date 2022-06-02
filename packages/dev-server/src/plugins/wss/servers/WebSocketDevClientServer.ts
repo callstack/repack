@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
-import { FastifyDevServer } from '../types';
-import { WebSocketServer } from './WebSocketServer';
+import type { FastifyInstance } from 'fastify';
+import { WebSocketServer } from '../WebSocketServer';
 
 /**
  * Class for creating a WebSocket server for communication with React Native clients.
@@ -18,7 +18,7 @@ export class WebSocketDevClientServer extends WebSocketServer {
    *
    * @param fastify Fastify instance to attach the WebSocket server to.
    */
-  constructor(fastify: FastifyDevServer) {
+  constructor(fastify: FastifyInstance) {
     super(fastify, '/__client');
   }
 

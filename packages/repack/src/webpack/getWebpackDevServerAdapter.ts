@@ -1,7 +1,11 @@
 import { Worker } from 'worker_threads';
 import path from 'path';
+import { URL } from 'url';
 import mimeTypes from 'mime-types';
-import type { CompilerOptions } from '@callstack/repack-dev-server';
+import type {
+  CompilerOptions,
+  SymbolicateOptions,
+} from '@callstack/repack-dev-server';
 import type { CliOptions, StartArguments } from '../types';
 import type { LogType, Reporter } from '../logging';
 import { CLI_OPTIONS_ENV_KEY, VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
@@ -10,7 +14,7 @@ export function getWebpackDevServerAdapter(
   cliOptions: CliOptions,
   reporter: Reporter,
   isVerbose?: boolean
-): CompilerOptions {
+): CompilerOptions & SymbolicateOptions {
   const workers: Record<string, Worker> = {};
   const cache: Record<string, Record<string, string | Buffer>> = {};
   const listeners: Record<string, Array<(error?: Error) => void>> = {};
@@ -149,8 +153,31 @@ export function getWebpackDevServerAdapter(
     });
   }
 
+  async function getAssetFromFileUrl(fileUrl: string) {
+    const { pathname: filename, searchParams } = new URL(fileUrl);
+    let platform = searchParams.get('platform');
+    if (!platform) {
+      const [, platformOrName, name] = filename.split('.').reverse();
+      if (name !== undefined) {
+        platform = platformOrName;
+      }
+    }
+
+    if (!platform) {
+      throw new Error('Cannot infer platform for file URL');
+    }
+
+    return (await getAsset(filename, platform)).toString();
+  }
+
   return {
     getAsset,
     getMimeType,
+    getSourceFile: getAssetFromFileUrl,
+    getSourceMap: getAssetFromFileUrl,
+    includeFrame: (frame) => {
+      // If the frame points to internal bootstrap/module system logic, skip the code frame.
+      return !/webpack[/\\]runtime[/\\].+\s/.test(frame.file);
+    },
   };
 }
