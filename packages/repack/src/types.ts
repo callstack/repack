@@ -135,7 +135,6 @@ export interface WebpackOptions {
   devServer?: any;
 }
 
-// TODO: move to dev-server
 /**
  * Represent Hot Module Replacement Update body.
  * Used by {@link WebSocketHMRServer} and `WebpackHMRClient`.
@@ -151,7 +150,6 @@ export interface HMRMessageBody {
   modules: Record<string, string>;
 }
 
-// TODO: move to dev-server
 /**
  * Represent Hot Module Replacement Update message.
  * Used by {@link WebSocketHMRServer} and `WebpackHMRClient`.

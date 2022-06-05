@@ -1,8 +1,10 @@
 import WebSocket from 'ws';
 import webpack from 'webpack';
-import { FastifyDevServer } from '../types';
-import { HMRMessage, HMRMessageBody } from '../../types';
-import { WebSocketServer } from './WebSocketServer';
+import {
+  FastifyDevServer,
+  WebSocketServer,
+} from '@callstack/repack-dev-server';
+import { HMRMessage, HMRMessageBody } from '../types';
 
 /**
  * {@link WebSocketHMRServer} configuration options.

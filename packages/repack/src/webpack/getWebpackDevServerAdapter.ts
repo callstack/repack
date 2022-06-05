@@ -1,10 +1,13 @@
 import { Worker } from 'worker_threads';
 import path from 'path';
 import { URL } from 'url';
+import EventEmitter from 'events';
 import mimeTypes from 'mime-types';
-import type {
+import {
   CompilerOptions,
   SymbolicateOptions,
+  EventsOptions,
+  DevServerEvents,
 } from '@callstack/repack-dev-server';
 import type { CliOptions, StartArguments } from '../types';
 import type { LogType, Reporter } from '../logging';
@@ -14,10 +17,11 @@ export function getWebpackDevServerAdapter(
   cliOptions: CliOptions,
   reporter: Reporter,
   isVerbose?: boolean
-): CompilerOptions & SymbolicateOptions {
+): CompilerOptions & SymbolicateOptions & EventsOptions {
   const workers: Record<string, Worker> = {};
   const cache: Record<string, Record<string, string | Buffer>> = {};
   const listeners: Record<string, Array<(error?: Error) => void>> = {};
+  const emitter = new EventEmitter();
 
   function spawnWorker(platform: string) {
     const workerData = {
@@ -82,6 +86,8 @@ export function getWebpackDevServerAdapter(
             }
       ) => {
         if (value.event === 'done') {
+          emitter.emit(DevServerEvents.BuildEnd, platform);
+
           cache[platform] = value.assets.reduce(
             (acc, { filename, data }) => ({
               ...acc,
@@ -91,6 +97,10 @@ export function getWebpackDevServerAdapter(
           );
 
           notifyListeners();
+        }
+
+        if (value.event === 'invalid' || value.event === 'watchRun') {
+          emitter.emit(DevServerEvents.BuildStart, platform);
         }
       }
     );
@@ -179,5 +189,6 @@ export function getWebpackDevServerAdapter(
       // If the frame points to internal bootstrap/module system logic, skip the code frame.
       return !/webpack[/\\]runtime[/\\].+\s/.test(frame.file);
     },
+    emitter,
   };
 }

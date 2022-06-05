@@ -1,22 +1,10 @@
-import Fastify, { FastifyServerOptions } from 'fastify';
+import Fastify from 'fastify';
 import fastifySensible from '@fastify/sensible';
-import compilerPlugin, { CompilerOptions } from './plugins/compiler';
+import compilerPlugin from './plugins/compiler';
 import devtoolsPlugin from './plugins/devtools';
 import wssPlugin from './plugins/wss';
-import type { DevServerOptions } from './types';
-import symbolicatePlugin, { SymbolicateOptions } from './plugins/symbolicate';
-
-export interface DevServerConfig {
-  rootDir: string;
-  server: DevServerOptions;
-  compiler: CompilerOptions;
-  symbolicate: SymbolicateOptions;
-  messages?: {
-    hello?: string;
-    status?: string;
-  };
-  logger?: FastifyServerOptions['logger'];
-}
+import type { DevServerConfig, FastifyDevServer } from './types';
+import symbolicatePlugin from './plugins/symbolicate';
 
 export async function createServer(config: DevServerConfig) {
   const {
@@ -81,6 +69,6 @@ export async function createServer(config: DevServerConfig) {
   return {
     listen,
     close,
-    instance,
+    instance: instance as FastifyDevServer,
   };
 }

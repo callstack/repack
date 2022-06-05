@@ -1,14 +1,7 @@
+import { FastifyInstance } from 'fastify';
 import WebSocket from 'ws';
-import webpack from 'webpack';
-import { WebSocketServer } from './WebSocketServer';
-
-/**
- * {@link WebSocketDashboardServer} configuration options.
- */
-interface WebSocketDashboardServerConfig {
-  /** Instance of Webpack compiler */
-  compiler?: webpack.Compiler;
-}
+import { DevServerEvents, EventEmitter } from '../../../types';
+import { WebSocketServer } from '../WebSocketServer';
 
 /**
  * Class for creating a WebSocket server for Dashboard client.
@@ -26,37 +19,20 @@ export class WebSocketDashboardServer extends WebSocketServer {
    * Any logging information, will be passed through standard `fastify.log` API.
    *
    * @param fastify Fastify instance to attach the WebSocket server to.
+   * @param emitter Event emitter instance.
    */
-  constructor(
-    fastify: FastifyDevServer,
-    private config?: WebSocketDashboardServerConfig
-  ) {
+  constructor(fastify: FastifyInstance, private emitter?: EventEmitter) {
     super(fastify, '/api/dashboard');
 
-    if (this.config) {
-      this.config.compiler?.hooks.invalid.tap(
-        'WebSocketDashboardServer',
-        () => {
-          this.send(
-            JSON.stringify({
-              kind: 'compilation',
-              event: { name: 'invalid' },
-            })
-          );
-        }
+    this.emitter?.addListener(DevServerEvents.BuildStart, (platform) => {
+      this.send(
+        JSON.stringify({ event: DevServerEvents.BuildStart, platform })
       );
+    });
 
-      this.config.compiler?.hooks.done.tap('WebSocketDashboardServer', () => {
-        this.send(
-          JSON.stringify({
-            kind: 'compilation',
-            event: {
-              name: 'done',
-            },
-          })
-        );
-      });
-    }
+    this.emitter?.removeListener(DevServerEvents.BuildEnd, (platform) => {
+      this.send(JSON.stringify({ event: DevServerEvents.BuildEnd, platform }));
+    });
   }
 
   /**

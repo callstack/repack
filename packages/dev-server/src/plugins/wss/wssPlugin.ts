@@ -1,29 +1,24 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import type { DevServerOptions } from '../../types';
+import type { DevServerOptions, EventsOptions } from '../../types';
 import { WebSocketDebuggerServer } from './servers/WebSocketDebuggerServer';
 import { WebSocketDevClientServer } from './servers/WebSocketDevClientServer';
 import { WebSocketMessageServer } from './servers/WebSocketMessageServer';
 import { WebSocketEventsServer } from './servers/WebSocketEventsServer';
 import { HermesInspectorProxy } from './servers/HermesInspectorProxy';
+import { WebSocketDashboardServer } from './servers/WebSocketDashboardServer';
 import { WebSocketRouter } from './WebSocketRouter';
+import type { WebSocketServersPlugin } from './types';
 
 declare module 'fastify' {
   interface FastifyInstance {
-    wss: {
-      debuggerServer: WebSocketDebuggerServer;
-      devClientServer: WebSocketDevClientServer;
-      messageServer: WebSocketMessageServer;
-      eventsServer: WebSocketEventsServer;
-      hermesInspectorProxy: HermesInspectorProxy;
-      router: WebSocketRouter;
-    };
+    wss: WebSocketServersPlugin;
   }
 }
 
 async function wssPlugin(
   instance: FastifyInstance,
-  options: { rootDir: string; server: DevServerOptions }
+  options: { rootDir: string; events?: EventsOptions; server: DevServerOptions }
 ) {
   const router = new WebSocketRouter(instance);
 
@@ -38,12 +33,17 @@ async function wssPlugin(
     options.rootDir,
     options.server
   );
+  const dashboardServer = new WebSocketDashboardServer(
+    instance,
+    options.events?.emitter
+  );
 
   router.registerServer(debuggerServer);
   router.registerServer(devClientServer);
   router.registerServer(messageServer);
   router.registerServer(eventsServer);
   router.registerServer(hermesInspectorProxy);
+  router.registerServer(dashboardServer);
 
   instance.decorate('wss', {
     debuggerServer,
@@ -51,6 +51,7 @@ async function wssPlugin(
     messageServer,
     eventsServer,
     hermesInspectorProxy,
+    dashboardServer,
     router,
   });
 }

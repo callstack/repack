@@ -12,6 +12,7 @@ import {
 } from '../logging';
 import { getWebpackDevServerAdapter } from '../webpack/getWebpackDevServerAdapter';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
+import { WebSocketHMRServer } from '../webpack/WebSocketHMRServer';
 
 /**
  * Start command for React Native CLI.
@@ -50,8 +51,14 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     }),
     new BroadcastReporter({}),
   ]);
-  const { getAsset, getMimeType, getSourceFile, getSourceMap, includeFrame } =
-    getWebpackDevServerAdapter(cliOptions, reporter);
+  const {
+    getAsset,
+    getMimeType,
+    getSourceFile,
+    getSourceMap,
+    includeFrame,
+    emitter,
+  } = getWebpackDevServerAdapter(cliOptions, reporter);
 
   const { listen, instance } = await createServer({
     rootDir: cliOptions.config.root,
@@ -78,6 +85,9 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         },
       }),
     },
+    events: {
+      emitter,
+    },
     compiler: {
       getAsset,
       getMimeType,
@@ -89,6 +99,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     },
   });
 
+  await instance.wss.router.registerServer(new WebSocketHMRServer(instance, {  }))
   await listen();
 
   if (args.interactive) {
@@ -113,15 +124,15 @@ export async function start(_: string[], config: Config, args: StartArguments) {
             break;
         }
       } else if (name === 'r') {
-        // devServerProxy.wsMessageServer.broadcast('reload');
-        // devServerProxy.fastify.log.info({
-        //   msg: 'Reloading app',
-        // });
+        instance.wss.messageServer.broadcast('reload');
+        instance.log.info({
+          msg: 'Reloading app',
+        });
       } else if (name === 'd') {
-        // devServerProxy.wsMessageServer.broadcast('devMenu');
-        // devServerProxy.fastify.log.info({
-        //   msg: 'Opening developer menu',
-        // });
+        instance.wss.messageServer.broadcast('devMenu');
+        instance.log.info({
+          msg: 'Opening developer menu',
+        });
       }
     });
   }
