@@ -1,7 +1,6 @@
 import readline from 'readline';
-import { Writable } from 'stream';
 import { Config } from '@react-native-community/cli-types';
-import { createServer } from '@callstack/repack-dev-server';
+import { createServer, Server } from '@callstack/repack-dev-server';
 import { CliOptions, StartArguments } from '../types';
 import { DEFAULT_PORT } from '../webpack/utils';
 import {
@@ -10,9 +9,8 @@ import {
   BroadcastReporter,
   makeLogEntryFromFastifyLog,
 } from '../logging';
-import { getWebpackDevServerAdapter } from '../webpack/getWebpackDevServerAdapter';
+import { Compiler } from '../webpack/Compiler';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
-import { WebSocketHMRServer } from '../webpack/WebSocketHMRServer';
 
 /**
  * Start command for React Native CLI.
@@ -51,18 +49,11 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     }),
     new BroadcastReporter({}),
   ]);
-  const {
-    getAsset,
-    getMimeType,
-    getSourceFile,
-    getSourceMap,
-    includeFrame,
-    emitter,
-  } = getWebpackDevServerAdapter(cliOptions, reporter);
+  const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
-  const { listen, instance } = await createServer({
-    rootDir: cliOptions.config.root,
-    server: {
+  const { start } = await createServer({
+    options: {
+      rootDir: cliOptions.config.root,
       host: args.host,
       port: args.port ?? DEFAULT_PORT,
       https: args.https
@@ -72,70 +63,92 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           }
         : undefined,
     },
-    logger: {
-      level: isVerbose ? 'trace' : 'info',
-      stream: new Writable({
-        write: (chunk, _encoding, callback) => {
-          // TODO: route logs are not emitted
-          const data = chunk.toString();
-          const logEntry = makeLogEntryFromFastifyLog(data);
-          logEntry.issuer = 'DevServer';
-          reporter.process(logEntry);
-          callback();
+    delegate: (ctx): Server.Delegate => {
+      if (args.interactive) {
+        bindKeypressInput(ctx);
+      }
+
+      return {
+        compiler: {
+          getAsset: (filename, platform) =>
+            compiler.getAsset(filename, platform),
+          getMimeType: (filename) => compiler.getMimeType(filename),
         },
-      }),
-    },
-    events: {
-      emitter,
-    },
-    compiler: {
-      getAsset,
-      getMimeType,
-    },
-    symbolicate: {
-      includeFrame,
-      getSourceFile,
-      getSourceMap,
+        symbolicator: {
+          getSource: (fileUrl) => {
+            const { filename, platform } = parseFileUrl(fileUrl);
+            return compiler.getSource(filename, platform);
+          },
+          getSourceMap: (fileUrl) => {
+            const { filename, platform } = parseFileUrl(fileUrl);
+            if (!platform) {
+              throw new Error('Cannot infer platform for file URL');
+            }
+
+            return compiler.getSourceMap(filename, platform);
+          },
+          shouldIncludeFrame: (frame) => {
+            // If the frame points to internal bootstrap/module system logic, skip the code frame.
+            return !/webpack[/\\]runtime[/\\].+\s/.test(frame.file);
+          },
+        },
+        hmr: {
+          getUriPath: () => '/__hmr',
+          onClientConnected: (platform, clientId) => {
+            ctx.broadcastToHmrClients({ action: 'sync' }, platform, [clientId]);
+          },
+        },
+        messages: {
+          getHello: () => 'React Native packager is running',
+          getStatus: () => 'packager-status:running',
+        },
+        logger: {
+          onMessage: (log) => {
+            const logEntry = makeLogEntryFromFastifyLog(log);
+            logEntry.issuer = 'DevServer';
+            reporter.process(logEntry);
+          },
+        },
+      };
     },
   });
 
-  await instance.wss.router.registerServer(new WebSocketHMRServer(instance, {  }))
-  await listen();
+  await start();
+}
 
-  if (args.interactive) {
-    if (!process.stdin.setRawMode) {
-      instance.log.warn({
-        msg: 'Interactive mode is not supported in this environment',
-      });
-    }
-
-    readline.emitKeypressEvents(process.stdin);
-    process.stdin.setRawMode(true);
-
-    process.stdin.on('keypress', (_key, data) => {
-      const { ctrl, name } = data;
-      if (ctrl === true) {
-        switch (name) {
-          case 'c':
-            process.exit();
-            break;
-          case 'z':
-            process.emit('SIGTSTP', 'SIGTSTP');
-            break;
-        }
-      } else if (name === 'r') {
-        instance.wss.messageServer.broadcast('reload');
-        instance.log.info({
-          msg: 'Reloading app',
-        });
-      } else if (name === 'd') {
-        instance.wss.messageServer.broadcast('devMenu');
-        instance.log.info({
-          msg: 'Opening developer menu',
-        });
-      }
+function bindKeypressInput(ctx: Server.DelegateContext) {
+  if (!process.stdin.setRawMode) {
+    ctx.log.warn({
+      msg: 'Interactive mode is not supported in this environment',
     });
   }
+
+  readline.emitKeypressEvents(process.stdin);
+  process.stdin.setRawMode(true);
+
+  process.stdin.on('keypress', (_key, data) => {
+    const { ctrl, name } = data;
+    if (ctrl === true) {
+      switch (name) {
+        case 'c':
+          process.exit();
+          break;
+        case 'z':
+          process.emit('SIGTSTP', 'SIGTSTP');
+          break;
+      }
+    } else if (name === 'r') {
+      ctx.broadcastToMessageClients({ method: 'reload' });
+      ctx.log.info({
+        msg: 'Reloading app',
+      });
+    } else if (name === 'd') {
+      ctx.broadcastToMessageClients({ method: 'devMenu' });
+      ctx.log.info({
+        msg: 'Opening developer menu',
+      });
+    }
+  });
 }
 
 // private runAdbReverse(logger: WebpackLogger) {
@@ -154,3 +167,16 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 //     }
 //   });
 // }
+
+function parseFileUrl(fileUrl: string) {
+  const { pathname: filename, searchParams } = new URL(fileUrl);
+  let platform = searchParams.get('platform');
+  if (!platform) {
+    const [, platformOrName, name] = filename.split('.').reverse();
+    if (name !== undefined) {
+      platform = platformOrName;
+    }
+  }
+
+  return { filename, platform: platform || undefined };
+}

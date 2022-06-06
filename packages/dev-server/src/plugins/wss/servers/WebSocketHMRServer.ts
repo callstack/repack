@@ -32,12 +32,17 @@ export class WebSocketHMRServer extends WebSocketServer {
    * Send action to all connected HMR clients.
    *
    * @param event Event to send to the clients.
+   * @param platform Platform of clients to send the event to.
+   * @param clientIds Ids of clients who should receive the event.
    */
-  send(platform: string, event: any) {
+  send(event: any, platform: string, clientIds?: string[]) {
     const data = typeof event === 'string' ? event : JSON.stringify(event);
 
     for (const [key, socket] of this.clients) {
-      if (key.platform !== platform) {
+      if (
+        key.platform !== platform ||
+        !(clientIds ?? [key.clientId]).includes(key.clientId)
+      ) {
         return;
       }
 

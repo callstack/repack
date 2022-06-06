@@ -1,3 +1,4 @@
+import { FastifyLoggerInstance } from 'fastify';
 import type { CompilerDelegate } from './plugins/compiler';
 import type { SymbolicatorDelegate } from './plugins/symbolicate';
 import type { HmrDelegate } from './plugins/wss';
@@ -56,11 +57,16 @@ export namespace Server {
   }
 
   export interface DelegateContext {
+    log: FastifyLoggerInstance;
     notifyBuildStart: (platform: string) => void;
     notifyBuildEnd: (platform: string) => void;
-    broadcastToHmrClients: <E = any>(platform: string, event: E) => void;
+    broadcastToHmrClients: <E = any>(
+      event: E,
+      platform: string,
+      clientIds?: string[]
+    ) => void;
     broadcastToMessageClients: <
-      E extends { method: string; params: Record<string, any> }
+      E extends { method: string; params?: Record<string, any> }
     >(
       event: E
     ) => void;

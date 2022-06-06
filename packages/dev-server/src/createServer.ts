@@ -22,6 +22,7 @@ export async function createServer(config: Server.Config) {
   });
 
   const delegate = config.delegate({
+    log: instance.log,
     notifyBuildStart: (platform) => {
       instance.wss.dashboardServer.send({
         event: Internal.EventTypes.BuildStart,
@@ -34,8 +35,8 @@ export async function createServer(config: Server.Config) {
         platform,
       });
     },
-    broadcastToHmrClients: (platform, event) => {
-      instance.wss.hmrServer.send(platform, event);
+    broadcastToHmrClients: (event, platform, clientIds) => {
+      instance.wss.hmrServer.send(event, platform, clientIds);
     },
     broadcastToMessageClients: ({ method, params }) => {
       instance.wss.messageServer.broadcast(method, params);
@@ -79,17 +80,17 @@ export async function createServer(config: Server.Config) {
   instance.get('/', async () => delegate.messages.getHello());
   instance.get('/status', async () => delegate.messages.getStatus());
 
-  async function listen() {
+  async function start() {
     await instance.listen(config.options.port, config.options.host);
   }
 
-  async function close() {
+  async function stop() {
     await instance.close();
   }
 
   return {
-    listen,
-    close,
+    start,
+    stop,
     instance,
   };
 }
