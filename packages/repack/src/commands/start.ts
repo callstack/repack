@@ -70,6 +70,8 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         bindKeypressInput(ctx);
       }
 
+      let lastStats: webpack.StatsCompilation | undefined;
+
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
       });
@@ -89,25 +91,11 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           stats: webpack.StatsCompilation;
         }) => {
           ctx.notifyBuildEnd(platform);
-
-          let body: HMRMessageBody | null = null;
-          const modules: Record<string, string> = {};
-          for (const module of stats.modules ?? []) {
-            const { identifier, name } = module;
-            if (identifier !== undefined && name) {
-              modules[identifier] = name;
-            }
-          }
-
-          body = {
-            name: stats.name ?? '',
-            time: stats.time ?? 0,
-            hash: stats.hash ?? '',
-            warnings: stats.warnings || [],
-            errors: stats.errors || [],
-            modules,
-          };
-          ctx.broadcastToHmrClients({ action: 'built', body }, platform);
+          lastStats = stats;
+          ctx.broadcastToHmrClients(
+            { action: 'built', body: createHmrBody(stats) },
+            platform
+          );
         }
       );
 
@@ -138,7 +126,11 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         hmr: {
           getUriPath: () => '/__hmr',
           onClientConnected: (platform, clientId) => {
-            ctx.broadcastToHmrClients({ action: 'sync' }, platform, [clientId]);
+            ctx.broadcastToHmrClients(
+              { action: 'sync', body: createHmrBody(lastStats) },
+              platform,
+              [clientId]
+            );
           },
         },
         messages: {
@@ -222,4 +214,29 @@ function parseFileUrl(fileUrl: string) {
   }
 
   return { filename, platform: platform || undefined };
+}
+
+function createHmrBody(
+  stats?: webpack.StatsCompilation
+): HMRMessageBody | null {
+  if (!stats) {
+    return null;
+  }
+
+  const modules: Record<string, string> = {};
+  for (const module of stats.modules ?? []) {
+    const { identifier, name } = module;
+    if (identifier !== undefined && name) {
+      modules[identifier] = name;
+    }
+  }
+
+  return {
+    name: stats.name ?? '',
+    time: stats.time ?? 0,
+    hash: stats.hash ?? '',
+    warnings: stats.warnings || [],
+    errors: stats.errors || [],
+    modules,
+  };
 }
