@@ -62,6 +62,7 @@ async function wssPlugin(
     eventsServer,
     hermesInspectorProxy,
     dashboardServer,
+    hmrServer,
     router,
   });
 }

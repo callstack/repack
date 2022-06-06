@@ -2,15 +2,18 @@
   "name": "@callstack/repack-dev-server",
   "license": "MIT",
   "version": "1.0.0",
-  "main": "dist/index",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "scripts": {
-    "clean": "del dist",
-    "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"**/__tests__/**\"",
+    "build:js": "babel src --out-dir dist --extensions \".js,.cjs,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start",
     "build:js:watch": "yarn build:js --watch",
     "build:ts": "tsc --emitDeclarationOnly",
     "build:ts:watch": "yarn build:ts --watch --preserveWatchOutput",
-    "build": "yarn clean && yarn build:js && yarn build:ts",
+    "build": "yarn build:js && yarn build:ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --ext \".js,.ts\" src"
   },
@@ -33,7 +36,8 @@
     "@babel/preset-typescript": "^7.17.12",
     "@callstack/eslint-config": "^12.0.2",
     "@types/node": "14",
-    "del-cli": "^4.0.1",
+    "@types/ws": "^8.5.3",
+    "babel-plugin-add-import-extension": "^1.6.0",
     "eslint": "^8.16.0",
     "typescript": "^4.7.2"
   }

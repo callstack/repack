@@ -2,6 +2,7 @@
 
 declare var __DEV__: boolean;
 declare var __PUBLIC_PORT__: number;
+declare var __PLATFORM__: string;
 declare var __CHUNKS__: { local?: Array<string | number | null> } | undefined;
 declare var __webpack_public_path__: string;
 declare var __webpack_get_script_filename__: (script: string) => string;

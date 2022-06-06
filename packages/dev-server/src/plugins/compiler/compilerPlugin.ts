@@ -6,22 +6,21 @@ async function compilerPlugin(
   instance: FastifyInstance,
   { delegate }: { delegate: Server.Delegate }
 ) {
-  instance.get(
-    '/:file',
-    {
-      schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            platform: {
-              type: 'string',
-            },
+  instance.route({
+    method: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
+    url: '/*',
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          platform: {
+            type: 'string',
           },
         },
       },
     },
-    async (request, reply) => {
-      const { file } = request.params as { file?: string };
+    handler: async (request, reply) => {
+      const file = (request.params as { '*'?: string })['*'];
       const { platform } = request.query as { platform?: string };
 
       if (!file) {
@@ -35,11 +34,12 @@ async function compilerPlugin(
       const asset = await delegate.compiler.getAsset(file, platform);
       const mimeType = delegate.compiler.getMimeType(file, platform, asset);
 
-      reply.code(200).type(mimeType).send(asset);
-    }
-  );
+      return reply.code(200).type(mimeType).send(asset);
+    },
+  });
 }
 
 export default fastifyPlugin(compilerPlugin, {
   name: 'compiler-plugin',
+  dependencies: ['fastify-sensible'],
 });

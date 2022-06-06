@@ -1,7 +1,7 @@
 import readline from 'readline';
 import webpack from 'webpack';
 import { Config } from '@react-native-community/cli-types';
-import { createServer, Server } from '@callstack/repack-dev-server';
+import type { Server } from '@callstack/repack-dev-server';
 import { CliOptions, HMRMessageBody, StartArguments } from '../types';
 import { DEFAULT_PORT } from '../webpack/utils';
 import {
@@ -52,6 +52,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   ]);
   const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
+  const { createServer } = await import('@callstack/repack-dev-server');
   const { start } = await createServer({
     options: {
       rootDir: cliOptions.config.root,
@@ -78,39 +79,37 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         ctx.broadcastToHmrClients({ action: 'building' }, platform);
       });
 
-      compiler.on('done', ({ platform, stats }) => {
-        ctx.notifyBuildEnd(platform);
+      compiler.on(
+        'done',
+        ({
+          platform,
+          stats,
+        }: {
+          platform: string;
+          stats: webpack.StatsCompilation;
+        }) => {
+          ctx.notifyBuildEnd(platform);
 
-        let body: HMRMessageBody | null = null;
-        const statsObject = (stats as webpack.Stats).toJson({
-          all: false,
-          cached: true,
-          children: true,
-          modules: true,
-          timings: true,
-          hash: true,
-          errors: true,
-          warnings: false,
-        });
-
-        const modules: Record<string, string> = {};
-        for (const module of statsObject.modules ?? []) {
-          const { identifier, name } = module;
-          if (identifier !== undefined && name) {
-            modules[identifier] = name;
+          let body: HMRMessageBody | null = null;
+          const modules: Record<string, string> = {};
+          for (const module of stats.modules ?? []) {
+            const { identifier, name } = module;
+            if (identifier !== undefined && name) {
+              modules[identifier] = name;
+            }
           }
-        }
 
-        body = {
-          name: statsObject.name ?? '',
-          time: statsObject.time ?? 0,
-          hash: statsObject.hash ?? '',
-          warnings: statsObject.warnings || [],
-          errors: statsObject.errors || [],
-          modules,
-        };
-        ctx.broadcastToHmrClients({ action: 'built', body }, platform);
-      });
+          body = {
+            name: stats.name ?? '',
+            time: stats.time ?? 0,
+            hash: stats.hash ?? '',
+            warnings: stats.warnings || [],
+            errors: stats.errors || [],
+            modules,
+          };
+          ctx.broadcastToHmrClients({ action: 'built', body }, platform);
+        }
+      );
 
       return {
         compiler: {

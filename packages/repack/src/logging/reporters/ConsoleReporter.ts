@@ -169,6 +169,14 @@ class InteractiveConsoleReporter implements Reporter {
         if (Object.keys(rest).length) {
           message.push(rest);
         }
+      } else if ('msg' in value) {
+        const {
+          msg,
+          issuer: issuerOverride,
+          ...rest
+        } = value as { msg: string | string[]; issuer?: string };
+        issuer = issuerOverride || issuer;
+        message.push(...(Array.isArray(msg) ? msg : [msg]), rest);
       } else {
         message.push(value);
       }

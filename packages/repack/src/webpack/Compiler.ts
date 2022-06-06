@@ -78,6 +78,7 @@ export class Compiler extends EventEmitter {
       (
         value:
           | { event: 'watchRun' | 'invalid' }
+          | { event: 'error'; error: Error }
           | {
               event: 'done';
               assets: Array<{ filename: string; data: Uint8Array }>;
@@ -92,9 +93,10 @@ export class Compiler extends EventEmitter {
             }),
             {}
           );
-
           callPendingResolvers();
           this.emit(value.event, { platform, stats: value.stats });
+        } else if (value.event === 'error') {
+          this.emit(value.event, value.error);
         } else {
           this.emit(value.event, { platform });
         }

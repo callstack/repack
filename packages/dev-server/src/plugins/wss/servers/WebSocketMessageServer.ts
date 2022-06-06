@@ -372,7 +372,7 @@ export class WebSocketMessageServer extends WebSocketServer {
     socket.addEventListener('close', onClose);
     socket.addEventListener('message', (event) => {
       const message = this.parseMessage(
-        event.data,
+        event.data.toString(),
         // @ts-ignore
         event.binary
       );

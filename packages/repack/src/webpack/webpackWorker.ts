@@ -37,7 +37,20 @@ compiler.hooks.done.tap('webpackWorker', (stats) => {
     };
   });
   parentPort?.postMessage(
-    { event: 'done', assets, stats },
+    {
+      event: 'done',
+      assets,
+      stats: stats.toJson({
+        all: false,
+        cached: true,
+        children: true,
+        modules: true,
+        timings: true,
+        hash: true,
+        errors: true,
+        warnings: false,
+      }),
+    },
     assets.map((asset) => asset.data.buffer)
   );
 });

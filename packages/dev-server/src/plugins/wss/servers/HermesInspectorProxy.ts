@@ -2,10 +2,12 @@ import type { IncomingMessage } from 'http';
 import { URL } from 'url';
 import WebSocket from 'ws';
 // @ts-ignore
-import Device from 'metro-inspector-proxy/src/Device';
+// import Device from 'metro-inspector-proxy/src/Device';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { WebSocketServer } from '../WebSocketServer';
 import { Server } from '../../../types';
+// @ts-ignore
+import Device from '../../../../vendor/metro-inspector-proxy/src/Device.js';
 
 const WS_DEVICE_URL = '/inspector/device';
 const WS_DEBUGGER_URL = '/inspector/debug';
@@ -32,7 +34,7 @@ export interface InspectorProxyConfig
   extends Pick<Server.Options, 'port' | 'host' | 'rootDir'> {}
 
 export class HermesInspectorProxy extends WebSocketServer {
-  private devices = new Map<number, Device>();
+  private devices = new Map<number, any>();
   private deviceCounter = 0;
   public readonly serverHost: string;
 

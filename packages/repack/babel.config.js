@@ -3,6 +3,7 @@ module.exports = {
   plugins: [
     '@babel/plugin-proposal-optional-chaining',
     '@babel/plugin-proposal-nullish-coalescing-operator',
+    '@babel/plugin-transform-modules-commonjs',
   ],
   overrides: [
     {
@@ -16,8 +17,9 @@ module.exports = {
           '@babel/preset-env',
           {
             targets: {
-              node: 12,
+              node: 14,
             },
+            modules: false,
           },
         ],
       ],
@@ -30,7 +32,7 @@ module.exports = {
           '@babel/preset-env',
           {
             targets: {
-              node: 12,
+              node: 14,
             },
           },
         ],

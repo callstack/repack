@@ -14,7 +14,9 @@ type EntryStaticNormalized =
 /**
  * {@link DevelopmentPlugin} configuration options.
  */
-export interface DevelopmentPluginConfig extends DevServerOptions {}
+export interface DevelopmentPluginConfig extends DevServerOptions {
+  platform: string;
+}
 
 /**
  * Class for running development server that handles serving the built bundle, all assets as well as
@@ -42,6 +44,7 @@ export class DevelopmentPlugin implements WebpackPlugin {
 
     new webpack.DefinePlugin({
       __PUBLIC_PORT__: JSON.stringify(this.config.port),
+      __PLATFORM__: JSON.stringify(this.config.platform),
     }).apply(compiler);
 
     if (this.config?.hmr) {
