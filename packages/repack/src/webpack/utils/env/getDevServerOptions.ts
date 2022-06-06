@@ -1,5 +1,4 @@
-import type { DevServerOptions } from '@callstack/repack-dev-server';
-import type { Fallback } from '../../../types';
+import type { DevServerOptions, Fallback } from '../../../types';
 import { getFallbackFromOptions } from './internal/getFallbackFromOptions';
 import { parseCliOptions } from './internal/parseCliOptions';
 
@@ -16,7 +15,7 @@ export function getDevServerOptions(
   options: Fallback<DeepOptional<DevServerOptions>> = {
     fallback: { port: DEFAULT_PORT },
   }
-): DevServerOptions & { enabled: boolean } {
+): DevServerOptions {
   const cliOptions = parseCliOptions();
   if (!cliOptions) {
     return {

@@ -1,7 +1,6 @@
 import webpack from 'webpack';
 import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import type { DevServerOptions } from '@callstack/repack-dev-server';
-import type { WebpackPlugin } from '../../types';
+import type { DevServerOptions, WebpackPlugin } from '../../types';
 
 type ExtractEntryStaticNormalized<E> = E extends () => Promise<infer U>
   ? U

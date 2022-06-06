@@ -1,7 +1,8 @@
 import readline from 'readline';
+import webpack from 'webpack';
 import { Config } from '@react-native-community/cli-types';
 import { createServer, Server } from '@callstack/repack-dev-server';
-import { CliOptions, StartArguments } from '../types';
+import { CliOptions, HMRMessageBody, StartArguments } from '../types';
 import { DEFAULT_PORT } from '../webpack/utils';
 import {
   composeReporters,
@@ -67,6 +68,49 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       if (args.interactive) {
         bindKeypressInput(ctx);
       }
+
+      compiler.on('watchRun', ({ platform }) => {
+        ctx.notifyBuildStart(platform);
+      });
+
+      compiler.on('invalid', ({ platform }) => {
+        ctx.notifyBuildStart(platform);
+        ctx.broadcastToHmrClients({ action: 'building' }, platform);
+      });
+
+      compiler.on('done', ({ platform, stats }) => {
+        ctx.notifyBuildEnd(platform);
+
+        let body: HMRMessageBody | null = null;
+        const statsObject = (stats as webpack.Stats).toJson({
+          all: false,
+          cached: true,
+          children: true,
+          modules: true,
+          timings: true,
+          hash: true,
+          errors: true,
+          warnings: false,
+        });
+
+        const modules: Record<string, string> = {};
+        for (const module of statsObject.modules ?? []) {
+          const { identifier, name } = module;
+          if (identifier !== undefined && name) {
+            modules[identifier] = name;
+          }
+        }
+
+        body = {
+          name: statsObject.name ?? '',
+          time: statsObject.time ?? 0,
+          hash: statsObject.hash ?? '',
+          warnings: statsObject.warnings || [],
+          errors: statsObject.errors || [],
+          modules,
+        };
+        ctx.broadcastToHmrClients({ action: 'built', body }, platform);
+      });
 
       return {
         compiler: {

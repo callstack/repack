@@ -37,7 +37,7 @@ compiler.hooks.done.tap('webpackWorker', (stats) => {
     };
   });
   parentPort?.postMessage(
-    { event: 'done', assets },
+    { event: 'done', assets, stats },
     assets.map((asset) => asset.data.buffer)
   );
 });

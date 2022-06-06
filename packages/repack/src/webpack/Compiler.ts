@@ -1,12 +1,14 @@
 import { Worker } from 'worker_threads';
 import path from 'path';
 import fs from 'fs';
+import EventEmitter from 'events';
+import webpack from 'webpack';
 import mimeTypes from 'mime-types';
 import type { CliOptions, StartArguments } from '../types';
 import type { LogType, Reporter } from '../logging';
 import { CLI_OPTIONS_ENV_KEY, VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
 
-export class Compiler {
+export class Compiler extends EventEmitter {
   workers: Record<string, Worker> = {};
   cache: Record<string, Record<string, string | Buffer>> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
@@ -15,7 +17,9 @@ export class Compiler {
     private cliOptions: CliOptions,
     private reporter: Reporter,
     private isVerbose?: boolean
-  ) {}
+  ) {
+    super();
+  }
 
   private spawnWorker(platform: string) {
     const workerData = {
@@ -77,6 +81,7 @@ export class Compiler {
           | {
               event: 'done';
               assets: Array<{ filename: string; data: Uint8Array }>;
+              stats: webpack.Stats;
             }
       ) => {
         if (value.event === 'done') {
@@ -89,10 +94,9 @@ export class Compiler {
           );
 
           callPendingResolvers();
-        }
-
-        if (value.event === 'invalid' || value.event === 'watchRun') {
-          // TODO
+          this.emit(value.event, { platform, stats: value.stats });
+        } else {
+          this.emit(value.event, { platform });
         }
       }
     );
