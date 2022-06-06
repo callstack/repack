@@ -1,24 +1,39 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import type { DevServerOptions, EventsOptions } from '../../types';
+import type { Server } from '../../types';
 import { WebSocketDebuggerServer } from './servers/WebSocketDebuggerServer';
 import { WebSocketDevClientServer } from './servers/WebSocketDevClientServer';
 import { WebSocketMessageServer } from './servers/WebSocketMessageServer';
 import { WebSocketEventsServer } from './servers/WebSocketEventsServer';
 import { HermesInspectorProxy } from './servers/HermesInspectorProxy';
 import { WebSocketDashboardServer } from './servers/WebSocketDashboardServer';
+import { WebSocketHMRServer } from './servers/WebSocketHMRServer';
 import { WebSocketRouter } from './WebSocketRouter';
-import type { WebSocketServersPlugin } from './types';
 
 declare module 'fastify' {
   interface FastifyInstance {
-    wss: WebSocketServersPlugin;
+    wss: {
+      debuggerServer: WebSocketDebuggerServer;
+      devClientServer: WebSocketDevClientServer;
+      messageServer: WebSocketMessageServer;
+      eventsServer: WebSocketEventsServer;
+      hermesInspectorProxy: HermesInspectorProxy;
+      dashboardServer: WebSocketDashboardServer;
+      hmrServer: WebSocketHMRServer;
+      router: WebSocketRouter;
+    };
   }
 }
 
 async function wssPlugin(
   instance: FastifyInstance,
-  options: { rootDir: string; events?: EventsOptions; server: DevServerOptions }
+  {
+    options,
+    delegate,
+  }: {
+    options: Server.Options;
+    delegate: Server.Delegate;
+  }
 ) {
   const router = new WebSocketRouter(instance);
 
@@ -28,15 +43,9 @@ async function wssPlugin(
   const eventsServer = new WebSocketEventsServer(instance, {
     webSocketMessageServer: messageServer,
   });
-  const hermesInspectorProxy = new HermesInspectorProxy(
-    instance,
-    options.rootDir,
-    options.server
-  );
-  const dashboardServer = new WebSocketDashboardServer(
-    instance,
-    options.events?.emitter
-  );
+  const hermesInspectorProxy = new HermesInspectorProxy(instance, options);
+  const dashboardServer = new WebSocketDashboardServer(instance);
+  const hmrServer = new WebSocketHMRServer(instance, delegate.hmr);
 
   router.registerServer(debuggerServer);
   router.registerServer(devClientServer);
@@ -44,6 +53,7 @@ async function wssPlugin(
   router.registerServer(eventsServer);
   router.registerServer(hermesInspectorProxy);
   router.registerServer(dashboardServer);
+  router.registerServer(hmrServer);
 
   instance.decorate('wss', {
     debuggerServer,

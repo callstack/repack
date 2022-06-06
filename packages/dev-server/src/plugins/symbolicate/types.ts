@@ -43,10 +43,10 @@ export interface SymbolicatorResults {
 }
 
 /**
- * Symbolication options required by {@link Symbolicator}.
+ * Symbolicator delegate required by {@link Symbolicator}.
  */
-export interface SymbolicateOptions {
-  getSourceFile: (fileUrl: string) => Promise<string>;
-  getSourceMap: (fileUrl: string) => Promise<string>;
-  includeFrame: (frame: StackFrame) => boolean;
+export interface SymbolicatorDelegate {
+  getSource: (fileUrl: string) => Promise<string | Buffer>;
+  getSourceMap: (fileUrl: string) => Promise<string | Buffer>;
+  shouldIncludeFrame: (frame: StackFrame) => boolean;
 }

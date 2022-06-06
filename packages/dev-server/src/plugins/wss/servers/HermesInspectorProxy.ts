@@ -5,7 +5,7 @@ import WebSocket from 'ws';
 import Device from 'metro-inspector-proxy/src/Device';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { WebSocketServer } from '../WebSocketServer';
-import { DevServerOptions } from '../../../types';
+import { Server } from '../../../types';
 
 const WS_DEVICE_URL = '/inspector/device';
 const WS_DEBUGGER_URL = '/inspector/debug';
@@ -28,18 +28,15 @@ interface Page {
   vm?: string;
 }
 
-export interface InspectorProxyConfig extends DevServerOptions {}
+export interface InspectorProxyConfig
+  extends Pick<Server.Options, 'port' | 'host' | 'rootDir'> {}
 
 export class HermesInspectorProxy extends WebSocketServer {
   private devices = new Map<number, Device>();
   private deviceCounter = 0;
   public readonly serverHost: string;
 
-  constructor(
-    fastify: FastifyInstance,
-    private rootDir: string,
-    private config: InspectorProxyConfig
-  ) {
+  constructor(fastify: FastifyInstance, private config: InspectorProxyConfig) {
     super(fastify, [WS_DEVICE_URL, WS_DEBUGGER_URL]);
     this.serverHost = `${this.config.host || 'localhost'}:${this.config.port}`;
     this.setup();
@@ -119,7 +116,7 @@ export class HermesInspectorProxy extends WebSocketServer {
 
         this.devices.set(
           deviceId,
-          new Device(deviceId, deviceName, appName, socket, this.rootDir)
+          new Device(deviceId, deviceName, appName, socket, this.config.rootDir)
         );
 
         this.fastify.log.info({ msg: 'Hermes device connected', deviceId });

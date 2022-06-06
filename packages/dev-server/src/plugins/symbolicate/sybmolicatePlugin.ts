@@ -1,22 +1,18 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import type { DevServerOptions } from '../../types';
+import type { Server } from '../../types';
 import { Symbolicator } from './Symbolicator';
-import type { ReactNativeStackFrame, SymbolicateOptions } from './types';
+import type { ReactNativeStackFrame } from './types';
 
 async function symbolicatePlugin(
   instance: FastifyInstance,
-  options: {
-    rootDir: string;
-    server: DevServerOptions;
-    symbolicate: SymbolicateOptions;
+  {
+    delegate,
+  }: {
+    delegate: Server.Delegate;
   }
 ) {
-  const symbolicator = new Symbolicator(
-    options.rootDir,
-    instance.log,
-    options.symbolicate
-  );
+  const symbolicator = new Symbolicator(instance.log, delegate.symbolicator);
 
   instance.post(
     '/symbolicate',

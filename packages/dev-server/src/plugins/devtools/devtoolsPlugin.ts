@@ -3,11 +3,11 @@ import open from 'open';
 import openEditor from 'open-editor';
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import type { DevServerOptions } from '../../types';
+import type { Server } from '../../types';
 
 async function devtoolsPlugin(
   instance: FastifyInstance,
-  options: { rootDir: string; server: DevServerOptions }
+  { options }: { options: Server.Options }
 ) {
   instance.route({
     method: ['GET', 'POST', 'PUT'],
@@ -26,9 +26,9 @@ async function devtoolsPlugin(
       if (customDebugger) {
         // NOOP for now
       } else if (!instance.wss.debuggerServer.isDebuggerConnected()) {
-        const url = `${options.server.https ? 'https' : 'http'}://${
-          options.server.host || 'localhost'
-        }:${options.server.port}/debugger-ui`;
+        const url = `${options.https ? 'https' : 'http'}://${
+          options.host || 'localhost'
+        }:${options.port}/debugger-ui`;
         try {
           request.log.info({ msg: 'Opening debugger UI', url });
           await open(url);

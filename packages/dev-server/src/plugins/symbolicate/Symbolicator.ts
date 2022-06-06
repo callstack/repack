@@ -7,7 +7,7 @@ import type {
   InputStackFrame,
   ReactNativeStackFrame,
   StackFrame,
-  SymbolicateOptions,
+  SymbolicatorDelegate,
   SymbolicatorResults,
 } from './types';
 
@@ -54,15 +54,12 @@ export class Symbolicator {
   /**
    * Constructs new `Symbolicator` instance.
    *
-   * @param rootDir Absolute path to root directory of the project.
    * @param logger Fastify logger instance.
-   * @param getSourceFile TODO
-   * @param getSourceMap TODO
+   * @param delegate TODO
    */
   constructor(
-    private rootDir: string,
     private logger: FastifyLoggerInstance,
-    private options: SymbolicateOptions
+    private delegate: SymbolicatorDelegate
   ) {}
 
   /**
@@ -90,8 +87,10 @@ export class Symbolicator {
       const processedFrames: StackFrame[] = [];
       for (const frame of frames) {
         if (!this.sourceMapConsumerCache[frame.file]) {
-          const rawSourceMap = await this.options.getSourceMap(frame.file);
-          const sourceMapConsumer = await new SourceMapConsumer(rawSourceMap);
+          const rawSourceMap = await this.delegate.getSourceMap(frame.file);
+          const sourceMapConsumer = await new SourceMapConsumer(
+            rawSourceMap.toString()
+          );
           this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
         }
         const processedFrame = this.processFrame(frame);
@@ -159,14 +158,14 @@ export class Symbolicator {
         continue;
       }
 
-      if (!this.options.includeFrame(frame)) {
+      if (!this.delegate.shouldIncludeFrame(frame)) {
         return undefined;
       }
 
       try {
         return {
           content: codeFrameColumns(
-            await this.options.getSourceFile(frame.file),
+            (await this.delegate.getSource(frame.file)).toString(),
             {
               start: { column: frame.column, line: frame.lineNumber },
             },

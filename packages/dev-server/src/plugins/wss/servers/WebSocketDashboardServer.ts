@@ -1,6 +1,5 @@
 import { FastifyInstance } from 'fastify';
 import WebSocket from 'ws';
-import { DevServerEvents, EventEmitter } from '../../../types';
 import { WebSocketServer } from '../WebSocketServer';
 
 /**
@@ -21,29 +20,21 @@ export class WebSocketDashboardServer extends WebSocketServer {
    * @param fastify Fastify instance to attach the WebSocket server to.
    * @param emitter Event emitter instance.
    */
-  constructor(fastify: FastifyInstance, private emitter?: EventEmitter) {
+  constructor(fastify: FastifyInstance) {
     super(fastify, '/api/dashboard');
-
-    this.emitter?.addListener(DevServerEvents.BuildStart, (platform) => {
-      this.send(
-        JSON.stringify({ event: DevServerEvents.BuildStart, platform })
-      );
-    });
-
-    this.emitter?.removeListener(DevServerEvents.BuildEnd, (platform) => {
-      this.send(JSON.stringify({ event: DevServerEvents.BuildEnd, platform }));
-    });
   }
 
   /**
    * Send message to all connected Dashboard clients.
    *
-   * @param message Stringified message to sent.
+   * @param event Event string or object to send.
    */
-  send(message: string) {
+  send(event: any) {
+    const data = typeof event === 'string' ? event : JSON.stringify(event);
+
     for (const [, socket] of this.clients.entries()) {
       try {
-        socket.send(message);
+        socket.send(data);
       } catch {
         // NOOP
       }

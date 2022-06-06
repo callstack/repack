@@ -1,7 +1,7 @@
 export type ProgressData = { completed: number; total: number };
 export type SendProgress = (data: ProgressData) => void;
 
-export interface CompilerOptions {
+export interface CompilerDelegate {
   getAsset: (
     filename: string,
     platform: string,

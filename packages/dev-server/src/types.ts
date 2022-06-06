@@ -1,7 +1,6 @@
-import type { FastifyInstance, FastifyServerOptions } from 'fastify';
-import type { CompilerOptions } from './plugins/compiler';
-import type { SymbolicateOptions } from './plugins/symbolicate';
-import type { WebSocketServersPlugin } from './plugins/wss';
+import type { CompilerDelegate } from './plugins/compiler';
+import type { SymbolicatorDelegate } from './plugins/symbolicate';
+import type { HmrDelegate } from './plugins/wss';
 
 /**
  * Development server configuration options.
@@ -31,34 +30,56 @@ export interface DevServerOptions {
   hmr?: boolean;
 }
 
-export interface DevServerConfig {
-  rootDir: string;
-  server: DevServerOptions;
-  compiler: CompilerOptions;
-  symbolicate: SymbolicateOptions;
-  events?: EventsOptions;
-  messages?: {
-    hello?: string;
-    status?: string;
-  };
-  logger?: FastifyServerOptions['logger'];
+export namespace Server {
+  export interface Config {
+    options: Options;
+    delegate: (context: DelegateContext) => Delegate;
+  }
+
+  export interface Options {
+    rootDir: string;
+    port: number;
+    host?: string;
+    https?: {
+      cert?: string;
+      key?: string;
+    };
+    isVerbose?: boolean;
+  }
+
+  export interface Delegate {
+    compiler: CompilerDelegate;
+    symbolicator: SymbolicatorDelegate;
+    logger: LoggerDelegate;
+    hmr: HmrDelegate;
+    messages: MessagesDelegate;
+  }
+
+  export interface DelegateContext {
+    notifyBuildStart: (platform: string) => void;
+    notifyBuildEnd: (platform: string) => void;
+    broadcastToHmrClients: <E = any>(platform: string, event: E) => void;
+    broadcastToMessageClients: <
+      E extends { method: string; params: Record<string, any> }
+    >(
+      event: E
+    ) => void;
+  }
+
+  export interface LoggerDelegate {
+    onMessage: (log: any) => void;
+  }
+
+  export interface MessagesDelegate {
+    getHello: () => string;
+    getStatus: () => string;
+  }
 }
 
-export interface EventsOptions {
-  emitter: EventEmitter;
+export namespace Internal {
+  export enum EventTypes {
+    BuildStart = 'BuildStart',
+    BuildEnd = 'BuildEnd',
+    HmrEvent = 'HmrEvent',
+  }
 }
-
-export interface EventEmitter {
-  addListener(event: string, listener: (platform: string) => void): this;
-  removeListener(event: string, listener: (platform: string) => void): this;
-}
-
-export enum DevServerEvents {
-  BuildStart = 'BuildStart',
-  BuildEnd = 'BuildEnd',
-  HmrMessage = 'HmrMessage',
-}
-
-export type FastifyDevServer = FastifyInstance & {
-  wss: WebSocketServersPlugin;
-};
