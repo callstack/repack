@@ -21,14 +21,18 @@ async function compilerPlugin(
     },
     handler: async (request, reply) => {
       const file = (request.params as { '*'?: string })['*'];
-      const { platform } = request.query as { platform?: string };
+      let { platform } = request.query as { platform?: string };
 
       if (!file) {
         return reply.notFound();
       }
 
+      // Let consumer infer the platform. If function is not provided fallback
+      // to platform query param.
+      platform = delegate.compiler.inferPlatform?.(request.url) ?? platform;
+
       if (!platform) {
-        return reply.badRequest('Missing platform query param');
+        return reply.badRequest('Cannot detect platform');
       }
 
       const asset = await delegate.compiler.getAsset(file, platform);

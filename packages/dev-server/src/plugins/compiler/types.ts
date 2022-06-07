@@ -12,4 +12,5 @@ export interface CompilerDelegate {
     platform: string,
     data: string | Buffer
   ) => string;
+  inferPlatform?: (uri: string) => string | undefined;
 }

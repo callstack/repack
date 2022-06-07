@@ -104,6 +104,14 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           getAsset: (filename, platform) =>
             compiler.getAsset(filename, platform),
           getMimeType: (filename) => compiler.getMimeType(filename),
+          inferPlatform: (uri) => {
+            const hotUpdateMatch = /^.*\.hot-update\.(.+)\.js(on)?$/.exec(uri);
+            if (hotUpdateMatch) {
+              return hotUpdateMatch[1];
+            }
+
+            return undefined;
+          },
         },
         symbolicator: {
           getSource: (fileUrl) => {

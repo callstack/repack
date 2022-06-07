@@ -104,6 +104,8 @@ module.exports = {
     filename: 'index.bundle',
     chunkFilename: '[name].chunk.bundle',
     publicPath: ReactNative.getPublicPath(devServer),
+    hotUpdateChunkFilename: `[id].[fullhash].hot-update.${platform}.js`,
+    hotUpdateMainFilename: `[runtime].[fullhash].hot-update.${platform}.json`,
   },
   /**
    * Configures optimization of the built bundle.
