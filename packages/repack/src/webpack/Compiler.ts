@@ -4,6 +4,7 @@ import fs from 'fs';
 import EventEmitter from 'events';
 import webpack from 'webpack';
 import mimeTypes from 'mime-types';
+import { SendProgress } from '@callstack/repack-dev-server';
 import type { CliOptions, StartArguments } from '../types';
 import type { LogType, Reporter } from '../logging';
 import { CLI_OPTIONS_ENV_KEY, VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
@@ -13,11 +14,14 @@ export interface Asset {
   info: Record<string, any>;
 }
 
+type Platform = string;
+
 export class Compiler extends EventEmitter {
-  workers: Record<string, Worker> = {};
-  cache: Record<string, Record<string, Asset>> = {};
-  resolvers: Record<string, Array<(error?: Error) => void>> = {};
-  isCompilationInProgress: Record<string, boolean> = {};
+  workers: Record<Platform, Worker> = {};
+  cache: Record<Platform, Record<string, Asset>> = {};
+  resolvers: Record<Platform, Array<(error?: Error) => void>> = {};
+  progressSenders: Record<Platform, SendProgress[]> = {};
+  isCompilationInProgress: Record<Platform, boolean> = {};
 
   constructor(
     private cliOptions: CliOptions,
@@ -86,6 +90,7 @@ export class Compiler extends EventEmitter {
       (
         value:
           | { event: 'watchRun' | 'invalid' }
+          | { event: 'progress'; total: number; completed: number }
           | { event: 'error'; error: Error }
           | {
               event: 'done';
@@ -113,6 +118,13 @@ export class Compiler extends EventEmitter {
           this.emit(value.event, { platform, stats: value.stats });
         } else if (value.event === 'error') {
           this.emit(value.event, value.error);
+        } else if (value.event === 'progress') {
+          this.progressSenders[platform].forEach((sendProgress) =>
+            sendProgress({
+              total: value.total,
+              completed: value.completed,
+            })
+          );
         } else {
           this.isCompilationInProgress[platform] = true;
           this.emit(value.event, { platform });
@@ -133,8 +145,8 @@ export class Compiler extends EventEmitter {
 
   async getAsset(
     filename: string,
-    platform: string
-    // sendProgress?: SendProgress
+    platform: string,
+    sendProgress?: SendProgress
   ): Promise<Asset> {
     // Return file from cache if exists
     const fileFromCache = this.cache[platform]?.[filename];
@@ -151,10 +163,18 @@ export class Compiler extends EventEmitter {
       );
     }
 
+    if (sendProgress) {
+      this.progressSenders[platform] = this.progressSenders[platform] ?? [];
+      this.progressSenders[platform].push(sendProgress);
+    }
     return new Promise<Asset>((resolve, reject) => {
       // Add new resolver to be executed when compilation is finished
       this.resolvers[platform] = (this.resolvers[platform] ?? []).concat(
         (error?: Error) => {
+          this.progressSenders[platform] = this.progressSenders[
+            platform
+          ].filter((item) => item !== sendProgress);
+
           if (error) {
             reject(error);
           } else {

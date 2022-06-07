@@ -1,5 +1,4 @@
-export type ProgressData = { completed: number; total: number };
-export type SendProgress = (data: ProgressData) => void;
+import type { SendProgress } from '../../types';
 
 export interface CompilerDelegate {
   getAsset: (

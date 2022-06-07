@@ -9,6 +9,20 @@ const cliOptions = workerData as CliOptions;
 const webpackConfig = require(cliOptions.config
   .webpackConfigPath) as webpack.Configuration;
 const watchOptions = webpackConfig.watchOptions ?? {};
+
+webpackConfig.plugins = (webpackConfig.plugins ?? []).concat(
+  new webpack.ProgressPlugin((_1, _2, message) => {
+    const [, completed, total] = /(\d+)\/(\d+) modules/.exec(message) ?? [];
+    if (completed !== undefined && total !== undefined) {
+      parentPort?.postMessage({
+        event: 'progress',
+        completed: parseInt(completed, 10),
+        total: parseInt(total, 10),
+      });
+    }
+  })
+);
+
 const compiler = webpack(webpackConfig);
 
 const fileSystem = memfs.createFsFromVolume(new memfs.Volume());

@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import { Server } from '../../types';
+import type { Server } from '../../types';
+import type { SendProgress } from '../../types';
 
 async function compilerPlugin(
   instance: FastifyInstance,
@@ -35,15 +36,41 @@ async function compilerPlugin(
         return reply.badRequest('Cannot detect platform');
       }
 
-      const asset = await delegate.compiler.getAsset(file, platform);
+      const multipart = reply.asMultipart();
+
+      const sendProgress: SendProgress = ({ completed, total }) => {
+        multipart?.writeChunk(
+          { 'Content-Type': 'application/json' },
+          JSON.stringify({
+            done: completed,
+            total,
+          })
+        );
+      };
+
+      const asset = await delegate.compiler.getAsset(
+        file,
+        platform,
+        sendProgress
+      );
       const mimeType = delegate.compiler.getMimeType(file, platform, asset);
 
-      return reply.code(200).type(mimeType).send(asset);
+      if (multipart) {
+        const buffer = Buffer.isBuffer(asset) ? asset : Buffer.from(asset);
+        multipart.setHeader('Content-Type', `${mimeType}; charset=UTF-8`);
+        multipart.setHeader(
+          'Content-Length',
+          String(Buffer.byteLength(buffer))
+        );
+        multipart.end(buffer);
+      } else {
+        return reply.code(200).type(mimeType).send(asset);
+      }
     },
   });
 }
 
 export default fastifyPlugin(compilerPlugin, {
   name: 'compiler-plugin',
-  dependencies: ['fastify-sensible'],
+  dependencies: ['fastify-sensible', 'multipart-plugin'],
 });

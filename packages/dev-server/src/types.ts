@@ -53,6 +53,9 @@ export namespace Server {
   }
 }
 
+export type ProgressData = { completed: number; total: number };
+export type SendProgress = (data: ProgressData) => void;
+
 export namespace Internal {
   export enum EventTypes {
     BuildStart = 'BuildStart',

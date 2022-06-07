@@ -1,6 +1,7 @@
 import { Writable } from 'stream';
 import Fastify from 'fastify';
 import fastifySensible from '@fastify/sensible';
+import multipartPlugin from './plugins/multipart';
 import compilerPlugin from './plugins/compiler';
 import devtoolsPlugin from './plugins/devtools';
 import wssPlugin from './plugins/wss';
@@ -49,6 +50,7 @@ export async function createServer(config: Server.Config) {
     options: config.options,
     delegate,
   });
+  await instance.register(multipartPlugin);
   await instance.register(compilerPlugin, {
     delegate,
   });
