@@ -8,7 +8,14 @@ import wssPlugin from './plugins/wss';
 import { Internal, Server } from './types';
 import symbolicatePlugin from './plugins/symbolicate';
 
+/**
+ * Create instance of development server, powered by Fastify.
+ *
+ * @param config Server configuration.
+ * @returns `start` and `stop` functions as well as an underlying Fastify `instance`.
+ */
 export async function createServer(config: Server.Config) {
+  /** Fastify instance powering the development server. */
   const instance = Fastify({
     logger: {
       level: 'trace',
@@ -82,10 +89,12 @@ export async function createServer(config: Server.Config) {
   instance.get('/', async () => delegate.messages.getHello());
   instance.get('/status', async () => delegate.messages.getStatus());
 
+  /** Start the development server. */
   async function start() {
     await instance.listen(config.options.port, config.options.host);
   }
 
+  /** Stop the development server. */
   async function stop() {
     await instance.close();
   }
