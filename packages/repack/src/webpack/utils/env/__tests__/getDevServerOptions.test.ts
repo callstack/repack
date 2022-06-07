@@ -8,6 +8,7 @@ describe('getDevServerOptions', () => {
 
   it('should return fallback value', () => {
     expect(getDevServerOptions()).toEqual({
+      enabled: false,
       port: DEFAULT_PORT,
     });
   });
