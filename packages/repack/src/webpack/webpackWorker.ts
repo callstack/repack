@@ -23,17 +23,15 @@ compiler.hooks.invalid.tap('webpackWorker', () => {
 });
 
 compiler.hooks.done.tap('webpackWorker', (stats) => {
-  const assetFilenames = stats.compilation
-    .getAssets()
-    .map((asset) => asset.name);
   const outputDirectory = stats.compilation.outputOptions.path!;
-  const assets = assetFilenames.map((filename) => {
+  const assets = stats.compilation.getAssets().map((asset) => {
     const data = fileSystem.readFileSync(
-      path.join(outputDirectory, filename)
+      path.join(outputDirectory, asset.name)
     ) as Buffer;
     return {
-      filename,
+      filename: asset.name,
       data,
+      info: asset.info,
     };
   });
   parentPort?.postMessage(

@@ -10,7 +10,7 @@ import symbolicatePlugin from './plugins/symbolicate';
 export async function createServer(config: Server.Config) {
   const instance = Fastify({
     logger: {
-      level: config.options.isVerbose ? 'trace' : 'info',
+      level: 'trace',
       stream: new Writable({
         write: (chunk, _encoding, callback) => {
           delegate.logger.onMessage(JSON.parse(chunk.toString()));

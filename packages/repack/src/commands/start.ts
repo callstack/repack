@@ -101,8 +101,8 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
       return {
         compiler: {
-          getAsset: (filename, platform) =>
-            compiler.getAsset(filename, platform),
+          getAsset: async (filename, platform) =>
+            (await compiler.getAsset(filename, platform)).data,
           getMimeType: (filename) => compiler.getMimeType(filename),
           inferPlatform: (uri) => {
             const hotUpdateMatch = /^.*\.hot-update\.(.+)\.js(on)?$/.exec(uri);
@@ -221,7 +221,10 @@ function parseFileUrl(fileUrl: string) {
     }
   }
 
-  return { filename, platform: platform || undefined };
+  return {
+    filename: filename.replace(/^\//, ''),
+    platform: platform || undefined,
+  };
 }
 
 function createHmrBody(

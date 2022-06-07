@@ -12,48 +12,33 @@ async function symbolicatePlugin(
     delegate: Server.Delegate;
   }
 ) {
-  const symbolicator = new Symbolicator(instance.log, delegate.symbolicator);
+  const symbolicator = new Symbolicator(delegate.symbolicator);
 
-  instance.post(
-    '/symbolicate',
-    {
-      schema: {
-        body: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              lineNumber: { type: 'number' },
-              column: { type: 'number' },
-              file: { type: 'string' },
-              methodName: { type: 'string' },
-            },
-            required: ['methodName'],
-          },
-        },
-      },
-    },
-    async (request, reply) => {
-      try {
-        const { stack } = request.body as {
-          stack: ReactNativeStackFrame[];
-        };
-        const platform = Symbolicator.inferPlatformFromStack(stack);
-        if (!platform) {
-          reply.badRequest('Cannot infer platform from stack trace');
-        } else {
-          const results = await symbolicator.process(stack);
-          reply.send(results);
-        }
-      } catch (error) {
-        request.log.error({
-          msg: 'Failed to symbolicate',
-          error: (error as Error).message,
-        });
-        reply.internalServerError();
+  instance.post('/symbolicate', async (request, reply) => {
+    // React Native sends stack as JSON but tests content-type to text/plain, so
+    // we cannot use JSON schema to validate the body.
+
+    try {
+      const { stack } = JSON.parse(request.body as string) as {
+        stack: ReactNativeStackFrame[];
+      };
+      const platform = Symbolicator.inferPlatformFromStack(stack);
+      if (!platform) {
+        request.log.debug({ msg: 'Received stack', stack });
+        reply.badRequest('Cannot infer platform from stack trace');
+      } else {
+        request.log.debug({ msg: 'Starting symbolication', platform, stack });
+        const results = await symbolicator.process(request.log, stack);
+        reply.send(results);
       }
+    } catch (error) {
+      request.log.error({
+        msg: 'Failed to symbolicate',
+        error: (error as Error).message,
+      });
+      reply.internalServerError();
     }
-  );
+  });
 }
 
 export default fastifyPlugin(symbolicatePlugin, {

@@ -54,13 +54,9 @@ export class Symbolicator {
   /**
    * Constructs new `Symbolicator` instance.
    *
-   * @param logger Fastify logger instance.
    * @param delegate TODO
    */
-  constructor(
-    private logger: FastifyLoggerInstance,
-    private delegate: SymbolicatorDelegate
-  ) {}
+  constructor(private delegate: SymbolicatorDelegate) {}
 
   /**
    * Process raw React Native stack frames and transform them using Source Maps.
@@ -70,11 +66,16 @@ export class Symbolicator {
    * For example out of 10 frames, it's possible that only first 7 will be symbolicated and the
    * remaining 3 will be unchanged.
    *
+   * @param logger Fastify logger instance.
    * @param stack Raw stack frames.
    * @returns Symbolicated stack frames.
    */
-  async process(stack: ReactNativeStackFrame[]): Promise<SymbolicatorResults> {
-    // TODO: add debug logging
+  async process(
+    logger: FastifyLoggerInstance,
+    stack: ReactNativeStackFrame[]
+  ): Promise<SymbolicatorResults> {
+    logger.debug({ msg: 'Filtering out unnecessary frames' });
+
     const frames: InputStackFrame[] = [];
     for (const frame of stack) {
       const { file } = frame;
@@ -84,22 +85,59 @@ export class Symbolicator {
     }
 
     try {
+      logger.debug({ msg: 'Processing frames', frames });
+
       const processedFrames: StackFrame[] = [];
       for (const frame of frames) {
         if (!this.sourceMapConsumerCache[frame.file]) {
+          logger.debug({
+            msg: 'Loading raw source map data',
+            fileUrl: frame.file,
+          });
+
           const rawSourceMap = await this.delegate.getSourceMap(frame.file);
+
+          logger.debug({
+            msg: 'Creating source map instance',
+            fileUrl: frame.file,
+            sourceMapLength: rawSourceMap.length,
+          });
           const sourceMapConsumer = await new SourceMapConsumer(
             rawSourceMap.toString()
           );
+
+          logger.debug({
+            msg: 'Saving source map instance into cache',
+            fileUrl: frame.file,
+          });
           this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
         }
+
+        logger.debug({
+          msg: 'Symbolicating frame',
+          frame,
+        });
         const processedFrame = this.processFrame(frame);
+
+        logger.debug({
+          msg: 'Finished symbolicating frame',
+          frame,
+        });
         processedFrames.push(processedFrame);
       }
 
+      const codeFrame =
+        (await this.getCodeFrame(logger, processedFrames)) ?? null;
+
+      logger.debug({
+        msg: 'Finished symbolicating frames',
+        processedFrames,
+        codeFrame,
+      });
+
       return {
         stack: processedFrames,
-        codeFrame: (await this.getCodeFrame(processedFrames)) ?? null,
+        codeFrame,
       };
     } finally {
       for (const key in this.sourceMapConsumerCache) {
@@ -151,6 +189,7 @@ export class Symbolicator {
   }
 
   private async getCodeFrame(
+    logger: FastifyLoggerInstance,
     processedFrames: StackFrame[]
   ): Promise<CodeFrame | undefined> {
     for (const frame of processedFrames) {
@@ -161,6 +200,11 @@ export class Symbolicator {
       if (!this.delegate.shouldIncludeFrame(frame)) {
         return undefined;
       }
+
+      logger.debug({
+        msg: 'Generating code frame',
+        frame,
+      });
 
       try {
         return {
@@ -178,7 +222,7 @@ export class Symbolicator {
           fileName: frame.file,
         };
       } catch (error) {
-        this.logger.error({
+        logger.error({
           msg: 'Failed to create code frame',
           error: (error as Error).message,
         });

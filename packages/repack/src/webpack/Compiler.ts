@@ -8,10 +8,16 @@ import type { CliOptions, StartArguments } from '../types';
 import type { LogType, Reporter } from '../logging';
 import { CLI_OPTIONS_ENV_KEY, VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
 
+export interface Asset {
+  data: string | Buffer;
+  info: Record<string, any>;
+}
+
 export class Compiler extends EventEmitter {
   workers: Record<string, Worker> = {};
-  cache: Record<string, Record<string, string | Buffer>> = {};
+  cache: Record<string, Record<string, Asset>> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
+  isCompilationInProgress: Record<string, boolean> = {};
 
   constructor(
     private cliOptions: CliOptions,
@@ -22,6 +28,8 @@ export class Compiler extends EventEmitter {
   }
 
   private spawnWorker(platform: string) {
+    this.isCompilationInProgress[platform] = true;
+
     const workerData = {
       ...this.cliOptions,
       arguments: {
@@ -81,15 +89,23 @@ export class Compiler extends EventEmitter {
           | { event: 'error'; error: Error }
           | {
               event: 'done';
-              assets: Array<{ filename: string; data: Uint8Array }>;
+              assets: Array<{
+                filename: string;
+                data: Uint8Array;
+                info: Record<string, any>;
+              }>;
               stats: webpack.Stats;
             }
       ) => {
         if (value.event === 'done') {
+          this.isCompilationInProgress[platform] = false;
           this.cache[platform] = value.assets.reduce(
-            (acc, { filename, data }) => ({
+            (acc, { filename, data, info }) => ({
               ...acc,
-              [filename]: Buffer.from(data),
+              [filename]: {
+                data: Buffer.from(data),
+                info,
+              },
             }),
             {}
           );
@@ -98,6 +114,7 @@ export class Compiler extends EventEmitter {
         } else if (value.event === 'error') {
           this.emit(value.event, value.error);
         } else {
+          this.isCompilationInProgress[platform] = true;
           this.emit(value.event, { platform });
         }
       }
@@ -118,19 +135,23 @@ export class Compiler extends EventEmitter {
     filename: string,
     platform: string
     // sendProgress?: SendProgress
-  ): Promise<string | Buffer> {
-    // Spawn new worker if not already running
-    if (!this.workers[platform]) {
-      this.workers[platform] = this.spawnWorker(platform);
-    }
-
+  ): Promise<Asset> {
     // Return file from cache if exists
     const fileFromCache = this.cache[platform]?.[filename];
     if (fileFromCache) {
       return fileFromCache;
     }
 
-    return new Promise<string | Buffer>((resolve, reject) => {
+    // Spawn new worker if not already running
+    if (!this.workers[platform]) {
+      this.workers[platform] = this.spawnWorker(platform);
+    } else if (!this.isCompilationInProgress[platform]) {
+      return Promise.reject(
+        `File ${filename} for ${platform} not found in compilation assets`
+      );
+    }
+
+    return new Promise<Asset>((resolve, reject) => {
       // Add new resolver to be executed when compilation is finished
       this.resolvers[platform] = (this.resolvers[platform] ?? []).concat(
         (error?: Error) => {
@@ -154,7 +175,7 @@ export class Compiler extends EventEmitter {
     platform?: string
   ): Promise<string | Buffer> {
     if (/\.bundle/.test(filename) && platform) {
-      return this.getAsset(filename, platform);
+      return (await this.getAsset(filename, platform)).data;
     }
 
     return fs.promises.readFile(
@@ -167,7 +188,16 @@ export class Compiler extends EventEmitter {
     filename: string,
     platform: string
   ): Promise<string | Buffer> {
-    return this.getAsset(filename, platform);
+    const { info } = await this.getAsset(filename, platform);
+    const sourceMapFilename = info.related?.sourceMap as string | undefined;
+
+    if (sourceMapFilename) {
+      return (await this.getAsset(sourceMapFilename, platform)).data;
+    }
+
+    return Promise.reject(
+      new Error(`Source map for ${filename} for ${platform} is missing`)
+    );
   }
 
   getMimeType(filename: string) {

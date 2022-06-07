@@ -17,7 +17,6 @@ export namespace Server {
       cert?: string;
       key?: string;
     };
-    isVerbose?: boolean;
   }
 
   export interface Delegate {
