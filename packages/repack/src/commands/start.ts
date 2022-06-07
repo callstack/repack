@@ -1,5 +1,6 @@
 import readline from 'readline';
 import webpack from 'webpack';
+import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
 import { CliOptions, HMRMessageBody, StartArguments } from '../types';
@@ -74,6 +75,9 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
+        if (platform === 'android') {
+          runAdbReverse(ctx, args.port ?? DEFAULT_PORT);
+        }
       });
 
       compiler.on('invalid', ({ platform }) => {
@@ -194,22 +198,21 @@ function bindKeypressInput(ctx: Server.DelegateContext) {
   });
 }
 
-// private runAdbReverse(logger: WebpackLogger) {
-//   // TODO: add support for multiple devices
-//   const adbPath = process.env.ANDROID_HOME
-//     ? `${process.env.ANDROID_HOME}/platform-tools/adb`
-//     : 'adb';
-//   const command = `${adbPath} reverse tcp:${this.config.port} tcp:${this.config.port}`;
-//   exec(command, (error) => {
-//     if (error) {
-//       // Get just the error message
-//       const message = error.message.split('error:')[1] || error.message;
-//       logger.warn(`Failed to run: ${command} - ${message.trim()}`);
-//     } else {
-//       logger.info(`Successfully run: ${command}`);
-//     }
-//   });
-// }
+async function runAdbReverse(ctx: Server.DelegateContext, port: number) {
+  const adbPath = process.env.ANDROID_HOME
+    ? `${process.env.ANDROID_HOME}/platform-tools/adb`
+    : 'adb';
+  const command = `${adbPath} reverse tcp:${port} tcp:${port}`;
+  try {
+    await execa.command(command);
+    ctx.log.info(`Successfully run: ${command}`);
+  } catch (error) {
+    // Get just the error message
+    const message =
+      (error as Error).message.split('error:')[1] || (error as Error).message;
+    ctx.log.warn(`Failed to run: ${command} - ${message.trim()}`);
+  }
+}
 
 function parseFileUrl(fileUrl: string) {
   const { pathname: filename, searchParams } = new URL(fileUrl);
