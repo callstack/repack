@@ -8,7 +8,6 @@ import { DEFAULT_PORT } from '../webpack/utils';
 import {
   composeReporters,
   ConsoleReporter,
-  BroadcastReporter,
   makeLogEntryFromFastifyLog,
 } from '../logging';
 import { Compiler } from '../webpack/Compiler';
@@ -49,7 +48,6 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     new ConsoleReporter({
       isVerbose,
     }),
-    new BroadcastReporter({}),
   ]);
   const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
