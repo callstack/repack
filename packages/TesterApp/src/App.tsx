@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { Colors, Header } from 'react-native/Libraries/NewAppScreen';
+// @ts-ignore
 import DeveloperActivitySvg from './undraw_Developer_activity_re_39tg.svg';
 
 import { RemoteContainer } from './RemoteContainer';
