@@ -31,7 +31,7 @@ module.exports = {
         loader: 'babel-loader',
         options: {
           babelrc: false,
-          configFile: require.resolve('./babel.config.js'),
+          configFile: require.resolve('./babel.config.cjs'),
         },
       },
       {

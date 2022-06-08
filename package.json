@@ -5,7 +5,7 @@
       "./packages/dev-server",
       "./packages/repack",
       "./packages/TesterApp",
-      "./packages/debugger-ui",
+      "./packages/debugger-app",
       "./packages/dashboard"
     ]
   },

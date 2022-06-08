@@ -1,6 +1,8 @@
 import { Writable } from 'stream';
 import Fastify from 'fastify';
 import fastifySensible from '@fastify/sensible';
+import fastifyStatic from '@fastify/static';
+import debuggerAppPath from '@callstack/repack-debugger-app';
 import multipartPlugin from './plugins/multipart';
 import compilerPlugin from './plugins/compiler';
 import devtoolsPlugin from './plugins/devtools';
@@ -68,11 +70,11 @@ export async function createServer(config: Server.Config) {
     options: config.options,
   });
 
-  // await this.fastify.register(fastifyStatic, {
-  //   root: path.join(__dirname, '../../first-party/debugger-ui'),
-  //   prefix: '/debugger-ui',
-  //   prefixAvoidTrailingSlash: true,
-  // });
+  await instance.register(fastifyStatic, {
+    root: debuggerAppPath,
+    prefix: '/debugger-ui',
+    prefixAvoidTrailingSlash: true,
+  });
 
   instance.addHook('onSend', async (request, reply, payload) => {
     reply.header('X-Content-Type-Options', 'nosniff');
