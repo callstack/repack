@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack-debugger-app",
-  "description": "",
+  "description": "Remote JS debugger app for React Native applications with @callstack/repack-dev-server.",
   "license": "MIT",
   "version": "1.0.0",
   "type": "module",
