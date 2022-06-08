@@ -11,10 +11,5 @@ module.exports = {
     ],
     '@babel/preset-typescript',
   ],
-  overrides: [
-    {
-      exclude: ['./src/plugins/wss/servers/DeviceWrapper.js'],
-      plugins: ['babel-plugin-add-import-extension'],
-    },
-  ],
+  plugins: ['babel-plugin-add-import-extension'],
 };

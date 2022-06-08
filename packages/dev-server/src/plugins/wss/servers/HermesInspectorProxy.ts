@@ -1,8 +1,6 @@
 import type { IncomingMessage } from 'http';
 import { URL } from 'url';
 import WebSocket from 'ws';
-// @ts-ignore
-// import Device from 'metro-inspector-proxy/src/Device';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { WebSocketServer } from '../WebSocketServer';
 import { Server } from '../../../types';
