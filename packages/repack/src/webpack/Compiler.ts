@@ -90,7 +90,12 @@ export class Compiler extends EventEmitter {
       (
         value:
           | { event: 'watchRun' | 'invalid' }
-          | { event: 'progress'; total: number; completed: number }
+          | {
+              event: 'progress';
+              total: number;
+              completed: number;
+              message: string;
+            }
           | { event: 'error'; error: Error }
           | {
               event: 'done';
@@ -125,6 +130,11 @@ export class Compiler extends EventEmitter {
               completed: value.completed,
             })
           );
+          this.emit(value.event, {
+            total: value.total,
+            completed: value.completed,
+            message: value.message,
+          });
         } else {
           this.isCompilationInProgress[platform] = true;
           this.emit(value.event, { platform });

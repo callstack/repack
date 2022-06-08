@@ -18,6 +18,7 @@ webpackConfig.plugins = (webpackConfig.plugins ?? []).concat(
         event: 'progress',
         completed: parseInt(completed, 10),
         total: parseInt(total, 10),
+        message,
       });
     }
   })
