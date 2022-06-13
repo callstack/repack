@@ -13,9 +13,7 @@ declare interface RepackRuntime {
   ) => void;
   loadScriptCallback: string[];
   loadHotUpdate: (url: string, done: (event?: LoadScriptEvent) => void) => void;
-  scriptManager?: {
-    loadScript: (name: string, caller: string | undefined) => Promise<void>;
-  };
+  scriptManager?: import('./modules/ScriptManager/ScriptManager').ScriptManagerBackend;
 }
 
 declare var __DEV__: boolean;
