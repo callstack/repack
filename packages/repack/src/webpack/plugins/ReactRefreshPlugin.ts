@@ -1,5 +1,5 @@
 import webpack from 'webpack';
-import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import type { DevServerOptions, WebpackPlugin } from '../../types';
 
 type ExtractEntryStaticNormalized<E> = E extends () => Promise<infer U>
@@ -12,26 +12,24 @@ type EntryStaticNormalized =
   ExtractEntryStaticNormalized<webpack.EntryNormalized>;
 
 /**
- * {@link DevelopmentPlugin} configuration options.
+ * {@link ReactRefreshPlugin} configuration options.
  */
-export interface DevelopmentPluginConfig {
+export interface ReactRefreshPluginConfig extends DevServerOptions {
   platform: string;
-  devServer?: DevServerOptions;
 }
 
 /**
- * Class for running development server that handles serving the built bundle, all assets as well as
- * providing Hot Module Replacement functionality.
+ * Class for setting up Hot Module Replacement and React Refresh support using `@pmmmwh/react-refresh-webpack-plugin`.
  *
  * @category Webpack Plugin
  */
-export class DevelopmentPlugin implements WebpackPlugin {
+export class ReactRefreshPlugin implements WebpackPlugin {
   /**
-   * Constructs new `DevelopmentPlugin`.
+   * Constructs new `ReactRefreshPlugin`.
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config?: DevelopmentPluginConfig) {}
+  constructor(private config?: ReactRefreshPluginConfig) {}
 
   /**
    * Apply the plugin.
@@ -39,28 +37,28 @@ export class DevelopmentPlugin implements WebpackPlugin {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: webpack.Compiler) {
-    if (!this.config?.devServer) {
+    if (!this.config) {
       return;
     }
 
     new webpack.DefinePlugin({
-      __PUBLIC_PORT__: JSON.stringify(this.config.devServer.port),
+      __PUBLIC_PORT__: JSON.stringify(this.config.port),
       __PLATFORM__: JSON.stringify(this.config.platform),
     }).apply(compiler);
 
-    if (this.config?.devServer.hmr) {
+    if (this.config?.hmr) {
       new webpack.HotModuleReplacementPlugin().apply(compiler);
-      new ReactRefreshPlugin({
+      new ReactRefreshWebpackPlugin({
         overlay: false,
       }).apply(compiler);
 
       // To avoid the problem from https://github.com/facebook/react/issues/20377
-      // we need to move React Refresh entry that `ReactRefreshPlugin` injects to evaluate right
+      // we need to move React Refresh entry that `ReactRefreshWebpackPlugin` injects, to evaluate right
       // before the `WebpackHMRClient` and after `InitializeCore` which sets up React DevTools.
       // Thanks to that the initialization order is correct:
       // 0. Polyfills
       // 1. `InitilizeCore` -> React DevTools
-      // 2. Rect Refresh Entry
+      // 2. React Refresh Entry
       // 3. `WebpackHMRClient`
       const getAdjustedEntry = (entry: EntryStaticNormalized) => {
         for (const key in entry) {

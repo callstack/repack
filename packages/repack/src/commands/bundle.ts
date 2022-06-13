@@ -2,7 +2,7 @@ import { Config } from '@react-native-community/cli-types';
 import webpack from 'webpack';
 import { CLI_OPTIONS_ENV_KEY, VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, CliOptions } from '../types';
-import { loadConfig } from '../webpack/loadConfig';
+import { loadWebpackConfig } from '../webpack/loadWebpackConfig';
 import { getWebpackEnvOptions } from '../webpack/utils';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
 
@@ -45,7 +45,10 @@ export async function bundle(
   }
 
   const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
-  const webpackConfig = await loadConfig(webpackConfigPath, webpackEnvOptions);
+  const webpackConfig = await loadWebpackConfig(
+    webpackConfigPath,
+    webpackEnvOptions
+  );
   const compiler = webpack(webpackConfig);
 
   compiler.run((error) => {

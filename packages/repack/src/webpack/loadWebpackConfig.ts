@@ -8,7 +8,7 @@ type WebpackConfig =
       argv: Record<string, any>
     ) => webpack.Configuration | Promise<webpack.Configuration>);
 
-export async function loadConfig(
+export async function loadWebpackConfig(
   webpackConfigPath: string,
   env: WebpackEnvOptions
 ) {
@@ -18,6 +18,10 @@ export async function loadConfig(
     config = require(webpackConfigPath);
   } catch {
     config = await import(webpackConfigPath);
+  }
+
+  if ('default' in config) {
+    config = (config as { default: WebpackConfig }).default;
   }
 
   if (typeof config === 'function') {

@@ -40,13 +40,11 @@ export function getInitializationEntries(
     ...getPolyfills(),
     initializeCoreLocation ||
       path.join(reactNativePath, 'Libraries/Core/InitializeCore.js'),
-    require.resolve('../../client/setup/setupRepack'),
+    require.resolve('../../modules/configurePublicPath'),
   ];
 
   if (hmr) {
-    entries.push(
-      require.resolve('../../client/setup/modules/WebpackHMRClient')
-    );
+    entries.push(require.resolve('../../modules/WebpackHMRClient'));
   }
 
   return entries;

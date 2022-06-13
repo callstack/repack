@@ -1,8 +1,8 @@
 /* eslint-env browser */
-declare var __DEV__: boolean;
+/* global __DEV__ */
 
 import prettyFormat from 'pretty-format';
-import { getDevServerLocation } from '../utils/getDevServerLocation';
+import { getDevServerLocation } from './getDevServerLocation';
 
 /**
  * With Webpack we don't use built-in metro-specific HMR client,

@@ -3,7 +3,11 @@ import fs from 'fs';
 
 // Supports the same files as Webpack CLI.
 const DEFAULT_WEBPACK_CONFIG_LOCATIONS = [
+  'webpack.config.mjs',
+  'webpack.config.cjs',
   'webpack.config.js',
+  '.webpack/webpack.config.mjs',
+  '.webpack/webpack.config.cjs',
   '.webpack/webpack.config.js',
   '.webpack/webpackfile',
 ];

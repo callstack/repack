@@ -132,25 +132,34 @@ export interface DevServerOptions {
 export interface WebpackEnvOptions {
   /** Compilation mode. */
   mode?: 'production' | 'development';
+
   /** Target application platform. */
   platform?: string;
+
   /** Context in which all resolution happens. Usually it's project root directory. */
   context?: string;
+
   /** Input filename - entry point of the bundle. */
   entry?: string;
+
   /** Bundle output path - directory where built bundle will be saved. */
   outputPath?: string;
+
   /** Bundle output filename - name under which built bundle will be saved. */
   outputFilename?: string;
+
   /**
    * Source map filename - name under which generated Source Map will be saved.
    * The output directory for the Source Map is the same as {@link outputPath}.
    */
   sourcemapFilename?: string;
+
   /** Whether to minimize the final bundle. */
   minimize?: boolean;
+
   /** Path to React Native dependency. Usually points to `node_modules/react-native`. */
   reactNativePath?: string;
+
   /**
    * Development server configuration options.
    * Used to configure `@callstack/repack-dev-server`.

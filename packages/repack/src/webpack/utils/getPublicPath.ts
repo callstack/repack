@@ -17,8 +17,8 @@ export interface GetPublicPathOptions
  */
 export function getPublicPath(options?: GetPublicPathOptions) {
   if (options) {
-    const { port, host = 'localhost', https } = options ?? {};
-    return `${https ? 'https' : 'http'}://${host}:${port}/`;
+    const { port, host, https } = options ?? {};
+    return `${https ? 'https' : 'http'}://${host || 'localhost'}:${port}/`;
   } else {
     return `noop:///`;
   }
