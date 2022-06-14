@@ -23,7 +23,7 @@ export function getWebpackEnvOptions(
         : `./${entryFile}`;
   } else {
     env.mode = 'development';
-    env.platform = cliOptions.arguments.start.platform;
+    env.platform = cliOptions.arguments.start.platform || undefined;
     env.devServer = {
       port: cliOptions.arguments.start.port ?? DEFAULT_PORT,
       host: cliOptions.arguments.start.host,
