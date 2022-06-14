@@ -1,7 +1,6 @@
-const path = require('path');
-const webpack = require('webpack');
-const TerserPlugin = require('terser-webpack-plugin');
-const ReactNative = require('@callstack/repack');
+import path from 'path';
+import TerserPlugin from 'terser-webpack-plugin';
+import * as Repack from '@callstack/repack';
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
@@ -18,16 +17,17 @@ const ReactNative = require('@callstack/repack');
  * @param env Environment options passed from either Webpack CLI or React Native CLI
  *            when running with `react-native start/bundle`.
  */
-module.exports = (env) => {
+export default (env) => {
   const {
     mode = 'development',
-    context = __dirname,
+    context = Repack.getDirname(import.meta.url),
     entry = './index.js',
-    platform,
+    platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
-    reactNativePath = require.resolve('react-native'),
+    reactNativePath = new URL('./node_modules/react-native', import.meta.url).pathname,
   } = env;
+  const dirname = Repack.getDirname(import.meta.url);
 
   if (!platform) {
     throw new Error('Missing platform');
@@ -57,7 +57,7 @@ module.exports = (env) => {
      * HMR will be enabled in development mode.
      */
     entry: [
-      ...ReactNative.getInitializationEntries(reactNativePath, {
+      ...Repack.getInitializationEntries(reactNativePath, {
         hmr: devServer && devServer.hmr,
       }),
       entry,
@@ -69,7 +69,7 @@ module.exports = (env) => {
        * convention and some 3rd-party libraries that specify `react-native` field
        * in their `package.json` might not work correctly.
        */
-      ...ReactNative.getResolveOptions(platform),
+      ...Repack.getResolveOptions(platform),
 
       /**
        * Uncomment this to ensure all `react-native*` imports will resolve to the same React Native
@@ -85,14 +85,14 @@ module.exports = (env) => {
      * It's recommended to leave it as it is unless you know what you're doing.
      * By default Webpack will emit files into the directory specified under `path`. In order for the
      * React Native app use them when bundling the `.ipa`/`.apk`, they need to be copied over with
-     * `ReactNative.OutputPlugin`, which is configured by default.
+     * `Repack.OutputPlugin`, which is configured by default inside `Repack.RepackPlugin`.
      */
     output: {
       clean: true,
-      path: path.join(__dirname, 'build', platform),
+      path: path.join(dirname, 'build', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
-      publicPath: ReactNative.getPublicPath(devServer),
+      publicPath: Repack.getPublicPath({ platform, devServer }),
     },
     /**
      * Configures optimization of the built bundle.
@@ -171,12 +171,12 @@ module.exports = (env) => {
          * If you wan to handle specific asset type manually, filter out the extension
          * from `ASSET_EXTENSIONS`, for example:
          * ```
-         * ReactNative.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+         * Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
          * ```
          */
         {
-          test: ReactNative.getAssetExtensionsRegExp(
-            ReactNative.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+          test: Repack.getAssetExtensionsRegExp(
+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
           use: {
             loader: '@callstack/repack/assets-loader',
@@ -188,109 +188,38 @@ module.exports = (env) => {
                * scale suffixes: `@1x`, `@2x` and so on.
                * By default all images are scalable.
                */
-              scalableAssetExtensions: ReactNative.SCALABLE_ASSETS,
+              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
             },
           },
+        },
+        {
+          test: /\.svg$/,
+          use: [
+            {
+              loader: '@svgr/webpack',
+              options: {
+                native: true,
+                dimensions: false,
+              },
+            },
+          ],
         },
       ],
     },
     plugins: [
       /**
-       * Various libraries like React and React rely on `process.env.NODE_ENV` / `__DEV__`
-       * to distinguish between production and development
+       * Configure other required and additional plugins to make the bundle
+       * work in React Native and provide good development experience with
+       * sensible defaults.
+       * 
+       * `Repack.RepackPlugin` provides some degree of customization, but if you
+       * need more control, you can replace `Repack.RepackPlugin` with plugins
+       * from `Repack.plugins`.
        */
-      new webpack.DefinePlugin({
-        __DEV__: JSON.stringify(mode === 'development'),
-      }),
-
-      /**
-       * This plugin makes sure the resolution for assets like images works with scales,
-       * for example: `image@1x.png`, `image@2x.png`.
-       */
-      new ReactNative.AssetsResolverPlugin({
+      new Repack.RepackPlugin({
+        mode,
         platform,
-      }),
-
-      /**
-       * React Native environment (globals and APIs that are available inside JS) differ greatly
-       * from Web or Node.js. This plugin ensures everything is setup correctly so that features
-       * like Hot Module Replacement will work correctly.
-       */
-      new ReactNative.TargetPlugin(),
-
-      /**
-       * By default Webpack will emit files into `output.path` directory (eg: `<root>/build/ios`),
-       * but in order to for the React Native application to include those files (or a subset of those)
-       * they need to be copied over to correct output directories supplied from React Native CLI
-       * when bundling the code (with `webpack-start` command).
-       * In development mode (when development server is running), this plugin is a no-op.
-       */
-      new ReactNative.OutputPlugin({
-        platform,
-        devServerEnabled: Boolean(devServer),
-        localChunks: [/Async/],
-        remoteChunksOutput: path.join(__dirname, 'build', platform, 'remote'),
-      }),
-
-      /**
-       * Configures Hot Module Replacement and React Refresh support.
-       */
-      new ReactNative.DevelopmentPlugin({
-        platform,
-        ...devServer,
-      }),
-
-      /**
-       * Configures Source Maps for the main bundle based on CLI options received from
-       * React Native CLI or fallback value..
-       * It's recommended to leave the default values, unless you know what you're doing.
-       * Wrong options might cause symbolication of stack trace inside React Native app
-       * to fail - the app will still work, but you might not get Source Map support.
-       */
-      new webpack.SourceMapDevToolPlugin({
-        test: /\.(js)?bundle$/,
-        exclude: /\.chunk\.(js)?bundle$/,
-        filename: '[file].map',
-        append: `//# sourceMappingURL=[url]?platform=${platform}`,
-        /**
-         * Uncomment for faster builds but less accurate Source Maps
-         */
-        // columns: false,
-      }),
-
-      /**
-       * Configures Source Maps for any additional chunks.
-       * It's recommended to leave the default values, unless you know what you're doing.
-       * Wrong options might cause symbolication of stack trace inside React Native app
-       * to fail - the app will still work, but you might not get Source Map support.
-       */
-      new webpack.SourceMapDevToolPlugin({
-        test: /\.(js)?bundle$/,
-        include: /\.chunk\.(js)?bundle$/,
-        filename: '[file].map',
-        append: `//# sourceMappingURL=[url]?platform=${platform}`,
-        /**
-         * Uncomment for faster builds but less accurate Source Maps
-         */
-        // columns: false,
-      }),
-
-      /**
-       * Logs messages and progress.
-       * It's recommended to always have this plugin, otherwise it might be difficult
-       * to figure out what's going on when bundling or running development server.
-       */
-      new ReactNative.LoggerPlugin({
-        platform,
-        devServerEnabled: Boolean(devServer),
-        output: {
-          console: true,
-          /**
-           * Uncomment for having logs stored in a file to this specific compilation.
-           * Compilation for each platform gets it's own log file.
-           */
-          // file: path.join(__dirname, '${build}.${platform}.log`),
-        },
+        devServer,
       }),
     ],
   };
