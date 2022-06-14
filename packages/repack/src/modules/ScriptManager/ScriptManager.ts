@@ -18,7 +18,7 @@ const CACHE_KEY = `Repack.ScriptManager.Cache.v3.${
   __DEV__ ? 'debug' : 'release'
 }`;
 
-export class ScriptManagerBackend extends EventEmitter {
+export class ScriptManagerAPI extends EventEmitter {
   constructor(private nativeModule: any) {
     super();
   }
@@ -174,6 +174,4 @@ export class ScriptManagerBackend extends EventEmitter {
   }
 }
 
-export const ScriptManager = new ScriptManagerBackend(
-  NativeModules.ScriptManager
-);
+export const ScriptManager = new ScriptManagerAPI(NativeModules.ScriptManager);
