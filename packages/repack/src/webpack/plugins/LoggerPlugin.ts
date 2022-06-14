@@ -1,6 +1,14 @@
 import webpack from 'webpack';
-import { Reporter } from '../../Reporter';
-import { LogEntry, LogType, WebpackPlugin } from '../../types';
+import { isVerbose, isWorker } from '../../env';
+import {
+  composeReporters,
+  FileReporter,
+  ConsoleReporter,
+  Reporter,
+  LogEntry,
+  LogType,
+} from '../../logging';
+import type { WebpackPlugin } from '../../types';
 
 export type GenericFilter = Array<string | RegExp>;
 
@@ -33,7 +41,7 @@ export class LoggerPlugin implements WebpackPlugin {
   private static SUPPORTED_TYPES: string[] = ['debug', 'info', 'warn', 'error'];
 
   /** {@link Reporter} instance used to actually writing logs to terminal/file. */
-  readonly reporter = new Reporter();
+  readonly reporter: Reporter;
 
   /**
    * Constructs new `LoggerPlugin`.
@@ -44,10 +52,20 @@ export class LoggerPlugin implements WebpackPlugin {
     if (this.config.output === undefined) {
       this.config.output = { console: true };
     }
-    // TODO: disable console in reporter
-    if (this.config.output.file) {
-      this.reporter.enableFileLogging(this.config.output.file);
+
+    const reporters = [];
+    if (this.config.output.console) {
+      reporters.push(
+        new ConsoleReporter({
+          isWorker: isWorker(),
+          isVerbose: isVerbose(),
+        })
+      );
     }
+    if (this.config.output.file) {
+      reporters.push(new FileReporter({ filename: this.config.output.file }));
+    }
+    this.reporter = composeReporters(reporters);
   }
 
   /**
@@ -195,7 +213,7 @@ export class LoggerPlugin implements WebpackPlugin {
         }
       }
 
-      this.reporter.flushFileLogs();
+      this.reporter.flush();
       this.reporter.stop();
     });
 
@@ -204,12 +222,12 @@ export class LoggerPlugin implements WebpackPlugin {
       if (errorEntry) {
         this.processEntry(errorEntry);
       }
-      this.reporter.flushFileLogs();
+      this.reporter.flush();
       this.reporter.stop();
     });
 
     process.on('exit', () => {
-      this.reporter.flushFileLogs();
+      this.reporter.flush();
       this.reporter.stop();
     });
   }

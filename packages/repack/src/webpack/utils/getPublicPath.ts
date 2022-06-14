@@ -1,8 +1,8 @@
-import { DevServerConfig } from '../../server';
+import type { DevServerOptions } from '../../types';
 
 /** {@link getPublicPath} options. */
 export interface GetPublicPathOptions
-  extends Pick<DevServerConfig, 'enabled' | 'host' | 'https'> {
+  extends Pick<DevServerOptions, 'enabled' | 'host' | 'https'> {
   /** Port under which to run the development server. */
   port?: number;
 }
