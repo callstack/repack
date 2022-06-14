@@ -2,6 +2,8 @@ import { Config } from '@react-native-community/cli-types';
 import webpack from 'webpack';
 import { CLI_OPTIONS_ENV_KEY, VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, CliOptions } from '../types';
+import { loadConfig } from '../webpack/loadConfig';
+import { getWebpackEnvOptions } from '../webpack/utils';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
 
 /**
@@ -16,12 +18,16 @@ import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
  * @internal
  * @category CLI command
  */
-export function bundle(_: string[], config: Config, args: BundleArguments) {
+export async function bundle(
+  _: string[],
+  config: Config,
+  args: BundleArguments
+) {
   const webpackConfigPath = getWebpackConfigPath(
     config.root,
     args.webpackConfig
   );
-  const cliOptions = JSON.stringify({
+  const cliOptions = {
     config: {
       root: config.root,
       reactNativePath: config.reactNativePath,
@@ -31,14 +37,16 @@ export function bundle(_: string[], config: Config, args: BundleArguments) {
     arguments: {
       bundle: args,
     },
-  } as CliOptions);
+  } as CliOptions;
 
-  process.env[CLI_OPTIONS_ENV_KEY] = cliOptions;
+  process.env[CLI_OPTIONS_ENV_KEY] = JSON.stringify(cliOptions);
   if (process.argv.includes('--verbose')) {
     process.env[VERBOSE_ENV_KEY] = '1';
   }
 
-  const compiler = webpack(require(webpackConfigPath));
+  const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
+  const webpackConfig = await loadConfig(webpackConfigPath, webpackEnvOptions);
+  const compiler = webpack(webpackConfig);
 
   compiler.run((error) => {
     if (error) {

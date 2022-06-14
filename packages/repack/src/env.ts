@@ -4,6 +4,9 @@ export const VERBOSE_ENV_KEY = 'REPACK_VERBOSE';
 
 export const CLI_OPTIONS_ENV_KEY = 'REPACK_CLI_OPTIONS';
 
+/** Default development server port. */
+export const DEFAULT_PORT = 8081;
+
 /**
  * Checks if code is running as a worker.
  *

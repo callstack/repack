@@ -13,7 +13,7 @@
     "ios": "react-native run-ios",
     "start": "react-native webpack-start",
     "bundle": "react-native webpack-bundle --platform ios --entry-file index.js --bundle-output ./dist/index.bundle --dev=false",
-    "webpack": "PLATFORM=ios webpack -c webpack.config.js"
+    "webpack": "webpack -c webpack.config.js --env platform=ios --env mode=production"
   },
   "dependencies": {
     "@callstack/repack": "^2.0.0-beta.7",
