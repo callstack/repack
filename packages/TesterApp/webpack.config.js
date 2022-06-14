@@ -104,6 +104,8 @@ module.exports = {
     filename: 'index.bundle',
     chunkFilename: '[name].chunk.bundle',
     publicPath: ReactNative.getPublicPath(devServer),
+    hotUpdateChunkFilename: `[id].[fullhash].hot-update.${platform}.js`,
+    hotUpdateMainFilename: `[runtime].[fullhash].hot-update.${platform}.json`,
   },
   /**
    * Configures optimization of the built bundle.
@@ -253,10 +255,9 @@ module.exports = {
     }),
 
     /**
-     * Runs development server when running with React Native CLI start command or if `devServer`
-     * was provided as s `fallback`.
+     * Configures Hot Module Replacement and React Refresh support.
      */
-    new ReactNative.DevServerPlugin({
+    new ReactNative.DevelopmentPlugin({
       platform,
       ...devServer,
     }),

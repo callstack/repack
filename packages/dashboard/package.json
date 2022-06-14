@@ -8,12 +8,10 @@
     ]
   },
   "scripts": {
-    "prepare": "npm run build",
     "build": "cross-env NODE_ENV=production webpack -c webpack.config.js",
     "start": "webpack serve",
     "lint": "eslint --ext \".ts,.tsx\" src",
-    "typecheck": "tsc",
-    "test": "exit 0"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "byte-size": "^8.1.0",

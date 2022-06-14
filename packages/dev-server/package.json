@@ -1,0 +1,69 @@
+{
+  "name": "@callstack/repack-dev-server",
+  "description": "A bundler-agnostic development server for React Native applications.",
+  "license": "MIT",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "vendor"
+  ],
+  "homepage": "https://github.com/callstack/repack",
+  "repository": "github:callstack/repack",
+  "keywords": [
+    "react-native",
+    "repack",
+    "re.pack",
+    "server",
+    "dev-server"
+  ],
+  "author": "zamotany <zamotany.oss@gmail.com>",
+  "engines": {
+    "node": ">=14.x"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "build:js": "babel src --out-dir dist --extensions \".js,.cjs,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start",
+    "build:js:watch": "yarn build:js --watch",
+    "build:ts": "tsc --emitDeclarationOnly",
+    "build:ts:watch": "yarn build:ts --watch --preserveWatchOutput",
+    "build": "yarn build:js && yarn build:ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --ext \".js,.ts\" src"
+  },
+  "dependencies": {
+    "@babel/code-frame": "^7.16.7",
+    "@callstack/repack-debugger-app": "^1.0.0",
+    "@fastify/sensible": "^4.1.0",
+    "@fastify/static": "^5.0.2",
+    "fastify": "^3.29.0",
+    "fastify-plugin": "^3.0.1",
+    "metro-inspector-proxy": "^0.71.0",
+    "open": "^8.4.0",
+    "open-editor": "^4.0.0",
+    "pretty-format": "^28.1.0",
+    "source-map": "^0.7.3",
+    "ws": "^8.7.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-typescript": "^7.17.12",
+    "@callstack/eslint-config": "^12.0.2",
+    "@types/babel__code-frame": "^7.0.3",
+    "@types/node": "14",
+    "@types/ws": "^8.5.3",
+    "babel-plugin-add-import-extension": "^1.6.0",
+    "eslint": "^8.16.0",
+    "typescript": "^4.7.2"
+  }
+}

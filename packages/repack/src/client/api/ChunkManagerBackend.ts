@@ -1,4 +1,4 @@
-/* globals __DEV__, __repack__, Headers, FormData */
+/* globals __DEV__, __PLATFORM__, __repack__, Headers, FormData */
 
 import EventEmitter from 'events';
 import shallowEqual from 'shallowequal';
@@ -76,6 +76,7 @@ export class ChunkManagerBackend {
 
     if (__DEV__ && !this.forceRemoteChunkResolution) {
       url = Chunk.fromDevServer(chunkId);
+      query = `platform=${__PLATFORM__ ?? ''}`;
       fetch = true;
     } else if (
       global.__CHUNKS__?.['local']?.includes(chunkId) &&

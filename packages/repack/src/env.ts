@@ -1,8 +1,8 @@
-export const WORKER_ENV_KEY = 'RNWT_WORKER';
+export const WORKER_ENV_KEY = 'REPACK_WORKER';
 
-export const VERBOSE_ENV_KEY = 'RNWT_VERBOSE';
+export const VERBOSE_ENV_KEY = 'REPACK_VERBOSE';
 
-export const CLI_OPTIONS_ENV_KEY = 'RNWT_CLI_OPTIONS';
+export const CLI_OPTIONS_ENV_KEY = 'REPACK_CLI_OPTIONS';
 
 /**
  * Checks if code is running as a worker.

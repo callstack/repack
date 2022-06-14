@@ -1,4 +1,4 @@
-import { DevServerOptions, Fallback } from '../../../types';
+import type { DevServerOptions, Fallback } from '../../../types';
 import { getFallbackFromOptions } from './internal/getFallbackFromOptions';
 import { parseCliOptions } from './internal/parseCliOptions';
 
@@ -20,6 +20,7 @@ export function getDevServerOptions(
   if (!cliOptions) {
     return {
       port: DEFAULT_PORT,
+      enabled: false,
       ...getFallbackFromOptions(options),
     };
   }
@@ -37,9 +38,7 @@ export function getDevServerOptions(
       hmr: getFallbackFromOptions(options).hmr ?? true,
       host: host || getFallbackFromOptions(options).host,
       port: port ?? getFallbackFromOptions(options).port ?? DEFAULT_PORT,
-      https,
-      cert,
-      key,
+      https: https ? { cert, key } : undefined,
     };
   }
 }
