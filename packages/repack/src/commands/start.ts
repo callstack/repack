@@ -4,7 +4,7 @@ import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
 import { CliOptions, HMRMessageBody, StartArguments } from '../types';
-import { DEFAULT_PORT } from '../webpack/utils';
+import { DEFAULT_PORT } from '../env';
 import {
   composeReporters,
   ConsoleReporter,

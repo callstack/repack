@@ -99,8 +99,6 @@ export interface CliOptions {
  * Development server configuration options.
  */
 export interface DevServerOptions {
-  enabled: boolean;
-
   /**
    * Hostname or IP address under which to run the development server.
    * When left unspecified, it will listen on all available network interfaces, similarly to listening on '0.0.0.0'.
@@ -126,35 +124,33 @@ export interface DevServerOptions {
 }
 
 /**
- * Represents all relevant options that are needed to create a valid Webpack configuration
- * and configure all plugins.
+ * Represents all relevant options that are passed to Webpack config function,
+ * needed to create a valid Webpack configuration and configure all plugins.
  *
  * This is the return type of {@link parseCliOptions}.
  */
-export interface WebpackOptions {
+export interface WebpackEnvOptions {
   /** Compilation mode. */
-  mode: 'production' | 'development';
-  /** Inferred from {@link mode}. `true` is `mode` is `development`. */
-  dev: boolean;
+  mode?: 'production' | 'development';
   /** Target application platform. */
-  platform: string;
+  platform?: string;
   /** Context in which all resolution happens. Usually it's project root directory. */
-  context: string;
+  context?: string;
   /** Input filename - entry point of the bundle. */
-  entry: string;
+  entry?: string;
   /** Bundle output path - directory where built bundle will be saved. */
-  outputPath: string;
+  outputPath?: string;
   /** Bundle output filename - name under which built bundle will be saved. */
-  outputFilename: string;
+  outputFilename?: string;
   /**
    * Source map filename - name under which generated Source Map will be saved.
    * The output directory for the Source Map is the same as {@link outputPath}.
    */
   sourcemapFilename?: string;
   /** Whether to minimize the final bundle. */
-  minimize: boolean;
+  minimize?: boolean;
   /** Path to React Native dependency. Usually points to `node_modules/react-native`. */
-  reactNativePath: string;
+  reactNativePath?: string;
   /**
    * Development server configuration options.
    * Used to configure `@callstack/repack-dev-server`.
