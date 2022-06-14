@@ -96,9 +96,9 @@ export class Script {
         url: locator.url,
         absolute: locator.absolute ?? false,
         timeout: locator.timeout ?? Script.DEFAULT_TIMEOUT,
-        query: new URLSearchParams(locator.query).toString(),
+        query: new URLSearchParams(locator.query).toString() || undefined,
         body,
-        headers,
+        headers: Object.keys(headers).length ? headers : undefined,
         fetch: locator.cache === false ? true : fetch,
       },
       locator.cache
