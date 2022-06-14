@@ -7,7 +7,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URL
 
-data class ChunkConfig(
+data class ScriptConfig(
         val id: String,
         val url: URL,
         val query: String?,
@@ -19,17 +19,17 @@ data class ChunkConfig(
         val headers: Headers
 ) {
     companion object {
-        fun fromReadableMap(id: String, value: ReadableMap): ChunkConfig {
+        fun fromReadableMap(id: String, value: ReadableMap): ScriptConfig {
             val urlString = value.getString("url")
-                    ?: throw Error("ChunkManagerModule.load ChunkMissing url")
+                    ?: throw Error("ScriptManagerModule.load ScriptMissing url")
             val method = value.getString("method")
-                    ?: throw Error("ChunkManagerModule.load ChunkMissing method")
+                    ?: throw Error("ScriptManagerModule.load ScriptMissing method")
             val fetch = value.getBoolean("fetch")
             val absolute = value.getBoolean("absolute")
             val query = value.getString("query")
             val bodyString = value.getString("body")
             val headersMap = value.getMap("headers")
-            val timeout = value.getInt("timeout") ?: throw Error("ChunkManagerModule.load ChunkMissing timeout")
+            val timeout = value.getInt("timeout") ?: throw Error("ScriptManagerModule.load ScriptMissing timeout")
 
             val url = URL(if (query != null) {
                 "$urlString?$query"
@@ -50,7 +50,7 @@ data class ChunkConfig(
             val contentType = (headers["content-type"] ?: "text/plain").toMediaType()
             val body = bodyString?.toRequestBody(contentType)
 
-            return ChunkConfig(
+            return ScriptConfig(
                     id,
                     url,
                     query,

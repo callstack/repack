@@ -1,4 +1,5 @@
 import readline from 'readline';
+import { URL } from 'url';
 import webpack from 'webpack';
 import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
@@ -107,9 +108,10 @@ export async function start(_: string[], config: Config, args: StartArguments) {
             (await compiler.getAsset(filename, platform, sendProgress)).data,
           getMimeType: (filename) => compiler.getMimeType(filename),
           inferPlatform: (uri) => {
-            const hotUpdateMatch = /^.*\.hot-update\.(.+)\.js(on)?$/.exec(uri);
-            if (hotUpdateMatch) {
-              return hotUpdateMatch[1];
+            const url = new URL(uri, 'protocol://domain');
+            if (!url.searchParams.get('platform')) {
+              const [, platform] = /^\/(.+)\/.+$/.exec(url.pathname) ?? [];
+              return platform;
             }
 
             return undefined;

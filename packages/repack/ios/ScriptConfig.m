@@ -1,9 +1,9 @@
 #import <Foundation/Foundation.h>
-#import "ChunkConfig.h"
+#import "ScriptConfig.h"
 
-@implementation ChunkConfig
+@implementation ScriptConfig
 
-@synthesize chunkId = _chunkId;
+@synthesize scriptId = _scriptId;
 @synthesize url = _url;
 @synthesize method = _method;
 @synthesize query = _query;
@@ -13,8 +13,8 @@
 @synthesize headers = _headers;
 @synthesize timeout = _timeout;
 
-+ (ChunkConfig *)fromConfigDictionary:(NSDictionary *)config
-                          withChunkId:(nonnull NSString*)chunkId
++ (ScriptConfig *)fromConfigDictionary:(NSDictionary *)config
+                          withScriptId:(nonnull NSString*)scriptId
 {
     NSString *urlString = config[@"url"];
     NSString *query = config[@"query"];
@@ -39,7 +39,7 @@
     BOOL fetch = [config[@"fetch"] boolValue];
     BOOL absolute = [config[@"absolute"] boolValue];
     
-    return [[ChunkConfig alloc] initWithChunk:chunkId
+    return [[ScriptConfig alloc] initWithScript:scriptId
                                       withURL:urlComponents.URL
                                    withMethod:method
                                     withQuery:query
@@ -58,7 +58,7 @@
     return self;
 }
 
-- (ChunkConfig *)initWithChunk:(NSString *)chunkId
+- (ScriptConfig *)initWithScript:(NSString *)scriptId
                        withURL:(NSURL *)url
                     withMethod:(NSString *)method
                      withQuery:(NSString *)query
@@ -68,7 +68,7 @@
                       withBody:(nullable NSData *)body
                    withTimeout:(nonnull NSNumber *)timeout
 {
-    _chunkId = chunkId;
+    _scriptId = scriptId;
     _url = url;
     _method = method;
     _query = query;

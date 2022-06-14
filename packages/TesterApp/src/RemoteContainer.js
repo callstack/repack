@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, View } from 'react-native';
-import { ChunkManager } from '@callstack/repack/client';
+import { ScriptManager } from '@callstack/repack/client';
 import { Text } from './Text';
 
 const RemoteChunkId = 'remote';
@@ -24,7 +24,7 @@ export const RemoteContainer = () => {
             title={isPreloaded ? 'Preloaded' : 'Preload chunk'}
             disabled={isPreloaded}
             onPress={async () => {
-              await ChunkManager.preloadChunk(RemoteChunkId);
+              await ScriptManager.preloadScript(RemoteChunkId);
               setIsPreloaded(true);
             }}
           />
@@ -35,7 +35,7 @@ export const RemoteContainer = () => {
       <Button
         title={'Invalidate'}
         onPress={async () => {
-          await ChunkManager.invalidateChunks([RemoteChunkId]);
+          await ScriptManager.invalidateScripts([RemoteChunkId]);
           setIsPreloaded(false);
         }}
       />

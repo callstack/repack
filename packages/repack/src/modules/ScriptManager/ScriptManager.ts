@@ -18,13 +18,14 @@ const CACHE_KEY = `Repack.ScriptManager.Cache.v3.${
   __DEV__ ? 'debug' : 'release'
 }`;
 
-export class ScriptManagerBackend {
-  constructor(private nativeModule: any) {}
+export class ScriptManagerBackend extends EventEmitter {
+  constructor(private nativeModule: any) {
+    super();
+  }
 
   private cache?: Cache;
   private resolve?: ScriptLocatorResolver;
   private storage?: StorageApi;
-  private eventEmitter = new EventEmitter();
 
   configure(config: ScriptManagerConfig) {
     this.storage = config.storage;
@@ -34,7 +35,7 @@ export class ScriptManagerBackend {
       parentPush: typeof Array.prototype.push,
       ...data: string[]
     ) => {
-      this.eventEmitter.emit('_loaded', data[0]);
+      this.emit('_loaded', data[0]);
       return parentPush(...data);
     }).bind(
       null,
@@ -59,100 +60,94 @@ export class ScriptManagerBackend {
     await this.storage?.setItem(CACHE_KEY, JSON.stringify(this.cache));
   }
 
+  private handleError(error: any, message: string, ...args: any[]): never {
+    console.error(message, (error as Error).message, ...args);
+    this.emit('error', { message, args, originalError: error });
+    throw error;
+  }
+
   async resolveScript(scriptId: string, caller?: string): Promise<Script> {
     await this.initCache();
+    try {
+      if (!this.resolve) {
+        throw new Error(
+          'No script resolver was provided. Did you forget to add `ScriptManager.configure({ resolve: ... })`?'
+        );
+      }
 
-    if (!this.resolve) {
-      throw new Error(
-        'No script resolver was provided. Did you forget to add `ScriptManager.configure({ resolve: ... })`?'
+      this.emit('resolving', { scriptId, caller });
+      const locator = await this.resolve(scriptId, caller);
+      const script = Script.from(locator, false);
+
+      if (!this.cache?.[scriptId]) {
+        script.locator.fetch = true;
+        this.cache = this.cache ?? {};
+        this.cache[scriptId] = script.getCacheData();
+        await this.saveCache();
+      } else if (script.shouldRefetch(this.cache[scriptId])) {
+        script.locator.fetch = true;
+        this.cache[scriptId] = script.getCacheData();
+        await this.saveCache();
+      }
+
+      this.emit('resolved', script.locator);
+
+      return script;
+    } catch (error) {
+      this.handleError(
+        error,
+        '[ScriptManager] Failed while resolving script locator:'
       );
     }
-
-    this.eventEmitter.emit('resolving', { scriptId, caller });
-    const locator = await this.resolve(scriptId, caller);
-    const script = Script.from(locator, false);
-
-    if (!this.cache?.[scriptId]) {
-      script.locator.fetch = true;
-      this.cache = this.cache ?? {};
-      this.cache[scriptId] = script.getCacheData();
-      await this.saveCache();
-    } else if (script.shouldRefetch(this.cache[scriptId])) {
-      script.locator.fetch = true;
-      this.cache[scriptId] = script.getCacheData();
-      await this.saveCache();
-    }
-
-    this.eventEmitter.emit('resolved', script.locator);
-
-    return script;
   }
 
   async loadScript(scriptId: string, caller?: string) {
-    let script: Script;
-    try {
-      script = await this.resolveScript(scriptId, caller);
-    } catch (error) {
-      console.error(
-        '[ScriptManager] Failed while resolving script locator:',
-        (error as Error).message
-      );
-      throw error;
-    }
+    let script = await this.resolveScript(scriptId, caller);
 
     return await new Promise<void>((resolve, reject) => {
       (async () => {
         const onLoaded = (data: string) => {
           if (data === scriptId) {
-            this.eventEmitter.emit('loaded', script.locator);
+            this.emit('loaded', script.locator);
             resolve();
           }
         };
 
         try {
-          this.eventEmitter.emit('loading', script.locator);
-          this.eventEmitter.on('_loaded', onLoaded);
+          this.emit('loading', script.locator);
+          this.on('_loaded', onLoaded);
           await this.nativeModule.loadScript(scriptId, script.locator);
         } catch (error) {
-          const { message, code } = error as Error & { code: string };
-          console.error(
+          const { code } = error as Error & { code: string };
+          this.handleError(
+            error,
             '[ScriptManager] Failed to load script:',
-            message,
             code ? `[${code}]` : '',
             script.locator
           );
-          reject(error);
         } finally {
-          this.eventEmitter.removeListener('_loaded', onLoaded);
+          this.removeListener('_loaded', onLoaded);
         }
-      })();
+      })().catch((error) => {
+        reject(error);
+      });
     });
   }
 
   async preloadScript(scriptId: string, caller?: string) {
-    let script: Script;
-    try {
-      script = await this.resolveScript(scriptId, caller);
-    } catch (error) {
-      console.error(
-        '[ScriptManager] Failed while resolving script locator:',
-        (error as Error).message
-      );
-      throw error;
-    }
+    let script = await this.resolveScript(scriptId, caller);
 
     try {
-      this.eventEmitter.emit('preloading', script.locator);
+      this.emit('preloading', script.locator);
       await this.nativeModule.preloadScript(scriptId, script.locator);
     } catch (error) {
-      const { message, code } = error as Error & { code: string };
-      console.error(
+      const { code } = error as Error & { code: string };
+      this.handleError(
+        error,
         '[ScriptManager] Failed to preload script:',
-        message,
         code ? `[${code}]` : '',
         script.locator
       );
-      throw error;
     }
   }
 
@@ -167,15 +162,14 @@ export class ScriptManagerBackend {
       await this.saveCache();
 
       await this.nativeModule.invalidateScripts(ids);
-      this.eventEmitter.emit('invalidated', ids);
+      this.emit('invalidated', ids);
     } catch (error) {
-      const { message, code } = error as Error & { code: string };
-      console.error(
+      const { code } = error as Error & { code: string };
+      this.handleError(
+        error,
         '[ScriptManager] Failed to invalidate scripts:',
-        message,
         code ? `[${code}]` : ''
       );
-      throw error;
     }
   }
 }

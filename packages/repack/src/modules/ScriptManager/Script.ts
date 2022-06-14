@@ -3,6 +3,15 @@
 import shallowEqual from 'shallowequal';
 import type { NormalizedScriptLocator, ScriptLocator } from './types';
 
+/**
+ * Representation of a Script to load and execute, used by {@link ScriptManager}.
+ *
+ * When configuring `ScriptManager` in `ScriptManager.configure(...)`, you can use
+ * `Script.getDevServerURL(...)`, `Script.getFileSystemURL(...)` or `Script.getRemoteURL(...)`
+ * to create a `url` for the script.
+ *
+ * Other methods are designed for internal use only.
+ */
 export class Script {
   static DEFAULT_TIMEOUT = 30000; // 30s
 
@@ -46,6 +55,14 @@ export class Script {
     return __webpack_get_script_filename__(url);
   }
 
+  /**
+   * Create new instance of `Script` from non-normalized script locator data.
+   *
+   * @param locator Non-normalized locator data.
+   * @param fetch Initial flag for whether script should be fetched or not.
+   *
+   * @internal
+   */
   static from(locator: ScriptLocator, fetch: boolean) {
     const headers: Record<string, string> = {};
     new Headers(locator.headers).forEach((value: string, key: string) => {
@@ -73,26 +90,52 @@ export class Script {
       body = locator.body ?? undefined;
     }
 
-    return new Script({
-      method: locator.method ?? 'GET',
-      url: locator.url,
-      absolute: locator.absolute ?? false,
-      timeout: locator.timeout ?? Script.DEFAULT_TIMEOUT,
-      query: new URLSearchParams(locator.query).toString(),
-      body,
-      headers,
-      fetch,
-    });
+    return new Script(
+      {
+        method: locator.method ?? 'GET',
+        url: locator.url,
+        absolute: locator.absolute ?? false,
+        timeout: locator.timeout ?? Script.DEFAULT_TIMEOUT,
+        query: new URLSearchParams(locator.query).toString(),
+        body,
+        headers,
+        fetch: locator.cache === false ? true : fetch,
+      },
+      locator.cache
+    );
   }
 
-  constructor(public readonly locator: NormalizedScriptLocator) {}
+  /**
+   * Constructs new representation of a script.
+   *
+   * @param locator Normalized locator data.
+   * @param cache Flag whether use cache or not, `true` by default.
+   *
+   * @internal
+   */
+  constructor(
+    public readonly locator: NormalizedScriptLocator,
+    public readonly cache: boolean = true
+  ) {}
 
+  /**
+   * Check if the script should be fetched again or reused,
+   * based on previous cached data.
+   *
+   * @param cachedData Cached data for the same script.
+   *
+   * @internal
+   */
   shouldRefetch(
     cachedData: Pick<
       NormalizedScriptLocator,
       'method' | 'url' | 'query' | 'headers' | 'body'
     >
   ) {
+    if (!this.cache) {
+      return true;
+    }
+
     const diffs = [
       cachedData.method !== this.locator.method,
       cachedData.url !== this.locator.url,
@@ -104,6 +147,11 @@ export class Script {
     return diffs.some((diff) => diff);
   }
 
+  /**
+   * Get object to store in cache.
+   *
+   * @internal
+   */
   getCacheData() {
     return {
       method: this.locator.method,

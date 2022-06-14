@@ -1,9 +1,9 @@
-#ifndef ChunkConfig_h
-#define ChunkConfig_h
+#ifndef ScriptConfig_h
+#define ScriptConfig_h
 
-@interface ChunkConfig : NSObject
+@interface ScriptConfig : NSObject
 
-@property (readonly, nonnull) NSString *chunkId;
+@property (readonly, nonnull) NSString *scriptId;
 @property (readonly, nonnull) NSURL *url;
 @property (readonly, nonnull) NSString *method;
 @property (readonly, nullable) NSString *query;
@@ -13,10 +13,10 @@
 @property (readonly, nullable) NSDictionary *headers;
 @property (readonly, nonnull) NSNumber *timeout;
 
-+ (nonnull ChunkConfig *)fromConfigDictionary:(nonnull NSDictionary *)config
-                                  withChunkId:(nonnull NSString*)chunkId;
++ (nonnull ScriptConfig *)fromConfigDictionary:(nonnull NSDictionary *)config
+                                  withScriptId:(nonnull NSString*)scriptId;
 
-- (ChunkConfig *)initWithChunk:(nonnull NSString*)chunkId
+- (ScriptConfig *)initWithScript:(nonnull NSString*)scriptId
                        withURL:(nonnull NSURL*)url
                     withMethod:(nonnull NSString*)method
                      withQuery:(nullable NSString*)query
@@ -28,4 +28,4 @@
 
 @end
 
-#endif /* ChunkConfig_h */
+#endif /* ScriptConfig_h */

@@ -1,5 +1,5 @@
-#import "ChunkManager.h"
-#import "ChunkConfig.h"
+#import "ScriptManager.h"
+#import "ScriptConfig.h"
 #import "ErrorCodes.h"
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
@@ -13,13 +13,13 @@
 @end
 
 
-@implementation ChunkManager
+@implementation ScriptManager
 
 RCT_EXPORT_MODULE()
 
 @synthesize bridge = _bridge;
 
-RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
+RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
                   config:(nonnull NSDictionary*)configDictionary
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
@@ -28,11 +28,11 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
         // Cast `RCTBridge` to `RCTCxxBridge`.
         __weak RCTCxxBridge *bridge = (RCTCxxBridge *)_bridge;
         
-        ChunkConfig *config;
+        ScriptConfig *config;
         @try {
-            config = [ChunkConfig fromConfigDictionary:configDictionary withChunkId:chunkId];
+            config = [ScriptConfig fromConfigDictionary:configDictionary withScriptId:scriptId];
         } @catch (NSError *error) {
-            reject(ChunkConfigError, error.localizedDescription, nil);
+            reject(ScriptConfigError, error.localizedDescription, nil);
             return;
         }
         
@@ -41,17 +41,17 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
             if (config.fetch) {
                 [self downloadAndCache:config completionHandler:^(NSError *error) {
                     if (error) {
-                        reject(ChunkDownloadFailure, error.localizedFailureReason, nil);
+                        reject(ScriptDownloadFailure, error.localizedFailureReason, nil);
                     } else {
                         [self execute:bridge
-                              chunkId:config.chunkId
+                              scriptId:config.scriptId
                                   url:config.url
                          withResolver:resolve
                          withRejecter:reject];
                     }
                 }];
             } else {
-                [self execute:bridge chunkId:chunkId url:config.url withResolver:resolve withRejecter:reject];
+                [self execute:bridge scriptId:scriptId url:config.url withResolver:resolve withRejecter:reject];
             }
             
         } else if ([[config.url scheme] isEqualToString:@"file"]) {
@@ -66,28 +66,28 @@ RCT_EXPORT_METHOD(loadChunk:(nonnull NSString*)chunkId
     }];
 }
 
-RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
+RCT_EXPORT_METHOD(preloadScript:(nonnull NSString*)scriptId
                   config:(nonnull NSDictionary*)configDictionary
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 {
-    ChunkConfig *config;
+    ScriptConfig *config;
     @try {
-        config = [ChunkConfig fromConfigDictionary:configDictionary withChunkId:chunkId];
+        config = [ScriptConfig fromConfigDictionary:configDictionary withScriptId:scriptId];
     } @catch (NSError *error) {
-        reject(ChunkConfigError, error.localizedDescription, nil);
+        reject(ScriptConfigError, error.localizedDescription, nil);
         return;
     }
     
     if (!config.fetch) {
-        // Do nothing, chunk is already preloaded
+        // Do nothing, script is already preloaded
         resolve(nil);
     } else {
         [self runInBackground:^(){
             if ([[config.url scheme] hasPrefix:@"http"]) {
                 [self downloadAndCache:config completionHandler:^(NSError *error) {
                     if (error) {
-                        reject(ChunkDownloadFailure, error.localizedFailureReason, nil);
+                        reject(ScriptDownloadFailure, error.localizedFailureReason, nil);
                     } else {
                         resolve(nil);
                     }
@@ -100,22 +100,22 @@ RCT_EXPORT_METHOD(preloadChunk:(nonnull NSString*)chunkId
     }
 }
 
-RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
+RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 {
     [self runInBackground:^(){
         NSFileManager* manager = [NSFileManager defaultManager];
-        NSString* chunksDirecotryPath = [self getChunksDirectoryPath];
+        NSString* scriptsDirecotryPath = [self getScriptsDirectoryPath];
         
         NSError *error;
-        if (chunks.count == 0 && [manager fileExistsAtPath:chunksDirecotryPath]) {
-            [manager removeItemAtPath:chunksDirecotryPath error:&error];
+        if (scripts.count == 0 && [manager fileExistsAtPath:scriptsDirecotryPath]) {
+            [manager removeItemAtPath:scriptsDirecotryPath error:&error];
         } else {
-            for (int i = 0; i < chunks.count; i++) {
-                NSString* chunkFilePath = [self getChunkFilePath:chunks[i]];
-                if ([manager fileExistsAtPath:chunkFilePath]) {
-                    [manager removeItemAtPath:[self getChunkFilePath:chunks[i]] error:&error];
+            for (int i = 0; i < scripts.count; i++) {
+                NSString* scriptFilePath = [self getScriptFilePath:scripts[i]];
+                if ([manager fileExistsAtPath:scriptFilePath]) {
+                    [manager removeItemAtPath:[self getScriptFilePath:scripts[i]] error:&error];
                 }
                 if (error != nil) {
                     break;
@@ -132,15 +132,15 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
 }
 
 - (void)execute:(RCTCxxBridge *)bridge
-        chunkId:(NSString *)chunkId
+        scriptId:(NSString *)scriptId
             url:(NSURL *)url
    withResolver:(RCTPromiseResolveBlock)resolve
    withRejecter:(RCTPromiseRejectBlock)reject
 {
-    NSString *chunkPath = [self getChunkFilePath:chunkId];
+    NSString *scriptPath = [self getScriptFilePath:scriptId];
     @try {
         NSFileManager* manager = [NSFileManager defaultManager];
-        NSData* data = [manager contentsAtPath:chunkPath];
+        NSData* data = [manager contentsAtPath:scriptPath];
         [bridge executeApplicationScript:data url:url async:YES];
         resolve(nil);
     } @catch (NSError *error) {
@@ -148,22 +148,22 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
     }
 }
 
-- (NSString *)getChunksDirectoryPath {
+- (NSString *)getScriptsDirectoryPath {
     NSString* rootDirectoryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES).firstObject;
     rootDirectoryPath = [rootDirectoryPath stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
-    return [rootDirectoryPath stringByAppendingPathComponent:@"chunks"];
+    return [rootDirectoryPath stringByAppendingPathComponent:@"scripts"];
 }
 
-- (NSString *)getChunkFilePath:(NSString*)chunkId {
-    NSString* chunkPath = [[self getChunksDirectoryPath] stringByAppendingPathComponent:chunkId];
-    return [chunkPath stringByAppendingPathExtension:@"chunk.bundle"];
+- (NSString *)getScriptFilePath:(NSString*)scriptId {
+    NSString* scriptPath = [[self getScriptsDirectoryPath] stringByAppendingPathComponent:scriptId];
+    return [scriptPath stringByAppendingPathExtension:@"script.bundle"];
 }
 
-- (void)downloadAndCache:(ChunkConfig *)config
+- (void)downloadAndCache:(ScriptConfig *)config
        completionHandler:(void (^)(NSError *error))callback
 {
-    NSString *chunkFilePath = [self getChunkFilePath:config.chunkId];
-    NSString* chunksDirectoryPath = [self getChunksDirectoryPath];
+    NSString *scriptFilePath = [self getScriptFilePath:config.scriptId];
+    NSString* scriptsDirectoryPath = [self getScriptsDirectoryPath];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:config.url];
     request.HTTPMethod = [config.method uppercaseString];
@@ -189,8 +189,8 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
             callback(error);
         } else {
             @try {
-                [self createChunksDirectory:chunksDirectoryPath];
-                [data writeToFile:chunkFilePath options:NSDataWritingAtomic error:&error];
+                [self createScriptsDirectory:scriptsDirectoryPath];
+                [data writeToFile:scriptFilePath options:NSDataWritingAtomic error:&error];
                 callback(nil);
             } @catch (NSError *error) {
                 callback(error);
@@ -202,13 +202,13 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
     [task resume];
 }
 
-- (void)createChunksDirectory:(NSString *)chunksDirectoryPath
+- (void)createScriptsDirectory:(NSString *)scriptsDirectoryPath
 {
     NSError *error;
     NSFileManager* manager = [NSFileManager defaultManager];
     
-    if (![manager fileExistsAtPath:chunksDirectoryPath]) {
-        [manager createDirectoryAtPath:chunksDirectoryPath
+    if (![manager fileExistsAtPath:scriptsDirectoryPath]) {
+        [manager createDirectoryAtPath:scriptsDirectoryPath
            withIntermediateDirectories:YES
                             attributes:nil
                                  error:&error];
@@ -221,23 +221,23 @@ RCT_EXPORT_METHOD(invalidateChunks:(nonnull NSArray*)chunks
 }
 
 - (void)executeFromFilesystem:(RCTCxxBridge *)bridge
-                       config:(ChunkConfig *)config
+                       config:(ScriptConfig *)config
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject
 {
     NSURL *url = config.url;
     @try {
-        NSString *chunkName = [[url lastPathComponent] stringByDeletingPathExtension];
-        NSString *chunkExtension = [url pathExtension];
-        NSURL *filesystemChunkUrl = nil;
+        NSString *scriptName = [[url lastPathComponent] stringByDeletingPathExtension];
+        NSString *scriptExtension = [url pathExtension];
+        NSURL *filesystemScriptUrl = nil;
         if (config.absolute) {
             if ([[NSFileManager defaultManager] fileExistsAtPath:[url path]]) {
-                filesystemChunkUrl = url;
+                filesystemScriptUrl = url;
             }
         } else {
-            filesystemChunkUrl = [[NSBundle mainBundle] URLForResource:chunkName withExtension:chunkExtension];
+            filesystemScriptUrl = [[NSBundle mainBundle] URLForResource:scriptName withExtension:scriptExtension];
         }
-        NSData *data = [[NSData alloc] initWithContentsOfFile:[filesystemChunkUrl path]];
+        NSData *data = [[NSData alloc] initWithContentsOfFile:[filesystemScriptUrl path]];
         [bridge executeApplicationScript:data url:url async:YES];
         resolve(nil);
     } @catch (NSError *error) {

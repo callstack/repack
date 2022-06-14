@@ -72,12 +72,26 @@ export interface ScriptLocator {
    * Defaults to `false`.
    */
   absolute?: boolean;
+
+  /**
+   * Flag to disable script caching. By default set to `true`.
+   *
+   * When `true` (default), it will compare method, url, query, headers and body of
+   * previous (if there was) attempt to load the same script. If none of them changed, it
+   * will NOT download a new copy of the script, but instead, it will only execute previously
+   * downloaded script.
+   * Setting this flat to `false`, disables that behavior.
+   */
+  cache?: boolean;
 }
 
 /**
  * Defines a function to resolve a script locator used in {@link ScriptManagerConfig}.
  * It's an async function which should return an object with data on how {@link ScriptManager}
  * should fetch the script. All fields describing the script locator data are listed in {@link ScriptLocator}.
+ *
+ * @param scriptId Id of the script to resolve.
+ * @param caller Name of the calling script - it can be for example: name of the bundle, chunk or container.
  */
 export type ScriptLocatorResolver = (
   scriptId: string,

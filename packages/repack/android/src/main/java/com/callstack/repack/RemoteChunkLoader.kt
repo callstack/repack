@@ -8,15 +8,15 @@ import java.io.IOException
 import java.io.OutputStreamWriter
 import java.util.concurrent.TimeUnit
 
-class RemoteChunkLoader(private val reactContext: ReactContext) {
-    private val chunksDirName = "chunks"
+class RemoteScriptLoader(private val reactContext: ReactContext) {
+    private val scriptsDirName = "scripts"
     private val client = OkHttpClient()
 
-    private fun getChunkFilePath(id: String): String {
-        return "${chunksDirName}/$id.chunk.bundle"
+    private fun getScriptFilePath(id: String): String {
+        return "${scriptsDirName}/$id.script.bundle"
     }
 
-    private fun createClientPerRequest(config: ChunkConfig): OkHttpClient {
+    private fun createClientPerRequest(config: ScriptConfig): OkHttpClient {
         val clientPerRequestBuilder = client.newBuilder();
         clientPerRequestBuilder.connectTimeout(config.timeout.toLong(), TimeUnit.MILLISECONDS);
         clientPerRequestBuilder.readTimeout(config.timeout.toLong(), TimeUnit.MILLISECONDS)
@@ -24,14 +24,14 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
         return clientPerRequestBuilder.build()
     }
 
-    private fun downloadAndCache(config: ChunkConfig, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
-        val path = getChunkFilePath(config.id)
+    private fun downloadAndCache(config: ScriptConfig, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
+        val path = getScriptFilePath(config.id)
         val file = File(reactContext.filesDir, path)
 
         val callback = object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 onError(
-                        ChunkLoadingError.NetworkFailure.code,
+                        ScriptLoadingError.NetworkFailure.code,
                         e.message ?: e.toString()
                 )
             }
@@ -39,9 +39,9 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     try {
-                        val chunksDir = File(reactContext.filesDir, chunksDirName)
-                        if (!chunksDir.exists()) {
-                            File(reactContext.filesDir, chunksDirName).mkdir()
+                        val scriptsDir = File(reactContext.filesDir, scriptsDirName)
+                        if (!scriptsDir.exists()) {
+                            File(reactContext.filesDir, scriptsDirName).mkdir()
                         }
 
                         file.createNewFile()
@@ -54,13 +54,13 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
                         onSuccess()
                     } catch (error: Exception) {
                         onError(
-                                ChunkLoadingError.ChunkCachingFailure.code,
+                                ScriptLoadingError.ScriptCachingFailure.code,
                                 error.message ?: error.toString()
                         )
                     }
                 } else {
                     onError(
-                            ChunkLoadingError.RequestFailure.code,
+                            ScriptLoadingError.RequestFailure.code,
                             "Request should have returned with 200 HTTP status, but instead it received ${response.code}"
                     )
                 }
@@ -80,9 +80,9 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
         clientPerRequest.newCall(request.build()).enqueue(callback)
     }
 
-    fun execute(config: ChunkConfig, promise: Promise) {
+    fun execute(config: ScriptConfig, promise: Promise) {
         try {
-            val path = getChunkFilePath(config.id)
+            val path = getScriptFilePath(config.id)
             reactContext.catalystInstance.loadScriptFromFile(
                     "${reactContext.filesDir}/${path}",
                     config.url.toString(),
@@ -91,26 +91,26 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
             promise.resolve(null)
         } catch (error: Exception) {
             promise.reject(
-                    ChunkLoadingError.RemoteEvalFailure.code,
+                    ScriptLoadingError.RemoteEvalFailure.code,
                     error.message ?: error.toString()
             )
         }
     }
 
 
-    fun preload(config: ChunkConfig, promise: Promise) {
+    fun preload(config: ScriptConfig, promise: Promise) {
         downloadAndCache(config, { promise.resolve(null) }, { code, message -> promise.reject(code, message) })
     }
 
-    fun load(config: ChunkConfig, promise: Promise) {
+    fun load(config: ScriptConfig, promise: Promise) {
         downloadAndCache(config, {
             execute(config, promise)
         }, { code, message -> promise.reject(code, message) })
     }
 
-    fun invalidate(chunkId: String?) {
-        if (chunkId != null) {
-            val file = File(reactContext.filesDir, getChunkFilePath(chunkId))
+    fun invalidate(scriptId: String?) {
+        if (scriptId != null) {
+            val file = File(reactContext.filesDir, getScriptFilePath(scriptId))
 
             if (file.exists()) {
                 file.delete()
@@ -119,7 +119,7 @@ class RemoteChunkLoader(private val reactContext: ReactContext) {
     }
 
     fun invalidateAll() {
-        val file = File(reactContext.filesDir, chunksDirName)
+        val file = File(reactContext.filesDir, scriptsDirName)
         if (file.exists()) {
             file.deleteRecursively()
         }

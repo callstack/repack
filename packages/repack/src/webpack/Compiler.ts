@@ -169,7 +169,9 @@ export class Compiler extends EventEmitter {
       this.workers[platform] = this.spawnWorker(platform);
     } else if (!this.isCompilationInProgress[platform]) {
       return Promise.reject(
-        `File ${filename} for ${platform} not found in compilation assets`
+        new Error(
+          `File ${filename} for ${platform} not found in compilation assets`
+        )
       );
     }
 
@@ -192,7 +194,11 @@ export class Compiler extends EventEmitter {
             if (fileFromCache) {
               resolve(fileFromCache);
             } else {
-              reject(new Error('File not found'));
+              reject(
+                new Error(
+                  `File ${filename} for ${platform} not found in compilation assets`
+                )
+              );
             }
           }
         }

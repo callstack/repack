@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9C0D210D265D1FE5005819F0 /* ChunkManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0D210B265D1FE5005819F0 /* ChunkManager.mm */; };
+		9C0D210D265D1FE5005819F0 /* ScriptManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0D210B265D1FE5005819F0 /* ScriptManager.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,9 +23,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		134814201AA4EA6300B7C361 /* libChunkManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libChunkManager.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		9C0D210B265D1FE5005819F0 /* ChunkManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChunkManager.mm; sourceTree = "<group>"; };
-		9C0D210C265D1FE5005819F0 /* ChunkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChunkManager.h; sourceTree = "<group>"; };
+		134814201AA4EA6300B7C361 /* libScriptManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libScriptManager.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C0D210B265D1FE5005819F0 /* ScriptManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScriptManager.mm; sourceTree = "<group>"; };
+		9C0D210C265D1FE5005819F0 /* ScriptManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,7 +42,7 @@
 		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				134814201AA4EA6300B7C361 /* libChunkManager.a */,
+				134814201AA4EA6300B7C361 /* libScriptManager.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -50,8 +50,8 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				9C0D210C265D1FE5005819F0 /* ChunkManager.h */,
-				9C0D210B265D1FE5005819F0 /* ChunkManager.mm */,
+				9C0D210C265D1FE5005819F0 /* ScriptManager.h */,
+				9C0D210B265D1FE5005819F0 /* ScriptManager.mm */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -59,9 +59,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		58B511DA1A9E6C8500147676 /* ChunkManager */ = {
+		58B511DA1A9E6C8500147676 /* ScriptManager */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "ChunkManager" */;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "ScriptManager" */;
 			buildPhases = (
 				58B511D71A9E6C8500147676 /* Sources */,
 				58B511D81A9E6C8500147676 /* Frameworks */,
@@ -71,9 +71,9 @@
 			);
 			dependencies = (
 			);
-			name = ChunkManager;
+			name = ScriptManager;
 			productName = RCTDataManager;
-			productReference = 134814201AA4EA6300B7C361 /* libChunkManager.a */;
+			productReference = 134814201AA4EA6300B7C361 /* libScriptManager.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -90,7 +90,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "ChunkManager" */;
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "ScriptManager" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -103,7 +103,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				58B511DA1A9E6C8500147676 /* ChunkManager */,
+				58B511DA1A9E6C8500147676 /* ScriptManager */,
 			);
 		};
 /* End PBXProject section */
@@ -113,7 +113,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9C0D210D265D1FE5005819F0 /* ChunkManager.mm in Sources */,
+				9C0D210D265D1FE5005819F0 /* ScriptManager.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,7 +224,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = ChunkManager;
+				PRODUCT_NAME = ScriptManager;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -242,7 +242,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = ChunkManager;
+				PRODUCT_NAME = ScriptManager;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -251,7 +251,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "ChunkManager" */ = {
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "ScriptManager" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511ED1A9E6C8500147676 /* Debug */,
@@ -260,7 +260,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "ChunkManager" */ = {
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "ScriptManager" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511F01A9E6C8500147676 /* Debug */,
