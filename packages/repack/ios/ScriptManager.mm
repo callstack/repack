@@ -66,7 +66,7 @@ RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
     }];
 }
 
-RCT_EXPORT_METHOD(preloadScript:(nonnull NSString*)scriptId
+RCT_EXPORT_METHOD(prefetchScript:(nonnull NSString*)scriptId
                   config:(nonnull NSDictionary*)configDictionary
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
@@ -80,7 +80,7 @@ RCT_EXPORT_METHOD(preloadScript:(nonnull NSString*)scriptId
     }
     
     if (!config.fetch) {
-        // Do nothing, script is already preloaded
+        // Do nothing, script is already prefetched
         resolve(nil);
     } else {
         [self runInBackground:^(){

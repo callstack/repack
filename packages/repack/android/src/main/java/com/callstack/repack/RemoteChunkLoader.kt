@@ -98,7 +98,7 @@ class RemoteScriptLoader(private val reactContext: ReactContext) {
     }
 
 
-    fun preload(config: ScriptConfig, promise: Promise) {
+    fun prefetch(config: ScriptConfig, promise: Promise) {
         downloadAndCache(config, { promise.resolve(null) }, { code, message -> promise.reject(code, message) })
     }
 

@@ -29,8 +29,8 @@ ScriptManager.on('resolved', (...args) => {
   console.log('DEBUG/resolved', ...args);
 });
 
-ScriptManager.on('preloading', (...args) => {
-  console.log('DEBUG/preloading', ...args);
+ScriptManager.on('prefetching', (...args) => {
+  console.log('DEBUG/prefetching', ...args);
 });
 
 ScriptManager.on('loading', (...args) => {

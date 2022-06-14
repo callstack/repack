@@ -18,15 +18,77 @@ const CACHE_KEY = `Repack.ScriptManager.Cache.v3.${
   __DEV__ ? 'debug' : 'release'
 }`;
 
+/**
+ * A manager to ease resolution, downloading and executing additional code from:
+ * - arbitrary JavaScript scripts
+ * - Webpack chunks
+ * - Webpack bundles
+ * - Webpack MF containers
+ *
+ * This API is mainly useful, if you are working with any form of Code Splitting.
+ *
+ * `ScriptManager` is also an `EventEmitter` and emits the following events:
+ * - `resolving` with `{ scriptId, caller }`
+ * - `resolved` with `scriptLocator: NormalizedScriptLocator`
+ * - `prefetching` with `scriptLocator: NormalizedScriptLocator`
+ * - `loading` with `scriptLocator: NormalizedScriptLocator`
+ * - `loaded` with `scriptLocator: NormalizedScriptLocator`
+ * - `error` with `error: Error`
+ *
+ * Example of using this API with async Webpack chunk:
+ * ```js
+ * import * as React from 'react';
+ * import { ScriptManager, Script } from '@callstack/repack/client';
+ *
+ * ScriptManager.configure({
+ *   resolve: async (scriptId) => {
+ *     if (__DEV__) {
+ *       return {
+ *         url: Script.getDevServerURL(scriptId);
+ *         cache: false,
+ *       };
+ *     }
+ *
+ *     return {
+ *       url: Script.getRemoteURL(`http://domain.exaple/apps/${scriptId}`),
+ *     };
+ *   },
+ * });
+ *
+ * // ScriptManager.loadScript is called internally when running `import()`
+ * const TeacherModule = React.lazy(() => import('./Teacher.js'));
+ * const StudentModule = React.lazy(() => import('./Student.js'));
+ *
+ * export function App({ role }) {
+ *   if (role === 'teacher') {
+ *     return <TeacherModule />;
+ *   }
+ *
+ *   return <StudentModule />
+ * }
+ * ```
+ */
 export class ScriptManagerAPI extends EventEmitter {
-  constructor(private nativeModule: any) {
-    super();
-  }
-
   private cache?: Cache;
   private resolve?: ScriptLocatorResolver;
   private storage?: StorageApi;
 
+  /**
+   * Constructs instance of `ScriptManagerAPI`.
+   * Should not be used directly.
+   *
+   * @internal
+   */
+  constructor(private nativeModule: any) {
+    super();
+  }
+
+  /**
+   * Configures `ScriptManager` to be able to resolve location of scripts.
+   * Optionally, it also allows to set up caching to avoid over-fetching.
+   *
+   * @param config Configuration options.
+   */
   configure(config: ScriptManagerConfig) {
     this.storage = config.storage;
     this.resolve = config.resolve;
@@ -66,6 +128,18 @@ export class ScriptManagerAPI extends EventEmitter {
     throw error;
   }
 
+  /**
+   * Resolves a {@link Script} instance with normalized locator data.
+   *
+   * Use `ScriptManager.on('resolving', ({ scriptId, caller }) => { })` to listen for when
+   * the script resolution begins.
+   *
+   * Use `ScriptManager.on('resolved', (scriptLocator) => { })` to listen for when
+   * the script's locator data is resolved.
+   *
+   * @param scriptId Id of the script to resolve.
+   * @param caller Name of the calling script - it can be for example: name of the bundle, chunk or container.
+   */
   async resolveScript(scriptId: string, caller?: string): Promise<Script> {
     await this.initCache();
     try {
@@ -101,6 +175,19 @@ export class ScriptManagerAPI extends EventEmitter {
     }
   }
 
+  /**
+   * Resolves given script's location, downloads and executes it.
+   * The execution of the code is handled internally by threading in React Native.
+   *
+   * Use `ScriptManager.on('loading', (scriptLocator) => { })` to listen for when
+   * the script is about to be loaded.
+   *
+   * Use `ScriptManager.on('loaded', (scriptLocator) => { })` to listen for when
+   * the script is loaded.
+   *
+   * @param scriptId Id of the script to load.
+   * @param caller Name of the calling script - it can be for example: name of the bundle, chunk or container.
+   */
   async loadScript(scriptId: string, caller?: string) {
     let script = await this.resolveScript(scriptId, caller);
 
@@ -134,23 +221,43 @@ export class ScriptManagerAPI extends EventEmitter {
     });
   }
 
-  async preloadScript(scriptId: string, caller?: string) {
+  /**
+   * Resolves given script's location and downloads it without executing.
+   * This function can be awaited to detect if the script was downloaded and for error handling.
+   *
+   * Use `ScriptManager.on('prefetching', (scriptLocator) => { })` to listen for when
+   * the script's prefetch beings.
+   *
+   * @param scriptId Id of the script to prefetch.
+   * @param caller Name of the calling script - it can be for example: name of the bundle, chunk or container.
+   */
+  async prefetchScript(scriptId: string, caller?: string) {
     let script = await this.resolveScript(scriptId, caller);
 
     try {
-      this.emit('preloading', script.locator);
-      await this.nativeModule.preloadScript(scriptId, script.locator);
+      this.emit('prefetching', script.locator);
+      await this.nativeModule.prefetchScript(scriptId, script.locator);
     } catch (error) {
       const { code } = error as Error & { code: string };
       this.handleError(
         error,
-        '[ScriptManager] Failed to preload script:',
+        '[ScriptManager] Failed to prefetch script:',
         code ? `[${code}]` : '',
         script.locator
       );
     }
   }
 
+  /**
+   * Clears the cache (if configured in {@link ScriptManager.configure}) and removes downloaded
+   * files for given scripts from the filesystem. This function can be awaited to detect if the
+   * scripts were invalidated and for error handling.
+   *
+   * Use `ScriptManager.on('invalidated', (scriptIds) => { })` to listen for when
+   * the invalidation completes.
+   *
+   * @param scriptIds Array of script ids to clear from cache and remove from filesystem.
+   */
   async invalidateScripts(scriptIds: string[] = []) {
     try {
       await this.initCache();

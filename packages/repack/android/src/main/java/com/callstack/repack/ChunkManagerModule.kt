@@ -49,16 +49,16 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ReactContextB
 }
 
 @ReactMethod
-fun preloadScript(scriptId: String, configMap: ReadableMap, promise: Promise) {
+fun prefetchScript(scriptId: String, configMap: ReadableMap, promise: Promise) {
     val config = ScriptConfig.fromReadableMap(scriptId, configMap)
     if (!config.fetch) {
-        // Do nothing, script is already preloaded
+        // Do nothing, script is already prefetched
         promise.resolve(null);
     } else {
         runInBackground {
             when {
                 config.url.protocol.startsWith("http") -> {
-                    remoteLoader.preload(config, promise)
+                    remoteLoader.prefetch(config, promise)
                 }
                 else -> {
                     promise.reject(

@@ -9,7 +9,7 @@ const Remote = React.lazy(() =>
 );
 
 export const RemoteContainer = () => {
-  const [isPreloaded, setIsPreloaded] = useState(false);
+  const [isPrefetched, setIsPrefetched] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
@@ -21,11 +21,11 @@ export const RemoteContainer = () => {
       ) : (
         <>
           <Button
-            title={isPreloaded ? 'Preloaded' : 'Preload chunk'}
-            disabled={isPreloaded}
+            title={isPrefetched ? 'Prefetched' : 'Prefetch chunk'}
+            disabled={isPrefetched}
             onPress={async () => {
-              await ScriptManager.preloadScript(RemoteChunkId);
-              setIsPreloaded(true);
+              await ScriptManager.prefetchScript(RemoteChunkId);
+              setIsPrefetched(true);
             }}
           />
 
