@@ -25,7 +25,8 @@ export default (env) => {
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
-    reactNativePath = new URL('./node_modules/react-native', import.meta.url).pathname,
+    reactNativePath = new URL('./node_modules/react-native', import.meta.url)
+      .pathname,
   } = env;
   const dirname = Repack.getDirname(import.meta.url);
 
@@ -211,7 +212,7 @@ export default (env) => {
        * Configure other required and additional plugins to make the bundle
        * work in React Native and provide good development experience with
        * sensible defaults.
-       * 
+       *
        * `Repack.RepackPlugin` provides some degree of customization, but if you
        * need more control, you can replace `Repack.RepackPlugin` with plugins
        * from `Repack.plugins`.

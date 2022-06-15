@@ -210,7 +210,7 @@ module.exports = (env) => {
        * Configure other required and additional plugins to make the bundle
        * work in React Native and provide good development experience with
        * sensible defaults.
-       * 
+       *
        * `Repack.RepackPlugin` provides some degree of customization, but if you
        * need more control, you can replace `Repack.RepackPlugin` with plugins
        * from `Repack.plugins`.
