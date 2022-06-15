@@ -1,7 +1,7 @@
 const path = require('path');
-const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const ReactNative = require('@callstack/repack');
+const webpack = require('../../node_modules/webpack');
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
@@ -18,7 +18,7 @@ const ReactNative = require('@callstack/repack');
  * @param env Environment options passed from either Webpack CLI or React Native CLI
  *            when running with `react-native start/bundle`.
  */
-module.exports = (env) => {
+module.exports = env => {
   const {
     mode = 'development',
     context = __dirname,
@@ -179,7 +179,7 @@ module.exports = (env) => {
          */
         {
           test: ReactNative.getAssetExtensionsRegExp(
-            ReactNative.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+            ReactNative.ASSET_EXTENSIONS.filter(ext => ext !== 'svg'),
           ),
           use: {
             loader: '@callstack/repack/assets-loader',
