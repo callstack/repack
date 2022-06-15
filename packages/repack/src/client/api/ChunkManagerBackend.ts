@@ -112,7 +112,7 @@ export class ChunkManagerBackend {
       }
 
       if (config.headers instanceof Headers) {
-        config.headers.forEach((value, key) => {
+        config.headers.forEach((value: string, key: string) => {
           headers = headers ?? {};
           headers[key.toLowerCase()] = value;
         });
