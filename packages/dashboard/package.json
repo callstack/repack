@@ -2,10 +2,8 @@
   "name": "dashboard",
   "private": true,
   "version": "1.0.0",
-  "workspaces": {
-    "nohoist": [
-      "**"
-    ]
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack -c webpack.config.js",
