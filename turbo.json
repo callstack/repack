@@ -11,15 +11,18 @@
       "outputs": ["docs/**"]
     },
     "lint": {
-      "dependsOn": [],
+      "dependsOn": ["build"],
+      "inputs": ["src/**"],
       "outputs": []
     },
     "typecheck": {
       "dependsOn": ["build"],
+      "inputs": ["src/**"],
       "outputs": []
     },
     "test": {
-      "dependsOn": [],
+      "dependsOn": ["build"],
+      "inputs": ["src/**"],
       "outputs": []
     }
   }

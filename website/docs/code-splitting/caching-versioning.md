@@ -11,11 +11,11 @@ are excluded.
 :::
 
 Providing `storage` options to
-[`ChunkManager.configure(...)`](../api/react-native/classes/ChunkManager#configure) will enable
+[`ChunkManager.configure(...)`](../api/repack/classes/ChunkManager#configure) will enable
 caching of downloaded chunks/scripts/containers. The `storage` option accepts anything with similar
 API to `AsyncStorage`'s `getItem`, `setItem` and `removeItem` functions.
 
-By default, [`ChunkManager`](../api/react-native/classes/ChunkManager) will compare the `url`
+By default, [`ChunkManager`](../api/repack/classes/ChunkManager) will compare the `url`
 returned by `resolveRemoteChunk` with the values stored in `storage` to determine if downloading if
 necessary. Skipping the download will only happen if the values are equal, meaning you can introduce
 versioning by changing the `url`, for example:
@@ -56,7 +56,7 @@ might end up with broken application or crashes.
 :::
 
 Usually cache invalidation happens automatically, but it's possible to invalidate chunk manually as
-well using [`ChunkManager.invalidateChunks(...)`](../api/react-native/classes/ChunkManager#invalidatechunks)
+well using [`ChunkManager.invalidateChunks(...)`](../api/repack/classes/ChunkManager#invalidatechunks)
 API which removes the chunks from filesystem and from the `storage`.
 
 :::warning

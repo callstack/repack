@@ -3905,7 +3905,7 @@ __metadata:
     lodash.throttle: ^4.1.1
     memfs: ^3.4.4
     mime-types: ^2.1.35
-    node-fetch: ^3.0.0
+    node-fetch: ^2.6.7
     pretty-format: ^26.6.2
     react-native: ^0.64.1
     release-it: ^14.10.0

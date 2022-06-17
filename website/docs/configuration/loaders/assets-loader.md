@@ -39,7 +39,7 @@ module.exports = {
 
 :::info
 
-Assets loader should be used in combination with [AssetsResolverPlugin](/docs/api/node/classes/AssetsResolverPlugin)
+Assets loader should be used in combination with [AssetsResolverPlugin](/docs/api/repack/classes/AssetsResolverPlugin)
 to work correctly and process scales: `@1x`, `@2x` and so on.
 
 :::

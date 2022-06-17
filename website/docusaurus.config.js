@@ -6,10 +6,10 @@ module.exports = {
   title: 'Re.Pack',
   tagline:
     'A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.',
-  url: 'https://re-pack.netlify.app/',
+  url: 'https://re-pack.netlify.app',
   baseUrl: '/',
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'throw',
+  onBrokenLinks: 'warn',
+  onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'Callstack',
   projectName: 'Re.Pack',
@@ -70,7 +70,7 @@ module.exports = {
             },
             {
               label: 'API',
-              to: '/docs/api/',
+              to: '/docs/api/about',
             },
             {
               label: '@callstack/repack API',

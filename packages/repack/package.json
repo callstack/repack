@@ -40,7 +40,7 @@
   "scripts": {
     "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start",
     "build:js:watch": "yarn build:js --watch",
-    "build:ts": "tsc",
+    "build:ts": "tsc --emitDeclarationOnly",
     "build:ts:watch": "yarn build:ts --watch --preserveWatchOutput",
     "build": "yarn build:js && yarn build:ts",
     "docs": "typedoc",
@@ -99,7 +99,7 @@
     "babel-loader": "^8.2.2",
     "eslint": "^7.30.0",
     "jest": "^26.6.3",
-    "node-fetch": "^3.0.0",
+    "node-fetch": "^2.6.7",
     "react-native": "^0.64.1",
     "release-it": "^14.10.0",
     "terser-webpack-plugin": "^5.1.3",

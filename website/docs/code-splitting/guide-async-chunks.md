@@ -103,7 +103,7 @@ At this point all the code used by `StudentSide.js` will be put into `student.ch
 
 If you try to render `Home` component in your application, it should work in development
 (the development server must be running). For production however, there's an additional step
-necessary - to configure [`ChunkManager`](../api/react-native/classes/ChunkManager):
+necessary - to configure [`ChunkManager`](../api/repack/classes/ChunkManager):
 
 ```js
 // index.js
@@ -129,7 +129,7 @@ ChunkManager.configure({
 AppRegistry.registerComponent(appName, () => App);
 ```
 
-This code will allow Re.Pack's [`ChunkManager`](../api/react-native/classes/ChunkManager) to
+This code will allow Re.Pack's [`ChunkManager`](../api/repack/classes/ChunkManager) to
 actually locate your chunks for the student and the teacher, and download them.
 
 When bundling for production/release, all remote chunks, including `student.chunk.bundle` and
@@ -138,8 +138,8 @@ You should upload files from this directory to a remote server or a CDN from whe
 will download them.
 
 You can change remote chunks output directory using
-[`remoteChunksOutput`](../api/node/interfaces/OutputPluginConfig#remotechunksoutput)
-in [`OutputPlugin`](../api/node/classes/OutputPlugin) configuration.
+[`remoteChunksOutput`](../api/repack/interfaces/OutputPluginConfig#remotechunksoutput)
+in [`OutputPlugin`](../api/repack/classes/OutputPlugin) configuration.
 
 ## Local vs remote chunks
 
@@ -156,14 +156,14 @@ want to have *pre-built* features/modules.
 :::info
 
 Local chunks will not be copied into `<projectRoot>/build/<platform>/remote` (or directory specified
-in [`remoteChunksOutput`](../api/node/interfaces/OutputPluginConfig#remotechunksoutput)).
+in [`remoteChunksOutput`](../api/repack/interfaces/OutputPluginConfig#remotechunksoutput)).
 They will be automatically copied to appropriate locations by
-[`OutputPlugin`](../api/node/classes/OutputPlugin).
+[`OutputPlugin`](../api/repack/classes/OutputPlugin).
 
 :::
 
 To mark a chunk as a local chunk, you need to add it's name or a RegExp matching the chunk's name to
-[`OutputPlugin`'s `localChunks` option](../api/node/interfaces/OutputPluginConfig#localchunks) in
+[`OutputPlugin`'s `localChunks` option](../api/repack/interfaces/OutputPluginConfig#localchunks) in
 your Webpack config.
 
 For example, if we know they majority of the users will be students, it would make sense to make 
