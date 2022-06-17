@@ -74,7 +74,7 @@ export class RepackPlugin implements WebpackPlugin {
         'remote'
       ),
       ...this.config.output,
-    });
+    }).apply(compiler);
 
     new DevelopmentPlugin({
       platform: this.config.platform,
