@@ -1,11 +1,9 @@
-name: CI
+name: Test
 
 on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
-
   workflow_dispatch:
 
 jobs:
@@ -13,25 +11,25 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node_version: ['12', '14']
+        node_version: ['14', '16']
         os: [ubuntu-latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       
       - name: Use Node.js ${{ matrix.node_version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
 
       - name: Install dependencies
-        run: yarn
+        run: yarn install
 
       - name: Lint
         run: yarn lint
         
       - name: Type check
-        run: yarn tsc
+        run: yarn typecheck
         
       - name: Run tests
         run: yarn test

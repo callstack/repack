@@ -8,7 +8,8 @@
       "./packages/repack",
       "./packages/TesterApp",
       "./packages/debugger-app",
-      "./packages/dashboard"
+      "./packages/dashboard",
+      "./website"
     ]
   },
   "scripts": {
@@ -17,6 +18,8 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "release": "yarn prepare && cp README.md packages/repack && yarn workspace @callstack/repack run release",
+    "website:start": "turbo run docs && yarn workspace website run start",
+    "website:build": "turbo run docs && yarn workspace website run build",
     "TesterApp:start": "turbo run build && yarn workspace testerapp run start",
     "TesterApp:bundle": "turbo run build && yarn workspace testerapp run bundle"
   },

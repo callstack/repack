@@ -5,15 +5,20 @@
     "build": {
       "dependsOn": ["^build"]
     },
+    "docs": {
+      "dependsOn": ["^docs"],
+      "inputs": ["src/**"],
+      "outputs": ["docs/**"]
+    },
     "lint": {
       "dependsOn": [],
       "outputs": []
     },
-    "test": {
-      "dependsOn": [],
+    "typecheck": {
+      "dependsOn": ["build"],
       "outputs": []
     },
-    "typecheck": {
+    "test": {
       "dependsOn": [],
       "outputs": []
     }

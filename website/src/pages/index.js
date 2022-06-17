@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import useThemeContext from '@theme/hooks/useThemeContext';
+import { useColorMode } from '@docusaurus/theme-common';
 import HomepageFeatures from '../components/HomepageFeatures';
 import Banner from '../../static/img/banner.svg';
 import MobileApp from '../../static/img/undraw_Mobile_app_re_catg.svg';
@@ -11,7 +11,8 @@ import styles from './index.module.css';
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
-  const { isDarkTheme } = useThemeContext();
+  const { colorMode } = useColorMode();
+  const isDarkTheme = colorMode === 'dark';
 
   return (
     <header

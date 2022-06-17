@@ -1,16 +1,3 @@
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# Swap the comments on the following lines if you don't wish to use zero-installs
-# Documentation here: https://yarnpkg.com/features/zero-installs
-# !.yarn/cache
-#.pnp.*
-
-
 # Created by https://www.toptal.com/developers/gitignore/api/node,reactnative
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,reactnative
 
@@ -381,14 +368,25 @@ Temporary Items
 
 # End of https://www.toptal.com/developers/gitignore/api/node,reactnative
 
-website/data/generated
-!website/vendor/*/dist
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Swap the comments on the following lines if you don't wish to use zero-installs
+# Documentation here: https://yarnpkg.com/features/zero-installs
+# !.yarn/cache
+#.pnp.*
 
 # Local Netlify folder
 .netlify
 
+# Custom
 first-party
-packages/repack/README.md
-packages/*/android/.idea/
-packages/repack/gradle*
-packages/repack/android/gradle*
+docs
+website/docs/api/**
+!website/docs
+.docusaurus

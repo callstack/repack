@@ -1,13 +1,15 @@
-name: Deploy
+name: Deploy PR
 
 on:
-  push:
+  pull_request:
     branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  website:
+  preview_website:
     runs-on: ubuntu-latest
+    # Skip running on forks since it won't have access to secrets
+    if: github.repository == 'callstack/repack'
 
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +20,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 14
-      
+
       - name: Install dependencies
         run: yarn install
 

@@ -9,7 +9,7 @@ module.exports = {
   url: 'https://re-pack.netlify.app/',
   baseUrl: '/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenMarkdownLinks: 'throw',
   favicon: 'img/favicon.ico',
   organizationName: 'Callstack',
   projectName: 'Re.Pack',
@@ -38,15 +38,9 @@ module.exports = {
         },
         {
           type: 'doc',
-          docId: 'api/react-native/index',
+          docId: 'api/about',
           position: 'left',
-          label: 'React Native API',
-        },
-        {
-          type: 'doc',
-          docId: 'api/node/index',
-          position: 'left',
-          label: 'Node API',
+          label: 'API',
         },
         // {
         //   to: '/blog',
@@ -75,12 +69,16 @@ module.exports = {
               to: '/docs/configuration/webpack-config',
             },
             {
-              label: 'React native API',
-              to: '/docs/api/react-native/index',
+              label: 'API',
+              to: '/docs/api/',
             },
             {
-              label: 'Node API',
-              to: '/docs/api/node/index',
+              label: '@callstack/repack API',
+              to: '/docs/api/repack/index',
+            },
+            {
+              label: '@callstack/dev-server API',
+              to: '/docs/api/dev-server/index',
             },
           ],
         },
