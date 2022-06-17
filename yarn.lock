@@ -7269,6 +7269,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/get-port@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "@types/get-port@npm:4.2.0"
+  dependencies:
+    get-port: "*"
+  checksum: 0c084e946089d310b2cfe130b0e4b8c25124800dfba069b756a4477a2e9cb9fabf4f5f59747d987492cbf25b72a24692f6bf1aee1fbfdc47411916221075eba3
+  languageName: node
+  linkType: hard
+
 "@types/glob@npm:^7.1.1":
   version: 7.2.0
   resolution: "@types/glob@npm:7.2.0"
@@ -16189,6 +16198,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"get-port@npm:*, get-port@npm:^6.1.2":
+  version: 6.1.2
+  resolution: "get-port@npm:6.1.2"
+  checksum: e3c3d591492a11393455ef220f24c812a28f7da56ec3e4a2512d931a1f196d42850b50ac6138349a44622eda6dc3c0ccd8495cd91376d968e2d9e6f6f849e0a9
+  languageName: node
+  linkType: hard
+
 "get-port@npm:^5.1.0":
   version: 5.1.1
   resolution: "get-port@npm:5.1.1"
@@ -22594,7 +22610,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^3.1.1":
+"node-fetch@npm:^3.1.1, node-fetch@npm:^3.2.6":
   version: 3.2.6
   resolution: "node-fetch@npm:3.2.6"
   dependencies:
@@ -29099,13 +29115,16 @@ __metadata:
     "@callstack/repack": "*"
     "@react-native-async-storage/async-storage": ^1.15.4
     "@svgr/webpack": ^6.2.1
+    "@types/get-port": ^4.2.0
     "@types/react-native": ^0.67.3
     babel-loader: ^8.2.5
     eslint: ^8.17.0
     execa: ^6.1.0
+    get-port: ^6.1.2
     globby: ^13.1.2
     lodash.throttle: ^4.1.1
     metro-react-native-babel-preset: ^0.67.0
+    node-fetch: ^3.2.6
     react: 17.0.2
     react-native: 0.68.2
     react-native-svg: ^12.1.1
