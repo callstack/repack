@@ -40,7 +40,7 @@ export async function bundle(
   } as CliOptions;
 
   process.env[CLI_OPTIONS_ENV_KEY] = JSON.stringify(cliOptions);
-  if (process.argv.includes('--verbose')) {
+  if (args.verbose ?? process.argv.includes('--verbose')) {
     process.env[VERBOSE_ENV_KEY] = '1';
   }
 

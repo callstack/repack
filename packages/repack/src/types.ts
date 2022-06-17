@@ -72,6 +72,9 @@ export interface StartArguments extends CommonArguments {
   key?: string;
   port?: number;
   interactive?: boolean;
+  silent?: boolean;
+  verbose?: boolean;
+  logFile?: string;
 }
 
 /**

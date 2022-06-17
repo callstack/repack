@@ -9,7 +9,9 @@ import { DEFAULT_PORT } from '../env';
 import {
   composeReporters,
   ConsoleReporter,
+  FileReporter,
   makeLogEntryFromFastifyLog,
+  Reporter,
 } from '../logging';
 import { Compiler } from '../webpack/Compiler';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
@@ -44,16 +46,22 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     },
   };
 
-  const isVerbose = process.argv.includes('--verbose');
-  const reporter = composeReporters([
-    new ConsoleReporter({
-      isVerbose,
-    }),
-  ]);
+  const isSilent = args.silent;
+  const isVerbose = isSilent
+    ? false
+    : args.verbose ?? process.argv.includes('--verbose');
+  const reporter = composeReporters(
+    [
+      new ConsoleReporter({
+        level: isSilent ? 'silent' : isVerbose ? 'verbose' : 'normal',
+      }),
+      args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
+    ].filter(Boolean) as Reporter[]
+  );
   const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
   const { createServer } = await import('@callstack/repack-dev-server');
-  const { start } = await createServer({
+  const { start, stop } = await createServer({
     options: {
       rootDir: cliOptions.config.root,
       host: args.host,
@@ -161,6 +169,13 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   });
 
   await start();
+
+  return {
+    stop: async () => {
+      reporter.stop();
+      await stop();
+    },
+  };
 }
 
 function bindKeypressInput(ctx: Server.DelegateContext) {

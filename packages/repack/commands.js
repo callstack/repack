@@ -71,7 +71,21 @@ module.exports = [
   },
   {
     name: 'webpack-start',
-    options: startCommand.options.concat(webpackConfigOption),
+    options: startCommand.options.concat(
+      {
+        name: '--verbose',
+        description: 'Enables verbose logging',
+      },
+      {
+        name: '--silent',
+        description: 'Silents all logs to the console/stdout',
+      },
+      {
+        name: '--log-file <string>',
+        description: 'Enables file logging to specified file',
+      },
+      webpackConfigOption
+    ),
     description: startCommand.description,
     func: require('./dist/commands/start').start,
   },
