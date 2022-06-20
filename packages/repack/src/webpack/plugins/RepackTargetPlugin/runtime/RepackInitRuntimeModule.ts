@@ -10,15 +10,9 @@ export class RepackInitRuntimeModule extends webpack.RuntimeModule {
   }
 
   generate() {
-    const init = require('./implementation/init');
-    console.log('DEBUG/init', init);
-
-    const fn = webpack.Template.getFunctionContent(init);
-    console.log('DEBUG/fn', fn);
-
     return webpack.Template.asString([
       '// Repack runtime initialization logic',
-      fn
+      webpack.Template.getFunctionContent(require('./implementation/init'))
         .replaceAll('$chunkId$', `"${this.chunkId ?? 'unknown'}"`)
         .replaceAll('$chunkLoadingGlobal$', `"${this.chunkLoadingGlobal}"`)
         .replaceAll('$globalObject$', this.globalObject),

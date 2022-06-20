@@ -1,3 +1,4 @@
+import './shims';
 import { AssetsResolverPlugin } from './webpack/plugins/AssetsResolverPlugin';
 import { DevelopmentPlugin } from './webpack/plugins/DevelopmentPlugin';
 import { JavaScriptLooseModePlugin } from './webpack/plugins/JavaScriptLooseModePlugin';

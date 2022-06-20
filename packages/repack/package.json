@@ -74,6 +74,7 @@
     "pretty-format": "^26.6.2",
     "schema-utils": "^3.0.0",
     "shallowequal": "^1.1.0",
+    "string.prototype.replaceall": "^1.0.6",
     "tapable": "^2.1.1"
   },
   "devDependencies": {
