@@ -80,18 +80,5 @@ export class RepackTargetPlugin implements WebpackPlugin {
           return true;
         });
     });
-
-    // const renderBootstrap =
-    //   webpack.javascript.JavascriptModulesPlugin.prototype.renderBootstrap;
-    // webpack.javascript.JavascriptModulesPlugin.prototype.renderBootstrap =
-    //   function (...args) {
-    //     const result = renderBootstrap.call(this, ...args);
-    //     result.afterStartup.push('');
-    //     result.afterStartup.push('// Re.Pack after startup');
-    //     result.afterStartup.push(
-    //       `__repack__.loadChunkCallback.push("${args[0].chunk.id}")`
-    //     );
-    //     return result;
-    //   };
   }
 }
