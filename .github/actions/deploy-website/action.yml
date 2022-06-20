@@ -18,20 +18,15 @@ runs:
       run: yarn website:build
       shell: sh
 
-    - name: Deploy website in preview mode
-      if: ${{ !inputs.production }}
+    - name: Deploy website
       working-directory: website
-      run: yarn netlify deploy --dir=build
-      shell: sh
-      env:
-        NETLIFY_AUTH_TOKEN: ${{ inputs.netlify-auth-token }}
-        NETLIFY_SITE_ID: ${{ inputs.netlify-site-id }}
-
-    - name: Deploy website to production
-      if: ${{ inputs.production }}
-      working-directory: website
-      run: yarn netlify deploy --dir=build --prod
-      shell: sh
+      run: |
+        if [[ "${{ inputs.production }}" == "true" ]]; then
+          yarn netlify deploy --dir=build --prod
+        else
+          yarn netlify deploy --dir=build
+        fi
+      shell: bash
       env:
         NETLIFY_AUTH_TOKEN: ${{ inputs.netlify-auth-token }}
         NETLIFY_SITE_ID: ${{ inputs.netlify-site-id }}
