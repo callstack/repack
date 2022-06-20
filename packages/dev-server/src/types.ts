@@ -4,7 +4,14 @@ import type { SymbolicatorDelegate } from './plugins/symbolicate';
 import type { HmrDelegate } from './plugins/wss';
 
 export type { CompilerDelegate } from './plugins/compiler';
-export type { SymbolicatorDelegate } from './plugins/symbolicate';
+export type {
+  SymbolicatorDelegate,
+  ReactNativeStackFrame,
+  InputStackFrame,
+  StackFrame,
+  CodeFrame,
+  SymbolicatorResults,
+} from './plugins/symbolicate';
 export type { HmrDelegate } from './plugins/wss';
 
 export namespace Server {

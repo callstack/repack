@@ -1,0 +1,32 @@
+name: 'Deploy website'
+description: 'Builds and deploys Re.Pack website to Netlify'
+inputs:
+  production:
+    description: 'Should the website be deployed to production'
+    required: false
+    default: false
+  netlify-auth-token:
+    description: 'Netlify auth token'
+    required: true
+  netlify-site-id:
+    description: 'Netlify site ID'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Build website
+      run: yarn website:build
+      shell: sh
+
+    - name: Deploy website
+      working-directory: website
+      run: |
+        if [[ "${{ inputs.production }}" == "true" ]]; then
+          yarn netlify deploy --dir=build --prod
+        else
+          yarn netlify deploy --dir=build
+        fi
+      shell: bash
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ inputs.netlify-auth-token }}
+        NETLIFY_SITE_ID: ${{ inputs.netlify-site-id }}

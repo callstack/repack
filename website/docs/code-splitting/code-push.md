@@ -13,7 +13,7 @@ The process of using Code Push with Code SPlitting could be described as follows
 2. Upload remote chunks/scripts/containers to a server/CDN.
 3. Release application to the store.
 4. Make changes to the code.
-5. **Change the `url` in [`ChunkManager.configure(...)`](../api/react-native/classes/ChunkManager#configure)**.
+5. **Change the `url` in [`ChunkManager.configure(...)`](../api/repack/classes/ChunkManager#configure)**.
 6. Bundle the application using Webpack and Re.Pack (and build other scripts and containers when
 using Scripts/Module Federation approach).
 7. Upload remote chunks/scripts/containers to a server/CDN **under new `url` from point 5**.
