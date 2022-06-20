@@ -386,7 +386,7 @@ Temporary Items
 
 # Custom
 first-party
-docs
+packages/**/docs
 website/docs/api/**
-!website/docs
+!website/docs/api/about.md
 .docusaurus
