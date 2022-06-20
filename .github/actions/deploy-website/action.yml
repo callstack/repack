@@ -16,19 +16,22 @@ runs:
   steps:
     - name: Build website
       run: yarn website:build
+      shell: bash
 
     - name: Deploy website in preview mode
       if: ${{ !inputs.production }}
       working-directory: website
       run: yarn netlify deploy --dir=build
+      shell: bash
       env:
-        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        NETLIFY_AUTH_TOKEN: ${{ inputs.netlify-auth-token }}
+        NETLIFY_SITE_ID: ${{ inputs.netlify-site-id }}
 
     - name: Deploy website to production
       if: ${{ inputs.production }}
       working-directory: website
       run: yarn netlify deploy --dir=build --prod
+      shell: bash
       env:
-        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        NETLIFY_AUTH_TOKEN: ${{ inputs.netlify-auth-token }}
+        NETLIFY_SITE_ID: ${{ inputs.netlify-site-id }}
