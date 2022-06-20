@@ -16,13 +16,13 @@ runs:
   steps:
     - name: Build website
       run: yarn website:build
-      shell: bash
+      shell: sh
 
     - name: Deploy website in preview mode
       if: ${{ !inputs.production }}
       working-directory: website
       run: yarn netlify deploy --dir=build
-      shell: bash
+      shell: sh
       env:
         NETLIFY_AUTH_TOKEN: ${{ inputs.netlify-auth-token }}
         NETLIFY_SITE_ID: ${{ inputs.netlify-site-id }}
@@ -31,7 +31,7 @@ runs:
       if: ${{ inputs.production }}
       working-directory: website
       run: yarn netlify deploy --dir=build --prod
-      shell: bash
+      shell: sh
       env:
         NETLIFY_AUTH_TOKEN: ${{ inputs.netlify-auth-token }}
         NETLIFY_SITE_ID: ${{ inputs.netlify-site-id }}
