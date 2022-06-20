@@ -11,6 +11,7 @@
   },
   "files": [
     "dist",
+    "docs",
     "vendor"
   ],
   "homepage": "https://github.com/callstack/repack",
@@ -36,6 +37,7 @@
     "build:ts": "tsc --emitDeclarationOnly",
     "build:ts:watch": "yarn build:ts --watch --preserveWatchOutput",
     "build": "yarn build:js && yarn build:ts",
+    "docs": "typedoc",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --ext \".js,.ts\" src"
   },
@@ -64,6 +66,8 @@
     "@types/ws": "^8.5.3",
     "babel-plugin-add-import-extension": "^1.6.0",
     "eslint": "^8.16.0",
+    "typedoc": "^0.22.17",
+    "typedoc-plugin-markdown": "^3.12.1",
     "typescript": "^4.7.2"
   }
 }

@@ -5,16 +5,24 @@
     "build": {
       "dependsOn": ["^build"]
     },
-    "lint": {
-      "dependsOn": [],
-      "outputs": []
+    "docs": {
+      "dependsOn": ["build", "^docs"],
+      "inputs": ["src/**"],
+      "outputs": ["docs/**"]
     },
-    "test": {
-      "dependsOn": [],
+    "lint": {
+      "dependsOn": ["build"],
+      "inputs": ["src/**"],
       "outputs": []
     },
     "typecheck": {
-      "dependsOn": [],
+      "dependsOn": ["build"],
+      "inputs": ["src/**"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "inputs": ["src/**"],
       "outputs": []
     }
   }
