@@ -58,16 +58,16 @@ module.exports = {
       label: 'Configuration',
       items: ['configuration/webpack-config', 'configuration/templates'],
     },
-    // {
-    //   type: 'category',
-    //   label: 'Loaders',
-    //   items: ['configuration/loaders/assets-loader'],
-    // },
-    // {
-    //   type: 'category',
-    //   label: 'Guides',
-    //   items: ['configuration/guides/svg'],
-    // },
+    {
+      type: 'category',
+      label: 'Loaders',
+      items: ['configuration/loaders/assets-loader'],
+    },
+    {
+      type: 'category',
+      label: 'Guides',
+      items: ['configuration/guides/svg'],
+    },
   ],
   packagesSidebar: [
     {
