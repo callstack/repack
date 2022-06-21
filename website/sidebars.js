@@ -68,32 +68,6 @@ module.exports = {
     //   label: 'Guides',
     //   items: ['configuration/guides/svg'],
     // },
-    // {
-    //   type: 'category',
-    //   label: 'Functions',
-    //   items: [
-    //     'api/repack/functions/getAssetExtensionsRegExp',
-    //     'api/repack/functions/getInitializationEntries',
-    //     'api/repack/functions/getPublicPath',
-    //     'api/repack/functions/getResolveOptions',
-    //     'api/repack/functions/getDirname',
-    //   ].map((docId) => ({ type: 'ref', id: docId })),
-    // },
-    // {
-    //   type: 'category',
-    //   label: 'Webpack Plugins',
-    //   items: [
-    //     'api/repack/classes/RepackPlugin',
-    //     'api/repack/classes/AssetsResolverPlugin',
-    //     'api/repack/classes/DevelopmentPlugin',
-    //     'api/repack/classes/JavaScriptLooseModePlugin',
-    //     'api/repack/classes/LoggerPlugin',
-    //     'api/repack/classes/ManifestPlugin',
-    //     'api/repack/classes/OutputPlugin',
-    //     'api/repack/classes/ReactRefreshPlugin',
-    //     'api/repack/classes/RepackTargetPlugin',
-    //   ].map((docId) => ({ type: 'ref', id: docId })),
-    // },
   ],
   packagesSidebar: [
     {

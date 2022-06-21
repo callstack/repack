@@ -1,9 +1,8 @@
-import { AppRegistry, Platform } from 'react-native';
+import { AppRegistry } from 'react-native';
 import { ScriptManager, Script } from '@callstack/repack/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import App from './src/App';
 import { name as appName } from './app.json';
-
 
 ScriptManager.configure({
   storage: AsyncStorage,
@@ -18,7 +17,7 @@ ScriptManager.configure({
     return {
       url: Script.getRemoteURL(`http://localhost:5000/${scriptId}`)
     };
-  }
+  },
 });
 
 ScriptManager.on('resolving', (...args) => {

@@ -98,30 +98,45 @@ export function Home({ user }) {
 }
 ```
 
+Since we are using Webpack's magic comments, we need to make sure Babel is not removing those.
+Add `comments: true` to your Babel config, for example:
+
+```js
+module.exports = {
+  presets: ['module:metro-react-native-babel-preset'],
+  comments: true,
+};
+```
+
 At this point all the code used by `StudentSide.js` will be put into `student.chunk.bundle` and
 `TeacherSide.js` into `teacher.chunk.bundle`.
 
-If you try to render `Home` component in your application, it should work in development
-(the development server must be running). For production however, there's an additional step
-necessary - to configure [`ChunkManager`](../api/repack/classes/ChunkManager):
+Before we can actually render out application, we need to configure [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI)
+so it can resolve out chunks:
 
 ```js
 // index.js
 import { AppRegistry } from 'react-native';
-import { ChunkManager } from '@callstack/repack/client';
+import { ScriptManager, Script } from '@callstack/repack/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import App from './src/App'; // Your application's root component
 import { name as appName } from './app.json';
 
-ChunkManager.configure({
+ScriptManager.configure({
   storage: AsyncStorage, // optional
-  resolveRemoteChunk: async (chunkId) => {
-    // Feel free to use any kind of remote config solution to obtain
-    // a base URL for the chunks, if you don't know where they will
-    // be hosted.
+  resolver: async (scriptId) => {
+    // `scriptId` will be either 'student' or 'teacher'
+
+    // In dev mode, resolve script location to dev server.
+    if (__DEV__) {
+      return {
+        url: Script.getDevServerURL(scriptId),
+        cache: false,
+      };
+    }
 
     return {
-      url: `http://my-domain.dev/${chunkId}`,
+      url: Script.getRemoteURL(`http://somewhere-on-the-internet.com/${scriptId}`)
     };
   },
 });
@@ -129,17 +144,17 @@ ChunkManager.configure({
 AppRegistry.registerComponent(appName, () => App);
 ```
 
-This code will allow Re.Pack's [`ChunkManager`](../api/repack/classes/ChunkManager) to
+This code will allow Re.Pack's [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI) to
 actually locate your chunks for the student and the teacher, and download them.
 
 When bundling for production/release, all remote chunks, including `student.chunk.bundle` and
 `teacher.chunk.bundle` will be copied to `<projectRoot>/build/<platform>/remote` by default.
-You should upload files from this directory to a remote server or a CDN from where `ChunkManager`
+You should upload files from this directory to a remote server or a CDN from where `ScriptManager`
 will download them.
 
-You can change remote chunks output directory using
-[`remoteChunksOutput`](../api/repack/interfaces/OutputPluginConfig#remotechunksoutput)
-in [`OutputPlugin`](../api/repack/classes/OutputPlugin) configuration.
+You can change this directory using
+[`remoteChunksOutput`](../api/repack/interfaces/plugins.OutputPluginConfig#remotechunksoutput)
+in [`RepackPlugin`](../api/repack/classes/RepackPlugin) or [`OutputPlugin`](../api/repack/classes/plugins.OutputPlugin) configuration.
 
 ## Local vs remote chunks
 
@@ -156,31 +171,38 @@ want to have *pre-built* features/modules.
 :::info
 
 Local chunks will not be copied into `<projectRoot>/build/<platform>/remote` (or directory specified
-in [`remoteChunksOutput`](../api/repack/interfaces/OutputPluginConfig#remotechunksoutput)).
-They will be automatically copied to appropriate locations by
-[`OutputPlugin`](../api/repack/classes/OutputPlugin).
+in [`remoteChunksOutput`](../api/repack/interfaces/plugins.OutputPluginConfig#remotechunksoutput)).
+They will be stored next to the main bundle.
 
 :::
 
 To mark a chunk as a local chunk, you need to add it's name or a RegExp matching the chunk's name to
-[`OutputPlugin`'s `localChunks` option](../api/repack/interfaces/OutputPluginConfig#localchunks) in
+[`localChunks`](../api/repack/interfaces/plugins.OutputPluginConfig#localchunks) in
 your Webpack config.
 
 For example, if we know they majority of the users will be students, it would make sense to make 
 `student` chunk a local chunk. To mark the `student` chunk as a local one, apply this diff to your
 Webpack configuration:
 
+If you're using [`RepackPlugin`](../api/repack/classes/RepackPlugin):
+
 ```diff
-    /**
-     * By default Webpack will emit files into `output.path` directory (eg: `<root>/build/ios`),
-     * but in order to for the React Native application to include those files (or a subset of those)
-     * they need to be copied over to correct output directories supplied from React Native CLI
-     * when bundling the code (with `webpack-bundle` command).
-     * In development mode (when development server is running), this plugin is a no-op.
-     */
-    new ReactNative.OutputPlugin({
-      platform,
-      devServerEnabled: devServer.enabled,
-+     localChunks: ['student'],
-    }),
+      new Repack.RepackPlugin({
+        mode,
+        platform,
+        devServer,
++       output: {
++         localChunks: ['student'],
++       },
+      }),
+```
+
+If you're using [`OutputPlugin`](../api/repack/classes/plugins.OutputPlugin):
+
+```diff
+      new ReactNative.OutputPlugin({
+        platform,
+        devServerEnabled: devServer.enabled,
++       localChunks: ['student'],
+      }),
 ```
