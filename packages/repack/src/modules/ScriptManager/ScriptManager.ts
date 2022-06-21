@@ -25,6 +25,10 @@ const CACHE_KEY = `Repack.ScriptManager.Cache.v3.${
  * - Webpack bundles
  * - Webpack MF containers
  *
+ * An instance of `ScriptManagerAPI` class is exported under `ScriptManager` constant.
+ *
+ * __You should always use `ScriptManager` constant instead of constructing `new ScriptManagerAPI(...)` yourself!__
+ *
  * This API is mainly useful, if you are working with any form of Code Splitting.
  *
  * `ScriptManager` is also an `EventEmitter` and emits the following events:

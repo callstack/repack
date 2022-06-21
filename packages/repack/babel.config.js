@@ -1,5 +1,6 @@
 module.exports = {
   presets: ['@babel/preset-typescript'],
+  plugins: ['@babel/plugin-proposal-export-namespace-from'],
   overrides: [
     {
       include: ['./src/**/runtime/implementation'],

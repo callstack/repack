@@ -1,20 +1,20 @@
-# Re.Pack 1.x to 2.x
+# Re.Pack 2.x to 3.x
 
-This guide shows how to upgrade from `@callstack/nativepack@1.x` to `@callstack/repack@2.x`.
+This guide shows how to upgrade from `@callstack/repack@2.x` to `@callstack/repack@3.x`.
 
 :::info
 
-`@callstack/repack` is rebranded `@callstack/nativepack` - they are both the same project.
+If you're upgrading from version `1.x`, we recommended you start with fresh Webpack config from our templates and reapply any changes you've added in the old config to the new one.
 
 :::
 
 ## Dependencies
 
-First, you need to update dependencies and replace `@callstack/nativepack` with `@callstack/repack` in your project's `package.json`:
+First, you need to update dependencies in your project's `package.json`:
 
 ```diff
-- "@callstack/nativepack": "^1.4.2"
-+ "@callstack/repack": "^2.0.0"
+- "@callstack/repack": "^2.0.0"
++ "@callstack/repack": "^3.0.0"
 ```
 
 :::tip
@@ -35,13 +35,20 @@ yarn install
 
 Every project is different and we have no way of knowing what your Webpack config looks like, so we cannot
 pin point every possible change you might need to do. Instead we provide a diff of our
-[Webpack config template](https://github.com/callstack/repack/blob/main/templates/webpack.config.js),
+[Webpack config template](https://github.com/callstack/repack/blob/main/templates/webpack.config.cjs),
 which you can use as a base to figure out what you need to change.
 
-Below is the diff of `template/webpack.config.js` between Re.Pack 1.x and 2.x:
+:::info
+
+The diff uses CJS template (`webpack.config.cjs`), since ESM was not supported in Re.Pack `2.x`,
+so the diff between 2 CJS templates will easier to read.
+
+:::
+
+Below is the diff of `template/webpack.config.js` between Re.Pack 2.x and 3.x:
 
 import CodeBlock from '@theme/CodeBlock';
-import webpackDiff from '!!raw-loader!../../static/diffs/repack_v1-v2.diff';
+import webpackDiff from '!!raw-loader!../../static/diffs/repack_v2-v3.diff';
 
 <CodeBlock language="diff">{webpackDiff}</CodeBlock>
 

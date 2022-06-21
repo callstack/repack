@@ -1,8 +1,8 @@
 # About
 
-`@callstack/repack` API documentation can be found here: [`@callstack/repack` API](./repack/index).
-You should use this link if you're using Re.Pack in your project to build React Native applications.
+API documentation for Re.Pack is split into few categories:
 
-Additionally Re.Pack provides API documentation for these packages as well:
+- [`@callstack/repack`](./repack/index) - documentation for APIs used to configure bundling or development processes: Webpack plugins, utilities and commands.
+- [`@callstack/repack/client`](./repack/client/index) - documentation for client-facing APIs, which you can use inside your application, for example `ScriptManager`.
+- [`@callstack/repack-dev-server`](./dev-server/index) - documentation for bundler-agnostic development server. Unless, you're trying to integrate a bundler other than Webpack, this API will not be useful to you.
 
-- [`@callstack/repack-dev-server`](./dev-server/index) - Documentation for bundler-agnostic development server. Unless, you're trying to integrate a bundler other than Webpack, this API will not be useful to you.

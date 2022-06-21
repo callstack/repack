@@ -1,9 +1,9 @@
-function getApiItems(label, source, types) {
+function getApiItems(source, types) {
   return [
     {
       type: 'doc',
       id: `api/${source}/index`,
-      label: 'Table of contents'
+      label: 'Table of contents',
     },
     ...types.map((type) => ({
       type: 'category',
@@ -27,6 +27,7 @@ module.exports = {
         'about',
         'getting-started',
         'known-issues',
+        'web-support',
         {
           type: 'category',
           label: 'Code Splitting',
@@ -43,7 +44,10 @@ module.exports = {
         {
           type: 'category',
           label: 'Migration guides',
-          items: ['migration-guides/repack-v1-to-v2'],
+          items: [
+            'migration-guides/repack-v1-to-v2',
+            'migration-guides/repack-v2-to-v3',
+          ],
         },
       ],
     },
@@ -52,69 +56,85 @@ module.exports = {
     {
       type: 'category',
       label: 'Configuration',
-      items: ['configuration/webpack-config'],
+      items: ['configuration/webpack-config', 'configuration/templates'],
     },
+    // {
+    //   type: 'category',
+    //   label: 'Loaders',
+    //   items: ['configuration/loaders/assets-loader'],
+    // },
+    // {
+    //   type: 'category',
+    //   label: 'Guides',
+    //   items: ['configuration/guides/svg'],
+    // },
+    // {
+    //   type: 'category',
+    //   label: 'Functions',
+    //   items: [
+    //     'api/repack/functions/getAssetExtensionsRegExp',
+    //     'api/repack/functions/getInitializationEntries',
+    //     'api/repack/functions/getPublicPath',
+    //     'api/repack/functions/getResolveOptions',
+    //     'api/repack/functions/getDirname',
+    //   ].map((docId) => ({ type: 'ref', id: docId })),
+    // },
+    // {
+    //   type: 'category',
+    //   label: 'Webpack Plugins',
+    //   items: [
+    //     'api/repack/classes/RepackPlugin',
+    //     'api/repack/classes/AssetsResolverPlugin',
+    //     'api/repack/classes/DevelopmentPlugin',
+    //     'api/repack/classes/JavaScriptLooseModePlugin',
+    //     'api/repack/classes/LoggerPlugin',
+    //     'api/repack/classes/ManifestPlugin',
+    //     'api/repack/classes/OutputPlugin',
+    //     'api/repack/classes/ReactRefreshPlugin',
+    //     'api/repack/classes/RepackTargetPlugin',
+    //   ].map((docId) => ({ type: 'ref', id: docId })),
+    // },
+  ],
+  packagesSidebar: [
     {
       type: 'category',
-      label: 'Loaders',
-      items: ['configuration/loaders/assets-loader'],
-    },
-    {
-      type: 'category',
-      label: 'Guides',
-      items: ['configuration/guides/svg'],
-    },
-    {
-      type: 'category',
-      label: 'Functions',
+      label: 'API',
       items: [
-        'api/repack/functions/getAssetExtensionsRegExp',
-        'api/repack/functions/getInitializationEntries',
-        'api/repack/functions/getPublicPath',
-        'api/repack/functions/getResolveOptions',
-      ].map((docId) => ({ type: 'ref', id: docId })),
-    },
-    {
-      type: 'category',
-      label: 'Webpack Plugins',
-      items: [
-        'api/repack/classes/AssetsPlugin',
-        'api/repack/classes/AssetsResolverPlugin',
-        'api/repack/classes/DevelopmentPlugin',
-        'api/repack/classes/JavaScriptLooseModePlugin',
-        'api/repack/classes/LoggerPlugin',
-        'api/repack/classes/OutputPlugin',
-        'api/repack/classes/TargetPlugin',
-      ].map((docId) => ({ type: 'ref', id: docId })),
+        'api/about',
+        {
+          type: 'category',
+          label: '@callstack/repack',
+          items: getApiItems('repack', [
+            'classes',
+            'functions',
+            'interfaces',
+            'modules',
+            'types',
+            'variables',
+          ]),
+        },
+        {
+          type: 'category',
+          label: '@callstack/repack/client',
+          items: getApiItems('repack/client', [
+            'classes',
+            'interfaces',
+            'types',
+            'variables',
+          ]),
+        },
+        {
+          type: 'category',
+          label: '@callstack/repack-dev-server',
+          items: getApiItems('dev-server', [
+            'enums',
+            'functions',
+            'interfaces',
+            'modules',
+            'types',
+          ]),
+        },
+      ],
     },
   ],
-  packagesSidebar: [{
-    type: 'category',
-    label: 'API',
-    items: [
-      'api/about', 
-      {
-        type: 'category',
-        label: '@callstack/repack',
-        items: getApiItems('@callstack/repack', 'repack', [
-          'classes',
-          'functions',
-          'interfaces',
-          'types',
-          'variables'
-        ])
-      },
-      {
-        type: 'category',
-        label: '@callstack/repack-dev-server',
-        items: getApiItems('@callstack/repack-dev-server', 'dev-server', [
-          'enums',
-          'functions',
-          'interfaces',
-          'modules',
-          'types',
-        ])
-      },
-    ]
-  }],
 };
