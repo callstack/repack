@@ -25,25 +25,82 @@ export interface RepackPluginConfig {
    */
   devServer?: DevServerOptions;
 
-  /** TODO */
+  /**
+   * Whether source maps should be generated. Defaults to `true`.
+   *
+   * Setting this to `false`, disables any source map generation.
+   */
   sourceMaps?: boolean;
 
-  /** TODO */
+  /**
+   * Options to configure {@link OutputPlugin}'s `localChunks`, `remoteChunksOutput` and `entry`.
+   */
   output?: Pick<
     OutputPluginConfig,
     'localChunks' | 'remoteChunksOutput' | 'entry'
   >;
 
-  /** TODO */
+  /**
+   * Options to configure {@link LoggerPlugin}'s `output`.
+   *
+   * Setting this to `false` disables {@link LoggerPlugin}.
+   */
   logger?: LoggerPluginConfig['output'] | boolean;
 }
 
 /**
- * TODO
+ * Webpack plugin, which abstracts configuration of other Re.Pack's plugin
+ * to make Webpack config more readable.
+ *
+ * @example Usage in Webpack config (ESM):
+ * ```ts
+ * import * as Repack from '@callstack/repack';
+ *
+ * export default (env) => {
+ *   const {
+ *     mode = 'development',
+ *     platform,
+ *     devServer = undefined,
+ *   } = env;
+ *
+ *   return {
+ *     plugins: [
+ *       new Repack.RepackPlugin({
+ *         mode,
+ *         platform,
+ *         devServer,
+ *       }),
+ *     ],
+ *   };
+ * };
+ * ```
+ *
+ * Internally, `RepackPlugin` configures the following plugins:
+ * - `webpack.DefinePlugin` with `__DEV__` global
+ * - {@link AssetsResolverPlugin}
+ * - {@link OutputPlugin}
+ * - {@link DevelopmentPlugin}
+ * - {@link RepackTargetPlugin}
+ * - `webpack.SourceMapDevToolPlugin`
+ * - {@link LoggerPlugin}
+ *
+ * `RepackPlugin` provides a sensible defaults, but can be customized to some extent.
+ * If you need more control, it's recommended to remove `RepackPlugin` and use other plugins
+ * directly, eg:
+ * ```ts
+ * import React from '@callstack/repack';
+ *
+ * new Repact.plugins.AssetsResolverPlugin();
+ * ```
  *
  * @category Webpack Plugin
  */
 export class RepackPlugin implements WebpackPlugin {
+  /**
+   * Constructs new `RepackPlugin`.
+   *
+   * @param config Plugin configuration options.
+   */
   constructor(private config: RepackPluginConfig) {
     this.config.sourceMaps = this.config.sourceMaps ?? true;
     this.config.logger = this.config.logger ?? true;

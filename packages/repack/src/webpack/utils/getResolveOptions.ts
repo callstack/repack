@@ -7,6 +7,21 @@
  * @returns Webpack's resolve options.
  *
  * @category Webpack util
+ *
+ * @example Usage in Webpack config:
+ * ```ts
+ * import * as Repack from '@callstack/repack';
+ *
+ * export default (env) => {
+ *   const { platform } = env;
+ *
+ *   return {
+ *     resolve: {
+ *       ...Repack.getResolveOptions(platform),
+ *     },
+ *   };
+ * };
+ * ```
  */
 export function getResolveOptions(platform: string) {
   return {

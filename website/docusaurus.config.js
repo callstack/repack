@@ -8,7 +8,7 @@ module.exports = {
     'A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.',
   url: 'https://re-pack.netlify.app',
   baseUrl: '/',
-  onBrokenLinks: 'warn',
+  onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'Callstack',
