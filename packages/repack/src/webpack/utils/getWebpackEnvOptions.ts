@@ -5,7 +5,7 @@ import { DEFAULT_PORT } from '../../env';
 export function getWebpackEnvOptions(
   cliOptions: CliOptions
 ): WebpackEnvOptions {
-  const env: WebpackEnvOptions = {};
+  const env: WebpackEnvOptions = { bundleFilename: '' };
 
   env.context = cliOptions.config.root;
   env.reactNativePath = cliOptions.config.reactNativePath;
@@ -21,6 +21,10 @@ export function getWebpackEnvOptions(
       path.isAbsolute(entryFile) || entryFile.startsWith('./')
         ? entryFile
         : `./${entryFile}`;
+
+    env.bundleFilename = cliOptions.arguments.bundle.bundleOutput;
+    env.sourceMapFilename = cliOptions.arguments.bundle.sourcemapOutput;
+    env.assetsPath = cliOptions.arguments.bundle.assetsDest;
   } else {
     env.mode = 'development';
     env.platform = cliOptions.arguments.start.platform || undefined;

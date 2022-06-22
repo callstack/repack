@@ -7,7 +7,7 @@ import mimeTypes from 'mime-types';
 import { SendProgress } from '@callstack/repack-dev-server';
 import type { CliOptions, StartArguments } from '../types';
 import type { LogType, Reporter } from '../logging';
-import { CLI_OPTIONS_ENV_KEY, VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
+import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
 
 export interface Asset {
   data: string | Buffer;
@@ -48,7 +48,6 @@ export class Compiler extends EventEmitter {
       stdout: true,
       stderr: true,
       env: {
-        [CLI_OPTIONS_ENV_KEY]: JSON.stringify(workerData),
         [WORKER_ENV_KEY]: '1',
         [VERBOSE_ENV_KEY]: this.isVerbose ? '1' : undefined,
       },

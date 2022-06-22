@@ -1,6 +1,6 @@
 import { Config } from '@react-native-community/cli-types';
 import webpack from 'webpack';
-import { CLI_OPTIONS_ENV_KEY, VERBOSE_ENV_KEY } from '../env';
+import { VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, CliOptions } from '../types';
 import { loadWebpackConfig } from '../webpack/loadWebpackConfig';
 import { getWebpackEnvOptions } from '../webpack/utils';
@@ -39,7 +39,6 @@ export async function bundle(
     },
   } as CliOptions;
 
-  process.env[CLI_OPTIONS_ENV_KEY] = JSON.stringify(cliOptions);
   if (args.verbose ?? process.argv.includes('--verbose')) {
     process.env[VERBOSE_ENV_KEY] = '1';
   }
