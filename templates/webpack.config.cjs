@@ -25,6 +25,9 @@ module.exports = (env) => {
     platform,
     minimize = mode === 'production',
     devServer = undefined,
+    bundleFilename = undefined,
+    sourceMapFilename = undefined,
+    assetsPath = undefined,
     reactNativePath = require.resolve('react-native'),
   } = env;
 
@@ -216,9 +219,15 @@ module.exports = (env) => {
        * from `Repack.plugins`.
        */
       new Repack.RepackPlugin({
+        context,
         mode,
         platform,
         devServer,
+        output: {
+          bundleFilename,
+          sourceMapFilename,
+          assetsPath,
+        },
       }),
     ],
   };

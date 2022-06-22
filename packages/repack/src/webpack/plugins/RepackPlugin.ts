@@ -138,18 +138,7 @@ export class RepackPlugin implements WebpackPlugin {
       enabled: !this.config.devServer,
       context: this.config.context,
       output: this.config.output,
-      extraChunks: this.config.extraChunks ?? [
-        {
-          include: /.*/,
-          type: 'remote',
-          outputPath: path.join(
-            this.config.context,
-            'build',
-            this.config.platform,
-            'remote'
-          ),
-        },
-      ],
+      extraChunks: this.config.extraChunks,
     }).apply(compiler);
 
     new DevelopmentPlugin({

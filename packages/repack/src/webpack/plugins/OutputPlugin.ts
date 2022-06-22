@@ -81,7 +81,7 @@ export interface OutputPluginConfig {
    */
   output: {
     /** Bundle output filename - name under which generated bundle will be saved. */
-    bundleFilename: string;
+    bundleFilename?: string;
 
     /**
      * Source map filename - name under which generated source map (for the main bundle) will be saved.
@@ -96,7 +96,7 @@ export interface OutputPluginConfig {
    * Options specifying how to deal with extra chunks generated in the compilation,
    * usually by using dynamic `import(...)` function.
    *
-   * By default all extra chunks will be saved under `<projectRoot>/build/<platform>/remote` directory.
+   * By default all extra chunks will be saved under `<projectRoot>/build/outputs/<platform>/remotes` directory.
    *
    * __Specifying custom value for this option, will disable default setting - you will need
    * to configure `outputPath` for `type: 'remote'` yourself.__
@@ -157,9 +157,9 @@ export class OutputPlugin implements WebpackPlugin {
         type: 'remote',
         outputPath: path.join(
           this.config.context,
-          'build',
+          'build/outputs',
           this.config.platform,
-          'remote'
+          'remotes'
         ),
       },
     ];
@@ -177,27 +177,6 @@ export class OutputPlugin implements WebpackPlugin {
 
     const logger = compiler.getInfrastructureLogger('RepackOutputPlugin');
 
-    // let { bundleOutput, assetsDest = '', sourcemapOutput = '' } = this.config;
-    let { bundleFilename, sourceMapFilename, assetsPath } = this.config.output;
-
-    if (!path.isAbsolute(bundleFilename)) {
-      bundleFilename = path.join(this.config.context, bundleFilename);
-    }
-
-    const bundlePath = path.dirname(bundleFilename);
-
-    if (!sourceMapFilename) {
-      sourceMapFilename = `${bundleFilename}.map`;
-    }
-
-    if (!path.isAbsolute(sourceMapFilename)) {
-      sourceMapFilename = path.join(this.config.context, sourceMapFilename);
-    }
-
-    if (!assetsPath) {
-      assetsPath = bundlePath;
-    }
-
     const extraAssets = (this.config.extraChunks ?? []).map((spec) =>
       spec.type === 'remote'
         ? {
@@ -208,14 +187,6 @@ export class OutputPlugin implements WebpackPlugin {
           }
         : spec
     );
-
-    logger.debug('Detected output paths:', {
-      bundleFilename,
-      bundlePath,
-      sourceMapFilename,
-      assetsPath,
-      extraAssets,
-    });
 
     const isLocalChunk = (chunkId: string): boolean => {
       for (const spec of extraAssets) {
@@ -330,23 +301,57 @@ export class OutputPlugin implements WebpackPlugin {
           throw new Error('Cannot infer output path from compilation');
         }
 
-        const localAssetsCopyProcessor = new AssetsCopyProcessor({
-          platform: this.config.platform,
-          compilation,
-          outputPath,
-          bundleOutput: bundleFilename,
-          bundleOutputDir: bundlePath,
-          sourcemapOutput: sourceMapFilename!,
-          assetsDest: assetsPath!,
-          logger,
-        });
+        let localAssetsCopyProcessor;
+
+        let { bundleFilename, sourceMapFilename, assetsPath } =
+          this.config.output;
+        if (bundleFilename) {
+          if (!path.isAbsolute(bundleFilename)) {
+            bundleFilename = path.join(this.config.context, bundleFilename);
+          }
+
+          const bundlePath = path.dirname(bundleFilename);
+
+          if (!sourceMapFilename) {
+            sourceMapFilename = `${bundleFilename}.map`;
+          }
+
+          if (!path.isAbsolute(sourceMapFilename)) {
+            sourceMapFilename = path.join(
+              this.config.context,
+              sourceMapFilename
+            );
+          }
+
+          if (!assetsPath) {
+            assetsPath = bundlePath;
+          }
+
+          logger.debug('Detected output paths:', {
+            bundleFilename,
+            bundlePath,
+            sourceMapFilename,
+            assetsPath,
+          });
+
+          localAssetsCopyProcessor = new AssetsCopyProcessor({
+            platform: this.config.platform,
+            compilation,
+            outputPath,
+            bundleOutput: bundleFilename,
+            bundleOutputDir: bundlePath,
+            sourcemapOutput: sourceMapFilename!,
+            assetsDest: assetsPath!,
+            logger,
+          });
+        }
 
         const remoteAssetsCopyProcessors: Record<string, AssetsCopyProcessor> =
           {};
 
         for (const chunk of localChunks) {
           // Process entry chunk
-          localAssetsCopyProcessor.enqueueChunk(chunk, {
+          localAssetsCopyProcessor?.enqueueChunk(chunk, {
             isEntry: entryChunk === chunk,
           });
         }
@@ -385,7 +390,7 @@ export class OutputPlugin implements WebpackPlugin {
         }
 
         await Promise.all([
-          ...localAssetsCopyProcessor.execute(),
+          ...(localAssetsCopyProcessor?.execute() ?? []),
           ...Object.values(remoteAssetsCopyProcessors).reduce(
             (acc, processor) => acc.concat(...processor.execute()),
             [] as Promise<void>[]
