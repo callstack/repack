@@ -146,7 +146,7 @@ export interface WebpackEnvOptions {
   entry?: string;
 
   /** Bundle output filename - name under which generated bundle will be saved. */
-  bundleFilename: string;
+  bundleFilename?: string;
 
   /**
    * Source map filename - name under which generated source map (for the main bundle) will be saved.
