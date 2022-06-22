@@ -100,13 +100,11 @@ export class AssetResolver {
     const platform = this.config.platform;
     const test = getAssetExtensionsRegExp(this.config.extensions!);
 
-    const logger = this.compiler.getInfrastructureLogger(
-      'ReactNativeAssetResolver'
-    );
+    const logger = this.compiler.getInfrastructureLogger('RepackAssetResolver');
 
     resolver
       .getHook('file')
-      .tapAsync('ReactNativeAssetResolver', (request, _context, callback) => {
+      .tapAsync('RepackAssetResolver', (request, _context, callback) => {
         const requestPath = request.path;
         if (
           (typeof requestPath === 'string' && !test.test(requestPath)) ||
