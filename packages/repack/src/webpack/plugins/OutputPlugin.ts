@@ -274,21 +274,6 @@ export class OutputPlugin implements WebpackPlugin {
               'Cannot infer entry chunk - this should have not happened.'
             );
           }
-
-          const mainBundleAssetName = [...entryChunk.files][0];
-          compilation.updateAsset(
-            mainBundleAssetName,
-            (source) =>
-              new webpack.sources.ConcatSource(
-                `var __repack_LOCAL_SCRIPTS__=${JSON.stringify(
-                  localChunks.map(
-                    (localChunk) => localChunk.name ?? localChunk.id?.toString()
-                  )
-                )};`,
-                '\n',
-                source
-              )
-          );
         }
       );
     });

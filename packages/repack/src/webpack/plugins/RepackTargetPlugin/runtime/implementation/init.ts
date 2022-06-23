@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-optional-chain */
 /* eslint-disable promise/prefer-await-to-then */
 /* eslint-disable promise/no-callback-in-promise */
 /* eslint-env browser */
@@ -8,7 +9,17 @@ let $chunkLoadingGlobal$ = '';
 let $globalObject$ = {} as Record<string, any>;
 
 module.exports = function () {
-  var loadScriptCallback: string[] = [];
+  var repackRuntime: RepackRuntime = {
+    loadScript,
+    loadHotUpdate,
+    shared: ($globalObject$.__repack__ && $globalObject$.__repack__.shared) ||
+      (__webpack_require__.repack && __webpack_require__.repack.shared) || {
+        loadScriptCallback: [],
+        scriptManager: undefined,
+      },
+  };
+
+  __webpack_require__.repack = $globalObject$.__repack__ = repackRuntime;
 
   (function () {
     function repackLoadScriptCallback(
@@ -21,7 +32,7 @@ module.exports = function () {
       var chunkIds = data[0];
       var i = 0;
       for (; i < chunkIds.length; i++) {
-        loadScriptCallback.push(chunkIds[i]);
+        repackRuntime.shared.loadScriptCallback.push(chunkIds[i]);
       }
     }
 
@@ -35,7 +46,7 @@ module.exports = function () {
 
   (function () {
     function repackScriptStartup() {
-      repackRuntime.loadScriptCallback.push($chunkId$);
+      repackRuntime.shared.loadScriptCallback.push($chunkId$);
     }
 
     var startupFunctions: Function[] = __webpack_require__.x
@@ -65,9 +76,9 @@ module.exports = function () {
     caller: string | undefined,
     done: (event?: LoadScriptEvent) => void
   ) {
-    if (repackRuntime.scriptManager) {
-      repackRuntime.scriptManager
-        .loadScript(name, caller)
+    if (repackRuntime.shared.scriptManager) {
+      repackRuntime.shared.scriptManager
+        .loadScript(name, caller, __webpack_require__)
         .then(function () {
           done();
           return;
@@ -127,13 +138,4 @@ module.exports = function () {
         done({ type: 'exec', target: { src: url } });
       });
   }
-
-  var repackRuntime: RepackRuntime = {
-    loadScript,
-    loadHotUpdate,
-    loadScriptCallback,
-    scriptManager: undefined,
-  };
-
-  __webpack_require__.repack = $globalObject$.__repack__ = repackRuntime;
 };
