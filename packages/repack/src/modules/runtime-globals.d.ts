@@ -13,7 +13,7 @@ declare interface RepackRuntime {
   ) => void;
   loadHotUpdate: (url: string, done: (event?: LoadScriptEvent) => void) => void;
   shared: {
-    loadScriptCallback: string[];
+    loadScriptCallback: string[][];
     scriptManager?: import('./ScriptManager').ScriptManager;
   };
 }

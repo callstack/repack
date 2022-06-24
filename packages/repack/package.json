@@ -48,7 +48,8 @@
     "lint": "eslint --ext \".js,.ts\" commands.js client.js src",
     "test": "jest",
     "typecheck": "tsc --noEmit",
-    "release": "release-it"
+    "release": "release-it",
+    "archive": "yarn build && yarn pack --out repack-%v-$(git log -1 --format=\"%h\").tgz"
   },
   "peerDependencies": {
     "@react-native-community/cli": "*",
