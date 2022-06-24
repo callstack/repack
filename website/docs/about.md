@@ -46,7 +46,7 @@ The main distinction is that, Metro is custom-built solution and Re.Pack uses We
 
 - Metro is slightly faster - it has less overhead compared to Webpack. Metro trades configurability for performance, whereas with Webpack it's the other way around.
 - Webpack configuration options and ecosystem allows for much greater control and support for advanced use-cases.
-- Metro's Fast Refresh is slightly more flexible compared to Webpack's solution: Hot Module Replacement + React Refresh — some cases require full application reloaded with Webpack and Re.Pack, but they are supported with Metro See: [Known issues](/docs/known-issues).
+- Metro's Fast Refresh is slightly more flexible compared to Webpack's solution: Hot Module Replacement + React Refresh — some cases require full application reloaded with Webpack and Re.Pack, but they are supported with Metro See: [Known issues](./known-issues).
 
 ## Re.Pack vs Haul
 

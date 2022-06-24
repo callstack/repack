@@ -14,7 +14,7 @@ If you're already familiar with JavaScript, React Native and Webpack, then you'l
 ## Minimum requirements
 
 - `react-native` >= 0.62.0
-- Node >= 12
+- Node >= 14 (__recommended Node 16 or newer__)
 
 If you're using older versions of React Native, you can still try using Re.Pack, but your mileage may vary as they are not officially supported.
 
@@ -26,26 +26,20 @@ Additionally, in order to use [Code Splitting](./code-splitting/concepts) functi
 
 ## Compatibility with Webpack
 
-On paper, Re.Pack should work with any version of Webpack 5, but we recommend to consult with the compatibility table below.
+On paper, __Re.Pack should work with any version of Webpack 5__, but we recommend to consult with the compatibility table below.
 The table represents versions of `webpack` for which Re.Pack is confirmed to work correctly.
 
 If you don't see your version, give it a go. If it doesn't work, please open an issue.
 
 
-| `webpack`  | `@callstack/repack` | `@callstack/nativepack`*  |
-| ---------- | ------------------- | ------------------------- |
-| `5.22.0`   |                     | `1.0.x`, `1.1.x`, `1.2.x` |
-| `>=5.29.0` | `2.0.0-beta.x`      | `1.2.x`, `1.3.x`, `1.4.x` |
-
-:::info
-
-\* `@callstack/repack` is rebranded `@callstack/nativepack` - they are both the same project.
-
-:::
+| `webpack`  | `@callstack/repack`                     |
+| ---------- | --------------------------------------- |
+| `5.22.0`   | `1.0.x`, `1.1.x`, `1.2.x`               |
+| `>=5.29.0` | `1.2.x`, `1.3.x`, `1.4.x`, `2.x`, `3.x` |
 
 ## Installation
 
-### Dependencies
+### 1. Dependencies
 
 Install required dependencies in your project:
 
@@ -55,11 +49,13 @@ npm i -D webpack terser-webpack-plugin babel-loader @callstack/repack
 yarn add -D webpack terser-webpack-plugin babel-loader @callstack/repack
 ```
 
-This will install latest versions of Webpack and Re.Pack. If you already have Webpack or Re.Pack installed, you might want to check the [compatibility table](#compatibility-with-webpack) to ensure all dependencies are ok.
+This will install latest versions of Webpack, Re.Pack and dependencies used in Webpack config: `terser-webpack-plugin` for minification and `babel-loader` for transpiling the code.
+
+If you already have Webpack or Re.Pack installed, you might want to check the [compatibility table](#compatibility-with-webpack) to ensure all dependencies are ok.
 
 Once the dependencies are installed, you need to tell React Native CLI to add Re.Pack's commands. 
 
-### React Native config
+### 2. React Native config
 
 Add the following content to `react-native.config.js` (or create it if it doesn't exist):
 
@@ -71,13 +67,19 @@ module.exports = {
 
 This will allow you to use `react-native webpack-start` and `react-native webpack-bundle` commands, but before that you need to create a Webpack configuration.
 
-### Webpack config
+### 3. Webpack config
 
-Create file `webpack.config.js` in the root directory of your project and paste the content from our [Webpack config template](https://github.com/callstack/repack/blob/main/templates/webpack.config.js).
+Create file `webpack.config.mjs` in the root directory of your project and paste the content from our [Webpack config template](https://github.com/callstack/repack/blob/main/templates/webpack.config.mjs).
 
-When building release version of your application XCode project and Gradle will still use Metro to bundle the application, so you need to adjust build settings so that XCode and Gradle are using Re.Pack.
+:::info
 
-### Configure XCode
+We recommend to use ESM version of Webpack config with the `.mjs` extension. However, Re.Pack also supports ESM under `.js` and CJS variant under `.js` and `.cjs` extensions. Check our [templates](https://github.com/callstack/repack/blob/main/templates/) for CJS and ESM variants as well as the documentation on [Webpack config](./configuration/webpack-config) to see the list of all available Webpack config location and extensions.
+
+:::
+
+### 4. Configure XCode
+
+When building release version of your application XCode project will still use Metro to bundle the application, so you need to adjust build settings to make XCode use Re.Pack instead.
 
 Open your application's XCode project/workspace and:
 
@@ -94,7 +96,9 @@ export BUNDLE_COMMAND=webpack-bundle
 ../node_modules/react-native/scripts/react-native-xcode.sh
 ```
 
-### Configure Android
+### 5. Configure Android
+
+When building release version of your application Gradle will still use Metro to bundle the application, so you need to adjust build settings to make Gradle use Re.Pack instead.
 
 Open your application's Gradle project, usually located at `android/app/build.gradle` and add `bundleCommand: "webpack-bundle"` to `project.ext.react`.
 
@@ -104,7 +108,6 @@ After the change, the content of `project.ext.react` should look similar to:
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
     bundleCommand: "webpack-bundle",
-    bundleInDebug: false
 ]
 ```
 
@@ -112,7 +115,7 @@ project.ext.react = [
 
 After completing [Installation](#installation) you should be able to use Re.Pack's development server and bundle your application.
 
-Keep in mind that, you might need to adjust [Webpack config](#webpack-config) to your project in order to the application to work correctly. It's impossible for us to know what your project looks like and uses, so it's recommended to read through the [Webpack config](#webpack-config)'s code and comments and make sure you understand what's going on there.
+Keep in mind that, you might need to adjust [Webpack config](./configuration/webpack-config) to your project in order to the application to work correctly. It's impossible for us to know what your project looks like and uses, so it's recommended to read through the Webpack config's code and comments and make sure you understand what's going on there.
 
 ### Running development server
 
@@ -130,23 +133,9 @@ You can pass the same CLI options to `react-native webpack-start` as you would t
 
 :::
 
-The 2nd option, is to use Webpack CLI:
-
-```bash
-PLATFORM=(ios|android) webpack-cli -c webpack.config.js
-```
-
-Make sure you have `webpack-cli` installed in your project. When running with Webpack CLI, you run a development server for a single platform - e.g. either `ios` or `android`.
-
-:::info
-
-If you want to develop for multiple platforms at once, please use `react-native webpack-start`.
-
-:::
-
 ### Bundling the app
 
-When building the release version of your application via XCode, Gradle CLI or Android Studio, as long as you followed [Configure XCode](#configure-xcode) and [Configure Android](#configure-android), it should use Re.Pack to bundle your application.
+When building the release version of your application via XCode, Gradle CLI or Android Studio, as long as you followed [Configure XCode](#4-configure-xcode) and [Configure Android](#5-configure-android), it should use Re.Pack to bundle your application.
 
 If you want to create bundle (development or production), **the recommended way is to use React Native CLI and run**:
 
@@ -162,7 +151,7 @@ You can pass the same CLI options to `react-native webpack-bundle` as you would 
 The 2nd option, is to use Webpack CLI:
 
 ```bash
-PLATFORM=(ios|android) webpack-cli -c webpack.config.js
+webpack -c webpack.config.mjs --env platform=ios --env mode=production
 ```
 
 Make sure you have `webpack-cli` installed in your project.

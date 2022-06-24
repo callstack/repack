@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-const { Headers } = require('node-fetch/lib/index.js');
+const { Headers } = require('headers-polyfill');
 
 jest.spyOn(process, 'cwd').mockImplementation(() => '/a/b/c');
 

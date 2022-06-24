@@ -14,6 +14,8 @@ export class FileReporter implements Reporter {
     if (!path.isAbsolute(this.config.filename)) {
       this.config.filename = path.join(process.cwd(), this.config.filename);
     }
+
+    fs.mkdirSync(path.dirname(this.config.filename), { recursive: true });
   }
 
   throttledFlush = throttle(() => {

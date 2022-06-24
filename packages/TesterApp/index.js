@@ -1,16 +1,47 @@
 import { AppRegistry } from 'react-native';
-import { ChunkManager } from '@callstack/repack/client';
+import { ScriptManager, Script } from '@callstack/repack/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import App from './src/App';
 import { name as appName } from './app.json';
 
-ChunkManager.configure({
+ScriptManager.configure({
   storage: AsyncStorage,
-  resolveRemoteChunk: async (chunkId) => {
+  resolve: async (scriptId, caller) => {
+    if (__DEV__) {
+      return {
+        url: Script.getDevServerURL(scriptId),
+        cache: false,
+      };
+    }
+
     return {
-      url: `http://localhost:5000/${chunkId}`,
+      url: Script.getRemoteURL(`http://localhost:5000/${scriptId}`)
     };
   },
+});
+
+ScriptManager.on('resolving', (...args) => {
+  console.log('DEBUG/resolving', ...args);
+});
+
+ScriptManager.on('resolved', (...args) => {
+  console.log('DEBUG/resolved', ...args);
+});
+
+ScriptManager.on('prefetching', (...args) => {
+  console.log('DEBUG/prefetching', ...args);
+});
+
+ScriptManager.on('loading', (...args) => {
+  console.log('DEBUG/loading', ...args);
+});
+
+ScriptManager.on('loaded', (...args) => {
+  console.log('DEBUG/loaded', ...args);
+});
+
+ScriptManager.on('error', (...args) => {
+  console.log('DEBUG/error', ...args);
 });
 
 AppRegistry.registerComponent(appName, () => App);

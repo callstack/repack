@@ -47,6 +47,26 @@ export const ASSET_EXTENSIONS = [
  *
  * @param extensions Extensions array.
  * @returns RegExp with extensions.
+ *
+ * @example Usage in Webpack config:
+ * ```ts
+ * import React from '@callstack/repack';
+ *
+ * export default () => {
+ *   return {
+ *     module: {
+ *       rules: [{
+ *         test: React.getAssetExtensionsRegExp(
+ *           Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+ *         ),
+ *         use: {
+ *           loader: '@callstack/repack/assets-loader',
+ *         }
+ *       }],
+ *     },
+ *   };
+ * };
+ * ```
  */
 export function getAssetExtensionsRegExp(extensions: string[]) {
   return new RegExp(`\\.(${extensions.join('|')})$`);

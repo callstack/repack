@@ -58,7 +58,7 @@ export class LoggerPlugin implements WebpackPlugin {
       reporters.push(
         new ConsoleReporter({
           isWorker: isWorker(),
-          isVerbose: isVerbose(),
+          level: isVerbose() ? 'verbose' : 'normal',
         })
       );
     }

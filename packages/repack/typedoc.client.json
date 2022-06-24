@@ -1,0 +1,12 @@
+{
+  "out": "docs/client",
+  "entryPoints": ["./src/modules/ScriptManager/index.ts"],
+  "tsconfig": "./tsconfig.json",
+  "readme": "none",
+  "name": "@callstack/repack/client",
+  "excludePrivate": true,
+  "allReflectionsHaveOwnDocument": true,
+  "hideBreadcrumbs": true,
+  "plugin": ["typedoc-plugin-markdown"],
+  "githubPages": false
+}

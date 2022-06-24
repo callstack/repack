@@ -14,8 +14,9 @@ type EntryStaticNormalized =
 /**
  * {@link DevelopmentPlugin} configuration options.
  */
-export interface DevelopmentPluginConfig extends DevServerOptions {
+export interface DevelopmentPluginConfig {
   platform: string;
+  devServer?: DevServerOptions;
 }
 
 /**
@@ -38,16 +39,16 @@ export class DevelopmentPlugin implements WebpackPlugin {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: webpack.Compiler) {
-    if (!this.config) {
+    if (!this.config?.devServer) {
       return;
     }
 
     new webpack.DefinePlugin({
-      __PUBLIC_PORT__: JSON.stringify(this.config.port),
+      __PUBLIC_PORT__: JSON.stringify(this.config.devServer.port),
       __PLATFORM__: JSON.stringify(this.config.platform),
     }).apply(compiler);
 
-    if (this.config?.hmr) {
+    if (this.config?.devServer.hmr) {
       new webpack.HotModuleReplacementPlugin().apply(compiler);
       new ReactRefreshPlugin({
         overlay: false,

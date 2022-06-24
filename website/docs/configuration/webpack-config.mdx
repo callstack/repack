@@ -1,4 +1,4 @@
-# Webpack Config
+# Webpack config
 
 One of Re.Pack key design goals was to give as much power and control to the developer — to you.
 This means that Re.Pack doesn't hide anything under its own proprietary configuration, but uses regular Webpack configuration.
@@ -7,8 +7,8 @@ This means that Re.Pack doesn't hide anything under its own proprietary configur
 
 By default, when running `react-native webpack-start` or `react-native webpack-bundle`, Re.Pack will look for Webpack configuration in the following places:
 
-1. `<root>/webpack.config.js`
-2. `<root>/.webpack/webpack.config.js`
+1. `<root>/webpack.config.{mjs,cjs,js}`
+2. `<root>/.webpack/webpack.config.{mjs,cjs,js}`
 3. `<root>/.webpack/webpackfile`
 
 Where `<root>` is your project's root directory.
@@ -16,6 +16,13 @@ Where `<root>` is your project's root directory.
 :::info
 
 The paths above are the same ones that normal Webpack CLI looks for Webpack configuration.
+
+:::
+
+
+:::tip
+
+Notice that you can use `.mjs`, `.cjs` and `.js` extension for Webpack config file. When looking for configuration file, Re.Pack will first try `.mjs`, then `.cjs` and finally `.js` extensions. We recommend to use `.mjs` or `.cjs` to be explicit.
 
 :::
 
@@ -27,63 +34,51 @@ If you want to store Webpack config in different place, you can provide custom p
 
 :::info
 
-If the `<path>` is relative, then it will be resolved based on root directory detected by React Native CLI, which usually should point to your project's root directory.
+If the `<path>` starts with `./` or `../`, it will be treated as relative path - it will be resolved based on root directory detected by React Native CLI, which usually points to your project's root directory.
 
 :::
 
 ## Webpack config template
 
-Every project is different, has different structure, uses different dependencies, has different requirements, so we cannot know what Webpack configuration your project might needs. Instead we give use a sensible and well-documented [Webpack template](https://github.com/callstack/repack/blob/main/templates/webpack.config.js) to use as a base and adjust some bits based on your project.
+Every project is different, has different structure, uses different dependencies, has different requirements, so we cannot know what Webpack configuration your project might needs. Instead we give use a sensible and well-documented [Webpack config template](./templates) to use as a base and adjust some bits based on your project.
 
-You can find the template inside Re.Pack's repository here:
-https://github.com/callstack/repack/blob/main/templates/webpack.config.js
-
-or copy it from below:
-
-import CodeBlock from '@theme/CodeBlock';
-import webpackConfig from '!!raw-loader!../../../templates/webpack.config.js';
-
-<CodeBlock className="language-js" title="templates/webpack.config.js">{webpackConfig}</CodeBlock>
+Please, refer to [this document for templates](./templates).
 
 We highly encourage to create recipes for adding or adjusting the support for other common use cases not included in the default template. **We welcome any PR!**
 
 ## Re.Pack's config APIs
 
-To make Webpack-produced bundle compatible and runnable by React Native, Re.Pack gives you a set of Webpack plugins:
+To make Webpack-produced bundle compatible and runnable by React Native, Re.Pack gives you a set of Webpack plugins.
 
-- [AssetsPlugin](/docs/api/repack/classes/AssetsPlugin)
-- [DevelopmentPlugin](/docs/api/repack/classes/DevelopmentPlugin)
-- [LoggerPlugin](/docs/api/repack/classes/LoggerPlugin)
-- [OutputPlugin](/docs/api/repack/classes/OutputPlugin)
-- [TargetPlugin](/docs/api/repack/classes/TargetPlugin)
-- [JavaScriptLooseModePlugin](/docs/api/repack/classes/JavaScriptLooseModePlugin)
+By default, all boring plugin configuration is abstracted behind a single [`RepackPlugin`](../api/repack/classes/RepackPlugin), which should suffice to most projects.
+However, in cause you need more control over the Re.Pack plugins, you can remove `RepackPlugin` and use plugins from [`plugins` namespace](../api/repack/modules/plugins):
 
-Except for `JavaScriptLooseModePlugin` all of them are required — not including any of them might break your build on make the bundle crash at runtime.
+- [AssetsResolverPlugin](../api/repack/classes/plugins.AssetsResolverPlugin) (__required__)
+- [DevelopmentPlugin](../api/repack/classes/plugins.DevelopmentPlugin) (__required__ only in development)
+- [RepackTargetPlugin](../api/repack/classes/plugins.RepackTargetPlugin) (__required__)
+- [ReactRefreshPlugin](../api/repack/classes/plugins.ReactRefreshPlugin)
+- [OutputPlugin](../api/repack/classes/plugins.OutputPlugin) (__required__)
+- [ManifestPlugin](../api/repack/classes/plugins.ManifestPlugin)
+- [LoggerPlugin](../api/repack/classes/plugins.LoggerPlugin)
+- [JavaScriptLooseModePlugin](../api/repack/classes/plugins.JavaScriptLooseModePlugin)
 
-Additionally to let you use React Native CLI in form of `react-native webpack-start` or `react-native webpack-bundle` commands, Re.Pack gives you helper functions to get arguments project information from React Native CLI and use them inside your Webpack config:
+:::warning
 
-
-- [getAssetExtensionsRegExp](/docs/api/repack/functions/getAssetExtensionsRegExp)
-- [getInitializationEntries](/docs/api/repack/functions/getInitializationEntries)
-- [getPublicPath](/docs/api/repack/functions/getPublicPath)
-- [getResolveOptions](/docs/api/repack/functions/getResolveOptions)
-
-:::caution
-
-It entirely possible not to use the functions above, but **it's highly recommended to leave them**.
+Not including required plugins will break your build or cause your app to crash at runtime!
 
 :::
 
-If you're planning on using Webpack CLI to run development server or bundle your application instead of relying on React Native CLI, then you might want to look into providing `fallback` values to each of these functions, for example:
+Additionally, Re.Pack gives you few helper functions:
 
-```js
-const context = ReactNative.getContext({ fallback: __dirname });
-```
 
-Those `fallback` values are only used when Webpack compilation is created by Webpack CLI instead of React Native CLI.
+- [getAssetExtensionsRegExp](../api/repack/functions/getAssetExtensionsRegExp)
+- [getInitializationEntries](../api/repack/functions/getInitializationEntries)
+- [getPublicPath](../api/repack/functions/getPublicPath)
+- [getResolveOptions](../api/repack/functions/getResolveOptions)
+- [getDirname](../api/repack/functions/getDirname)
 
 :::caution
 
-It's highly recommended to use React Native CLI and `react-native webpack-start` or `react-native webpack-bundle` commands unless you have previous experience with Webpack and you know what you're doing.
+It entirely possible not to use the functions above, but **it's highly recommended to use them**.
 
 :::

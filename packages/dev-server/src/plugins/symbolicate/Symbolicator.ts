@@ -54,7 +54,7 @@ export class Symbolicator {
   /**
    * Constructs new `Symbolicator` instance.
    *
-   * @param delegate TODO
+   * @param delegate Delegate instance with symbolication functions.
    */
   constructor(private delegate: SymbolicatorDelegate) {}
 
