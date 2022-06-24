@@ -34,7 +34,7 @@ module.exports = function () {
       var chunkIds = data[0];
       var i = 0;
       for (; i < chunkIds.length; i++) {
-        repackRuntime.shared.loadScriptCallback.push(chunkIds[i]);
+        repackRuntime.shared.loadScriptCallback.push([chunkIds[i], $chunkId$]);
       }
     }
 
@@ -48,7 +48,7 @@ module.exports = function () {
 
   (function () {
     function repackScriptStartup() {
-      repackRuntime.shared.loadScriptCallback.push($chunkId$);
+      repackRuntime.shared.loadScriptCallback.push([$chunkId$]);
     }
 
     var startupFunctions: Function[] = __webpack_require__.x

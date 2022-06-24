@@ -26,18 +26,20 @@ const CACHE_KEY = `Repack.ScriptManager.Cache.v3.${
  * - Webpack bundles
  * - Webpack MF containers
  *
- * An instance of `ScriptManagerAPI` class is exported under `ScriptManager` constant.
+ * Once an instance of `ScriptManager` is created, it will be globally available
+ * under `ScriptManager.shared` in main bundle, chunks and containers.
  *
- * __You should always use `ScriptManager` constant instead of constructing `new ScriptManagerAPI(...)` yourself!__
+ * When instance of `ScriptManager` is already created, attempt to create new instance
+ * will throw an exception.
  *
  * This API is mainly useful, if you are working with any form of Code Splitting.
  *
  * `ScriptManager` is also an `EventEmitter` and emits the following events:
  * - `resolving` with `{ scriptId, caller }`
- * - `resolved` with `scriptLocator: NormalizedScriptLocator`
- * - `prefetching` with `scriptLocator: NormalizedScriptLocator`
- * - `loading` with `scriptLocator: NormalizedScriptLocator`
- * - `loaded` with `scriptLocator: NormalizedScriptLocator`
+ * - `resolved` with `scriptId: string, caller?: string, locator: NormalizedScriptLocator, cache: boolean`
+ * - `prefetching` with `scriptId: string, caller?: string, locator: NormalizedScriptLocator, cache: boolean`
+ * - `loading` with `scriptId: string, caller?: string, locator: NormalizedScriptLocator, cache: boolean`
+ * - `loaded` with `scriptId: string, caller?: string, locator: NormalizedScriptLocator, cache: boolean`
  * - `error` with `error: Error`
  *
  * Example of using this API with async Webpack chunk:
@@ -84,7 +86,8 @@ export class ScriptManager extends EventEmitter {
     return scriptManager;
   }
 
-  private cache?: Cache;
+  private cache: Cache = {};
+  private cacheInitialized = false;
   private resolve?: ScriptLocatorResolver;
   private storage?: StorageApi;
 
@@ -112,9 +115,10 @@ export class ScriptManager extends EventEmitter {
 
     __webpack_require__.repack.shared.loadScriptCallback.push = ((
       parentPush: typeof Array.prototype.push,
-      ...data: string[]
+      ...data: string[][]
     ) => {
-      this.emit('_loaded', data[0]);
+      const [[scriptId, caller]] = data;
+      this.emit('__loaded__', { scriptId, caller });
       return parentPush(...data);
     }).bind(
       null,
@@ -127,11 +131,12 @@ export class ScriptManager extends EventEmitter {
   }
 
   private async initCache() {
-    if (!this.cache) {
+    if (!this.cacheInitialized) {
       const cache: Cache | null | undefined = JSON.parse(
         (await this.storage?.getItem(CACHE_KEY)) ?? '{}'
       );
-      this.cache = cache ?? undefined;
+      this.cache = cache ?? {};
+      this.cacheInitialized = true;
     }
   }
 
@@ -151,7 +156,7 @@ export class ScriptManager extends EventEmitter {
    * Use `ScriptManager.on('resolving', ({ scriptId, caller }) => { })` to listen for when
    * the script resolution begins.
    *
-   * Use `ScriptManager.on('resolved', (scriptLocator) => { })` to listen for when
+   * Use `ScriptManager.on('resolved', (script) => { })` to listen for when
    * the script's locator data is resolved.
    *
    * @param scriptId Id of the script to resolve.
@@ -171,26 +176,26 @@ export class ScriptManager extends EventEmitter {
       }
 
       this.emit('resolving', { scriptId, caller });
-      const locator = await this.resolve(scriptId, caller);
 
+      const locator = await this.resolve(scriptId, caller);
       if (typeof locator.url === 'function') {
         locator.url = locator.url(webpackContext);
       }
 
-      const script = Script.from(locator, false);
+      const script = Script.from({ scriptId, caller }, locator, false);
+      const cacheKey = `${scriptId}_${caller ?? 'unknown'}`;
 
-      if (!this.cache?.[scriptId]) {
+      if (!this.cache[cacheKey]) {
         script.locator.fetch = true;
-        this.cache = this.cache ?? {};
-        this.cache[scriptId] = script.getCacheData();
+        this.cache[cacheKey] = script.getCacheData();
         await this.saveCache();
-      } else if (script.shouldRefetch(this.cache[scriptId])) {
+      } else if (script.shouldRefetch(this.cache[cacheKey])) {
         script.locator.fetch = true;
-        this.cache[scriptId] = script.getCacheData();
+        this.cache[cacheKey] = script.getCacheData();
         await this.saveCache();
       }
 
-      this.emit('resolved', script.locator);
+      this.emit('resolved', script.toObject());
 
       return script;
     } catch (error) {
@@ -205,10 +210,10 @@ export class ScriptManager extends EventEmitter {
    * Resolves given script's location, downloads and executes it.
    * The execution of the code is handled internally by threading in React Native.
    *
-   * Use `ScriptManager.on('loading', (scriptLocator) => { })` to listen for when
+   * Use `ScriptManager.on('loading', (script) => { })` to listen for when
    * the script is about to be loaded.
    *
-   * Use `ScriptManager.on('loaded', (scriptLocator) => { })` to listen for when
+   * Use `ScriptManager.on('loaded', (script) => { })` to listen for when
    * the script is loaded.
    *
    * @param scriptId Id of the script to load.
@@ -222,16 +227,16 @@ export class ScriptManager extends EventEmitter {
     let script = await this.resolveScript(scriptId, caller, webpackContext);
     return await new Promise<void>((resolve, reject) => {
       (async () => {
-        const onLoaded = (data: string) => {
-          if (data === scriptId) {
-            this.emit('loaded', script.locator);
+        const onLoaded = (data: { scriptId: string; caller?: string }) => {
+          if (data.scriptId === scriptId && data.caller === caller) {
+            this.emit('loaded', script.toObject());
             resolve();
           }
         };
 
         try {
-          this.emit('loading', script.locator);
-          this.on('_loaded', onLoaded);
+          this.emit('loading', script.toObject());
+          this.on('__loaded__', onLoaded);
           await this.nativeScriptManager.loadScript(scriptId, script.locator);
         } catch (error) {
           const { code } = error as Error & { code: string };
@@ -239,10 +244,10 @@ export class ScriptManager extends EventEmitter {
             error,
             '[ScriptManager] Failed to load script:',
             code ? `[${code}]` : '',
-            script.locator
+            script.toObject()
           );
         } finally {
-          this.removeListener('_loaded', onLoaded);
+          this.removeListener('__loaded__', onLoaded);
         }
       })().catch((error) => {
         reject(error);
@@ -254,7 +259,7 @@ export class ScriptManager extends EventEmitter {
    * Resolves given script's location and downloads it without executing.
    * This function can be awaited to detect if the script was downloaded and for error handling.
    *
-   * Use `ScriptManager.on('prefetching', (scriptLocator) => { })` to listen for when
+   * Use `ScriptManager.on('prefetching', (script) => { })` to listen for when
    * the script's prefetch beings.
    *
    * @param scriptId Id of the script to prefetch.
@@ -268,7 +273,7 @@ export class ScriptManager extends EventEmitter {
     let script = await this.resolveScript(scriptId, caller, webpackContext);
 
     try {
-      this.emit('prefetching', script.locator);
+      this.emit('prefetching', script.toObject());
       await this.nativeScriptManager.prefetchScript(scriptId, script.locator);
     } catch (error) {
       const { code } = error as Error & { code: string };
@@ -276,7 +281,7 @@ export class ScriptManager extends EventEmitter {
         error,
         '[ScriptManager] Failed to prefetch script:',
         code ? `[${code}]` : '',
-        script.locator
+        script.toObject()
       );
     }
   }
@@ -294,10 +299,10 @@ export class ScriptManager extends EventEmitter {
   async invalidateScripts(scriptIds: string[] = []) {
     try {
       await this.initCache();
-      const ids = scriptIds ?? Object.keys(this.cache ?? {});
+      const ids = scriptIds ?? Object.keys(this.cache);
 
       for (const scriptId of ids) {
-        delete this.cache?.[scriptId];
+        delete this.cache[scriptId];
       }
       await this.saveCache();
 

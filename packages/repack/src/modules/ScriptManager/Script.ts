@@ -1,6 +1,7 @@
 /* globals Headers, FormData */
 
 import shallowEqual from 'shallowequal';
+import { Federated } from './federated';
 import type {
   NormalizedScriptLocator,
   ScriptLocator,
@@ -17,6 +18,13 @@ import type {
  * Other methods are designed for internal use only.
  */
 export class Script {
+  /**
+   * Utilities for working with Module Federation.
+   *
+   * Refer to {@link Federated} for more details.
+   */
+  static federated = Federated;
+
   static DEFAULT_TIMEOUT = 30000; // 30s
 
   /**
@@ -67,7 +75,11 @@ export class Script {
    *
    * @internal
    */
-  static from(locator: ScriptLocator, fetch: boolean) {
+  static from(
+    key: { scriptId: string; caller?: string },
+    locator: ScriptLocator,
+    fetch: boolean
+  ) {
     const headers: Record<string, string> = {};
     new Headers(locator.headers).forEach((value: string, key: string) => {
       headers[key.toLowerCase()] = value;
@@ -99,6 +111,8 @@ export class Script {
     }
 
     return new Script(
+      key.scriptId,
+      key.caller,
       {
         method: locator.method ?? 'GET',
         url: locator.url,
@@ -122,6 +136,8 @@ export class Script {
    * @internal
    */
   constructor(
+    public readonly scriptId: string,
+    public readonly caller: string | undefined,
     public readonly locator: NormalizedScriptLocator,
     public readonly cache: boolean = true
   ) {}
@@ -167,6 +183,15 @@ export class Script {
       query: this.locator.query,
       headers: this.locator.headers,
       body: this.locator.body,
+    };
+  }
+
+  toObject() {
+    return {
+      scriptId: this.scriptId,
+      caller: this.caller,
+      locator: this.locator,
+      cache: this.cache,
     };
   }
 }
