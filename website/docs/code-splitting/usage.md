@@ -2,7 +2,7 @@
 
 The specific implementation of Code Splitting in your application can be different and should account for your project's specific needs, requirements and limitations.
 
-In general, we can identify 3 main categories of implementation. All of those approaches are based on the same underlying mechanism: Re.Pack's [`ChunkManager API`](../api/react-native/classes/ChunkManager) and the native module for it.
+In general, we can identify 3 main categories of implementation. All of those approaches are based on the same underlying mechanism: Re.Pack's [`ScriptManager API`](../api/repack/client/classes/ScriptManagerAPI) and the native module for it.
 
 :::caution
 
@@ -20,74 +20,61 @@ Use [Glossary of terms](./glossary) to better understand the content of this doc
 
 ## Generic usage
 
-On a high-level, all functionalities that enable to use Webpack's Code Splitting, are powered by
-Re.Pack's [`ChunkManager`](../api/react-native/classes/ChunkManager).
+On a high-level, all functionalities that enable usage of Webpack's Code Splitting, are powered by
+Re.Pack's [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI), which consists of the JavaScript part and the native part.
 
-This APIs consists of the JavaScript part and the native part.
+The [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI) has methods which allows to:
 
-The [`ChunkManager`](../api/react-native/classes/ChunkManager) has function which allows to:
+1. Download and execute script - [`loadScript`](../api/repack/client/classes/ScriptManagerAPI#loadscript)
+2. Prefetch script (without executing immediately) - [`prefetchScript`](../api/repack/client/classes/ScriptManagerAPI#prefetchscript)
+3. Resolve script location - [`resolveScript`](../api/repack/client/classes/ScriptManagerAPI#resolvescript)
+4. Invalidate cache - [`invalidateScripts`](../api/repack/client/classes/ScriptManagerAPI#invalidatescripts)
 
-1. Download and execute the chunk - [`loadChunk`](../api/react-native/classes/ChunkManager#loadchunk)
-2. Download the chunk (without executing immediately) - [`preloadChunk`](../api/react-native/classes/ChunkManager#preloadchunk)
-3. Resolve chunk location - [`resolveChunk`](../api/react-native/classes/ChunkManager#resolvechunk)
-4. Invalidate chunk's cache - [`invalidateChunks`](../api/react-native/classes/ChunkManager#invalidatechunks)
+In order to provide this functionalities [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI)
+has to be configured to be able to resolve scripts:
 
-In order to provide this functionalities [`ChunkManager`](../api/react-native/classes/ChunkManager)
-has to be configured to be able to resolve remote chunks/scripts/containers:
+```ts
+import { ScriptManager, Script } from '@callstack/repack/client';
 
-```js
-ChunkManager.configure({
+ScriptManager.configure({
   storage: AsyncStorage, // Optional: enables caching
-  resolveRemoteChunk: async (chunkId, parentChunkId) => {
-    // Resolve or provide a URL to download the
-    // remote chunk/script/container from.
+  resolve: async (scriptId, caller) => {
+    // In dev mode, resolve script location to dev server.
+    if (__DEV__) {
+      return {
+        url: Script.getDevServerURL(scriptId),
+        cache: false,
+      };
+    }
+
     return {
-      url: `http://domain.com/${chunkId}`,
+      url: Script.getRemoteURL(`http://somewhere-on-the-internet.com/${scriptId}`)
     };
   },
 });
 ```
 
-If the `storage` is provided, the returned `url` from `resolveRemoteChunk` will be used for
-cache management. You can read more about it in [Caching and Versioning](./caching-versioning).
+If the `storage` is provided, the returned `url` from `resolve` will be used for cache management.
+You can read more about it in [Caching and Versioning](./caching-versioning).
 
-:::info
+Under the hood, the way a script gets loaded can be summarized as follows:
 
-Despite the name, [`ChunkManager`](../api/react-native/classes/ChunkManager) is also used when
-loading [scripts](#scripts) and containers from [Module Federation](#module-federation).
-
-:::
-
-Under the hood, the process could be summarized as follows:
-
-1. `ChunkManager.loadChunk(...)` gets called, either:
+1. `ScriptManager.loadScript(...)` gets called, either:
    - Automatically by the dynamic `import(...)` function handled by Webpack, when using [Async chunks approach](#async-chunks)
    - Manually when using [Scripts approach](#scripts) or [Module Federation](#module-federation)
-2. `ChunkManager.loadChunk(...)` is called `chunkId` and `parentChunkId` arguments, which are either provided by:
+2. `ScriptManager.loadScript(...)` is called `scriptId` and `caller` arguments, which are either provided by:
    - Webpack, based on it's internal naming logic or a [magic comment: `webpackChunkName`](https://webpack.js.org/migrate/5/#using--webpackchunkname--)
    - Manually
-3. `ChunkManager.loadChunk(...)` resolves the chunk location using `ChunkManager.resolveChunk(...)`.
-4. The resolution:
-   - In development: resolves all chunks to the development server location for better developer
-   experience, unless `forceRemoteChunkResolution` is set to `true`.
-   - In production:
-     - For remote chunks/scripts/containers (default): calls `resolveRemoteChunk` and compares the
-     returned `url` value with the one stored in `storage` (if provided):
-       - If the values are equal: the native module will **not** download a new version,
-       but execute already stored one
-       - If the values are not equal, or `storage` was not provided,
-       or the chunk was never downloaded before: the native module will download a chunk and execute
-       it
-     - For local chunks only: resolves chunk to the filesystem location
-5. The resolution info is passed to the native module, which downloads (unless a chunk is a local one)
-and executes the file.
-6. Once the code has been executed the `Promise` returned by `ChunkManager.loadChunk(...)` gets
-resolved.
+3. `ScriptManager.loadScript(...)` resolves the chunk location using `ScriptManager.resolveScript(...)`.
+4. The resolution happens inside `resolve` function passed when calling `ScriptManager.configure(...)`.
+5. The resolved location is compared against previous location of that script, if and only if, `storage` was provided and the script was resolved before.
+6. The resolved location is passed to the native module, which downloads if necessary and executes the script.
+7. Once the code has been executed the `Promise` returned by `ScriptManager.loadScript(...)` gets resolved.
 
 :::info
 
-[`ChunkManager.preloadChunk(...)`](../api/react-native/classes/ChunkManager#preloadchunk) follows
-the same behavior except for #5, where it downloads the file but doesn't execute it.
+[`ChunkManager.prefetchScript(...)`](../api/repack/client/classes/ScriptManagerAPI#prefetchscript) follows
+the same behavior except for #6, where it only downloads the file and doesn't execute it.
 
 :::
 
@@ -146,9 +133,10 @@ function App() {
 For each file in the dynamic `import(...)` function a new chunk will be created - those chunks will
 be a remote chunks by default and they will be copied to `<projectRoot>/build/<platform>/remote` by
 default. All chunks in this directory should be uploaded to the remote server or a CDN.
+
 You can change this directory using
-[`remoteChunksOutput`](../api/repack/interfaces/OutputPluginConfig#remotechunksoutput)
-in [`OutputPlugin`](../api/repack/classes/OutputPlugin) configuration.
+[`remoteChunksOutput`](../api/repack/interfaces/plugins.OutputPluginConfig#remotechunksoutput)
+in [`RepackPlugin`](../api/repack/classes/RepackPlugin) or [`OutputPlugin`](../api/repack/classes/plugins.OutputPlugin) configuration.
 
 :::tip
 
@@ -163,9 +151,9 @@ To see `import(...)`, `React.lazy` and `React.Suspense` in action, check out
 
 :::
 
-:::info
+:::caution
 
-For production, don't forget to configure Re.Pack's [`ChunkManager`](../api/react-native/classes/ChunkManager).
+Don't forget to configure [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI#configure)!
 
 :::
 
@@ -182,8 +170,7 @@ build pipelines, from separate codebases and repositories.
 
 Scripts should only be used by advanced users with deep Webpack knowledge and experience.
 
-Scripts give a lot of flexibility but it also means the support for them is only limited the
-[`ChunkManager`](../api/react-native/classes/ChunkManager) API. It's not possible for Re.Pack's
+Scripts give a lot of flexibility but it also means the support for them is limited. It's not possible for Re.Pack's
 contributors to support all potential setups using this approach.
 
 :::
@@ -202,25 +189,25 @@ A good starting point would be:
 Loading a script is as simple as running a single function:
 
 ```js
-await ChunkManager.loadChunk('my-script');
+await ScriptManager.loadScript('my-script');
 console.log('Script loaded');
 ```
 
-And configuring the [`ChunkManager`](../api/react-native/classes/ChunkManager) to resolve your
+And configuring the [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI#configure) to resolve your
 scripts:
 
 ```js
-ChunkManager.configure({
-  forceRemoteChunkResolution: true,
-  resolveRemoteChunk: async (chunkId) => {
-    if (chunkId === 'my-script') {
+import { ScriptManager, Script } from '@callstack/repack/client';
+
+ScriptManager.configure({
+  resolve: async (scriptId) => {
+    if (scriptId === 'my-script') {
       return {
-        url: `https://my-domain.dev/my-script.js`,
-        excludeExtension: true,
+        url: Script.getRemoteURL('https://my-domain.dev/my-script.js', { excludeExtension: true }),
       };
     }
 
-    throw new Error(`Chunk ${chunkId} not supported`);
+    throw new Error(`Script ${scriptId} not supported`);
   },
 });
 ```

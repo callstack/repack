@@ -3,12 +3,12 @@ package com.callstack.repack
 import android.os.Handler
 import com.facebook.react.bridge.*
 
-class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-    private val remoteLoader: RemoteChunkLoader = RemoteChunkLoader(reactApplicationContext)
-    private val fileSystemLoader: FileSystemChunkLoader = FileSystemChunkLoader(reactApplicationContext)
+class ScriptManagerModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+    private val remoteLoader: RemoteScriptLoader = RemoteScriptLoader(reactApplicationContext)
+    private val fileSystemLoader: FileSystemScriptLoader = FileSystemScriptLoader(reactApplicationContext)
 
     override fun getName(): String {
-        return "ChunkManager"
+        return "ScriptManager"
     }
 
     private fun runInBackground(fn: () -> Unit) {
@@ -21,11 +21,11 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
     }
 
     @ReactMethod
-    fun loadChunk(chunkId: String, configMap: ReadableMap, promise: Promise) {
+    fun loadScript(scriptId: String, configMap: ReadableMap, promise: Promise) {
         runInBackground {
-            val config = ChunkConfig.fromReadableMap(chunkId, configMap)
+            val config = ScriptConfig.fromReadableMap(scriptId, configMap)
 
-            // Currently, `loadChunk` supports either `RemoteChunkLoader` or `FileSystemChunkLoader`
+            // Currently, `loadScript` supports either `RemoteScriptLoader` or `FileSystemScriptLoader`
             // but not both at the same time - it will likely change in the future.
             when {
                 config.url.protocol.startsWith("http") -> {
@@ -40,7 +40,7 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
                 }
                 else -> {
                     promise.reject(
-                            ChunkLoadingError.UnsupportedScheme.code,
+                            ScriptLoadingError.UnsupportedScheme.code,
                             "Scheme in URL: '${config.url}' is not supported"
                     )
                 }
@@ -49,20 +49,20 @@ class ChunkManagerModule(reactContext: ReactApplicationContext) : ReactContextBa
 }
 
 @ReactMethod
-fun preloadChunk(chunkId: String, configMap: ReadableMap, promise: Promise) {
-    val config = ChunkConfig.fromReadableMap(chunkId, configMap)
+fun prefetchScript(scriptId: String, configMap: ReadableMap, promise: Promise) {
+    val config = ScriptConfig.fromReadableMap(scriptId, configMap)
     if (!config.fetch) {
-        // Do nothing, chunk is already preloaded
+        // Do nothing, script is already prefetched
         promise.resolve(null);
     } else {
         runInBackground {
             when {
                 config.url.protocol.startsWith("http") -> {
-                    remoteLoader.preload(config, promise)
+                    remoteLoader.prefetch(config, promise)
                 }
                 else -> {
                     promise.reject(
-                            ChunkLoadingError.UnsupportedScheme.code,
+                            ScriptLoadingError.UnsupportedScheme.code,
                             "Scheme in URL: '${config.url}' is not supported"
                     )
                 }
@@ -72,22 +72,22 @@ fun preloadChunk(chunkId: String, configMap: ReadableMap, promise: Promise) {
 }
 
 @ReactMethod
-fun invalidateChunks(chunkIds: ReadableArray, promise: Promise) {
+fun invalidateScripts(scriptIds: ReadableArray, promise: Promise) {
     runInBackground {
-        if (chunkIds.size() == 0) {
+        if (scriptIds.size() == 0) {
             remoteLoader.invalidateAll()
             promise.resolve(null)
         } else {
             try {
-                for (i in 0 until chunkIds.size()) {
-                    val chunkId = chunkIds.getString(i)
-                    remoteLoader.invalidate(chunkId)
+                for (i in 0 until scriptIds.size()) {
+                    val scriptId = scriptIds.getString(i)
+                    remoteLoader.invalidate(scriptId)
                 }
                 promise.resolve(null)
             } catch (error: Exception) {
                 promise.reject(
-                        ChunkLoadingError.ChunkInvalidationFailure.code,
-                        "Cannot invalidate some of the chunks"
+                        ScriptLoadingError.ScriptInvalidationFailure.code,
+                        "Cannot invalidate some of the scripts"
                 )
             }
         }

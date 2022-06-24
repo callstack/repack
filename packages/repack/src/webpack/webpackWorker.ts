@@ -4,11 +4,11 @@ import webpack from 'webpack';
 import memfs from 'memfs';
 import type { CliOptions } from '../types';
 import { getWebpackEnvOptions } from './utils';
-import { loadConfig } from './loadConfig';
+import { loadWebpackConfig } from './loadWebpackConfig';
 
 async function main(cliOptions: CliOptions) {
   const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
-  const webpackConfig = await loadConfig(
+  const webpackConfig = await loadWebpackConfig(
     cliOptions.config.webpackConfigPath,
     webpackEnvOptions
   );

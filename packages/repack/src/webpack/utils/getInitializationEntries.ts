@@ -24,6 +24,28 @@ export interface InitializationEntriesOptions {
  * @returns Array of entires.
  *
  * @category Webpack util
+ *
+ * @example Usage in Webpack config:
+ * ```ts
+ * import * as Repack from '@callstack/repack';
+ *
+ * export default (env) => {
+ *   const {
+ *     devServer,
+ *     reactNativePath = new URL('./node_modules/react-native', import.meta.url)
+ *       .pathname,
+ *   } = env;
+ *
+ *   return {
+ *     entry: [
+ *       ...Repack.getInitializationEntries(reactNativePath, {
+ *         hmr: devServer && devServer.hmr,
+ *       }),
+ *       entry,
+ *     ],
+ *   };
+ * };
+ * ```
  */
 export function getInitializationEntries(
   reactNativePath: string,
@@ -40,13 +62,11 @@ export function getInitializationEntries(
     ...getPolyfills(),
     initializeCoreLocation ||
       path.join(reactNativePath, 'Libraries/Core/InitializeCore.js'),
-    require.resolve('../../client/setup/setupRepack'),
+    require.resolve('../../modules/configurePublicPath'),
   ];
 
   if (hmr) {
-    entries.push(
-      require.resolve('../../client/setup/modules/WebpackHMRClient')
-    );
+    entries.push(require.resolve('../../modules/WebpackHMRClient'));
   }
 
   return entries;

@@ -2,7 +2,7 @@
 
 Assets loader allows you to use images in your application as well as to reference other static assets (video, audio, etc).
 
-In the default [Webpack template](/docs/configuration/webpack-config#webpack-config-template), the Assets loader is configured to process the same assets types as Metro:
+In the default [Webpack template](../templates), the Assets loader is configured to process the same assets types as Metro:
 
 ```js
 // webpack.config.js
@@ -39,7 +39,7 @@ module.exports = {
 
 :::info
 
-Assets loader should be used in combination with [AssetsResolverPlugin](/docs/api/repack/classes/AssetsResolverPlugin)
+Assets loader should be used in combination with [AssetsResolverPlugin](../../api/repack/classes/plugins.AssetsResolverPlugin)
 to work correctly and process scales: `@1x`, `@2x` and so on.
 
 :::
@@ -109,7 +109,7 @@ module.exports = {
 
 :::tip
 
-If you want to use SVGs in your application, check out [dedicated guide on SVGs](/docs/configuration/guides/svg).
+If you want to use SVGs in your application, check out [dedicated guide on SVGs](../guides/svg).
 
 :::
 

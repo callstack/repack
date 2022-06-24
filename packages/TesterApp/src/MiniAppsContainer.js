@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { Button, View } from 'react-native';
-import { ChunkManager } from '@callstack/repack/client';
+import { ScriptManager } from '@callstack/repack/client';
 
 export function MiniAppsContainer() {
   const [isInstalled, setIsInstalled] = useState(false);
@@ -14,7 +14,7 @@ export function MiniAppsContainer() {
   }, []);
 
   const uninstall = useCallback(async () => {
-    await ChunkManager.invalidateChunks(['miniapp']);
+    await ScriptManager.invalidateScripts(['miniapp']);
     miniAppContent.current = undefined;
     setIsInstalled(false);
     setIsVisible(false);

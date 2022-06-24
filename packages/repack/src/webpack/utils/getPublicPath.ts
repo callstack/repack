@@ -1,10 +1,12 @@
 import type { DevServerOptions } from '../../types';
 
 /** {@link getPublicPath} options. */
-export interface GetPublicPathOptions
-  extends Pick<DevServerOptions, 'host' | 'https'> {
-  /** Port under which to run the development server. */
-  port?: number;
+export interface GetPublicPathOptions {
+  /** Target application platform. */
+  platform: string;
+
+  /** Development server configuration options. */
+  devServer: Pick<DevServerOptions, 'port' | 'host' | 'https'>;
 }
 
 /**
@@ -14,11 +16,31 @@ export interface GetPublicPathOptions
  * @returns Value for Webpack's `output.publicPath` option.
  *
  * @category Webpack util
+ *
+ * @example Usage in Webpack config:
+ * ```ts
+ * import * as Repack from '@callstack/repack';
+ *
+ * export default (env) => {
+ *   const {
+ *     platform,
+ *     devServer = undefined,
+ *   } = env;
+ *
+ *   return {
+ *     output: {
+ *       publicPath: Repack.getPublicPath({ platform, devServer }),
+ *     },
+ *   };
+ * };
+ * ```
  */
 export function getPublicPath(options?: GetPublicPathOptions) {
-  if (options) {
-    const { port, host = 'localhost', https } = options ?? {};
-    return `${https ? 'https' : 'http'}://${host}:${port}/`;
+  if (options?.devServer) {
+    const { port, host, https } = options.devServer;
+    return `${https ? 'https' : 'http'}://${host || 'localhost'}:${port}/${
+      options.platform
+    }/`;
   } else {
     return `noop:///`;
   }

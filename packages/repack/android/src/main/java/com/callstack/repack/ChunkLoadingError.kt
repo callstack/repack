@@ -1,11 +1,11 @@
 package com.callstack.repack
 
-enum class ChunkLoadingError(val code: String) {
+enum class ScriptLoadingError(val code: String) {
     UnsupportedScheme("UnsupportedScheme"),
     FileSystemEvalFailure("FileSystemEvalFailure"),
     NetworkFailure("NetworkFailure"),
     RequestFailure("RequestFailure"),
     RemoteEvalFailure("RemoteEvalFailure"),
-    ChunkInvalidationFailure("ChunkInvalidationFailure"),
-    ChunkCachingFailure("ChunkCachingFailure"),
+    ScriptInvalidationFailure("ScriptInvalidationFailure"),
+    ScriptCachingFailure("ScriptCachingFailure"),
 }
