@@ -81,6 +81,10 @@ module.exports = [
         description: 'Silents all logs to the console/stdout',
       },
       {
+        name: '--json',
+        description: 'Log all messages to the console/stdout in JSON format',
+      },
+      {
         name: '--log-file <string>',
         description: 'Enables file logging to specified file',
       },
