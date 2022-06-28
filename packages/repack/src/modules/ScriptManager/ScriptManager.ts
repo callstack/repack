@@ -145,7 +145,7 @@ export class ScriptManager extends EventEmitter {
   }
 
   private handleError(error: any, message: string, ...args: any[]): never {
-    console.error(message, (error as Error).message, ...args);
+    console.error(message, ...args, { originalError: error });
     this.emit('error', { message, args, originalError: error });
     throw error;
   }
@@ -201,7 +201,8 @@ export class ScriptManager extends EventEmitter {
     } catch (error) {
       this.handleError(
         error,
-        '[ScriptManager] Failed while resolving script locator:'
+        '[ScriptManager] Failed while resolving script locator:',
+        { scriptId, caller }
       );
     }
   }

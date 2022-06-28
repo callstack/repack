@@ -1,7 +1,6 @@
 /* globals Headers, FormData */
 
 import shallowEqual from 'shallowequal';
-import { Federated } from './federated';
 import type {
   NormalizedScriptLocator,
   ScriptLocator,
@@ -18,13 +17,6 @@ import type {
  * Other methods are designed for internal use only.
  */
 export class Script {
-  /**
-   * Utilities for working with Module Federation.
-   *
-   * Refer to {@link Federated} for more details.
-   */
-  static federated = Federated;
-
   static DEFAULT_TIMEOUT = 30000; // 30s
 
   /**
