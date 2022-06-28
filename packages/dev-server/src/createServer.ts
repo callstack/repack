@@ -18,12 +18,13 @@ import symbolicatePlugin from './plugins/symbolicate';
  */
 export async function createServer(config: Server.Config) {
   /** Fastify instance powering the development server. */
+  let delegate: Server.Delegate;
   const instance = Fastify({
     logger: {
       level: 'trace',
       stream: new Writable({
         write: (chunk, _encoding, callback) => {
-          delegate.logger.onMessage(JSON.parse(chunk.toString()));
+          delegate?.logger.onMessage(JSON.parse(chunk.toString()));
           callback();
         },
       }),
@@ -31,7 +32,7 @@ export async function createServer(config: Server.Config) {
     ...(config.options.https ? { https: config.options.https } : undefined),
   });
 
-  const delegate = config.delegate({
+  delegate = config.delegate({
     log: instance.log,
     notifyBuildStart: (platform) => {
       instance.wss.dashboardServer.send({
