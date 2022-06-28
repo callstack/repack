@@ -74,6 +74,7 @@ export interface StartArguments extends CommonArguments {
   interactive?: boolean;
   silent?: boolean;
   verbose?: boolean;
+  json?: boolean;
   logFile?: string;
 }
 
