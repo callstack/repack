@@ -1,9 +1,8 @@
+import { ScriptManager } from './ScriptManager';
 import type { WebpackContext } from './types';
 
 /**
- * Namespace for utilities for Module Federation.
- *
- * Refer to {@link Script.federated} for more details.
+ * Namespace for runtime utilities for Module Federation.
  */
 export namespace Federated {
   /**
@@ -104,9 +103,9 @@ export namespace Federated {
    *
    * @example
    * ```ts
-   * import { ScriptManager, Script } from '@callstack/repack/client';
+   * import { ScriptManager, Script, Federated } from '@callstack/repack/client';
    *
-   * const resolveURL = Script.federated.createURLResolver({
+   * const resolveURL = Federated.createURLResolver({
    *   containers: {
    *     app1: 'http://localhost:9001/[name][ext]',
    *     app2: 'http://localhost:9002/[name].container.js',
@@ -140,11 +139,11 @@ export namespace Federated {
    * `createURLResolver` is a abstraction over {@link Script.getRemoteURL},
    * for example:
    * ```ts
-   * import { ScriptManager, Script } from '@callstack/repack/client';
+   * import { ScriptManager, Federated } from '@callstack/repack/client';
    *
    * new ScriptManager({
    *   resolve: async (scriptId, caller) => {
-   *     const resolveURL = Script.federated.createURLResolver({
+   *     const resolveURL = Federated.createURLResolver({
    *       containers: {
    *         app1: 'http://localhost:9000/[name][ext]',
    *       },
@@ -218,5 +217,55 @@ export namespace Federated {
 
       return resolver(scriptId, caller);
     };
+  }
+
+  declare function __webpack_init_sharing__(scope: string): Promise<void>;
+  declare var __webpack_share_scopes__: Record<string, any>;
+  declare var self: Record<string, any>;
+
+  /**
+   * Dynamically imports module from a Module Federation container. Similar to `import('file')`, but
+   * specific to Module Federation. Calling `importModule` will create an async boundary.
+   *
+   * Under the hood, `importModule` will call `ScriptManager.shared.loadScript(containerName)`.
+   * This means, `ScriptManager` must be instantiated beforehand and provided proper
+   * resolution logic to resolve URL based on the `containerName`.
+   *
+   * @param containerName Name of the container - should be the same name provided to
+   * `webpack.container.ModuleFederationPlugin` in `library.name`.
+   * @param module Full name with extension of the module to import from the container - only modules
+   * exposed in `exposes` in `webpack.container.ModuleFederationPlugin` can be used.
+   * @param scope Optional, scope for sharing modules between containers. Defaults to `'default'`.
+   * @returns Exports of given `module` from given container.
+   *
+   * @example
+   * ```ts
+   * import * as React from 'react';
+   * import { Federated } from '@callstack/repack/client';
+   *
+   * const Button = React.lazy(() => Federated.importModule('my-components', './Button.js'));
+   *
+   * const myUtil = await Federated.importModule('my-lib', './myUtil.js');
+   * ```
+   */
+  export async function importModule<Exports = any>(
+    containerName: string,
+    module: string,
+    scope: string = 'default'
+  ): Promise<Exports> {
+    // Initializes the share scope.
+    // This fills it with known provided modules from this build and all remotes.
+    await __webpack_init_sharing__(scope);
+
+    // Download and execute container
+    await ScriptManager.shared.loadScript(containerName);
+
+    const container = self[containerName];
+
+    // Initialize the container, it may provide shared modules
+    await container.init(__webpack_share_scopes__[scope]);
+    const factory = await container.get(module);
+    const exports = factory();
+    return exports;
   }
 }
