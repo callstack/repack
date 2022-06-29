@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack",
-  "version": "2.5.2",
+  "version": "3.0.0-next.0",
   "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -56,7 +56,7 @@
     "webpack": "5.x"
   },
   "dependencies": {
-    "@callstack/repack-dev-server": "^1.0.0",
+    "@callstack/repack-dev-server": "^1.0.0-next.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "colorette": "^1.2.2",
     "dedent": "^0.7.0",
