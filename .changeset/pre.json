@@ -1,0 +1,17 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "testerapp": "0.0.1",
+    "dashboard": "1.0.0",
+    "@callstack/repack-debugger-app": "0.0.1",
+    "@callstack/repack-dev-server": "0.0.1",
+    "@callstack/repack": "2.5.2",
+    "website": "0.0.1"
+  },
+  "changesets": [
+    "gold-ears-switch",
+    "selfish-rings-do",
+    "tame-bats-shake"
+  ]
+}

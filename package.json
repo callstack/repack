@@ -24,6 +24,8 @@
     "TesterApp:bundle": "turbo run build && yarn workspace testerapp run bundle"
   },
   "dependencies": {
+    "@changesets/changelog-github": "^0.4.5",
+    "@changesets/cli": "^2.23.0",
     "turbo": "^1.2.14"
   }
 }
