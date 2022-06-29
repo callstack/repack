@@ -3684,7 +3684,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@callstack/repack@3.0.0-next.0, @callstack/repack@workspace:packages/repack":
+"@callstack/repack@3.0.0-next.1, @callstack/repack@workspace:packages/repack":
   version: 0.0.0-use.local
   resolution: "@callstack/repack@workspace:packages/repack"
   dependencies:
@@ -29507,7 +29507,7 @@ __metadata:
     "@babel/core": ^7.12.9
     "@babel/runtime": ^7.12.5
     "@callstack/eslint-config": ^12.0.2
-    "@callstack/repack": 3.0.0-next.0
+    "@callstack/repack": 3.0.0-next.1
     "@react-native-async-storage/async-storage": ^1.15.4
     "@svgr/webpack": ^6.2.1
     "@types/get-port": ^4.2.0
