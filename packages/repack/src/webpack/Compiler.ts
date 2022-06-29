@@ -18,7 +18,8 @@ type Platform = string;
 
 export class Compiler extends EventEmitter {
   workers: Record<Platform, Worker> = {};
-  cache: Record<Platform, Record<string, Asset>> = {};
+  assetsCache: Record<Platform, Record<string, Asset>> = {};
+  statsCache: Record<Platform, webpack.StatsCompilation> = {};
   resolvers: Record<Platform, Array<(error?: Error) => void>> = {};
   progressSenders: Record<Platform, SendProgress[]> = {};
   isCompilationInProgress: Record<Platform, boolean> = {};
@@ -104,12 +105,13 @@ export class Compiler extends EventEmitter {
                 data: Uint8Array;
                 info: Record<string, any>;
               }>;
-              stats: webpack.Stats;
+              stats: webpack.StatsCompilation;
             }
       ) => {
         if (value.event === 'done') {
           this.isCompilationInProgress[platform] = false;
-          this.cache[platform] = value.assets.reduce(
+          this.statsCache[platform] = value.stats;
+          this.assetsCache[platform] = value.assets.reduce(
             (acc, { filename, data, info }) => ({
               ...acc,
               [filename]: {
@@ -158,8 +160,8 @@ export class Compiler extends EventEmitter {
     platform: string,
     sendProgress?: SendProgress
   ): Promise<Asset> {
-    // Return file from cache if exists
-    const fileFromCache = this.cache[platform]?.[filename];
+    // Return file from assetsCache if exists
+    const fileFromCache = this.assetsCache[platform]?.[filename];
     if (fileFromCache) {
       return fileFromCache;
     }
@@ -190,7 +192,7 @@ export class Compiler extends EventEmitter {
           if (error) {
             reject(error);
           } else {
-            const fileFromCache = this.cache[platform]?.[filename];
+            const fileFromCache = this.assetsCache[platform]?.[filename];
             if (fileFromCache) {
               resolve(fileFromCache);
             } else {

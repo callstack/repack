@@ -3,29 +3,27 @@ import WebSocket from 'ws';
 import { WebSocketServer } from '../WebSocketServer';
 
 /**
- * Class for creating a WebSocket server for Dashboard client.
- * It's used by built-in Dashboard web-app to receive compilation
- * events, logs and other necessary messages.
+ * Class for creating a WebSocket server for API clients.
+ * Useful to listening for compilation events and new logs.
  *
  * @category Development server
  */
-export class WebSocketDashboardServer extends WebSocketServer {
+export class WebSocketApiServer extends WebSocketServer {
   private clients = new Map<string, WebSocket>();
   private nextClientId = 0;
 
   /**
-   * Create new instance of WebSocketDashboardServer and attach it to the given Fastify instance.
+   * Create new instance of WebSocketApiServer and attach it to the given Fastify instance.
    * Any logging information, will be passed through standard `fastify.log` API.
    *
    * @param fastify Fastify instance to attach the WebSocket server to.
-   * @param emitter Event emitter instance.
    */
   constructor(fastify: FastifyInstance) {
-    super(fastify, '/api/dashboard');
+    super(fastify, '/api');
   }
 
   /**
-   * Send message to all connected Dashboard clients.
+   * Send message to all connected API clients.
    *
    * @param event Event string or object to send.
    */
@@ -50,12 +48,12 @@ export class WebSocketDashboardServer extends WebSocketServer {
     const clientId = `client#${this.nextClientId++}`;
     this.clients.set(clientId, socket);
 
-    this.fastify.log.info({ msg: 'Dashboard client connected', clientId });
+    this.fastify.log.info({ msg: 'API client connected', clientId });
     this.clients.set(clientId, socket);
 
     const onClose = () => {
       this.fastify.log.info({
-        msg: 'Dashboard client disconnected',
+        msg: 'API client disconnected',
         clientId,
       });
       this.clients.delete(clientId);
