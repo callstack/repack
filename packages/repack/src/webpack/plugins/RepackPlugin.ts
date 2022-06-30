@@ -1,4 +1,3 @@
-import path from 'path';
 import webpack from 'webpack';
 import type { DevServerOptions, WebpackPlugin } from '../../types';
 import { AssetsResolverPlugin } from './AssetsResolverPlugin';

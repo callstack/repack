@@ -130,6 +130,14 @@ export class ScriptManager extends EventEmitter {
     __webpack_require__.repack.shared.scriptManager = this;
   }
 
+  __destroy() {
+    __webpack_require__.repack.shared.scriptManager = undefined;
+    __webpack_require__.repack.shared.loadScriptCallback.push =
+      Array.prototype.push.bind(
+        __webpack_require__.repack.shared.loadScriptCallback
+      );
+  }
+
   private async initCache() {
     if (!this.cacheInitialized) {
       const cache: Cache | null | undefined = JSON.parse(
