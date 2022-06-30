@@ -1,8 +1,14 @@
 import path from 'path';
 import webpack from 'webpack';
-import type { WebpackPlugin } from '../../../types';
+import type { DevServerOptions, WebpackPlugin } from '../../../types';
 import { RepackInitRuntimeModule } from './runtime/RepackInitRuntimeModule';
 import { RepackLoadScriptRuntimeModule } from './runtime/RepackLoadScriptRuntimeModule';
+
+/**
+ * {@link RepackTargetPlugin} configuration options.
+ */
+export interface RepackTargetPluginConfig
+  extends Pick<DevServerOptions, 'hmr'> {}
 
 /**
  * Plugin for tweaking the JavaScript runtime code to account for React Native environment.
@@ -13,6 +19,13 @@ import { RepackLoadScriptRuntimeModule } from './runtime/RepackLoadScriptRuntime
  * @category Webpack Plugin
  */
 export class RepackTargetPlugin implements WebpackPlugin {
+  /**
+   * Constructs new `RepackTargetPlugin`.
+   *
+   * @param config Plugin configuration options.
+   */
+  constructor(private config?: RepackTargetPluginConfig) {}
+
   /**
    * Apply the plugin.
    *
@@ -57,11 +70,13 @@ export class RepackTargetPlugin implements WebpackPlugin {
           // Add code initialize Re.Pack's runtime logic.
           compilation.addRuntimeModule(
             chunk,
-            new RepackInitRuntimeModule(
-              chunk.id ?? undefined,
+            new RepackInitRuntimeModule({
+              chunkId: chunk.id ?? undefined,
               globalObject,
-              compiler.options.output.chunkLoadingGlobal!
-            )
+              chunkLoadingGlobal: compiler.options.output.chunkLoadingGlobal!,
+              hmrEnabled:
+                compilation.options.mode === 'development' && this.config?.hmr,
+            })
           );
         }
       );

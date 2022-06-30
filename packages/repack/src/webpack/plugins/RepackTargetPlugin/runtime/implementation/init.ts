@@ -1,11 +1,13 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable promise/prefer-await-to-then */
 /* eslint-disable promise/no-callback-in-promise */
 /* eslint-env browser */
-/* global LoadScriptEvent RepackRuntime __DEV__ __webpack_require__ */
+/* global LoadScriptEvent RepackRuntime __webpack_require__ */
 
-let $chunkId$ = '';
-let $chunkLoadingGlobal$ = '';
-let $globalObject$ = {} as Record<string, any>;
+const $chunkId$ = '';
+const $chunkLoadingGlobal$ = '';
+const $globalObject$ = {} as Record<string, any>;
+const $hmrEnabled$ = false;
 
 module.exports = function () {
   var loadScriptCallback: string[] = [];
@@ -83,7 +85,7 @@ module.exports = function () {
   }
 
   function loadHotUpdate(url: string, done: (event?: LoadScriptEvent) => void) {
-    if (!__DEV__ || !module.hot) {
+    if (!$hmrEnabled$) {
       console.error('[RepackRuntime] Loading HMR update chunks is disabled');
       done({ type: 'disabled', target: { src: url } });
       return;
@@ -106,14 +108,14 @@ module.exports = function () {
       .then(function (script?: string) {
         if (script) {
           // @ts-ignore
-          const globalEvalWithSourceUrl = global.globalEvalWithSourceUrl;
+          const globalEvalWithSourceUrl = self.globalEvalWithSourceUrl;
           (function () {
             if (globalEvalWithSourceUrl) {
               globalEvalWithSourceUrl(script, null);
             } else {
               eval(script);
             }
-          }.call(global));
+          }.call(self));
           done();
         }
 
