@@ -1,7 +1,12 @@
 import type { IncomingMessage } from 'http';
 import { URL } from 'url';
 import WebSocket from 'ws';
-import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import type {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+  LogLevel,
+} from 'fastify';
 import { WebSocketServer } from '../WebSocketServer';
 import { Server } from '../../../types';
 // @ts-ignore
@@ -77,7 +82,11 @@ export class HermesInspectorProxy extends WebSocketServer {
     };
 
     this.fastify.get('/json/list', { onSend }, pageListHandler);
-    this.fastify.get('/json', { onSend }, pageListHandler);
+    this.fastify.get(
+      '/json',
+      { onSend, logLevel: 'silent' as LogLevel },
+      pageListHandler
+    );
   }
 
   private buildPageDescription(deviceId: number, page: Page) {
