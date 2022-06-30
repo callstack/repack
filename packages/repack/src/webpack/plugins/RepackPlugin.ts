@@ -138,7 +138,9 @@ export class RepackPlugin implements WebpackPlugin {
       devServer: this.config.devServer,
     }).apply(compiler);
 
-    new RepackTargetPlugin().apply(compiler);
+    new RepackTargetPlugin({
+      hmr: this.config.devServer?.hmr,
+    }).apply(compiler);
 
     if (this.config.sourceMaps) {
       new webpack.SourceMapDevToolPlugin({
