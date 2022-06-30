@@ -1,4 +1,4 @@
-# Concepts
+# Concept
 
 Code Splitting is a technique that splits the code into multiple files, which can be loaded on
 demand and in parallel.

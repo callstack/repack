@@ -32,7 +32,7 @@ module.exports = {
           type: 'category',
           label: 'Code Splitting',
           items: [
-            'code-splitting/concepts',
+            'code-splitting/concept',
             'code-splitting/usage',
             'code-splitting/glossary',
             'code-splitting/guide-async-chunks',
@@ -40,6 +40,17 @@ module.exports = {
             'code-splitting/caching-versioning',
             'code-splitting/react-navigation',
             'code-splitting/code-push',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Module Federation',
+          items: [
+            'module-federation/concept',
+            'module-federation/host',
+            'module-federation/container',
+            'module-federation/async-import',
+            'module-federation/sync-import',
           ],
         },
         {
