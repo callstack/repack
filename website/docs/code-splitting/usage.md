@@ -2,7 +2,7 @@
 
 The specific implementation of Code Splitting in your application can be different and should account for your project's specific needs, requirements and limitations.
 
-In general, we can identify 3 main categories of implementation. All of those approaches are based on the same underlying mechanism: Re.Pack's [`ScriptManager API`](../api/repack/client/classes/ScriptManagerAPI) and the native module for it.
+In general, we can identify 3 main categories of implementation. All of those approaches are based on the same underlying mechanism: Re.Pack's [`ScriptManager`](../api/repack/client/classes/ScriptManager) and the native module for it.
 
 :::caution
 
@@ -21,22 +21,22 @@ Use [Glossary of terms](./glossary) to better understand the content of this doc
 ## Generic usage
 
 On a high-level, all functionalities that enable usage of Webpack's Code Splitting, are powered by
-Re.Pack's [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI), which consists of the JavaScript part and the native part.
+Re.Pack's [`ScriptManager`](../api/repack/client/classes/ScriptManager), which consists of the JavaScript part and the native part.
 
-The [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI) has methods which allows to:
+The [`ScriptManager`](../api/repack/client/classes/ScriptManager) has methods which allows to:
 
-1. Download and execute script - [`loadScript`](../api/repack/client/classes/ScriptManagerAPI#loadscript)
-2. Prefetch script (without executing immediately) - [`prefetchScript`](../api/repack/client/classes/ScriptManagerAPI#prefetchscript)
-3. Resolve script location - [`resolveScript`](../api/repack/client/classes/ScriptManagerAPI#resolvescript)
-4. Invalidate cache - [`invalidateScripts`](../api/repack/client/classes/ScriptManagerAPI#invalidatescripts)
+1. Download and execute script - [`loadScript`](../api/repack/client/classes/ScriptManager#loadscript)
+2. Prefetch script (without executing immediately) - [`prefetchScript`](../api/repack/client/classes/ScriptManager#prefetchscript)
+3. Resolve script location - [`resolveScript`](../api/repack/client/classes/ScriptManager#resolvescript)
+4. Invalidate cache - [`invalidateScripts`](../api/repack/client/classes/ScriptManager#invalidatescripts)
 
-In order to provide this functionalities [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI)
-has to be configured to be able to resolve scripts:
+In order to provide this functionalities [`ScriptManager`](../api/repack/client/classes/ScriptManager)
+has to be instantiated to be able to resolve scripts:
 
 ```ts
 import { ScriptManager, Script } from '@callstack/repack/client';
 
-ScriptManager.configure({
+new ScriptManager({
   storage: AsyncStorage, // Optional: enables caching
   resolve: async (scriptId, caller) => {
     // In dev mode, resolve script location to dev server.
@@ -57,23 +57,29 @@ ScriptManager.configure({
 If the `storage` is provided, the returned `url` from `resolve` will be used for cache management.
 You can read more about it in [Caching and Versioning](./caching-versioning).
 
+:::tip
+
+Calling `new ScriptManager(...)` will create a shared instance, which you can access using `ScriptManager.shared`. Trying to create another instance `ScriptManager`, will throw error.
+
+:::
+
 Under the hood, the way a script gets loaded can be summarized as follows:
 
-1. `ScriptManager.loadScript(...)` gets called, either:
+1. `ScriptManager.shared.loadScript(...)` gets called, either:
    - Automatically by the dynamic `import(...)` function handled by Webpack, when using [Async chunks approach](#async-chunks)
    - Manually when using [Scripts approach](#scripts) or [Module Federation](#module-federation)
-2. `ScriptManager.loadScript(...)` is called `scriptId` and `caller` arguments, which are either provided by:
+2. `ScriptManager.shared.loadScript(...)` is called `scriptId` and `caller` arguments, which are either provided by:
    - Webpack, based on it's internal naming logic or a [magic comment: `webpackChunkName`](https://webpack.js.org/migrate/5/#using--webpackchunkname--)
    - Manually
-3. `ScriptManager.loadScript(...)` resolves the chunk location using `ScriptManager.resolveScript(...)`.
-4. The resolution happens inside `resolve` function passed when calling `ScriptManager.configure(...)`.
+3. `ScriptManager.shared.loadScript(...)` resolves the chunk location using `ScriptManager.shared.resolveScript(...)`.
+4. The resolution happens inside `resolve` function passed when calling `new ScriptManager(...)`.
 5. The resolved location is compared against previous location of that script, if and only if, `storage` was provided and the script was resolved before.
 6. The resolved location is passed to the native module, which downloads if necessary and executes the script.
-7. Once the code has been executed the `Promise` returned by `ScriptManager.loadScript(...)` gets resolved.
+7. Once the code has been executed the `Promise` returned by `ScriptManager.shared.loadScript(...)` gets resolved.
 
 :::info
 
-[`ChunkManager.prefetchScript(...)`](../api/repack/client/classes/ScriptManagerAPI#prefetchscript) follows
+[`ScriptManager.shared.prefetchScript(...)`](../api/repack/client/classes/ScriptManager#prefetchscript) follows
 the same behavior except for #6, where it only downloads the file and doesn't execute it.
 
 :::
@@ -153,7 +159,7 @@ To see `import(...)`, `React.lazy` and `React.Suspense` in action, check out
 
 :::caution
 
-Don't forget to configure [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI#configure)!
+Don't forget to instantiate [`ScriptManager`](../api/repack/client/classes/ScriptManager#constructor)!
 
 :::
 
@@ -193,13 +199,13 @@ await ScriptManager.loadScript('my-script');
 console.log('Script loaded');
 ```
 
-And configuring the [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI#configure) to resolve your
+And configuring the [`ScriptManager`](../api/repack/client/classes/ScriptManager#constructor) to resolve your
 scripts:
 
 ```js
 import { ScriptManager, Script } from '@callstack/repack/client';
 
-ScriptManager.configure({
+new ScriptManager({
   resolve: async (scriptId) => {
     if (scriptId === 'my-script') {
       return {
