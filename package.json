@@ -17,7 +17,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "release": "yarn prepare && cp README.md packages/repack && yarn workspace @callstack/repack run release",
+    "release": "yarn build && yarn lint && yarn test && yarn changeset publish",
     "website:start": "turbo run docs && yarn workspace website run start",
     "website:build": "turbo run docs && yarn workspace website run export",
     "TesterApp:start": "turbo run build && yarn workspace testerapp run start",
