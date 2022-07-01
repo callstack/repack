@@ -74,6 +74,7 @@ export interface StartArguments extends CommonArguments {
   interactive?: boolean;
   silent?: boolean;
   verbose?: boolean;
+  json?: boolean;
   logFile?: string;
 }
 
@@ -145,17 +146,16 @@ export interface WebpackEnvOptions {
   /** Input filename - entry point of the bundle. */
   entry?: string;
 
-  /** Bundle output path - directory where built bundle will be saved. */
-  outputPath?: string;
-
-  /** Bundle output filename - name under which built bundle will be saved. */
-  outputFilename?: string;
+  /** Bundle output filename - name under which generated bundle will be saved. */
+  bundleFilename?: string;
 
   /**
-   * Source map filename - name under which generated Source Map will be saved.
-   * The output directory for the Source Map is the same as {@link outputPath}.
+   * Source map filename - name under which generated source map (for the main bundle) will be saved.
    */
-  sourcemapFilename?: string;
+  sourceMapFilename?: string;
+
+  /** Assets output path - directory where generated static assets will be saved. */
+  assetsPath?: string;
 
   /** Whether to minimize the final bundle. */
   minimize?: boolean;

@@ -92,9 +92,10 @@ module.exports = {
           label: '@callstack/repack/client',
           items: getApiItems('repack/client', [
             'classes',
+            'functions',
             'interfaces',
+            'modules',
             'types',
-            'variables',
           ]),
         },
         {

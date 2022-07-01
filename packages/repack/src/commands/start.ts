@@ -45,7 +45,6 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       start: { ...args, platform: '' },
     },
   };
-
   const isSilent = args.silent;
   const isVerbose = isSilent
     ? false
@@ -53,6 +52,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   const reporter = composeReporters(
     [
       new ConsoleReporter({
+        asJson: args.json,
         level: isSilent ? 'silent' : isVerbose ? 'verbose' : 'normal',
       }),
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
@@ -195,6 +195,7 @@ function bindKeypressInput(ctx: Server.DelegateContext) {
     ctx.log.warn({
       msg: 'Interactive mode is not supported in this environment',
     });
+    return;
   }
 
   readline.emitKeypressEvents(process.stdin);

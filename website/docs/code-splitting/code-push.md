@@ -13,7 +13,7 @@ The process of using Code Push with Code Splitting could be described as follows
 2. Upload scripts to a server/CDN.
 3. Release application to the store.
 4. Make changes to the code.
-5. **Change the `method`/`url`/`query`/`header` or `body` when resolving script in `resolve` function in [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI#configure)**.
+5. **Change the `method`/`url`/`query`/`header` or `body` when resolving script in `resolve` function in [`ScriptManager`](../api/repack/client/classes/ScriptManager#constructor)**.
 6. Bundle the application using Webpack and Re.Pack (and build other scripts and containers when
 using Scripts/Module Federation approach).
 7. Upload scripts to a server/CDN **under new `method`/`url`/`query`/`header` or `body` from point 5**.

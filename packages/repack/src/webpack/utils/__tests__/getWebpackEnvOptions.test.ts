@@ -14,7 +14,7 @@ describe('getWebpackEnvOptions', () => {
           bundle: {
             platform: 'android',
             dev: false,
-            bundleOutput: '/a/b/c',
+            bundleOutput: '/a/b/c/main.js',
             entryFile: 'main.js',
           },
         },
@@ -26,6 +26,7 @@ describe('getWebpackEnvOptions', () => {
       mode: 'production',
       platform: 'android',
       reactNativePath: '/x/y/z/node_modules/react-native',
+      bundleFilename: '/a/b/c/main.js',
     });
 
     expect(
@@ -40,7 +41,7 @@ describe('getWebpackEnvOptions', () => {
           bundle: {
             platform: 'android',
             dev: true,
-            bundleOutput: '/a/b/c',
+            bundleOutput: '/a/b/c/main.js',
             entryFile: '/x/y/z/src/main.js',
           },
         },
@@ -52,6 +53,7 @@ describe('getWebpackEnvOptions', () => {
       mode: 'development',
       platform: 'android',
       reactNativePath: '/x/y/z/node_modules/react-native',
+      bundleFilename: '/a/b/c/main.js',
     });
   });
 
@@ -78,6 +80,7 @@ describe('getWebpackEnvOptions', () => {
         hmr: true,
         port: 8081,
       },
+      bundleFilename: '',
     });
 
     expect(
@@ -105,6 +108,7 @@ describe('getWebpackEnvOptions', () => {
         port: 5000,
         host: 'local',
       },
+      bundleFilename: '',
     });
   });
 });

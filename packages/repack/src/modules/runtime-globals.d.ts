@@ -11,20 +11,20 @@ declare interface RepackRuntime {
     caller: string | undefined,
     done: (event?: LoadScriptEvent) => void
   ) => void;
-  loadScriptCallback: string[];
   loadHotUpdate: (url: string, done: (event?: LoadScriptEvent) => void) => void;
-  scriptManager?: import('./modules/ScriptManager/ScriptManager').ScriptManagerAPI;
+  shared: {
+    loadScriptCallback: string[][];
+    scriptManager?: import('./ScriptManager').ScriptManager;
+  };
 }
 
 declare var __DEV__: boolean;
 declare var __PUBLIC_PORT__: number;
 declare var __PLATFORM__: string;
-declare var __CHUNKS__: { local?: Array<string | number | null> } | undefined;
 declare var __webpack_public_path__: string;
-declare var __webpack_get_script_filename__: (script: string) => string;
 declare var __webpack_hash__: string;
 declare var __repack__: RepackRuntime;
-declare var __webpack_require__: {
+declare var __webpack_require__: import('./ScriptManager').WebpackContext & {
   x?: Function;
   repack: RepackRuntime;
 };

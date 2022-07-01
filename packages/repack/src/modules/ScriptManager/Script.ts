@@ -1,7 +1,11 @@
-/* globals Headers, FormData, __webpack_public_path__, __webpack_get_script_filename__ */
+/* globals Headers, FormData */
 
 import shallowEqual from 'shallowequal';
-import type { NormalizedScriptLocator, ScriptLocator } from './types';
+import type {
+  NormalizedScriptLocator,
+  ScriptLocator,
+  WebpackContext,
+} from './types';
 
 /**
  * Representation of a Script to load and execute, used by {@link ScriptManager}.
@@ -21,9 +25,8 @@ export class Script {
    * @param scriptId Id of the script.
    */
   static getDevServerURL(scriptId: string) {
-    return `${__webpack_public_path__}${__webpack_get_script_filename__(
-      scriptId
-    )}`;
+    return (webpackContext: WebpackContext) =>
+      `${webpackContext.p}${webpackContext.u(scriptId)}`;
   }
 
   /**
@@ -32,7 +35,8 @@ export class Script {
    * @param scriptId Id of the script.
    */
   static getFileSystemURL(scriptId: string) {
-    return __webpack_get_script_filename__(`file:///${scriptId}`);
+    return (webpackContext: WebpackContext) =>
+      webpackContext.u(`file:///${scriptId}`);
   }
 
   /**
@@ -52,7 +56,7 @@ export class Script {
       return url;
     }
 
-    return __webpack_get_script_filename__(url);
+    return (webpackContext: WebpackContext) => webpackContext.u(url);
   }
 
   /**
@@ -63,7 +67,11 @@ export class Script {
    *
    * @internal
    */
-  static from(locator: ScriptLocator, fetch: boolean) {
+  static from(
+    key: { scriptId: string; caller?: string },
+    locator: ScriptLocator,
+    fetch: boolean
+  ) {
     const headers: Record<string, string> = {};
     new Headers(locator.headers).forEach((value: string, key: string) => {
       headers[key.toLowerCase()] = value;
@@ -90,7 +98,13 @@ export class Script {
       body = locator.body ?? undefined;
     }
 
+    if (typeof locator.url === 'function') {
+      throw new Error('Property url as a function is not support');
+    }
+
     return new Script(
+      key.scriptId,
+      key.caller,
       {
         method: locator.method ?? 'GET',
         url: locator.url,
@@ -114,6 +128,8 @@ export class Script {
    * @internal
    */
   constructor(
+    public readonly scriptId: string,
+    public readonly caller: string | undefined,
     public readonly locator: NormalizedScriptLocator,
     public readonly cache: boolean = true
   ) {}
@@ -159,6 +175,15 @@ export class Script {
       query: this.locator.query,
       headers: this.locator.headers,
       body: this.locator.body,
+    };
+  }
+
+  toObject() {
+    return {
+      scriptId: this.scriptId,
+      caller: this.caller,
+      locator: this.locator,
+      cache: this.cache,
     };
   }
 }

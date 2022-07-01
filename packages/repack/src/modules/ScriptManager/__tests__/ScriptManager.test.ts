@@ -1,11 +1,15 @@
 /* globals globalThis */
 import { Script } from '../Script';
-import { ScriptManagerAPI } from '../ScriptManager';
+import { ScriptManager } from '../ScriptManager';
 
 jest.mock('react-native', () => ({ NativeModules: {} }));
 
 // @ts-ignore
-globalThis.__webpack_require__ = { repack: { loadScriptCallback: [] } };
+globalThis.__webpack_require__ = {
+  u: (id: string) => `${id}.chunk.bundle`,
+  p: '',
+  repack: { shared: { loadScriptCallback: [] } },
+};
 
 class FakeCache {
   data: Record<string, string> = {};
@@ -23,12 +27,18 @@ class FakeCache {
   }
 }
 
+beforeEach(() => {
+  try {
+    ScriptManager.shared.__destroy();
+  } catch {
+    // NOOP
+  }
+});
+
 describe('ScriptManagerAPI', () => {
   it('should resolve with url only', async () => {
-    const manager = new ScriptManagerAPI({});
     const cache = new FakeCache();
-
-    manager.configure({
+    new ScriptManager({
       storage: cache,
       resolve: async (scriptId, caller) => {
         expect(caller).toEqual('main');
@@ -39,7 +49,10 @@ describe('ScriptManagerAPI', () => {
       },
     });
 
-    const script = await manager.resolveScript('src_App_js', 'main');
+    const script = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
     expect(script.locator).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
@@ -50,10 +63,12 @@ describe('ScriptManagerAPI', () => {
 
     const {
       locator: { fetch },
-    } = await manager.resolveScript('src_App_js', 'main');
+    } = await ScriptManager.shared.resolveScript('src_App_js', 'main');
     expect(fetch).toBe(false);
 
-    manager.configure({
+    ScriptManager.shared.__destroy();
+
+    new ScriptManager({
       storage: cache,
       resolve: async (scriptId, caller) => {
         expect(caller).toEqual('main');
@@ -64,7 +79,10 @@ describe('ScriptManagerAPI', () => {
       },
     });
 
-    const newScript = await manager.resolveScript('src_App_js', 'main');
+    const newScript = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
     expect(newScript.locator).toEqual({
       url: 'http://domain.ext/subpath/src_App_js.chunk.bundle',
       fetch: true,
@@ -75,10 +93,8 @@ describe('ScriptManagerAPI', () => {
   });
 
   it('should resolve with custom extension', async () => {
-    const manager = new ScriptManagerAPI({});
     const cache = new FakeCache();
-
-    manager.configure({
+    new ScriptManager({
       storage: cache,
       resolve: async (scriptId, caller) => {
         expect(caller).toEqual('main');
@@ -91,7 +107,10 @@ describe('ScriptManagerAPI', () => {
       },
     });
 
-    const script = await manager.resolveScript('src_App_js', 'main');
+    const script = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
     expect(script.locator).toEqual({
       url: 'http://domain.ext/src_App_js.js',
       fetch: true,
@@ -102,10 +121,8 @@ describe('ScriptManagerAPI', () => {
   });
 
   it('should resolve with query', async () => {
-    const manager = new ScriptManagerAPI({});
     const cache = new FakeCache();
-
-    manager.configure({
+    new ScriptManager({
       storage: cache,
       resolve: async (scriptId, caller) => {
         expect(caller).toEqual('main');
@@ -120,7 +137,7 @@ describe('ScriptManagerAPI', () => {
       },
     });
 
-    let script = await manager.resolveScript('src_App_js', 'main');
+    let script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
     expect(script.locator).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
@@ -130,7 +147,8 @@ describe('ScriptManagerAPI', () => {
       timeout: Script.DEFAULT_TIMEOUT,
     });
 
-    manager.configure({
+    ScriptManager.shared.__destroy();
+    new ScriptManager({
       storage: cache,
       resolve: async (scriptId, caller) => {
         expect(caller).toEqual('main');
@@ -142,16 +160,14 @@ describe('ScriptManagerAPI', () => {
       },
     });
 
-    script = await manager.resolveScript('src_App_js', 'main');
+    script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
     expect(script.locator.fetch).toBe(true);
     expect(script.locator.query).toEqual('token=some_token');
   });
 
   it('should resolve with headers', async () => {
-    const manager = new ScriptManagerAPI({});
     const cache = new FakeCache();
-
-    manager.configure({
+    new ScriptManager({
       storage: cache,
       resolve: async (scriptId, caller) => {
         expect(caller).toEqual('main');
@@ -165,7 +181,7 @@ describe('ScriptManagerAPI', () => {
       },
     });
 
-    let script = await manager.resolveScript('src_App_js', 'main');
+    let script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
     expect(script.locator).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
@@ -175,7 +191,8 @@ describe('ScriptManagerAPI', () => {
       timeout: Script.DEFAULT_TIMEOUT,
     });
 
-    manager.configure({
+    ScriptManager.shared.__destroy();
+    new ScriptManager({
       storage: cache,
       resolve: async (scriptId, caller) => {
         expect(caller).toEqual('main');
@@ -190,7 +207,7 @@ describe('ScriptManagerAPI', () => {
       },
     });
 
-    script = await manager.resolveScript('src_App_js', 'main');
+    script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
     expect(script.locator).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
@@ -202,10 +219,8 @@ describe('ScriptManagerAPI', () => {
   });
 
   it('should resolve with body', async () => {
-    const manager = new ScriptManagerAPI({});
     const cache = new FakeCache();
-
-    manager.configure({
+    new ScriptManager({
       storage: cache,
       resolve: async (scriptId, caller) => {
         expect(caller).toEqual('main');
@@ -218,7 +233,7 @@ describe('ScriptManagerAPI', () => {
       },
     });
 
-    let script = await manager.resolveScript('src_App_js', 'main');
+    let script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
     expect(script.locator).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
@@ -228,7 +243,8 @@ describe('ScriptManagerAPI', () => {
       timeout: Script.DEFAULT_TIMEOUT,
     });
 
-    manager.configure({
+    ScriptManager.shared.__destroy();
+    new ScriptManager({
       storage: cache,
       resolve: async (scriptId, caller) => {
         expect(caller).toEqual('main');
@@ -241,7 +257,7 @@ describe('ScriptManagerAPI', () => {
       },
     });
 
-    script = await manager.resolveScript('src_App_js', 'main');
+    script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
     expect(script.locator).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
@@ -253,10 +269,8 @@ describe('ScriptManagerAPI', () => {
   });
 
   it('should resolve with absolute path', async () => {
-    const manager = new ScriptManagerAPI({});
     const cache = new FakeCache();
-
-    manager.configure({
+    new ScriptManager({
       storage: cache,
       resolve: async (scriptId, caller) => {
         expect(caller).toEqual('main');
@@ -270,7 +284,10 @@ describe('ScriptManagerAPI', () => {
       },
     });
 
-    const script = await manager.resolveScript('src_App_js', 'main');
+    const script = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
     expect(script.locator).toEqual({
       url: 'file:///absolute/directory/src_App_js.chunk.bundle',
       fetch: true,

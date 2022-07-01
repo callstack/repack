@@ -1,5 +1,10 @@
 /* globals Headers, FormData */
 
+export interface WebpackContext {
+  p: () => string;
+  u: (id: string) => string;
+}
+
 /**
  * Interface specifying how to fetch a script.
  * It represents the output of {@link ScriptLocatorResolver} function used by {@link ScriptManager}.
@@ -16,7 +21,7 @@ export interface ScriptLocator {
    *
    * **Passing query params might lead to unexpected results. To pass query params use `query` field.**
    */
-  url: string;
+  url: string | ((webpackContext: WebpackContext) => string);
 
   /**
    * Query params to append when building the final URL.
