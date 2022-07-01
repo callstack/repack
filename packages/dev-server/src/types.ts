@@ -66,6 +66,9 @@ export namespace Server {
 
     /** An messages delegate. */
     messages: MessagesDelegate;
+
+    /** An API delegate. */
+    api?: Api.Delegate;
   }
 
   /**
@@ -130,6 +133,42 @@ export namespace Server {
 
     /** Get message to send as a reply for `GET /status` route. */
     getStatus: () => string;
+  }
+
+  export namespace Api {
+    /** A compilation asset representation for API clients. */
+    export interface Asset {
+      name: string;
+      size: number;
+      [key: string]: any;
+    }
+
+    /** A compilation stats representation for API clients. */
+    export interface CompilationStats {
+      [key: string]: any;
+    }
+
+    /**
+     * Delegate with implementation for API endpoints.
+     */
+    export interface Delegate {
+      /** Get all platforms - either with already existing compilations or all supported platforms. */
+      getPlatforms: () => Promise<string[]>;
+
+      /**
+       * Get all assets from compilation for given platform.
+       * Should return `[]` if the compilation does not exists for given platform.
+       */
+      getAssets: (platform: string) => Promise<Asset[]>;
+
+      /**
+       * Get compilation stats for a given platform.
+       * Should return `null` if the compilation does not exists for given platform.
+       */
+      getCompilationStats: (
+        platform: string
+      ) => Promise<CompilationStats | null>;
+    }
   }
 }
 
