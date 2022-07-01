@@ -164,6 +164,18 @@ export async function start(_: string[], config: Config, args: StartArguments) {
             reporter.process(logEntry);
           },
         },
+        api: {
+          getPlatforms: async () => Object.keys(compiler.workers),
+          getAssets: async (platform) =>
+            Object.entries(compiler.assetsCache[platform] ?? {}).map(
+              ([name, asset]) => ({
+                name,
+                size: asset.info.size,
+              })
+            ),
+          getCompilationStats: async (platform) =>
+            compiler.statsCache[platform] ?? null,
+        },
       };
     },
   });

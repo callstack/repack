@@ -6,6 +6,7 @@ import debuggerAppPath from '@callstack/repack-debugger-app';
 import multipartPlugin from './plugins/multipart';
 import compilerPlugin from './plugins/compiler';
 import devtoolsPlugin from './plugins/devtools';
+import apiPlugin from './plugins/api';
 import wssPlugin from './plugins/wss';
 import { Internal, Server } from './types';
 import symbolicatePlugin from './plugins/symbolicate';
@@ -17,13 +18,17 @@ import symbolicatePlugin from './plugins/symbolicate';
  * @returns `start` and `stop` functions as well as an underlying Fastify `instance`.
  */
 export async function createServer(config: Server.Config) {
+  let delegate: Server.Delegate;
+
   /** Fastify instance powering the development server. */
   const instance = Fastify({
     logger: {
       level: 'trace',
       stream: new Writable({
         write: (chunk, _encoding, callback) => {
-          delegate.logger.onMessage(JSON.parse(chunk.toString()));
+          const log = JSON.parse(chunk.toString());
+          delegate?.logger.onMessage(log);
+          instance.wss.apiServer.send(log);
           callback();
         },
       }),
@@ -31,16 +36,16 @@ export async function createServer(config: Server.Config) {
     ...(config.options.https ? { https: config.options.https } : undefined),
   });
 
-  const delegate = config.delegate({
+  delegate = config.delegate({
     log: instance.log,
     notifyBuildStart: (platform) => {
-      instance.wss.dashboardServer.send({
+      instance.wss.apiServer.send({
         event: Internal.EventTypes.BuildStart,
         platform,
       });
     },
     notifyBuildEnd: (platform) => {
-      instance.wss.dashboardServer.send({
+      instance.wss.apiServer.send({
         event: Internal.EventTypes.BuildEnd,
         platform,
       });
@@ -60,6 +65,10 @@ export async function createServer(config: Server.Config) {
     delegate,
   });
   await instance.register(multipartPlugin);
+  await instance.register(apiPlugin, {
+    delegate,
+    prefix: '/api',
+  });
   await instance.register(compilerPlugin, {
     delegate,
   });

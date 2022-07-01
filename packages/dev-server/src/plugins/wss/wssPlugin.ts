@@ -6,7 +6,7 @@ import { WebSocketDevClientServer } from './servers/WebSocketDevClientServer';
 import { WebSocketMessageServer } from './servers/WebSocketMessageServer';
 import { WebSocketEventsServer } from './servers/WebSocketEventsServer';
 import { HermesInspectorProxy } from './servers/HermesInspectorProxy';
-import { WebSocketDashboardServer } from './servers/WebSocketDashboardServer';
+import { WebSocketApiServer } from './servers/WebSocketApiServer';
 import { WebSocketHMRServer } from './servers/WebSocketHMRServer';
 import { WebSocketRouter } from './WebSocketRouter';
 
@@ -18,7 +18,7 @@ declare module 'fastify' {
       messageServer: WebSocketMessageServer;
       eventsServer: WebSocketEventsServer;
       hermesInspectorProxy: HermesInspectorProxy;
-      dashboardServer: WebSocketDashboardServer;
+      apiServer: WebSocketApiServer;
       hmrServer: WebSocketHMRServer;
       router: WebSocketRouter;
     };
@@ -44,7 +44,7 @@ async function wssPlugin(
     webSocketMessageServer: messageServer,
   });
   const hermesInspectorProxy = new HermesInspectorProxy(instance, options);
-  const dashboardServer = new WebSocketDashboardServer(instance);
+  const apiServer = new WebSocketApiServer(instance);
   const hmrServer = new WebSocketHMRServer(instance, delegate.hmr);
 
   router.registerServer(debuggerServer);
@@ -52,7 +52,7 @@ async function wssPlugin(
   router.registerServer(messageServer);
   router.registerServer(eventsServer);
   router.registerServer(hermesInspectorProxy);
-  router.registerServer(dashboardServer);
+  router.registerServer(apiServer);
   router.registerServer(hmrServer);
 
   instance.decorate('wss', {
@@ -61,7 +61,7 @@ async function wssPlugin(
     messageServer,
     eventsServer,
     hermesInspectorProxy,
-    dashboardServer,
+    apiServer,
     hmrServer,
     router,
   });

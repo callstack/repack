@@ -1,5 +1,23 @@
 # @callstack/repack
 
+## 3.0.0-next.2
+
+### Minor Changes
+
+- ### Development server API
+
+  Added implementation for API functionalities in `@callstack/repack-dev-server`:
+
+  - `GET /api/platforms` - List all platforms with active compilations
+  - `GET /api/:platform/assets` - List all assets (`name` and `size`) for a given compilation
+  - `GET /api/:platform/stats` - Get Webpack compilation stats
+  - Websocket server under `/api` URI for logs and compilations events
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@1.0.0-next.1
+
 ## 3.0.0-next.1
 
 ### Patch Changes
