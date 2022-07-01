@@ -8,15 +8,17 @@
   "files": [
     "dist",
     "docs",
-    "first-party",
     "android",
+    "!android/build",
     "ios",
+    "!ios/build",
     "commands.js",
+    "commands.d.ts",
     "client.js",
+    "client.d.ts",
     "assets-loader.js",
     "callstack-repack.podspec",
-    "!android/build",
-    "!ios/build"
+    "CHANGELOG.md"
   ],
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
