@@ -1,4 +1,3 @@
-import path from 'path';
 import webpack from 'webpack';
 import type { DevServerOptions, WebpackPlugin } from '../../types';
 import { AssetsResolverPlugin } from './AssetsResolverPlugin';
@@ -11,6 +10,9 @@ import { RepackTargetPlugin } from './RepackTargetPlugin';
  * {@link RepackPlugin} configuration options.
  */
 export interface RepackPluginConfig {
+  /** Context in which all resolution happens. Usually it's project root directory. */
+  context: string;
+
   /** Compilation mode. */
   mode: 'development' | 'production';
 
@@ -33,12 +35,22 @@ export interface RepackPluginConfig {
   sourceMaps?: boolean;
 
   /**
-   * Options to configure {@link OutputPlugin}'s `localChunks`, `remoteChunksOutput` and `entry`.
+   * Output options specifying where to save generated bundle, source map and assets.
+   *
+   * Refer to {@link OutputPluginConfig.output} for more details.
    */
-  output?: Pick<
-    OutputPluginConfig,
-    'localChunks' | 'remoteChunksOutput' | 'entry'
-  >;
+  output: OutputPluginConfig['output'];
+
+  /** The entry chunk name, `main` by default. */
+  entryName?: string;
+
+  /**
+   * Options specifying how to deal with extra chunks generated in the compilation,
+   * usually by using dynamic `import(...)` function.
+   *
+   * Refer to {@link OutputPluginConfig.extraChunks} for more details.
+   */
+  extraChunks?: OutputPluginConfig['extraChunks'];
 
   /**
    * Options to configure {@link LoggerPlugin}'s `output`.
@@ -122,15 +134,10 @@ export class RepackPlugin implements WebpackPlugin {
 
     new OutputPlugin({
       platform: this.config.platform,
-      devServerEnabled: Boolean(this.config.devServer),
-      localChunks: [/Async/],
-      remoteChunksOutput: path.join(
-        __dirname,
-        'build',
-        this.config.platform,
-        'remote'
-      ),
-      ...this.config.output,
+      enabled: !this.config.devServer,
+      context: this.config.context,
+      output: this.config.output,
+      extraChunks: this.config.extraChunks,
     }).apply(compiler);
 
     new DevelopmentPlugin({

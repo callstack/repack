@@ -25,6 +25,9 @@ export default (env) => {
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
+    bundleFilename = undefined,
+    sourceMapFilename = undefined,
+    assetsPath = undefined,
     reactNativePath = new URL('./node_modules/react-native', import.meta.url)
       .pathname,
   } = env;
@@ -218,9 +221,15 @@ export default (env) => {
        * from `Repack.plugins`.
        */
       new Repack.RepackPlugin({
+        context,
         mode,
         platform,
         devServer,
+        output: {
+          bundleFilename,
+          sourceMapFilename,
+          assetsPath,
+        },
       }),
     ],
   };

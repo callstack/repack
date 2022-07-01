@@ -25,6 +25,9 @@ export default (env) => {
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
+    bundleFilename = undefined,
+    sourceMapFilename = undefined,
+    assetsPath = undefined,
     reactNativePath = new URL('./node_modules/react-native', import.meta.url)
       .pathname,
   } = env;
@@ -91,7 +94,7 @@ export default (env) => {
      */
     output: {
       clean: true,
-      path: path.join(dirname, 'build', platform),
+      path: path.join(dirname, 'build/generated', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
@@ -219,9 +222,19 @@ export default (env) => {
        * from `Repack.plugins`.
        */
       new Repack.RepackPlugin({
+        context,
         mode,
         platform,
         devServer,
+        output: {
+          bundleFilename,
+          sourceMapFilename,
+          assetsPath,
+        },
+        extraChunks: [{
+          include: ['src_Async_js'],
+          type: 'local'
+        }]
       }),
     ],
   };

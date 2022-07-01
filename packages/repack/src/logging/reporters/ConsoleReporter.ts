@@ -4,6 +4,7 @@ import throttle from 'lodash.throttle';
 import type { LogEntry, LogType, Reporter } from '../types';
 
 export interface ConsoleReporterConfig {
+  asJson?: boolean;
   level?: 'silent' | 'normal' | 'verbose';
   isWorker?: boolean;
 }
@@ -12,9 +13,10 @@ export class ConsoleReporter implements Reporter {
   private internalReporter: Reporter;
 
   constructor(private config: ConsoleReporterConfig) {
-    this.internalReporter = this.config.isWorker
-      ? new WorkerConsoleReporter(this.config)
-      : new InteractiveConsoleReporter(this.config);
+    this.internalReporter =
+      this.config.isWorker || this.config.asJson
+        ? new JsonConsoleReporter(this.config)
+        : new InteractiveConsoleReporter(this.config);
   }
 
   process(log: LogEntry) {
@@ -30,7 +32,7 @@ export class ConsoleReporter implements Reporter {
   }
 }
 
-class WorkerConsoleReporter implements Reporter {
+class JsonConsoleReporter implements Reporter {
   constructor(private config: ConsoleReporterConfig) {}
 
   process(log: LogEntry) {

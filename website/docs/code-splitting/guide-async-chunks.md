@@ -111,7 +111,7 @@ module.exports = {
 At this point all the code used by `StudentSide.js` will be put into `student.chunk.bundle` and
 `TeacherSide.js` into `teacher.chunk.bundle`.
 
-Before we can actually render out application, we need to configure [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI)
+Before we can actually render out application, we need to configure [`ScriptManager`](../api/repack/client/classes/ScriptManager)
 so it can resolve out chunks:
 
 ```js
@@ -122,7 +122,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import App from './src/App'; // Your application's root component
 import { name as appName } from './app.json';
 
-ScriptManager.configure({
+new ScriptManager({
   storage: AsyncStorage, // optional
   resolver: async (scriptId) => {
     // `scriptId` will be either 'student' or 'teacher'
@@ -144,7 +144,7 @@ ScriptManager.configure({
 AppRegistry.registerComponent(appName, () => App);
 ```
 
-This code will allow Re.Pack's [`ScriptManager`](../api/repack/client/classes/ScriptManagerAPI) to
+This code will allow Re.Pack's [`ScriptManager`](../api/repack/client/classes/ScriptManager) to
 actually locate your chunks for the student and the teacher, and download them.
 
 When bundling for production/release, all remote chunks, including `student.chunk.bundle` and
