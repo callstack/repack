@@ -1,18 +1,20 @@
 {
   "name": "@callstack/repack-dev-server",
-  "description": "A bundler-agnostic development server for React Native applications.",
+  "description": "A bundler-agnostic development server for React Native applications as part of @callstack/repack.",
   "license": "MIT",
   "version": "1.0.0-next.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
     "docs",
-    "vendor"
+    "vendor",
+    "CHANGELOG.md"
   ],
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
