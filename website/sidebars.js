@@ -36,6 +36,7 @@ module.exports = {
             'code-splitting/usage',
             'code-splitting/glossary',
             'code-splitting/guide-async-chunks',
+            'code-splitting/local-vs-remote-chunks',
             'code-splitting/caching-versioning',
             'code-splitting/react-navigation',
             'code-splitting/code-push',

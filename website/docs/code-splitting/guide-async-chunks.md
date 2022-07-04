@@ -111,8 +111,8 @@ module.exports = {
 At this point all the code used by `StudentSide.js` will be put into `student.chunk.bundle` and
 `TeacherSide.js` into `teacher.chunk.bundle`.
 
-Before we can actually render out application, we need to configure [`ScriptManager`](../api/repack/client/classes/ScriptManager)
-so it can resolve out chunks:
+Before we can actually render out application, we need to instantiate [`ScriptManager`](../api/repack/client/classes/ScriptManager),
+so it can resolve the chunks:
 
 ```js
 // index.js
@@ -148,61 +148,15 @@ This code will allow Re.Pack's [`ScriptManager`](../api/repack/client/classes/Sc
 actually locate your chunks for the student and the teacher, and download them.
 
 When bundling for production/release, all remote chunks, including `student.chunk.bundle` and
-`teacher.chunk.bundle` will be copied to `<projectRoot>/build/<platform>/remote` by default.
+`teacher.chunk.bundle` will be copied to `<projectRoot>/build/output/<platform>/remote` by default,
+for example: `<projectRoot>/build/output/ios/student.chunk.bundle`.
+
 You should upload files from this directory to a remote server or a CDN from where `ScriptManager`
 will download them.
 
-You can change this directory using
-[`remoteChunksOutput`](../api/repack/interfaces/plugins.OutputPluginConfig#remotechunksoutput)
-in [`RepackPlugin`](../api/repack/classes/RepackPlugin) or [`OutputPlugin`](../api/repack/classes/plugins.OutputPlugin) configuration.
+:::tip
 
-## Local vs remote chunks
-
-By default all async chunks are remote chunks, meaning they are hosted on a remote server (e.g: CDN)
-and downloaded on demand.
-
-Local chunks, however, are always stored on a filesystem and bundled together with main bundle into
-the final `.ipa` or `.apk` file, meaning they increase initial download size the user has to
-download when installing your application.
-
-Local chunks should only be used if you know that the majority of users will need them or if you
-want to have *pre-built* features/modules.
-
-:::info
-
-Local chunks will not be copied into `<projectRoot>/build/<platform>/remote` (or directory specified
-in [`remoteChunksOutput`](../api/repack/interfaces/plugins.OutputPluginConfig#remotechunksoutput)).
-They will be stored next to the main bundle.
+You can change this directory and/or mark chunks as local. Refer to dedicated [Local vs Remote chunks guide](./local-vs-remote-chunks)
+for more information.
 
 :::
-
-To mark a chunk as a local chunk, you need to add it's name or a RegExp matching the chunk's name to
-[`localChunks`](../api/repack/interfaces/plugins.OutputPluginConfig#localchunks) in
-your Webpack config.
-
-For example, if we know they majority of the users will be students, it would make sense to make 
-`student` chunk a local chunk. To mark the `student` chunk as a local one, apply this diff to your
-Webpack configuration:
-
-If you're using [`RepackPlugin`](../api/repack/classes/RepackPlugin):
-
-```diff
-      new Repack.RepackPlugin({
-        mode,
-        platform,
-        devServer,
-+       output: {
-+         localChunks: ['student'],
-+       },
-      }),
-```
-
-If you're using [`OutputPlugin`](../api/repack/classes/plugins.OutputPlugin):
-
-```diff
-      new ReactNative.OutputPlugin({
-        platform,
-        devServerEnabled: devServer.enabled,
-+       localChunks: ['student'],
-      }),
-```
