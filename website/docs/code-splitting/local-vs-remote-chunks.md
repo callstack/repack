@@ -201,6 +201,45 @@ Specifying `extraChunks` will override any defaults - you must configure `remote
 
 :::
 
+Once you have some chunks as local, you need to alter `resolve` function in [`ScriptManager`](../api/repack/client/classes/ScriptManager#constructor):
+
+```js
+import { ScriptManager, Script } from '@callstack/repack/client';
+
+new ScriptManager({
+  resolve: async (scriptId) => {
+    // In development, get all the chunks from dev server.
+    if (__DEV__) {
+      return {
+        url: Script.getDevServerURL(scriptId),
+        cache: false,
+      };
+    }
+
+    // In production, get chunks matching the regex from filesystem.
+    if (/^.+\.local$/.test(scriptId)) {
+      return {
+        url: Script.getFileSystemURL(scriptId),
+      };
+    } else {
+      return {
+        url: Script.getRemoteURL(`https://my-domain.dev/${scriptId}`),
+      };
+    }
+
+    throw new Error(`Script ${scriptId} could not be resolved`);
+  },
+});
+```
+
+:::tip
+
+To avoid having to repeat the RegExp, you can create a new `.js` or `.json` file, export the RegExp and use the file both in the source code as well as in the Webpack config.
+
+Check out the [`local-chunks` example](https://github.com/callstack/repack-examples) for concrete implementation.
+
+:::
+
 ## Advanced example
 
 You can mix multiple `type: 'local'` and `type: 'remote'` specs using `test`, `include` and `exclude` to match different chunks:
