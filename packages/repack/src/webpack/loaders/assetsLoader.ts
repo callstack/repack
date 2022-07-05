@@ -229,9 +229,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
         callback?.(
           null,
           dedent`
-        module.exports = ${JSON.stringify(
-          inlineAsset(content, resourcePath)
-        )}
+        module.exports = ${JSON.stringify(inlineAsset(content, resourcePath))}
       `
         );
       }
