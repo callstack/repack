@@ -32,9 +32,13 @@ In plural form: Async chunks refer to a [Code Splitting approach](./usage#async-
 
 A [Chunk](#chunk) stored locally on a filesystem (of a mobile device), contrary to a [Remote chunk](#remote-chunk).
 
+You can learn more about local chunks in the dedicated [Local vs remote chunks guide](./local-vs-remote-chunks).
+
 ## Remote chunk
 
 A [Chunk](#chunk) stored remotely on the server, CDN or any other network location, contrary to a [Local chunk](#local-chunk).
+
+You can learn more about remote chunks in the dedicated [Local vs remote chunks guide](./local-vs-remote-chunks).
 
 ## Script
 

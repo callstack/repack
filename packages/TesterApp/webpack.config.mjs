@@ -231,10 +231,17 @@ export default (env) => {
           sourceMapFilename,
           assetsPath,
         },
-        extraChunks: [{
-          include: ['src_Async_js'],
-          type: 'local'
-        }]
+        extraChunks: [
+          {
+            include: ['src_Async_js'],
+            type: 'local',
+          },
+          {
+            exclude: ['src_Async_js'],
+            type: 'remote',
+            outputPath: path.join('build/output', platform, 'remote'),
+          },
+        ],
       }),
     ],
   };

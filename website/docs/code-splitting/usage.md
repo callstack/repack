@@ -137,12 +137,13 @@ function App() {
 ```
 
 For each file in the dynamic `import(...)` function a new chunk will be created - those chunks will
-be a remote chunks by default and they will be copied to `<projectRoot>/build/<platform>/remote` by
-default. All chunks in this directory should be uploaded to the remote server or a CDN.
+be remote chunks by default.
 
-You can change this directory using
-[`remoteChunksOutput`](../api/repack/interfaces/plugins.OutputPluginConfig#remotechunksoutput)
-in [`RepackPlugin`](../api/repack/classes/RepackPlugin) or [`OutputPlugin`](../api/repack/classes/plugins.OutputPlugin) configuration.
+:::tip
+
+You can learn more about local and remote chunks in the dedicated [Local vs Remote chunks guide](./local-vs-remote-chunks).
+
+:::
 
 :::tip
 

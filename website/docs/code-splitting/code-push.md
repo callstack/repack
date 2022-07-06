@@ -26,3 +26,9 @@ which will cause cache invalidation and new script will be downloaded.
 Re.Pack is not an alternative for CodePush, and both projects aim to accomplish different use cases.
 
 :::
+
+:::warning
+
+Code Push works only on the main bundle, meaning all local chunks will not be updated by Code Push. 
+
+:::
