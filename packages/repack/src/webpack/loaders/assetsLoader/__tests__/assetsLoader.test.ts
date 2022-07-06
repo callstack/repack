@@ -197,9 +197,12 @@ describe('assetLoader', () => {
           path.join(__dirname, './__fixtures__/logo.png')
         )
       ).toString('base64');
-      expect(context.Export?.default.uri).toEqual(
-        `data:image/png;base64,${logo}`
-      );
+      expect(context.Export?.default).toEqual({
+        uri: `data:image/png;base64,${logo}`,
+        width: 2292,
+        height: 393,
+        scale: 1,
+      });
     });
 
     it('with scales', async () => {
@@ -214,13 +217,31 @@ describe('assetLoader', () => {
       const context: { Export?: { default: Record<string, any> } } = {};
       vm.runInNewContext(code, context);
 
-      const logo = (
-        await fs.promises.readFile(
-          path.join(__dirname, './__fixtures__/star@3x.png')
-        )
-      ).toString('base64');
-      expect(context.Export?.default.uri).toEqual(
-        `data:image/png;base64,${logo}`
+      const logos = await Promise.all([
+        (
+          await fs.promises.readFile(
+            path.join(__dirname, './__fixtures__/star@1x.png')
+          )
+        ).toString('base64'),
+        (
+          await fs.promises.readFile(
+            path.join(__dirname, './__fixtures__/star@2x.png')
+          )
+        ).toString('base64'),
+        (
+          await fs.promises.readFile(
+            path.join(__dirname, './__fixtures__/star@3x.png')
+          )
+        ).toString('base64'),
+      ]);
+
+      expect(context.Export?.default).toEqual(
+        logos.map((logo, index) => ({
+          uri: `data:image/png;base64,${logo}`,
+          scale: index + 1,
+          height: 272,
+          width: 286,
+        }))
       );
     });
   });

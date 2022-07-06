@@ -1,19 +1,16 @@
 import path from 'path';
-import escapeStringRegexp from 'escape-string-regexp';
-import imageSize from 'image-size';
 import dedent from 'dedent';
 import hasha from 'hasha';
-import type { ISizeCalculationResult } from 'image-size/dist/types/interface';
 import type { WebpackLogger } from '../../../types';
 import type { Asset } from './types';
+import { getImageSize } from './utils';
 
-export async function extractAsset(
+export async function extractAssets(
   {
     resourcePath,
     resourceDirname,
     resourceFilename,
     resourceExtensionType,
-    scaleKeys,
     assets,
     suffixPattern,
     assetsDirname,
@@ -25,7 +22,6 @@ export async function extractAsset(
     resourceDirname: string;
     resourceFilename: string;
     resourceExtensionType: string;
-    scaleKeys: string[];
     assets: Asset[];
     suffixPattern: string;
     assetsDirname: string;
@@ -35,10 +31,6 @@ export async function extractAsset(
   },
   logger: WebpackLogger
 ) {
-  const scaleNumbers = scaleKeys.map((scale) =>
-    parseFloat(scale.replace(/[^\d.]/g, ''))
-  );
-
   let publicPath = path
     .join(assetsDirname, resourceDirname)
     .replace(pathSeparatorRegexp, '/');
@@ -55,42 +47,24 @@ export async function extractAsset(
     )
   );
 
-  let info: ISizeCalculationResult | undefined;
-  try {
-    info = imageSize(resourcePath);
+  const size = getImageSize({
+    resourceFilename,
+    resourcePath,
+    suffixPattern,
+  });
 
-    const [, scaleMatch = ''] =
-      path
-        .basename(resourcePath)
-        .match(
-          new RegExp(`^${escapeStringRegexp(resourceFilename)}${suffixPattern}`)
-        ) ?? [];
-
-    if (scaleMatch) {
-      const scale = Number(scaleMatch.replace(/[^\d.]/g, ''));
-
-      if (typeof scale === 'number' && Number.isFinite(scale)) {
-        info.width && (info.width /= scale);
-        info.height && (info.height /= scale);
-      }
-    }
-  } catch {
-    // Asset is not an image
-  }
-
-  logger.debug(`Extracted asset ${resourcePath}`, {
-    scaleNumbers,
+  logger.debug(`Extracted assets for request ${resourcePath}`, {
     hashes,
     publicPath: customPublicPath,
-    height: info?.height,
-    width: info?.width,
+    height: size?.height,
+    width: size?.width,
   });
 
   return dedent`
     var AssetRegistry = require('react-native/Libraries/Image/AssetRegistry');
     module.exports = AssetRegistry.registerAsset({
       __packager_asset: true,
-      scales: ${JSON.stringify(scaleNumbers)},
+      scales: ${JSON.stringify(assets.map((asset) => asset.scale))},
       name: ${JSON.stringify(resourceFilename)},
       type: ${JSON.stringify(resourceExtensionType)},
       hash: ${JSON.stringify(hashes.join())},
@@ -100,8 +74,8 @@ export async function extractAsset(
           ? `fileSystemLocation: ${JSON.stringify(resourceDirname)},`
           : ''
       }
-      ${info ? `height: ${info.height},` : ''}
-      ${info ? `width: ${info.width},` : ''}
+      ${size ? `height: ${size.height},` : ''}
+      ${size ? `width: ${size.width},` : ''}
     });
     `;
 }

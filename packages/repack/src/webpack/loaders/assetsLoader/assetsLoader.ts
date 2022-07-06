@@ -2,12 +2,17 @@ import path from 'path';
 import type { LoaderContext } from 'loader-utils';
 import { AssetResolver } from '../../plugins/AssetsResolverPlugin/AssetResolver';
 import { getOptions } from './options';
-import { inlineAsset } from './inlineAsset';
-import { getFilesInDirectory } from './utils';
+import { inlineAssets } from './inlineAssets';
+import { getFilesInDirectory, getScaleNumber, readFile } from './utils';
 import type { Asset } from './types';
-import { extractAsset } from './extractAsset';
+import { extractAssets } from './extractAssets';
 
 export const raw = true;
+
+const testXml = /\.(xml)$/;
+const testMP4 = /\.(mp4)$/;
+const testImages = /\.(png|jpg|gif|webp)$/;
+const testFonts = /\.(ttf|otf|ttc)$/;
 
 export default async function repackAssetsLoader(this: LoaderContext) {
   this.cacheable();
@@ -65,9 +70,7 @@ export default async function repackAssetsLoader(this: LoaderContext) {
     );
 
     const scaleKeys = Object.keys(scales).sort(
-      (a, b) =>
-        parseFloat(a.replace(/[^\d.]/g, '')) -
-        parseFloat(b.replace(/[^\d.]/g, ''))
+      (a, b) => getScaleNumber(a) - getScaleNumber(b)
     );
 
     for (const scaleKey of scaleKeys) {
@@ -79,93 +82,81 @@ export default async function repackAssetsLoader(this: LoaderContext) {
     }
 
     const assets = await Promise.all<Asset>(
-      scaleKeys.map((scaleKey) => {
+      scaleKeys.map(async (scaleKey) => {
         const filenameWithScale = path.join(
           resourceAbsoluteDirname,
           scales[scaleKey].name
         );
 
-        return new Promise((resolve, reject) =>
-          this.fs.readFile(filenameWithScale, (error, results) => {
-            if (error) {
-              reject(error);
-            } else {
-              let destination;
+        const content = await readFile(filenameWithScale, this.fs);
 
-              if (!options.devServerEnabled && options.platform === 'android') {
-                const testXml = /\.(xml)$/;
-                const testMP4 = /\.(mp4)$/;
-                const testImages = /\.(png|jpg|gif|webp)$/;
-                const testFonts = /\.(ttf|otf|ttc)$/;
+        let destination;
 
-                // found font family
-                if (
-                  testXml.test(resourceNormalizedFilename) &&
-                  results?.indexOf('font-family') !== -1
-                ) {
-                  destination = 'font';
-                } else if (testFonts.test(resourceNormalizedFilename)) {
-                  // font extensions
-                  destination = 'font';
-                } else if (testMP4.test(resourceNormalizedFilename)) {
-                  // video files extensions
-                  destination = 'raw';
-                } else if (
-                  testImages.test(resourceNormalizedFilename) ||
-                  testXml.test(resourceNormalizedFilename)
-                ) {
-                  // images extensions
-                  switch (scaleKey) {
-                    case '@0.75x':
-                      destination = 'drawable-ldpi';
-                      break;
-                    case '@1x':
-                      destination = 'drawable-mdpi';
-                      break;
-                    case '@1.5x':
-                      destination = 'drawable-hdpi';
-                      break;
-                    case '@2x':
-                      destination = 'drawable-xhdpi';
-                      break;
-                    case '@3x':
-                      destination = 'drawable-xxhdpi';
-                      break;
-                    case '@4x':
-                      destination = 'drawable-xxxhdpi';
-                      break;
-                    default:
-                      throw new Error(
-                        `Unknown scale ${scaleKey} for ${filenameWithScale}`
-                      );
-                  }
-                } else {
-                  // everything else is going to RAW
-                  destination = 'raw';
-                }
-
-                destination = path.join(
-                  destination,
-                  resourceNormalizedFilename
+        if (!options.devServerEnabled && options.platform === 'android') {
+          // found font family
+          if (
+            testXml.test(resourceNormalizedFilename) &&
+            content?.indexOf('font-family') !== -1
+          ) {
+            destination = 'font';
+          } else if (testFonts.test(resourceNormalizedFilename)) {
+            // font extensions
+            destination = 'font';
+          } else if (testMP4.test(resourceNormalizedFilename)) {
+            // video files extensions
+            destination = 'raw';
+          } else if (
+            testImages.test(resourceNormalizedFilename) ||
+            testXml.test(resourceNormalizedFilename)
+          ) {
+            // images extensions
+            switch (scaleKey) {
+              case '@0.75x':
+                destination = 'drawable-ldpi';
+                break;
+              case '@1x':
+                destination = 'drawable-mdpi';
+                break;
+              case '@1.5x':
+                destination = 'drawable-hdpi';
+                break;
+              case '@2x':
+                destination = 'drawable-xhdpi';
+                break;
+              case '@3x':
+                destination = 'drawable-xxhdpi';
+                break;
+              case '@4x':
+                destination = 'drawable-xxxhdpi';
+                break;
+              default:
+                throw new Error(
+                  `Unknown scale ${scaleKey} for ${filenameWithScale}`
                 );
-              } else {
-                const name = `${resourceFilename}${
-                  scaleKey === '@1x' ? '' : scaleKey
-                }.${resourceExtensionType}`;
-                destination = path.join(assetsDirname, resourceDirname, name);
-              }
-
-              resolve({
-                filename: destination,
-                content: results,
-              });
             }
-          })
-        );
+          } else {
+            // everything else is going to RAW
+            destination = 'raw';
+          }
+
+          destination = path.join(destination, resourceNormalizedFilename);
+        } else {
+          const name = `${resourceFilename}${
+            scaleKey === '@1x' ? '' : scaleKey
+          }.${resourceExtensionType}`;
+          destination = path.join(assetsDirname, resourceDirname, name);
+        }
+
+        return {
+          filename: destination,
+          content,
+          scaleKey,
+          scale: getScaleNumber(scaleKey),
+        };
       })
     );
 
-    logger.debug(`Resolved asset ${this.resourcePath}`, {
+    logger.debug(`Resolved request ${this.resourcePath}`, {
       platform: options.platform,
       rootContext,
       resourceNormalizedFilename,
@@ -174,19 +165,22 @@ export default async function repackAssetsLoader(this: LoaderContext) {
       resourceAbsoluteDirname,
       resourceExtensionType,
       scales,
-      assets: assets.map((asset) => asset.filename),
+      assets: assets.map((asset) => ({
+        ...asset,
+        content: `size=${asset.content?.length} type=${typeof asset.content}`,
+      })),
     });
 
     if (options.inline) {
-      logger.debug(`Inlining asset ${resourcePath}`);
-      const { content } = assets[assets.length - 1];
-      if (content) {
-        callback?.(null, inlineAsset(content, resourcePath));
-      }
+      logger.debug(`Inlining assets for request ${resourcePath}`);
+      callback?.(
+        null,
+        inlineAssets({ assets, resourcePath, resourceFilename, suffixPattern })
+      );
     } else {
       for (const asset of assets) {
         const { filename, content } = asset;
-        logger.debug(`Emitting file ${filename} for asset ${resourcePath}`);
+        logger.debug(`Emitting asset ${filename} for request ${resourcePath}`);
 
         // Assets are emitted relatively to `output.path`.
         this.emitFile(filename, content ?? '');
@@ -194,13 +188,12 @@ export default async function repackAssetsLoader(this: LoaderContext) {
 
       callback?.(
         null,
-        await extractAsset(
+        await extractAssets(
           {
             resourcePath,
             resourceDirname,
             resourceFilename,
             resourceExtensionType,
-            scaleKeys,
             assets,
             suffixPattern,
             assetsDirname,
@@ -213,7 +206,6 @@ export default async function repackAssetsLoader(this: LoaderContext) {
       );
     }
   } catch (error) {
-    console.log(error);
     callback?.(error as Error);
   }
 }
