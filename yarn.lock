@@ -3739,6 +3739,7 @@ __metadata:
     typedoc-plugin-markdown: ^3.12.1
     typescript: ^4.1.5
     webpack: ^5.50.0
+    webpack-virtual-modules: ^0.4.4
   peerDependencies:
     "@react-native-community/cli": "*"
     "@react-native-community/cli-types": "*"
@@ -31454,6 +31455,13 @@ __metadata:
   version: 3.2.3
   resolution: "webpack-sources@npm:3.2.3"
   checksum: 989e401b9fe3536529e2a99dac8c1bdc50e3a0a2c8669cbafad31271eadd994bc9405f88a3039cd2e29db5e6d9d0926ceb7a1a4e7409ece021fe79c37d9c4607
+  languageName: node
+  linkType: hard
+
+"webpack-virtual-modules@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "webpack-virtual-modules@npm:0.4.4"
+  checksum: 6720b4c47d76dc9cbaff557562506c192da7560a90395e9918a418e257a0c0cda9f5e3ac92107ec0789f8f23ad942313bd8cdebc95031d0adef1032bf6142bc7
   languageName: node
   linkType: hard
 
