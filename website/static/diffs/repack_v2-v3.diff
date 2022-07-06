@@ -1,5 +1,5 @@
 diff --git a/templates/webpack.config.js b/templates/webpack.config.cjs
-index 6ff525d..9957a93 100644
+index 6ff525d..9284571 100644
 --- a/templates/webpack.config.js
 +++ b/templates/webpack.config.cjs
 @@ -1,7 +1,6 @@
@@ -11,7 +11,7 @@ index 6ff525d..9957a93 100644
  
  /**
   * More documentation, installation, usage, motivation and differences with Metro is available at:
-@@ -12,292 +11,224 @@ const ReactNative = require('@callstack/repack');
+@@ -12,292 +11,210 @@ const ReactNative = require('@callstack/repack');
   */
  
  /**
@@ -318,9 +318,7 @@ index 6ff525d..9957a93 100644
 +         * ```
 +         */
 +        {
-+          test: Repack.getAssetExtensionsRegExp(
-+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
-+          ),
++          test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
 +          use: {
 +            loader: '@callstack/repack/assets-loader',
 +            options: {
@@ -334,18 +332,6 @@ index 6ff525d..9957a93 100644
 +              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
 +            },
 +          },
-+        },
-+        {
-+          test: /\.svg$/,
-+          use: [
-+            {
-+              loader: '@svgr/webpack',
-+              options: {
-+                native: true,
-+                dimensions: false,
-+              },
-+            },
-+          ],
 +        },
 +      ],
 +    },
