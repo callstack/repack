@@ -7,7 +7,7 @@ module.exports = {
       comments: false,
     },
     {
-      exclude: ['./src/**/runtime/implementation'],
+      exclude: ['./src/**/runtime/implementation', './src/modules'],
       presets: [
         [
           '@babel/preset-env',
