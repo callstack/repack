@@ -102,7 +102,7 @@ By default all chunks are remote chunks, meaning they are not bundled into the a
 This helps with reducing the initial application size, especially if you have logic or features that only a subset of users will use - it doesn't make sense for everyone else
 to always have to download the code (together with the application) they won't need.
 
-All remote chunks are stored under `<projectRoot>/build/output/<platform>/remotes` by default, for example if `button.chunk.bundle` is a remote chunk, it will be stored under:
+All remote chunks are stored under `<projectRoot>/build/output/<platform>/remotes` by default. For example if `button.chunk.bundle` is a remote chunk, it will be stored under:
 `<projectRoot>/build/output/ios/remotes/button.chunk.bundle` for iOS.
 
 You can customize this by providing [`extraChunks`](../api/repack/interfaces/plugins.OutputPluginConfig#extrachunks) to [`RepackPlugin`](../api/repack/classes/RepackPlugin) or [`OutputPlugin`](../api/repack/classes/plugins.OutputPlugin) (if you're not using `RepackPlugin`):
