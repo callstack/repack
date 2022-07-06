@@ -48,7 +48,7 @@ force Webpack to always use the human-readable form for the name of the chunks.
 
 :::info
 
-In newer versions of Re.Pack's templates for Webpack config, `chunkIds` is set to `named` by default.
+In version `3.x`, Re.Pack's templates for Webpack config have `chunkIds` is set to `named` by default.
 
 :::
 
