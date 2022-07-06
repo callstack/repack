@@ -137,7 +137,7 @@ function App() {
 ```
 
 For each file in the dynamic `import(...)` function a new chunk will be created - those chunks will
-be a remote chunks by default.
+be remote chunks by default.
 
 :::tip
 
