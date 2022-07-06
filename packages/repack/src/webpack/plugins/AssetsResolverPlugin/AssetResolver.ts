@@ -25,7 +25,7 @@ export interface AssetResolverConfig {
   platform: string;
 }
 
-interface CollectedScales {
+export interface CollectedScales {
   [key: string]: {
     platform: string;
     name: string;
