@@ -2,6 +2,16 @@
 
 Assets loader allows you to use images in your application as well as to reference other static assets (video, audio, etc).
 
+By default, Assets loader extracts asset files, meaning the files will be copied to the output directory and included in the final application as individual files. The assets files are put in `assets/` (on iOS) or `drawable-*` (on Android) directories.
+
+This behavior is in line with how Metro handles assets.
+
+:::info
+
+If you want to inline assets as `base64` encoded data URI, check our [Inline assets guide](../guides/inline-assets).
+
+:::
+
 In the default [Webpack template](../templates), the Assets loader is configured to process the same assets types as Metro:
 
 ```js
