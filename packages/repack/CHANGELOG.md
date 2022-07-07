@@ -1,5 +1,16 @@
 # @callstack/repack
 
+## 3.0.0-next.4
+
+### Patch Changes
+
+- [#198](https://github.com/callstack/repack/pull/198) [`96a6b27`](https://github.com/callstack/repack/commit/96a6b2711c93973569c170a181a0c808724fb8ca) Thanks [@ScriptedAlchemy](https://github.com/ScriptedAlchemy)! - ### Module Federation
+
+  Keep track of initialized remote containers to prevent performance degradation and crashes.
+
+- Updated dependencies [[`c75cdc7`](https://github.com/callstack/repack/commit/c75cdc7a44351bb4702232e603031e2880f2839d)]:
+  - @callstack/repack-dev-server@1.0.0-next.2
+
 ## 3.0.0-next.3
 
 ### Minor Changes

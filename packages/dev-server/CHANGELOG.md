@@ -1,5 +1,11 @@
 # @callstack/repack-dev-server
 
+## 1.0.0-next.2
+
+### Patch Changes
+
+- [#200](https://github.com/callstack/repack/pull/200) [`c75cdc7`](https://github.com/callstack/repack/commit/c75cdc7a44351bb4702232e603031e2880f2839d) Thanks [@zamotany](https://github.com/zamotany)! - Prevent server logger from emitting log to API WS server before WS servers are created.
+
 ## 1.0.0-next.1
 
 ### Minor Changes
