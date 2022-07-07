@@ -4,7 +4,7 @@ The caching mechanism in Re.Pack prevents scripts over-fetching, which helps red
 bandwidth usage, specially since they can easily take up multiple MBs od data.
 
 Providing `storage` options to
-[`ScriptManager`](../api/repack/client/classes/ScriptManager#constructor) will enable
+[`ScriptManager.shared.setStorage`](../api/repack/client/classes/ScriptManager#setstorage) will enable
 caching of downloaded script. The `storage` option accepts anything with similar
 API to `AsyncStorage`'s `getItem`, `setItem` and `removeItem` functions.
 
@@ -16,15 +16,13 @@ versioning by changing the `url`, for example:
 ```js
 import { ScriptManager, Script } from '@callstack/repack/client';
 
-new ScriptManager({
-  storage: AsyncStorage,
-  resolve: async (scriptId) => {
-    const { version } = await getRemoteConfig();
+ScriptManager.shared.setStorage(AsyncStorage);
+ScriptManager.shared.addResolver(async (scriptId) => {
+  const { version } = await getRemoteConfig();
 
-    return {
-      url: Script.getRemoteURL(`http://my-domain.dev/v${version}/${scriptId}`),
-    };
-  },
+  return {
+    url: Script.getRemoteURL(`http://my-domain.dev/v${version}/${scriptId}`),
+  };
 });
 ```
 
@@ -33,15 +31,13 @@ Or by keeping the base URL inside remote config:
 ```js
 import { ScriptManager, Script } from '@callstack/repack/client';
 
-new ScriptManager({
-  storage: AsyncStorage,
-  resolve: async (scriptId) => {
-    const { baseURL } = await getRemoteConfig();
+ScriptManager.shared.setStorage(AsyncStorage);
+ScriptManager.shared.addResolver(async (scriptId) => {
+  const { baseURL } = await getRemoteConfig();
 
-    return {
-      url: Script.getRemoteURL(`${baseURL}/${chunkId}`),
-    };
-  },
+  return {
+    url: Script.getRemoteURL(`${baseURL}/${chunkId}`),
+  };
 });
 ```
 :::caution
@@ -52,7 +48,7 @@ might end up with broken application or crashes.
 :::
 
 Usually cache invalidation happens automatically, but it's possible to invalidate chunk manually as
-well using [`ScriptManager.invalidateScripts(...)`](../api/repack/client/classes/ScriptManager#invalidatescripts),
+well using [`ScriptManager.shared.invalidateScripts(...)`](../api/repack/client/classes/ScriptManager#invalidatescripts),
 which removes the scripts from filesystem and from the `storage`.
 
 :::warning
