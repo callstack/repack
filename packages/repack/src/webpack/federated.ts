@@ -46,7 +46,7 @@ export namespace Federated {
             init: (arg) => {
               if(!self.${remoteName}._initialized) {
                 try {
-                  self.${remoteName}._initialized = true
+                  self.${remoteName}._initialized = true;
                   return self.${remoteName}.init(arg);
                 } catch (e) {
                   console.log('[Repack/Federated] Remote container ${remoteName} already initialized.');
