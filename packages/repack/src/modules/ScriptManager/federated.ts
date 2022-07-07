@@ -261,9 +261,11 @@ export namespace Federated {
     await ScriptManager.shared.loadScript(containerName);
 
     const container = self[containerName];
-
-    // Initialize the container, it may provide shared modules
-    await container.init(__webpack_share_scopes__[scope]);
+    if(!container._initialized) {
+      // Initialize the container, it may provide shared modules
+      await container.init(__webpack_share_scopes__[scope]);
+      container._initialized = true
+    }
     const factory = await container.get(module);
     const exports = factory();
     return exports;

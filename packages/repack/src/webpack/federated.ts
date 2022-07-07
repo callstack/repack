@@ -44,10 +44,13 @@ export namespace Federated {
               return self.${remoteName}.get(request);
             },
             init: (arg) => {
-              try {
-                return self.${remoteName}.init(arg);
-              } catch (e) {
-                console.log('[Repack/Federated] Remote container ${remoteName} already initialized.');
+              if(!self.${remoteName}._initialized) {
+                try {
+                  self.${remoteName}._initialized = true
+                  return self.${remoteName}.init(arg);
+                } catch (e) {
+                  console.log('[Repack/Federated] Remote container ${remoteName} already initialized.');
+                }
               }
             }
           });
