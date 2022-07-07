@@ -1,5 +1,20 @@
 # @callstack/repack
 
+## 3.0.0-next.3
+
+### Minor Changes
+
+- [#160](https://github.com/callstack/repack/pull/160) [`b088203`](https://github.com/callstack/repack/commit/b08820302e7eadfb38a3d0be24a1ed79ad458dfa) Thanks [@TMaszko](https://github.com/TMaszko)! - ### Assets loader
+
+  By default, `@callstack/repack/assets-loader` will extract assets - meaning, they will be put in dedicated files and bundled together with the application.
+
+  Inlined assets, however, are encoded as `base64` string into a data URI. Inlined assets are stored inside the actual JavaScript bundle - no dedicated files will be emitted
+  for them.
+
+  - Add `inline: boolean` option to `@callstack/repack/assets-loader`.
+  - Add support for calculating `width`, `height` and `scale` for inlined assets.
+  - Add support for inlining multiple scales.
+
 ## 3.0.0-next.2
 
 ### Minor Changes
