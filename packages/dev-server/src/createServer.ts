@@ -28,7 +28,7 @@ export async function createServer(config: Server.Config) {
         write: (chunk, _encoding, callback) => {
           const log = JSON.parse(chunk.toString());
           delegate?.logger.onMessage(log);
-          instance.wss.apiServer.send(log);
+          instance.wss?.apiServer.send(log);
           callback();
         },
       }),
