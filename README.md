@@ -52,13 +52,20 @@ __Check the base [`webpack.config.js`](https://github.com/callstack/repack/blob/
 - [x] [Code splitting](https://re-pack.netlify.app/docs/code-splitting/concepts) (__experimental__):
   - Dynamic `import()` support with and without `React.lazy()` (recommended).
   - Arbitrary scripts (only for advanced users).
-- [x] Web Dashboard with compilation status, server logs and artifacts.
+- [x] REST API for development server:
+  - `GET /api/platforms` - platforms with active compilations.
+  - `GET /api/:platform/assets` - assets emitted from compilation.
+  - `GET /api/:platform/stats` - data about compilation.
 
 ### Planned features
 
 - [ ] `ChunksToHermesBytecodePlugin` plugin to automatically transform async chunks to bytecode format.
 - [ ] `webpack-init` command
 - [ ] [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669) support
+
+### Examples
+
+Explore examples of React Native applications using Re.Pack here: https://github.com/callstack/repack-examples.
 
 ## Documentation
 

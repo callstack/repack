@@ -37,6 +37,10 @@ If you don't see your version, give it a go. If it doesn't work, please open an 
 | `5.22.0`   | `1.0.x`, `1.1.x`, `1.2.x`               |
 | `>=5.29.0` | `1.2.x`, `1.3.x`, `1.4.x`, `2.x`, `3.x` |
 
+## Examples
+
+If you get stuck or you want to explore beforehand, you can use the examples of React Native applications using Re.Pack here: https://github.com/callstack/repack-examples.
+
 ## Installation
 
 ### 1. Dependencies
