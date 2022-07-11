@@ -10,7 +10,7 @@ import type {
 /**
  * Representation of a Script to load and execute, used by {@link ScriptManager}.
  *
- * When configuring `ScriptManager` in `ScriptManager.configure(...)`, you can use
+ * When adding resolvers to `ScriptManager` in `ScriptManager.shared.addResolver(...)`, you can use
  * `Script.getDevServerURL(...)`, `Script.getFileSystemURL(...)` or `Script.getRemoteURL(...)`
  * to create a `url` for the script.
  *

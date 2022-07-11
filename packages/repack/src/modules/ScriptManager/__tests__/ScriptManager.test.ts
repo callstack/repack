@@ -36,17 +36,41 @@ beforeEach(() => {
 });
 
 describe('ScriptManagerAPI', () => {
+  it('throw error if there are no resolvers', async () => {
+    await expect(
+      ScriptManager.shared.resolveScript('src_App_js', 'main')
+    ).rejects.toThrow(/Error: No script resolvers were added/);
+  });
+
+  it('throw error if no resolvers handled request', async () => {
+    ScriptManager.shared.addResolver(async () => undefined);
+    ScriptManager.shared.addResolver(async () => undefined);
+
+    await expect(
+      ScriptManager.shared.resolveScript('src_App_js', 'main')
+    ).rejects.toThrow(/No resolver was able to resolve script src_App_js/);
+  });
+
+  it('remove all resolvers', async () => {
+    ScriptManager.shared.addResolver(async () => undefined);
+    ScriptManager.shared.addResolver(async () => undefined);
+    ScriptManager.shared.removeAllResolvers();
+
+    await expect(
+      ScriptManager.shared.resolveScript('src_App_js', 'main')
+    ).rejects.toThrow(/Error: No script resolvers were added/);
+  });
+
   it('should resolve with url only', async () => {
     const cache = new FakeCache();
-    new ScriptManager({
-      storage: cache,
-      resolve: async (scriptId, caller) => {
-        expect(caller).toEqual('main');
 
-        return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-        };
-      },
+    ScriptManager.shared.setStorage(cache);
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+      };
     });
 
     const script = await ScriptManager.shared.resolveScript(
@@ -66,17 +90,14 @@ describe('ScriptManagerAPI', () => {
     } = await ScriptManager.shared.resolveScript('src_App_js', 'main');
     expect(fetch).toBe(false);
 
-    ScriptManager.shared.__destroy();
+    ScriptManager.shared.removeAllResolvers();
 
-    new ScriptManager({
-      storage: cache,
-      resolve: async (scriptId, caller) => {
-        expect(caller).toEqual('main');
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
 
-        return {
-          url: Script.getRemoteURL(`http://domain.ext/subpath/${scriptId}`),
-        };
-      },
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/subpath/${scriptId}`),
+      };
     });
 
     const newScript = await ScriptManager.shared.resolveScript(
@@ -94,17 +115,15 @@ describe('ScriptManagerAPI', () => {
 
   it('should resolve with custom extension', async () => {
     const cache = new FakeCache();
-    new ScriptManager({
-      storage: cache,
-      resolve: async (scriptId, caller) => {
-        expect(caller).toEqual('main');
+    ScriptManager.shared.setStorage(cache);
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
 
-        return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}.js`, {
-            excludeExtension: true,
-          }),
-        };
-      },
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}.js`, {
+          excludeExtension: true,
+        }),
+      };
     });
 
     const script = await ScriptManager.shared.resolveScript(
@@ -122,19 +141,17 @@ describe('ScriptManagerAPI', () => {
 
   it('should resolve with query', async () => {
     const cache = new FakeCache();
-    new ScriptManager({
-      storage: cache,
-      resolve: async (scriptId, caller) => {
-        expect(caller).toEqual('main');
+    ScriptManager.shared.setStorage(cache);
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
 
-        return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-          query: {
-            accessCode: '1234',
-            accessUid: 'asdf',
-          },
-        };
-      },
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        query: {
+          accessCode: '1234',
+          accessUid: 'asdf',
+        },
+      };
     });
 
     let script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
@@ -147,17 +164,14 @@ describe('ScriptManagerAPI', () => {
       timeout: Script.DEFAULT_TIMEOUT,
     });
 
-    ScriptManager.shared.__destroy();
-    new ScriptManager({
-      storage: cache,
-      resolve: async (scriptId, caller) => {
-        expect(caller).toEqual('main');
+    ScriptManager.shared.removeAllResolvers();
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
 
-        return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-          query: 'token=some_token',
-        };
-      },
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        query: 'token=some_token',
+      };
     });
 
     script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
@@ -167,18 +181,16 @@ describe('ScriptManagerAPI', () => {
 
   it('should resolve with headers', async () => {
     const cache = new FakeCache();
-    new ScriptManager({
-      storage: cache,
-      resolve: async (scriptId, caller) => {
-        expect(caller).toEqual('main');
+    ScriptManager.shared.setStorage(cache);
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
 
-        return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-          headers: {
-            'x-hello': 'world',
-          },
-        };
-      },
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        headers: {
+          'x-hello': 'world',
+        },
+      };
     });
 
     let script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
@@ -191,20 +203,17 @@ describe('ScriptManagerAPI', () => {
       timeout: Script.DEFAULT_TIMEOUT,
     });
 
-    ScriptManager.shared.__destroy();
-    new ScriptManager({
-      storage: cache,
-      resolve: async (scriptId, caller) => {
-        expect(caller).toEqual('main');
+    ScriptManager.shared.removeAllResolvers();
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
 
-        return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-          headers: {
-            'x-hello': 'world',
-            'x-changed': 'true',
-          },
-        };
-      },
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        headers: {
+          'x-hello': 'world',
+          'x-changed': 'true',
+        },
+      };
     });
 
     script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
@@ -220,17 +229,15 @@ describe('ScriptManagerAPI', () => {
 
   it('should resolve with body', async () => {
     const cache = new FakeCache();
-    new ScriptManager({
-      storage: cache,
-      resolve: async (scriptId, caller) => {
-        expect(caller).toEqual('main');
+    ScriptManager.shared.setStorage(cache);
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
 
-        return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-          method: 'POST',
-          body: 'hello_world',
-        };
-      },
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        method: 'POST',
+        body: 'hello_world',
+      };
     });
 
     let script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
@@ -243,18 +250,15 @@ describe('ScriptManagerAPI', () => {
       timeout: Script.DEFAULT_TIMEOUT,
     });
 
-    ScriptManager.shared.__destroy();
-    new ScriptManager({
-      storage: cache,
-      resolve: async (scriptId, caller) => {
-        expect(caller).toEqual('main');
+    ScriptManager.shared.removeAllResolvers();
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
 
-        return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-          method: 'POST',
-          body: 'message',
-        };
-      },
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        method: 'POST',
+        body: 'message',
+      };
     });
 
     script = await ScriptManager.shared.resolveScript('src_App_js', 'main');
@@ -270,18 +274,16 @@ describe('ScriptManagerAPI', () => {
 
   it('should resolve with absolute path', async () => {
     const cache = new FakeCache();
-    new ScriptManager({
-      storage: cache,
-      resolve: async (scriptId, caller) => {
-        expect(caller).toEqual('main');
+    ScriptManager.shared.setStorage(cache);
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
 
-        return {
-          url: Script.getFileSystemURL(`absolute/directory/${scriptId}`),
-          cache: false,
-          method: 'POST',
-          absolute: true,
-        };
-      },
+      return {
+        url: Script.getFileSystemURL(`absolute/directory/${scriptId}`),
+        cache: false,
+        method: 'POST',
+        absolute: true,
+      };
     });
 
     const script = await ScriptManager.shared.resolveScript(

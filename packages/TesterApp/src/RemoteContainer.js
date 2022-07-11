@@ -24,7 +24,7 @@ export const RemoteContainer = () => {
             title={isPrefetched ? 'Prefetched' : 'Prefetch chunk'}
             disabled={isPrefetched}
             onPress={async () => {
-              await ScriptManager.prefetchScript(RemoteChunkId);
+              await ScriptManager.shared.prefetchScript(RemoteChunkId);
               setIsPrefetched(true);
             }}
           />
@@ -35,7 +35,7 @@ export const RemoteContainer = () => {
       <Button
         title={'Invalidate'}
         onPress={async () => {
-          await ScriptManager.invalidateScripts([RemoteChunkId]);
+          await ScriptManager.shared.invalidateScripts([RemoteChunkId]);
           setIsPreloaded(false);
         }}
       />

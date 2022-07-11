@@ -30,36 +30,32 @@ The [`ScriptManager`](../api/repack/client/classes/ScriptManager) has methods wh
 3. Resolve script location - [`resolveScript`](../api/repack/client/classes/ScriptManager#resolvescript)
 4. Invalidate cache - [`invalidateScripts`](../api/repack/client/classes/ScriptManager#invalidatescripts)
 
-In order to provide this functionalities [`ScriptManager`](../api/repack/client/classes/ScriptManager)
-has to be instantiated to be able to resolve scripts:
+In order to provide this functionalities, a resolver has to be added using [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver):
 
 ```ts
 import { ScriptManager, Script } from '@callstack/repack/client';
 
-new ScriptManager({
-  storage: AsyncStorage, // Optional: enables caching
-  resolve: async (scriptId, caller) => {
-    // In dev mode, resolve script location to dev server.
-    if (__DEV__) {
-      return {
-        url: Script.getDevServerURL(scriptId),
-        cache: false,
-      };
-    }
-
+ScriptManager.shared.addResolver(async (scriptId, caller) => {
+  // In dev mode, resolve script location to dev server.
+  if (__DEV__) {
     return {
-      url: Script.getRemoteURL(`http://somewhere-on-the-internet.com/${scriptId}`)
+      url: Script.getDevServerURL(scriptId),
+      cache: false,
     };
-  },
+  }
+
+  return {
+    url: Script.getRemoteURL(`http://somewhere-on-the-internet.com/${scriptId}`)
+  };
 });
 ```
 
 If the `storage` is provided, the returned `url` from `resolve` will be used for cache management.
 You can read more about it in [Caching and Versioning](./caching-versioning).
 
-:::tip
+:::info
 
-Calling `new ScriptManager(...)` will create a shared instance, which you can access using `ScriptManager.shared`. Trying to create another instance `ScriptManager`, will throw error.
+Do not instantiate `ScriptManager` yourself - use `ScriptManager.shared` to get access to an instance.
 
 :::
 
@@ -72,10 +68,9 @@ Under the hood, the way a script gets loaded can be summarized as follows:
    - Webpack, based on it's internal naming logic or a [magic comment: `webpackChunkName`](https://webpack.js.org/migrate/5/#using--webpackchunkname--)
    - Manually
 3. `ScriptManager.shared.loadScript(...)` resolves the chunk location using `ScriptManager.shared.resolveScript(...)`.
-4. The resolution happens inside `resolve` function passed when calling `new ScriptManager(...)`.
-5. The resolved location is compared against previous location of that script, if and only if, `storage` was provided and the script was resolved before.
-6. The resolved location is passed to the native module, which downloads if necessary and executes the script.
-7. Once the code has been executed the `Promise` returned by `ScriptManager.shared.loadScript(...)` gets resolved.
+4. The resolved location is compared against previous location of that script, if and only if, `storage` was provided and the script was resolved before.
+5. The resolved location is passed to the native module, which downloads if necessary and executes the script.
+6. Once the code has been executed the `Promise` returned by `ScriptManager.shared.loadScript(...)` gets resolved.
 
 :::info
 
@@ -160,7 +155,7 @@ To see `import(...)`, `React.lazy` and `React.Suspense` in action, check out
 
 :::caution
 
-Don't forget to instantiate [`ScriptManager`](../api/repack/client/classes/ScriptManager#constructor)!
+Don't forget to add resolver using [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver)!
 
 :::
 
@@ -196,26 +191,23 @@ A good starting point would be:
 Loading a script is as simple as running a single function:
 
 ```js
-await ScriptManager.loadScript('my-script');
+await ScriptManager.shared.loadScript('my-script');
 console.log('Script loaded');
 ```
 
-And configuring the [`ScriptManager`](../api/repack/client/classes/ScriptManager#constructor) to resolve your
+And adding a resolver to the [`ScriptManager`](../api/repack/client/classes/ScriptManager#addResolver) to resolve your
 scripts:
 
 ```js
 import { ScriptManager, Script } from '@callstack/repack/client';
 
-new ScriptManager({
-  resolve: async (scriptId) => {
-    if (scriptId === 'my-script') {
-      return {
-        url: Script.getRemoteURL('https://my-domain.dev/my-script.js', { excludeExtension: true }),
-      };
-    }
+ScriptManager.shared.addResolver(async (scriptId) => {
+  if (scriptId === 'my-script') {
+    return {
+      url: Script.getRemoteURL('https://my-domain.dev/my-script.js', { excludeExtension: true }),
+    };
+  }
 
-    throw new Error(`Script ${scriptId} not supported`);
-  },
 });
 ```
 

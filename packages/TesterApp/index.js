@@ -4,20 +4,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import App from './src/App';
 import { name as appName } from './app.json';
 
-new ScriptManager({
-  storage: AsyncStorage,
-  resolve: async (scriptId, caller) => {
-    if (__DEV__) {
-      return {
-        url: Script.getDevServerURL(scriptId),
-        cache: false,
-      };
-    }
-
+ScriptManager.shared.setStorage(AsyncStorage);
+ScriptManager.shared.addResolver(async (scriptId, _caller) => {
+  if (__DEV__) {
     return {
-      url: Script.getRemoteURL(`http://localhost:5000/${scriptId}`),
+      url: Script.getDevServerURL(scriptId),
+      cache: false,
     };
-  },
+  }
+
+  return {
+    url: Script.getRemoteURL(`http://localhost:5000/${scriptId}`),
+  };
 });
 
 ScriptManager.shared.on('resolving', (...args) => {

@@ -115,24 +115,26 @@ export namespace Federated {
    *   },
    * });
    *
-   * new ScriptManager({
-   *   resolve: async (scriptId, caller) => {
-   *     let url;
-   *     if (caller === 'main') {
-   *       url = __DEV__
-   *         ? Script.getDevServerURL(scriptId)
-   *         : Script.getRemoteURL(`http://localhost:9000/${scriptId}`);
-   *     } else {
-   *       url = resolveURL(scriptId, caller);
-   *     }
+   * ScriptManager.shared.addResolver(async (scriptId, caller) => {
+   *   let url;
+   *   if (caller === 'main') {
+   *     url = __DEV__
+   *       ? Script.getDevServerURL(scriptId)
+   *       : Script.getRemoteURL(`http://localhost:9000/${scriptId}`);
+   *   } else {
+   *     url = resolveURL(scriptId, caller);
+   *   }
    *
-   *     return {
-   *       url,
-   *       query: {
-   *         platform: Platform.OS,
-   *       },
-   *     };
-   *   },
+   *   if (!url) {
+   *     return undefined;
+   *   }
+   *
+   *   return {
+   *     url,
+   *     query: {
+   *       platform: Platform.OS,
+   *     },
+   *   };
    * });
    * ```
    *
@@ -141,38 +143,34 @@ export namespace Federated {
    * ```ts
    * import { ScriptManager, Federated } from '@callstack/repack/client';
    *
-   * new ScriptManager({
-   *   resolve: async (scriptId, caller) => {
-   *     const resolveURL = Federated.createURLResolver({
-   *       containers: {
-   *         app1: 'http://localhost:9000/[name][ext]',
-   *       },
-   *     });
+   * ScriptManager.shared.addResolver((scriptId, caller) => {
+   *   const resolveURL = Federated.createURLResolver({
+   *     containers: {
+   *       app1: 'http://localhost:9000/[name][ext]',
+   *     },
+   *   });
    *
-   *     return {
-   *       url: resolveURL(scriptId, caller);
-   *     };
-   *   },
+   *   return {
+   *     url: resolveURL(scriptId, caller);
+   *   };
    * });
    * ```
    * is equivalent to:
    * ```ts
    * import { ScriptManager, Script } from '@callstack/repack/client';
    *
-   * new ScriptManager({
-   *   resolve: async (scriptId, caller) => {
-   *     if (scriptId === 'app1') {
-   *       return {
-   *         url: 'http://localhost:9000/app1.container.bundle',
-   *       };
-   *     }
+   * ScriptManager.shared.addResolver(async (scriptId, caller) => {
+   *   if (scriptId === 'app1') {
+   *     return {
+   *       url: 'http://localhost:9000/app1.container.bundle',
+   *     };
+   *   }
    *
-   *     if (caller === 'app1') {
-   *       return {
-   *         url: Script.getRemoteURL(`http://localhost:9000/${scriptId}`),
-   *       };
-   *     }
-   *   },
+   *   if (caller === 'app1') {
+   *     return {
+   *       url: Script.getRemoteURL(`http://localhost:9000/${scriptId}`),
+   *     };
+   *   }
    * });
    * ```
    *
@@ -228,7 +226,7 @@ export namespace Federated {
    * specific to Module Federation. Calling `importModule` will create an async boundary.
    *
    * Under the hood, `importModule` will call `ScriptManager.shared.loadScript(containerName)`.
-   * This means, `ScriptManager` must be instantiated beforehand and provided proper
+   * This means, a resolver must be added with `ScriptManager.shared.addResolver(...)` beforehand and provided proper
    * resolution logic to resolve URL based on the `containerName`.
    *
    * @param containerName Name of the container - should be the same name provided to
