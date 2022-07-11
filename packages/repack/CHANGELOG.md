@@ -1,5 +1,25 @@
 # @callstack/repack
 
+## 3.0.0-next.5
+
+### Minor Changes
+
+- [#202](https://github.com/callstack/repack/pull/202) [`fa097f7`](https://github.com/callstack/repack/commit/fa097f7a089221c11a60d8137368bf0e83f38230) Thanks [@zamotany](https://github.com/zamotany)! - ### ScriptManager
+
+  - Added ability to provide multiple resolvers to `ScriptManager` using `ScriptManager.shared.addResolver`.
+  - Removed `ScriptManager.configure` and split the functionality into `ScriptManager.shared.setStore` and `ScriptManager.shared.addResolver`.
+  - Added methods to remove a single resolver and to remove all resolver.
+  - Returning `undefined` from a resolver will cause next resolver in line to be used (as long as other resolver were added), if no resolver processed the request the error is thrown.
+
+  Example:
+
+  ```js
+  ScriptManager.shared.setStorage(AsyncStorage);
+  ScriptManager.shared.addResolver(async (scriptId, caller) => {
+    /* ... */
+  });
+  ```
+
 ## 3.0.0-next.4
 
 ### Patch Changes
