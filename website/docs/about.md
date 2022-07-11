@@ -37,6 +37,10 @@ If you're just starting with React Native, it's better to stick with the default
 3. Based on our experience with [Haul](https://github.com/callstack/haul), we shift as much responsibility onto you as possible, so that we can develop features, move at reasonable pace and reduce maintenance cost. Therefor, Re.Pack should be used by seasoned React Native developers with at least basic experience with Webpack.
 4. __[Future]__ We plan to use Re.Pack as a foundation for bringing multi-bundle support to React Native, by allowing you to use asynchronous chunks and finally Webpack 5 latest feature — [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669).
 
+## Examples
+
+You can explore examples of React Native applications using Re.Pack here: https://github.com/callstack/repack-examples.
+
 
 ## Re.Pack vs Metro
 

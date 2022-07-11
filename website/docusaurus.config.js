@@ -42,6 +42,11 @@ module.exports = {
           position: 'left',
           label: 'API',
         },
+        {
+          href: 'https://github.com/callstack/repack-examples',
+          label: 'Examples',
+          position: 'left',
+        },
         // {
         //   to: '/blog',
         //   label: 'Blog',
