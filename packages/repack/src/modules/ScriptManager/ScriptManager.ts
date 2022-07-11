@@ -6,7 +6,6 @@ import { Script } from './Script';
 import type {
   NormalizedScriptLocator,
   ScriptLocatorResolver,
-  ScriptManagerConfig,
   StorageApi,
 } from './types';
 
@@ -26,11 +25,9 @@ const CACHE_KEY = `Repack.ScriptManager.Cache.v3.${
  * - Webpack bundles
  * - Webpack MF containers
  *
- * Once an instance of `ScriptManager` is created, it will be globally available
- * under `ScriptManager.shared` in main bundle, chunks and containers.
+ * ScriptManager is globally available under `ScriptManager.shared` in main bundle, chunks and containers.
  *
- * When instance of `ScriptManager` is already created, attempt to create new instance
- * will throw an exception.
+ * Use `ScriptManager.shared` instead of creating new instance of `ScriptManager`.
  *
  * This API is mainly useful, if you are working with any form of Code Splitting.
  *
@@ -47,22 +44,20 @@ const CACHE_KEY = `Repack.ScriptManager.Cache.v3.${
  * import * as React from 'react';
  * import { ScriptManager, Script } from '@callstack/repack/client';
  *
- * new ScriptManager({
- *   resolve: async (scriptId) => {
- *     if (__DEV__) {
- *       return {
- *         url: Script.getDevServerURL(scriptId);
- *         cache: false,
- *       };
- *     }
- *
+ * ScriptManager.shared.addResolver(async (scriptId) => {
+ *   if (__DEV__) {
  *     return {
- *       url: Script.getRemoteURL(`http://domain.exaple/apps/${scriptId}`),
+ *       url: Script.getDevServerURL(scriptId);
+ *       cache: false,
  *     };
- *   },
+ *   }
+ *
+ *   return {
+ *     url: Script.getRemoteURL(`http://domain.exaple/apps/${scriptId}`),
+ *   };
  * });
  *
- * // ScriptManager.loadScript is called internally when running `import()`
+ * // ScriptManager.shared.loadScript is called internally when running `import()`
  * const TeacherModule = React.lazy(() => import('./Teacher.js'));
  * const StudentModule = React.lazy(() => import('./Student.js'));
  *
@@ -77,29 +72,25 @@ const CACHE_KEY = `Repack.ScriptManager.Cache.v3.${
  */
 export class ScriptManager extends EventEmitter {
   static get shared(): ScriptManager {
-    const { scriptManager } = __webpack_require__.repack.shared;
-    if (!scriptManager) {
-      throw new Error(
-        'Shared ScriptManager instance is not available. Did you instigate it in host application using new ScriptManager(...)?'
-      );
+    if (!__webpack_require__.repack.shared.scriptManager) {
+      __webpack_require__.repack.shared.scriptManager = new ScriptManager();
     }
-    return scriptManager;
+    return __webpack_require__.repack.shared.scriptManager;
   }
 
-  private cache: Cache = {};
-  private cacheInitialized = false;
-  private resolve?: ScriptLocatorResolver;
-  private storage?: StorageApi;
+  protected cache: Cache = {};
+  protected cacheInitialized = false;
+  protected resolvers: ScriptLocatorResolver[] = [];
+  protected storage?: StorageApi;
 
   /**
-   * Constructs instance of `ScriptManager`, configures it to be able to resolve
-   * location of scripts and optionally, it also allows to set up caching to
-   * avoid over-fetching.
+   * Constructs instance of `ScriptManager`.
    *
-   * @param config Configuration options.
+   * __Should not be called directly__ - use `ScriptManager.shared`.
+   *
+   * @internal
    */
-  constructor(
-    config: ScriptManagerConfig,
+  protected constructor(
     private nativeScriptManager = NativeModules.ScriptManager
   ) {
     super();
@@ -109,9 +100,6 @@ export class ScriptManager extends EventEmitter {
         'ScriptManager was already instantiated. Use ScriptManager.shared instead.'
       );
     }
-
-    this.storage = config.storage;
-    this.resolve = config.resolve;
 
     __webpack_require__.repack.shared.loadScriptCallback.push = ((
       parentPush: typeof Array.prototype.push,
@@ -138,7 +126,61 @@ export class ScriptManager extends EventEmitter {
       );
   }
 
-  private async initCache() {
+  /**
+   * Sets a storage backend to cache resolved scripts locator data.
+   *
+   * The stored data is used to detect if scripts locator data of previously downloaded
+   * script hasn't changed to avoid over-fetching the script.
+   *
+   * @param storage Implementation of storage functions.
+   */
+  setStorage(storage?: StorageApi) {
+    this.storage = storage;
+  }
+
+  /**
+   * Adds new script locator resolver.
+   *
+   * Resolver is an async function to resolve script locator data - in other words, it's a function to
+   * tell the {@link ScriptManager} how to fetch the script.
+   *
+   * There's no limitation on what logic you can run inside this function - it can include:
+   * - fetching/loading remote config
+   * - fetching/loading feature flags
+   * - fetching/loading A/B testing data
+   * - calling native modules
+   * - running arbitrary logic
+   *
+   * @param resolver Resolver function to add.
+   */
+  addResolver(resolver: ScriptLocatorResolver) {
+    this.resolvers.push(resolver);
+  }
+
+  /**
+   * Removes previously added resolver.
+   *
+   * @param resolver Resolver function to remove.
+   * @returns `true` if resolver was found and removed, `false` otherwise.
+   */
+  removeResolver(resolver: ScriptLocatorResolver): boolean {
+    const index = this.resolvers.indexOf(resolver);
+    if (index > -1) {
+      this.resolvers.splice(index, 1);
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Removes all previously added resolvers.
+   */
+  removeAllResolvers() {
+    this.resolvers = [];
+  }
+
+  protected async initCache() {
     if (!this.cacheInitialized) {
       const cache: Cache | null | undefined = JSON.parse(
         (await this.storage?.getItem(CACHE_KEY)) ?? '{}'
@@ -148,11 +190,11 @@ export class ScriptManager extends EventEmitter {
     }
   }
 
-  private async saveCache() {
+  protected async saveCache() {
     await this.storage?.setItem(CACHE_KEY, JSON.stringify(this.cache));
   }
 
-  private handleError(error: any, message: string, ...args: any[]): never {
+  protected handleError(error: any, message: string, ...args: any[]): never {
     console.error(message, ...args, { originalError: error });
     this.emit('error', { message, args, originalError: error });
     throw error;
@@ -161,10 +203,13 @@ export class ScriptManager extends EventEmitter {
   /**
    * Resolves a {@link Script} instance with normalized locator data.
    *
-   * Use `ScriptManager.on('resolving', ({ scriptId, caller }) => { })` to listen for when
+   * Resolution will use previously added (via `ScriptManager.shared.addResolver(...)`) resolvers
+   * in series, util one returns a locator data or will throw if no resolver handled the request.
+   *
+   * Use `ScriptManager.shared.on('resolving', ({ scriptId, caller }) => { })` to listen for when
    * the script resolution begins.
    *
-   * Use `ScriptManager.on('resolved', (script) => { })` to listen for when
+   * Use `ScriptManager.shared.on('resolved', (script) => { })` to listen for when
    * the script's locator data is resolved.
    *
    * @param scriptId Id of the script to resolve.
@@ -177,15 +222,26 @@ export class ScriptManager extends EventEmitter {
   ): Promise<Script> {
     await this.initCache();
     try {
-      if (!this.resolve) {
+      if (!this.resolvers.length) {
         throw new Error(
-          'No script resolver was provided. Did you forget to add `ScriptManager.configure({ resolve: ... })`?'
+          'No script resolvers were added. Did you forget to call `ScriptManager.shared.addResolver(...)`?'
         );
       }
 
       this.emit('resolving', { scriptId, caller });
 
-      const locator = await this.resolve(scriptId, caller);
+      let locator;
+      for (const resolve of this.resolvers) {
+        locator = await resolve(scriptId, caller);
+        if (locator) {
+          break;
+        }
+      }
+
+      if (!locator) {
+        throw new Error(`No resolver was able to resolve script ${scriptId}`);
+      }
+
       if (typeof locator.url === 'function') {
         locator.url = locator.url(webpackContext);
       }
@@ -219,10 +275,10 @@ export class ScriptManager extends EventEmitter {
    * Resolves given script's location, downloads and executes it.
    * The execution of the code is handled internally by threading in React Native.
    *
-   * Use `ScriptManager.on('loading', (script) => { })` to listen for when
+   * Use `ScriptManager.shared.on('loading', (script) => { })` to listen for when
    * the script is about to be loaded.
    *
-   * Use `ScriptManager.on('loaded', (script) => { })` to listen for when
+   * Use `ScriptManager.shared.on('loaded', (script) => { })` to listen for when
    * the script is loaded.
    *
    * @param scriptId Id of the script to load.
@@ -268,7 +324,7 @@ export class ScriptManager extends EventEmitter {
    * Resolves given script's location and downloads it without executing.
    * This function can be awaited to detect if the script was downloaded and for error handling.
    *
-   * Use `ScriptManager.on('prefetching', (script) => { })` to listen for when
+   * Use `ScriptManager.shared.on('prefetching', (script) => { })` to listen for when
    * the script's prefetch beings.
    *
    * @param scriptId Id of the script to prefetch.
@@ -296,11 +352,11 @@ export class ScriptManager extends EventEmitter {
   }
 
   /**
-   * Clears the cache (if configured in {@link ScriptManager.configure}) and removes downloaded
+   * Clears the cache (if configured in {@link ScriptManager.setStorage}) and removes downloaded
    * files for given scripts from the filesystem. This function can be awaited to detect if the
    * scripts were invalidated and for error handling.
    *
-   * Use `ScriptManager.on('invalidated', (scriptIds) => { })` to listen for when
+   * Use `ScriptManager.shared.on('invalidated', (scriptIds) => { })` to listen for when
    * the invalidation completes.
    *
    * @param scriptIds Array of script ids to clear from cache and remove from filesystem.

@@ -95,13 +95,15 @@ export interface ScriptLocator {
  * It's an async function which should return an object with data on how {@link ScriptManager}
  * should fetch the script. All fields describing the script locator data are listed in {@link ScriptLocator}.
  *
+ * Return `undefined` if the script should be resolved by other resolvers instead.
+ *
  * @param scriptId Id of the script to resolve.
  * @param caller Name of the calling script - it can be for example: name of the bundle, chunk or container.
  */
 export type ScriptLocatorResolver = (
   scriptId: string,
   caller?: string
-) => Promise<ScriptLocator>;
+) => Promise<ScriptLocator | undefined>;
 
 /**
  * Interface for storage backend used in {@link ScriptManagerConfig}.
@@ -114,32 +116,6 @@ export interface StorageApi {
   setItem: (key: string, value: string) => Promise<void>;
   /** Removes the item based on the key. */
   removeItem: (key: string) => Promise<void>;
-}
-
-/**
- * Configuration options for {@link ScriptManager}.
- */
-export interface ScriptManagerConfig {
-  /**
-   * An async function to resolve script locator data - in other words, it's a function to
-   * tell the {@link ScriptManager} how to fetch the script.
-   *
-   * There's no limitation on what logic you can run inside this function - it can include:
-   * - fetching/loading remote config
-   * - fetching/loading feature flags
-   * - fetching/loading A/B testing data
-   * - calling native modules
-   * - running arbitrary logic
-   */
-  resolve: ScriptLocatorResolver;
-
-  /**
-   * Optional: A storage backend to cache resolved scripts locator data.
-   *
-   * The stored data is used to detect if scripts locator data previously downloaded
-   * script hasn't changed to avoid over-fetching the script.
-   */
-  storage?: StorageApi;
 }
 
 /**

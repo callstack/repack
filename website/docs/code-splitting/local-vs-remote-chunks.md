@@ -201,34 +201,30 @@ Specifying `extraChunks` will override any defaults - you must configure `remote
 
 :::
 
-Once you have some chunks as local, you need to alter `resolve` function in [`ScriptManager`](../api/repack/client/classes/ScriptManager#constructor):
+Once you have some chunks as local, you need to alter the resolver in [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver):
 
 ```js
 import { ScriptManager, Script } from '@callstack/repack/client';
 
-new ScriptManager({
-  resolve: async (scriptId) => {
-    // In development, get all the chunks from dev server.
-    if (__DEV__) {
-      return {
-        url: Script.getDevServerURL(scriptId),
-        cache: false,
-      };
-    }
+ScriptManager.shared.addResolver(async (scriptId) => {
+  // In development, get all the chunks from dev server.
+  if (__DEV__) {
+    return {
+      url: Script.getDevServerURL(scriptId),
+      cache: false,
+    };
+  }
 
-    // In production, get chunks matching the regex from filesystem.
-    if (/^.+\.local$/.test(scriptId)) {
-      return {
-        url: Script.getFileSystemURL(scriptId),
-      };
-    } else {
-      return {
-        url: Script.getRemoteURL(`https://my-domain.dev/${scriptId}`),
-      };
-    }
-
-    throw new Error(`Script ${scriptId} could not be resolved`);
-  },
+  // In production, get chunks matching the regex from filesystem.
+  if (/^.+\.local$/.test(scriptId)) {
+    return {
+      url: Script.getFileSystemURL(scriptId),
+    };
+  } else {
+    return {
+      url: Script.getRemoteURL(`https://my-domain.dev/${scriptId}`),
+    };
+  }
 });
 ```
 

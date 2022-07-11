@@ -14,7 +14,7 @@ export function MiniAppsContainer() {
   }, []);
 
   const uninstall = useCallback(async () => {
-    await ScriptManager.invalidateScripts(['miniapp']);
+    await ScriptManager.shared.invalidateScripts(['miniapp']);
     miniAppContent.current = undefined;
     setIsInstalled(false);
     setIsVisible(false);

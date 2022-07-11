@@ -111,7 +111,7 @@ module.exports = {
 At this point all the code used by `StudentSide.js` will be put into `student.chunk.bundle` and
 `TeacherSide.js` into `teacher.chunk.bundle`.
 
-Before we can actually render out application, we need to instantiate [`ScriptManager`](../api/repack/client/classes/ScriptManager),
+Before we can actually render out application, we need to add resolver using [`ScriptManager.shared.addResolver(...)`](../api/repack/client/classes/ScriptManager#addresolver),
 so it can resolve the chunks:
 
 ```js
@@ -122,23 +122,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import App from './src/App'; // Your application's root component
 import { name as appName } from './app.json';
 
-new ScriptManager({
-  storage: AsyncStorage, // optional
-  resolver: async (scriptId) => {
-    // `scriptId` will be either 'student' or 'teacher'
+ScriptManager.shared.setStorage(AsyncStorage);
+ScriptManager.shared.addResolver(async (scriptId) => {
+  // `scriptId` will be either 'student' or 'teacher'
 
-    // In dev mode, resolve script location to dev server.
-    if (__DEV__) {
-      return {
-        url: Script.getDevServerURL(scriptId),
-        cache: false,
-      };
-    }
-
+  // In dev mode, resolve script location to dev server.
+  if (__DEV__) {
     return {
-      url: Script.getRemoteURL(`http://somewhere-on-the-internet.com/${scriptId}`)
+      url: Script.getDevServerURL(scriptId),
+      cache: false,
     };
-  },
+  }
+
+  return {
+    url: Script.getRemoteURL(`http://somewhere-on-the-internet.com/${scriptId}`)
+  };
 });
 
 AppRegistry.registerComponent(appName, () => App);
