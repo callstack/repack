@@ -78,10 +78,10 @@ export class ScriptManager extends EventEmitter {
     return __webpack_require__.repack.shared.scriptManager;
   }
 
-  private cache: Cache = {};
-  private cacheInitialized = false;
-  private resolvers: ScriptLocatorResolver[] = [];
-  private storage?: StorageApi;
+  protected cache: Cache = {};
+  protected cacheInitialized = false;
+  protected resolvers: ScriptLocatorResolver[] = [];
+  protected storage?: StorageApi;
 
   /**
    * Constructs instance of `ScriptManager`.
@@ -90,7 +90,9 @@ export class ScriptManager extends EventEmitter {
    *
    * @internal
    */
-  constructor(private nativeScriptManager = NativeModules.ScriptManager) {
+  protected constructor(
+    private nativeScriptManager = NativeModules.ScriptManager
+  ) {
     super();
 
     if (__webpack_require__.repack.shared.scriptManager) {
@@ -178,7 +180,7 @@ export class ScriptManager extends EventEmitter {
     this.resolvers = [];
   }
 
-  private async initCache() {
+  protected async initCache() {
     if (!this.cacheInitialized) {
       const cache: Cache | null | undefined = JSON.parse(
         (await this.storage?.getItem(CACHE_KEY)) ?? '{}'
@@ -188,11 +190,11 @@ export class ScriptManager extends EventEmitter {
     }
   }
 
-  private async saveCache() {
+  protected async saveCache() {
     await this.storage?.setItem(CACHE_KEY, JSON.stringify(this.cache));
   }
 
-  private handleError(error: any, message: string, ...args: any[]): never {
+  protected handleError(error: any, message: string, ...args: any[]): never {
     console.error(message, ...args, { originalError: error });
     this.emit('error', { message, args, originalError: error });
     throw error;
