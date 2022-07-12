@@ -42,17 +42,7 @@ module.exports = {
             'code-splitting/code-push',
           ],
         },
-        {
-          type: 'category',
-          label: 'Module Federation',
-          items: [
-            'module-federation/concept',
-            'module-federation/host',
-            'module-federation/container',
-            'module-federation/async-import',
-            'module-federation/sync-import',
-          ],
-        },
+        'module-federation',
         {
           type: 'category',
           label: 'Migration guides',
