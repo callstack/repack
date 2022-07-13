@@ -8,7 +8,7 @@ Common examples of such use cases are:
 
 :::info
 
-If you're using [Code Splitting](../../code-splitting/concepts) or Module Federation, assets will be inlined into the chunks or containers
+If you're using [Code Splitting](../../code-splitting/concept) or Module Federation, assets will be inlined into the chunks or containers
 importing them and should be properly rendered by the host application.
 
 :::

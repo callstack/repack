@@ -81,7 +81,7 @@ export default function HomepageFeatures() {
                 {'Use '}
                 <a
                   className={clsx('button button--link', styles.link)}
-                  href="/docs/code-splitting/concepts"
+                  href="/docs/code-splitting/concept"
                 >
                   Code Splitting
                 </a>

@@ -12,7 +12,7 @@ download size will be smaller.
 
 It's recommended to read:
 
-- [Concepts](./concepts)
+- [Concept](./concept)
 - [Generic usage](./usage#generic-usage)
 - [Async chunks usage](./usage#async-chunks)
 

@@ -213,33 +213,4 @@ ScriptManager.shared.addResolver(async (scriptId) => {
 
 ### Module Federation
 
-The Module Federation approach allows to create micro frontends, which are built using
-separate/dedicated Webpack compilations from the same (monorepo) or different codebases.
-
-Each micro frontend can be developed in isolation as a standalone application, but in production all
-of them will work together and act as a single entity.
-
-To get more information and better understand what Module Federation is, use the following resources:
-
-- https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669
-- https://webpack.js.org/concepts/module-federation/
-- https://github.com/module-federation/module-federation-examples
-
-:::caution
-
-Given the nature of React Native environment, which needs to be initialized at the very beginning to
-be usable, Module Federation gets limited to only a few scenarios. The best one showcasing how it
-could work in React Native is
-[`dynamic-system-host`](https://github.com/module-federation/module-federation-examples/tree/master/dynamic-system-host).
-
-:::
-
-:::caution
-
-The support for [Module Federation](https://webpack.js.org/concepts/module-federation/) in Re.Pack
-is still **work in progress and not official yet**.
-
-Initial investigation yielded promising results. Feel free to experiment with it using this example:
-https://github.com/zamotany/module-federation-repack.
-
-:::
+Use [Module Federation](../module-federation) document for information on adoption of Module Federation in React Native projects with Re.Pack.
