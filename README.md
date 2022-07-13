@@ -49,7 +49,7 @@ __Check the base [`webpack.config.js`](https://github.com/callstack/repack/blob/
   - Running the production/development bundle using Hermes engine
   - Transforming production bundle into bytecode bundle
   - Inspecting running Hermes engine with Flipper
-- [x] [Code splitting](https://re-pack.netlify.app/docs/code-splitting/concepts) (__experimental__):
+- [x] [Code splitting](https://re-pack.netlify.app/docs/code-splitting/concept) (__experimental__):
   - Dynamic `import()` support with and without `React.lazy()` (recommended).
   - Arbitrary scripts (only for advanced users).
 - [x] REST API for development server:
@@ -78,7 +78,7 @@ You can also use the following links to jump to specific topics:
 - [Configuration](https://re-pack.netlify.app/docs/configuration/webpack-config)
 - [API documentation](https://re-pack.netlify.app/docs/api/index)
 - [Known issues & limitations](https://re-pack.netlify.app/docs/known-issues)
-- [Code splitting](https://re-pack.netlify.app/docs/code-splitting/concepts)
+- [Code splitting](https://re-pack.netlify.app/docs/code-splitting/concept)
 
 ## Made with ❤️ at Callstack
 
