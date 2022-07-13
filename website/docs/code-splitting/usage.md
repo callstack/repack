@@ -213,4 +213,4 @@ ScriptManager.shared.addResolver(async (scriptId) => {
 
 ### Module Federation
 
-Use [Module Federation](../module-federation/concept) document for information on adoption of Module Federation in React Native projects with Re.Pack.
+Use [Module Federation](../module-federation) document for information on adoption of Module Federation in React Native projects with Re.Pack.

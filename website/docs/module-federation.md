@@ -1,17 +1,17 @@
 # Module Federation
 
-Before diving deep into Module Federation, it's important to understand how [Code Splitting](../code-splitting/concept) works in React Native with Re.Pack
+Before diving deep into Module Federation, it's important to understand how [Code Splitting](./code-splitting/concept) works in React Native with Re.Pack
 and what are the challenges.
 
-Module Federation is similar to [Code Splitting](../code-splitting/concept), but offers more control, flexibility and scalability.
+Module Federation is similar to [Code Splitting](./code-splitting/concept), but offers more control, flexibility and scalability.
 
 :::tip
 
-We highly recommend to read and understand [Code Splitting](../code-splitting/concept) first, before trying Module Federation:
+We highly recommend to read and understand [Code Splitting](./code-splitting/concept) first, before trying Module Federation:
 
-- [Concept](../code-splitting/concept)
-- [Usage](../code-splitting/usage)
-- [Glossary](../code-splitting/glossary)
+- [Concept](./code-splitting/concept)
+- [Usage](./code-splitting/usage)
+- [Glossary](./code-splitting/glossary)
 
 :::
 
@@ -68,7 +68,7 @@ Here's a list of currently know limitations:
 
 :::tip
 
-You should also consider limitations and T&C of the store you would be deploying the application to. You can read more on [Code Splitting page](../code-splitting/concept) - the same limitations and caveats apply.
+You should also consider limitations and T&C of the store you would be deploying the application to. You can read more on [Code Splitting page](./code-splitting/concept) - the same limitations and caveats apply.
 
 :::
 
@@ -97,17 +97,17 @@ Before adopting Module Federation in React Native, we recommend to create a Web-
 
 ## `ScriptManager` with Module Federation
 
-In Module Federation setup, [`ScripManager`](../api/repack/client/classes/ScriptManager) can be used in a similar way as you would use it with standard [Code Splitting](../code-splitting/usage).
+In Module Federation setup, [`ScripManager`](./api/repack/client/classes/ScriptManager) can be used in a similar way as you would use it with standard [Code Splitting](./code-splitting/usage).
 
 The main difference is with resolvers:
 
-- Each container can add their own resolvers using [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver) or
+- Each container can add their own resolvers using [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver) or
   a host application can provide resolver for containers.
 - Async chunks of containers have to be accounted for - there has to be a resolver for e.g `src_App_js` chunk for container `app1` and a resolver for `src_App_js` for container `app2`.
 
 ### Single resolver in host
 
-When using a single resolver in the host, we recommend to use [`Federated.createURLResolver`](../api/repack/client/functions/Federated.createURLResolver) to reduce boilerplate:
+When using a single resolver in the host, we recommend to use [`Federated.createURLResolver`](./api/repack/client/functions/Federated.createURLResolver) to reduce boilerplate:
 
 ```js
 import { ScriptManager, Script, Federated } from '@callstack/repack/client';
@@ -147,7 +147,7 @@ The example above would resolve chunks and container according to the table belo
 
 ### Multiple resolvers
 
-With multiple resolvers you can call [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver) multiple times in the Host application or have a dedicated resolver per container:
+With multiple resolvers you can call [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver) multiple times in the Host application or have a dedicated resolver per container:
 
 ```js
 // Host
@@ -266,7 +266,7 @@ In many guides and tutorials, you will find `import('./bootstrap')` inside an en
 it's a recommended way to deal with the `Uncaught Error: Shared module is not available for eager consumption` error (outlined in https://webpack.js.org/concepts/module-federation/#uncaught-error-shared-module-is-not-available-for-eager-consumption).
 This works for Web, because DOM API provides functionalities to load and execute additional JavaScript code out of the box.
 
-However, React Native doesn't provide any APIs to load additional code by default. The only way to execute additional code is to use native module to load it and evaluate on the native side. But, in order to use native modules, the bridge between JavaScript and native has to be established, which happens when React Native initializes the environment. In order words, only after React Native is initialized, it's possible to load and execute additional JavaScript code, which happens through [`ScripManager`](../api/repack/client/classes/ScriptManager).
+However, React Native doesn't provide any APIs to load additional code by default. The only way to execute additional code is to use native module to load it and evaluate on the native side. But, in order to use native modules, the bridge between JavaScript and native has to be established, which happens when React Native initializes the environment. In order words, only after React Native is initialized, it's possible to load and execute additional JavaScript code, which happens through [`ScripManager`](./api/repack/client/classes/ScriptManager).
 
 In practice, this means that your entry code should look similar to the following snippet:
 
@@ -293,7 +293,7 @@ import './src/bootstrap';
 
 Currently, there's a limitation for Host application preventing them from using `remotes` in `ModuleFederationPlugin`.
 
-In order to load a container from the host, you have to use [`Federated.importModule`](../api/repack/client/functions/Federated.importModule):
+In order to load a container from the host, you have to use [`Federated.importModule`](./api/repack/client/functions/Federated.importModule):
 
 ```js
 import * as React from 'react';
@@ -349,7 +349,7 @@ export default (env) => {
 
 ### `remotes` must use `Federated.createRemote(...)` function
 
-[`ScripManager`](../api/repack/client/classes/ScriptManager), which allows to load and evaluate additional JavaScript code (including containers), is an asynchronous API. This means the `remotes` in `ModuleFederationPlugin` must use `promise new Promise(...)` syntax. To avoid repetition and having to maintain `promise new Promise(...)` implementations yourself, Re.Pack provides an abstraction - [`Federated.createRemote` function](../api/repack/functions/Federated.createRemote):
+[`ScripManager`](./api/repack/client/classes/ScriptManager), which allows to load and evaluate additional JavaScript code (including containers), is an asynchronous API. This means the `remotes` in `ModuleFederationPlugin` must use `promise new Promise(...)` syntax. To avoid repetition and having to maintain `promise new Promise(...)` implementations yourself, Re.Pack provides an abstraction - [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote):
 
 ```js
 /* ... */
@@ -379,15 +379,15 @@ export default (env) => {
 };
 ```
 
-[`Federated.createRemote` function](../api/repack/functions/Federated.createRemote) will make the remote loadable, so you will be able to use import statement for `remotes`:
+[`Federated.createRemote` function](./api/repack/functions/Federated.createRemote) will make the remote loadable, so you will be able to use import statement for `remotes`:
 
 ```js
 import App1 from 'app1/App.js';
 import App1 from 'app2/App.js';
 ```
 
-The loading code generated by [`Federated.createRemote` function](../api/repack/functions/Federated.createRemote) uses [`ScripManager`](../api/repack/client/classes/ScriptManager),
-meaning you need to make sure the proper resolvers are added via [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver) so your remotes can be resolved, for example:
+The loading code generated by [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote) uses [`ScripManager`](./api/repack/client/classes/ScriptManager),
+meaning you need to make sure the proper resolvers are added via [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver) so your remotes can be resolved, for example:
 
 ```js
 import { ScriptManager, Federated } from '@callstack/repack/client';
@@ -403,4 +403,4 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
 
 ## Public Path is unused
 
-Re.Pack doesn't use public path and all chunk resolution as well as dynamic container resolution happens through resolvers added to [`ScripManager`](../api/repack/client/classes/ScriptManager) via [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver).
+Re.Pack doesn't use public path and all chunk resolution as well as dynamic container resolution happens through resolvers added to [`ScripManager`](./api/repack/client/classes/ScriptManager) via [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver).
