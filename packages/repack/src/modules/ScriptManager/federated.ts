@@ -264,12 +264,15 @@ export namespace Federated {
       __webpack_share_scopes__[scope].__isInitialized = true;
     }
 
-    const container = self[containerName];
-
-    if (!container) {
+    // Do not use `const container = self[containerName];` here. Once container is loaded
+    // `container` reference is not updated, so `container.__isInitialized`
+    // will crash the application, because of reading property from `undefined`.
+    if (!self[containerName]) {
       // Download and execute container
       await ScriptManager.shared.loadScript(containerName);
     }
+
+    const container = self[containerName];
 
     if (!container.__isInitialized) {
       container.__isInitialized = true;
