@@ -1,5 +1,18 @@
 # @callstack/repack
 
+## 3.0.0-next.6
+
+### Patch Changes
+
+- [#209](https://github.com/callstack/repack/pull/209) [`ecf7829`](https://github.com/callstack/repack/commit/ecf78293def2150f960873eda9a7d25a61908b5c) Thanks [@zamotany](https://github.com/zamotany)! - ### Fix `importModule` crashing the app
+
+  Prevent `importModule` from crashing with _cannot read property \_\_isInitialized of undefined_.
+
+* [#207](https://github.com/callstack/repack/pull/207) [`4e15c38`](https://github.com/callstack/repack/commit/4e15c380fc2ff9aad1f300e5960e14d67557f6ce) Thanks [@jbinda](https://github.com/jbinda)! - ### Fix bi-directional imports in Module Federation
+
+  `Federated.createRemote` and `Federated.importModule` now load and evaluate each container only once to support bi-directional
+  container imports and cycling dependencies.
+
 ## 3.0.0-next.5
 
 ### Minor Changes
