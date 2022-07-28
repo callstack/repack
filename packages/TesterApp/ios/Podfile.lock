@@ -1,6 +1,6 @@
 PODS:
   - boost (1.76.0)
-  - callstack-repack (2.5.2):
+  - callstack-repack (3.0.0-next.5):
     - React-Core
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
@@ -532,7 +532,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
-  callstack-repack: ad575a2fc7eb873c199a661900c2933abd9a8111
+  callstack-repack: 8d80e362cdd44d5a1db2784041acceb92098bafb
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
   FBLazyVector: a7a655862f6b09625d11c772296b01cd5164b648
