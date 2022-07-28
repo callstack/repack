@@ -251,19 +251,27 @@ export namespace Federated {
     module: string,
     scope: string = 'default'
   ): Promise<Exports> {
-    // Initializes the share scope.
-    // This fills it with known provided modules from this build and all remotes.
-    await __webpack_init_sharing__(scope);
+    if (
+      !__webpack_share_scopes__[scope] ||
+      !__webpack_share_scopes__[scope].__isInitialized
+    ) {
+      // Initializes the share scope.
+      // This fills it with known provided modules from this build and all remotes.
+      await __webpack_init_sharing__(scope); // Download and execute container
+      __webpack_share_scopes__[scope].__isInitialized = true;
+    }
 
-    // Download and execute container
-    await ScriptManager.shared.loadScript(containerName);
-
+    if (!self[containerName]) {
+      await ScriptManager.shared.loadScript(containerName);
+    }
     const container = self[containerName];
-    if (!container._initialized) {
+
+    if (!container.__isInitialized) {
+      container.__isInitialized = true;
       // Initialize the container, it may provide shared modules
       await container.init(__webpack_share_scopes__[scope]);
-      container._initialized = true;
     }
+
     const factory = await container.get(module);
     const exports = factory();
     return exports;
