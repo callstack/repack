@@ -225,6 +225,9 @@ export namespace Federated {
    * Dynamically imports module from a Module Federation container. Similar to `import('file')`, but
    * specific to Module Federation. Calling `importModule` will create an async boundary.
    *
+   * Container will be evaluated only once. If you use `importModule` for the same container twice,
+   * the container will be loaded and evaluated only on the first import.
+   *
    * Under the hood, `importModule` will call `ScriptManager.shared.loadScript(containerName)`.
    * This means, a resolver must be added with `ScriptManager.shared.addResolver(...)` beforehand and provided proper
    * resolution logic to resolve URL based on the `containerName`.
@@ -257,14 +260,16 @@ export namespace Federated {
     ) {
       // Initializes the share scope.
       // This fills it with known provided modules from this build and all remotes.
-      await __webpack_init_sharing__(scope); // Download and execute container
+      await __webpack_init_sharing__(scope);
       __webpack_share_scopes__[scope].__isInitialized = true;
     }
 
-    if (!self[containerName]) {
+    const container = self[containerName];
+
+    if (!container) {
+      // Download and execute container
       await ScriptManager.shared.loadScript(containerName);
     }
-    const container = self[containerName];
 
     if (!container.__isInitialized) {
       container.__isInitialized = true;

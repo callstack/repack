@@ -12,6 +12,9 @@ export namespace Federated {
    * The returned code should be put as a value inside `remotes` object when configuring
    * `webpack.container.ModuleFederationPlugin`.
    *
+   * Remote container will be evaluated only once. If you import module from the same container twice,
+   * the container will be loaded and evaluated only on the first import.
+   *
    * @param remoteName Name of the container to create remote for.
    * @returns A JavaScript loading code the the given remote.
    *
