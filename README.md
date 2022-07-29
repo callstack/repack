@@ -56,12 +56,16 @@ __Check the base [`webpack.config.js`](https://github.com/callstack/repack/blob/
   - `GET /api/platforms` - platforms with active compilations.
   - `GET /api/:platform/assets` - assets emitted from compilation.
   - `GET /api/:platform/stats` - data about compilation.
+- [x] [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669) support
 
 ### Planned features
 
+Available at: [Projects](https://github.com/callstack/repack/projects?type=classic)
+
 - [ ] `ChunksToHermesBytecodePlugin` plugin to automatically transform async chunks to bytecode format.
+- [ ] Code signing and verification
 - [ ] `webpack-init` command
-- [ ] [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669) support
+
 
 ### Examples
 
