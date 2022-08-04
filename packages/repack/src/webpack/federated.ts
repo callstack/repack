@@ -173,7 +173,6 @@ export namespace Federated {
       if (self.${remoteName}) {
         return resolveRemote();
       }
-      
       var scriptManager = __webpack_require__.repack.shared.scriptManager;
 
       ${defaultResolver}
