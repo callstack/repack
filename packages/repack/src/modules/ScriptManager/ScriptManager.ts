@@ -18,6 +18,16 @@ const CACHE_KEY = `Repack.ScriptManager.Cache.v3.${
   __DEV__ ? 'debug' : 'release'
 }`;
 
+/* Options for resolver when adding it to a `ScriptManager`. */
+export interface ResolverOptions {
+  /**
+   * Priority of the resolver. Defaults to `2`.
+   * Resolvers are called based on the highest priority,
+   * so higher the number, the higher priority the resolver gets.
+   */
+  priority?: number;
+}
+
 /**
  * A manager to ease resolution, downloading and executing additional code from:
  * - arbitrary JavaScript scripts
@@ -80,7 +90,7 @@ export class ScriptManager extends EventEmitter {
 
   protected cache: Cache = {};
   protected cacheInitialized = false;
-  protected resolvers: ScriptLocatorResolver[] = [];
+  protected resolvers: [number, ScriptLocatorResolver][] = [];
   protected storage?: StorageApi;
 
   /**
@@ -152,9 +162,15 @@ export class ScriptManager extends EventEmitter {
    * - running arbitrary logic
    *
    * @param resolver Resolver function to add.
+   * @param options Resolver options.
    */
-  addResolver(resolver: ScriptLocatorResolver) {
-    this.resolvers.push(resolver);
+  addResolver(
+    resolver: ScriptLocatorResolver,
+    { priority = 2 }: ResolverOptions = {}
+  ) {
+    this.resolvers = this.resolvers
+      .concat([[priority, resolver]])
+      .sort(([a], [b]) => b - a);
   }
 
   /**
@@ -164,7 +180,7 @@ export class ScriptManager extends EventEmitter {
    * @returns `true` if resolver was found and removed, `false` otherwise.
    */
   removeResolver(resolver: ScriptLocatorResolver): boolean {
-    const index = this.resolvers.indexOf(resolver);
+    const index = this.resolvers.findIndex(([, item]) => item === resolver);
     if (index > -1) {
       this.resolvers.splice(index, 1);
       return true;
@@ -231,7 +247,7 @@ export class ScriptManager extends EventEmitter {
       this.emit('resolving', { scriptId, caller });
 
       let locator;
-      for (const resolve of this.resolvers) {
+      for (const [, resolve] of this.resolvers) {
         locator = await resolve(scriptId, caller);
         if (locator) {
           break;

@@ -95,17 +95,175 @@ Before adopting Module Federation in React Native, we recommend to create a Web-
 
 :::
 
-## `ScriptManager` with Module Federation
+## Custom Module Federation plugin
+
+Re.Pack provides custom Module Federation plugin - [`Repack.plugin.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin).
+
+It's a recommended way to use Module Federation with Re.Pack. It provides defaults for `filename`, `library`, `shared` and converts `remotes` into `promise new Promise` loaders with [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote) automatically.
+
+For example a `host` config could look similar to:
+
+```js
+import * as Repack from '@callstack/repack';
+
+// ...
+new Repack.plugins.ModuleFederationPlugin({
+  name: 'host,
+});
+```
+
+And containers:
+
+```js
+import * as Repack from '@callstack/repack';
+
+new Repack.plugins.ModuleFederationPlugin({
+  name: 'app1',
+  remotes: {
+    module1: 'module1@https://example.com/module1.container.bundle',
+  },
+});
+
+new Repack.plugins.ModuleFederationPlugin({
+  name: 'app2',
+  remotes: {
+    module1: 'module1@https://example.com/module1.container.bundle',
+    module2: 'module1@dynamic',
+  },
+});
+```
+
+## Static vs dynamic containers with Module Federation
+
+In Module Federation with Re.Pack you can choose if you want to have containers loaded statically, dynamically or both.
+
+### Dynamic containers with `Federated.importModule`
+
+To load dynamic containers you can use [`Federated.importModule`](./api/repack/client/functions/Federated.importModule) and add a resolver for it and it's chunks, for example:
+
+```js
+import { ScriptManager, Script, Federated } from '@callstack/repack/client';
+
+// Add resolver
+ScriptManager.shared.addResolver(async (scriptId, caller) => {
+  // Create resolve function
+  const resolveURL = Federated.createURLResolver({
+    containers: {
+      app1: 'https://somewhere1.com/[name][ext]',
+    },
+  });
+
+  // Try to resolve URL based on scriptId and caller
+  const url = resolveURL(scriptId, caller);
+  if (url) {
+    return { url };
+  }
+});
+
+// Somewhere later...
+// Load container, React.lazy is optional
+const App1 = React.lazy(() => Federated.importModule('app1', './App'));
+```
+
+### Semi-Dynamic containers with `remotes`
+
+Another way to load container is with `remotes`. You specify what containers will be used in `remotes`, but the URL resolution will be dynamic. Using `remotes` allows you to import containers using standard import statement (`import ... from '...';`).
+
+In the code it could look similar to:
+
+```js
+import { ScriptManager, Script, Federated } from '@callstack/repack/client';
+
+// Add resolver
+ScriptManager.shared.addResolver(async (scriptId, caller) => {
+  // Create resolve function
+  const resolveURL = Federated.createURLResolver({
+    containers: {
+      app1: 'https://somewhere1.com/[name][ext]',
+    },
+  });
+
+  // Try to resolve URL based on scriptId and caller
+  const url = resolveURL(scriptId, caller);
+  if (url) {
+    return { url };
+  }
+});
+
+// Somewhere later...
+import App1 from 'app1/App';
+
+// use App1 somehow
+```
+
+And the `remotes` have to be configured inside [`Repack.plugin.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin):
+
+```js
+import * as Repack from '@callstack/repack';
+
+new Repack.plugins.ModuleFederationPlugin({
+  name: '...',
+  remotes: {
+    module1: 'app1@dynamic',
+  },
+});
+```
+
+:::caution
+
+Keep in mind, `remotes` cannot be used inside Host application: [Host application can't use `remotes`](#host-application-cant-use-remotes)
+
+:::
+
+### Static containers with `remotes`
+
+This options is similar to [Semi-Dynamic containers with `remotes`](#semi-dynamic-containers-with-remotes) but doesn't require to manually provide resolver with [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver). Instead, the URL for resolution is specified at build time inside `remotes`:
+
+```js
+import * as Repack from '@callstack/repack';
+
+new Repack.plugins.ModuleFederationPlugin({
+  name: '...',
+  remotes: {
+    module1: 'app1@https://example.com/app1.container.bundle',
+  },
+});
+```
+
+This will add a default resolver based on the URL after `@`, so you can import federated module without calling [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver):
+
+```js
+// Somewhere later...
+import App1 from 'app1/App';
+
+// use App1 somehow
+```
+
+:::caution
+
+Keep in mind, `remotes` cannot be used inside Host application: [Host application can't use `remotes`](#host-application-cant-use-remotes)
+
+:::
+
+## `ScriptManager`'s resolvers in Module Federation
 
 In Module Federation setup, [`ScripManager`](./api/repack/client/classes/ScriptManager) can be used in a similar way as you would use it with standard [Code Splitting](./code-splitting/usage).
 
 The main difference is with resolvers:
 
-- Each container can add their own resolvers using [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver) or
+- Containers can use `remotes` and provide URLs in plugin configuration (eg `module1@https://example.com/module1.container.bundle`) - this would add a default resolver for container `module1` and it's chunks.
+- Containers can add new resolvers using [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver) or
   a host application can provide resolver for containers.
 - Async chunks of containers have to be accounted for - there has to be a resolver for e.g `src_App_js` chunk for container `app1` and a resolver for `src_App_js` for container `app2`.
 
+
 ### Single resolver in host
+
+:::info
+
+Relevant only when using dynamic/semi-dynamic containers.
+
+:::
 
 When using a single resolver in the host, we recommend to use [`Federated.createURLResolver`](./api/repack/client/functions/Federated.createURLResolver) to reduce boilerplate:
 
@@ -147,6 +305,12 @@ The example above would resolve chunks and container according to the table belo
 
 ### Multiple resolvers
 
+:::info
+
+Relevant only when using dynamic/semi-dynamic containers.
+
+:::
+
 With multiple resolvers you can call [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver) multiple times in the Host application or have a dedicated resolver per container:
 
 ```js
@@ -161,17 +325,15 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
     };
   }
 
-  // Resolve entry of app1 container
+  // Resolve entry of app1 container and it's chunks
   if (scriptId === 'app1') {
     return {
       url: 'https://somewhere1.com/app1.container.bundle',
     };
   }
-
-// Resolve entry of app2 container
-  if (scriptId === 'app2') {
+  if (caller === 'app1') {
     return {
-      url: 'https://somewhere2.com/app2.container.js',
+      url: Script.getRemoteURL(`https://somewhere1.com/${scriptId}`),
     };
   }
 });
@@ -182,22 +344,15 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
 import { ScriptManager, Script, Federated } from '@callstack/repack/client';
 
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
-  // Resolve chunks of app1 container only
-  if (caller === 'app1') {
+  // Resolve entry of module1 container and it's chunks
+  if (scriptId === 'module1') {
     return {
-      url: Script.getRemoteURL(`https://somewhere1.com/${scriptId}`),
+      url: 'https://somewhere4.com/module1.container.bundle',
     };
   }
-});
-```
-
-```js
-// app2 container
-ScriptManager.shared.addResolver(async (scriptId, caller) => {
-  // Resolve chunks of app2 container only
-  if (caller === 'app2') {
+  if (caller === 'module1') {
     return {
-      url: Script.getRemoteURL(`https://somewhere2.com/chunks/${scriptId}`),
+      url: Script.getRemoteURL(`https://somewhere4.com/${scriptId}`),
     };
   }
 });
@@ -230,7 +385,7 @@ In practice, this means that `react` and `react-native` must be configured insid
 ```js
 /* ... */
 
-import webpack from 'webpack';
+import * as Repack from '@callstack/repack';
 
 export default (env) => {
   /* ... */
@@ -241,18 +396,12 @@ export default (env) => {
     plugins: [
       /* ... */
 
-      new webpack.container.ModuleFederationPlugin({
+      new Repack.plugins.ModuleFederationPlugin({
         /* ... */
 
         shared: {
-          react: {
-            singleton: true,
-            eager: true,
-          },
-          'react-native': {
-            singleton: true,
-            eager: true,
-          },
+          react: Repack.plugins.SHARED_REACT, // Added by default
+          'react-native': Repack.plugins.SHARED_REACT_NATIVE,  // Added by default
         },
       }),
     ],
@@ -291,7 +440,7 @@ import './src/bootstrap';
 
 ### Host application can't use `remotes`
 
-Currently, there's a limitation for Host application preventing them from using `remotes` in `ModuleFederationPlugin`.
+Currently, there's a limitation for Host application preventing them from using `remotes` in [`Repack.plugins.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin).
 
 In order to load a container from the host, you have to use [`Federated.importModule`](./api/repack/client/functions/Federated.importModule):
 
@@ -315,12 +464,12 @@ The code above, will load `app` container, import module `App.js` from it and pa
 
 If you're planning on using native modules, the host application must provide native code for those. It's also recommended to make those modules `shared` and a `singleton`.
 
-For example, if you want to use `react-native-reanimated`, you must add it to the host all all the containers you want to use Reanimated in, then configure `ModuleFederationPlugin` in host and the containers using the dependency:
+For example, if you want to use `react-native-reanimated`, you must add it to the host all all the containers you want to use Reanimated in, then configure [`Repack.plugins.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin) in host and the containers using the dependency:
 
 ```js
 /* ... */
 
-import webpack from 'webpack';
+import * as Repack from '@callstack/repack';
 
 export default (env) => {
   /* ... */
@@ -331,12 +480,12 @@ export default (env) => {
     plugins: [
       /* ... */
 
-      new webpack.container.ModuleFederationPlugin({
+      new Repack.plugins.ModuleFederationPlugin({
         /* ... */
 
         shared: {
-          /* ... */
-
+          react: Repack.Federated.SHARED_REACT,
+          'react-native': Repack.Federated.SHARED_REACT,
           'react-native-reanimated': {
             singleton: true,
           }
@@ -348,6 +497,18 @@ export default (env) => {
 ```
 
 ### `remotes` must use `Federated.createRemote(...)` function
+
+:::tip
+
+By using [`Repack.plugins.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin), `remotes` will be automatically converted to `promise new Promise` using [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote).
+
+:::
+
+:::info
+
+Only relevant when not using `webpack.container.ModuleFederationPlugin` instead of [`Repack.plugins.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin).
+
+:::
 
 [`ScripManager`](./api/repack/client/classes/ScriptManager), which allows to load and evaluate additional JavaScript code (including containers), is an asynchronous API. This means the `remotes` in `ModuleFederationPlugin` must use `promise new Promise(...)` syntax. To avoid repetition and having to maintain `promise new Promise(...)` implementations yourself, Re.Pack provides an abstraction - [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote):
 
@@ -370,8 +531,8 @@ export default (env) => {
         /* ... */
 
         remotes: {
-          app1: Federated.createRemote('app1'),
-          app2: Federated.createRemote('app2'),
+          app1: Federated.createRemote('app1@dynamic'),
+          app2: Federated.createRemote('app2@dynamic'),
         },
       }),
     ],
