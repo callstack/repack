@@ -14,7 +14,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@callstack/repack": "3.0.0-next.6",
+    "@callstack/repack": "3.0.0-next.7",
     "@react-native-async-storage/async-storage": "^1.15.4",
     "lodash.throttle": "^4.1.1",
     "react": "17.0.2",
