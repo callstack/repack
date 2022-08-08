@@ -1,6 +1,9 @@
 import webpack from 'webpack';
 import type { WebpackPlugin } from '../../types';
 
+/**
+ * @category Webpack Plugin
+ */
 export class ManifestPlugin implements WebpackPlugin {
   /**
    * Apply the plugin.
