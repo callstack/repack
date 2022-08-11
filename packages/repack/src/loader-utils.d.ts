@@ -20,6 +20,7 @@ declare module 'loader-utils' {
   export interface LoaderContext {
     rootContext: string;
     resourcePath: string;
+    resourceQuery: string;
     fs: webpack.Compiler['inputFileSystem'];
     cacheable(flag?: boolean): void;
     async(): LoaderCallback | undefined;

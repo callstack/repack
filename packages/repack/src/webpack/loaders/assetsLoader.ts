@@ -13,6 +13,7 @@ interface Options {
   scalableAssetExtensions: string[];
   devServerEnabled?: boolean;
   publicPath?: string;
+  remotePublicPath?: string;
 }
 
 function getOptions(loaderContext: LoaderContext): Options {
@@ -31,6 +32,7 @@ function getOptions(loaderContext: LoaderContext): Options {
         },
         devServerEnabled: { type: 'boolean' },
         publicPath: { type: 'string' },
+        remotePublicPath: { type: 'string' },
       },
     },
     options,
@@ -52,6 +54,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
   logger.debug('Processing:', this.resourcePath);
 
   try {
+    const isRemoteAsset = this.resourceQuery === '?remote=true';
     const options = getOptions(this);
     const pathSeparatorPattern = new RegExp(`\\${path.sep}`, 'g');
     const resourcePath = this.resourcePath;
@@ -71,17 +74,22 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       .replace(new RegExp(`^[\\.\\${path.sep}]+`), '');
     const type = path.extname(resourcePath).replace(/^\./, '');
     const assetsPath = 'assets';
+    const remoteAssetsPath = `remote-${assetsPath}`;
     const suffix = `(@\\d+(\\.\\d+)?x)?(\\.(${options.platform}|native))?\\.${type}$`;
     const filename = path
       .basename(resourcePath)
       .replace(new RegExp(suffix), '');
     // Name with embedded relative dirname eg `node_modules_reactnative_libraries_newappscreen_components_logo.png`
-    const normalizedName = `${(relativeDirname.length === 0
+    let normalizedName = `${(relativeDirname.length === 0
       ? filename
       : `${relativeDirname.replace(pathSeparatorPattern, '_')}_${filename}`
     )
       .toLowerCase()
-      .replace(/[^a-z0-9_]/g, '')}.${type}`;
+      .replace(/[^a-z0-9_]/g, '')}`;
+
+    if (!isRemoteAsset) {
+      normalizedName = `${normalizedName}.${type}`;
+    }
 
     const files = await new Promise<string[]>((resolve, reject) =>
       this.fs.readdir(dirname, (error, results) => {
@@ -112,9 +120,6 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
         parseFloat(b.replace(/[^\d.]/g, ''))
     );
 
-    const scaleNumbers = scaleKeys.map((scale) =>
-      parseFloat(scale.replace(/[^\d.]/g, ''))
-    );
     const assets = await Promise.all(
       scaleKeys.map(
         (
@@ -135,6 +140,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
 
                 if (
                   !options.devServerEnabled &&
+                  !isRemoteAsset &&
                   options.platform === 'android'
                 ) {
                   const testXml = /\.(xml)$/;
@@ -190,10 +196,17 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
 
                   destination = path.join(destination, normalizedName);
                 } else {
-                  const name = `${filename}${
-                    scale === '@1x' ? '' : scale
-                  }.${type}`;
-                  destination = path.join(assetsPath, relativeDirname, name);
+                  if (isRemoteAsset) {
+                    const baseDestinationPath = `${remoteAssetsPath}/${normalizedName}`;
+                    destination = `${baseDestinationPath}${
+                      scale === '@1x' ? '' : scale
+                    }_{###}.${type}`;
+                  } else {
+                    const name = `${filename}${
+                      scale === '@1x' ? '' : scale
+                    }.${type}`;
+                    destination = path.join(assetsPath, relativeDirname, name);
+                  }
                 }
 
                 resolve({
@@ -207,12 +220,31 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       )
     );
 
+    const hashes = await Promise.all(
+      assets.map((asset) =>
+        hasha.async(asset.content?.toString() ?? asset.destination, {
+          algorithm: 'md5',
+        })
+      )
+    );
+
+    const combinedHash = await hasha.async(hashes.join(''), {
+      algorithm: 'md5',
+    });
+
     assets.forEach((asset) => {
       const { destination, content } = asset;
 
-      logger.debug('Asset emitted:', destination);
-      // Assets are emitted relatively to `output.path`.
-      this.emitFile(destination, content ?? '');
+      if (isRemoteAsset) {
+        const filename = destination.replace(/{###}/, combinedHash);
+        // Assets are emitted relatively to `output.path`.
+        logger.debug('Remote asset emitted:', filename);
+        this.emitFile(filename, content ?? '');
+      } else {
+        logger.debug('Asset emitted:', destination);
+        // Assets are emitted relatively to `output.path`.
+        this.emitFile(destination, content ?? '');
+      }
     });
 
     let publicPath = path
@@ -223,13 +255,7 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       publicPath = path.join(options.publicPath, publicPath);
     }
 
-    const hashes = await Promise.all(
-      assets.map((asset) =>
-        hasha.async(asset.content?.toString() ?? asset.destination, {
-          algorithm: 'md5',
-        })
-      )
-    );
+    const remotePublicPath = options.remotePublicPath + normalizedName;
 
     let info: ISizeCalculationResult | undefined;
 
@@ -274,11 +300,18 @@ export default async function reactNativeAssetsLoader(this: LoaderContext) {
       var AssetRegistry = require('react-native/Libraries/Image/AssetRegistry');
       module.exports = AssetRegistry.registerAsset({
         __packager_asset: true,
-        scales: ${JSON.stringify(scaleNumbers)},
+        remoteAsset: ${isRemoteAsset},
+        scales: ${JSON.stringify(scales)},
         name: ${JSON.stringify(filename)},
         type: ${JSON.stringify(type)},
-        hash: ${JSON.stringify(hashes.join())},
-        httpServerLocation: ${JSON.stringify(publicPath)},
+        hash: ${
+          isRemoteAsset
+            ? JSON.stringify(combinedHash)
+            : JSON.stringify(hashes.join())
+        },
+        httpServerLocation: ${JSON.stringify(
+          isRemoteAsset ? remotePublicPath : publicPath
+        )},
         ${
           options.devServerEnabled
             ? `fileSystemLocation: ${JSON.stringify(dirname)},`
