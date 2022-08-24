@@ -51,6 +51,7 @@ export interface CommonArguments {
 export interface BundleArguments extends CommonArguments {
   assetsDest?: string;
   entryFile: string;
+  json?: string;
   minify?: boolean;
   dev: boolean;
   bundleOutput: string;
@@ -58,6 +59,7 @@ export interface BundleArguments extends CommonArguments {
   sourcemapOutput?: string;
   // sourcemapSourcesRoot?: string;
   // sourcemapUseAbsolutePath: boolean;
+  stats?: string;
 }
 
 /**
