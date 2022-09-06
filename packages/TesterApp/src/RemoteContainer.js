@@ -36,7 +36,11 @@ export const RemoteContainer = () => {
         title={'Invalidate'}
         onPress={async () => {
           await ScriptManager.shared.invalidateScripts([RemoteChunkId]);
-          setIsPreloaded(false);
+          if (isLoaded) {
+            setIsLoaded(false);
+          } else {
+            setIsPrefetched(false);
+          }
         }}
       />
     </View>
