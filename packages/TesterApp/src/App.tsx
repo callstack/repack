@@ -4,8 +4,8 @@ import { AppContainer } from './ui/AppContainer';
 import { Section } from './ui/Section';
 import { SectionContainer } from './ui/SectionContainer';
 
-import { RemoteContainer } from './remoteChunks/RemoteContainer';
 import { AsyncContainer } from './asyncChunks/AsyncContainer';
+import { RemoteContainer } from './remoteChunks/RemoteContainer';
 import { MiniAppsContainer } from './miniapp/MiniAppsContainer';
 
 const App = () => {
