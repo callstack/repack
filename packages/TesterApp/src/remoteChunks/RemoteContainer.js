@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Button, View } from 'react-native';
+import { View } from 'react-native';
 import { ScriptManager } from '@callstack/repack/client';
+
 import { Text } from '../ui/Text';
+import { Button } from '../ui/Button';
 
 const RemoteChunkId = 'remote';
 const Remote = React.lazy(() =>

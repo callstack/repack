@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text as NativeText } from 'react-native';
+import { Text as RNText } from 'react-native';
 import { useIsDarkMode } from './utils';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
@@ -11,5 +11,5 @@ export function Text({ colorLight, colorDark, children, style }) {
 
   const color = isDarkMode ? colorInDarkMode : colorInLightMode;
 
-  return <NativeText style={[{ color }, style]}>{children}</NativeText>;
+  return <RNText style={[{ color }, style]}>{children}</RNText>;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import throttle from 'lodash.throttle';
 import { StyleSheet, View } from 'react-native';
+
 import { Text } from '../ui/Text';
 
 export default function Remote() {
