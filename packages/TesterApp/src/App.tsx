@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { AppContainer } from './components/ui/AppContainer';
-import { Section } from './components/ui/Section';
-import { SectionContainer } from './components/ui/SectionContainer';
+import { AppContainer } from './ui/AppContainer';
+import { Section } from './ui/Section';
+import { SectionContainer } from './ui/SectionContainer';
 
-import { RemoteContainer } from './components/remoteChunks/RemoteContainer';
-import { AsyncContainer } from './components/asyncChunks/AsyncContainer';
-import { MiniAppsContainer } from './components/miniapp/MiniAppsContainer';
+import { RemoteContainer } from './remoteChunks/RemoteContainer';
+import { AsyncContainer } from './asyncChunks/AsyncContainer';
+import { MiniAppsContainer } from './miniapp/MiniAppsContainer';
 
 const App = () => {
   return (
