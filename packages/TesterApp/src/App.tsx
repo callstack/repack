@@ -1,22 +1,17 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, View } from 'react-native';
 import { Colors, Header } from 'react-native/Libraries/NewAppScreen';
+import { useIsDarkMode } from './components/ui/utils';
 // @ts-ignore
 import DeveloperActivitySvg from './undraw_Developer_activity_re_39tg.svg';
 
-import { RemoteContainer } from './RemoteContainer';
-import { AsyncContainer } from './AsyncContainer';
-import { Section } from './Section';
-import { MiniAppsContainer } from './MiniAppsContainer';
+import { RemoteContainer } from './components/remoteChunks/RemoteContainer';
+import { AsyncContainer } from './components/asyncChunks/AsyncContainer';
+import { Section } from './components/ui/Section';
+import { MiniAppsContainer } from './components/miniapp/MiniAppsContainer';
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+  const isDarkMode = useIsDarkMode();
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };

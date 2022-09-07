@@ -1,28 +1,22 @@
 import React from 'react';
-import { StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from './Text';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 export const Section = ({ children, title, description }) => {
-  const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
       <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}
+        colorLight={Colors.white}
+        colorDark={Colors.black}
+        style={styles.sectionTitle}
       >
         {title}
       </Text>
       <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}
+        colorLight={Colors.light}
+        colorDark={Colors.dark}
+        style={styles.sectionDescription}
       >
         {description}
       </Text>

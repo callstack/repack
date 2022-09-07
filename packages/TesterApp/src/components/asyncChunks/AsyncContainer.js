@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { Text } from './Text';
+import { Text } from '../ui/Text';
 
 const Async = React.lazy(() => import('./Async'));
 
