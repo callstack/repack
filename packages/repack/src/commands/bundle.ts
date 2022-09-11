@@ -51,7 +51,6 @@ export async function bundle(
     webpackEnvOptions
   );
   const compiler = webpack(webpackConfig);
-  console.log(compiler.options.stats);
 
   return new Promise<void>((resolve, reject) => {
     compiler.run((error, stats) => {
