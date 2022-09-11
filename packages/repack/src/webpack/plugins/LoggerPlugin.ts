@@ -125,7 +125,9 @@ export class LoggerPlugin implements WebpackPlugin {
    */
   apply(compiler: webpack.Compiler) {
     // Make sure webpack-cli doesn't print stats by default.
-    compiler.options.stats = 'none';
+    if (compiler.options.stats === undefined) {
+      compiler.options.stats = 'none';
+    }
 
     if (this.config.devServerEnabled) {
       new webpack.ProgressPlugin((percentage, message, text) => {

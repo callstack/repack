@@ -75,7 +75,6 @@ module.exports = [
         name: '--stats <preset>',
         description:
           'It instructs Webpack on how to treat the stats e.g. normal',
-        default: 'none',
       }
     ),
     func: require('./dist/commands/bundle').bundle,
