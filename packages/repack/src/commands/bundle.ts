@@ -51,6 +51,7 @@ export async function bundle(
     webpackEnvOptions
   );
   const compiler = webpack(webpackConfig);
+  console.log(compiler.options.stats);
 
   return new Promise<void>((resolve, reject) => {
     compiler.run((error, stats) => {
@@ -65,8 +66,20 @@ export async function bundle(
         }
 
         if (args.json && stats !== undefined) {
-          console.log(`Writing '${args.stats}' compiler stats`);
-          const statsJson = stats.toJson(args.stats);
+          console.log(`Writing compiler stats`);
+
+          let statOptions: Parameters<typeof stats.toJson>[0];
+          if (args.stats !== undefined) {
+            statOptions = { preset: args.stats };
+          } else if (typeof compiler.options.stats === 'boolean') {
+            statOptions = compiler.options.stats
+              ? { preset: 'normal' }
+              : { preset: 'none' };
+          } else {
+            statOptions = compiler.options.stats;
+          }
+
+          const statsJson = stats.toJson(statOptions);
           // Stats can be fairly big at which point their JSON no longer fits into a single string.
           // Approach was copied from `webpack-cli`: https://github.com/webpack/webpack-cli/blob/c03fb03d0aa73d21f16bd9263fd3109efaf0cd28/packages/webpack-cli/src/webpack-cli.ts#L2471-L2482
           const outputStream = fs.createWriteStream(args.json);
