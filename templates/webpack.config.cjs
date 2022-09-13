@@ -36,6 +36,18 @@ module.exports = (env) => {
   }
 
   /**
+   * Using Module Federation might require disabling hmr.
+   * Uncomment below to set `devServer.hmr` to `false`.
+   *
+   * Keep in mind that `devServer` object is not available
+   * when running `webpack-bundle` command and crash
+   * because of reading from `undefined` will occur. 
+   */
+  // if (devServer) {
+  //   devServer.hmr = false;
+  // }
+
+  /**
    * Depending on your Babel configuration you might want to keep it.
    * If you don't use `env` in your Babel config, you can remove it.
    *
