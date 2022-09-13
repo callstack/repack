@@ -8,7 +8,7 @@ import { WithChildren } from './types';
 type TextProps = WithChildren<{
   colorLight: string;
   colorDark: string;
-  style: StyleProp<TextStyle>;
+  style?: StyleProp<TextStyle>;
 }>;
 
 export function Text({ colorLight, colorDark, children, style }: TextProps) {
