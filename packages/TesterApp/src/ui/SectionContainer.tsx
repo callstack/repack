@@ -1,12 +1,15 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useIsDarkMode } from './utils';
 import { Colors, Header } from 'react-native/Libraries/NewAppScreen';
+
 // @ts-ignore
 import DeveloperActivitySvg from './undraw_Developer_activity_re_39tg.svg';
+import { useIsDarkMode } from './utils';
+import { WithChildren } from './types';
 
+type SectionContainerProps = WithChildren<{}>;
 
-export function SectionContainer({ children }) {
+export function SectionContainer({ children }: SectionContainerProps) {
   const isDarkMode = useIsDarkMode();
   return (
     <>
