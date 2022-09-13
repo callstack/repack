@@ -1,9 +1,16 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from './Text';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-export const Section = ({ children, title, description }) => {
+import { Text } from './Text';
+
+type SectionProps = {
+  children: React.ReactNode;
+  title: string;
+  description?: string;
+};
+
+export const Section = ({ children, title, description }: SectionProps) => {
   return (
     <View style={styles.sectionContainer}>
       <Text
@@ -13,13 +20,15 @@ export const Section = ({ children, title, description }) => {
       >
         {title}
       </Text>
-      <Text
-        colorLight={Colors.light}
-        colorDark={Colors.dark}
-        style={styles.sectionDescription}
-      >
-        {description}
-      </Text>
+      {description ? (
+        <Text
+          colorLight={Colors.light}
+          colorDark={Colors.dark}
+          style={styles.sectionDescription}
+        >
+          {description}
+        </Text>
+      ) : null}
       {children}
     </View>
   );
