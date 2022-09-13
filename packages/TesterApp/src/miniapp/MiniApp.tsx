@@ -1,15 +1,19 @@
 import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 
-import img from './callstack-dark.png';
-
 import { Text } from '../ui/Text';
+
+import img from './callstack-dark.png';
 
 export default function MiniApp() {
   return (
     <View style={styles.container}>
       <Text>MiniApp: this text comes from MiniApp</Text>
-      <Image accessibilityIgnoresInvertColors source={img} style={styles.image} />
+      <Image
+        accessibilityIgnoresInvertColors
+        source={img}
+        style={styles.image}
+      />
     </View>
   );
 }
