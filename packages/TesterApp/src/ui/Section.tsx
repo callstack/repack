@@ -3,12 +3,12 @@ import { StyleSheet, View } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 import { Text } from './Text';
+import { WithChildren } from './types';
 
-type SectionProps = {
-  children: React.ReactNode;
+type SectionProps = WithChildren<{
   title: string;
   description?: string;
-};
+}>;
 
 export const Section = ({ children, title, description }: SectionProps) => {
   return (
