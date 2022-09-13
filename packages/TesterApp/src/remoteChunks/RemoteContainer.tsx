@@ -6,8 +6,8 @@ import { Text } from '../ui/Text';
 import { Button } from '../ui/Button';
 
 const RemoteChunkId = 'remote';
-const Remote = React.lazy(() =>
-  import(/* webpackChunkName: "remote" */ './Remote')
+const Remote = React.lazy(
+  () => import(/* webpackChunkName: "remote" */ './Remote')
 );
 
 export const RemoteContainer = () => {

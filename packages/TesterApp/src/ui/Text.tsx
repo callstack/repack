@@ -6,8 +6,8 @@ import { useIsDarkMode } from './utils';
 import { WithChildren } from './types';
 
 type TextProps = WithChildren<{
-  colorLight: string;
-  colorDark: string;
+  colorLight?: string;
+  colorDark?: string;
   style?: StyleProp<TextStyle>;
 }>;
 
