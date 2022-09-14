@@ -3671,6 +3671,7 @@ __metadata:
     babel-plugin-add-import-extension: ^1.6.0
     eslint: ^8.16.0
     fastify: ^3.29.0
+    fastify-favicon: ^3.2.0
     fastify-plugin: ^3.0.1
     metro-inspector-proxy: ^0.71.0
     open: ^8.4.0
@@ -14950,6 +14951,15 @@ __metadata:
   version: 1.0.12
   resolution: "fastest-levenshtein@npm:1.0.12"
   checksum: e1a013698dd1d302c7a78150130c7d50bb678c2c2f8839842a796d66cc7cdf50ea6b3d7ca930b0c8e7e8c2cd84fea8ab831023b382f7aab6922c318c1451beab
+  languageName: node
+  linkType: hard
+
+"fastify-favicon@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "fastify-favicon@npm:3.2.0"
+  dependencies:
+    fastify-plugin: ^3.0.1
+  checksum: 175dbb65973e8f227ab41ad19b24f9a390d99833a5d391b199c9d3ff43e3115f3186a6438030cd55cb180970b8b18b8f2410b22f816fde13b19bb115f1b49ce9
   languageName: node
   linkType: hard
 
