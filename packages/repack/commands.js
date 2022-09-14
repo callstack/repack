@@ -85,6 +85,10 @@ module.exports = [
         description: 'Log all messages to the console/stdout in JSON format',
       },
       {
+        name: '--reverse-port',
+        description: 'ADB reverse port on starting devServers only for Android',
+      },
+      {
         name: '--log-file <string>',
         description: 'Enables file logging to specified file',
       },
