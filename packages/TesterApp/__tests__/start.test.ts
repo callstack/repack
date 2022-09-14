@@ -49,9 +49,9 @@ describe.each([
       'ios/miniapp.chunk.bundle.map',
       'ios/remote.chunk.bundle',
       'ios/remote.chunk.bundle.map',
-      'ios/src_Async_js.chunk.bundle',
-      'ios/src_Async_js.chunk.bundle.map',
-      'assets/src/callstack-dark.png?platform=ios',
+      'ios/src_asyncChunks_Async_tsx.chunk.bundle',
+      'ios/src_asyncChunks_Async_tsx.chunk.bundle.map',
+      'assets/src/miniapp/callstack-dark.png?platform=ios',
       'assets/node_modules/react-native/Libraries/NewAppScreen/components/logo.png?platform=ios',
     ],
   },
@@ -64,9 +64,9 @@ describe.each([
       'android/miniapp.chunk.bundle.map',
       'android/remote.chunk.bundle',
       'android/remote.chunk.bundle.map',
-      'android/src_Async_js.chunk.bundle',
-      'android/src_Async_js.chunk.bundle.map',
-      'assets/src/callstack-dark.png?platform=android',
+      'android/src_asyncChunks_Async_tsx.chunk.bundle',
+      'android/src_asyncChunks_Async_tsx.chunk.bundle.map',
+      'assets/src/miniapp/callstack-dark.png?platform=android',
       'assets/node_modules/react-native/Libraries/NewAppScreen/components/logo.png?platform=android',
     ],
   },
@@ -93,6 +93,9 @@ describe.each([
         );
 
         responses.forEach((response) => {
+          if (!response.ok) {
+            console.log(response);
+          }
           expect(response.ok).toBe(true);
         });
 

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Button, View } from 'react-native';
+import { View } from 'react-native';
 import { ScriptManager } from '@callstack/repack/client';
-import { Text } from './Text';
+
+import { Text } from '../ui/Text';
+import { Button } from '../ui/Button';
 
 const RemoteChunkId = 'remote';
-const Remote = React.lazy(() =>
-  import(/* webpackChunkName: "remote" */ './Remote')
+const Remote = React.lazy(
+  () => import(/* webpackChunkName: "remote" */ './Remote')
 );
 
 export const RemoteContainer = () => {
@@ -36,7 +38,11 @@ export const RemoteContainer = () => {
         title={'Invalidate'}
         onPress={async () => {
           await ScriptManager.shared.invalidateScripts([RemoteChunkId]);
-          setIsPreloaded(false);
+          if (isLoaded) {
+            setIsLoaded(false);
+          } else {
+            setIsPrefetched(false);
+          }
         }}
       />
     </View>

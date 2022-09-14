@@ -1,11 +1,15 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Button, View } from 'react-native';
+import { View } from 'react-native';
 import { ScriptManager } from '@callstack/repack/client';
+
+import { Button } from '../ui/Button';
+
+type MiniAppContentRef = undefined | (() => JSX.Element);
 
 export function MiniAppsContainer() {
   const [isInstalled, setIsInstalled] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const miniAppContent = useRef();
+  const miniAppContent = useRef<MiniAppContentRef>();
 
   const install = useCallback(async () => {
     const bundle = await import(/* webpackChunkName: "miniapp" */ './MiniApp');
@@ -33,7 +37,7 @@ export function MiniAppsContainer() {
         disabled={!isInstalled}
         onPress={toggle}
       />
-      {isInstalled && isVisible
+      {isInstalled && isVisible && miniAppContent.current
         ? React.createElement(miniAppContent.current, {})
         : null}
     </View>
