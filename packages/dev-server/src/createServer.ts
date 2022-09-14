@@ -1,6 +1,7 @@
 import { Writable } from 'stream';
 import Fastify from 'fastify';
 import fastifySensible from '@fastify/sensible';
+import fastifyFavicon from 'fastify-favicon';
 import fastifyStatic from '@fastify/static';
 import debuggerAppPath from '@callstack/repack-debugger-app';
 import multipartPlugin from './plugins/multipart';
@@ -84,6 +85,9 @@ export async function createServer(config: Server.Config) {
     prefix: '/debugger-ui',
     prefixAvoidTrailingSlash: true,
   });
+  // below is to prevent showing `GET 400 /favicon.ico`
+  // errors in console when requesting the bundle via browser
+  await instance.register(fastifyFavicon);
 
   instance.addHook('onSend', async (request, reply, payload) => {
     reply.header('X-Content-Type-Options', 'nosniff');
