@@ -42,8 +42,9 @@ export default (env) => {
    * Uncomment below to set `devServer.hmr` to `false`.
    *
    * Keep in mind that `devServer` object is not available
-   * when running `webpack-bundle` command and crash
-   * because of reading from `undefined` will occur. 
+   * when running `webpack-bundle` command. Be sure
+   * to check its value to avoid accessing undefined value,
+   * otherwise an error might occur.
    */
   // if (devServer) {
   //   devServer.hmr = false;
