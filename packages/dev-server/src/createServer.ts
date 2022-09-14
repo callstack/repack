@@ -1,7 +1,6 @@
 import { Writable } from 'stream';
 import Fastify from 'fastify';
 import fastifySensible from '@fastify/sensible';
-import fastifyFavicon from 'fastify-favicon';
 import fastifyStatic from '@fastify/static';
 import debuggerAppPath from '@callstack/repack-debugger-app';
 import multipartPlugin from './plugins/multipart';
@@ -9,6 +8,7 @@ import compilerPlugin from './plugins/compiler';
 import devtoolsPlugin from './plugins/devtools';
 import apiPlugin from './plugins/api';
 import wssPlugin from './plugins/wss';
+import faviconPlugin from './plugins/favicon';
 import { Internal, Server } from './types';
 import symbolicatePlugin from './plugins/symbolicate';
 
@@ -87,7 +87,7 @@ export async function createServer(config: Server.Config) {
   });
   // below is to prevent showing `GET 400 /favicon.ico`
   // errors in console when requesting the bundle via browser
-  await instance.register(fastifyFavicon);
+  await instance.register(faviconPlugin);
 
   instance.addHook('onSend', async (request, reply, payload) => {
     reply.header('X-Content-Type-Options', 'nosniff');
