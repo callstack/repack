@@ -1,4 +1,4 @@
-import { Worker } from 'worker_threads';
+import { Worker, SHARE_ENV } from 'worker_threads';
 import path from 'path';
 import fs from 'fs';
 import EventEmitter from 'events';
@@ -45,13 +45,13 @@ export class Compiler extends EventEmitter {
       },
     };
 
+    process.env[WORKER_ENV_KEY] = '1';
+    process.env[VERBOSE_ENV_KEY] = this.isVerbose ? '1' : undefined;
+
     const worker = new Worker(path.join(__dirname, './webpackWorker.js'), {
       stdout: true,
       stderr: true,
-      env: {
-        [WORKER_ENV_KEY]: '1',
-        [VERBOSE_ENV_KEY]: this.isVerbose ? '1' : undefined,
-      },
+      env: SHARE_ENV,
       workerData,
     });
 
