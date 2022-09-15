@@ -41,7 +41,8 @@
     "build": "yarn build:js && yarn build:ts",
     "docs": "typedoc",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint --ext \".js,.ts\" src"
+    "lint": "eslint --ext \".js,.ts\" src",
+    "archive": "yarn build && yarn pack --out repack-dev-server-%v-$(git log -1 --format=\"%h\").tgz"
   },
   "dependencies": {
     "@babel/code-frame": "^7.16.7",
