@@ -1,5 +1,18 @@
 # @callstack/repack
 
+## 3.0.0-next.8
+
+### Minor Changes
+
+- [#237](https://github.com/callstack/repack/pull/237) [`9960a7b`](https://github.com/callstack/repack/commit/9960a7b5a39c4cb4caed4fc365a72f5ac3329e60) Thanks [@jbinda](https://github.com/jbinda)! - Expose `--reverse-port` argument in start command to fix dev server on Android
+
+### Patch Changes
+
+- [#233](https://github.com/callstack/repack/pull/233) [`4bfeab1`](https://github.com/callstack/repack/commit/4bfeab131e3c3bca17a3b27247953d2c7adbd965) Thanks [@jbinda](https://github.com/jbinda)! - Pass `SHARE_ENV` to Worker to keep process envs from parent process
+
+- Updated dependencies [[`e6dc69d`](https://github.com/callstack/repack/commit/e6dc69d35f287af08d09944edd8e6d12f28484cf), [`b913b89`](https://github.com/callstack/repack/commit/b913b8981334854cc13076af2a9c8a12bc465d1b), [`6d65156`](https://github.com/callstack/repack/commit/6d65156366bc88edefdae7a3d0310ddbcdf48886)]:
+  - @callstack/repack-dev-server@1.0.0-next.3
+
 ## 3.0.0-next.7
 
 ### Minor Changes
