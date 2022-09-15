@@ -33,6 +33,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     config.root,
     args.webpackConfig
   );
+  const { reversePort: reversePortArg, ...restArgs } = args;
   const cliOptions: CliOptions = {
     config: {
       root: config.root,
@@ -42,9 +43,11 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     command: 'start',
     arguments: {
       // `platform` is empty, since it will be filled in later by `DevServerProxy`
-      start: { ...args, platform: '' },
+      start: { ...restArgs, platform: '' },
     },
   };
+
+  const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
   const isSilent = args.silent;
   const isVerbose = isSilent
     ? false
@@ -76,6 +79,10 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     delegate: (ctx): Server.Delegate => {
       if (args.interactive) {
         bindKeypressInput(ctx);
+      }
+
+      if (reversePort && args.port) {
+        runAdbReverse(ctx, args.port);
       }
 
       let lastStats: webpack.StatsCompilation | undefined;
