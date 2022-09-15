@@ -34,7 +34,7 @@
     "access": "public"
   },
   "scripts": {
-    "build:js": "babel src --out-dir dist --extensions \".js,.cjs,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start",
+    "build:js": "babel src --out-dir dist --extensions \".js,.cjs,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start --copy-files",
     "build:js:watch": "yarn build:js --watch",
     "build:ts": "tsc --emitDeclarationOnly",
     "build:ts:watch": "yarn build:ts --watch --preserveWatchOutput",
