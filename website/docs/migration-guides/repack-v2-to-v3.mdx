@@ -66,5 +66,37 @@ If you are facing runtime errors or crashes, please open an issue!
 
 :::
 
+## ChunkManager
 
+Despite build errors related with Webpack config, you should also tackle changes related to `ChunkManager`.
 
+Not only name has changed to `ScriptManager`, underlying logic was also affected. Full list of changes related to `ChunkManager` is [here](https://github.com/callstack/repack/blob/v3/packages/repack/CHANGELOG.md#300-next0)
+
+From migration perspective below has to be done:
+- replace `ChunkManager.configure(...)` with `ScriptManager.shared.addResolver(async (scriptId, caller)=> {...})`
+- take function passe to `resolveRemoteChunks` config option in `ChunkManager` and use it in `ScriptManager.shared.addResolver(...)`
+- rename `chunkId` and `parentChunkId`to `scriptId` and `caller`- adjust naming convention in your project to avoid mistakes in the future
+- replace `ChunkManager.loadChunk` with `ScriptManager.loadScript`
+
+:::tip
+
+To adjust `resolve` implementation you might also use exposed utlities from `Script`:
+- `Script.getDevSeverURL(scriptId)`
+- `Script.getRemoteURL(url)`
+- `Script.getFileSystemURL(scriptId)`
+
+:::
+
+:::tip
+
+To migrate from V2 where Module Federtion was implemented please keep in mind that `Fedrated` utilities have set of helpers to work with Module Federation
+- `Federated.createURLResolver({containers: Record<string,string>})` - resolver to be used in `ScriptManager.shared.addResolver`
+- `Federated.importModule` - handle loading dynamic containers
+
+:::
+
+:::tip
+
+Read more about support of Module Federation out of the box [here]('../module-federation.md')
+
+:::
