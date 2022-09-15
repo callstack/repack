@@ -75,6 +75,7 @@ export interface StartArguments extends CommonArguments {
   silent?: boolean;
   verbose?: boolean;
   json?: boolean;
+  reversePort?: boolean;
   logFile?: string;
 }
 
