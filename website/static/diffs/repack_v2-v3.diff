@@ -1,5 +1,5 @@
 diff --git a/templates/webpack.config.js b/templates/webpack.config.cjs
-index 6ff525d..9284571 100644
+index 6ff525d..af917c4 100644
 --- a/templates/webpack.config.js
 +++ b/templates/webpack.config.cjs
 @@ -1,7 +1,6 @@
@@ -11,7 +11,7 @@ index 6ff525d..9284571 100644
  
  /**
   * More documentation, installation, usage, motivation and differences with Metro is available at:
-@@ -12,292 +11,210 @@ const ReactNative = require('@callstack/repack');
+@@ -12,292 +11,223 @@ const ReactNative = require('@callstack/repack');
   */
  
  /**
@@ -81,6 +81,24 @@ index 6ff525d..9284571 100644
    /**
 -   * This should be always `false`, since the Source Map configuration is done
 -   * by `SourceMapDevToolPlugin`.
++   * Using Module Federation might require disabling hmr.
++   * Uncomment below to set `devServer.hmr` to `false`.
++   *
++   * Keep in mind that `devServer` object is not available
++   * when running `webpack-bundle` command. Be sure
++   * to check its value to avoid accessing undefined value,
++   * otherwise an error might occur.
+    */
+-  devtool: false,
+-  context,
++  // if (devServer) {
++  //   devServer.hmr = false;
++  // }
++
+   /**
+-   * `getInitializationEntries` will return necessary entries with setup and initialization code.
+-   * If you don't want to use Hot Module Replacement, set `hmr` option to `false`. By default,
+-   * HMR will be enabled in development mode.
 +   * Depending on your Babel configuration you might want to keep it.
 +   * If you don't use `env` in your Babel config, you can remove it.
 +   *
@@ -88,13 +106,6 @@ index 6ff525d..9284571 100644
 +   * to `development` or `production`. Otherwise your production code might be compiled with
 +   * in development mode by Babel.
     */
--  devtool: false,
--  context,
--  /**
--   * `getInitializationEntries` will return necessary entries with setup and initialization code.
--   * If you don't want to use Hot Module Replacement, set `hmr` option to `false`. By default,
--   * HMR will be enabled in development mode.
--   */
 -  entry: [
 -    ...ReactNative.getInitializationEntries(reactNativePath, {
 -      hmr: devServer.hmr,
