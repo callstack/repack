@@ -2,7 +2,7 @@
   "name": "@callstack/repack-debugger-app",
   "description": "Browser debugger app for React Native applications as part of @callstack/repack.",
   "license": "MIT",
-  "version": "1.0.0-next.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "./index.js",
   "types": "./index.d.ts",
