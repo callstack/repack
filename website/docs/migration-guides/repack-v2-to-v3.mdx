@@ -12,9 +12,10 @@ If you're upgrading from version `1.x`, we recommended you start with fresh Webp
 
 First, you need to update dependencies in your project's `package.json`:
 
-```diff
-- "@callstack/repack": "^2.0.0"
-+ "@callstack/repack": "^3.0.0"
+```bash
+yarn add --dev @callstack/repack@^3.0.0
+# or
+npm install --save-dev @callstack/repack@^3.0.0
 ```
 
 :::tip
@@ -22,14 +23,6 @@ First, you need to update dependencies in your project's `package.json`:
 It's also recommended to update Webpack to the latest version. In case of any trouble, take a look at [Compatibility with Webpack table](../getting-started#compatibility-with-webpack).
 
 :::
-
-After updating dependencies, please run:
-
-```bash
-npm install
-# or
-yarn install
-```
 
 ## Webpack config
 
