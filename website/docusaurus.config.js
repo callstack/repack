@@ -25,6 +25,11 @@ module.exports = {
       },
       items: [
         {
+          type: 'docsVersionDropdown',
+          position: 'left',
+          dropdownActiveClassDisabled: true,
+        },
+        {
           type: 'doc',
           docId: 'about',
           position: 'left',
@@ -133,6 +138,13 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
+          lastVersion: 'current',
+          versions: {
+            current: {
+              label: '3x',
+              path: '3x',
+            },
+          },
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/callstack/repack/edit/main/website/',
         },
