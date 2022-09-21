@@ -84,11 +84,11 @@ module.exports = {
             },
             {
               label: '@callstack/repack API',
-              to: '/docs/api/repack/index',
+              to: '/docs/api/repack',
             },
             {
               label: '@callstack/dev-server API',
-              to: '/docs/api/dev-server/index',
+              to: '/docs/api/dev-server',
             },
           ],
         },
@@ -142,7 +142,6 @@ module.exports = {
           versions: {
             current: {
               label: '3x',
-              path: '3x',
             },
           },
           sidebarPath: require.resolve('./sidebars.js'),
