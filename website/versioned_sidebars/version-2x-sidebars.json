@@ -1,0 +1,302 @@
+{
+  "version-2x/docsSidebar": [
+    {
+      "type": "category",
+      "label": "Documentation",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2x/about"
+        },
+        {
+          "type": "doc",
+          "id": "version-2x/getting-started"
+        },
+        {
+          "type": "doc",
+          "id": "version-2x/known-issues"
+        },
+        {
+          "type": "category",
+          "label": "Code Splitting",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-2x/code-splitting/concepts"
+            },
+            {
+              "type": "doc",
+              "id": "version-2x/code-splitting/usage"
+            },
+            {
+              "type": "doc",
+              "id": "version-2x/code-splitting/glossary"
+            },
+            {
+              "type": "doc",
+              "id": "version-2x/code-splitting/guide-async-chunks"
+            },
+            {
+              "type": "doc",
+              "id": "version-2x/code-splitting/caching-versioning"
+            },
+            {
+              "type": "doc",
+              "id": "version-2x/code-splitting/react-navigation"
+            },
+            {
+              "type": "doc",
+              "id": "version-2x/code-splitting/code-push"
+            }
+          ],
+          "collapsible": true,
+          "collapsed": true
+        },
+        {
+          "type": "category",
+          "label": "Migration guides",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-2x/migration-guides/repack-v1-to-v2"
+            }
+          ],
+          "collapsible": true,
+          "collapsed": true
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    }
+  ],
+  "version-2x/configuration": [
+    {
+      "type": "category",
+      "label": "Configuration",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2x/configuration/webpack-config"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "type": "category",
+      "label": "Loaders",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2x/configuration/loaders/assets-loader"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "type": "category",
+      "label": "Guides",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2x/configuration/guides/svg"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "type": "category",
+      "label": "Functions",
+      "items": [
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/functions/getContext"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/functions/getDevServerOptions"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/functions/getEntry"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/functions/getMode"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/functions/getPlatform"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/functions/getReactNativePath"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/functions/isMinimizeEnabled"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/functions/getInitializationEntries"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/functions/getPublicPath"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/functions/getResolveOptions"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "type": "category",
+      "label": "Webpack Plugins",
+      "items": [
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/classes/AssetsPlugin"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/classes/DevServerPlugin"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/classes/JavaScriptLooseModePlugin"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/classes/LoggerPlugin"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/classes/OutputPlugin"
+        },
+        {
+          "type": "ref",
+          "id": "version-2x/api/node/classes/TargetPlugin"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    }
+  ],
+  "version-2x/reactNativeApi": [
+    {
+      "type": "category",
+      "label": "React Native API",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2x/api/react-native/index"
+        },
+        {
+          "type": "category",
+          "label": "Classes",
+          "items": [
+            {
+              "type": "autogenerated",
+              "dirName": "api/react-native/classes"
+            }
+          ],
+          "collapsible": true,
+          "collapsed": true
+        },
+        {
+          "type": "category",
+          "label": "Interfaces",
+          "items": [
+            {
+              "type": "autogenerated",
+              "dirName": "api/react-native/interfaces"
+            }
+          ],
+          "collapsible": true,
+          "collapsed": true
+        },
+        {
+          "type": "category",
+          "label": "Types",
+          "items": [
+            {
+              "type": "autogenerated",
+              "dirName": "api/react-native/types"
+            }
+          ],
+          "collapsible": true,
+          "collapsed": true
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    }
+  ],
+  "version-2x/nodeApi": [
+    {
+      "type": "category",
+      "label": "Node API",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2x/api/node/index"
+        },
+        {
+          "type": "category",
+          "label": "Classes",
+          "items": [
+            {
+              "type": "autogenerated",
+              "dirName": "api/node/classes"
+            }
+          ],
+          "collapsible": true,
+          "collapsed": true
+        },
+        {
+          "type": "category",
+          "label": "Functions",
+          "items": [
+            {
+              "type": "autogenerated",
+              "dirName": "api/node/functions"
+            }
+          ],
+          "collapsible": true,
+          "collapsed": true
+        },
+        {
+          "type": "category",
+          "label": "Interfaces",
+          "items": [
+            {
+              "type": "autogenerated",
+              "dirName": "api/node/interfaces"
+            }
+          ],
+          "collapsible": true,
+          "collapsed": true
+        },
+        {
+          "type": "category",
+          "label": "Variables",
+          "items": [
+            {
+              "type": "autogenerated",
+              "dirName": "api/node/variables"
+            }
+          ],
+          "collapsible": true,
+          "collapsed": true
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    }
+  ]
+}
