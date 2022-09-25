@@ -1,3 +1,3 @@
-import { URL } from 'url';
+import { URL, fileURLToPath } from 'url';
 
-export default new URL('./dist', import.meta.url).pathname;
+export default fileURLToPath(new URL('./dist', import.meta.url));
