@@ -104,7 +104,7 @@ module.exports = (env) => {
      */
     output: {
       clean: true,
-      path: path.join(dirname, 'build/generated', platform),
+      path: path.join(__dirname, 'build/generated', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
