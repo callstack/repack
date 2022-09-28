@@ -36,7 +36,7 @@ ScriptManager.shared.addResolver(async (scriptId) => {
   const { baseURL } = await getRemoteConfig();
 
   return {
-    url: Script.getRemoteURL(`${baseURL}/${chunkId}`),
+    url: Script.getRemoteURL(`${baseURL}/${scriptId}`),
   };
 });
 ```
