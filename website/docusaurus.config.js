@@ -25,6 +25,11 @@ module.exports = {
       },
       items: [
         {
+          type: 'docsVersionDropdown',
+          position: 'left',
+          dropdownActiveClassDisabled: true,
+        },
+        {
           type: 'doc',
           docId: 'about',
           position: 'left',
@@ -79,11 +84,11 @@ module.exports = {
             },
             {
               label: '@callstack/repack API',
-              to: '/docs/api/repack/index',
+              to: '/docs/api/repack',
             },
             {
               label: '@callstack/dev-server API',
-              to: '/docs/api/dev-server/index',
+              to: '/docs/api/dev-server',
             },
           ],
         },
@@ -133,6 +138,12 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
+          lastVersion: 'current',
+          versions: {
+            current: {
+              label: '3x',
+            },
+          },
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/callstack/repack/edit/main/website/',
         },
