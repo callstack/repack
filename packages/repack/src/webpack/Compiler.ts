@@ -110,16 +110,23 @@ export class Compiler extends EventEmitter {
         if (value.event === 'done') {
           this.isCompilationInProgress[platform] = false;
           this.statsCache[platform] = value.stats;
-          this.assetsCache[platform] = value.assets.reduce(
-            (acc, { filename, data, info }) => ({
-              ...acc,
+          this.assetsCache[platform] = value.assets.reduce((acc, {
+            filename,
+            data,
+            info
+          }) => {
+            const buffer = Buffer.from(data);
+            return { ...acc,
               [filename]: {
-                data: Buffer.from(data),
-                info,
+                data: buffer,
+                info
               },
-            }),
-            {}
-          );
+              [filename.replace(/\\/g, '/')]: {
+                data: buffer,
+                info
+              },
+            };
+          }, {});
           callPendingResolvers();
           this.emit(value.event, { platform, stats: value.stats });
         } else if (value.event === 'error') {
