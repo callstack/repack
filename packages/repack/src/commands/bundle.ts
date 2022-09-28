@@ -51,13 +51,18 @@ export async function bundle(
   const compiler = webpack(webpackConfig);
 
   return new Promise<void>((resolve, reject) => {
-    compiler.run((error) => {
+    compiler.run((error, stats) => {
       if (error) {
         reject();
         console.error(error);
         process.exit(2);
       } else {
-        resolve();
+        if (stats?.hasErrors()) {
+          reject();
+          process.exit(2);
+        } else {
+          resolve();
+        }
       }
     });
   });
