@@ -111,13 +111,16 @@ export class Compiler extends EventEmitter {
           this.isCompilationInProgress[platform] = false;
           this.statsCache[platform] = value.stats;
           this.assetsCache[platform] = value.assets.reduce(
-            (acc, { filename, data, info }) => ({
-              ...acc,
-              [filename]: {
+            (acc, { filename, data, info }) => {
+              const asset = {
                 data: Buffer.from(data),
                 info,
-              },
-            }),
+              };
+              return { ...acc,
+                [filename]: asset,
+                [filename.replace(/\\/g, '/')]: asset,
+              };
+            },
             {}
           );
           callPendingResolvers();
