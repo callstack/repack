@@ -188,6 +188,14 @@ export default (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
+              inline: true,
+              /**
+               * Defines size treshold which cause that assets
+               * below that size will be inlined
+               * By default all images will be inlined if
+               * this treshold is not passed.
+               */
+              inlineMaxSize: 4 * 1024, // 4kb
               /**
                * Defines which assets are scalable - which assets can have
                * scale suffixes: `@1x`, `@2x` and so on.

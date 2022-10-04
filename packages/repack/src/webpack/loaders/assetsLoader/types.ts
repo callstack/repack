@@ -3,6 +3,7 @@ export interface Asset {
   content: string | Buffer | undefined;
   scaleKey: string;
   scale: number;
+  weight?: number;
 }
 
 export interface URISource {

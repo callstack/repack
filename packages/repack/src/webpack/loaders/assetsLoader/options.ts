@@ -6,6 +6,7 @@ export interface Options {
   scalableAssetExtensions: string[];
   devServerEnabled?: boolean;
   inline?: boolean;
+  inlineMaxSize?: number;
   publicPath?: string;
 }
 
@@ -22,6 +23,7 @@ export const optionsSchema: Schema = {
       type: 'array',
     },
     inline: { type: 'boolean' },
+    inlineMaxSize: { type: 'number' },
     devServerEnabled: { type: 'boolean' },
     publicPath: { type: 'string' },
   },

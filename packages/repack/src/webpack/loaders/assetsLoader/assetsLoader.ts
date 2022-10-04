@@ -3,7 +3,12 @@ import type { LoaderContext } from 'loader-utils';
 import { AssetResolver } from '../../plugins/AssetsResolverPlugin/AssetResolver';
 import { getOptions } from './options';
 import { inlineAssets } from './inlineAssets';
-import { getFilesInDirectory, getScaleNumber, readFile } from './utils';
+import {
+  getFilesInDirectory,
+  getScaleNumber,
+  readFile,
+  readFileAndSize,
+} from './utils';
 import type { Asset } from './types';
 import { extractAssets } from './extractAssets';
 
@@ -28,6 +33,7 @@ export default async function repackAssetsLoader(this: LoaderContext) {
     const pathSeparatorRegexp = new RegExp(`\\${path.sep}`, 'g');
     const resourcePath = this.resourcePath;
     const resourceAbsoluteDirname = path.dirname(resourcePath);
+    const checkInlineWeight = options.inline && options.inlineMaxSize;
     // Relative path to rootContext without any ../ due to https://github.com/callstack/haul/issues/474
     // Assets from from outside of rootContext, should still be placed inside bundle output directory.
     // Example:
@@ -88,7 +94,20 @@ export default async function repackAssetsLoader(this: LoaderContext) {
           scales[scaleKey].name
         );
 
-        const content = await readFile(filenameWithScale, this.fs);
+        let content;
+        let weight;
+
+        if (checkInlineWeight) {
+          const contentWithSize = await readFileAndSize(
+            filenameWithScale,
+            this.fs
+          );
+
+          content = contentWithSize.source;
+          weight = contentWithSize.weigh;
+        } else {
+          content = await readFile(filenameWithScale, this.fs);
+        }
 
         let destination;
 
@@ -146,12 +165,14 @@ export default async function repackAssetsLoader(this: LoaderContext) {
           }.${resourceExtensionType}`;
           destination = path.join(assetsDirname, resourceDirname, name);
         }
-
+        // TODO: remove console logs
+        console.log('WEIGHT', weight);
         return {
           filename: destination,
           content,
           scaleKey,
           scale: getScaleNumber(scaleKey),
+          weight,
         };
       })
     );
@@ -171,7 +192,22 @@ export default async function repackAssetsLoader(this: LoaderContext) {
       })),
     });
 
-    if (options.inline) {
+    let fallbackOutsideInline = false;
+
+    if (checkInlineWeight) {
+      fallbackOutsideInline = Boolean(
+        assets.filter(
+          ({ weight = 0 }) => weight > (options?.inlineMaxSize ?? 0)
+        ).length
+      );
+    }
+
+    // TODO: remove console logs
+    console.log('INLINE', options.inline, options.inlineMaxSize);
+    console.log('fallbackOutsideInline', fallbackOutsideInline);
+    console.log('Inline IF', options.inline && !fallbackOutsideInline);
+
+    if (options.inline && !fallbackOutsideInline) {
       logger.debug(`Inlining assets for request ${resourcePath}`);
       callback?.(
         null,

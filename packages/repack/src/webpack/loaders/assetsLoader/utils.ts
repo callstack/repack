@@ -27,6 +27,33 @@ export function getScaleNumber(scaleKey: string) {
   return parseFloat(scaleKey.replace(/[^\d.]/g, ''));
 }
 
+// TODO: incorporate changes in that function to not duplicate the code
+type FileAndSize = {
+  source: string | Buffer;
+  weigh: number;
+};
+
+export async function readFileAndSize(
+  filename: string,
+  fs: LoaderContext['fs']
+) {
+  return new Promise<FileAndSize>((resolve, reject) => {
+    fs.readFile(filename, (error, results) => {
+      if (error) {
+        reject(error);
+      } else if (results) {
+        resolve({ source: results, weigh: Buffer.byteLength(results) });
+      } else {
+        reject(
+          new Error(
+            `Read file operation on ${filename} returned empty content.`
+          )
+        );
+      }
+    });
+  });
+}
+
 export async function readFile(filename: string, fs: LoaderContext['fs']) {
   return new Promise<string | Buffer>((resolve, reject) => {
     fs.readFile(filename, (error, results) => {
