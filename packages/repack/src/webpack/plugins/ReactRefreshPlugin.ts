@@ -16,6 +16,7 @@ type EntryStaticNormalized =
  */
 export interface ReactRefreshPluginConfig extends DevServerOptions {
   platform: string;
+  port: number;
 }
 
 /**
