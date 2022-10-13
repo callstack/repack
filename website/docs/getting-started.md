@@ -49,7 +49,11 @@ Install required dependencies in your project:
 
 ```bash
 npm i -D webpack terser-webpack-plugin babel-loader @callstack/repack
-# or
+```
+
+or
+
+```bash
 yarn add -D webpack terser-webpack-plugin babel-loader @callstack/repack
 ```
 
