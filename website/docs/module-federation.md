@@ -108,7 +108,7 @@ import * as Repack from '@callstack/repack';
 
 // ...
 new Repack.plugins.ModuleFederationPlugin({
-  name: 'host,
+  name: 'host',
 });
 ```
 
