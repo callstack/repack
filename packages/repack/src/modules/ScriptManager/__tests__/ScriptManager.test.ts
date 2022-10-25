@@ -1,8 +1,9 @@
 /* globals globalThis */
+import * as ReactNative from 'react-native';
 import { Script } from '../Script';
 import { ScriptManager } from '../ScriptManager';
 
-jest.mock('react-native', () => ({ NativeModules: {} }));
+jest.mock('react-native', () => ({ NativeModules: { ScriptManager: {} } }));
 
 // @ts-ignore
 globalThis.__webpack_require__ = {
@@ -28,6 +29,8 @@ class FakeCache {
 }
 
 beforeEach(() => {
+  ReactNative.NativeModules.ScriptManager = {};
+
   try {
     ScriptManager.shared.__destroy();
   } catch {
@@ -36,6 +39,12 @@ beforeEach(() => {
 });
 
 describe('ScriptManagerAPI', () => {
+  it('throw error if ScriptManager NativeModule was not found', async () => {
+    ReactNative.NativeModules.ScriptManager = undefined;
+
+    await expect(() => ScriptManager.shared).toThrow(/module was not found/);
+  });
+
   it('throw error if there are no resolvers', async () => {
     await expect(
       ScriptManager.shared.resolveScript('src_App_js', 'main')

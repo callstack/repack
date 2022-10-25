@@ -105,6 +105,13 @@ export class ScriptManager extends EventEmitter {
   ) {
     super();
 
+    if (!nativeScriptManager) {
+      throw new Error(
+        'repack react-native module was not found.' +
+          (__DEV__ ? ' Did you forget to update native dependencies?' : '')
+      );
+    }
+
     if (__webpack_require__.repack.shared.scriptManager) {
       throw new Error(
         'ScriptManager was already instantiated. Use ScriptManager.shared instead.'
