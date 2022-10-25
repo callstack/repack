@@ -1,4 +1,6 @@
 import { Config } from '@react-native-community/cli-types';
+import fs from 'fs-extra';
+import { stringifyStream } from '@discoveryjs/json-ext';
 import webpack from 'webpack';
 import { VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, CliOptions } from '../types';
@@ -60,6 +62,43 @@ export async function bundle(
         if (stats?.hasErrors()) {
           reject();
           process.exit(2);
+        }
+
+        if (args.json && stats !== undefined) {
+          console.log(`Writing compiler stats`);
+
+          let statOptions: Parameters<typeof stats.toJson>[0];
+          if (args.stats !== undefined) {
+            statOptions = { preset: args.stats };
+          } else if (typeof compiler.options.stats === 'boolean') {
+            statOptions = compiler.options.stats
+              ? { preset: 'normal' }
+              : { preset: 'none' };
+          } else {
+            statOptions = compiler.options.stats;
+          }
+
+          const statsJson = stats.toJson(statOptions);
+          // Stats can be fairly big at which point their JSON no longer fits into a single string.
+          // Approach was copied from `webpack-cli`: https://github.com/webpack/webpack-cli/blob/c03fb03d0aa73d21f16bd9263fd3109efaf0cd28/packages/webpack-cli/src/webpack-cli.ts#L2471-L2482
+          const outputStream = fs.createWriteStream(args.json);
+
+          stringifyStream(statsJson)
+            .on('error', (error) => {
+              reject();
+              console.error(error);
+              process.exit(2);
+            })
+            .pipe(outputStream)
+            .on('error', (error) => {
+              reject();
+              console.error(error);
+              process.exit(2);
+            })
+            .on('close', () => {
+              console.log(`Wrote compiler stats to ${args.json}`);
+              resolve();
+            });
         } else {
           resolve();
         }

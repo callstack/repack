@@ -65,7 +65,17 @@ module.exports = [
         name: '--verbose',
         description: 'Enables verbose logging',
       },
-      webpackConfigOption
+      webpackConfigOption,
+      {
+        name: '--json <statsFile>',
+        description: 'Stores stats in a file.',
+        parse: (val) => path.resolve(val),
+      },
+      {
+        name: '--stats <preset>',
+        description:
+          'It instructs Webpack on how to treat the stats e.g. normal',
+      }
     ),
     func: require('./dist/commands/bundle').bundle,
   },
