@@ -116,7 +116,8 @@ export class Compiler extends EventEmitter {
                 data: Buffer.from(data),
                 info,
               };
-              return { ...acc,
+              return {
+                ...acc,
                 [filename]: asset,
                 [filename.replace(/\\/g, '/')]: asset,
               };
