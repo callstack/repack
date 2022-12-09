@@ -1,7 +1,7 @@
 import path from 'path';
 import type { LoaderContext } from 'loader-utils';
 import { AssetResolver } from '../../plugins/AssetsResolverPlugin/AssetResolver';
-import { getOptions } from './options';
+import { getOptions, InlineOptions } from './options';
 import { inlineAssets } from './inlineAssets';
 import {
   getFilesInDirectory,
@@ -33,7 +33,7 @@ export default async function repackAssetsLoader(this: LoaderContext) {
     const pathSeparatorRegexp = new RegExp(`\\${path.sep}`, 'g');
     const resourcePath = this.resourcePath;
     const resourceAbsoluteDirname = path.dirname(resourcePath);
-    const checkInlineWeight = options.inline && options.inlineMaxSize;
+    const checkInlineWeight = typeof options.inline === 'object';
     // Relative path to rootContext without any ../ due to https://github.com/callstack/haul/issues/474
     // Assets from from outside of rootContext, should still be placed inside bundle output directory.
     // Example:
@@ -197,13 +197,18 @@ export default async function repackAssetsLoader(this: LoaderContext) {
     if (checkInlineWeight) {
       fallbackOutsideInline = Boolean(
         assets.filter(
-          ({ weight = 0 }) => weight > (options?.inlineMaxSize ?? 0)
+          ({ weight = 0 }) =>
+            weight > (options.inline as InlineOptions).threshold ?? 0
         ).length
       );
     }
 
     // TODO: remove console logs
-    console.log('INLINE', options.inline, options.inlineMaxSize);
+    console.log(
+      'INLINE',
+      options.inline,
+      (options.inline as InlineOptions)?.threshold
+    );
     console.log('fallbackOutsideInline', fallbackOutsideInline);
     console.log('Inline IF', options.inline && !fallbackOutsideInline);
 

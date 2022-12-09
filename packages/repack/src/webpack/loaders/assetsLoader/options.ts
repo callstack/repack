@@ -1,12 +1,15 @@
 import { validateSchema } from 'webpack';
 import utils, { LoaderContext } from 'loader-utils';
 
+export interface InlineOptions {
+  threshold: number;
+}
+
 export interface Options {
   platform: string;
   scalableAssetExtensions: string[];
   devServerEnabled?: boolean;
-  inline?: boolean;
-  inlineMaxSize?: number;
+  inline?: boolean | InlineOptions;
   publicPath?: string;
 }
 
@@ -22,8 +25,18 @@ export const optionsSchema: Schema = {
     scalableAssetExtensions: {
       type: 'array',
     },
-    inline: { type: 'boolean' },
-    inlineMaxSize: { type: 'number' },
+    inline: {
+      anyOf: [
+        { type: 'boolean' },
+        {
+          type: 'object',
+          required: ['threshold'],
+          properties: {
+            threshold: { type: 'number' },
+          },
+        },
+      ],
+    },
     devServerEnabled: { type: 'boolean' },
     publicPath: { type: 'string' },
   },
