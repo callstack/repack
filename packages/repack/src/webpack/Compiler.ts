@@ -8,6 +8,7 @@ import { SendProgress } from '@callstack/repack-dev-server';
 import type { CliOptions, StartArguments } from '../types';
 import type { LogType, Reporter } from '../logging';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
+import { adaptFilenameToPlatform } from './utils';
 
 export interface Asset {
   data: string | Buffer;
@@ -118,8 +119,7 @@ export class Compiler extends EventEmitter {
               };
               return {
                 ...acc,
-                [filename]: asset,
-                [filename.replace(/\\/g, '/')]: asset,
+                [adaptFilenameToPlatform(filename)]: asset,
               };
             },
             {}
