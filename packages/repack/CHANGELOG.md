@@ -1,5 +1,23 @@
 # @callstack/repack
 
+## 3.0.1
+
+### Patch Changes
+
+#### Windows related issues:
+
+- Fix for path formatting on Windows platform breaking `assetsCache` in development Compiler
+
+  - [#256](https://github.com/callstack/repack/pull/256) [`7348b56`](https://github.com/callstack/repack/commit/7348b5628158e11c617e4499095fd108a3740a03) Thanks [@meypod](https://github.com/meypod)! - Fix assetsCache miss on Windows
+  - [#276](https://github.com/callstack/repack/pull/276) [`a15e881`](https://github.com/callstack/repack/commit/a15e8816c640c6627ef3ebb5a9d18b58f7178c6f) Thanks [@RafikiTiki](https://github.com/RafikiTiki)! - Fix: assetsCache not available on Windows platform due to problem with path encoding
+- [#255](https://github.com/callstack/repack/pull/255) [`d974069`](https://github.com/callstack/repack/commit/d974069ab2e7abee2a4b7103a8a86fe476fc122a) Thanks [@meypod](https://github.com/meypod)! - Fix v3 `debugger-app` not working on Windows platform
+
+#### Quality of life improvements:
+
+- [#252](https://github.com/callstack/repack/pull/252) [`c654c87`](https://github.com/callstack/repack/commit/c654c877a080cb6226b10da26b0aa55a2360198b) Thanks [@jbinda](https://github.com/jbinda)! - Exit with non-zero exit code if compilation has errors
+
+- [#268](https://github.com/callstack/repack/pull/268) [`aeebc70`](https://github.com/callstack/repack/commit/aeebc703cd0a2c102b85241d5180d7577a2899c5) Thanks [@robik](https://github.com/robik)! - Raise an error on missing native module
+
 ## 3.0.0
 
 ### Major Changes
