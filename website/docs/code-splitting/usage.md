@@ -149,7 +149,7 @@ To learn more or use async chunks in your project, check out our [dedicated Asyn
 :::tip
 
 To see `import(...)`, `React.lazy` and `React.Suspense` in action, check out
-[Re.Pack's `TesterApp`](https://github.com/callstack/repack/blob/main/packages/TesterApp/src/AsyncContainer.js).
+[Re.Pack's `TesterApp`](https://github.com/callstack/repack/blob/main/packages/TesterApp/src/asyncChunks/AsyncContainer.tsx).
 
 :::
 
