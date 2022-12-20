@@ -137,7 +137,7 @@ export class ModuleFederationPlugin implements WebpackPlugin {
     const remotes = Array.isArray(this.config.remotes)
       ? this.config.remotes.map((remote) => this.replaceRemotes(remote))
       : this.replaceRemotes(this.config.remotes ?? {});
-    
+
     const config = {
       ...this.config,
       filename:
