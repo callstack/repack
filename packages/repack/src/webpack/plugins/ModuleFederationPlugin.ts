@@ -137,8 +137,8 @@ export class ModuleFederationPlugin implements WebpackPlugin {
     const remotes = Array.isArray(this.config.remotes)
       ? this.config.remotes.map((remote) => this.replaceRemotes(remote))
       : this.replaceRemotes(this.config.remotes ?? {});
-
-    new container.ModuleFederationPlugin({
+    
+    const config = {
       ...this.config,
       filename:
         this.config.filename ?? this.config.exposes
@@ -156,6 +156,15 @@ export class ModuleFederationPlugin implements WebpackPlugin {
         'react-native': Federated.SHARED_REACT_NATIVE,
       },
       remotes,
-    }).apply(compiler);
+    }
+
+    if (config.library) {
+      compiler.options.output.library = {
+        ...compiler.options.output.library,
+        ...config.library,
+      }
+    }
+
+    new container.ModuleFederationPlugin(config).apply(compiler);
   }
 }
