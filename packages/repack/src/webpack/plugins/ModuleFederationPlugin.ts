@@ -156,13 +156,13 @@ export class ModuleFederationPlugin implements WebpackPlugin {
         'react-native': Federated.SHARED_REACT_NATIVE,
       },
       remotes,
-    }
+    };
 
     if (config.library) {
       compiler.options.output.library = {
         ...compiler.options.output.library,
         ...config.library,
-      }
+      };
     }
 
     new container.ModuleFederationPlugin(config).apply(compiler);

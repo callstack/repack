@@ -101,20 +101,22 @@ describe('ModuleFederationPlugin', () => {
   it('should use unique name from config', () => {
     class MockCompiler {
       options: any = {
-        output: {}
-      }
+        output: {},
+      };
     }
 
-    const mockCompilerInstance = new MockCompiler()
+    const mockCompilerInstance = new MockCompiler();
 
     new ModuleFederationPlugin({
       name: 'uniqueModuleName',
       exposes: {
-        './Home': './src/Home.ts'
-      }
+        './Home': './src/Home.ts',
+      },
     }).apply(mockCompilerInstance as Compiler);
 
-    expect(mockCompilerInstance.options.output.library.name).toMatch('uniqueModuleName');
+    expect(mockCompilerInstance.options.output.library.name).toMatch(
+      'uniqueModuleName'
+    );
     (container.ModuleFederationPlugin as jest.Mock).mockClear();
   });
 });
