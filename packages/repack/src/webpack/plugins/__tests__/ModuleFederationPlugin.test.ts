@@ -1,4 +1,4 @@
-import { container } from 'webpack';
+import { Compiler, container } from 'webpack';
 import { ModuleFederationPlugin } from '../ModuleFederationPlugin';
 
 jest.mock('webpack', () => ({
@@ -95,6 +95,26 @@ describe('ModuleFederationPlugin', () => {
     expect(config.remotes.app1).toMatch(
       'http://localhost:6789/static/[name][ext]'
     );
+    (container.ModuleFederationPlugin as jest.Mock).mockClear();
+  });
+
+  it('should use unique name from config', () => {
+    class MockCompiler {
+      options: any = {
+        output: {}
+      }
+    }
+
+    const mockCompilerInstance = new MockCompiler()
+
+    new ModuleFederationPlugin({
+      name: 'uniqueModuleName',
+      exposes: {
+        './Home': './src/Home.ts'
+      }
+    }).apply(mockCompilerInstance as Compiler);
+
+    expect(mockCompilerInstance.options.output.library.name).toMatch('uniqueModuleName');
     (container.ModuleFederationPlugin as jest.Mock).mockClear();
   });
 });
