@@ -88,6 +88,17 @@ export interface ScriptLocator {
    * Setting this flat to `false`, disables that behavior.
    */
   cache?: boolean;
+  /**
+   * Function called before loading
+   *
+   * @param script Script to load
+   * @returns Boolean indicating whether the script should be loaded or not
+   */
+  shouldLoad?: (
+    scriptId?: string,
+    caller?: string,
+    outdated?: boolean
+  ) => Promise<boolean> | boolean;
 }
 
 /**
