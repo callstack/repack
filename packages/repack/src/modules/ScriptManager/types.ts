@@ -89,12 +89,14 @@ export interface ScriptLocator {
    */
   cache?: boolean;
   /**
-   * Function called before loading
+   * Function called before loading or getting from the cache and after resolving the script locator.
    *
-   * @param script Script to load
+   * @param scriptId Id of the script to resolve.
+   * @param caller Name of the calling script - it can be for example: name of the bundle, chunk or container.
+   * @param outdated Boolean indicating whether the script cache is outdated or not.
    * @returns Boolean indicating whether the script should be loaded or not
    */
-  shouldLoad?: (
+  shouldUpdateScript?: (
     scriptId?: string,
     caller?: string,
     outdated?: boolean
