@@ -93,13 +93,13 @@ export interface ScriptLocator {
    *
    * @param scriptId Id of the script to resolve.
    * @param caller Name of the calling script - it can be for example: name of the bundle, chunk or container.
-   * @param outdated Boolean indicating whether the script cache is outdated or not.
+   * @param isOutdated Boolean indicating whether the script cache is outdated or not.
    * @returns Boolean indicating whether the script should be loaded or not
    */
   shouldUpdateScript?: (
     scriptId?: string,
     caller?: string,
-    outdated?: boolean
+    isOutdated?: boolean
   ) => Promise<boolean> | boolean;
 }
 
