@@ -307,4 +307,126 @@ describe('ScriptManagerAPI', () => {
       timeout: Script.DEFAULT_TIMEOUT,
     });
   });
+
+  it('should resolve with shouldUpdateScript', async () => {
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        cache: true,
+        shouldUpdateScript: () => false,
+      };
+    });
+
+    const script1 = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+    expect(script1.locator.fetch).toBe(false);
+
+    ScriptManager.shared.removeAllResolvers();
+
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        cache: true,
+        shouldUpdateScript: () => true,
+      };
+    });
+
+    const script2 = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+    expect(script2.locator.fetch).toBe(true);
+
+    ScriptManager.shared.removeAllResolvers();
+
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        cache: false,
+        shouldUpdateScript: () => false,
+      };
+    });
+
+    const script3 = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+    expect(script3.locator.fetch).toBe(true);
+
+    ScriptManager.shared.removeAllResolvers();
+
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        cache: false,
+        shouldUpdateScript: (_, __, isOutdated) => {
+          expect(isOutdated).toEqual(false);
+
+          return !!isOutdated;
+        },
+      };
+    });
+
+    const script4 = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+    expect(script4.locator.fetch).toBe(true);
+
+    ScriptManager.shared.removeAllResolvers();
+
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        cache: true,
+        shouldUpdateScript: (_, __, isOutdated) => {
+          expect(isOutdated).toEqual(false);
+
+          return !!isOutdated;
+        },
+      };
+    });
+
+    const script5 = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+    expect(script5.locator.fetch).toBe(false);
+
+    ScriptManager.shared.removeAllResolvers();
+
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://other.domain.ext/${scriptId}`),
+        cache: true,
+        shouldUpdateScript: (_, __, isOutdated) => {
+          expect(isOutdated).toEqual(true);
+
+          return !!isOutdated;
+        },
+      };
+    });
+
+    const script6 = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+    expect(script6.locator.fetch).toBe(true);
+  });
 });
