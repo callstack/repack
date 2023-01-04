@@ -91,9 +91,15 @@ export interface ScriptLocator {
   /**
    * Function called before loading or getting from the cache and after resolving the script locator.
    *
+   * When `true` is returned, the script will be loaded from the network.
+   * When `false` is returned, the script will be loaded from the cache.
+   *
    * @param scriptId Id of the script to resolve.
    * @param caller Name of the calling script - it can be for example: name of the bundle, chunk or container.
-   * @param isOutdated Boolean indicating whether the script cache is outdated or not.
+   * @param isOutdated Boolean indicating whether the script cache is outdated or not. It's `true` when the script
+   * cache is outdated and `false` when the script cache is up to date or there is no cache for the script.
+   * Outdated cache means that the script was previously downloaded and put into cache,
+   * but the script locator data (method, url, query, headers, or body) has changed since then.
    * @returns Boolean indicating whether the script should be loaded or not
    */
   shouldUpdateScript?: (

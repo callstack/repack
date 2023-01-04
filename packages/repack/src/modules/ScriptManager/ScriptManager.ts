@@ -272,13 +272,16 @@ export class ScriptManager extends EventEmitter {
       const script = Script.from({ scriptId, caller }, locator, false);
       const cacheKey = `${scriptId}_${caller ?? 'unknown'}`;
 
+      // Check if user provided a custom shouldUpdateScript function
       if (locator.shouldUpdateScript) {
+        // If so, we need to wait for it to resolve
         const fetch = await locator.shouldUpdateScript(
           scriptId,
           caller,
           script.shouldUpdateCache(this.cache[cacheKey])
         );
 
+        // If it returns true, we need to fetch the script
         if (fetch) {
           script.locator.fetch = true;
           this.cache[cacheKey] = script.getCacheData();
@@ -290,6 +293,7 @@ export class ScriptManager extends EventEmitter {
         return script;
       }
 
+      // If no custom shouldUpdateScript function was provided, we use the default one
       if (!this.cache[cacheKey]) {
         script.locator.fetch = true;
         this.cache[cacheKey] = script.getCacheData();
