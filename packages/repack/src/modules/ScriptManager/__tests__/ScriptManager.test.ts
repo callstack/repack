@@ -371,10 +371,10 @@ describe('ScriptManagerAPI', () => {
       return {
         url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
         cache: false,
-        shouldUpdateScript: (_, __, isOutdated) => {
-          expect(isOutdated).toEqual(false);
+        shouldUpdateScript: (_, __, isScriptCacheOutdated) => {
+          expect(isScriptCacheOutdated).toEqual(false);
 
-          return !!isOutdated;
+          return !!isScriptCacheOutdated;
         },
       };
     });
@@ -393,10 +393,10 @@ describe('ScriptManagerAPI', () => {
       return {
         url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
         cache: true,
-        shouldUpdateScript: (_, __, isOutdated) => {
-          expect(isOutdated).toEqual(false);
+        shouldUpdateScript: (_, __, isScriptCacheOutdated) => {
+          expect(isScriptCacheOutdated).toEqual(false);
 
-          return !!isOutdated;
+          return !!isScriptCacheOutdated;
         },
       };
     });
@@ -415,10 +415,10 @@ describe('ScriptManagerAPI', () => {
       return {
         url: Script.getRemoteURL(`http://other.domain.ext/${scriptId}`),
         cache: true,
-        shouldUpdateScript: (_, __, isOutdated) => {
-          expect(isOutdated).toEqual(true);
+        shouldUpdateScript: (_, __, isScriptCacheOutdated) => {
+          expect(isScriptCacheOutdated).toEqual(true);
 
-          return !!isOutdated;
+          return !!isScriptCacheOutdated;
         },
       };
     });
