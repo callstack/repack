@@ -137,6 +137,7 @@ export class RepackPlugin implements WebpackPlugin {
       enabled: !this.config.devServer,
       context: this.config.context,
       output: this.config.output,
+      entryName: this.config.entryName,
       extraChunks: this.config.extraChunks,
     }).apply(compiler);
 
