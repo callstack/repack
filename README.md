@@ -24,7 +24,7 @@ Re.Pack is a next generation of [Haul](https://github.com/callstack/haul) — a 
 
 Re.Pack uses Webpack 5 and React Native CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
 
-__Check the base [`webpack.config.js`](https://github.com/callstack/repack/blob/main/templates/webpack.config.js) template, if you're curious how it all looks like.__
+__Check the base [`webpack.config.js`](https://github.com/callstack/repack/blob/main/templates/webpack.config.mjs) template, if you're curious how it all looks like.__
 
 ## Features
 
