@@ -309,13 +309,18 @@ describe('ScriptManagerAPI', () => {
   });
 
   it('should resolve with shouldUpdateScript', async () => {
+    const domainURL = 'http://domain.ext/';
+    const otherDomainURL = 'http://other.domain.ext/';
+
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
+
+    // First time, cache is opt-in, shouldUpdateScript is false, so the script is not fetched
     ScriptManager.shared.addResolver(async (scriptId, caller) => {
       expect(caller).toEqual('main');
 
       return {
-        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        url: Script.getRemoteURL(`${domainURL}${scriptId}`),
         cache: true,
         shouldUpdateScript: () => false,
       };
@@ -329,11 +334,12 @@ describe('ScriptManagerAPI', () => {
 
     ScriptManager.shared.removeAllResolvers();
 
+    // Second time, cache is opt-in, shouldUpdateScript is true, so the script is fetched
     ScriptManager.shared.addResolver(async (scriptId, caller) => {
       expect(caller).toEqual('main');
 
       return {
-        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        url: Script.getRemoteURL(`${domainURL}${scriptId}`),
         cache: true,
         shouldUpdateScript: () => true,
       };
@@ -347,11 +353,12 @@ describe('ScriptManagerAPI', () => {
 
     ScriptManager.shared.removeAllResolvers();
 
+    // Third time, cache is opt-out, shouldUpdateScript is false, but the script is fetched since cache is opt-out
     ScriptManager.shared.addResolver(async (scriptId, caller) => {
       expect(caller).toEqual('main');
 
       return {
-        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        url: Script.getRemoteURL(`${domainURL}${scriptId}`),
         cache: false,
         shouldUpdateScript: () => false,
       };
@@ -365,11 +372,12 @@ describe('ScriptManagerAPI', () => {
 
     ScriptManager.shared.removeAllResolvers();
 
+    // Fourth time, cache is opt-out, isScriptCacheOutdated is false since cache is opt-out, but the script is fetched
     ScriptManager.shared.addResolver(async (scriptId, caller) => {
       expect(caller).toEqual('main');
 
       return {
-        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        url: Script.getRemoteURL(`${domainURL}${scriptId}`),
         cache: false,
         shouldUpdateScript: (_, __, isScriptCacheOutdated) => {
           expect(isScriptCacheOutdated).toEqual(false);
@@ -387,11 +395,12 @@ describe('ScriptManagerAPI', () => {
 
     ScriptManager.shared.removeAllResolvers();
 
+    // Fifth time, cache is opt-in, isScriptCacheOutdated is false since domain url is not changed, so the script is not fetched since we return false in shouldUpdateScript
     ScriptManager.shared.addResolver(async (scriptId, caller) => {
       expect(caller).toEqual('main');
 
       return {
-        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        url: Script.getRemoteURL(`${domainURL}${scriptId}`),
         cache: true,
         shouldUpdateScript: (_, __, isScriptCacheOutdated) => {
           expect(isScriptCacheOutdated).toEqual(false);
@@ -409,11 +418,12 @@ describe('ScriptManagerAPI', () => {
 
     ScriptManager.shared.removeAllResolvers();
 
+    // Sixth time, cache is opt-in, isScriptCacheOutdated is true since domain url is changed, so the script is fetched since we return true in shouldUpdateScript
     ScriptManager.shared.addResolver(async (scriptId, caller) => {
       expect(caller).toEqual('main');
 
       return {
-        url: Script.getRemoteURL(`http://other.domain.ext/${scriptId}`),
+        url: Script.getRemoteURL(`${otherDomainURL}${scriptId}`),
         cache: true,
         shouldUpdateScript: (_, __, isScriptCacheOutdated) => {
           expect(isScriptCacheOutdated).toEqual(true);

@@ -290,10 +290,11 @@ export class ScriptManager extends EventEmitter {
 
         this.emit('resolved', script.toObject());
 
+        // if it returns false, we don't need to fetch the script
         return script;
       }
 
-      // If no custom shouldUpdateScript function was provided, we use the default one
+      // If no custom shouldUpdateScript function was provided, we use the default behaviour
       if (!this.cache[cacheKey]) {
         script.locator.fetch = true;
         this.cache[cacheKey] = script.getCacheData();
