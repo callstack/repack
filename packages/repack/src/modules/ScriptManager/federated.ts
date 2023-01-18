@@ -217,6 +217,29 @@ export namespace Federated {
     };
   }
 
+  export function createTokenResolver(
+    tokens: Record<string, string>
+  ): (scriptId: string, caller?: string) => string | undefined {
+    const resolver = (scriptId: string, caller?: string) => {
+      let tokenKey;
+      if (caller === undefined) {
+        tokenKey = scriptId + '.container.bundle';
+      } else {
+        tokenKey = scriptId + '.chunk.bundle';
+      }
+
+      if (!tokens) {
+        return undefined;
+      }
+
+      return tokens[tokenKey];
+    };
+
+    return (scriptId, caller) => {
+      return resolver(scriptId, caller);
+    };
+  }
+
   declare function __webpack_init_sharing__(scope: string): Promise<void>;
   declare var __webpack_share_scopes__: Record<string, any>;
   declare var self: Record<string, any>;
