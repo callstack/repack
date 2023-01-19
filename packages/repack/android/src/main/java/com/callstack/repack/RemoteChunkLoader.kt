@@ -44,9 +44,14 @@ class RemoteScriptLoader(private val reactContext: ReactContext) {
                             File(reactContext.filesDir, scriptsDirName).mkdir()
                         }
 
+                        val body = response.body?.string()
+
+                        if (config.publicKey != null) {
+                            CodeSigningUtils.verifyBundle(config.token, config.publicKey, body)
+                        }
+
                         file.createNewFile()
 
-                        val body = response.body?.string()
                         val outputStream = file.outputStream()
                         val writer = OutputStreamWriter(outputStream)
                         writer.write(body)
