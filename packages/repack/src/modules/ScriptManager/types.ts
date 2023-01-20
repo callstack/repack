@@ -91,7 +91,7 @@ export interface ScriptLocator {
 
   token?: string;
 
-  publicKey?: string;
+  verifyScriptSignature?: boolean;
   /**
    * Function called before loading or getting from the cache and after resolving the script locator.
    * It's an async function which should return a boolean indicating whether the script should be loaded or use default behaviour.
@@ -176,5 +176,5 @@ export interface NormalizedScriptLocator {
 
   token?: string;
 
-  publicKey?: string;
+  verifyScriptSignature?: boolean;
 }

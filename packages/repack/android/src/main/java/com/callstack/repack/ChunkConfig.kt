@@ -18,7 +18,7 @@ data class ScriptConfig(
         val timeout: Int,
         val headers: Headers,
         val token: String?,
-        val publicKey: String?
+        val verifyScriptSignature: Boolean?
 ) {
     companion object {
         fun fromReadableMap(id: String, value: ReadableMap): ScriptConfig {
@@ -33,7 +33,7 @@ data class ScriptConfig(
             val headersMap = value.getMap("headers")
             val timeout = value.getInt("timeout") ?: throw Error("ScriptManagerModule.load ScriptMissing timeout")
             val token = value.getString("token")
-            val publicKey = value.getString("publicKey")
+            val verifyScriptSignature = value.getBoolean("verifyScriptSignature")
 
             val url = URL(if (query != null) {
                 "$urlString?$query"
@@ -65,7 +65,7 @@ data class ScriptConfig(
                     timeout,
                     headers.build(),
                     token,
-                    publicKey
+                    verifyScriptSignature
             )
         }
     }

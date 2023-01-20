@@ -1,5 +1,6 @@
 package com.callstack.repack
 
+import android.content.Context
 import android.util.Base64
 import com.nimbusds.jose.JWSVerifier
 import com.nimbusds.jose.crypto.RSASSAVerifier
@@ -45,8 +46,7 @@ class CodeSigningUtils {
                 return null
             }
 
-            val formattedPublicKey = stringPublicKey
-                .replace("-----BEGIN PUBLIC KEY-----", "")
+            val formattedPublicKey = stringPublicKey.replace("-----BEGIN PUBLIC KEY-----", "")
                 .replace("-----END PUBLIC KEY-----", "")
                 .replace(System.getProperty("line.separator")!!, "");
 
@@ -58,8 +58,7 @@ class CodeSigningUtils {
         }
 
         private fun verifyAndDecodeToken(
-            token: String,
-            publicKey: PublicKey?
+            token: String, publicKey: PublicKey?
         ): Map<String, Any?>? {
             val signedJWT = SignedJWT.parse(token)
             val verifier: JWSVerifier = RSASSAVerifier(publicKey as RSAPublicKey)
@@ -70,17 +69,36 @@ class CodeSigningUtils {
             return null
         }
 
-        fun verifyBundle(token: String?, stringPublicKey: String, fileContent: String?) {
+        private fun getCustomPropertyFromStringsIfExist(
+            context: Context, propertyName: String
+        ): String? {
+            val property: String
+            val packageName: String = context.packageName
+            val resId: Int =
+                context.resources.getIdentifier("Repack$propertyName", "string", packageName)
+            if (resId != 0) {
+                property = context.getString(resId)
+                return if (!property.isEmpty()) {
+                    property
+                } else {
+                    null
+                }
+            }
+            return null
+        }
+
+        fun verifyBundle(context: Context, token: String?, fileContent: String?) {
             if (token == null) {
                 throw Exception("The bundle could not be verified because no token was found.")
             }
 
+            val stringPublicKey = getCustomPropertyFromStringsIfExist(context, "PublicKey")
+
             val publicKey = parsePublicKey(stringPublicKey)
                 ?: throw Exception("The bundle could not be verified because public key is invalid.")
 
-            val claims: Map<String, Any?> =
-                verifyAndDecodeToken(token, publicKey)
-                    ?: throw Exception("The bundle verification failed because the token is invalid")
+            val claims: Map<String, Any?> = verifyAndDecodeToken(token, publicKey)
+                ?: throw Exception("The bundle verification failed because the token is invalid")
 
             val contentHash = claims["hash"] as String?
                 ?: throw Exception("The bundle could not be verified because file hash from token is invalid.")
