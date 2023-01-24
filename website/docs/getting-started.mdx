@@ -2,6 +2,9 @@
 sidebar_position: 1
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Getting Started
 
 ## Pre-requisites
@@ -61,7 +64,7 @@ This will install latest versions of Webpack, Re.Pack and dependencies used in W
 
 If you already have Webpack or Re.Pack installed, you might want to check the [compatibility table](#compatibility-with-webpack) to ensure all dependencies are ok.
 
-Once the dependencies are installed, you need to tell React Native CLI to add Re.Pack's commands. 
+Once the dependencies are installed, you need to tell React Native CLI to add Re.Pack's commands.
 
 ### 2. React Native config
 
@@ -98,11 +101,31 @@ Open your application's XCode project/workspace and:
 
 After the change, the content of this phase should look similar to:
 
+<Tabs>
+<TabItem value="current-rn" label="React Native version 0.69.0 or newer" default>
+
+```bash
+set -e
+
+WITH_ENVIRONMENT="../node_modules/react-native/scripts/xcode/with-environment.sh"
+export BUNDLE_COMMAND=webpack-bundle
+REACT_NATIVE_XCODE="../node_modules/react-native/scripts/react-native-xcode.sh"
+
+/bin/sh -c "$WITH_ENVIRONMENT $REACT_NATIVE_XCODE"
+```
+
+</TabItem>
+<TabItem value="old-rn" label="React Native version below 0.69.0" default>
+
 ```bash
 export NODE_BINARY=node
 export BUNDLE_COMMAND=webpack-bundle
 ../node_modules/react-native/scripts/react-native-xcode.sh
 ```
+
+</TabItem>
+</Tabs>
+
 
 ### 5. Configure Android
 
@@ -166,6 +189,6 @@ Make sure you have `webpack-cli` installed in your project.
 
 :::caution
 
-Using Webpack CLI is recommended **only for advanced users**, who have previous experience with Webpack. 
+Using Webpack CLI is recommended **only for advanced users**, who have previous experience with Webpack.
 
 :::
