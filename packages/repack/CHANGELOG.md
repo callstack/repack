@@ -1,5 +1,31 @@
 # @callstack/repack
 
+## 3.1.0
+
+### Minor Changes
+
+- [#287](https://github.com/callstack/repack/pull/287) [`47bdd09`](https://github.com/callstack/repack/commit/47bdd09f22e1ebf9cdfc29f0bb157a68f7af5b44) Thanks [@andrewworld](https://github.com/andrewworld)!
+
+  A new optional callback `shouldUpdateScript` was added. It could be passed into so-called _locator_ config in `addResolver` callback function return statement. Its main usage would be to ask a user whether they want to download the latest update of Federated Scripts or not (for example – if they are not connected to wifi and they would rather save their cellular data).
+
+  ```
+  shouldUpdateScript?: (
+      scriptId?: string,
+      caller?: string,
+      isScriptCacheOutdated?: boolean
+  ) => Promise<boolean> | boolean;
+  ```
+
+  More info and a set of examples describing what are the intended usages of this API will be published soon in a form of a guide in Repack docs. For now, if you're interested in playing with this API please refer to the linked PR or to the [API docs](https://re-pack.netlify.app/docs/api/repack/client/interfaces/ScriptLocator#shouldupdatescript) 
+
+### Patch Changes
+
+- [#293](https://github.com/callstack/repack/pull/293) [`7eeca5e`](https://github.com/callstack/repack/commit/7eeca5ed2619e7678ef88d8fb45735c14f1ecc75) Thanks [@RafikiTiki](https://github.com/RafikiTiki)! - Removed usage of deprecated jcenter repository from `build.gradle`.
+
+* [#288](https://github.com/callstack/repack/pull/288) [`7e0092e`](https://github.com/callstack/repack/commit/7e0092e9554e26a1de405261fb56c1e6b886e261) Thanks [@RafikiTiki](https://github.com/RafikiTiki)! - Fix [#258](https://github.com/callstack/repack/issues/293) – previously `entryName` config value was not passed from `RepackPlugin` to the `OutputPlugin`.
+
+- [#294](https://github.com/callstack/repack/pull/294) [`28cc721`](https://github.com/callstack/repack/commit/28cc721e8d6ac085bc66c47e627633046cb0d644) Thanks [@RafikiTiki](https://github.com/RafikiTiki)! - Updated kotlin-gradle-plugin version used by Repack to `1.7.0`.
+
 ## 3.0.1
 
 ### Patch Changes
@@ -10,6 +36,7 @@
 
   - [#256](https://github.com/callstack/repack/pull/256) [`7348b56`](https://github.com/callstack/repack/commit/7348b5628158e11c617e4499095fd108a3740a03) Thanks [@meypod](https://github.com/meypod)! - Fix assetsCache miss on Windows
   - [#276](https://github.com/callstack/repack/pull/276) [`a15e881`](https://github.com/callstack/repack/commit/a15e8816c640c6627ef3ebb5a9d18b58f7178c6f) Thanks [@RafikiTiki](https://github.com/RafikiTiki)! - Fix: assetsCache not available on Windows platform due to problem with path encoding
+
 - [#255](https://github.com/callstack/repack/pull/255) [`d974069`](https://github.com/callstack/repack/commit/d974069ab2e7abee2a4b7103a8a86fe476fc122a) Thanks [@meypod](https://github.com/meypod)! - Fix v3 `debugger-app` not working on Windows platform
 
 #### Quality of life improvements:
