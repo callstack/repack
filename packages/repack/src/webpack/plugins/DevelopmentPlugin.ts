@@ -1,4 +1,4 @@
-import webpack from 'webpack';
+import webpack, { EntryPlugin } from 'webpack';
 import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import type { DevServerOptions, WebpackPlugin } from '../../types';
 
@@ -62,20 +62,25 @@ export class DevelopmentPlugin implements WebpackPlugin {
       // 1. `InitilizeCore` -> React DevTools
       // 2. Rect Refresh Entry
       // 3. `WebpackHMRClient`
-      const getAdjustedEntry = (entry: EntryStaticNormalized) => {
+      const getAdjustedEntry = (
+        entry: EntryStaticNormalized,
+        refreshEntryPath?: string
+      ) => {
         for (const key in entry) {
           const { import: entryImports = [] } = entry[key];
           const refreshEntryIndex = entryImports.findIndex((value) =>
             /ReactRefreshEntry\.js/.test(value)
           );
+          const hmrClientIndex = entryImports.findIndex((value) =>
+            /WebpackHMRClient\.js/.test(value)
+          );
           if (refreshEntryIndex >= 0) {
             const refreshEntry = entryImports[refreshEntryIndex];
             entryImports.splice(refreshEntryIndex, 1);
-
-            const hmrClientIndex = entryImports.findIndex((value) =>
-              /WebpackHMRClient\.js/.test(value)
-            );
             entryImports.splice(hmrClientIndex, 0, refreshEntry);
+          } else if (refreshEntryPath) {
+            // if refreshEntry is added from EntryPlugin
+            entryImports.splice(hmrClientIndex, 0, refreshEntryPath);
           }
           entry[key].import = entryImports;
         }
@@ -92,6 +97,28 @@ export class DevelopmentPlugin implements WebpackPlugin {
           return getAdjustedEntry(entry);
         };
       }
+
+      // if ReactRefreshEntry is added from EntryPlugin, we need to move it from globalEntry to compiler.options.entry
+      compiler.hooks.make.tapAsync(
+        'MoveReactRefreshEntry',
+        (compilation, callback) => {
+          const globalEntryDeps = compilation.globalEntry.dependencies as Array<
+            ReturnType<typeof EntryPlugin.createDependency>
+          >;
+          const globalRefreshEntryIndex = globalEntryDeps.findIndex((value) =>
+            /ReactRefreshEntry\.js/.test(value.request)
+          );
+          if (globalRefreshEntryIndex >= 0) {
+            const globalRefreshEntry = globalEntryDeps[globalRefreshEntryIndex];
+            compiler.options.entry = getAdjustedEntry(
+              compiler.options.entry as EntryStaticNormalized,
+              globalRefreshEntry.request
+            );
+            globalEntryDeps.splice(globalRefreshEntryIndex, 1);
+          }
+          callback(null);
+        }
+      );
     }
   }
 }
