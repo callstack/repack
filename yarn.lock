@@ -3670,7 +3670,7 @@ __metadata:
     "@types/ws": ^8.5.3
     babel-plugin-add-import-extension: ^1.6.0
     eslint: ^8.16.0
-    fastify: ^3.29.0
+    fastify: ^3.29.5
     fastify-favicon: ^3.2.0
     fastify-plugin: ^3.0.1
     metro-inspector-proxy: ^0.71.0
@@ -14817,6 +14817,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-content-type-parse@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "fast-content-type-parse@npm:1.0.0"
+  checksum: 9e9187be17bea18a2ee715c5737b983181cbe84f286a291db0595e421e04b578da10ca10845639be08664a4db6a793f7709822935cf38cfdf9ecba38d84ead9e
+  languageName: node
+  linkType: hard
+
 "fast-decode-uri-component@npm:^1.0.1":
   version: 1.0.1
   resolution: "fast-decode-uri-component@npm:1.0.1"
@@ -14984,14 +14991,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify@npm:^3.29.0":
-  version: 3.29.0
-  resolution: "fastify@npm:3.29.0"
+"fastify@npm:^3.29.5":
+  version: 3.29.5
+  resolution: "fastify@npm:3.29.5"
   dependencies:
     "@fastify/ajv-compiler": ^1.0.0
     "@fastify/error": ^2.0.0
     abstract-logging: ^2.0.0
     avvio: ^7.1.2
+    fast-content-type-parse: ^1.0.0
     fast-json-stringify: ^2.5.2
     find-my-way: ^4.5.0
     flatstr: ^1.0.12
@@ -15003,7 +15011,7 @@ __metadata:
     secure-json-parse: ^2.0.0
     semver: ^7.3.2
     tiny-lru: ^8.0.1
-  checksum: ed2964035e34843d08c09eee80f5f14bd8cc0ab9b46ac9d146c6821b586a359a93e1354fca4004ac14e37b267afe5bb1ba3ddb555ecf09b74d9b6bf2f9893ba1
+  checksum: 6f97e67c25c509c584529aad2ffe0d4bf8943a860f09d847bf34a4736586cf73f5748bde154e0199c022b97ff76aba35c3094006e62b07100ab10c63205541e3
   languageName: node
   linkType: hard
 
