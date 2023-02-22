@@ -49,7 +49,7 @@
     "@callstack/repack-debugger-app": "^1.0.0",
     "@fastify/sensible": "^4.1.0",
     "@fastify/static": "^5.0.2",
-    "fastify": "^3.29.0",
+    "fastify": "^3.29.5",
     "fastify-favicon": "^3.2.0",
     "fastify-plugin": "^3.0.1",
     "metro-inspector-proxy": "^0.71.0",

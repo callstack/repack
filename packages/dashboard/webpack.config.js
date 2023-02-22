@@ -15,6 +15,7 @@ module.exports = {
     clean: true,
     filename: 'static/js/[name].[contenthash:8].js',
     publicPath: '/dashboard/',
+    hashFunction: 'xxhash64',
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
