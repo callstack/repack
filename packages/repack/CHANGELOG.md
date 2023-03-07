@@ -1,5 +1,16 @@
 # @callstack/repack
 
+## 3.1.1
+
+### Patch Changes
+
+- [#308](https://github.com/callstack/repack/pull/308) [`ad9581a`](https://github.com/callstack/repack/commit/ad9581a6d690b128991a9d64374ecb4b8d49c413) Thanks [@jbroma](https://github.com/jbroma)! - Make all packages compatible with Node v18
+
+* [#302](https://github.com/callstack/repack/pull/302) [`d73eff4`](https://github.com/callstack/repack/commit/d73eff4216c88f1473c8da6703f8e4ff6edab029) Thanks [@kerm1it](https://github.com/kerm1it)! - Fix #251 - restore working React Devtools
+
+* Updated dependencies [[`ad9581a`](https://github.com/callstack/repack/commit/ad9581a6d690b128991a9d64374ecb4b8d49c413)]:
+  - @callstack/repack-dev-server@1.0.1
+
 ## 3.1.0
 
 ### Minor Changes
@@ -16,7 +27,7 @@
   ) => Promise<boolean> | boolean;
   ```
 
-  More info and a set of examples describing what are the intended usages of this API will be published soon in a form of a guide in Repack docs. For now, if you're interested in playing with this API please refer to the linked PR or to the [API docs](https://re-pack.netlify.app/docs/api/repack/client/interfaces/ScriptLocator#shouldupdatescript) 
+  More info and a set of examples describing what are the intended usages of this API will be published soon in a form of a guide in Repack docs. For now, if you're interested in playing with this API please refer to the linked PR or to the [API docs](https://re-pack.netlify.app/docs/api/repack/client/interfaces/ScriptLocator#shouldupdatescript)
 
 ### Patch Changes
 

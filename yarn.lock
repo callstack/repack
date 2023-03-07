@@ -4722,7 +4722,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@callstack/repack-debugger-app@^1.0.0, @callstack/repack-debugger-app@workspace:packages/debugger-app":
+"@callstack/repack-debugger-app@^1.0.2, @callstack/repack-debugger-app@workspace:packages/debugger-app":
   version: 0.0.0-use.local
   resolution: "@callstack/repack-debugger-app@workspace:packages/debugger-app"
   dependencies:
@@ -4742,7 +4742,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@callstack/repack-dev-server@^1.0.0, @callstack/repack-dev-server@workspace:packages/dev-server":
+"@callstack/repack-dev-server@^1.0.1, @callstack/repack-dev-server@workspace:packages/dev-server":
   version: 0.0.0-use.local
   resolution: "@callstack/repack-dev-server@workspace:packages/dev-server"
   dependencies:
@@ -4752,7 +4752,7 @@ __metadata:
     "@babel/preset-env": ^7.18.2
     "@babel/preset-typescript": ^7.17.12
     "@callstack/eslint-config": ^12.0.2
-    "@callstack/repack-debugger-app": ^1.0.0
+    "@callstack/repack-debugger-app": ^1.0.2
     "@fastify/sensible": ^4.1.0
     "@fastify/static": ^5.0.2
     "@types/babel__code-frame": ^7.0.3
@@ -4775,7 +4775,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@callstack/repack@3.1.0, @callstack/repack@workspace:packages/repack":
+"@callstack/repack@3.1.1, @callstack/repack@workspace:packages/repack":
   version: 0.0.0-use.local
   resolution: "@callstack/repack@workspace:packages/repack"
   dependencies:
@@ -4785,7 +4785,7 @@ __metadata:
     "@babel/preset-env": ^7.18.2
     "@babel/preset-typescript": ^7.17.12
     "@callstack/eslint-config": ^11.0.0
-    "@callstack/repack-dev-server": ^1.0.0
+    "@callstack/repack-dev-server": ^1.0.1
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.7
     "@react-native-community/cli": 5.0.1-alpha.1
     "@react-native-community/cli-types": 5.0.1-alpha.1
@@ -29900,7 +29900,7 @@ __metadata:
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
     "@callstack/eslint-config": ^12.0.2
-    "@callstack/repack": 3.1.0
+    "@callstack/repack": 3.1.1
     "@react-native-async-storage/async-storage": ^1.17.11
     "@svgr/webpack": ^6.2.1
     "@tsconfig/react-native": ^2.0.2

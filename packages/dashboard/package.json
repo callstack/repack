@@ -1,7 +1,7 @@
 {
   "name": "dashboard",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "installConfig": {
     "hoistingLimits": "workspaces"
   },

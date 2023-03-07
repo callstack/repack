@@ -2,7 +2,7 @@
   "name": "@callstack/repack-dev-server",
   "description": "A bundler-agnostic development server for React Native applications as part of @callstack/repack.",
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@babel/code-frame": "^7.16.7",
-    "@callstack/repack-debugger-app": "^1.0.0",
+    "@callstack/repack-debugger-app": "^1.0.2",
     "@fastify/sensible": "^4.1.0",
     "@fastify/static": "^5.0.2",
     "fastify": "^3.29.5",
