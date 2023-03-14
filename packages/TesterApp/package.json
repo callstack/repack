@@ -1,6 +1,6 @@
 {
   "name": "testerapp",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "installConfig": {
     "hoistingLimits": "workspaces"
@@ -11,14 +11,19 @@
     "start": "react-native webpack-start",
     "bundle": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false",
     "webpack": "webpack -c webpack.config.js --env platform=ios --env mode=production",
+    "serve-remote-bundles": "npx serve build/output/ios/remote -l 9001",
     "test": "vitest run"
   },
   "dependencies": {
     "@callstack/repack": "3.1.1",
     "@react-native-async-storage/async-storage": "^1.17.11",
+    "appcenter": "^4.4.5",
+    "appcenter-analytics": "^4.4.5",
+    "appcenter-crashes": "^4.4.5",
     "lodash.throttle": "^4.1.1",
     "react": "18.2.0",
     "react-native": "^0.71.3",
+    "react-native-code-push": "^7.1.0",
     "react-native-svg": "^13.7.0"
   },
   "devDependencies": {
