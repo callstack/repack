@@ -10,7 +10,7 @@
     "ios": "react-native run-ios",
     "start": "react-native webpack-start",
     "bundle": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false",
-    "webpack": "webpack -c webpack.config.js --env platform=ios --env mode=production",
+    "webpack": "webpack -c webpack.config.mjs --env platform=ios --env mode=production",
     "serve-remote-bundles": "npx serve build/output/ios/remote -l 9001",
     "test": "vitest run"
   },

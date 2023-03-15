@@ -5,7 +5,7 @@ import { Text } from './ui/Text';
 export function CodePushDemoContainer() {
   return (
     <View>
-      <Text>Version: 1.1.1</Text>
+      <Text>Version: 1.1.4</Text>
     </View>
   );
 }
