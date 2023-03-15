@@ -1,10 +1,3 @@
-//
-//  CodeSigningUtils.swift
-//  callstack-repack
-//
-//  Created by Jakub Romańczyk on 24/02/2023.
-//
-
 import Foundation
 import CryptoKit
 import JWTDecode
@@ -14,8 +7,7 @@ import SwiftyRSA
 public class CodeSigningUtils: NSObject {
     
     private static func getPublicKey() -> String? {
-        // obtain public key embedded into the bundle
-        // from infoPlist under a key RepackPublicKey
+        // obtain public key embedded into the bundle from infoPlist under a key RepackPublicKey
         let bundle = Bundle.main
         let publicKey = bundle.object(forInfoDictionaryKey: "RepackPublicKey") as? String
         return publicKey

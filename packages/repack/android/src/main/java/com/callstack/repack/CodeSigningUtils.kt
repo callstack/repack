@@ -41,46 +41,41 @@ class CodeSigningUtils {
             return bin2hex(hashByteArray)
         }
 
-        private fun parsePublicKey(stringPublicKey: String?): PublicKey? {
-            if (stringPublicKey == null) {
-                return null
-            }
-
+        private fun parsePublicKey(stringPublicKey: String): PublicKey? {
             val formattedPublicKey = stringPublicKey.replace("-----BEGIN PUBLIC KEY-----", "")
                 .replace("-----END PUBLIC KEY-----", "")
-                .replace(System.getProperty("line.separator")!!, "");
+                .replace(System.getProperty("line.separator")!!, "")
 
             val byteKey: ByteArray = Base64.decode(formattedPublicKey.toByteArray(), Base64.DEFAULT)
-            val X509Key = X509EncodedKeySpec(byteKey)
+            val x509Key = X509EncodedKeySpec(byteKey)
             val kf = KeyFactory.getInstance("RSA")
 
-            return kf.generatePublic(X509Key)
+            return kf.generatePublic(x509Key)
         }
 
         private fun verifyAndDecodeToken(
             token: String, publicKey: PublicKey?
-        ): Map<String, Any?>? {
-            val signedJWT = SignedJWT.parse(token)
+        ): Map<String, Any?> {
+            val signedJWT = runCatching { SignedJWT.parse(token) }.getOrNull()
+                ?: throw Exception("The bundle verification failed because the token could not be decoded.")
             val verifier: JWSVerifier = RSASSAVerifier(publicKey as RSAPublicKey)
-            if (signedJWT.verify(verifier)) {
-                return signedJWT.jwtClaimsSet.claims
+
+            val verificationSuccessful = runCatching { signedJWT.verify(verifier) }.getOrNull()
+            if (verificationSuccessful != true) {
+                throw Exception("The bundle verification failed because token verification was unsuccessful. This might mean the token has been tampered with.")
             }
 
-            return null
+            return signedJWT.jwtClaimsSet.claims
         }
 
-        private fun getCustomPropertyFromStringsIfExist(
-            context: Context, propertyName: String
+        private fun getPublicKeyFromStringsIfExist(
+            context: Context
         ): String? {
-            val property: String
             val packageName: String = context.packageName
             val resId: Int =
-                context.resources.getIdentifier("Repack$propertyName", "string", packageName)
+                context.resources.getIdentifier("RepackPublicKey", "string", packageName)
             if (resId != 0) {
-                property = context.getString(resId)
-                return if (!property.isEmpty()) {
-                    property
-                } else {
+                return context.getString(resId).ifEmpty {
                     null
                 }
             }
@@ -89,25 +84,24 @@ class CodeSigningUtils {
 
         fun verifyBundle(context: Context, token: String?, fileContent: String?) {
             if (token == null) {
-                throw Exception("The bundle could not be verified because no token was found.")
+                throw Exception("The bundle verification failed because no token for the bundle was found.")
             }
 
-            val stringPublicKey = getCustomPropertyFromStringsIfExist(context, "PublicKey")
+            val stringPublicKey = getPublicKeyFromStringsIfExist(context)
+                ?: throw Exception("The bundle verification failed because PublicKey was not found in the bundle. Make sure you've added the PublicKey to the res/values/strings.xml under RepackPublicKey key.")
 
             val publicKey = parsePublicKey(stringPublicKey)
-                ?: throw Exception("The bundle could not be verified because public key is invalid.")
+                ?: throw Exception("The bundle verification failed because the PublicKey is invalid.")
 
             val claims: Map<String, Any?> = verifyAndDecodeToken(token, publicKey)
-                ?: throw Exception("The bundle verification failed because the token is invalid")
 
             val contentHash = claims["hash"] as String?
-                ?: throw Exception("The bundle could not be verified because file hash from token is invalid.")
+                ?: throw Exception("The bundle verification failed because the token is invalid.")
 
             val fileHash = computeHash(fileContent)
-                ?: throw Exception("The bundle could not be verified because bundle content is invalid.")
 
             if (contentHash != fileHash) {
-                throw Exception("The bundle verification failed because the hash is invalid")
+                throw Exception("The bundle verification failed because the bundle hash is invalid.")
             }
         }
     }

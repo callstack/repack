@@ -1,10 +1,3 @@
-//
-//  CodeSigningErrors.swift
-//  callstack-repack
-//
-//  Created by Jakub Romańczyk on 28/02/2023.
-//
-
 import Foundation
 
 enum CodeSigningError : Int, Error {
@@ -32,19 +25,19 @@ extension CodeSigningError: CustomNSError {
         
         switch self {
         case .tokenNotFound:
-            failureReason = "No token for the bundle found."
+            failureReason = "The bundle verification failed because no token for the bundle was found."
         case .tokenInvalid:
-            failureReason = "Token associated with the bundle is invalid."
+            failureReason = "The bundle verification failed because the token is invalid."
         case .tokenDecodingFailed:
-            failureReason = "Failed to decode the token."
+            failureReason = "The bundle verification failed because the token could not be decoded."
         case .tokenVerificationFailed:
-            failureReason = "Failed to verify the token. This might mean the token has been tampered with."
+            failureReason = "The bundle verification failed because token verification was unsuccessful. This might mean the token has been tampered with."
         case .publicKeyNotFound:
-            failureReason = "PublicKey used for code-signing not found in the bundle. Make sure you've added the PublicKey to the Info.plist under RepackPublicKey key."
+            failureReason = "The bundle verification failed because PublicKey was not found in the bundle. Make sure you've added the PublicKey to the Info.plist under RepackPublicKey key."
         case .publicKeyInvalid:
-            failureReason = "PublicKey found in the bundle is not a valid key."
+            failureReason = "The bundle verification failed because the PublicKey is invalid."
         case .bundleVerificationFailed:
-            failureReason = "Bundle verification failed."
+            failureReason = "The bundle verification failed because the bundle hash is invalid."
         }
         
         return [NSLocalizedFailureReasonErrorKey: failureReason]
