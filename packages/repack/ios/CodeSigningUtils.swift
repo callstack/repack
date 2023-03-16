@@ -1,5 +1,5 @@
 import Foundation
-import CryptoKit
+import CommonCrypto
 import JWTDecode
 import SwiftyRSA
 
@@ -66,13 +66,17 @@ public class CodeSigningUtils: NSObject {
         return hexHash
     }
     
-    private static func getHash(_ content: NSData) -> SHA256Digest {
+    private static func getHash(_ content: NSData) -> Data {
         let data = Data(referencing: content)
-        return SHA256.hash(data: data)
+        var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        data.withUnsafeBytes {
+            _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &hash)
+        }
+        return Data(hash)
     }
     
-    private static func convertToHex(_ hash: SHA256Digest) -> String {
-        return hash.compactMap { String(format: "%02x", $0) }.joined()
+    private static func convertToHex(_ data: Data) -> String {
+        return data.reduce("") { $0 + String(format: "%02x", $1) }
     }
     
     @objc
