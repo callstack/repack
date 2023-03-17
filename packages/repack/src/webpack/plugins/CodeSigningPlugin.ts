@@ -52,8 +52,13 @@ export class CodeSigningPlugin implements WebpackPlugin {
           // in the compilation, the keys of the object are pathnames of the assets
           // and the values are file sources.
 
+          const chunkFiles = new Set<string>();
+          compilation.chunks.forEach(({ files }) =>
+            files.forEach((file) => chunkFiles.add(file))
+          );
+
           const content = Object.entries(assets)
-            .filter(([fileName]) => fileName.endsWith('.bundle'))
+            .filter(([fileName]) => chunkFiles.has(fileName))
             .reduce((acc, [fileName, file]) => {
               // get bundle
               const bundle = file.source();

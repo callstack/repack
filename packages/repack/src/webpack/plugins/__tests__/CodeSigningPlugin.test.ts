@@ -29,6 +29,9 @@ const injectThisCompilationHookMock = (
     (_, compilationCB) => {
       compilationCB(
         {
+          chunks: Object.keys(assets).map((file) => ({
+            files: new Set([file]),
+          })),
           hooks: {
             processAssets: {
               tap: jest.fn().mockImplementationOnce((_, processAssetsCB) => {

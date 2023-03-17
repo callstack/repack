@@ -220,15 +220,22 @@ export namespace Federated {
   export function createTokenResolver(
     tokens: Record<string, string>
   ): (scriptId: string, caller?: string) => string | undefined {
-    const resolver = (scriptId: string, caller?: string) => {
+    const chunkKeys = Object.keys(tokens).filter(
+      (key) => !key.includes('.container.bundle')
+    );
+    const resolver = (
+      chunkKeys: string[],
+      scriptId: string,
+      caller?: string
+    ) => {
       let tokenKey;
       if (caller === undefined) {
         tokenKey = scriptId + '.container.bundle';
       } else {
-        tokenKey = scriptId + '.chunk.bundle';
+        tokenKey = chunkKeys.find((key) => key.includes(scriptId));
       }
 
-      if (!tokens) {
+      if (!tokens || !tokenKey) {
         return undefined;
       }
 
@@ -236,7 +243,7 @@ export namespace Federated {
     };
 
     return (scriptId, caller) => {
-      return resolver(scriptId, caller);
+      return resolver(chunkKeys, scriptId, caller);
     };
   }
 
