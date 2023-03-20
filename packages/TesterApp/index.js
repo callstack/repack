@@ -13,6 +13,13 @@ ScriptManager.shared.addResolver(async (scriptId, _caller) => {
     };
   }
 
+  if (scriptId.includes('local')) {
+    return {
+      url: Script.getFileSystemURL(scriptId),
+      cache: false,
+    };
+  }
+
   return {
     url: Script.getRemoteURL(`http://localhost:5000/${scriptId}`),
   };

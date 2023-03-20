@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { Text } from '../ui/Text';
 
-const Async = React.lazy(() => import('./Async'));
+const Async = React.lazy(() => import('./Async.local'));
 
 export function AsyncContainer() {
   const [value, setValue] = useState('not updated');
