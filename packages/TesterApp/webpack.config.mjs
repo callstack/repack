@@ -234,11 +234,11 @@ export default (env) => {
         },
         extraChunks: [
           {
-            include: ['src_asyncChunks_Async_tsx'],
+            include: /.+local.+/,
             type: 'local',
           },
           {
-            exclude: ['src_asyncChunks_Async_tsx'],
+            exclude: /.+local.+/,
             type: 'remote',
             outputPath: path.join('build/output', platform, 'remote'),
           },
