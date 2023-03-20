@@ -12,6 +12,8 @@
 @property (readonly, nullable) NSData *body;
 @property (readonly, nullable) NSDictionary *headers;
 @property (readonly, nonnull) NSNumber *timeout;
+@property (readonly, nullable) NSString *token;
+@property (readonly) BOOL verifyScriptSignature;
 
 + (nonnull ScriptConfig *)fromConfigDictionary:(nonnull NSDictionary *)config
                                   withScriptId:(nonnull NSString*)scriptId;
@@ -24,7 +26,9 @@
                   withAbsolute:(BOOL)absolute
                    withHeaders:(nullable NSDictionary *)headers
                       withBody:(nullable NSData *)body
-                   withTimeout:(nonnull NSNumber *)timeout;
+                   withTimeout:(nonnull NSNumber *)timeout
+                     withToken:(nullable NSString *)token
+     withVerifyScriptSignature:(BOOL)verifyScriptSignature;
 
 @end
 

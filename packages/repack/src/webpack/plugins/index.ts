@@ -7,3 +7,4 @@ export * from './OutputPlugin';
 export * from './ReactRefreshPlugin';
 export * from './RepackTargetPlugin';
 export * from './ModuleFederationPlugin';
+export * from './CodeSigningPlugin';

@@ -1,6 +1,9 @@
 #import "ScriptManager.h"
 #import "ScriptConfig.h"
 #import "ErrorCodes.h"
+
+#import "callstack_repack-Swift.h"
+
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 
@@ -189,6 +192,14 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
             callback(error);
         } else {
             @try {
+                if (config.verifyScriptSignature) {
+                    NSError *codeSigningError = nil;
+                    [CodeSigningUtils verifyBundleWithToken:config.token fileContent:data error:&codeSigningError];
+                    if (codeSigningError != nil) {
+                        callback(codeSigningError);
+                        return;
+                    }
+                }
                 [self createScriptsDirectory:scriptsDirectoryPath];
                 [data writeToFile:scriptFilePath options:NSDataWritingAtomic error:&error];
                 callback(nil);
