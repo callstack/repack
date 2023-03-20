@@ -131,15 +131,16 @@ export BUNDLE_COMMAND=webpack-bundle
 
 When building release version of your application Gradle will still use Metro to bundle the application, so you need to adjust build settings to make Gradle use Re.Pack instead.
 
-Open your application's Gradle project, usually located at `android/app/build.gradle` and add `bundleCommand: "webpack-bundle"` to `project.ext.react`.
+Open your application's Gradle project, usually located at `android/app/build.gradle` and add `bundleCommand = "webpack-bundle"` to `react`.
 
-After the change, the content of `project.ext.react` should look similar to:
+After the change, the content of `react` should look similar to:
 
 ```groovy
-project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
-    bundleCommand: "webpack-bundle",
-]
+react {
+    ...
+    bundleCommand = "webpack-bundle",
+    ...
+}
 ```
 
 ## Usage
