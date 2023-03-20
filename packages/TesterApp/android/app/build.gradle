@@ -169,5 +169,14 @@ dependencies {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+// TODO: remove project.ext.react and apply(...react.gradle) from here after this issue is resolved in react-native-code-push:  https://github.com/microsoft/react-native-code-push/issues/2418
+// PR link: https://github.com/microsoft/react-native-code-push/pull/2419
+// It's a very bad workaround, but it is what it is ¯\_(ツ)_/¯
+// We're basically building the bundle twice only because rn-code-push does not support the new react-native gradle plugin...
+project.ext.react = [
+        enableHermes: true,  // clean and rebuild if changing
+        bundleCommand: "webpack-bundle",
+]
 apply from: "../../node_modules/react-native/react.gradle"
+
 apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
