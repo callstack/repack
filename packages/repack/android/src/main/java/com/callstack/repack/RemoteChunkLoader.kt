@@ -46,7 +46,7 @@ class RemoteScriptLoader(private val reactContext: ReactContext) {
 
                         val body = response.body?.string()
 
-                        if (config.verifyScriptSignature != null && config.verifyScriptSignature == true) {
+                        if (config.verifyScriptSignature == true) {
                             CodeSigningUtils.verifyBundle(reactContext, config.token, body)
                         }
 
