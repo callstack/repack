@@ -218,11 +218,18 @@ export namespace Federated {
   }
 
   export function createTokenResolver(
-    tokens: Record<string, string>
+    tokens: Record<string, string> | undefined
   ): (scriptId: string, caller?: string) => string | undefined {
-    const chunkKeys = Object.keys(tokens).filter(
-      (key) => !key.includes('.container.bundle')
-    );
+    let chunkKeys: string[];
+
+    if (tokens) {
+      chunkKeys = Object.keys(tokens).filter(
+        (key) => !key.includes('.container.bundle')
+      );
+    } else {
+      chunkKeys = [];
+    }
+
     const resolver = (
       chunkKeys: string[],
       scriptId: string,
