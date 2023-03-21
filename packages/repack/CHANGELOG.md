@@ -1,5 +1,16 @@
 # @callstack/repack
 
+## 3.2.0-rc.0
+
+This Release candidate introduces a new feature – **Code Signing**. It allows you to sign your bundles during build time and verify them on the client side. This feature is currently in experimental mode and **the implementation is subject to change**. Once we are confident that the API is stable, we will release a stable version of this feature along the documentation and examples.
+
+### Minor Changes
+
+- [#318](https://github.com/callstack/repack/pull/318) [`6e12c14`](https://github.com/callstack/repack/commit/6e12c14e02002721ad4fe3ddf41743dcdb597f60) Thanks [@jbroma](https://github.com/jbroma)! - Added CodeSigning abilities to RePack:
+
+  - Introduced CodeSigningPlugin for generating code-signing mapping files
+  - Implemented CodeSigningUtils extension for ScriptManager to verify signed bundles on Android and iOS
+
 ## 3.1.1
 
 ### Patch Changes

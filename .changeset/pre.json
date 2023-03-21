@@ -1,0 +1,15 @@
+{
+  "mode": "pre",
+  "tag": "rc",
+  "initialVersions": {
+    "testerapp": "0.0.2",
+    "dashboard": "1.0.1",
+    "@callstack/repack-debugger-app": "1.0.2",
+    "@callstack/repack-dev-server": "1.0.1",
+    "@callstack/repack": "3.1.1",
+    "website": "0.0.1"
+  },
+  "changesets": [
+    "clean-buses-change"
+  ]
+}
