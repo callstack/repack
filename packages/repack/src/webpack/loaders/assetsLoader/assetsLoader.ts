@@ -2,10 +2,11 @@ import path from 'path';
 import type { LoaderContext } from 'loader-utils';
 import { AssetResolver } from '../../plugins/AssetsResolverPlugin/AssetResolver';
 import { getOptions } from './options';
+import { extractAssets } from './extractAssets';
 import { inlineAssets } from './inlineAssets';
+import { convertToRemoteAsset } from './convertToRemoteAssets';
 import { getFilesInDirectory, getScaleNumber, readFile } from './utils';
 import type { Asset } from './types';
-import { extractAssets } from './extractAssets';
 
 export const raw = true;
 
@@ -56,7 +57,8 @@ export default async function repackAssetsLoader(this: LoaderContext) {
     )
       .toLowerCase()
       .replace(/[^a-z0-9_]/g, '')}.${resourceExtensionType}`;
-    const assetsDirname = 'assets';
+
+    const assetsDirname = options.remote?.enabled ? 'remote-assets' : 'assets';
 
     const files = await getFilesInDirectory(resourceAbsoluteDirname, this.fs);
     const scales = AssetResolver.collectScales(
@@ -92,7 +94,11 @@ export default async function repackAssetsLoader(this: LoaderContext) {
 
         let destination;
 
-        if (!options.devServerEnabled && options.platform === 'android') {
+        if (
+          !options.devServerEnabled &&
+          !options.remote?.enabled &&
+          options.platform === 'android'
+        ) {
           // found font family
           if (
             testXml.test(resourceNormalizedFilename) &&
@@ -186,24 +192,41 @@ export default async function repackAssetsLoader(this: LoaderContext) {
         this.emitFile(filename, content ?? '');
       }
 
-      callback?.(
-        null,
-        await extractAssets(
-          {
-            resourcePath,
-            resourceDirname,
-            resourceFilename,
-            resourceExtensionType,
+      if (options.remote?.enabled) {
+        callback?.(
+          null,
+          convertToRemoteAsset({
             assets,
-            suffixPattern,
             assetsDirname,
+            remotePublicPath: options.remote.publicPath,
+            resourceDirname,
+            resourceExtensionType,
+            resourceFilename,
+            resourcePath,
+            suffixPattern,
             pathSeparatorRegexp,
-            publicPath: options.publicPath,
-            devServerEnabled: options.devServerEnabled,
-          },
-          logger
-        )
-      );
+          })
+        );
+      } else {
+        callback?.(
+          null,
+          await extractAssets(
+            {
+              resourcePath,
+              resourceDirname,
+              resourceFilename,
+              resourceExtensionType,
+              assets,
+              suffixPattern,
+              assetsDirname,
+              pathSeparatorRegexp,
+              publicPath: options.publicPath,
+              devServerEnabled: options.devServerEnabled,
+            },
+            logger
+          )
+        );
+      }
     }
   } catch (error) {
     callback?.(error as Error);

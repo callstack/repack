@@ -7,6 +7,10 @@ export interface Options {
   devServerEnabled?: boolean;
   inline?: boolean;
   publicPath?: string;
+  remote?: {
+    enabled: boolean;
+    publicPath: string;
+  };
 }
 
 type Schema = Parameters<typeof validateSchema>[0];
@@ -24,6 +28,14 @@ export const optionsSchema: Schema = {
     inline: { type: 'boolean' },
     devServerEnabled: { type: 'boolean' },
     publicPath: { type: 'string' },
+    remote: {
+      type: 'object',
+      required: ['enabled', 'publicPath'],
+      properties: {
+        enabled: { type: 'boolean' },
+        publicPath: { type: 'string', pattern: '^https?://' },
+      },
+    },
   },
 };
 
