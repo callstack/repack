@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import mimeTypes from 'mime-types';
 import type { Asset, ImageSize, URISource } from './types';
 import { getImageSize } from './utils';
@@ -18,15 +19,27 @@ export function inlineAssets({
 
   if (!mimeType) {
     throw new Error(
-      `Cannot inline asset for request ${resourcePath} - unable to detect mime type`
+      `Cannot inline asset for request ${resourcePath} - unable to detect MIME type`
     );
   }
 
-  const sourceSet = assets.map((asset) => encodeAsset(asset, mimeType, size));
+  // keys are always converted to strings
+  const sourceSet = assets.reduce((sources, asset) => {
+    sources[asset.scale] = encodeAsset(asset, mimeType, size);
+    return sources;
+  }, {} as Record<string, URISource>);
 
-  return `module.exports = ${JSON.stringify(
-    sourceSet.length === 1 ? sourceSet[0] : sourceSet
-  )}`;
+  const scales = JSON.stringify(Object.keys(sourceSet).map(Number));
+
+  // we need to import PixelRatio to remain compatible
+  // with older versions of React-Native
+  return dedent`
+    var PixelRatio = require('react-native/Libraries/Utilities/PixelRatio');
+    var AssetSourceResolver = require('react-native/Libraries/Image/AssetSourceResolver');
+    var prefferedScale = AssetSourceResolver.pickScale(${scales}, PixelRatio.get());
+
+    module.exports = ${JSON.stringify(sourceSet)}[prefferedScale];
+  `;
 }
 
 function encodeAsset(
