@@ -11,7 +11,9 @@
     "start": "react-native webpack-start",
     "bundle": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false",
     "webpack": "webpack -c webpack.config.js --env platform=ios --env mode=production",
-    "test": "vitest run"
+    "test": "vitest run",
+    "copy-remote-assets": "mkdir -p public && cp -r build/generated/ios/remote-assets public/",
+    "serve-remote-assets": "yarn copy-remote-assets && yarn http-server -p 9999"
   },
   "dependencies": {
     "@callstack/repack": "3.2.0-rc.0",
@@ -34,6 +36,7 @@
     "execa": "^6.1.0",
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
+    "http-server": "^14.1.1",
     "metro-react-native-babel-preset": "^0.73.7",
     "node-fetch": "^3.2.6",
     "terser-webpack-plugin": "^5.3.3",

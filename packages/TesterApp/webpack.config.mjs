@@ -184,6 +184,11 @@ export default (env) => {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
+          exclude: [
+            path.join(dirname, 'src/assetsTest/localAssets'),
+            path.join(dirname, 'src/assetsTest/inlineAssets'),
+            path.join(dirname, 'src/assetsTest/remoteAssets'),
+          ],
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {
@@ -210,8 +215,56 @@ export default (env) => {
             },
           ],
         },
+        {
+          test: Repack.getAssetExtensionsRegExp(
+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+          ),
+          include: [path.join(dirname, 'src/assetsTest/localAssets')],
+          use: {
+            loader: '@callstack/repack/assets-loader',
+            options: {
+              platform,
+              devServerEnabled: Boolean(devServer),
+              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
+            },
+          },
+        },
+        {
+          test: Repack.getAssetExtensionsRegExp(
+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+          ),
+          include: [path.join(dirname, 'src/assetsTest/inlineAssets')],
+          use: {
+            loader: '@callstack/repack/assets-loader',
+            options: {
+              platform,
+              devServerEnabled: Boolean(devServer),
+              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
+              inline: true,
+            },
+          },
+        },
+        {
+          test: Repack.getAssetExtensionsRegExp(
+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+          ),
+          include: [path.join(dirname, 'src/assetsTest/remoteAssets')],
+          use: {
+            loader: '@callstack/repack/assets-loader',
+            options: {
+              platform,
+              devServerEnabled: Boolean(devServer),
+              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
+              remote: {
+                enabled: true,
+                publicPath: 'http://localhost:9999',
+              },
+            },
+          },
+        },
       ],
     },
+
     plugins: [
       /**
        * Configure other required and additional plugins to make the bundle
