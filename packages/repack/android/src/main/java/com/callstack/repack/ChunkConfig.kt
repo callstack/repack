@@ -8,38 +8,40 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URL
 
 data class ScriptConfig(
-        val id: String,
-        val url: URL,
-        val query: String?,
-        val fetch: Boolean,
-        val absolute: Boolean,
-        val method: String,
-        val body: RequestBody?,
-        val timeout: Int,
-        val headers: Headers,
-        val token: String?,
-        val verifyScriptSignature: Boolean?
+    val id: String,
+    val url: URL,
+    val query: String?,
+    val fetch: Boolean,
+    val absolute: Boolean,
+    val method: String,
+    val body: RequestBody?,
+    val timeout: Int,
+    val headers: Headers,
+    val token: String?,
+    val verifyScriptSignature: Boolean
 ) {
     companion object {
         fun fromReadableMap(id: String, value: ReadableMap): ScriptConfig {
             val urlString = value.getString("url")
-                    ?: throw Error("ScriptManagerModule.load ScriptMissing url")
+                ?: throw Error("ScriptManagerModule.load ScriptMissing url")
             val method = value.getString("method")
-                    ?: throw Error("ScriptManagerModule.load ScriptMissing method")
+                ?: throw Error("ScriptManagerModule.load ScriptMissing method")
             val fetch = value.getBoolean("fetch")
             val absolute = value.getBoolean("absolute")
             val query = value.getString("query")
             val bodyString = value.getString("body")
             val headersMap = value.getMap("headers")
-            val timeout = value.getInt("timeout") ?: throw Error("ScriptManagerModule.load ScriptMissing timeout")
             val token = value.getString("token")
+            val timeout = value.getInt("timeout")
             val verifyScriptSignature = value.getBoolean("verifyScriptSignature")
 
-            val url = URL(if (query != null) {
-                "$urlString?$query"
-            } else {
-                urlString
-            })
+            val url = URL(
+                if (query != null) {
+                    "$urlString?$query"
+                } else {
+                    urlString
+                }
+            )
 
             val headers = Headers.Builder()
             val keyIterator = headersMap?.keySetIterator()
@@ -55,17 +57,17 @@ data class ScriptConfig(
             val body = bodyString?.toRequestBody(contentType)
 
             return ScriptConfig(
-                    id,
-                    url,
-                    query,
-                    fetch,
-                    absolute,
-                    method,
-                    body,
-                    timeout,
-                    headers.build(),
-                    token,
-                    verifyScriptSignature
+                id,
+                url,
+                query,
+                fetch,
+                absolute,
+                method,
+                body,
+                timeout,
+                headers.build(),
+                token,
+                verifyScriptSignature
             )
         }
     }
