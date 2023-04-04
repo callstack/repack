@@ -31,8 +31,8 @@ data class ScriptConfig(
             val query = value.getString("query")
             val bodyString = value.getString("body")
             val headersMap = value.getMap("headers")
-            val token = value.getString("token")
             val timeout = value.getInt("timeout")
+            val token = value.getString("token")
             val verifyScriptSignature = value.getBoolean("verifyScriptSignature")
 
             val url = URL(

@@ -92,6 +92,7 @@ describe('ScriptManagerAPI', () => {
       absolute: false,
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: false,
     });
 
     const {
@@ -119,6 +120,7 @@ describe('ScriptManagerAPI', () => {
       absolute: false,
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: false,
     });
   });
 
@@ -145,6 +147,7 @@ describe('ScriptManagerAPI', () => {
       absolute: false,
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: false,
     });
   });
 
@@ -171,6 +174,7 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       query: 'accessCode=1234&accessUid=asdf',
       timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: false,
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -210,6 +214,7 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       headers: { 'x-hello': 'world' },
       timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: false,
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -233,6 +238,7 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       headers: { 'x-hello': 'world', 'x-changed': 'true' },
       timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: false,
     });
   });
 
@@ -257,6 +263,7 @@ describe('ScriptManagerAPI', () => {
       method: 'POST',
       body: 'hello_world',
       timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: false,
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -278,6 +285,7 @@ describe('ScriptManagerAPI', () => {
       method: 'POST',
       body: 'message',
       timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: false,
     });
   });
 
@@ -305,6 +313,7 @@ describe('ScriptManagerAPI', () => {
       absolute: true,
       method: 'POST',
       timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: false,
     });
   });
 
