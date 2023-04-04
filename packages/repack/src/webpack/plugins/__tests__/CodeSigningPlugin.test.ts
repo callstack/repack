@@ -42,10 +42,12 @@ const injectThisCompilationHookMock = (
             files: new Set([file]),
           })),
           hooks: {
-            processAssets: {
-              tap: jest.fn().mockImplementationOnce((_, processAssetsCB) => {
-                processAssetsCB(assets);
-              }),
+            afterProcessAssets: {
+              tap: jest
+                .fn()
+                .mockImplementationOnce((_, afterProcessAssetsCB) => {
+                  afterProcessAssetsCB(assets);
+                }),
             },
           },
           emitAsset: emitAssetMock,
