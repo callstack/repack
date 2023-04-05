@@ -12,8 +12,7 @@
     "bundle": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false",
     "webpack": "webpack -c webpack.config.js --env platform=ios --env mode=production",
     "test": "vitest run",
-    "copy-remote-assets": "mkdir -p public && cp -r build/generated/ios/remote-assets public/",
-    "serve-remote-assets": "yarn copy-remote-assets && yarn http-server -p 9999"
+    "serve-remote-assets": "yarn http-server -p 9999 build/output/ios/remote/remote-assets"
   },
   "dependencies": {
     "@callstack/repack": "3.2.0-rc.0",

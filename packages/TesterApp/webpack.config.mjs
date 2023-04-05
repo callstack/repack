@@ -284,6 +284,7 @@ export default (env) => {
           bundleFilename,
           sourceMapFilename,
           assetsPath,
+          auxiliaryAssetsPath: path.join('build/output', platform, 'remote'),
         },
         extraChunks: [
           {

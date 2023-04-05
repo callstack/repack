@@ -58,6 +58,3 @@ yarn-error.log
 # Ruby / CocoaPods
 /ios/Pods/
 /vendor/bundle/
-
-# Remote-assets hosting
-public/
