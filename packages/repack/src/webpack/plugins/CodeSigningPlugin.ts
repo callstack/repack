@@ -45,75 +45,71 @@ export class CodeSigningPlugin implements WebpackPlugin {
     const privateKey = fs.readFileSync(privateKeyPath);
 
     // Tapping to the "thisCompilation" hook in order to further tap
-    // to the compilation process on an earlier stage.
+    // to the compilation process on an later stage.
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
-      compilation.hooks.processAssets.tap(
-        {
-          name: pluginName,
-          stage: webpack.Compilation.PROCESS_ASSETS_STAGE_DERIVED,
-        },
-        (assets) => {
-          // "assets" is an object that contains all assets
-          // in the compilation, the keys of the object are pathnames of the assets
-          // and the values are file sources.
-          const chunkFiles = new Set<string>();
-          // adjust for chunk name to filename
-          compilation.chunks.forEach((chunk) => {
-            chunk.files.forEach((file) => {
-              // Exclude main output bundle because it's always local
-              if (file === compilation.outputOptions.filename) {
-                return;
-              }
-              // Exclude chunks specified in config
-              if (this.config.excludeChunks?.includes(String(chunk.id))) {
-                return;
-              }
-              chunkFiles.add(file);
-            });
+      // we need to make sure that assets are fully processed in order
+      // to create a code-signing mapping.
+      compilation.hooks.afterProcessAssets.tap(pluginName, (assets) => {
+        // "assets" is an object that contains all assets
+        // in the compilation, the keys of the object are pathnames of the assets
+        // and the values are file sources.
+        const chunkFiles = new Set<string>();
+        // adjust for chunk name to filename
+        compilation.chunks.forEach((chunk) => {
+          chunk.files.forEach((file) => {
+            // Exclude main output bundle because it's always local
+            if (file === compilation.outputOptions.filename) {
+              return;
+            }
+            // Exclude chunks specified in config
+            if (this.config.excludeChunks?.includes(String(chunk.id))) {
+              return;
+            }
+            chunkFiles.add(file);
           });
+        });
 
-          const content = Object.entries(assets)
-            .filter(([fileName]) => chunkFiles.has(fileName))
-            .reduce((acc, [fileName, file]) => {
-              // get bundle
-              const bundle = file.source();
+        const content = Object.entries(assets)
+          .filter(([fileName]) => chunkFiles.has(fileName))
+          .reduce((acc, [fileName, file]) => {
+            // get bundle
+            const bundle = file.source();
 
-              // generate bundle hash
-              const hash = crypto
-                .createHash('sha256')
-                .update(bundle)
-                .digest('hex');
+            // generate bundle hash
+            const hash = crypto
+              .createHash('sha256')
+              .update(bundle)
+              .digest('hex');
 
-              // generate token
-              const token = jwt.sign({ hash }, privateKey, {
-                algorithm: 'RS256',
-              });
+            // generate token
+            const token = jwt.sign({ hash }, privateKey, {
+              algorithm: 'RS256',
+            });
 
-              acc[fileName] = token;
+            acc[fileName] = token;
 
-              return acc;
-            }, {} as Record<string, string>);
+            return acc;
+          }, {} as Record<string, string>);
 
-          const json = JSON.stringify(content);
+        const json = JSON.stringify(content);
 
-          if (this.config.outputPath) {
-            fs.ensureDirSync(this.config.outputPath);
-            fs.writeFileSync(
-              path.join(
-                compiler.context,
-                this.config.outputPath,
-                this.config.outputFile!
-              ),
-              json
-            );
-          } else {
-            compilation.emitAsset(
-              this.config.outputFile!,
-              new webpack.sources.RawSource(json)
-            );
-          }
+        if (this.config.outputPath) {
+          fs.ensureDirSync(this.config.outputPath);
+          fs.writeFileSync(
+            path.join(
+              compiler.context,
+              this.config.outputPath,
+              this.config.outputFile!
+            ),
+            json
+          );
+        } else {
+          compilation.emitAsset(
+            this.config.outputFile!,
+            new webpack.sources.RawSource(json)
+          );
         }
-      );
+      });
     });
   }
 }
