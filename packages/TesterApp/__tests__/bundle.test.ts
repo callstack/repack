@@ -35,6 +35,15 @@ describe.each([
       'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
       'assets/src/miniapp/callstack-dark.png',
       'assets/node_modules/react-native/Libraries/NewAppScreen/components/logo.png',
+      'assets/src/assetsTest/localAssets/webpack.png',
+      'assets/src/assetsTest/localAssets/webpack@2x.png',
+      'assets/src/assetsTest/localAssets/webpack@3x.png',
+      'remote-assets/assets/src/assetsTest/remoteAssets/webpack.png',
+      'remote-assets/assets/src/assetsTest/remoteAssets/webpack@2x.png',
+      'remote-assets/assets/src/assetsTest/remoteAssets/webpack@3x.png',
+      'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack.png',
+      'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack@2x.png',
+      'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack@3x.png',
       'react-native-bundle-output/assets/node_modules/react-native/Libraries/NewAppScreen/components/logo.png',
     ],
   },
@@ -50,12 +59,21 @@ describe.each([
       'src_asyncChunks_Async_local_tsx.chunk.bundle',
       'src_asyncChunks_Async_local_tsx.chunk.bundle.map',
       'drawable-mdpi/node_modules_reactnative_libraries_newappscreen_components_logo.png',
+      'drawable-mdpi/src_assetstest_localassets_webpack.png',
+      'drawable-xxhdpi/src_assetstest_localassets_webpack.png',
+      'drawable-xhdpi/src_assetstest_localassets_webpack.png',
       'drawable-mdpi/src_miniapp_callstackdark.png',
       'react-native-bundle-output/index.android.bundle',
       'react-native-bundle-output/index.android.bundle.map',
       'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle',
       'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
       'react-native-bundle-output/drawable-mdpi/node_modules_reactnative_libraries_newappscreen_components_logo.png',
+      'react-native-bundle-output/drawable-mdpi/src_assetstest_localassets_webpack.png',
+      'react-native-bundle-output/drawable-xxhdpi/src_assetstest_localassets_webpack.png',
+      'react-native-bundle-output/drawable-xhdpi/src_assetstest_localassets_webpack.png',
+      'remote-assets/assets/src/assetsTest/remoteAssets/webpack.png',
+      'remote-assets/assets/src/assetsTest/remoteAssets/webpack@2x.png',
+      'remote-assets/assets/src/assetsTest/remoteAssets/webpack@3x.png',
     ],
   },
 ])(
@@ -89,7 +107,7 @@ describe.each([
         await bundle.func([''], config as Config, args as Args);
 
         const files = await globby([`**/*`], { cwd: OUTPUT_DIR });
-        expect(files).toEqual(assets);
+        expect(files.sort()).toEqual(assets.sort());
       },
       60 * 1000
     );
