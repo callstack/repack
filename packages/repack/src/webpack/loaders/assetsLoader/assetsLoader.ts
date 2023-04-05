@@ -58,7 +58,8 @@ export default async function repackAssetsLoader(this: LoaderContext) {
       .toLowerCase()
       .replace(/[^a-z0-9_]/g, '')}.${resourceExtensionType}`;
 
-    const assetsDirname = options.remote?.enabled ? 'remote-assets' : 'assets';
+    const assetsDirname = 'assets';
+    const remoteAssetsDirname = 'remote-assets';
 
     const files = await getFilesInDirectory(resourceAbsoluteDirname, this.fs);
     const scales = AssetResolver.collectScales(
@@ -150,7 +151,12 @@ export default async function repackAssetsLoader(this: LoaderContext) {
           const name = `${resourceFilename}${
             scaleKey === '@1x' ? '' : scaleKey
           }.${resourceExtensionType}`;
-          destination = path.join(assetsDirname, resourceDirname, name);
+          destination = path.join(
+            options.remote?.enabled ? remoteAssetsDirname : '',
+            assetsDirname,
+            resourceDirname,
+            name
+          );
         }
 
         return {
