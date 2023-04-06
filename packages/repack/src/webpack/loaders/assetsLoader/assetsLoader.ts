@@ -4,7 +4,7 @@ import { AssetResolver } from '../../plugins/AssetsResolverPlugin/AssetResolver'
 import { getOptions } from './options';
 import { extractAssets } from './extractAssets';
 import { inlineAssets } from './inlineAssets';
-import { convertToRemoteAsset } from './convertToRemoteAssets';
+import { convertToRemoteAssets } from './convertToRemoteAssets';
 import { getFilesInDirectory, getScaleNumber, readFile } from './utils';
 import type { Asset } from './types';
 
@@ -201,7 +201,7 @@ export default async function repackAssetsLoader(this: LoaderContext) {
       if (options.remote?.enabled) {
         callback?.(
           null,
-          convertToRemoteAsset({
+          convertToRemoteAssets({
             assets,
             assetsDirname,
             remotePublicPath: options.remote.publicPath,

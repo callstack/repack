@@ -3,7 +3,7 @@ import dedent from 'dedent';
 import { getImageSize } from './utils';
 import type { Asset } from './types';
 
-export function convertToRemoteAsset({
+export function convertToRemoteAssets({
   assets,
   assetsDirname,
   remotePublicPath,
