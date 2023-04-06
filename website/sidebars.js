@@ -68,7 +68,11 @@ module.exports = {
     {
       type: 'category',
       label: 'Guides',
-      items: ['configuration/guides/svg', 'configuration/guides/inline-assets'],
+      items: [
+        'configuration/guides/svg',
+        'configuration/guides/inline-assets',
+        'configuration/guides/remote-assets',
+      ],
     },
   ],
   packagesSidebar: [
