@@ -45,9 +45,13 @@ async function compileBundle(
         platform,
       }),
       new VirtualModulesPlugin({
-        ...virtualModules,
         'node_modules/react-native/Libraries/Image/AssetRegistry.js':
           'module.exports = { registerAsset: (spec) => spec };',
+        'node_modules/react-native/Libraries/Utilities/PixelRatio.js':
+          'module.exports = { get: () => 1 };',
+        'node_modules/react-native/Libraries/Image/AssetSourceResolver.js':
+          'module.exports = { pickScale: (scales, pixelRatio) => scales[pixelRatio - 1] };',
+        ...virtualModules,
       }),
     ],
   });
@@ -205,10 +209,15 @@ describe('assetLoader', () => {
       });
     });
 
-    it('with scales', async () => {
+    it.each([
+      { prefferedScale: 1 },
+      { prefferedScale: 2 },
+      { prefferedScale: 3 },
+    ])('with scales', async ({ prefferedScale }) => {
       const { code } = await compileBundle(
         'android',
         {
+          'node_modules/react-native/Libraries/Utilities/PixelRatio.js': `module.exports = { get: () => ${prefferedScale} };`,
           './index.js': "export { default } from './__fixtures__/star.png';",
         },
         true
@@ -235,14 +244,12 @@ describe('assetLoader', () => {
         ).toString('base64'),
       ]);
 
-      expect(context.Export?.default).toEqual(
-        logos.map((logo, index) => ({
-          uri: `data:image/png;base64,${logo}`,
-          scale: index + 1,
-          height: 272,
-          width: 286,
-        }))
-      );
+      expect(context.Export?.default).toEqual({
+        uri: `data:image/png;base64,${logos[prefferedScale - 1]}`,
+        width: 286,
+        height: 272,
+        scale: prefferedScale,
+      });
     });
   });
 });
