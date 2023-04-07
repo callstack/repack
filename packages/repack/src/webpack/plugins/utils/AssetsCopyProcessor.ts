@@ -127,9 +127,10 @@ export class AssetsCopyProcessor {
     }
 
     // Copy regular assets
-    const mediaAssets = [...chunk.auxiliaryFiles].filter(
-      (file) => !/\.(map|bundle\.json)$/.test(file)
-    );
+    const mediaAssets = [...chunk.auxiliaryFiles]
+      .filter((file) => !/\.(map|bundle\.json)$/.test(file))
+      .filter((file) => !/^remote-assets/.test(file));
+
     this.queue.push(
       ...mediaAssets.map(
         (asset) => () =>
