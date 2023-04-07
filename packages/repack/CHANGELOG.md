@@ -1,5 +1,19 @@
 # @callstack/repack
 
+## 3.2.0-rc.1
+
+### Minor Changes
+
+- [#331](https://github.com/callstack/repack/pull/331) [`515fb05`](https://github.com/callstack/repack/commit/515fb05f307e10c9bf65fd54dce3e7ebb8d1ae45) Thanks [@jbroma](https://github.com/jbroma)! - Added remote-assets functionality to the assetsLoader
+
+* [#328](https://github.com/callstack/repack/pull/328) [`4f155dd`](https://github.com/callstack/repack/commit/4f155ddf8f5064f60175ed2ee8f0ad64ff9f252b) Thanks [@jbroma](https://github.com/jbroma)! - Auto device scale resolution for inlined assets
+
+### Patch Changes
+
+- [#330](https://github.com/callstack/repack/pull/330) [`f142e06`](https://github.com/callstack/repack/commit/f142e068f473084f473089d71cba40ccbdd41b46) Thanks [@jbroma](https://github.com/jbroma)! - Code-Signing - move execution of the plugin to the later stage of compilation
+
+* [#327](https://github.com/callstack/repack/pull/327) [`23dfc55`](https://github.com/callstack/repack/commit/23dfc55dbcefff62493c51eed6f40b88b93a433d) Thanks [@jbroma](https://github.com/jbroma)! - Fix verifyScriptSignature missing a default value
+
 ## 3.2.0-rc.0
 
 This Release candidate introduces a new feature – **Code Signing**. It allows you to sign your bundles during build time and verify them on the client side. This feature is currently in experimental mode and **the implementation is subject to change**. Once we are confident that the API is stable, we will release a stable version of this feature along the documentation and examples.

@@ -10,6 +10,11 @@
     "website": "0.0.1"
   },
   "changesets": [
-    "clean-buses-change"
+    "clean-buses-change",
+    "cool-otters-wash",
+    "famous-clouds-sparkle",
+    "fifty-humans-look",
+    "funny-clocks-play",
+    "honest-glasses-yell"
   ]
 }
