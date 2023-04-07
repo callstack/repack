@@ -21,7 +21,7 @@ ScriptManager.shared.addResolver(async (scriptId, _caller) => {
   }
 
   return {
-    url: Script.getRemoteURL(`http://localhost:5000/${scriptId}`),
+    url: Script.getRemoteURL(`http://localhost:9999/${scriptId}`),
   };
 });
 

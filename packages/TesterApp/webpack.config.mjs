@@ -257,7 +257,7 @@ export default (env) => {
               scalableAssetExtensions: Repack.SCALABLE_ASSETS,
               remote: {
                 enabled: true,
-                publicPath: 'http://localhost:9999',
+                publicPath: 'http://localhost:9999/remote-assets',
               },
             },
           },
