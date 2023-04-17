@@ -262,4 +262,114 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback);
 }
 
+// We won't compile this code when we build for the old architecture.
+#ifdef RCT_NEW_ARCH_ENABLED
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+    (const facebook::react::ObjCTurboModule::InitParams &)params
+{
+  return std::make_shared<facebook::react::NativeScriptManagerSpecJSI>(params);
+}
+#endif
+
+- (void)invalidateScripts:(NSArray *)scripts resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    [self runInBackground:^(){
+        NSFileManager* manager = [NSFileManager defaultManager];
+        NSString* scriptsDirecotryPath = [self getScriptsDirectoryPath];
+        
+        NSError *error;
+        if (scripts.count == 0 && [manager fileExistsAtPath:scriptsDirecotryPath]) {
+            [manager removeItemAtPath:scriptsDirecotryPath error:&error];
+        } else {
+            for (int i = 0; i < scripts.count; i++) {
+                NSString* scriptFilePath = [self getScriptFilePath:scripts[i]];
+                if ([manager fileExistsAtPath:scriptFilePath]) {
+                    [manager removeItemAtPath:[self getScriptFilePath:scripts[i]] error:&error];
+                }
+                if (error != nil) {
+                    break;
+                }
+            }
+        }
+        
+        if (error != nil) {
+            reject(InvalidationFailure, error.localizedDescription, nil);
+        } else {
+            resolve(nil);
+        }
+    }];
+}
+
+- (void)loadScript:(NSString *)scriptId config:(NSDictionary *)configDictionary resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    [self runInBackground:^(){
+        // Cast `RCTBridge` to `RCTCxxBridge`.
+        __weak RCTCxxBridge *bridge = (RCTCxxBridge *)self->_bridge;
+        
+        ScriptConfig *config;
+        @try {
+            config = [ScriptConfig fromConfigDictionary:configDictionary withScriptId:scriptId];
+        } @catch (NSError *error) {
+            reject(ScriptConfigError, error.localizedDescription, nil);
+            return;
+        }
+        
+        // Handle http & https
+        if ([[config.url scheme] hasPrefix:@"http"]) {
+            if (config.fetch) {
+                [self downloadAndCache:config completionHandler:^(NSError *error) {
+                    if (error) {
+                        reject(ScriptDownloadFailure, error.localizedFailureReason, nil);
+                    } else {
+                        [self execute:bridge
+                              scriptId:config.scriptId
+                                  url:config.url
+                         withResolver:resolve
+                         withRejecter:reject];
+                    }
+                }];
+            } else {
+                [self execute:bridge scriptId:scriptId url:config.url withResolver:resolve withRejecter:reject];
+            }
+            
+        } else if ([[config.url scheme] isEqualToString:@"file"]) {
+            [self executeFromFilesystem:bridge
+                                 config:config
+                           withResolver:resolve
+                           withRejecter:reject];
+        } else {
+            reject(UnsupportedScheme,
+                   [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", config.url.absoluteString], nil);
+        }
+    }];
+}
+
+- (void)prefetchScript:(NSString *)scriptId config:(NSDictionary *)configDictionary resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    ScriptConfig *config;
+    @try {
+        config = [ScriptConfig fromConfigDictionary:configDictionary withScriptId:scriptId];
+    } @catch (NSError *error) {
+        reject(ScriptConfigError, error.localizedDescription, nil);
+        return;
+    }
+    
+    if (!config.fetch) {
+        // Do nothing, script is already prefetched
+        resolve(nil);
+    } else {
+        [self runInBackground:^(){
+            if ([[config.url scheme] hasPrefix:@"http"]) {
+                [self downloadAndCache:config completionHandler:^(NSError *error) {
+                    if (error) {
+                        reject(ScriptDownloadFailure, error.localizedFailureReason, nil);
+                    } else {
+                        resolve(nil);
+                    }
+                }];
+            } else {
+                reject(UnsupportedScheme,
+                       [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", config.url.absoluteString], nil);
+            }
+        }];
+    }
+}
+
 @end
