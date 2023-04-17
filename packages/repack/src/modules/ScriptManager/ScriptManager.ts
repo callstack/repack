@@ -1,6 +1,6 @@
 /* globals __DEV__, __webpack_require__ */
 import EventEmitter from 'events';
-import NativeScriptManager from '../../../js'
+import NativeScriptManager from '../../../js';
 import { getWebpackContext } from './getWebpackContext';
 import { Script } from './Script';
 import type {
@@ -100,9 +100,7 @@ export class ScriptManager extends EventEmitter {
    *
    * @internal
    */
-  protected constructor(
-    private nativeScriptManager = NativeScriptManager
-  ) {
+  protected constructor( private nativeScriptManager = NativeScriptManager) {
     super();
 
     if (!nativeScriptManager) {
