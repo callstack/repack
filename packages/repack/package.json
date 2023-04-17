@@ -112,5 +112,13 @@
     "typescript": "^4.1.5",
     "webpack": "^5.75.0",
     "webpack-virtual-modules": "^0.4.4"
+  },
+  "codegenConfig": {
+    "name": "repack",
+    "type": "modules",
+    "jsSrcsDir": "./js",
+    "android": {
+      "javaPackageName": "com.callstack.repack"
+    }
   }
 }
