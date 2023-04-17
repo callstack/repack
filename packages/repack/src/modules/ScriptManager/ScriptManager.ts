@@ -100,7 +100,7 @@ export class ScriptManager extends EventEmitter {
    *
    * @internal
    */
-  protected constructor( private nativeScriptManager = NativeScriptManager) {
+  protected constructor(private nativeScriptManager = NativeScriptManager) {
     super();
 
     if (!nativeScriptManager) {
