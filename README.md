@@ -66,6 +66,28 @@ Available at: [Projects](https://github.com/callstack/repack/projects?type=class
 - [ ] Code signing and verification
 - [ ] `webpack-init` command
 
+### New Architecture Support (Turbo Module)
+----
+This library supports new architecture!. [turbo module](https://reactnative.dev/docs/next/the-new-architecture/pillars-turbomodules) offers a new architecture for initializing native modules.
+
+If you are using this library in your own project or [running the example](https://github.com/callstack/repack/blob/main/CONTRIBUTING.md#running-the-example), there are some extra steps needed.
+
+### iOS
+Install pods with this flag inside `ios` folder: 
+```sh
+RCT_NEW_ARCH_ENABLED=1 bundle exec pod install
+``` 
+and then run:
+
+```sh
+yarn ios
+``` 
+
+### Android
+Set `newArchEnabled` to `true` inside `android/gradle.properties` and then run: 
+```sh
+yarn android
+```
 
 ### Examples
 
