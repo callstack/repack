@@ -1,9 +1,10 @@
 /* globals globalThis */
-import * as ReactNative from 'react-native';
 import { Script } from '../Script';
 import { ScriptManager } from '../ScriptManager';
 
-jest.mock('react-native', () => ({ NativeModules: { ScriptManager: {} } }));
+jest.mock('../../../../js', () => ({
+  TurboModuleRegistry: { get: (module: {}) => module },
+}));
 
 // @ts-ignore
 globalThis.__webpack_require__ = {
@@ -29,8 +30,6 @@ class FakeCache {
 }
 
 beforeEach(() => {
-  ReactNative.NativeModules.ScriptManager = {};
-
   try {
     ScriptManager.shared.__destroy();
   } catch {
@@ -39,10 +38,8 @@ beforeEach(() => {
 });
 
 describe('ScriptManagerAPI', () => {
-  it('throw error if ScriptManager NativeModule was not found', async () => {
-    ReactNative.NativeModules.ScriptManager = undefined;
-
-    await expect(() => ScriptManager.shared).toThrow(/module was not found/);
+  it('should find ScriptManager TurboModules', async () => {
+    await expect(() => ScriptManager.shared).toBeTruthy();
   });
 
   it('throw error if there are no resolvers', async () => {
