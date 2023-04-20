@@ -89,8 +89,6 @@ export interface ScriptLocator {
    */
   cache?: boolean;
 
-  token?: string;
-
   verifyScriptSignature?: boolean;
   /**
    * Function called before loading or getting from the cache and after resolving the script locator.
@@ -173,8 +171,6 @@ export interface NormalizedScriptLocator {
 
   /** Request body. */
   body?: string;
-
-  token?: string;
 
   verifyScriptSignature?: boolean;
 }

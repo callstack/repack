@@ -114,7 +114,6 @@ export class Script {
         body,
         headers: Object.keys(headers).length ? headers : undefined,
         fetch: locator.cache === false ? true : fetch,
-        token: locator.token,
         verifyScriptSignature: locator.verifyScriptSignature ?? false,
       },
       locator.cache
