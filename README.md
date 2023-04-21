@@ -66,7 +66,7 @@ Available at: [Projects](https://github.com/callstack/repack/projects?type=class
 - [ ] Code signing and verification
 - [ ] `webpack-init` command
 
-### New Architecture Support (Turbo Module)
+### New Architecture Support
 ----
 This library supports new architecture!. [turbo module](https://reactnative.dev/docs/next/the-new-architecture/pillars-turbomodules) offers a new architecture for initializing native modules.
 
