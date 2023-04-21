@@ -12,7 +12,6 @@
 @synthesize body = _body;
 @synthesize headers = _headers;
 @synthesize timeout = _timeout;
-@synthesize token = _token;
 @synthesize verifyScriptSignature = _verifyScriptSignature;
 
 + (ScriptConfig *)fromConfigDictionary:(NSDictionary *)config
@@ -22,7 +21,6 @@
     NSString *query = config[@"query"];
     NSString *method = config[@"method"];
     NSNumber *timeout = config[@"timeout"];
-    NSString *token = config[@"token"];
     BOOL verifyScriptSignature = [config[@"verifyScriptSignature"] boolValue];
     
     if (!urlString) {
@@ -35,10 +33,6 @@
     
     if (!timeout) {
         @throw [NSError errorWithDomain:@"Missing timeout" code:3 userInfo:nil];
-    }
-    
-    if (verifyScriptSignature && !token) {
-        @throw [NSError errorWithDomain:@"Missing token" code:4 userInfo:nil];
     }
     
     NSURLComponents *urlComponents = [NSURLComponents componentsWithString:urlString];
@@ -57,7 +51,6 @@
                                       withHeaders:config[@"headers"]
                                          withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
                                       withTimeout:config[@"timeout"]
-                                        withToken:config[@"token"]
                         withVerifyScriptSignature:verifyScriptSignature];
 }
 
@@ -78,7 +71,6 @@
                    withHeaders:(nullable NSDictionary *)headers
                       withBody:(nullable NSData *)body
                    withTimeout:(nonnull NSNumber *)timeout
-                     withToken:(nullable NSString *)token
      withVerifyScriptSignature:(BOOL)verifyScriptSignature;
 {
     _scriptId = scriptId;
@@ -90,7 +82,6 @@
     _body = body;
     _headers = headers;
     _timeout = timeout;
-    _token = token;
     _verifyScriptSignature = verifyScriptSignature;
     return self;
 }

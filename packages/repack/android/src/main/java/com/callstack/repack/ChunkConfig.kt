@@ -17,7 +17,6 @@ data class ScriptConfig(
     val body: RequestBody?,
     val timeout: Int,
     val headers: Headers,
-    val token: String?,
     val verifyScriptSignature: Boolean
 ) {
     companion object {
@@ -32,7 +31,6 @@ data class ScriptConfig(
             val bodyString = value.getString("body")
             val headersMap = value.getMap("headers")
             val timeout = value.getInt("timeout")
-            val token = value.getString("token")
             val verifyScriptSignature = value.getBoolean("verifyScriptSignature")
 
             val url = URL(
@@ -66,7 +64,6 @@ data class ScriptConfig(
                 body,
                 timeout,
                 headers.build(),
-                token,
                 verifyScriptSignature
             )
         }
