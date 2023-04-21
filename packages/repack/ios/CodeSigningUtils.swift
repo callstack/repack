@@ -100,6 +100,34 @@ public class CodeSigningUtils: NSObject {
             throw CodeSigningError.bundleVerificationFailed
         }
     }
+    
+    @objc
+    public static func extractBundleAndToken(fileContent: NSData?) -> [String: Any] {
+        let signatureSize = 1280
+        let startingSequence = "/* RCSSB */"
+        
+        guard let data = fileContent else {
+            return ["bundle": NSNull(), "token": NSNull()]
+        }
+        
+        let fullData = Data(referencing: data)
+        
+        // Extract the last 1280 bytes from the ByteArray
+        let lastBytes = fullData.suffix(signatureSize)
+        
+        if let signatureString = String(data: lastBytes, encoding: .utf8), signatureString.hasPrefix(startingSequence) {
+            // Bundle is signed
+            let bundle = fullData.prefix(fullData.count - signatureSize)
+            let token = signatureString
+                .replacingOccurrences(of: startingSequence, with: "")
+                .replacingOccurrences(of: "\u{0000}", with: "")
+                .trimmingCharacters(in: .whitespaces)
+            return ["bundle": NSData(data: bundle), "token": token]
+        } else {
+            // The bundle is not signed, so consider all bytes as bundle
+            return ["bundle": data, "token": NSNull()]
+        }
+    }
 }
 
 
