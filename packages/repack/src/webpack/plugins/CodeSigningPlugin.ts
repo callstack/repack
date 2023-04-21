@@ -99,11 +99,7 @@ export class CodeSigningPlugin implements WebpackPlugin {
 
             await fs.ensureDir(this.config.outputPath);
             await fs.writeFile(
-              path.join(
-                compiler.context,
-                this.config.outputPath,
-                `${chunk}.signed`
-              ),
+              path.join(compiler.context, this.config.outputPath, chunk),
               signedBundle
             );
           })
