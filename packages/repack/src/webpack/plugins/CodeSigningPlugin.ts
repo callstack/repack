@@ -36,7 +36,10 @@ export class CodeSigningPlugin implements WebpackPlugin {
     const pluginName = CodeSigningPlugin.name;
     // reserve 1280 bytes for the token even if it's smaller
     // to leave some space for future additions to the JWT without breaking compatibility
-    const tokenBufferSize = 1280;
+    const TOKEN_BUFFER_SIZE = 1280;
+    // used to denote beginning of the code-signing section of the bundle
+    // alias for "Repack Code-Signing Signature Begin"
+    const BEGIN_CS_MARK = '/* RCSSB */';
     const privateKeyPath = path.join(
       compiler.context,
       this.config.privateKeyPath
@@ -88,13 +91,9 @@ export class CodeSigningPlugin implements WebpackPlugin {
             });
 
             // combine the bundle and the token
-            const tokenBuffer = Buffer.from(token);
-            const signedBundle = Buffer.alloc(bundle.length + tokenBufferSize);
-
-            bundle.copy(signedBundle);
-            tokenBuffer.copy(
-              signedBundle,
-              bundle.length + tokenBufferSize - tokenBuffer.length
+            const signedBundle = Buffer.concat(
+              [bundle, Buffer.from(BEGIN_CS_MARK), Buffer.from(token)],
+              bundle.length + TOKEN_BUFFER_SIZE
             );
 
             await fs.ensureDir(this.config.outputPath);
