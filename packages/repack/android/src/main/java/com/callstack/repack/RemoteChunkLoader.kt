@@ -3,6 +3,7 @@ package com.callstack.repack
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactContext
 import okhttp3.*
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.OutputStreamWriter
@@ -44,17 +45,21 @@ class RemoteScriptLoader(private val reactContext: ReactContext) {
                             File(reactContext.filesDir, scriptsDirName).mkdir()
                         }
 
-                        val body = response.body?.string()
+                        val rawBundle = response.body?.bytes()
 
-                        if (config.verifyScriptSignature == true) {
-                            CodeSigningUtils.verifyBundle(reactContext, config.token, body)
+                        val (bundle, token) = rawBundle?.let {
+                            CodeSigningUtils.extractBundleAndToken(rawBundle)
+                        } ?: Pair(null, null)
+
+                        if (config.verifyScriptSignature) {
+                            CodeSigningUtils.verifyBundle(reactContext, token, bundle)
                         }
 
                         file.createNewFile()
 
                         val outputStream = file.outputStream()
-                        val writer = OutputStreamWriter(outputStream)
-                        writer.write(body)
+                        val writer = BufferedOutputStream(outputStream)
+                        writer.write(bundle)
                         writer.close()
                         onSuccess()
                     } catch (error: Exception) {

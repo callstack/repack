@@ -6,6 +6,7 @@ import com.nimbusds.jose.JWSVerifier
 import com.nimbusds.jose.crypto.RSASSAVerifier
 import com.nimbusds.jwt.SignedJWT
 import java.math.BigInteger
+import java.nio.charset.Charset
 import java.security.KeyFactory
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -16,7 +17,7 @@ import java.security.spec.X509EncodedKeySpec
 
 class CodeSigningUtils {
     companion object {
-        private fun getHash(string: String): ByteArray? {
+        private fun getHash(bytes: ByteArray): ByteArray? {
             var digest: MessageDigest? = null
             try {
                 digest = MessageDigest.getInstance("SHA-256")
@@ -24,14 +25,14 @@ class CodeSigningUtils {
                 e1.printStackTrace()
             }
             digest?.reset()
-            return digest?.digest(string.toByteArray())
+            return digest?.digest(bytes)
         }
 
         private fun bin2hex(data: ByteArray): String {
             return java.lang.String.format("%0" + data.size * 2 + "x", BigInteger(1, data))
         }
 
-        private fun computeHash(content: String?): String? {
+        private fun computeHash(content: ByteArray?): String? {
             if (content == null) {
                 return null
             }
@@ -82,7 +83,7 @@ class CodeSigningUtils {
             return null
         }
 
-        fun verifyBundle(context: Context, token: String?, fileContent: String?) {
+        fun verifyBundle(context: Context, token: String?, fileContent: ByteArray?) {
             if (token == null) {
                 throw Exception("The bundle verification failed because no token for the bundle was found.")
             }
@@ -102,6 +103,28 @@ class CodeSigningUtils {
 
             if (contentHash != fileHash) {
                 throw Exception("The bundle verification failed because the bundle hash is invalid.")
+            }
+        }
+
+        fun extractBundleAndToken(fileContent: ByteArray): Pair<ByteArray, String?> {
+            val signatureSize = 1280
+            val startingSequence = "/* RCSSB */"
+
+            // Extract the last 1280 bytes from the ByteArray
+            val lastBytes = fileContent.takeLast(signatureSize).toByteArray()
+
+            val signatureString = lastBytes.toString(Charset.forName("UTF-8"))
+
+            return if (signatureString.startsWith(startingSequence)) {
+                // Bundle is signed
+                val bundle = fileContent.copyOfRange(0, fileContent.size - signatureSize)
+                val signature = signatureString.removePrefix(startingSequence)
+                        .replace("\u0000", "")
+                        .trim()
+                Pair(bundle, signature)
+            } else {
+                // The bundle is not signed, so consider all bytes as bundle
+                Pair(fileContent, null)
             }
         }
     }
