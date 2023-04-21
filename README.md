@@ -71,6 +71,8 @@ Available at: [Projects](https://github.com/callstack/repack/projects?type=class
 
 Explore examples of React Native applications using Re.Pack here: https://github.com/callstack/repack-examples.
 
+For a more comprehensive example of a Super App setup with Module Federation please visit our [Super App Showcase repository](https://github.com/callstack/super-app-showcase). 
+
 ## Documentation
 
 The documentation is available at: https://re-pack.netlify.app/
