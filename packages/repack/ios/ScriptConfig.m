@@ -21,7 +21,6 @@
     NSString *query = config[@"query"];
     NSString *method = config[@"method"];
     NSNumber *timeout = config[@"timeout"];
-    BOOL verifyScriptSignature = [config[@"verifyScriptSignature"] boolValue];
     
     if (!urlString) {
         @throw [NSError errorWithDomain:@"Missing url" code:1 userInfo:nil];
@@ -41,7 +40,6 @@
     BOOL fetch = [config[@"fetch"] boolValue];
     BOOL absolute = [config[@"absolute"] boolValue];
     
-    
     return [[ScriptConfig alloc] initWithScript:scriptId
                                           withURL:urlComponents.URL
                                        withMethod:method
@@ -51,7 +49,7 @@
                                       withHeaders:config[@"headers"]
                                          withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
                                       withTimeout:config[@"timeout"]
-                        withVerifyScriptSignature:verifyScriptSignature];
+                        withVerifyScriptSignature:config[@"verifyScriptSignature"]];
 }
 
 - (id)init
@@ -71,7 +69,7 @@
                    withHeaders:(nullable NSDictionary *)headers
                       withBody:(nullable NSData *)body
                    withTimeout:(nonnull NSNumber *)timeout
-     withVerifyScriptSignature:(BOOL)verifyScriptSignature;
+     withVerifyScriptSignature:(NSString *)verifyScriptSignature;
 {
     _scriptId = scriptId;
     _url = url;

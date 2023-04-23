@@ -196,7 +196,7 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
                 NSData *bundle = result[@"bundle"];
                 NSString *token = result[@"token"];
                 
-                if (config.verifyScriptSignature) {
+                if ([verifyScriptSignature isEqualToString:@"strict"] || ([verifyScriptSignature isEqualToString:@"lax"] && token != [NSNull null])) {
                     NSError *codeSigningError = nil;
                     [CodeSigningUtils verifyBundleWithToken:token fileContent:bundle error:&codeSigningError];
                     if (codeSigningError != nil) {
