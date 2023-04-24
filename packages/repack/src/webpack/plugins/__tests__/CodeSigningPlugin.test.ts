@@ -1,4 +1,6 @@
-import crypto from 'crypto';
+/* eslint-disable promise/prefer-await-to-then */
+/* eslint-disable no-control-regex */
+
 import path from 'path';
 import fs from 'fs-extra';
 import jwt from 'jsonwebtoken';
@@ -31,7 +33,7 @@ const compilerMock = {
 
 const injectHookMocks = (
   chunks: Record<string, { id: string }>,
-  resolve: () => void,
+  control: { resolve: () => void; reject: () => void },
   mainOutputBundleFilename: string = 'index.bundle'
 ) => {
   compilerMock.hooks.thisCompilation.tap.mockImplementationOnce(
@@ -59,7 +61,9 @@ const injectHookMocks = (
         outputOptions: {
           path: path.join(__dirname, '__fixtures__'),
         },
-      }).then(resolve);
+      })
+        .then(control.resolve)
+        .catch(control.reject);
     }
   );
 };
@@ -83,8 +87,8 @@ describe('CodeSigningPlugin', () => {
       privateKeyPath: '__fixtures__/testRS256.pem',
     });
 
-    await new Promise<void>((resolve) => {
-      injectHookMocks(chunks, resolve);
+    await new Promise<void>((resolve, reject) => {
+      injectHookMocks(chunks, { resolve, reject });
       pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
     });
 
@@ -121,8 +125,8 @@ describe('CodeSigningPlugin', () => {
       privateKeyPath: '__fixtures__/testRS256.pem',
     });
 
-    await new Promise<void>((resolve) => {
-      injectHookMocks(chunks, resolve);
+    await new Promise<void>((resolve, reject) => {
+      injectHookMocks(chunks, { resolve, reject });
       pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
     });
 
@@ -171,8 +175,8 @@ describe('CodeSigningPlugin', () => {
       privateKeyPath: '__fixtures__/testRS256.pem',
     });
 
-    await new Promise<void>((resolve) => {
-      injectHookMocks(chunks, resolve, mainOutputBundleFilename);
+    await new Promise<void>((resolve, reject) => {
+      injectHookMocks(chunks, { resolve, reject }, mainOutputBundleFilename);
       pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
     });
 
@@ -206,8 +210,8 @@ describe('CodeSigningPlugin', () => {
       excludeChunks: ['local_chunk'],
     });
 
-    await new Promise<void>((resolve) => {
-      injectHookMocks(chunks, resolve, 'main.bundle');
+    await new Promise<void>((resolve, reject) => {
+      injectHookMocks(chunks, { resolve, reject }, 'main.bundle');
       pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
     });
 
