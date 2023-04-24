@@ -107,23 +107,26 @@ class CodeSigningUtils {
         }
 
         fun extractBundleAndToken(fileContent: ByteArray): Pair<ByteArray, String?> {
+            // in signed bundles, last 1280 bytes are reserved for the token
             val signatureSize = 1280
+            // used to denote beginning of the code-signing section of the bundle
+            // alias for "Repack Code-Signing Signature Begin"
             val startingSequence = "/* RCSSB */"
 
-            // Extract the last 1280 bytes from the ByteArray
+            // extract the last 1280 bytes from the ByteArray
             val lastBytes = fileContent.takeLast(signatureSize).toByteArray()
 
             val signatureString = lastBytes.toString(Charset.forName("UTF-8"))
 
             return if (signatureString.startsWith(startingSequence)) {
-                // Bundle is signed
+                // bundle is signed
                 val bundle = fileContent.copyOfRange(0, fileContent.size - signatureSize)
                 val signature = signatureString.removePrefix(startingSequence)
                         .replace("\u0000", "")
                         .trim()
                 Pair(bundle, signature)
             } else {
-                // The bundle is not signed, so consider all bytes as bundle
+                // bundle is not signed, so consider all bytes as bundle
                 Pair(fileContent, null)
             }
         }
