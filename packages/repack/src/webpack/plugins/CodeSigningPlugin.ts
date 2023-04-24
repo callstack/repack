@@ -51,11 +51,7 @@ export class CodeSigningPlugin implements WebpackPlugin {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       // we need to make sure that assets are fully processed in order
       // to create a code-signing mapping.
-      compilation.hooks.afterProcessAssets.tap(pluginName, (assets) => {
-        // "assets" is an object that contains all assets
-        // in the compilation, the keys of the object are pathnames of the assets
-        // and the values are file sources.
-
+      compilation.hooks.afterProcessAssets.tap(pluginName, () => {
         // adjust for chunk name to filename
         compilation.chunks.forEach((chunk) => {
           chunk.files.forEach((file) => {

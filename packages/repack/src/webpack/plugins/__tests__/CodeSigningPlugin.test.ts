@@ -8,15 +8,14 @@ import {
   CodeSigningPluginConfig,
 } from '../CodeSigningPlugin';
 
-jest.mock('webpack-sources', () => ({
-  RawSource: jest.fn(),
-}));
-
 jest.mock('fs-extra', () => ({
   ...jest.requireActual('fs-extra'),
-  ensureDirSync: jest.fn(),
-  writeFileSync: jest.fn(),
+  ensureDir: jest.fn(),
+  writeFile: jest.fn(),
 }));
+
+const BUNDLE_WITH_JWT_REGEX =
+  /^(.+)?\/\* RCSSB \*\/(?:[\w-]*\.){2}[\w-]*(\x00)*$/;
 
 const compilerMock = {
   context: __dirname,
@@ -24,39 +23,43 @@ const compilerMock = {
     thisCompilation: {
       tap: jest.fn(),
     },
+    afterEmit: {
+      tapPromise: jest.fn(),
+    },
   },
 };
 
-const emitAssetMock = jest.fn();
-
-const injectThisCompilationHookMock = (
-  assets: Record<string, { id: string; source: () => Buffer }>,
+const injectHookMocks = (
+  chunks: Record<string, { id: string }>,
+  resolve: () => void,
   mainOutputBundleFilename: string = 'index.bundle'
 ) => {
   compilerMock.hooks.thisCompilation.tap.mockImplementationOnce(
-    (_, compilationCB) => {
-      compilationCB(
+    (_, callback) => {
+      callback(
         {
-          chunks: Object.entries(assets).map(([file, { id }]) => ({
+          chunks: Object.entries(chunks).map(([file, { id }]) => ({
             id,
             files: new Set([file]),
           })),
           hooks: {
-            afterProcessAssets: {
-              tap: jest
-                .fn()
-                .mockImplementationOnce((_, afterProcessAssetsCB) => {
-                  afterProcessAssetsCB(assets);
-                }),
-            },
+            afterProcessAssets: { tap: (_, cb) => cb() },
           },
-          emitAsset: emitAssetMock,
           outputOptions: {
             filename: mainOutputBundleFilename,
           },
         },
         jest.fn()
       );
+    }
+  );
+  compilerMock.hooks.afterEmit.tapPromise.mockImplementationOnce(
+    (_, callback) => {
+      callback({
+        outputOptions: {
+          path: path.join(__dirname, '__fixtures__'),
+        },
+      }).then(resolve);
     }
   );
 };
@@ -66,62 +69,82 @@ describe('CodeSigningPlugin', () => {
     jest.resetAllMocks();
   });
 
-  it('adds code-signing-mapping file to the sources', () => {
-    const assets = {
+  it('adds code-signing signatures to chunk files', async () => {
+    const chunks = {
       'example.container.bundle': {
         id: 'example_container',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
       },
       'example.chunk.bundle': {
         id: 'example_chunk',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
       },
     };
     const pluginInstance = new CodeSigningPlugin({
-      outputFile: 'custom_code_signing_mapping.json',
+      outputPath: path.join('output', 'signed'),
       privateKeyPath: '__fixtures__/testRS256.pem',
     });
-    injectThisCompilationHookMock(assets);
 
-    pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
+    await new Promise<void>((resolve) => {
+      injectHookMocks(chunks, resolve);
+      pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
+    });
+
     expect(compilerMock.hooks.thisCompilation.tap).toHaveBeenCalledTimes(1);
-    expect(webpack.sources.RawSource).toHaveBeenCalledTimes(1);
-    expect(emitAssetMock).toHaveBeenCalledTimes(1);
-    expect(emitAssetMock).toHaveBeenCalledWith(
-      'custom_code_signing_mapping.json',
-      expect.anything()
-    );
+    expect(compilerMock.hooks.afterEmit.tapPromise).toHaveBeenCalledTimes(1);
+
+    expect(fs.ensureDir).toHaveBeenCalledTimes(2);
+    expect(fs.ensureDir).toHaveBeenCalledWith(path.join('output', 'signed'));
+
+    expect(fs.writeFile).toHaveBeenCalledTimes(2);
+
+    // processing is async so order is random
+    const bundle1 = (fs.writeFile as jest.Mock).mock.calls[0][1] as Buffer;
+    expect(bundle1.toString().match(BUNDLE_WITH_JWT_REGEX)).toBeTruthy();
+    expect(bundle1.byteLength).toBeGreaterThan(1280);
+
+    const bundle2 = (fs.writeFile as jest.Mock).mock.calls[1][1] as Buffer;
+    expect(bundle2.toString().match(BUNDLE_WITH_JWT_REGEX)).toBeTruthy();
+    expect(bundle2.byteLength).toBeGreaterThan(1280);
   });
 
-  it('produces code-signing-mapping file with valid JWTs', () => {
-    const assets = {
+  it('produces code-signing-mapping file with valid JWTs', async () => {
+    const chunks = {
       'example.container.bundle': {
         id: 'example_container',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
       },
       'index.bundle': {
         id: 'index',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
       },
     };
+
     const pluginInstance = new CodeSigningPlugin({
-      outputFile: 'code_signing_mapping.json',
+      outputPath: path.join('output', 'signed'),
       privateKeyPath: '__fixtures__/testRS256.pem',
     });
-    injectThisCompilationHookMock(assets);
 
-    pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
+    await new Promise<void>((resolve) => {
+      injectHookMocks(chunks, resolve);
+      pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
+    });
 
-    const mappingFile = JSON.parse(
-      (webpack.sources.RawSource as jest.Mock).mock.calls[0][0]
-    );
     const publicKey = fs.readFileSync(
       path.join(__dirname, '__fixtures__/testRS256.pem.pub')
     );
 
+    const bundles = (fs.writeFile as jest.Mock).mock.calls.reduce(
+      (acc, call) => {
+        const jwt = (call[1] as Buffer)
+          .toString()
+          .split('/* RCSSB */')[1]
+          .replace(/\0/g, '');
+        acc[path.basename(call[0])] = jwt;
+        return acc;
+      },
+      {}
+    );
+
     let payload: jwt.JwtPayload;
-    Object.entries<string>(mappingFile).forEach(([key, value]) => {
-      expect(key in assets).toBeTruthy();
+    Object.entries<string>(bundles).forEach(([key, value]) => {
+      expect(key in chunks).toBeTruthy();
       expect(() => {
         payload = jwt.verify(value, publicKey) as jwt.JwtPayload;
       }).not.toThrow();
@@ -129,101 +152,74 @@ describe('CodeSigningPlugin', () => {
     });
   });
 
-  it('excludes main output bundle from code-signing', () => {
-    const assets = {
+  it('excludes main output bundle from code-signing', async () => {
+    const chunks = {
       'example.container.bundle': {
         id: 'example_container',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
       },
       'example.chunk.bundle': {
         id: 'example_chunk',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
       },
       'main.bundle': {
         id: 'main',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
       },
     };
+
+    const mainOutputBundleFilename = 'main.bundle';
     const pluginInstance = new CodeSigningPlugin({
-      outputFile: 'custom_code_signing_mapping.json',
+      outputPath: path.join('output', 'signed'),
       privateKeyPath: '__fixtures__/testRS256.pem',
     });
-    const mainOutputBundleFilename = 'main.bundle';
-    injectThisCompilationHookMock(assets, mainOutputBundleFilename);
 
-    pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
+    await new Promise<void>((resolve) => {
+      injectHookMocks(chunks, resolve, mainOutputBundleFilename);
+      pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
+    });
 
-    const mappingFile = JSON.parse(
-      (webpack.sources.RawSource as jest.Mock).mock.calls[0][0]
-    );
-    expect(mainOutputBundleFilename in mappingFile).toBeFalsy();
-    expect(Object.keys(mappingFile)).toHaveLength(2);
+    expect(fs.writeFile).toHaveBeenCalledTimes(2);
+    (fs.writeFile as jest.Mock).mock.calls.forEach((call) => {
+      expect(call[0]).not.toEqual(
+        path.join(__dirname, 'output', 'signed', mainOutputBundleFilename)
+      );
+    });
   });
 
-  it('excludes additional chunks specified in config from code-signing', () => {
-    const assets = {
+  it('excludes additional chunks specified in config from code-signing', async () => {
+    const chunks = {
       'example.container.bundle': {
         id: 'example_container',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
       },
       'example.chunk.bundle': {
         id: 'example_chunk',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
       },
       'local.chunk.bundle': {
         id: 'local_chunk',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
       },
-      'index.bundle': {
-        id: 'index',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
+      'main.bundle': {
+        id: 'main',
       },
     };
+
     const pluginInstance = new CodeSigningPlugin({
-      outputFile: 'code_signing_mapping.json',
+      outputPath: path.join('output', 'signed'),
       privateKeyPath: '__fixtures__/testRS256.pem',
       excludeChunks: ['local_chunk'],
     });
-    injectThisCompilationHookMock(assets);
 
-    pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
-
-    const mappingFile = JSON.parse(
-      (webpack.sources.RawSource as jest.Mock).mock.calls[0][0]
-    );
-    expect(Object.keys(mappingFile)).toHaveLength(2);
-    expect('index.bundle' in mappingFile).toBeFalsy();
-    expect('local.chunk.bundle' in mappingFile).toBeFalsy();
-  });
-
-  it('outputs the mapping file in a custom directory', () => {
-    const assets = {
-      'example.container.bundle': {
-        id: 'example_container',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
-      },
-      'index.bundle': {
-        id: 'index',
-        source: jest.fn().mockReturnValue(crypto.randomBytes(32)),
-      },
-    };
-    const pluginInstance = new CodeSigningPlugin({
-      outputFile: 'code_signing_mapping.json',
-      outputPath: 'build/outputs/ios/remote',
-      privateKeyPath: '__fixtures__/testRS256.pem',
+    await new Promise<void>((resolve) => {
+      injectHookMocks(chunks, resolve, 'main.bundle');
+      pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
     });
-    injectThisCompilationHookMock(assets);
 
-    pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
-
-    expect(fs.ensureDirSync).toHaveBeenCalledWith('build/outputs/ios/remote');
-    expect(fs.writeFileSync).toHaveBeenCalledWith(
-      path.join(
-        __dirname,
-        'build/outputs/ios/remote/code_signing_mapping.json'
-      ),
-      expect.stringContaining('example.container.bundle')
-    );
+    expect(fs.writeFile).toHaveBeenCalledTimes(2);
+    (fs.writeFile as jest.Mock).mock.calls.forEach((call) => {
+      expect(call[0]).not.toEqual(
+        path.join(__dirname, 'output', 'signed', 'main.bundle')
+      );
+      expect(call[0]).not.toEqual(
+        path.join(__dirname, 'output', 'signed', 'local.chunk.bundle')
+      );
+    });
   });
 
   it('throws an error when privateKey is not found', () => {
