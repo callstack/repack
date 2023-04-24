@@ -45,6 +45,14 @@ export class AssetsCopyProcessor {
 
     // Chunk bundle e.g: `index.bundle`, `src_App_js.chunk.bundle`
     const [chunkFile] = [...chunk.files];
+
+    // Sometimes there are no files associated with the chunk and the OutputPlugin fails
+    // Skipping such chunks is a temporary workaround resulting in proper behaviour
+    // TODO: determine the real cause of this issue
+    if (!chunkFile) {
+      return;
+    }
+
     const relatedSourceMap =
       compilation.assetsInfo.get(chunkFile)?.related?.sourceMap;
     // Source map for the chunk e.g: `index.bundle.map`, `src_App_js.chunk.bundle.map`
