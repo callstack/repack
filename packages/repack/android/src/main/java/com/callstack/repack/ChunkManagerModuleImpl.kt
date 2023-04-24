@@ -3,10 +3,9 @@ package com.callstack.repack
 import android.os.Handler
 import com.facebook.react.bridge.*
 
-class ScriptManagerModuleImpl {
-    companion object {
-        const val NAME = "ScriptManager"
-    }
+object ScriptManagerModuleImpl {
+
+    const val NAME = "ScriptManager"
 
     private fun runInBackground(fn: () -> Unit) {
         val handler = Handler()
@@ -49,7 +48,7 @@ class ScriptManagerModuleImpl {
         val config = ScriptConfig.fromReadableMap(scriptId, configMap)
         if (!config.fetch) {
             // Do nothing, script is already prefetched
-            promise.resolve(null);
+            promise.resolve(null)
         } else {
             runInBackground {
                 when {

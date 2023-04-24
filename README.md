@@ -68,7 +68,7 @@ Available at: [Projects](https://github.com/callstack/repack/projects?type=class
 
 ### New Architecture Support
 ----
-This library supports new architecture!. [turbo module](https://reactnative.dev/docs/next/the-new-architecture/pillars-turbomodules) offers a new architecture for initializing native modules.
+This library supports new architecture! Using [turbo modules](https://reactnative.dev/docs/next/the-new-architecture/pillars-turbomodules) offers a new way of initializing native modules.
 
 If you are using this library in your own project or [running the example](https://github.com/callstack/repack/blob/main/CONTRIBUTING.md#running-the-example), there are some extra steps needed.
 
