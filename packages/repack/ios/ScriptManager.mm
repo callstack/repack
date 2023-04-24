@@ -193,10 +193,10 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
         } else {
             @try {
                 NSDictionary<NSString *, id> *result = [CodeSigningUtils extractBundleAndTokenWithFileContent:data];
-                NSData *bundle = result[@"bundle"];
-                NSString *token = result[@"token"];
+                NSData *bundle = (result[@"bundle"] != [NSNull null]) ? result[@"bundle"] : nil;
+                NSString *token = (result[@"token"] != [NSNull null]) ? result[@"token"] : nil;
                 
-                if ([verifyScriptSignature isEqualToString:@"strict"] || ([verifyScriptSignature isEqualToString:@"lax"] && token != [NSNull null])) {
+                if ([config.verifyScriptSignature isEqualToString:@"strict"] || ([config.verifyScriptSignature isEqualToString:@"lax"] && token != nil)) {
                     NSError *codeSigningError = nil;
                     [CodeSigningUtils verifyBundleWithToken:token fileContent:bundle error:&codeSigningError];
                     if (codeSigningError != nil) {
