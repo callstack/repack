@@ -115,6 +115,11 @@ public class CodeSigningUtils: NSObject {
         
         let fullData = Data(referencing: data)
         
+        // if bundle is smaller than 1280 bytes, treat it as unsigned
+        if fullData.count < signatureSize {
+            return ["bundle": data, "token": NSNull()]
+        }
+        
         // extract the last 1280 bytes from the ByteArray
         let lastBytes = fullData.suffix(signatureSize)
         

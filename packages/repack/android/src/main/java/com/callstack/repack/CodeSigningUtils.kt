@@ -113,6 +113,10 @@ class CodeSigningUtils {
             // alias for "Repack Code-Signing Signature Begin"
             val startingSequence = "/* RCSSB */"
 
+            // if bundle is smaller than 1280 bytes, treat it as unsigned
+            if (fileContent.size < signatureSize) {
+                return Pair(fileContent, null)
+            }
             // extract the last 1280 bytes from the ByteArray
             val lastBytes = fileContent.takeLast(signatureSize).toByteArray()
 
