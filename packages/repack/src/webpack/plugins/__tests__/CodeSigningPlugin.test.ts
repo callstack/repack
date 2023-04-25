@@ -110,7 +110,7 @@ describe('CodeSigningPlugin', () => {
     expect(bundle2.byteLength).toBeGreaterThan(1280);
   });
 
-  it('produces code-signing-mapping file with valid JWTs', async () => {
+  it('produces code-signed bundles with valid JWTs', async () => {
     const chunks = {
       'example.container.bundle': {
         id: 'example_container',
