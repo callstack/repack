@@ -192,16 +192,20 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
             callback(error);
         } else {
             @try {
-                if (config.verifyScriptSignature) {
+                NSDictionary<NSString *, id> *result = [CodeSigningUtils extractBundleAndTokenWithFileContent:data];
+                NSData *bundle = (result[@"bundle"] != [NSNull null]) ? result[@"bundle"] : nil;
+                NSString *token = (result[@"token"] != [NSNull null]) ? result[@"token"] : nil;
+                
+                if ([config.verifyScriptSignature isEqualToString:@"strict"] || ([config.verifyScriptSignature isEqualToString:@"lax"] && token != nil)) {
                     NSError *codeSigningError = nil;
-                    [CodeSigningUtils verifyBundleWithToken:config.token fileContent:data error:&codeSigningError];
+                    [CodeSigningUtils verifyBundleWithToken:token fileContent:bundle error:&codeSigningError];
                     if (codeSigningError != nil) {
                         callback(codeSigningError);
                         return;
                     }
                 }
                 [self createScriptsDirectory:scriptsDirectoryPath];
-                [data writeToFile:scriptFilePath options:NSDataWritingAtomic error:&error];
+                [bundle writeToFile:scriptFilePath options:NSDataWritingAtomic error:&error];
                 callback(nil);
             } @catch (NSError *error) {
                 callback(error);

@@ -12,7 +12,6 @@
 @synthesize body = _body;
 @synthesize headers = _headers;
 @synthesize timeout = _timeout;
-@synthesize token = _token;
 @synthesize verifyScriptSignature = _verifyScriptSignature;
 
 + (ScriptConfig *)fromConfigDictionary:(NSDictionary *)config
@@ -22,8 +21,6 @@
     NSString *query = config[@"query"];
     NSString *method = config[@"method"];
     NSNumber *timeout = config[@"timeout"];
-    NSString *token = config[@"token"];
-    BOOL verifyScriptSignature = [config[@"verifyScriptSignature"] boolValue];
     
     if (!urlString) {
         @throw [NSError errorWithDomain:@"Missing url" code:1 userInfo:nil];
@@ -37,16 +34,11 @@
         @throw [NSError errorWithDomain:@"Missing timeout" code:3 userInfo:nil];
     }
     
-    if (verifyScriptSignature && !token) {
-        @throw [NSError errorWithDomain:@"Missing token" code:4 userInfo:nil];
-    }
-    
     NSURLComponents *urlComponents = [NSURLComponents componentsWithString:urlString];
     urlComponents.query = query;
     
     BOOL fetch = [config[@"fetch"] boolValue];
     BOOL absolute = [config[@"absolute"] boolValue];
-    
     
     return [[ScriptConfig alloc] initWithScript:scriptId
                                           withURL:urlComponents.URL
@@ -57,8 +49,7 @@
                                       withHeaders:config[@"headers"]
                                          withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
                                       withTimeout:config[@"timeout"]
-                                        withToken:config[@"token"]
-                        withVerifyScriptSignature:verifyScriptSignature];
+                        withVerifyScriptSignature:config[@"verifyScriptSignature"]];
 }
 
 - (id)init
@@ -78,8 +69,7 @@
                    withHeaders:(nullable NSDictionary *)headers
                       withBody:(nullable NSData *)body
                    withTimeout:(nonnull NSNumber *)timeout
-                     withToken:(nullable NSString *)token
-     withVerifyScriptSignature:(BOOL)verifyScriptSignature;
+     withVerifyScriptSignature:(NSString *)verifyScriptSignature;
 {
     _scriptId = scriptId;
     _url = url;
@@ -90,7 +80,6 @@
     _body = body;
     _headers = headers;
     _timeout = timeout;
-    _token = token;
     _verifyScriptSignature = verifyScriptSignature;
     return self;
 }

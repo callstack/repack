@@ -89,7 +89,7 @@ describe('ScriptManagerAPI', () => {
       absolute: false,
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
-      verifyScriptSignature: false,
+      verifyScriptSignature: 'off',
     });
 
     const {
@@ -117,7 +117,7 @@ describe('ScriptManagerAPI', () => {
       absolute: false,
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
-      verifyScriptSignature: false,
+      verifyScriptSignature: 'off',
     });
   });
 
@@ -144,7 +144,7 @@ describe('ScriptManagerAPI', () => {
       absolute: false,
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
-      verifyScriptSignature: false,
+      verifyScriptSignature: 'off',
     });
   });
 
@@ -171,7 +171,7 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       query: 'accessCode=1234&accessUid=asdf',
       timeout: Script.DEFAULT_TIMEOUT,
-      verifyScriptSignature: false,
+      verifyScriptSignature: 'off',
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -211,7 +211,7 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       headers: { 'x-hello': 'world' },
       timeout: Script.DEFAULT_TIMEOUT,
-      verifyScriptSignature: false,
+      verifyScriptSignature: 'off',
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -235,7 +235,7 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       headers: { 'x-hello': 'world', 'x-changed': 'true' },
       timeout: Script.DEFAULT_TIMEOUT,
-      verifyScriptSignature: false,
+      verifyScriptSignature: 'off',
     });
   });
 
@@ -260,7 +260,7 @@ describe('ScriptManagerAPI', () => {
       method: 'POST',
       body: 'hello_world',
       timeout: Script.DEFAULT_TIMEOUT,
-      verifyScriptSignature: false,
+      verifyScriptSignature: 'off',
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -282,7 +282,7 @@ describe('ScriptManagerAPI', () => {
       method: 'POST',
       body: 'message',
       timeout: Script.DEFAULT_TIMEOUT,
-      verifyScriptSignature: false,
+      verifyScriptSignature: 'off',
     });
   });
 
@@ -310,7 +310,7 @@ describe('ScriptManagerAPI', () => {
       absolute: true,
       method: 'POST',
       timeout: Script.DEFAULT_TIMEOUT,
-      verifyScriptSignature: false,
+      verifyScriptSignature: 'off',
     });
   });
 
