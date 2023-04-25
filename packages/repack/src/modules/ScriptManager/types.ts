@@ -89,9 +89,15 @@ export interface ScriptLocator {
    */
   cache?: boolean;
 
-  token?: string;
-
-  verifyScriptSignature?: boolean;
+  /**
+   * Flag to enable script's code-signature verification. By default set to `none`
+   *
+   * `strict` means that the script's code-signature will be verfied regardless of the signature being present in the bundle
+   * `lax` means that the script's code-signature will be verfied only when the signature is present in the bundle
+   *  if the signature is not present in the bundle, the script will be loaded without verification
+   * `off` means that the script's code-signature will not be verfied
+   */
+  verifyScriptSignature?: 'strict' | 'lax' | 'off';
   /**
    * Function called before loading or getting from the cache and after resolving the script locator.
    * It's an async function which should return a boolean indicating whether the script should be loaded or use default behaviour.
@@ -174,7 +180,6 @@ export interface NormalizedScriptLocator {
   /** Request body. */
   body?: string;
 
-  token?: string;
-
-  verifyScriptSignature?: boolean;
+  /** Whether script's signature should be verified or not */
+  verifyScriptSignature?: 'strict' | 'lax' | 'off';
 }

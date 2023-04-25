@@ -9,10 +9,8 @@ import type { WebpackPlugin } from '../../types';
  * {@link CodeSigningPlugin} configuration options.
  */
 export interface CodeSigningPluginConfig {
-  /** Output file name. */
-  outputFile?: string;
-  /** Output path to a directory, where code-signing mapping file should be saved. */
-  outputPath?: string;
+  /** Output path to a directory, where signed bundles should be saved. */
+  outputPath: string;
   /** Path to the private key. */
   privateKeyPath: string;
   /** Names of chunks to exclude from being signed. */
@@ -26,8 +24,6 @@ export class CodeSigningPlugin implements WebpackPlugin {
    * @param config Plugin configuration options.
    */
   constructor(private config: CodeSigningPluginConfig) {
-    this.config.outputFile =
-      this.config.outputFile ?? 'code_signing_mapping.json';
     this.config.privateKeyPath = this.config.privateKeyPath ?? './private.pem';
   }
 
@@ -38,22 +34,24 @@ export class CodeSigningPlugin implements WebpackPlugin {
    */
   apply(compiler: webpack.Compiler) {
     const pluginName = CodeSigningPlugin.name;
+    // reserve 1280 bytes for the token even if it's smaller
+    // to leave some space for future additions to the JWT without breaking compatibility
+    const TOKEN_BUFFER_SIZE = 1280;
+    // used to denote beginning of the code-signing section of the bundle
+    // alias for "Repack Code-Signing Signature Begin"
+    const BEGIN_CS_MARK = '/* RCSSB */';
     const privateKeyPath = path.join(
       compiler.context,
       this.config.privateKeyPath
     );
     const privateKey = fs.readFileSync(privateKeyPath);
-
+    const chunkFiles = new Set<string>();
     // Tapping to the "thisCompilation" hook in order to further tap
     // to the compilation process on an later stage.
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       // we need to make sure that assets are fully processed in order
       // to create a code-signing mapping.
-      compilation.hooks.afterProcessAssets.tap(pluginName, (assets) => {
-        // "assets" is an object that contains all assets
-        // in the compilation, the keys of the object are pathnames of the assets
-        // and the values are file sources.
-        const chunkFiles = new Set<string>();
+      compilation.hooks.afterProcessAssets.tap(pluginName, () => {
         // adjust for chunk name to filename
         compilation.chunks.forEach((chunk) => {
           chunk.files.forEach((file) => {
@@ -68,12 +66,14 @@ export class CodeSigningPlugin implements WebpackPlugin {
             chunkFiles.add(file);
           });
         });
+      });
 
-        const content = Object.entries(assets)
-          .filter(([fileName]) => chunkFiles.has(fileName))
-          .reduce((acc, [fileName, file]) => {
-            // get bundle
-            const bundle = file.source();
+      compiler.hooks.afterEmit.tapPromise(pluginName, async (compilation) => {
+        await Promise.all(
+          Array.from(chunkFiles).map(async (chunk) => {
+            const bundle = await fs.readFile(
+              path.join(compilation.outputOptions.path!, chunk)
+            );
 
             // generate bundle hash
             const hash = crypto
@@ -86,29 +86,19 @@ export class CodeSigningPlugin implements WebpackPlugin {
               algorithm: 'RS256',
             });
 
-            acc[fileName] = token;
+            // combine the bundle and the token
+            const signedBundle = Buffer.concat(
+              [bundle, Buffer.from(BEGIN_CS_MARK), Buffer.from(token)],
+              bundle.length + TOKEN_BUFFER_SIZE
+            );
 
-            return acc;
-          }, {} as Record<string, string>);
-
-        const json = JSON.stringify(content);
-
-        if (this.config.outputPath) {
-          fs.ensureDirSync(this.config.outputPath);
-          fs.writeFileSync(
-            path.join(
-              compiler.context,
-              this.config.outputPath,
-              this.config.outputFile!
-            ),
-            json
-          );
-        } else {
-          compilation.emitAsset(
-            this.config.outputFile!,
-            new webpack.sources.RawSource(json)
-          );
-        }
+            await fs.ensureDir(this.config.outputPath);
+            await fs.writeFile(
+              path.join(compiler.context, this.config.outputPath, chunk),
+              signedBundle
+            );
+          })
+        );
       });
     });
   }
