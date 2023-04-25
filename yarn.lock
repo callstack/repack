@@ -8913,7 +8913,7 @@ __metadata:
   version: 0.67.20
   resolution: "@types/react-native@npm:0.67.20"
   dependencies:
-    "@types/react": ^17
+    "@types/react": "*"
   checksum: cd97888c0a64829db6fc7f5e1a15bd65ffd8ec401d4ed639021a178ca93043dc914d4d6a11242b8bcd7fedd532f59d301bc353f0aa15f7db394d7c3dad272b68
   languageName: node
   linkType: hard
@@ -8969,17 +8969,6 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: ca2eca8f33ddbcba46932efeb8affdd274ea5800ea38bf8bc8de205808d09de21ea1f3d6ab156573aca393b912f0d908826cc6ad92470a3f2b6c34e70d5f75db
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^17":
-  version: 17.0.58
-  resolution: "@types/react@npm:17.0.58"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: 4eaf32b86c43f388c681e34a00921c508dd88a1d1022aebfadc5fe802b7c5bed863de1a17eed31e43ca2d65222952dfe79a022055a0e6e4e1ad89fc5a42ec05e
   languageName: node
   linkType: hard
 
