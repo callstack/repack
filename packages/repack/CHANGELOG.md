@@ -1,5 +1,29 @@
 # @callstack/repack
 
+## 3.2.0
+
+### Minor Changes
+
+#### Code Signing:
+* [#318](https://github.com/callstack/repack/pull/318) [`6e12c14`](https://github.com/callstack/repack/commit/6e12c14e02002721ad4fe3ddf41743dcdb597f60) Thanks [@jbroma](https://github.com/jbroma)! - Added CodeSigning abilities to RePack:
+* [#348](https://github.com/callstack/repack/pull/348) [`76e98e9`](https://github.com/callstack/repack/commit/76e98e983842e5b1288c754d61ee2f3449762f2c) Thanks [@jbroma](https://github.com/jbroma)! - Embed code-signing signatures into the bundles:
+
+  - Introduced `CodeSigningPlugin` for generating code-signed bundles
+  - Implemented `CodeSigningUtils` extension for native part of the `ScriptManager` to verify signed bundles on Android and iOS
+
+#### Remote Assets
+- [#331](https://github.com/callstack/repack/pull/331) [`515fb05`](https://github.com/callstack/repack/commit/515fb05f307e10c9bf65fd54dce3e7ebb8d1ae45) Thanks [@jbroma](https://github.com/jbroma)! - Added remote-assets functionality to the assetsLoader
+
+- [#328](https://github.com/callstack/repack/pull/328) [`4f155dd`](https://github.com/callstack/repack/commit/4f155ddf8f5064f60175ed2ee8f0ad64ff9f252b) Thanks [@jbroma](https://github.com/jbroma)! - Auto device scale resolution for inlined assets
+
+### Patch Changes
+
+- [#330](https://github.com/callstack/repack/pull/330) [`f142e06`](https://github.com/callstack/repack/commit/f142e068f473084f473089d71cba40ccbdd41b46) Thanks [@jbroma](https://github.com/jbroma)! - Code-Signing - move execution of the plugin to the later stage of compilation
+
+* [#347](https://github.com/callstack/repack/pull/347) [`2180c09`](https://github.com/callstack/repack/commit/2180c09dd6acf738e5db5c2fdbbcfcf08f82993a) Thanks [@jbroma](https://github.com/jbroma)! - Fix OutputPlugin issue where chunks have no associated files with them
+
+- [#327](https://github.com/callstack/repack/pull/327) [`23dfc55`](https://github.com/callstack/repack/commit/23dfc55dbcefff62493c51eed6f40b88b93a433d) Thanks [@jbroma](https://github.com/jbroma)! - Fix verifyScriptSignature missing a default value
+
 ## 3.2.0-rc.1
 
 ### Minor Changes
