@@ -1,5 +1,11 @@
 # @callstack/repack-init
 
+## 1.0.2
+
+### Patch Changes
+
+- Build the package properly before publishing to npm 🤦
+
 ## 1.0.1
 
 ### Patch Changes
