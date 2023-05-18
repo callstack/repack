@@ -1,3 +1,4 @@
+import type { PM } from 'detect-package-manager';
 import { execa } from 'execa';
 import ora from 'ora';
 
@@ -13,7 +14,7 @@ const dependencies = [
  *
  * @param packageManager yarn or npm
  */
-export default async function addDependencies(packageManager: 'yarn' | 'npm') {
+export default async function addDependencies(packageManager: PM) {
   let installCommand: string;
 
   if (packageManager === 'yarn') {
@@ -21,6 +22,7 @@ export default async function addDependencies(packageManager: 'yarn' | 'npm') {
   } else {
     installCommand = 'install';
   }
+
   const deps = dependencies.join(' ');
   const command = `${packageManager} ${installCommand} -D ${deps}`;
 

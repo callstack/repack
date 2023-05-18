@@ -4881,12 +4881,12 @@ __metadata:
     "@callstack/eslint-config": ^13.0.2
     chalk: ^5.2.0
     dedent: ^0.7.0
+    detect-package-manager: ^2.0.1
     eslint: ^8.40.0
     eslint-import-resolver-typescript: ^3.5.5
     eslint-plugin-flowtype: ^8.0.3
     eslint-plugin-import: ^2.27.5
     execa: ^7.1.1
-    find-up: ^6.3.0
     node-fetch: ^3.3.1
     ora: ^6.3.1
     semver: ^7.5.1
@@ -14403,6 +14403,15 @@ __metadata:
   version: 2.1.0
   resolution: "detect-node@npm:2.1.0"
   checksum: 832184ec458353e41533ac9c622f16c19f7c02d8b10c303dfd3a756f56be93e903616c0bb2d4226183c9351c15fc0b3dba41a17a2308262afabcfa3776e6ae6e
+  languageName: node
+  linkType: hard
+
+"detect-package-manager@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "detect-package-manager@npm:2.0.1"
+  dependencies:
+    execa: ^5.1.1
+  checksum: e72b910182d5ad479198d4235be206ac64a479257b32201bb06f3c842cc34c65ea851d46f72cc1d4bf535bcc6c4b44b5b86bb29fe1192b8c9c07b46883672f28
   languageName: node
   linkType: hard
 

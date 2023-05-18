@@ -22,7 +22,7 @@ export default async function run({ entry, templateType, verbose }: Options) {
   }
 
   try {
-    const packageManager = checkPackageManager(cwd);
+    const packageManager = await checkPackageManager(cwd);
     const reactNativeVersion = checkReactNative(cwd);
 
     await addDependencies(packageManager);

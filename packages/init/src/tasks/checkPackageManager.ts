@@ -1,24 +1,16 @@
-import { findUpSync } from 'find-up';
+import { detect, PM } from 'detect-package-manager';
 
 import logger from '../utils/logger.js';
-
-function isProjectUsingYarn(cwd: string) {
-  return findUpSync('yarn.lock', { cwd });
-}
 
 /**
  * Determines which package manager to use
  *
  * @param cwd current working directory
- * @returns package manager name
+ * @returns package manager name (one of 'npm', 'yarn', 'pnpm')
  */
-export default function checkPackageManager(cwd: string) {
-  const yarnLockPath = isProjectUsingYarn(cwd);
+export default async function checkPackageManager(cwd: string): Promise<PM> {
+  const packageManager = await detect({ cwd });
+  logger.info(`Using ${packageManager} as package manager`);
 
-  if (yarnLockPath) {
-    logger.info('Using yarn as package manager');
-    return 'yarn';
-  }
-  logger.info('Using npm as package manager');
-  return 'npm';
+  return packageManager;
 }
