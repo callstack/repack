@@ -9,6 +9,7 @@
       "./packages/TesterApp",
       "./packages/debugger-app",
       "./packages/dashboard",
+      "./packages/init",
       "./website"
     ]
   },
