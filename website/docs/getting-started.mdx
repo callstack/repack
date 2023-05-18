@@ -16,8 +16,8 @@ If you're already familiar with JavaScript, React Native and Webpack, then you'l
 
 ## Minimum requirements
 
-- `react-native` >= 0.62.0
-- Node >= 14 (__recommended Node 16 or newer__)
+- `react-native` >= 0.69.0
+- Node >= 16 (**recommended Node 18 or newer**)
 
 If you're using older versions of React Native, you can still try using Re.Pack, but your mileage may vary as they are not officially supported.
 
@@ -29,11 +29,10 @@ Additionally, in order to use [Code Splitting](./code-splitting/concept) functio
 
 ## Compatibility with Webpack
 
-On paper, __Re.Pack should work with any version of Webpack 5__, but we recommend to consult with the compatibility table below.
+On paper, **Re.Pack should work with any version of Webpack 5**, but we recommend to consult with the compatibility table below.
 The table represents versions of `webpack` for which Re.Pack is confirmed to work correctly.
 
 If you don't see your version, give it a go. If it doesn't work, please open an issue.
-
 
 | `webpack`  | `@callstack/repack`                     |
 | ---------- | --------------------------------------- |
@@ -45,6 +44,24 @@ If you don't see your version, give it a go. If it doesn't work, please open an 
 If you get stuck or you want to explore beforehand, you can use the examples of React Native applications using Re.Pack here: https://github.com/callstack/repack-examples.
 
 ## Installation
+
+If your project retains the structure of React-Native template then you can simply run the following command in your project:
+
+```sh
+npx @callstack/repack-init
+```
+
+`@callstack/repack-init` command will install all required dependencies and configure your project to use Re.Pack. The only thing left for you to do is to install Pods associated with Re.Pack for the iOS part of your application.
+
+:::info
+
+By default, `@callstack/repack-init` will create `webpack.config.mjs` file in the root directory of your project.
+If you want to use `.cjs` format, you can pass `--cjs` flag to the command.
+You can read more about these formats [down below](#3-webpack-config).
+
+:::
+
+## Manual installation
 
 ### 1. Dependencies
 
@@ -72,7 +89,7 @@ Add the following content to `react-native.config.js` (or create it if it doesn'
 
 ```js
 module.exports = {
-  commands: require('@callstack/repack/commands')
+  commands: require('@callstack/repack/commands'),
 };
 ```
 
@@ -126,7 +143,6 @@ export BUNDLE_COMMAND=webpack-bundle
 </TabItem>
 </Tabs>
 
-
 ### 5. Configure Android
 
 When building release version of your application Gradle will still use Metro to bundle the application, so you need to adjust build settings to make Gradle use Re.Pack instead.
@@ -174,6 +190,7 @@ If you want to create bundle (development or production), **the recommended way 
 ```bash
 react-native webpack-bundle
 ```
+
 :::tip
 
 You can pass the same CLI options to `react-native webpack-bundle` as you would to `react-native bundle`.
