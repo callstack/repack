@@ -15,6 +15,26 @@ A Webpack-based toolkit to build your React Native application with full support
 
 `@callstack/repack-init` is a tool that automates the integration of the `@callstack/repack` into React-Native projects`.
 
+## Usage
+
+```sh
+npx @callstack/repack-init [options]
+```
+
+## Options
+
+- `-e, --entry` Path to main entry point for the React-Native project. Defaults to: `index.js`
+
+- `-f, --format` Format of the webpack.config file. Available choices: `"mjs"`, `"cjs"` Defaults to: `"mjs"`
+
+- `-v, --verbose` Enables verbose logging. Defaults to: `false`
+
+- `--version` Show version number.
+
+- `--help` Show help.
+
+---
+
 Check out our website at https://re-pack.netlify.app/ for more info and documentation or out GitHub: https://github.com/callstack/repack.
 
 <!-- badges -->
