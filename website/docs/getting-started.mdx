@@ -151,13 +151,30 @@ Open your application's Gradle project, usually located at `android/app/build.gr
 
 After the change, the content of `react` should look similar to:
 
+<Tabs>
+<TabItem value="current-rn" label="React Native version 0.71.0 or newer" default>
+
 ```groovy
 react {
     ...
-    bundleCommand = "webpack-bundle",
+    bundleCommand = "webpack-bundle"
     ...
 }
 ```
+
+</TabItem>
+<TabItem value="old-rn" label="React Native version below 0.71.0" default>
+
+```groovy
+project.ext.react = [
+    ...
+    bundleCommand: "webpack-bundle",
+    ...
+]
+```
+
+</TabItem>
+</Tabs>
 
 ## Usage
 
