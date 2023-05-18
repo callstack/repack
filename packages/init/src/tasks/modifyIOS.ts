@@ -1,7 +1,14 @@
 import fs from 'fs';
 import path from 'path';
+import xcode from 'xcode';
 
 import logger from '../utils/logger.js';
+
+interface ShellScriptBuildPhase {
+  isa: 'PBXShellScriptBuildPhase';
+  name: string;
+  shellScript: string;
+}
 
 function findProjectPbxProjPath(cwd: string) {
   const iosPath = path.join(cwd, 'ios');
@@ -12,71 +19,57 @@ function findProjectPbxProjPath(cwd: string) {
     throw new Error('No directory with "project.pbxproj" found');
   }
 
-  const pbxProjPath = path.join(iosPath, xcodeProjDir, 'project.pbxproj');
-  return pbxProjPath;
+  const pbxprojPath = path.join(iosPath, xcodeProjDir, 'project.pbxproj');
+  return pbxprojPath;
 }
 
-function modifyPbxProjConfig(config: string): string {
-  const fallbackMessage =
-    'To finish the setup for iOS, You need to edit the file manually.\n' +
-    'Follow instructions at: https://re-pack.netlify.app/docs/getting-started/#4-configure-xcode';
-
-  const pbxShellScriptBuildPhaseIndex = config.indexOf(
-    'PBXShellScriptBuildPhase'
+function getBundleReactNativePhase(
+  project: xcode.XcodeProject
+): ShellScriptBuildPhase {
+  const shellScriptBuildPhase = project.hash.project.objects
+    .PBXShellScriptBuildPhase as Record<string, ShellScriptBuildPhase>;
+  const bundleReactNative = Object.values(shellScriptBuildPhase).find(
+    (buildPhase) => buildPhase.name === '"Bundle React Native code and images"'
   );
 
-  if (pbxShellScriptBuildPhaseIndex === -1) {
+  if (!bundleReactNative) {
     throw new Error(
-      'Could not find PBXShellScriptBuildPhase section in project.pbxproj\n' +
-        fallbackMessage
+      `Couldn't find a build phase "Bundle React Native code and images"`
     );
   }
 
-  const bundleReactNativeSectionIndex = config.indexOf(
-    'name = "Bundle React Native code and images";'
-  );
+  return bundleReactNative;
+}
 
-  if (bundleReactNativeSectionIndex === -1) {
-    throw new Error(
-      'Could not find "Bundle React Native code and images" section in project.pbxproj\n' +
-        fallbackMessage
-    );
-  }
-
-  const shellScriptIndex = config.indexOf(
-    'shellScript =',
-    bundleReactNativeSectionIndex
-  );
-  const shellScriptContentBeginIndex = config.indexOf('"', shellScriptIndex);
-  const shellScriptContentEndIndex = config.indexOf('";\n', shellScriptIndex);
-
-  if (
-    shellScriptIndex === -1 ||
-    shellScriptContentBeginIndex === -1 ||
-    shellScriptContentEndIndex === -1
-  ) {
-    throw new Error(
-      'Could not find shellScript in PBXShellScriptBuildPhase section in project.pbxproj\n' +
-        fallbackMessage
-    );
-  }
-
-  const shellScriptContent = config.slice(
-    shellScriptContentBeginIndex + 1, // skip the double quote
-    shellScriptContentEndIndex
-  );
+function modifyBundleReactNativeShellScript(
+  phase: ShellScriptBuildPhase
+): ShellScriptBuildPhase {
+  const shellScriptContent = phase.shellScript;
   const shellScriptContentLines = shellScriptContent.split('\\n');
 
   const bundleCommand = 'export BUNDLE_COMMAND=webpack-bundle';
-  shellScriptContentLines.splice(1, 0, '', bundleCommand, '');
 
-  const updatedShellScriptContent = shellScriptContentLines.join('\\n');
-  const updatedConfig =
-    config.slice(0, shellScriptContentBeginIndex) +
-    `"${updatedShellScriptContent}"` +
-    config.slice(shellScriptContentEndIndex + 1); // skip the double quote
+  if (shellScriptContentLines.includes(bundleCommand)) {
+    logger.info(
+      `${phase.name} phase in project.pbxproj already contains ${bundleCommand}`
+    );
+    return phase;
+  }
 
-  return updatedConfig;
+  shellScriptContentLines.splice(1, 0, '', bundleCommand);
+
+  phase.shellScript = shellScriptContentLines.join('\\n');
+  return phase;
+}
+
+function modifyPbxprojConfig(pbxprojPath: string) {
+  let project = xcode.project(pbxprojPath);
+  project.parseSync();
+
+  const bundleReactNativePhase = getBundleReactNativePhase(project);
+  modifyBundleReactNativeShellScript(bundleReactNativePhase);
+
+  return project.writeSync();
 }
 
 /**
@@ -88,7 +81,6 @@ function modifyPbxProjConfig(config: string): string {
 export default function modifyIOS(cwd: string) {
   const projectPbxProjPath = findProjectPbxProjPath(cwd);
   const relativeProjectPbxProjPath = path.relative(cwd, projectPbxProjPath);
-  const config = fs.readFileSync(projectPbxProjPath, 'utf-8');
 
   if (!fs.existsSync(projectPbxProjPath)) {
     throw Error(
@@ -98,7 +90,7 @@ export default function modifyIOS(cwd: string) {
 
   logger.info(`Found ${relativeProjectPbxProjPath}`);
 
-  const updatedConfig = modifyPbxProjConfig(config);
+  const updatedConfig = modifyPbxprojConfig(projectPbxProjPath);
 
   fs.writeFileSync(projectPbxProjPath, updatedConfig);
   logger.success(
