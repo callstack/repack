@@ -21,14 +21,14 @@ async function fetchConfigTemplate(templateType: 'mjs' | 'cjs') {
   let spinner;
   try {
     spinner = ora(
-      ` Downloading webpack.config.${templateType} template`
+      `Downloading webpack.config.${templateType} template`
     ).start();
     const template = await fetch(url);
-    spinner.stop();
+    spinner.succeed();
     return template.text();
   } catch (error) {
-    spinner?.stop();
-    throw new Error(`Failed to fetch webpack.config template from ${url}`);
+    spinner?.fail(`Failed to fetch webpack.config template from ${url}`);
+    throw error;
   }
 }
 

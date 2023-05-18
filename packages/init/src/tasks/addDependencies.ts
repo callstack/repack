@@ -1,8 +1,6 @@
 import { execa } from 'execa';
 import ora from 'ora';
 
-import logger from '../utils/logger.js';
-
 const dependencies = [
   'webpack',
   'terser-webpack-plugin',
@@ -30,14 +28,12 @@ export default async function addDependencies(packageManager: 'yarn' | 'npm') {
 
   try {
     spinner = ora(
-      ` Installing Re.Pack dependencies using ${packageManager}`
+      `Installing Re.Pack dependencies using ${packageManager}`
     ).start();
     await execa(command, { stdio: 'pipe', shell: true });
-    spinner.stop();
-    logger.success('Dependencies installed');
+    spinner.succeed('Dependencies installed');
   } catch (error) {
-    spinner?.stop();
-    logger.error(`Failed to install Re.Pack dependencies`);
+    spinner?.fail(`Failed to install Re.Pack dependencies`);
     throw error;
   }
 }
