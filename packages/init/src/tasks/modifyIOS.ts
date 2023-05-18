@@ -32,9 +32,20 @@ function modifyPbxProjConfig(config: string): string {
     );
   }
 
+  const bundleReactNativeSectionIndex = config.indexOf(
+    'name = "Bundle React Native code and images";'
+  );
+
+  if (bundleReactNativeSectionIndex === -1) {
+    throw new Error(
+      'Could not find "Bundle React Native code and images" section in project.pbxproj\n' +
+        fallbackMessage
+    );
+  }
+
   const shellScriptIndex = config.indexOf(
     'shellScript =',
-    pbxShellScriptBuildPhaseIndex
+    bundleReactNativeSectionIndex
   );
   const shellScriptContentBeginIndex = config.indexOf('"', shellScriptIndex);
   const shellScriptContentEndIndex = config.indexOf('";\n', shellScriptIndex);
