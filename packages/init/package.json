@@ -16,7 +16,9 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "bin": "build/bin.js",
+  "bin": {
+    "repack-init": "build/bin.js"
+  },
   "main": "build/index.js",
   "files": [
     "build",
