@@ -16,8 +16,7 @@ type NormalizedScriptLocator = {
     query?: string;
     headers?: string;
     body?: string;
-    token?: string;
-    verifyScriptSignature?: boolean;
+    verifyScriptSignature?: string;
 }
 
 type ScriptLocator = {
@@ -29,8 +28,7 @@ type ScriptLocator = {
     timeout?: Int32;
     absolute?: boolean;
     cache?: boolean; 
-    token?: string;
-    verifyScriptSignature?: boolean;
+    verifyScriptSignature?: string;
     shouldUpdateScript?: (
         scriptId?: string,
         caller?:string,
