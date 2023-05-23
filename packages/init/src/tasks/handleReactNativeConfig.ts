@@ -6,8 +6,8 @@ import logger from '../utils/logger.js';
 
 const defaultConfig = dedent`
   module.exports = {
-    commands: require('repack/commands'),
-  }`;
+    commands: require('@callstack/repack/commands'),
+  };`;
 
 /**
  * Checks whether react-native.config.js exists and adds the commands to it
@@ -29,14 +29,14 @@ export default function handleReactNativeConfig(cwd: string): void {
   if (!configContent.includes('commands:')) {
     updatedConfigContent = configContent.replace(
       'module.exports = {',
-      "module.exports = {\n  commands: require('repack/commands'),"
+      "module.exports = {\n  commands: require('@callstack/repack/commands'),"
     );
   } else {
     const commandsIndex = configContent.indexOf('commands:');
     const commandsEndIndex = configContent.indexOf(',', commandsIndex);
     const commandsString = configContent.slice(commandsIndex, commandsEndIndex);
 
-    const newCommandsString = `commands: require('repack/commands')`;
+    const newCommandsString = `commands: require('@callstack/repack/commands')`;
     if (commandsString === newCommandsString) {
       logger.success('File react-native.config.js is already up to date');
       return;
