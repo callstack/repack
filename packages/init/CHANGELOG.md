@@ -1,5 +1,11 @@
 # @callstack/repack-init
 
+## 1.0.3
+
+### Patch Changes
+
+- [#363](https://github.com/callstack/repack/pull/363) [`470f10a`](https://github.com/callstack/repack/commit/470f10a7b54ddebd8bd6f4ae65f290c00905d086) Thanks [@jbroma](https://github.com/jbroma)! - Fix bad package name when creating/updating react-native.config.js
+
 ## 1.0.2
 
 ### Patch Changes
