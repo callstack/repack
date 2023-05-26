@@ -207,7 +207,7 @@ function bindKeypressInput(ctx: Server.DelegateContext) {
 
   readline.emitKeypressEvents(process.stdin);
   process.stdin.setRawMode(true);
-
+  process.stdin.resume();
   process.stdin.on('keypress', (_key, data) => {
     const { ctrl, name } = data;
     if (ctrl === true) {
