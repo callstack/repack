@@ -29,7 +29,7 @@
   "devDependencies": {
     "@callstack/eslint-config": "^12.0.2",
     "eslint": "^8.17.0",
-    "netlify-cli": "^10.5.1"
+    "netlify-cli": "14.4.0"
   },
   "browserslist": {
     "production": [
