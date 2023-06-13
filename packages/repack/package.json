@@ -60,6 +60,7 @@
   "dependencies": {
     "@callstack/repack-dev-server": "^1.0.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
+    "cli-progress": "^3.12.0",
     "colorette": "^1.2.2",
     "dedent": "^0.7.0",
     "escape-string-regexp": "^4.0.0",

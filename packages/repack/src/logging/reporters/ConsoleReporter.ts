@@ -2,6 +2,7 @@ import util from 'util';
 import colorette from 'colorette';
 import throttle from 'lodash.throttle';
 import type { LogEntry, LogType, Reporter } from '../types';
+import cliProgress from 'cli-progress';
 
 export interface ConsoleReporterConfig {
   asJson?: boolean;
@@ -33,7 +34,7 @@ export class ConsoleReporter implements Reporter {
 }
 
 class JsonConsoleReporter implements Reporter {
-  constructor(private config: ConsoleReporterConfig) {}
+  constructor(private config: ConsoleReporterConfig) { }
 
   process(log: LogEntry) {
     console.log(JSON.stringify(log));
@@ -71,8 +72,14 @@ const FALLBACK_SYMBOLS: Record<LogType | 'progress', string> = {
 
 class InteractiveConsoleReporter implements Reporter {
   private requestBuffer: Record<string, Object> = {};
+  bar = new cliProgress.SingleBar({
+    format: 'Compiling {platform}: ' + '|{bar}|' + ' %{percentage}' + ' ',
+    hideCursor: true
+  }, cliProgress.Presets.shades_grey);
 
-  constructor(private config: ConsoleReporterConfig) {}
+  constructor(private config: ConsoleReporterConfig) {
+    this.bar.start(100, 0);
+   }
 
   process(log: LogEntry) {
     // Do not log anything in silent mode
@@ -94,8 +101,7 @@ class InteractiveConsoleReporter implements Reporter {
     const normalizedLog = this.normalizeLog(log);
     if (normalizedLog) {
       process.stdout.write(
-        `${
-          IS_SYMBOL_SUPPORTED ? SYMBOLS[log.type] : FALLBACK_SYMBOLS[log.type]
+        `${IS_SYMBOL_SUPPORTED ? SYMBOLS[log.type] : FALLBACK_SYMBOLS[log.type]
         } ${this.prettifyLog(normalizedLog)}\n`
       );
     }
@@ -114,26 +120,14 @@ class InteractiveConsoleReporter implements Reporter {
     };
 
     const percentage = Math.floor(value * 100);
-
-    process.stdout.write(
-      `${
-        IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
-      } ${this.prettifyLog({
-        timestamp: log.timestamp,
-        issuer: log.issuer,
-        type: 'info',
-        message: [`Compiling ${platform}: ${percentage}% ${label}`].concat(
-          ...(message ? [`(${message})`] : [])
-        ),
-      })}\n`
-    );
-  }, 2000);
+    this.bar.update(percentage,{platform})  }, 2000);
 
   private normalizeLog(log: LogEntry): LogEntry | undefined {
     const message = [];
     let issuer = log.issuer;
 
     for (const value of log.message) {
+      process.stdout.write(`\n`);
       if (
         typeof value === 'string' ||
         typeof value === 'boolean' ||
