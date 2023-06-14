@@ -9,18 +9,18 @@ jobs:
     runs-on: ubuntu-latest
 
     # Skip running on forks since it won't have access to secrets
-    if: github.repository == 'callstack/repack'
+    if: github.event.pull_request.head.repo.full_name == github.repository
 
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
-      - name: Use Node.js 16
+
+      - name: Use Node.js 18
         uses: actions/setup-node@v3
         with:
-          node-version: 16
-          cache: 'yarn'
+          node-version: 18
+          cache: "yarn"
 
       - name: Install dependencies
         run: yarn install --immutable
