@@ -1,8 +1,6 @@
 import path from 'path';
 import os from 'os';
 
-import type { Path } from '../../../../types';
-
 /**
  * Folder name of the Hermes compiler binary for the current OS.
  */
@@ -26,7 +24,7 @@ const getHermesOSBin = (): string => {
  *
  * Defaults to './node_modules/react-native/sdks/hermesc/{os}-bin/hermesc'
  */
-export const getHermesCLIPath = (reactNativePath: Path): Path => {
+export const getHermesCLIPath = (reactNativePath: string): string => {
   const osBin = getHermesOSBin();
   return path.join(reactNativePath, 'sdks/hermesc', osBin, 'hermesc');
 };

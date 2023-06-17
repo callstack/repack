@@ -2,16 +2,14 @@ import fs from 'fs/promises';
 import path from 'path';
 import execa from 'execa';
 
-import type { Path } from '../../../../types';
-
 /**
  * {@link composeSourceMaps} options.
  */
 interface ComposeSourceMapsOptions {
-  reactNativePath: Path;
-  packagerMapPath: Path;
-  compilerMapPath: Path;
-  outputFile: Path;
+  reactNativePath: string;
+  packagerMapPath: string;
+  compilerMapPath: string;
+  outputFile: string;
 }
 
 /**
