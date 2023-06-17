@@ -88,6 +88,20 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
+/**
+ * Custom variable to track if hermes is enabled separately from the
+ * `hermesEnabled` property in `gradle.properties`. Avoids automatic Hermes
+ * transformation but still allows us to specify that we want to use the Hermes
+ * runtime.
+ */
+def enableHermes = project.ext.react.get("enableHermes", false);
+
+ext {
+    react = [
+        enableHermes : true
+    ]
+}
+
 android {
     ndkVersion rootProject.ext.ndkVersion
 
@@ -161,7 +175,7 @@ dependencies {
 
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
 
-    if (hermesEnabled.toBoolean()) {
+    if (enableHermes) {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
