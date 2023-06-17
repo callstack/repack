@@ -4,12 +4,7 @@ import fs from 'fs/promises';
 import { ModuleFilenameHelpers } from 'webpack';
 
 import type { Compiler } from 'webpack';
-import type {
-  Path,
-  Rule,
-  WebpackEnvOptions,
-  WebpackPlugin,
-} from '../../../types';
+import type { Rule, WebpackEnvOptions, WebpackPlugin } from '../../../types';
 
 import {
   composeSourceMaps,
@@ -20,9 +15,9 @@ import {
 /**
  * Checks if a file exists.
  */
-const fileExists = async (p: Path) => {
+const fileExists = async (path: string) => {
   try {
-    await fs.access(p);
+    await fs.access(path);
     return true;
   } catch (_e) {
     return false;
@@ -42,19 +37,25 @@ type SharedOptions = Pick<
  * {@link ChunksToHermesBytecodePlugin} configuration options.
  */
 interface ChunksToHermesBytecodePluginConfig extends SharedOptions {
-  /* Whether to enable the plugin, normally it is not necessary to run in DEV */
+  /**
+   * Whether the plugin is enabled.
+   *
+   * Since hermes compilation of chunks is not necessary for every build, this
+   * option allows one to enable/disable the plugin. Normally, you would only
+   * enable this plugin for production builds.
+   */
   enabled: boolean;
 
-  /** (Optional) Path to the Hermes compiler binary */
-  hermesCLIPath?: Path;
+  /** Path to the Hermes compiler binary. */
+  hermesCLIPath?: string;
 
-  /** Matching files will be converted to Hermes bytecode */
+  /** Matching files will be converted to Hermes bytecode. */
   test?: Rule | Rule[];
 
-  /** Include matching files in conversion to Hermes bytecode */
+  /** Include matching files in conversion to Hermes bytecode. */
   include?: Rule | Rule[];
 
-  /** Exclude matching files from conversion to Hermes bytecode */
+  /** Exclude matching files from conversion to Hermes bytecode. */
   exclude?: Rule | Rule[];
 }
 
@@ -65,15 +66,20 @@ interface ChunksToHermesBytecodePluginConfig extends SharedOptions {
  * Note: This plugin should only be used for production builds. It is not possible to use this plugin for development builds.
  *
  * @example ```js
- * // webpack.config.js
+ * // webpack.config.mjs
  * import * as Repack from '@callstack/repack';
  *
  * // ...
  * plugins: [
  *   // Must appear after `Repack.OutputPlugin`, which is used by default in `Repack.RepackPlugin`
  *   new Repack.ChunksToHermesBytecodePlugin({
- *    enabled: mode === 'production',
+ *    enabled: mode === 'production' && !devServer,
  *    test: /\.(js)?bundle$/,
+ *    platform,
+ *    reactNativePath,
+ *    bundleFilename,
+ *    sourceMapFilename,
+ *    assetsPath,
  *   }),
  * ]
  * ```
@@ -89,7 +95,7 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
     const logger = compiler.getInfrastructureLogger(this.Name);
 
     if (!this.config.enabled) {
-      logger.debug('Skipping hermes compilation');
+      logger.info('Skipping hermes compilation');
       return;
     }
 
@@ -105,10 +111,14 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
       logger.error(
         `Hermes compilation is only supported for the 'webpack-bundle' command. You can disable this plugin via the 'enabled' option.`
       );
-      return; // TODO throw error?
+      logger.info(
+        `Did you forget to provide an explicit '--bundle-output <path>' option to 'webpack-bundle'?`
+      );
+
+      throw new Error('Hermes compilation is only supported for bundle builds');
     }
 
-    const shouldUseHermesByteCode = (filename: Path) =>
+    const shouldUseHermesByteCode = (filename: string) =>
       ModuleFilenameHelpers.matchObject(this.config, filename);
 
     const hermesCLIPath =
@@ -131,9 +141,6 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
           .getAssets()
           .filter((asset) => shouldUseHermesByteCode(asset.name))
           .map(async (asset) => {
-            logger.debug(
-              `Starting hermes compilation for asset: ${asset.name}`
-            );
             /**
              * Logic based on implementations for each platform.
              * #### iOS
@@ -144,10 +151,13 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
              * - Logic in [BundleHermesCTask.kt](https://github.com/facebook/react-native/blob/f38fc9ba8681622f7cfdb586753e50c596946929/packages/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/tasks/BundleHermesCTask.kt#L93-L111)
              */
 
+            logger.debug(
+              `Starting hermes compilation for asset: ${asset.name}`
+            );
             const assetPath = compilation.getPath(asset.name);
 
             // TODO: extract the following logic calculating paths to a separate
-            // function, share with OutputPlugin?
+            // function, share with OutputPlugin, or maybe integrate?
             const isMainBundle = asset.name === 'index.bundle';
 
             const bundleOutputPath = isMainBundle
@@ -156,6 +166,14 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
                   platform === 'ios' ? assetsOutputDir : bundleOutputDir,
                   assetPath
                 );
+
+            const bundleExists = await fileExists(bundleOutputPath);
+            if (!bundleExists) {
+              logger.error(`Bundle does not exist: ${bundleOutputPath}`);
+              // TODO: for now ignore this, consider throwing an error when remote
+              // assets are supported
+              return;
+            }
 
             const sourcemapOutputPath =
               !isMainBundle && platform === 'ios'
@@ -176,6 +194,10 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
             const useSourceMaps = await fileExists(sourcemapOutputPath);
             if (useSourceMaps) {
               await fs.rename(sourcemapOutputPath, packagerMapPath);
+            } else {
+              logger.info(
+                `No source maps found, did you forget to specify '--sourcemap-output'?`
+              );
             }
 
             await transformBundleToHermesBytecode({
@@ -197,8 +219,7 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
             }
           })
       );
-      // make typescript happy
-      // changes return type from Promise<void []> to Promise<void>
+
       return;
     });
   }
