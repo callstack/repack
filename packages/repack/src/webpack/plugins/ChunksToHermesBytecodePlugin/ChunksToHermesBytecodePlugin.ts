@@ -115,7 +115,9 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
         `Did you forget to provide an explicit '--bundle-output <path>' option to 'webpack-bundle'?`
       );
 
-      throw new Error('Hermes compilation is only supported for bundle builds');
+      throw new Error(
+        'Hermes compilation is only supported for bundle builds with --bundle-output'
+      );
     }
 
     const shouldUseHermesByteCode = (filename: string) =>
@@ -188,9 +190,6 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
               `${path.basename(bundleOutputPath)}.packager.map`
             );
 
-            const hermesBundlePath = `${bundleOutputPath}.hbc`;
-            const hermesMapPath = `${hermesBundlePath}.map`;
-
             const useSourceMaps = await fileExists(sourcemapOutputPath);
             if (useSourceMaps) {
               await fs.rename(sourcemapOutputPath, packagerMapPath);
@@ -200,20 +199,19 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
               );
             }
 
-            await transformBundleToHermesBytecode({
+            const hermesAsset = await transformBundleToHermesBytecode({
               hermesCLIPath,
               useSourceMaps,
-              inputFile: hermesBundlePath,
-              outputFile: bundleOutputPath,
+              filePath: bundleOutputPath,
             });
 
-            logger.debug(`Asset transformed: ${assetPath}`);
+            logger.info(`Asset transformed: ${assetPath}`);
 
             if (useSourceMaps) {
-              composeSourceMaps({
+              await composeSourceMaps({
                 reactNativePath,
                 packagerMapPath,
-                compilerMapPath: hermesMapPath,
+                compilerMapPath: hermesAsset.sourceMap,
                 outputFile: sourcemapOutputPath,
               });
             }

@@ -1,33 +1,37 @@
 import fs from 'fs/promises';
 import execa from 'execa';
 
-import type { Path } from '../../../../types';
-
 interface TransformBundleToHermesBytecodeOptions {
-  hermesCLIPath: Path;
+  hermesCLIPath: string;
   useSourceMaps: boolean;
-  inputFile: Path;
-  outputFile: Path;
+  filePath: string;
 }
 
 export const transformBundleToHermesBytecode = async ({
   hermesCLIPath,
   useSourceMaps,
-  inputFile,
-  outputFile,
+  filePath,
 }: TransformBundleToHermesBytecodeOptions) => {
+  const outputFile = filePath + '.hbc';
+  const hermesSourceMapPath = filePath + '.hbc.map';
+
   // Transform bundle to bytecode
-  await execa(hermesCLIPath, [
-    '-w', // Silence warnings else buffer overflows
-    '-O', // Enable optimizations
-    useSourceMaps ? '-output-source-map' : '',
-    '-emit-binary',
-    '-out',
-    inputFile,
-    outputFile,
-  ]);
+  await execa(
+    hermesCLIPath,
+    [
+      '-w', // Silence warnings else buffer overflows
+      '-O', // Enable optimizations
+      '-emit-binary',
+      '-out',
+      outputFile,
+      useSourceMaps ? '-output-source-map' : '',
+      filePath,
+    ].filter(Boolean)
+  );
 
   // Replace bundle with bytecode
-  await fs.unlink(inputFile);
-  await fs.rename(outputFile, inputFile);
+  await fs.unlink(filePath);
+  await fs.rename(outputFile, filePath);
+
+  return { sourceMap: hermesSourceMapPath };
 };
