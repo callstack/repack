@@ -94,13 +94,7 @@ def reactNativeArchitectures() {
  * transformation but still allows us to specify that we want to use the Hermes
  * runtime.
  */
-def enableHermes = project.ext.react.get("enableHermes", false);
-
-ext {
-    react = [
-        enableHermes : true
-    ]
-}
+def enableHermes = true
 
 android {
     ndkVersion rootProject.ext.ndkVersion
