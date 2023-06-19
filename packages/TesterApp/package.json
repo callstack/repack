@@ -9,8 +9,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native webpack-start",
-    "bundle:android": "react-native webpack-bundle --platform android --entry-file index.js --dev=false --bundle-output build/output/ios/main.jsbundle",
-    "bundle:ios": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false --bundle-output build/output/android/index.android.bundle",
+    "bundle:android": "react-native webpack-bundle --platform android --entry-file index.js --dev=false --bundle-output build/output/android/index.android.bundle",
+    "bundle:ios": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false --bundle-output build/output/ios/main.jsbundle",
     "webpack": "webpack -c webpack.config.js --env platform=android --env mode=production",
     "test": "vitest run",
     "serve-remote-assets": "yarn http-server -p 9999 build/output/android/remote && adb reverse tcp:9999 tcp:9999"
