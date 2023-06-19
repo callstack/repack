@@ -26,5 +26,5 @@ const getHermesOSBin = (): string => {
  */
 export const getHermesCLIPath = (reactNativePath: string): string => {
   const osBin = getHermesOSBin();
-  return path.join(reactNativePath, 'sdks/hermesc', osBin, 'hermesc');
+  return path.join(reactNativePath, 'sdks', 'hermesc', osBin, 'hermesc');
 };

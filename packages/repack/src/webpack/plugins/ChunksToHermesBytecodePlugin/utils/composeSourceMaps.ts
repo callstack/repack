@@ -9,7 +9,6 @@ interface ComposeSourceMapsOptions {
   reactNativePath: string;
   packagerMapPath: string;
   compilerMapPath: string;
-  outputFile: string;
 }
 
 /**
@@ -21,17 +20,20 @@ export const composeSourceMaps = async ({
   reactNativePath,
   packagerMapPath,
   compilerMapPath,
-  outputFile,
 }: ComposeSourceMapsOptions) => {
+  const composedSourceMapPath = packagerMapPath + '.composed';
+
   await execa('node', [
     path.join(reactNativePath, 'scripts/compose-source-maps.js'),
     packagerMapPath,
     compilerMapPath,
     '-o',
-    outputFile,
+    composedSourceMapPath,
   ]);
 
   // Remove intermediate files
   await fs.unlink(packagerMapPath);
   await fs.unlink(compilerMapPath);
+
+  await fs.rename(composedSourceMapPath, packagerMapPath);
 };

@@ -4,16 +4,16 @@ import execa from 'execa';
 interface TransformBundleToHermesBytecodeOptions {
   hermesCLIPath: string;
   useSourceMaps: boolean;
-  filePath: string;
+  bundlePath: string;
 }
 
 export const transformBundleToHermesBytecode = async ({
   hermesCLIPath,
   useSourceMaps,
-  filePath,
+  bundlePath,
 }: TransformBundleToHermesBytecodeOptions) => {
-  const outputFile = filePath + '.hbc';
-  const hermesSourceMapPath = filePath + '.hbc.map';
+  const hermesBundlePath = bundlePath + '.hbc';
+  const hermesSourceMapPath = bundlePath + '.hbc.map';
 
   // Transform bundle to bytecode
   await execa(
@@ -23,15 +23,14 @@ export const transformBundleToHermesBytecode = async ({
       '-O', // Enable optimizations
       '-emit-binary',
       '-out',
-      outputFile,
+      hermesBundlePath,
       useSourceMaps ? '-output-source-map' : '',
-      filePath,
+      bundlePath,
     ].filter(Boolean)
   );
 
-  // Replace bundle with bytecode
-  await fs.unlink(filePath);
-  await fs.rename(outputFile, filePath);
+  await fs.unlink(bundlePath);
+  await fs.rename(hermesBundlePath, bundlePath);
 
   return { sourceMap: hermesSourceMapPath };
 };

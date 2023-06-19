@@ -300,13 +300,9 @@ export default (env) => {
         ],
       }),
       new Repack.plugins.ChunksToHermesBytecodePlugin({
-        enabled: mode === 'production' && !devServer,
+        enabled: mode === 'production',
         test: /\.(js)?bundle$/,
-        platform,
-        reactNativePath,
-        bundleFilename,
-        sourceMapFilename,
-        assetsPath,
+        exclude: /index.bundle$/,
       }),
     ],
   };
