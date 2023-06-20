@@ -102,4 +102,4 @@ Like the project? ⚛️ [Join the team](https://callstack.com/careers/?utm_camp
 [chat-badge]: https://img.shields.io/discord/426714625279524876.svg?style=flat-square&colorB=758ED3
 [chat]: https://discord.gg/Q4yr2rTWYF
 [callstack-badge]: https://callstack.com/images/callstack-badge.svg
-[callstack]: https://callstack.com/open-source/?utm_source=github.com&utm_medium=referral&utm_campaign=PROJECT_NAME&utm_term=readme-badge
+[callstack]: https://callstack.com/open-source/?utm_source=github.com&utm_medium=referral&utm_campaign=repack&utm_term=readme-badge
