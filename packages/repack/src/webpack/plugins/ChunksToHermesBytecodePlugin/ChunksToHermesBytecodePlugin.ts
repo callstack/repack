@@ -1,5 +1,5 @@
 import path from 'path';
-import fs from 'fs/promises';
+import fs from 'fs-extra';
 
 import { ModuleFilenameHelpers } from 'webpack';
 
@@ -87,12 +87,12 @@ interface ChunksToHermesBytecodePluginConfig extends SharedOptions {
  * @category Webpack Plugin
  */
 export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
-  private readonly Name = 'ChunksToHermesBytecodePlugin';
+  private readonly name = 'ChunksToHermesBytecodePlugin';
 
   constructor(private config: ChunksToHermesBytecodePluginConfig) {}
 
   apply(compiler: Compiler) {
-    const logger = compiler.getInfrastructureLogger(this.Name);
+    const logger = compiler.getInfrastructureLogger(this.name);
 
     if (!this.config.enabled) {
       logger.info('Skipping hermes compilation');
@@ -137,7 +137,7 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
       ? path.dirname(sourceMapFilename)
       : bundleOutputDir;
 
-    compiler.hooks.afterEmit.tapPromise(this.Name, async (compilation) => {
+    compiler.hooks.afterEmit.tapPromise(this.name, async (compilation) => {
       await Promise.all(
         compilation
           .getAssets()

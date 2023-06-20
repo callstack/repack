@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
 import path from 'path';
+import fs from 'fs-extra';
 import execa from 'execa';
 
 /**
