@@ -49,6 +49,7 @@ __Check the base [`webpack.config.cjs`](https://github.com/callstack/repack/blob
   - Running the production/development bundle using Hermes engine
   - Transforming production bundle into bytecode bundle
   - Inspecting running Hermes engine with Flipper
+  - `ChunksToHermesBytecodePlugin` plugin to transform async chunks into Hermes bytecode
 - [x] [Code splitting](https://re-pack.netlify.app/docs/code-splitting/concept) (__experimental__):
   - Dynamic `import()` support with and without `React.lazy()` (recommended).
   - Arbitrary scripts (only for advanced users).
@@ -57,13 +58,12 @@ __Check the base [`webpack.config.cjs`](https://github.com/callstack/repack/blob
   - `GET /api/:platform/assets` - assets emitted from compilation.
   - `GET /api/:platform/stats` - data about compilation.
 - [x] [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669) support
+- [x] Code signing and verification
 
 ### Planned features
 
 Available at: [Projects](https://github.com/callstack/repack/projects?type=classic)
 
-- [ ] `ChunksToHermesBytecodePlugin` plugin to automatically transform async chunks to bytecode format.
-- [ ] Code signing and verification
 - [ ] `webpack-init` command
 
 
