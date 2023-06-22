@@ -41,9 +41,8 @@ import * as Repack from '@callstack/repack';
 
 // ...
 plugins: [
-  // Must appear after `Repack.RepackPlugin`
   new Repack.ChunksToHermesBytecodePlugin({
-    enabled: mode === 'production',
+    enabled: mode === 'production && !devServer',
     test: /\.(js)?bundle$/,
     exclude: /index.bundle$/,
   }),
@@ -55,5 +54,5 @@ If you enable Hermes in your project, your `index.bundle` file and it's source-m
 You should exclude it from the plugin to avoid processing it twice.
 :::
 
-In the example above, the plugin is enabled only for production builds (`mode === 'production'`).
+In the example above, the plugin is enabled only for production builds when bundling with `webpack-bundle`.
 It will process any files that end in `.jsbundle` or `.bundle`, but it will exclude `index.bundle`.

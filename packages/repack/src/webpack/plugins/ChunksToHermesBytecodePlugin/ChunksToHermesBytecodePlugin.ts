@@ -61,7 +61,7 @@ interface ChunksToHermesBytecodePluginConfig {
  * // ...
  * plugins: [
  *   new Repack.ChunksToHermesBytecodePlugin({
- *    enabled: mode === 'production',
+ *    enabled: mode === 'production' && !devServer,
  *    test: /\.(js)?bundle$/,
  *    exclude: /index.bundle$/,
  *   }),
