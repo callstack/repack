@@ -54,12 +54,7 @@ Re.Pack uses Webpack 5 and React Native CLI's plugin system to allow you to bund
   - `GET /api/:platform/stats` - data about compilation.
 - [x] [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669) support
 - [x] Code signing and verification
-
-### Planned features
-
-Available at: [Projects](https://github.com/callstack/repack/projects?type=classic)
-
-- [ ] `webpack-init` command
+- [x] `@callstack/repack-init` - tool that automates the integration of the Re.Pack into React-Native projects
 
 ### Examples
 
