@@ -333,5 +333,30 @@ describe('assetLoader', () => {
         scale: prefferedScale,
       });
     });
+
+    it('with URL containing a path after basename', async () => {
+      const { code } = await compileBundle(
+        'ios', // platform doesn't matter for remote-assets
+        {
+          './index.js': "export { default } from './__fixtures__/logo.png';",
+        },
+        false,
+        {
+          enabled: true,
+          publicPath: 'http://localhost:9999/remote-assets',
+        }
+      );
+
+      const context: { Export?: { default: Record<string, any> } } = {};
+      vm.runInNewContext(code, context);
+
+      expect(context.Export?.default).toEqual({
+        __packager_asset: true,
+        uri: `http://localhost:9999/remote-assets/assets/__fixtures__/logo.png`,
+        height: 393,
+        width: 2292,
+        scale: 1,
+      });
+    });
   });
 });

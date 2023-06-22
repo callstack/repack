@@ -31,6 +31,7 @@ export function getResolveOptions(platform: string) {
      */
     mainFields: ['react-native', 'browser', 'main'],
     aliasFields: ['react-native', 'browser', 'main'],
+    conditionNames: ['default', 'require'],
     extensions: [
       `.${platform}.ts`,
       `.${platform}.js`,
