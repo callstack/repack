@@ -299,6 +299,11 @@ export default (env) => {
           },
         ],
       }),
+      new Repack.plugins.ChunksToHermesBytecodePlugin({
+        enabled: mode === 'production' && !devServer,
+        test: /\.(js)?bundle$/,
+        exclude: /index.bundle$/,
+      }),
     ],
   };
 };

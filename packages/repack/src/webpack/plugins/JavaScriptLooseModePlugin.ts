@@ -5,7 +5,7 @@ import { Rule, WebpackPlugin } from '../../types';
  * {@link JavaScriptLooseModePlugin} configuration options.
  */
 export interface JavaScriptLooseModePluginConfig {
-  /** Covert to loose mode all modules that match the rule. */
+  /** Convert to loose mode all modules that match the rule. */
   test: Rule | Rule[];
   /** Convert to loose mode only those modules that match the rule. */
   include: Rule | Rule[];

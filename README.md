@@ -44,6 +44,7 @@ Re.Pack uses Webpack 5 and React Native CLI's plugin system to allow you to bund
   - Running the production/development bundle using Hermes engine
   - Transforming production bundle into bytecode bundle
   - Inspecting running Hermes engine with Flipper
+  - `ChunksToHermesBytecodePlugin` plugin to transform async chunks into Hermes bytecode
 - [x] [Code splitting](https://re-pack.netlify.app/docs/code-splitting/concept) (**experimental**):
   - Dynamic `import()` support with and without `React.lazy()` (recommended).
   - Arbitrary scripts (only for advanced users).
@@ -52,14 +53,8 @@ Re.Pack uses Webpack 5 and React Native CLI's plugin system to allow you to bund
   - `GET /api/:platform/assets` - assets emitted from compilation.
   - `GET /api/:platform/stats` - data about compilation.
 - [x] [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669) support
-
-### Planned features
-
-Available at: [Projects](https://github.com/callstack/repack/projects?type=classic)
-
-- [ ] `ChunksToHermesBytecodePlugin` plugin to automatically transform async chunks to bytecode format.
-- [ ] Code signing and verification
-- [ ] `webpack-init` command
+- [x] Code signing and verification
+- [x] `@callstack/repack-init` - tool that automates the integration of the Re.Pack into React-Native projects
 
 ### Examples
 
