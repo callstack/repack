@@ -4,7 +4,7 @@ import os from 'os';
 /**
  * Folder name of the Hermes compiler binary for the current OS.
  */
-const getHermesOSBin = (): string => {
+const getHermesOSBin = (): string | null => {
   switch (os.platform()) {
     case 'darwin':
       return 'osx-bin';
@@ -13,18 +13,23 @@ const getHermesOSBin = (): string => {
     case 'win32':
       return 'win64-bin';
     default:
-      throw new Error(
-        'OS not recognized. Please set hermesCLIPath to the path of a working Hermes compiler.'
-      );
+      return null;
   }
 };
 
 /**
  * Determines the path to the Hermes compiler binary.
  *
- * Defaults to './node_modules/react-native/sdks/hermesc/{os}-bin/hermesc'
+ * Defaults to './node_modules/react-native/sdks/hermesc/{os-bin}/hermesc'
  */
 export const getHermesCLIPath = (reactNativePath: string): string => {
   const osBin = getHermesOSBin();
+
+  if (!osBin) {
+    throw new Error(
+      'ChunksToHermesBytecodePlugin: OS not recognized. Please set hermesCLIPath to the path of a working Hermes compiler.'
+    );
+  }
+
   return path.join(reactNativePath, 'sdks', 'hermesc', osBin, 'hermesc');
 };

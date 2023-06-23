@@ -32,17 +32,24 @@ export const composeSourceMaps = async ({
 }: ComposeSourceMapsOptions) => {
   const composedSourceMapPath = packagerMapPath + '.composed';
 
-  await execa('node', [
-    path.join(reactNativePath, 'scripts/compose-source-maps.js'),
-    packagerMapPath,
-    compilerMapPath,
-    '-o',
-    composedSourceMapPath,
-  ]);
+  try {
+    await execa('node', [
+      path.join(reactNativePath, 'scripts/compose-source-maps.js'),
+      packagerMapPath,
+      compilerMapPath,
+      '-o',
+      composedSourceMapPath,
+    ]);
 
-  // Remove intermediate files
-  await fs.unlink(packagerMapPath);
-  await fs.unlink(compilerMapPath);
+    // Remove intermediate files
+    await fs.unlink(packagerMapPath);
+    await fs.unlink(compilerMapPath);
 
-  await fs.rename(composedSourceMapPath, packagerMapPath);
+    await fs.rename(composedSourceMapPath, packagerMapPath);
+  } catch (error) {
+    const message = (error as Error).toString();
+    throw new Error(
+      `ChunksToHermesBytecodePlugin: Failed to compose source maps. Reason:\n${message})`
+    );
+  }
 };

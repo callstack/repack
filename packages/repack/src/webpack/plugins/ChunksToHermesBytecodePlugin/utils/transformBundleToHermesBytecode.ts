@@ -27,22 +27,29 @@ export const transformBundleToHermesBytecode = async ({
   const hermesBundlePath = bundlePath + '.hbc';
   const hermesSourceMapPath = bundlePath + '.hbc.map';
 
-  // Transform bundle to bytecode
-  await execa(
-    hermesCLIPath,
-    [
-      '-w', // Silence warnings else buffer overflows
-      '-O', // Enable optimizations
-      '-emit-binary',
-      '-out',
-      hermesBundlePath,
-      useSourceMaps ? '-output-source-map' : '',
-      bundlePath,
-    ].filter(Boolean)
-  );
+  try {
+    // Transform bundle to bytecode
+    await execa(
+      hermesCLIPath,
+      [
+        '-w', // Silence warnings else buffer overflows
+        '-O', // Enable optimizations
+        '-emit-binary',
+        '-out',
+        hermesBundlePath,
+        useSourceMaps ? '-output-source-map' : '',
+        bundlePath,
+      ].filter(Boolean)
+    );
 
-  await fs.unlink(bundlePath);
-  await fs.rename(hermesBundlePath, bundlePath);
+    await fs.unlink(bundlePath);
+    await fs.rename(hermesBundlePath, bundlePath);
 
-  return { sourceMap: hermesSourceMapPath };
+    return { sourceMap: hermesSourceMapPath };
+  } catch (error) {
+    const message = (error as Error).toString();
+    throw new Error(
+      `ChunksToHermesBytecodePlugin: Failed to transform bundle ${bundlePath}. Reason:\n${message})`
+    );
+  }
 };
