@@ -1,5 +1,11 @@
 # testerapp
 
+## 0.1.1
+
+### Patch Changes
+
+- [#372](https://github.com/callstack/repack/pull/372) [`e7cbb63`](https://github.com/callstack/repack/commit/e7cbb630296bd1e0bd1dfd2420ba8b3ace05a904) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Upgraded React Native version in TesterApp to 0.71.8
+
 ## 0.1.0
 
 ### Minor Changes
