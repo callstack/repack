@@ -5,6 +5,8 @@
 ### Patch Changes
 
 - [#372](https://github.com/callstack/repack/pull/372) [`e7cbb63`](https://github.com/callstack/repack/commit/e7cbb630296bd1e0bd1dfd2420ba8b3ace05a904) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Upgraded React Native version in TesterApp to 0.71.8
+- Updated dependencies [[`0693fda`](https://github.com/callstack/repack/commit/0693fdaf33239f1d6ae28597bcc595f17aa8d4df), [`cf6c77a`](https://github.com/callstack/repack/commit/cf6c77a675e00d98a4d906b56b3fd928c02ffb84), [`c1a5a2b`](https://github.com/callstack/repack/commit/c1a5a2b403ed9b4a816465eba996f1655c21b718), [`14afc61`](https://github.com/callstack/repack/commit/14afc61f1d5730164b1ccb483b5efb6b32b5a0ad)]:
+  - @callstack/repack@3.3.0
 
 ## 0.1.0
 
