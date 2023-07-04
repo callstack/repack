@@ -339,8 +339,8 @@ export class OutputPlugin implements WebpackPlugin {
             outputPath,
             bundleOutput: bundleFilename,
             bundleOutputDir: bundlePath,
-            sourcemapOutput: sourceMapFilename!,
-            assetsDest: assetsPath!,
+            sourcemapOutput: sourceMapFilename,
+            assetsDest: assetsPath,
             logger,
           });
         }
