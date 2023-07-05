@@ -67,6 +67,11 @@ module.exports = {
     },
     {
       type: 'category',
+      label: 'Plugins',
+      items: ['configuration/plugins/chunks-to-hermes'],
+    },
+    {
+      type: 'category',
       label: 'Guides',
       items: [
         'configuration/guides/svg',

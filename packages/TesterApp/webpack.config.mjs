@@ -138,7 +138,8 @@ export default (env) => {
         {
           test: /\.[jt]sx?$/,
           include: [
-            /node_modules(.*[/\\])+react/,
+            /node_modules(.*[/\\])+react\//,
+            /node_modules(.*[/\\])+react-native/,
             /node_modules(.*[/\\])+@react-native/,
             /node_modules(.*[/\\])+@react-navigation/,
             /node_modules(.*[/\\])+@react-native-community/,
@@ -297,6 +298,11 @@ export default (env) => {
             outputPath: path.join('build/output', platform, 'remote'),
           },
         ],
+      }),
+      new Repack.plugins.ChunksToHermesBytecodePlugin({
+        enabled: mode === 'production' && !devServer,
+        test: /\.(js)?bundle$/,
+        exclude: /index.bundle$/,
       }),
     ],
   };

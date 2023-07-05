@@ -1,17 +1,33 @@
 # @callstack/repack
 
+## 3.3.0
+
+### Minor Changes
+
+- [#378](https://github.com/callstack/repack/pull/378) [`14afc61`](https://github.com/callstack/repack/commit/14afc61f1d5730164b1ccb483b5efb6b32b5a0ad) Thanks [@mikeduminy](https://github.com/mikeduminy)! - Add ChunksToHermesBytecodePlugin to transform all emitted chunks with Hermes
+
+### Patch Changes
+
+- [#391](https://github.com/callstack/repack/pull/391) [`0693fda`](https://github.com/callstack/repack/commit/0693fdaf33239f1d6ae28597bcc595f17aa8d4df) Thanks [@jbroma](https://github.com/jbroma)! - Fix: stricter versions for dependencies inside podspec
+
+- [#365](https://github.com/callstack/repack/pull/365) [`cf6c77a`](https://github.com/callstack/repack/commit/cf6c77a675e00d98a4d906b56b3fd928c02ffb84) Thanks [@jbroma](https://github.com/jbroma)! - Updated getResolveOptions exposed by RePack to prefer 'default' condition over webpack's defaults ['require', 'node']
+
+- [#382](https://github.com/callstack/repack/pull/382) [`c1a5a2b`](https://github.com/callstack/repack/commit/c1a5a2b403ed9b4a816465eba996f1655c21b718) Thanks [@jbroma](https://github.com/jbroma)! - Fixed and issue where URL for remote asset only included basename from publicPath
+
 ## 3.2.0
 
 ### Minor Changes
 
 #### Code Signing:
-* [#318](https://github.com/callstack/repack/pull/318) [`6e12c14`](https://github.com/callstack/repack/commit/6e12c14e02002721ad4fe3ddf41743dcdb597f60) Thanks [@jbroma](https://github.com/jbroma)! - Added CodeSigning abilities to RePack:
-* [#348](https://github.com/callstack/repack/pull/348) [`76e98e9`](https://github.com/callstack/repack/commit/76e98e983842e5b1288c754d61ee2f3449762f2c) Thanks [@jbroma](https://github.com/jbroma)! - Embed code-signing signatures into the bundles:
+
+- [#318](https://github.com/callstack/repack/pull/318) [`6e12c14`](https://github.com/callstack/repack/commit/6e12c14e02002721ad4fe3ddf41743dcdb597f60) Thanks [@jbroma](https://github.com/jbroma)! - Added CodeSigning abilities to RePack:
+- [#348](https://github.com/callstack/repack/pull/348) [`76e98e9`](https://github.com/callstack/repack/commit/76e98e983842e5b1288c754d61ee2f3449762f2c) Thanks [@jbroma](https://github.com/jbroma)! - Embed code-signing signatures into the bundles:
 
   - Introduced `CodeSigningPlugin` for generating code-signed bundles
   - Implemented `CodeSigningUtils` extension for native part of the `ScriptManager` to verify signed bundles on Android and iOS
 
 #### Remote Assets
+
 - [#331](https://github.com/callstack/repack/pull/331) [`515fb05`](https://github.com/callstack/repack/commit/515fb05f307e10c9bf65fd54dce3e7ebb8d1ae45) Thanks [@jbroma](https://github.com/jbroma)! - Added remote-assets functionality to the assetsLoader
 
 - [#328](https://github.com/callstack/repack/pull/328) [`4f155dd`](https://github.com/callstack/repack/commit/4f155ddf8f5064f60175ed2ee8f0ad64ff9f252b) Thanks [@jbroma](https://github.com/jbroma)! - Auto device scale resolution for inlined assets

@@ -19,8 +19,8 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { "DEFINES_MODULE" => "YES" }
   
   s.dependency "React-Core"
-  s.dependency 'JWTDecode', '~> 3.0'
-  s.dependency 'SwiftyRSA'
+  s.dependency 'JWTDecode', '~> 3.0.0'
+  s.dependency 'SwiftyRSA', '~> 1.7'
   
   # Don't install the dependencies when we run `pod install` in the old architecture.
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then

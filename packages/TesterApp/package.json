@@ -1,6 +1,6 @@
 {
   "name": "testerapp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "installConfig": {
     "hoistingLimits": "workspaces"
@@ -9,17 +9,19 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native webpack-start",
-    "bundle": "react-native webpack-bundle --platform android --entry-file index.js --dev=false",
+    "bundle:android": "react-native webpack-bundle --platform android --entry-file index.js --dev=false --bundle-output build/output/android/index.android.bundle",
+    "bundle:ios": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false --bundle-output build/output/ios/main.jsbundle",
     "webpack": "webpack -c webpack.config.js --env platform=android --env mode=production",
     "test": "vitest run",
-    "serve-remote-assets": "yarn http-server -p 9999 build/output/android/remote && adb reverse tcp:9999 tcp:9999"
+    "serve-remote-assets:android": "adb reverse tcp:9999 tcp:9999 && yarn http-server -p 9999 build/output/android/remote",
+    "serve-remote-assets:ios": "yarn http-server -p 9999 build/output/ios/remote"
   },
   "dependencies": {
-    "@callstack/repack": "3.2.0",
+    "@callstack/repack": "3.3.0",
     "@react-native-async-storage/async-storage": "^1.17.11",
     "lodash.throttle": "^4.1.1",
     "react": "18.2.0",
-    "react-native": "^0.71.3",
+    "react-native": "^0.71.8",
     "react-native-svg": "^13.7.0"
   },
   "devDependencies": {
@@ -36,7 +38,7 @@
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
-    "metro-react-native-babel-preset": "^0.73.7",
+    "metro-react-native-babel-preset": "^0.73.9",
     "node-fetch": "^3.2.6",
     "terser-webpack-plugin": "^5.3.3",
     "typescript": "^4.8.4",
