@@ -100,9 +100,9 @@ export interface RepackPluginConfig {
  * If you need more control, it's recommended to remove `RepackPlugin` and use other plugins
  * directly, eg:
  * ```ts
- * import React from '@callstack/repack';
+ * import * as Repack from '@callstack/repack';
  *
- * new Repact.plugins.AssetsResolverPlugin();
+ * new Repack.plugins.AssetsResolverPlugin();
  * ```
  *
  * @category Webpack Plugin
