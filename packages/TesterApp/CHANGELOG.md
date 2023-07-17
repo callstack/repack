@@ -1,5 +1,12 @@
 # testerapp
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`6171507`](https://github.com/callstack/repack/commit/6171507db6a1ebc067ab4be6ad3aa5b5cd1eb16b)]:
+  - @callstack/repack@3.3.1
+
 ## 0.1.1
 
 ### Patch Changes
