@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import semver from 'semver';
+import semver, { SemVer } from 'semver';
 
 import logger from '../utils/logger.js';
 
@@ -10,7 +10,7 @@ import logger from '../utils/logger.js';
  * @param cwd current working directory
  * @returns React-Native version
  */
-export default function checkReactNative(rootDir: string): string {
+export default function checkReactNative(rootDir: string): SemVer {
   const packageJsonPath = path.join(rootDir, 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
@@ -19,7 +19,11 @@ export default function checkReactNative(rootDir: string): string {
     throw new Error('React-Native not found in package.json');
   }
 
-  const version = packageJson.dependencies['react-native'];
+  const version = semver.coerce(packageJson.dependencies['react-native']);
+
+  if (!version) {
+    throw new Error('Failed to parse React-Native version');
+  }
 
   logger.info(`Found React-Native@${version} in package.json`);
 
