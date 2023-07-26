@@ -5,9 +5,9 @@ import semver from 'semver';
 import logger from '../utils/logger.js';
 
 /**
- * Checks whether react-native is installed and returns it's version
+ * Checks whether React-Native is installed and returns it's version
  *
- * @param cwd
+ * @param cwd current working directory
  * @returns React-Native version
  */
 export default function checkReactNative(rootDir: string): string {
