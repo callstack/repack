@@ -1,5 +1,11 @@
 # @callstack/repack-init
 
+## 1.0.4
+
+### Patch Changes
+
+- [#405](https://github.com/callstack/repack/pull/405) [`cbbb5b4`](https://github.com/callstack/repack/commit/cbbb5b485107dc46c4d2bb9f0578237bf4e50fdc) Thanks [@jbroma](https://github.com/jbroma)! - Fix bad behaviour of repack-init when run inside of a monorepo
+
 ## 1.0.3
 
 ### Patch Changes
