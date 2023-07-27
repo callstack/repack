@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import semver from 'semver';
+import semver, { SemVer } from 'semver';
 import dedent from 'dedent';
 
 import logger from '../utils/logger.js';
@@ -95,7 +95,7 @@ function modifyNewConfig(config: string): string {
  * @param cwd path for the root directory of the project
  * @param reactNativeVersion version of react-native in project
  */
-export default function modifyAndroid(cwd: string, reactNativeVersion: string) {
+export default function modifyAndroid(cwd: string, reactNativeVersion: SemVer) {
   const buildGradlePath = path.join(cwd, 'android', 'app', 'build.gradle');
   const config = fs.readFileSync(buildGradlePath, 'utf-8');
 

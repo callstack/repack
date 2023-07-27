@@ -12,7 +12,7 @@ const dependencies = [
 /**
  * Installs dependencies required by Re.Pack using the specified package manager
  *
- * @param packageManager yarn or npm
+ * @param packageManager yarn, npm or pnpm
  */
 export default async function addDependencies(packageManager: PM) {
   let installCommand: string;
