@@ -233,4 +233,17 @@ describe('CodeSigningPlugin', () => {
       )
     ).toThrowError();
   });
+
+  it('skips applying plugin when enabled flag is explicitly set to false', async () => {
+    const pluginInstance = new CodeSigningPlugin({
+      enabled: false,
+      outputPath: path.join('output', 'signed'),
+      privateKeyPath: '__fixtures__/testRS256.pem',
+    });
+
+    pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
+
+    expect(compilerMock.hooks.thisCompilation.tap).not.toHaveBeenCalled();
+    expect(compilerMock.hooks.afterEmit.tapPromise).not.toHaveBeenCalled();
+  });
 });
