@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "@callstack/repack-dev-server": "^1.0.1",
+    "@discoveryjs/json-ext": "^0.5.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "colorette": "^1.2.2",
     "dedent": "^0.7.0",
