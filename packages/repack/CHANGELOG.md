@@ -1,5 +1,11 @@
 # @callstack/repack
 
+## 3.3.1
+
+### Patch Changes
+
+- [#401](https://github.com/callstack/repack/pull/401) [`6171507`](https://github.com/callstack/repack/commit/6171507db6a1ebc067ab4be6ad3aa5b5cd1eb16b) Thanks [@jbroma](https://github.com/jbroma)! - Update nimbus-jose-jwt android dependency to address security vulnerabilites
+
 ## 3.3.0
 
 ### Minor Changes

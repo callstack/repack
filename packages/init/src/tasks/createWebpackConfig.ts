@@ -39,7 +39,13 @@ function adjustEntryFilename(template: string, entry: string) {
 
   return template.replace(/entry\s=.*,/, `entry = '${entry}',`);
 }
-
+/**
+ * Adds webpack.config file to the project
+ *
+ * @param cwd current working directory
+ * @param templateType mjs or cjs
+ * @param entry name of the entry file for the application
+ */
 export default async function createWebpackConfig(
   cwd: string,
   templateType: 'mjs' | 'cjs',

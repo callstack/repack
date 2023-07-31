@@ -146,5 +146,5 @@ dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "com.squareup.okhttp3:okhttp:4.9.0"
   implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.0"
-  implementation 'com.nimbusds:nimbus-jose-jwt:5.1'
+  implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
 }

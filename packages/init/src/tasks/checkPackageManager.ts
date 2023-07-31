@@ -1,5 +1,5 @@
 import { detect, PM } from 'detect-package-manager';
-
+import { findRoot } from '@manypkg/find-root';
 import logger from '../utils/logger.js';
 
 /**
@@ -9,7 +9,8 @@ import logger from '../utils/logger.js';
  * @returns package manager name (one of 'npm', 'yarn', 'pnpm')
  */
 export default async function checkPackageManager(cwd: string): Promise<PM> {
-  const packageManager = await detect({ cwd });
+  const { rootDir } = await findRoot(cwd);
+  const packageManager = await detect({ cwd: rootDir });
   logger.info(`Using ${packageManager} as package manager`);
 
   return packageManager;

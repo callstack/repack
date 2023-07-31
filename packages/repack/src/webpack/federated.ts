@@ -10,7 +10,7 @@ export namespace Federated {
    *
    * @example Basic example.
    * ```js
-   * import * as React from '@callstack/repack';
+   * import * as Repack from '@callstack/repack';
    *
    * new Repack.plugins.ModuleFederationPlugin({
    *   // ...
@@ -22,7 +22,7 @@ export namespace Federated {
    *
    * @example Example with spread and additional options.
    * ```js
-   * import * as React from '@callstack/repack';
+   * import * as Repack from '@callstack/repack';
    *
    * new Repack.plugins.ModuleFederationPlugin({
    *   // ...
