@@ -3,7 +3,7 @@
   "description": "Automates the integration of the @callstack/repack into React-Native projects",
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
   "keywords": [
@@ -34,6 +34,7 @@
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
+    "@manypkg/find-root": "^2.2.1",
     "chalk": "^5.2.0",
     "dedent": "^0.7.0",
     "detect-package-manager": "^2.0.1",
