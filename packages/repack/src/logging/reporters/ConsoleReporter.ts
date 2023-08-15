@@ -34,7 +34,7 @@ export class ConsoleReporter implements Reporter {
 }
 
 class JsonConsoleReporter implements Reporter {
-  constructor(private config: ConsoleReporterConfig) { }
+  constructor(private config: ConsoleReporterConfig) {}
 
   process(log: LogEntry) {
     console.log(JSON.stringify(log));
@@ -79,7 +79,8 @@ class InteractiveConsoleReporter implements Reporter {
 
   constructor(private config: ConsoleReporterConfig) {
     this.bar.start(100, 0);
-   }
+    this.bar.update(0, { platform: '' });
+  }
 
   process(log: LogEntry) {
     // Do not log anything in silent mode
@@ -120,7 +121,15 @@ class InteractiveConsoleReporter implements Reporter {
     };
 
     const percentage = Math.floor(value * 100);
-    this.bar.update(percentage,{platform})  }, 2000);
+    if (percentage > 0) {
+      // Update the progress bar label only if the percentage is greater than 0
+      this.bar.update(percentage, { platform });
+    } else {
+      // For 0% progress, update the label to an empty string
+      this.bar.update(percentage, { platform: '' });
+    }
+  }, 2000);
+ 
 
   private normalizeLog(log: LogEntry): LogEntry | undefined {
     const message = [];
