@@ -1,5 +1,16 @@
 # @callstack/repack
 
+## 3.4.0
+
+### Minor Changes
+
+- [#409](https://github.com/callstack/repack/pull/409) [`d4d7dc7`](https://github.com/callstack/repack/commit/d4d7dc7eaedfd3c6bdc31db7bb5f08495bbb81b0) Thanks [@jbroma](https://github.com/jbroma)! - Added enabled flag to CodeSigningPlugin, this is useful when you want to disable the plugin in development environment and only keep it in production. For now this flag defaults to true to prevent a breaking change.
+
+* [#408](https://github.com/callstack/repack/pull/408) [`3bcce76`](https://github.com/callstack/repack/commit/3bcce76b61b2206efbbc76870a578c62a2e6a0a5) Thanks [@eps1lon](https://github.com/eps1lon)! - Allow storing compilation stats.
+
+  You can now run `webpack-bundle` with `--json <file> --stats <preset>` (like with `webpack-cli`) to store compilation stats in the specified file.
+  Compilation stats can be used to analyze the bundle (e.g. with [`webpack-bundle-analyzer`](https://github.com/webpack-contrib/webpack-bundle-analyzer) or https://statoscope.tech/).
+
 ## 3.3.1
 
 ### Patch Changes

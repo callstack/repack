@@ -9,6 +9,8 @@ import type { WebpackPlugin } from '../../types';
  * {@link CodeSigningPlugin} configuration options.
  */
 export interface CodeSigningPluginConfig {
+  /** Whether the plugin is enabled. Defaults to true */
+  enabled?: boolean;
   /** Output path to a directory, where signed bundles should be saved. */
   outputPath: string;
   /** Path to the private key. */
@@ -33,6 +35,16 @@ export class CodeSigningPlugin implements WebpackPlugin {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: webpack.Compiler) {
+    /**
+     * For now this flag defaults to true to avoid a breaking change.
+     *
+     * TODO: In next major revision, we should consider removing the default here
+     * and align this option with other plugins.
+     */
+    if (this.config.enabled === false) {
+      return;
+    }
+
     const pluginName = CodeSigningPlugin.name;
     // reserve 1280 bytes for the token even if it's smaller
     // to leave some space for future additions to the JWT without breaking compatibility
