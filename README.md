@@ -56,14 +56,6 @@ Re.Pack uses Webpack 5 and React Native CLI's plugin system to allow you to bund
 - [x] Code signing and verification
 - [x] `@callstack/repack-init` - tool that automates the integration of the Re.Pack into React-Native projects
 
-### Planned features
-
-Available at: [Projects](https://github.com/callstack/repack/projects?type=classic)
-
-- [ ] `ChunksToHermesBytecodePlugin` plugin to automatically transform async chunks to bytecode format.
-- [ ] Code signing and verification
-- [ ] `webpack-init` command
-
 ### New Architecture Support (Turbo Module)
 ----
 This library supports new architecture!. [turbo module](https://reactnative.dev/docs/next/the-new-architecture/pillars-turbomodules) offers a new architecture for initializing native modules.
