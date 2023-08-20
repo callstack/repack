@@ -72,15 +72,23 @@ const FALLBACK_SYMBOLS: Record<LogType | 'progress', string> = {
 
 class InteractiveConsoleReporter implements Reporter {
   private requestBuffer: Record<string, Object> = {};
-  bar = new cliProgress.SingleBar({
-    format: 'Compiling {platform}: ' + '|{bar}|' + ' %{percentage}' + ' ',
-    hideCursor: true
-  }, cliProgress.Presets.shades_grey);
+  multiBar = new cliProgress.MultiBar(
+    {
+      hideCursor: true,
+      autopadding: true,
+      clearOnComplete: false,
+      format: '• {label} {platform}:' + ' [{bar}]' + ' {percentage}%',
+    },
+    cliProgress.Presets.shades_classic
+  );
 
-  constructor(private config: ConsoleReporterConfig) {
-    this.bar.start(100, 0);
-    this.bar.update(0, { platform: '' });
-  }
+  barAndroid = this.multiBar.create(100, 0, {
+    platform: '',
+    label: 'Compiling',
+  });
+  barIOS = this.multiBar.create(100, 0, { platform: '', label: 'Compiling' });
+
+  constructor(private config: ConsoleReporterConfig) {}
 
   process(log: LogEntry) {
     // Do not log anything in silent mode
@@ -101,16 +109,13 @@ class InteractiveConsoleReporter implements Reporter {
 
     const normalizedLog = this.normalizeLog(log);
     if (normalizedLog) {
-      process.stdout.write(
-        `${IS_SYMBOL_SUPPORTED ? SYMBOLS[log.type] : FALLBACK_SYMBOLS[log.type]
-        } ${this.prettifyLog(normalizedLog)}\n`
+      this.multiBar.log(`${IS_SYMBOL_SUPPORTED ? SYMBOLS[log.type] : FALLBACK_SYMBOLS[log.type]} ${this.prettifyLog(normalizedLog)}\n`
       );
     }
   }
 
   private processProgress = throttle((log: LogEntry) => {
-    const {
-      progress: { value, label, message, platform },
+    const {progress: { value,label: _label, message, platform },
     } = log.message[0] as {
       progress: {
         value: number;
@@ -121,22 +126,20 @@ class InteractiveConsoleReporter implements Reporter {
     };
 
     const percentage = Math.floor(value * 100);
-    if (percentage > 0) {
-      // Update the progress bar label only if the percentage is greater than 0
-      this.bar.update(percentage, { platform });
-    } else {
-      // For 0% progress, update the label to an empty string
-      this.bar.update(percentage, { platform: '' });
-    }
-  }, 2000);
- 
+
+       const label = _label !== '' ? _label : 'compiling'
+     if (percentage > 0){
+       if (platform === 'ios') this.barIOS.update(percentage, {platform, label})
+        if (platform === 'android') this.barAndroid.update(percentage, {platform, label})
+       }
+       }, 2000);
+    
 
   private normalizeLog(log: LogEntry): LogEntry | undefined {
     const message = [];
     let issuer = log.issuer;
 
     for (const value of log.message) {
-      process.stdout.write(`\n`);
       if (
         typeof value === 'string' ||
         typeof value === 'boolean' ||
