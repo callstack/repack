@@ -54,8 +54,7 @@
   "peerDependencies": {
     "@react-native-community/cli": "*",
     "@react-native-community/cli-types": "*",
-    "react-native": ">=0.63",
-    "webpack": "5.x"
+    "react-native": ">=0.63"
   },
   "dependencies": {
     "@callstack/repack-dev-server": "^1.0.1",
@@ -91,6 +90,7 @@
     "@callstack/eslint-config": "^11.0.0",
     "@react-native-community/cli": "5.0.1-alpha.1",
     "@react-native-community/cli-types": "5.0.1-alpha.1",
+    "@rspack/core": "^0.3.1",
     "@types/dedent": "^0.7.0",
     "@types/fs-extra": "^9.0.11",
     "@types/jest": "^28.1.1",
@@ -111,7 +111,6 @@
     "typedoc": "^0.22.17",
     "typedoc-plugin-markdown": "^3.12.1",
     "typescript": "^4.1.5",
-    "webpack": "^5.75.0",
     "webpack-virtual-modules": "^0.4.4"
   }
 }
