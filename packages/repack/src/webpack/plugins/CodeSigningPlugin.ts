@@ -2,8 +2,7 @@ import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs-extra';
 import jwt from 'jsonwebtoken';
-import webpack from 'webpack';
-import type { WebpackPlugin } from '../../types';
+import rspack, { RspackPluginInstance } from '@rspack/core';
 
 /**
  * {@link CodeSigningPlugin} configuration options.
@@ -19,7 +18,7 @@ export interface CodeSigningPluginConfig {
   excludeChunks?: string[];
 }
 
-export class CodeSigningPlugin implements WebpackPlugin {
+export class CodeSigningPlugin implements RspackPluginInstance {
   /**
    * Constructs new `RepackPlugin`.
    *
@@ -34,7 +33,7 @@ export class CodeSigningPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: rspack.Compiler) {
     /**
      * For now this flag defaults to true to avoid a breaking change.
      *
@@ -58,25 +57,22 @@ export class CodeSigningPlugin implements WebpackPlugin {
     );
     const privateKey = fs.readFileSync(privateKeyPath);
     const chunkFiles = new Set<string>();
-    // Tapping to the "thisCompilation" hook in order to further tap
-    // to the compilation process on an later stage.
-    compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
+
+    compiler.hooks.afterCompile.tap(pluginName, (compilation) => {
       // we need to make sure that assets are fully processed in order
       // to create a code-signing mapping.
-      compilation.hooks.afterProcessAssets.tap(pluginName, () => {
-        // adjust for chunk name to filename
-        compilation.chunks.forEach((chunk) => {
-          chunk.files.forEach((file) => {
-            // Exclude main output bundle because it's always local
-            if (file === compilation.outputOptions.filename) {
-              return;
-            }
-            // Exclude chunks specified in config
-            if (this.config.excludeChunks?.includes(String(chunk.id))) {
-              return;
-            }
-            chunkFiles.add(file);
-          });
+      // adjust for chunk name to filename
+      compilation.chunks?.forEach((chunk) => {
+        chunk.files.forEach((file) => {
+          // Exclude main output bundle because it's always local
+          if (file === compilation.outputOptions.filename) {
+            return;
+          }
+          // Exclude chunks specified in config
+          if (this.config.excludeChunks?.includes(String(chunk.id))) {
+            return;
+          }
+          chunkFiles.add(file);
         });
       });
 
