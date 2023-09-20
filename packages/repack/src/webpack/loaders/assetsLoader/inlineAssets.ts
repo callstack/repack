@@ -31,11 +31,17 @@ export function inlineAssets({
 
   const scales = JSON.stringify(Object.keys(sourceSet).map(Number));
 
-  // we need to import PixelRatio to remain compatible
-  // with older versions of React-Native
+  /**
+   * To enable scale resolution in runtime we need to import PixelRatio & AssetSourceResolver
+   * Although we could use AssetSourceResolver as it is, we need to import PixelRatio to remain
+   * compatible with older versions of React-Native. Newer versions of React-Native use
+   * ESM for PixelRatio, so we need to check if PixelRatio is an ESM module and if so, adjust the import.
+   */
   return dedent`
-    var PixelRatio = require('react-native/Libraries/Utilities/PixelRatio');
+    var PixelRatio = require('react-native/Libraries/Utilities/PixelRatio').default;
     var AssetSourceResolver = require('react-native/Libraries/Image/AssetSourceResolver');
+
+    if (PixelRatio.__esModule) PixelRatio = PixelRatio.default;
     var prefferedScale = AssetSourceResolver.pickScale(${scales}, PixelRatio.get());
 
     module.exports = ${JSON.stringify(sourceSet)}[prefferedScale];
