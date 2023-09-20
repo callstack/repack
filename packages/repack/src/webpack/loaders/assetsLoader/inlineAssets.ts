@@ -38,7 +38,7 @@ export function inlineAssets({
    * ESM for PixelRatio, so we need to check if PixelRatio is an ESM module and if so, adjust the import.
    */
   return dedent`
-    var PixelRatio = require('react-native/Libraries/Utilities/PixelRatio').default;
+    var PixelRatio = require('react-native/Libraries/Utilities/PixelRatio');
     var AssetSourceResolver = require('react-native/Libraries/Image/AssetSourceResolver');
 
     if (PixelRatio.__esModule) PixelRatio = PixelRatio.default;
