@@ -1,10 +1,15 @@
 import readline from 'readline';
-import { URL } from 'url';
-import webpack from 'webpack';
+import { URL, pathToFileURL } from 'url';
+import rspack from '@rspack/core';
 import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
-import { CliOptions, HMRMessageBody, StartArguments } from '../types';
+import {
+  CliOptions,
+  HMRMessageBody,
+  StartArguments,
+  StatsCompilation,
+} from '../types';
 import { DEFAULT_PORT } from '../env';
 import {
   composeReporters,
@@ -85,7 +90,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         runAdbReverse(ctx, args.port);
       }
 
-      let lastStats: webpack.StatsCompilation | undefined;
+      let lastStats: StatsCompilation | undefined;
 
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
@@ -106,7 +111,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           stats,
         }: {
           platform: string;
-          stats: webpack.StatsCompilation;
+          stats: StatsCompilation;
         }) => {
           ctx.notifyBuildEnd(platform);
           lastStats = stats;
@@ -135,15 +140,15 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         symbolicator: {
           getSource: (fileUrl) => {
             const { filename, platform } = parseFileUrl(fileUrl);
-            return compiler.getSource(filename, platform);
+            return compiler.getSource(filename, platform || 'ios');
           },
           getSourceMap: (fileUrl) => {
             const { filename, platform } = parseFileUrl(fileUrl);
-            if (!platform) {
-              throw new Error('Cannot infer platform for file URL');
-            }
+            // if (!platform) {
+            //   throw new Error('Cannot infer platform for file URL');
+            // }
 
-            return compiler.getSourceMap(filename, platform);
+            return compiler.getSourceMap(filename, platform || 'ios');
           },
           shouldIncludeFrame: (frame) => {
             // If the frame points to internal bootstrap/module system logic, skip the code frame.
@@ -250,13 +255,20 @@ async function runAdbReverse(ctx: Server.DelegateContext, port: number) {
 }
 
 function parseFileUrl(fileUrl: string) {
-  const { pathname: filename, searchParams } = new URL(fileUrl);
+  let url: URL;
+  if (fileUrl.startsWith('http')) {
+    url = new URL(fileUrl);
+  } else {
+    url = pathToFileURL('/' + fileUrl);
+  }
+  const { pathname: filename, searchParams } = url;
   let platform = searchParams.get('platform');
   if (!platform) {
-    const [, platformOrName, name] = filename.split('.').reverse();
-    if (name !== undefined) {
-      platform = platformOrName;
-    }
+    platform = 'ios';
+    // const [, platformOrName, name] = filename.split('.').reverse();
+    // if (name !== undefined) {
+    //   platform = platformOrName;
+    // }
   }
 
   return {
@@ -265,9 +277,7 @@ function parseFileUrl(fileUrl: string) {
   };
 }
 
-function createHmrBody(
-  stats?: webpack.StatsCompilation
-): HMRMessageBody | null {
+function createHmrBody(stats?: StatsCompilation): HMRMessageBody | null {
   if (!stats) {
     return null;
   }

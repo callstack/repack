@@ -2,17 +2,15 @@ import { Worker, SHARE_ENV } from 'worker_threads';
 import path from 'path';
 import fs from 'fs';
 import EventEmitter from 'events';
-import webpack from 'webpack';
 import mimeTypes from 'mime-types';
 import { SendProgress } from '@callstack/repack-dev-server';
-import type { CliOptions, StartArguments } from '../types';
+import type { CliOptions, StartArguments, StatsCompilation } from '../types';
 import type { LogType, Reporter } from '../logging';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
 import { adaptFilenameToPlatform } from './utils';
 
 export interface Asset {
   data: string | Buffer;
-  info: Record<string, any>;
 }
 
 type Platform = string;
@@ -20,7 +18,7 @@ type Platform = string;
 export class Compiler extends EventEmitter {
   workers: Record<Platform, Worker> = {};
   assetsCache: Record<Platform, Record<string, Asset>> = {};
-  statsCache: Record<Platform, webpack.StatsCompilation> = {};
+  statsCache: Record<Platform, StatsCompilation> = {};
   resolvers: Record<Platform, Array<(error?: Error) => void>> = {};
   progressSenders: Record<Platform, SendProgress[]> = {};
   isCompilationInProgress: Record<Platform, boolean> = {};
@@ -103,19 +101,17 @@ export class Compiler extends EventEmitter {
               assets: Array<{
                 filename: string;
                 data: Uint8Array;
-                info: Record<string, any>;
               }>;
-              stats: webpack.StatsCompilation;
+              stats: StatsCompilation;
             }
       ) => {
         if (value.event === 'done') {
           this.isCompilationInProgress[platform] = false;
           this.statsCache[platform] = value.stats;
           this.assetsCache[platform] = value.assets.reduce(
-            (acc, { filename, data, info }) => {
+            (acc, { filename, data }) => {
               const asset = {
                 data: Buffer.from(data),
-                info,
               };
               return {
                 ...acc,
@@ -229,8 +225,15 @@ export class Compiler extends EventEmitter {
     filename: string,
     platform: string
   ): Promise<string | Buffer> {
-    const { info } = await this.getAsset(filename, platform);
-    const sourceMapFilename = info.related?.sourceMap as string | undefined;
+    /** 
+     * Inside dev server we can control the naming of sourcemaps
+     * so there is no need to look it up, we can just assume default naming scheme
+     * 
+     * TODO: add some detection for checking if the sourcemap exists
+     * We could probably check the cache directly as it should be already compiled?
+     * Or start a new compilation that will get a source map? (perf++)
+     */
+    const sourceMapFilename = filename + '.map';
 
     if (sourceMapFilename) {
       return (await this.getAsset(sourceMapFilename, platform)).data;

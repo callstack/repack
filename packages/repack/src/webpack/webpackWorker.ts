@@ -1,10 +1,11 @@
 import { workerData, parentPort } from 'worker_threads';
 import path from 'path';
-import webpack from 'webpack';
+import { rspack, ProgressPlugin } from '@rspack/core';
 import memfs from 'memfs';
 import type { CliOptions } from '../types';
 import { getWebpackEnvOptions } from './utils';
 import { loadWebpackConfig } from './loadWebpackConfig';
+import { globSync } from 'glob';
 
 async function main(cliOptions: CliOptions) {
   const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
@@ -14,23 +15,19 @@ async function main(cliOptions: CliOptions) {
   );
   const watchOptions = webpackConfig.watchOptions ?? {};
 
+  // Disable clean output to retain assets between builds
+  webpackConfig.output = { ...webpackConfig.output, clean: false };
+
   webpackConfig.plugins = (webpackConfig.plugins ?? []).concat(
-    new webpack.ProgressPlugin((_1, _2, message) => {
-      const [, completed, total] = /(\d+)\/(\d+) modules/.exec(message) ?? [];
-      if (completed !== undefined && total !== undefined) {
-        parentPort?.postMessage({
-          event: 'progress',
-          completed: parseInt(completed, 10),
-          total: parseInt(total, 10),
-          message,
-        });
-      }
+    new ProgressPlugin({
+      prefix: `📦 Bundling ${webpackEnvOptions.platform}`,
     })
   );
 
-  const compiler = webpack(webpackConfig);
+  const compiler = rspack(webpackConfig);
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
+  // @ts-ignore
   compiler.outputFileSystem = fileSystem;
 
   compiler.hooks.watchRun.tap('webpackWorker', () => {
@@ -42,30 +39,35 @@ async function main(cliOptions: CliOptions) {
   });
 
   compiler.hooks.done.tap('webpackWorker', (stats) => {
+    // TODO Figure out the best way to get a list of assets
+    // Right now we will keep on stacking up on hot update assets
+    const globbedAssets = globSync('**/*', {
+      // @ts-expect-error incompatible types
+      fs: fileSystem,
+      nodir: true,
+      cwd: compiler.options.output.path,
+    });
     const outputDirectory = stats.compilation.outputOptions.path!;
-    const assets = stats.compilation.getAssets().map((asset) => {
+    const assets = globbedAssets.map((filename) => {
       const data = fileSystem.readFileSync(
-        path.join(outputDirectory, asset.name)
+        path.join(outputDirectory, filename)
       ) as Buffer;
       return {
-        filename: asset.name,
+        filename,
         data,
-        info: asset.info,
       };
     });
     parentPort?.postMessage(
       {
         event: 'done',
         assets,
+        // TODO add CLI option to enable all stats for the api endpoint in dev server
         stats: stats.toJson({
           all: false,
-          cached: true,
-          children: true,
-          modules: true,
           timings: true,
           hash: true,
           errors: true,
-          warnings: false,
+          warnings: true,
         }),
       },
       assets.map((asset) => asset.data.buffer)
