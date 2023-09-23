@@ -1,3 +1,11 @@
 {
-  "css.validate": false
+  "css.validate": false,
+  "eslint.workingDirectories": [
+    "packages/dashboard",
+    "packages/debugger-app",
+    "packages/dev-server",
+    "packages/init",
+    "packages/repack",
+    "packages/TesterApp"
+  ]
 }
