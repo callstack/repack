@@ -88,12 +88,10 @@ class DevServerClient {
 
 const client = new DevServerClient();
 
-module.exports = {
-  setup() {},
-  enable() {},
-  disable() {},
-  registerBundle() {},
-  log(level: string, data: any[]) {
-    client.log(level, data);
-  },
-};
+export function setup() {}
+export function enable() {}
+export function disable() {}
+export function registerBundle() {}
+export function log(level: string, data: any[]) {
+  client.log(level, data);
+}
