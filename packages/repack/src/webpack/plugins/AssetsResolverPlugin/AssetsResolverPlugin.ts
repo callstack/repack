@@ -1,5 +1,4 @@
-import webpack from 'webpack';
-import { WebpackPlugin } from '../../../types';
+import { Compiler, RspackPluginInstance } from '@rspack/core';
 import { ASSET_EXTENSIONS, SCALABLE_ASSETS } from '../../utils/assetExtensions';
 import { AssetResolver, AssetResolverConfig } from './AssetResolver';
 
@@ -17,7 +16,7 @@ export interface AssetsResolverPluginConfig extends AssetResolverConfig {}
  *
  * @category Webpack Plugin
  */
-export class AssetsResolverPlugin implements WebpackPlugin {
+export class AssetsResolverPlugin implements RspackPluginInstance {
   /**
    * Constructs new `AssetsResolverPlugin`.
    *
@@ -34,11 +33,16 @@ export class AssetsResolverPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: Compiler) {
     const assetResolver = new AssetResolver(this.config, compiler);
 
-    compiler.options.resolve.plugins = (
-      compiler.options.resolve.plugins || []
-    ).concat(assetResolver);
+    // compiler.options.resolve.plugins = (
+    //   compiler.options.resolve.plugins || []
+    // ).concat(assetResolver);
+    // compiler.hooks.normalModuleFactory.tap('AssetsResolverPlugin', (nmf) => {
+    //   nmf.hooks.beforeResolve.tap('AssetsResolverPlugin', (result) => {
+    //     console.log(result.request);
+    //   });
+    // });
   }
 }

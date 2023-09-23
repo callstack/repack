@@ -1,10 +1,10 @@
-import webpack from 'webpack';
-import type { DevServerOptions, WebpackPlugin } from '../../types';
+import rspack, { RspackPluginInstance } from '@rspack/core';
+import type { DevServerOptions } from '../../types';
 import { AssetsResolverPlugin } from './AssetsResolverPlugin';
 import { DevelopmentPlugin } from './DevelopmentPlugin';
 import { LoggerPlugin, LoggerPluginConfig } from './LoggerPlugin';
-import { OutputPlugin, OutputPluginConfig } from './OutputPlugin';
 import { RepackTargetPlugin } from './RepackTargetPlugin';
+// import { RawSource } from 'webpack-sources';
 
 /**
  * {@link RepackPlugin} configuration options.
@@ -39,7 +39,7 @@ export interface RepackPluginConfig {
    *
    * Refer to {@link OutputPluginConfig.output} for more details.
    */
-  output: OutputPluginConfig['output'];
+  // output: OutputPluginConfig['output'];
 
   /** The entry chunk name, `main` by default. */
   entryName?: string;
@@ -50,7 +50,7 @@ export interface RepackPluginConfig {
    *
    * Refer to {@link OutputPluginConfig.extraChunks} for more details.
    */
-  extraChunks?: OutputPluginConfig['extraChunks'];
+  // extraChunks?: OutputPluginConfig['extraChunks'];
 
   /**
    * Options to configure {@link LoggerPlugin}'s `output`.
@@ -107,7 +107,7 @@ export interface RepackPluginConfig {
  *
  * @category Webpack Plugin
  */
-export class RepackPlugin implements WebpackPlugin {
+export class RepackPlugin implements RspackPluginInstance {
   /**
    * Constructs new `RepackPlugin`.
    *
@@ -123,22 +123,14 @@ export class RepackPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
-    new webpack.DefinePlugin({
+  apply(compiler: rspack.Compiler) {
+    compiler.options.builtins.define = {
+      ...compiler.options.builtins.define,
       __DEV__: JSON.stringify(this.config.mode === 'development'),
-    }).apply(compiler);
+    };
 
     new AssetsResolverPlugin({
       platform: this.config.platform,
-    }).apply(compiler);
-
-    new OutputPlugin({
-      platform: this.config.platform,
-      enabled: !this.config.devServer,
-      context: this.config.context,
-      output: this.config.output,
-      entryName: this.config.entryName,
-      extraChunks: this.config.extraChunks,
     }).apply(compiler);
 
     new DevelopmentPlugin({
@@ -150,22 +142,6 @@ export class RepackPlugin implements WebpackPlugin {
       hmr: this.config.devServer?.hmr,
     }).apply(compiler);
 
-    if (this.config.sourceMaps) {
-      new webpack.SourceMapDevToolPlugin({
-        test: /\.(js)?bundle$/,
-        exclude: /\.chunk\.(js)?bundle$/,
-        filename: '[file].map',
-        append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
-      }).apply(compiler);
-
-      new webpack.SourceMapDevToolPlugin({
-        test: /\.(js)?bundle$/,
-        include: /\.chunk\.(js)?bundle$/,
-        filename: '[file].map',
-        append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
-      }).apply(compiler);
-    }
-
     if (this.config.logger) {
       new LoggerPlugin({
         platform: this.config.platform,
@@ -175,6 +151,35 @@ export class RepackPlugin implements WebpackPlugin {
           ...(typeof this.config.logger === 'object' ? this.config.logger : {}),
         },
       }).apply(compiler);
+    }
+
+    if (this.config.sourceMaps) {
+      // lack of support for SourceMapDevToolPlugin in rspack
+      // new webpack.SourceMapDevToolPlugin({
+      //   test: /\.(js)?bundle$/,
+      //   exclude: /\.chunk\.(js)?bundle$/,
+      //   filename: '[file].map',
+      //   append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
+      // }).apply(compiler);
+      // new webpack.SourceMapDevToolPlugin({
+      //   test: /\.(js)?bundle$/,
+      //   include: /\.chunk\.(js)?bundle$/,
+      //   filename: '[file].map',
+      //   append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
+      // }).apply(compiler);
+      // hacky workaround to add platform to sourcemap urls
+      // compiler.hooks.emit.tap('RepackPlugin', (compilation) => {
+      //   Object.entries(compilation.assets).forEach(([name, asset]) => {
+      //     if (name.endsWith('.bundle')) {
+      //       const source = asset.source() as string;
+      //       const result = source.replaceAll(
+      //         /\/\/# sourceMappingURL=(.*)$/gm,
+      //         `//# sourceMappingURL=$1?platform=${this.config.platform}`
+      //       );
+      //       compilation.assets[name] = new RawSource(result);
+      //     }
+      //   });
+      // });
     }
   }
 }
