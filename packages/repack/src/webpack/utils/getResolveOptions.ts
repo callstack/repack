@@ -30,7 +30,6 @@ export function getResolveOptions(platform: string) {
      * First entry takes precedence.
      */
     mainFields: ['react-native', 'browser', 'main'],
-    aliasFields: ['react-native', 'browser', 'main'],
     conditionNames: ['default', 'require'],
     extensions: [
       `.${platform}.ts`,
