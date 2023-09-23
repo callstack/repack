@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@callstack/eslint-config": "^14.0.0",
-    "eslint": "^8.40.0",
+    "eslint": "^8.50.0",
     "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-import": "^2.27.5",
