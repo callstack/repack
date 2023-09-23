@@ -9,7 +9,7 @@ declare module 'loader-utils' {
 
   /// <reference types="node" />
 
-  import webpack from 'webpack';
+  import rspack from '@rspack/core';
 
   export type LoaderCallback = (
     error: Error | undefined | null,
