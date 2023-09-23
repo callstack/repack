@@ -46,12 +46,15 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     ];
 
     const hmrClientRegexp =
-      /react-native([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/;
+      /react-native([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient$/;
 
-    // RSPACK-TODO Verify this resolution when running!!
     compiler.hooks.normalModuleFactory.tap('RepackTargetPlugin', (nmf) => {
       nmf.hooks.beforeResolve.tap('RepackTargetPlugin', (result) => {
-        if (hmrClientRegexp.test(result.request)) {
+        const absolutePath = path.join(
+          result.context as string,
+          result.request
+        );
+        if (hmrClientRegexp.test(absolutePath)) {
           const request = require.resolve('../../../modules/DevServerClient');
           const context = path.dirname(request);
           result.request = request;
