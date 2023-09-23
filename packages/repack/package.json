@@ -2,6 +2,9 @@
   "name": "@callstack/repack",
   "version": "3.4.0",
   "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
+  "installConfig": {
+    "hoistingLimits": "dependencies"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "react-native": "",

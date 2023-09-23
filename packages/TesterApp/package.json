@@ -3,7 +3,7 @@
   "version": "0.1.3",
   "private": true,
   "installConfig": {
-    "hoistingLimits": "workspaces"
+    "hoistingLimits": "dependencies"
   },
   "scripts": {
     "android": "react-native run-android",
