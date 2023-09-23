@@ -25,8 +25,8 @@
     "react-native-svg": "^13.7.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@babel/preset-env": "^7.20.0",
+    "@babel/core": "^7.22.20",
+    "@babel/preset-env": "^7.22.20",
     "@babel/runtime": "^7.20.0",
     "@callstack/eslint-config": "^14.0.0",
     "@rspack/core": "^0.3.4",
@@ -35,7 +35,7 @@
     "@tsconfig/react-native": "^2.0.2",
     "@types/get-port": "^4.2.0",
     "babel-loader": "^8.2.5",
-    "eslint": "^8.19.0",
+    "eslint": "^8.50.0",
     "execa": "^6.1.0",
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
