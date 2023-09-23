@@ -1,4 +1,4 @@
-import webpack from 'webpack';
+import rspack from '@rspack/core';
 
 export type Rule = string | RegExp;
 
@@ -11,21 +11,8 @@ export interface Fallback<T> {
  * See: https://webpack.js.org/api/logging/
  */
 export type WebpackLogger = ReturnType<
-  webpack.Compiler['getInfrastructureLogger']
+  rspack.Compiler['getInfrastructureLogger']
 >;
-
-/**
- * Interface that all Webpack plugins should implement.
- */
-export interface WebpackPlugin {
-  /**
-   * Entry point for a plugin. It should perform any kind of setup or initialization
-   * hook into compiler's events.
-   *
-   * @param compiler Webpack compiler instance.
-   */
-  apply(compiler: webpack.Compiler): void;
-}
 
 /**
  * Common CLI arguments that are used across all commands.
@@ -175,6 +162,8 @@ export interface WebpackEnvOptions {
   devServer?: DevServerOptions;
 }
 
+export type StatsCompilation = ReturnType<rspack.Stats['toJson']>;
+
 /**
  * Represent Hot Module Replacement Update body.
  *
@@ -184,8 +173,8 @@ export interface HMRMessageBody {
   name: string;
   time: number;
   hash: string;
-  warnings: webpack.StatsCompilation['warnings'];
-  errors: webpack.StatsCompilation['errors'];
+  warnings: StatsCompilation['warnings'];
+  errors: StatsCompilation['errors'];
   modules: Record<string, string>;
 }
 
