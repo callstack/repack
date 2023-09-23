@@ -46,7 +46,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@callstack/eslint-config": "^13.0.2",
+    "@callstack/eslint-config": "^14.0.0",
     "eslint": "^8.40.0",
     "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-plugin-flowtype": "^8.0.3",

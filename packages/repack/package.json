@@ -89,7 +89,7 @@
     "@babel/plugin-proposal-export-namespace-from": "^7.17.12",
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-typescript": "^7.17.12",
-    "@callstack/eslint-config": "^11.0.0",
+    "@callstack/eslint-config": "^14.0.0",
     "@react-native-community/cli": "5.0.1-alpha.1",
     "@react-native-community/cli-types": "5.0.1-alpha.1",
     "@rspack/core": "^0.3.4",
