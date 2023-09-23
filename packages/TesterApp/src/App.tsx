@@ -1,30 +1,23 @@
-import React from 'react';
-
+import React, { useRef } from 'react';
 import { AppContainer } from './ui/AppContainer';
 import { Section } from './ui/Section';
 import { SectionContainer } from './ui/SectionContainer';
-
-import { AsyncContainer } from './asyncChunks/AsyncContainer';
-import { RemoteContainer } from './remoteChunks/RemoteContainer';
-import { MiniAppsContainer } from './miniapp/MiniAppsContainer';
-import { AssetsTestContainer } from './assetsTest/AssetsTestContainer';
+import { View, Text } from 'react-native';
 
 const App = () => {
+  const oldTime = useRef(performance.now());
+
+  const now = performance.now();
+  console.log('🚀 HMR TIME', (now - oldTime.current).toFixed(0));
+  oldTime.current = now;
+
   return (
     <AppContainer>
       <SectionContainer>
-        <Section title="Async chunk">
-          <AsyncContainer />
-        </Section>
-        <Section title="Remote chunks">
-          <RemoteContainer />
-        </Section>
-        <Section title="Mini-apps">
-          <MiniAppsContainer />
-        </Section>
-        <Section title="Assets test">
-          <AssetsTestContainer />
-        </Section>
+        <Section title="Async chunk"></Section>
+        <Section title="Remote chunks"></Section>
+        <Section title="Mini-apps"></Section>
+        <Section title="Assets test"></Section>
       </SectionContainer>
     </AppContainer>
   );
