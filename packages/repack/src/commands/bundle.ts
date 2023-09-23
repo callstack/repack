@@ -1,7 +1,7 @@
 import { Config } from '@react-native-community/cli-types';
 import fs from 'fs-extra';
 import { stringifyStream } from '@discoveryjs/json-ext';
-import webpack from 'webpack';
+import { rspack } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, CliOptions } from '../types';
 import { loadWebpackConfig } from '../webpack/loadWebpackConfig';
@@ -50,7 +50,7 @@ export async function bundle(
     webpackConfigPath,
     webpackEnvOptions
   );
-  const compiler = webpack(webpackConfig);
+  const compiler = rspack(webpackConfig);
 
   return new Promise<void>((resolve, reject) => {
     compiler.run((error, stats) => {
