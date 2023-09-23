@@ -225,10 +225,10 @@ export class Compiler extends EventEmitter {
     filename: string,
     platform: string
   ): Promise<string | Buffer> {
-    /** 
+    /**
      * Inside dev server we can control the naming of sourcemaps
      * so there is no need to look it up, we can just assume default naming scheme
-     * 
+     *
      * TODO: add some detection for checking if the sourcemap exists
      * We could probably check the cache directly as it should be already compiled?
      * Or start a new compilation that will get a source map? (perf++)

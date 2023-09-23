@@ -1,4 +1,6 @@
-import { Schema } from '../types';
+import type { validate } from 'schema-utils';
+
+type Schema = Parameters<typeof validate>[0];
 
 export interface FlowLoaderOptions {
   all?: boolean;

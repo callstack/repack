@@ -1,6 +1,6 @@
 import { Compiler, RspackPluginInstance } from '@rspack/core';
 import { ASSET_EXTENSIONS, SCALABLE_ASSETS } from '../../utils/assetExtensions';
-import { AssetResolver, AssetResolverConfig } from './AssetResolver';
+import { AssetResolverConfig } from './AssetResolver';
 
 /**
  * {@link AssetsResolverPlugin} configuration options.
@@ -33,9 +33,8 @@ export class AssetsResolverPlugin implements RspackPluginInstance {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: Compiler) {
-    const assetResolver = new AssetResolver(this.config, compiler);
-
+  apply(_: Compiler) {
+    // const assetResolver = new AssetResolver(this.config, compiler);
     // compiler.options.resolve.plugins = (
     //   compiler.options.resolve.plugins || []
     // ).concat(assetResolver);

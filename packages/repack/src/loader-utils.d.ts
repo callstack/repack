@@ -9,8 +9,6 @@ declare module 'loader-utils' {
 
   /// <reference types="node" />
 
-  import rspack from '@rspack/core';
-
   export type LoaderCallback = (
     error: Error | undefined | null,
     content?: string | Buffer,

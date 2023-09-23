@@ -36,7 +36,7 @@
   "dependencies": {
     "@manypkg/find-root": "^2.2.1",
     "chalk": "^5.2.0",
-    "dedent": "^0.7.0",
+    "dedent": "^1.5.1",
     "detect-package-manager": "^2.0.1",
     "execa": "^7.1.1",
     "node-fetch": "^3.3.1",
@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@callstack/eslint-config": "^14.0.0",
+    "@types/yargs": "^17.0.24",
     "eslint": "^8.50.0",
     "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-plugin-flowtype": "^8.0.3",

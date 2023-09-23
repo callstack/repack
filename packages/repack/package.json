@@ -3,7 +3,7 @@
   "version": "3.4.0",
   "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
   "installConfig": {
-    "hoistingLimits": "dependencies"
+    "hoistingLimits": "workspaces"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -57,7 +57,9 @@
   "peerDependencies": {
     "@react-native-community/cli": "*",
     "@react-native-community/cli-types": "*",
-    "react-native": ">=0.63"
+    "react-native": ">=0.63",
+    "@rspack/core": "0.3.4",
+    "@rspack/plugin-react-refresh": "0.3.4"
   },
   "dependencies": {
     "@callstack/repack-dev-server": "^1.0.1",

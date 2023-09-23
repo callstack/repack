@@ -2,10 +2,10 @@ import { workerData, parentPort } from 'worker_threads';
 import path from 'path';
 import { rspack, ProgressPlugin } from '@rspack/core';
 import memfs from 'memfs';
+import { globSync } from 'glob';
 import type { CliOptions } from '../types';
 import { getWebpackEnvOptions } from './utils';
 import { loadWebpackConfig } from './loadWebpackConfig';
-import { globSync } from 'glob';
 
 async function main(cliOptions: CliOptions) {
   const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
