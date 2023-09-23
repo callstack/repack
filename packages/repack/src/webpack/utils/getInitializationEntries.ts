@@ -66,6 +66,9 @@ export function getInitializationEntries(
   ];
 
   if (hmr) {
+    entries.push(
+      require.resolve('@rspack/plugin-react-refresh/react-refresh-entry')
+    );
     entries.push(require.resolve('../../modules/WebpackHMRClient'));
   }
 
