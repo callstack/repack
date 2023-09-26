@@ -33,7 +33,7 @@
   "author": "zamotany <zamotany.oss@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=14.x"
+    "node": ">=18"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
