@@ -4855,7 +4855,7 @@ __metadata:
     "@fastify/sensible": ^4.1.0
     "@fastify/static": ^5.0.2
     "@types/babel__code-frame": ^7.0.3
-    "@types/node": 14
+    "@types/node": 18
     "@types/ws": ^8.5.3
     babel-plugin-add-import-extension: ^1.6.0
     eslint: ^8.16.0
@@ -4920,7 +4920,7 @@ __metadata:
     "@types/jsonwebtoken": ^9.0.0
     "@types/lodash.throttle": ^4.1.7
     "@types/mime-types": ^2.1.1
-    "@types/node": ^14.14.28
+    "@types/node": ^18
     "@types/react-dom": ^17.0.7
     "@types/react-native": ^0.67.8
     "@types/shallowequal": ^1.1.1
@@ -9001,10 +9001,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:14":
-  version: 14.18.18
-  resolution: "@types/node@npm:14.18.18"
-  checksum: a165225cd2603f6e62af8407449e4a4407305e03b41c1adf6b186fdf546e1a03c8214217659b5b36c556947c0c06234993ac880d4db6378136a7a810d47e0742
+"@types/node@npm:18, @types/node@npm:^18":
+  version: 18.18.0
+  resolution: "@types/node@npm:18.18.0"
+  checksum: 61bcffa28eb713e7a4c66fd369df603369c3f834a783faeced95fe3e78903faa25f1a704d49e054f41d71b7915eeb066d10a37cc699421fcf5dd267f96ad5808
   languageName: node
   linkType: hard
 
@@ -9012,13 +9012,6 @@ __metadata:
   version: 12.20.55
   resolution: "@types/node@npm:12.20.55"
   checksum: e4f86785f4092706e0d3b0edff8dca5a13b45627e4b36700acd8dfe6ad53db71928c8dee914d4276c7fd3b6ccd829aa919811c9eb708a2c8e4c6eb3701178c37
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^14.14.28":
-  version: 14.17.5
-  resolution: "@types/node@npm:14.17.5"
-  checksum: 8fba22a8df7bcea75039f08e00fcff8e331f6d367739a9631d3457bc3e8e5ddfdd60e1a5d685d9420312e9ed7cf2f2146d37224ec9f7d578fe8dd32ce3821e62
   languageName: node
   linkType: hard
 
