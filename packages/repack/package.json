@@ -97,7 +97,7 @@
     "@types/jsonwebtoken": "^9.0.0",
     "@types/lodash.throttle": "^4.1.7",
     "@types/mime-types": "^2.1.1",
-    "@types/node": "^14.14.28",
+    "@types/node": "^18",
     "@types/react-dom": "^17.0.7",
     "@types/react-native": "^0.67.8",
     "@types/shallowequal": "^1.1.1",
