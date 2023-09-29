@@ -51,10 +51,6 @@ export class CodeSigningPlugin implements WebpackPlugin {
       return;
     }
 
-    if (!this.config.privateKeyPath) {
-      throw new Error('CodeSigningPlugin: privateKeyPath is required');
-    }
-
     if (typeof compiler.options.output.filename === 'function') {
       throw new Error(
         'CodeSigningPlugin does not support dynamic output filename. Please use static filename instead.'
@@ -70,7 +66,12 @@ export class CodeSigningPlugin implements WebpackPlugin {
      * alias for "Repack Code-Signing Signature Begin"
      */
     const BEGIN_CS_MARK = '/* RCSSB */';
-    const privateKey = fs.readFileSync(this.config.privateKeyPath);
+
+    const privateKeyPath = path.isAbsolute(this.config.privateKeyPath)
+      ? this.config.privateKeyPath
+      : path.resolve(compiler.context, this.config.privateKeyPath);
+    const privateKey = fs.readFileSync(privateKeyPath);
+
     const excludedChunks = Array.isArray(this.config.excludeChunks)
       ? this.config.excludeChunks
       : [this.config.excludeChunks as RegExp];
