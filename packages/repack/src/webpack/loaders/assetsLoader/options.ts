@@ -1,7 +1,7 @@
 import { validate } from 'schema-utils';
-import utils, { LoaderContext } from 'loader-utils';
+import { LoaderContext } from '@rspack/core';
 
-export interface Options {
+export interface AssetLoaderOptions {
   platform: string;
   scalableAssetExtensions: string[];
   devServerEnabled?: boolean;
@@ -39,10 +39,12 @@ export const optionsSchema: Schema = {
   },
 };
 
-export function getOptions(loaderContext: LoaderContext): Options {
-  const options = utils.getOptions(loaderContext) || {};
+export function getOptions(
+  loaderContext: LoaderContext<AssetLoaderOptions>
+): AssetLoaderOptions {
+  const options = loaderContext.getOptions();
 
   validate(optionsSchema, options, { name: 'repackAssetsLoader' });
 
-  return options as unknown as Options;
+  return options;
 }
