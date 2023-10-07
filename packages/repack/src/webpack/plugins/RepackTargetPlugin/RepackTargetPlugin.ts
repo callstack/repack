@@ -50,10 +50,8 @@ export class RepackTargetPlugin implements RspackPluginInstance {
 
     compiler.hooks.normalModuleFactory.tap('RepackTargetPlugin', (nmf) => {
       nmf.hooks.beforeResolve.tap('RepackTargetPlugin', (result) => {
-        const absolutePath = path.join(
-          result.context as string,
-          result.request
-        );
+        const absolutePath = path.resolve(result.context ?? '', result.request);
+
         if (hmrClientRegexp.test(absolutePath)) {
           const request = require.resolve('../../../modules/DevServerClient');
           const context = path.dirname(request);
