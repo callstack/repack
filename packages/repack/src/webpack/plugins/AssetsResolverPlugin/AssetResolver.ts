@@ -2,19 +2,11 @@ import path from 'path';
 import type fs from 'fs';
 import escapeStringRegexp from 'escape-string-regexp';
 import type { Compiler, NormalModuleFactory } from '@rspack/core';
-import { getAssetExtensionsRegExp } from '../../utils/assetExtensions';
 
 /**
  * {@link AssetResolver} configuration options.
  */
 export interface AssetResolverConfig {
-  /**
-   * Override default asset extensions. If the asset matches one of the extensions, it will be process
-   * by the custom React Native asset resolver. Otherwise, the resolution will process normally and
-   * the asset will be handled by Webpack.
-   */
-  extensions?: string[];
-
   /**
    * Override default scalable extensions, which processes only scalable assets like images
    * to create a map of DPI variants of the asset.
@@ -95,14 +87,8 @@ export class AssetResolver {
 
   resolve(resolveData: ResolveData, callback: InnerCallback) {
     const platform = this.config.platform;
-    const test = getAssetExtensionsRegExp(this.config.extensions!);
     const logger = this.compiler.getInfrastructureLogger('RepackAssetResolver');
     const inputFileSystem = this.compiler.inputFileSystem as typeof fs;
-
-    if (!test.test(resolveData.request)) {
-      callback();
-      return;
-    }
 
     const requestPath = path.resolve(
       resolveData.context ?? '',

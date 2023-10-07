@@ -1,11 +1,22 @@
 import { Compiler, RspackPluginInstance } from '@rspack/core';
-import { ASSET_EXTENSIONS, SCALABLE_ASSETS } from '../../utils/assetExtensions';
+import {
+  ASSET_EXTENSIONS,
+  SCALABLE_ASSETS,
+  getAssetExtensionsRegExp,
+} from '../../utils/assetExtensions';
 import { AssetResolver, AssetResolverConfig } from './AssetResolver';
 
 /**
  * {@link AssetsResolverPlugin} configuration options.
  */
-export interface AssetsResolverPluginConfig extends AssetResolverConfig {}
+export interface AssetsResolverPluginConfig extends AssetResolverConfig {
+  /**
+   * Override default asset extensions. If the asset matches one of the extensions, it will be process
+   * by the custom React Native asset resolver. Otherwise, the resolution will process normally and
+   * the asset will be handled by Webpack.
+   */
+  extensions?: string[];
+}
 
 /**
  * Plugin for resolving assets (images, audio, video etc) for React Native applications.
@@ -35,12 +46,22 @@ export class AssetsResolverPlugin implements RspackPluginInstance {
    */
   apply(compiler: Compiler) {
     const assetResolver = new AssetResolver(this.config, compiler);
+    const test = getAssetExtensionsRegExp(this.config.extensions!);
 
+    /**
+     * In rspack, resolve.plugins is not implemented yet, so we have to use normalModuleFactory instead.
+     * We can intercept the asset resolution request and resolve it using our custom asset resolver.
+     */
     compiler.hooks.normalModuleFactory.tap('AssetsResolverPlugin', (nmf) => {
       nmf.hooks.beforeResolve.tapAsync(
         'AssetsResolverPlugin',
         (resolveData, callback) => {
-          assetResolver.resolve(resolveData, callback);
+          if (!test.test(resolveData.request)) {
+            callback();
+            return;
+          } else {
+            assetResolver.resolve(resolveData, callback);
+          }
         }
       );
     });
