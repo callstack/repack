@@ -36,8 +36,9 @@ module.exports = (env) => {
     resolve: {
       ...Repack.getResolveOptions(platform),
       alias: {
-        // this is here probably so it works in monorepos?
         'react-native': reactNativePath,
+        // react-native-svg uses babel codegen plugin that doesn't work with swc, but they ship with cjs version
+        'react-native-svg': require.resolve('react-native-svg'),
         // simulate target environment, because of symlinks this get's picked up by the loader that handles local source code
         '@callstack/repack': path.join(
           __dirname,
@@ -54,7 +55,7 @@ module.exports = (env) => {
     },
     module: {
       rules: [
-        ...Repack.getDefaultLoaders(), // loaders for: RN, React and all other node_modules
+        ...Repack.getDefaultLoaders(), // loaders for: React Native and all other node_modules
         {
           test: /\.[jt]sx?$/,
           exclude: /node_modules/,
