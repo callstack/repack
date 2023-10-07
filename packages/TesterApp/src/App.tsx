@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import { AppContainer } from './ui/AppContainer';
 import { Section } from './ui/Section';
 import { SectionContainer } from './ui/SectionContainer';
-import { View, Text } from 'react-native';
 
 const App = () => {
   const oldTime = useRef(performance.now());

@@ -34,15 +34,15 @@ export class AssetsResolverPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const assetResolver = new AssetResolver(this.config, compiler);
-    // compiler.options.resolve.plugins = (
-    //   compiler.options.resolve.plugins || []
-    // ).concat(assetResolver);
-    // compiler.hooks.normalModuleFactory.tap('AssetsResolverPlugin', (nmf) => {
-    //   nmf.hooks.beforeResolve.tap('AssetsResolverPlugin', (result) => {
-    //     console.log(result.request);
-    //   });
-    // });
+
+    compiler.hooks.normalModuleFactory.tap('AssetsResolverPlugin', (nmf) => {
+      nmf.hooks.beforeResolve.tapAsync(
+        'AssetsResolverPlugin',
+        (resolveData, callback) => {
+          assetResolver.resolve(resolveData, callback);
+        }
+      );
+    });
   }
 }

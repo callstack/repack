@@ -34,6 +34,7 @@
     "@svgr/webpack": "^6.2.1",
     "@tsconfig/react-native": "^2.0.2",
     "@types/get-port": "^4.2.0",
+    "@types/react": "18.2",
     "babel-loader": "^8.2.5",
     "eslint": "^8.50.0",
     "execa": "^6.1.0",
