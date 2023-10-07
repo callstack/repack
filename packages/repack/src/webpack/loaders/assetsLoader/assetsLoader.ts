@@ -1,5 +1,5 @@
 import path from 'path';
-import type { LoaderContext } from 'loader-utils';
+import type { LoaderContext } from '@rspack/core';
 import { AssetResolver } from '../../plugins/AssetsResolverPlugin/AssetResolver';
 import { getOptions } from './options';
 import { extractAssets } from './extractAssets';
@@ -168,20 +168,23 @@ export default async function repackAssetsLoader(this: LoaderContext) {
       })
     );
 
-    logger.debug(`Resolved request ${this.resourcePath}`, {
-      platform: options.platform,
-      rootContext,
-      resourceNormalizedFilename,
-      resourceFilename,
-      resourceDirname,
-      resourceAbsoluteDirname,
-      resourceExtensionType,
-      scales,
-      assets: assets.map((asset) => ({
-        ...asset,
-        content: `size=${asset.content?.length} type=${typeof asset.content}`,
-      })),
-    });
+    logger.debug(
+      `Resolved request ${this.resourcePath}`,
+      JSON.stringify({
+        platform: options.platform,
+        rootContext,
+        resourceNormalizedFilename,
+        resourceFilename,
+        resourceDirname,
+        resourceAbsoluteDirname,
+        resourceExtensionType,
+        scales,
+        assets: assets.map((asset) => ({
+          ...asset,
+          content: `size=${asset.content?.length} type=${typeof asset.content}`,
+        })),
+      })
+    );
 
     if (options.inline) {
       logger.debug(`Inlining assets for request ${resourcePath}`);

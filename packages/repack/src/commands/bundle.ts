@@ -69,6 +69,7 @@ export async function bundle(
 
           let statOptions: Parameters<typeof stats.toJson>[0];
           if (args.stats !== undefined) {
+            // @ts-expect-error FIX ME
             statOptions = { preset: args.stats };
           } else if (typeof compiler.options.stats === 'boolean') {
             statOptions = compiler.options.stats

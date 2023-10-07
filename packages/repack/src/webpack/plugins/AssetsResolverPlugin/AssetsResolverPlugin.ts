@@ -1,6 +1,6 @@
 import { Compiler, RspackPluginInstance } from '@rspack/core';
 import { ASSET_EXTENSIONS, SCALABLE_ASSETS } from '../../utils/assetExtensions';
-import { AssetResolverConfig } from './AssetResolver';
+import { AssetResolver, AssetResolverConfig } from './AssetResolver';
 
 /**
  * {@link AssetsResolverPlugin} configuration options.
@@ -33,8 +33,9 @@ export class AssetsResolverPlugin implements RspackPluginInstance {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(_: Compiler) {
-    // const assetResolver = new AssetResolver(this.config, compiler);
+  apply(compiler: Compiler) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const assetResolver = new AssetResolver(this.config, compiler);
     // compiler.options.resolve.plugins = (
     //   compiler.options.resolve.plugins || []
     // ).concat(assetResolver);

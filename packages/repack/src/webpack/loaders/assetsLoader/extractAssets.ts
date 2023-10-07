@@ -53,12 +53,15 @@ export async function extractAssets(
     suffixPattern,
   });
 
-  logger.debug(`Extracted assets for request ${resourcePath}`, {
-    hashes,
-    publicPath: customPublicPath,
-    height: size?.height,
-    width: size?.width,
-  });
+  logger.debug(
+    `Extracted assets for request ${resourcePath}`,
+    JSON.stringify({
+      hashes,
+      publicPath: customPublicPath,
+      height: size?.height,
+      width: size?.width,
+    })
+  );
 
   return dedent`
     var AssetRegistry = require('react-native/Libraries/Image/AssetRegistry');

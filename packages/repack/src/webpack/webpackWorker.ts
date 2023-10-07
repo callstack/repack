@@ -27,7 +27,7 @@ async function main(cliOptions: CliOptions) {
   const compiler = rspack(webpackConfig);
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
-  // @ts-ignore
+  // @ts-expect-error memfs is compatible enough
   compiler.outputFileSystem = fileSystem;
 
   compiler.hooks.watchRun.tap('webpackWorker', () => {
@@ -55,6 +55,7 @@ async function main(cliOptions: CliOptions) {
       return {
         filename,
         data,
+        size: data.length,
       };
     });
     parentPort?.postMessage(

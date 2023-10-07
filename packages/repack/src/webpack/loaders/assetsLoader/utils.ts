@@ -1,15 +1,15 @@
 import path from 'path';
+import type fs from 'fs';
 import imageSize from 'image-size';
-import type { LoaderContext } from 'loader-utils';
 import escapeStringRegexp from 'escape-string-regexp';
 import type { ImageSize } from './types';
 
 export async function getFilesInDirectory(
   dirname: string,
-  fs: LoaderContext['fs']
+  filesystem: typeof fs
 ) {
   return await new Promise<string[]>((resolve, reject) =>
-    fs.readdir(dirname, (error, results) => {
+    filesystem.readdir(dirname, (error, results) => {
       if (error) {
         reject(error);
       } else {
@@ -27,9 +27,9 @@ export function getScaleNumber(scaleKey: string) {
   return parseFloat(scaleKey.replace(/[^\d.]/g, ''));
 }
 
-export async function readFile(filename: string, fs: LoaderContext['fs']) {
+export async function readFile(filename: string, filesystem: typeof fs) {
   return new Promise<string | Buffer>((resolve, reject) => {
-    fs.readFile(filename, (error, results) => {
+    filesystem.readFile(filename, (error, results) => {
       if (error) {
         reject(error);
       } else if (results) {

@@ -11,6 +11,7 @@ import { adaptFilenameToPlatform } from './utils';
 
 export interface Asset {
   data: string | Buffer;
+  size: number;
 }
 
 type Platform = string;
@@ -101,6 +102,7 @@ export class Compiler extends EventEmitter {
               assets: Array<{
                 filename: string;
                 data: Uint8Array;
+                size: number;
               }>;
               stats: StatsCompilation;
             }
@@ -109,9 +111,10 @@ export class Compiler extends EventEmitter {
           this.isCompilationInProgress[platform] = false;
           this.statsCache[platform] = value.stats;
           this.assetsCache[platform] = value.assets.reduce(
-            (acc, { filename, data }) => {
+            (acc, { filename, data, size }) => {
               const asset = {
                 data: Buffer.from(data),
+                size,
               };
               return {
                 ...acc,

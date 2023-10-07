@@ -1,7 +1,7 @@
 import vm from 'vm';
 import fs from 'fs';
 import path from 'path';
-import webpack from 'webpack';
+import { rspack } from '@rspack/core';
 import memfs from 'memfs';
 import VirtualModulesPlugin from 'webpack-virtual-modules';
 import { AssetsResolverPlugin } from '../../../plugins/AssetsResolverPlugin';
@@ -20,7 +20,7 @@ async function compileBundle(
     publicPath: string;
   }
 ) {
-  const compiler = webpack({
+  const compiler = rspack({
     context: __dirname,
     mode: 'development',
     devtool: false,
@@ -80,6 +80,7 @@ async function compileBundle(
   });
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
+  // @ts-expect-error memfs is compatible enough
   compiler.outputFileSystem = fileSystem;
 
   return await new Promise<{ code: string; fileSystem: memfs.IFs }>(

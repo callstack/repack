@@ -5,10 +5,10 @@ import { ScriptManager } from '../ScriptManager';
 
 jest.mock('react-native', () => ({ NativeModules: { ScriptManager: {} } }));
 
-// @ts-ignore
 globalThis.__webpack_require__ = {
   u: (id: string) => `${id}.chunk.bundle`,
-  p: '',
+  p: () => '',
+  // @ts-ignore
   repack: { shared: { loadScriptCallback: [] } },
 };
 

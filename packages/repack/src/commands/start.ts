@@ -1,6 +1,5 @@
 import readline from 'readline';
 import { URL, pathToFileURL } from 'url';
-import rspack from '@rspack/core';
 import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
@@ -182,7 +181,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
             Object.entries(compiler.assetsCache[platform] ?? {}).map(
               ([name, asset]) => ({
                 name,
-                size: asset.info.size,
+                size: asset.size,
               })
             ),
           getCompilationStats: async (platform) =>
