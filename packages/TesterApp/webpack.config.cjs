@@ -55,7 +55,8 @@ module.exports = (env) => {
     },
     module: {
       rules: [
-        ...Repack.getDefaultLoaders(), // loaders for: React Native and all other node_modules
+        Repack.REACT_NATIVE_MODULE_RULES,
+        Repack.NODE_MODULES_MODULE_RULES,
         {
           test: /\.[jt]sx?$/,
           exclude: /node_modules/,

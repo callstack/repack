@@ -5,4 +5,5 @@ export * from './assetExtensions';
 export * from './getWebpackEnvOptions';
 export * from './getDirname';
 export * from './adaptFilenameToPlatform';
-export * from './getDefaultLoaders';
+export * from './reactNativeLoadingRules';
+export * from './nodeModulesLoadingRules';
