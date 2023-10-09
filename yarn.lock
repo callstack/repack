@@ -4882,7 +4882,7 @@ __metadata:
     "@manypkg/find-root": ^2.2.1
     chalk: ^5.2.0
     dedent: ^0.7.0
-    detect-package-manager: ^2.0.1
+    detect-package-manager: ^3.0.1
     eslint: ^8.40.0
     eslint-import-resolver-typescript: ^3.5.5
     eslint-plugin-flowtype: ^8.0.3
@@ -14438,12 +14438,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"detect-package-manager@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "detect-package-manager@npm:2.0.1"
+"detect-package-manager@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "detect-package-manager@npm:3.0.1"
   dependencies:
     execa: ^5.1.1
-  checksum: e72b910182d5ad479198d4235be206ac64a479257b32201bb06f3c842cc34c65ea851d46f72cc1d4bf535bcc6c4b44b5b86bb29fe1192b8c9c07b46883672f28
+  checksum: 3a203ba269183baea9969b89f18dd93a9bb451a51280b39ea2ee392f44bada0f79b676425fcd1e7fca6b8c8f03a048a5cc1d3b39bb9c0ebd0300337ae00a0b14
   languageName: node
   linkType: hard
 

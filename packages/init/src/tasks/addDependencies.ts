@@ -17,7 +17,7 @@ const dependencies = [
 export default async function addDependencies(packageManager: PM) {
   let installCommand: string;
 
-  if (packageManager === 'yarn') {
+  if (packageManager === 'yarn' || packageManager === 'bun') {
     installCommand = 'add';
   } else {
     installCommand = 'install';
