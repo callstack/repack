@@ -49,7 +49,7 @@ export default (env) => {
   // if (devServer) {
   //   devServer.hmr = false;
   // }
-  
+
   /**
    * Depending on your Babel configuration you might want to keep it.
    * If you don't use `env` in your Babel config, you can remove it.
@@ -106,6 +106,7 @@ export default (env) => {
      */
     output: {
       clean: true,
+      hashFunction: 'xxhash64',
       path: path.join(dirname, 'build/generated', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
@@ -149,7 +150,8 @@ export default (env) => {
         {
           test: /\.[jt]sx?$/,
           include: [
-            /node_modules(.*[/\\])+react/,
+            /node_modules(.*[/\\])+react\//,
+            /node_modules(.*[/\\])+react-native/,
             /node_modules(.*[/\\])+@react-native/,
             /node_modules(.*[/\\])+@react-navigation/,
             /node_modules(.*[/\\])+@react-native-community/,

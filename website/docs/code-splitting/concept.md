@@ -20,7 +20,7 @@ instance).
 :::info
 
 For dynamic feature delivery, Code Splitting should be used as a mean to optimize the user
-experience by deferring the features or deliver a existing features only to a subset of users.
+experience by deferring the features or deliver existing features only to a subset of users.
 
 :::
 

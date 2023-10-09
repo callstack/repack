@@ -105,6 +105,13 @@ export class ScriptManager extends EventEmitter {
   ) {
     super();
 
+    if (!nativeScriptManager) {
+      throw new Error(
+        'repack react-native module was not found.' +
+          (__DEV__ ? ' Did you forget to update native dependencies?' : '')
+      );
+    }
+
     if (__webpack_require__.repack.shared.scriptManager) {
       throw new Error(
         'ScriptManager was already instantiated. Use ScriptManager.shared instead.'
@@ -265,6 +272,29 @@ export class ScriptManager extends EventEmitter {
       const script = Script.from({ scriptId, caller }, locator, false);
       const cacheKey = `${scriptId}_${caller ?? 'unknown'}`;
 
+      // Check if user provided a custom shouldUpdateScript function
+      if (locator.shouldUpdateScript) {
+        // If so, we need to wait for it to resolve
+        const fetch = await locator.shouldUpdateScript(
+          scriptId,
+          caller,
+          script.shouldUpdateCache(this.cache[cacheKey])
+        );
+
+        // If it returns true, we need to fetch the script
+        if (fetch) {
+          script.locator.fetch = true;
+          this.cache[cacheKey] = script.getCacheData();
+          await this.saveCache();
+        }
+
+        this.emit('resolved', script.toObject());
+
+        // if it returns false, we don't need to fetch the script
+        return script;
+      }
+
+      // If no custom shouldUpdateScript function was provided, we use the default behaviour
       if (!this.cache[cacheKey]) {
         script.locator.fetch = true;
         this.cache[cacheKey] = script.getCacheData();

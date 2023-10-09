@@ -1,6 +1,6 @@
 {
   "name": "testerapp",
-  "version": "0.0.1",
+  "version": "0.1.3",
   "private": true,
   "installConfig": {
     "hoistingLimits": "workspaces"
@@ -9,38 +9,43 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native webpack-start",
-    "bundle": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false",
-    "webpack": "webpack -c webpack.config.js --env platform=ios --env mode=production",
-    "test": "vitest run"
+    "bundle:android": "react-native webpack-bundle --platform android --entry-file index.js --dev=false --bundle-output build/output/android/index.android.bundle",
+    "bundle:ios": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false --bundle-output build/output/ios/main.jsbundle",
+    "webpack": "webpack -c webpack.config.js --env platform=android --env mode=production",
+    "test": "vitest run",
+    "serve-remote-assets:android": "adb reverse tcp:9999 tcp:9999 && yarn http-server -p 9999 build/output/android/remote",
+    "serve-remote-assets:ios": "yarn http-server -p 9999 build/output/ios/remote"
   },
   "dependencies": {
-    "@callstack/repack": "3.0.0",
-    "@react-native-async-storage/async-storage": "^1.15.4",
+    "@callstack/repack": "3.4.0",
+    "@react-native-async-storage/async-storage": "^1.17.11",
     "lodash.throttle": "^4.1.1",
-    "react": "17.0.2",
-    "react-native": "0.68.2",
-    "react-native-svg": "^12.1.1"
+    "react": "18.2.0",
+    "react-native": "^0.71.8",
+    "react-native-svg": "^13.7.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@babel/runtime": "^7.12.5",
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
     "@callstack/eslint-config": "^12.0.2",
     "@svgr/webpack": "^6.2.1",
+    "@tsconfig/react-native": "^2.0.2",
     "@types/get-port": "^4.2.0",
-    "@types/react-native": "^0.67.3",
     "babel-loader": "^8.2.5",
-    "eslint": "^8.17.0",
+    "eslint": "^8.19.0",
     "execa": "^6.1.0",
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
-    "metro-react-native-babel-preset": "^0.67.0",
+    "http-server": "^14.1.1",
+    "metro-react-native-babel-preset": "^0.73.9",
     "node-fetch": "^3.2.6",
     "terser-webpack-plugin": "^5.3.3",
-    "typescript": "^4.7.3",
+    "typescript": "^4.8.4",
     "vitest": "^0.15.1",
-    "webpack": "^5.50.0"
+    "webpack": "^5.75.0"
   },
   "resolutions": {
-    "@types/react": "^17"
+    "@types/react": "^18"
   }
 }

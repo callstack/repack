@@ -11,6 +11,7 @@ type ExtractEntryStaticNormalized<E> = E extends () => Promise<infer U>
 type EntryStaticNormalized =
   ExtractEntryStaticNormalized<webpack.EntryNormalized>;
 
+type ModuleDependency = webpack.dependencies.ModuleDependency;
 /**
  * {@link DevelopmentPlugin} configuration options.
  */
@@ -62,36 +63,57 @@ export class DevelopmentPlugin implements WebpackPlugin {
       // 1. `InitilizeCore` -> React DevTools
       // 2. Rect Refresh Entry
       // 3. `WebpackHMRClient`
-      const getAdjustedEntry = (entry: EntryStaticNormalized) => {
+      // NOTE: This needs to be done before compilation begins
+      const getAdjustedEntry = (
+        entry: EntryStaticNormalized,
+        refreshEntryPath: string
+      ) => {
         for (const key in entry) {
           const { import: entryImports = [] } = entry[key];
-          const refreshEntryIndex = entryImports.findIndex((value) =>
-            /ReactRefreshEntry\.js/.test(value)
+          const hmrClientIndex = entryImports.findIndex((value) =>
+            /WebpackHMRClient\.js/.test(value)
           );
-          if (refreshEntryIndex >= 0) {
-            const refreshEntry = entryImports[refreshEntryIndex];
-            entryImports.splice(refreshEntryIndex, 1);
-
-            const hmrClientIndex = entryImports.findIndex((value) =>
-              /WebpackHMRClient\.js/.test(value)
-            );
-            entryImports.splice(hmrClientIndex, 0, refreshEntry);
+          if (hmrClientIndex >= 0) {
+            entryImports.splice(hmrClientIndex, 0, refreshEntryPath);
+            entry[key].import = entryImports;
           }
-          entry[key].import = entryImports;
         }
-
         return entry;
       };
 
+      // To modify the entry before compilation
+      // we need to obtain the path to ReactRefreshEntry.js manually
+      const reactRefreshEntryPath = require.resolve(
+        '@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js'
+      );
+
       if (typeof compiler.options.entry !== 'function') {
-        compiler.options.entry = getAdjustedEntry(compiler.options.entry);
+        compiler.options.entry = getAdjustedEntry(
+          compiler.options.entry,
+          reactRefreshEntryPath
+        );
       } else {
         const getEntry = compiler.options.entry;
         compiler.options.entry = async () => {
           const entry = await getEntry();
-          return getAdjustedEntry(entry);
+          return getAdjustedEntry(entry, reactRefreshEntryPath);
         };
       }
+
+      compiler.hooks.make.tapAsync(
+        'RemoveOriginalReactRefreshEntry',
+        (compilation, callback) => {
+          const globalEntryDeps = compilation.globalEntry
+            .dependencies as ModuleDependency[];
+          const refreshEntryIndex = globalEntryDeps.findIndex((value) =>
+            /ReactRefreshEntry\.js/.test(value.request)
+          );
+          if (refreshEntryIndex >= 0) {
+            globalEntryDeps.splice(refreshEntryIndex, 1);
+          }
+          callback(null);
+        }
+      );
     }
   }
 }

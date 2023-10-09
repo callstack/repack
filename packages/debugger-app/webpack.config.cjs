@@ -19,6 +19,7 @@ module.exports = {
     clean: true,
     filename: 'static/js/[name].[contenthash:8].js',
     publicPath: '/debugger-ui/',
+    hashFunction: 'xxhash64',
   },
   module: {
     rules: [

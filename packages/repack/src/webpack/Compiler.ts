@@ -8,6 +8,7 @@ import { SendProgress } from '@callstack/repack-dev-server';
 import type { CliOptions, StartArguments } from '../types';
 import type { LogType, Reporter } from '../logging';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
+import { adaptFilenameToPlatform } from './utils';
 
 export interface Asset {
   data: string | Buffer;
@@ -111,13 +112,16 @@ export class Compiler extends EventEmitter {
           this.isCompilationInProgress[platform] = false;
           this.statsCache[platform] = value.stats;
           this.assetsCache[platform] = value.assets.reduce(
-            (acc, { filename, data, info }) => ({
-              ...acc,
-              [filename]: {
+            (acc, { filename, data, info }) => {
+              const asset = {
                 data: Buffer.from(data),
                 info,
-              },
-            }),
+              };
+              return {
+                ...acc,
+                [adaptFilenameToPlatform(filename)]: asset,
+              };
+            },
             {}
           );
           callPendingResolvers();

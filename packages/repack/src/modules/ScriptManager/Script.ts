@@ -114,6 +114,7 @@ export class Script {
         body,
         headers: Object.keys(headers).length ? headers : undefined,
         fetch: locator.cache === false ? true : fetch,
+        verifyScriptSignature: locator.verifyScriptSignature ?? 'off',
       },
       locator.cache
     );
@@ -135,6 +136,26 @@ export class Script {
   ) {}
 
   /**
+   * Check if the script was already cached and cache should be updated with new data.
+   *
+   * @param cachedData Cached data for the same script.
+   *
+   * @internal
+   */
+  shouldUpdateCache(
+    cachedData: Pick<
+      NormalizedScriptLocator,
+      'method' | 'url' | 'query' | 'headers' | 'body'
+    >
+  ) {
+    if (!this.cache || !cachedData) {
+      return false;
+    }
+
+    return this.checkIfCacheDataOutdated(cachedData);
+  }
+
+  /**
    * Check if the script should be fetched again or reused,
    * based on previous cached data.
    *
@@ -152,6 +173,22 @@ export class Script {
       return true;
     }
 
+    return this.checkIfCacheDataOutdated(cachedData);
+  }
+
+  /**
+   * Check if previous cached data is the same as the new one.
+   *
+   * @param cachedData Cached data for the same script.
+   *
+   * @internal
+   */
+  checkIfCacheDataOutdated(
+    cachedData: Pick<
+      NormalizedScriptLocator,
+      'method' | 'url' | 'query' | 'headers' | 'body'
+    >
+  ) {
     const diffs = [
       cachedData.method !== this.locator.method,
       cachedData.url !== this.locator.url,

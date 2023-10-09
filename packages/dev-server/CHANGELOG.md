@@ -1,5 +1,14 @@
 # @callstack/repack-dev-server
 
+## 1.0.1
+
+### Patch Changes
+
+- [#308](https://github.com/callstack/repack/pull/308) [`ad9581a`](https://github.com/callstack/repack/commit/ad9581a6d690b128991a9d64374ecb4b8d49c413) Thanks [@jbroma](https://github.com/jbroma)! - Make all packages compatible with Node v18
+
+- Updated dependencies [[`ad9581a`](https://github.com/callstack/repack/commit/ad9581a6d690b128991a9d64374ecb4b8d49c413)]:
+  - @callstack/repack-debugger-app@1.0.2
+
 ## 1.0.0
 
 ### Major Changes

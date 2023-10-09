@@ -12,6 +12,7 @@
 @synthesize body = _body;
 @synthesize headers = _headers;
 @synthesize timeout = _timeout;
+@synthesize verifyScriptSignature = _verifyScriptSignature;
 
 + (ScriptConfig *)fromConfigDictionary:(NSDictionary *)config
                           withScriptId:(nonnull NSString*)scriptId
@@ -40,14 +41,15 @@
     BOOL absolute = [config[@"absolute"] boolValue];
     
     return [[ScriptConfig alloc] initWithScript:scriptId
-                                      withURL:urlComponents.URL
-                                   withMethod:method
-                                    withQuery:query
-                                    withFetch:fetch
-                                 withAbsolute:absolute
-                                  withHeaders:config[@"headers"]
-                                     withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
-                                  withTimeout:config[@"timeout"]];
+                                          withURL:urlComponents.URL
+                                       withMethod:method
+                                        withQuery:query
+                                        withFetch:fetch
+                                     withAbsolute:absolute
+                                      withHeaders:config[@"headers"]
+                                         withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
+                                      withTimeout:config[@"timeout"]
+                        withVerifyScriptSignature:config[@"verifyScriptSignature"]];
 }
 
 - (id)init
@@ -67,6 +69,7 @@
                    withHeaders:(nullable NSDictionary *)headers
                       withBody:(nullable NSData *)body
                    withTimeout:(nonnull NSNumber *)timeout
+     withVerifyScriptSignature:(NSString *)verifyScriptSignature;
 {
     _scriptId = scriptId;
     _url = url;
@@ -77,6 +80,7 @@
     _body = body;
     _headers = headers;
     _timeout = timeout;
+    _verifyScriptSignature = verifyScriptSignature;
     return self;
 }
 

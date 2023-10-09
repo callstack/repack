@@ -16,7 +16,8 @@ data class ScriptConfig(
         val method: String,
         val body: RequestBody?,
         val timeout: Int,
-        val headers: Headers
+        val headers: Headers,
+        val verifyScriptSignature: String,
 ) {
     companion object {
         fun fromReadableMap(id: String, value: ReadableMap): ScriptConfig {
@@ -29,13 +30,17 @@ data class ScriptConfig(
             val query = value.getString("query")
             val bodyString = value.getString("body")
             val headersMap = value.getMap("headers")
-            val timeout = value.getInt("timeout") ?: throw Error("ScriptManagerModule.load ScriptMissing timeout")
+            val timeout = value.getInt("timeout")
+            val verifyScriptSignature = value.getString("verifyScriptSignature")
+                    ?: throw Error("ScriptManagerModule.load ScriptMissing verifyScriptSignature")
 
-            val url = URL(if (query != null) {
-                "$urlString?$query"
-            } else {
-                urlString
-            })
+            val url = URL(
+                    if (query != null) {
+                        "$urlString?$query"
+                    } else {
+                        urlString
+                    }
+            )
 
             val headers = Headers.Builder()
             val keyIterator = headersMap?.keySetIterator()
@@ -59,7 +64,8 @@ data class ScriptConfig(
                     method,
                     body,
                     timeout,
-                    headers.build()
+                    headers.build(),
+                    verifyScriptSignature
             )
         }
     }

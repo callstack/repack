@@ -4,7 +4,7 @@ buildscript {
 
   repositories {
     google()
-    jcenter()
+    mavenCentral()
   }
 
   dependencies {
@@ -33,9 +33,9 @@ android {
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
     versionCode 1
     versionName "1.0"
-    
+
   }
-  
+
   buildTypes {
     release {
       minifyEnabled false
@@ -52,7 +52,6 @@ android {
 
 repositories {
   mavenCentral()
-  jcenter()
   google()
 
   def found = false
@@ -129,4 +128,5 @@ dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "com.squareup.okhttp3:okhttp:4.9.0"
   implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.0"
+  implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
 }

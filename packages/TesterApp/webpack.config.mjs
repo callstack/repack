@@ -31,7 +31,7 @@ export default (env) => {
     reactNativePath = new URL('./node_modules/react-native', import.meta.url)
       .pathname,
   } = env;
-  const dirname = Repack.getDirname(import.meta.url);
+  const dirname = context;
 
   if (!platform) {
     throw new Error('Missing platform');
@@ -94,6 +94,7 @@ export default (env) => {
      */
     output: {
       clean: true,
+      hashFunction: 'xxhash64',
       path: path.join(dirname, 'build/generated', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
@@ -137,7 +138,8 @@ export default (env) => {
         {
           test: /\.[jt]sx?$/,
           include: [
-            /node_modules(.*[/\\])+react/,
+            /node_modules(.*[/\\])+react\//,
+            /node_modules(.*[/\\])+react-native/,
             /node_modules(.*[/\\])+@react-native/,
             /node_modules(.*[/\\])+@react-navigation/,
             /node_modules(.*[/\\])+@react-native-community/,
@@ -183,6 +185,11 @@ export default (env) => {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
+          exclude: [
+            path.join(dirname, 'src/assetsTest/localAssets'),
+            path.join(dirname, 'src/assetsTest/inlineAssets'),
+            path.join(dirname, 'src/assetsTest/remoteAssets'),
+          ],
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {
@@ -209,8 +216,56 @@ export default (env) => {
             },
           ],
         },
+        {
+          test: Repack.getAssetExtensionsRegExp(
+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+          ),
+          include: [path.join(dirname, 'src/assetsTest/localAssets')],
+          use: {
+            loader: '@callstack/repack/assets-loader',
+            options: {
+              platform,
+              devServerEnabled: Boolean(devServer),
+              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
+            },
+          },
+        },
+        {
+          test: Repack.getAssetExtensionsRegExp(
+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+          ),
+          include: [path.join(dirname, 'src/assetsTest/inlineAssets')],
+          use: {
+            loader: '@callstack/repack/assets-loader',
+            options: {
+              platform,
+              devServerEnabled: Boolean(devServer),
+              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
+              inline: true,
+            },
+          },
+        },
+        {
+          test: Repack.getAssetExtensionsRegExp(
+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+          ),
+          include: [path.join(dirname, 'src/assetsTest/remoteAssets')],
+          use: {
+            loader: '@callstack/repack/assets-loader',
+            options: {
+              platform,
+              devServerEnabled: Boolean(devServer),
+              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
+              remote: {
+                enabled: true,
+                publicPath: 'http://localhost:9999/remote-assets',
+              },
+            },
+          },
+        },
       ],
     },
+
     plugins: [
       /**
        * Configure other required and additional plugins to make the bundle
@@ -230,18 +285,24 @@ export default (env) => {
           bundleFilename,
           sourceMapFilename,
           assetsPath,
+          auxiliaryAssetsPath: path.join('build/output', platform, 'remote'),
         },
         extraChunks: [
           {
-            include: ['src_asyncChunks_Async_tsx'],
+            include: /.+local.+/,
             type: 'local',
           },
           {
-            exclude: ['src_asyncChunks_Async_tsx'],
+            exclude: /.+local.+/,
             type: 'remote',
             outputPath: path.join('build/output', platform, 'remote'),
           },
         ],
+      }),
+      new Repack.plugins.ChunksToHermesBytecodePlugin({
+        enabled: mode === 'production' && !devServer,
+        test: /\.(js)?bundle$/,
+        exclude: /index.bundle$/,
       }),
     ],
   };

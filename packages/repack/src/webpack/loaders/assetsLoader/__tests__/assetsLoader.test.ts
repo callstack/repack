@@ -14,7 +14,11 @@ import {
 async function compileBundle(
   platform: string,
   virtualModules: Record<string, string>,
-  inline?: boolean
+  inline?: boolean,
+  remote?: {
+    enabled: boolean;
+    publicPath: string;
+  }
 ) {
   const compiler = webpack({
     context: __dirname,
@@ -35,6 +39,7 @@ async function compileBundle(
               platform,
               scalableAssetExtensions: SCALABLE_ASSETS,
               inline,
+              remote,
             },
           },
         },
@@ -45,9 +50,31 @@ async function compileBundle(
         platform,
       }),
       new VirtualModulesPlugin({
-        ...virtualModules,
         'node_modules/react-native/Libraries/Image/AssetRegistry.js':
           'module.exports = { registerAsset: (spec) => spec };',
+        'node_modules/react-native/Libraries/Utilities/PixelRatio.js':
+          'module.exports = { get: () => 1 };',
+        'node_modules/react-native/Libraries/Image/AssetSourceResolver.js': `
+          module.exports = class AssetSourceResolver { 
+            constructor(a,b,c) { 
+              this.asset = c 
+            } 
+            scaledAssetPath() { 
+              var scale = require('react-native/Libraries/Utilities/PixelRatio').get()
+              var scaleSuffix = scale === 1 ? '' : '@x' + scale;
+              return { 
+                __packager_asset: true, 
+                width: this.asset.width, 
+                height: this.asset.height, 
+                uri: this.asset.httpServerLocation + '/' + this.asset.name + scaleSuffix + '.' + this.asset.type,
+                scale: scale,
+              } 
+            }
+            static pickScale(scales, pixelRatio) {
+              return scales[pixelRatio - 1];
+            } 
+          };`,
+        ...virtualModules,
       }),
     ],
   });
@@ -205,10 +232,15 @@ describe('assetLoader', () => {
       });
     });
 
-    it('with scales', async () => {
+    it.each([
+      { prefferedScale: 1 },
+      { prefferedScale: 2 },
+      { prefferedScale: 3 },
+    ])('with scales', async ({ prefferedScale }) => {
       const { code } = await compileBundle(
         'android',
         {
+          'node_modules/react-native/Libraries/Utilities/PixelRatio.js': `module.exports = { get: () => ${prefferedScale} };`,
           './index.js': "export { default } from './__fixtures__/star.png';",
         },
         true
@@ -235,14 +267,96 @@ describe('assetLoader', () => {
         ).toString('base64'),
       ]);
 
-      expect(context.Export?.default).toEqual(
-        logos.map((logo, index) => ({
-          uri: `data:image/png;base64,${logo}`,
-          scale: index + 1,
-          height: 272,
-          width: 286,
-        }))
+      expect(context.Export?.default).toEqual({
+        uri: `data:image/png;base64,${logos[prefferedScale - 1]}`,
+        width: 286,
+        height: 272,
+        scale: prefferedScale,
+      });
+    });
+  });
+
+  describe('should convert to remote-asset', () => {
+    it('without scales', async () => {
+      const { code } = await compileBundle(
+        'ios', // platform doesn't matter for remote-assets
+        {
+          './index.js': "export { default } from './__fixtures__/logo.png';",
+        },
+        false,
+        {
+          enabled: true,
+          publicPath: 'http://localhost:9999',
+        }
       );
+
+      const context: { Export?: { default: Record<string, any> } } = {};
+      vm.runInNewContext(code, context);
+
+      expect(context.Export?.default).toEqual({
+        __packager_asset: true,
+        uri: `http://localhost:9999/assets/__fixtures__/logo.png`,
+        height: 393,
+        width: 2292,
+        scale: 1,
+      });
+    });
+
+    it.each([
+      { prefferedScale: 1 },
+      { prefferedScale: 2 },
+      { prefferedScale: 3 },
+    ])('with scales', async ({ prefferedScale }) => {
+      const { code } = await compileBundle(
+        'ios', // platform doesn't matter for remote-assets
+        {
+          'node_modules/react-native/Libraries/Utilities/PixelRatio.js': `module.exports = { get: () => ${prefferedScale} };`,
+          './index.js': "export { default } from './__fixtures__/star.png';",
+        },
+        false,
+        {
+          enabled: true,
+          publicPath: 'http://localhost:9999',
+        }
+      );
+
+      const context: { Export?: { default: Record<string, any> } } = {};
+      vm.runInNewContext(code, context);
+
+      expect(context.Export?.default).toEqual({
+        __packager_asset: true,
+        uri: `http://localhost:9999/assets/__fixtures__/star${
+          prefferedScale === 1 ? '' : '@x' + prefferedScale
+        }.png`,
+        height: 272,
+        width: 286,
+        scale: prefferedScale,
+      });
+    });
+
+    it('with URL containing a path after basename', async () => {
+      const { code } = await compileBundle(
+        'ios', // platform doesn't matter for remote-assets
+        {
+          './index.js': "export { default } from './__fixtures__/logo.png';",
+        },
+        false,
+        {
+          enabled: true,
+          publicPath: 'http://localhost:9999/remote-assets',
+        }
+      );
+
+      const context: { Export?: { default: Record<string, any> } } = {};
+      vm.runInNewContext(code, context);
+
+      expect(context.Export?.default).toEqual({
+        __packager_asset: true,
+        uri: `http://localhost:9999/remote-assets/assets/__fixtures__/logo.png`,
+        height: 393,
+        width: 2292,
+        scale: 1,
+      });
     });
   });
 });

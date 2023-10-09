@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack",
-  "version": "3.0.0",
+  "version": "3.4.0",
   "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -58,7 +58,8 @@
     "webpack": "5.x"
   },
   "dependencies": {
-    "@callstack/repack-dev-server": "^1.0.0",
+    "@callstack/repack-dev-server": "^1.0.1",
+    "@discoveryjs/json-ext": "^0.5.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "colorette": "^1.2.2",
     "dedent": "^0.7.0",
@@ -69,6 +70,7 @@
     "hash.js": "^1.1.7",
     "hasha": "^5.2.2",
     "image-size": "^0.9.3",
+    "jsonwebtoken": "^9.0.0",
     "loader-utils": "^2.0.0",
     "lodash.throttle": "^4.1.1",
     "memfs": "^3.4.4",
@@ -92,6 +94,7 @@
     "@types/dedent": "^0.7.0",
     "@types/fs-extra": "^9.0.11",
     "@types/jest": "^28.1.1",
+    "@types/jsonwebtoken": "^9.0.0",
     "@types/lodash.throttle": "^4.1.7",
     "@types/mime-types": "^2.1.1",
     "@types/node": "^14.14.28",
@@ -108,7 +111,7 @@
     "typedoc": "^0.22.17",
     "typedoc-plugin-markdown": "^3.12.1",
     "typescript": "^4.1.5",
-    "webpack": "^5.50.0",
+    "webpack": "^5.75.0",
     "webpack-virtual-modules": "^0.4.4"
   }
 }

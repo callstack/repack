@@ -1,5 +1,143 @@
 # @callstack/repack
 
+## 3.4.0
+
+### Minor Changes
+
+- [#409](https://github.com/callstack/repack/pull/409) [`d4d7dc7`](https://github.com/callstack/repack/commit/d4d7dc7eaedfd3c6bdc31db7bb5f08495bbb81b0) Thanks [@jbroma](https://github.com/jbroma)! - Added enabled flag to CodeSigningPlugin, this is useful when you want to disable the plugin in development environment and only keep it in production. For now this flag defaults to true to prevent a breaking change.
+
+* [#408](https://github.com/callstack/repack/pull/408) [`3bcce76`](https://github.com/callstack/repack/commit/3bcce76b61b2206efbbc76870a578c62a2e6a0a5) Thanks [@eps1lon](https://github.com/eps1lon)! - Allow storing compilation stats.
+
+  You can now run `webpack-bundle` with `--json <file> --stats <preset>` (like with `webpack-cli`) to store compilation stats in the specified file.
+  Compilation stats can be used to analyze the bundle (e.g. with [`webpack-bundle-analyzer`](https://github.com/webpack-contrib/webpack-bundle-analyzer) or https://statoscope.tech/).
+
+## 3.3.1
+
+### Patch Changes
+
+- [#401](https://github.com/callstack/repack/pull/401) [`6171507`](https://github.com/callstack/repack/commit/6171507db6a1ebc067ab4be6ad3aa5b5cd1eb16b) Thanks [@jbroma](https://github.com/jbroma)! - Update nimbus-jose-jwt android dependency to address security vulnerabilites
+
+## 3.3.0
+
+### Minor Changes
+
+- [#378](https://github.com/callstack/repack/pull/378) [`14afc61`](https://github.com/callstack/repack/commit/14afc61f1d5730164b1ccb483b5efb6b32b5a0ad) Thanks [@mikeduminy](https://github.com/mikeduminy)! - Add ChunksToHermesBytecodePlugin to transform all emitted chunks with Hermes
+
+### Patch Changes
+
+- [#391](https://github.com/callstack/repack/pull/391) [`0693fda`](https://github.com/callstack/repack/commit/0693fdaf33239f1d6ae28597bcc595f17aa8d4df) Thanks [@jbroma](https://github.com/jbroma)! - Fix: stricter versions for dependencies inside podspec
+
+- [#365](https://github.com/callstack/repack/pull/365) [`cf6c77a`](https://github.com/callstack/repack/commit/cf6c77a675e00d98a4d906b56b3fd928c02ffb84) Thanks [@jbroma](https://github.com/jbroma)! - Updated getResolveOptions exposed by RePack to prefer 'default' condition over webpack's defaults ['require', 'node']
+
+- [#382](https://github.com/callstack/repack/pull/382) [`c1a5a2b`](https://github.com/callstack/repack/commit/c1a5a2b403ed9b4a816465eba996f1655c21b718) Thanks [@jbroma](https://github.com/jbroma)! - Fixed and issue where URL for remote asset only included basename from publicPath
+
+## 3.2.0
+
+### Minor Changes
+
+#### Code Signing:
+
+- [#318](https://github.com/callstack/repack/pull/318) [`6e12c14`](https://github.com/callstack/repack/commit/6e12c14e02002721ad4fe3ddf41743dcdb597f60) Thanks [@jbroma](https://github.com/jbroma)! - Added CodeSigning abilities to RePack:
+- [#348](https://github.com/callstack/repack/pull/348) [`76e98e9`](https://github.com/callstack/repack/commit/76e98e983842e5b1288c754d61ee2f3449762f2c) Thanks [@jbroma](https://github.com/jbroma)! - Embed code-signing signatures into the bundles:
+
+  - Introduced `CodeSigningPlugin` for generating code-signed bundles
+  - Implemented `CodeSigningUtils` extension for native part of the `ScriptManager` to verify signed bundles on Android and iOS
+
+#### Remote Assets
+
+- [#331](https://github.com/callstack/repack/pull/331) [`515fb05`](https://github.com/callstack/repack/commit/515fb05f307e10c9bf65fd54dce3e7ebb8d1ae45) Thanks [@jbroma](https://github.com/jbroma)! - Added remote-assets functionality to the assetsLoader
+
+- [#328](https://github.com/callstack/repack/pull/328) [`4f155dd`](https://github.com/callstack/repack/commit/4f155ddf8f5064f60175ed2ee8f0ad64ff9f252b) Thanks [@jbroma](https://github.com/jbroma)! - Auto device scale resolution for inlined assets
+
+### Patch Changes
+
+- [#330](https://github.com/callstack/repack/pull/330) [`f142e06`](https://github.com/callstack/repack/commit/f142e068f473084f473089d71cba40ccbdd41b46) Thanks [@jbroma](https://github.com/jbroma)! - Code-Signing - move execution of the plugin to the later stage of compilation
+
+* [#347](https://github.com/callstack/repack/pull/347) [`2180c09`](https://github.com/callstack/repack/commit/2180c09dd6acf738e5db5c2fdbbcfcf08f82993a) Thanks [@jbroma](https://github.com/jbroma)! - Fix OutputPlugin issue where chunks have no associated files with them
+
+- [#327](https://github.com/callstack/repack/pull/327) [`23dfc55`](https://github.com/callstack/repack/commit/23dfc55dbcefff62493c51eed6f40b88b93a433d) Thanks [@jbroma](https://github.com/jbroma)! - Fix verifyScriptSignature missing a default value
+
+## 3.2.0-rc.1
+
+### Minor Changes
+
+- [#331](https://github.com/callstack/repack/pull/331) [`515fb05`](https://github.com/callstack/repack/commit/515fb05f307e10c9bf65fd54dce3e7ebb8d1ae45) Thanks [@jbroma](https://github.com/jbroma)! - Added remote-assets functionality to the assetsLoader
+
+* [#328](https://github.com/callstack/repack/pull/328) [`4f155dd`](https://github.com/callstack/repack/commit/4f155ddf8f5064f60175ed2ee8f0ad64ff9f252b) Thanks [@jbroma](https://github.com/jbroma)! - Auto device scale resolution for inlined assets
+
+### Patch Changes
+
+- [#330](https://github.com/callstack/repack/pull/330) [`f142e06`](https://github.com/callstack/repack/commit/f142e068f473084f473089d71cba40ccbdd41b46) Thanks [@jbroma](https://github.com/jbroma)! - Code-Signing - move execution of the plugin to the later stage of compilation
+
+* [#327](https://github.com/callstack/repack/pull/327) [`23dfc55`](https://github.com/callstack/repack/commit/23dfc55dbcefff62493c51eed6f40b88b93a433d) Thanks [@jbroma](https://github.com/jbroma)! - Fix verifyScriptSignature missing a default value
+
+## 3.2.0-rc.0
+
+This Release candidate introduces a new feature – **Code Signing**. It allows you to sign your bundles during build time and verify them on the client side. This feature is currently in experimental mode and **the implementation is subject to change**. Once we are confident that the API is stable, we will release a stable version of this feature along the documentation and examples.
+
+### Minor Changes
+
+- [#318](https://github.com/callstack/repack/pull/318) [`6e12c14`](https://github.com/callstack/repack/commit/6e12c14e02002721ad4fe3ddf41743dcdb597f60) Thanks [@jbroma](https://github.com/jbroma)! - Added CodeSigning abilities to RePack:
+
+  - Introduced CodeSigningPlugin for generating code-signing mapping files
+  - Implemented CodeSigningUtils extension for ScriptManager to verify signed bundles on Android and iOS
+
+## 3.1.1
+
+### Patch Changes
+
+- [#308](https://github.com/callstack/repack/pull/308) [`ad9581a`](https://github.com/callstack/repack/commit/ad9581a6d690b128991a9d64374ecb4b8d49c413) Thanks [@jbroma](https://github.com/jbroma)! - Make all packages compatible with Node v18
+
+* [#302](https://github.com/callstack/repack/pull/302) [`d73eff4`](https://github.com/callstack/repack/commit/d73eff4216c88f1473c8da6703f8e4ff6edab029) Thanks [@kerm1it](https://github.com/kerm1it)! - Fix #251 - restore working React Devtools
+
+* Updated dependencies [[`ad9581a`](https://github.com/callstack/repack/commit/ad9581a6d690b128991a9d64374ecb4b8d49c413)]:
+  - @callstack/repack-dev-server@1.0.1
+
+## 3.1.0
+
+### Minor Changes
+
+- [#287](https://github.com/callstack/repack/pull/287) [`47bdd09`](https://github.com/callstack/repack/commit/47bdd09f22e1ebf9cdfc29f0bb157a68f7af5b44) Thanks [@andrewworld](https://github.com/andrewworld)!
+
+  A new optional callback `shouldUpdateScript` was added. It could be passed into so-called _locator_ config in `addResolver` callback function return statement. Its main usage would be to ask a user whether they want to download the latest update of Federated Scripts or not (for example – if they are not connected to wifi and they would rather save their cellular data).
+
+  ```
+  shouldUpdateScript?: (
+      scriptId?: string,
+      caller?: string,
+      isScriptCacheOutdated?: boolean
+  ) => Promise<boolean> | boolean;
+  ```
+
+  More info and a set of examples describing what are the intended usages of this API will be published soon in a form of a guide in Repack docs. For now, if you're interested in playing with this API please refer to the linked PR or to the [API docs](https://re-pack.netlify.app/docs/api/repack/client/interfaces/ScriptLocator#shouldupdatescript)
+
+### Patch Changes
+
+- [#293](https://github.com/callstack/repack/pull/293) [`7eeca5e`](https://github.com/callstack/repack/commit/7eeca5ed2619e7678ef88d8fb45735c14f1ecc75) Thanks [@RafikiTiki](https://github.com/RafikiTiki)! - Removed usage of deprecated jcenter repository from `build.gradle`.
+
+* [#288](https://github.com/callstack/repack/pull/288) [`7e0092e`](https://github.com/callstack/repack/commit/7e0092e9554e26a1de405261fb56c1e6b886e261) Thanks [@RafikiTiki](https://github.com/RafikiTiki)! - Fix [#258](https://github.com/callstack/repack/issues/293) – previously `entryName` config value was not passed from `RepackPlugin` to the `OutputPlugin`.
+
+- [#294](https://github.com/callstack/repack/pull/294) [`28cc721`](https://github.com/callstack/repack/commit/28cc721e8d6ac085bc66c47e627633046cb0d644) Thanks [@RafikiTiki](https://github.com/RafikiTiki)! - Updated kotlin-gradle-plugin version used by Repack to `1.7.0`.
+
+## 3.0.1
+
+### Patch Changes
+
+#### Windows related issues:
+
+- Fix for path formatting on Windows platform breaking `assetsCache` in development Compiler
+
+  - [#256](https://github.com/callstack/repack/pull/256) [`7348b56`](https://github.com/callstack/repack/commit/7348b5628158e11c617e4499095fd108a3740a03) Thanks [@meypod](https://github.com/meypod)! - Fix assetsCache miss on Windows
+  - [#276](https://github.com/callstack/repack/pull/276) [`a15e881`](https://github.com/callstack/repack/commit/a15e8816c640c6627ef3ebb5a9d18b58f7178c6f) Thanks [@RafikiTiki](https://github.com/RafikiTiki)! - Fix: assetsCache not available on Windows platform due to problem with path encoding
+
+- [#255](https://github.com/callstack/repack/pull/255) [`d974069`](https://github.com/callstack/repack/commit/d974069ab2e7abee2a4b7103a8a86fe476fc122a) Thanks [@meypod](https://github.com/meypod)! - Fix v3 `debugger-app` not working on Windows platform
+
+#### Quality of life improvements:
+
+- [#252](https://github.com/callstack/repack/pull/252) [`c654c87`](https://github.com/callstack/repack/commit/c654c877a080cb6226b10da26b0aa55a2360198b) Thanks [@jbinda](https://github.com/jbinda)! - Exit with non-zero exit code if compilation has errors
+
+- [#268](https://github.com/callstack/repack/pull/268) [`aeebc70`](https://github.com/callstack/repack/commit/aeebc703cd0a2c102b85241d5180d7577a2899c5) Thanks [@robik](https://github.com/robik)! - Raise an error on missing native module
+
 ## 3.0.0
 
 ### Major Changes
