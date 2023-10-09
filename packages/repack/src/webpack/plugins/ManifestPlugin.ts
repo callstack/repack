@@ -17,8 +17,8 @@ export class ManifestPlugin implements WebpackPlugin {
           const manifest = {
             id: chunk.id,
             name: chunk.name,
-            files: [...chunk.files],
-            auxiliaryFiles: [...chunk.auxiliaryFiles],
+            files: [...chunk.files].sort(),
+            auxiliaryFiles: [...chunk.auxiliaryFiles].sort(),
           };
 
           if (manifest.files.length) {
