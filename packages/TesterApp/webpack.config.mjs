@@ -31,7 +31,7 @@ export default (env) => {
     reactNativePath = new URL('./node_modules/react-native', import.meta.url)
       .pathname,
   } = env;
-  const dirname = Repack.getDirname(import.meta.url);
+  const dirname = context;
 
   if (!platform) {
     throw new Error('Missing platform');
