@@ -150,7 +150,6 @@ describe('ModuleFederationPlugin', () => {
 
   it('should not add deep imports to existing shared dependencies when react-native is not present', () => {
     new ModuleFederationPlugin({
-      reactNativeDeepImports: false,
       shared: {
         react: Federated.SHARED_REACT,
       },
