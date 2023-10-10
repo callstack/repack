@@ -1,5 +1,22 @@
 # @callstack/repack
 
+## 3.5.0
+
+### Minor Changes
+
+- [#265](https://github.com/callstack/repack/pull/265) [`a288e1a`](https://github.com/callstack/repack/commit/a288e1a2d65f0f9bd31f37df6d508125a7472bc7) Thanks [@justusburger](https://github.com/justusburger)! - Ensure file lists in manifests are sorted
+
+* [#421](https://github.com/callstack/repack/pull/421) [`7deea25`](https://github.com/callstack/repack/commit/7deea25b426124209f131c09ee8549409b78fcc2) Thanks [@jbroma](https://github.com/jbroma)! - Add builtin support for react-native deep imports when using Module Federation
+
+### Patch Changes
+
+- [#422](https://github.com/callstack/repack/pull/422) [`430d6be`](https://github.com/callstack/repack/commit/430d6bee84402828404fc4e8883d4115813e5b8a) Thanks [@jbroma](https://github.com/jbroma)! - Fix inlining assets in react-native versions >= 0.72
+
+* [#427](https://github.com/callstack/repack/pull/427) [`e86db86`](https://github.com/callstack/repack/commit/e86db86a3f5d2cf0dede85b471bdc6940c5f71ab) Thanks [@jbroma](https://github.com/jbroma)! - Improve performance of HMR
+
+* Updated dependencies [[`a66785d`](https://github.com/callstack/repack/commit/a66785d4bdb629ab9abce2bf5fc0dc4b632072ef), [`719c2ef`](https://github.com/callstack/repack/commit/719c2ef3e1af0c82de8042de2c5c21ab88a287ea)]:
+  - @callstack/repack-dev-server@1.0.2
+
 ## 3.4.0
 
 ### Minor Changes
