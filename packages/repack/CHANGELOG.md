@@ -14,6 +14,8 @@
 
 * [#427](https://github.com/callstack/repack/pull/427) [`e86db86`](https://github.com/callstack/repack/commit/e86db86a3f5d2cf0dede85b471bdc6940c5f71ab) Thanks [@jbroma](https://github.com/jbroma)! - Improve performance of HMR
 
+* [#343](https://github.com/callstack/repack/pull/343) [`0141fc1`](https://github.com/callstack/repack/commit/0141fc145c86ae164973f9267c0621ca2aadbed4) Thanks [@piccinnigius](https://github.com/piccinnigius)! - Fix ERR_UNSUPPORTED_ESM_URL_SCHEME on Windows
+
 * Updated dependencies [[`a66785d`](https://github.com/callstack/repack/commit/a66785d4bdb629ab9abce2bf5fc0dc4b632072ef), [`719c2ef`](https://github.com/callstack/repack/commit/719c2ef3e1af0c82de8042de2c5c21ab88a287ea)]:
   - @callstack/repack-dev-server@1.0.2
 
