@@ -1,5 +1,11 @@
 # @callstack/repack-init
 
+## 1.1.0
+
+### Minor Changes
+
+- [#428](https://github.com/callstack/repack/pull/428) [`8a68670`](https://github.com/callstack/repack/commit/8a68670ed14a92341a68cd469330644df168bbeb) Thanks [@jbroma](https://github.com/jbroma)! - Init: Support bun for installing Re.Pack dependencies
+
 ## 1.0.4
 
 ### Patch Changes
