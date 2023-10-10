@@ -172,6 +172,7 @@ export class LoggerPlugin implements WebpackPlugin {
     compiler.hooks.done.tap('LoggerPlugin', (stats) => {
       if (this.config.devServerEnabled) {
         const { time, errors, warnings } = stats.toJson({
+          all: false,
           timings: true,
           errors: true,
           warnings: true,
