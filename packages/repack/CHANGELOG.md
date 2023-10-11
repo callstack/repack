@@ -1,5 +1,11 @@
 # @callstack/repack
 
+## 3.5.1
+
+### Patch Changes
+
+- [#444](https://github.com/callstack/repack/pull/444) [`88dc11f`](https://github.com/callstack/repack/commit/88dc11f575b0052aa37d692630cc3f1a6d9f0b3e) Thanks [@jbroma](https://github.com/jbroma)! - Fix ValidationError in ModuleFederationPlugin caused by reactNativeDeepImports prop
+
 ## 3.5.0
 
 ### Minor Changes
