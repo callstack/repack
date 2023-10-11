@@ -244,7 +244,7 @@ export class ModuleFederationPlugin implements WebpackPlugin {
     );
 
     new container.ModuleFederationPlugin({
-      ...this.config,
+      exposes: this.config.exposes,
       filename:
         this.config.filename ?? this.config.exposes
           ? `${this.config.name}.container.bundle`
@@ -256,8 +256,12 @@ export class ModuleFederationPlugin implements WebpackPlugin {
             ...this.config.library,
           }
         : undefined,
+      name: this.config.name,
       shared: sharedDependencies,
+      shareScope: this.config.shareScope,
       remotes,
+      remoteType: this.config.remoteType,
+      runtime: this.config.runtime,
     }).apply(compiler);
   }
 }
