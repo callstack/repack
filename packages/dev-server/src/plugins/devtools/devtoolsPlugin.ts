@@ -51,8 +51,10 @@ async function devtoolsPlugin(
     url: '/open-stack-frame',
     handler: async (request, reply) => {
       try {
-        const { file, lineNumber, column } = JSON.parse(
-          request.body as string
+        const { file, lineNumber, column } = (
+          typeof request.body === 'string'
+            ? JSON.parse(request.body)
+            : request.body
         ) as {
           file: string;
           lineNumber: number;

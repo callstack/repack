@@ -11,15 +11,24 @@ type ModuleFederationPluginOptions =
     ? O
     : never;
 
-type ExtractRemotesObject<T> = T extends {}
+type ExtractObject<T> = T extends {}
   ? T extends Array<any>
     ? never
     : T
   : never;
 
-type RemotesObject = ExtractRemotesObject<
-  ModuleFederationPluginOptions['remotes']
+type RemotesObject = ExtractObject<ModuleFederationPluginOptions['remotes']>;
+
+type SharedDependencies = Exclude<
+  ModuleFederationPluginOptions['shared'],
+  undefined
 >;
+
+type SharedObject = ExtractObject<SharedDependencies>;
+
+type SharedConfig = SharedObject extends { [key: string]: infer U }
+  ? Exclude<U, string>
+  : never;
 
 /**
  * {@link ModuleFederationPlugin} configuration options.
@@ -29,7 +38,10 @@ type RemotesObject = ExtractRemotesObject<
  * You can check documentation for all supported options here: https://webpack.js.org/plugins/module-federation-plugin/
  */
 export interface ModuleFederationPluginConfig
-  extends ModuleFederationPluginOptions {}
+  extends ModuleFederationPluginOptions {
+  /** Enable or disable adding React Native deep imports to shared dependencies */
+  reactNativeDeepImports?: boolean;
+}
 
 /**
  * Webpack plugin to configure Module Federation with platform differences
@@ -97,7 +109,10 @@ export interface ModuleFederationPluginConfig
  * @category Webpack Plugin
  */
 export class ModuleFederationPlugin implements WebpackPlugin {
-  constructor(private config: ModuleFederationPluginConfig) {}
+  constructor(private config: ModuleFederationPluginConfig) {
+    this.config.reactNativeDeepImports =
+      this.config.reactNativeDeepImports ?? true;
+  }
 
   private replaceRemotes<T extends string | string[] | RemotesObject>(
     remote: T
@@ -128,6 +143,92 @@ export class ModuleFederationPlugin implements WebpackPlugin {
     return replaced as T;
   }
 
+  private getDefaultSharedDependencies(): SharedObject {
+    return {
+      react: Federated.SHARED_REACT,
+      'react-native': Federated.SHARED_REACT_NATIVE,
+    };
+  }
+
+  /**
+   * As including 'react-native' as a shared dependency is not enough to support
+   * deep imports from 'react-native' (e.g. 'react-native/Libraries/Utilities/PixelRatio'),
+   * we need to add deep imports using an undocumented feature of ModuleFederationPlugin.
+   *
+   * When a dependency has a trailing slash, deep imports of that dependency will be correctly
+   * resolved by reaching out to the shared scope. This also ensures single instances of things
+   * like 'assetsRegistry'. Additionally, we mark every package from '@react-native' group as shared
+   * as well, as these are used by React Native too.
+   *
+   * Reference: https://stackoverflow.com/questions/65636979/wp5-module-federation-sharing-deep-imports
+   * Reference: https://github.com/webpack/webpack/blob/main/lib/sharing/resolveMatchedConfigs.js#L77-L79
+   *
+   * @param shared shared dependencies configuration from ModuleFederationPlugin
+   * @returns adjusted shared dependencies configuration
+   *
+   * @internal
+   */
+  private adaptSharedDependencies(
+    shared: SharedDependencies
+  ): SharedDependencies {
+    const sharedDependencyConfig = (eager?: boolean) => ({
+      singleton: true,
+      eager: eager ?? true,
+      requiredVersion: '*',
+    });
+
+    const findSharedDependency = (
+      name: string,
+      dependencies: SharedDependencies
+    ): SharedConfig | string | undefined => {
+      if (Array.isArray(dependencies)) {
+        return dependencies.find((item) =>
+          typeof item === 'string' ? item === name : Boolean(item[name])
+        );
+      } else {
+        return dependencies[name];
+      }
+    };
+
+    const sharedReactNative = findSharedDependency('react-native', shared);
+    const reactNativeEager =
+      typeof sharedReactNative === 'object'
+        ? sharedReactNative.eager
+        : undefined;
+
+    if (!this.config.reactNativeDeepImports || !sharedReactNative) {
+      return shared;
+    }
+
+    if (Array.isArray(shared)) {
+      const adjustedSharedDependencies = [...shared];
+      if (!findSharedDependency('react-native/', shared)) {
+        adjustedSharedDependencies.push({
+          'react-native/': sharedDependencyConfig(reactNativeEager),
+        });
+      }
+      if (!findSharedDependency('@react-native/', shared)) {
+        adjustedSharedDependencies.push({
+          '@react-native/': sharedDependencyConfig(reactNativeEager),
+        });
+      }
+      return adjustedSharedDependencies;
+    } else {
+      const adjustedSharedDependencies = { ...shared };
+      if (!findSharedDependency('react-native/', shared)) {
+        Object.assign(adjustedSharedDependencies, {
+          'react-native/': sharedDependencyConfig(reactNativeEager),
+        });
+      }
+      if (!findSharedDependency('@react-native/', shared)) {
+        Object.assign(adjustedSharedDependencies, {
+          '@react-native/': sharedDependencyConfig(reactNativeEager),
+        });
+      }
+      return adjustedSharedDependencies;
+    }
+  }
+
   /**
    * Apply the plugin.
    *
@@ -138,8 +239,12 @@ export class ModuleFederationPlugin implements WebpackPlugin {
       ? this.config.remotes.map((remote) => this.replaceRemotes(remote))
       : this.replaceRemotes(this.config.remotes ?? {});
 
+    const sharedDependencies = this.adaptSharedDependencies(
+      this.config.shared ?? this.getDefaultSharedDependencies()
+    );
+
     new container.ModuleFederationPlugin({
-      ...this.config,
+      exposes: this.config.exposes,
       filename:
         this.config.filename ?? this.config.exposes
           ? `${this.config.name}.container.bundle`
@@ -151,11 +256,12 @@ export class ModuleFederationPlugin implements WebpackPlugin {
             ...this.config.library,
           }
         : undefined,
-      shared: this.config.shared ?? {
-        react: Federated.SHARED_REACT,
-        'react-native': Federated.SHARED_REACT_NATIVE,
-      },
+      name: this.config.name,
+      shared: sharedDependencies,
+      shareScope: this.config.shareScope,
       remotes,
+      remoteType: this.config.remoteType,
+      runtime: this.config.runtime,
     }).apply(compiler);
   }
 }

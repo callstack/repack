@@ -3,7 +3,7 @@
   "description": "Automates the integration of the @callstack/repack into React-Native projects",
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
   "keywords": [
@@ -37,7 +37,7 @@
     "@manypkg/find-root": "^2.2.1",
     "chalk": "^5.2.0",
     "dedent": "^0.7.0",
-    "detect-package-manager": "^2.0.1",
+    "detect-package-manager": "^3.0.1",
     "execa": "^7.1.1",
     "node-fetch": "^3.3.1",
     "ora": "^6.3.1",
