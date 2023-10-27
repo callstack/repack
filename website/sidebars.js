@@ -77,6 +77,7 @@ module.exports = {
         'configuration/guides/svg',
         'configuration/guides/inline-assets',
         'configuration/guides/remote-assets',
+        'configuration/guides/lazy-compilation',
       ],
     },
   ],
