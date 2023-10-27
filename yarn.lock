@@ -4945,6 +4945,7 @@ __metadata:
     mime-types: ^2.1.35
     pretty-format: ^26.6.2
     react-native: ^0.64.1
+    react-native-event-source: ^1.1.0
     react-refresh: ^0.14.0
     schema-utils: ^3.0.0
     shallowequal: ^1.1.0
@@ -27521,6 +27522,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-event-source@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "react-native-event-source@npm:1.1.0"
+  checksum: 303f369bcaf10961b51212e7d39b266bdf37af2022e0def6ec8f12e416d1dd4d62bbadb7490671eaba1f29ea8b4f91864bf5b4299aca36545a89c9e813e15a27
+  languageName: node
+  linkType: hard
+
 "react-native-gradle-plugin@npm:^0.71.18":
   version: 0.71.18
   resolution: "react-native-gradle-plugin@npm:0.71.18"
@@ -31063,6 +31071,7 @@ __metadata:
     node-fetch: ^3.2.6
     react: 18.2.0
     react-native: ^0.71.8
+    react-native-event-source: ^1.1.0
     react-native-svg: ^13.7.0
     terser-webpack-plugin: ^5.3.3
     typescript: ^4.8.4
