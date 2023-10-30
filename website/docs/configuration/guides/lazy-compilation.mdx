@@ -11,7 +11,15 @@ If you encounter an issue while using lazy compilation, it's advisable to disabl
 
 :::
 
-If you are using [Code splitting](../../code-splitting/usage) and have async chunks in your app, it might be beneficial to use lazy compilation in development. It will cause all dynamic imports in your app to be compiled only when necessary, reducing the time of your initial app startup.
+If you are using [Code splitting](/docs/code-splitting/usage)
+and have async chunks in your app, imported like this:
+
+```js
+const myChunk = await import('./myChunk.js');
+```
+
+You might benefit from using lazy compilation in development.
+It will cause all dynamic imports in your app to be compiled only when necessary, reducing the time of your initial app startup.
 
 :::danger
 
