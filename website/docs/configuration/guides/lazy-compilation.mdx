@@ -80,7 +80,7 @@ export default (env) => {
 
     module: {
       experiments: [
-        lazyCompilation: {
+        lazyCompilation: devServer && {
             imports: true,
             entries: false,
         }
