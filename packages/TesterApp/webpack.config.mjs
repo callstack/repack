@@ -56,7 +56,7 @@ export default (env) => {
     devtool: false,
     context,
     experiments: {
-      lazyCompilation: {
+      lazyCompilation: devServer && {
         imports: true,
         entries: false,
       },
