@@ -55,6 +55,12 @@ export default (env) => {
      */
     devtool: false,
     context,
+    experiments: {
+      lazyCompilation: devServer && {
+        imports: true,
+        entries: false,
+      },
+    },
     /**
      * `getInitializationEntries` will return necessary entries with setup and initialization code.
      * If you don't want to use Hot Module Replacement, set `hmr` option to `false`. By default,
@@ -83,6 +89,17 @@ export default (env) => {
       alias: {
         'react-native': reactNativePath,
         '@babel/runtime': path.join(dirname, 'node_modules/@babel/runtime'),
+      },
+      /**
+       * Because Re.Pack is symlinked from it's workspace, we need to provide a fallback for
+       * `react-native-event-source` package used for lazyCompilation. This is not needed in
+       * normal projects.
+       */
+      fallback: {
+        'react-native-event-source': path.join(
+          dirname,
+          'node_modules/react-native-event-source'
+        ),
       },
     },
     /**

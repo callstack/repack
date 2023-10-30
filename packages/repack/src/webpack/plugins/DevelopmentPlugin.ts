@@ -40,6 +40,8 @@ export class DevelopmentPlugin implements WebpackPlugin {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: webpack.Compiler) {
+    const logger = compiler.getInfrastructureLogger('DevelopmentPlugin');
+
     if (!this.config?.devServer) {
       return;
     }
@@ -114,6 +116,33 @@ export class DevelopmentPlugin implements WebpackPlugin {
           callback(null);
         }
       );
+    }
+
+    if (compiler.options.experiments?.lazyCompilation) {
+      if (compiler.options.experiments.lazyCompilation.entries !== false) {
+        compiler.hooks.initialize.tap('DevelopmentPlugin', () => {
+          logger.error(
+            'You have enabled lazyCompilation for entrypoints which is not supported. ' +
+              'Lazy compilation is supported only for dynamic imports. ' +
+              'You can fix this by adding { entries: false } to experiments.lazyCompilation configuration object inside webpack.config.'
+          );
+        });
+      }
+
+      try {
+        require.resolve('react-native-event-source');
+      } catch (error) {
+        compiler.hooks.initialize.tap('DevelopmentPlugin', () => {
+          logger.error(
+            "You have enabled lazyCompilation but 'react-native-event-source' was not found in your devDependencies. " +
+              'Please install it via your package manager and try again.'
+          );
+        });
+      }
+
+      new webpack.ProvidePlugin({
+        EventSource: ['react-native-event-source', 'default'],
+      }).apply(compiler);
     }
   }
 }
