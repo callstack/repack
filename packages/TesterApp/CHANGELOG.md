@@ -1,5 +1,16 @@
 # testerapp
 
+## 0.1.6
+
+### Patch Changes
+
+- [#460](https://github.com/callstack/repack/pull/460) [`8992399`](https://github.com/callstack/repack/commit/8992399278b2fb4f17d92a1c25c502dfb4dc7a45) Thanks [@jbroma](https://github.com/jbroma)! - Force light theme in TesterApp
+
+* [#458](https://github.com/callstack/repack/pull/458) [`8e174dd`](https://github.com/callstack/repack/commit/8e174dd8b7e11c5318ba3b6fc10e8aff94483202) Thanks [@jbroma](https://github.com/jbroma)! - Upgraded TesterApp to react-native@0.72.6
+
+* Updated dependencies [[`74de630`](https://github.com/callstack/repack/commit/74de630d4a27215580e6f835b6204757f2998a5a)]:
+  - @callstack/repack@3.6.0
+
 ## 0.1.5
 
 ### Patch Changes

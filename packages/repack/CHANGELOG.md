@@ -1,5 +1,11 @@
 # @callstack/repack
 
+## 3.6.0
+
+### Minor Changes
+
+- [#457](https://github.com/callstack/repack/pull/457) [`74de630`](https://github.com/callstack/repack/commit/74de630d4a27215580e6f835b6204757f2998a5a) Thanks [@jbroma](https://github.com/jbroma)! - Support lazy-compilation for dynamic imports
+
 ## 3.5.1
 
 ### Patch Changes
