@@ -183,6 +183,11 @@ export class OutputPlugin implements WebpackPlugin {
       return;
     }
 
+    const outputPath = compiler.options.output?.path;
+    if (!outputPath) {
+      throw new Error('Cannot infer output path from compilation');
+    }
+
     const logger = compiler.getInfrastructureLogger('RepackOutputPlugin');
 
     const extraAssets = (this.config.extraChunks ?? []).map((spec) =>
@@ -295,11 +300,6 @@ export class OutputPlugin implements WebpackPlugin {
     compiler.hooks.afterEmit.tapPromise(
       'RepackOutputPlugin',
       async (compilation) => {
-        const outputPath = compilation.outputOptions.path;
-        if (!outputPath) {
-          throw new Error('Cannot infer output path from compilation');
-        }
-
         let localAssetsCopyProcessor;
 
         let { bundleFilename, sourceMapFilename, assetsPath } =
