@@ -70,8 +70,8 @@
     "@types/ws": "^8.5.3",
     "babel-plugin-add-import-extension": "^1.6.0",
     "eslint": "^8.53.0",
-    "typedoc": "^0.22.17",
-    "typedoc-plugin-markdown": "^3.12.1",
+    "typedoc": "^0.25.3",
+    "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.2.2"
   }
 }
