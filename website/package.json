@@ -27,6 +27,8 @@
     "url-loader": "^4.1.1"
   },
   "devDependencies": {
+    "@callstack/eslint-config": "^14.1.0",
+    "eslint": "^8.53.0",
     "netlify-cli": "^10.5.1"
   },
   "browserslist": {
