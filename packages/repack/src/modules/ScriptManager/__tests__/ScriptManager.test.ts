@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 /* globals globalThis */
 import * as ReactNative from 'react-native';
 import { Script } from '../Script';

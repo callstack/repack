@@ -24,10 +24,13 @@ export function inlineAssets({
   }
 
   // keys are always converted to strings
-  const sourceSet = assets.reduce((sources, asset) => {
-    sources[asset.scale] = encodeAsset(asset, mimeType, size);
-    return sources;
-  }, {} as Record<string, URISource>);
+  const sourceSet = assets.reduce(
+    (sources, asset) => {
+      sources[asset.scale] = encodeAsset(asset, mimeType, size);
+      return sources;
+    },
+    {} as Record<string, URISource>
+  );
 
   const scales = JSON.stringify(Object.keys(sourceSet).map(Number));
 

@@ -209,7 +209,7 @@ describe('CodeSigningPlugin', () => {
         { 'index.js': `var a = 'test';` },
         { enabled: true, privateKeyPath: '__fixtures__/missing.key' }
       )
-    ).rejects.toThrowError(/ENOENT.*missing\.key/);
+    ).rejects.toThrow(/ENOENT.*missing\.key/);
   });
 
   it('throws an error when schema is invalid', async () => {
@@ -220,6 +220,6 @@ describe('CodeSigningPlugin', () => {
         // @ts-expect-error invalid config on purpose
         { enabled: true }
       )
-    ).rejects.toThrowError(/Invalid configuration object/);
+    ).rejects.toThrow(/Invalid configuration object/);
   });
 });

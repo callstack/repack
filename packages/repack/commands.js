@@ -32,9 +32,9 @@ function getReactNativeCliPath() {
   return cliPath;
 }
 
-const {
-  projectCommands: cliCommands,
-} = require(`${getReactNativeCliPath()}/commands`);
+const { projectCommands: cliCommands } = require(
+  `${getReactNativeCliPath()}/commands`
+);
 
 const startCommand = cliCommands.find((command) => command.name === 'start');
 const bundleCommand = cliCommands.find((command) => command.name === 'bundle');
