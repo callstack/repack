@@ -101,7 +101,7 @@ class HMRClient {
 
     if (!this.upToDate(update.hash) && module.hot.status() === 'idle') {
       console.log('[HMRClient] Checking for updates on the server...');
-      this.checkUpdates(update);
+      void this.checkUpdates(update);
     }
   }
 
@@ -128,7 +128,8 @@ class HMRClient {
       });
 
       if (!this.upToDate()) {
-        this.checkUpdates(update);
+        // TODO - should we return here?
+        void this.checkUpdates(update);
       }
 
       // Double check to make sure all updated modules were accepted (renewed)
