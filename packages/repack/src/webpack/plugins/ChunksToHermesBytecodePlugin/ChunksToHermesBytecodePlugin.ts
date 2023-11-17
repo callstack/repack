@@ -102,7 +102,7 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
       this.config.hermesCLIPath || getHermesCLIPath(reactNativePath);
 
     compiler.hooks.assetEmitted.tapPromise(
-      this.name,
+      { name: this.name, stage: 10 },
       async (file, { outputPath }) => {
         const shouldTransformAsset = ModuleFilenameHelpers.matchObject(
           {
