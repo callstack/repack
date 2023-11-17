@@ -33,7 +33,7 @@
   "author": "zamotany <zamotany.oss@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=14.x"
+    "node": ">=18"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -79,7 +79,6 @@
     "react-refresh": "^0.14.0",
     "schema-utils": "^3.0.0",
     "shallowequal": "^1.1.0",
-    "string.prototype.replaceall": "^1.0.6",
     "tapable": "^2.1.1"
   },
   "devDependencies": {
@@ -97,7 +96,7 @@
     "@types/jsonwebtoken": "^9.0.0",
     "@types/lodash.throttle": "^4.1.7",
     "@types/mime-types": "^2.1.1",
-    "@types/node": "^14.14.28",
+    "@types/node": "^18",
     "@types/react-dom": "^17.0.7",
     "@types/react-native": "^0.67.8",
     "@types/shallowequal": "^1.1.1",
