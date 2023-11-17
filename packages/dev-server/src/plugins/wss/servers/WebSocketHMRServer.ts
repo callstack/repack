@@ -24,7 +24,10 @@ export class WebSocketHMRServer extends WebSocketServer {
    * @param fastify Fastify instance to attach the WebSocket server to.
    * @param delegate HMR delegate instance.
    */
-  constructor(fastify: FastifyInstance, private delegate: HmrDelegate) {
+  constructor(
+    fastify: FastifyInstance,
+    private delegate: HmrDelegate
+  ) {
     super(fastify, delegate.getUriPath());
   }
 

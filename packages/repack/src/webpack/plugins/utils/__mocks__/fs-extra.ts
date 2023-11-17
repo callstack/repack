@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 import path from 'path';
 
 class FsNode {
