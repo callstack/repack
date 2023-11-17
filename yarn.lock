@@ -4948,7 +4948,6 @@ __metadata:
     react-refresh: ^0.14.0
     schema-utils: ^3.0.0
     shallowequal: ^1.1.0
-    string.prototype.replaceall: ^1.0.6
     tapable: ^2.1.1
     terser-webpack-plugin: ^5.1.3
     typedoc: ^0.22.17
@@ -30248,20 +30247,6 @@ __metadata:
     regexp.prototype.flags: ^1.4.1
     side-channel: ^1.0.4
   checksum: fc09f3ccbfb325de0472bcc87a6be0598a7499e0b4a31db5789676155b15754a4cc4bb83924f15fc9ed48934dac7366ee52c8b9bd160bed6fd072c93b489e75c
-  languageName: node
-  linkType: hard
-
-"string.prototype.replaceall@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "string.prototype.replaceall@npm:1.0.6"
-  dependencies:
-    call-bind: ^1.0.2
-    define-properties: ^1.1.3
-    es-abstract: ^1.19.1
-    get-intrinsic: ^1.1.1
-    has-symbols: ^1.0.2
-    is-regex: ^1.1.4
-  checksum: 5020755c7bc8931fc7fb8c73b2f5b3600bbc6ce0fc1df7fef834798f6623e49b57afc2b997e83a69d50686b94b2d47304571435a6adbe59ca53c02a9ceec3422
   languageName: node
   linkType: hard
 
