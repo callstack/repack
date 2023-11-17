@@ -1,4 +1,3 @@
-import './shims';
 export * as plugins from './webpack/plugins';
 export * from './webpack/plugins/RepackPlugin';
 export * from './webpack/utils';
