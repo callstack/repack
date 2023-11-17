@@ -82,7 +82,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       }
 
       if (reversePort && args.port) {
-        runAdbReverse(ctx, args.port);
+        void runAdbReverse(ctx, args.port);
       }
 
       let lastStats: webpack.StatsCompilation | undefined;
@@ -90,7 +90,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
         if (platform === 'android') {
-          runAdbReverse(ctx, args.port ?? DEFAULT_PORT);
+          void runAdbReverse(ctx, args.port ?? DEFAULT_PORT);
         }
       });
 
@@ -172,16 +172,18 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           },
         },
         api: {
-          getPlatforms: async () => Object.keys(compiler.workers),
-          getAssets: async (platform) =>
-            Object.entries(compiler.assetsCache[platform] ?? {}).map(
-              ([name, asset]) => ({
-                name,
-                size: asset.info.size,
-              })
+          getPlatforms: () => Promise.resolve(Object.keys(compiler.workers)),
+          getAssets: (platform) =>
+            Promise.resolve(
+              Object.entries(compiler.assetsCache[platform] ?? {}).map(
+                ([name, asset]) => ({
+                  name,
+                  size: asset.info.size,
+                })
+              )
             ),
-          getCompilationStats: async (platform) =>
-            compiler.statsCache[platform] ?? null,
+          getCompilationStats: (platform) =>
+            Promise.resolve(compiler.statsCache[platform] ?? null),
         },
       };
     },

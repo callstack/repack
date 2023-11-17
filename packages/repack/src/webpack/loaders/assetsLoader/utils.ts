@@ -4,11 +4,8 @@ import type { LoaderContext } from 'loader-utils';
 import escapeStringRegexp from 'escape-string-regexp';
 import type { ImageSize } from './types';
 
-export async function getFilesInDirectory(
-  dirname: string,
-  fs: LoaderContext['fs']
-) {
-  return await new Promise<string[]>((resolve, reject) =>
+export function getFilesInDirectory(dirname: string, fs: LoaderContext['fs']) {
+  return new Promise<string[]>((resolve, reject) =>
     fs.readdir(dirname, (error, results) => {
       if (error) {
         reject(error);
@@ -27,7 +24,7 @@ export function getScaleNumber(scaleKey: string) {
   return parseFloat(scaleKey.replace(/[^\d.]/g, ''));
 }
 
-export async function readFile(filename: string, fs: LoaderContext['fs']) {
+export function readFile(filename: string, fs: LoaderContext['fs']) {
   return new Promise<string | Buffer>((resolve, reject) => {
     fs.readFile(filename, (error, results) => {
       if (error) {

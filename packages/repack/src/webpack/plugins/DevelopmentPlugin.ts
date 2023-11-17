@@ -5,8 +5,8 @@ import type { DevServerOptions, WebpackPlugin } from '../../types';
 type ExtractEntryStaticNormalized<E> = E extends () => Promise<infer U>
   ? U
   : E extends { [key: string]: any }
-  ? E
-  : never;
+    ? E
+    : never;
 
 type EntryStaticNormalized =
   ExtractEntryStaticNormalized<webpack.EntryNormalized>;

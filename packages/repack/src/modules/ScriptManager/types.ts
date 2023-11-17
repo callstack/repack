@@ -1,5 +1,3 @@
-/* globals Headers, FormData */
-
 export interface WebpackContext {
   p: () => string;
   u: (id: string) => string;

@@ -52,7 +52,7 @@ export class JavaScriptLooseModePlugin implements WebpackPlugin {
 
             const source = moduleSource.source().toString();
             const match = source.match(/['"]use strict['"]/);
-            if (!match || match.index === undefined) {
+            if (match?.index === undefined) {
               return moduleSource;
             }
             const replacement = new webpack.sources.ReplaceSource(moduleSource);

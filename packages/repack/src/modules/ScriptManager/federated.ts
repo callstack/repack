@@ -254,10 +254,7 @@ export namespace Federated {
     module: string,
     scope: string = 'default'
   ): Promise<Exports> {
-    if (
-      !__webpack_share_scopes__[scope] ||
-      !__webpack_share_scopes__[scope].__isInitialized
-    ) {
+    if (!__webpack_share_scopes__[scope]?.__isInitialized) {
       // Initializes the share scope.
       // This fills it with known provided modules from this build and all remotes.
       await __webpack_init_sharing__(scope);
