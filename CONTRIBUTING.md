@@ -6,7 +6,7 @@ We want this community to be friendly and respectful to each other. Please read 
 
 ## Requirements
 
-- Node 14+ (__recommended Node 16+__)
+- Node 18+
 - Yarn 3
 
 ## Our Development Process
@@ -15,7 +15,7 @@ All development is done directly on GitHub, and all work is public.
 
 ### Development workflow
 
-> **Working on your first pull request?** You can learn how from this *free* series: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
+> **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
 1. Fork the repo and create your branch from default branch (usually `main`) (a guide on [how to fork a repository](https://help.github.com/articles/fork-a-repo/)).
 2. Run `yarn install` to install & set up the development environment.
