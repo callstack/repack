@@ -43,5 +43,5 @@ async function symbolicatePlugin(
 
 export default fastifyPlugin(symbolicatePlugin, {
   name: 'symbolicate-plugin',
-  dependencies: ['fastify-sensible'],
+  dependencies: ['@fastify/sensible'],
 });
