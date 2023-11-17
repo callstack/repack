@@ -126,7 +126,7 @@ module.exports = function () {
             } else {
               eval(script);
             }
-          }.call(self));
+          }).call(self);
           done();
         }
 

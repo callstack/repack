@@ -1,5 +1,3 @@
-/* globals Headers, FormData */
-
 import shallowEqual from 'shallowequal';
 import type {
   NormalizedScriptLocator,

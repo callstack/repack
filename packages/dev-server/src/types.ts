@@ -106,7 +106,7 @@ export namespace Server {
      * @param event Arbitrary method-like event to broadcast.
      */
     broadcastToMessageClients: <
-      E extends { method: string; params?: Record<string, any> }
+      E extends { method: string; params?: Record<string, any> },
     >(
       event: E
     ) => void;

@@ -4,9 +4,9 @@ import { Federated } from '../federated';
 
 type ModuleFederationPluginOptions =
   typeof container.ModuleFederationPlugin extends {
-    new (options: infer O): InstanceType<
-      typeof container.ModuleFederationPlugin
-    >;
+    new (
+      options: infer O
+    ): InstanceType<typeof container.ModuleFederationPlugin>;
   }
     ? O
     : never;

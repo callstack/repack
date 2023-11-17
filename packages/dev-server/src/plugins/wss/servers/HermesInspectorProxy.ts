@@ -41,7 +41,10 @@ export class HermesInspectorProxy extends WebSocketServer {
   private deviceCounter = 0;
   public readonly serverHost: string;
 
-  constructor(fastify: FastifyInstance, private config: InspectorProxyConfig) {
+  constructor(
+    fastify: FastifyInstance,
+    private config: InspectorProxyConfig
+  ) {
     super(fastify, [WS_DEVICE_URL, WS_DEBUGGER_URL]);
     this.serverHost = `${this.config.host || 'localhost'}:${this.config.port}`;
     this.setup();
