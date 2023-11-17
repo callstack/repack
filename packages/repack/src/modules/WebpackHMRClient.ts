@@ -128,7 +128,7 @@ class HMRClient {
       });
 
       if (!this.upToDate()) {
-        // TODO - should we return here?
+        // TODO - determine whether we should do early return here
         void this.checkUpdates(update);
       }
 
