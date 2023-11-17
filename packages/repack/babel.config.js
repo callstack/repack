@@ -4,7 +4,7 @@ const defaultConfig = {
       '@babel/preset-env',
       {
         targets: {
-          node: 14,
+          node: 18,
         },
         // Disable CJS transform and add it manually.
         // Otherwise it will replace `import(...)` with `require(...)`, which
