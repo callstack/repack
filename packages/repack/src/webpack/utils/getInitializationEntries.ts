@@ -53,10 +53,9 @@ export function getInitializationEntries(
 ): string[] {
   const { initializeCoreLocation, hmr } = options;
 
-  const getPolyfills = require(path.join(
-    reactNativePath,
-    'rn-get-polyfills.js'
-  ));
+  const getPolyfills = require(
+    path.join(reactNativePath, 'rn-get-polyfills.js')
+  );
 
   const entries = [
     ...getPolyfills(),

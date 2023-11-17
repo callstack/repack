@@ -184,7 +184,7 @@ export class Compiler extends EventEmitter {
       this.progressSenders[platform] = this.progressSenders[platform] ?? [];
       this.progressSenders[platform].push(sendProgress);
     }
-    return new Promise<Asset>((resolve, reject) => {
+    return await new Promise<Asset>((resolve, reject) => {
       // Add new resolver to be executed when compilation is finished
       this.resolvers[platform] = (this.resolvers[platform] ?? []).concat(
         (error?: Error) => {

@@ -145,7 +145,10 @@ class InteractiveConsoleReporter implements Reporter {
         (value as { msg: string }).msg === 'incoming request'
       ) {
         // Incoming dev server request
-        const { reqId, req } = value as { reqId: string; req: Object };
+        const { reqId, req } = value as unknown as {
+          reqId: string;
+          req: Object;
+        };
         // Save req object, so that we can extract data when request gets completed
         this.requestBuffer[reqId] = req;
       } else if (

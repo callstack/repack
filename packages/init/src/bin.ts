@@ -35,7 +35,7 @@ const argv = yargs(hideBin(process.argv))
   .help()
   .parseSync();
 
-run({
+void run({
   entry: argv.entry,
   templateType: argv.format as 'mjs' | 'cjs',
   verbose: argv.verbose,

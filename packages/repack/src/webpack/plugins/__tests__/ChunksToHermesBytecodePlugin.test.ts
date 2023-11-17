@@ -72,7 +72,7 @@ describe('ChunksToHermesBytecodePlugin', () => {
       const pluginInstance = new ChunksToHermesBytecodePlugin(config);
 
       const fsMock = fs as jest.Mocked<typeof fs>;
-      fsMock.pathExists.mockImplementationOnce(async () => true);
+      fsMock.pathExists.mockImplementationOnce(() => Promise.resolve(true));
 
       await new Promise<void>((resolve, reject) => {
         compilerMock.hooks.assetEmitted.tapPromise.mockImplementationOnce(
@@ -108,7 +108,7 @@ describe('ChunksToHermesBytecodePlugin', () => {
       const pluginInstance = new ChunksToHermesBytecodePlugin(config);
 
       const fsMock = fs as jest.Mocked<typeof fs>;
-      fsMock.pathExists.mockImplementationOnce(async () => false);
+      fsMock.pathExists.mockImplementationOnce(() => Promise.resolve(false));
 
       await new Promise<void>((resolve, reject) => {
         compilerMock.hooks.assetEmitted.tapPromise.mockImplementationOnce(
