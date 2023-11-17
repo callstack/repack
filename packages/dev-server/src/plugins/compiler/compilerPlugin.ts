@@ -85,5 +85,5 @@ async function compilerPlugin(
 
 export default fastifyPlugin(compilerPlugin, {
   name: 'compiler-plugin',
-  dependencies: ['fastify-sensible', 'multipart-plugin'],
+  dependencies: ['@fastify/sensible', 'multipart-plugin'],
 });
