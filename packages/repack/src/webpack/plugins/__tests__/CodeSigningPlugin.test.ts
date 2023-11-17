@@ -1,10 +1,11 @@
-/* eslint-disable promise/prefer-await-to-then */
 /* eslint-disable no-control-regex */
 
 import path from 'path';
 import fs from 'fs-extra';
+import memfs from 'memfs';
 import jwt from 'jsonwebtoken';
 import webpack from 'webpack';
+import VirtualModulesPlugin from 'webpack-virtual-modules';
 import {
   CodeSigningPlugin,
   CodeSigningPluginConfig,
@@ -12,61 +13,57 @@ import {
 
 jest.mock('fs-extra', () => ({
   ...jest.requireActual('fs-extra'),
-  ensureDir: jest.fn(),
   writeFile: jest.fn(),
 }));
 
 const BUNDLE_WITH_JWT_REGEX =
-  /^(.+)?\/\* RCSSB \*\/(?:[\w-]*\.){2}[\w-]*(\x00)*$/;
+  /^(.+)?\/\* RCSSB \*\/(?:[\w-]*\.){2}[\w-]*(\x00)*$/m;
 
-const compilerMock = {
-  context: __dirname,
-  hooks: {
-    thisCompilation: {
-      tap: jest.fn(),
+async function compileBundle(
+  outputFilename: string,
+  virtualModules: Record<string, string>,
+  codeSigningConfig: CodeSigningPluginConfig
+) {
+  const compiler = webpack({
+    context: __dirname,
+    mode: 'production',
+    devtool: false,
+    entry: './index.js',
+    output: {
+      filename: outputFilename,
+      path: '/out',
+      library: 'Export',
+      chunkFilename: '[name].chunk.bundle',
     },
-    afterEmit: {
-      tapPromise: jest.fn(),
-    },
-  },
-};
+    plugins: [
+      new CodeSigningPlugin(codeSigningConfig),
+      new VirtualModulesPlugin(virtualModules),
+    ],
+  });
 
-const injectHookMocks = (
-  chunks: Record<string, { id: string }>,
-  control: { resolve: () => void; reject: () => void },
-  mainOutputBundleFilename: string = 'index.bundle'
-) => {
-  compilerMock.hooks.thisCompilation.tap.mockImplementationOnce(
-    (_, callback) => {
-      callback(
-        {
-          chunks: Object.entries(chunks).map(([file, { id }]) => ({
-            id,
-            files: new Set([file]),
-          })),
-          hooks: {
-            afterProcessAssets: { tap: (_, cb) => cb() },
-          },
-          outputOptions: {
-            filename: mainOutputBundleFilename,
-          },
-        },
-        jest.fn()
-      );
-    }
+  const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
+  compiler.outputFileSystem = fileSystem;
+
+  // @ts-expect-error memfs is not fully compatible with fs-extra
+  fs.writeFile.mockImplementation(fileSystem.promises.writeFile);
+
+  return await new Promise<{
+    fileSystem: typeof memfs.fs;
+    getBundle: (name: string) => Buffer;
+  }>((resolve, reject) =>
+    compiler.run((error) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve({
+          fileSystem,
+          getBundle: (name: string) =>
+            fileSystem.readFileSync(`/out/${name}`) as Buffer,
+        });
+      }
+    })
   );
-  compilerMock.hooks.afterEmit.tapPromise.mockImplementationOnce(
-    (_, callback) => {
-      callback({
-        outputOptions: {
-          path: path.join(__dirname, '__fixtures__'),
-        },
-      })
-        .then(control.resolve)
-        .catch(control.reject);
-    }
-  );
-};
+}
 
 describe('CodeSigningPlugin', () => {
   beforeEach(() => {
@@ -74,176 +71,155 @@ describe('CodeSigningPlugin', () => {
   });
 
   it('adds code-signing signatures to chunk files', async () => {
-    const chunks = {
-      'example.container.bundle': {
-        id: 'example_container',
+    const { getBundle } = await compileBundle(
+      'index.bundle',
+      {
+        'index.js': `
+          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk'); 
+          chunk.then(console.log);
+        `,
+        'myChunk.js': `
+          export default 'myChunk';
+        `,
       },
-      'example.chunk.bundle': {
-        id: 'example_chunk',
-      },
-    };
-    const pluginInstance = new CodeSigningPlugin({
-      outputPath: path.join('output', 'signed'),
-      privateKeyPath: '__fixtures__/testRS256.pem',
-    });
+      { enabled: true, privateKeyPath: '__fixtures__/testRS256.pem' }
+    );
 
-    await new Promise<void>((resolve, reject) => {
-      injectHookMocks(chunks, { resolve, reject });
-      pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
-    });
-
-    expect(compilerMock.hooks.thisCompilation.tap).toHaveBeenCalledTimes(1);
-    expect(compilerMock.hooks.afterEmit.tapPromise).toHaveBeenCalledTimes(1);
-
-    expect(fs.ensureDir).toHaveBeenCalledTimes(2);
-    expect(fs.ensureDir).toHaveBeenCalledWith(path.join('output', 'signed'));
-
-    expect(fs.writeFile).toHaveBeenCalledTimes(2);
-
-    // processing is async so order is random
-    const bundle1 = (fs.writeFile as jest.Mock).mock.calls[0][1] as Buffer;
-    expect(bundle1.toString().match(BUNDLE_WITH_JWT_REGEX)).toBeTruthy();
-    expect(bundle1.byteLength).toBeGreaterThan(1280);
-
-    const bundle2 = (fs.writeFile as jest.Mock).mock.calls[1][1] as Buffer;
-    expect(bundle2.toString().match(BUNDLE_WITH_JWT_REGEX)).toBeTruthy();
-    expect(bundle2.byteLength).toBeGreaterThan(1280);
+    const chunkBundle = getBundle('myChunk.chunk.bundle');
+    expect(chunkBundle.toString().match(BUNDLE_WITH_JWT_REGEX)).toBeTruthy();
+    expect(chunkBundle.length).toBeGreaterThan(1280);
   });
 
   it('produces code-signed bundles with valid JWTs', async () => {
-    const chunks = {
-      'example.container.bundle': {
-        id: 'example_container',
-      },
-      'index.bundle': {
-        id: 'index',
-      },
-    };
-
-    const pluginInstance = new CodeSigningPlugin({
-      outputPath: path.join('output', 'signed'),
-      privateKeyPath: '__fixtures__/testRS256.pem',
-    });
-
-    await new Promise<void>((resolve, reject) => {
-      injectHookMocks(chunks, { resolve, reject });
-      pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
-    });
-
     const publicKey = fs.readFileSync(
       path.join(__dirname, '__fixtures__/testRS256.pem.pub')
     );
 
-    const bundles = (fs.writeFile as jest.Mock).mock.calls.reduce(
-      (acc, call) => {
-        const jwt = (call[1] as Buffer)
-          .toString()
-          .split('/* RCSSB */')[1]
-          .replace(/\0/g, '');
-        acc[path.basename(call[0])] = jwt;
-        return acc;
+    const { getBundle } = await compileBundle(
+      'index.bundle',
+      {
+        'index.js': `
+          const signed1 = import(/* webpackChunkName: "firstSignedChunk" */'./firstSignedChunk'); 
+          signed1.then(console.log);
+
+          const signed2 = import(/* webpackChunkName: "secondSignedChunk" */'./secondSignedChunk'); 
+          signed2.then(console.log);
+        `,
+        'firstSignedChunk.js': `
+          export default 'firstSignedChunk';
+        `,
+        'secondSignedChunk.js': `
+          export default 'secondSignedChunk';
+        `,
       },
-      {}
+      { enabled: true, privateKeyPath: '__fixtures__/testRS256.pem' }
+    );
+
+    const bundles = [
+      getBundle('firstSignedChunk.chunk.bundle'),
+      getBundle('secondSignedChunk.chunk.bundle'),
+    ];
+
+    const jwts = bundles.map((content) =>
+      content.toString().split('/* RCSSB */')[1].replace(/\0/g, '')
     );
 
     let payload: jwt.JwtPayload;
-    Object.entries<string>(bundles).forEach(([key, value]) => {
-      expect(key in chunks).toBeTruthy();
+    jwts.forEach((bundleJWT) => {
       expect(() => {
-        payload = jwt.verify(value, publicKey) as jwt.JwtPayload;
+        payload = jwt.verify(bundleJWT, publicKey) as jwt.JwtPayload;
       }).not.toThrow();
       expect(payload).toHaveProperty('hash');
     });
   });
 
+  it('skips applying plugin when enabled flag is explicitly set to false', async () => {
+    const { getBundle } = await compileBundle(
+      'index.bundle',
+      {
+        'index.js': `
+          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk'); 
+          chunk.then(console.log);
+        `,
+        'myChunk.js': `
+          export default 'myChunk';
+        `,
+      },
+      { enabled: false, privateKeyPath: '__fixtures__/testRS256.pem' }
+    );
+
+    const chunkBundle = getBundle('myChunk.chunk.bundle');
+    expect(chunkBundle.toString().match(BUNDLE_WITH_JWT_REGEX)).toBeNull();
+  });
+
   it('excludes main output bundle from code-signing', async () => {
-    const chunks = {
-      'example.container.bundle': {
-        id: 'example_container',
+    const { getBundle } = await compileBundle(
+      'index.bundle',
+      {
+        'index.js': `
+          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk'); 
+          chunk.then(console.log);
+        `,
+        'myChunk.js': `
+          export default 'myChunk';
+        `,
       },
-      'example.chunk.bundle': {
-        id: 'example_chunk',
-      },
-      'main.bundle': {
-        id: 'main',
-      },
-    };
+      { enabled: true, privateKeyPath: '__fixtures__/testRS256.pem' }
+    );
 
-    const mainOutputBundleFilename = 'main.bundle';
-    const pluginInstance = new CodeSigningPlugin({
-      outputPath: path.join('output', 'signed'),
-      privateKeyPath: '__fixtures__/testRS256.pem',
-    });
-
-    await new Promise<void>((resolve, reject) => {
-      injectHookMocks(chunks, { resolve, reject }, mainOutputBundleFilename);
-      pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
-    });
-
-    expect(fs.writeFile).toHaveBeenCalledTimes(2);
-    (fs.writeFile as jest.Mock).mock.calls.forEach((call) => {
-      expect(call[0]).not.toEqual(
-        path.join(__dirname, 'output', 'signed', mainOutputBundleFilename)
-      );
-    });
+    const mainBundle = getBundle('index.bundle');
+    expect(mainBundle.toString().match(BUNDLE_WITH_JWT_REGEX)).toBeNull();
   });
 
   it('excludes additional chunks specified in config from code-signing', async () => {
-    const chunks = {
-      'example.container.bundle': {
-        id: 'example_container',
-      },
-      'example.chunk.bundle': {
-        id: 'example_chunk',
-      },
-      'local.chunk.bundle': {
-        id: 'local_chunk',
-      },
-      'main.bundle': {
-        id: 'main',
-      },
-    };
+    const { getBundle } = await compileBundle(
+      'index.bundle',
+      {
+        'index.js': `
+          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk'); 
+          chunk.then(console.log);
 
-    const pluginInstance = new CodeSigningPlugin({
-      outputPath: path.join('output', 'signed'),
-      privateKeyPath: '__fixtures__/testRS256.pem',
-      excludeChunks: ['local_chunk'],
-    });
+          const noSign = import(/* webpackChunkName: "noSign" */'./noSign');
+          noSign.then(console.log);
+        `,
+        'myChunk.js': `
+          export default 'myChunk';
+        `,
+        'noSign.js': `
+          export default 'noSign';
+        `,
+      },
+      {
+        enabled: true,
+        privateKeyPath: '__fixtures__/testRS256.pem',
+        excludeChunks: /noSign/,
+      }
+    );
 
-    await new Promise<void>((resolve, reject) => {
-      injectHookMocks(chunks, { resolve, reject }, 'main.bundle');
-      pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
-    });
-
-    expect(fs.writeFile).toHaveBeenCalledTimes(2);
-    (fs.writeFile as jest.Mock).mock.calls.forEach((call) => {
-      expect(call[0]).not.toEqual(
-        path.join(__dirname, 'output', 'signed', 'main.bundle')
-      );
-      expect(call[0]).not.toEqual(
-        path.join(__dirname, 'output', 'signed', 'local.chunk.bundle')
-      );
-    });
+    const signedChunk = getBundle('myChunk.chunk.bundle');
+    expect(signedChunk.toString().match(BUNDLE_WITH_JWT_REGEX)).toBeTruthy();
+    const unsignedChunk = getBundle('noSign.chunk.bundle');
+    expect(unsignedChunk.toString().match(BUNDLE_WITH_JWT_REGEX)).toBeNull();
   });
 
-  it('throws an error when privateKey is not found', () => {
-    expect(() =>
-      new CodeSigningPlugin({} as CodeSigningPluginConfig).apply(
-        compilerMock as unknown as webpack.Compiler
+  it('throws an error when privateKey is not found in the filesystem', async () => {
+    await expect(
+      compileBundle(
+        'index.bundle',
+        { 'index.js': `var a = 'test';` },
+        { enabled: true, privateKeyPath: '__fixtures__/missing.key' }
       )
-    ).toThrowError();
+    ).rejects.toThrowError(/ENOENT.*missing\.key/);
   });
 
-  it('skips applying plugin when enabled flag is explicitly set to false', async () => {
-    const pluginInstance = new CodeSigningPlugin({
-      enabled: false,
-      outputPath: path.join('output', 'signed'),
-      privateKeyPath: '__fixtures__/testRS256.pem',
-    });
-
-    pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
-
-    expect(compilerMock.hooks.thisCompilation.tap).not.toHaveBeenCalled();
-    expect(compilerMock.hooks.afterEmit.tapPromise).not.toHaveBeenCalled();
+  it('throws an error when schema is invalid', async () => {
+    await expect(
+      compileBundle(
+        'index.bundle',
+        { 'index.js': `var a = 'test';` },
+        // @ts-expect-error invalid config on purpose
+        { enabled: true }
+      )
+    ).rejects.toThrowError(/Invalid configuration object/);
   });
 });
