@@ -12,7 +12,7 @@ export class RepackLoadScriptRuntimeModule extends webpack.RuntimeModule {
         require('./implementation/loadScript')
       )
         .replaceAll('$loadScript$', webpack.RuntimeGlobals.loadScript)
-        .replaceAll('$caller$', `'${this.chunkId?.toString()}'` ?? 'undefined'),
+        .replaceAll('$caller$', `'${this.chunkId?.toString()}'`),
     ]);
   }
 }
