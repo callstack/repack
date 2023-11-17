@@ -107,7 +107,10 @@ export async function createServer(config: Server.Config) {
 
   /** Start the development server. */
   async function start() {
-    await instance.listen(config.options.port, config.options.host);
+    await instance.listen({
+      port: config.options.port,
+      host: config.options.host,
+    });
   }
 
   /** Stop the development server. */
