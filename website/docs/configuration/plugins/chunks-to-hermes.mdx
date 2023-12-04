@@ -41,7 +41,7 @@ import * as Repack from '@callstack/repack';
 
 // ...
 plugins: [
-  new Repack.ChunksToHermesBytecodePlugin({
+  new Repack.plugins.ChunksToHermesBytecodePlugin({
     enabled: mode === 'production' && !devServer,
     test: /\.(js)?bundle$/,
     exclude: /index.bundle$/,
