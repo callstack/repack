@@ -1,26 +1,55 @@
 const path = require('path');
+const { createRequire } = require('module');
 
-function getReactNativeCliPath() {
+function getCommands() {
   let cliPath;
 
   try {
+    cliPath = path.dirname(require.resolve('@react-native-community/cli'));
+  } catch {
+    // NOOP
+  }
+
+  try {
     cliPath = path.dirname(
-      require.resolve('@react-native/community-cli-plugin')
+      require.resolve('react-native/node_modules/@react-native-community/cli')
     );
   } catch {
     // NOOP
   }
 
-  if (!cliPath) {
-    throw new Error(
-      'Cannot resolve @react-native/community-cli-plugin package'
-    );
+  try {
+    const rnRequire = createRequire(require.resolve('react-native'));
+    cliPath = path.dirname(rnRequire.resolve('@react-native-community/cli'));
+  } catch {
+    // NOOP
   }
 
-  return cliPath;
+  const { projectCommands } = require(`${cliPath}/commands`);
+  const commandNames = Object.values(projectCommands).map(({ name }) => name);
+
+  if (commandNames.includes('bundle') && commandNames.includes('start')) {
+    return projectCommands;
+  }
+
+  let commands;
+
+  try {
+    commands = require(require.resolve(
+      'react-native/react-native.config.js'
+    )).commands;
+  } catch (e) {
+    // NOOP
+  }
+
+  if (!commands) {
+    throw new Error('Cannot resolve path react-native package');
+  }
+
+  return commands;
 }
 
-const cliCommands = require(getReactNativeCliPath());
+const cliCommands = getCommands();
 
 const startCommand = Object.values(cliCommands).find(
   (command) => command.name === 'start'
