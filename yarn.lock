@@ -7972,14 +7972,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:^1.17.11":
-  version: 1.17.11
-  resolution: "@react-native-async-storage/async-storage@npm:1.17.11"
+"@react-native-async-storage/async-storage@npm:^1.21.0":
+  version: 1.21.0
+  resolution: "@react-native-async-storage/async-storage@npm:1.21.0"
   dependencies:
     merge-options: ^3.0.4
   peerDependencies:
-    react-native: ^0.0.0-0 || 0.60 - 0.71 || 1000.0.0
-  checksum: 691f2b74498160d0b532f673402d8affeecb28b005b1c6d6fa2e7c87f89ab3068177e8e2d2686738306e7592a39c6d7148aa4c426b7e8e149c43a336ad446648
+    react-native: ^0.0.0-0 || >=0.60 <1.0
+  checksum: 969cdeb444a037087b1897553082e148e25c8331055dd0dc142f76deeb4aadd9ed5ec26926ae990b3e9ff088396e74ab557148a2dd2a7db86058051b774f2619
   languageName: node
   linkType: hard
 
@@ -32345,7 +32345,7 @@ __metadata:
     "@babel/runtime": ^7.20.0
     "@callstack/eslint-config": ^12.0.2
     "@callstack/repack": 3.6.0
-    "@react-native-async-storage/async-storage": ^1.17.11
+    "@react-native-async-storage/async-storage": ^1.21.0
     "@react-native/babel-preset": ^0.73.18
     "@react-native/eslint-config": ^0.73.1
     "@react-native/typescript-config": ^0.73.1
