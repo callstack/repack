@@ -155,7 +155,7 @@ export default (env) => {
             /node_modules(.*[/\\])+@react-native/,
             /node_modules(.*[/\\])+@react-navigation/,
             /node_modules(.*[/\\])+@react-native-community/,
-            /node_modules(.*[/\\])+@expo/,
+            /node_modules(.*[/\\])+expo/,
             /node_modules(.*[/\\])+pretty-format/,
             /node_modules(.*[/\\])+metro/,
             /node_modules(.*[/\\])+abort-controller/,
