@@ -43,7 +43,7 @@ function getCommands() {
   }
 
   if (!commands) {
-    throw new Error('Cannot resolve path react-native package');
+    throw new Error('Cannot resolve path to react-native package');
   }
 
   return commands;
