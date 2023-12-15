@@ -51,10 +51,10 @@ function getCommands() {
 
 const cliCommands = Object.values(getCommands());
 
-const startCommand = Object.values(cliCommands).find(
+const startCommand = cliCommands.find(
   (command) => command.name === 'start'
 );
-const bundleCommand = Object.values(cliCommands).find(
+const bundleCommand = cliCommands.find(
   (command) => command.name === 'bundle'
 );
 
