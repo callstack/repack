@@ -49,7 +49,7 @@ function getCommands() {
   return commands;
 }
 
-const cliCommands = getCommands();
+const cliCommands = Object.values(getCommands());
 
 const startCommand = Object.values(cliCommands).find(
   (command) => command.name === 'start'
