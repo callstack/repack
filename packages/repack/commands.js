@@ -51,12 +51,8 @@ function getCommands() {
 
 const cliCommands = Object.values(getCommands());
 
-const startCommand = cliCommands.find(
-  (command) => command.name === 'start'
-);
-const bundleCommand = cliCommands.find(
-  (command) => command.name === 'bundle'
-);
+const startCommand = cliCommands.find(({ name }) => name === 'start');
+const bundleCommand = cliCommands.find(({ name }) => name === 'bundle');
 
 const webpackConfigOption = {
   name: '--webpackConfig <path>',
