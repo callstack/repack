@@ -61,6 +61,10 @@ export default (env) => {
         entries: false,
       },
     },
+    cache: {
+      type: 'filesystem',
+      name: `${platform}-${mode}`,
+    },
     /**
      * `getInitializationEntries` will return necessary entries with setup and initialization code.
      * If you don't want to use Hot Module Replacement, set `hmr` option to `false`. By default,
