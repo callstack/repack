@@ -104,5 +104,17 @@ export async function bundle(
         }
       }
     });
+    // eslint-disable-next-line promise/prefer-await-to-then
+  }).then(() => {
+    return new Promise<void>((resolve, reject) => {
+      // make cache work: https://webpack.js.org/api/node/#run
+      compiler.close((error) => {
+        if (error) {
+          reject();
+        } else {
+          resolve();
+        }
+      });
+    });
   });
 }
