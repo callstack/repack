@@ -32,6 +32,7 @@ function getCommands() {
     return projectCommands;
   }
 
+  // RN >= 0.73
   let commands;
 
   try {
