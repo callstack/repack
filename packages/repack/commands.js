@@ -1,7 +1,7 @@
 const path = require('path');
 const { createRequire } = require('module');
 
-function getReactNativeCliPath() {
+function getCommands() {
   let cliPath;
 
   try {
@@ -25,19 +25,35 @@ function getReactNativeCliPath() {
     // NOOP
   }
 
-  if (!cliPath) {
-    throw new Error('Cannot resolve @react-native-community/cli package');
+  const { projectCommands } = require(`${cliPath}/commands`);
+  const commandNames = Object.values(projectCommands).map(({ name }) => name);
+
+  if (commandNames.includes('bundle') && commandNames.includes('start')) {
+    return projectCommands;
   }
 
-  return cliPath;
+  // RN >= 0.73
+  let commands;
+
+  try {
+    commands = require(require.resolve(
+      'react-native/react-native.config.js'
+    )).commands;
+  } catch (e) {
+    // NOOP
+  }
+
+  if (!commands) {
+    throw new Error('Cannot resolve path to react-native package');
+  }
+
+  return commands;
 }
 
-const {
-  projectCommands: cliCommands,
-} = require(`${getReactNativeCliPath()}/commands`);
+const cliCommands = Object.values(getCommands());
 
-const startCommand = cliCommands.find((command) => command.name === 'start');
-const bundleCommand = cliCommands.find((command) => command.name === 'bundle');
+const startCommand = cliCommands.find(({ name }) => name === 'start');
+const bundleCommand = cliCommands.find(({ name }) => name === 'bundle');
 
 const webpackConfigOption = {
   name: '--webpackConfig <path>',
