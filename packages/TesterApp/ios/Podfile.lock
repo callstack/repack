@@ -1,6 +1,6 @@
 PODS:
   - boost (1.83.0)
-  - callstack-repack (3.6.0):
+  - callstack-repack (3.7.0):
     - JWTDecode (~> 3.0.0)
     - React-Core
     - SwiftyRSA (~> 1.7)
@@ -1239,7 +1239,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 26fad476bfa736552bbfa698a06cc530475c1505
-  callstack-repack: 5ae2a87e5cf204ef1ac6d111c71bb948fc1f5b4e
+  callstack-repack: bbcb691e5e6a19845295770a1178bdf54b1be018
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   FBLazyVector: 39ba45baf4e398618f8b3a4bb6ba8fcdb7fc2133
   FBReactNativeSpec: 20cfca68498e27879514790359289d1df2b52c56

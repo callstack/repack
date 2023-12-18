@@ -1,5 +1,18 @@
 # @callstack/repack
 
+## 3.7.0
+
+### Minor Changes
+
+- [#477](https://github.com/callstack/repack/pull/477) [`e1476e6`](https://github.com/callstack/repack/commit/e1476e644c1da9cee5bc933b32219027248bd5af) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - fix: get commands options and description from new package (support RN>=0.73)
+
+### Patch Changes
+
+- [#479](https://github.com/callstack/repack/pull/479) [`b1ad518`](https://github.com/callstack/repack/commit/b1ad518a7ff76e5ffe95a9af02469cc74b99584e) Thanks [@ambar](https://github.com/ambar)! - Added the ability to fully leverage the webpack built-in caching mechanism to optimise cold build times.
+
+- Updated dependencies [[`cc997a2`](https://github.com/callstack/repack/commit/cc997a2f84b4835f8fe597487b0cde6f41b4b7f0)]:
+  - @callstack/repack-dev-server@1.1.0
+
 ## 3.6.0
 
 ### Minor Changes
