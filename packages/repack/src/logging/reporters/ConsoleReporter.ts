@@ -2,12 +2,75 @@ import util from 'util';
 import colorette from 'colorette';
 import throttle from 'lodash.throttle';
 import type { LogEntry, LogType, Reporter } from '../types';
-import cliProgress from 'cli-progress';
+import cliProgress, { SingleBar } from 'cli-progress';
 
 export interface ConsoleReporterConfig {
   asJson?: boolean;
   level?: 'silent' | 'normal' | 'verbose';
   isWorker?: boolean;
+}
+
+interface ProgressBarOptions {
+  total: number;
+  startValue?: number;
+  label?: string;
+  platform?: string;
+}
+
+interface BarLine {
+  bar: cliProgress.SingleBar;
+  started: boolean;
+}
+
+export class ProgressBarManager {
+  private multiBar: cliProgress.MultiBar;
+  private bars: BarLine[] = [];
+
+  constructor() {
+    this.multiBar = new cliProgress.MultiBar(
+      {
+        hideCursor: true,
+        autopadding: true,
+        clearOnComplete: false,
+        format: '• {label} {platform}:' + ' [{bar}]' + ' {percentage}%',
+      },
+      cliProgress.Presets.shades_classic
+    );
+  }
+
+  createProgressBar(options: ProgressBarOptions): cliProgress.SingleBar {
+    const { total, startValue = 0, label, platform } = options;
+    const bar = this.multiBar.create(total, startValue, { label, platform });
+    this.bars.push(bar);
+    return bar;
+  }
+
+  updateProgressBar(bar: cliProgress.SingleBar, percentage: number) {
+    const barInfo = this.findBarInfo(bar);
+
+    if (!barInfo) {
+      // Bar not found in the manager
+      return;
+    }
+
+    if (percentage > 0 && !barInfo.started) {
+      barInfo.started = true;
+    }
+
+    if (percentage > 0) {
+      bar.update(percentage);
+    } else if (barInfo.started) {
+      // Hide the progress bar when percentage is 0 and it has started
+      bar.stop();
+    }
+  }
+  private findBarInfo(barToFind: cliProgress.SingleBar) {
+    return this.bars.find(({ bar }) => bar === barToFind);
+  }
+
+  stopProgressBars() {
+    this.multiBar.stop();
+  }
 }
 
 export class ConsoleReporter implements Reporter {
@@ -72,23 +135,7 @@ const FALLBACK_SYMBOLS: Record<LogType | 'progress', string> = {
 
 class InteractiveConsoleReporter implements Reporter {
   private requestBuffer: Record<string, Object> = {};
-  multiBar = new cliProgress.MultiBar(
-    {
-      hideCursor: true,
-      autopadding: true,
-      clearOnComplete: false,
-      format: '• {label} {platform}:' + ' [{bar}]' + ' {percentage}%',
-    },
-    cliProgress.Presets.shades_classic
-  );
-
-  barAndroid = this.multiBar.create(100, 0, {
-    platform: '',
-    label: 'Compiling',
-  });
-  barIOS = this.multiBar.create(100, 0, { platform: '', label: 'Compiling' });
-
-  constructor(private config: ConsoleReporterConfig) {}
+  constructor(private config: ConsoleReporterConfig,private progressBarManager: ProgressBarManager) {}
 
   process(log: LogEntry) {
     // Do not log anything in silent mode
@@ -109,8 +156,6 @@ class InteractiveConsoleReporter implements Reporter {
 
     const normalizedLog = this.normalizeLog(log);
     if (normalizedLog) {
-      this.multiBar.log(`${IS_SYMBOL_SUPPORTED ? SYMBOLS[log.type] : FALLBACK_SYMBOLS[log.type]} ${this.prettifyLog(normalizedLog)}\n`
-      );
     }
   }
 
@@ -127,13 +172,25 @@ class InteractiveConsoleReporter implements Reporter {
 
     const percentage = Math.floor(value * 100);
 
-       const label = _label !== '' ? _label : 'compiling'
-     if (percentage > 0){
-       if (platform === 'ios') this.barIOS.update(percentage, {platform, label})
-        if (platform === 'android') this.barAndroid.update(percentage, {platform, label})
-       }
-       }, 2000);
-    
+    const label = _label !== '' ? _label : 'compiling';
+    let bar: cliProgress.SingleBar;
+    if (platform === 'ios') {
+      bar = this.progressBarManager.createProgressBar({
+        total: 100,
+        startValue: percentage,
+        label,
+        platform,
+      });
+    } else if (platform === 'android') {
+      bar = this.progressBarManager.createProgressBar({
+        total: 100,
+        startValue: percentage,
+        label,
+        platform,
+      });
+    }
+    this.progressBarManager.updateProgressBar(bar, percentage);
+  }, 2000);
 
   private normalizeLog(log: LogEntry): LogEntry | undefined {
     const message = [];
@@ -260,6 +317,7 @@ class InteractiveConsoleReporter implements Reporter {
   }
 
   stop() {
+    this.progressBarManager.stopProgressBars();
     // NOOP
   }
 }
