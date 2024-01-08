@@ -1,5 +1,27 @@
 # testerapp
 
+## 0.1.7
+
+### Patch Changes
+
+- [#476](https://github.com/callstack/repack/pull/476) [`c60d88a`](https://github.com/callstack/repack/commit/c60d88ac95105b39222eb3062cc40c0afde73496) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Upgraded TesterApp to react-native@0.73.0
+
+* [#479](https://github.com/callstack/repack/pull/479) [`b1ad518`](https://github.com/callstack/repack/commit/b1ad518a7ff76e5ffe95a9af02469cc74b99584e) Thanks [@ambar](https://github.com/ambar)! - Added the ability to fully leverage the webpack built-in caching mechanism to optimise cold build times.
+
+* Updated dependencies [[`e1476e6`](https://github.com/callstack/repack/commit/e1476e644c1da9cee5bc933b32219027248bd5af), [`b1ad518`](https://github.com/callstack/repack/commit/b1ad518a7ff76e5ffe95a9af02469cc74b99584e)]:
+  - @callstack/repack@3.7.0
+
+## 0.1.6
+
+### Patch Changes
+
+- [#460](https://github.com/callstack/repack/pull/460) [`8992399`](https://github.com/callstack/repack/commit/8992399278b2fb4f17d92a1c25c502dfb4dc7a45) Thanks [@jbroma](https://github.com/jbroma)! - Force light theme in TesterApp
+
+* [#458](https://github.com/callstack/repack/pull/458) [`8e174dd`](https://github.com/callstack/repack/commit/8e174dd8b7e11c5318ba3b6fc10e8aff94483202) Thanks [@jbroma](https://github.com/jbroma)! - Upgraded TesterApp to react-native@0.72.6
+
+* Updated dependencies [[`74de630`](https://github.com/callstack/repack/commit/74de630d4a27215580e6f835b6204757f2998a5a)]:
+  - @callstack/repack@3.6.0
+
 ## 0.1.5
 
 ### Patch Changes
