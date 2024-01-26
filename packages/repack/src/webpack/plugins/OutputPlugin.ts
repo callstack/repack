@@ -297,121 +297,118 @@ export class OutputPlugin implements WebpackPlugin {
       );
     });
 
-    compiler.hooks.afterEmit.tapPromise(
-      'RepackOutputPlugin',
-      async (compilation) => {
-        let localAssetsCopyProcessor;
+    compiler.hooks.done.tapPromise('RepackOutputPlugin', async (stats) => {
+      const compilation = stats.compilation;
+      const stats1 = stats.toJson({ all: true });
 
-        let { bundleFilename, sourceMapFilename, assetsPath } =
-          this.config.output;
-        if (bundleFilename) {
-          if (!path.isAbsolute(bundleFilename)) {
-            bundleFilename = path.join(this.config.context, bundleFilename);
-          }
+      let localAssetsCopyProcessor;
 
-          const bundlePath = path.dirname(bundleFilename);
-
-          if (!sourceMapFilename) {
-            sourceMapFilename = `${bundleFilename}.map`;
-          }
-
-          if (!path.isAbsolute(sourceMapFilename)) {
-            sourceMapFilename = path.join(
-              this.config.context,
-              sourceMapFilename
-            );
-          }
-
-          if (!assetsPath) {
-            assetsPath = bundlePath;
-          }
-
-          logger.debug('Detected output paths:', {
-            bundleFilename,
-            bundlePath,
-            sourceMapFilename,
-            assetsPath,
-          });
-
-          localAssetsCopyProcessor = new AssetsCopyProcessor({
-            platform: this.config.platform,
-            compilation,
-            outputPath,
-            bundleOutput: bundleFilename,
-            bundleOutputDir: bundlePath,
-            sourcemapOutput: sourceMapFilename,
-            assetsDest: assetsPath,
-            logger,
-          });
+      let { bundleFilename, sourceMapFilename, assetsPath } =
+        this.config.output;
+      if (bundleFilename) {
+        if (!path.isAbsolute(bundleFilename)) {
+          bundleFilename = path.join(this.config.context, bundleFilename);
         }
 
-        const remoteAssetsCopyProcessors: Record<string, AssetsCopyProcessor> =
-          {};
+        const bundlePath = path.dirname(bundleFilename);
 
-        for (const chunk of localChunks) {
-          // Process entry chunk
-          localAssetsCopyProcessor?.enqueueChunk(chunk, {
-            isEntry: entryChunk === chunk,
-          });
+        if (!sourceMapFilename) {
+          sourceMapFilename = `${bundleFilename}.map`;
         }
 
-        for (const chunk of remoteChunks) {
-          const spec = extraAssets.find((spec) =>
-            webpack.ModuleFilenameHelpers.matchObject(
-              {
-                test: spec.test,
-                include: spec.include,
-                exclude: spec.exclude,
-              },
-              chunk.name || chunk.id?.toString()
-            )
-          );
-
-          if (spec?.type === 'remote') {
-            if (!remoteAssetsCopyProcessors[spec.outputPath]) {
-              remoteAssetsCopyProcessors[spec.outputPath] =
-                new AssetsCopyProcessor({
-                  platform: this.config.platform,
-                  compilation,
-                  outputPath,
-                  bundleOutput: '',
-                  bundleOutputDir: spec.outputPath,
-                  sourcemapOutput: '',
-                  assetsDest: spec.outputPath,
-                  logger,
-                });
-            }
-
-            remoteAssetsCopyProcessors[spec.outputPath].enqueueChunk(chunk, {
-              isEntry: false,
-            });
-          }
+        if (!path.isAbsolute(sourceMapFilename)) {
+          sourceMapFilename = path.join(this.config.context, sourceMapFilename);
         }
 
-        let auxiliaryAssetsCopyProcessor;
-        const { auxiliaryAssetsPath } = this.config.output;
-        if (auxiliaryAssetsPath) {
-          auxiliaryAssetsCopyProcessor = new AuxiliaryAssetsCopyProcessor({
-            platform: this.config.platform,
-            outputPath,
-            assetsDest: auxiliaryAssetsPath,
-            logger,
-          });
-
-          for (const asset of auxiliaryAssets) {
-            auxiliaryAssetsCopyProcessor.enqueueAsset(asset);
-          }
+        if (!assetsPath) {
+          assetsPath = bundlePath;
         }
 
-        await Promise.all([
-          ...(localAssetsCopyProcessor?.execute() ?? []),
-          ...Object.values(remoteAssetsCopyProcessors).reduce(
-            (acc, processor) => acc.concat(...processor.execute()),
-            [] as Promise<void>[]
-          ),
-          ...(auxiliaryAssetsCopyProcessor?.execute() ?? []),
-        ]);
+        logger.debug('Detected output paths:', {
+          bundleFilename,
+          bundlePath,
+          sourceMapFilename,
+          assetsPath,
+        });
+
+        localAssetsCopyProcessor = new AssetsCopyProcessor({
+          platform: this.config.platform,
+          compilation,
+          outputPath,
+          bundleOutput: bundleFilename,
+          bundleOutputDir: bundlePath,
+          sourcemapOutput: sourceMapFilename,
+          assetsDest: assetsPath,
+          logger,
+        });
       }
-    );
+
+      const remoteAssetsCopyProcessors: Record<string, AssetsCopyProcessor> =
+        {};
+
+      for (const chunk of localChunks) {
+        // Process entry chunk
+        localAssetsCopyProcessor?.enqueueChunk(chunk, {
+          isEntry: entryChunk === chunk,
+        });
+      }
+
+      for (const chunk of remoteChunks) {
+        const spec = extraAssets.find((spec) =>
+          webpack.ModuleFilenameHelpers.matchObject(
+            {
+              test: spec.test,
+              include: spec.include,
+              exclude: spec.exclude,
+            },
+            chunk.name || chunk.id?.toString()
+          )
+        );
+
+        if (spec?.type === 'remote') {
+          if (!remoteAssetsCopyProcessors[spec.outputPath]) {
+            remoteAssetsCopyProcessors[spec.outputPath] =
+              new AssetsCopyProcessor({
+                platform: this.config.platform,
+                compilation,
+                outputPath,
+                bundleOutput: '',
+                bundleOutputDir: spec.outputPath,
+                sourcemapOutput: '',
+                assetsDest: spec.outputPath,
+                logger,
+              });
+          }
+
+          remoteAssetsCopyProcessors[spec.outputPath].enqueueChunk(chunk, {
+            isEntry: false,
+          });
+        }
+      }
+
+      let auxiliaryAssetsCopyProcessor;
+      const { auxiliaryAssetsPath } = this.config.output;
+      if (auxiliaryAssetsPath) {
+        auxiliaryAssetsCopyProcessor = new AuxiliaryAssetsCopyProcessor({
+          platform: this.config.platform,
+          outputPath,
+          assetsDest: auxiliaryAssetsPath,
+          logger,
+        });
+
+        for (const asset of auxiliaryAssets) {
+          auxiliaryAssetsCopyProcessor.enqueueAsset(asset);
+        }
+      }
+
+      await Promise.all([
+        ...(localAssetsCopyProcessor?.execute() ?? []),
+        ...Object.values(remoteAssetsCopyProcessors).reduce(
+          (acc, processor) => acc.concat(...processor.execute()),
+          [] as Promise<void>[]
+        ),
+        ...(auxiliaryAssetsCopyProcessor?.execute() ?? []),
+      ]);
+    });
   }
 }
