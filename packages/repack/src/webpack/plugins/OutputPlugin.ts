@@ -298,7 +298,6 @@ export class OutputPlugin implements WebpackPlugin {
     });
 
     compiler.hooks.done.tapPromise('RepackOutputPlugin', async (stats) => {
-      const compilation = stats.compilation;
       const stats1 = stats.toJson({ all: true });
 
       let localAssetsCopyProcessor;
@@ -333,7 +332,6 @@ export class OutputPlugin implements WebpackPlugin {
 
         localAssetsCopyProcessor = new AssetsCopyProcessor({
           platform: this.config.platform,
-          compilation,
           outputPath,
           bundleOutput: bundleFilename,
           bundleOutputDir: bundlePath,
@@ -350,6 +348,7 @@ export class OutputPlugin implements WebpackPlugin {
         // Process entry chunk
         localAssetsCopyProcessor?.enqueueChunk(chunk, {
           isEntry: entryChunk === chunk,
+          sourceMapFile: '', // TODO: use source map from stats.chunks
         });
       }
 
@@ -370,7 +369,6 @@ export class OutputPlugin implements WebpackPlugin {
             remoteAssetsCopyProcessors[spec.outputPath] =
               new AssetsCopyProcessor({
                 platform: this.config.platform,
-                compilation,
                 outputPath,
                 bundleOutput: '',
                 bundleOutputDir: spec.outputPath,
@@ -382,6 +380,7 @@ export class OutputPlugin implements WebpackPlugin {
 
           remoteAssetsCopyProcessors[spec.outputPath].enqueueChunk(chunk, {
             isEntry: false,
+            sourceMapFile: '', // TODO: use source map from stats.chunks
           });
         }
       }

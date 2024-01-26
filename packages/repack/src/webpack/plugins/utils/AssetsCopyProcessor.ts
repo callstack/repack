@@ -9,7 +9,6 @@ export class AssetsCopyProcessor {
   constructor(
     public readonly config: {
       platform: string;
-      compilation: webpack.Compilation;
       outputPath: string;
       bundleOutput: string;
       bundleOutputDir: string;
@@ -29,9 +28,11 @@ export class AssetsCopyProcessor {
     await this.filesystem.copyFile(from, to);
   }
 
-  enqueueChunk(chunk: webpack.Chunk, { isEntry }: { isEntry: boolean }) {
+  enqueueChunk(
+    chunk: webpack.Chunk,
+    { isEntry, sourceMapFile }: { isEntry: boolean; sourceMapFile?: string }
+  ) {
     const {
-      compilation,
       outputPath,
       bundleOutput,
       sourcemapOutput,
@@ -52,13 +53,6 @@ export class AssetsCopyProcessor {
     if (!chunkFile) {
       return;
     }
-
-    const relatedSourceMap =
-      compilation.assetsInfo.get(chunkFile)?.related?.sourceMap;
-    // Source map for the chunk e.g: `index.bundle.map`, `src_App_js.chunk.bundle.map`
-    const sourceMapFile = Array.isArray(relatedSourceMap)
-      ? relatedSourceMap[0]
-      : relatedSourceMap;
 
     // Target file path where to save the bundle.
     const bundleDestination = isEntry
