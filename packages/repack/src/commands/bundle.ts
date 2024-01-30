@@ -62,7 +62,9 @@ export async function bundle(
         if (stats?.hasErrors()) {
           reject();
           if (stats.compilation?.errors?.length) {
-            console.log(stats.compilation?.errors);
+            stats.compilation.errors.forEach((e) => {
+              console.log(e);
+            });
           }
           process.exit(2);
         }
