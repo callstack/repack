@@ -9,7 +9,7 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
         FileSystemScriptLoader(reactApplicationContext)
 
     override fun getName(): String {
-        return "ScriptManager"
+        return NAME
     }
 
     private fun runInBackground(fn: () -> Unit) {
@@ -96,5 +96,9 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
                 }
             }
         }
+    }
+
+    companion object {
+        const val NAME = "ScriptManager"
     }
 }
