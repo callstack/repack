@@ -24,7 +24,7 @@ class ScriptManagerPackage : TurboReactPackage() {
                 ScriptManagerModule.NAME,
                 ScriptManagerModule.NAME,
                 false,  // canOverrideExistingModule
-                /** default value is true, but we should initialize it as quick as possible*/
+                /** default value is false, but we should initialize it as quick as possible*/
                 true,  // needsEagerInit
                 false,  // isCxxModule
                 isTurboModule // isTurboModule
