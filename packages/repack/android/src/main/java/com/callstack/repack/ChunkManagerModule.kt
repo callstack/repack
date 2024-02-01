@@ -3,12 +3,13 @@ package com.callstack.repack
 import android.os.Handler
 import com.facebook.react.bridge.*
 
-class ScriptManagerModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManagerSpec(reactContext) {
     private val remoteLoader: RemoteScriptLoader = RemoteScriptLoader(reactApplicationContext)
-    private val fileSystemLoader: FileSystemScriptLoader = FileSystemScriptLoader(reactApplicationContext)
+    private val fileSystemLoader: FileSystemScriptLoader =
+        FileSystemScriptLoader(reactApplicationContext)
 
     override fun getName(): String {
-        return "ScriptManager"
+        return NAME
     }
 
     private fun runInBackground(fn: () -> Unit) {
@@ -21,7 +22,7 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ReactContextB
     }
 
     @ReactMethod
-    fun loadScript(scriptId: String, configMap: ReadableMap, promise: Promise) {
+    override fun loadScript(scriptId: String, configMap: ReadableMap, promise: Promise) {
         runInBackground {
             val config = ScriptConfig.fromReadableMap(scriptId, configMap)
 
@@ -35,62 +36,70 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ReactContextB
                         remoteLoader.execute(config, promise)
                     }
                 }
+
                 config.url.protocol == "file" -> {
                     fileSystemLoader.load(config, promise)
                 }
+
                 else -> {
                     promise.reject(
-                            ScriptLoadingError.UnsupportedScheme.code,
-                            "Scheme in URL: '${config.url}' is not supported"
+                        ScriptLoadingError.UnsupportedScheme.code,
+                        "Scheme in URL: '${config.url}' is not supported"
                     )
                 }
+            }
         }
     }
-}
 
-@ReactMethod
-fun prefetchScript(scriptId: String, configMap: ReadableMap, promise: Promise) {
-    val config = ScriptConfig.fromReadableMap(scriptId, configMap)
-    if (!config.fetch) {
-        // Do nothing, script is already prefetched
-        promise.resolve(null);
-    } else {
+    @ReactMethod
+    override fun prefetchScript(scriptId: String, configMap: ReadableMap, promise: Promise) {
+        val config = ScriptConfig.fromReadableMap(scriptId, configMap)
+        if (!config.fetch) {
+            // Do nothing, script is already prefetched
+            promise.resolve(null);
+            return
+        }
         runInBackground {
             when {
                 config.url.protocol.startsWith("http") -> {
                     remoteLoader.prefetch(config, promise)
                 }
+
                 else -> {
                     promise.reject(
-                            ScriptLoadingError.UnsupportedScheme.code,
-                            "Scheme in URL: '${config.url}' is not supported"
+                        ScriptLoadingError.UnsupportedScheme.code,
+                        "Scheme in URL: '${config.url}' is not supported"
+                    )
+                }
+            }
+        }
+
+    }
+
+    @ReactMethod
+    override fun invalidateScripts(scriptIds: ReadableArray, promise: Promise) {
+        runInBackground {
+            if (scriptIds.size() == 0) {
+                remoteLoader.invalidateAll()
+                promise.resolve(null)
+            } else {
+                try {
+                    for (i in 0 until scriptIds.size()) {
+                        val scriptId = scriptIds.getString(i)
+                        remoteLoader.invalidate(scriptId)
+                    }
+                    promise.resolve(null)
+                } catch (error: Exception) {
+                    promise.reject(
+                        ScriptLoadingError.ScriptInvalidationFailure.code,
+                        "Cannot invalidate some of the scripts"
                     )
                 }
             }
         }
     }
-}
 
-@ReactMethod
-fun invalidateScripts(scriptIds: ReadableArray, promise: Promise) {
-    runInBackground {
-        if (scriptIds.size() == 0) {
-            remoteLoader.invalidateAll()
-            promise.resolve(null)
-        } else {
-            try {
-                for (i in 0 until scriptIds.size()) {
-                    val scriptId = scriptIds.getString(i)
-                    remoteLoader.invalidate(scriptId)
-                }
-                promise.resolve(null)
-            } catch (error: Exception) {
-                promise.reject(
-                        ScriptLoadingError.ScriptInvalidationFailure.code,
-                        "Cannot invalidate some of the scripts"
-                )
-            }
-        }
+    companion object {
+        const val NAME = "ScriptManager"
     }
-}
 }

@@ -112,5 +112,10 @@
     "typescript": "^5.2.2",
     "webpack": "^5.75.0",
     "webpack-virtual-modules": "^0.4.4"
+  },
+  "codegenConfig": {
+    "name": "RNScriptManagerSpec",
+    "type": "modules",
+    "jsSrcsDir": "src"
   }
 }
