@@ -36,9 +36,9 @@ function getCommands() {
   let commands;
 
   try {
-    commands = require(require.resolve(
-      'react-native/react-native.config.js'
-    )).commands;
+    commands = require(
+      require.resolve('react-native/react-native.config.js')
+    ).commands;
   } catch (e) {
     // NOOP
   }
