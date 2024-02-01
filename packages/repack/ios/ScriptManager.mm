@@ -24,8 +24,8 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
                   config:(nonnull NSDictionary*)configDictionary
-                  withResolver:(RCTPromiseResolveBlock)resolve
-                  withRejecter:(RCTPromiseRejectBlock)reject)
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
 {
     [self runInBackground:^(){
         // Cast `RCTBridge` to `RCTCxxBridge`.
@@ -49,19 +49,19 @@ RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
                         [self execute:bridge
                               scriptId:config.scriptId
                                   url:config.url
-                         withResolver:resolve
-                         withRejecter:reject];
+                              resolve:resolve
+                               reject:reject];
                     }
                 }];
             } else {
-                [self execute:bridge scriptId:scriptId url:config.url withResolver:resolve withRejecter:reject];
+                [self execute:bridge scriptId:scriptId url:config.url resolve:resolve reject:reject];
             }
             
         } else if ([[config.url scheme] isEqualToString:@"file"]) {
             [self executeFromFilesystem:bridge
                                  config:config
-                           withResolver:resolve
-                           withRejecter:reject];
+                                resolve:resolve
+                                 reject:reject];
         } else {
             reject(UnsupportedScheme,
                    [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", config.url.absoluteString], nil);
@@ -71,8 +71,8 @@ RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
 
 RCT_EXPORT_METHOD(prefetchScript:(nonnull NSString*)scriptId
                   config:(nonnull NSDictionary*)configDictionary
-                  withResolver:(RCTPromiseResolveBlock)resolve
-                  withRejecter:(RCTPromiseRejectBlock)reject)
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
 {
     ScriptConfig *config;
     @try {
@@ -104,8 +104,8 @@ RCT_EXPORT_METHOD(prefetchScript:(nonnull NSString*)scriptId
 }
 
 RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
-                  withResolver:(RCTPromiseResolveBlock)resolve
-                  withRejecter:(RCTPromiseRejectBlock)reject)
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
 {
     [self runInBackground:^(){
         NSFileManager* manager = [NSFileManager defaultManager];
@@ -137,8 +137,8 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
 - (void)execute:(RCTCxxBridge *)bridge
         scriptId:(NSString *)scriptId
             url:(NSURL *)url
-   withResolver:(RCTPromiseResolveBlock)resolve
-   withRejecter:(RCTPromiseRejectBlock)reject
+        resolve:(RCTPromiseResolveBlock)resolve
+         reject:(RCTPromiseRejectBlock)reject
 {
     NSString *scriptPath = [self getScriptFilePath:scriptId];
     @try {
@@ -237,8 +237,8 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
 
 - (void)executeFromFilesystem:(RCTCxxBridge *)bridge
                        config:(ScriptConfig *)config
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject
+                      resolve:(RCTPromiseResolveBlock)resolve
+                       reject:(RCTPromiseRejectBlock)reject
 {
     NSURL *url = config.url;
     @try {
@@ -265,5 +265,14 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback);
 }
+
+// Don't compile this code when we build for the old architecture.
+#ifdef RCT_NEW_ARCH_ENABLED
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+    (const facebook::react::ObjCTurboModule::InitParams &)params
+{
+    return std::make_shared<facebook::react::NativeScriptManagerSpecJSI>(params);
+}
+#endif
 
 @end

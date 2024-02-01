@@ -27619,16 +27619,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-svg@npm:^13.7.0":
-  version: 13.8.0
-  resolution: "react-native-svg@npm:13.8.0"
+"react-native-svg@npm:14.1.0":
+  version: 14.1.0
+  resolution: "react-native-svg@npm:14.1.0"
   dependencies:
     css-select: "npm:^5.1.0"
     css-tree: "npm:^1.1.3"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 6a43dd4e16bcd227faa6ced43da82881a8abcec02808b20aaadf1effe873423b4bdb5484baaa7f8d9b06d0e18c02294253adb15872fc342e3c2d9dd3d4929cbc
+  checksum: 2322cba59542ae552c25d222b6311024ea17daf2431c5ed9029d3682e61d2f8bc5428f496b237e81a6d1c6bdf29abeab0ed005cfbb48420f34e1cdffdc40823b
   languageName: node
   linkType: hard
 
@@ -31161,7 +31161,7 @@ __metadata:
     react: "npm:18.2.0"
     react-native: "npm:0.73.2"
     react-native-event-source: "npm:^1.1.0"
-    react-native-svg: "npm:^13.7.0"
+    react-native-svg: "npm:14.1.0"
     terser-webpack-plugin: "npm:^5.3.3"
     typescript: "npm:^5.2.2"
     vitest: "npm:^0.15.1"
