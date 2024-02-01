@@ -1,6 +1,5 @@
 /* globals __DEV__, __webpack_require__ */
 import EventEmitter from 'events';
-import { NativeModules } from 'react-native';
 import { getWebpackContext } from './getWebpackContext';
 import { Script } from './Script';
 import type {
@@ -8,6 +7,7 @@ import type {
   ScriptLocatorResolver,
   StorageApi,
 } from './types';
+import NativeScriptManager from './NativeScriptManager';
 
 type Cache = Record<
   string,
@@ -100,9 +100,7 @@ export class ScriptManager extends EventEmitter {
    *
    * @internal
    */
-  protected constructor(
-    private nativeScriptManager = NativeModules.ScriptManager
-  ) {
+  protected constructor(private nativeScriptManager = NativeScriptManager) {
     super();
 
     if (!nativeScriptManager) {
