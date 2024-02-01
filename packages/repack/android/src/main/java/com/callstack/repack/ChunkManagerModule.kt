@@ -57,22 +57,23 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
         if (!config.fetch) {
             // Do nothing, script is already prefetched
             promise.resolve(null);
-        } else {
-            runInBackground {
-                when {
-                    config.url.protocol.startsWith("http") -> {
-                        remoteLoader.prefetch(config, promise)
-                    }
+            return
+        }
+        runInBackground {
+            when {
+                config.url.protocol.startsWith("http") -> {
+                    remoteLoader.prefetch(config, promise)
+                }
 
-                    else -> {
-                        promise.reject(
-                            ScriptLoadingError.UnsupportedScheme.code,
-                            "Scheme in URL: '${config.url}' is not supported"
-                        )
-                    }
+                else -> {
+                    promise.reject(
+                        ScriptLoadingError.UnsupportedScheme.code,
+                        "Scheme in URL: '${config.url}' is not supported"
+                    )
                 }
             }
         }
+
     }
 
     @ReactMethod
