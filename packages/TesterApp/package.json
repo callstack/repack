@@ -22,10 +22,7 @@
     "react-native-svg": "14.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@babel/preset-env": "^7.20.0",
-    "@babel/runtime": "^7.20.0",
-    "@callstack/eslint-config": "^14.1.0",
+    "@babel/core": "^7.23.9",
     "@react-native/babel-preset": "^0.73.18",
     "@react-native/eslint-config": "^0.73.1",
     "@react-native/typescript-config": "^0.73.1",
@@ -38,13 +35,11 @@
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
     "node-fetch": "^3.2.6",
+    "prettier": "^3.2.4",
     "react-native-event-source": "^1.1.0",
     "terser-webpack-plugin": "^5.3.3",
     "typescript": "^5.2.2",
     "vitest": "^0.15.1",
     "webpack": "^5.75.0"
-  },
-  "resolutions": {
-    "@types/react": "^18"
   }
 }

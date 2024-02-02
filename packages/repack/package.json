@@ -82,12 +82,10 @@
     "tapable": "^2.1.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.17.10",
-    "@babel/core": "^7.18.5",
+    "@babel/cli": "^7.23.9",
+    "@babel/core": "^7.23.9",
     "@babel/plugin-proposal-export-namespace-from": "^7.17.12",
-    "@babel/preset-env": "^7.18.2",
-    "@babel/preset-typescript": "^7.17.12",
-    "@callstack/eslint-config": "^14.1.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.23.2",
     "@react-native-community/cli": "5.0.1-alpha.1",
     "@react-native-community/cli-types": "5.0.1-alpha.1",
     "@types/dedent": "^0.7.0",
@@ -104,6 +102,7 @@
     "eslint": "^8.53.0",
     "headers-polyfill": "^3.0.7",
     "jest": "^28.1.1",
+    "react": "18.2.0",
     "react-native": "0.73.2",
     "react-native-event-source": "^1.1.0",
     "terser-webpack-plugin": "^5.1.3",
