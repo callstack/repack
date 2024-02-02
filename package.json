@@ -28,5 +28,19 @@
     "@changesets/changelog-github": "^0.4.5",
     "@changesets/cli": "^2.23.0",
     "turbo": "^1.2.14"
+  },
+  "devDependencies": {
+    "@callstack/eslint-config": "^14.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
+    "eslint": "^8.53.0",
+    "eslint-import-resolver-typescript": "^3.5.5",
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jest": "^27.6.3",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-promise": "^6.1.1",
+    "prettier": "^3.2.4",
+    "typescript": "^5.2.2"
   }
 }
