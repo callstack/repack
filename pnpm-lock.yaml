@@ -69,6 +69,18 @@ importers:
       eslint-plugin-promise:
         specifier: ^6.1.1
         version: 6.1.1(eslint@8.53.0)
+      eslint-plugin-react:
+        specifier: ^7.33.2
+        version: 7.33.2(eslint@8.53.0)
+      eslint-plugin-react-hooks:
+        specifier: ^4.6.0
+        version: 4.6.0(eslint@8.53.0)
+      eslint-plugin-react-native:
+        specifier: ^4.1.0
+        version: 4.1.0(eslint@8.53.0)
+      eslint-plugin-react-native-a11y:
+        specifier: ^3.3.0
+        version: 3.3.0(eslint@8.53.0)
       prettier:
         specifier: ^3.2.4
         version: 3.2.5
@@ -115,6 +127,15 @@ importers:
       '@types/get-port':
         specifier: ^4.2.0
         version: 4.2.0
+      '@types/jest':
+        specifier: ^28.1.1
+        version: 28.1.1
+      '@types/lodash.throttle':
+        specifier: ^4.1.9
+        version: 4.1.9
+      '@types/react':
+        specifier: ^18.2.51
+        version: 18.2.63
       babel-loader:
         specifier: ^8.2.5
         version: 8.2.5(@babel/core@7.24.0)(webpack@5.75.0)
@@ -212,6 +233,9 @@ importers:
       '@types/classnames':
         specifier: ^2.3.1
         version: 2.3.1
+      '@types/node':
+        specifier: '18'
+        version: 18.18.0
       '@types/react':
         specifier: ^17.0.24
         version: 17.0.24
@@ -7537,6 +7561,12 @@ packages:
       '@types/lodash': 4.14.182
     dev: true
 
+  /@types/lodash.throttle@4.1.9:
+    resolution: {integrity: sha512-PCPVfpfueguWZQB7pJQK890F2scYKoDUL3iM522AptHWn7d5NQmeS/LTEHIcLr5PaTzl3dK2Z0xSUHHTHwaL5g==}
+    dependencies:
+      '@types/lodash': 4.14.182
+    dev: true
+
   /@types/lodash@4.14.182:
     resolution: {integrity: sha512-/THyiqyQAP9AfARo4pF+aCGcyiQ94tX/Is2I7HofNRqoYLgN1PBoOWu2/zTA5zMxzP5EFutMtWtGAFRKUe961Q==}
     dev: true
@@ -7644,6 +7674,14 @@ packages:
       '@types/prop-types': 15.7.4
       '@types/scheduler': 0.16.2
       csstype: 3.0.8
+
+  /@types/react@18.2.63:
+    resolution: {integrity: sha512-ppaqODhs15PYL2nGUOaOu2RSCCB4Difu4UFrP4I3NHLloXC/ESQzQMi9nvjfT1+rudd0d2L3fQPJxRSey+rGlQ==}
+    dependencies:
+      '@types/prop-types': 15.7.4
+      '@types/scheduler': 0.16.2
+      csstype: 3.0.8
+    dev: true
 
   /@types/responselike@1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}

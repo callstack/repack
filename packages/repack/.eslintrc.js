@@ -19,4 +19,9 @@ module.exports = {
       extends: ['plugin:@typescript-eslint/disable-type-checked'],
     },
   ],
+  settings: {
+    jest: {
+      version: 'latest',
+    },
+  },
 };
