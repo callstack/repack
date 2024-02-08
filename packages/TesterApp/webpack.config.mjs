@@ -92,7 +92,6 @@ export default (env) => {
        */
       alias: {
         'react-native': reactNativePath,
-        '@babel/runtime': path.join(dirname, 'node_modules/@babel/runtime'),
       },
       /**
        * Because Re.Pack is symlinked from it's workspace, we need to provide a fallback for
