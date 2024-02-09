@@ -50,7 +50,7 @@ export class RepackTargetPlugin implements WebpackPlugin {
 
     // Replace React Native's HMRClient.js with custom Webpack-powered DevServerClient.
     new webpack.NormalModuleReplacementPlugin(
-      /react-native([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/,
+      /react-native.*?([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/,
       function (resource) {
         const request = require.resolve('../../../modules/DevServerClient');
         const context = path.dirname(request);
