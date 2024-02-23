@@ -67,7 +67,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   const { start, stop } = await createServer({
     options: {
       rootDir: cliOptions.config.root,
-      host: args.host,
+      host: args.host?.length ? args.host : 'localhost',
       port: args.port ?? DEFAULT_PORT,
       https: args.https
         ? {
@@ -75,6 +75,9 @@ export async function start(_: string[], config: Config, args: StartArguments) {
             key: args.key,
           }
         : undefined,
+    },
+    experiments: {
+      experimentalDebugger: args.experimentalDebugger,
     },
     delegate: (ctx): Server.Delegate => {
       if (args.interactive) {

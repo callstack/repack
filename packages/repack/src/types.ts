@@ -79,6 +79,7 @@ export interface StartArguments extends CommonArguments {
   json?: boolean;
   reversePort?: boolean;
   logFile?: string;
+  experimentalDebugger?: boolean;
 }
 
 /**

@@ -1,11 +1,10 @@
 import { Writable } from 'stream';
 import Fastify from 'fastify';
 import fastifySensible from '@fastify/sensible';
-import fastifyStatic from '@fastify/static';
-import debuggerAppPath from '@callstack/repack-debugger-app';
+import middie from '@fastify/middie';
+import { createDevMiddleware } from '@react-native/dev-middleware';
 import multipartPlugin from './plugins/multipart';
 import compilerPlugin from './plugins/compiler';
-import devtoolsPlugin from './plugins/devtools';
 import apiPlugin from './plugins/api';
 import wssPlugin from './plugins/wss';
 import faviconPlugin from './plugins/favicon';
@@ -59,10 +58,27 @@ export async function createServer(config: Server.Config) {
     },
   });
 
+  await instance.register(middie);
+
+  const { middleware, websocketEndpoints } = createDevMiddleware({
+    projectRoot: config.options.rootDir,
+    serverBaseUrl: `http://${config.options.host}:${config.options.port}`,
+    logger: console,
+    unstable_experiments: {
+      // NOTE: Only affects the /open-debugger endpoint
+      enableNewDebugger: config.experiments?.experimentalDebugger,
+    },
+  });
+
+  instance.use(middleware);
+
   // Register plugins
   await instance.register(fastifySensible);
   await instance.register(wssPlugin, {
-    options: config.options,
+    options: {
+      ...config.options,
+      websocketEndpoints,
+    },
     delegate,
   });
   await instance.register(multipartPlugin);
@@ -76,15 +92,7 @@ export async function createServer(config: Server.Config) {
   await instance.register(symbolicatePlugin, {
     delegate,
   });
-  await instance.register(devtoolsPlugin, {
-    options: config.options,
-  });
 
-  await instance.register(fastifyStatic, {
-    root: debuggerAppPath,
-    prefix: '/debugger-ui',
-    prefixAvoidTrailingSlash: true,
-  });
   // below is to prevent showing `GET 400 /favicon.ico`
   // errors in console when requesting the bundle via browser
   await instance.register(faviconPlugin);
