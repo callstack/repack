@@ -1,14 +1,15 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
+import { WebSocketServer } from 'ws';
 import type { Server } from '../../types';
 import { WebSocketDebuggerServer } from './servers/WebSocketDebuggerServer';
 import { WebSocketDevClientServer } from './servers/WebSocketDevClientServer';
 import { WebSocketMessageServer } from './servers/WebSocketMessageServer';
 import { WebSocketEventsServer } from './servers/WebSocketEventsServer';
-import { HermesInspectorProxy } from './servers/HermesInspectorProxy';
 import { WebSocketApiServer } from './servers/WebSocketApiServer';
 import { WebSocketHMRServer } from './servers/WebSocketHMRServer';
 import { WebSocketRouter } from './WebSocketRouter';
+import { convertDevMiddlewareWebsocketServers } from './convertDevMiddlewareWebsocketServers';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -17,7 +18,6 @@ declare module 'fastify' {
       devClientServer: WebSocketDevClientServer;
       messageServer: WebSocketMessageServer;
       eventsServer: WebSocketEventsServer;
-      hermesInspectorProxy: HermesInspectorProxy;
       apiServer: WebSocketApiServer;
       hmrServer: WebSocketHMRServer;
       router: WebSocketRouter;
@@ -31,7 +31,9 @@ async function wssPlugin(
     options,
     delegate,
   }: {
-    options: Server.Options;
+    options: Server.Options & {
+      websocketEndpoints: { [key: string]: WebSocketServer };
+    };
     delegate: Server.Delegate;
   }
 ) {
@@ -43,7 +45,6 @@ async function wssPlugin(
   const eventsServer = new WebSocketEventsServer(instance, {
     webSocketMessageServer: messageServer,
   });
-  const hermesInspectorProxy = new HermesInspectorProxy(instance, options);
   const apiServer = new WebSocketApiServer(instance);
   const hmrServer = new WebSocketHMRServer(instance, delegate.hmr);
 
@@ -51,18 +52,27 @@ async function wssPlugin(
   router.registerServer(devClientServer);
   router.registerServer(messageServer);
   router.registerServer(eventsServer);
-  router.registerServer(hermesInspectorProxy);
   router.registerServer(apiServer);
   router.registerServer(hmrServer);
+
+  // Convert websocket servers returned from the RN dev middleware to match Repack structure
+  const devMiddlewareWebsocketServers = convertDevMiddlewareWebsocketServers(
+    options.websocketEndpoints,
+    instance
+  );
+
+  devMiddlewareWebsocketServers.forEach((server) => {
+    router.registerServer(server);
+  });
 
   instance.decorate('wss', {
     debuggerServer,
     devClientServer,
     messageServer,
     eventsServer,
-    hermesInspectorProxy,
     apiServer,
     hmrServer,
+    ...devMiddlewareWebsocketServers,
     router,
   });
 }

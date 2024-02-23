@@ -5158,8 +5158,10 @@ __metadata:
     "@babel/preset-typescript": "npm:^7.17.12"
     "@callstack/eslint-config": "npm:^14.1.0"
     "@callstack/repack-debugger-app": "npm:^1.0.2"
+    "@fastify/middie": "npm:^8.3.0"
     "@fastify/sensible": "npm:^5.5.0"
     "@fastify/static": "npm:^6.12.0"
+    "@react-native/dev-middleware": "npm:^0.73.8"
     "@types/babel__code-frame": "npm:^7.0.3"
     "@types/node": "npm:18"
     "@types/ws": "npm:^8.5.3"
@@ -6275,6 +6277,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fastify/error@npm:^3.2.0":
+  version: 3.4.1
+  resolution: "@fastify/error@npm:3.4.1"
+  checksum: 4d63660f7d4a0d6091abf869208d30898bde82f513ca7be542243d9d740df743dd4be293e7db30858fca612dd512d28a818ea06dc674e06b445278fcefcdda92
+  languageName: node
+  linkType: hard
+
 "@fastify/error@npm:^3.4.0":
   version: 3.4.0
   resolution: "@fastify/error@npm:3.4.0"
@@ -6288,6 +6297,18 @@ __metadata:
   dependencies:
     fast-json-stringify: "npm:^5.7.0"
   checksum: 9ad575907d44bbd371dbc23a51853fd349a459092340fe91c50317f92707961f2e6ca6c9d17707a8e4a087c635e09bce1166e082d54f191769a582339c94badd
+  languageName: node
+  linkType: hard
+
+"@fastify/middie@npm:^8.3.0":
+  version: 8.3.0
+  resolution: "@fastify/middie@npm:8.3.0"
+  dependencies:
+    "@fastify/error": "npm:^3.2.0"
+    fastify-plugin: "npm:^4.0.0"
+    path-to-regexp: "npm:^6.1.0"
+    reusify: "npm:^1.0.4"
+  checksum: 5e419509accaf2ea9283ad9bb961781222d7e8860a99827ae855c696b955f42e8e7789605a59b6e1d994a36a07b5b77fcf45402810d90389ed30ed8946160616
   languageName: node
   linkType: hard
 
@@ -8456,6 +8477,25 @@ __metadata:
     serve-static: "npm:^1.13.1"
     temp-dir: "npm:^2.0.0"
   checksum: 9a564a9f791c5a142b801f99d886e1125a3b73ce511f67eb5cdc65b548af4088176a6d5467500182d3fbe9c9d89583a0a88cfd57a7be38a58f582ee9049562a2
+  languageName: node
+  linkType: hard
+
+"@react-native/dev-middleware@npm:^0.73.8":
+  version: 0.73.8
+  resolution: "@react-native/dev-middleware@npm:0.73.8"
+  dependencies:
+    "@isaacs/ttlcache": "npm:^1.4.1"
+    "@react-native/debugger-frontend": "npm:0.73.3"
+    chrome-launcher: "npm:^0.15.2"
+    chromium-edge-launcher: "npm:^1.0.0"
+    connect: "npm:^3.6.5"
+    debug: "npm:^2.2.0"
+    node-fetch: "npm:^2.2.0"
+    open: "npm:^7.0.3"
+    serve-static: "npm:^1.13.1"
+    temp-dir: "npm:^2.0.0"
+    ws: "npm:^6.2.2"
+  checksum: 9ba1b721189918cf1db0d311d5e36d73a7a314bd1449c79b52b83c51649a616adece2da9c6e9058a869e81b3fd20c9f4055d3d5ca1e27529ea0e2b2a93b22d32
   languageName: node
   linkType: hard
 
@@ -26061,6 +26101,13 @@ __metadata:
   dependencies:
     isarray: "npm:0.0.1"
   checksum: 45a01690f72919163cf89714e31a285937b14ad54c53734c826363fcf7beba9d9d0f2de802b4986b1264374562d6a3398a2e5289753a764e3a256494f1e52add
+  languageName: node
+  linkType: hard
+
+"path-to-regexp@npm:^6.1.0":
+  version: 6.2.1
+  resolution: "path-to-regexp@npm:6.2.1"
+  checksum: 1e266be712d1a08086ee77beab12a1804842ec635dfed44f9ee1ba960a0e01cec8063fb8c92561115cdc0ce73158cdc7766e353ffa039340b4a85b370084c4d4
   languageName: node
   linkType: hard
 

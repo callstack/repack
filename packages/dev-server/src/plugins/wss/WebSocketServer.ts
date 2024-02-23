@@ -28,6 +28,7 @@ export abstract class WebSocketServer {
    * @param fastify Fastify instance to which the WebSocket will be attached to.
    * @param path Path on which this WebSocketServer will be accepting connections.
    * @param wssOptions WebSocket Server options.
+   * @param wssServer WebSocketServerImpl WebSocket Server to be wrapped in order to be compatible with WebSocketRouter.
    */
   constructor(
     fastify: FastifyInstance,
@@ -35,15 +36,21 @@ export abstract class WebSocketServer {
     wssOptions: Omit<
       ServerOptions,
       'noServer' | 'server' | 'host' | 'port' | 'path'
-    > = {}
+    > = {},
+    wssServer?: WebSocketServerImpl
   ) {
     this.fastify = fastify;
-    this.server = new WebSocketServerImpl({
-      noServer: true,
-      ...wssOptions,
-    });
-    this.server.on('connection', this.onConnection.bind(this));
     this.paths = Array.isArray(path) ? path : [path];
+
+    if (wssServer) {
+      this.server = wssServer;
+    } else {
+      this.server = new WebSocketServerImpl({
+        noServer: true,
+        ...wssOptions,
+      });
+      this.server.on('connection', this.onConnection.bind(this));
+    }
   }
 
   shouldUpgrade(pathname: string) {
