@@ -222,88 +222,76 @@ export class OutputPlugin implements WebpackPlugin {
       return false;
     };
 
-    let entryGroup: webpack.Compilation['chunkGroups'][0] | undefined;
-    let entryChunk: webpack.Chunk | undefined;
-    const entryChunkName = this.config.entryName ?? 'main';
-    const localChunks: webpack.Chunk[] = [];
-    const remoteChunks: webpack.Chunk[] = [];
-    const auxiliaryAssets: Set<string> = new Set();
-
-    compiler.hooks.compilation.tap('RepackOutputPlugin', (compilation) => {
-      compilation.hooks.processAssets.tap(
-        {
-          name: 'RepackOutputPlugin',
-          stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
-        },
-        () => {
-          entryGroup = compilation.chunkGroups.find((group) =>
-            group.isInitial()
-          );
-          entryChunk = entryGroup?.chunks.find(
-            (chunk) => chunk.name === entryChunkName
-          );
-          const sharedChunks = new Set<webpack.Chunk>();
-
-          for (const chunk of compilation.chunks) {
-            // Do not process shared chunks right now.
-            if (sharedChunks.has(chunk)) {
-              continue;
-            }
-
-            [...chunk.getAllInitialChunks()]
-              .filter((sharedChunk) => sharedChunk !== chunk)
-              .forEach((sharedChunk) => {
-                sharedChunks.add(sharedChunk);
-              });
-
-            // Entry chunk
-            if (entryChunk && entryChunk === chunk) {
-              localChunks.push(chunk);
-            } else if (isLocalChunk(chunk.name ?? chunk.id?.toString())) {
-              localChunks.push(chunk);
-            } else {
-              remoteChunks.push(chunk);
-            }
-          }
-
-          // Process shared chunks to add them either as local or remote chunk.
-          for (const sharedChunk of sharedChunks) {
-            const isUsedByLocalChunk = localChunks.some((localChunk) => {
-              return [...localChunk.getAllInitialChunks()].includes(
-                sharedChunk
-              );
-            });
-            if (
-              isUsedByLocalChunk ||
-              isLocalChunk(sharedChunk.name ?? sharedChunk.id?.toString())
-            ) {
-              localChunks.push(sharedChunk);
-            } else {
-              remoteChunks.push(sharedChunk);
-            }
-          }
-
-          if (!entryChunk) {
-            throw new Error(
-              'Cannot infer entry chunk - this should have not happened.'
-            );
-          }
-
-          // Collect auxiliary assets (only remote-assets for now)
-          Object.keys(compilation.assets)
-            .filter((filename) => /^remote-assets/.test(filename))
-            .forEach((asset) => auxiliaryAssets.add(asset));
-        }
-      );
-    });
-
     compiler.hooks.done.tapPromise('RepackOutputPlugin', async (stats) => {
-      const stats1 = stats.toJson({ all: true });
+      const compilation = stats.compilation;
+      const compilationStats = stats.toJson({ all: false, chunks: true });
+      const entryChunkName = this.config.entryName ?? 'main';
+      const localChunks: webpack.Chunk[] = [];
+      const remoteChunks: webpack.Chunk[] = [];
+      const sharedChunks = new Set<webpack.Chunk>();
+      const auxiliaryAssets: Set<string> = new Set();
 
+      const entryGroup = compilation.chunkGroups.find((group) =>
+        group.isInitial()
+      );
+      const entryChunk = entryGroup?.chunks.find(
+        (chunk) => chunk.name === entryChunkName
+      );
+
+      for (const chunk of compilation.chunks) {
+        // Do not process shared chunks right now.
+        if (sharedChunks.has(chunk)) {
+          continue;
+        }
+
+        [...chunk.getAllInitialChunks()]
+          .filter((sharedChunk) => sharedChunk !== chunk)
+          .forEach((sharedChunk) => {
+            sharedChunks.add(sharedChunk);
+          });
+
+        // Entry chunk
+        if (entryChunk && entryChunk === chunk) {
+          localChunks.push(chunk);
+        } else if (isLocalChunk(chunk.name ?? chunk.id?.toString())) {
+          localChunks.push(chunk);
+        } else {
+          remoteChunks.push(chunk);
+        }
+      }
+
+      // Process shared chunks to add them either as local or remote chunk.
+      for (const sharedChunk of sharedChunks) {
+        const isUsedByLocalChunk = localChunks.some((localChunk) => {
+          return [...localChunk.getAllInitialChunks()].includes(sharedChunk);
+        });
+        if (
+          isUsedByLocalChunk ||
+          isLocalChunk(sharedChunk.name ?? sharedChunk.id?.toString())
+        ) {
+          localChunks.push(sharedChunk);
+        } else {
+          remoteChunks.push(sharedChunk);
+        }
+      }
+
+      if (!entryChunk) {
+        throw new Error(
+          'Cannot infer entry chunk - this should have not happened.'
+        );
+      }
+
+      // Collect auxiliary assets (only remote-assets for now)
+      Object.keys(compilation.assets)
+        .filter((filename) => /^remote-assets/.test(filename))
+        .forEach((asset) => auxiliaryAssets.add(asset));
+
+      // console.log(compilationStats.chunks?.forEach(c => console.log(c.id, c.auxiliaryFiles)));
       let localAssetsCopyProcessor;
 
       let { bundleFilename, sourceMapFilename, assetsPath } =
         this.config.output;
+
       if (bundleFilename) {
         if (!path.isAbsolute(bundleFilename)) {
           bundleFilename = path.join(this.config.context, bundleFilename);
