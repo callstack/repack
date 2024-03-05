@@ -2,9 +2,6 @@
   "name": "website",
   "version": "0.0.1",
   "private": true,
-  "installConfig": {
-    "hoistingLimits": "workspaces"
-  },
   "scripts": {
     "copy-api-docs": "sh ./scripts/copy-api-docs.sh",
     "start": "yarn copy-api-docs && docusaurus start",
