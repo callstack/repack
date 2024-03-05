@@ -7,7 +7,7 @@ We want this community to be friendly and respectful to each other. Please read 
 ## Requirements
 
 - Node 18+
-- pnpm 8.15.4
+- pnpm 8
 
 ## Our Development Process
 
