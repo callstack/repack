@@ -72,6 +72,9 @@ typings/
 # Output of 'npm pack'
 *.tgz
 
+# Yarn Integrity file
+.yarn-integrity
+
 # dotenv environment variables file
 .env
 .env.test
@@ -270,6 +273,8 @@ gradle-app.setting
 
 # Output of 'npm pack'
 
+# Yarn Integrity file
+
 # dotenv environment variables file
 
 # parcel-bundler cache (https://parceljs.org/)
@@ -352,6 +357,10 @@ Temporary Items
 .apdisk
 
 # End of https://www.toptal.com/developers/gitignore/api/node,reactnative
+
+# Yarn
+.yarn/*
+
 
 # Local Netlify folder
 .netlify
