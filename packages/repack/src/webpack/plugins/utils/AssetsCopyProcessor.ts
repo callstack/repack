@@ -29,7 +29,7 @@ export class AssetsCopyProcessor {
   }
 
   enqueueChunk(
-    chunk: webpack.Chunk,
+    chunk: webpack.StatsChunk,
     { isEntry, sourceMapFile }: { isEntry: boolean; sourceMapFile?: string }
   ) {
     const {
@@ -45,11 +45,15 @@ export class AssetsCopyProcessor {
       : bundleOutputDir;
 
     // Chunk bundle e.g: `index.bundle`, `src_App_js.chunk.bundle`
-    const [chunkFile] = [...chunk.files];
+    // There might be more than 1 file associated with the chunk -
+    // this happens e.g. on web when importing CSS files into JS.
+    // TBD whether this can ever occur in React Native.
+    const chunkFile = chunk.files?.[0];
 
     // Sometimes there are no files associated with the chunk and the OutputPlugin fails
     // Skipping such chunks is a temporary workaround resulting in proper behaviour
-    // TODO: determine the real cause of this issue
+    // This can happen when Module Federation is used and some chunks are not emitted
+    // and are only used as temporary during compilation.
     if (!chunkFile) {
       return;
     }

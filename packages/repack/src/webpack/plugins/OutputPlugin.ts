@@ -218,40 +218,58 @@ export class OutputPlugin implements WebpackPlugin {
           }
         }
       }
-
       return false;
     };
 
+    const getRelatedSourceMap = (chunk: webpack.StatsChunk) => {
+      return chunk.auxiliaryFiles?.find((file) => /\.map$/.test(file));
+    };
+
+    const getAllInitialChunks = (
+      chunk: webpack.StatsChunk,
+      chunks: Map<string | number, webpack.StatsChunk>
+    ): Array<webpack.StatsChunk> => {
+      if (!chunk.parents?.length) return [chunk];
+      return chunk.parents.flatMap((parent) => {
+        return getAllInitialChunks(chunks.get(parent)!, chunks);
+      });
+    };
+
     compiler.hooks.done.tapPromise('RepackOutputPlugin', async (stats) => {
-      const compilation = stats.compilation;
-      const compilationStats = stats.toJson({ all: false, chunks: true });
+      const compilationStats = stats.toJson({
+        all: false,
+        assets: true,
+        chunks: true,
+        chunkRelations: true,
+        ids: true,
+      });
+      const chunks = new Map(
+        compilationStats.chunks!.map((chunk) => [chunk.id!, chunk])
+      );
       const entryChunkName = this.config.entryName ?? 'main';
-      const localChunks: webpack.Chunk[] = [];
-      const remoteChunks: webpack.Chunk[] = [];
-      const sharedChunks = new Set<webpack.Chunk>();
+      const localChunks: webpack.StatsChunk[] = [];
+      const remoteChunks: webpack.StatsChunk[] = [];
+      const sharedChunks = new Set<webpack.StatsChunk>();
       const auxiliaryAssets: Set<string> = new Set();
 
-      const entryGroup = compilation.chunkGroups.find((group) =>
-        group.isInitial()
-      );
-      const entryChunk = entryGroup?.chunks.find(
-        (chunk) => chunk.name === entryChunkName
-      );
+      const entryChunk = compilationStats?.chunks?.find((chunk) => {
+        return chunk.initial && chunk.names?.includes(entryChunkName);
+      });
 
-      for (const chunk of compilation.chunks) {
+      for (const chunk of compilationStats.chunks!) {
         // Do not process shared chunks right now.
         if (sharedChunks.has(chunk)) {
           continue;
         }
 
-        [...chunk.getAllInitialChunks()]
+        getAllInitialChunks(chunk, chunks)
           .filter((sharedChunk) => sharedChunk !== chunk)
           .forEach((sharedChunk) => {
             sharedChunks.add(sharedChunk);
           });
 
         // Entry chunk
-        if (entryChunk && entryChunk === chunk) {
+        if (entryChunk === chunk) {
           localChunks.push(chunk);
         } else if (isLocalChunk(chunk.name ?? chunk.id?.toString())) {
           localChunks.push(chunk);
@@ -262,9 +280,9 @@ export class OutputPlugin implements WebpackPlugin {
 
       // Process shared chunks to add them either as local or remote chunk.
       for (const sharedChunk of sharedChunks) {
-        const isUsedByLocalChunk = localChunks.some((localChunk) => {
-          return [...localChunk.getAllInitialChunks()].includes(sharedChunk);
-        });
+        const isUsedByLocalChunk = localChunks.some((localChunk) =>
+          getAllInitialChunks(localChunk, chunks).includes(sharedChunk)
+        );
         if (
           isUsedByLocalChunk ||
           isLocalChunk(sharedChunk.name ?? sharedChunk.id?.toString())
@@ -281,12 +299,12 @@ export class OutputPlugin implements WebpackPlugin {
         );
       }
 
+      const assets = compilationStats.assets!;
       // Collect auxiliary assets (only remote-assets for now)
-      Object.keys(compilation.assets)
-        .filter((filename) => /^remote-assets/.test(filename))
-        .forEach((asset) => auxiliaryAssets.add(asset));
+      assets
+        .filter((asset) => /^remote-assets/.test(asset.name))
+        .forEach((asset) => auxiliaryAssets.add(asset.name));
 
-      // console.log(compilationStats.chunks?.forEach(c => console.log(c.id, c.auxiliaryFiles)));
       let localAssetsCopyProcessor;
 
       let { bundleFilename, sourceMapFilename, assetsPath } =
@@ -336,7 +354,7 @@ export class OutputPlugin implements WebpackPlugin {
         // Process entry chunk
         localAssetsCopyProcessor?.enqueueChunk(chunk, {
           isEntry: entryChunk === chunk,
-          sourceMapFile: '', // TODO: use source map from stats.chunks
+          sourceMapFile: getRelatedSourceMap(chunk),
         });
       }
 
@@ -368,7 +386,7 @@ export class OutputPlugin implements WebpackPlugin {
 
           remoteAssetsCopyProcessors[spec.outputPath].enqueueChunk(chunk, {
             isEntry: false,
-            sourceMapFile: '', // TODO: use source map from stats.chunks
+            sourceMapFile: getRelatedSourceMap(chunk),
           });
         }
       }
