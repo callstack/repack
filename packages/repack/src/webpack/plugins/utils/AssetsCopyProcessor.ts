@@ -133,7 +133,7 @@ export class AssetsCopyProcessor {
     }
 
     // Copy regular assets
-    const mediaAssets = [...chunk.auxiliaryFiles]
+    const mediaAssets = [...chunk.auxiliaryFiles!]
       .filter((file) => !/\.(map|bundle\.json)$/.test(file))
       .filter((file) => !/^remote-assets/.test(file));
 
@@ -148,7 +148,7 @@ export class AssetsCopyProcessor {
     );
 
     // Manifest file name e.g: `index.bundle.json`, src_App_js.chunk.bundle.json`
-    const [manifest] = [...chunk.auxiliaryFiles].filter((file) =>
+    const [manifest] = [...chunk.auxiliaryFiles!].filter((file) =>
       /\.bundle\.json$/.test(file)
     );
     if (manifest) {

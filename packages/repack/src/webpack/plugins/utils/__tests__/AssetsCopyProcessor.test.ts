@@ -9,26 +9,6 @@ describe('AssetsCopyProcessor', () => {
   describe('for ios', () => {
     const acpConfigStub = {
       platform: 'ios',
-      compilation: {
-        assetsInfo: new Map([
-          [
-            'index.bundle',
-            {
-              related: {
-                sourceMap: 'index.bundle.map',
-              },
-            },
-          ],
-          [
-            'src_Async_js.chunk.bundle',
-            {
-              related: {
-                sourceMap: 'src_Async_js.chunk.bundle.map',
-              },
-            },
-          ],
-        ]),
-      } as unknown as webpack.Compilation,
       outputPath: '/dist',
       bundleOutput: '/target/ios/build/Release-iphonesimulator/main.jsbundle',
       bundleOutputDir: '/target/ios/build/Release-iphonesimulator',
@@ -64,8 +44,8 @@ describe('AssetsCopyProcessor', () => {
             'assets/node_modules/react-native/libraries/newappscreen/components/logo.png',
             'index.bundle.map',
           ],
-        } as unknown as webpack.Chunk,
-        { isEntry: true }
+        } as unknown as webpack.StatsChunk,
+        { isEntry: true, sourceMapFile: 'index.bundle.map' }
       );
       await Promise.all(acp.execute());
       expect(1).toBe(1);
@@ -110,8 +90,8 @@ describe('AssetsCopyProcessor', () => {
             'src_Async_js.chunk.bundle.map',
             'src_Async_js.chunk.bundle.json',
           ],
-        } as unknown as webpack.Chunk,
-        { isEntry: false }
+        } as unknown as webpack.StatsChunk,
+        { isEntry: false, sourceMapFile: 'src_Async_js.chunk.bundle.map' }
       );
       await Promise.all(acp.execute());
 
@@ -136,26 +116,6 @@ describe('AssetsCopyProcessor', () => {
   describe('for android', () => {
     const acpConfigStub = {
       platform: 'android',
-      compilation: {
-        assetsInfo: new Map([
-          [
-            'index.bundle',
-            {
-              related: {
-                sourceMap: 'index.bundle.map',
-              },
-            },
-          ],
-          [
-            'src_Async_js.chunk.bundle',
-            {
-              related: {
-                sourceMap: 'src_Async_js.chunk.bundle.map',
-              },
-            },
-          ],
-        ]),
-      } as unknown as webpack.Compilation,
       outputPath: '/dist',
       bundleOutput:
         '/target/generated/assets/react/release/index.android.bundle',
@@ -190,8 +150,8 @@ describe('AssetsCopyProcessor', () => {
             'drawable-mdpi/node_modules_reactnative_libraries_newappscreen_components_logo.png',
             'index.bundle.map',
           ],
-        } as unknown as webpack.Chunk,
-        { isEntry: true }
+        } as unknown as webpack.StatsChunk,
+        { isEntry: true, sourceMapFile: 'index.bundle.map' }
       );
       await Promise.all(acp.execute());
 
@@ -235,8 +195,8 @@ describe('AssetsCopyProcessor', () => {
             'src_Async_js.chunk.bundle.map',
             'src_Async_js.chunk.bundle.json',
           ],
-        } as unknown as webpack.Chunk,
-        { isEntry: false }
+        } as unknown as webpack.StatsChunk,
+        { isEntry: false, sourceMapFile: 'src_Async_js.chunk.bundle.map' }
       );
       await Promise.all(acp.execute());
 
