@@ -4,6 +4,8 @@ settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
 
+packageExtensionsChecksum: 7765c0b8bb934187be06f95467f438bc
+
 importers:
 
   .:
@@ -4560,7 +4562,7 @@ packages:
       react-dom: '*'
     dependencies:
       '@docusaurus/types': 2.0.0-beta.21(react-dom@17.0.2)(react@17.0.2)
-      '@types/react': 17.0.24
+      '@types/react': 18.2.63
       '@types/react-router-config': 5.0.6
       '@types/react-router-dom': 5.3.3
       react: 17.0.2
@@ -4850,7 +4852,7 @@ packages:
     peerDependencies:
       react: '*'
     dependencies:
-      '@types/react': 17.0.24
+      '@types/react': 18.2.63
       prop-types: 15.8.1
       react: 17.0.2
     dev: false
@@ -6714,6 +6716,7 @@ packages:
     dependencies:
       appdirsjs: 1.2.5
       chalk: 4.1.2
+      execa: 5.1.1
       find-up: 5.0.0
       mime: 2.5.2
       node-fetch: 2.6.7
@@ -6729,6 +6732,7 @@ packages:
     resolution: {integrity: sha512-XOX5w98oSE8+KnkMZZPMRT7I5TaP8fLbDl0tCu40S7Epz+Zz924n80fmdu6nUDIfPT1nV6yH1hmHmWAWTDOR+Q==}
     dependencies:
       chalk: 3.0.0
+      execa: 5.1.1
       lodash: 4.17.21
       mime: 2.5.2
       node-fetch: 2.6.7
@@ -7652,7 +7656,7 @@ packages:
     resolution: {integrity: sha512-db1mx37a1EJDf1XeX8jJN7R3PZABmJQXR8r28yUjVMFSjkmnQo6X6pOEEmNl+Tp2gYQOGPdYbFIipBtdElZ3Yg==}
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 17.0.24
+      '@types/react': 18.2.63
       '@types/react-router': 5.1.16
     dev: false
 
@@ -7682,7 +7686,6 @@ packages:
       '@types/prop-types': 15.7.4
       '@types/scheduler': 0.16.2
       csstype: 3.0.8
-    dev: true
 
   /@types/responselike@1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
