@@ -1,28 +1,16 @@
 {
   "name": "repack",
-  "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2",
   "private": true,
-  "workspaces": {
-    "packages": [
-      "./packages/dev-server",
-      "./packages/repack",
-      "./packages/TesterApp",
-      "./packages/debugger-app",
-      "./packages/dashboard",
-      "./packages/init",
-      "./website"
-    ]
-  },
   "scripts": {
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "release": "yarn build && yarn lint && yarn test && yarn changeset publish",
-    "website:start": "turbo run docs && yarn workspace website run start",
-    "website:build": "turbo run docs && yarn workspace website run export",
-    "TesterApp:start": "turbo run build && yarn workspace testerapp run start",
-    "TesterApp:bundle": "turbo run build && yarn workspace testerapp run bundle"
+    "release": "pnpm build && pnpm lint && pnpm test && pnpm changeset publish",
+    "website:start": "turbo run docs && pnpm --filter website run start",
+    "website:build": "turbo run docs && pnpm --filter website run export",
+    "TesterApp:start": "turbo run build && pnpm --filter testerapp run start",
+    "TesterApp:bundle": "turbo run build && pnpm --filter testerapp run bundle"
   },
   "dependencies": {
     "@changesets/changelog-github": "^0.4.5",
@@ -53,5 +41,6 @@
     "eslint-plugin-react-native-a11y": "^3.3.0",
     "prettier": "^3.2.4",
     "typescript": "^5.2.2"
-  }
+  },
+  "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2"
 }

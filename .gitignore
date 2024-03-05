@@ -72,9 +72,6 @@ typings/
 # Output of 'npm pack'
 *.tgz
 
-# Yarn Integrity file
-.yarn-integrity
-
 # dotenv environment variables file
 .env
 .env.test
@@ -273,8 +270,6 @@ gradle-app.setting
 
 # Output of 'npm pack'
 
-# Yarn Integrity file
-
 # dotenv environment variables file
 
 # parcel-bundler cache (https://parceljs.org/)
@@ -357,19 +352,6 @@ Temporary Items
 .apdisk
 
 # End of https://www.toptal.com/developers/gitignore/api/node,reactnative
-
-# Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# Swap the comments on the following lines if you don't wish to use zero-installs
-# Documentation here: https://yarnpkg.com/features/zero-installs
-# !.yarn/cache
-#.pnp.*
 
 # Local Netlify folder
 .netlify

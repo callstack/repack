@@ -41,15 +41,15 @@
   },
   "scripts": {
     "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start",
-    "build:js:watch": "yarn build:js --watch",
+    "build:js:watch": "pnpm build:js --watch",
     "build:ts": "tsc --emitDeclarationOnly",
-    "build:ts:watch": "yarn build:ts --watch --preserveWatchOutput",
-    "build": "yarn build:js && yarn build:ts",
+    "build:ts:watch": "pnpm build:ts --watch --preserveWatchOutput",
+    "build": "pnpm build:js && pnpm build:ts",
     "docs": "typedoc && typedoc --options typedoc.client.json",
     "lint": "eslint --ext \".js,.ts\" commands.js client.js src",
     "test": "jest",
     "typecheck": "tsc --noEmit",
-    "archive": "yarn build && yarn pack --out repack-%v-$(git log -1 --format=\"%h\").tgz"
+    "archive": "pnpm build && pnpm pack"
   },
   "peerDependencies": {
     "@react-native-community/cli": "*",

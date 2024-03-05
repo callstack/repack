@@ -35,14 +35,14 @@
   },
   "scripts": {
     "build:js": "babel src --out-dir dist --extensions \".js,.cjs,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start --copy-files",
-    "build:js:watch": "yarn build:js --watch",
+    "build:js:watch": "pnpm build:js --watch",
     "build:ts": "tsc --emitDeclarationOnly",
-    "build:ts:watch": "yarn build:ts --watch --preserveWatchOutput",
-    "build": "yarn build:js && yarn build:ts",
+    "build:ts:watch": "pnpm build:ts --watch --preserveWatchOutput",
+    "build": "pnpm build:js && pnpm build:ts",
     "docs": "typedoc",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --ext \".js,.ts\" src",
-    "archive": "yarn build && yarn pack --out repack-dev-server-%v-$(git log -1 --format=\"%h\").tgz"
+    "archive": "pnpm build && pnpm pack"
   },
   "dependencies": {
     "@babel/code-frame": "^7.16.7",
