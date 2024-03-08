@@ -35,14 +35,14 @@
   },
   "scripts": {
     "build:js": "babel src --out-dir dist --extensions \".js,.cjs,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start --copy-files",
-    "build:js:watch": "yarn build:js --watch",
+    "build:js:watch": "pnpm build:js --watch",
     "build:ts": "tsc --emitDeclarationOnly",
-    "build:ts:watch": "yarn build:ts --watch --preserveWatchOutput",
-    "build": "yarn build:js && yarn build:ts",
+    "build:ts:watch": "pnpm build:ts --watch --preserveWatchOutput",
+    "build": "pnpm build:js && pnpm build:ts",
     "docs": "typedoc",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --ext \".js,.ts\" src",
-    "archive": "yarn build && yarn pack --out repack-dev-server-%v-$(git log -1 --format=\"%h\").tgz"
+    "archive": "pnpm build && pnpm pack"
   },
   "dependencies": {
     "@babel/code-frame": "^7.16.7",
@@ -60,11 +60,8 @@
     "ws": "^8.7.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.17.10",
-    "@babel/core": "^7.18.2",
-    "@babel/preset-env": "^7.18.2",
-    "@babel/preset-typescript": "^7.17.12",
-    "@callstack/eslint-config": "^14.1.0",
+    "@babel/cli": "^7.23.9",
+    "@babel/core": "^7.23.9",
     "@types/babel__code-frame": "^7.0.3",
     "@types/node": "18",
     "@types/ws": "^8.5.3",

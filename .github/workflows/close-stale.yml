@@ -17,5 +17,5 @@ jobs:
           close-issue-message: 'This issue has been automatically closed because it has been inactive for more than 14 days. Please reopen if you want to add more context.'
           close-pr-message: 'This pull request has been automatically closed because it has been inactive for more than 14 days. Please reopen if you still intend to submit this pull request.'
           stale-pr-label: stale
-          stape-issue-label: stale
+          stale-issue-label: stale
 

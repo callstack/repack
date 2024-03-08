@@ -13,4 +13,9 @@ module.exports = {
       },
     },
   ],
+  settings: {
+    jest: {
+      version: 'latest',
+    },
+  },
 };

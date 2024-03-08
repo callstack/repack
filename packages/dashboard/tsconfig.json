@@ -4,17 +4,15 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2020",
-    "lib": [
-      "ES2020",
-      "DOM"
-    ],
+    "lib": ["ES2020", "DOM"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmit": true,
     "jsx": "react",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "react": ["./node_modules/@types/react"],
+    },
   },
-  "include": [
-    "src/**/*.tsx"
-  ]
+  "include": ["src/**/*.tsx"],
 }
