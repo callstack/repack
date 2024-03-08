@@ -13,6 +13,13 @@ let port: number;
 let stopServer: () => Promise<void>;
 
 const TMP_DIR = path.join(__dirname, 'out/server-test-output');
+const REACT_NATIVE_PATH = require.resolve('react-native', {
+  paths: [path.dirname(__dirname)],
+});
+const RELATIVE_REACT_NATIVE_PATH = path.relative(
+  path.join(__dirname, '..', '..', '..'),
+  path.dirname(REACT_NATIVE_PATH)
+);
 
 beforeAll(async () => {
   await fs.promises.rm(TMP_DIR, {
@@ -53,7 +60,7 @@ describe.each([
       'ios/src_asyncChunks_Async_local_tsx.chunk.bundle',
       'ios/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
       'assets/src/miniapp/callstack-dark.png?platform=ios',
-      'assets/node_modules/react-native/Libraries/NewAppScreen/components/logo.png?platform=ios',
+      `assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png?platform=ios`,
     ],
   },
   {
@@ -68,7 +75,7 @@ describe.each([
       'android/src_asyncChunks_Async_local_tsx.chunk.bundle',
       'android/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
       'assets/src/miniapp/callstack-dark.png?platform=android',
-      'assets/node_modules/react-native/Libraries/NewAppScreen/components/logo.png?platform=android',
+      `assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png?platform=android`,
     ],
   },
 ])(

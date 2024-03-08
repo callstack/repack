@@ -31,7 +31,7 @@
   },
   "scripts": {
     "build": "webpack -c webpack.config.cjs",
-    "build:watch": "yarn build --watch",
+    "build:watch": "pnpm build --watch",
     "lint": "eslint src"
   },
   "devDependencies": {

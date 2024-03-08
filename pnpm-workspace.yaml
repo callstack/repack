@@ -1,0 +1,8 @@
+packages:
+  - "packages/dev-server"
+  - "packages/repack"
+  - "packages/TesterApp"
+  - "packages/debugger-app"
+  - "packages/dashboard"
+  - "packages/init"
+  - "website"
