@@ -243,7 +243,7 @@ export class OutputPlugin implements WebpackPlugin {
         chunkRelations: true,
         ids: true,
       });
-      const chunks = new Map(
+      const statsChunkMap = new Map(
         compilationStats.chunks!.map((chunk) => [chunk.id!, chunk])
       );
       const entryChunkName = this.config.entryName ?? 'main';
@@ -252,7 +252,7 @@ export class OutputPlugin implements WebpackPlugin {
       const sharedChunks = new Set<webpack.StatsChunk>();
       const auxiliaryAssets: Set<string> = new Set();
 
-      const entryChunk = compilationStats?.chunks?.find((chunk) => {
+      const entryChunk = compilationStats.chunks!.find((chunk) => {
         return chunk.initial && chunk.names?.includes(entryChunkName);
       });
 
@@ -262,7 +262,7 @@ export class OutputPlugin implements WebpackPlugin {
           continue;
         }
 
-        getAllInitialChunks(chunk, chunks)
+        getAllInitialChunks(chunk, statsChunkMap)
           .filter((sharedChunk) => sharedChunk !== chunk)
           .forEach((sharedChunk) => {
             sharedChunks.add(sharedChunk);
@@ -281,7 +281,7 @@ export class OutputPlugin implements WebpackPlugin {
       // Process shared chunks to add them either as local or remote chunk.
       for (const sharedChunk of sharedChunks) {
         const isUsedByLocalChunk = localChunks.some((localChunk) =>
-          getAllInitialChunks(localChunk, chunks).includes(sharedChunk)
+          getAllInitialChunks(localChunk, statsChunkMap).includes(sharedChunk)
         );
         if (
           isUsedByLocalChunk ||
