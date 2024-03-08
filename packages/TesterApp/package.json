@@ -2,9 +2,6 @@
   "name": "testerapp",
   "version": "0.1.7",
   "private": true,
-  "installConfig": {
-    "hoistingLimits": "workspaces"
-  },
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -13,27 +10,27 @@
     "bundle:ios": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false --bundle-output build/output/ios/main.jsbundle",
     "webpack": "webpack -c webpack.config.js --env platform=android --env mode=production",
     "test": "vitest run",
-    "serve-remote-assets:android": "adb reverse tcp:9999 tcp:9999 && yarn http-server -p 9999 build/output/android/remote",
-    "serve-remote-assets:ios": "yarn http-server -p 9999 build/output/ios/remote"
+    "serve-remote-assets:android": "adb reverse tcp:9999 tcp:9999 && pnpm http-server -p 9999 build/output/android/remote",
+    "serve-remote-assets:ios": "pnpm http-server -p 9999 build/output/ios/remote"
   },
   "dependencies": {
     "@callstack/repack": "3.7.0",
     "@react-native-async-storage/async-storage": "^1.21.0",
     "lodash.throttle": "^4.1.1",
     "react": "18.2.0",
-    "react-native": "0.73.2",
+    "react-native": "0.73.5",
     "react-native-svg": "14.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@babel/preset-env": "^7.20.0",
-    "@babel/runtime": "^7.20.0",
-    "@callstack/eslint-config": "^14.1.0",
-    "@react-native/babel-preset": "^0.73.18",
+    "@babel/core": "^7.23.9",
+    "@react-native/babel-preset": "^0.73.21",
     "@react-native/eslint-config": "^0.73.1",
     "@react-native/typescript-config": "^0.73.1",
     "@svgr/webpack": "^6.2.1",
     "@types/get-port": "^4.2.0",
+    "@types/jest": "^28.1.1",
+    "@types/lodash.throttle": "^4.1.9",
+    "@types/react": "^18.2.51",
     "babel-loader": "^8.2.5",
     "eslint": "^8.53.0",
     "execa": "^6.1.0",
@@ -41,13 +38,11 @@
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
     "node-fetch": "^3.2.6",
+    "prettier": "^3.2.4",
     "react-native-event-source": "^1.1.0",
     "terser-webpack-plugin": "^5.3.3",
     "typescript": "^5.2.2",
     "vitest": "^0.15.1",
     "webpack": "^5.75.0"
-  },
-  "resolutions": {
-    "@types/react": "^18"
   }
 }

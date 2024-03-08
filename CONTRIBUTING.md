@@ -7,7 +7,7 @@ We want this community to be friendly and respectful to each other. Please read 
 ## Requirements
 
 - Node 18+
-- Yarn 3
+- pnpm 8 (use it via `corepack install`)
 
 ## Our Development Process
 
@@ -18,7 +18,7 @@ All development is done directly on GitHub, and all work is public.
 > **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
 1. Fork the repo and create your branch from default branch (usually `main`) (a guide on [how to fork a repository](https://help.github.com/articles/fork-a-repo/)).
-2. Run `yarn install` to install & set up the development environment.
+2. Run `pnpm install` to install & set up the development environment.
 3. Do the changes you want and test them out in the TesterApp (`packages/TesterApp`) before sending a pull request.
 
 ### Commit message convention
@@ -38,7 +38,7 @@ We follow the [conventional commits specification](https://www.conventionalcommi
 When adding new features, fixes or doing any changes to public API, behavior or logic is required to
 create a changeset explaining what has been modified.
 
-Once code changes are done, run `yarn changeset add` and follow the CLI instructions to write a changeset.
+Once code changes are done, run `pnpm changeset add` and follow the CLI instructions to write a changeset.
 
 You can learn more about changesets here: https://github.com/changesets/changesets
 
@@ -46,9 +46,9 @@ You can learn more about changesets here: https://github.com/changesets/changese
 
 We use `typescript` for type checking, `eslint` with `prettier` for linting and formatting the code, and `jest`/`vitest` for testing. You should run the following commands before sending a pull request:
 
-- `yarn typecheck`: type-check files with `tsc`.
-- `yarn lint`: lint files with `eslint` and `prettier`.
-- `yarn test`: run unit tests with `jest`/`vitest`.
+- `pnpm typecheck`: type-check files with `tsc`.
+- `pnpm lint`: lint files with `eslint` and `prettier`.
+- `pnpm test`: run unit tests with `jest`/`vitest`.
 
 ### Sending a pull request
 
@@ -62,7 +62,7 @@ We use `typescript` for type checking, `eslint` with `prettier` for linting and 
 
 The example TesterApp uses React Native CLI so make sure you have your [environment setup to build native apps](https://reactnative.dev/docs/environment-setup).
 
-You can then use Xcode/Android Studio/Gradle to build application or run `yarn react-native webpack-start` and `yarn react-native run-ios`/`yarn react-native run-android` to start development server and run applications in development mode. You can also use `yarn TesterApp:start`/`yarn TesterApp:build` from the root directory.
+You can then use Xcode/Android Studio/Gradle to build application or run `pnpm react-native webpack-start` and `pnpm react-native run-ios`/`pnpm react-native run-android` to start development server and run applications in development mode. You can also use `pnpm TesterApp:start`/`pnpm TesterApp:build` from the root directory.
 
 ### Working on documentation
 
@@ -73,7 +73,7 @@ The documentation is automatically generated from the [TypeScript](https://www.t
 We use [changesets](https://github.com/changesets/changesets) to automate to bump the version, update `CHANGELOG.md` files in published packages and publish to NPM registry. If you have publish access to the NPM `@callstack` scope, run the following from the default branch (usually `main` branch) to publish a new release:
 
 ```sh
-yarn release
+pnpm release
 ```
 
 NOTE: You must have a `GITHUB_TOKEN` environment variable available. You can create a GitHub access token with the "repo" access [here](https://github.com/settings/tokens).

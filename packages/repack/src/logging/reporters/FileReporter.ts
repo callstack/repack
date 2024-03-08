@@ -18,7 +18,7 @@ export class FileReporter implements Reporter {
     fs.mkdirSync(path.dirname(this.config.filename), { recursive: true });
   }
 
-  throttledFlush = throttle(() => {
+  throttledFlush: () => void = throttle(() => {
     this.flush();
   }, 1000);
 

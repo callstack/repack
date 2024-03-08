@@ -15,16 +15,16 @@ runs:
   using: "composite"
   steps:
     - name: Build website
-      run: yarn website:build
+      run: pnpm website:build
       shell: sh
 
     - name: Deploy website
       working-directory: website
       run: |
         if [[ "${{ inputs.production }}" == "true" ]]; then
-          yarn netlify deploy --dir=build --prod
+          pnpm netlify deploy --dir=build --prod
         else
-          yarn netlify deploy --dir=build
+          pnpm netlify deploy --dir=build
         fi
       shell: bash
       env:
