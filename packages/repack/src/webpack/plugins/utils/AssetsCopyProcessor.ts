@@ -9,7 +9,6 @@ export class AssetsCopyProcessor {
   constructor(
     public readonly config: {
       platform: string;
-      compilation: webpack.Compilation;
       outputPath: string;
       bundleOutput: string;
       bundleOutputDir: string;
@@ -29,9 +28,11 @@ export class AssetsCopyProcessor {
     await this.filesystem.copyFile(from, to);
   }
 
-  enqueueChunk(chunk: webpack.Chunk, { isEntry }: { isEntry: boolean }) {
+  enqueueChunk(
+    chunk: webpack.StatsChunk,
+    { isEntry, sourceMapFile }: { isEntry: boolean; sourceMapFile?: string }
+  ) {
     const {
-      compilation,
       outputPath,
       bundleOutput,
       sourcemapOutput,
@@ -44,21 +45,18 @@ export class AssetsCopyProcessor {
       : bundleOutputDir;
 
     // Chunk bundle e.g: `index.bundle`, `src_App_js.chunk.bundle`
-    const [chunkFile] = [...chunk.files];
+    // There might be more than 1 file associated with the chunk -
+    // this happens e.g. on web when importing CSS files into JS.
+    // TBD whether this can ever occur in React Native.
+    const chunkFile = chunk.files?.[0];
 
     // Sometimes there are no files associated with the chunk and the OutputPlugin fails
     // Skipping such chunks is a temporary workaround resulting in proper behaviour
-    // TODO: determine the real cause of this issue
+    // This can happen when Module Federation is used and some chunks are not emitted
+    // and are only used as temporary during compilation.
     if (!chunkFile) {
       return;
     }
-
-    const relatedSourceMap =
-      compilation.assetsInfo.get(chunkFile)?.related?.sourceMap;
-    // Source map for the chunk e.g: `index.bundle.map`, `src_App_js.chunk.bundle.map`
-    const sourceMapFile = Array.isArray(relatedSourceMap)
-      ? relatedSourceMap[0]
-      : relatedSourceMap;
 
     // Target file path where to save the bundle.
     const bundleDestination = isEntry
@@ -135,7 +133,7 @@ export class AssetsCopyProcessor {
     }
 
     // Copy regular assets
-    const mediaAssets = [...chunk.auxiliaryFiles]
+    const mediaAssets = [...chunk.auxiliaryFiles!]
       .filter((file) => !/\.(map|bundle\.json)$/.test(file))
       .filter((file) => !/^remote-assets/.test(file));
 
@@ -150,7 +148,7 @@ export class AssetsCopyProcessor {
     );
 
     // Manifest file name e.g: `index.bundle.json`, src_App_js.chunk.bundle.json`
-    const [manifest] = [...chunk.auxiliaryFiles].filter((file) =>
+    const [manifest] = [...chunk.auxiliaryFiles!].filter((file) =>
       /\.bundle\.json$/.test(file)
     );
     if (manifest) {

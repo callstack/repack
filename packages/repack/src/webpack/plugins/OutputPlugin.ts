@@ -183,6 +183,11 @@ export class OutputPlugin implements WebpackPlugin {
       return;
     }
 
+    const outputPath = compiler.options.output?.path;
+    if (!outputPath) {
+      throw new Error('Cannot infer output path from compilation');
+    }
+
     const logger = compiler.getInfrastructureLogger('RepackOutputPlugin');
 
     const extraAssets = (this.config.extraChunks ?? []).map((spec) =>
@@ -213,205 +218,202 @@ export class OutputPlugin implements WebpackPlugin {
           }
         }
       }
-
       return false;
     };
 
-    let entryGroup: webpack.Compilation['chunkGroups'][0] | undefined;
-    let entryChunk: webpack.Chunk | undefined;
-    const entryChunkName = this.config.entryName ?? 'main';
-    const localChunks: webpack.Chunk[] = [];
-    const remoteChunks: webpack.Chunk[] = [];
-    const auxiliaryAssets: Set<string> = new Set();
+    const getRelatedSourceMap = (chunk: webpack.StatsChunk) => {
+      return chunk.auxiliaryFiles?.find((file) => /\.map$/.test(file));
+    };
 
-    compiler.hooks.compilation.tap('RepackOutputPlugin', (compilation) => {
-      compilation.hooks.processAssets.tap(
-        {
-          name: 'RepackOutputPlugin',
-          stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
-        },
-        () => {
-          entryGroup = compilation.chunkGroups.find((group) =>
-            group.isInitial()
-          );
-          entryChunk = entryGroup?.chunks.find(
-            (chunk) => chunk.name === entryChunkName
-          );
-          const sharedChunks = new Set<webpack.Chunk>();
+    const getAllInitialChunks = (
+      chunk: webpack.StatsChunk,
+      chunks: Map<string | number, webpack.StatsChunk>
+    ): Array<webpack.StatsChunk> => {
+      if (!chunk.parents?.length) return [chunk];
+      return chunk.parents.flatMap((parent) => {
+        return getAllInitialChunks(chunks.get(parent)!, chunks);
+      });
+    };
 
-          for (const chunk of compilation.chunks) {
-            // Do not process shared chunks right now.
-            if (sharedChunks.has(chunk)) {
-              continue;
-            }
-
-            [...chunk.getAllInitialChunks()]
-              .filter((sharedChunk) => sharedChunk !== chunk)
-              .forEach((sharedChunk) => {
-                sharedChunks.add(sharedChunk);
-              });
-
-            // Entry chunk
-            if (entryChunk && entryChunk === chunk) {
-              localChunks.push(chunk);
-            } else if (isLocalChunk(chunk.name ?? chunk.id?.toString())) {
-              localChunks.push(chunk);
-            } else {
-              remoteChunks.push(chunk);
-            }
-          }
-
-          // Process shared chunks to add them either as local or remote chunk.
-          for (const sharedChunk of sharedChunks) {
-            const isUsedByLocalChunk = localChunks.some((localChunk) => {
-              return [...localChunk.getAllInitialChunks()].includes(
-                sharedChunk
-              );
-            });
-            if (
-              isUsedByLocalChunk ||
-              isLocalChunk(sharedChunk.name ?? sharedChunk.id?.toString())
-            ) {
-              localChunks.push(sharedChunk);
-            } else {
-              remoteChunks.push(sharedChunk);
-            }
-          }
-
-          if (!entryChunk) {
-            throw new Error(
-              'Cannot infer entry chunk - this should have not happened.'
-            );
-          }
-
-          // Collect auxiliary assets (only remote-assets for now)
-          Object.keys(compilation.assets)
-            .filter((filename) => /^remote-assets/.test(filename))
-            .forEach((asset) => auxiliaryAssets.add(asset));
-        }
+    compiler.hooks.done.tapPromise('RepackOutputPlugin', async (stats) => {
+      const compilationStats = stats.toJson({
+        all: false,
+        assets: true,
+        chunks: true,
+        chunkRelations: true,
+        ids: true,
+      });
+      const statsChunkMap = new Map(
+        compilationStats.chunks!.map((chunk) => [chunk.id!, chunk])
       );
-    });
+      const entryChunkName = this.config.entryName ?? 'main';
+      const localChunks: webpack.StatsChunk[] = [];
+      const remoteChunks: webpack.StatsChunk[] = [];
+      const sharedChunks = new Set<webpack.StatsChunk>();
+      const auxiliaryAssets: Set<string> = new Set();
 
-    compiler.hooks.afterEmit.tapPromise(
-      'RepackOutputPlugin',
-      async (compilation) => {
-        const outputPath = compilation.outputOptions.path;
-        if (!outputPath) {
-          throw new Error('Cannot infer output path from compilation');
+      const entryChunk = compilationStats.chunks!.find((chunk) => {
+        return chunk.initial && chunk.names?.includes(entryChunkName);
+      });
+
+      for (const chunk of compilationStats.chunks!) {
+        // Do not process shared chunks right now.
+        if (sharedChunks.has(chunk)) {
+          continue;
         }
 
-        let localAssetsCopyProcessor;
-
-        let { bundleFilename, sourceMapFilename, assetsPath } =
-          this.config.output;
-        if (bundleFilename) {
-          if (!path.isAbsolute(bundleFilename)) {
-            bundleFilename = path.join(this.config.context, bundleFilename);
-          }
-
-          const bundlePath = path.dirname(bundleFilename);
-
-          if (!sourceMapFilename) {
-            sourceMapFilename = `${bundleFilename}.map`;
-          }
-
-          if (!path.isAbsolute(sourceMapFilename)) {
-            sourceMapFilename = path.join(
-              this.config.context,
-              sourceMapFilename
-            );
-          }
-
-          if (!assetsPath) {
-            assetsPath = bundlePath;
-          }
-
-          logger.debug('Detected output paths:', {
-            bundleFilename,
-            bundlePath,
-            sourceMapFilename,
-            assetsPath,
+        getAllInitialChunks(chunk, statsChunkMap)
+          .filter((sharedChunk) => sharedChunk !== chunk)
+          .forEach((sharedChunk) => {
+            sharedChunks.add(sharedChunk);
           });
 
-          localAssetsCopyProcessor = new AssetsCopyProcessor({
-            platform: this.config.platform,
-            compilation,
-            outputPath,
-            bundleOutput: bundleFilename,
-            bundleOutputDir: bundlePath,
-            sourcemapOutput: sourceMapFilename,
-            assetsDest: assetsPath,
-            logger,
-          });
+        // Entry chunk
+        if (entryChunk === chunk) {
+          localChunks.push(chunk);
+        } else if (isLocalChunk(chunk.name ?? chunk.id?.toString())) {
+          localChunks.push(chunk);
+        } else {
+          remoteChunks.push(chunk);
         }
-
-        const remoteAssetsCopyProcessors: Record<string, AssetsCopyProcessor> =
-          {};
-
-        for (const chunk of localChunks) {
-          // Process entry chunk
-          localAssetsCopyProcessor?.enqueueChunk(chunk, {
-            isEntry: entryChunk === chunk,
-          });
-        }
-
-        for (const chunk of remoteChunks) {
-          const spec = extraAssets.find((spec) =>
-            webpack.ModuleFilenameHelpers.matchObject(
-              {
-                test: spec.test,
-                include: spec.include,
-                exclude: spec.exclude,
-              },
-              chunk.name || chunk.id?.toString()
-            )
-          );
-
-          if (spec?.type === 'remote') {
-            if (!remoteAssetsCopyProcessors[spec.outputPath]) {
-              remoteAssetsCopyProcessors[spec.outputPath] =
-                new AssetsCopyProcessor({
-                  platform: this.config.platform,
-                  compilation,
-                  outputPath,
-                  bundleOutput: '',
-                  bundleOutputDir: spec.outputPath,
-                  sourcemapOutput: '',
-                  assetsDest: spec.outputPath,
-                  logger,
-                });
-            }
-
-            remoteAssetsCopyProcessors[spec.outputPath].enqueueChunk(chunk, {
-              isEntry: false,
-            });
-          }
-        }
-
-        let auxiliaryAssetsCopyProcessor;
-        const { auxiliaryAssetsPath } = this.config.output;
-        if (auxiliaryAssetsPath) {
-          auxiliaryAssetsCopyProcessor = new AuxiliaryAssetsCopyProcessor({
-            platform: this.config.platform,
-            outputPath,
-            assetsDest: auxiliaryAssetsPath,
-            logger,
-          });
-
-          for (const asset of auxiliaryAssets) {
-            auxiliaryAssetsCopyProcessor.enqueueAsset(asset);
-          }
-        }
-
-        await Promise.all([
-          ...(localAssetsCopyProcessor?.execute() ?? []),
-          ...Object.values(remoteAssetsCopyProcessors).reduce(
-            (acc, processor) => acc.concat(...processor.execute()),
-            [] as Promise<void>[]
-          ),
-          ...(auxiliaryAssetsCopyProcessor?.execute() ?? []),
-        ]);
       }
-    );
+
+      // Process shared chunks to add them either as local or remote chunk.
+      for (const sharedChunk of sharedChunks) {
+        const isUsedByLocalChunk = localChunks.some((localChunk) =>
+          getAllInitialChunks(localChunk, statsChunkMap).includes(sharedChunk)
+        );
+        if (
+          isUsedByLocalChunk ||
+          isLocalChunk(sharedChunk.name ?? sharedChunk.id?.toString())
+        ) {
+          localChunks.push(sharedChunk);
+        } else {
+          remoteChunks.push(sharedChunk);
+        }
+      }
+
+      if (!entryChunk) {
+        throw new Error(
+          'Cannot infer entry chunk - this should have not happened.'
+        );
+      }
+
+      const assets = compilationStats.assets!;
+      // Collect auxiliary assets (only remote-assets for now)
+      assets
+        .filter((asset) => /^remote-assets/.test(asset.name))
+        .forEach((asset) => auxiliaryAssets.add(asset.name));
+
+      let localAssetsCopyProcessor;
+
+      let { bundleFilename, sourceMapFilename, assetsPath } =
+        this.config.output;
+
+      if (bundleFilename) {
+        if (!path.isAbsolute(bundleFilename)) {
+          bundleFilename = path.join(this.config.context, bundleFilename);
+        }
+
+        const bundlePath = path.dirname(bundleFilename);
+
+        if (!sourceMapFilename) {
+          sourceMapFilename = `${bundleFilename}.map`;
+        }
+
+        if (!path.isAbsolute(sourceMapFilename)) {
+          sourceMapFilename = path.join(this.config.context, sourceMapFilename);
+        }
+
+        if (!assetsPath) {
+          assetsPath = bundlePath;
+        }
+
+        logger.debug('Detected output paths:', {
+          bundleFilename,
+          bundlePath,
+          sourceMapFilename,
+          assetsPath,
+        });
+
+        localAssetsCopyProcessor = new AssetsCopyProcessor({
+          platform: this.config.platform,
+          outputPath,
+          bundleOutput: bundleFilename,
+          bundleOutputDir: bundlePath,
+          sourcemapOutput: sourceMapFilename,
+          assetsDest: assetsPath,
+          logger,
+        });
+      }
+
+      const remoteAssetsCopyProcessors: Record<string, AssetsCopyProcessor> =
+        {};
+
+      for (const chunk of localChunks) {
+        // Process entry chunk
+        localAssetsCopyProcessor?.enqueueChunk(chunk, {
+          isEntry: entryChunk === chunk,
+          sourceMapFile: getRelatedSourceMap(chunk),
+        });
+      }
+
+      for (const chunk of remoteChunks) {
+        const spec = extraAssets.find((spec) =>
+          webpack.ModuleFilenameHelpers.matchObject(
+            {
+              test: spec.test,
+              include: spec.include,
+              exclude: spec.exclude,
+            },
+            chunk.name || chunk.id?.toString()
+          )
+        );
+
+        if (spec?.type === 'remote') {
+          if (!remoteAssetsCopyProcessors[spec.outputPath]) {
+            remoteAssetsCopyProcessors[spec.outputPath] =
+              new AssetsCopyProcessor({
+                platform: this.config.platform,
+                outputPath,
+                bundleOutput: '',
+                bundleOutputDir: spec.outputPath,
+                sourcemapOutput: '',
+                assetsDest: spec.outputPath,
+                logger,
+              });
+          }
+
+          remoteAssetsCopyProcessors[spec.outputPath].enqueueChunk(chunk, {
+            isEntry: false,
+            sourceMapFile: getRelatedSourceMap(chunk),
+          });
+        }
+      }
+
+      let auxiliaryAssetsCopyProcessor;
+      const { auxiliaryAssetsPath } = this.config.output;
+      if (auxiliaryAssetsPath) {
+        auxiliaryAssetsCopyProcessor = new AuxiliaryAssetsCopyProcessor({
+          platform: this.config.platform,
+          outputPath,
+          assetsDest: auxiliaryAssetsPath,
+          logger,
+        });
+
+        for (const asset of auxiliaryAssets) {
+          auxiliaryAssetsCopyProcessor.enqueueAsset(asset);
+        }
+      }
+
+      await Promise.all([
+        ...(localAssetsCopyProcessor?.execute() ?? []),
+        ...Object.values(remoteAssetsCopyProcessors).reduce(
+          (acc, processor) => acc.concat(...processor.execute()),
+          [] as Promise<void>[]
+        ),
+        ...(auxiliaryAssetsCopyProcessor?.execute() ?? []),
+      ]);
+    });
   }
 }
