@@ -1,8 +1,11 @@
 import path from 'path';
 import fs from 'fs-extra';
 
-import { ModuleFilenameHelpers, Compiler } from 'webpack';
-import type { Rule, WebpackPlugin } from '../../../types';
+import rspack, {
+  ModuleFilenameHelpers,
+  RspackPluginInstance,
+} from '@rspack/core';
+import type { Rule } from '../../../types';
 
 import {
   composeSourceMaps,
@@ -70,12 +73,12 @@ interface ChunksToHermesBytecodePluginConfig {
  *
  * @category Webpack Plugin
  */
-export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
+export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
   private readonly name = 'ChunksToHermesBytecodePlugin';
 
   constructor(private config: ChunksToHermesBytecodePluginConfig) {}
 
-  apply(compiler: Compiler) {
+  apply(compiler: rspack.Compiler) {
     const logger = compiler.getInfrastructureLogger(this.name);
 
     if (!this.config.enabled) {
@@ -92,6 +95,8 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
      * ones present in build directory, which might result in transformation being
      * skipped when there is a untransformed bundle present in the build directory.
      */
+    // TODO Verify if this is still needed, maybe we can skip this
+    // @ts-expect-error compareBeforeEmit does not exist in rspack
     compiler.options.output.compareBeforeEmit = !!this.config.compareBeforeEmit;
 
     const reactNativePath =
