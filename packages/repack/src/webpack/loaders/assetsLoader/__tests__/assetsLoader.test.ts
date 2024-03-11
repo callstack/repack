@@ -46,10 +46,7 @@ async function compileBundle(
       ],
     },
     plugins: [
-      // @ts-expect-error AssetResolverPlugin is not migrated yet
-      new AssetsResolverPlugin({
-        platform,
-      }),
+      new AssetsResolverPlugin({ platform }),
       new RspackVirtualModulePlugin({
         'node_modules/react-native/Libraries/Image/AssetRegistry.js':
           'module.exports = { registerAsset: (spec) => spec };',

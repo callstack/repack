@@ -1,12 +1,22 @@
-import webpack from 'webpack';
-import { WebpackPlugin } from '../../../types';
-import { ASSET_EXTENSIONS, SCALABLE_ASSETS } from '../../utils/assetExtensions';
+import rspack, { RspackPluginInstance } from '@rspack/core';
+import {
+  ASSET_EXTENSIONS,
+  SCALABLE_ASSETS,
+  getAssetExtensionsRegExp,
+} from '../../utils/assetExtensions';
 import { AssetResolver, AssetResolverConfig } from './AssetResolver';
 
 /**
  * {@link AssetsResolverPlugin} configuration options.
  */
-export interface AssetsResolverPluginConfig extends AssetResolverConfig {}
+export interface AssetsResolverPluginConfig extends AssetResolverConfig {
+  /**
+   * Override default asset extensions. If the asset matches one of the extensions, it will be process
+   * by the custom React Native asset resolver. Otherwise, the resolution will process normally and
+   * the asset will be handled by Webpack.
+   */
+  extensions?: string[];
+}
 
 /**
  * Plugin for resolving assets (images, audio, video etc) for React Native applications.
@@ -17,7 +27,7 @@ export interface AssetsResolverPluginConfig extends AssetResolverConfig {}
  *
  * @category Webpack Plugin
  */
-export class AssetsResolverPlugin implements WebpackPlugin {
+export class AssetsResolverPlugin implements RspackPluginInstance {
   /**
    * Constructs new `AssetsResolverPlugin`.
    *
@@ -34,11 +44,28 @@ export class AssetsResolverPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: rspack.Compiler) {
     const assetResolver = new AssetResolver(this.config, compiler);
-
-    compiler.options.resolve.plugins = (
-      compiler.options.resolve.plugins || []
-    ).concat(assetResolver);
+    const test = getAssetExtensionsRegExp(this.config.extensions!);
+    /**
+     * In rspack, resolve.plugins is not implemented yet, so we have to use normalModuleFactory instead.
+     * We can intercept the asset resolution request and resolve it using our custom asset resolver.
+     * This now done in a very hacky way using `beforeResolve` hook and should be changed in the future.
+     *
+     * TODO Refactor this
+     */
+    compiler.hooks.normalModuleFactory.tap('AssetsResolverPlugin', (nmf) => {
+      nmf.hooks.beforeResolve.tapAsync(
+        'AssetsResolverPlugin',
+        (resolveData, callback) => {
+          if (!test.test(resolveData.request)) {
+            callback();
+            return;
+          } else {
+            assetResolver.resolve(resolveData, callback);
+          }
+        }
+      );
+    });
   }
 }

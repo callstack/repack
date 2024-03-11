@@ -1,20 +1,12 @@
 import path from 'path';
+import type fs from 'fs';
+import rspack from '@rspack/core';
 import escapeStringRegexp from 'escape-string-regexp';
-import webpack from 'webpack';
-import { HookMap, SyncHook } from 'tapable';
-import { getAssetExtensionsRegExp } from '../../utils/assetExtensions';
 
 /**
  * {@link AssetResolver} configuration options.
  */
 export interface AssetResolverConfig {
-  /**
-   * Override default asset extensions. If the asset matches one of the extensions, it will be process
-   * by the custom React Native asset resolver. Otherwise, the resolution will process normally and
-   * the asset will be handled by Webpack.
-   */
-  extensions?: string[];
-
   /**
    * Override default scalable extensions, which processes only scalable assets like images
    * to create a map of DPI variants of the asset.
@@ -38,18 +30,15 @@ interface CollectOptions {
   type: string;
 }
 
-// Resolver is not directly exposed from webpack types so we need to do some TS trickery to
-// get the type.
-type Resolver =
-  webpack.Compiler['resolverFactory']['hooks']['resolver'] extends HookMap<
-    infer H
-  >
-    ? H extends SyncHook<infer S>
-      ? S extends any[]
-        ? S[0]
-        : never
-      : never
-    : never;
+type NormalModuleFactory = rspack.NormalModuleFactory;
+
+type ResolveData = Parameters<
+  NormalModuleFactory['hooks']['beforeResolve']['callAsync']
+>[0];
+
+type InnerCallback = Parameters<
+  Parameters<NormalModuleFactory['hooks']['beforeResolve']['tapAsync']>[1]
+>[1];
 
 export class AssetResolver {
   static collectScales(
@@ -93,92 +82,72 @@ export class AssetResolver {
 
   constructor(
     public readonly config: AssetResolverConfig,
-    private compiler: webpack.Compiler
+    private compiler: rspack.Compiler
   ) {}
 
-  apply(resolver: Resolver) {
+  resolve(resolveData: ResolveData, callback: InnerCallback) {
     const platform = this.config.platform;
-    const test = getAssetExtensionsRegExp(this.config.extensions!);
-
     const logger = this.compiler.getInfrastructureLogger('RepackAssetResolver');
+    // TODO might need fixing types in @rspack/core
+    const inputFileSystem = this.compiler.inputFileSystem as typeof fs;
 
-    resolver
-      .getHook('file')
-      .tapAsync('RepackAssetResolver', (request, _context, callback) => {
-        const requestPath = request.path;
-        if (
-          (typeof requestPath === 'string' && !test.test(requestPath)) ||
-          requestPath === false
-        ) {
+    const requestPath = path.resolve(
+      resolveData.context ?? '',
+      resolveData.request
+    );
+
+    logger.debug(
+      'Processing asset:',
+      path.relative(this.compiler.context, requestPath)
+    );
+
+    inputFileSystem.readdir(path.dirname(requestPath), (error, files) => {
+      if (error) {
+        callback(error);
+        return;
+      }
+
+      const basename = path.basename(requestPath);
+      const name = basename.replace(/\.[^.]+$/, '');
+      const type = path.extname(requestPath).substring(1);
+
+      let resolved = files.includes(basename) ? requestPath : undefined;
+
+      if (!resolved) {
+        const map = AssetResolver.collectScales(
+          this.config.scalableExtensions!,
+          files,
+          { name, type, platform }
+        );
+
+        const key = map['@1x']
+          ? '@1x'
+          : Object.keys(map).sort(
+              (a, b) =>
+                Number(a.replace(/[^\d.]/g, '')) -
+                Number(b.replace(/[^\d.]/g, ''))
+            )[0];
+
+        resolved = map[key]?.name
+          ? path.resolve(path.dirname(requestPath), map[key].name)
+          : undefined;
+
+        if (!resolved) {
+          logger.error('Cannot resolve:', requestPath, {
+            files,
+            scales: map,
+          });
+
           callback();
           return;
         }
+      }
 
-        logger.debug('Processing asset:', requestPath);
+      resolveData.request = resolved;
+      resolveData.context = path.dirname(resolved);
 
-        resolver.fileSystem.readdir(
-          path.dirname(requestPath),
-          (error, results) => {
-            if (error) {
-              callback();
-              return;
-            }
-
-            const basename = path.basename(requestPath);
-            const name = basename.replace(/\.[^.]+$/, '');
-            const type = path.extname(requestPath).substring(1);
-            const files = ((results as Array<string | Buffer>)?.filter(
-              (result) => typeof result === 'string'
-            ) ?? []) as string[];
-
-            let resolved = files.includes(basename) ? requestPath : undefined;
-
-            if (!resolved) {
-              const map = AssetResolver.collectScales(
-                this.config.scalableExtensions!,
-                files,
-                {
-                  name,
-                  type,
-                  platform,
-                }
-              );
-              const key = map['@1x']
-                ? '@1x'
-                : Object.keys(map).sort(
-                    (a, b) =>
-                      Number(a.replace(/[^\d.]/g, '')) -
-                      Number(b.replace(/[^\d.]/g, ''))
-                  )[0];
-
-              resolved = map[key]?.name
-                ? path.resolve(path.dirname(requestPath), map[key].name)
-                : undefined;
-
-              if (!resolved) {
-                logger.error('Cannot resolve:', requestPath, {
-                  files,
-                  scales: map,
-                });
-                callback();
-                return;
-              }
-            }
-
-            const resolvedFile = {
-              ...request,
-              path: resolved,
-              relativePath:
-                request.relativePath &&
-                resolver.join(request.relativePath, resolved),
-              file: true,
-            };
-
-            logger.debug('Asset resolved:', requestPath, '->', resolved);
-
-            callback(null, resolvedFile);
-          }
-        );
-      });
+      logger.debug('Asset resolved:', requestPath, '->', resolved);
+      callback();
+    });
   }
 }
