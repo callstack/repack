@@ -1,8 +1,16 @@
-import { validateSchema, LoaderContext } from 'webpack';
+import type { LoaderContext } from '@rspack/core';
+import { validate } from 'schema-utils';
 
-export interface Options {
+/**
+ * Note: platform is not needed - can be removed
+ * Note: devServer enabled can be inferred from loader context:
+ *       - we can access this.mode & this.hot
+ * Note: publicPath could be obtained from webpack config in the future
+ */
+export interface AssetLoaderOptions {
   platform: string;
-  scalableAssetExtensions: string[];
+  scalableAssetExtensions?: string[];
+  scalableAssetResolutions?: string[];
   devServerEnabled?: boolean;
   inline?: boolean;
   publicPath?: string;
@@ -18,16 +26,19 @@ export interface Options {
   };
 }
 
-type Schema = Parameters<typeof validateSchema>[0];
+type Schema = Parameters<typeof validate>[0];
 
 export const optionsSchema: Schema = {
   type: 'object',
-  required: ['platform', 'scalableAssetExtensions'],
+  required: ['platform'],
   properties: {
     platform: {
       type: 'string',
     },
     scalableAssetExtensions: {
+      type: 'array',
+    },
+    scalableAssetResolutions: {
       type: 'array',
     },
     inline: { type: 'boolean' },
@@ -45,10 +56,12 @@ export const optionsSchema: Schema = {
   },
 };
 
-export function getOptions(loaderContext: LoaderContext<Options>): Options {
-  const options = loaderContext.getOptions() || {};
+export function getOptions(
+  loaderContext: LoaderContext<AssetLoaderOptions>
+): AssetLoaderOptions {
+  const options = loaderContext.getOptions(loaderContext) || {};
 
-  validateSchema(optionsSchema, options, { name: 'repackAssetsLoader' });
+  validate(optionsSchema, options, { name: 'repackAssetsLoader' });
 
-  return options as unknown as Options;
+  return options;
 }

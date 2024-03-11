@@ -24,20 +24,20 @@ class HMRClient {
     }:${__PUBLIC_PORT__}/__hmr?platform=${__PLATFORM__}`;
     this.socket = new WebSocket(this.url);
 
-    console.log('[HMRClient] Connecting...', {
+    console.debug('[HMRClient] Connecting...', {
       url: this.url,
     });
 
     this.socket.onopen = () => {
-      console.log('[HMRClient] Connected');
+      console.debug('[HMRClient] Connected');
     };
 
     this.socket.onclose = () => {
-      console.log('[HMRClient] Disconnected');
+      console.debug('[HMRClient] Disconnected');
     };
 
     this.socket.onerror = (event) => {
-      console.log('[HMRClient] Error', event);
+      console.debug('[HMRClient] Error', event);
     };
 
     this.socket.onmessage = (event) => {
@@ -60,12 +60,12 @@ class HMRClient {
     switch (message.action) {
       case 'building':
         this.app.LoadingView.showMessage('Rebuilding...', 'refresh');
-        console.log('[HMRClient] Bundle rebuilding', {
+        console.debug('[HMRClient] Bundle rebuilding', {
           name: message.body?.name,
         });
         break;
       case 'built':
-        console.log('[HMRClient] Bundle rebuilt', {
+        console.debug('[HMRClient] Bundle rebuilt', {
           name: message.body?.name,
           time: message.body?.time,
         });
@@ -100,7 +100,7 @@ class HMRClient {
     }
 
     if (!this.upToDate(update.hash) && module.hot.status() === 'idle') {
-      console.log('[HMRClient] Checking for updates on the server...');
+      console.debug('[HMRClient] Checking for updates on the server...');
       void this.checkUpdates(update);
     }
   }
@@ -128,13 +128,19 @@ class HMRClient {
       });
 
       if (!this.upToDate()) {
-        // TODO - determine whether we should do early return here
         void this.checkUpdates(update);
+        return;
+      }
+
+      // No modules updated - leave everything as it is (including errors)
+      if (!renewedModules || renewedModules.length === 0) {
+        console.debug('[HMRClient] No renewed modules - app is up to date');
+        return;
       }
 
       // Double check to make sure all updated modules were accepted (renewed)
       const unacceptedModules = updatedModules.filter((moduleId) => {
-        return renewedModules && renewedModules.indexOf(moduleId) < 0;
+        return renewedModules.indexOf(moduleId) < 0;
       });
 
       if (unacceptedModules.length) {
@@ -144,7 +150,7 @@ class HMRClient {
         );
         this.app.reload();
       } else {
-        console.log('[HMRClient] Renewed modules - app is up to date', {
+        console.debug('[HMRClient] Renewed modules - app is up to date', {
           renewedModules,
         });
         this.app.dismissErrors();

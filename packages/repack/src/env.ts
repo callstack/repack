@@ -1,5 +1,3 @@
-export const WORKER_ENV_KEY = 'REPACK_WORKER';
-
 export const VERBOSE_ENV_KEY = 'REPACK_VERBOSE';
 
 /**
@@ -11,16 +9,8 @@ export const DEFAULT_HOSTNAME = 'localhost';
 /** Default development server port. */
 export const DEFAULT_PORT = 8081;
 
-/**
- * Checks if code is running as a worker.
- *
- * @returns True if running as a worker.
- *
- * @internal
- */
-export function isWorker() {
-  return Boolean(process.env[WORKER_ENV_KEY]);
-}
+/** Default development server platforms. */
+export const DEFAULT_PLATFORMS = ['android', 'ios'];
 
 /**
  * Checks if code is running in verbose mode.

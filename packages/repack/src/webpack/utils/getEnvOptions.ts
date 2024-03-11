@@ -1,11 +1,9 @@
 import path from 'path';
-import type { CliOptions, WebpackEnvOptions } from '../../types';
+import type { CliOptions, EnvOptions } from '../../types';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../../env';
 
-export function getWebpackEnvOptions(
-  cliOptions: CliOptions
-): WebpackEnvOptions {
-  const env: WebpackEnvOptions = { bundleFilename: '' };
+export function getEnvOptions(cliOptions: CliOptions): EnvOptions {
+  const env: EnvOptions = { bundleFilename: '' };
 
   env.context = cliOptions.config.root;
   env.reactNativePath = cliOptions.config.reactNativePath;
@@ -27,7 +25,6 @@ export function getWebpackEnvOptions(
     env.assetsPath = cliOptions.arguments.bundle.assetsDest;
   } else {
     env.mode = 'development';
-    env.platform = cliOptions.arguments.start.platform || undefined;
     env.devServer = {
       port: cliOptions.arguments.start.port ?? DEFAULT_PORT,
       host: cliOptions.arguments.start.host || DEFAULT_HOSTNAME,

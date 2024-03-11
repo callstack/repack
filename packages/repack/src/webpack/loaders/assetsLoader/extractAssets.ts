@@ -1,18 +1,17 @@
-import path from 'path';
+import path from 'node:path';
+import crypto from 'node:crypto';
 import dedent from 'dedent';
-import hasha from 'hasha';
-import type { WebpackLogger } from '../../../types';
+import type { InfrastructureLogger } from '../../../types';
 import type { Asset } from './types';
-import { getImageSize } from './utils';
+import { getDefaultAsset } from './utils';
 
-export async function extractAssets(
+export function extractAssets(
   {
     resourcePath,
     resourceDirname,
     resourceFilename,
     resourceExtensionType,
     assets,
-    suffixPattern,
     assetsDirname,
     pathSeparatorRegexp,
     publicPath: customPublicPath,
@@ -29,7 +28,7 @@ export async function extractAssets(
     publicPath?: string;
     devServerEnabled?: boolean;
   },
-  logger: WebpackLogger
+  logger: InfrastructureLogger
 ) {
   let publicPath = path
     .join(assetsDirname, resourceDirname)
@@ -39,32 +38,27 @@ export async function extractAssets(
     publicPath = path.join(customPublicPath, publicPath);
   }
 
-  const hashes = await Promise.all(
-    assets.map((asset) =>
-      hasha.async(asset.content?.toString() ?? asset.filename, {
-        algorithm: 'md5',
-      })
-    )
+  const size = getDefaultAsset(assets).dimensions;
+  const scales = assets.map((asset) => asset.scale);
+  const hashes = assets.map((asset) =>
+    crypto.createHash('md5').update(asset.data).digest('hex')
   );
 
-  const size = getImageSize({
-    resourceFilename,
-    resourcePath,
-    suffixPattern,
-  });
-
-  logger.debug(`Extracted assets for request ${resourcePath}`, {
-    hashes,
-    publicPath: customPublicPath,
-    height: size?.height,
-    width: size?.width,
-  });
+  logger.debug(
+    `Extracted assets for request ${resourcePath}`,
+    JSON.stringify({
+      hashes,
+      publicPath: customPublicPath,
+      height: size?.height,
+      width: size?.width,
+    })
+  );
 
   return dedent`
     var AssetRegistry = require('react-native/Libraries/Image/AssetRegistry');
     module.exports = AssetRegistry.registerAsset({
       __packager_asset: true,
-      scales: ${JSON.stringify(assets.map((asset) => asset.scale))},
+      scales: ${JSON.stringify(scales)},
       name: ${JSON.stringify(resourceFilename)},
       type: ${JSON.stringify(resourceExtensionType)},
       hash: ${JSON.stringify(hashes.join())},

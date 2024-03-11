@@ -1,6 +1,9 @@
 import path from 'path';
-import webpack from 'webpack';
-import { Rule, WebpackPlugin } from '../../types';
+import rspack, {
+  ModuleFilenameHelpers,
+  RspackPluginInstance,
+} from '@rspack/core';
+import { Rule } from '../../types';
 import { AssetsCopyProcessor } from './utils/AssetsCopyProcessor';
 import { AuxiliaryAssetsCopyProcessor } from './utils/AuxiliaryAssetsCopyProcessor';
 
@@ -142,7 +145,7 @@ export interface OutputPluginConfig {
  *
  * @category Webpack Plugin
  */
-export class OutputPlugin implements WebpackPlugin {
+export class OutputPlugin implements RspackPluginInstance {
   /**
    * Constructs new `OutputPlugin`.
    *
@@ -178,7 +181,7 @@ export class OutputPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: rspack.Compiler) {
     if (!this.config.enabled) {
       return;
     }
@@ -205,7 +208,7 @@ export class OutputPlugin implements WebpackPlugin {
       for (const spec of extraAssets) {
         if (spec.type === 'local') {
           if (
-            webpack.ModuleFilenameHelpers.matchObject(
+            ModuleFilenameHelpers.matchObject(
               {
                 test: spec.test,
                 include: spec.include,
@@ -221,14 +224,14 @@ export class OutputPlugin implements WebpackPlugin {
       return false;
     };
 
-    const getRelatedSourceMap = (chunk: webpack.StatsChunk) => {
+    const getRelatedSourceMap = (chunk: rspack.StatsChunk) => {
       return chunk.auxiliaryFiles?.find((file) => /\.map$/.test(file));
     };
 
     const getAllInitialChunks = (
-      chunk: webpack.StatsChunk,
-      chunks: Map<string | number, webpack.StatsChunk>
-    ): Array<webpack.StatsChunk> => {
+      chunk: rspack.StatsChunk,
+      chunks: Map<string | number, rspack.StatsChunk>
+    ): Array<rspack.StatsChunk> => {
       if (!chunk.parents?.length) {
         return [chunk];
       }
@@ -255,9 +258,9 @@ export class OutputPlugin implements WebpackPlugin {
         compilationStats.chunks!.map((chunk) => [chunk.id!, chunk])
       );
       const entryChunkName = this.config.entryName ?? 'main';
-      const localChunks: webpack.StatsChunk[] = [];
-      const remoteChunks: webpack.StatsChunk[] = [];
-      const sharedChunks = new Set<webpack.StatsChunk>();
+      const localChunks: rspack.StatsChunk[] = [];
+      const remoteChunks: rspack.StatsChunk[] = [];
+      const sharedChunks = new Set<rspack.StatsChunk>();
       const auxiliaryAssets: Set<string> = new Set();
 
       const entryChunk = compilationStats.chunks!.find((chunk) => {
@@ -331,12 +334,16 @@ export class OutputPlugin implements WebpackPlugin {
           assetsPath = bundlePath;
         }
 
-        logger.debug('Detected output paths:', {
-          bundleFilename,
-          bundlePath,
-          sourceMapFilename,
-          assetsPath,
-        });
+        // TODO verify this logs nicely
+        logger.debug(
+          'Detected output paths:',
+          JSON.stringify({
+            bundleFilename,
+            bundlePath,
+            sourceMapFilename,
+            assetsPath,
+          })
+        );
 
         localAssetsCopyProcessor = new AssetsCopyProcessor({
           platform: this.config.platform,
@@ -362,7 +369,7 @@ export class OutputPlugin implements WebpackPlugin {
 
       for (const chunk of remoteChunks) {
         const spec = extraAssets.find((spec) =>
-          webpack.ModuleFilenameHelpers.matchObject(
+          ModuleFilenameHelpers.matchObject(
             {
               test: spec.test,
               include: spec.include,

@@ -16,7 +16,7 @@ module.exports = function () {
     loadHotUpdate,
     shared: ($globalObject$.__repack__ && $globalObject$.__repack__.shared) ||
       (__webpack_require__.repack && __webpack_require__.repack.shared) || {
-        loadScriptCallback: [],
+        loadScriptCallback: [[$chunkId$]],
         scriptManager: undefined,
       },
   };
@@ -44,33 +44,6 @@ module.exports = function () {
       null,
       chunkLoadingGlobal.push.bind(chunkLoadingGlobal)
     );
-  })();
-
-  (function () {
-    function repackScriptStartup() {
-      repackRuntime.shared.loadScriptCallback.push([$chunkId$]);
-    }
-
-    var startupFunctions: Function[] = __webpack_require__.x
-      ? [__webpack_require__.x, repackScriptStartup]
-      : [repackScriptStartup];
-
-    function startupFunction(this: any) {
-      var results;
-      for (var i = 0; i < startupFunctions.length; i++) {
-        results = startupFunctions[i].apply(this, arguments);
-      }
-      return results;
-    }
-
-    Object.defineProperty(__webpack_require__, 'x', {
-      get() {
-        return startupFunction;
-      },
-      set(fn) {
-        startupFunctions.push(fn);
-      },
-    });
   })();
 
   function loadScript(
@@ -122,7 +95,7 @@ module.exports = function () {
           const globalEvalWithSourceUrl = self.globalEvalWithSourceUrl;
           (function () {
             if (globalEvalWithSourceUrl) {
-              globalEvalWithSourceUrl(script, null);
+              globalEvalWithSourceUrl(script, url);
             } else {
               eval(script);
             }

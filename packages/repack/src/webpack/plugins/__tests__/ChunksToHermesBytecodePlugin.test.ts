@@ -1,6 +1,8 @@
+/// <reference types="@types/jest" />
+
 import fs from 'fs-extra';
 import execa from 'execa';
-import webpack from 'webpack';
+import rspack from '@rspack/core';
 import { ChunksToHermesBytecodePlugin } from '../ChunksToHermesBytecodePlugin';
 
 jest.mock('fs-extra', () => ({
@@ -42,7 +44,7 @@ describe('ChunksToHermesBytecodePlugin', () => {
     };
     const pluginInstance = new ChunksToHermesBytecodePlugin(config);
 
-    pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
+    pluginInstance.apply(compilerMock as unknown as rspack.Compiler);
 
     expect(compilerMock.hooks.assetEmitted.tapPromise).not.toHaveBeenCalled();
   });
@@ -55,7 +57,7 @@ describe('ChunksToHermesBytecodePlugin', () => {
     };
     const pluginInstance = new ChunksToHermesBytecodePlugin(config);
 
-    pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
+    pluginInstance.apply(compilerMock as unknown as rspack.Compiler);
 
     expect(compilerMock.options.output.compareBeforeEmit).toBe(false);
   });
@@ -82,7 +84,7 @@ describe('ChunksToHermesBytecodePlugin', () => {
               .catch(reject);
           }
         );
-        pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
+        pluginInstance.apply(compilerMock as unknown as rspack.Compiler);
       });
       const execaMock = execa as jest.MockedFunction<typeof execa>;
       const execaNodeMock = execa.node as jest.MockedFunction<
@@ -122,7 +124,7 @@ describe('ChunksToHermesBytecodePlugin', () => {
               .catch(reject);
           }
         );
-        pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
+        pluginInstance.apply(compilerMock as unknown as rspack.Compiler);
       });
 
       const execaMock = execa as jest.MockedFunction<typeof execa>;

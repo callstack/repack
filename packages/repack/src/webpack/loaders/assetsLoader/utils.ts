@@ -1,82 +1,74 @@
-import path from 'path';
+import path from 'node:path';
 import imageSize from 'image-size';
-import escapeStringRegexp from 'escape-string-regexp';
-import { LoaderContext } from 'webpack';
-import { Options } from './options';
-import type { ImageSize } from './types';
-
-export function getFilesInDirectory(
-  dirname: string,
-  fs: LoaderContext<Options>['fs']
-) {
-  return new Promise<string[]>((resolve, reject) =>
-    fs.readdir(dirname, (error, results) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(
-          (results as Array<any> | undefined)?.filter(
-            (result) => typeof result === 'string'
-          ) ?? []
-        );
-      }
-    })
-  );
-}
+import type { Asset, AssetDimensions, CollectedScales } from './types';
 
 export function getScaleNumber(scaleKey: string) {
   return parseFloat(scaleKey.replace(/[^\d.]/g, ''));
 }
 
-export function readFile(filename: string, fs: LoaderContext<Options>['fs']) {
-  return new Promise<string | Buffer>((resolve, reject) => {
-    fs.readFile(filename, (error, results) => {
-      if (error) {
-        reject(error);
-      } else if (results) {
-        resolve(results);
-      } else {
-        reject(
-          new Error(
-            `Read file operation on ${filename} returned empty content.`
-          )
-        );
-      }
-    });
-  });
+/** Default asset is the one with scale that was originally requested in the loader */
+export function getDefaultAsset(assets: Asset[]) {
+  const defaultAsset = assets.find((asset) => asset.default === true);
+  if (!defaultAsset) {
+    throw new Error('Malformed assets array - no default asset found');
+  }
+  return defaultAsset;
 }
 
-export function getImageSize({
-  resourcePath,
-  resourceFilename,
-  suffixPattern,
+export function getAssetDimensions({
+  resourceData,
+  resourceScale,
 }: {
-  resourcePath: string;
-  resourceFilename: string;
-  suffixPattern: string;
-}): ImageSize | undefined {
-  let info: ImageSize | undefined;
+  resourceData: Buffer;
+  resourceScale: number;
+}): AssetDimensions | null {
   try {
-    info = imageSize(resourcePath);
-
-    const [, scaleMatch = ''] =
-      path
-        .basename(resourcePath)
-        .match(
-          new RegExp(`^${escapeStringRegexp(resourceFilename)}${suffixPattern}`)
-        ) ?? [];
-
-    if (scaleMatch) {
-      const scale = Number(scaleMatch.replace(/[^\d.]/g, ''));
-
-      if (typeof scale === 'number' && Number.isFinite(scale)) {
-        info.width && (info.width /= scale);
-        info.height && (info.height /= scale);
-      }
+    const info = imageSize(resourceData);
+    if (!info.width || !info.height) {
+      return null;
     }
+    return {
+      width: info.width / resourceScale,
+      height: info.height / resourceScale,
+    };
   } catch {
-    // Asset is not an image
+    return null;
+  }
+}
+
+export async function collectScales(
+  resourceAbsoluteDirname: string,
+  resourceFilename: string,
+  resourceExtension: string,
+  scalableAssetExtensions: string[],
+  scalableAssetResolutions: string[],
+  readDirAsync: (path: string) => Promise<string[]>
+): Promise<CollectedScales> {
+  // NOTE: assets can't have platform extensions!
+  // NOTE: this probably needs to handle nonscalable too
+  if (!scalableAssetExtensions.includes(resourceExtension)) {
+    return { '@1x': resourceFilename + '.' + resourceExtension };
   }
 
-  return info;
+  // explicit scales
+  const candidates = scalableAssetResolutions.map((scaleKey) => {
+    const scale = '@' + scaleKey + 'x';
+    return [scale, resourceFilename + scale + '.' + resourceExtension];
+  });
+  // implicit 1x scale
+  candidates.push(['@1x', resourceFilename + '.' + resourceExtension]);
+
+  const contents = await readDirAsync(resourceAbsoluteDirname);
+  const entries = new Set(contents);
+
+  const collectedScales: Record<string, string> = {};
+  for (const candidate of candidates) {
+    const [scaleKey, candidateFilename] = candidate;
+    if (entries.has(candidateFilename)) {
+      const filepath = path.join(resourceAbsoluteDirname, candidateFilename);
+      collectedScales[scaleKey] = filepath;
+    }
+  }
+
+  return collectedScales;
 }

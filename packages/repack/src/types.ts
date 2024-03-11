@@ -1,40 +1,16 @@
-import webpack from 'webpack';
+import rspack from '@rspack/core';
 
 export type Rule = string | RegExp;
 
-export interface Fallback<T> {
-  fallback: T | (() => T);
-}
-
-/**
- * Represent interface of Webpack logger.
- * See: https://webpack.js.org/api/logging/
- */
-export type WebpackLogger = ReturnType<
-  webpack.Compiler['getInfrastructureLogger']
+export type InfrastructureLogger = ReturnType<
+  rspack.Compiler['getInfrastructureLogger']
 >;
-
-/**
- * Interface that all Webpack plugins should implement.
- */
-export interface WebpackPlugin {
-  /**
-   * Entry point for a plugin. It should perform any kind of setup or initialization
-   * hook into compiler's events.
-   *
-   * @param compiler Webpack compiler instance.
-   */
-  apply(compiler: webpack.Compiler): void;
-}
-
 /**
  * Common CLI arguments that are used across all commands.
  *
  * @internal
  */
 export interface CommonArguments {
-  /** Target application platform. */
-  platform: string;
   /** Whether to clean any persistent cache. */
   resetCache?: boolean;
   /** Whether to log additional debug messages. */
@@ -51,6 +27,7 @@ export interface CommonArguments {
 export interface BundleArguments extends CommonArguments {
   assetsDest?: string;
   entryFile: string;
+  platform: string;
   json?: string;
   minify?: boolean;
   dev: boolean;
@@ -59,7 +36,7 @@ export interface BundleArguments extends CommonArguments {
   sourcemapOutput?: string;
   // sourcemapSourcesRoot?: string;
   // sourcemapUseAbsolutePath: boolean;
-  stats?: string;
+  stats?: Exclude<rspack.StatsValue, Record<any, any> | boolean>;
 }
 
 /**
@@ -68,6 +45,7 @@ export interface BundleArguments extends CommonArguments {
  * @internal
  */
 export interface StartArguments extends CommonArguments {
+  platforms?: string[];
   cert?: string;
   host?: string;
   https?: boolean;
@@ -79,29 +57,31 @@ export interface StartArguments extends CommonArguments {
   json?: boolean;
   reversePort?: boolean;
   logFile?: string;
+  logRequests?: boolean;
   experimentalDebugger?: boolean;
 }
 
-/**
- * Holds all information used by {@link parseCliOptions}.
- *
- * @internal
- */
-export interface CliOptions {
+interface CommonCliOptions {
   config: {
     root: string;
     reactNativePath: string;
     webpackConfigPath: string;
   };
-  command: 'bundle' | 'start';
-  arguments:
-    | {
-        bundle: BundleArguments;
-      }
-    | {
-        start: StartArguments;
-      };
 }
+
+export interface StartCliOptions extends CommonCliOptions {
+  command: 'start';
+  arguments: {
+    start: Omit<StartArguments, 'platforms'> & { platforms: string[] };
+  };
+}
+
+export interface BundleCliOptions extends CommonCliOptions {
+  command: 'bundle';
+  arguments: { bundle: BundleArguments };
+}
+
+export type CliOptions = StartCliOptions | BundleCliOptions;
 
 /**
  * Development server configuration options.
@@ -143,7 +123,7 @@ export interface DevServerOptions {
  *
  * This is the return type of {@link parseCliOptions}.
  */
-export interface WebpackEnvOptions {
+export interface EnvOptions {
   /** Compilation mode. */
   mode?: 'production' | 'development';
 
@@ -191,9 +171,8 @@ export interface HMRMessageBody {
   name: string;
   time: number;
   hash: string;
-  warnings: webpack.StatsCompilation['warnings'];
-  errors: webpack.StatsCompilation['errors'];
-  modules: Record<string, string>;
+  warnings: rspack.StatsCompilation['warnings'];
+  errors: rspack.StatsCompilation['errors'];
 }
 
 /**

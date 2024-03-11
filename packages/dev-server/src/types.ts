@@ -24,7 +24,7 @@ export namespace Server {
     experiments?: Experiments;
 
     /** Function to create a delegate, which implements crucial functionalities. */
-    delegate: (context: DelegateContext) => Delegate;
+    delegate: (context: DelegateContext) => Promise<Delegate>;
   }
 
   export interface Experiments {
@@ -56,6 +56,9 @@ export namespace Server {
 
     /** Additional endpoints with pre-configured servers */
     endpoints?: Record<string, WebSocketServer>;
+
+    /** Whether to enable logging requests. */
+    logRequests?: boolean;
   }
 
   /**
@@ -181,23 +184,6 @@ export namespace Server {
     }
   }
 }
-
-/** Representation of the compilation progress. */
-export interface ProgressData {
-  /** Number of modules built. */
-  completed: number;
-
-  /** Total number of modules detect as part of compilation. */
-  total: number;
-}
-
-/**
- * Type representing a function to send the progress.
- *
- * Used by {@link CompilerDelegate} in `getAsset` function to send the compilation
- * progress to the client who requested the asset.
- */
-export type SendProgress = (data: ProgressData) => void;
 
 /**
  * Internal types. Do not use.

@@ -175,11 +175,11 @@ const webpackConfigOption = {
   parse: (val) => path.resolve(val),
   default: (config) => {
     const {
-      getWebpackConfigPath,
-    } = require('./dist/commands/utils/getWebpackConfigPath');
+      getConfigFilePath,
+    } = require('./dist/commands/utils/getConfigFilePath');
 
     try {
-      return getWebpackConfigPath(config.root);
+      return getConfigFilePath(config.root);
     } catch {
       return '';
     }
