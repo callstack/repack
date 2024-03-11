@@ -1,7 +1,7 @@
-import { validateSchema } from 'webpack';
-import utils, { LoaderContext } from 'loader-utils';
+import { validate } from 'schema-utils';
+import { LoaderContext } from '@rspack/core';
 
-export interface Options {
+export interface AssetLoaderOptions {
   platform: string;
   scalableAssetExtensions: string[];
   devServerEnabled?: boolean;
@@ -13,7 +13,7 @@ export interface Options {
   };
 }
 
-type Schema = Parameters<typeof validateSchema>[0];
+type Schema = Parameters<typeof validate>[0];
 
 export const optionsSchema: Schema = {
   type: 'object',
@@ -39,10 +39,12 @@ export const optionsSchema: Schema = {
   },
 };
 
-export function getOptions(loaderContext: LoaderContext): Options {
-  const options = utils.getOptions(loaderContext) || {};
+export function getOptions(
+  loaderContext: LoaderContext<AssetLoaderOptions>
+): AssetLoaderOptions {
+  const options = loaderContext.getOptions(loaderContext) || {};
 
-  validateSchema(optionsSchema, options, { name: 'repackAssetsLoader' });
+  validate(optionsSchema, options, { name: 'repackAssetsLoader' });
 
-  return options as unknown as Options;
+  return options;
 }

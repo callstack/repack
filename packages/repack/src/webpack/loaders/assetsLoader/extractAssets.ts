@@ -1,7 +1,7 @@
 import path from 'path';
 import dedent from 'dedent';
 import hasha from 'hasha';
-import type { WebpackLogger } from '../../../types';
+import type { InfrastructureLogger } from '../../../types';
 import type { Asset } from './types';
 import { getImageSize } from './utils';
 
@@ -29,7 +29,7 @@ export async function extractAssets(
     publicPath?: string;
     devServerEnabled?: boolean;
   },
-  logger: WebpackLogger
+  logger: InfrastructureLogger
 ) {
   let publicPath = path
     .join(assetsDirname, resourceDirname)
@@ -53,12 +53,15 @@ export async function extractAssets(
     suffixPattern,
   });
 
-  logger.debug(`Extracted assets for request ${resourcePath}`, {
-    hashes,
-    publicPath: customPublicPath,
-    height: size?.height,
-    width: size?.width,
-  });
+  logger.debug(
+    `Extracted assets for request ${resourcePath}`,
+    JSON.stringify({
+      hashes,
+      publicPath: customPublicPath,
+      height: size?.height,
+      width: size?.width,
+    })
+  );
 
   return dedent`
     var AssetRegistry = require('react-native/Libraries/Image/AssetRegistry');

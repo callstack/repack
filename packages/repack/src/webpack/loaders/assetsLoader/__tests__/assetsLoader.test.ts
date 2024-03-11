@@ -1,9 +1,9 @@
 import vm from 'vm';
 import fs from 'fs';
 import path from 'path';
-import webpack from 'webpack';
+import { rspack } from '@rspack/core';
 import memfs from 'memfs';
-import VirtualModulesPlugin from 'webpack-virtual-modules';
+import { RspackVirtualModulePlugin } from 'rspack-plugin-virtual-module';
 import { AssetsResolverPlugin } from '../../../plugins/AssetsResolverPlugin';
 import {
   ASSET_EXTENSIONS,
@@ -20,7 +20,7 @@ async function compileBundle(
     publicPath: string;
   }
 ) {
-  const compiler = webpack({
+  const compiler = rspack({
     context: __dirname,
     mode: 'development',
     devtool: false,
@@ -46,10 +46,11 @@ async function compileBundle(
       ],
     },
     plugins: [
+      // @ts-expect-error AssetResolverPlugin is not migrated yet
       new AssetsResolverPlugin({
         platform,
       }),
-      new VirtualModulesPlugin({
+      new RspackVirtualModulePlugin({
         'node_modules/react-native/Libraries/Image/AssetRegistry.js':
           'module.exports = { registerAsset: (spec) => spec };',
         'node_modules/react-native/Libraries/Utilities/PixelRatio.js':
@@ -80,6 +81,7 @@ async function compileBundle(
   });
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
+  // @ts-expect-error memfs is compatible enough
   compiler.outputFileSystem = fileSystem;
 
   return await new Promise<{ code: string; fileSystem: memfs.IFs }>(

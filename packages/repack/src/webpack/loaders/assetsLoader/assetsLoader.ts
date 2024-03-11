@@ -1,7 +1,7 @@
 import path from 'path';
-import type { LoaderContext } from 'loader-utils';
+import type { LoaderContext } from '@rspack/core';
 import { AssetResolver } from '../../plugins/AssetsResolverPlugin/AssetResolver';
-import { getOptions } from './options';
+import { getOptions, AssetLoaderOptions } from './options';
 import { extractAssets } from './extractAssets';
 import { inlineAssets } from './inlineAssets';
 import { convertToRemoteAssets } from './convertToRemoteAssets';
@@ -15,7 +15,9 @@ const testMP4 = /\.(mp4)$/;
 const testImages = /\.(png|jpg|gif|webp)$/;
 const testFonts = /\.(ttf|otf|ttc)$/;
 
-export default async function repackAssetsLoader(this: LoaderContext) {
+export default async function repackAssetsLoader(
+  this: LoaderContext<AssetLoaderOptions>
+) {
   this.cacheable();
 
   const callback = this.async();
@@ -168,20 +170,23 @@ export default async function repackAssetsLoader(this: LoaderContext) {
       })
     );
 
-    logger.debug(`Resolved request ${this.resourcePath}`, {
-      platform: options.platform,
-      rootContext,
-      resourceNormalizedFilename,
-      resourceFilename,
-      resourceDirname,
-      resourceAbsoluteDirname,
-      resourceExtensionType,
-      scales,
-      assets: assets.map((asset) => ({
-        ...asset,
-        content: `size=${asset.content?.length} type=${typeof asset.content}`,
-      })),
-    });
+    logger.debug(
+      `Resolved request ${this.resourcePath}`,
+      JSON.stringify({
+        platform: options.platform,
+        rootContext,
+        resourceNormalizedFilename,
+        resourceFilename,
+        resourceDirname,
+        resourceAbsoluteDirname,
+        resourceExtensionType,
+        scales,
+        assets: assets.map((asset) => ({
+          ...asset,
+          content: `size=${asset.content?.length} type=${typeof asset.content}`,
+        })),
+      })
+    );
 
     if (options.inline) {
       logger.debug(`Inlining assets for request ${resourcePath}`);
