@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
-import webpack from 'webpack';
-import { WebpackLogger } from '../../../types';
+import rspack from '@rspack/core';
+import { InfrastructureLogger } from '../../../types';
 
 export class AssetsCopyProcessor {
   queue: Array<() => Promise<void>> = [];
@@ -14,7 +14,7 @@ export class AssetsCopyProcessor {
       bundleOutputDir: string;
       sourcemapOutput: string;
       assetsDest: string;
-      logger: WebpackLogger;
+      logger: InfrastructureLogger;
     },
     private filesystem: Pick<
       typeof fs,
@@ -29,7 +29,7 @@ export class AssetsCopyProcessor {
   }
 
   enqueueChunk(
-    chunk: webpack.StatsChunk,
+    chunk: rspack.StatsChunk,
     { isEntry, sourceMapFile }: { isEntry: boolean; sourceMapFile?: string }
   ) {
     const {
