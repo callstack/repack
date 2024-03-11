@@ -1,16 +1,15 @@
-import webpack from 'webpack';
-import type { WebpackPlugin } from '../../types';
+import rspack, { RspackPluginInstance } from '@rspack/core';
 
 /**
  * @category Webpack Plugin
  */
-export class ManifestPlugin implements WebpackPlugin {
+export class ManifestPlugin implements RspackPluginInstance {
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: rspack.Compiler) {
     compiler.hooks.compilation.tap('TargetPlugin', (compilation) => {
       compilation.hooks.afterProcessAssets.tap('TargetPlugin', () => {
         for (const chunk of compilation.chunks) {
@@ -22,12 +21,13 @@ export class ManifestPlugin implements WebpackPlugin {
           };
 
           if (manifest.files.length) {
-            const manifestFile = `${manifest.files[0]}.json`;
-            chunk.auxiliaryFiles.add(manifestFile);
-            compilation.emitAsset(
-              manifestFile,
-              new webpack.sources.RawSource(JSON.stringify(manifest))
-            );
+            // TODO Fix this - right now adding to auxiliaryFiles is not supported
+            // const manifestFile = `${manifest.files[0]}.json`;
+            // chunk.auxiliaryFiles.add(manifestFile);
+            // compilation.emitAsset(
+            //   manifestFile,
+            //   new rspack.sources.RawSource(JSON.stringify(manifest))
+            // );
           }
         }
       });
