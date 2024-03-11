@@ -69,6 +69,7 @@
     "escape-string-regexp": "^4.0.0",
     "events": "^3.3.0",
     "execa": "^5.0.0",
+    "flow-remove-types": "^2.230.0",
     "fs-extra": "^10.0.0",
     "hash.js": "^1.1.7",
     "hasha": "^5.2.2",
