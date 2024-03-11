@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
-import webpack from 'webpack';
-import { WebpackLogger } from '../../../../types';
+import rspack from '@rspack/core';
+import { InfrastructureLogger } from '../../../../types';
 import { AssetsCopyProcessor } from '../AssetsCopyProcessor';
 
 jest.mock('fs-extra');
@@ -15,7 +15,7 @@ describe('AssetsCopyProcessor', () => {
       sourcemapOutput:
         '/target/ios/build/Release-iphonesimulator/main.jsbundle.map',
       assetsDest: '/target/ios/build/Release-iphonesimulator/App.app',
-      logger: { debug: jest.fn() } as unknown as WebpackLogger,
+      logger: { debug: jest.fn() } as unknown as InfrastructureLogger,
     };
 
     it("should copy entry chunk's files into correct directories", async () => {
@@ -44,7 +44,7 @@ describe('AssetsCopyProcessor', () => {
             'assets/node_modules/react-native/libraries/newappscreen/components/logo.png',
             'index.bundle.map',
           ],
-        } as unknown as webpack.StatsChunk,
+        } as unknown as rspack.StatsChunk,
         { isEntry: true, sourceMapFile: 'index.bundle.map' }
       );
       await Promise.all(acp.execute());
@@ -90,7 +90,7 @@ describe('AssetsCopyProcessor', () => {
             'src_Async_js.chunk.bundle.map',
             'src_Async_js.chunk.bundle.json',
           ],
-        } as unknown as webpack.StatsChunk,
+        } as unknown as rspack.StatsChunk,
         { isEntry: false, sourceMapFile: 'src_Async_js.chunk.bundle.map' }
       );
       await Promise.all(acp.execute());
@@ -123,7 +123,7 @@ describe('AssetsCopyProcessor', () => {
       sourcemapOutput:
         '/target/generated/sourcemaps/react/release/index.android.bundle.map',
       assetsDest: '/target/generated/res/react/release',
-      logger: { debug: jest.fn() } as unknown as WebpackLogger,
+      logger: { debug: jest.fn() } as unknown as InfrastructureLogger,
     };
 
     it("should copy entry chunk's files into correct directories", async () => {
@@ -150,7 +150,7 @@ describe('AssetsCopyProcessor', () => {
             'drawable-mdpi/node_modules_reactnative_libraries_newappscreen_components_logo.png',
             'index.bundle.map',
           ],
-        } as unknown as webpack.StatsChunk,
+        } as unknown as rspack.StatsChunk,
         { isEntry: true, sourceMapFile: 'index.bundle.map' }
       );
       await Promise.all(acp.execute());
@@ -195,7 +195,7 @@ describe('AssetsCopyProcessor', () => {
             'src_Async_js.chunk.bundle.map',
             'src_Async_js.chunk.bundle.json',
           ],
-        } as unknown as webpack.StatsChunk,
+        } as unknown as rspack.StatsChunk,
         { isEntry: false, sourceMapFile: 'src_Async_js.chunk.bundle.map' }
       );
       await Promise.all(acp.execute());

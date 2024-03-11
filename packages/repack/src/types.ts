@@ -2,6 +2,9 @@ import rspack from '@rspack/core';
 
 export type Rule = string | RegExp;
 
+export type InfrastructureLogger = ReturnType<
+  rspack.Compiler['getInfrastructureLogger']
+>;
 /**
  * Common CLI arguments that are used across all commands.
  *

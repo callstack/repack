@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { WebpackLogger } from '../../../types';
+import { InfrastructureLogger } from '../../../types';
 
 export class AuxiliaryAssetsCopyProcessor {
   queue: Array<() => Promise<void>> = [];
@@ -10,7 +10,7 @@ export class AuxiliaryAssetsCopyProcessor {
       platform: string;
       outputPath: string;
       assetsDest: string;
-      logger: WebpackLogger;
+      logger: InfrastructureLogger;
     },
     private filesystem: Pick<
       typeof fs,
