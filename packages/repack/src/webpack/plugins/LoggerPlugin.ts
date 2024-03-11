@@ -1,4 +1,4 @@
-import webpack from 'webpack';
+import rspack, { RspackPluginInstance } from '@rspack/core';
 import { isVerbose, isWorker } from '../../env';
 import {
   composeReporters,
@@ -8,7 +8,6 @@ import {
   LogEntry,
   LogType,
 } from '../../logging';
-import type { WebpackPlugin } from '../../types';
 
 export type GenericFilter = Array<string | RegExp>;
 
@@ -37,7 +36,7 @@ export interface LoggerPluginConfig {
  *
  * @category Webpack Plugin
  */
-export class LoggerPlugin implements WebpackPlugin {
+export class LoggerPlugin implements RspackPluginInstance {
   private static SUPPORTED_TYPES: string[] = ['debug', 'info', 'warn', 'error'];
 
   /** {@link Reporter} instance used to actually writing logs to terminal/file. */
@@ -123,29 +122,13 @@ export class LoggerPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: rspack.Compiler) {
     // Make sure webpack-cli doesn't print stats by default.
     if (compiler.options.stats === undefined) {
       compiler.options.stats = 'none';
     }
 
-    if (this.config.devServerEnabled) {
-      new webpack.ProgressPlugin((percentage, message, text) => {
-        const entry = this.createEntry('LoggerPlugin', 'info', [
-          {
-            progress: {
-              value: percentage,
-              label: message,
-              message: text,
-              platform: this.config.platform,
-            },
-          },
-        ]);
-        if (entry) {
-          this.processEntry(entry);
-        }
-      }).apply(compiler);
-    }
+    // TODO Add support for progress plugin
 
     compiler.hooks.infrastructureLog.tap(
       'LoggerPlugin',
@@ -209,7 +192,7 @@ export class LoggerPlugin implements WebpackPlugin {
         }
       } else {
         const statsEntry = this.createEntry('LoggerPlugin', 'info', [
-          stats.toString('all'),
+          stats.toString({ all: true }),
         ]);
         if (statsEntry) {
           this.processEntry(statsEntry);
