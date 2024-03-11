@@ -1,4 +1,4 @@
-import { container } from 'webpack';
+import { container } from '@rspack/core';
 import { ModuleFederationPlugin } from '../ModuleFederationPlugin';
 import { Federated } from '../../federated';
 
@@ -13,6 +13,7 @@ jest.mock('webpack', () => ({
 describe('ModuleFederationPlugin', () => {
   it('should replace RemotesObject remotes', () => {
     new ModuleFederationPlugin({
+      name: 'test',
       remotes: {
         external: 'external1@dynamic',
       },
@@ -24,6 +25,7 @@ describe('ModuleFederationPlugin', () => {
     (container.ModuleFederationPlugin as jest.Mock).mockClear();
 
     new ModuleFederationPlugin({
+      name: 'test',
       remotes: {
         external: ['external1@dynamic', 'external2@dynamic'],
       },
@@ -37,6 +39,7 @@ describe('ModuleFederationPlugin', () => {
 
   it('should replace string[] remotes', () => {
     new ModuleFederationPlugin({
+      name: 'test',
       remotes: ['remote1@dynamic', 'remote2@dynamic'],
     }).apply(jest.fn() as any);
 
@@ -49,13 +52,10 @@ describe('ModuleFederationPlugin', () => {
 
   it('should replace RemotesObject[] remotes', () => {
     new ModuleFederationPlugin({
+      name: 'test',
       remotes: [
-        {
-          external: 'external1@dynamic',
-        },
-        {
-          external: ['external2@dynamic', 'external3@dynamic'],
-        },
+        { external: 'external1@dynamic' },
+        { external: ['external2@dynamic', 'external3@dynamic'] },
       ],
     }).apply(jest.fn() as any);
 
@@ -69,6 +69,7 @@ describe('ModuleFederationPlugin', () => {
 
   it('should not add default resolver for remote', () => {
     new ModuleFederationPlugin({
+      name: 'test',
       remotes: {
         app1: 'app1@dynamic',
       },
@@ -82,6 +83,7 @@ describe('ModuleFederationPlugin', () => {
 
   it('should add default resolver for remote', () => {
     new ModuleFederationPlugin({
+      name: 'test',
       remotes: {
         app1: 'app1@http://localhost:6789/static/app1.container.bundle',
       },
@@ -100,7 +102,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should add default shared dependencies', () => {
-    new ModuleFederationPlugin({}).apply(jest.fn() as any);
+    new ModuleFederationPlugin({ name: 'test' }).apply(jest.fn() as any);
     const config = (container.ModuleFederationPlugin as jest.Mock).mock
       .calls[0][0];
     expect(config.shared).toHaveProperty('react');
@@ -110,9 +112,10 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should not add deep imports to defaulted shared dependencies', () => {
-    new ModuleFederationPlugin({ reactNativeDeepImports: false }).apply(
-      jest.fn() as any
-    );
+    new ModuleFederationPlugin({
+      name: 'test',
+      reactNativeDeepImports: false,
+    }).apply(jest.fn() as any);
     const config = (container.ModuleFederationPlugin as jest.Mock).mock
       .calls[0][0];
     expect(config.shared).toHaveProperty('react');
@@ -123,6 +126,7 @@ describe('ModuleFederationPlugin', () => {
 
   it('should add deep imports to existing shared dependencies', () => {
     new ModuleFederationPlugin({
+      name: 'test',
       shared: {
         react: Federated.SHARED_REACT,
         'react-native': Federated.SHARED_REACT_NATIVE,
@@ -136,6 +140,7 @@ describe('ModuleFederationPlugin', () => {
 
   it('should not add deep imports to existing shared dependencies', () => {
     new ModuleFederationPlugin({
+      name: 'test',
       reactNativeDeepImports: false,
       shared: {
         react: Federated.SHARED_REACT,
@@ -150,6 +155,7 @@ describe('ModuleFederationPlugin', () => {
 
   it('should not add deep imports to existing shared dependencies when react-native is not present', () => {
     new ModuleFederationPlugin({
+      name: 'test',
       shared: {
         react: Federated.SHARED_REACT,
       },
@@ -162,6 +168,7 @@ describe('ModuleFederationPlugin', () => {
 
   it('should add deep imports to existing shared dependencies array', () => {
     new ModuleFederationPlugin({
+      name: 'test',
       shared: ['react', 'react-native'],
     }).apply(jest.fn() as any);
     const config = (container.ModuleFederationPlugin as jest.Mock).mock
@@ -172,6 +179,7 @@ describe('ModuleFederationPlugin', () => {
 
   it('should not duplicate or override existing deep imports', () => {
     new ModuleFederationPlugin({
+      name: 'test',
       shared: {
         react: Federated.SHARED_REACT,
         'react-native': Federated.SHARED_REACT_NATIVE,
@@ -190,6 +198,7 @@ describe('ModuleFederationPlugin', () => {
 
   it('should determine eager based on shared react-native config', () => {
     new ModuleFederationPlugin({
+      name: 'test',
       shared: {
         react: { singleton: true, eager: true },
         'react-native': { singleton: true, eager: false },

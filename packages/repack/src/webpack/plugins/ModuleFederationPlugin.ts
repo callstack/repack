@@ -1,12 +1,11 @@
-import { Compiler, container } from 'webpack';
-import type { WebpackPlugin } from '../../types';
+import rspack, { RspackPluginInstance } from '@rspack/core';
 import { Federated } from '../federated';
 
 type ModuleFederationPluginOptions =
-  typeof container.ModuleFederationPlugin extends {
+  typeof rspack.container.ModuleFederationPlugin extends {
     new (
       options: infer O
-    ): InstanceType<typeof container.ModuleFederationPlugin>;
+    ): InstanceType<typeof rspack.container.ModuleFederationPlugin>;
   }
     ? O
     : never;
@@ -108,7 +107,7 @@ export interface ModuleFederationPluginConfig
  *
  * @category Webpack Plugin
  */
-export class ModuleFederationPlugin implements WebpackPlugin {
+export class ModuleFederationPlugin implements RspackPluginInstance {
   constructor(private config: ModuleFederationPluginConfig) {
     this.config.reactNativeDeepImports =
       this.config.reactNativeDeepImports ?? true;
@@ -234,7 +233,7 @@ export class ModuleFederationPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: Compiler) {
+  apply(compiler: rspack.Compiler) {
     const remotes = Array.isArray(this.config.remotes)
       ? this.config.remotes.map((remote) => this.replaceRemotes(remote))
       : this.replaceRemotes(this.config.remotes ?? {});
@@ -243,7 +242,7 @@ export class ModuleFederationPlugin implements WebpackPlugin {
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
 
-    new container.ModuleFederationPlugin({
+    new rspack.container.ModuleFederationPlugin({
       exposes: this.config.exposes,
       filename:
         this.config.filename ?? this.config.exposes
