@@ -347,6 +347,9 @@ importers:
       execa:
         specifier: ^5.0.0
         version: 5.1.1
+      flow-remove-types:
+        specifier: ^2.230.0
+        version: 2.237.2
       fs-extra:
         specifier: ^10.0.0
         version: 10.1.0
@@ -4223,6 +4226,11 @@ packages:
     resolution: {integrity: sha512-HVzoK3r6Vsg+lKvlIZzaWNBVai+FXTX1wdYhz/wVlH13tb/gOdLXmlTqy6odmTBhT5UoWUbq0k8263Qhr9d88w==}
     engines: {node: '>=0.4.0'}
 
+  flow-remove-types@2.237.2:
+    resolution: {integrity: sha512-jdItmXv5HBjrNSvP8ivbSdmnqYGKfgMJayoGlmgB309fifqxNhY8HHCZxu4xC0Qk32ZB4WI74i0EHZOGXWzOmg==}
+    engines: {node: '>=4'}
+    hasBin: true
+
   follow-redirects@1.15.1:
     resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
     engines: {node: '>=4.0'}
@@ -4484,6 +4492,9 @@ packages:
   hermes-estree@0.20.1:
     resolution: {integrity: sha512-SQpZK4BzR48kuOg0v4pb3EAGNclzIlqMj3Opu/mu7bbAoFw6oig6cEt/RAi0zTFW/iW6Iz9X9ggGuZTAZ/yZHg==}
 
+  hermes-estree@0.21.0:
+    resolution: {integrity: sha512-nFKvwIBMg+u/Ofbc/jNuFUVu8vKb2gxkl0+wCgKootBLGbDWeZzznDnbaDpYvJKTRw2NlZk7oan3yucTGfo1aA==}
+
   hermes-parser@0.18.2:
     resolution: {integrity: sha512-1eQfvib+VPpgBZ2zYKQhpuOjw1tH+Emuib6QmjkJWJMhyjM8xnXMvA+76o9LhF0zOAJDZgPfQhg43cyXEyl5Ew==}
 
@@ -4492,6 +4503,9 @@ packages:
 
   hermes-parser@0.20.1:
     resolution: {integrity: sha512-BL5P83cwCogI8D7rrDCgsFY0tdYUtmFP9XaXtl2IQjC+2Xo+4okjfXintlTxcIwl4qeGddEl28Z11kbVIw0aNA==}
+
+  hermes-parser@0.21.0:
+    resolution: {integrity: sha512-YKRYs6ufKDQ1VWMbnLBrsGxA7xRDhgrlrMoMD1jWNoV0NiIWVRM5OuRfGXsGj2tQhOngH/6VKVjeMkuwKyqF+w==}
 
   hermes-profile-transformer@0.0.6:
     resolution: {integrity: sha512-cnN7bQUm65UWOy6cbGcCcZ3rpwW8Q/j4OP5aWRhEry4Z2t2aR1cjrbp0BS+KiBN0smvP1caBgAuxutvyvJILzQ==}
@@ -5792,6 +5806,10 @@ packages:
   node-int64@0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
 
+  node-modules-regexp@1.0.0:
+    resolution: {integrity: sha512-JMaRS9L4wSRIR+6PTVEikTrq/lMGEZR43a48ETeilY0Q0iMwVnccMFrUM1k+tNzmYuIU0Vh710bCUqHX+/+ctQ==}
+    engines: {node: '>=0.10.0'}
+
   node-releases@2.0.14:
     resolution: {integrity: sha512-y10wOWt8yZpqXmOgRo77WaHEmhYQYGNA6y421PKsKYWEK8aW+cqAphborZDhqfyKrbZEN92CN1X2KbafY2s7Yw==}
 
@@ -6067,6 +6085,10 @@ packages:
   pino@8.16.1:
     resolution: {integrity: sha512-3bKsVhBmgPjGV9pyn4fO/8RtoVDR8ssW1ev819FsRXlRNgW8gR/9Kx+gCK4UPWd4JjrRDLWpzd/pb1AyWm3MGA==}
     hasBin: true
+
+  pirates@3.0.2:
+    resolution: {integrity: sha512-c5CgUJq6H2k6MJz72Ak1F5sN9n9wlSlJyEnwvpm9/y3WB4E3pHBDT2c6PEiS1vyJvq2bUxUAIu0EGf8Cx4Ic7Q==}
+    engines: {node: '>= 4'}
 
   pirates@4.0.5:
     resolution: {integrity: sha512-8V9+HQPupnaXMA23c5hvl69zXvTwTzyAYasnkb0Tts4XvO4CliqONMOnvlq26rkhLC3nWDFBJf73LU1e1VZLaQ==}
@@ -7360,6 +7382,9 @@ packages:
         optional: true
       jsdom:
         optional: true
+
+  vlq@0.2.3:
+    resolution: {integrity: sha512-DRibZL6DsNhIgYQ+wNdWDL2SL3bKPlVrRiBqV5yuMm++op8W4kGFtaQfCs4KEJn0wBZcHVHJ3eoywX8983k1ow==}
 
   vlq@1.0.1:
     resolution: {integrity: sha512-gQpnTgkubC6hQgdIcRdYGDSDc+SaujOdyesZQMv6JlfQee/9Mp0Qhnys6WxDWvQnL5WZdT7o2Ul187aSt0Rq+w==}
@@ -12564,6 +12589,12 @@ snapshots:
 
   flow-parser@0.206.0: {}
 
+  flow-remove-types@2.237.2:
+    dependencies:
+      hermes-parser: 0.21.0
+      pirates: 3.0.2
+      vlq: 0.2.3
+
   follow-redirects@1.15.1: {}
 
   for-each@0.3.3:
@@ -12879,6 +12910,8 @@ snapshots:
 
   hermes-estree@0.20.1: {}
 
+  hermes-estree@0.21.0: {}
+
   hermes-parser@0.18.2:
     dependencies:
       hermes-estree: 0.18.2
@@ -12890,6 +12923,10 @@ snapshots:
   hermes-parser@0.20.1:
     dependencies:
       hermes-estree: 0.20.1
+
+  hermes-parser@0.21.0:
+    dependencies:
+      hermes-estree: 0.21.0
 
   hermes-profile-transformer@0.0.6:
     dependencies:
@@ -14803,6 +14840,8 @@ snapshots:
 
   node-int64@0.4.0: {}
 
+  node-modules-regexp@1.0.0: {}
+
   node-releases@2.0.14: {}
 
   node-stream-zip@1.15.0: {}
@@ -15108,6 +15147,10 @@ snapshots:
       safe-stable-stringify: 2.3.1
       sonic-boom: 3.7.0
       thread-stream: 2.4.1
+
+  pirates@3.0.2:
+    dependencies:
+      node-modules-regexp: 1.0.0
 
   pirates@4.0.5: {}
 
@@ -16625,6 +16668,8 @@ snapshots:
       - sass
       - stylus
       - supports-color
+
+  vlq@0.2.3: {}
 
   vlq@1.0.1: {}
 
