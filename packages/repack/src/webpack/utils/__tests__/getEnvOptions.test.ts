@@ -1,9 +1,11 @@
-import { getWebpackEnvOptions } from '../getWebpackEnvOptions';
+/// <reference types="@types/jest" />
 
-describe('getWebpackEnvOptions', () => {
+import { getEnvOptions } from '../getEnvOptions';
+
+describe('getEnvOptions', () => {
   it('should return options for bundling', () => {
     expect(
-      getWebpackEnvOptions({
+      getEnvOptions({
         config: {
           root: '/x/y/z',
           reactNativePath: '/x/y/z/node_modules/react-native',
@@ -30,7 +32,7 @@ describe('getWebpackEnvOptions', () => {
     });
 
     expect(
-      getWebpackEnvOptions({
+      getEnvOptions({
         config: {
           root: '/x/y/z',
           reactNativePath: '/x/y/z/node_modules/react-native',
@@ -59,7 +61,7 @@ describe('getWebpackEnvOptions', () => {
 
   it('should return options for developing', () => {
     expect(
-      getWebpackEnvOptions({
+      getEnvOptions({
         config: {
           root: '/x/y/z',
           reactNativePath: '/x/y/z/node_modules/react-native',
@@ -68,7 +70,7 @@ describe('getWebpackEnvOptions', () => {
         command: 'start',
         arguments: {
           start: {
-            platform: '',
+            platforms: [],
           },
         },
       })
@@ -85,7 +87,7 @@ describe('getWebpackEnvOptions', () => {
     });
 
     expect(
-      getWebpackEnvOptions({
+      getEnvOptions({
         config: {
           root: '/x/y/z',
           reactNativePath: '/x/y/z/node_modules/react-native',
@@ -94,7 +96,7 @@ describe('getWebpackEnvOptions', () => {
         command: 'start',
         arguments: {
           start: {
-            platform: '',
+            platforms: [],
             port: 5000,
             host: 'local',
           },

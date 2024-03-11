@@ -1,14 +1,20 @@
 import path from 'path';
-import webpack from 'webpack';
-import type { DevServerOptions, WebpackPlugin } from '../../../types';
-import { RepackInitRuntimeModule } from './runtime/RepackInitRuntimeModule';
-import { RepackLoadScriptRuntimeModule } from './runtime/RepackLoadScriptRuntimeModule';
+import rspack, { RspackPluginInstance, ResolveAlias } from '@rspack/core';
+import type { DevServerOptions } from '../../../types';
+import { generateLoadScriptRuntimeModule } from './runtime/RepackLoadScriptRuntimeModule';
+import { generateRepackInitRuntimeModule } from './runtime/RepackInitRuntimeModule';
 
 /**
  * {@link RepackTargetPlugin} configuration options.
  */
 export interface RepackTargetPluginConfig
-  extends Pick<DevServerOptions, 'hmr'> {}
+  extends Pick<DevServerOptions, 'hmr'> {
+  /**
+   * Absolute location to JS file with initialization logic for React Native.
+   * Useful if you want to built for out-of-tree platforms.
+   */
+  initializeCoreLocation?: string;
+}
 
 /**
  * Plugin for tweaking the JavaScript runtime code to account for React Native environment.
@@ -18,7 +24,7 @@ export interface RepackTargetPluginConfig
  *
  * @category Webpack Plugin
  */
-export class RepackTargetPlugin implements WebpackPlugin {
+export class RepackTargetPlugin implements RspackPluginInstance {
   /**
    * Constructs new `RepackTargetPlugin`.
    *
@@ -26,74 +32,112 @@ export class RepackTargetPlugin implements WebpackPlugin {
    */
   constructor(private config?: RepackTargetPluginConfig) {}
 
+  private getReactNativePath(candidate: ResolveAlias[string] | undefined) {
+    if (typeof candidate === 'string') {
+      return candidate;
+    } else if (typeof candidate === 'object') {
+      const candidates = candidate.filter(Boolean) as string[];
+      if (candidates.length > 0) {
+        return candidates[0];
+      }
+    }
+    return require.resolve('react-native');
+  }
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: rspack.Compiler) {
     const globalObject = 'self';
     compiler.options.target = false;
     compiler.options.output.chunkLoading = 'jsonp';
     compiler.options.output.chunkFormat = 'array-push';
     compiler.options.output.globalObject = globalObject;
 
+    const reactNativePath = this.getReactNativePath(
+      compiler.options.resolve.alias?.['react-native']
+    );
+    const getPolyfills = require(
+      path.join(reactNativePath, 'rn-get-polyfills.js')
+    );
+    const entries = [
+      ...getPolyfills(),
+      this.config?.initializeCoreLocation ||
+        path.join(reactNativePath, 'Libraries/Core/InitializeCore.js'),
+      require.resolve('../../../modules/configurePublicPath'),
+    ];
+
+    // Add React-Native entries
+    for (const entry of entries) {
+      new rspack.EntryPlugin(compiler.context, entry, {
+        name: undefined,
+      }).apply(compiler);
+    }
+
     // Normalize global object.
-    new webpack.BannerPlugin({
+    new rspack.BannerPlugin({
       raw: true,
       entryOnly: true,
-      banner: webpack.Template.asString([
+      banner: rspack.Template.asString([
         `/******/ var ${globalObject} = ${globalObject} || this || new Function("return this")() || ({}); // repackGlobal'`,
         '/******/',
       ]),
     }).apply(compiler);
 
     // Replace React Native's HMRClient.js with custom Webpack-powered DevServerClient.
-    new webpack.NormalModuleReplacementPlugin(
-      /react-native.*?([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/,
-      function (resource) {
-        const request = require.resolve('../../../modules/DevServerClient');
-        const context = path.dirname(request);
-        resource.request = request;
-        resource.context = context;
-        resource.createData.resource = request;
-        resource.createData.context = context;
-      }
+    new rspack.NormalModuleReplacementPlugin(
+      /react-native.*?([/\\]+)Libraries[/\\]Utilities[/\\]HMRClient\.js$/,
+      require.resolve('../../../modules/DevServerClient')
     ).apply(compiler);
 
-    compiler.hooks.compilation.tap('RepackTargetPlugin', (compilation) => {
-      compilation.hooks.additionalTreeRuntimeRequirements.tap(
-        'RepackTargetPlugin',
-        (chunk, runtimeRequirements) => {
-          runtimeRequirements.add(webpack.RuntimeGlobals.startupOnlyAfter);
+    // ReactNativeTypes.js is flow type only module
+    new rspack.NormalModuleReplacementPlugin(
+      /react-native.*?([/\\]+)Libraries[/\\]Renderer[/\\]shims[/\\]ReactNativeTypes\.js$/,
+      require.resolve('../../../modules/EmptyModule')
+    ).apply(compiler);
 
-          // Add code initialize Re.Pack's runtime logic.
-          compilation.addRuntimeModule(
-            chunk,
-            new RepackInitRuntimeModule({
-              chunkId: chunk.id ?? undefined,
-              globalObject,
+    compiler.hooks.thisCompilation.tap('RepackTargetPlugin', (compilation) => {
+      compilation.hooks.runtimeModule.tap(
+        'RepackTargetPlugin',
+        (module, chunk) => {
+          // TODO determine if we need limit it to just the main chunk
+          /**
+           * We inject RePack's runtime modules only when load_script module is present.
+           * This module is injected when:
+           * 1. HMR is enabled
+           * 2. Dynamic import is used anywhere in the project
+           */
+          if (module.name === 'load_script') {
+            const loadScriptRuntimeModule = generateLoadScriptRuntimeModule(
+              chunk.id
+            );
+            const initRuntimeModule = generateRepackInitRuntimeModule({
+              chunkId: chunk.id,
               chunkLoadingGlobal: compiler.options.output.chunkLoadingGlobal!,
-              hmrEnabled:
-                compilation.options.mode === 'development' && this.config?.hmr,
-            })
-          );
+              globalObject: globalObject,
+              hmrEnabled: this.config?.hmr,
+            });
+
+            // combine both runtime modules
+            const repackRuntimeModule = Buffer.from(
+              `${loadScriptRuntimeModule}\n${initRuntimeModule}`,
+              'utf-8'
+            );
+
+            // inject runtime module
+            module.source!.source = repackRuntimeModule;
+          }
+
+          // Remove CSS runtime modules
+          if (
+            module.name === 'css_loading' ||
+            module.name === 'get css chunk filename'
+          ) {
+            module.source!.source = Buffer.from(`// noop`, 'utf-8');
+          }
         }
       );
-
-      // Overwrite Webpack's default load script runtime code with Re.Pack's implementation
-      // specific to React Native.
-      compilation.hooks.runtimeRequirementInTree
-        .for(webpack.RuntimeGlobals.loadScript)
-        .tap('RepackTargetPlugin', (chunk) => {
-          compilation.addRuntimeModule(
-            chunk,
-            new RepackLoadScriptRuntimeModule(chunk.id ?? undefined)
-          );
-
-          // Return `true` to make sure Webpack's default load script runtime is not added.
-          return true;
-        });
     });
   }
 }

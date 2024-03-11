@@ -1,6 +1,8 @@
+/// <reference types="@types/jest" />
+
 import fs from 'fs-extra';
 import { AuxiliaryAssetsCopyProcessor } from '../AuxiliaryAssetsCopyProcessor';
-import { WebpackLogger } from '../../../../types';
+import { InfrastructureLogger } from '../../../../types';
 
 jest.mock('fs-extra');
 
@@ -16,7 +18,7 @@ describe('AuxiliaryAssetsCopyProcessor', () => {
     const aacp = new AuxiliaryAssetsCopyProcessor(
       {
         platform: 'ios',
-        logger: { debug: jest.fn() } as unknown as WebpackLogger,
+        logger: { debug: jest.fn() } as unknown as InfrastructureLogger,
         outputPath: '/dist',
         assetsDest: '/target/ios/remote',
       },

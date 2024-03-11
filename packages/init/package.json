@@ -34,6 +34,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@inquirer/prompts": "^5.0.4",
     "@manypkg/find-root": "^2.2.1",
     "chalk": "^5.2.0",
     "dedent": "^0.7.0",

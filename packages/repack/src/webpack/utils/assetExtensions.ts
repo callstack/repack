@@ -12,6 +12,9 @@ export const SCALABLE_ASSETS = [
   'tiff',
 ];
 
+/** Resolutions array of all supported asset resolutions */
+export const SCALABLE_RESOLUTIONS = ['0.75', '1', '1.5', '2', '3', '4'];
+
 /** Extensions array of all supported assets by Re.Pack's Assets loader. */
 export const ASSET_EXTENSIONS = [
   ...SCALABLE_ASSETS,

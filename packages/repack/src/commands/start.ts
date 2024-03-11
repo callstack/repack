@@ -1,11 +1,10 @@
-import readline from 'readline';
-import { URL } from 'url';
-import webpack from 'webpack';
+import readline from 'node:readline';
+import { URL } from 'node:url';
 import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
-import { CliOptions, HMRMessageBody, StartArguments } from '../types';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../env';
+import { StartArguments, StartCliOptions } from '../types';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT, DEFAULT_PLATFORMS } from '../env';
 import {
   composeReporters,
   ConsoleReporter,
@@ -14,7 +13,7 @@ import {
   Reporter,
 } from '../logging';
 import { Compiler } from '../webpack/Compiler';
-import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
+import { getConfigFilePath } from './utils/getConfigFilePath';
 
 /**
  * Start command for React Native CLI.
@@ -28,17 +27,22 @@ import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
  * @internal
  * @category CLI command
  */
-export async function start(_: string[], config: Config, args: StartArguments) {
-  const webpackConfigPath = getWebpackConfigPath(
-    config.root,
-    args.webpackConfig
-  );
-  const { reversePort: reversePortArg, ...restArgs } = args;
-  const cliOptions: CliOptions = {
+export async function start(
+  _: string[],
+  cliConfig: Config,
+  args: StartArguments
+) {
+  const configPath = getConfigFilePath(cliConfig.root, args.webpackConfig);
+  const {
+    platforms: platformsArg,
+    reversePort: reversePortArg,
+    ...restArgs
+  } = args;
+  const cliOptions = {
     config: {
-      root: config.root,
-      reactNativePath: config.reactNativePath,
-      webpackConfigPath,
+      root: cliConfig.root,
+      reactNativePath: cliConfig.reactNativePath,
+      webpackConfigPath: configPath,
     },
     command: 'start',
     arguments: { start: { ...restArgs } },
@@ -50,7 +54,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     ? false
     : // TODO fix in a separate PR (jbroma)
       // eslint-disable-next-line prettier/prettier
-      args.verbose ?? process.argv.includes('--verbose');
+      (args.verbose ?? process.argv.includes('--verbose'));
   const reporter = composeReporters(
     [
       new ConsoleReporter({
@@ -60,7 +64,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
     ].filter(Boolean) as Reporter[]
   );
-  const compiler = new Compiler(cliOptions, reporter, isVerbose);
+  const compiler = new Compiler(cliOptions, reporter);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
@@ -74,11 +78,14 @@ export async function start(_: string[], config: Config, args: StartArguments) {
             key: args.key,
           }
         : undefined,
+      logRequests:
+        isVerbose ||
+        (args.logRequests ?? process.argv.includes('--log-requests')),
     },
     experiments: {
       experimentalDebugger: args.experimentalDebugger,
     },
-    delegate: (ctx): Server.Delegate => {
+    delegate: async (ctx) => {
       if (args.interactive) {
         bindKeypressInput(ctx);
       }
@@ -87,42 +94,12 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         void runAdbReverse(ctx, args.port);
       }
 
-      const lastStats: Record<string, webpack.StatsCompilation> = {};
-
-      compiler.on('watchRun', ({ platform }) => {
-        ctx.notifyBuildStart(platform);
-        if (platform === 'android') {
-          void runAdbReverse(ctx, args.port ?? DEFAULT_PORT);
-        }
-      });
-
-      compiler.on('invalid', ({ platform }) => {
-        ctx.notifyBuildStart(platform);
-        ctx.broadcastToHmrClients({ action: 'building' }, platform);
-      });
-
-      compiler.on(
-        'done',
-        ({
-          platform,
-          stats,
-        }: {
-          platform: string;
-          stats: webpack.StatsCompilation;
-        }) => {
-          ctx.notifyBuildEnd(platform);
-          lastStats[platform] = stats;
-          ctx.broadcastToHmrClients(
-            { action: 'built', body: createHmrBody(stats) },
-            platform
-          );
-        }
-      );
+      await compiler.init(ctx);
 
       return {
         compiler: {
-          getAsset: async (filename, platform, sendProgress) =>
-            (await compiler.getAsset(filename, platform, sendProgress)).data,
+          getAsset: async (filename, platform) =>
+            (await compiler.getAsset(filename, platform)).data,
           getMimeType: (filename) => compiler.getMimeType(filename),
           inferPlatform: (uri) => {
             const url = new URL(uri, 'protocol://domain');
@@ -140,6 +117,13 @@ export async function start(_: string[], config: Config, args: StartArguments) {
             return compiler.getSource(filename, platform);
           },
           getSourceMap: (fileUrl) => {
+            // TODO Align this with output.hotModuleUpdateChunkFilename
+            if (fileUrl.endsWith('.hot-update.js')) {
+              const { pathname } = new URL(fileUrl);
+              const [platform, filename] = pathname.split('/').filter(Boolean);
+              return compiler.getSourceMap(filename, platform);
+            }
+
             const { filename, platform } = parseFileUrl(fileUrl);
             if (!platform) {
               throw new Error('Cannot infer platform for file URL');
@@ -156,7 +140,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           getUriPath: () => '/__hmr',
           onClientConnected: (platform, clientId) => {
             ctx.broadcastToHmrClients(
-              { action: 'sync', body: createHmrBody(lastStats[platform]) },
+              { action: 'sync', body: compiler.getHmrBody(platform) },
               platform,
               [clientId]
             );
@@ -174,14 +158,11 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           },
         },
         api: {
-          getPlatforms: () => Promise.resolve(Object.keys(compiler.workers)),
+          getPlatforms: () => Promise.resolve(compiler.platforms),
           getAssets: (platform) =>
             Promise.resolve(
               Object.entries(compiler.assetsCache[platform] ?? {}).map(
-                ([name, asset]) => ({
-                  name,
-                  size: asset.info.size,
-                })
+                ([name, asset]) => ({ name, size: asset.size })
               )
             ),
           getCompilationStats: (platform) =>
@@ -192,6 +173,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   });
 
   await start();
+  compiler.start();
 
   return {
     stop: async () => {
@@ -278,30 +260,5 @@ function parseFileUrl(fileUrl: string) {
   return {
     filename: filename.replace(/^\//, ''),
     platform: platform || undefined,
-  };
-}
-
-function createHmrBody(
-  stats?: webpack.StatsCompilation
-): HMRMessageBody | null {
-  if (!stats) {
-    return null;
-  }
-
-  const modules: Record<string, string> = {};
-  for (const module of stats.modules ?? []) {
-    const { identifier, name } = module;
-    if (identifier !== undefined && name) {
-      modules[identifier] = name;
-    }
-  }
-
-  return {
-    name: stats.name ?? '',
-    time: stats.time ?? 0,
-    hash: stats.hash ?? '',
-    warnings: stats.warnings || [],
-    errors: stats.errors || [],
-    modules,
   };
 }

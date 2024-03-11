@@ -1,5 +1,5 @@
-import webpack from 'webpack';
-import { isVerbose, isWorker } from '../../env';
+import rspack, { RspackPluginInstance } from '@rspack/core';
+import { isVerbose } from '../../env';
 import {
   composeReporters,
   FileReporter,
@@ -8,7 +8,6 @@ import {
   LogEntry,
   LogType,
 } from '../../logging';
-import type { WebpackPlugin } from '../../types';
 
 export type GenericFilter = Array<string | RegExp>;
 
@@ -32,13 +31,19 @@ export interface LoggerPluginConfig {
 }
 
 /**
- * Logger plugin that handles all logging coming from the Webpack ecosystem, including compilation
- * progress as well as debug logs from other plugins and resolvers.
+ * Logger plugin that handles all logging coming from the Webpack ecosystem,
+ * including debug logs from other plugins and resolvers.
  *
  * @category Webpack Plugin
  */
-export class LoggerPlugin implements WebpackPlugin {
-  private static SUPPORTED_TYPES: string[] = ['debug', 'info', 'warn', 'error'];
+export class LoggerPlugin implements RspackPluginInstance {
+  private static SUPPORTED_TYPES: string[] = [
+    'debug',
+    'info',
+    'warn',
+    'error',
+    'success',
+  ];
 
   /** {@link Reporter} instance used to actually writing logs to terminal/file. */
   readonly reporter: Reporter;
@@ -56,10 +61,7 @@ export class LoggerPlugin implements WebpackPlugin {
     const reporters = [];
     if (this.config.output.console) {
       reporters.push(
-        new ConsoleReporter({
-          isWorker: isWorker(),
-          level: isVerbose() ? 'verbose' : 'normal',
-        })
+        new ConsoleReporter({ level: isVerbose() ? 'verbose' : 'normal' })
       );
     }
     if (this.config.output.file) {
@@ -123,28 +125,10 @@ export class LoggerPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: rspack.Compiler) {
     // Make sure webpack-cli doesn't print stats by default.
     if (compiler.options.stats === undefined) {
       compiler.options.stats = 'none';
-    }
-
-    if (this.config.devServerEnabled) {
-      new webpack.ProgressPlugin((percentage, message, text) => {
-        const entry = this.createEntry('LoggerPlugin', 'info', [
-          {
-            progress: {
-              value: percentage,
-              label: message,
-              message: text,
-              platform: this.config.platform,
-            },
-          },
-        ]);
-        if (entry) {
-          this.processEntry(entry);
-        }
-      }).apply(compiler);
     }
 
     compiler.hooks.infrastructureLog.tap(
@@ -169,56 +153,18 @@ export class LoggerPlugin implements WebpackPlugin {
       });
     });
 
-    compiler.hooks.done.tap('LoggerPlugin', (stats) => {
-      if (this.config.devServerEnabled) {
-        const { time, errors, warnings } = stats.toJson({
-          all: false,
-          timings: true,
-          errors: true,
-          warnings: true,
-        });
-
-        let entires: Array<LogEntry | undefined> = [];
-        if (errors?.length) {
-          entires = [
-            this.createEntry('LoggerPlugin', 'error', [
-              'Failed to build bundle due to errors',
-            ]),
-            ...errors.map((error) =>
-              this.createEntry('LoggerPlugin', 'error', [
-                `Error in "${error.moduleName}": ${error.message}`,
-              ])
-            ),
-          ];
-        } else {
-          entires = [
-            this.createEntry('LoggerPlugin', 'info', [
-              warnings?.length ? 'Bundle built with warnings' : 'Bundle built',
-              { time },
-            ]),
-            ...(warnings?.map((warning) =>
-              this.createEntry('LoggerPlugin', 'warn', [
-                `Warning in "${warning.moduleName}": ${warning.message}`,
-              ])
-            ) ?? []),
-          ];
-        }
-
-        for (const entry of entires.filter(Boolean) as LogEntry[]) {
-          this.processEntry(entry);
-        }
-      } else {
+    if (!this.config.devServerEnabled) {
+      compiler.hooks.done.tap('LoggerPlugin', (stats) => {
         const statsEntry = this.createEntry('LoggerPlugin', 'info', [
-          stats.toString('all'),
+          stats.toString({ preset: 'normal', colors: true }),
         ]);
         if (statsEntry) {
           this.processEntry(statsEntry);
         }
-      }
-
-      this.reporter.flush();
-      this.reporter.stop();
-    });
+        this.reporter.flush();
+        this.reporter.stop();
+      });
+    }
 
     process.on('uncaughtException', (error) => {
       const errorEntry = this.createEntry('LoggerPlugin', 'error', [error]);

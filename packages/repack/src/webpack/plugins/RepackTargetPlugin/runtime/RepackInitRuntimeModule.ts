@@ -1,4 +1,4 @@
-import webpack from 'webpack';
+import rspack from '@rspack/core';
 
 interface RepackInitRuntimeModuleConfig {
   chunkId: string | number | undefined;
@@ -7,22 +7,15 @@ interface RepackInitRuntimeModuleConfig {
   hmrEnabled?: boolean;
 }
 
-export class RepackInitRuntimeModule extends webpack.RuntimeModule {
-  constructor(private config: RepackInitRuntimeModuleConfig) {
-    super('repack/init', webpack.RuntimeModule.STAGE_BASIC);
-  }
-
-  generate() {
-    return webpack.Template.asString([
-      '// Repack runtime initialization logic',
-      webpack.Template.getFunctionContent(require('./implementation/init'))
-        .replaceAll('$hmrEnabled$', `${this.config.hmrEnabled ?? false}`)
-        .replaceAll('$chunkId$', `"${this.config.chunkId ?? 'unknown'}"`)
-        .replaceAll(
-          '$chunkLoadingGlobal$',
-          `"${this.config.chunkLoadingGlobal}"`
-        )
-        .replaceAll('$globalObject$', this.config.globalObject),
-    ]);
-  }
+export function generateRepackInitRuntimeModule(
+  config: RepackInitRuntimeModuleConfig
+) {
+  return rspack.Template.asString([
+    '// Repack runtime initialization logic',
+    rspack.Template.getFunctionContent(require('./implementation/init'))
+      .replaceAll('$hmrEnabled$', `${config.hmrEnabled ?? false}`)
+      .replaceAll('$chunkId$', `"${config.chunkId ?? 'unknown'}"`)
+      .replaceAll('$chunkLoadingGlobal$', `"${config.chunkLoadingGlobal}"`)
+      .replaceAll('$globalObject$', config.globalObject),
+  ]);
 }
