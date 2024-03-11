@@ -1,3 +1,5 @@
+/// <reference types="@types/jest" />
+
 import fs from 'fs-extra';
 import rspack from '@rspack/core';
 import { InfrastructureLogger } from '../../../../types';
