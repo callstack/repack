@@ -2,11 +2,10 @@ import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs-extra';
 import jwt from 'jsonwebtoken';
-import webpack from 'webpack';
-import type { WebpackPlugin } from '../../../types';
+import rspack, { RspackPluginInstance } from '@rspack/core';
 import { validateConfig, CodeSigningPluginConfig } from './config';
 
-export class CodeSigningPlugin implements WebpackPlugin {
+export class CodeSigningPlugin implements RspackPluginInstance {
   private chunkFilenames: Set<string>;
 
   /**
@@ -43,7 +42,7 @@ export class CodeSigningPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: rspack.Compiler) {
     const pluginName = CodeSigningPlugin.name;
     const logger = compiler.getInfrastructureLogger(pluginName);
 

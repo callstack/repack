@@ -4,8 +4,8 @@ import path from 'path';
 import fs from 'fs-extra';
 import memfs from 'memfs';
 import jwt from 'jsonwebtoken';
-import webpack from 'webpack';
-import VirtualModulesPlugin from 'webpack-virtual-modules';
+import { rspack } from '@rspack/core';
+import { RspackVirtualModulePlugin } from 'rspack-plugin-virtual-module';
 import {
   CodeSigningPlugin,
   CodeSigningPluginConfig,
@@ -24,7 +24,7 @@ async function compileBundle(
   virtualModules: Record<string, string>,
   codeSigningConfig: CodeSigningPluginConfig
 ) {
-  const compiler = webpack({
+  const compiler = rspack({
     context: __dirname,
     mode: 'production',
     devtool: false,
@@ -37,11 +37,12 @@ async function compileBundle(
     },
     plugins: [
       new CodeSigningPlugin(codeSigningConfig),
-      new VirtualModulesPlugin(virtualModules),
+      new RspackVirtualModulePlugin(virtualModules),
     ],
   });
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
+  // @ts-expect-error memfs is not fully compatible with fs-extra
   compiler.outputFileSystem = fileSystem;
 
   // @ts-expect-error memfs is not fully compatible with fs-extra
