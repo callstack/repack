@@ -42,10 +42,10 @@ async function compileBundle(
   });
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
-  // @ts-expect-error memfs is not fully compatible with fs-extra
+  // @ts-expect-error memfs is compatible enough
   compiler.outputFileSystem = fileSystem;
 
-  // @ts-expect-error memfs is not fully compatible with fs-extra
+  // @ts-expect-error memfs is compatible enough
   fs.writeFile.mockImplementation(fileSystem.promises.writeFile);
 
   return await new Promise<{
