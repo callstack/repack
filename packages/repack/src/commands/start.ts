@@ -1,6 +1,6 @@
 import readline from 'readline';
 import { URL } from 'url';
-import webpack from 'webpack';
+import rspack from '@rspack/core';
 import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
@@ -88,7 +88,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         void runAdbReverse(ctx, args.port);
       }
 
-      const lastStats: Record<string, webpack.StatsCompilation> = {};
+      const lastStats: Record<string, rspack.StatsCompilation> = {};
 
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
@@ -109,7 +109,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           stats,
         }: {
           platform: string;
-          stats: webpack.StatsCompilation;
+          stats: rspack.StatsCompilation;
         }) => {
           ctx.notifyBuildEnd(platform);
           lastStats[platform] = stats;
@@ -270,9 +270,7 @@ function parseFileUrl(fileUrl: string) {
   };
 }
 
-function createHmrBody(
-  stats?: webpack.StatsCompilation
-): HMRMessageBody | null {
+function createHmrBody(stats?: rspack.StatsCompilation): HMRMessageBody | null {
   if (!stats) {
     return null;
   }

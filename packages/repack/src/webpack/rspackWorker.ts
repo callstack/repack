@@ -1,36 +1,27 @@
 import { workerData, parentPort } from 'worker_threads';
 import path from 'path';
-import webpack from 'webpack';
+import { rspack } from '@rspack/core';
 import memfs from 'memfs';
 import type { CliOptions } from '../types';
 import { getWebpackEnvOptions } from './utils';
-import { loadWebpackConfig } from './loadWebpackConfig';
+import { loadRspackConfig } from './loadRspackConfig';
 
 async function main(cliOptions: CliOptions) {
   const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
-  const webpackConfig = await loadWebpackConfig(
+  const rspackConfig = await loadRspackConfig(
     cliOptions.config.webpackConfigPath,
     webpackEnvOptions
   );
-  const watchOptions = webpackConfig.watchOptions ?? {};
+  const watchOptions = rspackConfig.watchOptions ?? {};
 
-  webpackConfig.plugins = (webpackConfig.plugins ?? []).concat(
-    new webpack.ProgressPlugin((_1, _2, message) => {
-      const [, completed, total] = /(\d+)\/(\d+) modules/.exec(message) ?? [];
-      if (completed !== undefined && total !== undefined) {
-        parentPort?.postMessage({
-          event: 'progress',
-          completed: parseInt(completed, 10),
-          total: parseInt(total, 10),
-          message,
-        });
-      }
-    })
-  );
+  // Disable clean output to retain assets between builds
+  // TODO verify if this is still the case
+  rspackConfig.output = { ...rspackConfig.output, clean: false };
 
-  const compiler = webpack(webpackConfig);
+  const compiler = rspack(rspackConfig);
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
+  // @ts-expect-error memfs is compatible enough
   compiler.outputFileSystem = fileSystem;
 
   compiler.hooks.watchRun.tap('webpackWorker', () => {

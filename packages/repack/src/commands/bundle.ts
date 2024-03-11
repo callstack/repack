@@ -1,10 +1,10 @@
 import { Config } from '@react-native-community/cli-types';
 import fs from 'fs-extra';
 import { stringifyStream } from '@discoveryjs/json-ext';
-import webpack from 'webpack';
+import { rspack, StatsValue } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, CliOptions } from '../types';
-import { loadWebpackConfig } from '../webpack/loadWebpackConfig';
+import { loadRspackConfig } from '../webpack/loadRspackConfig';
 import { getWebpackEnvOptions } from '../webpack/utils';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
 
@@ -46,11 +46,11 @@ export async function bundle(
   }
 
   const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
-  const webpackConfig = await loadWebpackConfig(
+  const webpackConfig = await loadRspackConfig(
     webpackConfigPath,
     webpackEnvOptions
   );
-  const compiler = webpack(webpackConfig);
+  const compiler = rspack(webpackConfig);
 
   return new Promise<void>((resolve, reject) => {
     compiler.run((error, stats) => {
@@ -70,7 +70,7 @@ export async function bundle(
         if (args.json && stats !== undefined) {
           console.log(`Writing compiler stats`);
 
-          let statOptions: Parameters<typeof stats.toJson>[0];
+          let statOptions: StatsValue;
           if (args.stats !== undefined) {
             statOptions = { preset: args.stats };
           } else if (typeof compiler.options.stats === 'boolean') {

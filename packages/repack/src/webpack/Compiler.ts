@@ -2,7 +2,7 @@ import { Worker, SHARE_ENV } from 'worker_threads';
 import path from 'path';
 import fs from 'fs';
 import EventEmitter from 'events';
-import webpack from 'webpack';
+import rspack from '@rspack/core';
 import mimeTypes from 'mime-types';
 import { SendProgress } from '@callstack/repack-dev-server';
 import type { CliOptions, StartArguments } from '../types';
@@ -20,7 +20,7 @@ type Platform = string;
 export class Compiler extends EventEmitter {
   workers: Record<Platform, Worker> = {};
   assetsCache: Record<Platform, Record<string, Asset>> = {};
-  statsCache: Record<Platform, webpack.StatsCompilation> = {};
+  statsCache: Record<Platform, rspack.StatsCompilation> = {};
   resolvers: Record<Platform, Array<(error?: Error) => void>> = {};
   progressSenders: Record<Platform, SendProgress[]> = {};
   isCompilationInProgress: Record<Platform, boolean> = {};
@@ -105,7 +105,7 @@ export class Compiler extends EventEmitter {
                 data: Uint8Array;
                 info: Record<string, any>;
               }>;
-              stats: webpack.StatsCompilation;
+              stats: rspack.StatsCompilation;
             }
       ) => {
         if (value.event === 'done') {
@@ -237,16 +237,22 @@ export class Compiler extends EventEmitter {
     filename: string,
     platform: string
   ): Promise<string | Buffer> {
-    const { info } = await this.getAsset(filename, platform);
-    const sourceMapFilename = info.related?.sourceMap as string | undefined;
+    /**
+     * Inside dev server we can control the naming of sourcemaps
+     * so there is no need to look it up, we can just assume default naming scheme
+     *
+     * TODO: add some detection for checking if the sourcemap exists
+     * We could probably check the cache directly as it should be already compiled?
+     * Or start a new compilation that will get a source map? (perf++)
+     */
+    const sourceMapFilename = filename + '.map';
 
-    if (sourceMapFilename) {
-      return (await this.getAsset(sourceMapFilename, platform)).data;
+    try {
+      const sourceMap = await this.getAsset(sourceMapFilename, platform);
+      return sourceMap.data;
+    } catch {
+      throw new Error(`Source map for ${filename} for ${platform} is missing`);
     }
-
-    return Promise.reject(
-      new Error(`Source map for ${filename} for ${platform} is missing`)
-    );
   }
 
   getMimeType(filename: string) {
