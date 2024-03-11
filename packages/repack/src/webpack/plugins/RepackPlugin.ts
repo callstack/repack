@@ -1,5 +1,5 @@
-import webpack from 'webpack';
-import type { DevServerOptions, WebpackPlugin } from '../../types';
+import rspack, { RspackPluginInstance } from '@rspack/core';
+import type { DevServerOptions } from '../../types';
 import { AssetsResolverPlugin } from './AssetsResolverPlugin';
 import { DevelopmentPlugin } from './DevelopmentPlugin';
 import { LoggerPlugin, LoggerPluginConfig } from './LoggerPlugin';
@@ -107,7 +107,7 @@ export interface RepackPluginConfig {
  *
  * @category Webpack Plugin
  */
-export class RepackPlugin implements WebpackPlugin {
+export class RepackPlugin implements RspackPluginInstance {
   /**
    * Constructs new `RepackPlugin`.
    *
@@ -123,8 +123,8 @@ export class RepackPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
-    new webpack.DefinePlugin({
+  apply(compiler: rspack.Compiler) {
+    new rspack.DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
     }).apply(compiler);
 
@@ -151,14 +151,14 @@ export class RepackPlugin implements WebpackPlugin {
     }).apply(compiler);
 
     if (this.config.sourceMaps) {
-      new webpack.SourceMapDevToolPlugin({
+      new rspack.SourceMapDevToolPlugin({
         test: /\.(js)?bundle$/,
         exclude: /\.chunk\.(js)?bundle$/,
         filename: '[file].map',
         append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
       }).apply(compiler);
 
-      new webpack.SourceMapDevToolPlugin({
+      new rspack.SourceMapDevToolPlugin({
         test: /\.(js)?bundle$/,
         include: /\.chunk\.(js)?bundle$/,
         filename: '[file].map',
