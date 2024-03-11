@@ -42,6 +42,7 @@ beforeEach(() => {
 
 describe('ScriptManagerAPI', () => {
   it('throw error if ScriptManager NativeModule was not found', async () => {
+    // @ts-ignore
     await expect(() => new ScriptManager(null).shared).toThrow(
       /repack react-native module was not found/
     );
