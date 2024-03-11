@@ -462,6 +462,9 @@ importers:
       react-native-event-source:
         specifier: ^1.1.0
         version: 1.1.0
+      rspack-plugin-virtual-module:
+        specifier: ^0.1.12
+        version: 0.1.12
       terser-webpack-plugin:
         specifier: ^5.1.3
         version: 5.3.10(webpack@5.91.0)
@@ -471,9 +474,6 @@ importers:
       webpack:
         specifier: ^5.91.0
         version: 5.91.0
-      webpack-virtual-modules:
-        specifier: ^0.4.4
-        version: 0.4.6
 
   website:
     dependencies:
@@ -7412,9 +7412,6 @@ packages:
   webpack-sources@3.2.3:
     resolution: {integrity: sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==}
     engines: {node: '>=10.13.0'}
-
-  webpack-virtual-modules@0.4.6:
-    resolution: {integrity: sha512-5tyDlKLqPfMqjT3Q9TAqf2YqjwmnUleZwzJi1A5qXnlBCdj2AtOJ6wAWdglTIDOPgOiOrXeBeFcsQ8+aGQ6QbA==}
 
   webpack@5.91.0:
     resolution: {integrity: sha512-rzVwlLeBWHJbmgTC/8TvAcu5vpJNII+MelQpylD4jNERPwpBJOE2lEcko1zJX3QJeLjTTAnQxn/OJ8bjDzVQaw==}
@@ -16693,8 +16690,6 @@ snapshots:
   webidl-conversions@3.0.1: {}
 
   webpack-sources@3.2.3: {}
-
-  webpack-virtual-modules@0.4.6: {}
 
   webpack@5.91.0:
     dependencies:
