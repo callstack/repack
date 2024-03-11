@@ -1,18 +1,18 @@
-import webpack from 'webpack';
+import rspack from '@rspack/core';
 import { WebpackEnvOptions } from '../types';
 
-type WebpackConfig =
-  | webpack.Configuration
+type RspackConfig =
+  | rspack.Configuration
   | ((
       env: WebpackEnvOptions,
       argv: Record<string, any>
-    ) => webpack.Configuration | Promise<webpack.Configuration>);
+    ) => rspack.Configuration | Promise<rspack.Configuration>);
 
-export async function loadWebpackConfig(
+export async function loadRspackConfig(
   webpackConfigPath: string,
   env: WebpackEnvOptions
 ) {
-  let config: WebpackConfig;
+  let config: RspackConfig;
 
   try {
     config = require(webpackConfigPath);
@@ -21,7 +21,7 @@ export async function loadWebpackConfig(
   }
 
   if ('default' in config) {
-    config = (config as { default: WebpackConfig }).default;
+    config = (config as { default: RspackConfig }).default;
   }
 
   if (typeof config === 'function') {

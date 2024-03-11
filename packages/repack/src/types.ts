@@ -34,7 +34,7 @@ export interface BundleArguments extends CommonArguments {
   sourcemapOutput?: string;
   // sourcemapSourcesRoot?: string;
   // sourcemapUseAbsolutePath: boolean;
-  stats?: string;
+  stats?: Exclude<rspack.StatsValue, Record<any, any> | boolean>;
 }
 
 /**

@@ -84,7 +84,7 @@ export namespace Federated {
    * with priority `0`, if you provide URL after the `@`.
    * If `dynamic` (eg `module1@dynamic`) is provided, no default resolver will be added.
    *
-   * __This function should be used only when using `webpack.container.ModuleFederationPlugin`.__
+   * __This function should be used only when using `rspack.container.ModuleFederationPlugin`.__
    * For `Repack.plugins.ModuleFederationPlugin`, `Federated.createRemote` is used under the hood.
    *
    * Remote container will be evaluated only once. If you import module from the same container twice,
@@ -95,13 +95,13 @@ export namespace Federated {
    *
    * @example
    * ```ts
-   * import webpack from 'webpack';
+   * import rspack from '@rspack/core';
    * import * as Repack from '@callstack/repack';
    *
    * export default (env) => {
    *   return {
    *     plugins: [
-   *       new webpack.container.ModuleFederationPlugin({
+   *       new rspack.container.ModuleFederationPlugin({
    *         remotes: {
    *           app1: Repack.Federated.createRemote('app1@dynamic'),
    *           app2: Repack.Federated.createRemote('app2@https://example.com/app2.container.bundle'),
