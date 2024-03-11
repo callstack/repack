@@ -1,3 +1,5 @@
+/// <reference types="@types/jest" />
+
 import fs from 'fs-extra';
 import { AuxiliaryAssetsCopyProcessor } from '../AuxiliaryAssetsCopyProcessor';
 import { InfrastructureLogger } from '../../../../types';

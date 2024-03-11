@@ -1,3 +1,5 @@
+/// <reference types="@types/jest" />
+
 import { getWebpackEnvOptions } from '../getWebpackEnvOptions';
 
 describe('getWebpackEnvOptions', () => {

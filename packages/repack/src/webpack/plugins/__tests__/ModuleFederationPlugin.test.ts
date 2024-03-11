@@ -1,3 +1,5 @@
+/// <reference types="@types/jest" />
+
 import { container } from '@rspack/core';
 import { ModuleFederationPlugin } from '../ModuleFederationPlugin';
 import { Federated } from '../../federated';
