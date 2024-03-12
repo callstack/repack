@@ -49,6 +49,7 @@ module.exports = (env) => {
         Repack.NODE_MODULES_LOADING_RULES,
         {
           test: /\.[jt]sx?$/,
+          type: 'javascript/auto',
           exclude: /node_modules/,
           use: {
             loader: 'builtin:swc-loader',
