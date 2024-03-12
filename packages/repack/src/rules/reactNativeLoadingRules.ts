@@ -39,4 +39,5 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
     },
     { loader: '@callstack/repack/flow-strip-types-loader' },
   ],
+  type: 'javascript/auto',
 };

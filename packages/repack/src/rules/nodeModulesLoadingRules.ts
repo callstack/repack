@@ -40,6 +40,7 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
   test: /\.[cm]?[jt]sx?$/,
   include: [/node_modules/],
   exclude: [
+    /node_modules(.*[/\\])+react@/,
     /node_modules(.*[/\\])+react-native@/,
     /node_modules(.*[/\\])+@react-native\+/,
   ],
@@ -59,4 +60,5 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
       },
     },
   ],
+  type: 'javascript/auto',
 };
