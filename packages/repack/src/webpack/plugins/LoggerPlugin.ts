@@ -192,7 +192,7 @@ export class LoggerPlugin implements RspackPluginInstance {
         }
       } else {
         const statsEntry = this.createEntry('LoggerPlugin', 'info', [
-          stats.toString({ all: true }),
+          stats.toString({ preset: 'normal', colors: true }),
         ]);
         if (statsEntry) {
           this.processEntry(statsEntry);
