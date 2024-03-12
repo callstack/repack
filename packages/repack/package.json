@@ -58,13 +58,11 @@
     "@react-native-community/cli-types": "*",
     "@rspack/core": "^0.5.6",
     "@rspack/plugin-react-refresh": "^0.5.6",
-    "react-native": ">=0.63",
-    "webpack": "5.x"
+    "react-native": ">=0.74"
   },
   "dependencies": {
     "@callstack/repack-dev-server": "^4.0.0",
     "@discoveryjs/json-ext": "^0.5.7",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "colorette": "^1.2.2",
     "dedent": "^0.7.0",
     "escape-string-regexp": "^4.0.0",
@@ -72,19 +70,16 @@
     "execa": "^5.0.0",
     "flow-remove-types": "^2.230.0",
     "fs-extra": "^10.0.0",
-    "hash.js": "^1.1.7",
     "hasha": "^5.2.2",
     "image-size": "^0.9.3",
     "jsonwebtoken": "^9.0.0",
-    "loader-utils": "^2.0.0",
     "lodash.throttle": "^4.1.1",
     "memfs": "^3.4.4",
     "mime-types": "^2.1.35",
     "pretty-format": "^26.6.2",
     "react-refresh": "^0.14.0",
     "schema-utils": "^3.0.0",
-    "shallowequal": "^1.1.0",
-    "tapable": "^2.1.1"
+    "shallowequal": "^1.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.9",
@@ -105,19 +100,15 @@
     "@types/react-dom": "^17.0.7",
     "@types/shallowequal": "^1.1.1",
     "babel-jest": "^28.1.1",
-    "babel-loader": "^8.2.2",
     "eslint": "^8.53.0",
     "headers-polyfill": "^3.0.7",
     "jest": "^28.1.1",
     "react": "18.2.0",
     "react-native": "0.74.0",
-    "react-native-event-source": "^1.1.0",
     "rspack-plugin-virtual-module": "^0.1.12",
-    "terser-webpack-plugin": "^5.1.3",
     "typedoc": "^0.25.3",
     "typedoc-plugin-markdown": "^3.17.1",
-    "typescript": "^5.2.2",
-    "webpack": "^5.75.0"
+    "typescript": "^5.2.2"
   },
   "codegenConfig": {
     "name": "RNScriptManagerSpec",
