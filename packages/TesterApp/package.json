@@ -26,12 +26,14 @@
     "@react-native/babel-preset": "0.74.81",
     "@react-native/eslint-config": "0.74.81",
     "@react-native/typescript-config": "0.74.81",
+    "@rspack/core": "^0.5.6",
+    "@rspack/plugin-react-refresh": "^0.5.6",
     "@svgr/webpack": "^6.2.1",
+    "@swc/helpers": "^0.5.6",
     "@types/get-port": "^4.2.0",
     "@types/jest": "^28.1.1",
     "@types/lodash.throttle": "^4.1.9",
     "@types/react": "^18.2.51",
-    "babel-loader": "^8.2.5",
     "eslint": "^8.53.0",
     "execa": "^6.1.0",
     "get-port": "^6.1.2",
@@ -39,10 +41,7 @@
     "http-server": "^14.1.1",
     "node-fetch": "^3.2.6",
     "prettier": "^3.2.4",
-    "react-native-event-source": "^1.1.0",
-    "terser-webpack-plugin": "^5.3.3",
     "typescript": "^5.2.2",
-    "vitest": "^0.15.1",
-    "webpack": "^5.75.0"
+    "vitest": "^0.15.1"
   }
 }
