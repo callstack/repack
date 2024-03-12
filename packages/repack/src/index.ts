@@ -6,3 +6,4 @@ export * from './commands/bundle';
 export * from './commands/start';
 export * from './types';
 export * from './logging';
+export * from './rules';
