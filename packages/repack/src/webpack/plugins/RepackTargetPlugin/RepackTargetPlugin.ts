@@ -86,7 +86,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     }).apply(compiler);
 
     const hmrClientRegexp =
-      /react-native.*?([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/;
+      /react-native.*?([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient$/;
 
     // Replace React Native's HMRClient.js with custom Webpack-powered DevServerClient.
     compiler.hooks.normalModuleFactory.tap('RepackTargetPlugin', (nmf) => {
