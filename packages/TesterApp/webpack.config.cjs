@@ -47,10 +47,24 @@ module.exports = (env) => {
       rules: [
         Repack.REACT_NATIVE_LOADING_RULES,
         Repack.NODE_MODULES_LOADING_RULES,
+        /* repack is symlinked to a local workspace */
         {
           test: /\.[jt]sx?$/,
           type: 'javascript/auto',
-          exclude: /node_modules/,
+          include: [/repack[/\\]dist/],
+          use: {
+            loader: 'builtin:swc-loader',
+            options: {
+              env: { targets: { hermes: '0.12' } },
+              jsc: { externalHelpers: true },
+            },
+          },
+        },
+        /* Codebase rules */
+        {
+          test: /\.[jt]sx?$/,
+          type: 'javascript/auto',
+          exclude: [/node_modules/, /repack[/\\]dist/],
           use: {
             loader: 'builtin:swc-loader',
             options: {
@@ -59,7 +73,7 @@ module.exports = (env) => {
                 targets: { hermes: '0.12' },
               },
               jsc: {
-                externalHelpers: false,
+                externalHelpers: true,
                 transform: {
                   react: {
                     development: mode === 'development',
