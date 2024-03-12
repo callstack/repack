@@ -102,7 +102,6 @@ export class RepackTargetPlugin implements RspackPluginInstance {
       });
     });
 
-    // TODO remove undeeded runtime modules that are injected automatically here
     compiler.hooks.thisCompilation.tap('RepackTargetPlugin', (compilation) => {
       compilation.hooks.runtimeModule.tap(
         'RepackTargetPlugin',
@@ -133,6 +132,14 @@ export class RepackTargetPlugin implements RspackPluginInstance {
 
             // inject runtime module
             module.source!.source = repackRuntimeModule;
+          }
+
+          // Remove CSS runtime modules
+          if (
+            module.name === 'css_loading' ||
+            module.name === 'get css chunk filename'
+          ) {
+            module.source!.source = Buffer.from(`// noop`, 'utf-8');
           }
         }
       );
