@@ -2,6 +2,9 @@ import flowRemoveTypes from 'flow-remove-types';
 
 import { LoaderContext } from '@rspack/core';
 
+const ReactNativeTypesPath =
+  /[/\\]react-native[/\\]Libraries[/\\]Renderer[/\\]shims[/\\]ReactNativeTypes\.js$/;
+
 export default function flowStripTypesLoader(
   this: LoaderContext,
   source: string,
@@ -10,6 +13,12 @@ export default function flowStripTypesLoader(
   this.cacheable();
   const callback = this.async();
 
+  /* Overrides */
+  /* ReactNativeTypes.js contains only types, and can be skipped safely */
+  if (this.resourcePath.match(ReactNativeTypesPath)) {
+    callback(null, '', '');
+    return;
+  }
   /**
    *  Transforming React-Native requires us to use the `all` option, which
    *  removes all Flow annotations, as not all files are marked with `@flow`
