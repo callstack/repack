@@ -154,10 +154,10 @@ importers:
         specifier: 0.74.83
         version: 0.74.83
       '@rspack/core':
-        specifier: ^0.5.6
+        specifier: ^0.5.7
         version: 0.5.9(@swc/helpers@0.5.11)
       '@rspack/plugin-react-refresh':
-        specifier: ^0.5.6
+        specifier: ^0.5.7
         version: 0.5.9(react-refresh@0.14.2)
       '@svgr/webpack':
         specifier: ^8.1.0
@@ -400,11 +400,14 @@ importers:
         specifier: 13.6.4
         version: 13.6.4
       '@rspack/core':
-        specifier: ^0.5.6
+        specifier: ^0.5.7
         version: 0.5.9(@swc/helpers@0.5.11)
       '@rspack/plugin-react-refresh':
-        specifier: ^0.5.6
+        specifier: ^0.5.7
         version: 0.5.9(react-refresh@0.14.0)
+      '@swc/helpers':
+        specifier: ^0.5.6
+        version: 0.5.11
       '@types/dedent':
         specifier: ^0.7.0
         version: 0.7.0
