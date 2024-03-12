@@ -49,7 +49,7 @@ export class Compiler extends EventEmitter {
     process.env[WORKER_ENV_KEY] = '1';
     process.env[VERBOSE_ENV_KEY] = this.isVerbose ? '1' : undefined;
 
-    const worker = new Worker(path.join(__dirname, './webpackWorker.js'), {
+    const worker = new Worker(path.join(__dirname, './rspackWorker.js'), {
       stdout: true,
       stderr: true,
       env: SHARE_ENV,
