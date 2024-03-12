@@ -1,23 +1,31 @@
 import flowRemoveTypes from 'flow-remove-types';
-
 import { LoaderContext } from '@rspack/core';
 
 const ReactNativeTypesPath =
   /[/\\]react-native[/\\]Libraries[/\\]Renderer[/\\]shims[/\\]ReactNativeTypes\.js$/;
+const NativeAppearancePath =
+  /[/\\]react-native[/\\]Libraries[/\\]Utilities[/\\]NativeAppearance\.js$/;
 
 export default function flowStripTypesLoader(
   this: LoaderContext,
-  source: string,
-  sourceMap: string
+  originalSource: string
 ) {
   this.cacheable();
   const callback = this.async();
+  let source = originalSource;
 
   /* Overrides */
   /* ReactNativeTypes.js contains only types, and can be skipped safely */
   if (this.resourcePath.match(ReactNativeTypesPath)) {
     callback(null, '', '');
     return;
+  }
+  /* NativeAppearance.js is not being stripped properly */
+  if (this.resourcePath.match(NativeAppearancePath)) {
+    source = originalSource
+      .split('\n')
+      .filter((line) => !line.startsWith('export type '))
+      .join('\n');
   }
   /**
    *  Transforming React-Native requires us to use the `all` option, which
@@ -35,5 +43,5 @@ export default function flowStripTypesLoader(
     ignoreUninitializedFields: true,
   });
 
-  callback(null, result.toString(), sourceMap);
+  callback(null, result.toString());
 }
