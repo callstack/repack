@@ -16,8 +16,6 @@ module.exports = (env) => {
     assetsPath = undefined,
     reactNativePath = require.resolve('react-native'),
   } = env;
-  const dirname = context;
-
   if (!platform) {
     throw new Error('Missing platform');
   }
@@ -26,12 +24,7 @@ module.exports = (env) => {
     mode,
     devtool: false,
     context,
-    entry: [
-      ...Repack.getInitializationEntries(reactNativePath, {
-        hmr: devServer && devServer.hmr,
-      }),
-      entry,
-    ],
+    entry,
     resolve: {
       ...Repack.getResolveOptions(platform),
       alias: {
@@ -41,7 +34,7 @@ module.exports = (env) => {
     output: {
       clean: true,
       hashFunction: 'xxhash64',
-      path: path.join(dirname, 'build/generated', platform),
+      path: path.join(context, 'build/generated', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
@@ -91,9 +84,9 @@ module.exports = (env) => {
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
           exclude: [
-            path.join(dirname, 'src/assetsTest/localAssets'),
-            path.join(dirname, 'src/assetsTest/inlineAssets'),
-            path.join(dirname, 'src/assetsTest/remoteAssets'),
+            path.join(context, 'src/assetsTest/localAssets'),
+            path.join(context, 'src/assetsTest/inlineAssets'),
+            path.join(context, 'src/assetsTest/remoteAssets'),
           ],
           use: {
             loader: '@callstack/repack/assets-loader',
@@ -125,7 +118,7 @@ module.exports = (env) => {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
-          include: [path.join(dirname, 'src/assetsTest/localAssets')],
+          include: [path.join(context, 'src/assetsTest/localAssets')],
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {
@@ -139,7 +132,7 @@ module.exports = (env) => {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
-          include: [path.join(dirname, 'src/assetsTest/inlineAssets')],
+          include: [path.join(context, 'src/assetsTest/inlineAssets')],
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {
@@ -154,7 +147,7 @@ module.exports = (env) => {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
-          include: [path.join(dirname, 'src/assetsTest/remoteAssets')],
+          include: [path.join(context, 'src/assetsTest/remoteAssets')],
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {

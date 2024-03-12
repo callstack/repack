@@ -25,6 +25,7 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
           parser: {
             syntax: 'ecmascript',
             jsx: true,
+            exportDefaultFrom: true,
           },
           externalHelpers: true,
         },

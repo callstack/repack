@@ -45,6 +45,12 @@ export interface RepackPluginConfig {
   entryName?: string;
 
   /**
+   * Absolute location to JS file with initialization logic for React Native.
+   * Useful if you want to built for out-of-tree platforms.
+   */
+  initializeCore?: string;
+
+  /**
    * Options specifying how to deal with extra chunks generated in the compilation,
    * usually by using dynamic `import(...)` function.
    *
@@ -141,13 +147,13 @@ export class RepackPlugin implements RspackPluginInstance {
       extraChunks: this.config.extraChunks,
     }).apply(compiler);
 
+    new RepackTargetPlugin({
+      hmr: this.config.devServer?.hmr,
+    }).apply(compiler);
+
     new DevelopmentPlugin({
       platform: this.config.platform,
       devServer: this.config.devServer,
-    }).apply(compiler);
-
-    new RepackTargetPlugin({
-      hmr: this.config.devServer?.hmr,
     }).apply(compiler);
 
     if (this.config.sourceMaps) {

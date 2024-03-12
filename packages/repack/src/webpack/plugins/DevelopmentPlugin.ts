@@ -42,6 +42,11 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     if (this.config?.devServer.hmr) {
       new rspack.HotModuleReplacementPlugin().apply(compiler);
       new RspackReactRefreshPlugin().apply(compiler);
+      new rspack.EntryPlugin(
+        compiler.context,
+        require.resolve('../../modules/WebpackHMRClient'),
+        { name: undefined }
+      ).apply(compiler);
 
       // TODO Bring back lazy compilation when it's implemented in rspack
     }
