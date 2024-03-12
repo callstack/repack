@@ -1,5 +1,5 @@
 export default async (env) => {
-  const config = (await import('../webpack.config.mjs')).default(env);
+  const config = (await import('../webpack.config.cjs')).default(env);
   return {
     ...config,
     output: {
