@@ -60,14 +60,9 @@ module.exports = (env) => {
           use: {
             loader: 'builtin:swc-loader',
             options: {
+              sourceMap: true,
               env: {
-                targets: 'edge 18',
-                include: [
-                  'transform-arrow-functions',
-                  'transform-block-scoping',
-                  'transform-classes',
-                  'transform-unicode-regex',
-                ],
+                targets: { hermes: '0.12' },
               },
               jsc: {
                 externalHelpers: false,

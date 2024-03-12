@@ -19,13 +19,7 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
       loader: 'builtin:swc-loader',
       options: {
         env: {
-          targets: 'edge 18',
-          include: [
-            'transform-arrow-functions',
-            'transform-block-scoping',
-            'transform-classes',
-            'transform-unicode-regex',
-          ],
+          targets: { hermes: '0.12' },
         },
         jsc: {
           parser: {
