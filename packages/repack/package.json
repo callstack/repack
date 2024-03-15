@@ -48,6 +48,7 @@
     "docs": "typedoc && typedoc --options typedoc.client.json",
     "lint": "eslint --ext \".js,.ts\" commands.js client.js src",
     "test": "jest",
+    "test:metro": "jest -c ./metro/jest.config.js",
     "typecheck": "tsc --noEmit",
     "archive": "pnpm build && pnpm pack"
   },
@@ -99,6 +100,8 @@
     "@types/shallowequal": "^1.1.1",
     "babel-jest": "^28.1.1",
     "babel-loader": "^8.2.2",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "babel-plugin-syntax-hermes-parser": "^0.20.1",
     "eslint": "^8.53.0",
     "headers-polyfill": "^3.0.7",
     "jest": "^28.1.1",
