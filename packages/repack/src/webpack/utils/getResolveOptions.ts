@@ -4,7 +4,7 @@
  * in dependencies' `package.json`.
  *
  * @param platform Target application platform.
- * @param packageExports Whether to resolve `exports` field in `package.json`. Defaults to false
+ * @param enablePackageExports Whether to resolve `exports` field in `package.json`. Defaults to false.
  * @returns Webpack's resolve options.
  *
  * @category Webpack util
@@ -24,13 +24,35 @@
  * };
  * ```
  */
-export function getResolveOptions(platform: string, packageExports?: boolean) {
+export function getResolveOptions(
+  platform: string,
+  enablePackageExports?: boolean
+) {
   let exportsFields: string[];
+  let extensions = [
+    '.native.ts',
+    '.native.js',
+    '.native.tsx',
+    '.native.jsx',
+    '.ts',
+    '.js',
+    '.tsx',
+    '.jsx',
+    '.json',
+  ];
 
-  if (packageExports) {
+  if (enablePackageExports) {
     exportsFields = ['exports'];
   } else {
     exportsFields = [];
+    // Only resolve platform extensions when package exports are disabled
+    extensions = [
+      `.${platform}.ts`,
+      `.${platform}.js`,
+      `.${platform}.tsx`,
+      `.${platform}.jsx`,
+      ...extensions,
+    ];
   }
 
   return {
@@ -42,20 +64,6 @@ export function getResolveOptions(platform: string, packageExports?: boolean) {
     aliasFields: ['react-native', 'browser', 'main'],
     conditionNames: ['require', 'import', 'react-native'],
     exportsFields,
-    extensions: [
-      `.${platform}.ts`,
-      `.${platform}.js`,
-      `.${platform}.tsx`,
-      `.${platform}.jsx`,
-      '.native.ts',
-      '.native.js',
-      '.native.tsx',
-      '.native.jsx',
-      '.ts',
-      '.js',
-      '.tsx',
-      '.jsx',
-      '.json',
-    ],
+    extensions,
   };
 }
