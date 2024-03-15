@@ -26,14 +26,11 @@
  */
 export function getResolveOptions(platform: string, packageExports?: boolean) {
   let exportsFields: string[];
-  let conditionNames: string[];
 
   if (packageExports) {
     exportsFields = ['exports'];
-    conditionNames = ['default', 'require'];
   } else {
     exportsFields = [];
-    conditionNames = [];
   }
 
   return {
@@ -43,8 +40,8 @@ export function getResolveOptions(platform: string, packageExports?: boolean) {
      */
     mainFields: ['react-native', 'browser', 'main'],
     aliasFields: ['react-native', 'browser', 'main'],
+    conditionNames: ['require', 'import', 'react-native'],
     exportsFields,
-    conditionNames,
     extensions: [
       `.${platform}.ts`,
       `.${platform}.js`,
