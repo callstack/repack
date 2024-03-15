@@ -4,6 +4,7 @@
  * in dependencies' `package.json`.
  *
  * @param platform Target application platform.
+ * @param packageExports Whether to resolve `exports` field in `package.json`. Defaults to false
  * @returns Webpack's resolve options.
  *
  * @category Webpack util
@@ -23,7 +24,18 @@
  * };
  * ```
  */
-export function getResolveOptions(platform: string) {
+export function getResolveOptions(platform: string, packageExports?: boolean) {
+  let exportsFields: string[];
+  let conditionNames: string[];
+
+  if (packageExports) {
+    exportsFields = ['exports'];
+    conditionNames = ['default', 'require'];
+  } else {
+    exportsFields = [];
+    conditionNames = [];
+  }
+
   return {
     /**
      * Match what React Native packager supports.
@@ -31,7 +43,8 @@ export function getResolveOptions(platform: string) {
      */
     mainFields: ['react-native', 'browser', 'main'],
     aliasFields: ['react-native', 'browser', 'main'],
-    conditionNames: ['default', 'require'],
+    exportsFields,
+    conditionNames,
     extensions: [
       `.${platform}.ts`,
       `.${platform}.js`,
