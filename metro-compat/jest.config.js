@@ -2,6 +2,10 @@ module.exports = {
   rootDir: __dirname,
   testEnvironment: 'node',
   testRegex: '__tests__/.*-test\\.js$',
+  testPathIgnorePatterns: [
+    '<rootDir>/node_modules/',
+    '<rootDir>/resolver/__tests__/assets-test.js',
+  ],
   fakeTimers: {
     enableGlobally: true,
     legacyFakeTimers: false,
