@@ -91,7 +91,10 @@ function getEnhancedResolvePath() {
 }
 
 // maps metro-resolver options to enhanced-resolve options
-function transformContext(context: ResolutionContext): TransformedContext {
+function transformContext(
+  context: ResolutionContext,
+  platform: string | null
+): TransformedContext {
   return {
     // webpack provides context as a directory, not a file
     context: path.dirname(context.originModulePath!),
@@ -100,7 +103,12 @@ function transformContext(context: ResolutionContext): TransformedContext {
       ...context.__additionalFileMap,
     } as InputFileMap,
     options: {
-      conditionNames: context.unstable_conditionNames,
+      // webpack uses whole separate config per platform
+      conditionNames: platform
+        ? context.unstable_conditionsByPlatform[platform]
+        : context.unstable_conditionNames,
+      mainFields: context.mainFields,
+      // symlinks are enabled by default
       symlinks: context.__options?.enableSymlinks ?? true,
     },
   };
@@ -113,7 +121,10 @@ export function resolve(
   platform: string | null
 ) {
   const enhancedResolve: EnhancedResolve = require(getEnhancedResolvePath());
-  const { context, inputFileMap, options } = transformContext(metroContext);
+  const { context, inputFileMap, options } = transformContext(
+    metroContext,
+    platform
+  );
   const { fileMap, symlinksMap } = processInputFileMap(inputFileMap);
 
   setupFilesystemFromFileMap(fileMap, symlinksMap);
@@ -122,10 +133,11 @@ export function resolve(
     // @ts-expect-error memfs is compatible enough
     fileSystem: filesystem,
     // apply Re.Pack defaults
-    ...getResolveOptions(
-      platform ?? 'platform',
-      metroContext.unstable_enablePackageExports
-    ),
+    ...getResolveOptions({
+      platform: platform ?? 'platform',
+      enablePackageExports: metroContext.unstable_enablePackageExports,
+      preferNativePlatform: metroContext.preferNativePlatform,
+    }),
     // customize options for test purposes
     ...options,
   });
