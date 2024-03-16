@@ -7,7 +7,7 @@ module.exports = {
     legacyFakeTimers: false,
   },
   transform: {
-    '\\.js$': '<rootDir>/transformer.js',
+    '\\.[jt]s$': '<rootDir>/transformer.js',
   },
   modulePathIgnorePatterns: ['/node_modules/', 'packages/[^/]+/build/'],
 };
