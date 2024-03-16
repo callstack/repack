@@ -36,14 +36,17 @@ const tsPlugins = [
 module.exports = {
   babelrc: false,
   browserslistConfigFile: false,
-  plugins: [
-    ...jsPlugins.map((plugin) => require.resolve(plugin)),
-    [require.resolve('babel-plugin-module-resolver'), { resolvePath }],
-  ],
   overrides: [
     {
       test: ['**/*.ts'],
       plugins: tsPlugins.map((plugin) => require.resolve(plugin)),
+    },
+    {
+      test: ['**/*.js'],
+      plugins: [
+        ...jsPlugins.map((plugin) => require.resolve(plugin)),
+        [require.resolve('babel-plugin-module-resolver'), { resolvePath }],
+      ],
     },
   ],
 };
