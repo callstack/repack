@@ -9,7 +9,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "jest --clearCache && jest --no-watchman"
+    "test": "jest --clearCache && jest --noStackTrace --no-watchman -- resolver/__tests__/package-exports-test.js"
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",
@@ -21,6 +21,7 @@
     "enhanced-resolve": "^5.16.0",
     "eslint": "^8.53.0",
     "jest": "^28.1.1",
-    "memfs": "^3.4.4"
+    "memfs": "^3.4.4",
+    "type-fest": "^4.12.0"
   }
 }

@@ -2,12 +2,15 @@ import path from 'path';
 import memfs from 'memfs';
 import { getResolveOptions } from '@callstack/repack/dist/webpack/utils/getResolveOptions';
 import type * as EnhancedResolveNS from 'enhanced-resolve';
+import type { PackageJson } from 'type-fest';
 
 type EnhancedResolve = typeof EnhancedResolveNS;
 type EnhancedResolveOptions = EnhancedResolveNS.ResolveOptions;
-type InputFileMap = Record<string, string | { realPath?: string }>;
 type FileMap = Record<string, string>;
 type SymlinksMap = Record<string, string>;
+type InputFileMap =
+  | Record<string, string | { realPath?: string }>
+  | Record<string, PackageJson>;
 
 interface TransformedContext {
   context: string;
@@ -52,14 +55,16 @@ const filesystem = new memfs.Volume();
 
 // divide input file map into file map and symlinks map
 function processInputFileMap(inputFileMap: InputFileMap) {
-  const fileMap: Record<string, string> = {};
-  const symlinksMap: Record<string, string> = {};
+  const fileMap: FileMap = {};
+  const symlinksMap: SymlinksMap = {};
 
   for (const [filePath, content] of Object.entries(inputFileMap)) {
     if (typeof content === 'string') {
       fileMap[filePath] = content;
-    } else {
+    } else if ('realPath' in content) {
       symlinksMap[filePath] = String(content.realPath);
+    } else {
+      fileMap[filePath] = JSON.stringify(content);
     }
   }
 
@@ -112,7 +117,10 @@ export function resolve(
     // @ts-expect-error memfs is compatible enough
     fileSystem: filesystem,
     // apply Re.Pack defaults
-    ...getResolveOptions(platform ?? 'platform'),
+    ...getResolveOptions(
+      platform ?? 'platform',
+      metroContext.unstable_enablePackageExports
+    ),
     // customize options for test purposes
     ...options,
   });
