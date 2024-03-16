@@ -95,6 +95,9 @@ importers:
       '@callstack/repack':
         specifier: workspace:*
         version: link:../packages/repack
+      '@types/jest':
+        specifier: ^28.1.1
+        version: 28.1.1
       '@types/node':
         specifier: ^18
         version: 18.18.0

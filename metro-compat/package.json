@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",
+    "@types/jest": "^28.1.1",
     "@types/node": "^18",
     "babel-jest": "^28.1.1",
     "babel-plugin-module-resolver": "^5.0.0",
