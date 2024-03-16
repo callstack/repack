@@ -1,3 +1,4 @@
+import path from 'path';
 import memfs from 'memfs';
 import { getResolveOptions } from '@callstack/repack/dist/webpack/utils/getResolveOptions';
 import type * as EnhancedResolveNS from 'enhanced-resolve';
@@ -42,7 +43,7 @@ interface ResolutionContext {
   getPackage: (packageJsonPath: string) => Object;
   getPackageForModule: (modulePath: string) => Object;
   // mock additional fields
-  __filemap: InputFileMap;
+  __fileMap: InputFileMap;
   __options: { enableSymlinks?: boolean };
 }
 
@@ -61,8 +62,6 @@ function processInputFileMap(inputFileMap: InputFileMap) {
       symlinksMap[filePath] = String(content.realPath);
     }
   }
-
-  //
 
   return { fileMap, symlinksMap };
 }
@@ -87,10 +86,10 @@ function getEnhancedResolvePath() {
 
 // maps metro-resolver options to enhanced-resolve options
 function transformContext(context: ResolutionContext): TransformedContext {
-  console.log(context);
   return {
-    context: context.originModulePath!,
-    inputFileMap: context.__filemap,
+    // webpack provides context as a directory, not a file
+    context: path.dirname(context.originModulePath!),
+    inputFileMap: context.__fileMap,
     options: {
       symlinks: context.__options?.enableSymlinks ?? true,
     },
@@ -106,6 +105,7 @@ export function resolve(
   const enhancedResolve: EnhancedResolve = require(getEnhancedResolvePath());
   const { context, inputFileMap, options } = transformContext(metroContext);
   const { fileMap, symlinksMap } = processInputFileMap(inputFileMap);
+
   setupFilesystemFromFileMap(fileMap, symlinksMap);
 
   const resolve = enhancedResolve.create.sync({
@@ -117,6 +117,11 @@ export function resolve(
     ...options,
   });
 
-  console.log('FINAL OPTIONS', context, request, platform, options);
-  return resolve(context, request);
+  // console.log('FINAL OPTIONS', context, request, platform, options);
+  const resolvedPath = resolve(context, request);
+  // adjust result to match metro-resolver output
+  return {
+    type: 'sourceFile',
+    filePath: resolvedPath,
+  };
 }
