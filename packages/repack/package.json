@@ -48,7 +48,6 @@
     "docs": "typedoc && typedoc --options typedoc.client.json",
     "lint": "eslint --ext \".js,.ts\" commands.js client.js src",
     "test": "jest",
-    "test:metro": "jest -c ./metro/jest.config.js",
     "typecheck": "tsc --noEmit",
     "archive": "pnpm build && pnpm pack"
   },
