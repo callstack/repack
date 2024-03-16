@@ -1,5 +1,3 @@
-const path = require('path');
-
 module.exports = {
   extends: '@callstack/eslint-config/node',
   parserOptions: {
@@ -14,16 +12,6 @@ module.exports = {
       },
       rules: {
         'import/no-extraneous-dependencies': 0,
-      },
-    },
-    {
-      files: ['metro/**'],
-      env: {
-        jest: true,
-      },
-      parserOptions: {
-        project: true,
-        tsconfigRootDir: path.join(__dirname, 'metro'),
       },
     },
     {
