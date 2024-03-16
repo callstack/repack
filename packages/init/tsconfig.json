@@ -12,7 +12,7 @@
     "strict": true,
     "paths": {
       "detect-package-manager": [
-        "../../node_modules/detect-package-manager/dist/index.d.ts"
+        "./node_modules/detect-package-manager/dist/index.d.ts"
       ]
     }
   },
