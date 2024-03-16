@@ -125,3 +125,5 @@ export function resolve(
     filePath: resolvedPath,
   };
 }
+
+export default { resolve };
