@@ -1,14 +1,16 @@
 import memfs from 'memfs';
-import { getResolveOptions } from '@callstack/repack';
+import { getResolveOptions } from '@callstack/repack/dist/webpack/utils/getResolveOptions';
 import type * as EnhancedResolveNS from 'enhanced-resolve';
+
+type EnhancedResolve = typeof EnhancedResolveNS;
+type EnhancedResolveOptions = EnhancedResolveNS.ResolveOptions;
 type InputFileMap = Record<string, string | { realPath?: string }>;
 type FileMap = Record<string, string>;
 type SymlinksMap = Record<string, string>;
 
-type EnhancedResolve = typeof EnhancedResolveNS;
-type EnhancedResolveOptions = EnhancedResolveNS.ResolveOptions;
 interface TransformedContext {
   context: string;
+  inputFileMap: InputFileMap;
   options: Partial<EnhancedResolveOptions>;
 }
 
@@ -39,6 +41,9 @@ interface ResolutionContext {
   doesFileExist: (filePath: string) => boolean;
   getPackage: (packageJsonPath: string) => Object;
   getPackageForModule: (modulePath: string) => Object;
+  // mock additional fields
+  __filemap: InputFileMap;
+  __options: { enableSymlinks?: boolean };
 }
 
 // shared filesystem for all tests
@@ -56,6 +61,8 @@ function processInputFileMap(inputFileMap: InputFileMap) {
       symlinksMap[filePath] = String(content.realPath);
     }
   }
+
+  //
 
   return { fileMap, symlinksMap };
 }
@@ -80,48 +87,13 @@ function getEnhancedResolvePath() {
 
 // maps metro-resolver options to enhanced-resolve options
 function transformContext(context: ResolutionContext): TransformedContext {
+  console.log(context);
   return {
     context: context.originModulePath!,
+    inputFileMap: context.__filemap,
     options: {
-      symlinks: context.unstable_enableSymlinks,
+      symlinks: context.__options?.enableSymlinks ?? true,
     },
-  };
-}
-
-// mocked utils
-export function createResolutionContext(
-  inputFileMap: InputFileMap,
-  options: { enableSymlinks?: boolean }
-): ResolutionContext {
-  const { fileMap, symlinksMap } = processInputFileMap(inputFileMap);
-  // TODO determine if it's ok to set it up here;
-  setupFilesystemFromFileMap(fileMap, symlinksMap);
-
-  // return defaults
-  return {
-    dev: true,
-    allowHaste: true,
-    assetExts: new Set(['jpg', 'png']),
-    customResolverOptions: {},
-    disableHierarchicalLookup: false,
-    extraNodeModules: null,
-    mainFields: ['browser', 'main'],
-    nodeModulesPaths: [],
-    preferNativePlatform: false,
-    redirectModulePath: (filePath: string) => filePath,
-    resolveAsset: (_: string) => null,
-    resolveHasteModule: (_: string) => null,
-    resolveHastePackage: (_: string) => null,
-    sourceExts: ['js', 'jsx', 'json', 'ts', 'tsx'],
-    unstable_conditionNames: ['require'],
-    unstable_conditionsByPlatform: { web: ['browser'] },
-    unstable_enablePackageExports: false,
-    unstable_logWarning: () => {},
-    unstable_enableSymlinks: options.enableSymlinks ?? true,
-    // let's see if we need this
-    getPackage: () => ({}),
-    getPackageForModule: () => ({}),
-    doesFileExist: () => false,
   };
 }
 
@@ -129,18 +101,22 @@ export function createResolutionContext(
 export function resolve(
   metroContext: ResolutionContext,
   request: string,
-  platform: string
+  platform: string | null
 ) {
   const enhancedResolve: EnhancedResolve = require(getEnhancedResolvePath());
-  const { context, options } = transformContext(metroContext);
+  const { context, inputFileMap, options } = transformContext(metroContext);
+  const { fileMap, symlinksMap } = processInputFileMap(inputFileMap);
+  setupFilesystemFromFileMap(fileMap, symlinksMap);
 
   const resolve = enhancedResolve.create.sync({
+    // @ts-expect-error memfs is compatible enough
+    fileSystem: filesystem,
     // apply Re.Pack defaults
-    ...getResolveOptions(platform),
+    ...getResolveOptions(platform ?? 'platform'),
     // customize options for test purposes
     ...options,
   });
 
-  console.log(context, request, platform);
+  console.log('FINAL OPTIONS', context, request, platform, options);
   return resolve(context, request);
 }

@@ -9,5 +9,6 @@ module.exports = {
   transform: {
     '\\.[jt]s$': '<rootDir>/transformer.js',
   },
+  setupFiles: ['<rootDir>/jest.setup.js'],
   modulePathIgnorePatterns: ['/node_modules/', 'packages/[^/]+/build/'],
 };

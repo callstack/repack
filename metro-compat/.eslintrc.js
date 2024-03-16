@@ -12,4 +12,12 @@ module.exports = {
       version: 'latest',
     },
   },
+  overrides: [
+    {
+      files: ['jest.setup.js'],
+      env: {
+        jest: true,
+      },
+    },
+  ],
 };
