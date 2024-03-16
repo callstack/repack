@@ -1,8 +1,8 @@
-function resolve() {
-  console.log('resolve');
+function resolve(context, request, platform) {
+  console.log(context, request, platform);
+  return '';
 }
 
 module.exports = {
-  __esModule: true,
-  default: resolve,
+  resolve,
 };

@@ -5,8 +5,9 @@ const path = require('path');
 const pathMap = {
   resolver: {
     '../index': 'resolve',
-    './utils': 'resolve-utils',
     '../errors/FailedToResolvePathError': 'resolve-error',
+    // ignored
+    '../types': '../types',
   },
 };
 

@@ -1,7 +1,7 @@
 module.exports = {
   rootDir: __dirname,
   testEnvironment: 'node',
-  testRegex: 'resolver/.*-test\\.js$',
+  testRegex: '__tests__/.*-test\\.js$',
   fakeTimers: {
     enableGlobally: true,
     legacyFakeTimers: false,
