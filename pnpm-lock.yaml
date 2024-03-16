@@ -107,6 +107,9 @@ importers:
       babel-plugin-syntax-hermes-parser:
         specifier: ^0.20.1
         version: 0.20.1
+      enhanced-resolve:
+        specifier: ^5.16.0
+        version: 5.16.0
       eslint:
         specifier: ^8.53.0
         version: 8.53.0
@@ -11321,6 +11324,14 @@ packages:
     dependencies:
       graceful-fs: 4.2.10
       tapable: 2.2.0
+
+  /enhanced-resolve@5.16.0:
+    resolution: {integrity: sha512-O+QWCviPNSSLAD9Ucn8Awv+poAkqn3T1XY5/N7kR7rQO9yfSGWkYZDwpJ+iKF7B8rxaQKWngSqACpgzeapSyoA==}
+    engines: {node: '>=10.13.0'}
+    dependencies:
+      graceful-fs: 4.2.10
+      tapable: 2.2.0
+    dev: true
 
   /enquirer@2.3.6:
     resolution: {integrity: sha512-yjNnPr315/FjS4zIsUxYguYUPP2e1NK4d7E7ZOLiyYCcbFBiTMyID+2wvm2w6+pZ/odMA7cRkjhsPbltwBOrLg==}
