@@ -9,7 +9,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --clearCache && jest --no-watchman"
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",

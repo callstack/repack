@@ -1,5 +1,7 @@
 import memfs from 'memfs';
 
+type FileMap = Record<string, string | { realPath?: string }>;
+
 interface ResolutionContext {
   assetExts: Set<string>;
   extraNodeModules: Record<string, string>;
@@ -27,15 +29,22 @@ interface ResolutionContext {
   getPackageForModule: (modulePath: string) => Object;
 }
 
+// shared filesystem for all tests
 const filesystem = new memfs.Volume();
 
-function setupFilesystemFromFileMap(
-  fileMap: Record<string, string | { realPath?: string }>
-) {
+function setupFilesystemFromFileMap(fileMap: FileMap) {
   filesystem.reset();
-  filesystem.fromJSON(fileMap, '/');
 }
 
+// mocked utils
+export function createResolutionContext(
+  fileMap: FileMap,
+  options: { enableSymlinks?: boolean }
+) {
+  console.log('createResolutionContext');
+}
+
+// mocked index
 export function resolve(context: ResolutionContext, request, platform) {
   setupFilesystemFromFileMap(context.fileMap);
   console.log(context, request, platform);
