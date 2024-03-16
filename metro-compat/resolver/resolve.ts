@@ -47,6 +47,7 @@ interface ResolutionContext {
   getPackageForModule: (modulePath: string) => Object;
   // mock additional fields
   __fileMap: InputFileMap;
+  __additionalFileMap: InputFileMap;
   __options: { enableSymlinks?: boolean };
 }
 
@@ -61,7 +62,7 @@ function processInputFileMap(inputFileMap: InputFileMap) {
   for (const [filePath, content] of Object.entries(inputFileMap)) {
     if (typeof content === 'string') {
       fileMap[filePath] = content;
-    } else if ('realPath' in content) {
+    } else if (content && 'realPath' in content) {
       symlinksMap[filePath] = String(content.realPath);
     } else {
       fileMap[filePath] = JSON.stringify(content);
@@ -94,8 +95,12 @@ function transformContext(context: ResolutionContext): TransformedContext {
   return {
     // webpack provides context as a directory, not a file
     context: path.dirname(context.originModulePath!),
-    inputFileMap: context.__fileMap,
+    inputFileMap: {
+      ...context.__fileMap,
+      ...context.__additionalFileMap,
+    } as InputFileMap,
     options: {
+      conditionNames: context.unstable_conditionNames,
       symlinks: context.__options?.enableSymlinks ?? true,
     },
   };
