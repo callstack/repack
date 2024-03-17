@@ -13,6 +13,9 @@ const testsToSkip = {
     '[nonstrict] should fall back to "browser" spec resolution and log inaccessible import warning',
     // Assets are handled differently in webpack
     'should resolve assets using "exports" field and calling `resolveAsset`',
+    // Resolving fails as expected but error messages are different
+    'should use most specific pattern base',
+    'should throw FailedToResolvePathError when no conditions are matched',
   ]),
 };
 
