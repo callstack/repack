@@ -7,7 +7,7 @@ import type { PackageJson } from 'type-fest';
 type EnhancedResolve = typeof EnhancedResolveNS;
 type EnhancedResolveOptions = EnhancedResolveNS.ResolveOptions;
 type FileMap = Record<string, string>;
-type SymlinksMap = Record<string, string>;
+type SymlinksMap = Record<string, string | null>;
 type InputFileMap =
   | Record<string, string | { realPath?: string }>
   | Record<string, PackageJson>;
@@ -19,10 +19,7 @@ interface TransformedContext {
 }
 
 interface ResolutionContext {
-  assetExts: Set<string>;
-  extraNodeModules: Record<string, string> | null;
   mainFields: string[];
-  nodeModulesPaths: string[];
   preferNativePlatform: boolean;
   originModulePath?: string;
   sourceExts: string[];
@@ -30,29 +27,28 @@ interface ResolutionContext {
   unstable_conditionsByPlatform: Record<string, string[]>;
   unstable_enablePackageExports: boolean;
   unstable_enableSymlinks: boolean;
-  // unsupported, but need to be handled
+  // unsupported or ignored
   allowHaste: boolean;
-  resolveHasteModule: (name: string) => string | null;
-  resolveHastePackage: (name: string) => string | null;
-  // unsure
-  dev: boolean;
-  resolveAsset: (filePath: string) => null;
-  unstable_logWarning: () => void;
-  disableHierarchicalLookup: boolean;
+  assetExts: Set<string>;
   customResolverOptions: Record<string, any>;
-  redirectModulePath: (filePath: string) => string;
-  unstable_getRealPath?: ((filePath: string) => string) | null;
+  dev: boolean;
+  disableHierarchicalLookup: boolean;
   doesFileExist: (filePath: string) => boolean;
+  extraNodeModules: Record<string, string> | null;
   getPackage: (packageJsonPath: string) => Object;
   getPackageForModule: (modulePath: string) => Object;
+  nodeModulesPaths: string[];
+  redirectModulePath?: (filePath: string) => string;
+  resolveAsset: (filePath: string) => null;
+  resolveHasteModule: (name: string) => string | null;
+  resolveHastePackage: (name: string) => string | null;
+  unstable_getRealPath?: ((filePath: string) => string) | null;
+  unstable_logWarning: () => void;
   // mock additional fields
   __fileMap: InputFileMap;
-  __additionalFileMap: InputFileMap;
+  __fileMapOverrides: InputFileMap;
   __options: { enableSymlinks?: boolean };
 }
-
-// shared filesystem for all tests
-const filesystem = new memfs.Volume();
 
 // divide input file map into file map and symlinks map
 function processInputFileMap(inputFileMap: InputFileMap) {
@@ -63,24 +59,25 @@ function processInputFileMap(inputFileMap: InputFileMap) {
     if (typeof content === 'string') {
       fileMap[filePath] = content;
     } else if (content && 'realPath' in content) {
-      symlinksMap[filePath] = String(content.realPath);
+      symlinksMap[filePath] = content.realPath;
     } else {
-      fileMap[filePath] = JSON.stringify(content);
+      const packageJson = content as PackageJson;
+      fileMap[filePath] = JSON.stringify(packageJson);
     }
   }
 
   return { fileMap, symlinksMap };
 }
 
-function setupFilesystemFromFileMap(
-  fileMap: FileMap,
-  symlinksMap: SymlinksMap
-) {
-  filesystem.reset();
-  filesystem.fromJSON(fileMap, '/');
+function createFilesystem(fileMap: FileMap, symlinksMap: SymlinksMap) {
+  const filesystem = memfs.Volume.fromJSON(fileMap, '/');
   for (const [link, target] of Object.entries(symlinksMap)) {
-    filesystem.symlinkSync(target, link);
+    if (target && !filesystem.existsSync(target)) {
+      filesystem.writeFileSync(target, '');
+    }
+    filesystem.symlinkSync(target ?? '', link);
   }
+  return filesystem;
 }
 
 // use internal enhanced-resolve
@@ -100,15 +97,18 @@ function transformContext(
     context: path.dirname(context.originModulePath!),
     inputFileMap: {
       ...context.__fileMap,
-      ...context.__additionalFileMap,
+      ...context.__fileMapOverrides,
     } as InputFileMap,
     options: {
-      // webpack uses whole separate config per platform
+      // repack uses whole separate config per platform
       conditionNames: platform
         ? context.unstable_conditionsByPlatform[platform]
         : context.unstable_conditionNames,
+      fallback: context.extraNodeModules
+        ? { ...context.extraNodeModules }
+        : undefined,
       mainFields: context.mainFields,
-      // symlinks are enabled by default
+      // symlinks are enabled by default in metro
       symlinks: context.__options?.enableSymlinks ?? true,
     },
   };
@@ -126,10 +126,9 @@ export function resolve(
     platform
   );
   const { fileMap, symlinksMap } = processInputFileMap(inputFileMap);
+  const filesystem = createFilesystem(fileMap, symlinksMap);
 
-  setupFilesystemFromFileMap(fileMap, symlinksMap);
-
-  const resolve = enhancedResolve.create.sync({
+  const resolveOptions: EnhancedResolveOptions = {
     // @ts-expect-error memfs is compatible enough
     fileSystem: filesystem,
     // apply Re.Pack defaults
@@ -140,10 +139,11 @@ export function resolve(
     }),
     // customize options for test purposes
     ...options,
-  });
+  };
 
-  // console.log('FINAL OPTIONS', context, request, platform, options);
+  const resolve = enhancedResolve.create.sync(resolveOptions);
   const resolvedPath = resolve(context, request);
+
   // adjust result to match metro-resolver output
   return {
     type: 'sourceFile',
