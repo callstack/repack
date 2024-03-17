@@ -14,7 +14,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['jest.setup.js'],
+      files: ['jest.setup.js', 'align-spec.js'],
       env: {
         jest: true,
       },
