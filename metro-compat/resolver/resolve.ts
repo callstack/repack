@@ -132,8 +132,7 @@ export function resolve(
     // @ts-expect-error memfs is compatible enough
     fileSystem: filesystem,
     // apply Re.Pack defaults
-    ...getResolveOptions({
-      platform: platform ?? 'platform',
+    ...getResolveOptions(String(platform), {
       enablePackageExports: metroContext.unstable_enablePackageExports,
       preferNativePlatform: metroContext.preferNativePlatform,
     }),
