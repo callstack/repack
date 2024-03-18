@@ -45,9 +45,9 @@ export interface ResolveOptions {
  * ```
  */
 
-export function getResolveOptions(platform: string, options: ResolveOptions) {
-  const preferNativePlatform = options.preferNativePlatform ?? true;
-  const enablePackageExports = options.enablePackageExports ?? false;
+export function getResolveOptions(platform: string, options?: ResolveOptions) {
+  const preferNativePlatform = options?.preferNativePlatform ?? true;
+  const enablePackageExports = options?.enablePackageExports ?? false;
 
   let extensions = ['.ts', '.js', '.tsx', '.jsx', '.json'];
 
