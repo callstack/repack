@@ -50,6 +50,12 @@ export function getResolveOptions({
   let exportsFields: string[];
 
   if (enablePackageExports) {
+    /**
+     * Match what React Native uses in @react-native/metro-config.
+     * Order of conditionNames doesn't matter.
+     *
+     * Source: https://github.com/facebook/react-native/blob/d53cc2b46dee5ed4d93ee76dea4aea9da42d0158/packages/metro-config/src/index.flow.js
+     */
     conditionNames = ['require', 'import', 'react-native'];
     exportsFields = ['exports'];
   } else {
@@ -66,6 +72,8 @@ export function getResolveOptions({
     /**
      * Match what React Native packager supports.
      * First entry takes precedence.
+     *
+     * Source: https://github.com/facebook/react-native/blob/d53cc2b46dee5ed4d93ee76dea4aea9da42d0158/packages/metro-config/src/index.flow.js
      */
     mainFields: ['react-native', 'browser', 'main'],
     aliasFields: ['react-native', 'browser', 'main'],
