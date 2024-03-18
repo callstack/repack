@@ -23,7 +23,45 @@
  * };
  * ```
  */
-export function getResolveOptions(platform: string) {
+export function getResolveOptions({
+  platform,
+  enablePackageExports = false,
+  preferNativePlatform = true,
+}: {
+  platform: string;
+  enablePackageExports?: boolean;
+  preferNativePlatform?: boolean;
+}) {
+  let extensions = ['.ts', '.js', '.tsx', '.jsx', '.json'];
+  const platformExtensions = [
+    `.${platform}.ts`,
+    `.${platform}.js`,
+    `.${platform}.tsx`,
+    `.${platform}.jsx`,
+  ];
+  const nativeExtensions = [
+    '.native.ts',
+    '.native.js',
+    '.native.tsx',
+    '.native.jsx',
+  ];
+
+  let conditionNames: string[];
+  let exportsFields: string[];
+
+  if (enablePackageExports) {
+    conditionNames = ['require', 'import', 'react-native'];
+    exportsFields = ['exports'];
+  } else {
+    conditionNames = [];
+    exportsFields = [];
+    extensions = [
+      platformExtensions,
+      preferNativePlatform ? nativeExtensions : [],
+      extensions,
+    ].flat();
+  }
+
   return {
     /**
      * Match what React Native packager supports.
@@ -31,21 +69,8 @@ export function getResolveOptions(platform: string) {
      */
     mainFields: ['react-native', 'browser', 'main'],
     aliasFields: ['react-native', 'browser', 'main'],
-    conditionNames: ['default', 'require'],
-    extensions: [
-      `.${platform}.ts`,
-      `.${platform}.js`,
-      `.${platform}.tsx`,
-      `.${platform}.jsx`,
-      '.native.ts',
-      '.native.js',
-      '.native.tsx',
-      '.native.jsx',
-      '.ts',
-      '.js',
-      '.tsx',
-      '.jsx',
-      '.json',
-    ],
+    conditionNames,
+    exportsFields,
+    extensions,
   };
 }
