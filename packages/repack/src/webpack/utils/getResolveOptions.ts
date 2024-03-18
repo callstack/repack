@@ -1,9 +1,25 @@
 /**
- * Get Webpack's resolve options to properly resolve JavaScript files
- * that contain `<platform>` or `native` (eg `file.ios.js`) suffixes as well as `react-native` field
- * in dependencies' `package.json`.
+ * {@link getResolveOptions} options.
+ */
+export interface ResolveOptions {
+  /**
+   * Whether to enable Package Exports support. Defaults to `false`.
+   */
+  enablePackageExports?: boolean;
+  /**
+   * Whether to prefer native platform over generic platform. Defaults to `true`
+   */
+  preferNativePlatform?: boolean;
+}
+
+/**
+ * Get Webpack's resolve options to properly resolve JavaScript files:
+ * - resolve platform extensions (e.g. `file.ios.js`)
+ * - resolve native extensions (e.g. `file.native.js`)
+ * - optionally use package exports (`exports` field in `package.json`) instead of main fields (e.g. `main` or `browser` or `react-native`)
  *
  * @param platform Target application platform.
+ * @param options Additional options that can modify resolution behaviour.
  * @returns Webpack's resolve options.
  *
  * @category Webpack util
@@ -17,28 +33,29 @@
  *
  *   return {
  *     resolve: {
- *       ...Repack.getResolveOptions(platform),
+ *       ...Repack.getResolveOptions(platform, {
+ *         enablePackageExports: false,
+ *         preferNativePlatform: true
+ *       }),
  *     },
  *   };
  * };
  * ```
  */
-export function getResolveOptions({
-  platform,
-  enablePackageExports = false,
-  preferNativePlatform = true,
-}: {
-  platform: string;
-  enablePackageExports?: boolean;
-  preferNativePlatform?: boolean;
-}) {
+
+export function getResolveOptions(platform: string, options: ResolveOptions) {
+  const preferNativePlatform = options.preferNativePlatform ?? true;
+  const enablePackageExports = options.enablePackageExports ?? false;
+
   let extensions = ['.ts', '.js', '.tsx', '.jsx', '.json'];
+
   const platformExtensions = [
     `.${platform}.ts`,
     `.${platform}.js`,
     `.${platform}.tsx`,
     `.${platform}.jsx`,
   ];
+
   const nativeExtensions = [
     '.native.ts',
     '.native.js',
@@ -53,8 +70,7 @@ export function getResolveOptions({
     /**
      * Match what React Native uses in @react-native/metro-config.
      * Order of conditionNames doesn't matter.
-     *
-     * Source: https://github.com/facebook/react-native/blob/d53cc2b46dee5ed4d93ee76dea4aea9da42d0158/packages/metro-config/src/index.flow.js
+     * Order inside of target package.json's `exports` field matters.
      */
     conditionNames = ['require', 'import', 'react-native'];
     exportsFields = ['exports'];
@@ -70,10 +86,10 @@ export function getResolveOptions({
 
   return {
     /**
-     * Match what React Native packager supports.
+     * Match what React Native uses in @react-native/metro-config.
      * First entry takes precedence.
      *
-     * Source: https://github.com/facebook/react-native/blob/d53cc2b46dee5ed4d93ee76dea4aea9da42d0158/packages/metro-config/src/index.flow.js
+     * Reference: https://github.com/facebook/react-native/blob/main/packages/metro-config/src/index.flow.js
      */
     mainFields: ['react-native', 'browser', 'main'],
     aliasFields: ['react-native', 'browser', 'main'],
