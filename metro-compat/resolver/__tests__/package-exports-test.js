@@ -10,7 +10,7 @@
  */
 
 import Resolver from '../index';
-import { createPackageAccessors, createResolutionContext } from './utils';
+import {createPackageAccessors, createResolutionContext} from './utils';
 import path from 'path';
 
 // Tests validating Package Exports resolution behaviour. See RFC0534:
@@ -71,10 +71,10 @@ describe('with package exports resolution disabled', () => {
 
     expect(
       Resolver.resolve(
-        { ...context, unstable_logWarning: logWarning },
+        {...context, unstable_logWarning: logWarning},
         'test-pkg/foo',
-        'ios'
-      )
+        'ios',
+      ),
     ).toEqual({
       type: 'sourceFile',
       filePath: '/root/node_modules/test-pkg/foo.ios.js',
@@ -121,7 +121,7 @@ describe('with package exports resolution enabled', () => {
             realPath: '/root/node_modules/test-pkg/symlink-target.js',
           },
         },
-        { enableSymlinks: true }
+        {enableSymlinks: true},
       ),
       originModulePath: '/root/src/main.js',
       unstable_enablePackageExports: true,
@@ -305,7 +305,7 @@ describe('with package exports resolution enabled', () => {
       });
       expect(logWarning).toHaveBeenCalledTimes(1);
       expect(logWarning.mock.calls[0][0]).toMatchInlineSnapshot(
-        `"Attempted to import the module \\"/root/node_modules/test-pkg/foo\\" which is not listed in the \\"exports\\" of \\"/root/node_modules/test-pkg\\". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API."`
+        `"Attempted to import the module \\"/root/node_modules/test-pkg/foo\\" which is not listed in the \\"exports\\" of \\"/root/node_modules/test-pkg\\". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API."`,
       );
     });
 
@@ -342,7 +342,7 @@ describe('with package exports resolution enabled', () => {
         {
           type: 'sourceFile',
           filePath: '/root/node_modules/test-pkg/metadata.min.json',
-        }
+        },
       );
     });
 
@@ -363,8 +363,8 @@ describe('with package exports resolution enabled', () => {
         Resolver.resolve(
           baseContext,
           '/root/node_modules/test-pkg/metadata.json',
-          null
-        )
+          null,
+        ),
       ).toEqual({
         type: 'sourceFile',
         filePath: '/root/node_modules/test-pkg/metadata.json',
@@ -432,7 +432,7 @@ describe('with package exports resolution enabled', () => {
           {
             type: 'sourceFile',
             filePath: '/root/node_modules/test-pkg/lib/foo.js',
-          }
+          },
         );
       });
     });
@@ -449,11 +449,11 @@ describe('with package exports resolution enabled', () => {
           {
             type: 'sourceFile',
             filePath: '/root/node_modules/test-pkg/private/bar.js',
-          }
+          },
         );
         expect(logWarning).toHaveBeenCalledTimes(1);
         expect(logWarning.mock.calls[0][0]).toMatchInlineSnapshot(
-          `"Attempted to import the module \\"/root/node_modules/test-pkg/private/bar\\" which is not listed in the \\"exports\\" of \\"/root/node_modules/test-pkg\\". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API."`
+          `"Attempted to import the module \\"/root/node_modules/test-pkg/private/bar\\" which is not listed in the \\"exports\\" of \\"/root/node_modules/test-pkg\\". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API."`,
         );
       });
 
@@ -473,7 +473,7 @@ describe('with package exports resolution enabled', () => {
           {
             type: 'sourceFile',
             filePath: '/root/node_modules/test-pkg/private/bar.js',
-          }
+          },
         );
         expect(logWarning).not.toHaveBeenCalled();
       });
@@ -551,10 +551,10 @@ describe('with package exports resolution enabled', () => {
       }
 
       expect(() =>
-        Resolver.resolve(baseContext, 'test-pkg/features/foo', null)
+        Resolver.resolve(baseContext, 'test-pkg/features/foo', null),
       ).toThrowError();
       expect(() =>
-        Resolver.resolve(baseContext, 'test-pkg/features/baz.js', null)
+        Resolver.resolve(baseContext, 'test-pkg/features/baz.js', null),
       ).toThrowError();
     });
 
@@ -566,7 +566,7 @@ describe('with package exports resolution enabled', () => {
 
       // TODO(T145206395): Improve this error trace
       expect(() =>
-        Resolver.resolve(context, 'test-pkg/features/bar/Bar.js', null)
+        Resolver.resolve(context, 'test-pkg/features/bar/Bar.js', null),
       ).toThrowErrorMatchingInlineSnapshot(`
         "Module does not exist in the Haste module map or in these directories:
           /root/src/node_modules
@@ -585,7 +585,7 @@ describe('with package exports resolution enabled', () => {
         };
 
         expect(
-          Resolver.resolve(context, 'test-pkg/assets/Logo.js', null)
+          Resolver.resolve(context, 'test-pkg/assets/Logo.js', null),
         ).toEqual({
           type: 'sourceFile',
           filePath: '/root/node_modules/test-pkg/assets/Logo.js',
@@ -744,10 +744,10 @@ describe('with package exports resolution enabled', () => {
         });
         expect(
           Resolver.resolve(
-            { ...context, unstable_conditionsByPlatform: {} },
+            {...context, unstable_conditionsByPlatform: {}},
             'test-pkg/foo.js',
-            'web'
-          )
+            'web',
+          ),
         ).toEqual({
           type: 'sourceFile',
           filePath: '/root/node_modules/test-pkg/lib/foo.js',
@@ -839,7 +839,7 @@ describe('with package exports resolution enabled', () => {
         });
         expect(logWarning).toHaveBeenCalledTimes(1);
         expect(logWarning.mock.calls[0][0]).toMatchInlineSnapshot(
-          `"Attempted to import the module \\"/root/node_modules/test-pkg/lib/foo.js\\" which is listed in the \\"exports\\" of \\"/root/node_modules/test-pkg\\", however no match was resolved for this request (platform = null). Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API."`
+          `"Attempted to import the module \\"/root/node_modules/test-pkg/lib/foo.js\\" which is listed in the \\"exports\\" of \\"/root/node_modules/test-pkg\\", however no match was resolved for this request (platform = null). Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API."`,
         );
       });
     });
@@ -873,12 +873,12 @@ describe('with package exports resolution enabled', () => {
           const assets = [
             basePath + extension,
             ...assetResolutions.map(
-              (resolution) => basePath + '@' + resolution + 'x' + extension
+              resolution => basePath + '@' + resolution + 'x' + extension,
             ),
-          ].filter((candidate) => baseContext.doesFileExist(candidate));
+          ].filter(candidate => baseContext.doesFileExist(candidate));
 
           return assets.length ? assets : null;
-        }
+        },
       );
       const context = {
         ...baseContext,
@@ -886,7 +886,7 @@ describe('with package exports resolution enabled', () => {
       };
 
       expect(
-        Resolver.resolve(context, 'test-pkg/icons/metro.png', null)
+        Resolver.resolve(context, 'test-pkg/icons/metro.png', null),
       ).toEqual({
         type: 'assetFiles',
         filePaths: [
@@ -898,7 +898,7 @@ describe('with package exports resolution enabled', () => {
       expect(resolveAsset).toHaveBeenLastCalledWith(
         '/root/node_modules/test-pkg/assets/icons',
         'metro',
-        '.png'
+        '.png',
       );
     });
   });
@@ -937,10 +937,10 @@ describe('with package exports resolution enabled', () => {
         });
         expect(
           Resolver.resolve(
-            { ...context, unstable_conditionNames: ['react-native'] },
+            {...context, unstable_conditionNames: ['react-native']},
             'test-pkg',
-            null
-          )
+            null,
+          ),
         ).toEqual({
           type: 'sourceFile',
           filePath: '/root/node_modules/test-pkg/index-react-native.js',
@@ -953,7 +953,7 @@ describe('with package exports resolution enabled', () => {
             '/root/src/main.js': '',
             '/root/node_modules/test-pkg/package.json': JSON.stringify({
               exports: [
-                { browser: './index-browser.js', default: 'index.js' },
+                {browser: './index-browser.js', default: 'index.js'},
                 './index-alt.js',
               ],
             }),
@@ -983,8 +983,8 @@ describe('with package exports resolution enabled', () => {
             '/root/node_modules/test-pkg/package.json': JSON.stringify({
               main: './index.js',
               exports: [
-                [{ import: 'index.mjs' }],
-                [{ require: 'index.cjs' }],
+                [{import: 'index.mjs'}],
+                [{require: 'index.cjs'}],
                 ['index.cjs'],
               ],
             }),
@@ -1015,8 +1015,8 @@ describe('with package exports resolution enabled', () => {
               main: './index.js',
               exports: {
                 '.': [
-                  [{ import: 'index.mjs' }],
-                  [{ require: 'index.cjs' }],
+                  [{import: 'index.mjs'}],
+                  [{require: 'index.cjs'}],
                   ['index.cjs'],
                 ],
               },
@@ -1070,8 +1070,8 @@ describe('with package exports resolution enabled', () => {
         Resolver.resolve(
           context,
           '@babel/runtime/helpers/interopRequireDefault',
-          null
-        )
+          null,
+        ),
       ).toEqual({
         type: 'sourceFile',
         filePath:

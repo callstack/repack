@@ -9,11 +9,11 @@
  * @oncall react_native
  */
 
-import type { ResolutionContext } from '../index';
+import type {ResolutionContext} from '../index';
 
 import FailedToResolvePathError from '../errors/FailedToResolvePathError';
 import Resolver from '../index';
-import { createResolutionContext } from './utils';
+import {createResolutionContext} from './utils';
 
 const fileMap = {
   '/root/project/foo.js': '',
@@ -90,7 +90,7 @@ describe('preferNativePlatform: false', () => {
 
   test('platform: android, only ios+native available does not resolve', () => {
     expect(() => Resolver.resolve(context, './baz', 'android')).toThrow(
-      FailedToResolvePathError
+      FailedToResolvePathError,
     );
   });
 });

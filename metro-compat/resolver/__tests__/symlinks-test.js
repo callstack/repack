@@ -11,21 +11,22 @@
 
 'use strict';
 
-import type { ResolutionContext } from '../index';
+import type {ResolutionContext} from '../index';
 
-const Resolver = require('../index');
+import {createResolutionContext} from './utils';
+
 const FailedToResolvePathError = require('../errors/FailedToResolvePathError');
-const { createResolutionContext } = require('./utils');
+const Resolver = require('../index');
 
 const fileMap = {
   '/root/project/foo.js': '',
   '/root/project/baz/index.js': '',
-  '/root/project/baz.js': { realPath: null },
-  '/root/project/link-to-foo.js': { realPath: '/root/project/foo.js' },
+  '/root/project/baz.js': {realPath: null},
+  '/root/project/link-to-foo.js': {realPath: '/root/project/foo.js'},
 };
 
-const CONTEXT = {
-  ...createResolutionContext(fileMap, { enableSymlinks: true }),
+const CONTEXT: ResolutionContext = {
+  ...createResolutionContext(fileMap, {enableSymlinks: true}),
   originModulePath: '/root/project/foo.js',
 };
 
@@ -39,7 +40,7 @@ it('resolves to a real path when the chosen candidate is a symlink', () => {
 it('does not resolve to a broken symlink', () => {
   // ./baz.js is a broken link, baz/index.js is real
   expect(() => Resolver.resolve(CONTEXT, './baz.js', null)).toThrow(
-    FailedToResolvePathError
+    FailedToResolvePathError,
   );
   expect(Resolver.resolve(CONTEXT, './baz', null)).toEqual({
     type: 'sourceFile',

@@ -10,7 +10,7 @@
  */
 
 import Resolver from '../index';
-import { createPackageAccessors, createResolutionContext } from './utils';
+import {createPackageAccessors, createResolutionContext} from './utils';
 
 describe('browser field spec', () => {
   describe('alternate main fields', () => {
@@ -39,8 +39,8 @@ describe('browser field spec', () => {
             mainFields: ['browser', 'main'],
           },
           'test-pkg',
-          null
-        )
+          null,
+        ),
       ).toEqual({
         type: 'sourceFile',
         filePath: '/root/node_modules/test-pkg/index-browser.js',
@@ -53,8 +53,8 @@ describe('browser field spec', () => {
             mainFields: ['react-native', 'browser', 'main'],
           },
           'test-pkg',
-          null
-        )
+          null,
+        ),
       ).toEqual({
         type: 'sourceFile',
         filePath: '/root/node_modules/test-pkg/index-react-native.js',
@@ -73,8 +73,8 @@ describe('browser field spec', () => {
             mainFields: ['browser', 'main'],
           },
           'test-pkg',
-          null
-        )
+          null,
+        ),
       ).toEqual({
         type: 'sourceFile',
         filePath: '/root/node_modules/test-pkg/index.js',

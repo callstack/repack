@@ -12,7 +12,7 @@
 'use strict';
 
 import Resolver from '../index';
-import { createResolutionContext } from './utils';
+import {createResolutionContext} from './utils';
 import path from 'path';
 
 describe('asset resolutions', () => {
@@ -30,17 +30,17 @@ describe('asset resolutions', () => {
   const resolveAsset = (
     dirPath: string,
     assetName: string,
-    extension: string
+    extension: string,
   ) => {
     const basePath = dirPath + path.sep + assetName;
     let assets = [
       basePath + extension,
       ...assetResolutions.map(
-        (resolution) => basePath + '@' + resolution + 'x' + extension
+        resolution => basePath + '@' + resolution + 'x' + extension,
       ),
     ];
 
-    assets = assets.filter((candidate) => baseContext.doesFileExist(candidate));
+    assets = assets.filter(candidate => baseContext.doesFileExist(candidate));
 
     return assets.length ? assets : null;
   };
@@ -77,7 +77,7 @@ describe('asset resolutions', () => {
 
     // Asset file matching more specific asset ext
     expect(
-      Resolver.resolve(context, './assets/example.asset.json', null)
+      Resolver.resolve(context, './assets/example.asset.json', null),
     ).toEqual({
       type: 'assetFiles',
       filePaths: ['/root/project/assets/example.asset.json'],
