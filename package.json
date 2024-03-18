@@ -15,7 +15,7 @@
   "dependencies": {
     "@changesets/changelog-github": "^0.4.5",
     "@changesets/cli": "^2.23.0",
-    "turbo": "^1.2.14"
+    "turbo": "^1.12.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.9",
