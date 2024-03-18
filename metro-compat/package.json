@@ -9,7 +9,9 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "jest --noStackTrace"
+    "lint": "eslint .",
+    "test": "jest --noStackTrace",
+    "typecheck": "tsc"
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",

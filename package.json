@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint --filter=!metro-compat",
+    "typecheck": "turbo run typecheck --filter=!metro-compat",
     "test": "turbo run test --filter=!metro-compat",
     "release": "pnpm build && pnpm lint && pnpm test && pnpm changeset publish",
     "website:start": "turbo run docs && pnpm --filter website run start",

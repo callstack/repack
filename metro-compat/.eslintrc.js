@@ -4,6 +4,13 @@ module.exports = {
     project: true,
     tsconfigRootDir: __dirname,
   },
+  ignorePatterns: [
+    '.eslintrc.js',
+    'babel.config.js',
+    'jest.config.js',
+    'jest.setup.js',
+    '**/__tests__/*.js',
+  ],
   rules: {
     'import/no-extraneous-dependencies': 'off',
   },

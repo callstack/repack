@@ -1,6 +1,5 @@
 // based on https://github.com/facebook/metro/blob/main/babel.config.js
 const path = require('path');
-// eslint-disable-next-line import/no-extraneous-dependencies
 
 const pathMap = {
   resolver: {
