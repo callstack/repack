@@ -1,5 +1,5 @@
 /**
- * {@link getResolveOptions} options.
+ * {@link getResolveOptions} additional options.
  */
 export interface ResolveOptions {
   /**
@@ -16,7 +16,8 @@ export interface ResolveOptions {
  * Get Webpack's resolve options to properly resolve JavaScript files:
  * - resolve platform extensions (e.g. `file.ios.js`)
  * - resolve native extensions (e.g. `file.native.js`)
- * - optionally use package exports (`exports` field in `package.json`) instead of main fields (e.g. `main` or `browser` or `react-native`)
+ * - optionally use package exports (`exports` field in `package.json`) instead of
+ *   main fields (e.g. `main` or `browser` or `react-native`)
  *
  * @param platform Target application platform.
  * @param options Additional options that can modify resolution behaviour.
@@ -25,6 +26,7 @@ export interface ResolveOptions {
  * @category Webpack util
  *
  * @example Usage in Webpack config:
+ *
  * ```ts
  * import * as Repack from '@callstack/repack';
  *
@@ -84,17 +86,32 @@ export function getResolveOptions(platform: string, options: ResolveOptions) {
     ].flat();
   }
 
+  /**
+   * Match what React Native uses in @react-native/metro-config.
+   * First entry takes precedence.
+   *
+   * Reference: https://github.com/facebook/react-native/blob/main/packages/metro-config/src/index.flow.js
+   */
   return {
     /**
-     * Match what React Native uses in @react-native/metro-config.
-     * First entry takes precedence.
-     *
-     * Reference: https://github.com/facebook/react-native/blob/main/packages/metro-config/src/index.flow.js
+     * Reference: Webpack's [configuration.resolve.mainFields](https://webpack.js.org/configuration/resolve/#resolvemainfields)
      */
     mainFields: ['react-native', 'browser', 'main'],
+    /**
+     * Reference: Webpack's [configuration.resolve.aliasFields](https://webpack.js.org/configuration/resolve/#resolvealiasfields)
+     */
     aliasFields: ['react-native', 'browser', 'main'],
-    conditionNames,
-    exportsFields,
-    extensions,
+    /**
+     * Reference: Webpack's [configuration.resolve.conditionNames](https://webpack.js.org/configuration/resolve/#resolveconditionnames)
+     */
+    conditionNames: conditionNames,
+    /**
+     * Reference: Webpack's [configuration.resolve.exportsFields](https://webpack.js.org/configuration/resolve/#resolveexportsfields)
+     */
+    exportsFields: exportsFields,
+    /**
+     * Reference: Webpack's [configuration.resolve.extensions](https://webpack.js.org/configuration/resolve/#resolveextensions)
+     */
+    extensions: extensions,
   };
 }
