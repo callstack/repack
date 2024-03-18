@@ -1,3 +1,4 @@
 {
-  "css.validate": false
+  "css.validate": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
