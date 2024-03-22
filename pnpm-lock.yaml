@@ -17,8 +17,8 @@ importers:
         specifier: ^2.23.0
         version: 2.23.0
       turbo:
-        specifier: ^1.2.14
-        version: 1.2.14
+        specifier: ^1.12.5
+        version: 1.12.5
     devDependencies:
       '@babel/cli':
         specifier: ^7.23.9
@@ -8077,7 +8077,7 @@ packages:
       webpack-cli: 4.x.x
     dependencies:
       webpack: 5.75.0(webpack-cli@4.9.2)
-      webpack-cli: 4.9.2(webpack-dev-server@4.9.2)(webpack@5.75.0)
+      webpack-cli: 4.9.2(webpack@5.75.0)
 
   /@webpack-cli/info@1.4.1(webpack-cli@4.9.2):
     resolution: {integrity: sha512-PKVGmazEq3oAo46Q63tpMr4HipI3OPfP7LiNOEJg963RMgT0rqheag28NCML0o3GIzA3DmxP1ZIAv9oTX1CUIA==}
@@ -8085,7 +8085,7 @@ packages:
       webpack-cli: 4.x.x
     dependencies:
       envinfo: 7.11.0
-      webpack-cli: 4.9.2(webpack-dev-server@4.9.2)(webpack@5.75.0)
+      webpack-cli: 4.9.2(webpack@5.75.0)
 
   /@webpack-cli/serve@1.6.1(webpack-cli@4.9.2):
     resolution: {integrity: sha512-gNGTiTrjEVQ0OcVnzsRSqTxaBSr+dmTfm+qJsCDluky8uhdLWep7Gcr62QsAKHTMxjCS/8nEITsmFAhfIx+QSw==}
@@ -8097,7 +8097,6 @@ packages:
         optional: true
     dependencies:
       webpack-cli: 4.9.2(webpack@5.75.0)
-    dev: true
 
   /@webpack-cli/serve@1.6.1(webpack-cli@4.9.2)(webpack-dev-server@4.9.2):
     resolution: {integrity: sha512-gNGTiTrjEVQ0OcVnzsRSqTxaBSr+dmTfm+qJsCDluky8uhdLWep7Gcr62QsAKHTMxjCS/8nEITsmFAhfIx+QSw==}
@@ -21208,128 +21207,64 @@ packages:
       yargs: 17.7.2
     dev: false
 
-  /turbo-darwin-64@1.2.14:
-    resolution: {integrity: sha512-Fdx212fvhcbF/KKnSoenTtNLZ5Wzl+DDBmwHoHXmG2DX/1qFk4HD1/D6waCySZU1Hu1bQToIimEyrWgwAkCVbQ==}
+  /turbo-darwin-64@1.12.5:
+    resolution: {integrity: sha512-0GZ8reftwNQgIQLHkHjHEXTc/Z1NJm+YjsrBP+qhM/7yIZ3TEy9gJhuogDt2U0xIWwFgisTyzbtU7xNaQydtoA==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: false
     optional: true
 
-  /turbo-darwin-arm64@1.2.14:
-    resolution: {integrity: sha512-B9LRgZKW1D8EwMLNhW6n8pADiZZ+M7Qgb/Pv9DAJM+/MW5ozRn/PBA4Y+teyx2dGuaMOzvX9QzRhT1jn5U71TA==}
+  /turbo-darwin-arm64@1.12.5:
+    resolution: {integrity: sha512-8WpOLNNzvH6kohQOjihD+gaWL+ZFNfjvBwhOF0rjEzvW+YR3Pa7KjhulrjWyeN2yMFqAPubTbZIGOz1EVXLuQA==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: false
     optional: true
 
-  /turbo-freebsd-64@1.2.14:
-    resolution: {integrity: sha512-kmDgDZXS3vdDremUPPkaY4bAtEyqqUnhcH3tVGsHZJ6OF1eCoy+oiXWa9Aw7Wm2B0Ph5TyMooOjChgE44q4cMA==}
-    cpu: [x64]
-    os: [freebsd]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /turbo-freebsd-arm64@1.2.14:
-    resolution: {integrity: sha512-ZDbxkIXkBQJGJOrwihmfbza+jnfObMspbThEL0bp/MtMJS8QO4NELyjHDM0LgTfecduXtS1rJMSe7pZjiEK/Vg==}
-    cpu: [arm64]
-    os: [freebsd]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /turbo-linux-32@1.2.14:
-    resolution: {integrity: sha512-fBGbevGtvbGV5bK+w6O8vve5C07TbdfIk5j59odTZo782F4Xs7fgY57mRQtNOq71YUW9Hs7FGrLUI1iRsVODAA==}
-    cpu: [ia32]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /turbo-linux-64@1.2.14:
-    resolution: {integrity: sha512-im46sHYjZ/yl4JSmjF8HbgHpvClVHtFMvIkRVnJGuJK+e74L5YVX7ML/o1PdBj4NtQNNxyPRWfit7zfM/yLjtQ==}
+  /turbo-linux-64@1.12.5:
+    resolution: {integrity: sha512-INit73+bNUpwqGZCxgXCR3I+cQsdkQ3/LkfkgSOibkpg+oGqxJRzeXw3sp990d7SCoE8QOcs3iw+PtiFX/LDAA==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: false
     optional: true
 
-  /turbo-linux-arm64@1.2.14:
-    resolution: {integrity: sha512-qyusEtylnt5cF2+jIOMIN4iCzMG/tur2y3++YeKRCdGaboPUbsfCcTXbhM29VxxNWw5JVxh7FC0+ZUsEFRYDNg==}
+  /turbo-linux-arm64@1.12.5:
+    resolution: {integrity: sha512-6lkRBvxtI/GQdGtaAec9LvVQUoRw6nXFp0kM+Eu+5PbZqq7yn6cMkgDJLI08zdeui36yXhone8XGI8pHg8bpUQ==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: false
     optional: true
 
-  /turbo-linux-arm@1.2.14:
-    resolution: {integrity: sha512-d8v53TxIQpq6w3RFxcOyHrQzLcvgyA3VC9oxZ2phZtlcTvjjZulYmuToUAHdRW24cA2DGZkwA2wSF//zJoBcdQ==}
-    cpu: [arm]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /turbo-linux-mips64le@1.2.14:
-    resolution: {integrity: sha512-zKPi9ArRDu4BKB8YmcQ6i89Hhzd5xk4W+m7YuZKBmeEVCFBDUUAyWnKsvmBoYuGTpdQqMSH14BdYMTr5s2thjw==}
-    cpu: [mips64el]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /turbo-linux-ppc64le@1.2.14:
-    resolution: {integrity: sha512-gW43yKJjSHZjZdjI/MihrnIEACnwhB+okJJjYYFKuEteJF+TCWHvY3rfL9MFI7vH2zwFUgoncIOuGvaeZo3K0A==}
-    cpu: [ppc64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /turbo-windows-32@1.2.14:
-    resolution: {integrity: sha512-BMqpSaHx5mgvMdXotMoVinU3dSGBoRdZZkwOAs8R0WPUCwZVMPo6fTuKIhcOlKFOt6swQGFD02IzCWD+SGfEuA==}
-    cpu: [ia32]
-    os: [win32]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /turbo-windows-64@1.2.14:
-    resolution: {integrity: sha512-SA9YNAyZ2wYBccPtWbQckpSZOAuhH71893UZsstRWUEUj/cZ+PFpwNGTrHTGoySbwQPbOVHQNXEO7QX405Ajow==}
+  /turbo-windows-64@1.12.5:
+    resolution: {integrity: sha512-gQYbOhZg5Ww0bQ/bC0w/4W6yQRwBumUUnkB+QPo15VznwxZe2a7bo6JM+9Xy9dKLa/kn+p7zTqme4OEp6M3/Yg==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: false
     optional: true
 
-  /turbo-windows-arm64@1.2.14:
-    resolution: {integrity: sha512-VNxbJ2LlRWzkiRE15nwW4oA/wBMFf1h8fuPCHHXtB6ThjfeG8SN5QgPUrhTIP4p7WiEdN/Sq7UJzFrGA4I8jqg==}
+  /turbo-windows-arm64@1.12.5:
+    resolution: {integrity: sha512-auvhZ9FrhnvQ4mgBlY9O68MT4dIfprYGvd2uPICba/mHUZZvVy5SGgbHJ0KbMwaJfnnFoPgLJO6M+3N2gDprKw==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: false
     optional: true
 
-  /turbo@1.2.14:
-    resolution: {integrity: sha512-una2aE2agjTT2SgC3kCmUrYIPy5uh5NLPQrRCKKBIgvII90vyajvFhcq+yJUYdh5f+2o0xb/9YXaj+FAITds0A==}
+  /turbo@1.12.5:
+    resolution: {integrity: sha512-FATU5EnhrYG8RvQJYFJnDd18DpccDjyvd53hggw9T9JEg9BhWtIEoeaKtBjYbpXwOVrJQMDdXcIB4f2nD3QPPg==}
     hasBin: true
-    requiresBuild: true
     optionalDependencies:
-      turbo-darwin-64: 1.2.14
-      turbo-darwin-arm64: 1.2.14
-      turbo-freebsd-64: 1.2.14
-      turbo-freebsd-arm64: 1.2.14
-      turbo-linux-32: 1.2.14
-      turbo-linux-64: 1.2.14
-      turbo-linux-arm: 1.2.14
-      turbo-linux-arm64: 1.2.14
-      turbo-linux-mips64le: 1.2.14
-      turbo-linux-ppc64le: 1.2.14
-      turbo-windows-32: 1.2.14
-      turbo-windows-64: 1.2.14
-      turbo-windows-arm64: 1.2.14
+      turbo-darwin-64: 1.12.5
+      turbo-darwin-arm64: 1.12.5
+      turbo-linux-64: 1.12.5
+      turbo-linux-arm64: 1.12.5
+      turbo-windows-64: 1.12.5
+      turbo-windows-arm64: 1.12.5
     dev: false
 
   /type-check@0.3.2:
@@ -22097,7 +22032,6 @@ packages:
       rechoir: 0.7.0
       webpack: 5.75.0(webpack-cli@4.9.2)
       webpack-merge: 5.8.0
-    dev: true
 
   /webpack-dev-middleware@5.3.3(webpack@5.75.0):
     resolution: {integrity: sha512-hj5CYrY0bZLB+eTO+x/j67Pkrquiy7kWepMHmUMoPsmcUaeEnQJqFzHJOyxgWlq746/wUuA64p9ta34Kyb01pA==}
@@ -22208,7 +22142,7 @@ packages:
       tapable: 2.2.0
       terser-webpack-plugin: 5.3.3(webpack@5.75.0)
       watchpack: 2.4.0
-      webpack-cli: 4.9.2(webpack-dev-server@4.9.2)(webpack@5.75.0)
+      webpack-cli: 4.9.2(webpack@5.75.0)
       webpack-sources: 3.2.3
     transitivePeerDependencies:
       - '@swc/core'

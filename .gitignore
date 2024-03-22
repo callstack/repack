@@ -371,3 +371,6 @@ packages/**/docs
 website/docs/api/**
 !website/docs/api/about.md
 .docusaurus
+
+# turborepo
+.turbo/
