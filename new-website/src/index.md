@@ -2,12 +2,11 @@
 pageType: home
 
 hero:
-  name: Re.Pack docs
-  text: Re.Pack documentation
-  tagline: Re.Pack docs tagline
+  name: Re.Pack
+  tagline: A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.
   actions:
     - theme: brand
-      text: Quick Start
+      text: Get started
       link: /guide/
     - theme: alt
       text: Github

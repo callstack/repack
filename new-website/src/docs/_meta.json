@@ -1,0 +1,55 @@
+[
+  {
+    "type": "section-header",
+    "label": "Fundamentals"
+  },
+  {
+    "type": "file",
+    "name": "getting-started",
+    "label": "Getting Started"
+  },
+  {
+    "type": "file",
+    "name": "about",
+    "label": "About Re.Pack"
+  },
+  {
+    "type": "section-header",
+    "label": "Guides"
+  },
+  {
+    "type": "dir",
+    "name": "code-splitting",
+    "label": "Code Splitting"
+  },
+  {
+    "type": "file",
+    "name": "module-federation",
+    "label": "Module Federation"
+  },
+  {
+    "type": "dir",
+    "name": "loaders",
+    "label": "Loaders"
+  },
+  {
+    "type": "dir",
+    "name": "plugins",
+    "label": "Plugins"
+  },
+  {
+    "type": "dir",
+    "name": "guides",
+    "label": "Guides"
+  },
+  {
+    "type": "dir",
+    "name": "migration-guides",
+    "label": "Migration Guides"
+  },
+  {
+    "type": "file",
+    "name": "known-issues",
+    "label": "Known Issues"
+  }
+]

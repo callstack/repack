@@ -1,0 +1,186 @@
+:root {
+  --rp-nav-height: 60px !important;
+  --rp-sidebar-width: 320px !important;
+  --rp-aside-width: 268px !important;
+}
+
+:root {
+  --rp-c-bg: #ffffff !important;
+  --rp-c-bg-soft: #f9f9f9 !important;
+  --rp-c-bg-mute: #f1f1f1 !important;
+
+  --rp-c-divider: rgba(60, 60, 60, 0.29) !important;
+  --rp-c-divider-light: rgba(60, 60, 60, 0.12) !important;
+
+  --rp-c-text-1: #1a2b3c !important; /* darker */
+  --rp-c-text-2: rgba(50, 50, 50, 0.8) !important; /* darker and more opaque */
+  --rp-c-text-3: rgba(50, 50, 50, 0.6) !important; /* darker and more opaque */
+  --rp-c-text-4: rgba(50, 50, 50, 0.4) !important; /* darker and more opaque */
+
+  --rp-c-text-code: #476573 !important;
+
+  --rp-c-brand: #9b6dff !important;
+  --rp-c-brand-light: #b89dff !important;
+  --rp-c-brand-lighter: #d4c8ff !important;
+  --rp-c-brand-dark: #7f58cc !important;
+  --rp-c-brand-darker: #604399 !important;
+  --rp-c-brand-tint: rgba(155, 109, 255, 0.1) !important;
+
+  --rp-c-gray: #8e8e8e !important;
+  --rp-c-gray-light-1: #aeaeae !important;
+  --rp-c-gray-light-2: #c7c7c7 !important;
+  --rp-c-gray-light-3: #d1d1d1 !important;
+  --rp-c-gray-light-4: #e5e5e5 !important;
+  --rp-c-gray-light-5: #f2f2f2 !important;
+
+  --rp-c-dark: #000000 !important;
+  --rp-c-dark-light-1: #2f2f2f !important;
+  --rp-c-dark-light-2: #3a3a3a !important;
+  --rp-c-dark-light-3: #4a4a4a !important;
+  --rp-c-dark-light-4: #5c5c5c !important;
+  --rp-c-dark-light-5: #6b6b6b !important;
+
+  --rp-radius: 1rem !important;
+  --rp-radius-small: 0.5rem !important;
+  --rp-radius-large: 1.5rem !important;
+}
+
+.dark {
+  --rp-c-bg: #1e1e1e !important; /* Dark Gray */
+  --rp-c-bg-soft: #505050 !important; /* Soft Dark Gray */
+  --rp-c-bg-mute: #2d2d2d !important; /* Muted Dark Gray */
+  --rp-c-bg-alt: #121212 !important; /* Alternate Dark Gray */
+
+  --rp-c-divider: rgba(80, 80, 80, 0.65) !important; /* Gray Divider */
+  --rp-c-divider-light: rgba(80, 80, 80, 0.48) !important; /* Light Gray Divider */
+
+  --rp-c-text-1: #dde1e6 !important; /* Primary Text */
+  --rp-c-text-2: #b2b8bf !important; /* Secondary Text */
+  --rp-c-text-3: #878c92 !important; /* Tertiary Text */
+  --rp-c-text-4: #5c6166 !important; /* Quaternary Text */
+
+  /* Will be used in overview page */
+  --rp-c-text-code: #c9def1 !important;
+}
+
+:root {
+  --rp-z-index-local-nav: 10 !important;
+  --rp-z-index-nav: 20 !important;
+  --rp-z-index-backdrop: 30 !important;
+  --rp-z-index-sidebar: 40 !important;
+}
+
+:root {
+  --rp-shadow-1: 0 1px 4px rgba(0, 0, 0, 0.02), 0 1px 0 rgba(0, 0, 0, 0.06) !important;
+  --rp-shadow-2: 0 3px 12px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0, 0, 0, 0.07) !important;
+  --rp-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  --rp-shadow-4: 0 14px 44px rgba(0, 0, 0, 0.12), 0 3px 9px rgba(0, 0, 0, 0.12) !important;
+  --rp-shadow-5: 0 18px 56px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.16) !important;
+}
+
+:root {
+  --rp-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji' !important;
+  --rp-font-family-mono: Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.rspress-nav {
+  /* background-color: var(--rp-c-bg-soft) !important; */
+  /* border-bottom: 1px solid var(--rp-c-divider-light); */
+  /* border-bottom: 1px solid var(--rp-c-divider) !important; */
+  box-shadow: var(--rp-shadow-2);
+}
+
+.rspress-doc > h1 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.rspress-sidebar-group {
+  margin-left: 0.3rem !important;
+}
+
+.rspress-sidebar {
+  background-color: var(--rp-c-bg-alt) !important;
+  /* border-right: 1px solid var(--rp-c-divider) !important; */
+}
+
+.rspress-doc-container {
+  background-color: var(--rp-c-bg);
+}
+
+.rspress-sidebar > div {
+  padding-right: 0;
+}
+
+/* Sidebar item vertical line */
+.rspress-sidebar-group::before {
+  /* content: none; */
+}
+
+/* Sidebar section items */
+.rspress-sidebar-group > div > a > div {
+  font-size: 15px !important;
+  padding-left: 1.5rem;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  /* background-color: transparent; */
+}
+
+.rspress-sidebar-group > div > a > div:hover {
+  /* background-color: var(--rp-c-bg-mute) !important; */
+}
+
+/* Sidebar section headers */
+.rspress-scrollbar > nav > section > div:first-child {
+  /* background-color: transparent; */
+  /* color: var(--rp-c-brand-light); */
+  /* background-color: var(--rp-c-bg-mute); */
+}
+
+.rspress-scrollbar > nav > section > div:first-child:hover {
+  /* background-color: var(--rp-c-bg-mute) !important; */
+}
+
+.rspress-scrollbar > nav > a > div:first-child {
+  /* background-color: transparent; */
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  /* border-bottom: 1px solid var(--rp-c-divider) !important;
+  border-bottom-right-radius: 0 !important; */
+  /* color: var(--rp-c-brand-light); */
+  /* background-color: var(--rp-c-bg-mute); */
+}
+
+.rspress-scrollbar > nav > a > div:first-child:before {
+  content: none;
+}
+
+.rspress-scrollbar > nav > a > div:first-child:hover {
+  /* color: var(--rp-c-brand-light); */
+  /* background-color: transparent; */
+  /* color: var(--rp-c-brand-light); */
+}
+
+.rspress-scrollbar > nav > section > div > h2 {
+  font-size: 15px !important;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.rspress-sidebar-section-header {
+  /* border-bottom: 1px solid var(--rp-c-divider) !important; */
+}
+
+.rspress-sidebar-section-header > span {
+  font-size: 15px !important;
+}
+
+.aside-active {
+  /* background-color: transparent !important; */
+}
+
+#aside-container {
+  /* border-left: 1px solid var(--rp-c-divider) !important; */
+  padding-left: 1rem;
+}
