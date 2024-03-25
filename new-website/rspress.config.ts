@@ -9,18 +9,6 @@ export default defineConfig({
     light: 'https://re-pack.netlify.app/img/logo_light.svg',
     dark: 'https://re-pack.netlify.app/img/logo_dark.svg',
   },
-  builderConfig: {
-    tools: {
-      rspack(_, { addRules }) {
-        addRules([
-          {
-            test: /\.diff$/,
-            type: 'asset/source',
-          },
-        ]);
-      },
-    },
-  },
   markdown: {
     codeHighlighter: 'prism',
   },
