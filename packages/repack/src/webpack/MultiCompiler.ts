@@ -30,7 +30,7 @@ export class MultiCompiler extends EventEmitter {
   resolvers: Record<Platform, Array<(error?: Error) => void>> = {};
   progressSenders: Record<Platform, SendProgress[]> = {};
   isCompilationInProgress: Record<Platform, boolean> = {};
-  watchOptions: Record<Platform, WatchOptions> = {};
+  watchOptions: WatchOptions = {};
 
   constructor(
     private cliOptions: CliOptions,
@@ -49,15 +49,14 @@ export class MultiCompiler extends EventEmitter {
       this.cliOptions.config.webpackConfigPath,
       { ...webpackEnvOptions, platform: 'android' }
     );
-    this.watchOptions['android'] = androidConfig.watchOptions ?? {};
 
     const iosConfig = await loadRspackConfig(
       this.cliOptions.config.webpackConfigPath,
       { ...webpackEnvOptions, platform: 'ios' }
     );
-    this.watchOptions['ios'] = iosConfig.watchOptions ?? {};
 
     this.instance = rspack([androidConfig, iosConfig]);
+    this.watchOptions = androidConfig.watchOptions ?? {};
   }
 
   private getCompilerForPlatform(platform: string) {
@@ -66,14 +65,13 @@ export class MultiCompiler extends EventEmitter {
   }
 
   private callPendingResolvers(platform: string, error?: Error) {
-    this.resolvers[platform].forEach((resolver) => resolver(error));
+    this.resolvers[platform]?.forEach((resolver) => resolver(error));
     this.resolvers[platform] = [];
   }
 
-  private startWatch(platform: string) {
+  private configureCompilerForPlatform(platform: string) {
     const platformCompiler = this.getCompilerForPlatform(platform);
     const platformFilesystem = memfs.createFsFromVolume(new memfs.Volume());
-
     // @ts-expect-error memfs is compatible enough
     platformCompiler.outputFileSystem = platformFilesystem;
 
@@ -127,11 +125,18 @@ export class MultiCompiler extends EventEmitter {
       this.callPendingResolvers(platform);
       this.emit('done', { platform, stats: this.statsCache[platform] });
     });
+  }
+
+  private startWatch() {
+    ['android', 'ios'].forEach((platform) => {
+      this.configureCompilerForPlatform(platform);
+    });
 
     // start watching
-    platformCompiler.watch(this.watchOptions[platform], (error) => {
+    this.instance.watch(this.watchOptions, (error) => {
       if (!error) return;
-      this.callPendingResolvers(platform, error);
+      this.callPendingResolvers('android', error);
+      this.callPendingResolvers('ios', error);
       this.emit('error', error);
     });
   }
@@ -148,9 +153,8 @@ export class MultiCompiler extends EventEmitter {
     }
 
     // Spawn new worker if not already running
-    const platformCompiler = this.getCompilerForPlatform(platform);
-    if (!platformCompiler.watching) {
-      this.startWatch(platform);
+    if (!this.instance.watching) {
+      this.startWatch();
     } else if (!this.isCompilationInProgress[platform]) {
       return Promise.reject(
         new Error(
