@@ -98,12 +98,11 @@ export class MultiCompiler extends EventEmitter {
           info: asset.info,
         };
       });
-
       this.isCompilationInProgress[platform] = false;
       this.statsCache[platform] = stats.toJson({
         all: false,
         children: true,
-        modules: true,
+        modules: false, // we don't need this
         timings: true,
         hash: true,
         errors: true,
@@ -113,7 +112,7 @@ export class MultiCompiler extends EventEmitter {
         (acc, { filename, data, info }) => {
           const asset = {
             data: Buffer.from(data),
-            info,
+            info, // this is only used for API, and only used for size
           };
           return {
             ...acc,
