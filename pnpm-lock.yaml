@@ -90,7 +90,7 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
-  metro-compat:
+  metro-compat-test:
     devDependencies:
       '@callstack/repack':
         specifier: workspace:*
@@ -11775,7 +11775,7 @@ packages:
       eslint-plugin-import: '*'
     dependencies:
       debug: 4.3.4(supports-color@9.2.2)
-      enhanced-resolve: 5.14.0
+      enhanced-resolve: 5.16.0
       eslint: 8.53.0
       eslint-module-utils: 2.8.0(@typescript-eslint/parser@6.21.0)(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.5.5)(eslint@8.53.0)
       eslint-plugin-import: 2.29.0(@typescript-eslint/parser@6.21.0)(eslint-import-resolver-typescript@3.5.5)(eslint@8.53.0)
