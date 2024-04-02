@@ -1,0 +1,29 @@
+{
+  "name": "metro-compat-test",
+  "description": "Metro compatibility tests",
+  "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
+  "license": "MIT",
+  "private": true,
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "jest --noStackTrace",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@callstack/repack": "workspace:*",
+    "@types/jest": "^28.1.1",
+    "@types/node": "^18",
+    "babel-jest": "^28.1.1",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "babel-plugin-syntax-hermes-parser": "^0.20.1",
+    "enhanced-resolve": "^5.16.0",
+    "eslint": "^8.53.0",
+    "jest": "^28.1.1",
+    "memfs": "^3.4.4",
+    "type-fest": "^4.12.0"
+  }
+}
