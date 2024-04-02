@@ -9,23 +9,38 @@ const testsToSkip = {
     '[nonstrict] should fall back to "main" field resolution when "exports" is an invalid subpath',
     '[nonstrict] should fall back to "browser" spec resolution and log inaccessible import warning',
     '[nonstrict] should fall back and log warning for an invalid "exports" target value',
-    '[nonstrict] should fall back to "browser" spec resolution and log inaccessible import warning',
-    '[nonstrict] should fall back to "browser" spec resolution and log inaccessible import warning',
     // Assets are handled differently in webpack
     'should resolve assets using "exports" field and calling `resolveAsset`',
     // Resolving fails as expected but error messages are different
     'should use most specific pattern base',
     'should throw FailedToResolvePathError when no conditions are matched',
+    // Root shorthand - pending fix in metro
+    'should expand array of strings as subpath mapping (root shorthand)',
+    // Restricted imports - pending fix in metro
+    'should resolve subpath patterns in "exports" matching import specifier',
+  ]),
+};
+
+const testsToSkipOnce = {
+  describe: new Set(),
+  test: new Set([
+    // sourceExts are expanded, platform-specific extensions are not
+    'without expanding `sourceExts`',
+    'without expanding platform-specific extensions',
   ]),
 };
 
 // alias it to test
 Object.defineProperty(testsToSkip, 'it', testsToSkip.test);
+Object.defineProperty(testsToSkipOnce, 'it', testsToSkipOnce.test);
 
 // trap call & check if test should be skipped
 const handler = {
   apply(target, _, args) {
     if (testsToSkip[target.name].has(args[0])) {
+      return target.skip(...args);
+    } else if (testsToSkipOnce[target.name].has(args[0])) {
+      testsToSkipOnce[target.name].delete(args[0]);
       return target.skip(...args);
     } else return target(...args);
   },
