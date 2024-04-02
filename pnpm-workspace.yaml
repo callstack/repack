@@ -6,4 +6,4 @@ packages:
   - "packages/dashboard"
   - "packages/init"
   - "website"
-  - "metro-compat"
+  - "metro-compat-test"
