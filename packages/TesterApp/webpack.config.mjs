@@ -93,17 +93,6 @@ export default (env) => {
       alias: {
         'react-native': reactNativePath,
       },
-      /**
-       * Because Re.Pack is symlinked from it's workspace, we need to provide a fallback for
-       * `react-native-event-source` package used for lazyCompilation. This is not needed in
-       * normal projects.
-       */
-      fallback: {
-        'react-native-event-source': path.join(
-          dirname,
-          'node_modules/react-native-event-source'
-        ),
-      },
     },
     /**
      * Configures output.
