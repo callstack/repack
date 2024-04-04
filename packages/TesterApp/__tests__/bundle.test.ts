@@ -21,75 +21,85 @@ const REACT_NATIVE_ANDROID_ASSET_PATH = RELATIVE_REACT_NATIVE_PATH.replaceAll(
   '_'
 ).replaceAll(/[-.@+]/g, '');
 
-beforeAll(async () => {
-  await fs.promises.rm(TMP_DIR, {
-    recursive: true,
-    force: true,
-  });
-});
+describe('bundle command', () => {
+  it("should be also available under 'webpack-bundle' alias", () => {
+    const bundleCommand = commands.find((command) => command.name === 'bundle');
+    const webpackBundleCommand = commands.find(
+      (command) => command.name === 'webpack-bundle'
+    );
 
-describe.each([
-  {
-    platform: 'ios',
-    assets: [
-      'index.bundle',
-      'index.bundle.map',
-      'miniapp.chunk.bundle',
-      'miniapp.chunk.bundle.map',
-      'remote.chunk.bundle',
-      'remote.chunk.bundle.map',
-      'src_asyncChunks_Async_local_tsx.chunk.bundle',
-      'src_asyncChunks_Async_local_tsx.chunk.bundle.map',
-      'react-native-bundle-output/main.jsbundle',
-      'react-native-bundle-output/main.jsbundle.map',
-      'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle',
-      'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
-      'assets/src/miniapp/callstack-dark.png',
-      `assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png`,
-      'assets/src/assetsTest/localAssets/webpack.png',
-      'assets/src/assetsTest/localAssets/webpack@2x.png',
-      'assets/src/assetsTest/localAssets/webpack@3x.png',
-      'remote-assets/assets/src/assetsTest/remoteAssets/webpack.png',
-      'remote-assets/assets/src/assetsTest/remoteAssets/webpack@2x.png',
-      'remote-assets/assets/src/assetsTest/remoteAssets/webpack@3x.png',
-      'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack.png',
-      'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack@2x.png',
-      'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack@3x.png',
-      `react-native-bundle-output/assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png`,
-    ],
-  },
-  {
-    platform: 'android',
-    assets: [
-      'index.bundle',
-      'index.bundle.map',
-      'miniapp.chunk.bundle',
-      'miniapp.chunk.bundle.map',
-      'remote.chunk.bundle',
-      'remote.chunk.bundle.map',
-      'src_asyncChunks_Async_local_tsx.chunk.bundle',
-      'src_asyncChunks_Async_local_tsx.chunk.bundle.map',
-      `drawable-mdpi/${REACT_NATIVE_ANDROID_ASSET_PATH}_libraries_newappscreen_components_logo.png`,
-      'drawable-mdpi/src_assetstest_localassets_webpack.png',
-      'drawable-xxhdpi/src_assetstest_localassets_webpack.png',
-      'drawable-xhdpi/src_assetstest_localassets_webpack.png',
-      'drawable-mdpi/src_miniapp_callstackdark.png',
-      'react-native-bundle-output/index.android.bundle',
-      'react-native-bundle-output/index.android.bundle.map',
-      'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle',
-      'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
-      `react-native-bundle-output/drawable-mdpi/${REACT_NATIVE_ANDROID_ASSET_PATH}_libraries_newappscreen_components_logo.png`,
-      'react-native-bundle-output/drawable-mdpi/src_assetstest_localassets_webpack.png',
-      'react-native-bundle-output/drawable-xxhdpi/src_assetstest_localassets_webpack.png',
-      'react-native-bundle-output/drawable-xhdpi/src_assetstest_localassets_webpack.png',
-      'remote-assets/assets/src/assetsTest/remoteAssets/webpack.png',
-      'remote-assets/assets/src/assetsTest/remoteAssets/webpack@2x.png',
-      'remote-assets/assets/src/assetsTest/remoteAssets/webpack@3x.png',
-    ],
-  },
-])(
-  'bundle command should successfully produce bundle assets',
-  ({ platform, assets }) => {
+    expect(bundleCommand).toBeDefined();
+    expect(webpackBundleCommand).toBeDefined();
+    expect(bundleCommand!.func).toEqual(webpackBundleCommand!.func);
+  });
+
+  describe.each([
+    {
+      platform: 'ios',
+      assets: [
+        'index.bundle',
+        'index.bundle.map',
+        'miniapp.chunk.bundle',
+        'miniapp.chunk.bundle.map',
+        'remote.chunk.bundle',
+        'remote.chunk.bundle.map',
+        'src_asyncChunks_Async_local_tsx.chunk.bundle',
+        'src_asyncChunks_Async_local_tsx.chunk.bundle.map',
+        'react-native-bundle-output/main.jsbundle',
+        'react-native-bundle-output/main.jsbundle.map',
+        'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle',
+        'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
+        'assets/src/miniapp/callstack-dark.png',
+        `assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png`,
+        'assets/src/assetsTest/localAssets/webpack.png',
+        'assets/src/assetsTest/localAssets/webpack@2x.png',
+        'assets/src/assetsTest/localAssets/webpack@3x.png',
+        'remote-assets/assets/src/assetsTest/remoteAssets/webpack.png',
+        'remote-assets/assets/src/assetsTest/remoteAssets/webpack@2x.png',
+        'remote-assets/assets/src/assetsTest/remoteAssets/webpack@3x.png',
+        'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack.png',
+        'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack@2x.png',
+        'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack@3x.png',
+        `react-native-bundle-output/assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png`,
+      ],
+    },
+    {
+      platform: 'android',
+      assets: [
+        'index.bundle',
+        'index.bundle.map',
+        'miniapp.chunk.bundle',
+        'miniapp.chunk.bundle.map',
+        'remote.chunk.bundle',
+        'remote.chunk.bundle.map',
+        'src_asyncChunks_Async_local_tsx.chunk.bundle',
+        'src_asyncChunks_Async_local_tsx.chunk.bundle.map',
+        `drawable-mdpi/${REACT_NATIVE_ANDROID_ASSET_PATH}_libraries_newappscreen_components_logo.png`,
+        'drawable-mdpi/src_assetstest_localassets_webpack.png',
+        'drawable-xxhdpi/src_assetstest_localassets_webpack.png',
+        'drawable-xhdpi/src_assetstest_localassets_webpack.png',
+        'drawable-mdpi/src_miniapp_callstackdark.png',
+        'react-native-bundle-output/index.android.bundle',
+        'react-native-bundle-output/index.android.bundle.map',
+        'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle',
+        'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
+        `react-native-bundle-output/drawable-mdpi/${REACT_NATIVE_ANDROID_ASSET_PATH}_libraries_newappscreen_components_logo.png`,
+        'react-native-bundle-output/drawable-mdpi/src_assetstest_localassets_webpack.png',
+        'react-native-bundle-output/drawable-xxhdpi/src_assetstest_localassets_webpack.png',
+        'react-native-bundle-output/drawable-xhdpi/src_assetstest_localassets_webpack.png',
+        'remote-assets/assets/src/assetsTest/remoteAssets/webpack.png',
+        'remote-assets/assets/src/assetsTest/remoteAssets/webpack@2x.png',
+        'remote-assets/assets/src/assetsTest/remoteAssets/webpack@3x.png',
+      ],
+    },
+  ])('should successfully produce bundle assets', ({ platform, assets }) => {
+    beforeAll(async () => {
+      await fs.promises.rm(TMP_DIR, {
+        recursive: true,
+        force: true,
+      });
+    });
+
     afterEach(() => {
       delete process.env.TEST_WEBPACK_OUTPUT_PATH;
     });
@@ -122,5 +132,5 @@ describe.each([
       },
       60 * 1000
     );
-  }
-);
+  });
+});

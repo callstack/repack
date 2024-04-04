@@ -72,9 +72,9 @@ const webpackConfigOption = {
   },
 };
 
-module.exports = [
+const commands = [
   {
-    name: 'webpack-bundle',
+    name: 'bundle',
     description: bundleCommand.description,
     options: bundleCommand.options.concat(
       {
@@ -96,7 +96,7 @@ module.exports = [
     func: require('./dist/commands/bundle').bundle,
   },
   {
-    name: 'webpack-start',
+    name: 'start',
     options: startCommand.options.concat(
       {
         name: '--verbose',
@@ -124,3 +124,10 @@ module.exports = [
     func: require('./dist/commands/start').start,
   },
 ];
+
+const webpackCommands = commands.map((command) => ({
+  ...command,
+  name: `webpack-${command.name}`,
+}));
+
+module.exports = [...commands, ...webpackCommands];
