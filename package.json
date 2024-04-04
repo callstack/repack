@@ -5,7 +5,7 @@
     "build": "turbo run build",
     "lint": "turbo run lint --filter=!metro-compat-test",
     "typecheck": "turbo run typecheck --filter=!metro-compat-test",
-    "test": "turbo run test --filter=!metro-compat-test",
+    "test": "turbo run test",
     "release": "pnpm build && pnpm lint && pnpm test && pnpm changeset publish",
     "website:start": "turbo run docs && pnpm --filter website run start",
     "website:build": "turbo run docs && pnpm --filter website run export",

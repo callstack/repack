@@ -101,9 +101,12 @@ function transformContext(
     } as InputFileMap,
     options: {
       // repack uses whole separate config per platform
-      conditionNames: platform
-        ? context.unstable_conditionsByPlatform[platform]
-        : context.unstable_conditionNames,
+      conditionNames: Array.from(
+        new Set([
+          ...context.unstable_conditionNames,
+          ...(context.unstable_conditionsByPlatform[platform!] ?? []),
+        ])
+      ),
       fallback: context.extraNodeModules
         ? { ...context.extraNodeModules }
         : undefined,
