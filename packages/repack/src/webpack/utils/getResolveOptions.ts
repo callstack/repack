@@ -49,21 +49,7 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
   const preferNativePlatform = options?.preferNativePlatform ?? true;
   const enablePackageExports = options?.enablePackageExports ?? false;
 
-  let extensions = ['.ts', '.js', '.tsx', '.jsx', '.json'];
-
-  const platformExtensions = [
-    `.${platform}.ts`,
-    `.${platform}.js`,
-    `.${platform}.tsx`,
-    `.${platform}.jsx`,
-  ];
-
-  const nativeExtensions = [
-    '.native.ts',
-    '.native.js',
-    '.native.tsx',
-    '.native.jsx',
-  ];
+  let extensions = ['.js', '.jsx', '.json', '.ts', '.tsx'];
 
   let conditionNames: string[];
   let exportsFields: string[];
@@ -79,11 +65,16 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
   } else {
     conditionNames = [];
     exportsFields = [];
-    extensions = [
-      platformExtensions,
-      preferNativePlatform ? nativeExtensions : [],
-      extensions,
-    ].flat();
+    extensions = extensions.flatMap((ext) => {
+      const platformExt = `.${platform}${ext}`;
+      const nativeExt = `.native${ext}`;
+
+      if (preferNativePlatform) {
+        return [platformExt, nativeExt, ext];
+      } else {
+        return [platformExt, ext];
+      }
+    });
   }
 
   /**
