@@ -21,66 +21,76 @@ const RELATIVE_REACT_NATIVE_PATH = path.relative(
   path.dirname(REACT_NATIVE_PATH)
 );
 
-beforeAll(async () => {
-  await fs.promises.rm(TMP_DIR, {
-    recursive: true,
-    force: true,
+describe('start command', () => {
+  it("should be also available under 'webpack-start' alias", () => {
+    const startCommand = commands.find((command) => command.name === 'start');
+    const webpackStartCommand = commands.find(
+      (command) => command.name === 'webpack-start'
+    );
+
+    expect(startCommand).toBeDefined();
+    expect(webpackStartCommand).toBeDefined();
+    expect(startCommand!.func).toEqual(webpackStartCommand!.func);
   });
 
-  port = await getPort();
-  const config = {
-    root: path.join(__dirname, '..'),
-    reactNativePath: path.join(__dirname, '../node_modules/react-native'),
-  };
-  const args = {
-    port,
-    silent: true,
-    logFile: path.join(TMP_DIR, 'server.log'),
-    webpackConfig: path.join(__dirname, './webpack.config.mjs'),
-  };
+  describe.each([
+    {
+      platform: 'ios',
+      requests: [
+        'index.bundle.map?platform=ios',
+        'index.bundle.map?platform=ios',
+        'ios/miniapp.chunk.bundle',
+        'ios/miniapp.chunk.bundle.map',
+        'ios/remote.chunk.bundle',
+        'ios/remote.chunk.bundle.map',
+        'ios/src_asyncChunks_Async_local_tsx.chunk.bundle',
+        'ios/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
+        'assets/src/miniapp/callstack-dark.png?platform=ios',
+        `assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png?platform=ios`,
+      ],
+    },
+    {
+      platform: 'android',
+      requests: [
+        'index.bundle.map?platform=android',
+        'index.bundle.map?platform=android',
+        'android/miniapp.chunk.bundle',
+        'android/miniapp.chunk.bundle.map',
+        'android/remote.chunk.bundle',
+        'android/remote.chunk.bundle.map',
+        'android/src_asyncChunks_Async_local_tsx.chunk.bundle',
+        'android/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
+        'assets/src/miniapp/callstack-dark.png?platform=android',
+        `assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png?platform=android`,
+      ],
+    },
+  ])('should successfully produce bundle assets', ({ platform, requests }) => {
+    beforeAll(async () => {
+      await fs.promises.rm(TMP_DIR, {
+        recursive: true,
+        force: true,
+      });
 
-  const { stop } = await start.func([], config as Config, args as Args);
-  stopServer = stop;
-});
+      port = await getPort();
+      const config = {
+        root: path.join(__dirname, '..'),
+        reactNativePath: path.join(__dirname, '../node_modules/react-native'),
+      };
+      const args = {
+        port,
+        silent: true,
+        logFile: path.join(TMP_DIR, 'server.log'),
+        webpackConfig: path.join(__dirname, './webpack.config.mjs'),
+      };
 
-afterAll(async () => {
-  await stopServer();
-});
+      const { stop } = await start.func([], config as Config, args as Args);
+      stopServer = stop;
+    });
 
-describe.each([
-  {
-    platform: 'ios',
-    requests: [
-      'index.bundle.map?platform=ios',
-      'index.bundle.map?platform=ios',
-      'ios/miniapp.chunk.bundle',
-      'ios/miniapp.chunk.bundle.map',
-      'ios/remote.chunk.bundle',
-      'ios/remote.chunk.bundle.map',
-      'ios/src_asyncChunks_Async_local_tsx.chunk.bundle',
-      'ios/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
-      'assets/src/miniapp/callstack-dark.png?platform=ios',
-      `assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png?platform=ios`,
-    ],
-  },
-  {
-    platform: 'android',
-    requests: [
-      'index.bundle.map?platform=android',
-      'index.bundle.map?platform=android',
-      'android/miniapp.chunk.bundle',
-      'android/miniapp.chunk.bundle.map',
-      'android/remote.chunk.bundle',
-      'android/remote.chunk.bundle.map',
-      'android/src_asyncChunks_Async_local_tsx.chunk.bundle',
-      'android/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
-      'assets/src/miniapp/callstack-dark.png?platform=android',
-      `assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png?platform=android`,
-    ],
-  },
-])(
-  'start command should successfully produce bundle assets',
-  ({ platform, requests }) => {
+    afterAll(async () => {
+      await stopServer();
+    });
+
     it(
       `for ${platform}`,
       async () => {
@@ -115,5 +125,5 @@ describe.each([
       },
       60 * 1000
     );
-  }
-);
+  });
+});
