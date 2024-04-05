@@ -1,5 +1,6 @@
 {
   "name": "metro-compat-test",
+  "version": "0.0.1",
   "description": "Metro compatibility tests",
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
