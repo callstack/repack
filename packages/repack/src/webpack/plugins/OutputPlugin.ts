@@ -293,12 +293,6 @@ export class OutputPlugin implements WebpackPlugin {
         }
       }
 
-      if (!entryChunk) {
-        throw new Error(
-          'Cannot infer entry chunk - this should have not happened.'
-        );
-      }
-
       const assets = compilationStats.assets!;
       // Collect auxiliary assets (only remote-assets for now)
       assets
