@@ -13,5 +13,5 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": ["dashboard", "metro-compat-test", "testerapp", "website"]
 }
