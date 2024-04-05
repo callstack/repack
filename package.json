@@ -42,24 +42,5 @@
     "prettier": "^3.2.4",
     "typescript": "^5.2.2"
   },
-  "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2",
-  "pnpm": {
-    "packageExtensions": {
-      "@react-native/dev-middleware@*": {
-        "dependencies": {
-          "ws": "*"
-        }
-      },
-      "@react-native/codegen@*": {
-        "dependencies": {
-          "invariant": "^2.2.4"
-        }
-      },
-      "@react-native-community/cli-tools@*": {
-        "dependencies": {
-          "execa": "^5.0.0"
-        }
-      }
-    }
-  }
+  "packageManager": "pnpm@8.15.6"
 }
