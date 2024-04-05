@@ -2,10 +2,16 @@
   "$schema": "https://unpkg.com/@changesets/config@2.0.0/schema.json",
   "changelog": ["@changesets/changelog-github", { "repo": "callstack/repack" }],
   "commit": false,
-  "fixed": [],
+  "fixed": [
+    [
+      "@callstack/repack",
+      "@callstack/repack-dev-server",
+      "@callstack/repack-init"
+    ]
+  ],
   "linked": [],
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": ["dashboard", "metro-compat-test", "testerapp", "website"]
 }
