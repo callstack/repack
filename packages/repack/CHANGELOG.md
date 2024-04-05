@@ -1,5 +1,76 @@
 # @callstack/repack
 
+## 4.0.0-rc.0
+
+### Major Changes
+
+- [#430](https://github.com/callstack/repack/pull/430) [`0d96b11`](https://github.com/callstack/repack/commit/0d96b11ff3a6e2c21eb622e21ff7947db29a3272) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING CHANGE:
+
+  Upgrade to Node 18, drop support for Node 16.
+
+- [#530](https://github.com/callstack/repack/pull/530) [`470a7c1`](https://github.com/callstack/repack/commit/470a7c1da6043904c82f53c2a0c82e73c438299a) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING CHANGE:
+
+  `ReactRefreshPlugin` was removed.
+
+  If you were using `ReactRefreshPlugin`, please switch to `DevelopmentPlugin` moving forward.
+  Users of `RepackPlugin` can continue as is, with no changes required.
+
+- [#435](https://github.com/callstack/repack/pull/435) [`63d973f`](https://github.com/callstack/repack/commit/63d973ff4bae6f30f50a39a9f49095be4ce52967) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING CHANGE:
+
+  CodeSigningPlugin no longer accepts `outputPath` property as configuration option. Instead, it performs the code-signing in-place and integrates nicely with OutputPlugin.
+
+- [#537](https://github.com/callstack/repack/pull/537) [`6fa32cb`](https://github.com/callstack/repack/commit/6fa32cb575ea2c845a700511669fdcb5124acc4d) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING CHANGE:
+
+  Re.Pack commands now override the default `start` and `bundle` CLI commands for enhanced functionality and compatibility with `react-native` versions >= 0.74. For earlier versions of `react-native` (< 0.74), the traditional commands `webpack-start` and `webpack-bundle` remain available and recommended.
+
+  This change primarily impacts setups where both Metro and Re.Pack are used simultaneously.
+
+  To maintain your current workflow without adopting these overrides, especially to avoid conflicts in projects using both Metro and Re.Pack, you can opt out by filtering out the new command names and reverting to the legacy `webpack` prefixed commands:
+
+  ```js
+  // react-native.config.js
+  const commands = require('@callstack/repack/commands');
+
+  module.exports = {
+    commands: commands.filter((command) => command.name.startsWith('webpack')),
+  };
+  ```
+
+  Additionally, this update ensures that running `react-native run-ios` or `react-native run-android` will launch the Re.Pack dev server by default instead of the Metro dev server.
+
+- [#525](https://github.com/callstack/repack/pull/525) [`a74930b`](https://github.com/callstack/repack/commit/a74930bd4b5d704d35e182f7ddfea340a0a07793) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING CHANGE:
+
+  `getResolveOptions` is now way more compatible with `metro-resolver` and `@react-native/metro-config`
+
+  1. `getResolveOptions` now accepts a second optional parameter called options with the following properties:
+     - `enablePackageExports` - defaults to `false`
+     - `preferNativePlatform` - defaults to `true`
+  2. Order of extensions was changed to match the order from `@react-native/metro-config`.
+  3. Resolution via Package Exports (`exports` field in package.json) is now optional and disabled by default.
+     It can now be enabled via `getResolveOptions` options parameter. This change was introduced to match `metro` defaults.
+  4. Default `conditionNames` are now: `['require', 'import', 'react-native']` and match `@react-native/metro-config` defaults.
+
+- [#495](https://github.com/callstack/repack/pull/495) [`50a7257`](https://github.com/callstack/repack/commit/50a7257f1da9af44c5b6690c31408607d358b2e5) Thanks [@troZee](https://github.com/troZee)! - Support for New Architecture
+
+### Minor Changes
+
+- [#539](https://github.com/callstack/repack/pull/539) [`8270cb7`](https://github.com/callstack/repack/commit/8270cb7e2ccce9e2020517216e72302b6ba5833a) Thanks [@jbroma](https://github.com/jbroma)! - OutputPlugin now supports configuration with empty object as compilation entry.
+
+### Patch Changes
+
+- [#491](https://github.com/callstack/repack/pull/491) [`ebf1b19`](https://github.com/callstack/repack/commit/ebf1b19976edc603ebe4de992665d10a5bc30eaa) Thanks [@hosseinmd](https://github.com/hosseinmd)! - log error before exit when compilation has error
+
+- [#499](https://github.com/callstack/repack/pull/499) [`15ffcba`](https://github.com/callstack/repack/commit/15ffcbabd9c9f0dadc3d91489d3b76c4cd80155f) Thanks [@jbroma](https://github.com/jbroma)! - Support non-classic(pnpm) paths to HMRClient from react-native
+
+- [#496](https://github.com/callstack/repack/pull/496) [`a59b8ed`](https://github.com/callstack/repack/commit/a59b8ed4adab99f5e10024ae6f24ad18cdad791e) Thanks [@krozniata](https://github.com/krozniata)! - Remove duplicated React-Core dependency from podspec
+
+- [#515](https://github.com/callstack/repack/pull/515) [`ee1cc79`](https://github.com/callstack/repack/commit/ee1cc7994cd1ae75d7a35faae6e0ac3ea36059b8) Thanks [@jbroma](https://github.com/jbroma)! - Use `done` hook inside of `OutputPlugin`
+
+- [#464](https://github.com/callstack/repack/pull/464) [`72c770b`](https://github.com/callstack/repack/commit/72c770bb4ac5540a3c73cf244ca861069a37b045) Thanks [@jbroma](https://github.com/jbroma)! - chore: upgrade TypeScript, ESLint, TypeDoc
+
+- Updated dependencies [[`0d96b11`](https://github.com/callstack/repack/commit/0d96b11ff3a6e2c21eb622e21ff7947db29a3272), [`72c770b`](https://github.com/callstack/repack/commit/72c770bb4ac5540a3c73cf244ca861069a37b045)]:
+  - @callstack/repack-dev-server@4.0.0-rc.0
+
 ## 3.7.0
 
 ### Minor Changes
