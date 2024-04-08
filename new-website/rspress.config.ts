@@ -13,8 +13,8 @@ export default defineConfig({
     codeHighlighter: 'prism',
   },
   multiVersion: {
-    default: 'v4',
-    versions: ['v2', 'v3', 'v4'],
+    default: '3.x',
+    versions: ['2.x', '3.x'],
   },
   themeConfig: {
     lastUpdated: true,
