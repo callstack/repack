@@ -6,8 +6,8 @@
   },
   {
     "text": "API",
-    "link": "/api/",
-    "activeMatch": "/api/"
+    "link": "/api/about.html",
+    "activeMatch": "^/api/"
   },
   {
     "text": "Examples",
