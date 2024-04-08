@@ -184,3 +184,8 @@
   /* border-left: 1px solid var(--rp-c-divider) !important; */
   padding-left: 1rem;
 }
+
+/* code link */
+.rspress-doc a > code {
+  color: inherit;
+}
