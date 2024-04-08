@@ -12,6 +12,10 @@ export default defineConfig({
   markdown: {
     codeHighlighter: 'prism',
   },
+  multiVersion: {
+    default: 'v4',
+    versions: ['v2', 'v3', 'v4'],
+  },
   themeConfig: {
     lastUpdated: true,
     enableContentAnimation: true,
