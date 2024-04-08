@@ -17,7 +17,6 @@ export default defineConfig({
     versions: ['2.x', '3.x'],
   },
   themeConfig: {
-    lastUpdated: true,
     enableContentAnimation: true,
     enableScrollToTop: true,
     outlineTitle: 'Contents',
