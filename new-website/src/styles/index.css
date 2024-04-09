@@ -46,13 +46,11 @@
 }
 
 .dark {
-  --rp-c-bg: #1e1e1e !important; /* Dark Gray */
-  --rp-c-bg-soft: #505050 !important; /* Soft Dark Gray */
-  --rp-c-bg-mute: #2d2d2d !important; /* Muted Dark Gray */
-  --rp-c-bg-alt: #121212 !important; /* Alternate Dark Gray */
+  --rp-c-bg: #161618 !important; /* Dark Gray */
+  --rp-c-bg-soft: #1b1b1f !important; /* Soft Dark Gray */
+  --rp-c-bg-mute: #65758529 !important; /* Muted Dark Gray */
 
-  --rp-c-divider: rgba(80, 80, 80, 0.65) !important; /* Gray Divider */
-  --rp-c-divider-light: rgba(80, 80, 80, 0.48) !important; /* Light Gray Divider */
+  --rp-c-divider-light: #65758529 !important; /* Light Gray Divider */
 
   --rp-c-text-1: #dde1e6 !important; /* Primary Text */
   --rp-c-text-2: #b2b8bf !important; /* Secondary Text */
@@ -85,10 +83,14 @@
 }
 
 .rspress-nav {
-  /* background-color: var(--rp-c-bg-soft) !important; */
-  /* border-bottom: 1px solid var(--rp-c-divider-light); */
-  border-bottom: 1px solid var(--rp-c-divider) !important;
-  /* box-shadow: var(--rp-shadow-2); */
+  background-color: var(--rp-c-bg-soft) !important;
+  /* border-bottom: 1px solid var(--rp-c-divider-light) !important; */
+  box-shadow: var(--rp-shadow-3);
+}
+
+.rspress-sidebar-section-header > span::before {
+  font-size: 15px !important;
+  /* border-bottom: 1px solid var(--rp-c-divider) !important; */
 }
 
 .rspress-doc > h1 {
@@ -101,8 +103,8 @@
 }
 
 .rspress-sidebar {
-  /* background-color: var(--rp-c-bg-alt) !important; */
-  border-right: 1px solid var(--rp-c-divider) !important;
+  /* background-color: var(--rp-c-bg-soft) !important; */
+  /* border-right: 1px solid var(--rp-c-divider-light) !important; */
 }
 
 .rspress-doc-container {
