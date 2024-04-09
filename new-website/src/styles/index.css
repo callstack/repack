@@ -12,10 +12,10 @@
   --rp-c-divider: rgba(60, 60, 60, 0.29) !important;
   --rp-c-divider-light: rgba(60, 60, 60, 0.12) !important;
 
-  --rp-c-text-1: #1a2b3c !important; /* darker */
-  --rp-c-text-2: rgba(50, 50, 50, 0.8) !important; /* darker and more opaque */
-  --rp-c-text-3: rgba(50, 50, 50, 0.6) !important; /* darker and more opaque */
-  --rp-c-text-4: rgba(50, 50, 50, 0.4) !important; /* darker and more opaque */
+  --rp-c-text-1: #1a2b3c !important;
+  --rp-c-text-2: rgba(50, 50, 50, 0.8) !important;
+  --rp-c-text-3: rgba(50, 50, 50, 0.6) !important;
+  --rp-c-text-4: rgba(50, 50, 50, 0.4) !important;
 
   --rp-c-text-code: #476573 !important;
 
@@ -46,16 +46,16 @@
 }
 
 .dark {
-  --rp-c-bg: #161618 !important; /* Dark Gray */
-  --rp-c-bg-soft: #1b1b1f !important; /* Soft Dark Gray */
-  --rp-c-bg-mute: #65758529 !important; /* Muted Dark Gray */
+  --rp-c-bg: #161618 !important;
+  --rp-c-bg-soft: #1b1b1f !important;
+  --rp-c-bg-mute: #65758529 !important;
 
-  --rp-c-divider-light: #65758529 !important; /* Light Gray Divider */
+  --rp-c-divider-light: #65758529 !important;
 
-  --rp-c-text-1: #dde1e6 !important; /* Primary Text */
-  --rp-c-text-2: #b2b8bf !important; /* Secondary Text */
-  --rp-c-text-3: #878c92 !important; /* Tertiary Text */
-  --rp-c-text-4: #5c6166 !important; /* Quaternary Text */
+  --rp-c-text-1: #dde1e6 !important;
+  --rp-c-text-2: #b2b8bf !important;
+  --rp-c-text-3: #878c92 !important;
+  --rp-c-text-4: #5c6166 !important;
 
   /* Will be used in overview page */
   --rp-c-text-code: #c9def1 !important;
@@ -95,78 +95,80 @@
 
 /* Sidebar section items */
 .rspress-sidebar-group > div > a > div {
+  background-color: transparent !important;
   font-size: 15px !important;
+  font-weight: 500 !important;
   padding-top: 0.3rem;
   padding-bottom: 0.3rem;
+
+  &:hover {
+    background-color: transparent !important;
+    color: var(--rp-c-brand) !important;
+  }
+
+  &::before {
+    content: none;
+  }
 }
 
-/* Nested items */
-.rspress-sidebar-group > div > a > div:hover {
-  background-color: inherit !important;
-  color: var(--rp-c-brand) !important;
+/* Deeply nested section items */
+.rspress-sidebar-group > div > section > div {
+  background-color: transparent !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+
+  &:hover {
+    color: var(--rp-c-brand) !important;
+  }
 }
 
 /* Sidebar section headers */
 .rspress-scrollbar > nav > section > div:first-child {
-  /* background-color: inherit !important; */
-}
+  background-color: transparent !important;
 
-.rspress-scrollbar > nav > section > div:first-child:hover {
-  background-color: inherit !important;
-  color: var(--rp-c-brand) !important;
-}
-
-.rspress-scrollbar > nav > a > div:first-child {
-  /* background-color: transparent; */
-  padding-top: 0.3rem;
-  padding-bottom: 0.3rem;
-  /* border-bottom: 1px solid var(--rp-c-divider) !important;
-  border-bottom-right-radius: 0 !important; */
-  /* color: var(--rp-c-brand-light); */
-  /* background-color: var(--rp-c-bg-mute); */
-}
-
-.rspress-scrollbar > nav > a > div:first-child:before {
-  /* content: none; */
-}
-
-.rspress-scrollbar > nav > a > div:first-child:hover {
-  /* color: var(--rp-c-brand-light); */
-  /* background-color: transparent; */
-  /* color: var(--rp-c-brand-light); */
+  &:hover {
+    background-color: inherit !important;
+    color: var(--rp-c-brand) !important;
+  }
 }
 
 /* Group Header*/
 .rspress-scrollbar > nav > section > div > h2 {
   font-size: 15px !important;
+  font-weight: 500 !important;
   padding-top: 0;
   padding-bottom: 0;
 }
 
-.rspress-sidebar-section-header {
-  /* border-bottom: 1px solid var(--rp-c-divider) !important; */
+.rspress-scrollbar > nav > a > div:first-child {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  background-color: transparent !important;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+
+  &::before {
+    content: none;
+  }
+
+  &:hover {
+    color: var(--rp-c-brand) !important;
+  }
 }
 
+/* Sidebar section headers */
 .rspress-sidebar-section-header > span {
   font-size: 15px !important;
   font-weight: 700;
-  /* background-color: var(--rp-c-bg-mute) !important; */
-  /* border-radius: var(--rp-radius-small) !important; */
-  /* border-bottom: 1px solid var(--rp-c-divider) !important; */
 }
 
 /* Table of Contents */
 #aside-container {
-  /* border-left: 1px solid var(--rp-c-divider) !important; */
-  /* padding-left: 1rem; */
+  border-left: 1px solid var(--rp-c-divider-light) !important;
+  padding-left: 1rem;
 }
 
 /* Code link */
 .rspress-doc a > code {
   color: inherit;
 }
-
-/* Search Modal */
-/* #search-container > div > div {
-  background-color: var(--rp-c-bg);
-} */
