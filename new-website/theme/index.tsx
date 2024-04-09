@@ -4,10 +4,12 @@ export default Theme;
 
 const { code: Code, pre: Pre } = getCustomMDXComponent();
 
-export const CodeBlock = ({ children, language }) => {
+export const CodeBlock = ({ children, language, title }) => {
   return (
     <Pre>
-      <Code className={`language-${language}`}>{children}</Code>
+      <Code className={`language-${language}`} meta={`title="${title}"`}>
+        {children}
+      </Code>
     </Pre>
   );
 };

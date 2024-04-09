@@ -34,6 +34,11 @@
   },
   {
     "type": "dir",
+    "name": "configuration",
+    "label": "Configuration"
+  },
+  {
+    "type": "dir",
     "name": "loaders",
     "label": "Loaders"
   },
