@@ -1,7 +1,12 @@
 [
   {
     "type": "section-header",
-    "label": "Fundamentals"
+    "label": "Documentation"
+  },
+  {
+    "type": "file",
+    "name": "about",
+    "label": "About Re.Pack"
   },
   {
     "type": "file",
@@ -10,12 +15,13 @@
   },
   {
     "type": "file",
-    "name": "about",
-    "label": "About Re.Pack"
+    "name": "known-issues",
+    "label": "Known Issues"
   },
   {
-    "type": "section-header",
-    "label": "Guides"
+    "type": "file",
+    "name": "web-support",
+    "label": "Web Support"
   },
   {
     "type": "dir",
@@ -26,6 +32,20 @@
     "type": "file",
     "name": "module-federation",
     "label": "Module Federation"
+  },
+  {
+    "type": "dir",
+    "name": "migration-guides",
+    "label": "Migration Guides"
+  },
+  {
+    "type": "section-header",
+    "label": "Configuration"
+  },
+  {
+    "type": "dir",
+    "name": "configuration",
+    "label": "Configuration"
   },
   {
     "type": "dir",
@@ -41,15 +61,5 @@
     "type": "dir",
     "name": "guides",
     "label": "Guides"
-  },
-  {
-    "type": "dir",
-    "name": "migration-guides",
-    "label": "Migration Guides"
-  },
-  {
-    "type": "file",
-    "name": "known-issues",
-    "label": "Known Issues"
   }
 ]
