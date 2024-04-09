@@ -82,65 +82,38 @@
   --rp-font-family-mono: Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+/* Nav header */
 .rspress-nav {
   background-color: var(--rp-c-bg-soft) !important;
   border-bottom: 1px solid var(--rp-c-divider-light) !important;
 }
 
-.rspress-sidebar-section-header > span::before {
-  font-size: 15px !important;
-  /* border-bottom: 1px solid var(--rp-c-divider) !important; */
-}
-
-.rspress-doc > h1 {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.rspress-sidebar-group {
-  margin-left: 0.3rem !important;
-}
-
-.rspress-sidebar {
-  /* background-color: var(--rp-c-bg-soft) !important; */
-  /* border-right: 1px solid var(--rp-c-divider-light) !important; */
-}
-
-.rspress-doc-container {
-  background-color: var(--rp-c-bg);
-}
-
-.rspress-sidebar > div {
-  padding-right: 0;
-}
-
 /* Sidebar item vertical line */
 .rspress-sidebar-group::before {
-  /* content: none; */
+  content: none;
 }
 
 /* Sidebar section items */
 .rspress-sidebar-group > div > a > div {
   font-size: 15px !important;
-  padding-left: 1.5rem;
   padding-top: 0.3rem;
   padding-bottom: 0.3rem;
-  /* background-color: transparent; */
 }
 
+/* Nested items */
 .rspress-sidebar-group > div > a > div:hover {
-  /* background-color: var(--rp-c-bg-mute) !important; */
+  background-color: inherit !important;
+  color: var(--rp-c-brand) !important;
 }
 
 /* Sidebar section headers */
 .rspress-scrollbar > nav > section > div:first-child {
-  /* background-color: transparent; */
-  /* color: var(--rp-c-brand-light); */
-  /* background-color: var(--rp-c-bg-mute); */
+  /* background-color: inherit !important; */
 }
 
 .rspress-scrollbar > nav > section > div:first-child:hover {
-  /* background-color: var(--rp-c-bg-mute) !important; */
+  background-color: inherit !important;
+  color: var(--rp-c-brand) !important;
 }
 
 .rspress-scrollbar > nav > a > div:first-child {
@@ -154,7 +127,7 @@
 }
 
 .rspress-scrollbar > nav > a > div:first-child:before {
-  content: none;
+  /* content: none; */
 }
 
 .rspress-scrollbar > nav > a > div:first-child:hover {
@@ -163,6 +136,7 @@
   /* color: var(--rp-c-brand-light); */
 }
 
+/* Group Header*/
 .rspress-scrollbar > nav > section > div > h2 {
   font-size: 15px !important;
   padding-top: 0;
@@ -175,23 +149,24 @@
 
 .rspress-sidebar-section-header > span {
   font-size: 15px !important;
+  font-weight: 700;
+  /* background-color: var(--rp-c-bg-mute) !important; */
+  /* border-radius: var(--rp-radius-small) !important; */
+  /* border-bottom: 1px solid var(--rp-c-divider) !important; */
 }
 
-.aside-active {
-  /* background-color: transparent !important; */
-}
-
+/* Table of Contents */
 #aside-container {
   /* border-left: 1px solid var(--rp-c-divider) !important; */
-  padding-left: 1rem;
+  /* padding-left: 1rem; */
 }
 
-/* code link */
+/* Code link */
 .rspress-doc a > code {
   color: inherit;
 }
 
-/* search modal */
+/* Search Modal */
 /* #search-container > div > div {
   background-color: var(--rp-c-bg);
 } */
