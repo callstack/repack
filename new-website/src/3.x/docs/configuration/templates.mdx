@@ -1,3 +1,7 @@
+import { CodeBlock } from '@theme';
+import CJSTemplate from '../../../../../templates/webpack.config.cjs?raw';
+import ESMTemplate from '../../../../../templates/webpack.config.mjs?raw';
+
 # Templates
 
 :::info
@@ -10,16 +14,10 @@ Webpack config templates are also available on GitHub repo under [`templates/` d
 
 Recommended extensions for the config: `.mjs` or `.js`, for example: `webpack.config.mjs`.
 
-// import CodeBlock from '@theme/CodeBlock';
-// import configEsm from '!!raw-loader?esModule=true!../../../templates/webpack.config.mjs';
-
-// <CodeBlock language="js">{configEsm}</CodeBlock>
-
+<CodeBlock language="js">{ESMTemplate}</CodeBlock>
 
 ## CJS templates
 
 Recommended extensions for the config: `.cjs` or `.js`, for example: `webpack.config.cjs`.
 
-// import configCjs from '!!raw-loader?esModule=false!../../../templates/webpack.config.cjs';
-
-// <CodeBlock language="js">{configCjs}</CodeBlock>
+<CodeBlock language="js">{CJSTemplate}</CodeBlock>

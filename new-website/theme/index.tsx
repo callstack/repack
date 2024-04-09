@@ -1,10 +1,15 @@
-import Theme, { Link } from 'rspress/theme';
+import Theme, { Link, getCustomMDXComponent } from 'rspress/theme';
 
-const Layout = () => <Theme.Layout />;
+export default Theme;
 
-export default {
-  ...Theme,
-  Layout,
+const { code: Code, pre: Pre } = getCustomMDXComponent();
+
+export const CodeBlock = ({ children, language }) => {
+  return (
+    <Pre>
+      <Code className={`language-${language}`}>{children}</Code>
+    </Pre>
+  );
 };
 
 const CustomLink = (props) => (
@@ -13,6 +18,7 @@ const CustomLink = (props) => (
     style={{ borderBottomStyle: 'solid', borderBottomColor: 'white' }}
   />
 );
+
 export { CustomLink as Link };
 
 export * from 'rspress/theme';

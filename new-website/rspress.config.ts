@@ -29,4 +29,16 @@ export default defineConfig({
     ],
   },
   globalStyles: path.join(__dirname, 'src/styles/index.css'),
+  builderConfig: {
+    tools: {
+      rspack(config, { addRules }) {
+        addRules([
+          {
+            resourceQuery: /raw/,
+            type: 'asset/source',
+          },
+        ]);
+      },
+    },
+  },
 });
