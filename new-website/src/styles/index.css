@@ -82,6 +82,17 @@
   --rp-font-family-mono: Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+/* Code blocks */
+:root {
+  --rp-code-block-bg: var(--rp-c-bg-soft);
+  --rp-code-title-bg: var(--rp-c-bg-mute);
+}
+
+.dark {
+  --rp-code-block-bg: var(--rp-c-bg-soft);
+  --rp-code-title-bg: var(--rp-c-bg-mute);
+}
+
 /* Nav header */
 .rspress-nav {
   background-color: var(--rp-c-bg-soft) !important;
