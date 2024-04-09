@@ -84,8 +84,7 @@
 
 .rspress-nav {
   background-color: var(--rp-c-bg-soft) !important;
-  /* border-bottom: 1px solid var(--rp-c-divider-light) !important; */
-  box-shadow: var(--rp-shadow-3);
+  border-bottom: 1px solid var(--rp-c-divider-light) !important;
 }
 
 .rspress-sidebar-section-header > span::before {
