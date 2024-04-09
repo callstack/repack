@@ -7,7 +7,10 @@ const { code: Code, pre: Pre } = getCustomMDXComponent();
 export const CodeBlock = ({ children, language, title }) => {
   return (
     <Pre>
-      <Code className={`language-${language}`} meta={`title="${title}"`}>
+      <Code
+        className={`language-${language}`}
+        meta={title ? `title="${title}"` : undefined}
+      >
         {children}
       </Code>
     </Pre>
