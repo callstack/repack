@@ -87,8 +87,8 @@
 .rspress-nav {
   /* background-color: var(--rp-c-bg-soft) !important; */
   /* border-bottom: 1px solid var(--rp-c-divider-light); */
-  /* border-bottom: 1px solid var(--rp-c-divider) !important; */
-  box-shadow: var(--rp-shadow-2);
+  border-bottom: 1px solid var(--rp-c-divider) !important;
+  /* box-shadow: var(--rp-shadow-2); */
 }
 
 .rspress-doc > h1 {
@@ -101,8 +101,8 @@
 }
 
 .rspress-sidebar {
-  background-color: var(--rp-c-bg-alt) !important;
-  /* border-right: 1px solid var(--rp-c-divider) !important; */
+  /* background-color: var(--rp-c-bg-alt) !important; */
+  border-right: 1px solid var(--rp-c-divider) !important;
 }
 
 .rspress-doc-container {
@@ -189,3 +189,8 @@
 .rspress-doc a > code {
   color: inherit;
 }
+
+/* search modal */
+/* #search-container > div > div {
+  background-color: var(--rp-c-bg);
+} */
