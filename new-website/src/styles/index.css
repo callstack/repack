@@ -213,3 +213,12 @@
 .rspress-doc a > code {
   color: inherit;
 }
+
+.rspress-link {
+  border-style: solid !important;
+  border-color: white;
+
+  &:hover {
+    border-color: var(--rp-c-brand) !important;
+  }
+}
