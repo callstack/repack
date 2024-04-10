@@ -7,7 +7,7 @@
   {
     "text": "API",
     "link": "/api/about.html",
-    "activeMatch": "/^api/"
+    "activeMatch": "^/api/"
   },
   {
     "text": "Examples",
