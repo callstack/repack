@@ -76,12 +76,6 @@
   --rp-shadow-5: 0 18px 56px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.16) !important;
 }
 
-:root {
-  --rp-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji' !important;
-  --rp-font-family-mono: Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
 /* Code blocks */
 :root {
   --rp-code-block-bg: var(--rp-c-bg-soft);
@@ -221,4 +215,9 @@
   &:hover {
     border-color: var(--rp-c-brand) !important;
   }
+}
+
+/* keep name for SEO only */
+h1.leading-tight > span {
+  display: none;
 }

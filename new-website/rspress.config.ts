@@ -1,10 +1,12 @@
 import * as path from 'path';
 import { defineConfig } from 'rspress/config';
+import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
 
 export default defineConfig({
   root: path.join(__dirname, 'src'),
   title: 'Re.Pack docs',
   description: 'Re.Pack documentation',
+  icon: '/img/favicon.ico',
   logo: {
     light: 'https://re-pack.netlify.app/img/logo_light.svg',
     dark: 'https://re-pack.netlify.app/img/logo_dark.svg',
@@ -45,4 +47,5 @@ export default defineConfig({
       },
     },
   },
+  plugins: [pluginFontOpenSans()],
 });

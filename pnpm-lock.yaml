@@ -129,6 +129,9 @@ importers:
       rspress:
         specifier: ^1.18.0
         version: 1.18.0
+      rspress-plugin-font-open-sans:
+        specifier: ^1.0.0
+        version: 1.0.0
     devDependencies:
       '@types/node':
         specifier: ^18
@@ -21302,6 +21305,10 @@ packages:
     resolution: {integrity: sha512-qyBM9XsP7oxBQSms2cr715XOeoDi6p5hUYXtlNDfst0jha8vfWVPNeC7j5+j5dG+yt//1OCmLaOY2rWqPSVXDg==}
     dependencies:
       fs-extra: 11.2.0
+    dev: false
+
+  /rspress-plugin-font-open-sans@1.0.0:
+    resolution: {integrity: sha512-4GP0pd7h3W8EWdqE0VkA62nzUJZNy4ZnYK7be8+lOKHQKsQ5nZ+22A/VurNssi1eZFx3kjwbmIuoAkgb5W8S9Q==}
     dev: false
 
   /rspress@1.18.0:
