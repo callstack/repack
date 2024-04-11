@@ -95,9 +95,9 @@ Before adopting Module Federation in React Native, we recommend to create a Web-
 
 ## Custom Module Federation plugin
 
-Re.Pack provides custom Module Federation plugin - [`Repack.plugin.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin).
+Re.Pack provides custom Module Federation plugin - [`Repack.plugin.ModuleFederationPlugin`](../api/repack/classes/plugins.ModuleFederationPlugin).
 
-It's a recommended way to use Module Federation with Re.Pack. It provides defaults for `filename`, `library`, `shared` and converts `remotes` into `promise new Promise` loaders with [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote) automatically.
+It's a recommended way to use Module Federation with Re.Pack. It provides defaults for `filename`, `library`, `shared` and converts `remotes` into `promise new Promise` loaders with [`Federated.createRemote` function](../api/repack/functions/Federated.createRemote) automatically.
 
 For example a `host` config could look similar to:
 
@@ -194,7 +194,7 @@ import App1 from 'app1/App';
 // use App1 somehow
 ```
 
-And the `remotes` have to be configured inside [`Repack.plugin.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin):
+And the `remotes` have to be configured inside [`Repack.plugin.ModuleFederationPlugin`](../api/repack/classes/plugins.ModuleFederationPlugin):
 
 ```js
 import * as Repack from '@callstack/repack';
@@ -435,7 +435,7 @@ import './src/bootstrap';
 
 ### Host application can't use `remotes`
 
-Currently, there's a limitation for Host application preventing them from using `remotes` in [`Repack.plugins.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin).
+Currently, there's a limitation for Host application preventing them from using `remotes` in [`Repack.plugins.ModuleFederationPlugin`](../api/repack/classes/plugins.ModuleFederationPlugin).
 
 In order to load a container from the host, you have to use [`Federated.importModule`](../api/repack/client/functions/Federated.importModule):
 
@@ -459,7 +459,7 @@ The code above, will load `app` container, import module `App.js` from it and pa
 
 If you're planning on using native modules, the host application must provide native code for those. It's also recommended to make those modules `shared` and a `singleton`.
 
-For example, if you want to use `react-native-reanimated`, you must add it to the host all all the containers you want to use Reanimated in, then configure [`Repack.plugins.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin) in host and the containers using the dependency:
+For example, if you want to use `react-native-reanimated`, you must add it to the host all all the containers you want to use Reanimated in, then configure [`Repack.plugins.ModuleFederationPlugin`](../api/repack/classes/plugins.ModuleFederationPlugin) in host and the containers using the dependency:
 
 ```js
 /* ... */
@@ -495,17 +495,17 @@ export default (env) => {
 
 :::tip
 
-By using [`Repack.plugins.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin), `remotes` will be automatically converted to `promise new Promise` using [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote).
+By using [`Repack.plugins.ModuleFederationPlugin`](../api/repack/classes/plugins.ModuleFederationPlugin), `remotes` will be automatically converted to `promise new Promise` using [`Federated.createRemote` function](../api/repack/functions/Federated.createRemote).
 
 :::
 
 :::info
 
-Only relevant when not using `webpack.container.ModuleFederationPlugin` instead of [`Repack.plugins.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin).
+Only relevant when not using `webpack.container.ModuleFederationPlugin` instead of [`Repack.plugins.ModuleFederationPlugin`](../api/repack/classes/plugins.ModuleFederationPlugin).
 
 :::
 
-[`ScriptManager`](../api/repack/client/classes/ScriptManager), which allows to load and evaluate additional JavaScript code (including containers), is an asynchronous API. This means the `remotes` in `ModuleFederationPlugin` must use `promise new Promise(...)` syntax. To avoid repetition and having to maintain `promise new Promise(...)` implementations yourself, Re.Pack provides an abstraction - [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote):
+[`ScriptManager`](../api/repack/client/classes/ScriptManager), which allows to load and evaluate additional JavaScript code (including containers), is an asynchronous API. This means the `remotes` in `ModuleFederationPlugin` must use `promise new Promise(...)` syntax. To avoid repetition and having to maintain `promise new Promise(...)` implementations yourself, Re.Pack provides an abstraction - [`Federated.createRemote` function](../api/repack/functions/Federated.createRemote):
 
 ```js
 /* ... */
@@ -535,14 +535,14 @@ export default (env) => {
 };
 ```
 
-[`Federated.createRemote` function](./api/repack/functions/Federated.createRemote) will make the remote loadable, so you will be able to use import statement for `remotes`:
+[`Federated.createRemote` function](../api/repack/functions/Federated.createRemote) will make the remote loadable, so you will be able to use import statement for `remotes`:
 
 ```js
 import App1 from 'app1/App.js';
 import App1 from 'app2/App.js';
 ```
 
-The loading code generated by [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote) uses [`ScriptManager`](../api/repack/client/classes/ScriptManager),
+The loading code generated by [`Federated.createRemote` function](../api/repack/functions/Federated.createRemote) uses [`ScriptManager`](../api/repack/client/classes/ScriptManager),
 meaning you need to make sure the proper resolvers are added via [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver) so your remotes can be resolved, for example:
 
 ```js

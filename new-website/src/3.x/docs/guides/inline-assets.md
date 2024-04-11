@@ -5,18 +5,18 @@ There are some situations when you might want to inline assets into the JavaScri
 Common examples of such use cases are:
 
 - Out-of-tree platforms that don't support static assets in a similar way as React Native on iOS/Android does or don't support static assets at all.
-- [Code splitting](../../code-splitting/usage) with static assets used by [remote chunks](../../code-splitting/glossary#remote-chunks).
+- [Code splitting](../code-splitting/usage) with static assets used by [remote chunks](../code-splitting/glossary#remote-chunks).
 
 :::info
 
-If you're using [Code Splitting](../../code-splitting/concept) or Module Federation, assets will be inlined into the chunks or containers
+If you're using [Code Splitting](../code-splitting/concept) or Module Federation, assets will be inlined into the chunks or containers
 importing them and should be properly rendered by the host application.
 
 :::
 
 ## Usage
 
-Generally speaking, to inline assets you have to pass `inline: true` option to the [Assets loader](../loader/../loaders/assets-loader):
+Generally speaking, to inline assets you have to pass `inline: true` option to the [Assets loader](../loaders/assets-loader):
 
 ```js
 /* ... */
@@ -34,7 +34,7 @@ export default (env) => {
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
-            loader: "@callstack/repack/assets-loader",
+            loader: '@callstack/repack/assets-loader',
             options: {
               inline: true,
               platform,

@@ -35,8 +35,7 @@ If you're just starting with React Native, it's better to stick with the default
 1. Re.Pack was design for the advanced users, as such it exposes _low-level API_ in form of Webpack plugins and utilities, meaning we only give you the tools you need to build React Native application, but the actual configuration and maintenance of said config is on your shoulders.
 2. To support wide variety of use cases and give you as much control as possible, Re.Pack is written to allow you to bundle and run development server directly from Webpack CLI as well by using React Native CLI. While it's recommended to stick with React Native CLI, you can pick one you want to go with.
 3. Based on our experience with [Haul](https://github.com/callstack/haul), we shift as much responsibility onto you as possible, so that we can develop features, move at reasonable pace and reduce maintenance cost. Therefor, Re.Pack should be used by seasoned React Native developers with at least basic experience with Webpack.
-4. __[Future]__ We plan to use Re.Pack as a foundation for bringing multi-bundle support to React Native, by allowing you to use asynchronous chunks and finally Webpack 5 latest feature — [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669).
-
+4. **[Future]** We plan to use Re.Pack as a foundation for bringing multi-bundle support to React Native, by allowing you to use asynchronous chunks and finally Webpack 5 latest feature — [Module Federation](https://medium.com/swlh/webpack-5-module-federation-a-game-changer-to-javascript-architecture-bcdd30e02669).
 
 ## Re.Pack vs Metro
 
@@ -46,7 +45,7 @@ The main distinction is that, Metro is custom-built solution and Re.Pack uses We
 
 - Metro is slightly faster - it has less overhead compared to Webpack. Metro trades configurability for performance, whereas with Webpack it's the other way around.
 - Webpack configuration options and ecosystem allows for much greater control and support for advanced use-cases.
-- Metro's Fast Refresh is slightly more flexible compared to Webpack's solution: Hot Module Replacement + React Refresh — some cases require full application reloaded with Webpack and Re.Pack, but they are supported with Metro See: [Known issues](/docs/2x/known-issues).
+- Metro's Fast Refresh is slightly more flexible compared to Webpack's solution: Hot Module Replacement + React Refresh — some cases require full application reloaded with Webpack and Re.Pack, but they are supported with Metro See: [Known issues](./known-issues).
 
 ## Re.Pack vs Haul
 

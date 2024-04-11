@@ -1,6 +1,6 @@
 # SVG
 
-By default, Re.Pack's [Assets loader](/docs/2x/configuration/loaders/assets-loader) is configured to allow you to import SVGs in you code, but that doesn't mean you can render them immediately.
+By default, Re.Pack's [Assets loader](../loaders/assets-loader) is configured to allow you to import SVGs in you code, but that doesn't mean you can render them immediately.
 
 ## Pre-requisites
 
@@ -10,7 +10,7 @@ Please follow this installation instructions here: https://github.com/react-nati
 
 ## Exclude SVG from Re.Pack's Assets loader
 
-Now that you have [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) installed and linked into the application, you need to tell Webpack **not to use** Re.Pack's [Assets loader](/docs/2x/configuration/loaders/assets-loader) from processing SVGs, since you will process them manually later.
+Now that you have [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) installed and linked into the application, you need to tell Webpack **not to use** Re.Pack's [Assets loader](../loaders/assets-loader) from processing SVGs, since you will process them manually later.
 
 Go to your Webpack configuration and apply the following diff:
 
@@ -26,7 +26,7 @@ Go to your Webpack configuration and apply the following diff:
 
 :::tip
 
-If you don't have Re.Pack's Assets loader rule in your Webpack config, read [this guide](/docs/2x/configuration/loaders/assets-loader#migrating-from-assetsplugin) first.
+If you don't have Re.Pack's Assets loader rule in your Webpack config, read [this guide](../loaders/assets-loader#migrating-from-assetsplugin) first.
 
 :::
 
@@ -69,7 +69,7 @@ module.exports = {
 +             native: true,
 +             // You might want to uncomment the following line.
 +             // More info: https://react-svgr.com/docs/options/#dimensions
-+             // dimensions: false, 
++             // dimensions: false,
 +           },
 +         },
 +       ],

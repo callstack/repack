@@ -12,7 +12,7 @@ If you want to inline assets as `base64` encoded data URI, check our [Inline ass
 
 :::
 
-In the default [Webpack template](../templates), the Assets loader is configured to process the same assets types as Metro:
+In the default [Webpack template](../configuration/templates), the Assets loader is configured to process the same assets types as Metro:
 
 ```js
 // webpack.config.js
@@ -61,6 +61,7 @@ A typical scenario would be if you want to manually process specific assets sepa
 different loaders — a common example of such scenario would be SVGs.
 
 You can exclude asset types by filtering them out from `ASSET_EXTENSIONS` array:
+
 ```js
 // webpack.config.js
 module.exports = {
@@ -107,8 +108,10 @@ module.exports = {
         test: /\.svg$/, // or ReactNative.getAssetExtensionsRegExp(['svg'])
         use: {
           loader: '<your_loader>',
-          options: { /* ... options for your loader ... */ }
-        }
+          options: {
+            /* ... options for your loader ... */
+          },
+        },
       },
     ],
     // ...
@@ -129,7 +132,7 @@ If you are using older version of Re.Pack you might have `AssetPlugin` and no ru
 in your Webpack config.
 
 You can keep using `AssetsPlugin`, as long as you don't want to render SVGs in your application,
-or you don't intend to use custom rules for other assets. 
+or you don't intend to use custom rules for other assets.
 
 :::caution
 
@@ -140,7 +143,7 @@ Keep in mind that `AssetPlugin` is **deprecated** and will be removed in next ma
 To migrate from `AssetPlugin` and use Re.Pack's Assets loader, apply the following diff to your
 Webpack config:
 
-```diff
+````diff
 @@ -165,6 +165,34 @@ module.exports = {
            },
          },
@@ -178,7 +181,7 @@ Webpack config:
    plugins: [
 @@ -177,11 +205,11 @@ module.exports = {
      }),
- 
+
      /**
 -     * This plugin makes sure you can use assets like images, videos, audio.
 +     * This plugin makes sure the resolution for assets like images works with scales,
@@ -189,10 +192,10 @@ Webpack config:
        platform,
 -      devServerEnabled: devServer.enabled,
      }),
- 
+
      /**
 
-```
+````
 
 After applying these changes, your application should still behave the same as it was before,
 but now you can modify, which assets are processed by Re.Pack's Assets loader and use different

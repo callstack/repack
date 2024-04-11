@@ -7,7 +7,7 @@ the assets causes your bundle size to increase dramatically.
 
 ## Usage
 
-To convert assets to remote assets you have to configure `remote` option to the [Assets loader](../loader/../loaders/assets-loader):
+To convert assets to remote assets you have to configure `remote` option to the [Assets loader](../loaders/assets-loader):
 
 ```js
 /* ... */
@@ -24,17 +24,17 @@ export default (env) => {
 
         {
           test: Repack.getAssetExtensionsRegExp(
-            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== "svg"),
+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
           use: {
-            loader: "@callstack/repack/assets-loader",
+            loader: '@callstack/repack/assets-loader',
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
               scalableAssetExtensions: Repack.SCALABLE_ASSETS,
               remote: {
                 enabled: true,
-                publicPath: "http://localhost:9999",
+                publicPath: 'http://localhost:9999',
               },
             },
           },
@@ -95,7 +95,7 @@ new Repack.RepackPlugin({
     bundleFilename,
     sourceMapFilename,
     assetsPath,
-    auxiliaryAssetsPath: path.join("build/output", platform, "remote"),
+    auxiliaryAssetsPath: path.join('build/output', platform, 'remote'),
   },
 });
 ```

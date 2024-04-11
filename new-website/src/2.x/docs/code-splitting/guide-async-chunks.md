@@ -1,12 +1,12 @@
 # Guide: Async chunks
 
-Let's assume, we are building an E-Learning application with specific functionalities for a student 
+Let's assume, we are building an E-Learning application with specific functionalities for a student
 and for a teacher. Both student and a teacher will get different UIs and different features, so it
 would make sense to isolate the student's specific code from the teacher's. That's were Code
 Splitting comes into play - we can use dynamic `import(...)` function together with `React.lazy` and
 `React.Suspense` to conditionally render the student and the teacher sides based on the user's role.
 The code for the student and the teacher will be put into a remote async chunk, so that the initial
-download size will be smaller. 
+download size will be smaller.
 
 :::tip
 
@@ -45,7 +45,7 @@ export default function StudentSide({ user }) {
       <Text>You are a student.</Text>
       {/* ...more student related code */}
     </View>
-  )
+  );
 }
 ```
 
@@ -63,7 +63,7 @@ export default function TeacherSide({ user }) {
       <Text>You are a teacher.</Text>
       {/* ...more teacher related code */}
     </View>
-  )
+  );
 }
 ```
 
@@ -84,9 +84,12 @@ const TeacherSide = React.lazy(
 
 export function Home({ user }) {
   const Side = React.useMemo(
-    () => user.role === 'student'
-      ? <StudentSide user={user} />
-      : <TeacherSize user={user} />,
+    () =>
+      user.role === 'student' ? (
+        <StudentSide user={user} />
+      ) : (
+        <TeacherSize user={user} />
+      ),
     [user]
   );
 
@@ -94,7 +97,7 @@ export function Home({ user }) {
     <React.Suspense fallback={<Text>Loading...</Text>}>
       <Side />
     </React.Suspense>
-  )
+  );
 }
 ```
 
@@ -103,7 +106,7 @@ At this point all the code used by `StudentSide.js` will be put into `student.ch
 
 If you try to render `Home` component in your application, it should work in development
 (the development server must be running). For production however, there's an additional step
-necessary - to configure [`ChunkManager`](../api/react-native/classes/ChunkManager):
+necessary - to configure [`ChunkManager`](../../api/react-native/classes/ChunkManager):
 
 ```js
 // index.js
@@ -129,7 +132,7 @@ ChunkManager.configure({
 AppRegistry.registerComponent(appName, () => App);
 ```
 
-This code will allow Re.Pack's [`ChunkManager`](../api/react-native/classes/ChunkManager) to
+This code will allow Re.Pack's [`ChunkManager`](../../api/react-native/classes/ChunkManager) to
 actually locate your chunks for the student and the teacher, and download them.
 
 When bundling for production/release, all remote chunks, including `student.chunk.bundle` and
@@ -138,8 +141,8 @@ You should upload files from this directory to a remote server or a CDN from whe
 will download them.
 
 You can change remote chunks output directory using
-[`remoteChunksOutput`](../api/node/interfaces/OutputPluginConfig#remotechunksoutput)
-in [`OutputPlugin`](../api/node/classes/OutputPlugin) configuration.
+[`remoteChunksOutput`](../../api/node/interfaces/OutputPluginConfig#remotechunksoutput)
+in [`OutputPlugin`](../../api/node/classes/OutputPlugin) configuration.
 
 ## Local vs remote chunks
 
@@ -151,22 +154,22 @@ the final `.ipa` or `.apk` file, meaning they increase initial download size the
 download when installing your application.
 
 Local chunks should only be used if you know that the majority of users will need them or if you
-want to have *pre-built* features/modules.
+want to have _pre-built_ features/modules.
 
 :::info
 
 Local chunks will not be copied into `<projectRoot>/build/<platform>/remote` (or directory specified
-in [`remoteChunksOutput`](../api/node/interfaces/OutputPluginConfig#remotechunksoutput)).
+in [`remoteChunksOutput`](../../api/node/interfaces/OutputPluginConfig#remotechunksoutput)).
 They will be automatically copied to appropriate locations by
-[`OutputPlugin`](../api/node/classes/OutputPlugin).
+[`OutputPlugin`](../../api/node/classes/OutputPlugin).
 
 :::
 
 To mark a chunk as a local chunk, you need to add it's name or a RegExp matching the chunk's name to
-[`OutputPlugin`'s `localChunks` option](../api/node/interfaces/OutputPluginConfig#localchunks) in
+[`OutputPlugin`'s `localChunks` option](../../api/node/interfaces/OutputPluginConfig#localchunks) in
 your Webpack config.
 
-For example, if we know they majority of the users will be students, it would make sense to make 
+For example, if we know they majority of the users will be students, it would make sense to make
 `student` chunk a local chunk. To mark the `student` chunk as a local one, apply this diff to your
 Webpack configuration:
 
