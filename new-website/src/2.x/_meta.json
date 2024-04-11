@@ -1,12 +1,12 @@
 [
   {
     "text": "Docs",
-    "link": "/docs/getting-started.html",
+    "link": "/docs/getting-started",
     "activeMatch": "^/2.x/docs/"
   },
   {
     "text": "API",
-    "link": "/api/about.html",
+    "link": "/api/about",
     "activeMatch": "^/2.x/api/"
   },
   {
