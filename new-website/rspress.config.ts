@@ -10,6 +10,7 @@ export default defineConfig({
     dark: 'https://re-pack.netlify.app/img/logo_dark.svg',
   },
   markdown: {
+    checkDeadLinks: true,
     codeHighlighter: 'prism',
   },
   multiVersion: {
@@ -24,7 +25,7 @@ export default defineConfig({
       {
         icon: 'github',
         mode: 'link',
-        content: 'https://github.com/web-infra-dev/rspress',
+        content: 'https://github.com/callstack/repack',
       },
     ],
   },
