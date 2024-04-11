@@ -9,14 +9,14 @@ and the data necessary to fetch it.
 
 ### Properties
 
-- [absolute](ChunkConfig.md#absolute)
-- [body](ChunkConfig.md#body)
-- [fetch](ChunkConfig.md#fetch)
-- [headers](ChunkConfig.md#headers)
-- [method](ChunkConfig.md#method)
-- [query](ChunkConfig.md#query)
-- [timeout](ChunkConfig.md#timeout)
-- [url](ChunkConfig.md#url)
+- [absolute](./ChunkConfig.md#absolute)
+- [body](./ChunkConfig.md#body)
+- [fetch](./ChunkConfig.md#fetch)
+- [headers](./ChunkConfig.md#headers)
+- [method](./ChunkConfig.md#method)
+- [query](./ChunkConfig.md#query)
+- [timeout](./ChunkConfig.md#timeout)
+- [url](./ChunkConfig.md#url)
 
 ## Properties
 

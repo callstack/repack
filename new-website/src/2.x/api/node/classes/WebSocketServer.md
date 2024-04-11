@@ -6,33 +6,33 @@ Abstract class for providing common logic (eg routing) for all WebSocket servers
 
 - **`WebSocketServer`**
 
-  ↳ [`WebSocketDebuggerServer`](WebSocketDebuggerServer.md)
+  ↳ [`WebSocketDebuggerServer`](./WebSocketDebuggerServer.md)
 
-  ↳ [`WebSocketDevClientServer`](WebSocketDevClientServer.md)
+  ↳ [`WebSocketDevClientServer`](./WebSocketDevClientServer.md)
 
-  ↳ [`WebSocketEventsServer`](WebSocketEventsServer.md)
+  ↳ [`WebSocketEventsServer`](./WebSocketEventsServer.md)
 
-  ↳ [`WebSocketHMRServer`](WebSocketHMRServer.md)
+  ↳ [`WebSocketHMRServer`](./WebSocketHMRServer.md)
 
-  ↳ [`WebSocketMessageServer`](WebSocketMessageServer.md)
+  ↳ [`WebSocketMessageServer`](./WebSocketMessageServer.md)
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](WebSocketServer.md#constructor)
+- [constructor](./WebSocketServer.md#constructor)
 
 ### Properties
 
-- [fastify](WebSocketServer.md#fastify)
-- [paths](WebSocketServer.md#paths)
-- [server](WebSocketServer.md#server)
+- [fastify](./WebSocketServer.md#fastify)
+- [paths](./WebSocketServer.md#paths)
+- [server](./WebSocketServer.md#server)
 
 ### Methods
 
-- [onConnection](WebSocketServer.md#onconnection)
-- [shouldUpgrade](WebSocketServer.md#shouldupgrade)
-- [upgrade](WebSocketServer.md#upgrade)
+- [onConnection](./WebSocketServer.md#onconnection)
+- [shouldUpgrade](./WebSocketServer.md#shouldupgrade)
+- [upgrade](./WebSocketServer.md#upgrade)
 
 ## Constructors
 
@@ -61,7 +61,7 @@ Any logging information, will be passed through standard `fastify.log` API.
 
 • `Protected` **fastify**: [`FastifyDevServer`](../types/FastifyDevServer.md)
 
-Fastify instance from which [server](WebSocketServer.md#server) will receive upgrade connections.
+Fastify instance from which [server](./WebSocketServer.md#server) will receive upgrade connections.
 
 #### Defined in
 

@@ -6,24 +6,24 @@ Class that handles all reporting, logging and compilation progress handling.
 
 ### Constructors
 
-- [constructor](Reporter.md#constructor)
+- [constructor](./Reporter.md#constructor)
 
 ### Properties
 
-- [isVerbose](Reporter.md#isverbose)
-- [isWorker](Reporter.md#isworker)
+- [isVerbose](./Reporter.md#isverbose)
+- [isWorker](./Reporter.md#isworker)
 
 ### Methods
 
-- [attachResponse](Reporter.md#attachresponse)
-- [enableFileLogging](Reporter.md#enablefilelogging)
-- [flushFileLogs](Reporter.md#flushfilelogs)
-- [getLogBuffer](Reporter.md#getlogbuffer)
-- [getPrettyProgress](Reporter.md#getprettyprogress)
-- [process](Reporter.md#process)
-- [stop](Reporter.md#stop)
-- [colorizeText](Reporter.md#colorizetext)
-- [getSymbolForType](Reporter.md#getsymbolfortype)
+- [attachResponse](./Reporter.md#attachresponse)
+- [enableFileLogging](./Reporter.md#enablefilelogging)
+- [flushFileLogs](./Reporter.md#flushfilelogs)
+- [getLogBuffer](./Reporter.md#getlogbuffer)
+- [getPrettyProgress](./Reporter.md#getprettyprogress)
+- [process](./Reporter.md#process)
+- [stop](./Reporter.md#stop)
+- [colorizeText](./Reporter.md#colorizetext)
+- [getSymbolForType](./Reporter.md#getsymbolfortype)
 
 ## Constructors
 
@@ -120,7 +120,7 @@ ___
 ▸ **flushFileLogs**(): `void`
 
 Flush all buffered logs to a file provided that file
-reporting was enabled with [enableFileLogging](Reporter.md#enablefilelogging).
+reporting was enabled with [enableFileLogging](./Reporter.md#enablefilelogging).
 
 #### Returns
 
@@ -179,7 +179,7 @@ ___
 ▸ **process**(`logEntry`): `void`
 
 Process new log entry and report it to terminal and file if file reporting was enabled with
-[enableFileLogging](Reporter.md#enablefilelogging).
+[enableFileLogging](./Reporter.md#enablefilelogging).
 
 #### Parameters
 

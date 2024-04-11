@@ -7,30 +7,30 @@ It handles creation of a Fastify instance, creation of all WebSocket servers and
 
 - **`BaseDevServer`**
 
-  ↳ [`DevServer`](DevServer.md)
+  ↳ [`DevServer`](./DevServer.md)
 
-  ↳ [`DevServerProxy`](DevServerProxy.md)
+  ↳ [`DevServerProxy`](./DevServerProxy.md)
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](BaseDevServer.md#constructor)
+- [constructor](./BaseDevServer.md#constructor)
 
 ### Properties
 
-- [config](BaseDevServer.md#config)
-- [fastify](BaseDevServer.md#fastify)
-- [wsClientServer](BaseDevServer.md#wsclientserver)
-- [wsDebuggerServer](BaseDevServer.md#wsdebuggerserver)
-- [wsEventsServer](BaseDevServer.md#wseventsserver)
-- [wsMessageServer](BaseDevServer.md#wsmessageserver)
-- [wsRouter](BaseDevServer.md#wsrouter)
+- [config](./BaseDevServer.md#config)
+- [fastify](./BaseDevServer.md#fastify)
+- [wsClientServer](./BaseDevServer.md#wsclientserver)
+- [wsDebuggerServer](./BaseDevServer.md#wsdebuggerserver)
+- [wsEventsServer](./BaseDevServer.md#wseventsserver)
+- [wsMessageServer](./BaseDevServer.md#wsmessageserver)
+- [wsRouter](./BaseDevServer.md#wsrouter)
 
 ### Methods
 
-- [run](BaseDevServer.md#run)
-- [setup](BaseDevServer.md#setup)
+- [run](./BaseDevServer.md#run)
+- [setup](./BaseDevServer.md#setup)
 
 ## Constructors
 
@@ -79,7 +79,7 @@ ___
 
 ### wsClientServer
 
-• **wsClientServer**: [`WebSocketDevClientServer`](WebSocketDevClientServer.md)
+• **wsClientServer**: [`WebSocketDevClientServer`](./WebSocketDevClientServer.md)
 
 Server instance for React Native clients.
 
@@ -91,7 +91,7 @@ ___
 
 ### wsDebuggerServer
 
-• **wsDebuggerServer**: [`WebSocketDebuggerServer`](WebSocketDebuggerServer.md)
+• **wsDebuggerServer**: [`WebSocketDebuggerServer`](./WebSocketDebuggerServer.md)
 
 Debugger server instance.
 
@@ -103,7 +103,7 @@ ___
 
 ### wsEventsServer
 
-• **wsEventsServer**: [`WebSocketEventsServer`](WebSocketEventsServer.md)
+• **wsEventsServer**: [`WebSocketEventsServer`](./WebSocketEventsServer.md)
 
 Events server instance.
 
@@ -115,7 +115,7 @@ ___
 
 ### wsMessageServer
 
-• **wsMessageServer**: [`WebSocketMessageServer`](WebSocketMessageServer.md)
+• **wsMessageServer**: [`WebSocketMessageServer`](./WebSocketMessageServer.md)
 
 Message server instance.
 
@@ -159,8 +159,8 @@ ___
 
 Sets up common routes.
 
-All classes that implements [BaseDevServer](BaseDevServer.md) should call this method before
-calling [run](BaseDevServer.md#run).
+All classes that implements [BaseDevServer](./BaseDevServer.md) should call this method before
+calling [run](./BaseDevServer.md#run).
 
 #### Returns
 

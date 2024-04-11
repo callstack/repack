@@ -9,17 +9,17 @@ This is the return type of {@link parseCliOptions}.
 
 ### Properties
 
-- [context](WebpackOptions.md#context)
-- [dev](WebpackOptions.md#dev)
-- [devServer](WebpackOptions.md#devserver)
-- [entry](WebpackOptions.md#entry)
-- [minimize](WebpackOptions.md#minimize)
-- [mode](WebpackOptions.md#mode)
-- [outputFilename](WebpackOptions.md#outputfilename)
-- [outputPath](WebpackOptions.md#outputpath)
-- [platform](WebpackOptions.md#platform)
-- [reactNativePath](WebpackOptions.md#reactnativepath)
-- [sourcemapFilename](WebpackOptions.md#sourcemapfilename)
+- [context](./WebpackOptions.md#context)
+- [dev](./WebpackOptions.md#dev)
+- [devServer](./WebpackOptions.md#devserver)
+- [entry](./WebpackOptions.md#entry)
+- [minimize](./WebpackOptions.md#minimize)
+- [mode](./WebpackOptions.md#mode)
+- [outputFilename](./WebpackOptions.md#outputfilename)
+- [outputPath](./WebpackOptions.md#outputpath)
+- [platform](./WebpackOptions.md#platform)
+- [reactNativePath](./WebpackOptions.md#reactnativepath)
+- [sourcemapFilename](./WebpackOptions.md#sourcemapfilename)
 
 ## Properties
 
@@ -39,7 +39,7 @@ ___
 
 • **dev**: `boolean`
 
-Inferred from [mode](WebpackOptions.md#mode). `true` is `mode` is `development`.
+Inferred from [mode](./WebpackOptions.md#mode). `true` is `mode` is `development`.
 
 #### Defined in
 
@@ -49,7 +49,7 @@ ___
 
 ### devServer
 
-• `Optional` **devServer**: [`DevServerOptions`](DevServerOptions.md)
+• `Optional` **devServer**: [`DevServerOptions`](./DevServerOptions.md)
 
 Development server configuration options.
 Used by [DevServerPlugin](../classes/DevServerPlugin.md), [BaseDevServer](../classes/BaseDevServer.md), [DevServer](../classes/DevServer.md) and [DevServerProxy](../classes/DevServerProxy.md).
@@ -151,7 +151,7 @@ ___
 • `Optional` **sourcemapFilename**: `string`
 
 Source map filename - name under which generated Source Map will be saved.
-The output directory for the Source Map is the same as [outputPath](WebpackOptions.md#outputpath).
+The output directory for the Source Map is the same as [outputPath](./WebpackOptions.md#outputpath).
 
 #### Defined in
 

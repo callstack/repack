@@ -13,14 +13,14 @@ Apart from 'stream' all other fields come from Fastify types.
 
 ### Properties
 
-- [level](DevServerLoggerOptions.md#level)
-- [prettyPrint](DevServerLoggerOptions.md#prettyprint)
-- [serializers](DevServerLoggerOptions.md#serializers)
-- [stream](DevServerLoggerOptions.md#stream)
+- [level](./DevServerLoggerOptions.md#level)
+- [prettyPrint](./DevServerLoggerOptions.md#prettyprint)
+- [serializers](./DevServerLoggerOptions.md#serializers)
+- [stream](./DevServerLoggerOptions.md#stream)
 
 ### Methods
 
-- [genReqId](DevServerLoggerOptions.md#genreqid)
+- [genReqId](./DevServerLoggerOptions.md#genreqid)
 
 ## Properties
 

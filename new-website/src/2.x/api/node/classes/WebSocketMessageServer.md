@@ -7,7 +7,7 @@ Based on: https://github.com/react-native-community/cli/blob/v4.14.0/packages/cl
 
 ## Hierarchy
 
-- [`WebSocketServer`](WebSocketServer.md)
+- [`WebSocketServer`](./WebSocketServer.md)
 
   ↳ **`WebSocketMessageServer`**
 
@@ -15,31 +15,31 @@ Based on: https://github.com/react-native-community/cli/blob/v4.14.0/packages/cl
 
 ### Constructors
 
-- [constructor](WebSocketMessageServer.md#constructor)
+- [constructor](./WebSocketMessageServer.md#constructor)
 
 ### Properties
 
-- [fastify](WebSocketMessageServer.md#fastify)
-- [paths](WebSocketMessageServer.md#paths)
-- [server](WebSocketMessageServer.md#server)
-- [PROTOCOL\_VERSION](WebSocketMessageServer.md#protocol_version)
+- [fastify](./WebSocketMessageServer.md#fastify)
+- [paths](./WebSocketMessageServer.md#paths)
+- [server](./WebSocketMessageServer.md#server)
+- [PROTOCOL\_VERSION](./WebSocketMessageServer.md#protocol_version)
 
 ### Methods
 
-- [broadcast](WebSocketMessageServer.md#broadcast)
-- [forwardRequest](WebSocketMessageServer.md#forwardrequest)
-- [forwardResponse](WebSocketMessageServer.md#forwardresponse)
-- [getClientSocket](WebSocketMessageServer.md#getclientsocket)
-- [handleError](WebSocketMessageServer.md#handleerror)
-- [onConnection](WebSocketMessageServer.md#onconnection)
-- [parseMessage](WebSocketMessageServer.md#parsemessage)
-- [processServerRequest](WebSocketMessageServer.md#processserverrequest)
-- [sendBroadcast](WebSocketMessageServer.md#sendbroadcast)
-- [shouldUpgrade](WebSocketMessageServer.md#shouldupgrade)
-- [upgrade](WebSocketMessageServer.md#upgrade)
-- [isBroadcast](WebSocketMessageServer.md#isbroadcast)
-- [isRequest](WebSocketMessageServer.md#isrequest)
-- [isResponse](WebSocketMessageServer.md#isresponse)
+- [broadcast](./WebSocketMessageServer.md#broadcast)
+- [forwardRequest](./WebSocketMessageServer.md#forwardrequest)
+- [forwardResponse](./WebSocketMessageServer.md#forwardresponse)
+- [getClientSocket](./WebSocketMessageServer.md#getclientsocket)
+- [handleError](./WebSocketMessageServer.md#handleerror)
+- [onConnection](./WebSocketMessageServer.md#onconnection)
+- [parseMessage](./WebSocketMessageServer.md#parsemessage)
+- [processServerRequest](./WebSocketMessageServer.md#processserverrequest)
+- [sendBroadcast](./WebSocketMessageServer.md#sendbroadcast)
+- [shouldUpgrade](./WebSocketMessageServer.md#shouldupgrade)
+- [upgrade](./WebSocketMessageServer.md#upgrade)
+- [isBroadcast](./WebSocketMessageServer.md#isbroadcast)
+- [isRequest](./WebSocketMessageServer.md#isrequest)
+- [isResponse](./WebSocketMessageServer.md#isresponse)
 
 ## Constructors
 
@@ -58,7 +58,7 @@ Any logging information, will be passed through standard `fastify.log` API.
 
 #### Overrides
 
-[WebSocketServer](WebSocketServer.md).[constructor](WebSocketServer.md#constructor)
+[WebSocketServer](./WebSocketServer.md).[constructor](./WebSocketServer.md#constructor)
 
 #### Defined in
 
@@ -70,11 +70,11 @@ Any logging information, will be passed through standard `fastify.log` API.
 
 • `Protected` **fastify**: [`FastifyDevServer`](../types/FastifyDevServer.md)
 
-Fastify instance from which [server](WebSocketMessageServer.md#server) will receive upgrade connections.
+Fastify instance from which [server](./WebSocketMessageServer.md#server) will receive upgrade connections.
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[fastify](WebSocketServer.md#fastify)
+[WebSocketServer](./WebSocketServer.md).[fastify](./WebSocketServer.md#fastify)
 
 #### Defined in
 
@@ -88,7 +88,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[paths](WebSocketServer.md#paths)
+[WebSocketServer](./WebSocketServer.md).[paths](./WebSocketServer.md#paths)
 
 #### Defined in
 
@@ -104,7 +104,7 @@ An instance of the underlying WebSocket server.
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[server](WebSocketServer.md#server)
+[WebSocketServer](./WebSocketServer.md).[server](./WebSocketServer.md#server)
 
 #### Defined in
 
@@ -262,7 +262,7 @@ Process new client's WebSocket connection.
 
 #### Overrides
 
-[WebSocketServer](WebSocketServer.md).[onConnection](WebSocketServer.md#onconnection)
+[WebSocketServer](./WebSocketServer.md).[onConnection](./WebSocketServer.md#onconnection)
 
 #### Defined in
 
@@ -299,7 +299,7 @@ ___
 
 ▸ **processServerRequest**(`clientId`, `message`): `void`
 
-Process request message targeted towards this [WebSocketMessageServer](WebSocketMessageServer.md)
+Process request message targeted towards this [WebSocketMessageServer](./WebSocketMessageServer.md)
 and send back the results.
 
 #### Parameters
@@ -358,7 +358,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[shouldUpgrade](WebSocketServer.md#shouldupgrade)
+[WebSocketServer](./WebSocketServer.md).[shouldUpgrade](./WebSocketServer.md#shouldupgrade)
 
 #### Defined in
 
@@ -384,7 +384,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[upgrade](WebSocketServer.md#upgrade)
+[WebSocketServer](./WebSocketServer.md).[upgrade](./WebSocketServer.md#upgrade)
 
 #### Defined in
 
@@ -409,7 +409,7 @@ Check if message is a broadcast request.
 `boolean`
 
 True if message is a broadcast request and should be broadcasted
-with [sendBroadcast](WebSocketMessageServer.md#sendbroadcast).
+with [sendBroadcast](./WebSocketMessageServer.md#sendbroadcast).
 
 #### Defined in
 

@@ -6,9 +6,9 @@ Represents an event message.
 
 ### Properties
 
-- [data](EventMessage.md#data)
-- [error](EventMessage.md#error)
-- [type](EventMessage.md#type)
+- [data](./EventMessage.md#data)
+- [error](./EventMessage.md#error)
+- [type](./EventMessage.md#type)
 
 ## Properties
 

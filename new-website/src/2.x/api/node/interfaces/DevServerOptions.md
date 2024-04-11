@@ -8,19 +8,19 @@ Used by [DevServerPlugin](../classes/DevServerPlugin.md), [BaseDevServer](../cla
 
 - **`DevServerOptions`**
 
-  ↳ [`BaseDevServerConfig`](BaseDevServerConfig.md)
+  ↳ [`BaseDevServerConfig`](./BaseDevServerConfig.md)
 
 ## Table of contents
 
 ### Properties
 
-- [cert](DevServerOptions.md#cert)
-- [enabled](DevServerOptions.md#enabled)
-- [hmr](DevServerOptions.md#hmr)
-- [host](DevServerOptions.md#host)
-- [https](DevServerOptions.md#https)
-- [key](DevServerOptions.md#key)
-- [port](DevServerOptions.md#port)
+- [cert](./DevServerOptions.md#cert)
+- [enabled](./DevServerOptions.md#enabled)
+- [hmr](./DevServerOptions.md#hmr)
+- [host](./DevServerOptions.md#host)
+- [https](./DevServerOptions.md#https)
+- [key](./DevServerOptions.md#key)
+- [port](./DevServerOptions.md#port)
 
 ## Properties
 

@@ -9,16 +9,16 @@ produces frames that point to source code inside your project eg `Hello.tsx:10:9
 
 ### Constructors
 
-- [constructor](Symbolicator.md#constructor)
+- [constructor](./Symbolicator.md#constructor)
 
 ### Properties
 
-- [sourceMapConsumerCache](Symbolicator.md#sourcemapconsumercache)
+- [sourceMapConsumerCache](./Symbolicator.md#sourcemapconsumercache)
 
 ### Methods
 
-- [process](Symbolicator.md#process)
-- [inferPlatformFromStack](Symbolicator.md#inferplatformfromstack)
+- [process](./Symbolicator.md#process)
+- [inferPlatformFromStack](./Symbolicator.md#inferplatformfromstack)
 
 ## Constructors
 

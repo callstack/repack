@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-- `Omit`<[`DevServerConfig`](DevServerConfig.md), ``"context"``\>
+- `Omit`<[`DevServerConfig`](./DevServerConfig.md), ``"context"``\>
 
   ↳ **`DevServerPluginConfig`**
 
@@ -12,14 +12,14 @@
 
 ### Properties
 
-- [cert](DevServerPluginConfig.md#cert)
-- [enabled](DevServerPluginConfig.md#enabled)
-- [hmr](DevServerPluginConfig.md#hmr)
-- [host](DevServerPluginConfig.md#host)
-- [https](DevServerPluginConfig.md#https)
-- [key](DevServerPluginConfig.md#key)
-- [platform](DevServerPluginConfig.md#platform)
-- [port](DevServerPluginConfig.md#port)
+- [cert](./DevServerPluginConfig.md#cert)
+- [enabled](./DevServerPluginConfig.md#enabled)
+- [hmr](./DevServerPluginConfig.md#hmr)
+- [host](./DevServerPluginConfig.md#host)
+- [https](./DevServerPluginConfig.md#https)
+- [key](./DevServerPluginConfig.md#key)
+- [platform](./DevServerPluginConfig.md#platform)
+- [port](./DevServerPluginConfig.md#port)
 
 ## Properties
 

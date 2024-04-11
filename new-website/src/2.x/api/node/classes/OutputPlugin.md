@@ -11,11 +11,11 @@ React Native application directory, so that the files can be packed together int
 
 ### Constructors
 
-- [constructor](OutputPlugin.md#constructor)
+- [constructor](./OutputPlugin.md#constructor)
 
 ### Methods
 
-- [apply](OutputPlugin.md#apply)
+- [apply](./OutputPlugin.md#apply)
 
 ## Constructors
 

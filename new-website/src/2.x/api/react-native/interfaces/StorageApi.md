@@ -1,15 +1,15 @@
 # Interface: StorageApi
 
-Interface for storage backend used in [ChunkManagerConfig](ChunkManagerConfig.md).
+Interface for storage backend used in [ChunkManagerConfig](./ChunkManagerConfig.md).
 The interface is modelled on Async Storage from `react-native-community`.
 
 ## Table of contents
 
 ### Methods
 
-- [getItem](StorageApi.md#getitem)
-- [removeItem](StorageApi.md#removeitem)
-- [setItem](StorageApi.md#setitem)
+- [getItem](./StorageApi.md#getitem)
+- [removeItem](./StorageApi.md#removeitem)
+- [setItem](./StorageApi.md#setitem)
 
 ## Methods
 

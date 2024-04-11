@@ -6,16 +6,16 @@ Raw React Native stack frame.
 
 - **`ReactNativeStackFrame`**
 
-  ↳ [`InputStackFrame`](InputStackFrame.md)
+  ↳ [`InputStackFrame`](./InputStackFrame.md)
 
 ## Table of contents
 
 ### Properties
 
-- [column](ReactNativeStackFrame.md#column)
-- [file](ReactNativeStackFrame.md#file)
-- [lineNumber](ReactNativeStackFrame.md#linenumber)
-- [methodName](ReactNativeStackFrame.md#methodname)
+- [column](./ReactNativeStackFrame.md#column)
+- [file](./ReactNativeStackFrame.md#file)
+- [lineNumber](./ReactNativeStackFrame.md#linenumber)
+- [methodName](./ReactNativeStackFrame.md#methodname)
 
 ## Properties
 

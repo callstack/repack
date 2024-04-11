@@ -17,11 +17,11 @@ More information can be found here: https://github.com/callstack/repack/pull/81
 
 ### Constructors
 
-- [constructor](AssetsPlugin.md#constructor)
+- [constructor](./AssetsPlugin.md#constructor)
 
 ### Methods
 
-- [apply](AssetsPlugin.md#apply)
+- [apply](./AssetsPlugin.md#apply)
 
 ## Constructors
 

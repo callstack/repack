@@ -6,13 +6,13 @@ Message representation used by [WebSocketMessageServer](../classes/WebSocketMess
 
 ### Properties
 
-- [error](ReactNativeMessage.md#error)
-- [id](ReactNativeMessage.md#id)
-- [method](ReactNativeMessage.md#method)
-- [params](ReactNativeMessage.md#params)
-- [result](ReactNativeMessage.md#result)
-- [target](ReactNativeMessage.md#target)
-- [version](ReactNativeMessage.md#version)
+- [error](./ReactNativeMessage.md#error)
+- [id](./ReactNativeMessage.md#id)
+- [method](./ReactNativeMessage.md#method)
+- [params](./ReactNativeMessage.md#params)
+- [result](./ReactNativeMessage.md#result)
+- [target](./ReactNativeMessage.md#target)
+- [version](./ReactNativeMessage.md#version)
 
 ## Properties
 
@@ -28,7 +28,7 @@ ___
 
 ### id
 
-• `Optional` **id**: [`ReactNativeIdObject`](ReactNativeIdObject.md)
+• `Optional` **id**: [`ReactNativeIdObject`](./ReactNativeIdObject.md)
 
 #### Defined in
 

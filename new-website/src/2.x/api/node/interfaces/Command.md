@@ -6,10 +6,10 @@ Represents a command that connected clients can send to the [WebSocketEventsServ
 
 ### Properties
 
-- [command](Command.md#command)
-- [params](Command.md#params)
-- [type](Command.md#type)
-- [version](Command.md#version)
+- [command](./Command.md#command)
+- [params](./Command.md#params)
+- [type](./Command.md#type)
+- [version](./Command.md#version)
 
 ## Properties
 

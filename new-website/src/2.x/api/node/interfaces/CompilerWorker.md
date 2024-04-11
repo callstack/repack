@@ -7,8 +7,8 @@ via [DevServerPlugin](../classes/DevServerPlugin.md).
 
 ### Properties
 
-- [port](CompilerWorker.md#port)
-- [process](CompilerWorker.md#process)
+- [port](./CompilerWorker.md#port)
+- [process](./CompilerWorker.md#process)
 
 ## Properties
 

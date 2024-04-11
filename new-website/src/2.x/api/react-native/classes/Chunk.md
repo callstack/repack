@@ -10,13 +10,13 @@ A helper class to ease the creation of of chunk based on it's location.
 
 ### Constructors
 
-- [constructor](Chunk.md#constructor)
+- [constructor](./Chunk.md#constructor)
 
 ### Methods
 
-- [fromDevServer](Chunk.md#fromdevserver)
-- [fromFileSystem](Chunk.md#fromfilesystem)
-- [fromRemote](Chunk.md#fromremote)
+- [fromDevServer](./Chunk.md#fromdevserver)
+- [fromFileSystem](./Chunk.md#fromfilesystem)
+- [fromRemote](./Chunk.md#fromremote)
 
 ## Constructors
 

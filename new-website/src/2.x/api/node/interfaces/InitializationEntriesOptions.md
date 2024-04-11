@@ -6,8 +6,8 @@
 
 ### Properties
 
-- [hmr](InitializationEntriesOptions.md#hmr)
-- [initializeCoreLocation](InitializationEntriesOptions.md#initializecorelocation)
+- [hmr](./InitializationEntriesOptions.md#hmr)
+- [initializeCoreLocation](./InitializationEntriesOptions.md#initializecorelocation)
 
 ## Properties
 

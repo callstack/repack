@@ -6,7 +6,7 @@ Based on: https://github.com/react-native-community/cli/blob/v4.14.0/packages/cl
 
 ## Hierarchy
 
-- [`WebSocketServer`](WebSocketServer.md)
+- [`WebSocketServer`](./WebSocketServer.md)
 
   ↳ **`WebSocketEventsServer`**
 
@@ -14,23 +14,23 @@ Based on: https://github.com/react-native-community/cli/blob/v4.14.0/packages/cl
 
 ### Constructors
 
-- [constructor](WebSocketEventsServer.md#constructor)
+- [constructor](./WebSocketEventsServer.md#constructor)
 
 ### Properties
 
-- [fastify](WebSocketEventsServer.md#fastify)
-- [paths](WebSocketEventsServer.md#paths)
-- [server](WebSocketEventsServer.md#server)
-- [PROTOCOL\_VERSION](WebSocketEventsServer.md#protocol_version)
+- [fastify](./WebSocketEventsServer.md#fastify)
+- [paths](./WebSocketEventsServer.md#paths)
+- [server](./WebSocketEventsServer.md#server)
+- [PROTOCOL\_VERSION](./WebSocketEventsServer.md#protocol_version)
 
 ### Methods
 
-- [broadcastEvent](WebSocketEventsServer.md#broadcastevent)
-- [onConnection](WebSocketEventsServer.md#onconnection)
-- [parseMessage](WebSocketEventsServer.md#parsemessage)
-- [serializeMessage](WebSocketEventsServer.md#serializemessage)
-- [shouldUpgrade](WebSocketEventsServer.md#shouldupgrade)
-- [upgrade](WebSocketEventsServer.md#upgrade)
+- [broadcastEvent](./WebSocketEventsServer.md#broadcastevent)
+- [onConnection](./WebSocketEventsServer.md#onconnection)
+- [parseMessage](./WebSocketEventsServer.md#parsemessage)
+- [serializeMessage](./WebSocketEventsServer.md#serializemessage)
+- [shouldUpgrade](./WebSocketEventsServer.md#shouldupgrade)
+- [upgrade](./WebSocketEventsServer.md#upgrade)
 
 ## Constructors
 
@@ -50,7 +50,7 @@ Any logging information, will be passed through standard `fastify.log` API.
 
 #### Overrides
 
-[WebSocketServer](WebSocketServer.md).[constructor](WebSocketServer.md#constructor)
+[WebSocketServer](./WebSocketServer.md).[constructor](./WebSocketServer.md#constructor)
 
 #### Defined in
 
@@ -62,11 +62,11 @@ Any logging information, will be passed through standard `fastify.log` API.
 
 • `Protected` **fastify**: [`FastifyDevServer`](../types/FastifyDevServer.md)
 
-Fastify instance from which [server](WebSocketEventsServer.md#server) will receive upgrade connections.
+Fastify instance from which [server](./WebSocketEventsServer.md#server) will receive upgrade connections.
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[fastify](WebSocketServer.md#fastify)
+[WebSocketServer](./WebSocketServer.md).[fastify](./WebSocketServer.md#fastify)
 
 #### Defined in
 
@@ -80,7 +80,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[paths](WebSocketServer.md#paths)
+[WebSocketServer](./WebSocketServer.md).[paths](./WebSocketServer.md#paths)
 
 #### Defined in
 
@@ -96,7 +96,7 @@ An instance of the underlying WebSocket server.
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[server](WebSocketServer.md#server)
+[WebSocketServer](./WebSocketServer.md).[server](./WebSocketServer.md#server)
 
 #### Defined in
 
@@ -154,7 +154,7 @@ Process new client's WebSocket connection.
 
 #### Overrides
 
-[WebSocketServer](WebSocketServer.md).[onConnection](WebSocketServer.md#onconnection)
+[WebSocketServer](./WebSocketServer.md).[onConnection](./WebSocketServer.md#onconnection)
 
 #### Defined in
 
@@ -226,7 +226,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[shouldUpgrade](WebSocketServer.md#shouldupgrade)
+[WebSocketServer](./WebSocketServer.md).[shouldUpgrade](./WebSocketServer.md#shouldupgrade)
 
 #### Defined in
 
@@ -252,7 +252,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[upgrade](WebSocketServer.md#upgrade)
+[WebSocketServer](./WebSocketServer.md).[upgrade](./WebSocketServer.md#upgrade)
 
 #### Defined in
 

@@ -11,11 +11,11 @@ providing Hot Module Replacement functionality.
 
 ### Constructors
 
-- [constructor](DevServerPlugin.md#constructor)
+- [constructor](./DevServerPlugin.md#constructor)
 
 ### Methods
 
-- [apply](DevServerPlugin.md#apply)
+- [apply](./DevServerPlugin.md#apply)
 
 ## Constructors
 

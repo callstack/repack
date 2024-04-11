@@ -4,7 +4,7 @@ Class for creating a WebSocket server for Hot Module Replacement.
 
 ## Hierarchy
 
-- [`WebSocketServer`](WebSocketServer.md)
+- [`WebSocketServer`](./WebSocketServer.md)
 
   ↳ **`WebSocketHMRServer`**
 
@@ -12,20 +12,20 @@ Class for creating a WebSocket server for Hot Module Replacement.
 
 ### Constructors
 
-- [constructor](WebSocketHMRServer.md#constructor)
+- [constructor](./WebSocketHMRServer.md#constructor)
 
 ### Properties
 
-- [fastify](WebSocketHMRServer.md#fastify)
-- [paths](WebSocketHMRServer.md#paths)
-- [server](WebSocketHMRServer.md#server)
+- [fastify](./WebSocketHMRServer.md#fastify)
+- [paths](./WebSocketHMRServer.md#paths)
+- [server](./WebSocketHMRServer.md#server)
 
 ### Methods
 
-- [onConnection](WebSocketHMRServer.md#onconnection)
-- [sendAction](WebSocketHMRServer.md#sendaction)
-- [shouldUpgrade](WebSocketHMRServer.md#shouldupgrade)
-- [upgrade](WebSocketHMRServer.md#upgrade)
+- [onConnection](./WebSocketHMRServer.md#onconnection)
+- [sendAction](./WebSocketHMRServer.md#sendaction)
+- [shouldUpgrade](./WebSocketHMRServer.md#shouldupgrade)
+- [upgrade](./WebSocketHMRServer.md#upgrade)
 
 ## Constructors
 
@@ -45,7 +45,7 @@ Any logging information, will be passed through standard `fastify.log` API.
 
 #### Overrides
 
-[WebSocketServer](WebSocketServer.md).[constructor](WebSocketServer.md#constructor)
+[WebSocketServer](./WebSocketServer.md).[constructor](./WebSocketServer.md#constructor)
 
 #### Defined in
 
@@ -57,11 +57,11 @@ Any logging information, will be passed through standard `fastify.log` API.
 
 • `Protected` **fastify**: [`FastifyDevServer`](../types/FastifyDevServer.md)
 
-Fastify instance from which [server](WebSocketHMRServer.md#server) will receive upgrade connections.
+Fastify instance from which [server](./WebSocketHMRServer.md#server) will receive upgrade connections.
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[fastify](WebSocketServer.md#fastify)
+[WebSocketServer](./WebSocketServer.md).[fastify](./WebSocketServer.md#fastify)
 
 #### Defined in
 
@@ -75,7 +75,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[paths](WebSocketServer.md#paths)
+[WebSocketServer](./WebSocketServer.md).[paths](./WebSocketServer.md#paths)
 
 #### Defined in
 
@@ -91,7 +91,7 @@ An instance of the underlying WebSocket server.
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[server](WebSocketServer.md#server)
+[WebSocketServer](./WebSocketServer.md).[server](./WebSocketServer.md#server)
 
 #### Defined in
 
@@ -117,7 +117,7 @@ Process new WebSocket connection from HMR client.
 
 #### Overrides
 
-[WebSocketServer](WebSocketServer.md).[onConnection](WebSocketServer.md#onconnection)
+[WebSocketServer](./WebSocketServer.md).[onConnection](./WebSocketServer.md#onconnection)
 
 #### Defined in
 
@@ -163,7 +163,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[shouldUpgrade](WebSocketServer.md#shouldupgrade)
+[WebSocketServer](./WebSocketServer.md).[shouldUpgrade](./WebSocketServer.md#shouldupgrade)
 
 #### Defined in
 
@@ -189,7 +189,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[upgrade](WebSocketServer.md#upgrade)
+[WebSocketServer](./WebSocketServer.md).[upgrade](./WebSocketServer.md#upgrade)
 
 #### Defined in
 

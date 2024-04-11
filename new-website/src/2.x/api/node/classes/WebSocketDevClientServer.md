@@ -5,7 +5,7 @@ All client logs - logs from React Native application - are processed here.
 
 ## Hierarchy
 
-- [`WebSocketServer`](WebSocketServer.md)
+- [`WebSocketServer`](./WebSocketServer.md)
 
   ↳ **`WebSocketDevClientServer`**
 
@@ -13,20 +13,20 @@ All client logs - logs from React Native application - are processed here.
 
 ### Constructors
 
-- [constructor](WebSocketDevClientServer.md#constructor)
+- [constructor](./WebSocketDevClientServer.md#constructor)
 
 ### Properties
 
-- [fastify](WebSocketDevClientServer.md#fastify)
-- [paths](WebSocketDevClientServer.md#paths)
-- [server](WebSocketDevClientServer.md#server)
+- [fastify](./WebSocketDevClientServer.md#fastify)
+- [paths](./WebSocketDevClientServer.md#paths)
+- [server](./WebSocketDevClientServer.md#server)
 
 ### Methods
 
-- [onConnection](WebSocketDevClientServer.md#onconnection)
-- [processMessage](WebSocketDevClientServer.md#processmessage)
-- [shouldUpgrade](WebSocketDevClientServer.md#shouldupgrade)
-- [upgrade](WebSocketDevClientServer.md#upgrade)
+- [onConnection](./WebSocketDevClientServer.md#onconnection)
+- [processMessage](./WebSocketDevClientServer.md#processmessage)
+- [shouldUpgrade](./WebSocketDevClientServer.md#shouldupgrade)
+- [upgrade](./WebSocketDevClientServer.md#upgrade)
 
 ## Constructors
 
@@ -45,7 +45,7 @@ Any logging information, will be passed through standard `fastify.log` API.
 
 #### Overrides
 
-[WebSocketServer](WebSocketServer.md).[constructor](WebSocketServer.md#constructor)
+[WebSocketServer](./WebSocketServer.md).[constructor](./WebSocketServer.md#constructor)
 
 #### Defined in
 
@@ -57,11 +57,11 @@ Any logging information, will be passed through standard `fastify.log` API.
 
 • `Protected` **fastify**: [`FastifyDevServer`](../types/FastifyDevServer.md)
 
-Fastify instance from which [server](WebSocketDevClientServer.md#server) will receive upgrade connections.
+Fastify instance from which [server](./WebSocketDevClientServer.md#server) will receive upgrade connections.
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[fastify](WebSocketServer.md#fastify)
+[WebSocketServer](./WebSocketServer.md).[fastify](./WebSocketServer.md#fastify)
 
 #### Defined in
 
@@ -75,7 +75,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[paths](WebSocketServer.md#paths)
+[WebSocketServer](./WebSocketServer.md).[paths](./WebSocketServer.md#paths)
 
 #### Defined in
 
@@ -91,7 +91,7 @@ An instance of the underlying WebSocket server.
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[server](WebSocketServer.md#server)
+[WebSocketServer](./WebSocketServer.md).[server](./WebSocketServer.md#server)
 
 #### Defined in
 
@@ -117,7 +117,7 @@ Process new WebSocket connection from client application.
 
 #### Overrides
 
-[WebSocketServer](WebSocketServer.md).[onConnection](WebSocketServer.md#onconnection)
+[WebSocketServer](./WebSocketServer.md).[onConnection](./WebSocketServer.md#onconnection)
 
 #### Defined in
 
@@ -163,7 +163,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[shouldUpgrade](WebSocketServer.md#shouldupgrade)
+[WebSocketServer](./WebSocketServer.md).[shouldUpgrade](./WebSocketServer.md#shouldupgrade)
 
 #### Defined in
 
@@ -189,7 +189,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[upgrade](WebSocketServer.md#upgrade)
+[WebSocketServer](./WebSocketServer.md).[upgrade](./WebSocketServer.md#upgrade)
 
 #### Defined in
 

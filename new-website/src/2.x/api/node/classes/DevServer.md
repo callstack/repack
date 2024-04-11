@@ -1,15 +1,15 @@
 # Class: DevServer
 
 Class for setting up and running development server for React Native application.
-It's usually created by the [DevServerPlugin](DevServerPlugin.md).
+It's usually created by the [DevServerPlugin](./DevServerPlugin.md).
 
 Each `DevServer` instance is platform-specific, for example for `ios` and `android` platforms,
 you need 2 `DevServer` running (on different ports). Alternatively you can
-use [DevServerProxy](DevServerProxy.md) to spawn new processes with Webpack compilations for each platform.
+use [DevServerProxy](./DevServerProxy.md) to spawn new processes with Webpack compilations for each platform.
 
 ## Hierarchy
 
-- [`BaseDevServer`](BaseDevServer.md)
+- [`BaseDevServer`](./BaseDevServer.md)
 
   ↳ **`DevServer`**
 
@@ -17,26 +17,26 @@ use [DevServerProxy](DevServerProxy.md) to spawn new processes with Webpack comp
 
 ### Constructors
 
-- [constructor](DevServer.md#constructor)
+- [constructor](./DevServer.md#constructor)
 
 ### Properties
 
-- [config](DevServer.md#config)
-- [fastify](DevServer.md#fastify)
-- [hmrServer](DevServer.md#hmrserver)
-- [symbolicator](DevServer.md#symbolicator)
-- [wdm](DevServer.md#wdm)
-- [wsClientServer](DevServer.md#wsclientserver)
-- [wsDashboardServer](DevServer.md#wsdashboardserver)
-- [wsDebuggerServer](DevServer.md#wsdebuggerserver)
-- [wsEventsServer](DevServer.md#wseventsserver)
-- [wsMessageServer](DevServer.md#wsmessageserver)
-- [wsRouter](DevServer.md#wsrouter)
+- [config](./DevServer.md#config)
+- [fastify](./DevServer.md#fastify)
+- [hmrServer](./DevServer.md#hmrserver)
+- [symbolicator](./DevServer.md#symbolicator)
+- [wdm](./DevServer.md#wdm)
+- [wsClientServer](./DevServer.md#wsclientserver)
+- [wsDashboardServer](./DevServer.md#wsdashboardserver)
+- [wsDebuggerServer](./DevServer.md#wsdebuggerserver)
+- [wsEventsServer](./DevServer.md#wseventsserver)
+- [wsMessageServer](./DevServer.md#wsmessageserver)
+- [wsRouter](./DevServer.md#wsrouter)
 
 ### Methods
 
-- [run](DevServer.md#run)
-- [setup](DevServer.md#setup)
+- [run](./DevServer.md#run)
+- [setup](./DevServer.md#setup)
 
 ## Constructors
 
@@ -55,7 +55,7 @@ Constructs new `DevServer` instance.
 
 #### Overrides
 
-[BaseDevServer](BaseDevServer.md).[constructor](BaseDevServer.md#constructor)
+[BaseDevServer](./BaseDevServer.md).[constructor](./BaseDevServer.md#constructor)
 
 #### Defined in
 
@@ -71,7 +71,7 @@ Configuration options.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[config](BaseDevServer.md#config)
+[BaseDevServer](./BaseDevServer.md).[config](./BaseDevServer.md#config)
 
 #### Defined in
 
@@ -87,7 +87,7 @@ Fastify instance.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[fastify](BaseDevServer.md#fastify)
+[BaseDevServer](./BaseDevServer.md).[fastify](./BaseDevServer.md#fastify)
 
 #### Defined in
 
@@ -97,7 +97,7 @@ ___
 
 ### hmrServer
 
-• **hmrServer**: [`WebSocketHMRServer`](WebSocketHMRServer.md)
+• **hmrServer**: [`WebSocketHMRServer`](./WebSocketHMRServer.md)
 
 HMR WebSocket server instance to allow HMR clients to receive updates.
 
@@ -109,7 +109,7 @@ ___
 
 ### symbolicator
 
-• **symbolicator**: [`Symbolicator`](Symbolicator.md)
+• **symbolicator**: [`Symbolicator`](./Symbolicator.md)
 
 Symbolicator instance to transform stack traces using Source Maps.
 
@@ -133,13 +133,13 @@ ___
 
 ### wsClientServer
 
-• **wsClientServer**: [`WebSocketDevClientServer`](WebSocketDevClientServer.md)
+• **wsClientServer**: [`WebSocketDevClientServer`](./WebSocketDevClientServer.md)
 
 Server instance for React Native clients.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[wsClientServer](BaseDevServer.md#wsclientserver)
+[BaseDevServer](./BaseDevServer.md).[wsClientServer](./BaseDevServer.md#wsclientserver)
 
 #### Defined in
 
@@ -161,13 +161,13 @@ ___
 
 ### wsDebuggerServer
 
-• **wsDebuggerServer**: [`WebSocketDebuggerServer`](WebSocketDebuggerServer.md)
+• **wsDebuggerServer**: [`WebSocketDebuggerServer`](./WebSocketDebuggerServer.md)
 
 Debugger server instance.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[wsDebuggerServer](BaseDevServer.md#wsdebuggerserver)
+[BaseDevServer](./BaseDevServer.md).[wsDebuggerServer](./BaseDevServer.md#wsdebuggerserver)
 
 #### Defined in
 
@@ -177,13 +177,13 @@ ___
 
 ### wsEventsServer
 
-• **wsEventsServer**: [`WebSocketEventsServer`](WebSocketEventsServer.md)
+• **wsEventsServer**: [`WebSocketEventsServer`](./WebSocketEventsServer.md)
 
 Events server instance.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[wsEventsServer](BaseDevServer.md#wseventsserver)
+[BaseDevServer](./BaseDevServer.md).[wsEventsServer](./BaseDevServer.md#wseventsserver)
 
 #### Defined in
 
@@ -193,13 +193,13 @@ ___
 
 ### wsMessageServer
 
-• **wsMessageServer**: [`WebSocketMessageServer`](WebSocketMessageServer.md)
+• **wsMessageServer**: [`WebSocketMessageServer`](./WebSocketMessageServer.md)
 
 Message server instance.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[wsMessageServer](BaseDevServer.md#wsmessageserver)
+[BaseDevServer](./BaseDevServer.md).[wsMessageServer](./BaseDevServer.md#wsmessageserver)
 
 #### Defined in
 
@@ -215,7 +215,7 @@ WebSocket router instance.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[wsRouter](BaseDevServer.md#wsrouter)
+[BaseDevServer](./BaseDevServer.md).[wsRouter](./BaseDevServer.md#wsrouter)
 
 #### Defined in
 
@@ -235,7 +235,7 @@ Runs development server.
 
 #### Overrides
 
-[BaseDevServer](BaseDevServer.md).[run](BaseDevServer.md#run)
+[BaseDevServer](./BaseDevServer.md).[run](./BaseDevServer.md#run)
 
 #### Defined in
 
@@ -255,7 +255,7 @@ Sets up Fastify plugins and routes.
 
 #### Overrides
 
-[BaseDevServer](BaseDevServer.md).[setup](BaseDevServer.md#setup)
+[BaseDevServer](./BaseDevServer.md).[setup](./BaseDevServer.md#setup)
 
 #### Defined in
 

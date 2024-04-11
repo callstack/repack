@@ -6,7 +6,7 @@ CLI arguments passed from React Native CLI when running start command.
 
 ## Hierarchy
 
-- [`CommonArguments`](CommonArguments.md)
+- [`CommonArguments`](./CommonArguments.md)
 
   ↳ **`StartArguments`**
 
@@ -14,16 +14,16 @@ CLI arguments passed from React Native CLI when running start command.
 
 ### Properties
 
-- [cert](StartArguments.md#cert)
-- [host](StartArguments.md#host)
-- [https](StartArguments.md#https)
-- [interactive](StartArguments.md#interactive)
-- [key](StartArguments.md#key)
-- [platform](StartArguments.md#platform)
-- [port](StartArguments.md#port)
-- [resetCache](StartArguments.md#resetcache)
-- [verbose](StartArguments.md#verbose)
-- [webpackConfig](StartArguments.md#webpackconfig)
+- [cert](./StartArguments.md#cert)
+- [host](./StartArguments.md#host)
+- [https](./StartArguments.md#https)
+- [interactive](./StartArguments.md#interactive)
+- [key](./StartArguments.md#key)
+- [platform](./StartArguments.md#platform)
+- [port](./StartArguments.md#port)
+- [resetCache](./StartArguments.md#resetcache)
+- [verbose](./StartArguments.md#verbose)
+- [webpackConfig](./StartArguments.md#webpackconfig)
 
 ## Properties
 
@@ -85,7 +85,7 @@ Target application platform.
 
 #### Inherited from
 
-[CommonArguments](CommonArguments.md).[platform](CommonArguments.md#platform)
+[CommonArguments](./CommonArguments.md).[platform](./CommonArguments.md#platform)
 
 #### Defined in
 
@@ -111,7 +111,7 @@ Whether to clean any persistent cache.
 
 #### Inherited from
 
-[CommonArguments](CommonArguments.md).[resetCache](CommonArguments.md#resetcache)
+[CommonArguments](./CommonArguments.md).[resetCache](./CommonArguments.md#resetcache)
 
 #### Defined in
 
@@ -127,7 +127,7 @@ Whether to log additional debug messages.
 
 #### Inherited from
 
-[CommonArguments](CommonArguments.md).[verbose](CommonArguments.md#verbose)
+[CommonArguments](./CommonArguments.md).[verbose](./CommonArguments.md#verbose)
 
 #### Defined in
 
@@ -143,7 +143,7 @@ Custom path to Webpack config.
 
 #### Inherited from
 
-[CommonArguments](CommonArguments.md).[webpackConfig](CommonArguments.md#webpackconfig)
+[CommonArguments](./CommonArguments.md).[webpackConfig](./CommonArguments.md#webpackconfig)
 
 #### Defined in
 

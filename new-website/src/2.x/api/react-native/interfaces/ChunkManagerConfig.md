@@ -6,9 +6,9 @@ Configuration options for [ChunkManager](../classes/ChunkManager.md).
 
 ### Properties
 
-- [forceRemoteChunkResolution](ChunkManagerConfig.md#forceremotechunkresolution)
-- [resolveRemoteChunk](ChunkManagerConfig.md#resolveremotechunk)
-- [storage](ChunkManagerConfig.md#storage)
+- [forceRemoteChunkResolution](./ChunkManagerConfig.md#forceremotechunkresolution)
+- [resolveRemoteChunk](./ChunkManagerConfig.md#resolveremotechunk)
+- [storage](./ChunkManagerConfig.md#storage)
 
 ## Properties
 
@@ -42,7 +42,7 @@ ___
 
 ### storage
 
-• `Optional` **storage**: [`StorageApi`](StorageApi.md)
+• `Optional` **storage**: [`StorageApi`](./StorageApi.md)
 
 Optional: A storage backend to cache resolved URLs for chunks.
 The stored data is used to detect if URL to previously downloaded

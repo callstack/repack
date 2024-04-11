@@ -6,9 +6,9 @@
 
 ### Properties
 
-- [exclude](JavaScriptLooseModePluginConfig.md#exclude)
-- [include](JavaScriptLooseModePluginConfig.md#include)
-- [test](JavaScriptLooseModePluginConfig.md#test)
+- [exclude](./JavaScriptLooseModePluginConfig.md#exclude)
+- [include](./JavaScriptLooseModePluginConfig.md#include)
+- [test](./JavaScriptLooseModePluginConfig.md#test)
 
 ## Properties
 

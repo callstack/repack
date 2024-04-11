@@ -12,11 +12,11 @@
 
 ### Properties
 
-- [configureLoader](AssetsPluginConfig.md#configureloader)
-- [devServerEnabled](AssetsPluginConfig.md#devserverenabled)
-- [extensions](AssetsPluginConfig.md#extensions)
-- [platform](AssetsPluginConfig.md#platform)
-- [scalableExtensions](AssetsPluginConfig.md#scalableextensions)
+- [configureLoader](./AssetsPluginConfig.md#configureloader)
+- [devServerEnabled](./AssetsPluginConfig.md#devserverenabled)
+- [extensions](./AssetsPluginConfig.md#extensions)
+- [platform](./AssetsPluginConfig.md#platform)
+- [scalableExtensions](./AssetsPluginConfig.md#scalableextensions)
 
 ## Properties
 

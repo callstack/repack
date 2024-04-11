@@ -11,17 +11,17 @@ progress as well as debug logs from other plugins and resolvers.
 
 ### Constructors
 
-- [constructor](LoggerPlugin.md#constructor)
+- [constructor](./LoggerPlugin.md#constructor)
 
 ### Properties
 
-- [reporter](LoggerPlugin.md#reporter)
+- [reporter](./LoggerPlugin.md#reporter)
 
 ### Methods
 
-- [apply](LoggerPlugin.md#apply)
-- [createEntry](LoggerPlugin.md#createentry)
-- [processEntry](LoggerPlugin.md#processentry)
+- [apply](./LoggerPlugin.md#apply)
+- [createEntry](./LoggerPlugin.md#createentry)
+- [processEntry](./LoggerPlugin.md#processentry)
 
 ## Constructors
 
@@ -45,9 +45,9 @@ Constructs new `LoggerPlugin`.
 
 ### reporter
 
-• `Readonly` **reporter**: [`Reporter`](Reporter.md)
+• `Readonly` **reporter**: [`Reporter`](./Reporter.md)
 
-[Reporter](Reporter.md) instance used to actually writing logs to terminal/file.
+[Reporter](./Reporter.md) instance used to actually writing logs to terminal/file.
 
 #### Defined in
 
@@ -112,7 +112,7 @@ ___
 
 ▸ **processEntry**(`entry`): `void`
 
-Process log entry and pass it to [reporter](LoggerPlugin.md#reporter) instance.
+Process log entry and pass it to [reporter](./LoggerPlugin.md#reporter) instance.
 
 #### Parameters
 

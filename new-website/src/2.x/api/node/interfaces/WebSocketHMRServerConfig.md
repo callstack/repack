@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [compiler](WebSocketHMRServerConfig.md#compiler)
+- [compiler](./WebSocketHMRServerConfig.md#compiler)
 
 ## Properties
 

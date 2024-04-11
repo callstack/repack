@@ -6,9 +6,9 @@
 
 ### Properties
 
-- [devServerEnabled](LoggerPluginConfig.md#devserverenabled)
-- [output](LoggerPluginConfig.md#output)
-- [platform](LoggerPluginConfig.md#platform)
+- [devServerEnabled](./LoggerPluginConfig.md#devserverenabled)
+- [output](./LoggerPluginConfig.md#output)
+- [platform](./LoggerPluginConfig.md#platform)
 
 ## Properties
 
@@ -36,7 +36,7 @@ Logging output config.
 | :------ | :------ | :------ |
 | `console?` | `boolean` | Whether to log to console. |
 | `file?` | `string` | Absolute path to file to log messages to. |
-| `listener?` | (`logEntry`: [`LogEntry`](LogEntry.md)) => `void` | - |
+| `listener?` | (`logEntry`: [`LogEntry`](./LogEntry.md)) => `void` | - |
 
 #### Defined in
 

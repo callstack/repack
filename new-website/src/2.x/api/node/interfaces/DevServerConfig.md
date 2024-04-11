@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-- [`BaseDevServerConfig`](BaseDevServerConfig.md)
+- [`BaseDevServerConfig`](./BaseDevServerConfig.md)
 
   ↳ **`DevServerConfig`**
 
@@ -12,15 +12,15 @@
 
 ### Properties
 
-- [cert](DevServerConfig.md#cert)
-- [context](DevServerConfig.md#context)
-- [enabled](DevServerConfig.md#enabled)
-- [hmr](DevServerConfig.md#hmr)
-- [host](DevServerConfig.md#host)
-- [https](DevServerConfig.md#https)
-- [key](DevServerConfig.md#key)
-- [platform](DevServerConfig.md#platform)
-- [port](DevServerConfig.md#port)
+- [cert](./DevServerConfig.md#cert)
+- [context](./DevServerConfig.md#context)
+- [enabled](./DevServerConfig.md#enabled)
+- [hmr](./DevServerConfig.md#hmr)
+- [host](./DevServerConfig.md#host)
+- [https](./DevServerConfig.md#https)
+- [key](./DevServerConfig.md#key)
+- [platform](./DevServerConfig.md#platform)
+- [port](./DevServerConfig.md#port)
 
 ## Properties
 
@@ -32,7 +32,7 @@ Path to certificate when running server on HTTPS.
 
 #### Inherited from
 
-[BaseDevServerConfig](BaseDevServerConfig.md).[cert](BaseDevServerConfig.md#cert)
+[BaseDevServerConfig](./BaseDevServerConfig.md).[cert](./BaseDevServerConfig.md#cert)
 
 #### Defined in
 
@@ -48,7 +48,7 @@ Context in which all resolution happens. Usually it's project root directory.
 
 #### Inherited from
 
-[BaseDevServerConfig](BaseDevServerConfig.md).[context](BaseDevServerConfig.md#context)
+[BaseDevServerConfig](./BaseDevServerConfig.md).[context](./BaseDevServerConfig.md#context)
 
 #### Defined in
 
@@ -64,7 +64,7 @@ Whether to start development server.
 
 #### Inherited from
 
-[BaseDevServerConfig](BaseDevServerConfig.md).[enabled](BaseDevServerConfig.md#enabled)
+[BaseDevServerConfig](./BaseDevServerConfig.md).[enabled](./BaseDevServerConfig.md#enabled)
 
 #### Defined in
 
@@ -80,7 +80,7 @@ Whether to enable Hot Module Replacement.
 
 #### Inherited from
 
-[BaseDevServerConfig](BaseDevServerConfig.md).[hmr](BaseDevServerConfig.md#hmr)
+[BaseDevServerConfig](./BaseDevServerConfig.md).[hmr](./BaseDevServerConfig.md#hmr)
 
 #### Defined in
 
@@ -97,7 +97,7 @@ When left unspecified, it will listen on all available network interfaces, simil
 
 #### Inherited from
 
-[BaseDevServerConfig](BaseDevServerConfig.md).[host](BaseDevServerConfig.md#host)
+[BaseDevServerConfig](./BaseDevServerConfig.md).[host](./BaseDevServerConfig.md#host)
 
 #### Defined in
 
@@ -113,7 +113,7 @@ Whether to run server on HTTPS instead of HTTP.
 
 #### Inherited from
 
-[BaseDevServerConfig](BaseDevServerConfig.md).[https](BaseDevServerConfig.md#https)
+[BaseDevServerConfig](./BaseDevServerConfig.md).[https](./BaseDevServerConfig.md#https)
 
 #### Defined in
 
@@ -129,7 +129,7 @@ Path to certificate key when running server on HTTPS.
 
 #### Inherited from
 
-[BaseDevServerConfig](BaseDevServerConfig.md).[key](BaseDevServerConfig.md#key)
+[BaseDevServerConfig](./BaseDevServerConfig.md).[key](./BaseDevServerConfig.md#key)
 
 #### Defined in
 
@@ -145,7 +145,7 @@ Target application platform.
 
 #### Inherited from
 
-[BaseDevServerConfig](BaseDevServerConfig.md).[platform](BaseDevServerConfig.md#platform)
+[BaseDevServerConfig](./BaseDevServerConfig.md).[platform](./BaseDevServerConfig.md#platform)
 
 #### Defined in
 
@@ -161,7 +161,7 @@ Port under which to run the development server. See: [DEFAULT_PORT](../variables
 
 #### Inherited from
 
-[BaseDevServerConfig](BaseDevServerConfig.md).[port](BaseDevServerConfig.md#port)
+[BaseDevServerConfig](./BaseDevServerConfig.md).[port](./BaseDevServerConfig.md#port)
 
 #### Defined in
 

@@ -1,7 +1,7 @@
 # Class: DevServerProxy
 
 Class for spawning new compiler workers for each requested platform and forwarding requests
-to respective platform-specific [DevServer](DevServer.md).
+to respective platform-specific [DevServer](./DevServer.md).
 
 The overall architecture is:
 ```
@@ -23,7 +23,7 @@ for bundle eg: `index.bundle?platform=ios&...`.
 
 ## Hierarchy
 
-- [`BaseDevServer`](BaseDevServer.md)
+- [`BaseDevServer`](./BaseDevServer.md)
 
   ↳ **`DevServerProxy`**
 
@@ -31,27 +31,27 @@ for bundle eg: `index.bundle?platform=ios&...`.
 
 ### Constructors
 
-- [constructor](DevServerProxy.md#constructor)
+- [constructor](./DevServerProxy.md#constructor)
 
 ### Properties
 
-- [config](DevServerProxy.md#config)
-- [fastify](DevServerProxy.md#fastify)
-- [reporter](DevServerProxy.md#reporter)
-- [workers](DevServerProxy.md#workers)
-- [wsClientServer](DevServerProxy.md#wsclientserver)
-- [wsDashboardServer](DevServerProxy.md#wsdashboardserver)
-- [wsDebuggerServer](DevServerProxy.md#wsdebuggerserver)
-- [wsEventsServer](DevServerProxy.md#wseventsserver)
-- [wsMessageServer](DevServerProxy.md#wsmessageserver)
-- [wsRouter](DevServerProxy.md#wsrouter)
+- [config](./DevServerProxy.md#config)
+- [fastify](./DevServerProxy.md#fastify)
+- [reporter](./DevServerProxy.md#reporter)
+- [workers](./DevServerProxy.md#workers)
+- [wsClientServer](./DevServerProxy.md#wsclientserver)
+- [wsDashboardServer](./DevServerProxy.md#wsdashboardserver)
+- [wsDebuggerServer](./DevServerProxy.md#wsdebuggerserver)
+- [wsEventsServer](./DevServerProxy.md#wseventsserver)
+- [wsMessageServer](./DevServerProxy.md#wsmessageserver)
+- [wsRouter](./DevServerProxy.md#wsrouter)
 
 ### Methods
 
-- [forwardRequest](DevServerProxy.md#forwardrequest)
-- [run](DevServerProxy.md#run)
-- [runWorker](DevServerProxy.md#runworker)
-- [setup](DevServerProxy.md#setup)
+- [forwardRequest](./DevServerProxy.md#forwardrequest)
+- [run](./DevServerProxy.md#run)
+- [runWorker](./DevServerProxy.md#runworker)
+- [setup](./DevServerProxy.md#setup)
 
 ## Constructors
 
@@ -70,7 +70,7 @@ Constructs new `DevServerProxy`.
 
 #### Overrides
 
-[BaseDevServer](BaseDevServer.md).[constructor](BaseDevServer.md#constructor)
+[BaseDevServer](./BaseDevServer.md).[constructor](./BaseDevServer.md#constructor)
 
 #### Defined in
 
@@ -86,7 +86,7 @@ Configuration options.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[config](BaseDevServer.md#config)
+[BaseDevServer](./BaseDevServer.md).[config](./BaseDevServer.md#config)
 
 #### Defined in
 
@@ -102,7 +102,7 @@ Fastify instance.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[fastify](BaseDevServer.md#fastify)
+[BaseDevServer](./BaseDevServer.md).[fastify](./BaseDevServer.md#fastify)
 
 #### Defined in
 
@@ -112,7 +112,7 @@ ___
 
 ### reporter
 
-• **reporter**: [`Reporter`](Reporter.md)
+• **reporter**: [`Reporter`](./Reporter.md)
 
 Reporter instance.
 
@@ -136,13 +136,13 @@ ___
 
 ### wsClientServer
 
-• **wsClientServer**: [`WebSocketDevClientServer`](WebSocketDevClientServer.md)
+• **wsClientServer**: [`WebSocketDevClientServer`](./WebSocketDevClientServer.md)
 
 Server instance for React Native clients.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[wsClientServer](BaseDevServer.md#wsclientserver)
+[BaseDevServer](./BaseDevServer.md).[wsClientServer](./BaseDevServer.md#wsclientserver)
 
 #### Defined in
 
@@ -162,13 +162,13 @@ ___
 
 ### wsDebuggerServer
 
-• **wsDebuggerServer**: [`WebSocketDebuggerServer`](WebSocketDebuggerServer.md)
+• **wsDebuggerServer**: [`WebSocketDebuggerServer`](./WebSocketDebuggerServer.md)
 
 Debugger server instance.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[wsDebuggerServer](BaseDevServer.md#wsdebuggerserver)
+[BaseDevServer](./BaseDevServer.md).[wsDebuggerServer](./BaseDevServer.md#wsdebuggerserver)
 
 #### Defined in
 
@@ -178,13 +178,13 @@ ___
 
 ### wsEventsServer
 
-• **wsEventsServer**: [`WebSocketEventsServer`](WebSocketEventsServer.md)
+• **wsEventsServer**: [`WebSocketEventsServer`](./WebSocketEventsServer.md)
 
 Events server instance.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[wsEventsServer](BaseDevServer.md#wseventsserver)
+[BaseDevServer](./BaseDevServer.md).[wsEventsServer](./BaseDevServer.md#wseventsserver)
 
 #### Defined in
 
@@ -194,13 +194,13 @@ ___
 
 ### wsMessageServer
 
-• **wsMessageServer**: [`WebSocketMessageServer`](WebSocketMessageServer.md)
+• **wsMessageServer**: [`WebSocketMessageServer`](./WebSocketMessageServer.md)
 
 Message server instance.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[wsMessageServer](BaseDevServer.md#wsmessageserver)
+[BaseDevServer](./BaseDevServer.md).[wsMessageServer](./BaseDevServer.md#wsmessageserver)
 
 #### Defined in
 
@@ -216,7 +216,7 @@ WebSocket router instance.
 
 #### Inherited from
 
-[BaseDevServer](BaseDevServer.md).[wsRouter](BaseDevServer.md#wsrouter)
+[BaseDevServer](./BaseDevServer.md).[wsRouter](./BaseDevServer.md#wsrouter)
 
 #### Defined in
 
@@ -228,7 +228,7 @@ WebSocket router instance.
 
 ▸ **forwardRequest**(`platform`, `request`, `reply`, `multipartRes?`): `Promise`<`void`\>
 
-Forward request to a [DevServer](DevServer.md) running inside compiler worker for the `platform`.
+Forward request to a [DevServer](./DevServer.md) running inside compiler worker for the `platform`.
 
 #### Parameters
 
@@ -261,7 +261,7 @@ Runs the proxy.
 
 #### Overrides
 
-[BaseDevServer](BaseDevServer.md).[run](BaseDevServer.md#run)
+[BaseDevServer](./BaseDevServer.md).[run](./BaseDevServer.md#run)
 
 #### Defined in
 
@@ -275,7 +275,7 @@ ___
 
 Spawn new compiler worker for given `platform`.
 If the worker is already running, a warning is emitted and the method stops it's execution.
-The port on which [DevServer](DevServer.md) inside worker will be running is random, so no assumptions
+The port on which [DevServer](./DevServer.md) inside worker will be running is random, so no assumptions
 should be taken regarding the port number.
 
 #### Parameters
@@ -306,7 +306,7 @@ Sets up routes.
 
 #### Overrides
 
-[BaseDevServer](BaseDevServer.md).[setup](BaseDevServer.md#setup)
+[BaseDevServer](./BaseDevServer.md).[setup](./BaseDevServer.md#setup)
 
 #### Defined in
 

@@ -6,11 +6,11 @@
 
 ### Properties
 
-- [devServerEnabled](OutputPluginConfig.md#devserverenabled)
-- [entry](OutputPluginConfig.md#entry)
-- [localChunks](OutputPluginConfig.md#localchunks)
-- [platform](OutputPluginConfig.md#platform)
-- [remoteChunksOutput](OutputPluginConfig.md#remotechunksoutput)
+- [devServerEnabled](./OutputPluginConfig.md#devserverenabled)
+- [entry](./OutputPluginConfig.md#entry)
+- [localChunks](./OutputPluginConfig.md#localchunks)
+- [platform](./OutputPluginConfig.md#platform)
+- [remoteChunksOutput](./OutputPluginConfig.md#remotechunksoutput)
 
 ## Properties
 

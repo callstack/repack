@@ -13,11 +13,11 @@ tweaks necessary to make the final bundle runnable inside React Native's JavaScr
 
 ### Constructors
 
-- [constructor](TargetPlugin.md#constructor)
+- [constructor](./TargetPlugin.md#constructor)
 
 ### Methods
 
-- [apply](TargetPlugin.md#apply)
+- [apply](./TargetPlugin.md#apply)
 
 ## Constructors
 

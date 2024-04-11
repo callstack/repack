@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [webSocketMessageServer](WebSocketEventsServerConfig.md#websocketmessageserver)
+- [webSocketMessageServer](./WebSocketEventsServerConfig.md#websocketmessageserver)
 
 ## Properties
 

@@ -8,7 +8,7 @@ which runs inside a browser.
 
 ## Hierarchy
 
-- [`WebSocketServer`](WebSocketServer.md)
+- [`WebSocketServer`](./WebSocketServer.md)
 
   ↳ **`WebSocketDebuggerServer`**
 
@@ -16,23 +16,23 @@ which runs inside a browser.
 
 ### Constructors
 
-- [constructor](WebSocketDebuggerServer.md#constructor)
+- [constructor](./WebSocketDebuggerServer.md#constructor)
 
 ### Properties
 
-- [fastify](WebSocketDebuggerServer.md#fastify)
-- [paths](WebSocketDebuggerServer.md#paths)
-- [server](WebSocketDebuggerServer.md#server)
+- [fastify](./WebSocketDebuggerServer.md#fastify)
+- [paths](./WebSocketDebuggerServer.md#paths)
+- [server](./WebSocketDebuggerServer.md#server)
 
 ### Methods
 
-- [isDebuggerConnected](WebSocketDebuggerServer.md#isdebuggerconnected)
-- [onClientConnection](WebSocketDebuggerServer.md#onclientconnection)
-- [onConnection](WebSocketDebuggerServer.md#onconnection)
-- [onDebuggerConnection](WebSocketDebuggerServer.md#ondebuggerconnection)
-- [send](WebSocketDebuggerServer.md#send)
-- [shouldUpgrade](WebSocketDebuggerServer.md#shouldupgrade)
-- [upgrade](WebSocketDebuggerServer.md#upgrade)
+- [isDebuggerConnected](./WebSocketDebuggerServer.md#isdebuggerconnected)
+- [onClientConnection](./WebSocketDebuggerServer.md#onclientconnection)
+- [onConnection](./WebSocketDebuggerServer.md#onconnection)
+- [onDebuggerConnection](./WebSocketDebuggerServer.md#ondebuggerconnection)
+- [send](./WebSocketDebuggerServer.md#send)
+- [shouldUpgrade](./WebSocketDebuggerServer.md#shouldupgrade)
+- [upgrade](./WebSocketDebuggerServer.md#upgrade)
 
 ## Constructors
 
@@ -51,7 +51,7 @@ Any logging information, will be passed through standard `fastify.log` API.
 
 #### Overrides
 
-[WebSocketServer](WebSocketServer.md).[constructor](WebSocketServer.md#constructor)
+[WebSocketServer](./WebSocketServer.md).[constructor](./WebSocketServer.md#constructor)
 
 #### Defined in
 
@@ -63,11 +63,11 @@ Any logging information, will be passed through standard `fastify.log` API.
 
 • `Protected` **fastify**: [`FastifyDevServer`](../types/FastifyDevServer.md)
 
-Fastify instance from which [server](WebSocketDebuggerServer.md#server) will receive upgrade connections.
+Fastify instance from which [server](./WebSocketDebuggerServer.md#server) will receive upgrade connections.
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[fastify](WebSocketServer.md#fastify)
+[WebSocketServer](./WebSocketServer.md).[fastify](./WebSocketServer.md#fastify)
 
 #### Defined in
 
@@ -81,7 +81,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[paths](WebSocketServer.md#paths)
+[WebSocketServer](./WebSocketServer.md).[paths](./WebSocketServer.md#paths)
 
 #### Defined in
 
@@ -97,7 +97,7 @@ An instance of the underlying WebSocket server.
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[server](WebSocketServer.md#server)
+[WebSocketServer](./WebSocketServer.md).[server](./WebSocketServer.md#server)
 
 #### Defined in
 
@@ -164,7 +164,7 @@ for determining the type of the connection.
 
 #### Overrides
 
-[WebSocketServer](WebSocketServer.md).[onConnection](WebSocketServer.md#onconnection)
+[WebSocketServer](./WebSocketServer.md).[onConnection](./WebSocketServer.md#onconnection)
 
 #### Defined in
 
@@ -234,7 +234,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[shouldUpgrade](WebSocketServer.md#shouldupgrade)
+[WebSocketServer](./WebSocketServer.md).[shouldUpgrade](./WebSocketServer.md#shouldupgrade)
 
 #### Defined in
 
@@ -260,7 +260,7 @@ ___
 
 #### Inherited from
 
-[WebSocketServer](WebSocketServer.md).[upgrade](WebSocketServer.md#upgrade)
+[WebSocketServer](./WebSocketServer.md).[upgrade](./WebSocketServer.md#upgrade)
 
 #### Defined in
 

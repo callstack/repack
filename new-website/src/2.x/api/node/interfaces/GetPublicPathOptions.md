@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-- `Pick`<[`DevServerConfig`](DevServerConfig.md), ``"enabled"`` \| ``"host"`` \| ``"https"``\>
+- `Pick`<[`DevServerConfig`](./DevServerConfig.md), ``"enabled"`` \| ``"host"`` \| ``"https"``\>
 
   ↳ **`GetPublicPathOptions`**
 
@@ -12,10 +12,10 @@
 
 ### Properties
 
-- [enabled](GetPublicPathOptions.md#enabled)
-- [host](GetPublicPathOptions.md#host)
-- [https](GetPublicPathOptions.md#https)
-- [port](GetPublicPathOptions.md#port)
+- [enabled](./GetPublicPathOptions.md#enabled)
+- [host](./GetPublicPathOptions.md#host)
+- [https](./GetPublicPathOptions.md#https)
+- [port](./GetPublicPathOptions.md#port)
 
 ## Properties
 

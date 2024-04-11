@@ -7,14 +7,14 @@ It represents the output of [RemoteChunkResolver](../types/RemoteChunkResolver.m
 
 ### Properties
 
-- [absolute](RemoteChunkLocation.md#absolute)
-- [body](RemoteChunkLocation.md#body)
-- [excludeExtension](RemoteChunkLocation.md#excludeextension)
-- [headers](RemoteChunkLocation.md#headers)
-- [method](RemoteChunkLocation.md#method)
-- [query](RemoteChunkLocation.md#query)
-- [timeout](RemoteChunkLocation.md#timeout)
-- [url](RemoteChunkLocation.md#url)
+- [absolute](./RemoteChunkLocation.md#absolute)
+- [body](./RemoteChunkLocation.md#body)
+- [excludeExtension](./RemoteChunkLocation.md#excludeextension)
+- [headers](./RemoteChunkLocation.md#headers)
+- [method](./RemoteChunkLocation.md#method)
+- [query](./RemoteChunkLocation.md#query)
+- [timeout](./RemoteChunkLocation.md#timeout)
+- [url](./RemoteChunkLocation.md#url)
 
 ## Properties
 

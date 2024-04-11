@@ -1,19 +1,19 @@
 # Interface: SymbolicatorResults
 
-Represents results of running [process](CompilerWorker.md#process) method on [Symbolicator](../classes/Symbolicator.md) instance.
+Represents results of running [process](./CompilerWorker.md#process) method on [Symbolicator](../classes/Symbolicator.md) instance.
 
 ## Table of contents
 
 ### Properties
 
-- [codeFrame](SymbolicatorResults.md#codeframe)
-- [stack](SymbolicatorResults.md#stack)
+- [codeFrame](./SymbolicatorResults.md#codeframe)
+- [stack](./SymbolicatorResults.md#stack)
 
 ## Properties
 
 ### codeFrame
 
-• **codeFrame**: ``null`` \| [`CodeFrame`](CodeFrame.md)
+• **codeFrame**: ``null`` \| [`CodeFrame`](./CodeFrame.md)
 
 #### Defined in
 
@@ -23,7 +23,7 @@ ___
 
 ### stack
 
-• **stack**: [`StackFrame`](StackFrame.md)[]
+• **stack**: [`StackFrame`](./StackFrame.md)[]
 
 #### Defined in
 

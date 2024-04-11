@@ -1,13 +1,13 @@
 # Interface: ReactNativeIdObject
 
-Holds [ReactNativeMessage](ReactNativeMessage.md) `id` data.
+Holds [ReactNativeMessage](./ReactNativeMessage.md) `id` data.
 
 ## Table of contents
 
 ### Properties
 
-- [clientId](ReactNativeIdObject.md#clientid)
-- [requestId](ReactNativeIdObject.md#requestid)
+- [clientId](./ReactNativeIdObject.md#clientid)
+- [requestId](./ReactNativeIdObject.md#requestid)
 
 ## Properties
 

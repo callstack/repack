@@ -6,9 +6,9 @@
 
 ### Properties
 
-- [verbose](ReporterConfig.md#verbose)
-- [wsDashboardServer](ReporterConfig.md#wsdashboardserver)
-- [wsEventsServer](ReporterConfig.md#wseventsserver)
+- [verbose](./ReporterConfig.md#verbose)
+- [wsDashboardServer](./ReporterConfig.md#wsdashboardserver)
+- [wsEventsServer](./ReporterConfig.md#wseventsserver)
 
 ## Properties
 

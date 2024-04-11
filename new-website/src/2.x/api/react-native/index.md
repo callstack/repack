@@ -4,16 +4,16 @@
 
 ### Classes
 
-- [Chunk](classes/Chunk.md)
-- [ChunkManager](classes/ChunkManager.md)
+- [Chunk](./classes/Chunk.md)
+- [ChunkManager](./classes/ChunkManager.md)
 
 ### Interfaces
 
-- [ChunkConfig](interfaces/ChunkConfig.md)
-- [ChunkManagerConfig](interfaces/ChunkManagerConfig.md)
-- [RemoteChunkLocation](interfaces/RemoteChunkLocation.md)
-- [StorageApi](interfaces/StorageApi.md)
+- [ChunkConfig](./interfaces/ChunkConfig.md)
+- [ChunkManagerConfig](./interfaces/ChunkManagerConfig.md)
+- [RemoteChunkLocation](./interfaces/RemoteChunkLocation.md)
+- [StorageApi](./interfaces/StorageApi.md)
 
 ### Type aliases
 
-- [RemoteChunkResolver](types/RemoteChunkResolver.md)
+- [RemoteChunkResolver](./types/RemoteChunkResolver.md)

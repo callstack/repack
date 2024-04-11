@@ -4,20 +4,20 @@ React Native stack frame used as input when processing by [Symbolicator](../clas
 
 ## Hierarchy
 
-- [`ReactNativeStackFrame`](ReactNativeStackFrame.md)
+- [`ReactNativeStackFrame`](./ReactNativeStackFrame.md)
 
   ↳ **`InputStackFrame`**
 
-  ↳↳ [`StackFrame`](StackFrame.md)
+  ↳↳ [`StackFrame`](./StackFrame.md)
 
 ## Table of contents
 
 ### Properties
 
-- [column](InputStackFrame.md#column)
-- [file](InputStackFrame.md#file)
-- [lineNumber](InputStackFrame.md#linenumber)
-- [methodName](InputStackFrame.md#methodname)
+- [column](./InputStackFrame.md#column)
+- [file](./InputStackFrame.md#file)
+- [lineNumber](./InputStackFrame.md#linenumber)
+- [methodName](./InputStackFrame.md#methodname)
 
 ## Properties
 
@@ -27,7 +27,7 @@ React Native stack frame used as input when processing by [Symbolicator](../clas
 
 #### Inherited from
 
-[ReactNativeStackFrame](ReactNativeStackFrame.md).[column](ReactNativeStackFrame.md#column)
+[ReactNativeStackFrame](./ReactNativeStackFrame.md).[column](./ReactNativeStackFrame.md#column)
 
 #### Defined in
 
@@ -41,7 +41,7 @@ ___
 
 #### Overrides
 
-[ReactNativeStackFrame](ReactNativeStackFrame.md).[file](ReactNativeStackFrame.md#file)
+[ReactNativeStackFrame](./ReactNativeStackFrame.md).[file](./ReactNativeStackFrame.md#file)
 
 #### Defined in
 
@@ -55,7 +55,7 @@ ___
 
 #### Inherited from
 
-[ReactNativeStackFrame](ReactNativeStackFrame.md).[lineNumber](ReactNativeStackFrame.md#linenumber)
+[ReactNativeStackFrame](./ReactNativeStackFrame.md).[lineNumber](./ReactNativeStackFrame.md#linenumber)
 
 #### Defined in
 
@@ -69,7 +69,7 @@ ___
 
 #### Inherited from
 
-[ReactNativeStackFrame](ReactNativeStackFrame.md).[methodName](ReactNativeStackFrame.md#methodname)
+[ReactNativeStackFrame](./ReactNativeStackFrame.md).[methodName](./ReactNativeStackFrame.md#methodname)
 
 #### Defined in
 

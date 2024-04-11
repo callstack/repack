@@ -9,8 +9,8 @@ Used by [WebSocketHMRServer](../classes/WebSocketHMRServer.md) and `WebpackHMRCl
 
 ### Properties
 
-- [action](HMRMessage.md#action)
-- [body](HMRMessage.md#body)
+- [action](./HMRMessage.md#action)
+- [body](./HMRMessage.md#body)
 
 ## Properties
 
@@ -26,7 +26,7 @@ ___
 
 ### body
 
-• **body**: ``null`` \| [`HMRMessageBody`](HMRMessageBody.md)
+• **body**: ``null`` \| [`HMRMessageBody`](./HMRMessageBody.md)
 
 #### Defined in
 

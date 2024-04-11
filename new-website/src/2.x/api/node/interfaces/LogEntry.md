@@ -8,10 +8,10 @@ Represent log message with all necessary data.
 
 ### Properties
 
-- [issuer](LogEntry.md#issuer)
-- [message](LogEntry.md#message)
-- [timestamp](LogEntry.md#timestamp)
-- [type](LogEntry.md#type)
+- [issuer](./LogEntry.md#issuer)
+- [message](./LogEntry.md#message)
+- [timestamp](./LogEntry.md#timestamp)
+- [type](./LogEntry.md#type)
 
 ## Properties
 

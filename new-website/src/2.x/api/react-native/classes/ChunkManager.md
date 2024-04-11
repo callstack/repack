@@ -41,15 +41,15 @@ export function App({ role }) {
 
 ### Constructors
 
-- [constructor](ChunkManager.md#constructor)
+- [constructor](./ChunkManager.md#constructor)
 
 ### Methods
 
-- [configure](ChunkManager.md#configure)
-- [invalidateChunks](ChunkManager.md#invalidatechunks)
-- [loadChunk](ChunkManager.md#loadchunk)
-- [preloadChunk](ChunkManager.md#preloadchunk)
-- [resolveChunk](ChunkManager.md#resolvechunk)
+- [configure](./ChunkManager.md#configure)
+- [invalidateChunks](./ChunkManager.md#invalidatechunks)
+- [loadChunk](./ChunkManager.md#loadchunk)
+- [preloadChunk](./ChunkManager.md#preloadchunk)
+- [resolveChunk](./ChunkManager.md#resolvechunk)
 
 ## Constructors
 
@@ -87,7 +87,7 @@ ___
 
 ▸ `Static` **invalidateChunks**(`chunksIds?`): `Promise`<`void`\>
 
-Clears the cache (if configured in [ChunkManager.configure](ChunkManager.md#configure)) and removes downloaded
+Clears the cache (if configured in [ChunkManager.configure](./ChunkManager.md#configure)) and removes downloaded
 files for given chunks from the filesystem.
 
 This function can be awaited to detect if the chunks were invalidated and for error handling.

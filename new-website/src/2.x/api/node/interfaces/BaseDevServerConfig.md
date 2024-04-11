@@ -4,27 +4,27 @@
 
 ## Hierarchy
 
-- [`DevServerOptions`](DevServerOptions.md)
+- [`DevServerOptions`](./DevServerOptions.md)
 
   ↳ **`BaseDevServerConfig`**
 
-  ↳↳ [`DevServerConfig`](DevServerConfig.md)
+  ↳↳ [`DevServerConfig`](./DevServerConfig.md)
 
-  ↳↳ [`DevServerProxyConfig`](DevServerProxyConfig.md)
+  ↳↳ [`DevServerProxyConfig`](./DevServerProxyConfig.md)
 
 ## Table of contents
 
 ### Properties
 
-- [cert](BaseDevServerConfig.md#cert)
-- [context](BaseDevServerConfig.md#context)
-- [enabled](BaseDevServerConfig.md#enabled)
-- [hmr](BaseDevServerConfig.md#hmr)
-- [host](BaseDevServerConfig.md#host)
-- [https](BaseDevServerConfig.md#https)
-- [key](BaseDevServerConfig.md#key)
-- [platform](BaseDevServerConfig.md#platform)
-- [port](BaseDevServerConfig.md#port)
+- [cert](./BaseDevServerConfig.md#cert)
+- [context](./BaseDevServerConfig.md#context)
+- [enabled](./BaseDevServerConfig.md#enabled)
+- [hmr](./BaseDevServerConfig.md#hmr)
+- [host](./BaseDevServerConfig.md#host)
+- [https](./BaseDevServerConfig.md#https)
+- [key](./BaseDevServerConfig.md#key)
+- [platform](./BaseDevServerConfig.md#platform)
+- [port](./BaseDevServerConfig.md#port)
 
 ## Properties
 
@@ -36,7 +36,7 @@ Path to certificate when running server on HTTPS.
 
 #### Inherited from
 
-[DevServerOptions](DevServerOptions.md).[cert](DevServerOptions.md#cert)
+[DevServerOptions](./DevServerOptions.md).[cert](./DevServerOptions.md#cert)
 
 #### Defined in
 
@@ -64,7 +64,7 @@ Whether to start development server.
 
 #### Inherited from
 
-[DevServerOptions](DevServerOptions.md).[enabled](DevServerOptions.md#enabled)
+[DevServerOptions](./DevServerOptions.md).[enabled](./DevServerOptions.md#enabled)
 
 #### Defined in
 
@@ -80,7 +80,7 @@ Whether to enable Hot Module Replacement.
 
 #### Inherited from
 
-[DevServerOptions](DevServerOptions.md).[hmr](DevServerOptions.md#hmr)
+[DevServerOptions](./DevServerOptions.md).[hmr](./DevServerOptions.md#hmr)
 
 #### Defined in
 
@@ -97,7 +97,7 @@ When left unspecified, it will listen on all available network interfaces, simil
 
 #### Inherited from
 
-[DevServerOptions](DevServerOptions.md).[host](DevServerOptions.md#host)
+[DevServerOptions](./DevServerOptions.md).[host](./DevServerOptions.md#host)
 
 #### Defined in
 
@@ -113,7 +113,7 @@ Whether to run server on HTTPS instead of HTTP.
 
 #### Inherited from
 
-[DevServerOptions](DevServerOptions.md).[https](DevServerOptions.md#https)
+[DevServerOptions](./DevServerOptions.md).[https](./DevServerOptions.md#https)
 
 #### Defined in
 
@@ -129,7 +129,7 @@ Path to certificate key when running server on HTTPS.
 
 #### Inherited from
 
-[DevServerOptions](DevServerOptions.md).[key](DevServerOptions.md#key)
+[DevServerOptions](./DevServerOptions.md).[key](./DevServerOptions.md#key)
 
 #### Defined in
 
@@ -157,7 +157,7 @@ Port under which to run the development server. See: [DEFAULT_PORT](../variables
 
 #### Inherited from
 
-[DevServerOptions](DevServerOptions.md).[port](DevServerOptions.md#port)
+[DevServerOptions](./DevServerOptions.md).[port](./DevServerOptions.md#port)
 
 #### Defined in
 
