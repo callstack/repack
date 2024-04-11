@@ -17,6 +17,9 @@ export default defineConfig({
     default: '3.x',
     versions: ['2.x', '3.x'],
   },
+  route: {
+    cleanUrls: true,
+  },
   themeConfig: {
     enableContentAnimation: true,
     enableScrollToTop: true,

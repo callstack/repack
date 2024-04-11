@@ -50,17 +50,17 @@ We highly encourage to create recipes for adding or adjusting the support for ot
 
 To make Webpack-produced bundle compatible and runnable by React Native, Re.Pack gives you a set of Webpack plugins.
 
-By default, all boring plugin configuration is abstracted behind a single [`RepackPlugin`](../api/repack/classes/RepackPlugin), which should suffice to most projects.
-However, in cause you need more control over the Re.Pack plugins, you can remove `RepackPlugin` and use plugins from [`plugins` namespace](../api/repack/modules/plugins):
+By default, all boring plugin configuration is abstracted behind a single [`RepackPlugin`](../../api/repack/classes/RepackPlugin), which should suffice to most projects.
+However, in cause you need more control over the Re.Pack plugins, you can remove `RepackPlugin` and use plugins from [`plugins` namespace](../../api/repack/modules/plugins):
 
-- [AssetsResolverPlugin](../api/repack/classes/plugins.AssetsResolverPlugin) (__required__)
-- [DevelopmentPlugin](../api/repack/classes/plugins.DevelopmentPlugin) (__required__ only in development)
-- [RepackTargetPlugin](../api/repack/classes/plugins.RepackTargetPlugin) (__required__)
-- [ReactRefreshPlugin](../api/repack/classes/plugins.ReactRefreshPlugin)
-- [OutputPlugin](../api/repack/classes/plugins.OutputPlugin) (__required__)
-- [ManifestPlugin](../api/repack/classes/plugins.ManifestPlugin)
-- [LoggerPlugin](../api/repack/classes/plugins.LoggerPlugin)
-- [JavaScriptLooseModePlugin](../api/repack/classes/plugins.JavaScriptLooseModePlugin)
+- [AssetsResolverPlugin](../../api/repack/classes/plugins.AssetsResolverPlugin) (__required__)
+- [DevelopmentPlugin](../../api/repack/classes/plugins.DevelopmentPlugin) (__required__ only in development)
+- [RepackTargetPlugin](../../api/repack/classes/plugins.RepackTargetPlugin) (__required__)
+- [ReactRefreshPlugin](../../api/repack/classes/plugins.ReactRefreshPlugin)
+- [OutputPlugin](../../api/repack/classes/plugins.OutputPlugin) (__required__)
+- [ManifestPlugin](../../api/repack/classes/plugins.ManifestPlugin)
+- [LoggerPlugin](../../api/repack/classes/plugins.LoggerPlugin)
+- [JavaScriptLooseModePlugin](../../api/repack/classes/plugins.JavaScriptLooseModePlugin)
 
 :::warning
 
@@ -70,12 +70,11 @@ Not including required plugins will break your build or cause your app to crash 
 
 Additionally, Re.Pack gives you few helper functions:
 
-
-- [getAssetExtensionsRegExp](../api/repack/functions/getAssetExtensionsRegExp)
-- [getInitializationEntries](../api/repack/functions/getInitializationEntries)
-- [getPublicPath](../api/repack/functions/getPublicPath)
-- [getResolveOptions](../api/repack/functions/getResolveOptions)
-- [getDirname](../api/repack/functions/getDirname)
+- [getAssetExtensionsRegExp](../../api/repack/functions/getAssetExtensionsRegExp)
+- [getInitializationEntries](../../api/repack/functions/getInitializationEntries)
+- [getPublicPath](../../api/repack/functions/getPublicPath)
+- [getResolveOptions](../../api/repack/functions/getResolveOptions)
+- [getDirname](../../api/repack/functions/getDirname)
 
 :::caution
 

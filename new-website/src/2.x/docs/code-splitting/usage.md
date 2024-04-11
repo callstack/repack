@@ -2,11 +2,11 @@
 
 The specific implementation of Code Splitting in your application can be different and should account for your project's specific needs, requirements and limitations.
 
-In general, we can identify 3 main categories of implementation. All of those approaches are based on the same underlying mechanism: Re.Pack's [`ChunkManager API`](../api/react-native/classes/ChunkManager) and the native module for it.
+In general, we can identify 3 main categories of implementation. All of those approaches are based on the same underlying mechanism: Re.Pack's [`ChunkManager API`](../../api/react-native/classes/ChunkManager) and the native module for it.
 
 :::caution
 
-Because Code Splitting support is based on the native module, you need to be able to compile the native code in your project, meaning you cannot use it with Expo. 
+Because Code Splitting support is based on the native module, you need to be able to compile the native code in your project, meaning you cannot use it with Expo.
 
 It might be possible to use it in an ejected Expo app, but that scenario is not officially supported.
 
@@ -21,18 +21,18 @@ Use [Glossary of terms](./glossary) to better understand the content of this doc
 ## Generic usage
 
 On a high-level, all functionalities that enable to use Webpack's Code Splitting, are powered by
-Re.Pack's [`ChunkManager`](../api/react-native/classes/ChunkManager).
+Re.Pack's [`ChunkManager`](../../api/react-native/classes/ChunkManager).
 
 This APIs consists of the JavaScript part and the native part.
 
-The [`ChunkManager`](../api/react-native/classes/ChunkManager) has function which allows to:
+The [`ChunkManager`](../../api/react-native/classes/ChunkManager) has function which allows to:
 
-1. Download and execute the chunk - [`loadChunk`](../api/react-native/classes/ChunkManager#loadchunk)
-2. Download the chunk (without executing immediately) - [`preloadChunk`](../api/react-native/classes/ChunkManager#preloadchunk)
-3. Resolve chunk location - [`resolveChunk`](../api/react-native/classes/ChunkManager#resolvechunk)
-4. Invalidate chunk's cache - [`invalidateChunks`](../api/react-native/classes/ChunkManager#invalidatechunks)
+1. Download and execute the chunk - [`loadChunk`](../../api/react-native/classes/ChunkManager#loadchunk)
+2. Download the chunk (without executing immediately) - [`preloadChunk`](../../api/react-native/classes/ChunkManager#preloadchunk)
+3. Resolve chunk location - [`resolveChunk`](../../api/react-native/classes/ChunkManager#resolvechunk)
+4. Invalidate chunk's cache - [`invalidateChunks`](../../api/react-native/classes/ChunkManager#invalidatechunks)
 
-In order to provide this functionalities [`ChunkManager`](../api/react-native/classes/ChunkManager)
+In order to provide this functionalities [`ChunkManager`](../../api/react-native/classes/ChunkManager)
 has to be configured to be able to resolve remote chunks/scripts/containers:
 
 ```js
@@ -53,7 +53,7 @@ cache management. You can read more about it in [Caching and Versioning](./cachi
 
 :::info
 
-Despite the name, [`ChunkManager`](../api/react-native/classes/ChunkManager) is also used when
+Despite the name, [`ChunkManager`](../../api/react-native/classes/ChunkManager) is also used when
 loading [scripts](#scripts) and containers from [Module Federation](#module-federation).
 
 :::
@@ -69,24 +69,24 @@ Under the hood, the process could be summarized as follows:
 3. `ChunkManager.loadChunk(...)` resolves the chunk location using `ChunkManager.resolveChunk(...)`.
 4. The resolution:
    - In development: resolves all chunks to the development server location for better developer
-   experience, unless `forceRemoteChunkResolution` is set to `true`.
+     experience, unless `forceRemoteChunkResolution` is set to `true`.
    - In production:
      - For remote chunks/scripts/containers (default): calls `resolveRemoteChunk` and compares the
-     returned `url` value with the one stored in `storage` (if provided):
+       returned `url` value with the one stored in `storage` (if provided):
        - If the values are equal: the native module will **not** download a new version,
-       but execute already stored one
+         but execute already stored one
        - If the values are not equal, or `storage` was not provided,
-       or the chunk was never downloaded before: the native module will download a chunk and execute
-       it
+         or the chunk was never downloaded before: the native module will download a chunk and execute
+         it
      - For local chunks only: resolves chunk to the filesystem location
 5. The resolution info is passed to the native module, which downloads (unless a chunk is a local one)
-and executes the file.
+   and executes the file.
 6. Once the code has been executed the `Promise` returned by `ChunkManager.loadChunk(...)` gets
-resolved.
+   resolved.
 
 :::info
 
-[`ChunkManager.preloadChunk(...)`](../api/react-native/classes/ChunkManager#preloadchunk) follows
+[`ChunkManager.preloadChunk(...)`](../../api/react-native/classes/ChunkManager#preloadchunk) follows
 the same behavior except for #5, where it downloads the file but doesn't execute it.
 
 :::
@@ -147,8 +147,8 @@ For each file in the dynamic `import(...)` function a new chunk will be created 
 be a remote chunks by default and they will be copied to `<projectRoot>/build/<platform>/remote` by
 default. All chunks in this directory should be uploaded to the remote server or a CDN.
 You can change this directory using
-[`remoteChunksOutput`](../api/node/interfaces/OutputPluginConfig#remotechunksoutput)
-in [`OutputPlugin`](../api/node/classes/OutputPlugin) configuration.
+[`remoteChunksOutput`](../../api/node/interfaces/OutputPluginConfig#remotechunksoutput)
+in [`OutputPlugin`](../../api/node/classes/OutputPlugin) configuration.
 
 :::tip
 
@@ -165,7 +165,7 @@ To see `import(...)`, `React.lazy` and `React.Suspense` in action, check out
 
 :::info
 
-For production, don't forget to configure Re.Pack's [`ChunkManager`](../api/react-native/classes/ChunkManager).
+For production, don't forget to configure Re.Pack's [`ChunkManager`](../../api/react-native/classes/ChunkManager).
 
 :::
 
@@ -183,7 +183,7 @@ build pipelines, from separate codebases and repositories.
 Scripts should only be used by advanced users with deep Webpack knowledge and experience.
 
 Scripts give a lot of flexibility but it also means the support for them is only limited the
-[`ChunkManager`](../api/react-native/classes/ChunkManager) API. It's not possible for Re.Pack's
+[`ChunkManager`](../../api/react-native/classes/ChunkManager) API. It's not possible for Re.Pack's
 contributors to support all potential setups using this approach.
 
 :::
@@ -206,7 +206,7 @@ await ChunkManager.loadChunk('my-script');
 console.log('Script loaded');
 ```
 
-And configuring the [`ChunkManager`](../api/react-native/classes/ChunkManager) to resolve your
+And configuring the [`ChunkManager`](../../api/react-native/classes/ChunkManager) to resolve your
 scripts:
 
 ```js
