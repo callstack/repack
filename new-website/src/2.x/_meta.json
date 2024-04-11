@@ -2,12 +2,12 @@
   {
     "text": "Docs",
     "link": "/docs/getting-started.html",
-    "activeMatch": "^/docs/"
+    "activeMatch": "^/2.x/docs/"
   },
   {
     "text": "API",
     "link": "/api/about.html",
-    "activeMatch": "^/api/"
+    "activeMatch": "^/2.x/api/"
   },
   {
     "text": "Examples",
