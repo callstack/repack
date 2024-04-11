@@ -16,7 +16,7 @@
   },
   {
     "type": "dir",
-    "name": "client",
+    "name": "repack/client",
     "label": "@callstack/repack/client",
     "collapsed": true
   },
