@@ -3,14 +3,18 @@ pageType: home
 
 hero:
   name: Re.Pack
+  text: <img src="img/banner.svg">
   tagline: A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.
+  image:
+    src: /img/undraw_Mobile_app_re_catg.svg
+    alt: Re.Pack logo
   actions:
     - theme: brand
       text: Get started
-      link: /guide/
+      link: /docs/getting-started
     - theme: alt
       text: Github
-      link: https://github.com/web-infra-dev/rspress
+      link: https://github.com/callstack/repack
 features:
   - title: Blazing fast build speed
     details: The core compilation module is based on the Rust front-end toolchain, providing a more ultimate development experience.
