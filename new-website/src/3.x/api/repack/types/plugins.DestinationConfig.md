@@ -2,7 +2,7 @@
 
 [plugins](../modules/plugins.md).DestinationConfig
 
-Ƭ **DestinationConfig**: [`LocalDestinationConfig`](plugins.LocalDestinationConfig.md) \| [`RemoteDestinationConfig`](plugins.RemoteDestinationConfig.md)
+Ƭ **DestinationConfig**: [`LocalDestinationConfig`](./plugins.LocalDestinationConfig.md) \| [`RemoteDestinationConfig`](./plugins.RemoteDestinationConfig.md)
 
 Destination config for chunks.
 

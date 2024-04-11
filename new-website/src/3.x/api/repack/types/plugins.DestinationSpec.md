@@ -2,7 +2,7 @@
 
 [plugins](../modules/plugins.md).DestinationSpec
 
-Ƭ **DestinationSpec**: [`DestinationMatchRules`](plugins.DestinationMatchRules.md) & [`DestinationConfig`](plugins.DestinationConfig.md)
+Ƭ **DestinationSpec**: [`DestinationMatchRules`](./plugins.DestinationMatchRules.md) & [`DestinationConfig`](./plugins.DestinationConfig.md)
 
 Destination specification for chunks.
 

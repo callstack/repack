@@ -1,6 +1,6 @@
 # Class: Script
 
-Representation of a Script to load and execute, used by [ScriptManager](ScriptManager.md).
+Representation of a Script to load and execute, used by [ScriptManager](./ScriptManager.md).
 
 When adding resolvers to `ScriptManager` in `ScriptManager.shared.addResolver(...)`, you can use
 `Script.getDevServerURL(...)`, `Script.getFileSystemURL(...)` or `Script.getRemoteURL(...)`
@@ -12,27 +12,27 @@ Other methods are designed for internal use only.
 
 ### Constructors
 
-- [constructor](Script.md#constructor)
+- [constructor](./Script.md#constructor)
 
 ### Properties
 
-- [cache](Script.md#cache)
-- [caller](Script.md#caller)
-- [locator](Script.md#locator)
-- [scriptId](Script.md#scriptid)
-- [DEFAULT\_TIMEOUT](Script.md#default_timeout)
+- [cache](./Script.md#cache)
+- [caller](./Script.md#caller)
+- [locator](./Script.md#locator)
+- [scriptId](./Script.md#scriptid)
+- [DEFAULT\_TIMEOUT](./Script.md#default_timeout)
 
 ### Methods
 
-- [checkIfCacheDataOutdated](Script.md#checkifcachedataoutdated)
-- [getCacheData](Script.md#getcachedata)
-- [shouldRefetch](Script.md#shouldrefetch)
-- [shouldUpdateCache](Script.md#shouldupdatecache)
-- [toObject](Script.md#toobject)
-- [from](Script.md#from)
-- [getDevServerURL](Script.md#getdevserverurl)
-- [getFileSystemURL](Script.md#getfilesystemurl)
-- [getRemoteURL](Script.md#getremoteurl)
+- [checkIfCacheDataOutdated](./Script.md#checkifcachedataoutdated)
+- [getCacheData](./Script.md#getcachedata)
+- [shouldRefetch](./Script.md#shouldrefetch)
+- [shouldUpdateCache](./Script.md#shouldupdatecache)
+- [toObject](./Script.md#toobject)
+- [from](./Script.md#from)
+- [getDevServerURL](./Script.md#getdevserverurl)
+- [getFileSystemURL](./Script.md#getfilesystemurl)
+- [getRemoteURL](./Script.md#getremoteurl)
 
 ## Constructors
 
@@ -215,7 +215,7 @@ ___
 
 ### from
 
-▸ `Static` **from**(`key`, `locator`, `fetch`): [`Script`](Script.md)
+▸ `Static` **from**(`key`, `locator`, `fetch`): [`Script`](./Script.md)
 
 Create new instance of `Script` from non-normalized script locator data.
 
@@ -233,7 +233,7 @@ Create new instance of `Script` from non-normalized script locator data.
 
 #### Returns
 
-[`Script`](Script.md)
+[`Script`](./Script.md)
 
 #### Defined in
 

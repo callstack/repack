@@ -28,12 +28,12 @@ export default (env) => {
 
 Internally, `RepackPlugin` configures the following plugins:
 - `webpack.DefinePlugin` with `__DEV__` global
-- [AssetsResolverPlugin](plugins.AssetsResolverPlugin.md)
-- [OutputPlugin](plugins.OutputPlugin.md)
-- [DevelopmentPlugin](plugins.DevelopmentPlugin.md)
-- [RepackTargetPlugin](plugins.RepackTargetPlugin.md)
+- [AssetsResolverPlugin](./plugins.AssetsResolverPlugin.md)
+- [OutputPlugin](./plugins.OutputPlugin.md)
+- [DevelopmentPlugin](./plugins.DevelopmentPlugin.md)
+- [RepackTargetPlugin](./plugins.RepackTargetPlugin.md)
 - `webpack.SourceMapDevToolPlugin`
-- [LoggerPlugin](plugins.LoggerPlugin.md)
+- [LoggerPlugin](./plugins.LoggerPlugin.md)
 
 `RepackPlugin` provides a sensible defaults, but can be customized to some extent.
 If you need more control, it's recommended to remove `RepackPlugin` and use other plugins
@@ -52,11 +52,11 @@ new Repack.plugins.AssetsResolverPlugin();
 
 ### Constructors
 
-- [constructor](RepackPlugin.md#constructor)
+- [constructor](./RepackPlugin.md#constructor)
 
 ### Methods
 
-- [apply](RepackPlugin.md#apply)
+- [apply](./RepackPlugin.md#apply)
 
 ## Constructors
 

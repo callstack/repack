@@ -14,11 +14,11 @@ might not work in JavaScript Strict mode.
 
 ### Constructors
 
-- [constructor](plugins.JavaScriptLooseModePlugin.md#constructor)
+- [constructor](./plugins.JavaScriptLooseModePlugin.md#constructor)
 
 ### Methods
 
-- [apply](plugins.JavaScriptLooseModePlugin.md#apply)
+- [apply](./plugins.JavaScriptLooseModePlugin.md#apply)
 
 ## Constructors
 

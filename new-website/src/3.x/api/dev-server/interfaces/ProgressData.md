@@ -6,8 +6,8 @@ Representation of the compilation progress.
 
 ### Properties
 
-- [completed](ProgressData.md#completed)
-- [total](ProgressData.md#total)
+- [completed](./ProgressData.md#completed)
+- [total](./ProgressData.md#total)
 
 ## Properties
 

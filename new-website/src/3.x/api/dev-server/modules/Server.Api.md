@@ -1,6 +1,6 @@
 # Namespace: Api
 
-[Server](Server.md).Api
+[Server](./Server.md).Api
 
 ## Table of contents
 

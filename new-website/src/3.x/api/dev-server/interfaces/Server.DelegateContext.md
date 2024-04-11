@@ -2,7 +2,7 @@
 
 [Server](../modules/Server.md).DelegateContext
 
-A delegate context used in `delegate` builder in [Config](Server.Config.md).
+A delegate context used in `delegate` builder in [Config](./Server.Config.md).
 
 Allows to emit logs, notify about compilation events and broadcast events to connected clients.
 
@@ -10,14 +10,14 @@ Allows to emit logs, notify about compilation events and broadcast events to con
 
 ### Properties
 
-- [log](Server.DelegateContext.md#log)
+- [log](./Server.DelegateContext.md#log)
 
 ### Methods
 
-- [broadcastToHmrClients](Server.DelegateContext.md#broadcasttohmrclients)
-- [broadcastToMessageClients](Server.DelegateContext.md#broadcasttomessageclients)
-- [notifyBuildEnd](Server.DelegateContext.md#notifybuildend)
-- [notifyBuildStart](Server.DelegateContext.md#notifybuildstart)
+- [broadcastToHmrClients](./Server.DelegateContext.md#broadcasttohmrclients)
+- [broadcastToMessageClients](./Server.DelegateContext.md#broadcasttomessageclients)
+- [notifyBuildEnd](./Server.DelegateContext.md#notifybuildend)
+- [notifyBuildStart](./Server.DelegateContext.md#notifybuildstart)
 
 ## Properties
 

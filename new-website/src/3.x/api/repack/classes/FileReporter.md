@@ -8,17 +8,17 @@
 
 ### Constructors
 
-- [constructor](FileReporter.md#constructor)
+- [constructor](./FileReporter.md#constructor)
 
 ### Properties
 
-- [throttledFlush](FileReporter.md#throttledflush)
+- [throttledFlush](./FileReporter.md#throttledflush)
 
 ### Methods
 
-- [flush](FileReporter.md#flush)
-- [process](FileReporter.md#process)
-- [stop](FileReporter.md#stop)
+- [flush](./FileReporter.md#flush)
+- [process](./FileReporter.md#process)
+- [stop](./FileReporter.md#stop)
 
 ## Constructors
 

@@ -7,9 +7,9 @@ The interface is modelled on Async Storage from `react-native-community`.
 
 ### Methods
 
-- [getItem](StorageApi.md#getitem)
-- [removeItem](StorageApi.md#removeitem)
-- [setItem](StorageApi.md#setitem)
+- [getItem](./StorageApi.md#getitem)
+- [removeItem](./StorageApi.md#removeitem)
+- [setItem](./StorageApi.md#setitem)
 
 ## Methods
 

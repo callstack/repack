@@ -8,14 +8,14 @@
 
 ### Properties
 
-- [devServer](plugins.DevelopmentPluginConfig.md#devserver)
-- [platform](plugins.DevelopmentPluginConfig.md#platform)
+- [devServer](./plugins.DevelopmentPluginConfig.md#devserver)
+- [platform](./plugins.DevelopmentPluginConfig.md#platform)
 
 ## Properties
 
 ### devServer
 
-• `Optional` **devServer**: [`DevServerOptions`](DevServerOptions.md)
+• `Optional` **devServer**: [`DevServerOptions`](./DevServerOptions.md)
 
 #### Defined in
 

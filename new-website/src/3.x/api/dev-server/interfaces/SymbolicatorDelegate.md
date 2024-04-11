@@ -6,9 +6,9 @@ Delegate with implementation for symbolication functions.
 
 ### Methods
 
-- [getSource](SymbolicatorDelegate.md#getsource)
-- [getSourceMap](SymbolicatorDelegate.md#getsourcemap)
-- [shouldIncludeFrame](SymbolicatorDelegate.md#shouldincludeframe)
+- [getSource](./SymbolicatorDelegate.md#getsource)
+- [getSourceMap](./SymbolicatorDelegate.md#getsourcemap)
+- [shouldIncludeFrame](./SymbolicatorDelegate.md#shouldincludeframe)
 
 ## Methods
 
@@ -66,7 +66,7 @@ Check if given stack frame should be included in the new symbolicated stack.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `frame` | [`StackFrame`](StackFrame.md) | Stack frame to check. |
+| `frame` | [`StackFrame`](./StackFrame.md) | Stack frame to check. |
 
 #### Returns
 

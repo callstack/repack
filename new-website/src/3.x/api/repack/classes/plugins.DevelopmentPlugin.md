@@ -13,11 +13,11 @@ providing Hot Module Replacement functionality.
 
 ### Constructors
 
-- [constructor](plugins.DevelopmentPlugin.md#constructor)
+- [constructor](./plugins.DevelopmentPlugin.md#constructor)
 
 ### Methods
 
-- [apply](plugins.DevelopmentPlugin.md#apply)
+- [apply](./plugins.DevelopmentPlugin.md#apply)
 
 ## Constructors
 

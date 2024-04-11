@@ -6,8 +6,8 @@ Delegate with implementation for HMR-specific functions.
 
 ### Methods
 
-- [getUriPath](HmrDelegate.md#geturipath)
-- [onClientConnected](HmrDelegate.md#onclientconnected)
+- [getUriPath](./HmrDelegate.md#geturipath)
+- [onClientConnected](./HmrDelegate.md#onclientconnected)
 
 ## Methods
 

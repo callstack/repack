@@ -10,11 +10,11 @@
 
 ### Constructors
 
-- [constructor](plugins.CodeSigningPlugin.md#constructor)
+- [constructor](./plugins.CodeSigningPlugin.md#constructor)
 
 ### Methods
 
-- [apply](plugins.CodeSigningPlugin.md#apply)
+- [apply](./plugins.CodeSigningPlugin.md#apply)
 
 ## Constructors
 

@@ -4,8 +4,8 @@
 
 ### Methods
 
-- [p](WebpackContext.md#p)
-- [u](WebpackContext.md#u)
+- [p](./WebpackContext.md#p)
+- [u](./WebpackContext.md#u)
 
 ## Methods
 

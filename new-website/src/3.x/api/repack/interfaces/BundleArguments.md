@@ -6,7 +6,7 @@ CLI arguments passed from React Native CLI when running bundle command.
 
 ## Hierarchy
 
-- [`CommonArguments`](CommonArguments.md)
+- [`CommonArguments`](./CommonArguments.md)
 
   ↳ **`BundleArguments`**
 
@@ -14,18 +14,18 @@ CLI arguments passed from React Native CLI when running bundle command.
 
 ### Properties
 
-- [assetsDest](BundleArguments.md#assetsdest)
-- [bundleOutput](BundleArguments.md#bundleoutput)
-- [dev](BundleArguments.md#dev)
-- [entryFile](BundleArguments.md#entryfile)
-- [json](BundleArguments.md#json)
-- [minify](BundleArguments.md#minify)
-- [platform](BundleArguments.md#platform)
-- [resetCache](BundleArguments.md#resetcache)
-- [sourcemapOutput](BundleArguments.md#sourcemapoutput)
-- [stats](BundleArguments.md#stats)
-- [verbose](BundleArguments.md#verbose)
-- [webpackConfig](BundleArguments.md#webpackconfig)
+- [assetsDest](./BundleArguments.md#assetsdest)
+- [bundleOutput](./BundleArguments.md#bundleoutput)
+- [dev](./BundleArguments.md#dev)
+- [entryFile](./BundleArguments.md#entryfile)
+- [json](./BundleArguments.md#json)
+- [minify](./BundleArguments.md#minify)
+- [platform](./BundleArguments.md#platform)
+- [resetCache](./BundleArguments.md#resetcache)
+- [sourcemapOutput](./BundleArguments.md#sourcemapoutput)
+- [stats](./BundleArguments.md#stats)
+- [verbose](./BundleArguments.md#verbose)
+- [webpackConfig](./BundleArguments.md#webpackconfig)
 
 ## Properties
 
@@ -97,7 +97,7 @@ Target application platform.
 
 #### Inherited from
 
-[CommonArguments](CommonArguments.md).[platform](CommonArguments.md#platform)
+[CommonArguments](./CommonArguments.md).[platform](./CommonArguments.md#platform)
 
 #### Defined in
 
@@ -113,7 +113,7 @@ Whether to clean any persistent cache.
 
 #### Inherited from
 
-[CommonArguments](CommonArguments.md).[resetCache](CommonArguments.md#resetcache)
+[CommonArguments](./CommonArguments.md).[resetCache](./CommonArguments.md#resetcache)
 
 #### Defined in
 
@@ -149,7 +149,7 @@ Whether to log additional debug messages.
 
 #### Inherited from
 
-[CommonArguments](CommonArguments.md).[verbose](CommonArguments.md#verbose)
+[CommonArguments](./CommonArguments.md).[verbose](./CommonArguments.md#verbose)
 
 #### Defined in
 
@@ -165,7 +165,7 @@ Custom path to Webpack config.
 
 #### Inherited from
 
-[CommonArguments](CommonArguments.md).[webpackConfig](CommonArguments.md#webpackconfig)
+[CommonArguments](./CommonArguments.md).[webpackConfig](./CommonArguments.md#webpackconfig)
 
 #### Defined in
 

@@ -10,11 +10,11 @@
 
 ### Constructors
 
-- [constructor](plugins.ManifestPlugin.md#constructor)
+- [constructor](./plugins.ManifestPlugin.md#constructor)
 
 ### Methods
 
-- [apply](plugins.ManifestPlugin.md#apply)
+- [apply](./plugins.ManifestPlugin.md#apply)
 
 ## Constructors
 

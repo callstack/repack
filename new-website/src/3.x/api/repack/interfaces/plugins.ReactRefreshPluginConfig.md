@@ -6,7 +6,7 @@
 
 ## Hierarchy
 
-- [`DevServerOptions`](DevServerOptions.md)
+- [`DevServerOptions`](./DevServerOptions.md)
 
   ↳ **`ReactRefreshPluginConfig`**
 
@@ -14,11 +14,11 @@
 
 ### Properties
 
-- [hmr](plugins.ReactRefreshPluginConfig.md#hmr)
-- [host](plugins.ReactRefreshPluginConfig.md#host)
-- [https](plugins.ReactRefreshPluginConfig.md#https)
-- [platform](plugins.ReactRefreshPluginConfig.md#platform)
-- [port](plugins.ReactRefreshPluginConfig.md#port)
+- [hmr](./plugins.ReactRefreshPluginConfig.md#hmr)
+- [host](./plugins.ReactRefreshPluginConfig.md#host)
+- [https](./plugins.ReactRefreshPluginConfig.md#https)
+- [platform](./plugins.ReactRefreshPluginConfig.md#platform)
+- [port](./plugins.ReactRefreshPluginConfig.md#port)
 
 ## Properties
 
@@ -30,7 +30,7 @@ Whether to enable Hot Module Replacement.
 
 #### Inherited from
 
-[DevServerOptions](DevServerOptions.md).[hmr](DevServerOptions.md#hmr)
+[DevServerOptions](./DevServerOptions.md).[hmr](./DevServerOptions.md#hmr)
 
 #### Defined in
 
@@ -47,7 +47,7 @@ When left unspecified, it will listen on all available network interfaces, simil
 
 #### Inherited from
 
-[DevServerOptions](DevServerOptions.md).[host](DevServerOptions.md#host)
+[DevServerOptions](./DevServerOptions.md).[host](./DevServerOptions.md#host)
 
 #### Defined in
 
@@ -71,7 +71,7 @@ If specified, the server will use HTTPS, otherwise HTTP.
 
 #### Inherited from
 
-[DevServerOptions](DevServerOptions.md).[https](DevServerOptions.md#https)
+[DevServerOptions](./DevServerOptions.md).[https](./DevServerOptions.md#https)
 
 #### Defined in
 
@@ -97,7 +97,7 @@ Port under which to run the development server. See: {@link DEFAULT_PORT}.
 
 #### Inherited from
 
-[DevServerOptions](DevServerOptions.md).[port](DevServerOptions.md#port)
+[DevServerOptions](./DevServerOptions.md).[port](./DevServerOptions.md#port)
 
 #### Defined in
 

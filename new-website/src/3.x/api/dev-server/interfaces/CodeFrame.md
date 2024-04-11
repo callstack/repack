@@ -6,9 +6,9 @@ Represents [@babel/core-frame](https://babeljs.io/docs/en/babel-code-frame).
 
 ### Properties
 
-- [content](CodeFrame.md#content)
-- [fileName](CodeFrame.md#filename)
-- [location](CodeFrame.md#location)
+- [content](./CodeFrame.md#content)
+- [fileName](./CodeFrame.md#filename)
+- [location](./CodeFrame.md#location)
 
 ## Properties
 

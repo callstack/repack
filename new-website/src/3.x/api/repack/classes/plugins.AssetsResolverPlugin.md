@@ -16,11 +16,11 @@ you to use assets in the same way as you would do when using Metro.
 
 ### Constructors
 
-- [constructor](plugins.AssetsResolverPlugin.md#constructor)
+- [constructor](./plugins.AssetsResolverPlugin.md#constructor)
 
 ### Methods
 
-- [apply](plugins.AssetsResolverPlugin.md#apply)
+- [apply](./plugins.AssetsResolverPlugin.md#apply)
 
 ## Constructors
 

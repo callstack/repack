@@ -8,9 +8,9 @@
 
 ### Properties
 
-- [devServerEnabled](plugins.LoggerPluginConfig.md#devserverenabled)
-- [output](plugins.LoggerPluginConfig.md#output)
-- [platform](plugins.LoggerPluginConfig.md#platform)
+- [devServerEnabled](./plugins.LoggerPluginConfig.md#devserverenabled)
+- [output](./plugins.LoggerPluginConfig.md#output)
+- [platform](./plugins.LoggerPluginConfig.md#platform)
 
 ## Properties
 
@@ -38,7 +38,7 @@ Logging output config.
 | :------ | :------ | :------ |
 | `console?` | `boolean` | Whether to log to console. |
 | `file?` | `string` | Absolute path to file to log messages to. |
-| `listener?` | (`logEntry`: [`LogEntry`](LogEntry.md)) => `void` | Listener for new messages. |
+| `listener?` | (`logEntry`: [`LogEntry`](./LogEntry.md)) => `void` | Listener for new messages. |
 
 #### Defined in
 

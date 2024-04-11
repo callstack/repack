@@ -9,9 +9,9 @@
 
 ### Methods
 
-- [flush](Reporter.md#flush)
-- [process](Reporter.md#process)
-- [stop](Reporter.md#stop)
+- [flush](./Reporter.md#flush)
+- [process](./Reporter.md#process)
+- [stop](./Reporter.md#stop)
 
 ## Methods
 
@@ -37,7 +37,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `log` | [`LogEntry`](LogEntry.md) |
+| `log` | [`LogEntry`](./LogEntry.md) |
 
 #### Returns
 

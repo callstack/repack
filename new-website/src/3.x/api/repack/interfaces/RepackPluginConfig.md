@@ -6,15 +6,15 @@
 
 ### Properties
 
-- [context](RepackPluginConfig.md#context)
-- [devServer](RepackPluginConfig.md#devserver)
-- [entryName](RepackPluginConfig.md#entryname)
-- [extraChunks](RepackPluginConfig.md#extrachunks)
-- [logger](RepackPluginConfig.md#logger)
-- [mode](RepackPluginConfig.md#mode)
-- [output](RepackPluginConfig.md#output)
-- [platform](RepackPluginConfig.md#platform)
-- [sourceMaps](RepackPluginConfig.md#sourcemaps)
+- [context](./RepackPluginConfig.md#context)
+- [devServer](./RepackPluginConfig.md#devserver)
+- [entryName](./RepackPluginConfig.md#entryname)
+- [extraChunks](./RepackPluginConfig.md#extrachunks)
+- [logger](./RepackPluginConfig.md#logger)
+- [mode](./RepackPluginConfig.md#mode)
+- [output](./RepackPluginConfig.md#output)
+- [platform](./RepackPluginConfig.md#platform)
+- [sourceMaps](./RepackPluginConfig.md#sourcemaps)
 
 ## Properties
 
@@ -32,7 +32,7 @@ ___
 
 ### devServer
 
-• `Optional` **devServer**: [`DevServerOptions`](DevServerOptions.md)
+• `Optional` **devServer**: [`DevServerOptions`](./DevServerOptions.md)
 
 Development server configuration options.
 Used to configure `@callstack/repack-dev-server`.
@@ -64,7 +64,7 @@ ___
 Options specifying how to deal with extra chunks generated in the compilation,
 usually by using dynamic `import(...)` function.
 
-Refer to [OutputPluginConfig.extraChunks](plugins.OutputPluginConfig.md#extrachunks) for more details.
+Refer to [OutputPluginConfig.extraChunks](./plugins.OutputPluginConfig.md#extrachunks) for more details.
 
 #### Defined in
 
@@ -74,7 +74,7 @@ ___
 
 ### logger
 
-• `Optional` **logger**: `boolean` \| { `console?`: `boolean` ; `file?`: `string` ; `listener?`: (`logEntry`: [`LogEntry`](LogEntry.md)) => `void`  }
+• `Optional` **logger**: `boolean` \| { `console?`: `boolean` ; `file?`: `string` ; `listener?`: (`logEntry`: [`LogEntry`](./LogEntry.md)) => `void`  }
 
 Options to configure [LoggerPlugin](../classes/plugins.LoggerPlugin.md)'s `output`.
 
@@ -104,7 +104,7 @@ ___
 
 Output options specifying where to save generated bundle, source map and assets.
 
-Refer to [OutputPluginConfig.output](plugins.OutputPluginConfig.md#output) for more details.
+Refer to [OutputPluginConfig.output](./plugins.OutputPluginConfig.md#output) for more details.
 
 #### Type declaration
 

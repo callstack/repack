@@ -15,11 +15,11 @@ tweaks necessary to make the final bundle runnable inside React Native's JavaScr
 
 ### Constructors
 
-- [constructor](plugins.RepackTargetPlugin.md#constructor)
+- [constructor](./plugins.RepackTargetPlugin.md#constructor)
 
 ### Methods
 
-- [apply](plugins.RepackTargetPlugin.md#apply)
+- [apply](./plugins.RepackTargetPlugin.md#apply)
 
 ## Constructors
 

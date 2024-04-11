@@ -14,9 +14,9 @@
 
 ### Properties
 
-- [extensions](plugins.AssetsResolverPluginConfig.md#extensions)
-- [platform](plugins.AssetsResolverPluginConfig.md#platform)
-- [scalableExtensions](plugins.AssetsResolverPluginConfig.md#scalableextensions)
+- [extensions](./plugins.AssetsResolverPluginConfig.md#extensions)
+- [platform](./plugins.AssetsResolverPluginConfig.md#platform)
+- [scalableExtensions](./plugins.AssetsResolverPluginConfig.md#scalableextensions)
 
 ## Properties
 

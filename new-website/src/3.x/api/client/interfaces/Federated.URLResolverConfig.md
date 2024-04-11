@@ -9,8 +9,8 @@ Allows to configure how created [URLResolver](../types/Federated.URLResolver.md)
 
 ### Properties
 
-- [chunks](Federated.URLResolverConfig.md#chunks)
-- [containers](Federated.URLResolverConfig.md#containers)
+- [chunks](./Federated.URLResolverConfig.md#chunks)
+- [containers](./Federated.URLResolverConfig.md#containers)
 
 ## Properties
 

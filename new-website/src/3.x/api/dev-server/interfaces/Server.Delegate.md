@@ -8,18 +8,18 @@ A complete delegate with implementations for all server functionalities.
 
 ### Properties
 
-- [api](Server.Delegate.md#api)
-- [compiler](Server.Delegate.md#compiler)
-- [hmr](Server.Delegate.md#hmr)
-- [logger](Server.Delegate.md#logger)
-- [messages](Server.Delegate.md#messages)
-- [symbolicator](Server.Delegate.md#symbolicator)
+- [api](./Server.Delegate.md#api)
+- [compiler](./Server.Delegate.md#compiler)
+- [hmr](./Server.Delegate.md#hmr)
+- [logger](./Server.Delegate.md#logger)
+- [messages](./Server.Delegate.md#messages)
+- [symbolicator](./Server.Delegate.md#symbolicator)
 
 ## Properties
 
 ### api
 
-• `Optional` **api**: [`Delegate`](Server.Api.Delegate.md)
+• `Optional` **api**: [`Delegate`](./Server.Api.Delegate.md)
 
 An API delegate.
 
@@ -31,7 +31,7 @@ ___
 
 ### compiler
 
-• **compiler**: [`CompilerDelegate`](CompilerDelegate.md)
+• **compiler**: [`CompilerDelegate`](./CompilerDelegate.md)
 
 A compiler delegate.
 
@@ -43,7 +43,7 @@ ___
 
 ### hmr
 
-• **hmr**: [`HmrDelegate`](HmrDelegate.md)
+• **hmr**: [`HmrDelegate`](./HmrDelegate.md)
 
 An HMR delegate.
 
@@ -55,7 +55,7 @@ ___
 
 ### logger
 
-• **logger**: [`LoggerDelegate`](Server.LoggerDelegate.md)
+• **logger**: [`LoggerDelegate`](./Server.LoggerDelegate.md)
 
 A logger delegate.
 
@@ -67,7 +67,7 @@ ___
 
 ### messages
 
-• **messages**: [`MessagesDelegate`](Server.MessagesDelegate.md)
+• **messages**: [`MessagesDelegate`](./Server.MessagesDelegate.md)
 
 An messages delegate.
 
@@ -79,7 +79,7 @@ ___
 
 ### symbolicator
 
-• **symbolicator**: [`SymbolicatorDelegate`](SymbolicatorDelegate.md)
+• **symbolicator**: [`SymbolicatorDelegate`](./SymbolicatorDelegate.md)
 
 A symbolicator delegate.
 

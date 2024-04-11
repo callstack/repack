@@ -8,15 +8,15 @@ Holds all information used by {@link parseCliOptions}.
 
 ### Properties
 
-- [arguments](CliOptions.md#arguments)
-- [command](CliOptions.md#command)
-- [config](CliOptions.md#config)
+- [arguments](./CliOptions.md#arguments)
+- [command](./CliOptions.md#command)
+- [config](./CliOptions.md#config)
 
 ## Properties
 
 ### arguments
 
-• **arguments**: { `bundle`: [`BundleArguments`](BundleArguments.md)  } \| { `start`: [`StartArguments`](StartArguments.md)  }
+• **arguments**: { `bundle`: [`BundleArguments`](./BundleArguments.md)  } \| { `start`: [`StartArguments`](./StartArguments.md)  }
 
 #### Defined in
 

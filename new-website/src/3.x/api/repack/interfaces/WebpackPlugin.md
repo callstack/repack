@@ -21,7 +21,7 @@ Interface that all Webpack plugins should implement.
 
 ### Methods
 
-- [apply](WebpackPlugin.md#apply)
+- [apply](./WebpackPlugin.md#apply)
 
 ## Methods
 

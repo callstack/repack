@@ -6,14 +6,14 @@
 
 ### Properties
 
-- [devServer](GetPublicPathOptions.md#devserver)
-- [platform](GetPublicPathOptions.md#platform)
+- [devServer](./GetPublicPathOptions.md#devserver)
+- [platform](./GetPublicPathOptions.md#platform)
 
 ## Properties
 
 ### devServer
 
-• **devServer**: `Pick`<[`DevServerOptions`](DevServerOptions.md), ``"port"`` \| ``"host"`` \| ``"https"``\>
+• **devServer**: `Pick`<[`DevServerOptions`](./DevServerOptions.md), ``"port"`` \| ``"host"`` \| ``"https"``\>
 
 Development server configuration options.
 

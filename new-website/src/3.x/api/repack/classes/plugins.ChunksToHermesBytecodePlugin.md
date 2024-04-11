@@ -37,11 +37,11 @@ plugins: [
 
 ### Constructors
 
-- [constructor](plugins.ChunksToHermesBytecodePlugin.md#constructor)
+- [constructor](./plugins.ChunksToHermesBytecodePlugin.md#constructor)
 
 ### Methods
 
-- [apply](plugins.ChunksToHermesBytecodePlugin.md#apply)
+- [apply](./plugins.ChunksToHermesBytecodePlugin.md#apply)
 
 ## Constructors
 

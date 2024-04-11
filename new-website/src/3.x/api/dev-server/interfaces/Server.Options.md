@@ -8,10 +8,10 @@ Development server options.
 
 ### Properties
 
-- [host](Server.Options.md#host)
-- [https](Server.Options.md#https)
-- [port](Server.Options.md#port)
-- [rootDir](Server.Options.md#rootdir)
+- [host](./Server.Options.md#host)
+- [https](./Server.Options.md#https)
+- [port](./Server.Options.md#port)
+- [rootDir](./Server.Options.md#rootdir)
 
 ## Properties
 

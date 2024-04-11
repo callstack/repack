@@ -4,7 +4,7 @@
 
 ### Properties
 
-- [priority](ResolverOptions.md#priority)
+- [priority](./ResolverOptions.md#priority)
 
 ## Properties
 

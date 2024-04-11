@@ -6,14 +6,14 @@ Represents results of running {@link process} method on {@link Symbolicator} ins
 
 ### Properties
 
-- [codeFrame](SymbolicatorResults.md#codeframe)
-- [stack](SymbolicatorResults.md#stack)
+- [codeFrame](./SymbolicatorResults.md#codeframe)
+- [stack](./SymbolicatorResults.md#stack)
 
 ## Properties
 
 ### codeFrame
 
-• **codeFrame**: ``null`` \| [`CodeFrame`](CodeFrame.md)
+• **codeFrame**: ``null`` \| [`CodeFrame`](./CodeFrame.md)
 
 #### Defined in
 
@@ -23,7 +23,7 @@ ___
 
 ### stack
 
-• **stack**: [`StackFrame`](StackFrame.md)[]
+• **stack**: [`StackFrame`](./StackFrame.md)[]
 
 #### Defined in
 

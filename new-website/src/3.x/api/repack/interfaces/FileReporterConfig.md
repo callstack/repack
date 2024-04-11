@@ -4,7 +4,7 @@
 
 ### Properties
 
-- [filename](FileReporterConfig.md#filename)
+- [filename](./FileReporterConfig.md#filename)
 
 ## Properties
 

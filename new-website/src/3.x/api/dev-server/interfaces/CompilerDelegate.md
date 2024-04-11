@@ -6,9 +6,9 @@ Delegate with implementation for compiler-specific functions.
 
 ### Methods
 
-- [getAsset](CompilerDelegate.md#getasset)
-- [getMimeType](CompilerDelegate.md#getmimetype)
-- [inferPlatform](CompilerDelegate.md#inferplatform)
+- [getAsset](./CompilerDelegate.md#getasset)
+- [getMimeType](./CompilerDelegate.md#getmimetype)
+- [inferPlatform](./CompilerDelegate.md#inferplatform)
 
 ## Methods
 

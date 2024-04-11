@@ -6,7 +6,7 @@
 
 ## Hierarchy
 
-- `Pick`<[`DevServerOptions`](DevServerOptions.md), ``"hmr"``\>
+- `Pick`<[`DevServerOptions`](./DevServerOptions.md), ``"hmr"``\>
 
   ↳ **`RepackTargetPluginConfig`**
 
@@ -14,7 +14,7 @@
 
 ### Properties
 
-- [hmr](plugins.RepackTargetPluginConfig.md#hmr)
+- [hmr](./plugins.RepackTargetPluginConfig.md#hmr)
 
 ## Properties
 

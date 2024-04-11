@@ -8,17 +8,17 @@ Development server configuration.
 
 ### Properties
 
-- [options](Server.Config.md#options)
+- [options](./Server.Config.md#options)
 
 ### Methods
 
-- [delegate](Server.Config.md#delegate)
+- [delegate](./Server.Config.md#delegate)
 
 ## Properties
 
 ### options
 
-• **options**: [`Options`](Server.Options.md)
+• **options**: [`Options`](./Server.Options.md)
 
 Development server options to configure e.g: `port`, `host` etc.
 
@@ -30,7 +30,7 @@ Development server options to configure e.g: `port`, `host` etc.
 
 ### delegate
 
-▸ **delegate**(`context`): [`Delegate`](Server.Delegate.md)
+▸ **delegate**(`context`): [`Delegate`](./Server.Delegate.md)
 
 Function to create a delegate, which implements crucial functionalities.
 
@@ -38,11 +38,11 @@ Function to create a delegate, which implements crucial functionalities.
 
 | Name | Type |
 | :------ | :------ |
-| `context` | [`DelegateContext`](Server.DelegateContext.md) |
+| `context` | [`DelegateContext`](./Server.DelegateContext.md) |
 
 #### Returns
 
-[`Delegate`](Server.Delegate.md)
+[`Delegate`](./Server.Delegate.md)
 
 #### Defined in
 

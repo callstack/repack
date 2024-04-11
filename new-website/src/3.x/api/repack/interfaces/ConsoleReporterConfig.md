@@ -4,9 +4,9 @@
 
 ### Properties
 
-- [asJson](ConsoleReporterConfig.md#asjson)
-- [isWorker](ConsoleReporterConfig.md#isworker)
-- [level](ConsoleReporterConfig.md#level)
+- [asJson](./ConsoleReporterConfig.md#asjson)
+- [isWorker](./ConsoleReporterConfig.md#isworker)
+- [level](./ConsoleReporterConfig.md#level)
 
 ## Properties
 

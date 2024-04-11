@@ -6,9 +6,9 @@
 
 ### Enumeration Members
 
-- [BuildEnd](Internal.EventTypes.md#buildend)
-- [BuildStart](Internal.EventTypes.md#buildstart)
-- [HmrEvent](Internal.EventTypes.md#hmrevent)
+- [BuildEnd](./Internal.EventTypes.md#buildend)
+- [BuildStart](./Internal.EventTypes.md#buildstart)
+- [HmrEvent](./Internal.EventTypes.md#hmrevent)
 
 ## Enumeration Members
 

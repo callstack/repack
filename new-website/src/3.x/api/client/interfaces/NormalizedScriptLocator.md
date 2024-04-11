@@ -8,15 +8,15 @@ Internal representation of script locator data.
 
 ### Properties
 
-- [absolute](NormalizedScriptLocator.md#absolute)
-- [body](NormalizedScriptLocator.md#body)
-- [fetch](NormalizedScriptLocator.md#fetch)
-- [headers](NormalizedScriptLocator.md#headers)
-- [method](NormalizedScriptLocator.md#method)
-- [query](NormalizedScriptLocator.md#query)
-- [timeout](NormalizedScriptLocator.md#timeout)
-- [url](NormalizedScriptLocator.md#url)
-- [verifyScriptSignature](NormalizedScriptLocator.md#verifyscriptsignature)
+- [absolute](./NormalizedScriptLocator.md#absolute)
+- [body](./NormalizedScriptLocator.md#body)
+- [fetch](./NormalizedScriptLocator.md#fetch)
+- [headers](./NormalizedScriptLocator.md#headers)
+- [method](./NormalizedScriptLocator.md#method)
+- [query](./NormalizedScriptLocator.md#query)
+- [timeout](./NormalizedScriptLocator.md#timeout)
+- [url](./NormalizedScriptLocator.md#url)
+- [verifyScriptSignature](./NormalizedScriptLocator.md#verifyscriptsignature)
 
 ## Properties
 

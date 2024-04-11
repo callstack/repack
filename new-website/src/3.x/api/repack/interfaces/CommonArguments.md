@@ -8,18 +8,18 @@ Common CLI arguments that are used across all commands.
 
 - **`CommonArguments`**
 
-  ↳ [`BundleArguments`](BundleArguments.md)
+  ↳ [`BundleArguments`](./BundleArguments.md)
 
-  ↳ [`StartArguments`](StartArguments.md)
+  ↳ [`StartArguments`](./StartArguments.md)
 
 ## Table of contents
 
 ### Properties
 
-- [platform](CommonArguments.md#platform)
-- [resetCache](CommonArguments.md#resetcache)
-- [verbose](CommonArguments.md#verbose)
-- [webpackConfig](CommonArguments.md#webpackconfig)
+- [platform](./CommonArguments.md#platform)
+- [resetCache](./CommonArguments.md#resetcache)
+- [verbose](./CommonArguments.md#verbose)
+- [webpackConfig](./CommonArguments.md#webpackconfig)
 
 ## Properties
 

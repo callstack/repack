@@ -7,19 +7,19 @@ It represents the output of [ScriptLocatorResolver](../types/ScriptLocatorResolv
 
 ### Properties
 
-- [absolute](ScriptLocator.md#absolute)
-- [body](ScriptLocator.md#body)
-- [cache](ScriptLocator.md#cache)
-- [headers](ScriptLocator.md#headers)
-- [method](ScriptLocator.md#method)
-- [query](ScriptLocator.md#query)
-- [timeout](ScriptLocator.md#timeout)
-- [url](ScriptLocator.md#url)
-- [verifyScriptSignature](ScriptLocator.md#verifyscriptsignature)
+- [absolute](./ScriptLocator.md#absolute)
+- [body](./ScriptLocator.md#body)
+- [cache](./ScriptLocator.md#cache)
+- [headers](./ScriptLocator.md#headers)
+- [method](./ScriptLocator.md#method)
+- [query](./ScriptLocator.md#query)
+- [timeout](./ScriptLocator.md#timeout)
+- [url](./ScriptLocator.md#url)
+- [verifyScriptSignature](./ScriptLocator.md#verifyscriptsignature)
 
 ### Methods
 
-- [shouldUpdateScript](ScriptLocator.md#shouldupdatescript)
+- [shouldUpdateScript](./ScriptLocator.md#shouldupdatescript)
 
 ## Properties
 
@@ -140,7 +140,7 @@ ___
 
 ### url
 
-• **url**: `string` \| (`webpackContext`: [`WebpackContext`](WebpackContext.md)) => `string`
+• **url**: `string` \| (`webpackContext`: [`WebpackContext`](./WebpackContext.md)) => `string`
 
 A path-only URL to remote location, where to download a script from.
 

@@ -8,8 +8,8 @@ Represent Hot Module Replacement Update message.
 
 ### Properties
 
-- [action](HMRMessage.md#action)
-- [body](HMRMessage.md#body)
+- [action](./HMRMessage.md#action)
+- [body](./HMRMessage.md#body)
 
 ## Properties
 
@@ -25,7 +25,7 @@ ___
 
 ### body
 
-• **body**: ``null`` \| [`HMRMessageBody`](HMRMessageBody.md)
+• **body**: ``null`` \| [`HMRMessageBody`](./HMRMessageBody.md)
 
 #### Defined in
 

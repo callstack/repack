@@ -12,11 +12,11 @@ Class for setting up Hot Module Replacement and React Refresh support using `@pm
 
 ### Constructors
 
-- [constructor](plugins.ReactRefreshPlugin.md#constructor)
+- [constructor](./plugins.ReactRefreshPlugin.md#constructor)
 
 ### Methods
 
-- [apply](plugins.ReactRefreshPlugin.md#apply)
+- [apply](./plugins.ReactRefreshPlugin.md#apply)
 
 ## Constructors
 

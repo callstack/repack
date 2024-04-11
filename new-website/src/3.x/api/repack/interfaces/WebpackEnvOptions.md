@@ -9,16 +9,16 @@ This is the return type of {@link parseCliOptions}.
 
 ### Properties
 
-- [assetsPath](WebpackEnvOptions.md#assetspath)
-- [bundleFilename](WebpackEnvOptions.md#bundlefilename)
-- [context](WebpackEnvOptions.md#context)
-- [devServer](WebpackEnvOptions.md#devserver)
-- [entry](WebpackEnvOptions.md#entry)
-- [minimize](WebpackEnvOptions.md#minimize)
-- [mode](WebpackEnvOptions.md#mode)
-- [platform](WebpackEnvOptions.md#platform)
-- [reactNativePath](WebpackEnvOptions.md#reactnativepath)
-- [sourceMapFilename](WebpackEnvOptions.md#sourcemapfilename)
+- [assetsPath](./WebpackEnvOptions.md#assetspath)
+- [bundleFilename](./WebpackEnvOptions.md#bundlefilename)
+- [context](./WebpackEnvOptions.md#context)
+- [devServer](./WebpackEnvOptions.md#devserver)
+- [entry](./WebpackEnvOptions.md#entry)
+- [minimize](./WebpackEnvOptions.md#minimize)
+- [mode](./WebpackEnvOptions.md#mode)
+- [platform](./WebpackEnvOptions.md#platform)
+- [reactNativePath](./WebpackEnvOptions.md#reactnativepath)
+- [sourceMapFilename](./WebpackEnvOptions.md#sourcemapfilename)
 
 ## Properties
 
@@ -60,7 +60,7 @@ ___
 
 ### devServer
 
-• `Optional` **devServer**: [`DevServerOptions`](DevServerOptions.md)
+• `Optional` **devServer**: [`DevServerOptions`](./DevServerOptions.md)
 
 Development server configuration options.
 Used to configure `@callstack/repack-dev-server`.

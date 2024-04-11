@@ -8,7 +8,7 @@ Delegate with implementation for logging functions.
 
 ### Methods
 
-- [onMessage](Server.LoggerDelegate.md#onmessage)
+- [onMessage](./Server.LoggerDelegate.md#onmessage)
 
 ## Methods
 

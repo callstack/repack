@@ -8,12 +8,12 @@ Represent Hot Module Replacement Update body.
 
 ### Properties
 
-- [errors](HMRMessageBody.md#errors)
-- [hash](HMRMessageBody.md#hash)
-- [modules](HMRMessageBody.md#modules)
-- [name](HMRMessageBody.md#name)
-- [time](HMRMessageBody.md#time)
-- [warnings](HMRMessageBody.md#warnings)
+- [errors](./HMRMessageBody.md#errors)
+- [hash](./HMRMessageBody.md#hash)
+- [modules](./HMRMessageBody.md#modules)
+- [name](./HMRMessageBody.md#name)
+- [time](./HMRMessageBody.md#time)
+- [warnings](./HMRMessageBody.md#warnings)
 
 ## Properties
 

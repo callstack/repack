@@ -8,15 +8,15 @@ Delegate with implementation for API endpoints.
 
 ### Methods
 
-- [getAssets](Server.Api.Delegate.md#getassets)
-- [getCompilationStats](Server.Api.Delegate.md#getcompilationstats)
-- [getPlatforms](Server.Api.Delegate.md#getplatforms)
+- [getAssets](./Server.Api.Delegate.md#getassets)
+- [getCompilationStats](./Server.Api.Delegate.md#getcompilationstats)
+- [getPlatforms](./Server.Api.Delegate.md#getplatforms)
 
 ## Methods
 
 ### getAssets
 
-▸ **getAssets**(`platform`): `Promise`<[`Asset`](Server.Api.Asset.md)[]\>
+▸ **getAssets**(`platform`): `Promise`<[`Asset`](./Server.Api.Asset.md)[]\>
 
 Get all assets from compilation for given platform.
 Should return `[]` if the compilation does not exists for given platform.
@@ -29,7 +29,7 @@ Should return `[]` if the compilation does not exists for given platform.
 
 #### Returns
 
-`Promise`<[`Asset`](Server.Api.Asset.md)[]\>
+`Promise`<[`Asset`](./Server.Api.Asset.md)[]\>
 
 #### Defined in
 
@@ -39,7 +39,7 @@ ___
 
 ### getCompilationStats
 
-▸ **getCompilationStats**(`platform`): `Promise`<``null`` \| [`CompilationStats`](Server.Api.CompilationStats.md)\>
+▸ **getCompilationStats**(`platform`): `Promise`<``null`` \| [`CompilationStats`](./Server.Api.CompilationStats.md)\>
 
 Get compilation stats for a given platform.
 Should return `null` if the compilation does not exists for given platform.
@@ -52,7 +52,7 @@ Should return `null` if the compilation does not exists for given platform.
 
 #### Returns
 
-`Promise`<``null`` \| [`CompilationStats`](Server.Api.CompilationStats.md)\>
+`Promise`<``null`` \| [`CompilationStats`](./Server.Api.CompilationStats.md)\>
 
 #### Defined in
 

@@ -8,10 +8,10 @@
 
 ### Properties
 
-- [enabled](plugins.CodeSigningPluginConfig.md#enabled)
-- [excludeChunks](plugins.CodeSigningPluginConfig.md#excludechunks)
-- [outputPath](plugins.CodeSigningPluginConfig.md#outputpath)
-- [privateKeyPath](plugins.CodeSigningPluginConfig.md#privatekeypath)
+- [enabled](./plugins.CodeSigningPluginConfig.md#enabled)
+- [excludeChunks](./plugins.CodeSigningPluginConfig.md#excludechunks)
+- [outputPath](./plugins.CodeSigningPluginConfig.md#outputpath)
+- [privateKeyPath](./plugins.CodeSigningPluginConfig.md#privatekeypath)
 
 ## Properties
 

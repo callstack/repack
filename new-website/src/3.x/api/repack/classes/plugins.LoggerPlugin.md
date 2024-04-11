@@ -13,17 +13,17 @@ progress as well as debug logs from other plugins and resolvers.
 
 ### Constructors
 
-- [constructor](plugins.LoggerPlugin.md#constructor)
+- [constructor](./plugins.LoggerPlugin.md#constructor)
 
 ### Properties
 
-- [reporter](plugins.LoggerPlugin.md#reporter)
+- [reporter](./plugins.LoggerPlugin.md#reporter)
 
 ### Methods
 
-- [apply](plugins.LoggerPlugin.md#apply)
-- [createEntry](plugins.LoggerPlugin.md#createentry)
-- [processEntry](plugins.LoggerPlugin.md#processentry)
+- [apply](./plugins.LoggerPlugin.md#apply)
+- [createEntry](./plugins.LoggerPlugin.md#createentry)
+- [processEntry](./plugins.LoggerPlugin.md#processentry)
 
 ## Constructors
 
@@ -114,7 +114,7 @@ ___
 
 ▸ **processEntry**(`entry`): `void`
 
-Process log entry and pass it to [reporter](plugins.LoggerPlugin.md#reporter) instance.
+Process log entry and pass it to [reporter](./plugins.LoggerPlugin.md#reporter) instance.
 
 #### Parameters
 

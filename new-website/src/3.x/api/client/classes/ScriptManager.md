@@ -61,55 +61,55 @@ export function App({ role }) {
 
 ### Constructors
 
-- [constructor](ScriptManager.md#constructor)
+- [constructor](./ScriptManager.md#constructor)
 
 ### Properties
 
-- [cache](ScriptManager.md#cache)
-- [cacheInitialized](ScriptManager.md#cacheinitialized)
-- [resolvers](ScriptManager.md#resolvers)
-- [storage](ScriptManager.md#storage)
-- [captureRejectionSymbol](ScriptManager.md#capturerejectionsymbol)
-- [captureRejections](ScriptManager.md#capturerejections)
-- [defaultMaxListeners](ScriptManager.md#defaultmaxlisteners)
-- [errorMonitor](ScriptManager.md#errormonitor)
+- [cache](./ScriptManager.md#cache)
+- [cacheInitialized](./ScriptManager.md#cacheinitialized)
+- [resolvers](./ScriptManager.md#resolvers)
+- [storage](./ScriptManager.md#storage)
+- [captureRejectionSymbol](./ScriptManager.md#capturerejectionsymbol)
+- [captureRejections](./ScriptManager.md#capturerejections)
+- [defaultMaxListeners](./ScriptManager.md#defaultmaxlisteners)
+- [errorMonitor](./ScriptManager.md#errormonitor)
 
 ### Accessors
 
-- [shared](ScriptManager.md#shared)
+- [shared](./ScriptManager.md#shared)
 
 ### Methods
 
-- [\_\_destroy](ScriptManager.md#__destroy)
-- [addListener](ScriptManager.md#addlistener)
-- [addResolver](ScriptManager.md#addresolver)
-- [emit](ScriptManager.md#emit)
-- [eventNames](ScriptManager.md#eventnames)
-- [getMaxListeners](ScriptManager.md#getmaxlisteners)
-- [handleError](ScriptManager.md#handleerror)
-- [initCache](ScriptManager.md#initcache)
-- [invalidateScripts](ScriptManager.md#invalidatescripts)
-- [listenerCount](ScriptManager.md#listenercount)
-- [listeners](ScriptManager.md#listeners)
-- [loadScript](ScriptManager.md#loadscript)
-- [off](ScriptManager.md#off)
-- [on](ScriptManager.md#on)
-- [once](ScriptManager.md#once)
-- [prefetchScript](ScriptManager.md#prefetchscript)
-- [prependListener](ScriptManager.md#prependlistener)
-- [prependOnceListener](ScriptManager.md#prependoncelistener)
-- [rawListeners](ScriptManager.md#rawlisteners)
-- [removeAllListeners](ScriptManager.md#removealllisteners)
-- [removeAllResolvers](ScriptManager.md#removeallresolvers)
-- [removeListener](ScriptManager.md#removelistener)
-- [removeResolver](ScriptManager.md#removeresolver)
-- [resolveScript](ScriptManager.md#resolvescript)
-- [saveCache](ScriptManager.md#savecache)
-- [setMaxListeners](ScriptManager.md#setmaxlisteners)
-- [setStorage](ScriptManager.md#setstorage)
-- [listenerCount](ScriptManager.md#listenercount-1)
-- [on](ScriptManager.md#on-1)
-- [once](ScriptManager.md#once-1)
+- [\_\_destroy](./ScriptManager.md#__destroy)
+- [addListener](./ScriptManager.md#addlistener)
+- [addResolver](./ScriptManager.md#addresolver)
+- [emit](./ScriptManager.md#emit)
+- [eventNames](./ScriptManager.md#eventnames)
+- [getMaxListeners](./ScriptManager.md#getmaxlisteners)
+- [handleError](./ScriptManager.md#handleerror)
+- [initCache](./ScriptManager.md#initcache)
+- [invalidateScripts](./ScriptManager.md#invalidatescripts)
+- [listenerCount](./ScriptManager.md#listenercount)
+- [listeners](./ScriptManager.md#listeners)
+- [loadScript](./ScriptManager.md#loadscript)
+- [off](./ScriptManager.md#off)
+- [on](./ScriptManager.md#on)
+- [once](./ScriptManager.md#once)
+- [prefetchScript](./ScriptManager.md#prefetchscript)
+- [prependListener](./ScriptManager.md#prependlistener)
+- [prependOnceListener](./ScriptManager.md#prependoncelistener)
+- [rawListeners](./ScriptManager.md#rawlisteners)
+- [removeAllListeners](./ScriptManager.md#removealllisteners)
+- [removeAllResolvers](./ScriptManager.md#removeallresolvers)
+- [removeListener](./ScriptManager.md#removelistener)
+- [removeResolver](./ScriptManager.md#removeresolver)
+- [resolveScript](./ScriptManager.md#resolvescript)
+- [saveCache](./ScriptManager.md#savecache)
+- [setMaxListeners](./ScriptManager.md#setmaxlisteners)
+- [setStorage](./ScriptManager.md#setstorage)
+- [listenerCount](./ScriptManager.md#listenercount-1)
+- [on](./ScriptManager.md#on-1)
+- [once](./ScriptManager.md#once-1)
 
 ## Constructors
 
@@ -181,7 +181,7 @@ ___
 
 ### captureRejectionSymbol
 
-▪ `Static` `Readonly` **captureRejectionSymbol**: typeof [`captureRejectionSymbol`](ScriptManager.md#capturerejectionsymbol)
+▪ `Static` `Readonly` **captureRejectionSymbol**: typeof [`captureRejectionSymbol`](./ScriptManager.md#capturerejectionsymbol)
 
 #### Inherited from
 
@@ -225,7 +225,7 @@ ___
 
 ### errorMonitor
 
-▪ `Static` `Readonly` **errorMonitor**: typeof [`errorMonitor`](ScriptManager.md#errormonitor)
+▪ `Static` `Readonly` **errorMonitor**: typeof [`errorMonitor`](./ScriptManager.md#errormonitor)
 
 This symbol shall be used to install a listener for only monitoring `'error'`
 events. Listeners installed using this symbol are called before the regular
@@ -247,11 +247,11 @@ node_modules/@types/node/events.d.ts:37
 
 ### shared
 
-• `Static` `get` **shared**(): [`ScriptManager`](ScriptManager.md)
+• `Static` `get` **shared**(): [`ScriptManager`](./ScriptManager.md)
 
 #### Returns
 
-[`ScriptManager`](ScriptManager.md)
+[`ScriptManager`](./ScriptManager.md)
 
 #### Defined in
 
@@ -275,7 +275,7 @@ ___
 
 ### addListener
 
-▸ **addListener**(`event`, `listener`): [`ScriptManager`](ScriptManager.md)
+▸ **addListener**(`event`, `listener`): [`ScriptManager`](./ScriptManager.md)
 
 #### Parameters
 
@@ -286,7 +286,7 @@ ___
 
 #### Returns
 
-[`ScriptManager`](ScriptManager.md)
+[`ScriptManager`](./ScriptManager.md)
 
 #### Inherited from
 
@@ -305,7 +305,7 @@ ___
 Adds new script locator resolver.
 
 Resolver is an async function to resolve script locator data - in other words, it's a function to
-tell the [ScriptManager](ScriptManager.md) how to fetch the script.
+tell the [ScriptManager](./ScriptManager.md) how to fetch the script.
 
 There's no limitation on what logic you can run inside this function - it can include:
 - fetching/loading remote config
@@ -432,7 +432,7 @@ ___
 
 ▸ **invalidateScripts**(`scriptIds?`): `Promise`<`void`\>
 
-Clears the cache (if configured in [ScriptManager.setStorage](ScriptManager.md#setstorage)) and removes downloaded
+Clears the cache (if configured in [ScriptManager.setStorage](./ScriptManager.md#setstorage)) and removes downloaded
 files for given scripts from the filesystem. This function can be awaited to detect if the
 scripts were invalidated and for error handling.
 
@@ -536,7 +536,7 @@ ___
 
 ### off
 
-▸ **off**(`event`, `listener`): [`ScriptManager`](ScriptManager.md)
+▸ **off**(`event`, `listener`): [`ScriptManager`](./ScriptManager.md)
 
 #### Parameters
 
@@ -547,7 +547,7 @@ ___
 
 #### Returns
 
-[`ScriptManager`](ScriptManager.md)
+[`ScriptManager`](./ScriptManager.md)
 
 #### Inherited from
 
@@ -561,7 +561,7 @@ ___
 
 ### on
 
-▸ **on**(`event`, `listener`): [`ScriptManager`](ScriptManager.md)
+▸ **on**(`event`, `listener`): [`ScriptManager`](./ScriptManager.md)
 
 #### Parameters
 
@@ -572,7 +572,7 @@ ___
 
 #### Returns
 
-[`ScriptManager`](ScriptManager.md)
+[`ScriptManager`](./ScriptManager.md)
 
 #### Inherited from
 
@@ -586,7 +586,7 @@ ___
 
 ### once
 
-▸ **once**(`event`, `listener`): [`ScriptManager`](ScriptManager.md)
+▸ **once**(`event`, `listener`): [`ScriptManager`](./ScriptManager.md)
 
 #### Parameters
 
@@ -597,7 +597,7 @@ ___
 
 #### Returns
 
-[`ScriptManager`](ScriptManager.md)
+[`ScriptManager`](./ScriptManager.md)
 
 #### Inherited from
 
@@ -639,7 +639,7 @@ ___
 
 ### prependListener
 
-▸ **prependListener**(`event`, `listener`): [`ScriptManager`](ScriptManager.md)
+▸ **prependListener**(`event`, `listener`): [`ScriptManager`](./ScriptManager.md)
 
 #### Parameters
 
@@ -650,7 +650,7 @@ ___
 
 #### Returns
 
-[`ScriptManager`](ScriptManager.md)
+[`ScriptManager`](./ScriptManager.md)
 
 #### Inherited from
 
@@ -664,7 +664,7 @@ ___
 
 ### prependOnceListener
 
-▸ **prependOnceListener**(`event`, `listener`): [`ScriptManager`](ScriptManager.md)
+▸ **prependOnceListener**(`event`, `listener`): [`ScriptManager`](./ScriptManager.md)
 
 #### Parameters
 
@@ -675,7 +675,7 @@ ___
 
 #### Returns
 
-[`ScriptManager`](ScriptManager.md)
+[`ScriptManager`](./ScriptManager.md)
 
 #### Inherited from
 
@@ -713,7 +713,7 @@ ___
 
 ### removeAllListeners
 
-▸ **removeAllListeners**(`event?`): [`ScriptManager`](ScriptManager.md)
+▸ **removeAllListeners**(`event?`): [`ScriptManager`](./ScriptManager.md)
 
 #### Parameters
 
@@ -723,7 +723,7 @@ ___
 
 #### Returns
 
-[`ScriptManager`](ScriptManager.md)
+[`ScriptManager`](./ScriptManager.md)
 
 #### Inherited from
 
@@ -753,7 +753,7 @@ ___
 
 ### removeListener
 
-▸ **removeListener**(`event`, `listener`): [`ScriptManager`](ScriptManager.md)
+▸ **removeListener**(`event`, `listener`): [`ScriptManager`](./ScriptManager.md)
 
 #### Parameters
 
@@ -764,7 +764,7 @@ ___
 
 #### Returns
 
-[`ScriptManager`](ScriptManager.md)
+[`ScriptManager`](./ScriptManager.md)
 
 #### Inherited from
 
@@ -802,9 +802,9 @@ ___
 
 ### resolveScript
 
-▸ **resolveScript**(`scriptId`, `caller?`, `webpackContext?`): `Promise`<[`Script`](Script.md)\>
+▸ **resolveScript**(`scriptId`, `caller?`, `webpackContext?`): `Promise`<[`Script`](./Script.md)\>
 
-Resolves a [Script](Script.md) instance with normalized locator data.
+Resolves a [Script](./Script.md) instance with normalized locator data.
 
 Resolution will use previously added (via `ScriptManager.shared.addResolver(...)`) resolvers
 in series, util one returns a locator data or will throw if no resolver handled the request.
@@ -825,7 +825,7 @@ the script's locator data is resolved.
 
 #### Returns
 
-`Promise`<[`Script`](Script.md)\>
+`Promise`<[`Script`](./Script.md)\>
 
 #### Defined in
 
@@ -849,7 +849,7 @@ ___
 
 ### setMaxListeners
 
-▸ **setMaxListeners**(`n`): [`ScriptManager`](ScriptManager.md)
+▸ **setMaxListeners**(`n`): [`ScriptManager`](./ScriptManager.md)
 
 #### Parameters
 
@@ -859,7 +859,7 @@ ___
 
 #### Returns
 
-[`ScriptManager`](ScriptManager.md)
+[`ScriptManager`](./ScriptManager.md)
 
 #### Inherited from
 

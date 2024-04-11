@@ -4,15 +4,15 @@
 
 Ƭ **DestinationMatchRules**: `Object`
 
-Matching options to check if given [DestinationConfig](plugins.DestinationConfig.md) should be used.
+Matching options to check if given [DestinationConfig](./plugins.DestinationConfig.md) should be used.
 
 #### Type declaration
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `exclude?` | [`Rule`](Rule.md) \| [`Rule`](Rule.md)[] | Rule (string or RegExp) that __MUST NOT__ match the chunk name (or id if name is not available), for the whole `DestinationMatchRules` to match. |
-| `include?` | [`Rule`](Rule.md) \| [`Rule`](Rule.md)[] | Rule (string or RegExp) that must match the chunk name (or id if name is not available), for the whole `DestinationMatchRules` to match. |
-| `test?` | [`Rule`](Rule.md) \| [`Rule`](Rule.md)[] | Rule (string or RegExp) that must match the chunk name (or id if name is not available), for the whole `DestinationMatchRules` to match. |
+| `exclude?` | [`Rule`](./Rule.md) \| [`Rule`](./Rule.md)[] | Rule (string or RegExp) that __MUST NOT__ match the chunk name (or id if name is not available), for the whole `DestinationMatchRules` to match. |
+| `include?` | [`Rule`](./Rule.md) \| [`Rule`](./Rule.md)[] | Rule (string or RegExp) that must match the chunk name (or id if name is not available), for the whole `DestinationMatchRules` to match. |
+| `test?` | [`Rule`](./Rule.md) \| [`Rule`](./Rule.md)[] | Rule (string or RegExp) that must match the chunk name (or id if name is not available), for the whole `DestinationMatchRules` to match. |
 
 #### Defined in
 

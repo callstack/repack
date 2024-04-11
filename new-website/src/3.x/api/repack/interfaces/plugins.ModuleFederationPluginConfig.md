@@ -18,16 +18,16 @@ You can check documentation for all supported options here: https://webpack.js.o
 
 ### Properties
 
-- [exposes](plugins.ModuleFederationPluginConfig.md#exposes)
-- [filename](plugins.ModuleFederationPluginConfig.md#filename)
-- [library](plugins.ModuleFederationPluginConfig.md#library)
-- [name](plugins.ModuleFederationPluginConfig.md#name)
-- [reactNativeDeepImports](plugins.ModuleFederationPluginConfig.md#reactnativedeepimports)
-- [remoteType](plugins.ModuleFederationPluginConfig.md#remotetype)
-- [remotes](plugins.ModuleFederationPluginConfig.md#remotes)
-- [runtime](plugins.ModuleFederationPluginConfig.md#runtime)
-- [shareScope](plugins.ModuleFederationPluginConfig.md#sharescope)
-- [shared](plugins.ModuleFederationPluginConfig.md#shared)
+- [exposes](./plugins.ModuleFederationPluginConfig.md#exposes)
+- [filename](./plugins.ModuleFederationPluginConfig.md#filename)
+- [library](./plugins.ModuleFederationPluginConfig.md#library)
+- [name](./plugins.ModuleFederationPluginConfig.md#name)
+- [reactNativeDeepImports](./plugins.ModuleFederationPluginConfig.md#reactnativedeepimports)
+- [remoteType](./plugins.ModuleFederationPluginConfig.md#remotetype)
+- [remotes](./plugins.ModuleFederationPluginConfig.md#remotes)
+- [runtime](./plugins.ModuleFederationPluginConfig.md#runtime)
+- [shareScope](./plugins.ModuleFederationPluginConfig.md#sharescope)
+- [shared](./plugins.ModuleFederationPluginConfig.md#shared)
 
 ## Properties
 

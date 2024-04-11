@@ -6,16 +6,16 @@ Development server configuration options.
 
 - **`DevServerOptions`**
 
-  ↳ [`ReactRefreshPluginConfig`](plugins.ReactRefreshPluginConfig.md)
+  ↳ [`ReactRefreshPluginConfig`](./plugins.ReactRefreshPluginConfig.md)
 
 ## Table of contents
 
 ### Properties
 
-- [hmr](DevServerOptions.md#hmr)
-- [host](DevServerOptions.md#host)
-- [https](DevServerOptions.md#https)
-- [port](DevServerOptions.md#port)
+- [hmr](./DevServerOptions.md#hmr)
+- [host](./DevServerOptions.md#host)
+- [https](./DevServerOptions.md#https)
+- [port](./DevServerOptions.md#port)
 
 ## Properties
 

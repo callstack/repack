@@ -4,7 +4,7 @@ Final symbolicated stack frame.
 
 ## Hierarchy
 
-- [`InputStackFrame`](InputStackFrame.md)
+- [`InputStackFrame`](./InputStackFrame.md)
 
   ↳ **`StackFrame`**
 
@@ -12,11 +12,11 @@ Final symbolicated stack frame.
 
 ### Properties
 
-- [collapse](StackFrame.md#collapse)
-- [column](StackFrame.md#column)
-- [file](StackFrame.md#file)
-- [lineNumber](StackFrame.md#linenumber)
-- [methodName](StackFrame.md#methodname)
+- [collapse](./StackFrame.md#collapse)
+- [column](./StackFrame.md#column)
+- [file](./StackFrame.md#file)
+- [lineNumber](./StackFrame.md#linenumber)
+- [methodName](./StackFrame.md#methodname)
 
 ## Properties
 
@@ -36,7 +36,7 @@ ___
 
 #### Inherited from
 
-[InputStackFrame](InputStackFrame.md).[column](InputStackFrame.md#column)
+[InputStackFrame](./InputStackFrame.md).[column](./InputStackFrame.md#column)
 
 #### Defined in
 
@@ -50,7 +50,7 @@ ___
 
 #### Inherited from
 
-[InputStackFrame](InputStackFrame.md).[file](InputStackFrame.md#file)
+[InputStackFrame](./InputStackFrame.md).[file](./InputStackFrame.md#file)
 
 #### Defined in
 
@@ -64,7 +64,7 @@ ___
 
 #### Inherited from
 
-[InputStackFrame](InputStackFrame.md).[lineNumber](InputStackFrame.md#linenumber)
+[InputStackFrame](./InputStackFrame.md).[lineNumber](./InputStackFrame.md#linenumber)
 
 #### Defined in
 
@@ -78,7 +78,7 @@ ___
 
 #### Inherited from
 
-[InputStackFrame](InputStackFrame.md).[methodName](InputStackFrame.md#methodname)
+[InputStackFrame](./InputStackFrame.md).[methodName](./InputStackFrame.md#methodname)
 
 #### Defined in
 

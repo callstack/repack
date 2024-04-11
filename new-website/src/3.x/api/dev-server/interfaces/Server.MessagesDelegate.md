@@ -8,8 +8,8 @@ Delegate with implementation for messages used in route handlers.
 
 ### Methods
 
-- [getHello](Server.MessagesDelegate.md#gethello)
-- [getStatus](Server.MessagesDelegate.md#getstatus)
+- [getHello](./Server.MessagesDelegate.md#gethello)
+- [getStatus](./Server.MessagesDelegate.md#getstatus)
 
 ## Methods
 

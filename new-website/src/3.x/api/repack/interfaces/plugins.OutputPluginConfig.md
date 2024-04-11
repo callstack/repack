@@ -8,12 +8,12 @@
 
 ### Properties
 
-- [context](plugins.OutputPluginConfig.md#context)
-- [enabled](plugins.OutputPluginConfig.md#enabled)
-- [entryName](plugins.OutputPluginConfig.md#entryname)
-- [extraChunks](plugins.OutputPluginConfig.md#extrachunks)
-- [output](plugins.OutputPluginConfig.md#output)
-- [platform](plugins.OutputPluginConfig.md#platform)
+- [context](./plugins.OutputPluginConfig.md#context)
+- [enabled](./plugins.OutputPluginConfig.md#enabled)
+- [entryName](./plugins.OutputPluginConfig.md#entryname)
+- [extraChunks](./plugins.OutputPluginConfig.md#extrachunks)
+- [output](./plugins.OutputPluginConfig.md#output)
+- [platform](./plugins.OutputPluginConfig.md#platform)
 
 ## Properties
 

@@ -72,11 +72,11 @@ new Repack.plugins.ModuleFederationPlugin({
 
 ### Constructors
 
-- [constructor](plugins.ModuleFederationPlugin.md#constructor)
+- [constructor](./plugins.ModuleFederationPlugin.md#constructor)
 
 ### Methods
 
-- [apply](plugins.ModuleFederationPlugin.md#apply)
+- [apply](./plugins.ModuleFederationPlugin.md#apply)
 
 ## Constructors
 

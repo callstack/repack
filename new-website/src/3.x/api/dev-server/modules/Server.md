@@ -4,7 +4,7 @@
 
 ### Namespaces
 
-- [Api](Server.Api.md)
+- [Api](./Server.Api.md)
 
 ### Interfaces
 

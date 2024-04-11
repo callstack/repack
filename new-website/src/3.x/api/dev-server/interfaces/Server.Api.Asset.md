@@ -12,8 +12,8 @@ A compilation asset representation for API clients.
 
 ### Properties
 
-- [name](Server.Api.Asset.md#name)
-- [size](Server.Api.Asset.md#size)
+- [name](./Server.Api.Asset.md#name)
+- [size](./Server.Api.Asset.md#size)
 
 ## Properties
 

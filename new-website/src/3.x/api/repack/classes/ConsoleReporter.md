@@ -8,13 +8,13 @@
 
 ### Constructors
 
-- [constructor](ConsoleReporter.md#constructor)
+- [constructor](./ConsoleReporter.md#constructor)
 
 ### Methods
 
-- [flush](ConsoleReporter.md#flush)
-- [process](ConsoleReporter.md#process)
-- [stop](ConsoleReporter.md#stop)
+- [flush](./ConsoleReporter.md#flush)
+- [process](./ConsoleReporter.md#process)
+- [stop](./ConsoleReporter.md#stop)
 
 ## Constructors
 
