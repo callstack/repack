@@ -2,11 +2,11 @@
 
 The specific implementation of Code Splitting in your application can be different and should account for your project's specific needs, requirements and limitations.
 
-In general, we can identify 3 main categories of implementation. All of those approaches are based on the same underlying mechanism: Re.Pack's [`ScriptManager`](../api/repack/client/classes/ScriptManager) and the native module for it.
+In general, we can identify 3 main categories of implementation. All of those approaches are based on the same underlying mechanism: Re.Pack's [`ScriptManager`](../../api/repack/client/classes/ScriptManager) and the native module for it.
 
 :::caution
 
-Because Code Splitting support is based on the native module, you need to be able to compile the native code in your project, meaning you cannot use it with Expo. 
+Because Code Splitting support is based on the native module, you need to be able to compile the native code in your project, meaning you cannot use it with Expo.
 
 It might be possible to use it in an ejected Expo app, but that scenario is not officially supported.
 
@@ -21,16 +21,16 @@ Use [Glossary of terms](./glossary) to better understand the content of this doc
 ## Generic usage
 
 On a high-level, all functionalities that enable usage of Webpack's Code Splitting, are powered by
-Re.Pack's [`ScriptManager`](../api/repack/client/classes/ScriptManager), which consists of the JavaScript part and the native part.
+Re.Pack's [`ScriptManager`](../../api/repack/client/classes/ScriptManager), which consists of the JavaScript part and the native part.
 
-The [`ScriptManager`](../api/repack/client/classes/ScriptManager) has methods which allows to:
+The [`ScriptManager`](../../api/repack/client/classes/ScriptManager) has methods which allows to:
 
-1. Download and execute script - [`loadScript`](../api/repack/client/classes/ScriptManager#loadscript)
-2. Prefetch script (without executing immediately) - [`prefetchScript`](../api/repack/client/classes/ScriptManager#prefetchscript)
-3. Resolve script location - [`resolveScript`](../api/repack/client/classes/ScriptManager#resolvescript)
-4. Invalidate cache - [`invalidateScripts`](../api/repack/client/classes/ScriptManager#invalidatescripts)
+1. Download and execute script - [`loadScript`](../../api/repack/client/classes/ScriptManager#loadscript)
+2. Prefetch script (without executing immediately) - [`prefetchScript`](../../api/repack/client/classes/ScriptManager#prefetchscript)
+3. Resolve script location - [`resolveScript`](../../api/repack/client/classes/ScriptManager#resolvescript)
+4. Invalidate cache - [`invalidateScripts`](../../api/repack/client/classes/ScriptManager#invalidatescripts)
 
-In order to provide this functionalities, a resolver has to be added using [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver):
+In order to provide this functionalities, a resolver has to be added using [`ScriptManager.shared.addResolver`](../../api/repack/client/classes/ScriptManager#addresolver):
 
 ```ts
 import { ScriptManager, Script } from '@callstack/repack/client';
@@ -45,7 +45,9 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
   }
 
   return {
-    url: Script.getRemoteURL(`http://somewhere-on-the-internet.com/${scriptId}`)
+    url: Script.getRemoteURL(
+      `http://somewhere-on-the-internet.com/${scriptId}`
+    ),
   };
 });
 ```
@@ -74,7 +76,7 @@ Under the hood, the way a script gets loaded can be summarized as follows:
 
 :::info
 
-[`ScriptManager.shared.prefetchScript(...)`](../api/repack/client/classes/ScriptManager#prefetchscript) follows
+[`ScriptManager.shared.prefetchScript(...)`](../../api/repack/client/classes/ScriptManager#prefetchscript) follows
 the same behavior except for #6, where it only downloads the file and doesn't execute it.
 
 :::
@@ -155,7 +157,7 @@ To see `import(...)`, `React.lazy` and `React.Suspense` in action, check out
 
 :::caution
 
-Don't forget to add resolver using [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver)!
+Don't forget to add resolver using [`ScriptManager.shared.addResolver`](../../api/repack/client/classes/ScriptManager#addresolver)!
 
 :::
 
@@ -195,7 +197,7 @@ await ScriptManager.shared.loadScript('my-script');
 console.log('Script loaded');
 ```
 
-And adding a resolver to the [`ScriptManager`](../api/repack/client/classes/ScriptManager#addResolver) to resolve your
+And adding a resolver to the [`ScriptManager`](../../api/repack/client/classes/ScriptManager#addResolver) to resolve your
 scripts:
 
 ```js
@@ -204,10 +206,11 @@ import { ScriptManager, Script } from '@callstack/repack/client';
 ScriptManager.shared.addResolver(async (scriptId) => {
   if (scriptId === 'my-script') {
     return {
-      url: Script.getRemoteURL('https://my-domain.dev/my-script.js', { excludeExtension: true }),
+      url: Script.getRemoteURL('https://my-domain.dev/my-script.js', {
+        excludeExtension: true,
+      }),
     };
   }
-
 });
 ```
 

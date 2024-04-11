@@ -102,31 +102,31 @@ It's a recommended way to use Module Federation with Re.Pack. It provides defaul
 For example a `host` config could look similar to:
 
 ```js
-import * as Repack from "@callstack/repack";
+import * as Repack from '@callstack/repack';
 
 // ...
 new Repack.plugins.ModuleFederationPlugin({
-  name: "host",
+  name: 'host',
 });
 ```
 
 And containers:
 
 ```js
-import * as Repack from "@callstack/repack";
+import * as Repack from '@callstack/repack';
 
 new Repack.plugins.ModuleFederationPlugin({
-  name: "app1",
+  name: 'app1',
   remotes: {
-    module1: "module1@https://example.com/module1.container.bundle",
+    module1: 'module1@https://example.com/module1.container.bundle',
   },
 });
 
 new Repack.plugins.ModuleFederationPlugin({
-  name: "app2",
+  name: 'app2',
   remotes: {
-    module1: "module1@https://example.com/module1.container.bundle",
-    module2: "module1@dynamic",
+    module1: 'module1@https://example.com/module1.container.bundle',
+    module2: 'module1@dynamic',
   },
 });
 ```
@@ -137,17 +137,17 @@ In Module Federation with Re.Pack you can choose if you want to have containers 
 
 ### Dynamic containers with `Federated.importModule`
 
-To load dynamic containers you can use [`Federated.importModule`](./api/repack/client/functions/Federated.importModule) and add a resolver for it and it's chunks, for example:
+To load dynamic containers you can use [`Federated.importModule`](../api/repack/client/functions/Federated.importModule) and add a resolver for it and it's chunks, for example:
 
 ```js
-import { ScriptManager, Script, Federated } from "@callstack/repack/client";
+import { ScriptManager, Script, Federated } from '@callstack/repack/client';
 
 // Add resolver
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
   // Create resolve function
   const resolveURL = Federated.createURLResolver({
     containers: {
-      app1: "https://somewhere1.com/[name][ext]",
+      app1: 'https://somewhere1.com/[name][ext]',
     },
   });
 
@@ -160,7 +160,7 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
 
 // Somewhere later...
 // Load container, React.lazy is optional
-const App1 = React.lazy(() => Federated.importModule("app1", "./App"));
+const App1 = React.lazy(() => Federated.importModule('app1', './App'));
 ```
 
 ### Semi-Dynamic containers with `remotes`
@@ -170,14 +170,14 @@ Another way to load container is with `remotes`. You specify what containers wil
 In the code it could look similar to:
 
 ```js
-import { ScriptManager, Script, Federated } from "@callstack/repack/client";
+import { ScriptManager, Script, Federated } from '@callstack/repack/client';
 
 // Add resolver
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
   // Create resolve function
   const resolveURL = Federated.createURLResolver({
     containers: {
-      app1: "https://somewhere1.com/[name][ext]",
+      app1: 'https://somewhere1.com/[name][ext]',
     },
   });
 
@@ -189,7 +189,7 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
 });
 
 // Somewhere later...
-import App1 from "app1/App";
+import App1 from 'app1/App';
 
 // use App1 somehow
 ```
@@ -197,12 +197,12 @@ import App1 from "app1/App";
 And the `remotes` have to be configured inside [`Repack.plugin.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin):
 
 ```js
-import * as Repack from "@callstack/repack";
+import * as Repack from '@callstack/repack';
 
 new Repack.plugins.ModuleFederationPlugin({
-  name: "...",
+  name: '...',
   remotes: {
-    module1: "app1@dynamic",
+    module1: 'app1@dynamic',
   },
 });
 ```
@@ -215,24 +215,24 @@ Keep in mind, `remotes` cannot be used inside Host application: [Host applicatio
 
 ### Static containers with `remotes`
 
-This options is similar to [Semi-Dynamic containers with `remotes`](#semi-dynamic-containers-with-remotes) but doesn't require to manually provide resolver with [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver). Instead, the URL for resolution is specified at build time inside `remotes`:
+This options is similar to [Semi-Dynamic containers with `remotes`](#semi-dynamic-containers-with-remotes) but doesn't require to manually provide resolver with [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver). Instead, the URL for resolution is specified at build time inside `remotes`:
 
 ```js
-import * as Repack from "@callstack/repack";
+import * as Repack from '@callstack/repack';
 
 new Repack.plugins.ModuleFederationPlugin({
-  name: "...",
+  name: '...',
   remotes: {
-    module1: "app1@https://example.com/app1.container.bundle",
+    module1: 'app1@https://example.com/app1.container.bundle',
   },
 });
 ```
 
-This will add a default resolver based on the URL after `@`, so you can import federated module without calling [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver):
+This will add a default resolver based on the URL after `@`, so you can import federated module without calling [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver):
 
 ```js
 // Somewhere later...
-import App1 from "app1/App";
+import App1 from 'app1/App';
 
 // use App1 somehow
 ```
@@ -245,12 +245,12 @@ Keep in mind, `remotes` cannot be used inside Host application: [Host applicatio
 
 ## `ScriptManager`'s resolvers in Module Federation
 
-In Module Federation setup, [`ScriptManager`](./api/repack/client/classes/ScriptManager) can be used in a similar way as you would use it with standard [Code Splitting](./code-splitting/usage).
+In Module Federation setup, [`ScriptManager`](../api/repack/client/classes/ScriptManager) can be used in a similar way as you would use it with standard [Code Splitting](./code-splitting/usage).
 
 The main difference is with resolvers:
 
 - Containers can use `remotes` and provide URLs in plugin configuration (eg `module1@https://example.com/module1.container.bundle`) - this would add a default resolver for container `module1` and it's chunks.
-- Containers can add new resolvers using [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver) or
+- Containers can add new resolvers using [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver) or
   a host application can provide resolver for containers.
 - Async chunks of containers have to be accounted for - there has to be a resolver for e.g `src_App_js` chunk for container `app1` and a resolver for `src_App_js` for container `app2`.
 
@@ -262,21 +262,21 @@ Relevant only when using dynamic/semi-dynamic containers.
 
 :::
 
-When using a single resolver in the host, we recommend to use [`Federated.createURLResolver`](./api/repack/client/functions/Federated.createURLResolver) to reduce boilerplate:
+When using a single resolver in the host, we recommend to use [`Federated.createURLResolver`](../api/repack/client/functions/Federated.createURLResolver) to reduce boilerplate:
 
 ```js
-import { ScriptManager, Script, Federated } from "@callstack/repack/client";
+import { ScriptManager, Script, Federated } from '@callstack/repack/client';
 
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
   // Create resolve function
   const resolveURL = Federated.createURLResolver({
     containers: {
-      app1: "https://somewhere1.com/[name][ext]",
-      app2: "https://somewhere2.com/[name].container.js",
+      app1: 'https://somewhere1.com/[name][ext]',
+      app2: 'https://somewhere2.com/[name].container.js',
     },
     chunks: {
-      main: "https://somewhere3.com/[name][ext]",
-      app2: "https://somewhere2.com/chunks/[name][ext]",
+      main: 'https://somewhere3.com/[name][ext]',
+      app2: 'https://somewhere2.com/chunks/[name][ext]',
     },
   });
 
@@ -307,27 +307,27 @@ Relevant only when using dynamic/semi-dynamic containers.
 
 :::
 
-With multiple resolvers you can call [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver) multiple times in the Host application or have a dedicated resolver per container:
+With multiple resolvers you can call [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver) multiple times in the Host application or have a dedicated resolver per container:
 
 ```js
 // Host
-import { ScriptManager, Script, Federated } from "@callstack/repack/client";
+import { ScriptManager, Script, Federated } from '@callstack/repack/client';
 
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
   // Resolve chunks of host application only
-  if (caller === "main") {
+  if (caller === 'main') {
     return {
       url: Script.getRemoteURL(`https://somewhere3.com/${scriptId}`),
     };
   }
 
   // Resolve entry of app1 container and it's chunks
-  if (scriptId === "app1") {
+  if (scriptId === 'app1') {
     return {
-      url: "https://somewhere1.com/app1.container.bundle",
+      url: 'https://somewhere1.com/app1.container.bundle',
     };
   }
-  if (caller === "app1") {
+  if (caller === 'app1') {
     return {
       url: Script.getRemoteURL(`https://somewhere1.com/${scriptId}`),
     };
@@ -337,16 +337,16 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
 
 ```js
 // app1 container
-import { ScriptManager, Script, Federated } from "@callstack/repack/client";
+import { ScriptManager, Script, Federated } from '@callstack/repack/client';
 
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
   // Resolve entry of module1 container and it's chunks
-  if (scriptId === "module1") {
+  if (scriptId === 'module1') {
     return {
-      url: "https://somewhere4.com/module1.container.bundle",
+      url: 'https://somewhere4.com/module1.container.bundle',
     };
   }
-  if (caller === "module1") {
+  if (caller === 'module1') {
     return {
       url: Script.getRemoteURL(`https://somewhere4.com/${scriptId}`),
     };
@@ -380,7 +380,7 @@ In practice, this means that `react` and `react-native` must be configured insid
 ```js
 /* ... */
 
-import * as Repack from "@callstack/repack";
+import * as Repack from '@callstack/repack';
 
 export default (env) => {
   /* ... */
@@ -396,7 +396,7 @@ export default (env) => {
 
         shared: {
           react: Repack.plugins.SHARED_REACT, // Added by default
-          "react-native": Repack.plugins.SHARED_REACT_NATIVE, // Added by default
+          'react-native': Repack.plugins.SHARED_REACT_NATIVE, // Added by default
         },
       }),
     ],
@@ -410,38 +410,38 @@ In many guides and tutorials, you will find `import('./bootstrap')` inside an en
 it's a recommended way to deal with the `Uncaught Error: Shared module is not available for eager consumption` error (outlined in https://webpack.js.org/concepts/module-federation/#uncaught-error-shared-module-is-not-available-for-eager-consumption).
 This works for Web, because DOM API provides functionalities to load and execute additional JavaScript code out of the box.
 
-However, React Native doesn't provide any APIs to load additional code by default. The only way to execute additional code is to use native module to load it and evaluate on the native side. But, in order to use native modules, the bridge between JavaScript and native has to be established, which happens when React Native initializes the environment. In order words, only after React Native is initialized, it's possible to load and execute additional JavaScript code, which happens through [`ScriptManager`](./api/repack/client/classes/ScriptManager).
+However, React Native doesn't provide any APIs to load additional code by default. The only way to execute additional code is to use native module to load it and evaluate on the native side. But, in order to use native modules, the bridge between JavaScript and native has to be established, which happens when React Native initializes the environment. In order words, only after React Native is initialized, it's possible to load and execute additional JavaScript code, which happens through [`ScriptManager`](../api/repack/client/classes/ScriptManager).
 
 In practice, this means that your entry code should look similar to the following snippet:
 
 ```js
-import { AppRegistry } from "react-native";
-import { ScriptManager, Script } from "@callstack/repack/client";
-import App from "./App";
+import { AppRegistry } from 'react-native';
+import { ScriptManager, Script } from '@callstack/repack/client';
+import App from './App';
 
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
   // ...
 });
 
-AppRegistry.registerComponent("AppName", () => App);
+AppRegistry.registerComponent('AppName', () => App);
 ```
 
 This code can be place inside entry `<projectRoot>/index.js`, but we recommend to put it inside `<projectRoot>/src/bootstrap.{js,ts}` and use a synchronous import statement inside `<projectRoot>/index.js`:
 
 ```js
 // index.js
-import "./src/bootstrap";
+import './src/bootstrap';
 ```
 
 ### Host application can't use `remotes`
 
 Currently, there's a limitation for Host application preventing them from using `remotes` in [`Repack.plugins.ModuleFederationPlugin`](./api/repack/classes/plugins.ModuleFederationPlugin).
 
-In order to load a container from the host, you have to use [`Federated.importModule`](./api/repack/client/functions/Federated.importModule):
+In order to load a container from the host, you have to use [`Federated.importModule`](../api/repack/client/functions/Federated.importModule):
 
 ```js
-import * as React from "react";
-import { ScriptManager, Federated } from "@callstack/repack/client";
+import * as React from 'react';
+import { ScriptManager, Federated } from '@callstack/repack/client';
 
 // Somewhere in the code before `Federated.importModule`,
 // usually before `AppRegistry.registerComponent`
@@ -450,7 +450,7 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
   // ...
 });
 
-const App = React.lazy(() => Federated.importModule("app", "App.js"));
+const App = React.lazy(() => Federated.importModule('app', 'App.js'));
 ```
 
 The code above, will load `app` container, import module `App.js` from it and pass it to `React.lazy`.
@@ -464,7 +464,7 @@ For example, if you want to use `react-native-reanimated`, you must add it to th
 ```js
 /* ... */
 
-import * as Repack from "@callstack/repack";
+import * as Repack from '@callstack/repack';
 
 export default (env) => {
   /* ... */
@@ -480,8 +480,8 @@ export default (env) => {
 
         shared: {
           react: Repack.Federated.SHARED_REACT,
-          "react-native": Repack.Federated.SHARED_REACT,
-          "react-native-reanimated": {
+          'react-native': Repack.Federated.SHARED_REACT,
+          'react-native-reanimated': {
             singleton: true,
           },
         },
@@ -505,13 +505,13 @@ Only relevant when not using `webpack.container.ModuleFederationPlugin` instead 
 
 :::
 
-[`ScriptManager`](./api/repack/client/classes/ScriptManager), which allows to load and evaluate additional JavaScript code (including containers), is an asynchronous API. This means the `remotes` in `ModuleFederationPlugin` must use `promise new Promise(...)` syntax. To avoid repetition and having to maintain `promise new Promise(...)` implementations yourself, Re.Pack provides an abstraction - [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote):
+[`ScriptManager`](../api/repack/client/classes/ScriptManager), which allows to load and evaluate additional JavaScript code (including containers), is an asynchronous API. This means the `remotes` in `ModuleFederationPlugin` must use `promise new Promise(...)` syntax. To avoid repetition and having to maintain `promise new Promise(...)` implementations yourself, Re.Pack provides an abstraction - [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote):
 
 ```js
 /* ... */
 
-import { Federated } from "@callstack/repack";
-import webpack from "webpack";
+import { Federated } from '@callstack/repack';
+import webpack from 'webpack';
 
 export default (env) => {
   /* ... */
@@ -526,8 +526,8 @@ export default (env) => {
         /* ... */
 
         remotes: {
-          app1: Federated.createRemote("app1@dynamic"),
-          app2: Federated.createRemote("app2@dynamic"),
+          app1: Federated.createRemote('app1@dynamic'),
+          app2: Federated.createRemote('app2@dynamic'),
         },
       }),
     ],
@@ -538,15 +538,15 @@ export default (env) => {
 [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote) will make the remote loadable, so you will be able to use import statement for `remotes`:
 
 ```js
-import App1 from "app1/App.js";
-import App1 from "app2/App.js";
+import App1 from 'app1/App.js';
+import App1 from 'app2/App.js';
 ```
 
-The loading code generated by [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote) uses [`ScriptManager`](./api/repack/client/classes/ScriptManager),
-meaning you need to make sure the proper resolvers are added via [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver) so your remotes can be resolved, for example:
+The loading code generated by [`Federated.createRemote` function](./api/repack/functions/Federated.createRemote) uses [`ScriptManager`](../api/repack/client/classes/ScriptManager),
+meaning you need to make sure the proper resolvers are added via [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver) so your remotes can be resolved, for example:
 
 ```js
-import { ScriptManager, Federated } from "@callstack/repack/client";
+import { ScriptManager, Federated } from '@callstack/repack/client';
 
 // Somewhere in the code, usually before `AppRegistry.registerComponent`
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
@@ -559,4 +559,4 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
 
 ## Public Path is unused
 
-Re.Pack doesn't use public path and all chunk resolution as well as dynamic container resolution happens through resolvers added to [`ScriptManager`](./api/repack/client/classes/ScriptManager) via [`ScriptManager.shared.addResolver`](./api/repack/client/classes/ScriptManager#addresolver).
+Re.Pack doesn't use public path and all chunk resolution as well as dynamic container resolution happens through resolvers added to [`ScriptManager`](../api/repack/client/classes/ScriptManager) via [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver).

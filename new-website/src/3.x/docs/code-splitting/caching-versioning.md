@@ -4,11 +4,11 @@ The caching mechanism in Re.Pack prevents scripts over-fetching, which helps red
 bandwidth usage, specially since they can easily take up multiple MBs od data.
 
 Providing `storage` options to
-[`ScriptManager.shared.setStorage`](../api/repack/client/classes/ScriptManager#setstorage) will enable
+[`ScriptManager.shared.setStorage`](../../api/repack/client/classes/ScriptManager#setstorage) will enable
 caching of downloaded script. The `storage` option accepts anything with similar
 API to `AsyncStorage`'s `getItem`, `setItem` and `removeItem` functions.
 
-By default, [`ScriptManager`](../api/repack/client/classes/ScriptManager) will compare the `method`/`url`/`query`/`header` or `body`
+By default, [`ScriptManager`](../../api/repack/client/classes/ScriptManager) will compare the `method`/`url`/`query`/`header` or `body`
 returned by `resolve` with the values stored in `storage` to determine if downloading is
 necessary. Skipping the download will only happen, if the values are equal, meaning you can introduce
 versioning by changing the `url`, for example:
@@ -48,7 +48,7 @@ might end up with broken application or crashes.
 :::
 
 Usually cache invalidation happens automatically, but it's possible to invalidate chunk manually as
-well using [`ScriptManager.shared.invalidateScripts(...)`](../api/repack/client/classes/ScriptManager#invalidatescripts),
+well using [`ScriptManager.shared.invalidateScripts(...)`](../../api/repack/client/classes/ScriptManager#invalidatescripts),
 which removes the scripts from filesystem and from the `storage`.
 
 :::warning

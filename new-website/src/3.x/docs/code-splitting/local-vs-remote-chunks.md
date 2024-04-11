@@ -105,7 +105,7 @@ to always have to download the code (together with the application) they won't n
 All remote chunks are stored under `<projectRoot>/build/output/<platform>/remotes` by default. For example if `button.chunk.bundle` is a remote chunk, it will be stored under:
 `<projectRoot>/build/output/ios/remotes/button.chunk.bundle` for iOS.
 
-You can customize this by providing [`extraChunks`](../api/repack/interfaces/plugins.OutputPluginConfig#extrachunks) to [`RepackPlugin`](../api/repack/classes/RepackPlugin) or [`OutputPlugin`](../api/repack/classes/plugins.OutputPlugin) (if you're not using `RepackPlugin`):
+You can customize this by providing [`extraChunks`](../../api/repack/interfaces/plugins.OutputPluginConfig#extrachunks) to [`RepackPlugin`](../../api/repack/classes/RepackPlugin) or [`OutputPlugin`](../../api/repack/classes/plugins.OutputPlugin) (if you're not using `RepackPlugin`):
 
 ```js
 /* ... */
@@ -160,7 +160,7 @@ Using __local__ chunks with Hermes and bytecode bundles, will likely result __in
 
 :::
 
-You can customize which chunk should be local by providing [`extraChunks`](../api/repack/interfaces/plugins.OutputPluginConfig#extrachunks) option in [`RepackPlugin`](../api/repack/classes/RepackPlugin) or [`OutputPlugin`](../api/repack/classes/plugins.OutputPlugin) (if you're not using `RepackPlugin`) configuration:
+You can customize which chunk should be local by providing [`extraChunks`](../../api/repack/interfaces/plugins.OutputPluginConfig#extrachunks) option in [`RepackPlugin`](../../api/repack/classes/RepackPlugin) or [`OutputPlugin`](../../api/repack/classes/plugins.OutputPlugin) (if you're not using `RepackPlugin`) configuration:
 
 ```js
 /* ... */
@@ -201,7 +201,7 @@ Specifying `extraChunks` will override any defaults - you must configure `remote
 
 :::
 
-Once you have some chunks as local, you need to alter the resolver in [`ScriptManager.shared.addResolver`](../api/repack/client/classes/ScriptManager#addresolver):
+Once you have some chunks as local, you need to alter the resolver in [`ScriptManager.shared.addResolver`](../../api/repack/client/classes/ScriptManager#addresolver):
 
 ```js
 import { ScriptManager, Script } from '@callstack/repack/client';

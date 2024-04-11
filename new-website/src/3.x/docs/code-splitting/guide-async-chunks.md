@@ -111,7 +111,7 @@ module.exports = {
 At this point all the code used by `StudentSide.js` will be put into `student.chunk.bundle` and
 `TeacherSide.js` into `teacher.chunk.bundle`.
 
-Before we can actually render out application, we need to add resolver using [`ScriptManager.shared.addResolver(...)`](../api/repack/client/classes/ScriptManager#addresolver),
+Before we can actually render out application, we need to add resolver using [`ScriptManager.shared.addResolver(...)`](../../api/repack/client/classes/ScriptManager#addresolver),
 so it can resolve the chunks:
 
 ```js
@@ -142,7 +142,7 @@ ScriptManager.shared.addResolver(async (scriptId) => {
 AppRegistry.registerComponent(appName, () => App);
 ```
 
-This code will allow Re.Pack's [`ScriptManager`](../api/repack/client/classes/ScriptManager) to
+This code will allow Re.Pack's [`ScriptManager`](../../api/repack/client/classes/ScriptManager) to
 actually locate your chunks for the student and the teacher, and download them.
 
 When bundling for production/release, all remote chunks, including `student.chunk.bundle` and
