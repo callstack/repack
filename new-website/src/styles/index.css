@@ -6,8 +6,8 @@
 
 :root {
   --rp-c-bg: #ffffff !important;
-  --rp-c-bg-soft: #f9f9f9 !important;
-  --rp-c-bg-mute: #f1f1f1 !important;
+  --rp-c-bg-soft: #f6f6f7 !important;
+  --rp-c-bg-mute: #ececec !important;
 
   --rp-c-divider: rgba(60, 60, 60, 0.29) !important;
   --rp-c-divider-light: rgba(60, 60, 60, 0.12) !important;
@@ -17,7 +17,7 @@
   --rp-c-text-3: rgba(50, 50, 50, 0.6) !important;
   --rp-c-text-4: rgba(50, 50, 50, 0.4) !important;
 
-  --rp-c-text-code: #476573 !important;
+  --rp-c-text-code: var(--rp-c-brand-dark) !important;
 
   --rp-c-brand: #9b6dff !important;
   --rp-c-brand-light: #b89dff !important;
@@ -58,7 +58,7 @@
   --rp-c-text-4: #5c6166 !important;
 
   /* Will be used in overview page */
-  --rp-c-text-code: #c9def1 !important;
+  --rp-c-text-code: var(--rp-c-brand-light) !important;
 }
 
 :root {
