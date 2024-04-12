@@ -8,7 +8,7 @@
     "preview": "rspress preview"
   },
   "dependencies": {
-    "rspress": "^1.18.0",
+    "rspress": "^1.18.1",
     "rspress-plugin-font-open-sans": "^1.0.0"
   },
   "devDependencies": {
