@@ -61,21 +61,6 @@
   --rp-c-text-code: var(--rp-c-brand-light) !important;
 }
 
-:root {
-  --rp-z-index-local-nav: 10 !important;
-  --rp-z-index-nav: 20 !important;
-  --rp-z-index-backdrop: 30 !important;
-  --rp-z-index-sidebar: 40 !important;
-}
-
-:root {
-  --rp-shadow-1: 0 1px 4px rgba(0, 0, 0, 0.02), 0 1px 0 rgba(0, 0, 0, 0.06) !important;
-  --rp-shadow-2: 0 3px 12px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0, 0, 0, 0.07) !important;
-  --rp-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
-  --rp-shadow-4: 0 14px 44px rgba(0, 0, 0, 0.12), 0 3px 9px rgba(0, 0, 0, 0.12) !important;
-  --rp-shadow-5: 0 18px 56px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.16) !important;
-}
-
 /* Code blocks */
 :root {
   --rp-code-block-bg: var(--rp-c-bg-soft);
