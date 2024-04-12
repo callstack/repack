@@ -48,4 +48,7 @@ export default defineConfig({
     },
   },
   plugins: [pluginFontOpenSans()],
+  search: {
+    searchHooks: path.join(__dirname, './search/index.tsx'),
+  },
 });
