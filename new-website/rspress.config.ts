@@ -8,8 +8,8 @@ export default defineConfig({
   description: 'Re.Pack documentation',
   icon: '/img/favicon.ico',
   logo: {
-    light: 'https://re-pack.netlify.app/img/logo_light.svg',
-    dark: 'https://re-pack.netlify.app/img/logo_dark.svg',
+    light: '/img/logo_light.svg',
+    dark: '/img/logo_dark.svg',
   },
   markdown: {
     checkDeadLinks: true,
