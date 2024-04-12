@@ -117,6 +117,17 @@
   --rp-container-danger-text: var(--rp-text-1) !important;
 }
 
+/* Home Page */
+:root {
+  --rp-home-feature-bg: var(--rp-c-bg-soft) !important;
+  --rp-home-feature-hover-bg: var(--rp-c-bg-mute) !important;
+}
+
+.dark {
+  --rp-home-feature-bg: var(--rp-c-bg-mute) !important;
+  --rp-home-feature-hover-bg: var(--rp-c-bg-soft) !important;
+}
+
 /* Nav header */
 .rspress-nav {
   background-color: var(--rp-c-bg-soft) !important;
