@@ -3,7 +3,7 @@ pageType: home
 
 hero:
   name: Re.Pack
-  text: <img src="img/banner.svg">
+  text: <img src="/img/banner.svg">
   tagline: A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.
   image:
     src: /img/undraw_Mobile_app_re_catg.svg
