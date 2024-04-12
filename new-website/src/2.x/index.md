@@ -6,7 +6,7 @@ hero:
   text: <img src="/img/banner.svg">
   tagline: A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.
   image:
-    src: /img/undraw_Mobile_app_re_catg.svg
+    src: /img/undraw_progressive_app_m9ms.svg
     alt: Re.Pack logo
   actions:
     - theme: brand
