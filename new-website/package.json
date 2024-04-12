@@ -1,11 +1,15 @@
 {
-  "name": "rspress-doc-template",
-  "version": "1.0.0",
+  "name": "new-website",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "rspress dev",
     "build": "rspress build",
-    "preview": "rspress preview"
+    "preview": "rspress preview",
+    "start": "pnpm run dev",
+    "export": "pnpm run build",
+    "diff:v1-v2": "git diff origin/nativepack:templates/webpack.config.js origin/2.x:templates/webpack.config.js > src/public/diffs/repack_v1-v2.diff",
+    "diff:v2-v3": "git diff origin/2.x:templates/webpack.config.js HEAD:templates/webpack.config.cjs > src/public/diffs/repack_v2-v3.diff"
   },
   "dependencies": {
     "rspress": "^1.18.1",
