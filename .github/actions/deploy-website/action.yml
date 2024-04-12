@@ -1,25 +1,24 @@
-name: 'Deploy website'
-description: 'Builds and deploys Re.Pack website to Netlify'
+name: "Deploy website"
+description: "Builds and deploys Re.Pack website to Netlify"
 inputs:
   production:
-    description: 'Should the website be deployed to production'
+    description: "Should the website be deployed to production"
     required: false
-    default: false
   netlify-auth-token:
-    description: 'Netlify auth token'
+    description: "Netlify auth token"
     required: true
   netlify-site-id:
-    description: 'Netlify site ID'
+    description: "Netlify site ID"
     required: true
 runs:
   using: "composite"
   steps:
     - name: Build website
-      run: pnpm website:build
+      run: pnpm new-website:build
       shell: sh
 
     - name: Deploy website
-      working-directory: website
+      working-directory: new-website
       run: |
         if [[ "${{ inputs.production }}" == "true" ]]; then
           pnpm netlify deploy --dir=build --prod
