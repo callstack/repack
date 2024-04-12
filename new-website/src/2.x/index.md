@@ -7,7 +7,7 @@ hero:
   tagline: A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.
   image:
     src: /img/undraw_progressive_app_m9ms.svg
-    alt: Re.Pack logo
+    alt: Mobile Development Setup
   actions:
     - theme: brand
       text: Get started
