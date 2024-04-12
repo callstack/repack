@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -14,19 +14,19 @@ jobs:
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v3
-      
+
       - name: Use Node.js 18
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'pnpm'
-      
+          cache: "pnpm"
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Deploy website
         uses: ./.github/actions/deploy-website
         with:
-          production: true
+          production: false
           netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
