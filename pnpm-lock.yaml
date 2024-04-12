@@ -139,6 +139,9 @@ importers:
       '@types/react':
         specifier: ^18.2.64
         version: 18.2.74
+      netlify-cli:
+        specifier: ^10.5.1
+        version: 10.5.1
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -747,7 +750,7 @@ packages:
       slash: 2.0.0
     optionalDependencies:
       '@nicolo-ribaudo/chokidar-2': 2.1.8-no-fsevents.3
-      chokidar: 3.5.3
+      chokidar: 3.6.0
     dev: true
 
   /@babel/code-frame@7.22.13:
@@ -10012,7 +10015,6 @@ packages:
       readdirp: 3.6.0
     optionalDependencies:
       fsevents: 2.3.2
-    dev: false
 
   /chownr@1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
@@ -13376,7 +13378,7 @@ packages:
       '@babel/code-frame': 7.23.5
       '@types/json-schema': 7.0.15
       chalk: 4.1.2
-      chokidar: 3.5.3
+      chokidar: 3.6.0
       cosmiconfig: 6.0.0
       deepmerge: 4.3.1
       eslint: 8.53.0
@@ -23855,7 +23857,7 @@ packages:
       '@types/ws': 8.5.9
       ansi-html-community: 0.0.8
       bonjour-service: 1.0.13
-      chokidar: 3.5.3
+      chokidar: 3.6.0
       colorette: 2.0.19
       compression: 1.7.4
       connect-history-api-fallback: 1.6.0
