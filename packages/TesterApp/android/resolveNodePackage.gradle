@@ -2,10 +2,20 @@
 // TODO remove in the future when this lands in RN
 
 ext.resolveNodePackage = { String packageName, File startDir ->
-    def candidate = new File(startDir, "node_modules/$packageName")
+    def candidate
+
+    def osName = System.getProperty("os.name").toLowerCase()
+    if (osName.contains("win")) {
+        // for Windows OS
+        candidate = new File(startDir, "node_modules\\$packageName")
+    } else {
+        // for Unix-likely OS (MacOS/Linux)
+        candidate = new File(startDir, "node_modules/$packageName")
+    }
 
     if (candidate.exists()) {
-        return candidate.canonicalFile
+        // workaround for `candidate.canonicalPath` because it doesn't resolve final path to symlink on Windows
+        return new File(candidate.toPath().toRealPath().toString())
     }
 
     def parentDir = startDir.parentFile
