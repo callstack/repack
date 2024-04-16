@@ -1,7 +1,9 @@
-import path from 'path';
+import { createRequire } from 'node:module';
+import path from 'node:path';
 import TerserPlugin from 'terser-webpack-plugin';
 import * as Repack from '@callstack/repack';
 
+const require = createRequire(import.meta.url);
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
  * https://github.com/callstack/repack/blob/main/README.md
@@ -28,8 +30,7 @@ export default (env) => {
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
-    reactNativePath = new URL('./node_modules/react-native', import.meta.url)
-      .pathname,
+    reactNativePath = require.resolve('react-native'),
   } = env;
   const dirname = Repack.getDirname(import.meta.url);
 
