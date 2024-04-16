@@ -11,6 +11,11 @@ const info = require('../package.json');
 
 const argv = yargs(hideBin(process.argv))
   .usage(`Usage: ${info.name} [options]`)
+  .option('custom-version', {
+    alias: 'c',
+    type: 'string',
+    description: "Specify the version of the '@callstack/repack' to install",
+  })
   .option('entry', {
     alias: 'e',
     type: 'string',
@@ -37,6 +42,7 @@ const argv = yargs(hideBin(process.argv))
 
 void run({
   entry: argv.entry,
+  repackVersion: argv.customVersion,
   templateType: argv.format as 'mjs' | 'cjs',
   verbose: argv.verbose,
 });

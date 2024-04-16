@@ -1,6 +1,7 @@
 import type { PM } from 'detect-package-manager';
 import { execa } from 'execa';
 import ora from 'ora';
+import logger from '../utils/logger.js';
 
 const dependencies = [
   'webpack',
@@ -14,13 +15,22 @@ const dependencies = [
  *
  * @param packageManager yarn, npm or pnpm
  */
-export default async function addDependencies(packageManager: PM) {
+export default async function addDependencies(
+  packageManager: PM,
+  repackVersion?: string
+) {
   let installCommand: string;
 
   if (packageManager === 'yarn' || packageManager === 'bun') {
     installCommand = 'add';
   } else {
     installCommand = 'install';
+  }
+
+  if (repackVersion) {
+    const index = dependencies.indexOf('@callstack/repack');
+    dependencies[index] = `@callstack/repack@${repackVersion}`;
+    logger.info(`Using custom Re.Pack version of ${repackVersion}`);
   }
 
   const deps = dependencies.join(' ');
