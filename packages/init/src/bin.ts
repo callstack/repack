@@ -38,6 +38,7 @@ const argv = yargs(hideBin(process.argv))
   .conflicts('mjs', 'cjs')
   .version(info.version)
   .help()
+  .wrap(null)
   .parseSync();
 
 void run({
