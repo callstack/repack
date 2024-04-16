@@ -30,7 +30,7 @@ export default async function addDependencies(
   if (repackVersion) {
     const index = dependencies.indexOf('@callstack/repack');
     dependencies[index] = `@callstack/repack@${repackVersion}`;
-    logger.info(`Using custom Re.Pack version of ${repackVersion}`);
+    logger.info(`Using custom Re.Pack version ${repackVersion}`);
   }
 
   const deps = dependencies.join(' ');
