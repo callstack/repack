@@ -22,7 +22,7 @@ module.exports = (env) => {
     mode = 'development',
     context = __dirname,
     entry = './index.js',
-    platform,
+    platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
     bundleFilename = undefined,
