@@ -1,12 +1,15 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import fastifyFavicon from 'fastify-favicon';
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 
 // @ts-ignore
-const pathToImg = new URL('../../img', import.meta.url).pathname;
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+const pathToImgDir = path.join(dirname, '../../img');
 
 async function faviconPlugin(instance: FastifyInstance) {
-  instance.register(fastifyFavicon, { path: pathToImg });
+  instance.register(fastifyFavicon, { path: pathToImgDir });
 }
 
 export default fastifyPlugin(faviconPlugin, {
