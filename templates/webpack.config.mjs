@@ -3,7 +3,9 @@ import path from 'node:path';
 import TerserPlugin from 'terser-webpack-plugin';
 import * as Repack from '@callstack/repack';
 
+const dirname = Repack.getDirname(import.meta.url);
 const require = createRequire(import.meta.url);
+
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
  * https://github.com/callstack/repack/blob/main/README.md
@@ -22,7 +24,7 @@ const require = createRequire(import.meta.url);
 export default (env) => {
   const {
     mode = 'development',
-    context = Repack.getDirname(import.meta.url),
+    context = dirname,
     entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
@@ -32,13 +34,12 @@ export default (env) => {
     assetsPath = undefined,
     reactNativePath = require.resolve('react-native'),
   } = env;
-  const dirname = Repack.getDirname(import.meta.url);
 
   if (!platform) {
     throw new Error('Missing platform');
   }
 
-    /**
+  /**
    * Using Module Federation might require disabling hmr.
    * Uncomment below to set `devServer.hmr` to `false`.
    *
