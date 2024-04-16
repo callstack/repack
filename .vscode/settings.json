@@ -1,4 +1,5 @@
 {
   "css.validate": false,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "turbo.useLocalTurbo": true
 }
