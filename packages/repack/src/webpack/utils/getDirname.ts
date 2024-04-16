@@ -1,16 +1,16 @@
 import path from 'path';
-import { URL } from 'url';
+import { fileURLToPath } from 'url';
 
 /**
- * Get absolute directory (without any protocol) from a `file://` URL of a module.
- * Mostly useful in ESM Webpack configs, where `__dirname` is not available, but `import.meta.url` is.
+ * Converts a `file:///` URL to an absolute directory path.
+ * Useful in ESM Webpack configs where `__dirname` is unavailable.
  *
- * @param fileUrl String with absolute `file://` URL of a module.
- * @returns Absolute dirname without `file://` of a module pointed by `fileUrl`.
+ * @param fileUrl The `file:///` URL of a module.
+ * @returns The directory path without the `file:///` prefix.
  *
  * @category Webpack util
  *
- * @example Usage in Webpack config (ESM):
+ * @example Usage in a Webpack ESM config:
  * ```ts
  * import * as Repack from '@callstack/repack';
  *
@@ -22,5 +22,5 @@ import { URL } from 'url';
  * ```
  */
 export function getDirname(fileUrl: string) {
-  return path.dirname(new URL(fileUrl).pathname);
+  return path.dirname(fileURLToPath(fileUrl));
 }
