@@ -14,12 +14,12 @@ const argv = yargs(hideBin(process.argv))
   .option('custom-version', {
     alias: 'c',
     type: 'string',
-    description: "Specify the version of the '@callstack/repack' to install",
+    description: 'Specify the version of `@callstack/repack` to install',
   })
   .option('entry', {
     alias: 'e',
     type: 'string',
-    description: 'Path to main entry point for the React-Native project',
+    description: 'Path to the main entry point of the React-Native project',
     default: 'index.js',
   })
   .option('format', {
@@ -32,7 +32,7 @@ const argv = yargs(hideBin(process.argv))
   .option('verbose', {
     alias: 'v',
     type: 'boolean',
-    description: 'Enables verbose logging',
+    description: 'Enable verbose logging',
     default: false,
   })
   .conflicts('mjs', 'cjs')
