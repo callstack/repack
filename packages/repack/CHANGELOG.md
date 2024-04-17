@@ -1,5 +1,16 @@
 # @callstack/repack
 
+## 4.0.0-rc.1
+
+### Patch Changes
+
+- [#555](https://github.com/callstack/repack/pull/555) [`8fe92be`](https://github.com/callstack/repack/commit/8fe92bedc65c1757f3105d21d4c498cf17327ee7) Thanks [@jbroma](https://github.com/jbroma)! - Fix getDirname on Windows
+
+- [#556](https://github.com/callstack/repack/pull/556) [`6c09015`](https://github.com/callstack/repack/commit/6c09015c1afe3ac2d932dad5ed158165fd548c87) Thanks [@jbroma](https://github.com/jbroma)! - Update webpack.config templates
+
+- Updated dependencies [[`ed82e29`](https://github.com/callstack/repack/commit/ed82e29c2871411fd73616f29a7d4b75ff3dd913)]:
+  - @callstack/repack-dev-server@4.0.0-rc.1
+
 ## 4.0.0-rc.0
 
 ### Major Changes
@@ -29,10 +40,10 @@
 
   ```js
   // react-native.config.js
-  const commands = require('@callstack/repack/commands');
+  const commands = require("@callstack/repack/commands");
 
   module.exports = {
-    commands: commands.filter((command) => command.name.startsWith('webpack')),
+    commands: commands.filter((command) => command.name.startsWith("webpack")),
   };
   ```
 
@@ -361,22 +372,22 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   import * as Repack from "@callstack/repack";
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: "host"
+    name: "host",
   });
 
   new Repack.plugins.ModuleFederationPlugin({
     name: "app1",
     remotes: {
-      module1: "module1@https://example.com/module1.container.bundle"
-    }
+      module1: "module1@https://example.com/module1.container.bundle",
+    },
   });
 
   new Repack.plugins.ModuleFederationPlugin({
     name: "app2",
     remotes: {
       module1: "module1@https://example.com/module1.container.bundle",
-      module2: "module1@dynamic"
-    }
+      module2: "module1@dynamic",
+    },
   });
   ```
 
@@ -398,7 +409,7 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
     async (scriptId, caller) => {
       // ...
     },
-    { priority: 1 }
+    { priority: 1 },
   ); // Default priority is `2`.
   ```
 
@@ -455,22 +466,22 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   import * as Repack from "@callstack/repack";
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: "host"
+    name: "host",
   });
 
   new Repack.plugins.ModuleFederationPlugin({
     name: "app1",
     remotes: {
-      module1: "module1@https://example.com/module1.container.bundle"
-    }
+      module1: "module1@https://example.com/module1.container.bundle",
+    },
   });
 
   new Repack.plugins.ModuleFederationPlugin({
     name: "app2",
     remotes: {
       module1: "module1@https://example.com/module1.container.bundle",
-      module2: "module1@dynamic"
-    }
+      module2: "module1@dynamic",
+    },
   });
   ```
 
@@ -492,7 +503,7 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
     async (scriptId, caller) => {
       // ...
     },
-    { priority: 1 }
+    { priority: 1 },
   ); // Default priority is `2`.
   ```
 
