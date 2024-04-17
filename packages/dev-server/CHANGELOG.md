@@ -1,5 +1,11 @@
 # @callstack/repack-dev-server
 
+## 4.0.0-rc.1
+
+### Patch Changes
+
+- [#554](https://github.com/callstack/repack/pull/554) [`ed82e29`](https://github.com/callstack/repack/commit/ed82e29c2871411fd73616f29a7d4b75ff3dd913) Thanks [@jbroma](https://github.com/jbroma)! - Fix path to favicon.ico on Windows
+
 ## 4.0.0-rc.0
 
 ### Major Changes
