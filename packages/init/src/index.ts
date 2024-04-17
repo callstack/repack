@@ -10,11 +10,17 @@ import logger, { enableVerboseLogging } from './utils/logger.js';
 
 interface Options {
   entry: string;
+  repackVersion?: string;
   templateType: 'mjs' | 'cjs';
   verbose: boolean;
 }
 
-export default async function run({ entry, templateType, verbose }: Options) {
+export default async function run({
+  entry,
+  repackVersion,
+  templateType,
+  verbose,
+}: Options) {
   const cwd = process.cwd();
 
   if (verbose) {
@@ -25,7 +31,7 @@ export default async function run({ entry, templateType, verbose }: Options) {
     const packageManager = await checkPackageManager(cwd);
     const reactNativeVersion = checkReactNative(cwd);
 
-    await addDependencies(packageManager);
+    await addDependencies(packageManager, repackVersion);
 
     await createWebpackConfig(cwd, templateType, entry);
 
