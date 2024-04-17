@@ -1,5 +1,11 @@
 # @callstack/repack-init
 
+## 4.0.0-rc.1
+
+### Minor Changes
+
+- [#557](https://github.com/callstack/repack/pull/557) [`8a57f57`](https://github.com/callstack/repack/commit/8a57f57912748efe806dbac52e29a8f4e238652d) Thanks [@jbroma](https://github.com/jbroma)! - add `custom-version` flag
+
 ## 4.0.0-rc.0
 
 ### Major Changes
