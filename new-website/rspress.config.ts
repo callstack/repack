@@ -16,7 +16,7 @@ export default defineConfig({
   },
   outDir: 'build',
   markdown: {
-    checkDeadLinks: !isProd, // disable in production due to upstream bug
+    checkDeadLinks: true,
     codeHighlighter: 'prism',
   },
   multiVersion: {
