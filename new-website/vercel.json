@@ -4,6 +4,13 @@
   "cleanUrls": true,
   "framework": null,
   "installCommand": "pnpm install",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "status": 404,
+      "dest": "/404.html"
+    }
+  ],
   "outputDirectory": "build",
   "trailingSlash": false
 }
