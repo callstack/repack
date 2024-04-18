@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { defineConfig } from 'rspress/config';
 import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
+import vercelAnalytics from 'rspress-plugin-vercel-analytics';
 
 export default defineConfig({
   root: path.join(__dirname, 'src'),
@@ -65,5 +66,5 @@ export default defineConfig({
       },
     },
   },
-  plugins: [pluginFontOpenSans()],
+  plugins: [pluginFontOpenSans(), vercelAnalytics()],
 });
