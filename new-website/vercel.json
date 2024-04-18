@@ -6,6 +6,10 @@
   "installCommand": "pnpm install",
   "redirects": [
     {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/404.html",
       "statusCode": 404
