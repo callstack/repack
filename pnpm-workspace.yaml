@@ -6,3 +6,4 @@ packages:
   - "packages/init"
   - "website"
   - "metro-compat-test"
+  - "new-website"

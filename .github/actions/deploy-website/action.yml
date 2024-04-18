@@ -1,29 +1,51 @@
-name: 'Deploy website'
-description: 'Builds and deploys Re.Pack website to Netlify'
+name: "Deploy website"
+description: "Builds and deploys Re.Pack website to Netlify"
 inputs:
-  production:
-    description: 'Should the website be deployed to production'
+  new:
+    description: "Should deploy the new-website"
     required: false
-    default: false
+    default: "false"
+  production:
+    description: "Should the website be deployed to production"
+    required: false
   netlify-auth-token:
-    description: 'Netlify auth token'
+    description: "Netlify auth token"
     required: true
   netlify-site-id:
-    description: 'Netlify site ID'
+    description: "Netlify site ID"
     required: true
 runs:
   using: "composite"
   steps:
     - name: Build website
-      run: pnpm website:build
-      shell: sh
+      run: |
+        if [ "${{ inputs.new }}" = "true" ]; then
+          echo "Building new website..."
+          pnpm new-website:build
+        else
+          echo "Building old website..."
+          pnpm website:build
+        fi
+      shell: bash
+
+    - name: Set working directory
+      id: set_dir
+      run: |
+        if [ "${{ inputs.new }}" = "true" ]; then
+          echo "DEPLOY_WORKING_DIR=new-website" >> $GITHUB_ENV
+        else
+          echo "DEPLOY_WORKING_DIR=website" >> $GITHUB_ENV
+        fi
+      shell: bash
 
     - name: Deploy website
-      working-directory: website
+      working-directory: ${{ env.DEPLOY_WORKING_DIR }}
       run: |
-        if [[ "${{ inputs.production }}" == "true" ]]; then
+        if [ "${{ inputs.production }}" = "true" ]; then
+          echo "Deploying to production..."
           pnpm netlify deploy --dir=build --prod
         else
+          echo "Deploying to development..."
           pnpm netlify deploy --dir=build
         fi
       shell: bash
