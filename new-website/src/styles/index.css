@@ -153,6 +153,15 @@
   }
 }
 
+.rspress-sidebar {
+  border-right: 1px solid var(--rp-c-divider-light) !important;
+  margin-right: 12px !important;
+
+  & > div {
+    padding-right: 0 !important;
+  }
+}
+
 /* Sidebar section headers */
 .rspress-scrollbar > nav > section > div:first-child {
   background-color: transparent !important;
