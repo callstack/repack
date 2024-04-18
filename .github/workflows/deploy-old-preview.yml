@@ -25,7 +25,6 @@ jobs:
       - name: Deploy website
         uses: ./.github/actions/deploy-website
         with:
-          new: false
           production: false
           netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
