@@ -28,8 +28,18 @@ runs:
         fi
       shell: bash
 
+    - name: Set working directory
+      id: set_dir
+      run: |
+        if [ "${{ inputs.new }}" = "true" ]; then
+          echo "DEPLOY_WORKING_DIR=new-website" >> $GITHUB_ENV
+        else
+          echo "DEPLOY_WORKING_DIR=website" >> $GITHUB_ENV
+        fi
+      shell: bash
+
     - name: Deploy website
-      working-directory: ${{ if eq(inputs.new, 'true') }}new-website${{ else }}website${{ endif }}
+      working-directory: ${{ env.DEPLOY_WORKING_DIR }}
       run: |
         if [ "${{ inputs.production }}" = "true" ]; then
           echo "Deploying to production..."
