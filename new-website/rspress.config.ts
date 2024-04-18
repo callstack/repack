@@ -2,8 +2,6 @@ import * as path from 'path';
 import { defineConfig } from 'rspress/config';
 import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
 
-const isProd = process.env.NODE_ENV === 'production';
-
 export default defineConfig({
   root: path.join(__dirname, 'src'),
   title: 'Re.Pack',
@@ -25,6 +23,9 @@ export default defineConfig({
   },
   route: {
     cleanUrls: true,
+  },
+  search: {
+    versioned: true,
   },
   themeConfig: {
     enableContentAnimation: true,
