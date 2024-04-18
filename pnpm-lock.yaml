@@ -126,6 +126,9 @@ importers:
 
   new-website:
     dependencies:
+      rsbuild-plugin-open-graph:
+        specifier: ^1.0.0
+        version: 1.0.0
       rspress:
         specifier: 1.18.3
         version: 1.18.3
@@ -21684,6 +21687,15 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
+
+  /rsbuild-plugin-open-graph@1.0.0:
+    resolution: {integrity: sha512-SuN9w2FH2v9Mp9/jBowH/RvR74i5A1KzM8+3JrCwCpsuny2HQ3iZqVETgDJ0VIcXqLHUxPnI0aGMgbAcqmlzcg==}
+    peerDependencies:
+      '@rsbuild/core': 0.x
+    peerDependenciesMeta:
+      '@rsbuild/core':
+        optional: true
+    dev: false
 
   /rslog@1.2.1:
     resolution: {integrity: sha512-XDMoa858LLZnf4i2kUwyjBQGplXaoSoIfMQf9iji2ano5t1OfSiJsSYpHeOH26DJEc5hdje/4K3wiT6TWL3cRA==}

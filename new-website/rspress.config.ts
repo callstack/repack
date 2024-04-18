@@ -2,6 +2,7 @@ import * as path from 'path';
 import { defineConfig } from 'rspress/config';
 import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
 import vercelAnalytics from 'rspress-plugin-vercel-analytics';
+import { pluginOpenGraph } from 'rsbuild-plugin-open-graph';
 
 export default defineConfig({
   root: path.join(__dirname, 'src'),
@@ -55,6 +56,19 @@ export default defineConfig({
   },
   globalStyles: path.join(__dirname, 'src/styles/index.css'),
   builderConfig: {
+    plugins: [
+      pluginOpenGraph({
+        title: 'Re.Pack',
+        type: 'website',
+        url: 'https://re-pack.dev/',
+        description:
+          'A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.',
+        twitter: {
+          site: '@repack_rn',
+          card: 'summary_large_image',
+        },
+      }),
+    ],
     tools: {
       rspack(config, { addRules }) {
         addRules([
