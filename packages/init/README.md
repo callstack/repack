@@ -23,11 +23,13 @@ npx @callstack/repack-init [options]
 
 ## Options
 
-- `-e, --entry` Path to main entry point for the React-Native project. Defaults to: `index.js`
+- `-c, --custom-version` Specify the version of `@callstack/repack` to install.
 
-- `-f, --format` Format of the webpack.config file. Available choices: `"mjs"`, `"cjs"` Defaults to: `"mjs"`
+- `-e, --entry` Path to the main entry point of the React-Native project. Defaults to: `index.js`.
 
-- `-v, --verbose` Enables verbose logging. Defaults to: `false`
+- `-f, --format` Format of the webpack.config file. Available choices: `"mjs"`, `"cjs"`. Defaults to: `"mjs"`.
+
+- `-v, --verbose` Enable verbose logging. Defaults to: `false`.
 
 - `--version` Show version number.
 

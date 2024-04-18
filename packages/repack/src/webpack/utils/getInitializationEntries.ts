@@ -29,11 +29,12 @@ export interface InitializationEntriesOptions {
  * ```ts
  * import * as Repack from '@callstack/repack';
  *
+ * const { resolve } = createRequire(import.meta.url);
+ *
  * export default (env) => {
  *   const {
  *     devServer,
- *     reactNativePath = new URL('./node_modules/react-native', import.meta.url)
- *       .pathname,
+ *     reactNativePath = resolve('react-native'),
  *   } = env;
  *
  *   return {

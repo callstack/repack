@@ -1,6 +1,10 @@
-import path from 'path';
+import { createRequire } from 'node:module';
+import path from 'node:path';
 import TerserPlugin from 'terser-webpack-plugin';
 import * as Repack from '@callstack/repack';
+
+const dirname = Repack.getDirname(import.meta.url);
+const { resolve } = createRequire(import.meta.url);
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
@@ -20,7 +24,7 @@ import * as Repack from '@callstack/repack';
 export default (env) => {
   const {
     mode = 'development',
-    context = Repack.getDirname(import.meta.url),
+    context = dirname,
     entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
@@ -28,10 +32,8 @@ export default (env) => {
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
-    reactNativePath = new URL('./node_modules/react-native', import.meta.url)
-      .pathname,
+    reactNativePath = resolve('react-native'),
   } = env;
-  const dirname = context;
 
   if (!platform) {
     throw new Error('Missing platform');
@@ -156,7 +158,7 @@ export default (env) => {
             /node_modules(.*[/\\])+pretty-format/,
             /node_modules(.*[/\\])+metro/,
             /node_modules(.*[/\\])+abort-controller/,
-            /node_modules(.*[/\\])+@callstack\/repack/,
+            /node_modules(.*[/\\])+@callstack[/\\]repack/,
           ],
           use: 'babel-loader',
         },
