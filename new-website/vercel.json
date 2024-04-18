@@ -4,11 +4,11 @@
   "cleanUrls": true,
   "framework": null,
   "installCommand": "pnpm install",
-  "routes": [
+  "redirects": [
     {
-      "src": "/(.*)",
-      "status": 404,
-      "dest": "/404.html"
+      "source": "/(.*)",
+      "destination": "/404.html",
+      "statusCode": 404
     }
   ],
   "outputDirectory": "build",
