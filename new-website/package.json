@@ -10,7 +10,7 @@
     "diff:v2-v3": "git diff origin/2.x:templates/webpack.config.js HEAD:templates/webpack.config.cjs > src/public/diffs/repack_v2-v3.diff"
   },
   "dependencies": {
-    "rspress": "^1.18.1",
+    "rspress": "1.18.2",
     "rspress-plugin-font-open-sans": "^1.0.0"
   },
   "devDependencies": {
