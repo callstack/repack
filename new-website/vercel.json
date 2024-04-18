@@ -5,5 +5,5 @@
   "framework": null,
   "installCommand": "pnpm install",
   "outputDirectory": "build",
-  "trailingSlash": true
+  "trailingSlash": false
 }
