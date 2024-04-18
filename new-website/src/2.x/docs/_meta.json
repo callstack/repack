@@ -29,6 +29,9 @@
     "label": "Known Issues"
   },
   {
+    "type": "divider"
+  },
+  {
     "type": "section-header",
     "label": "Configuration"
   },

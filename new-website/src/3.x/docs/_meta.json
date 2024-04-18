@@ -39,6 +39,9 @@
     "label": "Migration Guides"
   },
   {
+    "type": "divider"
+  },
+  {
     "type": "section-header",
     "label": "Configuration"
   },
