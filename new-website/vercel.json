@@ -4,17 +4,7 @@
   "cleanUrls": true,
   "framework": null,
   "installCommand": "pnpm install",
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/404.html",
-      "statusCode": 404
-    }
-  ],
+  "rewrites": [{ "source": "/(.*)", "destination": "/404.html" }],
   "outputDirectory": "build",
   "trailingSlash": false
 }
