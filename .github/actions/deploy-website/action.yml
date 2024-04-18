@@ -43,7 +43,7 @@ runs:
       run: |
         if [ "${{ inputs.production }}" = "true" ]; then
           echo "Deploying to production..."
-          pnpm netlify deploy --dir=build
+          pnpm netlify deploy --dir=build --prod
         else
           echo "Deploying to development..."
           pnpm netlify deploy --dir=build
