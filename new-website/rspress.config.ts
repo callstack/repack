@@ -31,6 +31,9 @@ export default defineConfig({
     enableContentAnimation: true,
     enableScrollToTop: true,
     outlineTitle: 'Contents',
+    footer: {
+      message: 'Copyright © 2024 Callstack Open Source',
+    },
     socialLinks: [
       {
         icon: 'github',
