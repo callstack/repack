@@ -44,5 +44,10 @@
     "prettier": "^3.2.4",
     "typescript": "^5.2.2"
   },
-  "packageManager": "pnpm@8.15.6"
+  "packageManager": "pnpm@8.15.6",
+  "pnpm": {
+    "patchedDependencies": {
+      "@rspress/theme-default@1.18.2": "patches/@rspress__theme-default@1.18.2.patch"
+    }
+  }
 }

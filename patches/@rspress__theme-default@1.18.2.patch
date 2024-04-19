@@ -1,0 +1,33 @@
+diff --git a/dist/bundle.js b/dist/bundle.js
+index a3d6a12a28475e0a63f03ecc9af245a9032bfcc2..7d84b394a4915195502a03ea83a2cb255240c37c 100644
+--- a/dist/bundle.js
++++ b/dist/bundle.js
+@@ -3263,7 +3263,7 @@ function NavScreenMenuGroup(item) {
+ 
+ // src/logic/useNav.ts
+ import { useEffect as useEffect11, useState as useState14 } from "react";
+-import { useLocation as useLocation8, useVersion as useVersion3 } from "@rspress/runtime";
++import { useLocation as useLocation8, usePageData as usePageDataPatch } from "@rspress/runtime";
+ function useNavScreen() {
+   const { pathname } = useLocation8();
+   const [isScreenOpen, setIsScreenOpen] = useState14(false);
+@@ -3296,12 +3296,17 @@ function useNavScreen() {
+   };
+ }
+ function useNavData() {
++  const { siteData, page } = usePageDataPatch();
++  const defaultVersion = siteData.multiVersion.default;
++  const currentVersion = page.version;
++
+   const { nav } = useLocaleSiteData();
+-  const version = useVersion3();
++
+   if (Array.isArray(nav)) {
+     return nav;
+   }
+-  const navKey = version.length > 0 ? version : "default";
++
++  const navKey = currentVersion || defaultVersion || 'default';
+   return [...nav[navKey]];
+ }
+ 
