@@ -46,7 +46,7 @@ export class WebSocketHMRServer extends WebSocketServer {
         key.platform !== platform ||
         !(clientIds ?? [key.clientId]).includes(key.clientId)
       ) {
-        return;
+        continue;
       }
 
       try {
