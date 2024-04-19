@@ -7,7 +7,7 @@
 With Webpack's Hot Module Replacement, the modules don't refresh themselves, but their parents refresh them, meaning for components `A` -> `B` (`A` renders `B`),
 if you edit `B`, the component `A` will refresh `B`, but if you edit component `A` there's no one to refresh `A`.
 
-The easiest workaround it create additional component that will simply render your previous root component, eg:
+The easiest workaround is to create additional component that will simply render your previous root component, eg:
 
 ```js
 // --- index.js -------------------------------------------
