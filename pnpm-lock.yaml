@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  '@rspress/theme-default@1.18.2':
-    hash: 7r3vb7cx227ewakm2f4wlmdwha
-    path: patches/@rspress__theme-default@1.18.2.patch
-
 importers:
 
   .:
@@ -6967,7 +6962,7 @@ packages:
       '@rspress/plugin-medium-zoom': 1.18.2(@rspress/runtime@1.18.2)
       '@rspress/runtime': 1.18.2
       '@rspress/shared': 1.18.2
-      '@rspress/theme-default': 1.18.2(patch_hash=7r3vb7cx227ewakm2f4wlmdwha)
+      '@rspress/theme-default': 1.18.2
       body-scroll-lock: 4.0.0-beta.0
       copy-to-clipboard: 3.3.3
       enhanced-resolve: 5.16.0
@@ -7147,7 +7142,7 @@ packages:
       unified: 10.1.2
     dev: false
 
-  /@rspress/theme-default@1.18.2(patch_hash=7r3vb7cx227ewakm2f4wlmdwha):
+  /@rspress/theme-default@1.18.2:
     resolution: {integrity: sha512-CEPqkWqASLpxUevhf89aqgK0u++EItWIDGMHO8aYquxFbv9iMPVEnjd9xUKiUwBlpueELyRmrHxH1GTz+nTctQ==}
     engines: {node: '>=14.17.6'}
     dependencies:
@@ -7172,7 +7167,6 @@ packages:
       react-transition-group: 4.4.5(react-dom@18.2.0)(react@18.2.0)
       rspack-plugin-virtual-module: 0.1.12
     dev: false
-    patched: true
 
   /@samverschueren/stream-to-observable@0.3.1(rxjs@6.6.7):
     resolution: {integrity: sha512-c/qwwcHyafOQuVQJj0IlBjf5yYgBI7YPJ77k4fOJYesb41jio65eaJODRUmfYKhTOFBrIZ66kgvGPlNbjuoRdQ==}
