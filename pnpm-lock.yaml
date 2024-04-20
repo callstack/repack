@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@rspress/core@1.18.2':
+    hash: iyf5gcrx3uzwl2ggnx43ns3dhm
+    path: patches/@rspress__core@1.18.2.patch
+
 importers:
 
   .:
@@ -6944,7 +6949,7 @@ packages:
       react-refresh: 0.14.0
     dev: false
 
-  /@rspress/core@1.18.2:
+  /@rspress/core@1.18.2(patch_hash=iyf5gcrx3uzwl2ggnx43ns3dhm):
     resolution: {integrity: sha512-9y/mRFXk6gEszTJxV89yJ7awxaL2AgtbWa2eJUDd3uB1X4xiN8eilWJoj5qg7S8u/BumGv1uR/HkNupS3ohqNg==}
     engines: {node: '>=14.17.6'}
     dependencies:
@@ -7002,6 +7007,7 @@ packages:
       - supports-color
       - webpack
     dev: false
+    patched: true
 
   /@rspress/mdx-rs-darwin-arm64@0.5.1:
     resolution: {integrity: sha512-KX3WNnlXR02V73Y4f0WXqRammhcRSpPqrRMQzh7ufIwTiFOUYxbx0GEDTiTyaPnJ6EfA/ojh6fHl8c2fLKlGYQ==}
@@ -21740,7 +21746,7 @@ packages:
     hasBin: true
     dependencies:
       '@rsbuild/core': 0.6.1
-      '@rspress/core': 1.18.2
+      '@rspress/core': 1.18.2(patch_hash=iyf5gcrx3uzwl2ggnx43ns3dhm)
       '@rspress/shared': 1.18.2
       cac: 6.7.14
       chalk: 5.3.0
