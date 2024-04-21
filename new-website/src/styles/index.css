@@ -12,7 +12,7 @@
   --rp-c-divider: rgba(60, 60, 60, 0.29) !important;
   --rp-c-divider-light: rgba(60, 60, 60, 0.12) !important;
 
-  --rp-c-text-1: #1a2b3c !important;
+  --rp-c-text-1: rgb(50, 50, 50) !important;
   --rp-c-text-2: rgba(50, 50, 50, 0.8) !important;
   --rp-c-text-3: rgba(50, 50, 50, 0.6) !important;
   --rp-c-text-4: rgba(50, 50, 50, 0.4) !important;
