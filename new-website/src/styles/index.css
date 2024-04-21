@@ -222,9 +222,32 @@
   }
 }
 
-/* keep name for SEO only */
-h1.leading-tight > span {
-  display: none;
+.home-hero-name-img {
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+p.rspress-home-hero-text {
+  font-size: 1.35rem;
+}
+
+@media (min-width: 370px) {
+  p.rspress-home-hero-text {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 640px) {
+  p.rspress-home-hero-text {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  p.rspress-home-hero-text {
+    font-size: 3rem;
+  }
 }
 
 .rspress-nav-search-button > button {
