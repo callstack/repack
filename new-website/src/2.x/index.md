@@ -7,7 +7,7 @@ hero:
   tagline: Everything you need to leverage Webpack in your React-Native setup
   actions:
     - theme: brand
-      text: Get started
+      text: <span className="home-hero-primary-action">Get started</span>
       link: /docs/getting-started
     - theme: alt
       text: Github

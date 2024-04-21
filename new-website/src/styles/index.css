@@ -228,6 +228,20 @@
   margin-bottom: 1.5rem;
 }
 
+a:has(> span.home-hero-primary-action) {
+  background: var(--rp-c-brand) !important;
+}
+
+div[class^='mask'] {
+  display: block !important;
+  background-image: conic-gradient(
+    from 180deg at 50% 50%,
+    var(--rp-c-brand) 0deg,
+    180deg,
+    var(--rp-c-brand-darker) 1turn
+  );
+}
+
 p.rspress-home-hero-text {
   font-size: 1.35rem;
 }
