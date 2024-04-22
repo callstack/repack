@@ -4,6 +4,7 @@
   "cleanUrls": true,
   "framework": null,
   "installCommand": "pnpm install",
+  "rewrites": [{ "source": "/(.*)", "destination": "/404.html" }],
   "outputDirectory": "build",
   "trailingSlash": false
 }
