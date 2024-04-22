@@ -226,3 +226,7 @@
 h1.leading-tight > span {
   display: none;
 }
+
+.rspress-nav-search-button > button {
+  background-color: transparent;
+}
