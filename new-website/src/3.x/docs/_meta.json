@@ -39,9 +39,9 @@
     "label": "Migration Guides"
   },
   {
-    "type": "file",
-    "name": "repack-init",
-    "label": "repack-init cli"
+    "type": "dir",
+    "name": "cli-commands",
+    "label": "CLI commands"
   },
   {
     "type": "divider"
