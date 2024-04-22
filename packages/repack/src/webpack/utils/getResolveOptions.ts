@@ -1,3 +1,5 @@
+import os from 'node:os';
+
 /**
  * {@link getResolveOptions} additional options.
  */
@@ -49,7 +51,17 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
   const preferNativePlatform = options?.preferNativePlatform ?? true;
   const enablePackageExports = options?.enablePackageExports ?? false;
 
-  let extensions = ['.js', '.jsx', '.json', '.ts', '.tsx'];
+  let extensions: string[];
+  /**
+   * On Windows, paths are case-insensitive, but Metro uses
+   * case-sensitive paths, so we need to prioritize JS/TS
+   * extensions first to avoid resolving wrong files.
+   */
+  if (os.platform() === 'win32') {
+    extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
+  } else {
+    extensions = ['.js', '.jsx', '.json', '.ts', '.tsx'];
+  }
 
   let conditionNames: string[];
   let exportsFields: string[];
