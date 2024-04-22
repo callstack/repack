@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-Fix: match .json extension last on Windows
+Fix: always match .json extension last
