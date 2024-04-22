@@ -264,6 +264,7 @@ p.rspress-home-hero-text {
   }
 }
 
-.rspress-nav-search-button > button {
-  background-color: transparent;
+/* fix background on buttons, regression introduced in rspress 1.18.3 */
+button {
+  background-color: initial;
 }
