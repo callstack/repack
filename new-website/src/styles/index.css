@@ -232,7 +232,7 @@ a:has(> span.home-hero-primary-action) {
   background: var(--rp-c-brand) !important;
 }
 
-div[class^='mask'] {
+*:not([id='search-container']) > div[class^='mask'] {
   display: block !important;
   background-image: conic-gradient(
     from 180deg at 50% 50%,
