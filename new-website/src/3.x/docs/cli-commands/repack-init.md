@@ -8,6 +8,7 @@ In the root of an existing React Native project, run this command in your termin
 
 ```bash
 npx @callstack/repack-init [options]
+```
 
 ## Options
 
