@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
   s.platforms            = { :ios => "12.0" }
   s.source               = { :git => "https://github.com/callstack/repack.git", :tag => "#{s.version}" }
   s.source_files         = "ios/**/*.{h,m,mm,swift}"
+  s.static_framework     = true
 
   s.pod_target_xcconfig = { "DEFINES_MODULE" => "YES" }
 
@@ -30,11 +31,11 @@ Pod::Spec.new do |s|
     # Don't install the dependencies when we run `pod install` in the old architecture.
     if new_arch_enabled then
       s.compiler_flags = folly_compiler_flags + " -DRCT_NEW_ARCH_ENABLED=1"
-      s.pod_target_xcconfig = {
+      s.pod_target_xcconfig.update({
         "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\"",
         "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1",
         "CLANG_CXX_LANGUAGE_STANDARD" => "c++17"
-      }
+      })
       s.dependency "React-Codegen"
       s.dependency "RCT-Folly"
       s.dependency "RCTRequired"
