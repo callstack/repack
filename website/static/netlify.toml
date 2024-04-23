@@ -2,18 +2,22 @@
   from = "/docs/2x/api/*"
   to = "https://re-pack.dev/2.x/api/:splat"
   status = 301
+  force = true
 
 [[redirects]]
   from = "/docs/2x/*"
   to = "https://re-pack.dev/2.x/docs/:splat"
   status = 301
+  force = true
 
 [[redirects]]
   from = "/docs/api/*"
   to = "https://re-pack.dev/2.x/api/:splat"
   status = 301
+  force = true
 
 [[redirects]]
   from = "/docs/*"
   to = "https://re-pack.dev/2.x/docs/:splat"
   status = 301
+  force = true
