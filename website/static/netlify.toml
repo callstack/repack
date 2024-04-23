@@ -24,6 +24,6 @@
 
 [[redirects]]
   from = "/*"
-  to = "https://re-pack.dev/*"
+  to = "https://re-pack.dev/:splat"
   status = 301
   force = true
