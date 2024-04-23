@@ -39,6 +39,11 @@
     "label": "Migration Guides"
   },
   {
+    "type": "dir",
+    "name": "cli-commands",
+    "label": "CLI commands"
+  },
+  {
     "type": "divider"
   },
   {
