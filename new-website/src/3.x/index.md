@@ -10,8 +10,8 @@ hero:
       text: <span className="home-hero-primary-action">Get started</span>
       link: /docs/getting-started
     - theme: alt
-      text: Github
-      link: https://github.com/callstack/repack
+      text: Learn more
+      link: /docs/about
 features:
   - title: Webpack-powered solution
     details: Leverage full Webpack ecosystem of plugins and loaders. Use plethora of configuration options to adjust the bundling to your needs.
