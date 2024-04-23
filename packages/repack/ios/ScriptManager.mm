@@ -2,7 +2,11 @@
 #import "ScriptConfig.h"
 #import "ErrorCodes.h"
 
+#if __has_include(<callstack_repack/callstack_repack-Swift.h>)
+#import <callstack_repack/callstack_repack-Swift.h>
+#else
 #import "callstack_repack-Swift.h"
+#endif
 
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
