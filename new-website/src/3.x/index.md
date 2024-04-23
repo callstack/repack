@@ -2,19 +2,16 @@
 pageType: home
 
 hero:
-  name: Re.Pack
-  text: <img src="/img/banner.svg">
-  tagline: A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.
-  image:
-    src: /img/undraw_progressive_app_m9ms.svg
-    alt: Mobile Development Setup
+  name: '<img alt="Re.Pack" className="home-hero-name-img" src="/img/banner.svg">'
+  text: 'React-Native 🤝 Webpack'
+  tagline: Everything you need to leverage Webpack in your React-Native setup
   actions:
     - theme: brand
-      text: Get started
+      text: <span className="home-hero-primary-action">Get started</span>
       link: /docs/getting-started
     - theme: alt
-      text: Github
-      link: https://github.com/callstack/repack
+      text: Learn more
+      link: /docs/about
 features:
   - title: Webpack-powered solution
     details: Leverage full Webpack ecosystem of plugins and loaders. Use plethora of configuration options to adjust the bundling to your needs.

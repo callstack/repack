@@ -49,7 +49,7 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
   const preferNativePlatform = options?.preferNativePlatform ?? true;
   const enablePackageExports = options?.enablePackageExports ?? false;
 
-  let extensions = ['.js', '.jsx', '.json', '.ts', '.tsx'];
+  let extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
 
   let conditionNames: string[];
   let exportsFields: string[];
