@@ -158,6 +158,19 @@ export class Compiler extends EventEmitter {
     return worker;
   }
 
+  private addProgressSender(platform: string, callback?: SendProgress) {
+    if (!callback) return;
+    this.progressSenders[platform] = this.progressSenders[platform] ?? [];
+    this.progressSenders[platform].push(callback);
+  }
+
+  private removeProgressSender(platform: string, callback?: SendProgress) {
+    if (!callback) return;
+    this.progressSenders[platform] = this.progressSenders[platform].filter(
+      (item) => item !== callback
+    );
+  }
+
   async getAsset(
     filename: string,
     platform: string,
@@ -165,14 +178,15 @@ export class Compiler extends EventEmitter {
   ): Promise<Asset> {
     // Return file from assetsCache if exists
     const fileFromCache = this.assetsCache[platform]?.[filename];
-    if (fileFromCache) {
-      return fileFromCache;
-    }
+    if (fileFromCache) return fileFromCache;
+
+    this.addProgressSender(platform, sendProgress);
 
     // Spawn new worker if not already running
     if (!this.workers[platform]) {
       this.workers[platform] = this.spawnWorker(platform);
     } else if (!this.isCompilationInProgress[platform]) {
+      this.removeProgressSender(platform, sendProgress);
       return Promise.reject(
         new Error(
           `File ${filename} for ${platform} not found in compilation assets`
@@ -180,17 +194,11 @@ export class Compiler extends EventEmitter {
       );
     }
 
-    if (sendProgress) {
-      this.progressSenders[platform] = this.progressSenders[platform] ?? [];
-      this.progressSenders[platform].push(sendProgress);
-    }
     return await new Promise<Asset>((resolve, reject) => {
       // Add new resolver to be executed when compilation is finished
       this.resolvers[platform] = (this.resolvers[platform] ?? []).concat(
         (error?: Error) => {
-          this.progressSenders[platform] = this.progressSenders[
-            platform
-          ].filter((item) => item !== sendProgress);
+          this.removeProgressSender(platform, sendProgress);
 
           if (error) {
             reject(error);
