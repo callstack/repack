@@ -10,34 +10,34 @@ npx @callstack/repack-init [options]
 
 ## Options
 
-### `-c`, `-custom-version`
+### --custom-version, -c
 
 - Type: `string`
 - Default: `latest`
 
 Use a custom version of Re.Pack.
 
-### `-e`, `--entry`
+### --entry, -e
 
 - Type: `string`
 - Default: `index.js`
 
 Path to the entry file of your `react-native` application.
 
-### `-f`, `--format`
+### --format, -f
 
 - Type: `mjs` | `cjs`
 - Default: `mjs`
 
 Format of the Webpack config file. Available choices `"mjs"`, `"cjs"`.
 
-### `-v, --verbose`
+### --verbose, -v
 
 - Type: `boolean`
 - Default: `false`
 
 Enable verbose output.
 
-### `--version`
+### --version
 
 Show version number.
