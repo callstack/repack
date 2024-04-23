@@ -12,12 +12,18 @@
 
 [[redirects]]
   from = "/docs/api/*"
-  to = "https://re-pack.dev/2.x/api/:splat"
+  to = "https://re-pack.dev/api/:splat"
   status = 301
   force = true
 
 [[redirects]]
   from = "/docs/*"
-  to = "https://re-pack.dev/2.x/docs/:splat"
+  to = "https://re-pack.dev/docs/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "https://re-pack.dev/*"
   status = 301
   force = true
