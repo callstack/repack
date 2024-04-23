@@ -4,9 +4,10 @@
 
 ## Usage
 
+In the root of an existing React Native project, run this command in your terminal of choice:
+
 ```bash
 npx @callstack/repack-init [options]
-```
 
 ## Options
 
@@ -29,7 +30,7 @@ Path to the entry file of your `react-native` application.
 - Type: `mjs` | `cjs`
 - Default: `mjs`
 
-Format of the Webpack config file. Available choices `"mjs"`, `"cjs"`.
+Format of the Webpack config file. Available choices `mjs`, `cjs`.
 
 ### --verbose, -v
 
