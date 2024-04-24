@@ -1,5 +1,24 @@
 # @callstack/repack
 
+## 4.0.0-rc.2
+
+### Minor Changes
+
+- [#582](https://github.com/callstack/repack/pull/582) [`24585c0`](https://github.com/callstack/repack/commit/24585c07429533a0543eb61426771d196bdee0f1) Thanks [@jbroma](https://github.com/jbroma)! - use `localhost` as a defined default for the dev-server
+
+### Patch Changes
+
+- [#580](https://github.com/callstack/repack/pull/580) [`b6c68dc`](https://github.com/callstack/repack/commit/b6c68dc08a463880f2869610648336bc7e764a41) Thanks [@jbroma](https://github.com/jbroma)! - Fix: make `callstack-repack` pod compatible with use_frameworks!
+
+- [#579](https://github.com/callstack/repack/pull/579) [`06a4da8`](https://github.com/callstack/repack/commit/06a4da81ba661105da6c03ef254f2baf7daeaa1b) Thanks [@jbroma](https://github.com/jbroma)! - Fix: include `NativeScriptManger.ts` for codegen
+
+- [#574](https://github.com/callstack/repack/pull/574) [`bab94bf`](https://github.com/callstack/repack/commit/bab94bf0a4092c3e34a33dff6f160b4e6dbd45a5) Thanks [@jbroma](https://github.com/jbroma)! - Fix dev server crash caused by uninitialized progress senders
+
+- [#572](https://github.com/callstack/repack/pull/572) [`b134936`](https://github.com/callstack/repack/commit/b1349360db91a4f52489880cc12dd895850b6339) Thanks [@jbroma](https://github.com/jbroma)! - Fix: always match .json extension last
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.0.0-rc.2
+
 ## 4.0.0-rc.1
 
 ### Patch Changes
