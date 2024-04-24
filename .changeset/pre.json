@@ -8,16 +8,21 @@
     "@callstack/repack-dev-server": "1.1.0",
     "@callstack/repack-init": "1.1.0",
     "@callstack/repack": "3.7.0",
-    "website": "0.0.1"
+    "website": "0.0.1",
+    "new-website": "0.0.1"
   },
   "changesets": [
+    "big-spiders-guess",
     "bright-pillows-argue",
     "dry-trains-join",
     "early-carrots-travel",
     "early-radios-grow",
+    "fair-experts-wave",
     "fast-geckos-wonder",
+    "friendly-insects-dream",
     "good-planes-confess",
     "grumpy-tigers-eat",
+    "heavy-schools-buy",
     "honest-wolves-act",
     "kind-beds-clap",
     "kind-scissors-kick",
@@ -25,6 +30,7 @@
     "polite-islands-fetch",
     "sharp-stingrays-wave",
     "shiny-planes-hope",
+    "tidy-dogs-grab",
     "warm-numbers-doubt",
     "yellow-spiders-smash"
   ]

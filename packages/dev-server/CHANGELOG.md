@@ -1,5 +1,7 @@
 # @callstack/repack-dev-server
 
+## 4.0.0-rc.2
+
 ## 4.0.0-rc.1
 
 ### Patch Changes

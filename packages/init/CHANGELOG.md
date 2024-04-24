@@ -1,5 +1,7 @@
 # @callstack/repack-init
 
+## 4.0.0-rc.2
+
 ## 4.0.0-rc.1
 
 ### Minor Changes
