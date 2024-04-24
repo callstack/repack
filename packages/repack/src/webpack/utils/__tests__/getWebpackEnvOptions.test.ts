@@ -79,6 +79,7 @@ describe('getWebpackEnvOptions', () => {
       devServer: {
         hmr: true,
         port: 8081,
+        host: 'localhost',
       },
       bundleFilename: '',
     });
