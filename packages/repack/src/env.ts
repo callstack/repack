@@ -2,6 +2,9 @@ export const WORKER_ENV_KEY = 'REPACK_WORKER';
 
 export const VERBOSE_ENV_KEY = 'REPACK_VERBOSE';
 
+/** Default development server hostname. */
+export const DEFAULT_HOSTNAME = 'localhost';
+
 /** Default development server port. */
 export const DEFAULT_PORT = 8081;
 
