@@ -123,7 +123,7 @@ export interface DevServerOptions {
   /**
    * HTTPS options.
    * If specified, the server will use HTTPS, otherwise HTTP.
-   * */
+   */
   https?: {
     /** Path to certificate when running server on HTTPS. */
     cert?: string;
