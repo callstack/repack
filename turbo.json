@@ -5,12 +5,6 @@
       "dependsOn": ["^build"],
       "outputMode": "errors-only"
     },
-    "docs": {
-      "dependsOn": ["build", "^docs"],
-      "inputs": ["src/**"],
-      "outputs": ["docs/**"],
-      "outputMode": "errors-only"
-    },
     "lint": {
       "dependsOn": ["build"],
       "inputs": ["src/**"],
