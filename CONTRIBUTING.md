@@ -66,7 +66,7 @@ You can then use Xcode/Android Studio/Gradle to build application or run `pnpm r
 
 ### Working on documentation
 
-The documentation is automatically generated from the [TypeScript](https://www.typescriptlang.org/) types and in-code documentation comments using [TypeDoc](https://typedoc.org/). The documentation is a part of the website, which is stored in `website` directory and uses Docusaurus v2.
+The documentation is a part of the website, which is stored in `website` directory and uses `rspress` - an SSG framework that leverages `rspack`. To start working on the docs, either run `pnpm website:start` from the root of the repository, or `pnpm start` from inside of the `website` directory.
 
 ### Publishing a release
 
