@@ -1,7 +1,7 @@
-import { createRequire } from "node:module";
-import path from "node:path";
-import TerserPlugin from "terser-webpack-plugin";
-import * as Repack from "@callstack/repack";
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import TerserPlugin from 'terser-webpack-plugin';
+import * as Repack from '@callstack/repack';
 
 const dirname = Repack.getDirname(import.meta.url);
 const { resolve } = createRequire(import.meta.url);
@@ -23,20 +23,20 @@ const { resolve } = createRequire(import.meta.url);
  */
 export default (env) => {
   const {
-    mode = "development",
+    mode = 'development',
     context = dirname,
-    entry = "./index.js",
+    entry = './index.js',
     platform = process.env.PLATFORM,
-    minimize = mode === "production",
+    minimize = mode === 'production',
     devServer = undefined,
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
-    reactNativePath = resolve("react-native"),
+    reactNativePath = resolve('react-native'),
   } = env;
 
   if (!platform) {
-    throw new Error("Missing platform");
+    throw new Error('Missing platform');
   }
 
   /**
@@ -108,10 +108,10 @@ export default (env) => {
      */
     output: {
       clean: true,
-      hashFunction: "xxhash64",
-      path: path.join(dirname, "build/generated", platform),
-      filename: "index.bundle",
-      chunkFilename: "[name].chunk.bundle",
+      hashFunction: 'xxhash64',
+      path: path.join(dirname, 'build/generated', platform),
+      filename: 'index.bundle',
+      chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
     },
     /**
@@ -137,7 +137,7 @@ export default (env) => {
           },
         }),
       ],
-      chunkIds: "named",
+      chunkIds: 'named',
     },
     module: {
       /**
@@ -163,7 +163,7 @@ export default (env) => {
             /node_modules(.*[/\\])+abort-controller/,
             /node_modules(.*[/\\])+@callstack[/\\]repack/,
           ],
-          use: "babel-loader",
+          use: 'babel-loader',
         },
         /**
          * Here you can adjust loader that will process your files.
@@ -175,12 +175,12 @@ export default (env) => {
           test: /\.[jt]sx?$/,
           exclude: /node_modules/,
           use: {
-            loader: "babel-loader",
+            loader: 'babel-loader',
             options: {
               /** Add React Refresh transform only when HMR is enabled. */
               plugins:
                 devServer && devServer.hmr
-                  ? ["module:react-refresh/babel"]
+                  ? ['module:react-refresh/babel']
                   : undefined,
             },
           },
@@ -198,7 +198,7 @@ export default (env) => {
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
-            loader: "@callstack/repack/assets-loader",
+            loader: '@callstack/repack/assets-loader',
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
