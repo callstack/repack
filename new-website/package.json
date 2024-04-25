@@ -10,7 +10,7 @@
     "diff:v2-v3": "git diff origin/2.x:templates/webpack.config.js HEAD:templates/webpack.config.cjs > src/public/diffs/repack_v2-v3.diff"
   },
   "dependencies": {
-    "rsbuild-plugin-open-graph": "^1.0.0",    
+    "rsbuild-plugin-open-graph": "^1.0.0",
     "rspress": "1.18.3",
     "rspress-plugin-font-open-sans": "^1.0.0",
     "rspress-plugin-vercel-analytics": "^0.3.0"

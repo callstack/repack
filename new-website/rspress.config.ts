@@ -7,8 +7,7 @@ import { pluginOpenGraph } from 'rsbuild-plugin-open-graph';
 export default defineConfig({
   root: path.join(__dirname, 'src'),
   title: 'Re.Pack',
-  description:
-    'A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.',
+  description: 'A toolkit to build your React Native application with Webpack.',
   icon: '/img/favicon.ico',
   logo: {
     light: '/img/logo_light.svg',
@@ -60,9 +59,10 @@ export default defineConfig({
       pluginOpenGraph({
         title: 'Re.Pack',
         type: 'website',
-        url: 'https://re-pack.dev/',
+        url: 'https://re-pack.dev',
+        image: '/img/og-image.png',
         description:
-          'A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.',
+          'A toolkit to build your React Native application with Webpack.',
         twitter: {
           site: '@repack_rn',
           card: 'summary_large_image',
