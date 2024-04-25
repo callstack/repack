@@ -45,7 +45,7 @@ Re.Pack uses Webpack 5 and React Native CLI's plugin system to allow you to bund
   - Transforming production bundle into bytecode bundle
   - Inspecting running Hermes engine with Flipper
   - `ChunksToHermesBytecodePlugin` plugin to transform async chunks into Hermes bytecode
-- [x] [Code splitting](https://re-pack.netlify.app/docs/code-splitting/concept) (**experimental**):
+- [x] [Code splitting](https://re-pack.dev/docs/code-splitting/concept) (**experimental**):
   - Dynamic `import()` support with and without `React.lazy()` (recommended).
   - Arbitrary scripts (only for advanced users).
 - [x] REST API for development server:
@@ -64,16 +64,16 @@ For a more comprehensive example of a Super App setup with Module Federation ple
 
 ## Documentation
 
-The documentation is available at: https://re-pack.netlify.app/
+The documentation is available at: https://re-pack.dev
 
 You can also use the following links to jump to specific topics:
 
-- [About Re.Pack](https://re-pack.netlify.app/docs/about)
-- [Getting Started](https://re-pack.netlify.app/docs/getting-started)
-- [Configuration](https://re-pack.netlify.app/docs/configuration/webpack-config)
-- [API documentation](https://re-pack.netlify.app/docs/api/index)
-- [Known issues & limitations](https://re-pack.netlify.app/docs/known-issues)
-- [Code splitting](https://re-pack.netlify.app/docs/code-splitting/concept)
+- [About Re.Pack](https://re-pack.dev/docs/about)
+- [Getting Started](https://re-pack.dev/docs/getting-started)
+- [Configuration](https://re-pack.dev/docs/configuration/webpack-config)
+- [API documentation](https://re-pack.dev/api/about)
+- [Known issues & limitations](https://re-pack.dev/docs/known-issues)
+- [Code splitting](https://re-pack.dev/docs/code-splitting/concept)
 
 ## Made with ❤️ at Callstack
 
