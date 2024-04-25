@@ -60,7 +60,7 @@ export default defineConfig({
         title: 'Re.Pack',
         type: 'website',
         url: 'https://re-pack.dev',
-        image: '/img/og-image.png',
+        image: 'https://repack.dev/img/og_image.png',
         description:
           'A toolkit to build your React Native application with Webpack.',
         twitter: {
