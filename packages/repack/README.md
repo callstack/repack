@@ -17,7 +17,7 @@ Re.Pack is a next generation of [Haul](https://github.com/callstack/haul) — a 
 
 Re.Pack uses Webpack 5 and React Native CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
 
-Check out our website at https://re-pack.netlify.app/ for more info and documentation or out GitHub: https://github.com/callstack/repack.
+Check out our website at https://re-pack.dev for more info and documentation or out GitHub: https://github.com/callstack/repack.
 
 ## Made with ❤️ at Callstack
 
@@ -26,8 +26,8 @@ Check out our website at https://re-pack.netlify.app/ for more info and document
 Like the project? ⚛️ [Join the team](https://callstack.com/careers/?utm_campaign=Senior_RN&utm_source=github&utm_medium=readme) who does amazing stuff for clients and drives React Native Open Source! 🔥
 
 <!-- badges -->
-[callstack-readme-with-love]: https://callstack.com/?utm_source=github.com&utm_medium=referral&utm_campaign=react-native-paper&utm_term=readme-with-love
 
+[callstack-readme-with-love]: https://callstack.com/?utm_source=github.com&utm_medium=referral&utm_campaign=react-native-paper&utm_term=readme-with-love
 [build-badge]: https://img.shields.io/github/workflow/status/callstack/repack/CI/main?style=flat-square
 [build]: https://github.com/callstack/repack/actions/workflows/main.yml
 [version-badge]: https://img.shields.io/npm/v/@callstack/repack?style=flat-square

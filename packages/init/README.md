@@ -37,7 +37,7 @@ npx @callstack/repack-init [options]
 
 ---
 
-Check out our website at https://re-pack.netlify.app/ for more info and documentation or out GitHub: https://github.com/callstack/repack.
+Check out our website at https://re-pack.dev for more info and documentation or out GitHub: https://github.com/callstack/repack.
 
 <!-- badges -->
 

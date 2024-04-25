@@ -3,42 +3,22 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "copy-api-docs": "sh ./scripts/copy-api-docs.sh",
-    "start": "pnpm copy-api-docs && docusaurus start",
-    "export": "pnpm copy-api-docs && docusaurus build",
-    "diff:v1-v2": "git diff origin/nativepack:templates/webpack.config.js origin/2.x:templates/webpack.config.js > static/diffs/repack_v1-v2.diff",
-    "diff:v2-v3": "git diff origin/2.x:templates/webpack.config.js HEAD:templates/webpack.config.cjs > static/diffs/repack_v2-v3.diff"
+    "start": "rspress dev",
+    "export": "rspress build",
+    "preview": "rspress preview",
+    "diff:v1-v2": "git diff origin/nativepack:templates/webpack.config.js origin/2.x:templates/webpack.config.js > src/public/diffs/repack_v1-v2.diff",
+    "diff:v2-v3": "git diff origin/2.x:templates/webpack.config.js HEAD:templates/webpack.config.cjs > src/public/diffs/repack_v2-v3.diff"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-beta.21",
-    "@docusaurus/preset-classic": "^2.0.0-beta.21",
-    "@docusaurus/theme-common": "^2.0.0-beta.21",
-    "@mdx-js/react": "^1.6.22",
-    "@svgr/webpack": "^6.2.1",
-    "clsx": "^1.1.1",
-    "del-cli": "^4.0.1",
-    "file-loader": "^6.2.0",
-    "prism-react-renderer": "^1.3.3",
-    "raw-loader": "^4.0.2",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "url-loader": "^4.1.1"
+    "rsbuild-plugin-open-graph": "^1.0.0",
+    "rspress": "1.18.3",
+    "rspress-plugin-font-open-sans": "^1.0.0",
+    "rspress-plugin-vercel-analytics": "^0.3.0"
   },
   "devDependencies": {
-    "@callstack/eslint-config": "^14.1.0",
-    "eslint": "^8.53.0",
-    "netlify-cli": "^10.5.1"
-  },
-  "browserslist": {
-    "production": [
-      ">0.5%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "@types/node": "^18",
+    "@types/react": "^18.2.64",
+    "netlify-cli": "^10.5.1",
+    "typescript": "^5.2.2"
   }
 }

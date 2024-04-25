@@ -5,7 +5,7 @@ If you want to familiarize yourself with the code base, you are just in the righ
 
 Before you start, make sure you've gone through the [README](./README.md).
 
-Feel free to jump between this document and [Documentation](https://re-pack.netlify.app/)
+Feel free to jump between this document and [Documentation](https://re-pack.dev)
 for an additional context on configuration, parameters and types.
 
 ## General overview
@@ -57,12 +57,13 @@ When running a development server, there is a wide difference in the functionali
 - `webpack-start`:
   - Uses `DevServerProxy`, which sole purpose is to allow running multiple Webpack compilers for multiple platforms.
   - Each platform will get its own _compiler worker_, which runs Webpack compiler in watch mode. For each compilation a platform-specific Webpack
-  configuration will be created, which will include platform-specific `DevServer`.
+    configuration will be created, which will include platform-specific `DevServer`.
   - Each platform-specific `DevServer` will listen on randomly picked free-port.
   - `DevServerProxy` will handle the creation of said workers, as well as forwarding the requests based on `?platform=<platform>` query param.
   - Additionally `DevServerProxy` has the same Dev endpoints as `DevServer` (they both extend `BaseDevServer`) and dedicated `POST /symbolicate` endpoint.
 
 The overall architecture of `DevServerProxy` is as follows:
+
 ```
 `DevServerProxy`
 ├── <compiler worker platform=ios>
@@ -76,8 +77,8 @@ The overall architecture of `DevServerProxy` is as follows:
 └── ...
 ```
 
-Check [`getDevServerOptions` function](https://re-pack.netlify.app/docs/api/functions/getDevServerOptions) for details on configuration options that the `DevServer` or `DevServerProxy` will receive.
-  
+Check [`getDevServerOptions` function](https://re-pack.dev/2.x/api/node/functions/getDevServerOptions) for details on configuration options that the `DevServer` or `DevServerProxy` will receive.
+
 ## Logging
 
 Depending on how you run Re.Pack the logging works slightly differently, but

@@ -11,7 +11,7 @@ const { resolve } = createRequire(import.meta.url);
  * https://github.com/callstack/repack/blob/main/README.md
  *
  * The API documentation for the functions and plugins used in this file is available at:
- * https://re-pack.netlify.app/
+ * https://re-pack.dev
  */
 
 /**

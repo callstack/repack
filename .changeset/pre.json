@@ -8,8 +8,7 @@
     "@callstack/repack-dev-server": "1.1.0",
     "@callstack/repack-init": "1.1.0",
     "@callstack/repack": "3.7.0",
-    "website": "0.0.1",
-    "new-website": "0.0.1"
+    "website": "0.0.1"
   },
   "changesets": [
     "big-spiders-guess",
