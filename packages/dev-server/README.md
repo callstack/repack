@@ -15,11 +15,11 @@ A Webpack-based toolkit to build your React Native application with full support
 
 `@callstack/repack-dev-sever` is bundler-agnostic development server for React Native applications as part of `@callstack/repack`.
 
-Check out our website at https://re-pack.netlify.app/ for more info and documentation or out GitHub: https://github.com/callstack/repack.
+Check out our website at https://re-pack.dev for more info and documentation or out GitHub: https://github.com/callstack/repack.
 
 <!-- badges -->
-[callstack-readme-with-love]: https://callstack.com/?utm_source=github.com&utm_medium=referral&utm_campaign=react-native-paper&utm_term=readme-with-love
 
+[callstack-readme-with-love]: https://callstack.com/?utm_source=github.com&utm_medium=referral&utm_campaign=react-native-paper&utm_term=readme-with-love
 [build-badge]: https://img.shields.io/github/workflow/status/callstack/repack/CI/main?style=flat-square
 [build]: https://github.com/callstack/repack/actions/workflows/main.yml
 [version-badge]: https://img.shields.io/npm/v/@callstack/repack-debugger-app?style=flat-square
