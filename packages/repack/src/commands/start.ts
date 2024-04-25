@@ -5,7 +5,7 @@ import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
 import { CliOptions, HMRMessageBody, StartArguments } from '../types';
-import { DEFAULT_PORT } from '../env';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../env';
 import {
   composeReporters,
   ConsoleReporter,
@@ -67,7 +67,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   const { start, stop } = await createServer({
     options: {
       rootDir: cliOptions.config.root,
-      host: args.host,
+      host: args.host || DEFAULT_HOSTNAME,
       port: args.port ?? DEFAULT_PORT,
       https: args.https
         ? {
