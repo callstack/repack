@@ -1,13 +1,13 @@
-const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
-const Repack = require('@callstack/repack');
+const path = require("path");
+const TerserPlugin = require("terser-webpack-plugin");
+const Repack = require("@callstack/repack");
 
 /**
  * More documentation, installation, usage, motivation and differences with Metro is available at:
  * https://github.com/callstack/repack/blob/main/README.md
  *
  * The API documentation for the functions and plugins used in this file is available at:
- * https://re-pack.netlify.app/
+ * https://re-pack.dev
  */
 
 /**
@@ -19,20 +19,20 @@ const Repack = require('@callstack/repack');
  */
 module.exports = (env) => {
   const {
-    mode = 'development',
+    mode = "development",
     context = __dirname,
-    entry = './index.js',
+    entry = "./index.js",
     platform = process.env.PLATFORM,
-    minimize = mode === 'production',
+    minimize = mode === "production",
     devServer = undefined,
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
-    reactNativePath = require.resolve('react-native'),
+    reactNativePath = require.resolve("react-native"),
   } = env;
 
   if (!platform) {
-    throw new Error('Missing platform');
+    throw new Error("Missing platform");
   }
 
   /**
@@ -104,10 +104,10 @@ module.exports = (env) => {
      */
     output: {
       clean: true,
-      hashFunction: 'xxhash64',
-      path: path.join(__dirname, 'build/generated', platform),
-      filename: 'index.bundle',
-      chunkFilename: '[name].chunk.bundle',
+      hashFunction: "xxhash64",
+      path: path.join(__dirname, "build/generated", platform),
+      filename: "index.bundle",
+      chunkFilename: "[name].chunk.bundle",
       publicPath: Repack.getPublicPath({ platform, devServer }),
     },
     /**
@@ -133,7 +133,7 @@ module.exports = (env) => {
           },
         }),
       ],
-      chunkIds: 'named',
+      chunkIds: "named",
     },
     module: {
       /**
@@ -159,7 +159,7 @@ module.exports = (env) => {
             /node_modules(.*[/\\])+abort-controller/,
             /node_modules(.*[/\\])+@callstack[/\\]repack/,
           ],
-          use: 'babel-loader',
+          use: "babel-loader",
         },
         /**
          * Here you can adjust loader that will process your files.
@@ -171,12 +171,12 @@ module.exports = (env) => {
           test: /\.[jt]sx?$/,
           exclude: /node_modules/,
           use: {
-            loader: 'babel-loader',
+            loader: "babel-loader",
             options: {
               /** Add React Refresh transform only when HMR is enabled. */
               plugins:
                 devServer && devServer.hmr
-                  ? ['module:react-refresh/babel']
+                  ? ["module:react-refresh/babel"]
                   : undefined,
             },
           },
@@ -194,7 +194,7 @@ module.exports = (env) => {
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
-            loader: '@callstack/repack/assets-loader',
+            loader: "@callstack/repack/assets-loader",
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
