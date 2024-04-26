@@ -85,7 +85,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         void runAdbReverse(ctx, args.port);
       }
 
-      let lastStats: webpack.StatsCompilation | undefined;
+      const lastStats: Record<string, webpack.StatsCompilation> = {};
 
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
@@ -109,7 +109,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           stats: webpack.StatsCompilation;
         }) => {
           ctx.notifyBuildEnd(platform);
-          lastStats = stats;
+          lastStats[platform] = stats;
           ctx.broadcastToHmrClients(
             { action: 'built', body: createHmrBody(stats) },
             platform
@@ -154,7 +154,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           getUriPath: () => '/__hmr',
           onClientConnected: (platform, clientId) => {
             ctx.broadcastToHmrClients(
-              { action: 'sync', body: createHmrBody(lastStats) },
+              { action: 'sync', body: createHmrBody(lastStats[platform]) },
               platform,
               [clientId]
             );
