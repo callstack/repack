@@ -228,6 +228,10 @@
   margin-bottom: 1.5rem;
 }
 
+div:has(> p.rspress-home-hero-text) {
+  align-items: stretch;
+}
+
 a:has(> span.home-hero-primary-action) {
   background: var(--rp-c-brand) !important;
 }
@@ -262,9 +266,4 @@ p.rspress-home-hero-text {
   p.rspress-home-hero-text {
     font-size: 3rem;
   }
-}
-
-/* fix background on buttons, regression introduced in rspress 1.18.3 */
-button {
-  background-color: initial;
 }
