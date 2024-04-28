@@ -1,10 +1,9 @@
-import readline from 'readline';
-import { URL } from 'url';
-import rspack from '@rspack/core';
+import readline from 'node:readline';
+import { URL } from 'node:url';
 import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
-import { CliOptions, HMRMessageBody, StartArguments } from '../types';
+import { CliOptions, StartArguments } from '../types';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../env';
 import {
   composeReporters,
@@ -79,7 +78,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     experiments: {
       experimentalDebugger: args.experimentalDebugger,
     },
-    delegate: (ctx): Server.Delegate => {
+    delegate: async (ctx) => {
       if (args.interactive) {
         bindKeypressInput(ctx);
       }
@@ -88,37 +87,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         void runAdbReverse(ctx, args.port);
       }
 
-      const lastStats: Record<string, rspack.StatsCompilation> = {};
-
-      compiler.on('watchRun', ({ platform }) => {
-        ctx.notifyBuildStart(platform);
-        if (platform === 'android') {
-          void runAdbReverse(ctx, args.port ?? DEFAULT_PORT);
-        }
-      });
-
-      compiler.on('invalid', ({ platform }) => {
-        ctx.notifyBuildStart(platform);
-        ctx.broadcastToHmrClients({ action: 'building' }, platform);
-      });
-
-      compiler.on(
-        'done',
-        ({
-          platform,
-          stats,
-        }: {
-          platform: string;
-          stats: rspack.StatsCompilation;
-        }) => {
-          ctx.notifyBuildEnd(platform);
-          lastStats[platform] = stats;
-          ctx.broadcastToHmrClients(
-            { action: 'built', body: createHmrBody(stats) },
-            platform
-          );
-        }
-      );
+      await compiler.initialize(ctx);
 
       return {
         compiler: {
@@ -157,7 +126,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           getUriPath: () => '/__hmr',
           onClientConnected: (platform, clientId) => {
             ctx.broadcastToHmrClients(
-              { action: 'sync', body: createHmrBody(lastStats[platform]) },
+              { action: 'sync', body: compiler.getHmrBody(platform) },
               platform,
               [clientId]
             );
@@ -192,7 +161,6 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     },
   });
 
-  await compiler.createCompiler();
   await start();
 
   return {
@@ -268,28 +236,5 @@ function parseFileUrl(fileUrl: string) {
   return {
     filename: filename.replace(/^\//, ''),
     platform: platform || undefined,
-  };
-}
-
-function createHmrBody(stats?: rspack.StatsCompilation): HMRMessageBody | null {
-  if (!stats) {
-    return null;
-  }
-
-  const modules: Record<string, string> = {};
-  for (const module of stats.modules ?? []) {
-    const { identifier, name } = module;
-    if (identifier !== undefined && name) {
-      modules[identifier] = name;
-    }
-  }
-
-  return {
-    name: stats.name ?? '',
-    time: stats.time ?? 0,
-    hash: stats.hash ?? '',
-    warnings: stats.warnings || [],
-    errors: stats.errors || [],
-    modules,
   };
 }

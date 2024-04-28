@@ -1,16 +1,15 @@
-import path from 'path';
-import fs from 'fs';
-import EventEmitter from 'events';
+import fs from 'node:fs';
+import path from 'node:path';
 import memfs from 'memfs';
+import mimeTypes from 'mime-types';
 import {
   rspack,
   MultiCompiler as RspackMultiCompiler,
   StatsCompilation,
   WatchOptions,
 } from '@rspack/core';
-import mimeTypes from 'mime-types';
-import { SendProgress } from '@callstack/repack-dev-server';
-import type { CliOptions } from '../types';
+import type { Server, SendProgress } from '@callstack/repack-dev-server';
+import type { CliOptions, HMRMessageBody } from '../types';
 import type { Reporter } from '../logging';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
 import { adaptFilenameToPlatform, getWebpackEnvOptions } from './utils';
@@ -23,10 +22,11 @@ export interface Asset {
 
 type Platform = string;
 
-export class MultiCompiler extends EventEmitter {
+export class MultiCompiler {
   instance!: RspackMultiCompiler;
   assetsCache: Record<Platform, Record<string, Asset>> = {};
   statsCache: Record<Platform, StatsCompilation> = {};
+  hmrBodyCache: Record<Platform, HMRMessageBody> = {};
   resolvers: Record<Platform, Array<(error?: Error) => void>> = {};
   progressSenders: Record<Platform, SendProgress[]> = {};
   isCompilationInProgress: Record<Platform, boolean> = {};
@@ -37,12 +37,11 @@ export class MultiCompiler extends EventEmitter {
     private reporter: Reporter,
     private isVerbose?: boolean
   ) {
-    super();
     process.env[WORKER_ENV_KEY] = '1';
     process.env[VERBOSE_ENV_KEY] = this.isVerbose ? '1' : undefined;
   }
 
-  public async createCompiler() {
+  public async initialize(ctx: Server.DelegateContext) {
     const webpackEnvOptions = getWebpackEnvOptions(this.cliOptions);
 
     const androidConfig = await loadRspackConfig(
@@ -57,6 +56,9 @@ export class MultiCompiler extends EventEmitter {
 
     this.instance = rspack([androidConfig, iosConfig]);
     this.watchOptions = androidConfig.watchOptions ?? {};
+    ['android', 'ios'].forEach((platform) => {
+      this.configureCompilerForPlatform(ctx, platform);
+    });
   }
 
   private getCompilerForPlatform(platform: string) {
@@ -69,7 +71,10 @@ export class MultiCompiler extends EventEmitter {
     this.resolvers[platform] = [];
   }
 
-  private configureCompilerForPlatform(platform: string) {
+  private configureCompilerForPlatform(
+    ctx: Server.DelegateContext,
+    platform: string
+  ) {
     const platformCompiler = this.getCompilerForPlatform(platform);
     const platformFilesystem = memfs.createFsFromVolume(new memfs.Volume());
     // @ts-expect-error memfs is compatible enough
@@ -77,13 +82,14 @@ export class MultiCompiler extends EventEmitter {
 
     platformCompiler.hooks.watchRun.tap(`compiler-${platform}`, () => {
       this.isCompilationInProgress[platform] = true;
-      this.emit('watchRun', { platform });
+      ctx.notifyBuildStart(platform);
     });
 
     platformCompiler.hooks.invalid.tap(`compiler-${platform}`, () => {
       // was true before, TBD
-      this.isCompilationInProgress[platform] = false;
-      this.emit('invalid', { platform });
+      this.isCompilationInProgress[platform] = true;
+      ctx.notifyBuildStart(platform);
+      ctx.broadcastToHmrClients({ action: 'building' }, platform);
     });
 
     platformCompiler.hooks.done.tap(`compiler-${platform}`, (stats) => {
@@ -122,21 +128,20 @@ export class MultiCompiler extends EventEmitter {
         {}
       );
       this.callPendingResolvers(platform);
-      this.emit('done', { platform, stats: this.statsCache[platform] });
+      ctx.notifyBuildEnd(platform);
+      ctx.broadcastToHmrClients(
+        { action: 'built', body: this.getHmrBody(platform) },
+        platform
+      );
     });
   }
 
   private startWatch() {
-    ['android', 'ios'].forEach((platform) => {
-      this.configureCompilerForPlatform(platform);
-    });
-
     // start watching
     this.instance.watch(this.watchOptions, (error) => {
       if (!error) return;
       this.callPendingResolvers('android', error);
       this.callPendingResolvers('ios', error);
-      this.emit('error', error);
     });
   }
 
@@ -235,5 +240,20 @@ export class MultiCompiler extends EventEmitter {
     }
 
     return mimeTypes.lookup(filename) || 'text/plain';
+  }
+
+  getHmrBody(platform: string): HMRMessageBody | null {
+    const stats = this.statsCache[platform];
+    if (!stats) {
+      return null;
+    }
+
+    return {
+      name: stats.name ?? '',
+      time: stats.time ?? 0,
+      hash: stats.hash ?? '',
+      warnings: stats.warnings || [],
+      errors: stats.errors || [],
+    };
   }
 }
