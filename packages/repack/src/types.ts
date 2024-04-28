@@ -171,7 +171,6 @@ export interface HMRMessageBody {
   hash: string;
   warnings: rspack.StatsCompilation['warnings'];
   errors: rspack.StatsCompilation['errors'];
-  modules: Record<string, string>;
 }
 
 /**

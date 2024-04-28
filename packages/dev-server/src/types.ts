@@ -24,7 +24,7 @@ export namespace Server {
     experiments?: Experiments;
 
     /** Function to create a delegate, which implements crucial functionalities. */
-    delegate: (context: DelegateContext) => Delegate;
+    delegate: (context: DelegateContext) => Promise<Delegate>;
   }
 
   export interface Experiments {
