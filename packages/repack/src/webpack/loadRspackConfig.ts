@@ -11,7 +11,7 @@ type RspackConfig =
 export async function loadRspackConfig(
   webpackConfigPath: string,
   env: WebpackEnvOptions
-) {
+): Promise<rspack.Configuration> {
   let config: RspackConfig;
 
   try {
