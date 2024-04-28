@@ -80,17 +80,22 @@ export class WebSocketHMRServer extends WebSocketServer {
     }
 
     const clientId = `client#${this.nextClientId++}`;
-    this.clients.set({ clientId, platform }, socket);
 
-    this.fastify.log.info({ msg: 'HMR client connected', clientId, platform });
+    const client = {
+      clientId,
+      platform,
+    };
+
+    this.clients.set(client, socket);
+
+    this.fastify.log.info({ msg: 'HMR client connected', ...client });
 
     const onClose = () => {
       this.fastify.log.info({
         msg: 'HMR client disconnected',
-        clientId,
-        platform,
+        ...client,
       });
-      this.clients.delete({ clientId, platform });
+      this.clients.delete(client);
     };
 
     socket.addEventListener('error', onClose);
