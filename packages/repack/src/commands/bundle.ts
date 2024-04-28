@@ -61,9 +61,9 @@ export async function bundle(
       } else {
         if (stats?.hasErrors()) {
           reject();
-          stats.compilation?.errors?.forEach((e) => {
-            console.error(e);
-          });
+          for (const error of stats.compilation.errors) {
+            console.error(error);
+          }
           process.exit(2);
         }
 
