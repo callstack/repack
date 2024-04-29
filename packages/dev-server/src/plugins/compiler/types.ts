@@ -1,5 +1,3 @@
-import type { SendProgress } from '../../types';
-
 /**
  * Delegate with implementation for compiler-specific functions.
  */
@@ -11,13 +9,8 @@ export interface CompilerDelegate {
    *
    * @param filename Filename of the asset to get.
    * @param platform Platform of the asset to get.
-   * @param sendProgress Function to notify the client who requested the asset about compilation progress.
    */
-  getAsset: (
-    filename: string,
-    platform: string,
-    sendProgress?: SendProgress
-  ) => Promise<string | Buffer>;
+  getAsset: (filename: string, platform: string) => Promise<string | Buffer>;
 
   /**
    * Detect MIME type of the asset from `filename`, `platform` or `data` (or from combination of either).
