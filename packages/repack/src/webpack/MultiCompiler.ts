@@ -199,6 +199,14 @@ export class MultiCompiler {
     filename: string,
     platform?: string
   ): Promise<string | Buffer> {
+    /**
+     * TODO refactor this part
+     *
+     * This code makes an assumption that filename ends with .bundle
+     * but this can be changed by the user, so is prone to breaking
+     * In reality, it's not that big a deal. This part is within a dev server
+     * so we might override & enforce the format for the purpose of development
+     */
     if (/\.bundle/.test(filename) && platform) {
       return (await this.getAsset(filename, platform)).data;
     }
@@ -216,10 +224,6 @@ export class MultiCompiler {
     /**
      * Inside dev server we can control the naming of sourcemaps
      * so there is no need to look it up, we can just assume default naming scheme
-     *
-     * TODO: add some detection for checking if the sourcemap exists
-     * We could probably check the cache directly as it should be already compiled?
-     * Or start a new compilation that will get a source map? (perf++)
      */
     const sourceMapFilename = filename + '.map';
 
@@ -232,6 +236,12 @@ export class MultiCompiler {
   }
 
   getMimeType(filename: string) {
+    /**
+     * TODO potentially refactor
+     *
+     * same as in getSource, this part is prone to breaking
+     * if the user changes the filename format
+     */
     if (filename.endsWith('.bundle')) {
       return 'text/javascript';
     }
