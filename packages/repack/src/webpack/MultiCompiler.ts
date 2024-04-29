@@ -10,7 +10,6 @@ import {
 } from '@rspack/core';
 import type { Server } from '@callstack/repack-dev-server';
 import type { CliOptions, HMRMessageBody } from '../types';
-import type { Reporter } from '../logging';
 import { adaptFilenameToPlatform, getWebpackEnvOptions } from './utils';
 import { loadRspackConfig } from './loadRspackConfig';
 
@@ -30,10 +29,7 @@ export class MultiCompiler {
   watchOptions: WatchOptions = {};
   watching: MultiWatching | null = null;
 
-  constructor(
-    private cliOptions: CliOptions,
-    private reporter: Reporter
-  ) {}
+  constructor(private cliOptions: CliOptions) {}
 
   private getCompilerForPlatform(platform: string) {
     if (!this.instance) throw new Error('Compiler not created yet');
