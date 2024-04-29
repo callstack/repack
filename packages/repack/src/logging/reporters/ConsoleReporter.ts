@@ -1,6 +1,5 @@
 import util from 'util';
 import colorette from 'colorette';
-import throttle from 'lodash.throttle';
 import type { LogEntry, LogType, Reporter } from '../types';
 
 export interface ConsoleReporterConfig {
@@ -53,20 +52,18 @@ const IS_SYMBOL_SUPPORTED =
   process.env.CI ||
   process.env.TERM === 'xterm-256color';
 
-const SYMBOLS: Record<LogType | 'progress', string> = {
+const SYMBOLS: Record<LogType, string> = {
   debug: colorette.gray('?'),
   info: colorette.blue('ℹ'),
   warn: colorette.yellow('⚠'),
   error: colorette.red('✖'),
-  progress: colorette.green('⇢'),
 };
 
-const FALLBACK_SYMBOLS: Record<LogType | 'progress', string> = {
+const FALLBACK_SYMBOLS: Record<LogType, string> = {
   debug: colorette.gray('?'),
   info: colorette.blue('i'),
   warn: colorette.yellow('!'),
   error: colorette.red('x'),
-  progress: colorette.green('->'),
 };
 
 class InteractiveConsoleReporter implements Reporter {
@@ -85,12 +82,6 @@ class InteractiveConsoleReporter implements Reporter {
       return;
     }
 
-    const [firstMessage] = log.message;
-    if (typeof firstMessage === 'object' && 'progress' in firstMessage) {
-      this.processProgress(log);
-      return;
-    }
-
     const normalizedLog = this.normalizeLog(log);
     if (normalizedLog) {
       process.stdout.write(
@@ -100,34 +91,6 @@ class InteractiveConsoleReporter implements Reporter {
       );
     }
   }
-
-  private processProgress = throttle((log: LogEntry) => {
-    const {
-      progress: { value, label, message, platform },
-    } = log.message[0] as {
-      progress: {
-        value: number;
-        label: string;
-        message: string;
-        platform: string;
-      };
-    };
-
-    const percentage = Math.floor(value * 100);
-
-    process.stdout.write(
-      `${
-        IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
-      } ${this.prettifyLog({
-        timestamp: log.timestamp,
-        issuer: log.issuer,
-        type: 'info',
-        message: [`Compiling ${platform}: ${percentage}% ${label}`].concat(
-          ...(message ? [`(${message})`] : [])
-        ),
-      })}\n`
-    );
-  }, 2000);
 
   private normalizeLog(log: LogEntry): LogEntry | undefined {
     const message = [];

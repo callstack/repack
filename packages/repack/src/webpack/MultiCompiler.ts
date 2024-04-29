@@ -8,7 +8,7 @@ import {
   StatsCompilation,
   WatchOptions,
 } from '@rspack/core';
-import type { Server, SendProgress } from '@callstack/repack-dev-server';
+import type { Server } from '@callstack/repack-dev-server';
 import type { CliOptions, HMRMessageBody } from '../types';
 import type { Reporter } from '../logging';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
@@ -27,7 +27,6 @@ export class MultiCompiler {
   assetsCache: Record<string, Record<string, Asset>> = {};
   statsCache: Record<string, StatsCompilation> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
-  progressSenders: Record<string, SendProgress[]> = {};
   isCompilationInProgress: Record<string, boolean> = {};
   watchOptions: WatchOptions = {};
   watching: MultiWatching | null = null;
@@ -142,11 +141,7 @@ export class MultiCompiler {
     });
   }
 
-  async getAsset(
-    filename: string,
-    platform: string,
-    sendProgress?: SendProgress
-  ): Promise<Asset> {
+  async getAsset(filename: string, platform: string): Promise<Asset> {
     // Return file from assetsCache if exists
     const fileFromCache = this.assetsCache[platform]?.[filename];
     if (fileFromCache) {
@@ -164,18 +159,10 @@ export class MultiCompiler {
       );
     }
 
-    if (sendProgress) {
-      this.progressSenders[platform] = this.progressSenders[platform] ?? [];
-      this.progressSenders[platform].push(sendProgress);
-    }
     return await new Promise<Asset>((resolve, reject) => {
       // Add new resolver to be executed when compilation is finished
       this.resolvers[platform] = (this.resolvers[platform] ?? []).concat(
         (error?: Error) => {
-          this.progressSenders[platform] = this.progressSenders[
-            platform
-          ].filter((item) => item !== sendProgress);
-
           if (error) {
             reject(error);
           } else {

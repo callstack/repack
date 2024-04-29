@@ -91,8 +91,8 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
       return {
         compiler: {
-          getAsset: async (filename, platform, sendProgress) =>
-            (await compiler.getAsset(filename, platform, sendProgress)).data,
+          getAsset: async (filename, platform) =>
+            (await compiler.getAsset(filename, platform)).data,
           getMimeType: (filename) => compiler.getMimeType(filename),
           inferPlatform: (uri) => {
             const url = new URL(uri, 'protocol://domain');

@@ -31,8 +31,8 @@ export interface LoggerPluginConfig {
 }
 
 /**
- * Logger plugin that handles all logging coming from the Webpack ecosystem, including compilation
- * progress as well as debug logs from other plugins and resolvers.
+ * Logger plugin that handles all logging coming from the Webpack ecosystem,
+ * including debug logs from other plugins and resolvers.
  *
  * @category Webpack Plugin
  */
@@ -127,8 +127,6 @@ export class LoggerPlugin implements RspackPluginInstance {
     if (compiler.options.stats === undefined) {
       compiler.options.stats = 'none';
     }
-
-    // TODO Add support for progress plugin
 
     compiler.hooks.infrastructureLog.tap(
       'LoggerPlugin',
