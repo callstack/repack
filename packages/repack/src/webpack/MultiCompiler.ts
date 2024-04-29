@@ -40,26 +40,6 @@ export class MultiCompiler {
     process.env[VERBOSE_ENV_KEY] = this.isVerbose ? '1' : undefined;
   }
 
-  public async initialize(ctx: Server.DelegateContext) {
-    const webpackEnvOptions = getWebpackEnvOptions(this.cliOptions);
-
-    const androidConfig = await loadRspackConfig(
-      this.cliOptions.config.webpackConfigPath,
-      { ...webpackEnvOptions, platform: 'android' }
-    );
-
-    const iosConfig = await loadRspackConfig(
-      this.cliOptions.config.webpackConfigPath,
-      { ...webpackEnvOptions, platform: 'ios' }
-    );
-
-    this.instance = rspack([androidConfig, iosConfig]);
-    this.watchOptions = androidConfig.watchOptions ?? {};
-    ['android', 'ios'].forEach((platform) => {
-      this.configureCompilerForPlatform(ctx, platform);
-    });
-  }
-
   private getCompilerForPlatform(platform: string) {
     if (!this.instance) throw new Error('Compiler not created yet');
     return this.instance.compilers[platform === 'android' ? 0 : 1];
@@ -132,10 +112,30 @@ export class MultiCompiler {
     });
   }
 
-  private startWatch() {
-    // start watching
+  async init(ctx: Server.DelegateContext) {
+    const webpackEnvOptions = getWebpackEnvOptions(this.cliOptions);
+
+    const androidConfig = await loadRspackConfig(
+      this.cliOptions.config.webpackConfigPath,
+      { ...webpackEnvOptions, platform: 'android' }
+    );
+
+    const iosConfig = await loadRspackConfig(
+      this.cliOptions.config.webpackConfigPath,
+      { ...webpackEnvOptions, platform: 'ios' }
+    );
+
+    this.instance = rspack([androidConfig, iosConfig]);
+    this.watchOptions = androidConfig.watchOptions ?? {};
+    ['android', 'ios'].forEach((platform) => {
+      this.configureCompilerForPlatform(ctx, platform);
+    });
+  }
+
+  start() {
     this.watching = this.instance.watch(this.watchOptions, (error) => {
       if (!error) return;
+      // TODO make this handle all platforms
       this.callPendingResolvers('android', error);
       this.callPendingResolvers('ios', error);
     });
@@ -148,13 +148,10 @@ export class MultiCompiler {
       return fileFromCache;
     }
 
-    // Spawn new worker if not already running
-    if (!this.instance.watching) {
-      this.startWatch();
-    } else if (!this.isCompilationInProgress[platform]) {
+    if (!this.isCompilationInProgress[platform]) {
       return Promise.reject(
         new Error(
-          `File ${filename} for ${platform} not found in compilation assets`
+          `File ${filename} for ${platform} not found in compilation assets (no compilation in progress)`
         )
       );
     }
