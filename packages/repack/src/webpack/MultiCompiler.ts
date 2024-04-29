@@ -75,24 +75,25 @@ export class MultiCompiler {
     ctx: Server.DelegateContext,
     platform: string
   ) {
+    const compilerName = `repack-${platform}-compiler`;
     const platformCompiler = this.getCompilerForPlatform(platform);
     const platformFilesystem = memfs.createFsFromVolume(new memfs.Volume());
+
     // @ts-expect-error memfs is compatible enough
     platformCompiler.outputFileSystem = platformFilesystem;
 
-    platformCompiler.hooks.watchRun.tap(`compiler-${platform}`, () => {
+    platformCompiler.hooks.watchRun.tap(compilerName, () => {
       this.isCompilationInProgress[platform] = true;
       ctx.notifyBuildStart(platform);
     });
 
-    platformCompiler.hooks.invalid.tap(`compiler-${platform}`, () => {
-      // was true before, TBD
+    platformCompiler.hooks.invalid.tap(compilerName, () => {
       this.isCompilationInProgress[platform] = true;
       ctx.notifyBuildStart(platform);
       ctx.broadcastToHmrClients({ action: 'building' }, platform);
     });
 
-    platformCompiler.hooks.done.tap(`compiler-${platform}`, (stats) => {
+    platformCompiler.hooks.done.tap(compilerName, (stats) => {
       const outputDirectory = stats.compilation.outputOptions.path!;
       const assets = stats.compilation.getAssets().map((asset) => {
         const data = platformFilesystem.readFileSync(
