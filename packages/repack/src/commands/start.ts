@@ -87,7 +87,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         void runAdbReverse(ctx, args.port);
       }
 
-      await compiler.initialize(ctx);
+      await compiler.init(ctx);
 
       return {
         compiler: {
@@ -161,6 +161,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     },
   });
 
+  compiler.start();
   await start();
 
   return {
