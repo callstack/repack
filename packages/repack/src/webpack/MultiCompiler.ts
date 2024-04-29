@@ -20,17 +20,17 @@ export interface Asset {
   info: Record<string, any>;
 }
 
-type Platform = string;
+type MultiWatching = ReturnType<RspackMultiCompiler['watch']>;
 
 export class MultiCompiler {
   instance!: RspackMultiCompiler;
-  assetsCache: Record<Platform, Record<string, Asset>> = {};
-  statsCache: Record<Platform, StatsCompilation> = {};
-  hmrBodyCache: Record<Platform, HMRMessageBody> = {};
-  resolvers: Record<Platform, Array<(error?: Error) => void>> = {};
-  progressSenders: Record<Platform, SendProgress[]> = {};
-  isCompilationInProgress: Record<Platform, boolean> = {};
+  assetsCache: Record<string, Record<string, Asset>> = {};
+  statsCache: Record<string, StatsCompilation> = {};
+  resolvers: Record<string, Array<(error?: Error) => void>> = {};
+  progressSenders: Record<string, SendProgress[]> = {};
+  isCompilationInProgress: Record<string, boolean> = {};
   watchOptions: WatchOptions = {};
+  watching: MultiWatching | null = null;
 
   constructor(
     private cliOptions: CliOptions,
@@ -98,11 +98,7 @@ export class MultiCompiler {
         const data = platformFilesystem.readFileSync(
           path.join(outputDirectory, asset.name)
         ) as Buffer;
-        return {
-          filename: asset.name,
-          data,
-          info: asset.info,
-        };
+        return { filename: asset.name, data, info: asset.info };
       });
       this.isCompilationInProgress[platform] = false;
       this.statsCache[platform] = stats.toJson({
@@ -138,7 +134,7 @@ export class MultiCompiler {
 
   private startWatch() {
     // start watching
-    this.instance.watch(this.watchOptions, (error) => {
+    this.watching = this.instance.watch(this.watchOptions, (error) => {
       if (!error) return;
       this.callPendingResolvers('android', error);
       this.callPendingResolvers('ios', error);
