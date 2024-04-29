@@ -1,5 +1,5 @@
 import rspack, { RspackPluginInstance } from '@rspack/core';
-import { isVerbose, isWorker } from '../../env';
+import { isVerbose } from '../../env';
 import {
   composeReporters,
   FileReporter,
@@ -55,10 +55,7 @@ export class LoggerPlugin implements RspackPluginInstance {
     const reporters = [];
     if (this.config.output.console) {
       reporters.push(
-        new ConsoleReporter({
-          isWorker: isWorker(),
-          level: isVerbose() ? 'verbose' : 'normal',
-        })
+        new ConsoleReporter({ level: isVerbose() ? 'verbose' : 'normal' })
       );
     }
     if (this.config.output.file) {

@@ -5,17 +5,15 @@ import type { LogEntry, LogType, Reporter } from '../types';
 export interface ConsoleReporterConfig {
   asJson?: boolean;
   level?: 'silent' | 'normal' | 'verbose';
-  isWorker?: boolean;
 }
 
 export class ConsoleReporter implements Reporter {
   private internalReporter: Reporter;
 
   constructor(private config: ConsoleReporterConfig) {
-    this.internalReporter =
-      this.config.isWorker || this.config.asJson
-        ? new JsonConsoleReporter(this.config)
-        : new InteractiveConsoleReporter(this.config);
+    this.internalReporter = this.config.asJson
+      ? new JsonConsoleReporter(this.config)
+      : new InteractiveConsoleReporter(this.config);
   }
 
   process(log: LogEntry) {

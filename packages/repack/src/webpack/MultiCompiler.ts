@@ -11,7 +11,6 @@ import {
 import type { Server } from '@callstack/repack-dev-server';
 import type { CliOptions, HMRMessageBody } from '../types';
 import type { Reporter } from '../logging';
-import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
 import { adaptFilenameToPlatform, getWebpackEnvOptions } from './utils';
 import { loadRspackConfig } from './loadRspackConfig';
 
@@ -33,12 +32,8 @@ export class MultiCompiler {
 
   constructor(
     private cliOptions: CliOptions,
-    private reporter: Reporter,
-    private isVerbose?: boolean
-  ) {
-    process.env[WORKER_ENV_KEY] = '1';
-    process.env[VERBOSE_ENV_KEY] = this.isVerbose ? '1' : undefined;
-  }
+    private reporter: Reporter
+  ) {}
 
   private getCompilerForPlatform(platform: string) {
     if (!this.instance) throw new Error('Compiler not created yet');
