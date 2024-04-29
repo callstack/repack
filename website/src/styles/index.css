@@ -127,13 +127,11 @@
 /* Sidebar section items */
 .rspress-sidebar-group > div > a > div {
   background-color: transparent !important;
-  font-size: 15px !important;
-  font-weight: 500 !important;
+  font-size: 14px !important;
   padding-top: 0.3rem;
   padding-bottom: 0.3rem;
 
   &:hover {
-    background-color: transparent !important;
     color: var(--rp-c-brand) !important;
   }
 
@@ -145,8 +143,10 @@
 /* Deeply nested section items */
 .rspress-sidebar-group > div > section > div {
   background-color: transparent !important;
-  font-size: 15px !important;
-  font-weight: 500 !important;
+
+  & > h2 {
+    font-size: 14px !important;
+  }
 
   &:hover {
     color: var(--rp-c-brand) !important;
@@ -167,25 +167,12 @@
   background-color: transparent !important;
 
   &:hover {
-    background-color: inherit !important;
     color: var(--rp-c-brand) !important;
   }
 }
 
-/* Group Header*/
-.rspress-scrollbar > nav > section > div > h2 {
-  font-size: 15px !important;
-  font-weight: 500 !important;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
 .rspress-scrollbar > nav > a > div:first-child {
-  font-size: 15px !important;
-  font-weight: 500 !important;
   background-color: transparent !important;
-  padding-top: 0.3rem;
-  padding-bottom: 0.3rem;
 
   &::before {
     content: none;
@@ -208,20 +195,6 @@
   padding-left: 1rem;
 }
 
-/* Code link */
-.rspress-doc a > code {
-  color: inherit;
-}
-
-.rspress-link {
-  border-style: solid !important;
-  border-color: white;
-
-  &:hover {
-    border-color: var(--rp-c-brand) !important;
-  }
-}
-
 .home-hero-name-img {
   width: 100%;
   margin-top: 1.5rem;
@@ -236,6 +209,7 @@ a:has(> span.home-hero-primary-action) {
   background: var(--rp-c-brand) !important;
 }
 
+/* Home background gradient */
 *:not([id='search-container']) > div[class^='mask'] {
   display: block !important;
   background-image: conic-gradient(
