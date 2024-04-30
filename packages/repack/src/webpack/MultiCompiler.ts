@@ -2,31 +2,20 @@ import fs from 'node:fs';
 import path from 'node:path';
 import memfs from 'memfs';
 import mimeTypes from 'mime-types';
-import {
-  rspack,
-  MultiCompiler as RspackMultiCompiler,
-  StatsCompilation,
-  WatchOptions,
-} from '@rspack/core';
+import rspack from '@rspack/core';
 import type { Server } from '@callstack/repack-dev-server';
 import type { CliOptions, HMRMessageBody } from '../types';
-import { adaptFilenameToPlatform, getWebpackEnvOptions } from './utils';
 import { loadRspackConfig } from './loadRspackConfig';
-
-export interface Asset {
-  data: string | Buffer;
-  info: Record<string, any>;
-}
-
-type MultiWatching = ReturnType<RspackMultiCompiler['watch']>;
+import type { CompilerAsset, MultiWatching } from './types';
+import { adaptFilenameToPlatform, getWebpackEnvOptions } from './utils';
 
 export class MultiCompiler {
-  instance!: RspackMultiCompiler;
-  assetsCache: Record<string, Record<string, Asset>> = {};
-  statsCache: Record<string, StatsCompilation> = {};
+  instance!: rspack.MultiCompiler;
+  assetsCache: Record<string, Record<string, CompilerAsset> | undefined> = {};
+  statsCache: Record<string, rspack.StatsCompilation | undefined> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
   isCompilationInProgress: Record<string, boolean> = {};
-  watchOptions: WatchOptions = {};
+  watchOptions: rspack.WatchOptions = {};
   watching: MultiWatching | null = null;
 
   constructor(private cliOptions: CliOptions) {}
@@ -64,37 +53,36 @@ export class MultiCompiler {
     });
 
     platformCompiler.hooks.done.tap(compilerName, (stats) => {
-      const outputDirectory = stats.compilation.outputOptions.path!;
-      const assets = stats.compilation.getAssets().map((asset) => {
-        const data = platformFilesystem.readFileSync(
-          path.join(outputDirectory, asset.name)
-        ) as Buffer;
-        return { filename: asset.name, data, info: asset.info };
-      });
-      this.isCompilationInProgress[platform] = false;
       this.statsCache[platform] = stats.toJson({
         all: false,
+        assets: true,
         children: true,
-        modules: false, // we don't need this
         timings: true,
         hash: true,
         errors: true,
         warnings: true,
       });
+      const outputDirectory = stats.compilation.outputOptions.path!;
+      const assets = this.statsCache[platform]!.assets!;
+
       this.assetsCache[platform] = assets.reduce(
-        (acc, { filename, data, info }) => {
-          const asset = {
-            data: Buffer.from(data),
-            info, // this is only used for API, and only used for size
-          };
-          return {
-            ...acc,
-            [adaptFilenameToPlatform(filename)]: asset,
-          };
+        (acc, { name, info, size }) => {
+          const assetPath = path.join(outputDirectory, name);
+          const data = platformFilesystem.readFileSync(assetPath) as Buffer;
+          const asset = { data, info, size };
+          return Object.assign(acc, { [adaptFilenameToPlatform(name)]: asset });
         },
-        {}
+        // keep old assets, discard HMR-related ones
+        Object.fromEntries(
+          Object.entries(this.assetsCache[platform] ?? {}).filter(
+            ([_, asset]) => !asset.info.hotModuleReplacement
+          )
+        )
       );
+
+      this.isCompilationInProgress[platform] = false;
       this.callPendingResolvers(platform);
+
       ctx.notifyBuildEnd(platform);
       ctx.broadcastToHmrClients(
         { action: 'built', body: this.getHmrBody(platform) },
@@ -116,7 +104,7 @@ export class MultiCompiler {
       { ...webpackEnvOptions, platform: 'ios' }
     );
 
-    this.instance = rspack([androidConfig, iosConfig]);
+    this.instance = rspack.rspack([androidConfig, iosConfig]);
     this.watchOptions = androidConfig.watchOptions ?? {};
     ['android', 'ios'].forEach((platform) => {
       this.configureCompilerForPlatform(ctx, platform);
@@ -132,7 +120,7 @@ export class MultiCompiler {
     });
   }
 
-  async getAsset(filename: string, platform: string): Promise<Asset> {
+  async getAsset(filename: string, platform: string): Promise<CompilerAsset> {
     // Return file from assetsCache if exists
     const fileFromCache = this.assetsCache[platform]?.[filename];
     if (fileFromCache) {
@@ -147,7 +135,7 @@ export class MultiCompiler {
       );
     }
 
-    return await new Promise<Asset>((resolve, reject) => {
+    return await new Promise<CompilerAsset>((resolve, reject) => {
       // Add new resolver to be executed when compilation is finished
       this.resolvers[platform] = (this.resolvers[platform] ?? []).concat(
         (error?: Error) => {

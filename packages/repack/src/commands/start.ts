@@ -148,10 +148,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           getAssets: (platform) =>
             Promise.resolve(
               Object.entries(compiler.assetsCache[platform] ?? {}).map(
-                ([name, asset]) => ({
-                  name,
-                  size: asset.info.size,
-                })
+                ([name, asset]) => ({ name, size: asset.size })
               )
             ),
           getCompilationStats: (platform) =>
