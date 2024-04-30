@@ -24,7 +24,7 @@
     "enhanced-resolve": "^5.16.0",
     "eslint": "^8.53.0",
     "jest": "^28.1.1",
-    "memfs": "^3.4.4",
+    "memfs": "^4.9.1",
     "type-fest": "^4.12.0"
   }
 }
