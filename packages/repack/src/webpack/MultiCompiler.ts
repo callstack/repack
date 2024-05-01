@@ -4,13 +4,14 @@ import memfs from 'memfs';
 import mimeTypes from 'mime-types';
 import rspack from '@rspack/core';
 import type { Server } from '@callstack/repack-dev-server';
-import type { CliOptions, HMRMessageBody } from '../types';
+import type { StartCliOptions, HMRMessageBody } from '../types';
 import { loadRspackConfig } from './loadRspackConfig';
 import type { CompilerAsset, MultiWatching } from './types';
 import { adaptFilenameToPlatform, getWebpackEnvOptions } from './utils';
 
 export class MultiCompiler {
   instance!: rspack.MultiCompiler;
+  platforms: string[];
   assetsCache: Record<string, Record<string, CompilerAsset> | undefined> = {};
   statsCache: Record<string, rspack.StatsCompilation | undefined> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
@@ -18,11 +19,26 @@ export class MultiCompiler {
   watchOptions: rspack.WatchOptions = {};
   watching: MultiWatching | null = null;
 
-  constructor(private cliOptions: CliOptions) {}
+  constructor(private cliOptions: StartCliOptions) {
+    this.platforms = cliOptions.arguments.start.platforms!;
+  }
 
   private getCompilerForPlatform(platform: string) {
-    if (!this.instance) throw new Error('Compiler not created yet');
-    return this.instance.compilers[platform === 'android' ? 0 : 1];
+    if (!this.instance) {
+      throw new Error('[MultiCompiler] Compiler not created yet');
+    }
+
+    const index = this.platforms.indexOf(platform);
+    if (index === -1) {
+      throw new Error(`[MultiCompiler] Platform ${platform} not found`);
+    }
+
+    const compiler = this.instance.compilers[index];
+    if (!compiler) {
+      throw new Error(`[MultiCompiler] Compiler for ${platform} not found`);
+    }
+
+    return compiler;
   }
 
   private callPendingResolvers(platform: string, error?: Error) {
@@ -93,20 +109,16 @@ export class MultiCompiler {
 
   async init(ctx: Server.DelegateContext) {
     const webpackEnvOptions = getWebpackEnvOptions(this.cliOptions);
-
-    const androidConfig = await loadRspackConfig(
-      this.cliOptions.config.webpackConfigPath,
-      { ...webpackEnvOptions, platform: 'android' }
+    const configs = await Promise.all(
+      this.platforms.map((platform) => {
+        const env = { ...webpackEnvOptions, platform };
+        return loadRspackConfig(this.cliOptions.config.webpackConfigPath, env);
+      })
     );
 
-    const iosConfig = await loadRspackConfig(
-      this.cliOptions.config.webpackConfigPath,
-      { ...webpackEnvOptions, platform: 'ios' }
-    );
-
-    this.instance = rspack.rspack([androidConfig, iosConfig]);
-    this.watchOptions = androidConfig.watchOptions ?? {};
-    ['android', 'ios'].forEach((platform) => {
+    this.instance = rspack.rspack(configs);
+    this.watchOptions = configs[0].watchOptions ?? {};
+    this.platforms.forEach((platform) => {
       this.configureCompilerForPlatform(ctx, platform);
     });
   }
@@ -114,9 +126,9 @@ export class MultiCompiler {
   start() {
     this.watching = this.instance.watch(this.watchOptions, (error) => {
       if (!error) return;
-      // TODO make this handle all platforms
-      this.callPendingResolvers('android', error);
-      this.callPendingResolvers('ios', error);
+      this.platforms.forEach((platform) => {
+        this.callPendingResolvers(platform, error);
+      });
     });
   }
 

@@ -11,8 +11,6 @@ export type InfrastructureLogger = ReturnType<
  * @internal
  */
 export interface CommonArguments {
-  /** Target application platform. */
-  platform: string;
   /** Whether to clean any persistent cache. */
   resetCache?: boolean;
   /** Whether to log additional debug messages. */
@@ -29,6 +27,7 @@ export interface CommonArguments {
 export interface BundleArguments extends CommonArguments {
   assetsDest?: string;
   entryFile: string;
+  platform: string;
   json?: string;
   minify?: boolean;
   dev: boolean;
@@ -46,6 +45,7 @@ export interface BundleArguments extends CommonArguments {
  * @internal
  */
 export interface StartArguments extends CommonArguments {
+  platforms?: string[];
   cert?: string;
   host?: string;
   https?: boolean;
@@ -60,26 +60,25 @@ export interface StartArguments extends CommonArguments {
   experimentalDebugger?: boolean;
 }
 
-/**
- * Holds all information used by {@link parseCliOptions}.
- *
- * @internal
- */
-export interface CliOptions {
+interface CommonCliOptions {
   config: {
     root: string;
     reactNativePath: string;
     webpackConfigPath: string;
   };
-  command: 'bundle' | 'start';
-  arguments:
-    | {
-        bundle: BundleArguments;
-      }
-    | {
-        start: StartArguments;
-      };
 }
+
+export interface StartCliOptions extends CommonCliOptions {
+  command: 'start';
+  arguments: { start: StartArguments };
+}
+
+export interface BundleCliOptions extends CommonCliOptions {
+  command: 'bundle';
+  arguments: { bundle: BundleArguments };
+}
+
+export type CliOptions = StartCliOptions | BundleCliOptions;
 
 /**
  * Development server configuration options.

@@ -27,7 +27,6 @@ export function getWebpackEnvOptions(
     env.assetsPath = cliOptions.arguments.bundle.assetsDest;
   } else {
     env.mode = 'development';
-    env.platform = cliOptions.arguments.start.platform || undefined;
     env.devServer = {
       port: cliOptions.arguments.start.port ?? DEFAULT_PORT,
       host: cliOptions.arguments.start.host || DEFAULT_HOSTNAME,

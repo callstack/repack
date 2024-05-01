@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import { stringifyStream } from '@discoveryjs/json-ext';
 import { rspack, StatsValue } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../env';
-import { BundleArguments, CliOptions } from '../types';
+import { BundleArguments, BundleCliOptions } from '../types';
 import { loadRspackConfig } from '../webpack/loadRspackConfig';
 import { getWebpackEnvOptions } from '../webpack/utils';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
@@ -39,7 +39,7 @@ export async function bundle(
     arguments: {
       bundle: args,
     },
-  } as CliOptions;
+  } as BundleCliOptions;
 
   if (args.verbose ?? process.argv.includes('--verbose')) {
     process.env[VERBOSE_ENV_KEY] = '1';
