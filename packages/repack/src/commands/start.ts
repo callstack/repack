@@ -3,7 +3,7 @@ import { URL } from 'node:url';
 import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
-import { CliOptions, StartArguments } from '../types';
+import { StartArguments, StartCliOptions } from '../types';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../env';
 import {
   composeReporters,
@@ -33,7 +33,8 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     args.webpackConfig
   );
   const { reversePort: reversePortArg, ...restArgs } = args;
-  const cliOptions: CliOptions = {
+  const platforms = ['android', 'ios'];
+  const cliOptions = {
     config: {
       root: config.root,
       reactNativePath: config.reactNativePath,
@@ -41,10 +42,9 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     },
     command: 'start',
     arguments: {
-      // `platform` is empty, since it will be filled in later by `DevServerProxy`
-      start: { ...restArgs, platform: '' },
+      start: { ...restArgs, platforms },
     },
-  };
+  } as StartCliOptions;
 
   const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
   const isSilent = args.silent;
@@ -144,7 +144,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           },
         },
         api: {
-          getPlatforms: () => Promise.resolve(['android', 'ios']),
+          getPlatforms: () => Promise.resolve(compiler.platforms),
           getAssets: (platform) =>
             Promise.resolve(
               Object.entries(compiler.assetsCache[platform] ?? {}).map(
