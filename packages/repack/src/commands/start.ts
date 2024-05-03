@@ -60,7 +60,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
     ].filter(Boolean) as Reporter[]
   );
-  const compiler = new MultiCompiler(cliOptions);
+  const compiler = new MultiCompiler(cliOptions, reporter);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({

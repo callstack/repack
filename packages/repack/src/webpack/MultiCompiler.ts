@@ -4,6 +4,7 @@ import memfs from 'memfs';
 import mimeTypes from 'mime-types';
 import rspack from '@rspack/core';
 import type { Server } from '@callstack/repack-dev-server';
+import type { Reporter } from '../logging';
 import type { StartCliOptions, HMRMessageBody } from '../types';
 import { loadRspackConfig } from './loadRspackConfig';
 import type { CompilerAsset, MultiWatching } from './types';
@@ -19,7 +20,10 @@ export class MultiCompiler {
   watchOptions: rspack.WatchOptions = {};
   watching: MultiWatching | null = null;
 
-  constructor(private cliOptions: StartCliOptions) {
+  constructor(
+    private cliOptions: StartCliOptions,
+    private reporter: Reporter
+  ) {
     this.platforms = cliOptions.arguments.start.platforms!;
   }
 
@@ -50,25 +54,26 @@ export class MultiCompiler {
     ctx: Server.DelegateContext,
     platform: string
   ) {
-    const compilerName = `repack-${platform}-compiler`;
+    const internalName = `${platform}-compiler`;
     const platformCompiler = this.getCompilerForPlatform(platform);
     const platformFilesystem = memfs.createFsFromVolume(new memfs.Volume());
 
     // @ts-expect-error memfs is compatible enough
     platformCompiler.outputFileSystem = platformFilesystem;
+    platformCompiler.name = platform;
 
-    platformCompiler.hooks.watchRun.tap(compilerName, () => {
+    platformCompiler.hooks.watchRun.tap(internalName, () => {
       this.isCompilationInProgress[platform] = true;
       ctx.notifyBuildStart(platform);
     });
 
-    platformCompiler.hooks.invalid.tap(compilerName, () => {
+    platformCompiler.hooks.invalid.tap(internalName, () => {
       this.isCompilationInProgress[platform] = true;
       ctx.notifyBuildStart(platform);
       ctx.broadcastToHmrClients({ action: 'building' }, platform);
     });
 
-    platformCompiler.hooks.done.tap(compilerName, (stats) => {
+    platformCompiler.hooks.done.tap(internalName, (stats) => {
       this.statsCache[platform] = stats.toJson({
         all: false,
         assets: true,
@@ -120,6 +125,59 @@ export class MultiCompiler {
     this.watchOptions = configs[0].watchOptions ?? {};
     this.platforms.forEach((platform) => {
       this.configureCompilerForPlatform(ctx, platform);
+    });
+
+    this.instance.hooks.done.tap('Compiler', (multiStats) => {
+      const issuer = 'DevServer';
+      const timestamp = Date.now();
+      const {
+        children = [],
+        errors = [],
+        warnings = [],
+      } = multiStats.toJson({
+        preset: 'errors-warnings',
+        timings: true,
+      });
+
+      if (errors.length) {
+        const message = ['Bundle built with erros'];
+        this.reporter.process({ type: 'error', issuer, timestamp, message });
+
+        children.forEach((stats) => {
+          stats.errors?.forEach((error) => {
+            const message = [
+              `Error in "${error.moduleName}":\n${error.formatted}`,
+            ];
+            this.reporter.process({
+              type: 'error',
+              issuer,
+              timestamp,
+              message,
+            });
+          });
+        });
+      } else if (warnings?.length) {
+        const message = ['Bundle built with warnings'];
+        this.reporter.process({ type: 'warn', issuer, timestamp, message });
+
+        children.forEach((stats) => {
+          stats.warnings?.forEach((warning) => {
+            const message = [
+              `Warning in "${warning.moduleName}": ${warning.message}`,
+            ];
+            this.reporter.process({ type: 'warn', issuer, timestamp, message });
+          });
+        });
+      } else {
+        const message = [
+          'Bundle built',
+          Object.fromEntries(children.map(({ name, time }) => [name, time])),
+        ];
+        this.reporter.process({ type: 'info', issuer, timestamp, message });
+      }
+
+      this.reporter.flush();
+      this.reporter.stop();
     });
   }
 

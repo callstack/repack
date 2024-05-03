@@ -147,56 +147,18 @@ export class LoggerPlugin implements RspackPluginInstance {
       });
     });
 
-    compiler.hooks.done.tap('LoggerPlugin', (stats) => {
-      if (this.config.devServerEnabled) {
-        const { time, errors, warnings } = stats.toJson({
-          all: false,
-          timings: true,
-          errors: true,
-          warnings: true,
-        });
-
-        let entires: Array<LogEntry | undefined> = [];
-        if (errors?.length) {
-          entires = [
-            this.createEntry('LoggerPlugin', 'error', [
-              'Failed to build bundle due to errors',
-            ]),
-            ...errors.map((error) =>
-              this.createEntry('LoggerPlugin', 'error', [
-                `Error in "${error.moduleName}": ${error.message}`,
-              ])
-            ),
-          ];
-        } else {
-          entires = [
-            this.createEntry('LoggerPlugin', 'info', [
-              warnings?.length ? 'Bundle built with warnings' : 'Bundle built',
-              { time },
-            ]),
-            ...(warnings?.map((warning) =>
-              this.createEntry('LoggerPlugin', 'warn', [
-                `Warning in "${warning.moduleName}": ${warning.message}`,
-              ])
-            ) ?? []),
-          ];
-        }
-
-        for (const entry of entires.filter(Boolean) as LogEntry[]) {
-          this.processEntry(entry);
-        }
-      } else {
+    if (!this.config.devServerEnabled) {
+      compiler.hooks.done.tap('LoggerPlugin', (stats) => {
         const statsEntry = this.createEntry('LoggerPlugin', 'info', [
           stats.toString({ preset: 'normal', colors: true }),
         ]);
         if (statsEntry) {
           this.processEntry(statsEntry);
         }
-      }
-
-      this.reporter.flush();
-      this.reporter.stop();
-    });
+        this.reporter.flush();
+        this.reporter.stop();
+      });
+    }
 
     process.on('uncaughtException', (error) => {
       const errorEntry = this.createEntry('LoggerPlugin', 'error', [error]);
