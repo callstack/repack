@@ -67,8 +67,9 @@ module.exports = (env) => {
           exclude: [/node_modules/, /repack[/\\]dist/],
           use: {
             loader: 'builtin:swc-loader',
+            /** @type {import('@rspack/core').SwcLoaderOptions} */
             options: {
-              sourceMap: true,
+              sourceMaps: true,
               env: {
                 targets: { hermes: '0.12' },
               },
