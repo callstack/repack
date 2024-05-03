@@ -166,6 +166,7 @@ export class Symbolicator {
     const lookup = consumer.originalPositionFor({
       line: frame.lineNumber,
       column: frame.column,
+      bias: SourceMapConsumer.LEAST_UPPER_BOUND,
     });
 
     // If lookup fails, we get the same shape object, but with

@@ -162,6 +162,9 @@ export class RepackPlugin implements RspackPluginInstance {
         exclude: /\.chunk\.(js)?bundle$/,
         filename: '[file].map',
         append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
+        module: true,
+        columns: true,
+        noSources: false,
       }).apply(compiler);
 
       new rspack.SourceMapDevToolPlugin({
@@ -169,6 +172,9 @@ export class RepackPlugin implements RspackPluginInstance {
         include: /\.chunk\.(js)?bundle$/,
         filename: '[file].map',
         append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
+        module: true,
+        columns: true,
+        noSources: false,
       }).apply(compiler);
     }
 
