@@ -6,20 +6,21 @@ import {
   WebSocket,
   WebSocketServer as WebSocketServerImpl,
 } from 'ws';
+import { WebSocketServerInterface } from './types';
 
 /**
  * Abstract class for providing common logic (eg routing) for all WebSocket servers.
  *
  * @category Development server
  */
-export abstract class WebSocketServer {
+export abstract class WebSocketServer implements WebSocketServerInterface {
   /** An instance of the underlying WebSocket server. */
-  public readonly server: WebSocketServerImpl;
+  protected server: WebSocketServerImpl;
 
   /** Fastify instance from which {@link server} will receive upgrade connections. */
   protected fastify: FastifyInstance;
 
-  public readonly paths: string[];
+  protected paths: string[];
 
   /**
    * Create a new instance of the WebSocketServer.
@@ -38,10 +39,7 @@ export abstract class WebSocketServer {
     > = {}
   ) {
     this.fastify = fastify;
-    this.server = new WebSocketServerImpl({
-      noServer: true,
-      ...wssOptions,
-    });
+    this.server = new WebSocketServerImpl({ noServer: true, ...wssOptions });
     this.server.on('connection', this.onConnection.bind(this));
     this.paths = Array.isArray(path) ? path : [path];
   }

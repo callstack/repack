@@ -1,4 +1,5 @@
-import { FastifyLoggerInstance } from 'fastify';
+import type { FastifyBaseLogger } from 'fastify';
+import type { WebSocketServer } from 'ws';
 import type { CompilerDelegate } from './plugins/compiler';
 import type { SymbolicatorDelegate } from './plugins/symbolicate';
 import type { HmrDelegate } from './plugins/wss';
@@ -20,8 +21,14 @@ export namespace Server {
     /** Development server options to configure e.g: `port`, `host` etc. */
     options: Options;
 
+    experiments?: Experiments;
+
     /** Function to create a delegate, which implements crucial functionalities. */
     delegate: (context: DelegateContext) => Delegate;
+  }
+
+  export interface Experiments {
+    experimentalDebugger?: boolean;
   }
 
   /** Development server options. */
@@ -46,6 +53,9 @@ export namespace Server {
       /** Path to certificate key when running server as HTTPS. */
       key?: string;
     };
+
+    /** Additional endpoints with pre-configured servers */
+    endpoints?: Record<string, WebSocketServer>;
   }
 
   /**
@@ -78,7 +88,7 @@ export namespace Server {
    */
   export interface DelegateContext {
     /** A logger instance, useful for emitting logs from the delegate. */
-    log: FastifyLoggerInstance;
+    log: FastifyBaseLogger;
 
     /** Send notification about compilation start for given `platform`. */
     notifyBuildStart: (platform: string) => void;
