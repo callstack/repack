@@ -223,12 +223,6 @@ importers:
       '@fastify/sensible':
         specifier: ^5.5.0
         version: 5.5.0
-      '@react-native-community/cli-debugger-ui':
-        specifier: ^13.6.6
-        version: 13.6.6
-      '@react-native-community/cli-server-api':
-        specifier: ^13.6.6
-        version: 13.6.6
       '@react-native/dev-middleware':
         specifier: ^0.73.8
         version: 0.73.8
@@ -260,6 +254,12 @@ importers:
       '@babel/core':
         specifier: ^7.23.9
         version: 7.24.0
+      '@react-native-community/cli-debugger-ui':
+        specifier: '>=11.3.1'
+        version: 13.6.6
+      '@react-native-community/cli-server-api':
+        specifier: '>=11.3.1'
+        version: 13.6.6
       '@types/babel__code-frame':
         specifier: ^7.0.3
         version: 7.0.3
@@ -3746,7 +3746,7 @@ packages:
       serve-static: 1.15.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
+    dev: true
 
   /@react-native-community/cli-doctor@13.6.4:
     resolution: {integrity: sha512-lWOXCISH/cHtLvO0cWTr+IPSzA54FewVOw7MoCMEvWusH+1n7c3hXTAve78mLozGQ7iuUufkHFWwKf3dzOkflQ==}
@@ -3847,7 +3847,7 @@ packages:
       - encoding
       - supports-color
       - utf-8-validate
-    dev: false
+    dev: true
 
   /@react-native-community/cli-tools@13.6.4:
     resolution: {integrity: sha512-N4oHLLbeTdg8opqJozjClmuTfazo1Mt+oxU7mr7m45VCsFgBqTF70Uwad289TM/3l44PP679NRMAHVYqpIRYtQ==}
@@ -3882,7 +3882,7 @@ packages:
       sudo-prompt: 9.2.1
     transitivePeerDependencies:
       - encoding
-    dev: false
+    dev: true
 
   /@react-native-community/cli-types@13.6.4:
     resolution: {integrity: sha512-NxGCNs4eYtVC8x0wj0jJ/MZLRy8C+B9l8lY8kShuAcvWTv5JXRqmXjg8uK1aA+xikPh0maq4cc/zLw1roroY/A==}

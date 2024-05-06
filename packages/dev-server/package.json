@@ -48,8 +48,6 @@
     "@babel/code-frame": "^7.16.7",
     "@fastify/middie": "^8.3.0",
     "@fastify/sensible": "^5.5.0",
-    "@react-native-community/cli-debugger-ui": "^13.6.6",
-    "@react-native-community/cli-server-api": "^13.6.6",
     "@react-native/dev-middleware": "^0.73.8",
     "fastify": "^4.24.3",
     "fastify-favicon": "^4.3.0",
@@ -62,6 +60,8 @@
   "devDependencies": {
     "@babel/cli": "^7.23.9",
     "@babel/core": "^7.23.9",
+    "@react-native-community/cli-debugger-ui": ">=11.3.1",
+    "@react-native-community/cli-server-api": ">=11.3.1",
     "@types/babel__code-frame": "^7.0.3",
     "@types/node": "18",
     "@types/ws": "^8.5.3",
@@ -70,5 +70,9 @@
     "typedoc": "^0.25.3",
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "@react-native-community/cli-debugger-ui": ">=11.3.1",
+    "@react-native-community/cli-server-api": ">=11.3.1"
   }
 }
