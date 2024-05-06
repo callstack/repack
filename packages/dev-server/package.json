@@ -74,5 +74,13 @@
   "peerDependencies": {
     "@react-native-community/cli-debugger-ui": ">=11.3.1",
     "@react-native-community/cli-server-api": ">=11.3.1"
+  },
+  "peerDependenciesMeta": {
+    "@react-native-community/cli-debugger-ui": {
+      "optional": true
+    },
+    "@react-native-community/cli-server-api": {
+      "optional": true
+    }
   }
 }
