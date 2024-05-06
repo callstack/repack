@@ -1,6 +1,5 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import { WebSocketServer } from 'ws';
 import type { Server } from '../../types';
 import { WebSocketDebuggerServer } from './servers/WebSocketDebuggerServer';
 import { WebSocketDevClientServer } from './servers/WebSocketDevClientServer';
@@ -9,7 +8,7 @@ import { WebSocketEventsServer } from './servers/WebSocketEventsServer';
 import { WebSocketApiServer } from './servers/WebSocketApiServer';
 import { WebSocketHMRServer } from './servers/WebSocketHMRServer';
 import { WebSocketRouter } from './WebSocketRouter';
-import { convertDevMiddlewareWebsocketServers } from './convertDevMiddlewareWebsocketServers';
+import { WebSocketServerAdapter } from './WebSocketServerAdapter';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -20,10 +19,19 @@ declare module 'fastify' {
       eventsServer: WebSocketEventsServer;
       apiServer: WebSocketApiServer;
       hmrServer: WebSocketHMRServer;
+      deviceConnectionServer: WebSocketServerAdapter;
+      debuggerConnectionServer: WebSocketServerAdapter;
       router: WebSocketRouter;
     };
   }
 }
+
+/**
+ * Defined in @react-native/dev-middleware
+ * Reference: https://github.com/facebook/react-native/blob/main/packages/dev-middleware/src/inspector-proxy/InspectorProxy.js
+ */
+const WS_DEVICE_URL = '/inspector/device';
+const WS_DEBUGGER_URL = '/inspector/debug';
 
 async function wssPlugin(
   instance: FastifyInstance,
@@ -31,9 +39,7 @@ async function wssPlugin(
     options,
     delegate,
   }: {
-    options: Server.Options & {
-      websocketEndpoints: { [key: string]: WebSocketServer };
-    };
+    options: Server.Options;
     delegate: Server.Delegate;
   }
 ) {
@@ -48,22 +54,27 @@ async function wssPlugin(
   const apiServer = new WebSocketApiServer(instance);
   const hmrServer = new WebSocketHMRServer(instance, delegate.hmr);
 
+  // @react-native/dev-middleware servers
+  const deviceConnectionServer = new WebSocketServerAdapter(
+    instance,
+    WS_DEVICE_URL,
+    options.endpoints?.[WS_DEVICE_URL]
+  );
+
+  const debuggerConnectionServer = new WebSocketServerAdapter(
+    instance,
+    WS_DEBUGGER_URL,
+    options.endpoints?.[WS_DEBUGGER_URL]
+  );
+
   router.registerServer(debuggerServer);
   router.registerServer(devClientServer);
   router.registerServer(messageServer);
   router.registerServer(eventsServer);
   router.registerServer(apiServer);
   router.registerServer(hmrServer);
-
-  // Convert websocket servers returned from the RN dev middleware to match Repack structure
-  const devMiddlewareWebsocketServers = convertDevMiddlewareWebsocketServers(
-    options.websocketEndpoints,
-    instance
-  );
-
-  devMiddlewareWebsocketServers.forEach((server) => {
-    router.registerServer(server);
-  });
+  router.registerServer(deviceConnectionServer);
+  router.registerServer(debuggerConnectionServer);
 
   instance.decorate('wss', {
     debuggerServer,
@@ -72,7 +83,8 @@ async function wssPlugin(
     eventsServer,
     apiServer,
     hmrServer,
-    ...devMiddlewareWebsocketServers,
+    deviceConnectionServer,
+    debuggerConnectionServer,
     router,
   });
 }

@@ -1,7 +1,7 @@
-import type { IncomingMessage } from 'http';
-import type { Socket } from 'net';
+import type { IncomingMessage } from 'node:http';
+import type { Socket } from 'node:net';
 import type { FastifyInstance } from 'fastify';
-import { WebSocketServer } from './WebSocketServer';
+import { WebSocketServerInterface } from './types';
 
 /**
  * Class for creating a WebSocket router to forward connections to the
@@ -15,7 +15,7 @@ import { WebSocketServer } from './WebSocketServer';
  */
 export class WebSocketRouter {
   /** The list of all register WebSocket servers. */
-  protected servers: WebSocketServer[] = [];
+  protected servers: WebSocketServerInterface[] = [];
 
   /**
    * Create new instance of `WebSocketRouter` and attach it to the given Fastify instance.
@@ -55,7 +55,7 @@ export class WebSocketRouter {
    * @param server WebSocket server to register.
    * @returns The same instance of the WebSocket server after it's been registered.
    */
-  registerServer<T extends WebSocketServer>(server: T): T {
+  registerServer<T extends WebSocketServerInterface>(server: T): T {
     this.servers.push(server);
     return server;
   }

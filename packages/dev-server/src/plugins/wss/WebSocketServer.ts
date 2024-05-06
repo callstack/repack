@@ -6,20 +6,21 @@ import {
   WebSocket,
   WebSocketServer as WebSocketServerImpl,
 } from 'ws';
+import { WebSocketServerInterface } from './types';
 
 /**
  * Abstract class for providing common logic (eg routing) for all WebSocket servers.
  *
  * @category Development server
  */
-export abstract class WebSocketServer {
+export abstract class WebSocketServer implements WebSocketServerInterface {
   /** An instance of the underlying WebSocket server. */
-  public readonly server: WebSocketServerImpl;
+  protected server: WebSocketServerImpl;
 
   /** Fastify instance from which {@link server} will receive upgrade connections. */
   protected fastify: FastifyInstance;
 
-  public readonly paths: string[];
+  protected paths: string[];
 
   /**
    * Create a new instance of the WebSocketServer.
@@ -28,7 +29,6 @@ export abstract class WebSocketServer {
    * @param fastify Fastify instance to which the WebSocket will be attached to.
    * @param path Path on which this WebSocketServer will be accepting connections.
    * @param wssOptions WebSocket Server options.
-   * @param wssServer WebSocketServerImpl WebSocket Server to be wrapped in order to be compatible with WebSocketRouter.
    */
   constructor(
     fastify: FastifyInstance,
@@ -36,21 +36,12 @@ export abstract class WebSocketServer {
     wssOptions: Omit<
       ServerOptions,
       'noServer' | 'server' | 'host' | 'port' | 'path'
-    > = {},
-    wssServer?: WebSocketServerImpl
+    > = {}
   ) {
     this.fastify = fastify;
+    this.server = new WebSocketServerImpl({ noServer: true, ...wssOptions });
+    this.server.on('connection', this.onConnection.bind(this));
     this.paths = Array.isArray(path) ? path : [path];
-
-    if (wssServer) {
-      this.server = wssServer;
-    } else {
-      this.server = new WebSocketServerImpl({
-        noServer: true,
-        ...wssOptions,
-      });
-      this.server.on('connection', this.onConnection.bind(this));
-    }
   }
 
   shouldUpgrade(pathname: string) {

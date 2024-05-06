@@ -1,5 +1,5 @@
 import React from 'react';
-import { Appearance, Button } from 'react-native'
+import { Appearance } from 'react-native'
 
 import { AppContainer } from './ui/AppContainer';
 import { Section } from './ui/Section';
@@ -9,7 +9,7 @@ import { AsyncContainer } from './asyncChunks/AsyncContainer';
 import { RemoteContainer } from './remoteChunks/RemoteContainer';
 import { MiniAppsContainer } from './miniapp/MiniAppsContainer';
 import { AssetsTestContainer } from './assetsTest/AssetsTestContainer';
-import DeprecatedRemoteDebuggerContainer from './deprecatedRemoteDebugger/DeprecatedRemoteDebuggerContainer.tsx'
+import DeprecatedRemoteDebuggerContainer from './deprecatedRemoteDebugger/DeprecatedRemoteDebuggerContainer'
 
 Appearance.setColorScheme('light');
 

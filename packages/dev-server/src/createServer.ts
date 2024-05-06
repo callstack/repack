@@ -65,26 +65,23 @@ export async function createServer(config: Server.Config) {
     },
   });
 
-  await instance.register(middie);
-
-  const { middleware, websocketEndpoints } = createDevMiddleware({
+  const devMiddleware = createDevMiddleware({
     projectRoot: config.options.rootDir,
     serverBaseUrl: `http://${config.options.host}:${config.options.port}`,
-    logger: console,
+    // TODO verify this works properly
+    logger: instance.log,
     unstable_experiments: {
-      // NOTE: Only affects the /open-debugger endpoint
       enableNewDebugger: config.experiments?.experimentalDebugger,
     },
   });
 
-  instance.use(middleware);
-
   // Register plugins
   await instance.register(fastifySensible);
+  await instance.register(middie);
   await instance.register(wssPlugin, {
     options: {
       ...config.options,
-      websocketEndpoints,
+      endpoints: devMiddleware.websocketEndpoints,
     },
     delegate,
   });
@@ -97,8 +94,8 @@ export async function createServer(config: Server.Config) {
     delegate,
   });
 
-  // TODO: devtoolsPlugin and the following deprecated remote debugger middelewares should be removed after
-  //  the new (experiemntal) debugger is stable AND the remote debugger is finally removed from the React Native core.
+  // TODO: devtoolsPlugin and the following deprecated remote debugger middlewares should be removed after
+  //  the new (experimental) debugger is stable AND the remote debugger is finally removed from the React Native core.
   //  When that happens remember to remove @react-native-community/cli-server-api & @react-native-community/cli-debugger-ui
   //  from the dependencies.
   await instance.register(devtoolsPlugin, {
@@ -127,6 +124,9 @@ export async function createServer(config: Server.Config) {
 
     return payload;
   });
+
+  // Register dev middleware
+  instance.use(devMiddleware.middleware);
 
   // Register routes
   instance.get('/', async () => delegate.messages.getHello());

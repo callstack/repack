@@ -1,3 +1,6 @@
+import { IncomingMessage } from 'node:http';
+import { Socket } from 'node:net';
+
 /**
  * Delegate with implementation for HMR-specific functions.
  */
@@ -14,4 +17,9 @@ export interface HmrDelegate {
    * @param clientId Id of the connected client.
    */
   onClientConnected: (platform: string, clientId: string) => void;
+}
+
+export interface WebSocketServerInterface {
+  shouldUpgrade(pathname: string): boolean;
+  upgrade(request: IncomingMessage, socket: Socket, head: Buffer): void;
 }
