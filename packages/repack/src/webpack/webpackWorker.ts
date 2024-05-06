@@ -53,23 +53,20 @@ async function main(cliOptions: CliOptions) {
         info: asset.info,
       };
     });
-    parentPort?.postMessage(
-      {
-        event: 'done',
-        assets,
-        stats: stats.toJson({
-          all: false,
-          cached: true,
-          children: true,
-          modules: true,
-          timings: true,
-          hash: true,
-          errors: true,
-          warnings: false,
-        }),
-      },
-      assets.map((asset) => asset.data.buffer)
-    );
+    parentPort?.postMessage({
+      event: 'done',
+      assets,
+      stats: stats.toJson({
+        all: false,
+        cached: true,
+        children: true,
+        modules: true,
+        timings: true,
+        hash: true,
+        errors: true,
+        warnings: false,
+      }),
+    });
   });
 
   compiler.watch(watchOptions, (error) => {
