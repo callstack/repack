@@ -68,7 +68,6 @@ export async function createServer(config: Server.Config) {
   const devMiddleware = createDevMiddleware({
     projectRoot: config.options.rootDir,
     serverBaseUrl: `http://${config.options.host}:${config.options.port}`,
-    // TODO verify this works properly
     logger: instance.log,
     unstable_experiments: {
       enableNewDebugger: config.experiments?.experimentalDebugger,
