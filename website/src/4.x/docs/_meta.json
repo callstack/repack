@@ -12,5 +12,14 @@
     "type": "file",
     "name": "getting-started",
     "label": "Getting Started"
+  },
+  {
+    "type": "section-header",
+    "label": "Configuration"
+  },
+  {
+    "type": "dir",
+    "name": "plugins",
+    "label": "Plugins"
   }
 ]
