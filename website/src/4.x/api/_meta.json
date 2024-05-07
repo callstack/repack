@@ -1,0 +1,11 @@
+[
+  {
+    "type": "section-header",
+    "label": "API"
+  },
+  {
+    "type": "file",
+    "name": "about",
+    "label": "About"
+  }
+]

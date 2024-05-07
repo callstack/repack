@@ -1,0 +1,16 @@
+[
+  {
+    "type": "section-header",
+    "label": "Documentation"
+  },
+  {
+    "type": "file",
+    "name": "about",
+    "label": "About Re.Pack"
+  },
+  {
+    "type": "file",
+    "name": "getting-started",
+    "label": "Getting Started"
+  }
+]
