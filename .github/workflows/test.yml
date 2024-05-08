@@ -2,8 +2,15 @@ name: Test
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+      - "website/**"
   pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "website/**"
   workflow_dispatch:
 
 jobs:
@@ -11,28 +18,27 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node_version: ['18', '20', '22']
+        node_version: ["18", "20", "22"]
         os: [ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
-      
+
       - name: Use Node.js ${{ matrix.node_version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node_version }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Lint
         run: pnpm lint
-        
+
       - name: Type check
         run: pnpm typecheck
-        
+
       - name: Run tests
         run: pnpm test
-
