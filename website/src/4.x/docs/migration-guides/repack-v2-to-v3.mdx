@@ -1,29 +1,21 @@
-import { CodeBlock } from '@theme';
+import { CodeBlock, PackageManagerTabs } from '@theme';
 import webpackDiff from '../../../public/diffs/repack_v2-v3.diff?raw';
 
 # Re.Pack 2.x to 3.x
 
 This guide shows how to upgrade from `@callstack/repack@2.x` to `@callstack/repack@3.x`.
 
-:::info
-
-If you're upgrading from version `1.x`, we recommended you start with fresh Webpack config from our templates and reapply any changes you've added in the old config to the new one.
-
-:::
+If you are upgrading from `@callstack/nativepack@1.x`, we recommend that you first upgrade to `@callstack/repack@2.x` and then to `@callstack/repack@3.x`.
 
 ## Dependencies
 
 First, you need to update dependencies in your project's `package.json`:
 
-```bash
-yarn add --dev @callstack/repack@^3.0.0
-# or
-npm install --save-dev @callstack/repack@^3.0.0
-```
+<PackageManagerTabs command="install -D @callstack/repack@^3.0.0" />
 
 :::tip
 
-It's also recommended to update Webpack to the latest version. In case of any trouble, take a look at [Compatibility with Webpack table](../getting-started#compatibility-with-webpack).
+It's also recommended to update Webpack to the latest version.
 
 :::
 
@@ -36,24 +28,25 @@ which you can use as a base to figure out what you need to change.
 
 :::info
 
-The diff uses CJS template (`webpack.config.cjs`), since ESM was not supported in Re.Pack `2.x`,
-so the diff between 2 CJS templates will easier to read.
+The diff uses CJS template `webpack.config.cjs`, since ESM was not supported in Re.Pack `2.x`,
+so the diff between 2 CJS templates is easier to read.
 
 :::
 
 Below is the diff of `template/webpack.config.js` between Re.Pack 2.x and 3.x:
 
-<CodeBlock language="diff">{webpackDiff}</CodeBlock>
+<details>
+  <summary>
+    <strong>Diff</strong>
+  </summary>
+  <CodeBlock language="diff">{webpackDiff}</CodeBlock>
+</details>
+
+After applying these changes to your Webpack config, try bundling your application or running it. If you have build errors try adjusting Webpack config based on what the errors are saying.
+
+After addressing build errors, you should be able to run the application.
 
 :::tip
-
-After applying these changes to your Webpack config, try bundling your application or running it.
-
-:::
-
-If you have build errors try adjusting Webpack config based on what the errors are saying. After addressing build errors, you should be able to run the application.
-
-:::caution
 
 If you are facing runtime errors or crashes, please open an issue!
 
@@ -88,11 +81,5 @@ To migrate from V2 where Module Federtion was implemented please keep in mind th
 - `Federated.importModule` - handle loading dynamic containers
 
 See examples [here](https://github.com/callstack/repack-examples/blob/main/module-federation/host/index.tsx) and [here](https://github.com/callstack/repack-examples/blob/main/module-federation/host/App.tsx)
-
-:::
-
-:::tip
-
-Read more about support of Module Federation out of the box [here](../module-federation.md)
 
 :::

@@ -1,4 +1,4 @@
-import { CodeBlock } from '@theme';
+import { CodeBlock, PackageManagerTabs } from '@theme';
 import webpackDiff from '../../../public/diffs/repack_v1-v2.diff?raw';
 
 # Re.Pack 1.x to 2.x
@@ -15,24 +15,20 @@ This guide shows how to upgrade from `@callstack/nativepack@1.x` to `@callstack/
 
 First, you need to update dependencies and replace `@callstack/nativepack` with `@callstack/repack` in your project's `package.json`:
 
-```diff
+```diff title="package.json"
 - "@callstack/nativepack": "^1.4.2"
 + "@callstack/repack": "^2.0.0"
 ```
 
 :::tip
 
-It's also recommended to update Webpack to the latest version. In case of any trouble, take a look at [Compatibility with Webpack table](../getting-started#compatibility-with-webpack).
+It's also recommended to update Webpack to the latest version.
 
 :::
 
 After updating dependencies, please run:
 
-```bash
-npm install
-# or
-yarn install
-```
+<PackageManagerTabs command="install" />
 
 ## Webpack config
 
@@ -43,17 +39,18 @@ which you can use as a base to figure out what you need to change.
 
 Below is the diff of `template/webpack.config.js` between Re.Pack 1.x and 2.x:
 
-<CodeBlock language="diff">{webpackDiff}</CodeBlock>
+<details>
+  <summary>
+    <strong>Diff</strong>
+  </summary>
+  <CodeBlock language="diff">{webpackDiff}</CodeBlock>
+</details>
+
+After applying these changes to your Webpack config, try bundling your application or running it. If you have build errors try adjusting Webpack config based on what the errors are saying.
+
+After addressing build errors, you should be able to run the application.
 
 :::tip
-
-After applying these changes to your Webpack config, try bundling your application or running it.
-
-:::
-
-If you have build errors try adjusting Webpack config based on what the errors are saying. After addressing build errors, you should be able to run the application.
-
-:::caution
 
 If you are facing runtime errors or crashes, please open an issue!
 
