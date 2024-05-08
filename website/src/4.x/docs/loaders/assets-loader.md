@@ -7,7 +7,7 @@ By default, Assets loader extracts asset files, meaning the files will be copied
 - on iOS: `assets/` directory
 - on Android: `drawable-*` directories
 
-This behavior is in line with how Metro handles assets. The default [Webpack template](../configuration/templates) has Assets Loader configured to process the same assets types as Metro.
+This behavior is in line with how Metro handles assets. The default [Webpack template](../placeholder) has Assets Loader configured to process the same assets types as Metro.
 
 Assets Loader in Re.Pack also has some additional capabilities like inlining assets as `base64` encoded data URI or converting the assets to be downloadable from a remote server, you can read more about them here:
 
