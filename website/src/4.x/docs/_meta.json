@@ -19,7 +19,17 @@
   },
   {
     "type": "dir",
+    "name": "loaders",
+    "label": "Loaders"
+  },
+  {
+    "type": "dir",
     "name": "plugins",
     "label": "Plugins"
+  },
+  {
+    "type": "dir",
+    "name": "guides",
+    "label": "Guides"
   }
 ]
