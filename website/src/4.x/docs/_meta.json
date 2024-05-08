@@ -14,6 +14,11 @@
     "label": "Getting Started"
   },
   {
+    "type": "dir",
+    "name": "migration-guides",
+    "label": "Migration Guides"
+  },
+  {
     "type": "section-header",
     "label": "Configuration"
   },
