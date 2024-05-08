@@ -8,5 +8,10 @@
     "type": "file",
     "name": "code-signing",
     "label": "CodeSigningPlugin"
+  },
+  {
+    "type": "file",
+    "name": "hermes",
+    "label": "ChunksToHermesBytecodePlugin"
   }
 ]
