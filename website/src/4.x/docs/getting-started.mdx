@@ -6,16 +6,16 @@ import { PackageManagerTabs, Steps } from 'rspress/theme';
 
 If you're already familiar with JavaScript, React Native and Webpack, then you'll be able to get moving quickly! Otherwise, it's highly recommended to get yourself familiar with these topic and then come back here:
 
-- [React Native Express](https://www.reactnative.express/)
+- [React Native documentation](https://reactnative.dev/)
 - [Webpack concepts](https://webpack.js.org/concepts/)
 
 ## Minimum requirements
 
-- Node.js >= 18
+- Node.js >= 18.0.0
 - React Native >= 0.72.0
 
 :::tip
-The information on this page might not always be up-to-date. Official support is provided for the latest version of React Native and it's 2 previous versions, [similar to how React Native is supported](https://github.com/reactwg/react-native-releases). If you're using older version of React Native, you can still try using Re.Pack, but you might need to adjust the configuration to make it work.
+The information on this page might not always be up-to-date. Official support is provided for the latest version of React Native and its 2 previous versions, [similar to how React Native is supported](https://github.com/reactwg/react-native-releases). If you're using older version of React Native, you can still try using Re.Pack, but you might need to adjust the configuration to make it work.
 :::
 
 ## Note on Expo
@@ -28,16 +28,16 @@ If you get stuck or you want to explore beforehand, you can use the examples of 
 
 ## Installation
 
-To create a new React Native project with Re.Pack:
+To create a new React Native project with Re.Pack or adapt an existing one:
 
 {/* prettier-ignore-start */}
 
 <Steps>
-  ### Initialize a new project using React Native CLI 
+  ### [Optional] Initialize a new project using React Native CLI 
   ```bash 
   npx react-native init AwesomeProject --skip-install 
   ``` 
-  ### Go to project directory
+  ### Go to your React Native project root directory
    ```bash 
   cd AwesomeProject
   ```
@@ -49,7 +49,6 @@ To create a new React Native project with Re.Pack:
 
 {/* prettier-ignore-end */}
 
-If your existing project retains the structure of React Native template then you can skip to the last step and use the `@callstack/repack-init` CLI on its own.
 In case your project structure differs from the default template, you can follow the manual installation steps [down below](#manual-installation).
 
 :::details
@@ -62,7 +61,7 @@ You can read more about these formats [down below](#3-webpack-config).
 
 After completing [Installation](#installation) you should be able to use Re.Pack's development server and bundle your application.
 
-Keep in mind that, you might need to adjust [Webpack config](./placeholder) to your project in order to the application to work correctly. It's impossible for us to know what your project looks like and uses, so it's recommended to read through the Webpack config's code and comments and make sure you understand what's going on there.
+Keep in mind that, you might need to adjust [Webpack config](./placeholder) to your project in order for the application to work correctly. It's impossible for us to know what your project looks like and uses, so it's recommended to read through the Webpack config's code and comments and make sure you understand what's going on there.
 
 ### Running development server
 
@@ -130,7 +129,7 @@ We recommend to use ESM version of Webpack config with the `.mjs` extension. How
 
 When building release version of your application XCode project will still use Metro to bundle the application, so you need to adjust build settings to make XCode use Re.Pack instead.
 
-Open your application's XCode project/workspace and:
+Open your application's Xcode project/workspace and:
 
 1. Click on the project in **_Project navigator_** panel on the left
 2. Go to **_Build Phases_** tab
