@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-Update webpack.config templates
+Update `webpack.config` templates

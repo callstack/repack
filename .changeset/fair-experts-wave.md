@@ -2,4 +2,4 @@
 "@callstack/repack": minor
 ---
 
-use `localhost` as a defined default for the dev-server
+Use `localhost` as a defined default for the dev-server

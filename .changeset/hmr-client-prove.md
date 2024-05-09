@@ -2,6 +2,4 @@
 "@callstack/repack-dev-server": patch
 ---
 
-should traversal all connected devices when sending event.
-
-delete device don't work when disconnected.
+Notify clients on all platforms when sending an HMR event update

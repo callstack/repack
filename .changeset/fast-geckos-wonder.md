@@ -4,4 +4,4 @@
 "@callstack/repack": major
 ---
 
-BREAKING CHANGE: Upgrade to Node 18, drop support for Node 16.
+Upgrade to Node 18, drop support for Node 16

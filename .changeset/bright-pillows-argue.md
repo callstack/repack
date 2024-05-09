@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-log error before exit when compilation has error
+Log error before exit during bundling

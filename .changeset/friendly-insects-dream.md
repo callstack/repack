@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-Fix: include `NativeScriptManger.ts` for codegen
+Include `NativeScriptManger.ts` in distributed files for codegen
