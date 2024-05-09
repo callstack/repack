@@ -15,6 +15,11 @@
   },
   {
     "type": "file",
+    "name": "web-support",
+    "label": "Web Support"
+  },
+  {
+    "type": "file",
     "name": "known-issues",
     "label": "Known Issues"
   },
