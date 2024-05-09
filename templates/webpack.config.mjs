@@ -150,7 +150,7 @@ export default (env) => {
        */
       rules: [
         {
-          test: /\.[jt]sx?$/,
+          test: /\.[cm]?[jt]sx?$/,
           include: [
             /node_modules(.*[/\\])+react\//,
             /node_modules(.*[/\\])+react-native/,
