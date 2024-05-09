@@ -16,12 +16,14 @@
   {
     "type": "dir",
     "name": "cli-commands",
-    "label": "CLI commands"
+    "label": "CLI commands",
+    "collapsed": true
   },
   {
     "type": "dir",
     "name": "migration-guides",
-    "label": "Migration Guides"
+    "label": "Migration Guides",
+    "collapsed": true
   },
   {
     "type": "section-header",
