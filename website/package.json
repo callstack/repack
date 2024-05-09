@@ -6,8 +6,8 @@
     "start": "rspress dev",
     "export": "rspress build",
     "preview": "rspress preview",
-    "diff:v1-v2": "git diff origin/nativepack:templates/webpack.config.js origin/2.x:templates/webpack.config.js > src/public/diffs/repack_v1-v2.diff",
-    "diff:v2-v3": "git diff origin/2.x:templates/webpack.config.js HEAD:templates/webpack.config.cjs > src/public/diffs/repack_v2-v3.diff"
+    "diff:v3-v4:cjs": "git diff @callstack/repack@3.0.0:templates/webpack.config.cjs HEAD:templates/webpack.config.cjs > src/public/diffs/repack_v3-v4_cjs.diff",
+    "diff:v3-v4:mjs": "git diff @callstack/repack@3.0.0:templates/webpack.config.mjs HEAD:templates/webpack.config.mjs > src/public/diffs/repack_v3-v4_mjs.diff"
   },
   "dependencies": {
     "rsbuild-plugin-open-graph": "^1.0.0",
