@@ -5,11 +5,11 @@ There are some situations when you might want to inline assets into the JavaScri
 Common examples of such use cases are:
 
 - Out-of-tree platforms that don't support static assets in a similar way as React Native on iOS/Android does or don't support static assets at all.
-- [Code splitting](../placeholder) with static assets used by [remote chunks](../placeholder).
+- [Code splitting](../code-splitting/usage) with static assets used by [remote chunks](../code-splitting/glossary#remote-chunk).
 
 :::info
 
-If you're using [Code Splitting](../placeholder) or Module Federation, assets will be inlined into the chunks or containers
+If you're using [Code Splitting](../code-splitting/concept) or Module Federation, assets will be inlined into the chunks or containers
 importing them and should be properly rendered by the host application.
 
 :::

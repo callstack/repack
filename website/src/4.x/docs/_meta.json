@@ -1,9 +1,5 @@
 [
   {
-    "type": "section-header",
-    "label": "Documentation"
-  },
-  {
     "type": "file",
     "name": "about",
     "label": "About Re.Pack"
@@ -14,12 +10,43 @@
     "label": "Getting Started"
   },
   {
-    "type": "dir",
-    "name": "migration-guides",
-    "label": "Migration Guides"
+    "type": "file",
+    "name": "web-support",
+    "label": "Web Support"
   },
   {
-    "type": "section-header",
+    "type": "dir",
+    "name": "code-splitting",
+    "label": "Code Splitting"
+  },
+  {
+    "type": "file",
+    "name": "module-federation",
+    "label": "Module Federation"
+  },
+  {
+    "type": "dir",
+    "name": "cli-commands",
+    "label": "CLI commands",
+    "collapsed": true
+  },
+  {
+    "type": "file",
+    "name": "known-issues",
+    "label": "Known Issues"
+  },
+  {
+    "type": "dir",
+    "name": "migration-guides",
+    "label": "Migration Guides",
+    "collapsed": true
+  },
+  {
+    "type": "divider"
+  },
+  {
+    "type": "dir",
+    "name": "configuration",
     "label": "Configuration"
   },
   {
