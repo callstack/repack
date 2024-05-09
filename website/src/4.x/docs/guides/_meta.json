@@ -1,1 +1,1 @@
-["inline-assets", "remote-assets", "svg"]
+["inline-assets", "remote-assets", "svg", "lazy-compilation"]
