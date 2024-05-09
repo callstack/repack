@@ -1,4 +1,6 @@
 import { CodeBlock, PackageManagerTabs } from '@theme';
+import webpackDiffMJS from '../../../public/diffs/repack_v3-v4_mjs.diff?raw';
+import webpackDiffCJS from '../../../public/diffs/repack_v3-v4_cjs.diff?raw';
 
 # Re.Pack 3.x to 4.x
 
@@ -36,12 +38,14 @@ Below are the diffs of both `.mjs` and `.cjs` versions of `webpack.config`:
   <summary>
     <strong>MJS Diff</strong>
   </summary>
+  <CodeBlock language="diff">{webpackDiffMJS}</CodeBlock>
 </details>
 
 <details>
   <summary>
     <strong>CJS Diff</strong>
   </summary>
+  <CodeBlock language="diff">{webpackDiffCJS}</CodeBlock>
 </details>
 
 After applying these changes to your Webpack config, try bundling your application or running it.
