@@ -1,4 +1,6 @@
 ---
+"@callstack/repack-dev-server": major
+"@callstack/repack-init": major
 "@callstack/repack": major
 ---
 

@@ -1,5 +1,5 @@
 ---
-"@callstack/repack": minor
+"@callstack/repack-init": minor
 ---
 
-Add `custom-version` flag to `@callstack/repack-init` CLI for selecting custom Re.Pack version to install
+Add `custom-version` flag for selecting custom Re.Pack version to install
