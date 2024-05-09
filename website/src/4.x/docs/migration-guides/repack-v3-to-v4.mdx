@@ -8,6 +8,10 @@ This guide shows how to upgrade from `@callstack/repack@3.x` to `@callstack/repa
 
 If you are upgrading from any version prior to 3.x, we recommend that you follow other migration guides first.
 
+:::info title="Thanks for using Re.Pack!"
+If you are still facing some build or runtime errors after the migration, please open an issue.
+:::
+
 ## Node version
 
 Re.Pack 4.x requires Node.js >= 18.0.0 or newer.
@@ -73,6 +77,11 @@ module.exports = {
   ),
 };
 ```
+
+:::info
+As a side effect of this change, running `react-native run-ios` or `react-native run-android`
+will now launch the Re.Pack dev server by default instead of the Metro dev server.
+:::
 
 ## Module resolution changes
 
