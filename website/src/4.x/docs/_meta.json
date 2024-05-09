@@ -15,6 +15,11 @@
   },
   {
     "type": "dir",
+    "name": "cli-commands",
+    "label": "CLI commands"
+  },
+  {
+    "type": "dir",
     "name": "migration-guides",
     "label": "Migration Guides"
   },
