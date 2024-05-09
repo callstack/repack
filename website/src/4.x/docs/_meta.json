@@ -1,9 +1,5 @@
 [
   {
-    "type": "section-header",
-    "label": "Documentation"
-  },
-  {
     "type": "file",
     "name": "about",
     "label": "About Re.Pack"
@@ -36,7 +32,11 @@
     "collapsed": true
   },
   {
-    "type": "section-header",
+    "type": "divider"
+  },
+  {
+    "type": "dir",
+    "name": "configuration",
     "label": "Configuration"
   },
   {
