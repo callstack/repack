@@ -1,5 +1,19 @@
 # @callstack/repack-init
 
+## 4.0.0
+
+### Major Changes
+
+- [#430](https://github.com/callstack/repack/pull/430) [`0d96b11`](https://github.com/callstack/repack/commit/0d96b11ff3a6e2c21eb622e21ff7947db29a3272) Thanks [@jbroma](https://github.com/jbroma)! - Upgrade to Node 18, drop support for Node 16
+
+### Minor Changes
+
+- [#557](https://github.com/callstack/repack/pull/557) [`8a57f57`](https://github.com/callstack/repack/commit/8a57f57912748efe806dbac52e29a8f4e238652d) Thanks [@jbroma](https://github.com/jbroma)! - Add `custom-version` flag for selecting custom Re.Pack version to install
+
+### Patch Changes
+
+- [#464](https://github.com/callstack/repack/pull/464) [`72c770b`](https://github.com/callstack/repack/commit/72c770bb4ac5540a3c73cf244ca861069a37b045) Thanks [@jbroma](https://github.com/jbroma)! - Upgrade TypeScript, ESLint, TypeDoc in the repository
+
 ## 4.0.0-rc.2
 
 ## 4.0.0-rc.1
