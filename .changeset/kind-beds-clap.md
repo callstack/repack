@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-Fix getDirname on Windows
+Fix `getDirname` utility function on Windows

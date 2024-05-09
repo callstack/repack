@@ -2,8 +2,6 @@
 "@callstack/repack": major
 ---
 
-BREAKING CHANGE:
-
 `getResolveOptions` is now way more compatible with `metro-resolver` and `@react-native/metro-config`
 
 1. `getResolveOptions` now accepts a second optional parameter called options with the following properties:

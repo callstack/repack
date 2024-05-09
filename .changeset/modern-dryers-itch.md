@@ -1,5 +1,5 @@
 ---
-"@callstack/repack-dev-server": patch
+"@callstack/repack": patch
 ---
 
-Fix path to favicon.ico on Windows
+Fix path to `favicon.ico` on Windows

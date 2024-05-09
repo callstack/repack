@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-Fix: always match .json extension last
+Always match .json extension last during module resolution

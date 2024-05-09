@@ -2,4 +2,4 @@
 "@callstack/repack": major
 ---
 
-Support for New Architecture
+Add support for New Architecture
