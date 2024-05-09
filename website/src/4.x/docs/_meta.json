@@ -25,15 +25,15 @@
     "label": "Module Federation"
   },
   {
-    "type": "file",
-    "name": "known-issues",
-    "label": "Known Issues"
-  },
-  {
     "type": "dir",
     "name": "cli-commands",
     "label": "CLI commands",
     "collapsed": true
+  },
+  {
+    "type": "file",
+    "name": "known-issues",
+    "label": "Known Issues"
   },
   {
     "type": "dir",
