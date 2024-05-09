@@ -15,6 +15,16 @@
     "label": "Web Support"
   },
   {
+    "type": "dir",
+    "name": "code-splitting",
+    "label": "Code Splitting"
+  },
+  {
+    "type": "file",
+    "name": "module-federation",
+    "label": "Module Federation"
+  },
+  {
     "type": "file",
     "name": "known-issues",
     "label": "Known Issues"
