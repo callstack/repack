@@ -1,5 +1,25 @@
 # @callstack/repack-dev-server
 
+## 4.0.0
+
+### Major Changes
+
+- [#430](https://github.com/callstack/repack/pull/430) [`0d96b11`](https://github.com/callstack/repack/commit/0d96b11ff3a6e2c21eb622e21ff7947db29a3272) Thanks [@jbroma](https://github.com/jbroma)! - Upgrade to Node 18, drop support for Node 16
+
+- [#508](https://github.com/callstack/repack/pull/508) [`fec8962`](https://github.com/callstack/repack/commit/fec8962b45f3d744d7c41e8f6eeae0a2310c7693) Thanks [@RafikiTiki](https://github.com/RafikiTiki)! - - Fixed deprecated remote debugger integration:
+  - Removed vendored code and used middlewares from `@react-native-community/cli-server-api`
+  - Removed `package/debugger-app` and replaced it with `@react-native-community/cli-debugger-ui`
+  - Removed vendored code responsible for integration with Flipper debugger & custom implementation of the Hermes Inspector Proxy
+  - Added integration with `@react-native/dev-middleware` which enables us to use both Flipper and new experimental debugger
+
+### Patch Changes
+
+- [#567](https://github.com/callstack/repack/pull/567) [`6417da7`](https://github.com/callstack/repack/commit/6417da7ba72e39602735062198165c998e4e19cf) Thanks [@kerm1it](https://github.com/kerm1it)! - Notify clients on all platforms when sending an HMR event update
+
+- [#554](https://github.com/callstack/repack/pull/554) [`ed82e29`](https://github.com/callstack/repack/commit/ed82e29c2871411fd73616f29a7d4b75ff3dd913) Thanks [@jbroma](https://github.com/jbroma)! - Fix path to `favicon.ico` on Windows
+
+- [#464](https://github.com/callstack/repack/pull/464) [`72c770b`](https://github.com/callstack/repack/commit/72c770bb4ac5540a3c73cf244ca861069a37b045) Thanks [@jbroma](https://github.com/jbroma)! - Upgrade TypeScript, ESLint, TypeDoc in the repository
+
 ## 4.0.0-rc.2
 
 ## 4.0.0-rc.1

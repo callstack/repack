@@ -1,5 +1,67 @@
 # @callstack/repack
 
+## 4.0.0
+
+### Major Changes
+
+- [#430](https://github.com/callstack/repack/pull/430) [`0d96b11`](https://github.com/callstack/repack/commit/0d96b11ff3a6e2c21eb622e21ff7947db29a3272) Thanks [@jbroma](https://github.com/jbroma)! - Upgrade to Node 18, drop support for Node 16
+
+- [#530](https://github.com/callstack/repack/pull/530) [`470a7c1`](https://github.com/callstack/repack/commit/470a7c1da6043904c82f53c2a0c82e73c438299a) Thanks [@jbroma](https://github.com/jbroma)! - Remove `ReactRefreshPlugin` in favor of `DevelopmentPlugin`
+
+- [#435](https://github.com/callstack/repack/pull/435) [`63d973f`](https://github.com/callstack/repack/commit/63d973ff4bae6f30f50a39a9f49095be4ce52967) Thanks [@jbroma](https://github.com/jbroma)! - `CodeSigningPlugin` no longer accepts `outputPath` property as configuration option, performs the code-signing in-place and integrates nicely with OutputPlugin
+
+- [#537](https://github.com/callstack/repack/pull/537) [`6fa32cb`](https://github.com/callstack/repack/commit/6fa32cb575ea2c845a700511669fdcb5124acc4d) Thanks [@jbroma](https://github.com/jbroma)! - Override the default `start` and `bundle` CLI commands for enhanced functionality and compatibility with `react-native` versions >= 0.74. Additionally, this update ensures that running `react-native run-ios` or `react-native run-android` will launch the Re.Pack dev server by default instead of the Metro dev server.
+
+- [#525](https://github.com/callstack/repack/pull/525) [`a74930b`](https://github.com/callstack/repack/commit/a74930bd4b5d704d35e182f7ddfea340a0a07793) Thanks [@jbroma](https://github.com/jbroma)! - `getResolveOptions` is now way more compatible with `metro-resolver` and `@react-native/metro-config`
+
+  1. `getResolveOptions` now accepts a second optional parameter called options with the following properties:
+     - `enablePackageExports` - defaults to `false`
+     - `preferNativePlatform` - defaults to `true`
+  2. Order of extensions was changed to match the order from `@react-native/metro-config`.
+  3. Resolution via Package Exports (`exports` field in package.json) is now optional and disabled by default.
+     It can now be enabled via `getResolveOptions` options parameter. This change was introduced to match `metro` defaults.
+  4. Default `conditionNames` are now: `['require', 'import', 'react-native']` and match `@react-native/metro-config` defaults.
+
+- [#495](https://github.com/callstack/repack/pull/495) [`50a7257`](https://github.com/callstack/repack/commit/50a7257f1da9af44c5b6690c31408607d358b2e5) Thanks [@troZee](https://github.com/troZee)! - Add support for New Architecture
+
+### Minor Changes
+
+- [#539](https://github.com/callstack/repack/pull/539) [`8270cb7`](https://github.com/callstack/repack/commit/8270cb7e2ccce9e2020517216e72302b6ba5833a) Thanks [@jbroma](https://github.com/jbroma)! - OutputPlugin now supports configuration with empty object as compilation entry
+
+- [#582](https://github.com/callstack/repack/pull/582) [`24585c0`](https://github.com/callstack/repack/commit/24585c07429533a0543eb61426771d196bdee0f1) Thanks [@jbroma](https://github.com/jbroma)! - Use `localhost` as a defined default for the dev-server
+
+- [#508](https://github.com/callstack/repack/pull/508) [`fec8962`](https://github.com/callstack/repack/commit/fec8962b45f3d744d7c41e8f6eeae0a2310c7693) Thanks [@RafikiTiki](https://github.com/RafikiTiki)! - Added pass-through `experimentalDebugger` flag to CLI commands to ensure compatibility with Metro and new experimental debugger for React Native
+
+### Patch Changes
+
+- [#580](https://github.com/callstack/repack/pull/580) [`b6c68dc`](https://github.com/callstack/repack/commit/b6c68dc08a463880f2869610648336bc7e764a41) Thanks [@jbroma](https://github.com/jbroma)! - Make Re.Pack compatible with use_frameworks!
+
+- [#491](https://github.com/callstack/repack/pull/491) [`ebf1b19`](https://github.com/callstack/repack/commit/ebf1b19976edc603ebe4de992665d10a5bc30eaa) Thanks [@hosseinmd](https://github.com/hosseinmd)! - Log error before exit during bundling
+
+- [#499](https://github.com/callstack/repack/pull/499) [`15ffcba`](https://github.com/callstack/repack/commit/15ffcbabd9c9f0dadc3d91489d3b76c4cd80155f) Thanks [@jbroma](https://github.com/jbroma)! - Support non-classic(e.g. pnpm) paths to HMRClient from react-native
+
+- [#496](https://github.com/callstack/repack/pull/496) [`a59b8ed`](https://github.com/callstack/repack/commit/a59b8ed4adab99f5e10024ae6f24ad18cdad791e) Thanks [@krozniata](https://github.com/krozniata)! - Remove duplicated React-Core dependency from podspec
+
+- [#588](https://github.com/callstack/repack/pull/588) [`b30bca0`](https://github.com/callstack/repack/commit/b30bca06e0d036e599ccf566cc7a50aa70fb8a51) Thanks [@jbroma](https://github.com/jbroma)! - Keep separate logs for compilation stats specific to each platform
+
+- [#612](https://github.com/callstack/repack/pull/612) [`b6eb0ea`](https://github.com/callstack/repack/commit/b6eb0ea5b5722627abd4cb904970c3ee910ee657) Thanks [@jbroma](https://github.com/jbroma)! - Update templates to include `.cjs` and `.mjs` extensions
+
+- [#579](https://github.com/callstack/repack/pull/579) [`06a4da8`](https://github.com/callstack/repack/commit/06a4da81ba661105da6c03ef254f2baf7daeaa1b) Thanks [@jbroma](https://github.com/jbroma)! - Include `NativeScriptManger.ts` in distributed files for codegen
+
+- [#574](https://github.com/callstack/repack/pull/574) [`bab94bf`](https://github.com/callstack/repack/commit/bab94bf0a4092c3e34a33dff6f160b4e6dbd45a5) Thanks [@jbroma](https://github.com/jbroma)! - Fix dev server crash caused by uninitialized progress senders
+
+- [#555](https://github.com/callstack/repack/pull/555) [`8fe92be`](https://github.com/callstack/repack/commit/8fe92bedc65c1757f3105d21d4c498cf17327ee7) Thanks [@jbroma](https://github.com/jbroma)! - Fix `getDirname` utility function on Windows
+
+- [#596](https://github.com/callstack/repack/pull/596) [`b5ae6ac`](https://github.com/callstack/repack/commit/b5ae6ac2a678e384c7f93421997107de106ca735) Thanks [@jbroma](https://github.com/jbroma)! - Fix crash when using Node >= 21 for bundling in development
+
+- [#556](https://github.com/callstack/repack/pull/556) [`6c09015`](https://github.com/callstack/repack/commit/6c09015c1afe3ac2d932dad5ed158165fd548c87) Thanks [@jbroma](https://github.com/jbroma)! - Update `webpack.config` templates
+
+- [#515](https://github.com/callstack/repack/pull/515) [`ee1cc79`](https://github.com/callstack/repack/commit/ee1cc7994cd1ae75d7a35faae6e0ac3ea36059b8) Thanks [@jbroma](https://github.com/jbroma)! - Use `done` hook inside of `OutputPlugin`
+
+- [#572](https://github.com/callstack/repack/pull/572) [`b134936`](https://github.com/callstack/repack/commit/b1349360db91a4f52489880cc12dd895850b6339) Thanks [@jbroma](https://github.com/jbroma)! - Always match .json extension last during module resolution
+
+- [#464](https://github.com/callstack/repack/pull/464) [`72c770b`](https://github.com/callstack/repack/commit/72c770bb4ac5540a3c73cf244ca861069a37b045) Thanks [@jbroma](https://github.com/jbroma)! - Upgrade TypeScript, ESLint, TypeDoc in the repository
+
 ## 4.0.0-rc.2
 
 ### Minor Changes
