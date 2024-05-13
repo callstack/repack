@@ -56,8 +56,8 @@
   "peerDependencies": {
     "@react-native-community/cli": "*",
     "@react-native-community/cli-types": "*",
-    "@rspack/core": "=>0.6.3",
-    "@rspack/plugin-react-refresh": ">=0.6.3",
+    "@rspack/core": "=>0.6.5",
+    "@rspack/plugin-react-refresh": ">=0.6.5",
     "react-native": ">=0.74"
   },
   "dependencies": {
@@ -88,8 +88,8 @@
     "@babel/plugin-transform-modules-commonjs": "^7.23.2",
     "@react-native-community/cli": "13.6.4",
     "@react-native-community/cli-types": "13.6.4",
-    "@rspack/core": "0.6.3",
-    "@rspack/plugin-react-refresh": "0.6.3",
+    "@rspack/core": "0.6.5",
+    "@rspack/plugin-react-refresh": "0.6.5",
     "@swc/helpers": "0.5.11",
     "@types/dedent": "^0.7.0",
     "@types/fs-extra": "^9.0.11",
