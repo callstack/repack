@@ -77,6 +77,7 @@ module.exports = (env) => {
                 externalHelpers: true,
                 transform: {
                   react: {
+                    runtime: 'automatic',
                     development: mode === 'development',
                     refresh: mode === 'development' && Boolean(devServer),
                   },
