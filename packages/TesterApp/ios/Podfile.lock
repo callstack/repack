@@ -1,6 +1,6 @@
 PODS:
   - boost (1.83.0)
-  - callstack-repack (4.0.0-rc.2):
+  - callstack-repack (4.0.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1383,7 +1383,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  callstack-repack: 7e54e95be6a8e0f1fc6aec6c65438269d1bb1bf6
+  callstack-repack: 8d1e64e5e5f4e9e81db6f66e5b4c46441707814d
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FBLazyVector: 026c8f4ae67b06e088ae01baa2271ef8a26c0e8c
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
