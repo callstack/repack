@@ -128,13 +128,19 @@ class HMRClient {
       });
 
       if (!this.upToDate()) {
-        // TODO - determine whether we should do early return here
         void this.checkUpdates(update);
+        return;
+      }
+
+      // No modules updated - leave everything as it is (including errors)
+      if (!renewedModules || renewedModules.length === 0) {
+        console.log('[HMRClient] No renewed modules - app is up to date');
+        return;
       }
 
       // Double check to make sure all updated modules were accepted (renewed)
       const unacceptedModules = updatedModules.filter((moduleId) => {
-        return renewedModules && renewedModules.indexOf(moduleId) < 0;
+        return renewedModules.indexOf(moduleId) < 0;
       });
 
       if (unacceptedModules.length) {
