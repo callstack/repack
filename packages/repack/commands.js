@@ -123,6 +123,10 @@ const commands = [
         name: '--log-file <string>',
         description: 'Enables file logging to specified file',
       },
+      {
+        name: '--log-requests',
+        description: 'Enables logging of all requests made to the devServer',
+      },
       webpackConfigOption
     ),
     description: startCommand.description,

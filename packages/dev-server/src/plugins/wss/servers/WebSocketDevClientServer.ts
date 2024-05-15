@@ -55,10 +55,10 @@ export class WebSocketDevClientServer extends WebSocketServer {
   onConnection(socket: WebSocket) {
     const clientId = `client#${this.nextClientId++}`;
     this.clients.set(clientId, socket);
-    this.fastify.log.info({ msg: 'React Native client connected', clientId });
+    this.fastify.log.debug({ msg: 'React Native client connected', clientId });
 
     const onClose = () => {
-      this.fastify.log.info({
+      this.fastify.log.debug({
         msg: 'React Native client disconnected',
         clientId,
       });

@@ -72,7 +72,7 @@ export class WebSocketHMRServer extends WebSocketServer {
     const platform = searchParams.get('platform');
 
     if (!platform) {
-      this.fastify.log.info({
+      this.fastify.log.debug({
         msg: 'HMR connection disconnected - missing platform',
       });
       socket.close();
@@ -88,10 +88,10 @@ export class WebSocketHMRServer extends WebSocketServer {
 
     this.clients.set(client, socket);
 
-    this.fastify.log.info({ msg: 'HMR client connected', ...client });
+    this.fastify.log.debug({ msg: 'HMR client connected', ...client });
 
     const onClose = () => {
-      this.fastify.log.info({
+      this.fastify.log.debug({
         msg: 'HMR client disconnected',
         ...client,
       });
