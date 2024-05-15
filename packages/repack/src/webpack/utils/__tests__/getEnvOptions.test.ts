@@ -69,7 +69,9 @@ describe('getEnvOptions', () => {
         },
         command: 'start',
         arguments: {
-          start: {},
+          start: {
+            platforms: [],
+          },
         },
       })
     ).toEqual({
@@ -94,6 +96,7 @@ describe('getEnvOptions', () => {
         command: 'start',
         arguments: {
           start: {
+            platforms: [],
             port: 5000,
             host: 'local',
           },
