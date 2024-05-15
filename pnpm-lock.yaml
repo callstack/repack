@@ -345,8 +345,8 @@ importers:
         specifier: ^5.0.0
         version: 5.1.1
       flow-remove-types:
-        specifier: ^2.230.0
-        version: 2.237.2
+        specifier: 2.236.0
+        version: 2.236.0
       fs-extra:
         specifier: ^10.0.0
         version: 10.1.0
@@ -4023,8 +4023,8 @@ packages:
     resolution: {integrity: sha512-HVzoK3r6Vsg+lKvlIZzaWNBVai+FXTX1wdYhz/wVlH13tb/gOdLXmlTqy6odmTBhT5UoWUbq0k8263Qhr9d88w==}
     engines: {node: '>=0.4.0'}
 
-  flow-remove-types@2.237.2:
-    resolution: {integrity: sha512-jdItmXv5HBjrNSvP8ivbSdmnqYGKfgMJayoGlmgB309fifqxNhY8HHCZxu4xC0Qk32ZB4WI74i0EHZOGXWzOmg==}
+  flow-remove-types@2.236.0:
+    resolution: {integrity: sha512-EVg9IM7QKZsFJq8VSYFYslPR/hrtnD0pw0z/dndAuTDkhfCOQSjiJNjZhd3mTizZ4UFrysTNNcv/QDF3a/ZnTw==}
     engines: {node: '>=4'}
     hasBin: true
 
@@ -12145,7 +12145,7 @@ snapshots:
 
   flow-parser@0.206.0: {}
 
-  flow-remove-types@2.237.2:
+  flow-remove-types@2.236.0:
     dependencies:
       hermes-parser: 0.21.0
       pirates: 3.0.2
