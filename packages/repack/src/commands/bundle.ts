@@ -6,7 +6,7 @@ import { VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, BundleCliOptions } from '../types';
 import { loadConfig } from '../webpack/loadConfig';
 import { getWebpackEnvOptions } from '../webpack/utils';
-import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
+import { getConfigFilePath } from './utils/getConfigFilePath';
 
 /**
  * Bundle command for React Native CLI.
@@ -25,10 +25,7 @@ export async function bundle(
   config: Config,
   args: BundleArguments
 ) {
-  const webpackConfigPath = getWebpackConfigPath(
-    config.root,
-    args.webpackConfig
-  );
+  const webpackConfigPath = getConfigFilePath(config.root, args.webpackConfig);
   const cliOptions = {
     config: {
       root: config.root,
