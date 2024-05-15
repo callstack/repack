@@ -40,6 +40,11 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
   test: /\.[cm]?[jt]sx?$/,
   include: [/node_modules/],
   exclude: [
+    // classic paths
+    /node_modules(.*[/\\])+react[/\\]/,
+    /node_modules(.*[/\\])+react-native[/\\]/,
+    /node_modules(.*[/\\])+@react-native[/\\]/,
+    // exotic paths (pnpm)
     /node_modules(.*[/\\])+react@/,
     /node_modules(.*[/\\])+react-native@/,
     /node_modules(.*[/\\])+@react-native\+/,
