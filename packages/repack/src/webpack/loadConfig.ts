@@ -8,16 +8,16 @@ type RspackConfig =
       argv: Record<string, any>
     ) => rspack.Configuration | Promise<rspack.Configuration>);
 
-export async function loadRspackConfig(
-  webpackConfigPath: string,
+export async function loadConfig(
+  configFilePath: string,
   env: WebpackEnvOptions
 ): Promise<rspack.Configuration> {
   let config: RspackConfig;
 
   try {
-    config = require(webpackConfigPath);
+    config = require(configFilePath);
   } catch {
-    config = await import(webpackConfigPath);
+    config = await import(configFilePath);
   }
 
   if ('default' in config) {

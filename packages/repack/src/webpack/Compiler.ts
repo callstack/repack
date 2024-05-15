@@ -6,7 +6,7 @@ import rspack from '@rspack/core';
 import type { Server } from '@callstack/repack-dev-server';
 import type { Reporter } from '../logging';
 import type { StartCliOptions, HMRMessageBody } from '../types';
-import { loadRspackConfig } from './loadRspackConfig';
+import { loadConfig } from './loadConfig';
 import type { CompilerAsset, MultiWatching } from './types';
 import { adaptFilenameToPlatform, getWebpackEnvOptions } from './utils';
 
@@ -118,7 +118,7 @@ export class Compiler {
     const configs = await Promise.all(
       this.platforms.map((platform) => {
         const env = { ...webpackEnvOptions, platform };
-        return loadRspackConfig(this.cliOptions.config.webpackConfigPath, env);
+        return loadConfig(this.cliOptions.config.webpackConfigPath, env);
       })
     );
 
