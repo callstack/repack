@@ -115,6 +115,10 @@ const commands = [
         description: 'ADB reverse port on starting devServers only for Android',
       },
       {
+        name: '--platforms',
+        description: 'Specify platforms for the dev server to run on',
+      },
+      {
         name: '--log-file <string>',
         description: 'Enables file logging to specified file',
       },

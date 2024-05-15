@@ -4,7 +4,7 @@ import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
 import { StartArguments, StartCliOptions } from '../types';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../env';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT, DEFAULT_PLATFORMS } from '../env';
 import {
   composeReporters,
   ConsoleReporter,
@@ -32,8 +32,12 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     config.root,
     args.webpackConfig
   );
-  const { reversePort: reversePortArg, ...restArgs } = args;
-  const platforms = ['android', 'ios'];
+  const {
+    platforms: platformsArg,
+    reversePort: reversePortArg,
+    ...restArgs
+  } = args;
+  const platforms = platformsArg ?? DEFAULT_PLATFORMS;
   const cliOptions = {
     config: {
       root: config.root,
@@ -42,7 +46,10 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     },
     command: 'start',
     arguments: {
-      start: { ...restArgs, platforms },
+      start: {
+        platforms,
+        ...restArgs,
+      },
     },
   } as StartCliOptions;
 
