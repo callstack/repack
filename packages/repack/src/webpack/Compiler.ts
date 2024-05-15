@@ -8,7 +8,7 @@ import type { Reporter } from '../logging';
 import type { StartCliOptions, HMRMessageBody } from '../types';
 import { loadConfig } from './loadConfig';
 import type { CompilerAsset, MultiWatching } from './types';
-import { adaptFilenameToPlatform, getWebpackEnvOptions } from './utils';
+import { adaptFilenameToPlatform, getEnvOptions } from './utils';
 
 export class Compiler {
   instance!: rspack.MultiCompiler;
@@ -114,7 +114,7 @@ export class Compiler {
   }
 
   async init(ctx: Server.DelegateContext) {
-    const webpackEnvOptions = getWebpackEnvOptions(this.cliOptions);
+    const webpackEnvOptions = getEnvOptions(this.cliOptions);
     const configs = await Promise.all(
       this.platforms.map((platform) => {
         const env = { ...webpackEnvOptions, platform };
