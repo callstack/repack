@@ -172,8 +172,8 @@ export async function start(
     },
   });
 
-  compiler.start();
   await start();
+  compiler.start();
 
   return {
     stop: async () => {
