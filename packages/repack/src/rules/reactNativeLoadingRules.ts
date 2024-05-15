@@ -7,7 +7,7 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
     // classic paths
     /node_modules(.*[/\\])+react-native[/\\]/,
     /node_modules(.*[/\\])+@react-native[/\\]/,
-    // exotic paths (pnpm)
+    // exotic paths (e.g. pnpm)
     /node_modules(.*[/\\])+react-native@/,
     /node_modules(.*[/\\])+@react-native\+/,
   ],
