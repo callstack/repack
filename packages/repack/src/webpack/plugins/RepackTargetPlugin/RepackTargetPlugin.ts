@@ -85,16 +85,16 @@ export class RepackTargetPlugin implements RspackPluginInstance {
       ]),
     }).apply(compiler);
 
-    // Mark ReactNativeTypes.js as ignored module
-    new rspack.IgnorePlugin({
-      resourceRegExp:
-        /[/\\]react-native[/\\]Libraries[/\\]Renderer[/\\]shims[/\\]ReactNativeTypes\.js$/,
-    }).apply(compiler);
-
     // Replace React Native's HMRClient.js with custom Webpack-powered DevServerClient.
     new rspack.NormalModuleReplacementPlugin(
-      /react-native.*?([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/,
+      /react-native.*?([/\\]+)Libraries[/\\]Utilities[/\\]HMRClient\.js$/,
       require.resolve('../../../modules/DevServerClient')
+    ).apply(compiler);
+
+    // ReactNativeTypes.js is flow type only module
+    new rspack.NormalModuleReplacementPlugin(
+      /react-native.*?([/\\]+)Libraries[/\\]Renderer[/\\]shims[/\\]ReactNativeTypes\.js$/,
+      require.resolve('../../../modules/EmptyModule')
     ).apply(compiler);
 
     compiler.hooks.thisCompilation.tap('RepackTargetPlugin', (compilation) => {
