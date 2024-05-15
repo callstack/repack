@@ -40,6 +40,15 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     }).apply(compiler);
 
     if (this.config?.devServer.hmr) {
+      // TODO Align this with output.hotModuleUpdateChunkFilename
+      new rspack.SourceMapDevToolPlugin({
+        test: /\.hot-update\.js$/,
+        filename: '[file].map',
+        append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
+        module: true,
+        columns: true,
+        noSources: false,
+      }).apply(compiler);
       new rspack.HotModuleReplacementPlugin().apply(compiler);
       new RspackReactRefreshPlugin().apply(compiler);
       new rspack.EntryPlugin(
