@@ -2,10 +2,10 @@ import rspack, { RspackPluginInstance } from '@rspack/core';
 import { Federated } from '../federated';
 
 type ModuleFederationPluginOptions =
-  typeof rspack.container.ModuleFederationPlugin extends {
+  typeof rspack.container.ModuleFederationPluginV1 extends {
     new (
       options: infer O
-    ): InstanceType<typeof rspack.container.ModuleFederationPlugin>;
+    ): InstanceType<typeof rspack.container.ModuleFederationPluginV1>;
   }
     ? O
     : never;
@@ -242,7 +242,7 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
 
-    new rspack.container.ModuleFederationPlugin({
+    new rspack.container.ModuleFederationPluginV1({
       exposes: this.config.exposes,
       filename:
         this.config.filename ?? this.config.exposes
