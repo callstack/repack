@@ -70,7 +70,9 @@ interface CommonCliOptions {
 
 export interface StartCliOptions extends CommonCliOptions {
   command: 'start';
-  arguments: { start: StartArguments };
+  arguments: {
+    start: Omit<StartArguments, 'platforms'> & { platforms: string[] };
+  };
 }
 
 export interface BundleCliOptions extends CommonCliOptions {
