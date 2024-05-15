@@ -13,7 +13,7 @@ import {
   Reporter,
 } from '../logging';
 import { Compiler } from '../webpack/Compiler';
-import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
+import { getConfigFilePath } from './utils/getConfigFilePath';
 
 /**
  * Start command for React Native CLI.
@@ -28,10 +28,7 @@ import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
  * @category CLI command
  */
 export async function start(_: string[], config: Config, args: StartArguments) {
-  const webpackConfigPath = getWebpackConfigPath(
-    config.root,
-    args.webpackConfig
-  );
+  const webpackConfigPath = getConfigFilePath(config.root, args.webpackConfig);
   const {
     platforms: platformsArg,
     reversePort: reversePortArg,
