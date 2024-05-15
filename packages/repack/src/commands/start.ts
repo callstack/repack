@@ -12,7 +12,7 @@ import {
   makeLogEntryFromFastifyLog,
   Reporter,
 } from '../logging';
-import { MultiCompiler } from '../webpack/MultiCompiler';
+import { Compiler } from '../webpack/Compiler';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
 
 /**
@@ -67,7 +67,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
     ].filter(Boolean) as Reporter[]
   );
-  const compiler = new MultiCompiler(cliOptions, reporter);
+  const compiler = new Compiler(cliOptions, reporter);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
