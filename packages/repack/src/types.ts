@@ -120,7 +120,7 @@ export interface DevServerOptions {
  *
  * This is the return type of {@link parseCliOptions}.
  */
-export interface WebpackEnvOptions {
+export interface EnvOptions {
   /** Compilation mode. */
   mode?: 'production' | 'development';
 

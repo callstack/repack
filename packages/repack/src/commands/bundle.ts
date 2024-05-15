@@ -5,7 +5,7 @@ import { rspack, StatsValue } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, BundleCliOptions } from '../types';
 import { loadConfig } from '../webpack/loadConfig';
-import { getWebpackEnvOptions } from '../webpack/utils';
+import { getEnvOptions } from '../webpack/utils';
 import { getConfigFilePath } from './utils/getConfigFilePath';
 
 /**
@@ -22,15 +22,15 @@ import { getConfigFilePath } from './utils/getConfigFilePath';
  */
 export async function bundle(
   _: string[],
-  config: Config,
+  cliConfig: Config,
   args: BundleArguments
 ) {
-  const webpackConfigPath = getConfigFilePath(config.root, args.webpackConfig);
+  const configPath = getConfigFilePath(cliConfig.root, args.webpackConfig);
   const cliOptions = {
     config: {
-      root: config.root,
-      reactNativePath: config.reactNativePath,
-      webpackConfigPath,
+      root: cliConfig.root,
+      reactNativePath: cliConfig.reactNativePath,
+      webpackConfigPath: configPath,
     },
     command: 'bundle',
     arguments: {
@@ -42,9 +42,9 @@ export async function bundle(
     process.env[VERBOSE_ENV_KEY] = '1';
   }
 
-  const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
-  const webpackConfig = await loadConfig(webpackConfigPath, webpackEnvOptions);
-  const compiler = rspack(webpackConfig);
+  const envOptions = getEnvOptions(cliOptions);
+  const config = await loadConfig(configPath, envOptions);
+  const compiler = rspack(config);
 
   return new Promise<void>((resolve, reject) => {
     compiler.run((error, stats) => {
