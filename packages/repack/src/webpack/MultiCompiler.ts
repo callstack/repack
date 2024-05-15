@@ -24,7 +24,8 @@ export class MultiCompiler {
     private cliOptions: StartCliOptions,
     private reporter: Reporter
   ) {
-    this.platforms = cliOptions.arguments.start.platforms!;
+    // TODO validate platforms?
+    this.platforms = cliOptions.arguments.start.platforms!.split(',');
   }
 
   private getCompilerForPlatform(platform: string) {

@@ -45,7 +45,7 @@ export interface BundleArguments extends CommonArguments {
  * @internal
  */
 export interface StartArguments extends CommonArguments {
-  platforms?: string[];
+  platforms?: string;
   cert?: string;
   host?: string;
   https?: boolean;
