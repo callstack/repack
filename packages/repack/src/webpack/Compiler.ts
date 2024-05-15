@@ -183,6 +183,13 @@ export class Compiler {
   }
 
   start() {
+    this.reporter.process({
+      type: 'info',
+      issuer: 'DevServer',
+      timestamp: Date.now(),
+      message: ['Starting build for platforms:', this.platforms.join(', ')],
+    });
+
     this.watching = this.instance.watch(this.watchOptions, (error) => {
       if (!error) return;
       this.platforms.forEach((platform) => {

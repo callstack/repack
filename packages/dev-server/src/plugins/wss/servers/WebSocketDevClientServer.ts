@@ -35,8 +35,11 @@ export class WebSocketDevClientServer extends WebSocketServer {
           this.fastify.log.error({ issuer: 'Console', msg: body.data });
         } else if (body.level === 'warn') {
           this.fastify.log.warn({ issuer: 'Console', msg: body.data });
-        } else {
+        } else if (body.level === 'info' || body.level === 'log') {
           this.fastify.log.info({ issuer: 'Console', msg: body.data });
+        } else {
+          // body.level === 'debug' || body.level === 'trace'
+          this.fastify.log.debug({ issuer: 'Console', msg: body.data });
         }
         break;
       default:
