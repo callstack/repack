@@ -1,1 +1,1 @@
-export * from './assetsLoader';
+export { default, raw } from './assetsLoader';
