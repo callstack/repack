@@ -14,7 +14,7 @@ declare interface RepackRuntime {
   loadHotUpdate: (url: string, done: (event?: LoadScriptEvent) => void) => void;
   shared: {
     loadScriptCallback: string[][];
-    scriptManager?: import('./ScriptManager').ScriptManager;
+    scriptManager?: import('../modules/ScriptManager').ScriptManager;
   };
 }
 
@@ -24,7 +24,7 @@ declare var __PLATFORM__: string;
 declare var __webpack_public_path__: string;
 declare var __webpack_hash__: string;
 declare var __repack__: RepackRuntime;
-declare var __webpack_require__: import('./ScriptManager').WebpackContext & {
+declare var __webpack_require__: import('../modules/ScriptManager').WebpackContext & {
   x?: Function;
   repack: RepackRuntime;
 };
