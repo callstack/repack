@@ -47,7 +47,7 @@ export async function start(
     command: 'start',
     arguments: {
       start: {
-        platforms: platformsArg ? platformsArg.split(',') : DEFAULT_PLATFORMS,
+        platforms: platformsArg ?? DEFAULT_PLATFORMS,
         ...restArgs,
       },
     },
