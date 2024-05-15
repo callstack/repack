@@ -17,7 +17,7 @@
     "client.js",
     "client.d.ts",
     "assets-loader.js",
-    "flow-strip-types-loader.js",
+    "flow-loader.js",
     "callstack-repack.podspec",
     "src/modules/ScriptManager/NativeScriptManager.ts",
     "CHANGELOG.md"
