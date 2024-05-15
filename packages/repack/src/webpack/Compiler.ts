@@ -10,7 +10,7 @@ import { loadRspackConfig } from './loadRspackConfig';
 import type { CompilerAsset, MultiWatching } from './types';
 import { adaptFilenameToPlatform, getWebpackEnvOptions } from './utils';
 
-export class MultiCompiler {
+export class Compiler {
   instance!: rspack.MultiCompiler;
   platforms: string[];
   assetsCache: Record<string, Record<string, CompilerAsset> | undefined> = {};
@@ -30,17 +30,17 @@ export class MultiCompiler {
 
   private getCompilerForPlatform(platform: string) {
     if (!this.instance) {
-      throw new Error('[MultiCompiler] Compiler not created yet');
+      throw new Error('[Compiler] Compiler not created yet');
     }
 
     const index = this.platforms.indexOf(platform);
     if (index === -1) {
-      throw new Error(`[MultiCompiler] Platform ${platform} not found`);
+      throw new Error(`[Compiler] Platform ${platform} not found`);
     }
 
     const compiler = this.instance.compilers[index];
     if (!compiler) {
-      throw new Error(`[MultiCompiler] Compiler for ${platform} not found`);
+      throw new Error(`[Compiler] Compiler for ${platform} not found`);
     }
 
     return compiler;
