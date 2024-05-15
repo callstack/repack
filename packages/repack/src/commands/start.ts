@@ -27,24 +27,27 @@ import { getConfigFilePath } from './utils/getConfigFilePath';
  * @internal
  * @category CLI command
  */
-export async function start(_: string[], config: Config, args: StartArguments) {
-  const webpackConfigPath = getConfigFilePath(config.root, args.webpackConfig);
+export async function start(
+  _: string[],
+  cliConfig: Config,
+  args: StartArguments
+) {
+  const configPath = getConfigFilePath(cliConfig.root, args.webpackConfig);
   const {
     platforms: platformsArg,
     reversePort: reversePortArg,
     ...restArgs
   } = args;
-  const platforms = platformsArg ?? DEFAULT_PLATFORMS;
   const cliOptions = {
     config: {
-      root: config.root,
-      reactNativePath: config.reactNativePath,
-      webpackConfigPath,
+      root: cliConfig.root,
+      reactNativePath: cliConfig.reactNativePath,
+      webpackConfigPath: configPath,
     },
     command: 'start',
     arguments: {
       start: {
-        platforms,
+        platforms: platformsArg ? platformsArg.split(',') : DEFAULT_PLATFORMS,
         ...restArgs,
       },
     },
