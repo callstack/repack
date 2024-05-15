@@ -4,7 +4,7 @@ import { stringifyStream } from '@discoveryjs/json-ext';
 import { rspack, StatsValue } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, BundleCliOptions } from '../types';
-import { loadRspackConfig } from '../webpack/loadRspackConfig';
+import { loadConfig } from '../webpack/loadConfig';
 import { getWebpackEnvOptions } from '../webpack/utils';
 import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
 
@@ -46,10 +46,7 @@ export async function bundle(
   }
 
   const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
-  const webpackConfig = await loadRspackConfig(
-    webpackConfigPath,
-    webpackEnvOptions
-  );
+  const webpackConfig = await loadConfig(webpackConfigPath, webpackEnvOptions);
   const compiler = rspack(webpackConfig);
 
   return new Promise<void>((resolve, reject) => {
