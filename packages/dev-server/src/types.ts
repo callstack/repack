@@ -56,6 +56,9 @@ export namespace Server {
 
     /** Additional endpoints with pre-configured servers */
     endpoints?: Record<string, WebSocketServer>;
+
+    /** Whether to enable logging requests. */
+    logRequests?: boolean;
   }
 
   /**

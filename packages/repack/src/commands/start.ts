@@ -81,6 +81,9 @@ export async function start(
             key: args.key,
           }
         : undefined,
+      logRequests:
+        isVerbose ||
+        (args.logRequests ?? process.argv.includes('--log-requests')),
     },
     experiments: {
       experimentalDebugger: args.experimentalDebugger,

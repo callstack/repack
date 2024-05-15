@@ -29,6 +29,7 @@ export async function createServer(config: Server.Config) {
 
   /** Fastify instance powering the development server. */
   const instance = Fastify({
+    disableRequestLogging: !config.options.logRequests,
     logger: {
       level: 'trace',
       stream: new Writable({
