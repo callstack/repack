@@ -95,7 +95,7 @@ module.exports = function () {
           const globalEvalWithSourceUrl = self.globalEvalWithSourceUrl;
           (function () {
             if (globalEvalWithSourceUrl) {
-              globalEvalWithSourceUrl(script, null);
+              globalEvalWithSourceUrl(script, url);
             } else {
               eval(script);
             }

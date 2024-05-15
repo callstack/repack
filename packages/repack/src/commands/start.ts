@@ -110,6 +110,13 @@ export async function start(_: string[], config: Config, args: StartArguments) {
             return compiler.getSource(filename, platform);
           },
           getSourceMap: (fileUrl) => {
+            // TODO Align this with output.hotModuleUpdateChunkFilename
+            if (fileUrl.endsWith('.hot-update.js')) {
+              const { pathname } = new URL(fileUrl);
+              const [platform, filename] = pathname.split('/').filter(Boolean);
+              return compiler.getSourceMap(filename, platform);
+            }
+
             const { filename, platform } = parseFileUrl(fileUrl);
             if (!platform) {
               throw new Error('Cannot infer platform for file URL');
