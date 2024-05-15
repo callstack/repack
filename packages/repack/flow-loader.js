@@ -1,5 +1,4 @@
-const {
-  default: loader,
-} = require('./dist/webpack/loaders/flowStripTypesLoader');
+const { default: loader, raw } = require('./dist/webpack/loaders/flowLoader');
 
 module.exports = loader;
+module.exports.raw = raw;
