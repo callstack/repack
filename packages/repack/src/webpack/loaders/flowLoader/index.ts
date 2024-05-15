@@ -1,1 +1,1 @@
-export { default } from './flowStripTypesLoader';
+export * from './flowLoader';
