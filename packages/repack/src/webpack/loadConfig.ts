@@ -1,16 +1,16 @@
 import rspack from '@rspack/core';
-import { WebpackEnvOptions } from '../types';
+import { EnvOptions } from '../types';
 
 type RspackConfig =
   | rspack.Configuration
   | ((
-      env: WebpackEnvOptions,
+      env: EnvOptions,
       argv: Record<string, any>
     ) => rspack.Configuration | Promise<rspack.Configuration>);
 
 export async function loadConfig(
   configFilePath: string,
-  env: WebpackEnvOptions
+  env: EnvOptions
 ): Promise<rspack.Configuration> {
   let config: RspackConfig;
 
