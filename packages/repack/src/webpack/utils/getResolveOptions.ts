@@ -1,3 +1,5 @@
+import { SCALABLE_ASSETS } from './assetExtensions';
+
 /**
  * {@link getResolveOptions} additional options.
  */
@@ -78,6 +80,22 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
   }
 
   /**
+   * Match what React Native uses from metro-config.
+   * Usage of 'extensionAlias' removes the need for
+   * AssetResolverPlugin altogether.
+   */
+  const assetResolutions = ['1', '1.5', '2', '3', '4'];
+  const extensionAlias = Object.fromEntries(
+    SCALABLE_ASSETS.map((assetExt) => {
+      const ext = '.' + assetExt;
+      const aliases = assetResolutions.map((resolution) => {
+        return '@' + resolution + 'x' + ext;
+      });
+      return [ext, aliases.concat(ext)];
+    })
+  );
+
+  /**
    * Match what React Native uses in @react-native/metro-config.
    * First entry takes precedence.
    *
@@ -104,5 +122,9 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
      * Reference: Webpack's [configuration.resolve.extensions](https://webpack.js.org/configuration/resolve/#resolveextensions)
      */
     extensions: extensions,
+    /**
+     * Reference: Webpack's [configuration.resolve.extensionAlias](https://webpack.js.org/configuration/resolve/#resolveextensionalias)
+     */
+    extensionAlias: extensionAlias,
   };
 }
