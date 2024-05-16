@@ -141,7 +141,7 @@ export class Compiler {
       });
 
       if (errors.length) {
-        const message = ['Bundle built with erros'];
+        const message = ['Bundle built with errors'];
         this.reporter.process({ type: 'error', issuer, timestamp, message });
 
         children.forEach((stats) => {
@@ -174,7 +174,7 @@ export class Compiler {
           'Bundle built',
           Object.fromEntries(children.map(({ name, time }) => [name, time])),
         ];
-        this.reporter.process({ type: 'info', issuer, timestamp, message });
+        this.reporter.process({ type: 'success', issuer, timestamp, message });
       }
 
       this.reporter.flush();

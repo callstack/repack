@@ -37,7 +37,13 @@ export interface LoggerPluginConfig {
  * @category Webpack Plugin
  */
 export class LoggerPlugin implements RspackPluginInstance {
-  private static SUPPORTED_TYPES: string[] = ['debug', 'info', 'warn', 'error'];
+  private static SUPPORTED_TYPES: string[] = [
+    'debug',
+    'info',
+    'warn',
+    'error',
+    'success',
+  ];
 
   /** {@link Reporter} instance used to actually writing logs to terminal/file. */
   readonly reporter: Reporter;
