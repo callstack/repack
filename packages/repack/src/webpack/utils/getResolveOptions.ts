@@ -84,12 +84,12 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
    * Usage of 'extensionAlias' removes the need for
    * AssetResolverPlugin altogether.
    */
-  const assetResolutions = ['1', '1.5', '2', '3', '4'];
+  const assetScales = ['0.75', '1', '1.5', '2', '3', '4'];
   const extensionAlias = Object.fromEntries(
     SCALABLE_ASSETS.map((assetExt) => {
       const ext = '.' + assetExt;
-      const aliases = assetResolutions.map((resolution) => {
-        return '@' + resolution + 'x' + ext;
+      const aliases = assetScales.map((scale) => {
+        return '@' + scale + 'x' + ext;
       });
       return [ext, aliases.concat(ext)];
     })
