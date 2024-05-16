@@ -1,6 +1,5 @@
 import rspack, { RspackPluginInstance } from '@rspack/core';
 import type { DevServerOptions } from '../../types';
-import { AssetsResolverPlugin } from './AssetsResolverPlugin';
 import { DevelopmentPlugin } from './DevelopmentPlugin';
 import { LoggerPlugin, LoggerPluginConfig } from './LoggerPlugin';
 import { OutputPlugin, OutputPluginConfig } from './OutputPlugin';
@@ -132,10 +131,6 @@ export class RepackPlugin implements RspackPluginInstance {
   apply(compiler: rspack.Compiler) {
     new rspack.DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
-    }).apply(compiler);
-
-    new AssetsResolverPlugin({
-      platform: this.config.platform,
     }).apply(compiler);
 
     new OutputPlugin({
