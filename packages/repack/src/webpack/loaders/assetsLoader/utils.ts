@@ -2,7 +2,7 @@ import path from 'path';
 import type fs from 'fs';
 import imageSize from 'image-size';
 import escapeStringRegexp from 'escape-string-regexp';
-import type { ImageSize } from './types';
+import type { CollectOptions, CollectedScales, ImageSize } from './types';
 
 export function getFilesInDirectory(dirname: string, filesystem: typeof fs) {
   return new Promise<string[]>((resolve, reject) =>
@@ -75,4 +75,43 @@ export function getImageSize({
   }
 
   return info;
+}
+
+export function collectScales(
+  scalableAssetExtensions: string[],
+  files: string[],
+  { name, type, platform }: CollectOptions
+): CollectedScales {
+  const regex = scalableAssetExtensions.includes(type)
+    ? new RegExp(
+        `^${escapeStringRegexp(
+          name
+        )}(@\\d+(\\.\\d+)?x)?(\\.(${platform}|native))?.${escapeStringRegexp(
+          type
+        )}$`
+      )
+    : new RegExp(
+        `^${escapeStringRegexp(name)}(\\.(${platform}|native))?\\.${type}$`
+      );
+
+  const priority = (queryPlatform: string) =>
+    ['native', platform].indexOf(queryPlatform);
+
+  // Build a map of files according to the scale
+  const output: CollectedScales = {};
+  for (const file of files) {
+    const match = regex.exec(file);
+    if (match) {
+      let [, scale, , , platform] = match;
+      scale = scale || '@1x';
+      if (
+        !output[scale] ||
+        priority(platform) > priority(output[scale].platform)
+      ) {
+        output[scale] = { platform, name: file };
+      }
+    }
+  }
+
+  return output;
 }

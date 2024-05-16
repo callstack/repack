@@ -16,3 +16,16 @@ export interface ImageSize {
   width?: number;
   height?: number;
 }
+
+export interface CollectedScales {
+  [key: string]: {
+    platform: string;
+    name: string;
+  };
+}
+
+export interface CollectOptions {
+  name: string;
+  platform: string;
+  type: string;
+}

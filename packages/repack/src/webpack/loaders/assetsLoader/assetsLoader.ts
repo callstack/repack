@@ -1,11 +1,15 @@
-import path from 'path';
+import path from 'node:path';
 import type { LoaderContext } from '@rspack/core';
-import { AssetResolver } from '../../plugins/AssetsResolverPlugin/AssetResolver';
 import { getOptions, AssetLoaderOptions } from './options';
 import { extractAssets } from './extractAssets';
 import { inlineAssets } from './inlineAssets';
 import { convertToRemoteAssets } from './convertToRemoteAssets';
-import { getFilesInDirectory, getScaleNumber, readFile } from './utils';
+import {
+  collectScales,
+  getFilesInDirectory,
+  getScaleNumber,
+  readFile,
+} from './utils';
 import type { Asset } from './types';
 
 export const raw = true;
@@ -64,15 +68,11 @@ export default async function repackAssetsLoader(
     const remoteAssetsDirname = 'remote-assets';
 
     const files = await getFilesInDirectory(resourceAbsoluteDirname, this.fs);
-    const scales = AssetResolver.collectScales(
-      options.scalableAssetExtensions,
-      files,
-      {
-        name: resourceFilename,
-        type: resourceExtensionType,
-        platform: options.platform,
-      }
-    );
+    const scales = collectScales(options.scalableAssetExtensions, files, {
+      name: resourceFilename,
+      type: resourceExtensionType,
+      platform: options.platform,
+    });
 
     const scaleKeys = Object.keys(scales).sort(
       (a, b) => getScaleNumber(a) - getScaleNumber(b)
