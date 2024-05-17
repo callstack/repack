@@ -1,45 +1,10 @@
-import path from 'path';
-import type fs from 'fs';
+import path from 'node:path';
 import imageSize from 'image-size';
 import escapeStringRegexp from 'escape-string-regexp';
-import type { CollectOptions, CollectedScales, ImageSize } from './types';
-
-export function getFilesInDirectory(dirname: string, filesystem: typeof fs) {
-  return new Promise<string[]>((resolve, reject) =>
-    filesystem.readdir(dirname, (error, results) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(
-          (results as Array<any> | undefined)?.filter(
-            (result) => typeof result === 'string'
-          ) ?? []
-        );
-      }
-    })
-  );
-}
+import type { CollectedScales, ImageSize } from './types';
 
 export function getScaleNumber(scaleKey: string) {
   return parseFloat(scaleKey.replace(/[^\d.]/g, ''));
-}
-
-export function readFile(filename: string, filesystem: typeof fs) {
-  return new Promise<string | Buffer>((resolve, reject) => {
-    filesystem.readFile(filename, (error, results) => {
-      if (error) {
-        reject(error);
-      } else if (results) {
-        resolve(results);
-      } else {
-        reject(
-          new Error(
-            `Read file operation on ${filename} returned empty content.`
-          )
-        );
-      }
-    });
-  });
 }
 
 export function getImageSize({
@@ -54,17 +19,14 @@ export function getImageSize({
   let info: ImageSize | undefined;
   try {
     info = imageSize(resourcePath);
-
     const [, scaleMatch = ''] =
       path
         .basename(resourcePath)
         .match(
           new RegExp(`^${escapeStringRegexp(resourceFilename)}${suffixPattern}`)
         ) ?? [];
-
     if (scaleMatch) {
       const scale = Number(scaleMatch.replace(/[^\d.]/g, ''));
-
       if (typeof scale === 'number' && Number.isFinite(scale)) {
         info.width && (info.width /= scale);
         info.height && (info.height /= scale);
@@ -77,41 +39,41 @@ export function getImageSize({
   return info;
 }
 
-export function collectScales(
+// eslint-disable-next-line require-await
+export async function collectScales(
+  resourceAbsoluteDirname: string,
+  resourceFilename: string,
+  resourceExtension: string,
   scalableAssetExtensions: string[],
-  files: string[],
-  { name, type, platform }: CollectOptions
-): CollectedScales {
-  const regex = scalableAssetExtensions.includes(type)
-    ? new RegExp(
-        `^${escapeStringRegexp(
-          name
-        )}(@\\d+(\\.\\d+)?x)?(\\.(${platform}|native))?.${escapeStringRegexp(
-          type
-        )}$`
-      )
-    : new RegExp(
-        `^${escapeStringRegexp(name)}(\\.(${platform}|native))?\\.${type}$`
-      );
+  scalableAssetResolutions: string[],
+  readdirAsync: (path: string) => Promise<string[]>
+): Promise<CollectedScales> {
+  // NOTE: assets can't have platform extensions!
+  // NOTE: this probably needs to handle nonscalable too
+  if (!scalableAssetExtensions.includes(resourceExtension)) {
+    return { '@1x': resourceFilename + '.' + resourceExtension };
+  }
 
-  const priority = (queryPlatform: string) =>
-    ['native', platform].indexOf(queryPlatform);
+  // explicit scales
+  const candidates = scalableAssetResolutions.map((scaleKey) => {
+    const scale = '@' + scaleKey + 'x';
+    return [scale, resourceFilename + scale + '.' + resourceExtension];
+  });
+  // implicit 1x scale
+  candidates.push(['@1x', resourceFilename + '.' + resourceExtension]);
 
-  // Build a map of files according to the scale
-  const output: CollectedScales = {};
-  for (const file of files) {
-    const match = regex.exec(file);
-    if (match) {
-      let [, scale, , , platform] = match;
-      scale = scale || '@1x';
-      if (
-        !output[scale] ||
-        priority(platform) > priority(output[scale].platform)
-      ) {
-        output[scale] = { platform, name: file };
-      }
+  // exposed fs is not fully compliant to fs spec
+  const contents = await readdirAsync(resourceAbsoluteDirname);
+  const entries = new Set(contents);
+
+  const collectedScales: Record<string, string> = {};
+  for (const candidate of candidates) {
+    const [scaleKey, candidateFilename] = candidate;
+    if (entries.has(candidateFilename)) {
+      const filepath = path.join(resourceAbsoluteDirname, candidateFilename);
+      collectedScales[scaleKey] = filepath;
     }
   }
 
-  return output;
+  return collectedScales;
 }

@@ -3,7 +3,8 @@ import { LoaderContext } from '@rspack/core';
 
 export interface AssetLoaderOptions {
   platform: string;
-  scalableAssetExtensions: string[];
+  scalableAssetExtensions?: string[];
+  scalableAssetResolutions?: string[];
   devServerEnabled?: boolean;
   inline?: boolean;
   publicPath?: string;

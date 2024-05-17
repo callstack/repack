@@ -1,4 +1,4 @@
-import { SCALABLE_ASSETS } from './assetExtensions';
+import { SCALABLE_ASSETS, SCALABLE_RESOLUTIONS } from './assetExtensions';
 
 /**
  * {@link getResolveOptions} additional options.
@@ -84,11 +84,10 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
    * Usage of 'extensionAlias' removes the need for
    * AssetResolverPlugin altogether.
    */
-  const assetScales = ['0.75', '1', '1.5', '2', '3', '4'];
   const extensionAlias = Object.fromEntries(
     SCALABLE_ASSETS.map((assetExt) => {
       const ext = '.' + assetExt;
-      const aliases = assetScales.map((scale) => {
+      const aliases = SCALABLE_RESOLUTIONS.map((scale) => {
         return '@' + scale + 'x' + ext;
       });
       return [ext, aliases.concat(ext)];

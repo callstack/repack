@@ -1,3 +1,6 @@
+import type { LoaderContext } from '@rspack/core';
+import type { AssetLoaderOptions } from './options';
+
 export interface Asset {
   filename: string;
   content: string | Buffer | undefined;
@@ -18,10 +21,7 @@ export interface ImageSize {
 }
 
 export interface CollectedScales {
-  [key: string]: {
-    platform: string;
-    name: string;
-  };
+  [key: string]: string;
 }
 
 export interface CollectOptions {
@@ -29,3 +29,5 @@ export interface CollectOptions {
   platform: string;
   type: string;
 }
+
+export interface AssetLoaderContext extends LoaderContext<AssetLoaderOptions> {}
