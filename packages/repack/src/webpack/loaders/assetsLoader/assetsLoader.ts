@@ -1,16 +1,14 @@
+import fs from 'node:fs';
 import path from 'node:path';
-import type { LoaderContext } from '@rspack/core';
-import { getOptions, AssetLoaderOptions } from './options';
+import util from 'node:util';
+import crypto from 'node:crypto';
+import { SCALABLE_ASSETS, SCALABLE_RESOLUTIONS } from '../../utils';
+import { getOptions } from './options';
 import { extractAssets } from './extractAssets';
 import { inlineAssets } from './inlineAssets';
 import { convertToRemoteAssets } from './convertToRemoteAssets';
-import {
-  collectScales,
-  getFilesInDirectory,
-  getScaleNumber,
-  readFile,
-} from './utils';
-import type { Asset } from './types';
+import { collectScales, getScaleNumber } from './utils';
+import type { Asset, AssetLoaderContext } from './types';
 
 export const raw = true;
 
@@ -20,10 +18,13 @@ const testImages = /\.(png|jpg|gif|webp)$/;
 const testFonts = /\.(ttf|otf|ttc)$/;
 
 export default async function repackAssetsLoader(
-  this: LoaderContext<AssetLoaderOptions>
+  this: AssetLoaderContext,
+  content: Buffer
 ) {
   this.cacheable();
-
+  const id = crypto.randomBytes(16).toString('hex');
+  // console.time(`repackAssetsLoader - ${id}`);
+  console.time(`repackAssetsLoader - ${id} - 1`);
   const callback = this.async();
   const logger = this.getLogger('repackAssetsLoader');
   const rootContext = this.rootContext;
@@ -32,6 +33,15 @@ export default async function repackAssetsLoader(
 
   try {
     const options = getOptions(this);
+
+    // defaults
+    const scalableAssetExtensions =
+      options.scalableAssetExtensions ?? SCALABLE_ASSETS;
+    const scalableAssetResolutions =
+      options.scalableAssetResolutions ?? SCALABLE_RESOLUTIONS;
+
+    // const parsedPath = path.parse(this.resourcePath);
+    // console.log(parsedPath);
     const pathSeparatorRegexp = new RegExp(`\\${path.sep}`, 'g');
     const resourcePath = this.resourcePath;
     const resourceAbsoluteDirname = path.dirname(resourcePath);
@@ -67,33 +77,28 @@ export default async function repackAssetsLoader(
     const assetsDirname = 'assets';
     const remoteAssetsDirname = 'remote-assets';
 
-    const files = await getFilesInDirectory(resourceAbsoluteDirname, this.fs);
-    const scales = collectScales(options.scalableAssetExtensions, files, {
-      name: resourceFilename,
-      type: resourceExtensionType,
-      platform: options.platform,
-    });
-
+    const scales = await collectScales(
+      resourceAbsoluteDirname,
+      resourceFilename,
+      resourceExtensionType,
+      scalableAssetExtensions,
+      scalableAssetResolutions,
+      util.promisify(this.fs.readdir)
+    );
+    console.timeEnd(`repackAssetsLoader - ${id} - 1`);
     const scaleKeys = Object.keys(scales).sort(
       (a, b) => getScaleNumber(a) - getScaleNumber(b)
     );
 
     for (const scaleKey of scaleKeys) {
-      const filenameWithScale = path.join(
-        resourceAbsoluteDirname,
-        scales[scaleKey].name
-      );
+      const filenameWithScale = scales[scaleKey];
       this.addDependency(filenameWithScale);
     }
 
     const assets = await Promise.all<Asset>(
       scaleKeys.map(async (scaleKey) => {
-        const filenameWithScale = path.join(
-          resourceAbsoluteDirname,
-          scales[scaleKey].name
-        );
-
-        const content = await readFile(filenameWithScale, this.fs);
+        const filenameWithScale = scales[scaleKey];
+        const content = fs.readFileSync(filenameWithScale);
 
         let destination;
 
@@ -188,12 +193,15 @@ export default async function repackAssetsLoader(
       })
     );
 
+    let result;
     if (options.inline) {
       logger.debug(`Inlining assets for request ${resourcePath}`);
-      callback?.(
-        null,
-        inlineAssets({ assets, resourcePath, resourceFilename, suffixPattern })
-      );
+      result = inlineAssets({
+        assets,
+        resourcePath,
+        resourceFilename,
+        suffixPattern,
+      });
     } else {
       for (const asset of assets) {
         const { filename, content } = asset;
@@ -204,41 +212,37 @@ export default async function repackAssetsLoader(
       }
 
       if (options.remote?.enabled) {
-        callback?.(
-          null,
-          convertToRemoteAssets({
-            assets,
-            assetsDirname,
-            remotePublicPath: options.remote.publicPath,
-            resourceDirname,
-            resourceExtensionType,
-            resourceFilename,
-            resourcePath,
-            suffixPattern,
-            pathSeparatorRegexp,
-          })
-        );
+        result = convertToRemoteAssets({
+          assets,
+          assetsDirname,
+          remotePublicPath: options.remote.publicPath,
+          resourceDirname,
+          resourceExtensionType,
+          resourceFilename,
+          resourcePath,
+          suffixPattern,
+          pathSeparatorRegexp,
+        });
       } else {
-        callback?.(
-          null,
-          await extractAssets(
-            {
-              resourcePath,
-              resourceDirname,
-              resourceFilename,
-              resourceExtensionType,
-              assets,
-              suffixPattern,
-              assetsDirname,
-              pathSeparatorRegexp,
-              publicPath: options.publicPath,
-              devServerEnabled: options.devServerEnabled,
-            },
-            logger
-          )
+        result = await extractAssets(
+          {
+            resourcePath,
+            resourceDirname,
+            resourceFilename,
+            resourceExtensionType,
+            assets,
+            suffixPattern,
+            assetsDirname,
+            pathSeparatorRegexp,
+            publicPath: options.publicPath,
+            devServerEnabled: options.devServerEnabled,
+          },
+          logger
         );
       }
     }
+    callback?.(null, result);
+    // console.timeEnd(`repackAssetsLoader - ${id}`);
   } catch (error) {
     callback?.(error as Error);
   }
