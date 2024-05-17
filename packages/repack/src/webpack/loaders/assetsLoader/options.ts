@@ -18,7 +18,7 @@ type Schema = Parameters<typeof validate>[0];
 
 export const optionsSchema: Schema = {
   type: 'object',
-  required: ['platform', 'scalableAssetExtensions'],
+  required: ['platform'],
   properties: {
     platform: {
       type: 'string',
