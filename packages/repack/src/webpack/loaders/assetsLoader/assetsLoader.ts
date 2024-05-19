@@ -19,11 +19,14 @@ const testMP4 = /\.(mp4)$/;
 const testImages = /\.(png|jpg|gif|webp)$/;
 const testFonts = /\.(ttf|otf|ttc)$/;
 
-export default async function repackAssetsLoader(this: AssetLoaderContext) {
+export default async function repackAssetsLoader(
+  this: AssetLoaderContext,
+  assetData: Buffer
+) {
   this.cacheable();
   const id = crypto.randomBytes(16).toString('hex');
-  // console.time(`repackAssetsLoader - ${id}`);
-  console.time(`repackAssetsLoader - ${id} - 1`);
+  console.time(`repackAssetsLoader - ${id}`);
+  // console.time(`repackAssetsLoader - ${id} - 1`);
   const callback = this.async();
   const logger = this.getLogger('repackAssetsLoader');
   const rootContext = this.rootContext;
@@ -87,20 +90,25 @@ export default async function repackAssetsLoader(this: AssetLoaderContext) {
       scalableAssetResolutions,
       readDirAsync
     );
-    console.timeEnd(`repackAssetsLoader - ${id} - 1`);
+    // console.timeEnd(`repackAssetsLoader - ${id} - 1`);
     const scaleKeys = Object.keys(scales).sort(
       (a, b) => getScaleNumber(a) - getScaleNumber(b)
     );
 
     for (const scaleKey of scaleKeys) {
-      const filenameWithScale = scales[scaleKey];
-      this.addDependency(filenameWithScale);
+      const assetPath = scales[scaleKey];
+      this.addDependency(assetPath);
     }
 
     const assets = await Promise.all<Asset>(
       scaleKeys.map(async (scaleKey) => {
-        const filenameWithScale = scales[scaleKey];
-        const content = await readFileAsync(filenameWithScale);
+        const assetPath = scales[scaleKey];
+
+        // use raw Buffer passed to loader to avoid unnecessary read
+        const content =
+          assetPath === resourcePath
+            ? assetData
+            : await readFileAsync(assetPath);
 
         let destination;
 
@@ -146,9 +154,7 @@ export default async function repackAssetsLoader(this: AssetLoaderContext) {
                 destination = 'drawable-xxxhdpi';
                 break;
               default:
-                throw new Error(
-                  `Unknown scale ${scaleKey} for ${filenameWithScale}`
-                );
+                throw new Error(`Unknown scale ${scaleKey} for ${assetPath}`);
             }
           } else {
             // everything else is going to RAW
@@ -244,7 +250,7 @@ export default async function repackAssetsLoader(this: AssetLoaderContext) {
       }
     }
     callback?.(null, result);
-    // console.timeEnd(`repackAssetsLoader - ${id}`);
+    console.timeEnd(`repackAssetsLoader - ${id}`);
   } catch (error) {
     callback?.(error as Error);
   }
