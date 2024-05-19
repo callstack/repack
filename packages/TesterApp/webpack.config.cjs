@@ -1,6 +1,7 @@
 // @ts-check
 const path = require('path');
 const Repack = require('@callstack/repack');
+const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
 
 /** @type {(env: any) => import('@rspack/core').Configuration} */
 module.exports = (env) => {
@@ -35,8 +36,8 @@ module.exports = (env) => {
       clean: true,
       hashFunction: 'xxhash64',
       path: path.join(context, 'build/generated', platform),
-      filename: 'index.bundle',
-      chunkFilename: '[name].chunk.bundle',
+      filename: 'index.js',
+      chunkFilename: '[name].chunk.js',
       publicPath: Repack.getPublicPath({ platform, devServer }),
     },
     optimization: {
@@ -210,6 +211,7 @@ module.exports = (env) => {
       //   test: /\.(js)?bundle$/,
       //   exclude: /index.bundle$/,
       // }),
-    ],
+      process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
+    ].filter(Boolean),
   };
 };
