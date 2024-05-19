@@ -1,5 +1,5 @@
+import type { LoaderContext } from '@rspack/core';
 import { validate } from 'schema-utils';
-import { LoaderContext } from '@rspack/core';
 
 /**
  * Note: platform is not needed - can be removed
