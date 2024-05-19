@@ -65,7 +65,6 @@
     "@discoveryjs/json-ext": "^0.5.7",
     "colorette": "^1.2.2",
     "dedent": "^0.7.0",
-    "escape-string-regexp": "^4.0.0",
     "events": "^3.3.0",
     "execa": "^5.0.0",
     "flow-remove-types": "2.236.0",

@@ -348,9 +348,6 @@ importers:
       dedent:
         specifier: ^0.7.0
         version: 0.7.0
-      escape-string-regexp:
-        specifier: ^4.0.0
-        version: 4.0.0
       events:
         specifier: ^3.3.0
         version: 3.3.0
