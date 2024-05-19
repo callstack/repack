@@ -1,7 +1,7 @@
 import path from 'path';
 import dedent from 'dedent';
-import { getImageSize } from './utils';
 import type { Asset } from './types';
+import { getDefaultAsset } from './utils';
 
 export function convertToRemoteAssets({
   assets,
@@ -10,8 +10,6 @@ export function convertToRemoteAssets({
   resourceDirname,
   resourceExtensionType,
   resourceFilename,
-  resourcePath,
-  suffixPattern,
   pathSeparatorRegexp,
 }: {
   assets: Asset[];
@@ -31,8 +29,7 @@ export function convertToRemoteAssets({
   // works on both unix & windows
   const publicPathURL = new URL(path.join(remotePublicPath, assetPath));
 
-  const size = getImageSize({ resourcePath, resourceFilename, suffixPattern });
-
+  const size = getDefaultAsset(assets).dimensions;
   const asset = JSON.stringify({
     name: resourceFilename,
     type: resourceExtensionType,

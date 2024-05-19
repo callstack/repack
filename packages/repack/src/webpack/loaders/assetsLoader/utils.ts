@@ -1,52 +1,48 @@
 import path from 'node:path';
 import imageSize from 'image-size';
-import escapeStringRegexp from 'escape-string-regexp';
-import type { CollectedScales, ImageSize } from './types';
+import type { Asset, AssetDimensions, CollectedScales } from './types';
 
 export function getScaleNumber(scaleKey: string) {
   return parseFloat(scaleKey.replace(/[^\d.]/g, ''));
 }
 
-export function getImageSize({
-  resourcePath,
-  resourceFilename,
-  suffixPattern,
-}: {
-  resourcePath: string;
-  resourceFilename: string;
-  suffixPattern: string;
-}): ImageSize | undefined {
-  let info: ImageSize | undefined;
-  try {
-    info = imageSize(resourcePath);
-    const [, scaleMatch = ''] =
-      path
-        .basename(resourcePath)
-        .match(
-          new RegExp(`^${escapeStringRegexp(resourceFilename)}${suffixPattern}`)
-        ) ?? [];
-    if (scaleMatch) {
-      const scale = Number(scaleMatch.replace(/[^\d.]/g, ''));
-      if (typeof scale === 'number' && Number.isFinite(scale)) {
-        info.width && (info.width /= scale);
-        info.height && (info.height /= scale);
-      }
-    }
-  } catch {
-    // Asset is not an image
+/** Default asset is the one with scale that was originally requested in the loader */
+export function getDefaultAsset(assets: Asset[]) {
+  const defaultAsset = assets.find((asset) => asset.default === true);
+  if (!defaultAsset) {
+    throw new Error('Malformed assets array - no default asset found');
   }
-
-  return info;
+  return defaultAsset;
 }
 
-// eslint-disable-next-line require-await
+export function getAssetDimensions({
+  resourceData,
+  resourceScale,
+}: {
+  resourceData: Buffer;
+  resourceScale: number;
+}): AssetDimensions | null {
+  try {
+    const info = imageSize(resourceData);
+    if (!info.width || !info.height) {
+      return null;
+    }
+    return {
+      width: info.width / resourceScale,
+      height: info.height / resourceScale,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function collectScales(
   resourceAbsoluteDirname: string,
   resourceFilename: string,
   resourceExtension: string,
   scalableAssetExtensions: string[],
   scalableAssetResolutions: string[],
-  readdirAsync: (path: string) => Promise<string[]>
+  readDirAsync: (path: string) => Promise<string[]>
 ): Promise<CollectedScales> {
   // NOTE: assets can't have platform extensions!
   // NOTE: this probably needs to handle nonscalable too
@@ -62,8 +58,7 @@ export async function collectScales(
   // implicit 1x scale
   candidates.push(['@1x', resourceFilename + '.' + resourceExtension]);
 
-  // exposed fs is not fully compliant to fs spec
-  const contents = await readdirAsync(resourceAbsoluteDirname);
+  const contents = await readDirAsync(resourceAbsoluteDirname);
   const entries = new Set(contents);
 
   const collectedScales: Record<string, string> = {};
