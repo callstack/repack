@@ -1,7 +1,7 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import util from 'node:util';
 import crypto from 'node:crypto';
+import type fs from 'node:fs';
 import { SCALABLE_ASSETS, SCALABLE_RESOLUTIONS } from '../../utils';
 import { getOptions } from './options';
 import { extractAssets } from './extractAssets';
@@ -10,6 +10,8 @@ import { convertToRemoteAssets } from './convertToRemoteAssets';
 import { collectScales, getScaleNumber } from './utils';
 import type { Asset, AssetLoaderContext } from './types';
 
+type AsyncFS = (typeof fs)['promises'];
+
 export const raw = true;
 
 const testXml = /\.(xml)$/;
@@ -17,10 +19,7 @@ const testMP4 = /\.(mp4)$/;
 const testImages = /\.(png|jpg|gif|webp)$/;
 const testFonts = /\.(ttf|otf|ttc)$/;
 
-export default async function repackAssetsLoader(
-  this: AssetLoaderContext,
-  content: Buffer
-) {
+export default async function repackAssetsLoader(this: AssetLoaderContext) {
   this.cacheable();
   const id = crypto.randomBytes(16).toString('hex');
   // console.time(`repackAssetsLoader - ${id}`);
@@ -28,6 +27,9 @@ export default async function repackAssetsLoader(
   const callback = this.async();
   const logger = this.getLogger('repackAssetsLoader');
   const rootContext = this.rootContext;
+
+  const readDirAsync: AsyncFS['readdir'] = util.promisify(this.fs.readdir);
+  const readFileAsync: AsyncFS['readFile'] = util.promisify(this.fs.readFile);
 
   logger.debug(`Processing asset ${this.resourcePath}`);
 
@@ -83,7 +85,7 @@ export default async function repackAssetsLoader(
       resourceExtensionType,
       scalableAssetExtensions,
       scalableAssetResolutions,
-      util.promisify(this.fs.readdir)
+      readDirAsync
     );
     console.timeEnd(`repackAssetsLoader - ${id} - 1`);
     const scaleKeys = Object.keys(scales).sort(
@@ -98,7 +100,7 @@ export default async function repackAssetsLoader(
     const assets = await Promise.all<Asset>(
       scaleKeys.map(async (scaleKey) => {
         const filenameWithScale = scales[scaleKey];
-        const content = fs.readFileSync(filenameWithScale);
+        const content = await readFileAsync(filenameWithScale);
 
         let destination;
 
