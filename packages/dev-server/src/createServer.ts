@@ -103,7 +103,12 @@ export async function createServer(config: Server.Config) {
   });
   instance.use('/debugger-ui', debuggerUIMiddleware());
   instance.use('/open-url', openURLMiddleware);
-  instance.use('/open-stack-frame', openStackFrameInEditorMiddleware);
+  instance.use(
+    '/open-stack-frame',
+    openStackFrameInEditorMiddleware({
+      watchFolders: [config.options.rootDir],
+    })
+  );
 
   await instance.register(symbolicatePlugin, {
     delegate,
