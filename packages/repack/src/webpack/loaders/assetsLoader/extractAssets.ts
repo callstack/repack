@@ -1,11 +1,11 @@
-import path from 'path';
+import path from 'node:path';
+import crypto from 'node:crypto';
 import dedent from 'dedent';
-import hasha from 'hasha';
 import type { InfrastructureLogger } from '../../../types';
 import type { Asset } from './types';
 import { getDefaultAsset } from './utils';
 
-export async function extractAssets(
+export function extractAssets(
   {
     resourcePath,
     resourceDirname,
@@ -40,12 +40,8 @@ export async function extractAssets(
 
   const size = getDefaultAsset(assets).dimensions;
   const scales = assets.map((asset) => asset.scale);
-  const hashes = await Promise.all(
-    assets.map((asset) =>
-      hasha.async(asset.data.toString() ?? asset.filename, {
-        algorithm: 'md5',
-      })
-    )
+  const hashes = assets.map((asset) =>
+    crypto.createHash('md5').update(asset.data).digest('hex')
   );
 
   logger.debug(

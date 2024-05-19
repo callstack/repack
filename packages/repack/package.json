@@ -69,7 +69,6 @@
     "execa": "^5.0.0",
     "flow-remove-types": "2.236.0",
     "fs-extra": "^10.0.0",
-    "hasha": "^5.2.2",
     "image-size": "^1.1.1",
     "jsonwebtoken": "^9.0.0",
     "lodash.throttle": "^4.1.1",
