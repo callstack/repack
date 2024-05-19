@@ -226,7 +226,7 @@ export default async function repackAssetsLoader(
           pathSeparatorRegexp,
         });
       } else {
-        result = await extractAssets(
+        result = extractAssets(
           {
             resourcePath,
             resourceDirname,

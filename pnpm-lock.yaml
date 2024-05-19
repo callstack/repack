@@ -347,9 +347,6 @@ importers:
       fs-extra:
         specifier: ^10.0.0
         version: 10.1.0
-      hasha:
-        specifier: ^5.2.2
-        version: 5.2.2
       image-size:
         specifier: ^1.1.1
         version: 1.1.1
@@ -4214,10 +4211,6 @@ packages:
   has@1.0.3:
     resolution: {integrity: sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==}
     engines: {node: '>= 0.4.0'}
-
-  hasha@5.2.2:
-    resolution: {integrity: sha512-Hrp5vIK/xr5SkeN2onO32H0MgNZ0f17HRNH39WfL0SYUNOTZ5Lz1TJ8Pajo/87dYGEFlLMm7mIc/k/s6Bvz9HQ==}
-    engines: {node: '>=8'}
 
   hasown@2.0.0:
     resolution: {integrity: sha512-vUptKVTpIJhcczKBbgnS+RtcuYMB8+oNzPK2/Hp3hanz8JmpATdmmgLgSaadVREkDm+e2giHwY3ZRkyjSIDDFA==}
@@ -12322,11 +12315,6 @@ snapshots:
   has@1.0.3:
     dependencies:
       function-bind: 1.1.2
-
-  hasha@5.2.2:
-    dependencies:
-      is-stream: 2.0.0
-      type-fest: 0.8.1
 
   hasown@2.0.0:
     dependencies:
