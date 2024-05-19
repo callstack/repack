@@ -1,6 +1,11 @@
 import { validate } from 'schema-utils';
 import { LoaderContext } from '@rspack/core';
 
+/**
+ * Note: platform is not needed - can be removed
+ * Note: devServer enabled can be inferred from loader context:
+ *       - we can access this.mode & this.hot
+ */
 export interface AssetLoaderOptions {
   platform: string;
   scalableAssetExtensions?: string[];
