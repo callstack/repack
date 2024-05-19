@@ -110,12 +110,6 @@ module.exports = (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
-              /**
-               * Defines which assets are scalable - which assets can have
-               * scale suffixes: `@1x`, `@2x` and so on.
-               * By default all images are scalable.
-               */
-              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
             },
           },
         },
@@ -141,7 +135,6 @@ module.exports = (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
-              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
             },
           },
         },
@@ -155,7 +148,6 @@ module.exports = (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
-              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
               inline: true,
             },
           },
@@ -170,7 +162,6 @@ module.exports = (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
-              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
               remote: {
                 enabled: true,
                 publicPath: 'http://localhost:9999/remote-assets',
