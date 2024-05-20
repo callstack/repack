@@ -1,5 +1,7 @@
 # @callstack/repack-init
 
+## 5.0.0-next.1
+
 ## 5.0.0-next.0
 
 ## 4.0.0

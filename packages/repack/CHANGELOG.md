@@ -1,5 +1,14 @@
 # @callstack/repack
 
+## 5.0.0-next.1
+
+### Patch Changes
+
+- TargetPlugin & init fixes
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-next.1
+
 ## 5.0.0-next.0
 
 ### Major Changes

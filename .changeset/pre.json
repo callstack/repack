@@ -10,6 +10,7 @@
     "website": "0.0.1"
   },
   "changesets": [
-    "forty-rice-raise"
+    "forty-rice-raise",
+    "violet-berries-happen"
   ]
 }
