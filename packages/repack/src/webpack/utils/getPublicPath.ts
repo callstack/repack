@@ -6,7 +6,7 @@ export interface GetPublicPathOptions {
   platform: string;
 
   /** Development server configuration options. */
-  devServer: Pick<DevServerOptions, 'port' | 'host' | 'https'>;
+  devServer?: Pick<DevServerOptions, 'port' | 'host' | 'https'>;
 }
 
 /**
