@@ -31,7 +31,7 @@ export default async function run({
     const packageManager = await checkPackageManager(rootDir);
     const reactNativeVersion = checkReactNative(cwd);
 
-    await addDependencies(packageManager, repackVersion);
+    await addDependencies(cwd, packageManager, repackVersion);
 
     await createWebpackConfig(cwd, templateType, entry);
 
