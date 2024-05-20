@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import rspack, { RspackPluginInstance, ResolveAlias } from '@rspack/core';
 import type { DevServerOptions } from '../../../types';
 import { generateLoadScriptRuntimeModule } from './runtime/RepackLoadScriptRuntimeModule';
@@ -33,15 +33,18 @@ export class RepackTargetPlugin implements RspackPluginInstance {
   constructor(private config?: RepackTargetPluginConfig) {}
 
   private getReactNativePath(candidate: ResolveAlias[string] | undefined) {
+    let reactNativePath: string | undefined;
     if (typeof candidate === 'string') {
-      return candidate;
-    } else if (typeof candidate === 'object') {
-      const candidates = candidate.filter(Boolean) as string[];
-      if (candidates.length > 0) {
-        return candidates[0];
-      }
+      reactNativePath = candidate;
     }
-    return require.resolve('react-native');
+    if (typeof candidate === 'object') {
+      const candidates = candidate.filter(Boolean) as string[];
+      reactNativePath = candidates[0];
+    }
+    if (!reactNativePath) {
+      reactNativePath = require.resolve('react-native');
+    }
+    return path.dirname(reactNativePath);
   }
   /**
    * Apply the plugin.
@@ -58,11 +61,13 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     const reactNativePath = this.getReactNativePath(
       compiler.options.resolve.alias?.['react-native']
     );
-    const getPolyfills = require(
+
+    const getReactNativePolyfills = require(
       path.join(reactNativePath, 'rn-get-polyfills.js')
     );
+
     const entries = [
-      ...getPolyfills(),
+      ...getReactNativePolyfills(),
       this.config?.initializeCoreLocation ||
         path.join(reactNativePath, 'Libraries/Core/InitializeCore.js'),
       require.resolve('../../../modules/configurePublicPath'),
