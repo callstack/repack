@@ -1,9 +1,12 @@
 // @ts-check
-const path = require('path');
+/** @type {import('node:path')} */
+const path = require('node:path');
+/** @type {import('@callstack/repack')} */
 const Repack = require('@callstack/repack');
+/** @type {import('@rsdoctor/rspack-plugin')} */
 const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
 
-/** @type {(env: any) => import('@rspack/core').Configuration} */
+/** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
 module.exports = (env) => {
   const {
     mode = 'development',
