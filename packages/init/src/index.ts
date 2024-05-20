@@ -1,3 +1,4 @@
+import ensureProjectExists from './tasks/ensureProjectExists.js';
 import checkPackageManager from './tasks/checkPackageManager.js';
 import checkReactNative from './tasks/checkReactNative.js';
 import addDependencies from './tasks/addDependencies.js';
@@ -21,14 +22,13 @@ export default async function run({
   templateType,
   verbose,
 }: Options) {
-  const cwd = process.cwd();
-
   if (verbose) {
     enableVerboseLogging();
   }
 
   try {
-    const packageManager = await checkPackageManager(cwd);
+    const { cwd, rootDir } = await ensureProjectExists();
+    const packageManager = await checkPackageManager(rootDir);
     const reactNativeVersion = checkReactNative(cwd);
 
     await addDependencies(packageManager, repackVersion);
