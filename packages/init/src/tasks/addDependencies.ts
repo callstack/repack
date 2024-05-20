@@ -4,10 +4,10 @@ import ora from 'ora';
 import logger from '../utils/logger.js';
 
 const dependencies = [
-  'webpack',
-  'terser-webpack-plugin',
-  'babel-loader',
-  '@callstack/repack',
+  '@rspack/core@0.6.5',
+  '@rspack/plugin-react-refresh@0.6.5',
+  '@swc/helpers',
+  '@callstack/repack@next',
 ];
 
 /**
@@ -28,9 +28,14 @@ export default async function addDependencies(
   }
 
   if (repackVersion) {
-    const index = dependencies.indexOf('@callstack/repack');
-    dependencies[index] = `@callstack/repack@${repackVersion}`;
-    logger.info(`Using custom Re.Pack version ${repackVersion}`);
+    // const index = dependencies.indexOf('@callstack/repack');
+    // dependencies[index] = `@callstack/repack@${repackVersion}`;
+    // logger.info(`Using custom Re.Pack version ${repackVersion}`);
+    logger.warn(
+      'Ignoring --custom-version parameter. ' +
+        "This version of '@callstack/repack-init' " +
+        'supports only the latest preview release of Re.Pack'
+    );
   }
 
   const deps = dependencies.join(' ');
