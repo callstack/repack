@@ -70,13 +70,13 @@
     "flow-remove-types": "2.236.0",
     "fs-extra": "^10.0.0",
     "image-size": "^1.1.1",
-    "jsonwebtoken": "^9.0.0",
+    "jsonwebtoken": "^9.0.2",
     "lodash.throttle": "^4.1.1",
     "memfs": "^4.9.1",
     "mime-types": "^2.1.35",
     "pretty-format": "^26.6.2",
     "react-refresh": "^0.14.0",
-    "schema-utils": "^3.0.0",
+    "schema-utils": "^4.2.0",
     "shallowequal": "^1.1.0"
   },
   "devDependencies": {
