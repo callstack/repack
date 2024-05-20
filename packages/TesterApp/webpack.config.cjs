@@ -56,7 +56,7 @@ module.exports = (env) => {
           use: {
             loader: 'builtin:swc-loader',
             options: {
-              env: { targets: { hermes: '0.12' } },
+              env: { targets: { 'react-native': '0.74' } },
               jsc: { externalHelpers: true },
             },
           },
@@ -72,7 +72,7 @@ module.exports = (env) => {
             options: {
               sourceMaps: true,
               env: {
-                targets: { hermes: '0.12' },
+                targets: { 'react-native': '0.74' },
               },
               jsc: {
                 externalHelpers: true,
