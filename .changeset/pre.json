@@ -9,5 +9,7 @@
     "@callstack/repack": "4.0.0",
     "website": "0.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "forty-rice-raise"
+  ]
 }

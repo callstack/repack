@@ -1,5 +1,11 @@
 # @callstack/repack
 
+## 5.0.0-next.0
+
+### Major Changes
+
+- [`9b0acc7`](https://github.com/callstack/repack/commit/9b0acc7879c59d54cf8e8118cbabb341d24af18c) Thanks [@jbroma](https://github.com/jbroma)! - V5 Rspack Preview
+
 ## 4.0.0
 
 ### Major Changes
