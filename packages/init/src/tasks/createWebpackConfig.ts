@@ -6,9 +6,9 @@ import ora from 'ora';
 import logger from '../utils/logger.js';
 
 const MJSTemplateURL =
-  'https://raw.githubusercontent.com/callstack/repack/main/templates/webpack.config.mjs';
+  'https://raw.githubusercontent.com/callstack/repack/v5-preview/templates/webpack.config.mjs';
 const CJSTemplateURL =
-  'https://raw.githubusercontent.com/callstack/repack/main/templates/webpack.config.cjs';
+  'https://raw.githubusercontent.com/callstack/repack/v5-preview/templates/webpack.config.cjs';
 
 async function fetchConfigTemplate(templateType: 'mjs' | 'cjs') {
   let url;
