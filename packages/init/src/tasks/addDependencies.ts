@@ -16,6 +16,7 @@ const dependencies = [
  * @param packageManager yarn, npm or pnpm
  */
 export default async function addDependencies(
+  cwd: string,
   packageManager: PM,
   repackVersion?: string
 ) {
@@ -47,7 +48,7 @@ export default async function addDependencies(
     spinner = ora(
       `Installing Re.Pack dependencies using ${packageManager}`
     ).start();
-    await execa(command, { stdio: 'pipe', shell: true });
+    await execa(command, { cwd, stdio: 'pipe', shell: true });
     spinner.succeed('Dependencies installed');
   } catch (error) {
     spinner?.fail(`Failed to install Re.Pack dependencies`);
