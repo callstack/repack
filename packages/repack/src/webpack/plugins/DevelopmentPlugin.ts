@@ -40,7 +40,8 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     }).apply(compiler);
 
     if (this.config?.devServer.hmr) {
-      // TODO Align this with output.hotModuleUpdateChunkFilename
+      // TODO Align this with output.hotModuleUpdateChunkFilename?
+      // setup HMR source maps
       new rspack.SourceMapDevToolPlugin({
         test: /\.hot-update\.js$/,
         filename: '[file].map',
@@ -49,6 +50,8 @@ export class DevelopmentPlugin implements RspackPluginInstance {
         columns: true,
         noSources: false,
       }).apply(compiler);
+
+      // setup HMR
       new rspack.HotModuleReplacementPlugin().apply(compiler);
       new RspackReactRefreshPlugin().apply(compiler);
       new rspack.EntryPlugin(
