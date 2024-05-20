@@ -54,7 +54,7 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
       loader: 'builtin:swc-loader',
       options: {
         env: {
-          targets: { hermes: '0.12' },
+          targets: { 'react-native': '0.74' },
         },
         jsc: { externalHelpers: true },
         module: {
