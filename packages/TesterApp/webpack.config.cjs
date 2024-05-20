@@ -36,8 +36,8 @@ module.exports = (env) => {
       clean: true,
       hashFunction: 'xxhash64',
       path: path.join(context, 'build/generated', platform),
-      filename: 'index.js',
-      chunkFilename: '[name].chunk.js',
+      filename: 'index.bundle',
+      chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
     },
     optimization: {
