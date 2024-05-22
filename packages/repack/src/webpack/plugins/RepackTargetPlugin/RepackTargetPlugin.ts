@@ -44,7 +44,10 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     if (!reactNativePath) {
       reactNativePath = require.resolve('react-native');
     }
-    return path.dirname(reactNativePath);
+
+    return path.extname(reactNativePath)
+      ? path.dirname(reactNativePath)
+      : reactNativePath;
   }
   /**
    * Apply the plugin.
