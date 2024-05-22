@@ -1,8 +1,10 @@
 import readline from 'node:readline';
 import { URL } from 'node:url';
 import execa from 'execa';
+import colorette from 'colorette';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
+import packageJson from '../../package.json';
 import { StartArguments, StartCliOptions } from '../types';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT, DEFAULT_PLATFORMS } from '../env';
 import {
@@ -67,6 +69,12 @@ export async function start(
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
     ].filter(Boolean) as Reporter[]
   );
+
+  const version = packageJson.version;
+  process.stdout.write(
+    colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
+  );
+
   const compiler = new Compiler(cliOptions, reporter);
 
   const { createServer } = await import('@callstack/repack-dev-server');
