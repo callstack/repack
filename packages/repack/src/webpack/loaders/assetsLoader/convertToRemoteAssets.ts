@@ -7,6 +7,7 @@ export function convertToRemoteAssets({
   assets,
   assetsDirname,
   remotePublicPath,
+  remoteFilePath,
   resourceDirname,
   resourceExtensionType,
   resourceFilename,
@@ -17,6 +18,7 @@ export function convertToRemoteAssets({
   assets: Asset[];
   assetsDirname: string;
   remotePublicPath: string;
+  remoteFilePath?: string;
   resourceDirname: string;
   resourceExtensionType: string;
   resourceFilename: string;
@@ -29,7 +31,7 @@ export function convertToRemoteAssets({
     .replace(pathSeparatorRegexp, '/');
 
   // works on both unix & windows
-  const publicPathURL = new URL(path.join(remotePublicPath, assetPath));
+  const publicPathURL = new URL(path.join(remotePublicPath, remoteFilePath || assetPath));
 
   const size = getImageSize({ resourcePath, resourceFilename, suffixPattern });
 

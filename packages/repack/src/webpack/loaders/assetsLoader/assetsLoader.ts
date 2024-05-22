@@ -151,7 +151,7 @@ export default async function repackAssetsLoader(this: LoaderContext) {
           const name = `${resourceFilename}${
             scaleKey === '@1x' ? '' : scaleKey
           }.${resourceExtensionType}`;
-          destination = path.join(
+          destination = options.remote?.enabled && options.remote.filePath ? path.join(remoteAssetsDirname, options.remote.filePath, name) : path.join(
             options.remote?.enabled ? remoteAssetsDirname : '',
             assetsDirname,
             resourceDirname,
