@@ -3,7 +3,7 @@
   "description": "Automates the integration of the @callstack/repack into React-Native projects",
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
-  "version": "5.0.0-next.1",
+  "version": "5.0.0-next.2",
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
   "keywords": [

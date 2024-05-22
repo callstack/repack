@@ -1,5 +1,14 @@
 # @callstack/repack
 
+## 5.0.0-next.2
+
+### Patch Changes
+
+- [`db3d6cd`](https://github.com/callstack/repack/commit/db3d6cd3e5e78bdd433a2e21910ff4dbbfee8c43) Thanks [@jbroma](https://github.com/jbroma)! - Fixes & inclusion of OOT platforms for flow transpilation
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-next.2
+
 ## 5.0.0-next.1
 
 ### Patch Changes

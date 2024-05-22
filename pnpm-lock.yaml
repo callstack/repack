@@ -127,7 +127,7 @@ importers:
   packages/TesterApp:
     dependencies:
       '@callstack/repack':
-        specifier: 5.0.0-next.1
+        specifier: 5.0.0-next.2
         version: link:../repack
       '@react-native-async-storage/async-storage':
         specifier: ^1.21.0
@@ -343,7 +343,7 @@ importers:
   packages/repack:
     dependencies:
       '@callstack/repack-dev-server':
-        specifier: ^5.0.0-next.1
+        specifier: ^5.0.0-next.2
         version: link:../dev-server
       '@discoveryjs/json-ext':
         specifier: ^0.5.7
