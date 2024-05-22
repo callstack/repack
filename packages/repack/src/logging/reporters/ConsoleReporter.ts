@@ -206,13 +206,17 @@ class InteractiveConsoleReporter implements Reporter {
       }
     }
 
-    return (
-      colorette.gray(
+    let timestamp = '';
+    let issuer = '';
+
+    if (this.config.level === 'verbose') {
+      timestamp = colorette.gray(
         `[${new Date(log.timestamp).toISOString().split('T')[1]}]`
-      ) +
-      colorette.bold(`[${log.issuer}]`) +
-      ` ${body}`
-    );
+      );
+      issuer = colorette.bold(`[${log.issuer}]`);
+    }
+
+    return `${timestamp}${issuer} ${body}`;
   }
 
   flush() {
