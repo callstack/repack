@@ -76,9 +76,7 @@ module.exports = (env) => {
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
     },
-    /**
-     * Configures optimization of the built bundle.
-     */
+    /** Configures optimization of the built bundle. */
     optimization: {
       /** Enables minification based on values passed from React Native CLI or from fallback. */
       minimize,
@@ -123,6 +121,8 @@ module.exports = (env) => {
             },
           },
         },
+        /** Run React Native codegen, required for utilizing new architecture */
+        Repack.REACT_NATIVE_CODEGEN_RULES,
         /**
          * This loader handles all static assets (images, video, audio and others), so that you can
          * use (reference) them inside your application.
