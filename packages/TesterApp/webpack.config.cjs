@@ -90,6 +90,7 @@ module.exports = (env) => {
             },
           },
         },
+        Repack.REACT_NATIVE_CODEGEN_RULES,
         /**
          * This loader handles all static assets (images, video, audio and others), so that you can
          * use (reference) them inside your application.
