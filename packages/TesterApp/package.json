@@ -27,7 +27,7 @@
     "@react-native/eslint-config": "0.74.81",
     "@react-native/typescript-config": "0.74.81",
     "@svgr/webpack": "^6.2.1",
-    "@types/jest": "^28.1.1",
+    "@types/jest": "^29.5.12",
     "@types/lodash.throttle": "^4.1.9",
     "@types/react": "^18.2.51",
     "babel-loader": "^9.1.3",
