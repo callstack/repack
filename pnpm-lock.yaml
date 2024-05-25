@@ -409,9 +409,9 @@ importers:
       '@babel/core':
         specifier: ^7.23.9
         version: 7.24.0
-      '@babel/plugin-proposal-export-namespace-from':
-        specifier: ^7.17.12
-        version: 7.18.9(@babel/core@7.24.0)
+      '@babel/plugin-transform-export-namespace-from':
+        specifier: ^7.24.6
+        version: 7.24.6(@babel/core@7.24.0)
       '@babel/plugin-transform-modules-commonjs':
         specifier: ^7.23.2
         version: 7.23.3(@babel/core@7.24.0)
@@ -660,6 +660,10 @@ packages:
 
   '@babel/helper-plugin-utils@7.24.0':
     resolution: {integrity: sha512-9cUznXMG0+FxRuJfvL82QlTqIzhVW9sL0KjMPHhAOOvpQGL8QtdxnBKILjBqxlHyliz0yCa1G903ZXI/FuHy2w==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-plugin-utils@7.24.6':
+    resolution: {integrity: sha512-MZG/JcWfxybKwsA9N9PmtF2lOSFSEMVCpIRrbxccZFLJPrJciJdG/UhSh5W96GEteJI2ARqm5UAHxISwRDLSNg==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-remap-async-to-generator@7.22.20':
@@ -1166,6 +1170,12 @@ packages:
 
   '@babel/plugin-transform-export-namespace-from@7.23.4':
     resolution: {integrity: sha512-GzuSBcKkx62dGzZI1WVgTWvkkz84FZO5TC5T8dl/Tht/rAla6Dg/Mz9Yhypg+ezVACf/rgDuQt3kbWEv7LdUDQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
+  '@babel/plugin-transform-export-namespace-from@7.24.6':
+    resolution: {integrity: sha512-inXaTM1SVrIxCkIJ5gqWiozHfFMStuGbGJAxZFBoHcRRdDP0ySLb3jH6JOwmfiinPwyMZqMBX+7NBDCO4z0NSA==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
@@ -8035,6 +8045,8 @@ snapshots:
 
   '@babel/helper-plugin-utils@7.24.0': {}
 
+  '@babel/helper-plugin-utils@7.24.6': {}
+
   '@babel/helper-remap-async-to-generator@7.22.20(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
@@ -8544,6 +8556,12 @@ snapshots:
     dependencies:
       '@babel/core': 7.24.0
       '@babel/helper-plugin-utils': 7.24.0
+      '@babel/plugin-syntax-export-namespace-from': 7.8.3(@babel/core@7.24.0)
+
+  '@babel/plugin-transform-export-namespace-from@7.24.6(@babel/core@7.24.0)':
+    dependencies:
+      '@babel/core': 7.24.0
+      '@babel/helper-plugin-utils': 7.24.6
       '@babel/plugin-syntax-export-namespace-from': 7.8.3(@babel/core@7.24.0)
 
   '@babel/plugin-transform-flow-strip-types@7.22.5(@babel/core@7.24.0)':

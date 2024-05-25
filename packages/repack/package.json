@@ -85,7 +85,7 @@
   "devDependencies": {
     "@babel/cli": "^7.23.9",
     "@babel/core": "^7.23.9",
-    "@babel/plugin-proposal-export-namespace-from": "^7.17.12",
+    "@babel/plugin-transform-export-namespace-from": "^7.24.6",
     "@babel/plugin-transform-modules-commonjs": "^7.23.2",
     "@react-native-community/cli": "13.6.4",
     "@react-native-community/cli-types": "13.6.4",
