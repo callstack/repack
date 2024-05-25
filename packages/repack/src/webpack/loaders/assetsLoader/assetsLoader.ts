@@ -1,7 +1,7 @@
 import path from 'path';
-import type { LoaderContext } from 'loader-utils';
+import { LoaderContext } from 'webpack';
 import { AssetResolver } from '../../plugins/AssetsResolverPlugin/AssetResolver';
-import { getOptions } from './options';
+import { getOptions, Options } from './options';
 import { extractAssets } from './extractAssets';
 import { inlineAssets } from './inlineAssets';
 import { convertToRemoteAssets } from './convertToRemoteAssets';
@@ -15,7 +15,7 @@ const testMP4 = /\.(mp4)$/;
 const testImages = /\.(png|jpg|gif|webp)$/;
 const testFonts = /\.(ttf|otf|ttc)$/;
 
-export default async function repackAssetsLoader(this: LoaderContext) {
+export default async function repackAssetsLoader(this: LoaderContext<Options>) {
   this.cacheable();
 
   const callback = this.async();
