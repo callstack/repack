@@ -109,7 +109,7 @@
     "typedoc": "^0.25.3",
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.2.2",
-    "webpack": "^5.75.0",
+    "webpack": "^5.91.0",
     "webpack-virtual-modules": "^0.4.4"
   },
   "codegenConfig": {

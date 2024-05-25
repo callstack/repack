@@ -42,6 +42,6 @@
     "terser-webpack-plugin": "^5.3.3",
     "typescript": "^5.2.2",
     "vitest": "^0.15.1",
-    "webpack": "^5.75.0"
+    "webpack": "^5.91.0"
   }
 }
