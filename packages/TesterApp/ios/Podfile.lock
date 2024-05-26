@@ -1158,6 +1158,7 @@ PODS:
     - React-ImageManager
     - React-jsi
     - React-NativeModulesApple
+    - React-RCTAppDelegate
     - React-RCTFabric
     - React-rendererdebug
     - React-utils
@@ -1169,9 +1170,69 @@ PODS:
     - React-jsi
   - ReactTestApp-Resources (1.0.0-dev)
   - RNCAsyncStorage (1.21.0):
+    - DoubleConversion
+    - glog
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNSVG (15.2.0-rc.0):
+    - DoubleConversion
+    - glog
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNSVG/common (= 15.2.0-rc.0)
+    - Yoga
+  - RNSVG/common (15.2.0-rc.0):
+    - DoubleConversion
+    - glog
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - SocketRocket (0.7.0)
   - SwiftyRSA (1.7.0):
     - SwiftyRSA/ObjC (= 1.7.0)
@@ -1204,6 +1265,7 @@ DEPENDENCIES:
   - React-graphics (from `../node_modules/react-native/ReactCommon/react/renderer/graphics`)
   - React-ImageManager (from `../node_modules/react-native/ReactCommon/react/renderer/imagemanager/platform/ios`)
   - React-jsc (from `../node_modules/react-native/ReactCommon/jsc`)
+  - React-jsc/Fabric (from `../node_modules/react-native/ReactCommon/jsc`)
   - React-jserrorhandler (from `../node_modules/react-native/ReactCommon/jserrorhandler`)
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
@@ -1401,9 +1463,9 @@ SPEC CHECKSUMS:
   React-perflogger: 271f1111779fef70f9502d1d38da5132e5585230
   React-RCTActionSheet: 5d6fb9adb11ab1bfbce6695a2b785767e4658c53
   React-RCTAnimation: 86ace32c56e69b3822e7e5184ea83a79d47fc7b9
-  React-RCTAppDelegate: 6379a11a49fd0be615dc2e23da0c8a84c52ec65c
+  React-RCTAppDelegate: a36f432ae0bf0fda42054ef65be4423585a34545
   React-RCTBlob: 558daf7c11715ef24d97a0be5ccc3b209753682c
-  React-RCTFabric: eb4b1fc3718040717f17114b7782a519987bd7c4
+  React-RCTFabric: 4564d7ce8d81b8ea2918188a0e02da22b040e679
   React-RCTImage: b482f07cfdbe8e413edbf9d85953cecdb569472c
   React-RCTLinking: fbd73a66cab34df69b2389c17f200e4722890fd9
   React-RCTNetwork: fbdd716fbd6e53feb6d8e00eeb85e8184ad42ac8
@@ -1418,11 +1480,11 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 203e25504974651c4472ad00e035658d32002305
   React-utils: 67c666fd04996cdb6bba26590586753d3e8ff7ed
   ReactCommon: 53dbd9a55e29188ded016078708d1da8de2db19d
-  ReactNativeHost: 6a81a2716363fcd1e720b67d2f6b56968ffbaa8b
+  ReactNativeHost: da8e610050d04e1758bb6240106ccd9eed305d82
   ReactTestApp-DevSupport: f845db38b4b4ce8d341f8acdba934ee85ed3d7b2
-  ReactTestApp-Resources: 857244f3a23f2b3157b364fa06cf3e8866deff9c
-  RNCAsyncStorage: 618d03a5f52fbccb3d7010076bc54712844c18ef
-  RNSVG: 55bf7e6e90717321191cde721072df87e9f8a024
+  ReactTestApp-Resources: 50f9d362ae86b0a695da1257047c10bda2aff598
+  RNCAsyncStorage: 3b12e5211749c9be1e56d56ac98b156ba776c404
+  RNSVG: c436d4045608f1ac0dbe82a84b78caa78a21503d
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
   Yoga: ff1d575b119f510a5de23c22a794872562078ccf
