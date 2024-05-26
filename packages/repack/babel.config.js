@@ -18,7 +18,7 @@ const defaultConfig = {
 
 module.exports = {
   presets: ['@babel/preset-typescript'],
-  plugins: ['@babel/plugin-proposal-export-namespace-from'],
+  plugins: ['@babel/plugin-transform-export-namespace-from'],
   overrides: [
     {
       include: ['./src/**/runtime/implementation'],

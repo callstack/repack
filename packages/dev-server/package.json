@@ -39,7 +39,6 @@
     "build:ts": "tsc --emitDeclarationOnly",
     "build:ts:watch": "pnpm build:ts --watch --preserveWatchOutput",
     "build": "pnpm build:js && pnpm build:ts",
-    "docs": "typedoc",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --ext \".js,.ts\" src",
     "archive": "pnpm build && pnpm pack"
@@ -66,10 +65,8 @@
     "@types/node": "18",
     "@types/ws": "^8.5.3",
     "babel-plugin-add-import-extension": "^1.6.0",
-    "eslint": "^8.53.0",
-    "typedoc": "^0.25.3",
-    "typedoc-plugin-markdown": "^3.17.1",
-    "typescript": "^5.2.2"
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5"
   },
   "peerDependencies": {
     "@react-native-community/cli-debugger-ui": ">=11.3.1",

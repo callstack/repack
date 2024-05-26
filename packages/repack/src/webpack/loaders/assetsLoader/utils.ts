@@ -1,10 +1,14 @@
 import path from 'path';
 import imageSize from 'image-size';
-import type { LoaderContext } from 'loader-utils';
 import escapeStringRegexp from 'escape-string-regexp';
+import { LoaderContext } from 'webpack';
+import { Options } from './options';
 import type { ImageSize } from './types';
 
-export function getFilesInDirectory(dirname: string, fs: LoaderContext['fs']) {
+export function getFilesInDirectory(
+  dirname: string,
+  fs: LoaderContext<Options>['fs']
+) {
   return new Promise<string[]>((resolve, reject) =>
     fs.readdir(dirname, (error, results) => {
       if (error) {
@@ -24,7 +28,7 @@ export function getScaleNumber(scaleKey: string) {
   return parseFloat(scaleKey.replace(/[^\d.]/g, ''));
 }
 
-export function readFile(filename: string, fs: LoaderContext['fs']) {
+export function readFile(filename: string, fs: LoaderContext<Options>['fs']) {
   return new Promise<string | Buffer>((resolve, reject) => {
     fs.readFile(filename, (error, results) => {
       if (error) {

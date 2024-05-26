@@ -1,5 +1,4 @@
-import { validateSchema } from 'webpack';
-import utils, { LoaderContext } from 'loader-utils';
+import { validateSchema, LoaderContext } from 'webpack';
 
 export interface Options {
   platform: string;
@@ -39,8 +38,8 @@ export const optionsSchema: Schema = {
   },
 };
 
-export function getOptions(loaderContext: LoaderContext): Options {
-  const options = utils.getOptions(loaderContext) || {};
+export function getOptions(loaderContext: LoaderContext<Options>): Options {
+  const options = loaderContext.getOptions() || {};
 
   validateSchema(optionsSchema, options, { name: 'repackAssetsLoader' });
 

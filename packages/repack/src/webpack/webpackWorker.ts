@@ -31,6 +31,8 @@ async function main(cliOptions: CliOptions) {
   const compiler = webpack(webpackConfig);
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
+
+  // @ts-expect-error memfs is compatible enough
   compiler.outputFileSystem = fileSystem;
 
   compiler.hooks.watchRun.tap('webpackWorker', () => {

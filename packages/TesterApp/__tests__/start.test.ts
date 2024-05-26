@@ -1,6 +1,5 @@
-import path from 'path';
-import fs from 'fs';
-import fetch from 'node-fetch';
+import path from 'node:path';
+import fs from 'node:fs';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import getPort from 'get-port';
 import commands from '@callstack/repack/commands';
