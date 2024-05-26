@@ -9,12 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": true,
-    "paths": {
-      "detect-package-manager": [
-        "./node_modules/detect-package-manager/dist/index.d.ts"
-      ]
-    }
+    "strict": true
   },
   "include": ["src/**/*.ts"]
 }

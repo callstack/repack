@@ -293,8 +293,8 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0
       detect-package-manager:
-        specifier: ^3.0.1
-        version: 3.0.1
+        specifier: ^3.0.2
+        version: 3.0.2
       execa:
         specifier: ^7.1.1
         version: 7.1.1
@@ -3115,8 +3115,8 @@ packages:
     resolution: {integrity: sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==}
     engines: {node: '>=8'}
 
-  detect-package-manager@3.0.1:
-    resolution: {integrity: sha512-qoHDH6+lMcpJPAScE7+5CYj91W0mxZNXTwZPrCqi1KMk+x+AoQScQ2V1QyqTln1rHU5Haq5fikvOGHv+leKD8A==}
+  detect-package-manager@3.0.2:
+    resolution: {integrity: sha512-8JFjJHutStYrfWwzfretQoyNGoZVW1Fsrp4JO9spa7h/fBfwgTMEIy4/LBzRDGsxwVPHU0q+T9YvwLDJoOApLQ==}
     engines: {node: '>=12'}
 
   devlop@1.1.0:
@@ -10565,7 +10565,7 @@ snapshots:
 
   detect-newline@3.1.0: {}
 
-  detect-package-manager@3.0.1:
+  detect-package-manager@3.0.2:
     dependencies:
       execa: 5.1.1
 
