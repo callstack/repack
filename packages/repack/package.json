@@ -67,7 +67,6 @@
     "events": "^3.3.0",
     "execa": "^5.0.0",
     "fs-extra": "^10.0.0",
-    "hash.js": "^1.1.7",
     "hasha": "^5.2.2",
     "image-size": "^0.9.3",
     "jsonwebtoken": "^9.0.0",
@@ -77,8 +76,7 @@
     "pretty-format": "^26.6.2",
     "react-refresh": "^0.14.0",
     "schema-utils": "^3.0.0",
-    "shallowequal": "^1.1.0",
-    "tapable": "^2.1.1"
+    "shallowequal": "^1.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.9",
