@@ -1,5 +1,5 @@
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 import { globby } from 'globby';
 import { describe, it, afterEach, beforeAll, expect } from 'vitest';
 import commands from '@callstack/repack/commands';

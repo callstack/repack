@@ -34,7 +34,6 @@
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
-    "node-fetch": "^3.2.6",
     "prettier": "^3.2.4",
     "react-native-event-source": "^1.1.0",
     "terser-webpack-plugin": "^5.3.3",
