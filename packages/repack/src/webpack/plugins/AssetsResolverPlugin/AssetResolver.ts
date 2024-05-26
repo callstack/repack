@@ -1,7 +1,6 @@
 import path from 'path';
 import escapeStringRegexp from 'escape-string-regexp';
-import webpack from 'webpack';
-import { HookMap, SyncHook } from 'tapable';
+import webpack, { Resolver } from 'webpack';
 import { getAssetExtensionsRegExp } from '../../utils/assetExtensions';
 
 /**
@@ -37,19 +36,6 @@ interface CollectOptions {
   platform: string;
   type: string;
 }
-
-// Resolver is not directly exposed from webpack types so we need to do some TS trickery to
-// get the type.
-type Resolver =
-  webpack.Compiler['resolverFactory']['hooks']['resolver'] extends HookMap<
-    infer H
-  >
-    ? H extends SyncHook<infer S>
-      ? S extends any[]
-        ? S[0]
-        : never
-      : never
-    : never;
 
 export class AssetResolver {
   static collectScales(
