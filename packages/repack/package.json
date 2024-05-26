@@ -46,7 +46,6 @@
     "build:ts": "tsc --emitDeclarationOnly",
     "build:ts:watch": "pnpm build:ts --watch --preserveWatchOutput",
     "build": "pnpm build:js && pnpm build:ts",
-    "docs": "typedoc && typedoc --options typedoc.client.json",
     "lint": "eslint --ext \".js,.ts\" commands.js client.js src",
     "test": "jest",
     "typecheck": "tsc --noEmit",
@@ -106,8 +105,6 @@
     "react-native": "0.74.0",
     "react-native-event-source": "^1.1.0",
     "terser-webpack-plugin": "^5.1.3",
-    "typedoc": "^0.25.3",
-    "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.4.5",
     "webpack": "^5.91.0",
     "webpack-virtual-modules": "^0.4.4"
