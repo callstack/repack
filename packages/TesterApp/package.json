@@ -14,7 +14,7 @@
     "serve-remote-assets:ios": "pnpm http-server -p 9999 build/output/ios/remote"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.21.0",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "lodash.throttle": "^4.1.1",
     "react": "18.2.0",
     "react-native": "0.74.0",
