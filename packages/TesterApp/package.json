@@ -34,11 +34,13 @@
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
+    "node-fetch": "^3.2.6",
+    "react-native-test-app": "^3.7.2",
     "prettier": "^3.2.4",
-    "react-native-event-source": "^1.1.0",
-    "terser-webpack-plugin": "^5.3.3",
-    "typescript": "^5.4.5",
-    "vitest": "^0.15.1",
-    "webpack": "^5.91.0"
+    "typescript": "^5.2.2",
+    "vitest": "^0.15.1"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

@@ -1,4 +1,18 @@
 {
   "name": "TesterApp",
-  "displayName": "TesterApp"
+  "displayName": "TesterApp",
+  "components": [
+    {
+      "appKey": "TesterApp",
+      "displayName": "TesterApp"
+    }
+  ],
+  "resources": {
+    "android": [
+      "build/"
+    ],
+    "ios": [
+      "build/"
+    ]
+  }
 }
