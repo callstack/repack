@@ -34,7 +34,7 @@ export const composeSourceMaps = async ({
 
   try {
     await execa.node(
-      path.join(reactNativePath, 'scripts/compose-source-maps.js'),
+      path.join(reactNativePath, 'scripts', 'compose-source-maps.js'),
       [packagerMapPath, compilerMapPath, '-o', composedSourceMapPath]
     );
 
