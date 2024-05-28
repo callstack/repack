@@ -2,23 +2,19 @@
 #import "ScriptConfig.h"
 #import "ErrorCodes.h"
 
+// make it work with use_frameworks!
 #if __has_include(<callstack_repack/callstack_repack-Swift.h>)
 #import <callstack_repack/callstack_repack-Swift.h>
 #else
 #import "callstack_repack-Swift.h"
 #endif
 
-#import <React/RCTBridge.h>
-#import <React/RCTBundleURLProvider.h>
+#import <React/RCTBridge+Private.h>
+#import <jsi/jsi.h>
 
-// Define interface of `RCTCxxBridge` with single method that we need to use.
-// `RTCBridge instance is under the hood `RCTCxxBridge`.
-@interface RCTCxxBridge
-
-- (void)executeApplicationScript:(NSData *)script url:(NSURL *)url async:(BOOL)async;
-
+@interface RCTBridge (JSIRuntime)
+- (void *)runtime;
 @end
-
 
 @implementation ScriptManager
 
@@ -32,8 +28,12 @@ RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
                   reject:(RCTPromiseRejectBlock)reject)
 {
     [self runInBackground:^(){
-        // Cast `RCTBridge` to `RCTCxxBridge`.
-        __weak RCTCxxBridge *bridge = (RCTCxxBridge *)_bridge;
+        
+        auto jsRuntime = [self javaScriptRuntimePointer];
+        if (!jsRuntime) {
+            reject(RuntimeUnavailableError, @"Can't access runtime", nil);
+            return;
+        }
         
         ScriptConfig *config;
         @try {
@@ -50,7 +50,7 @@ RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
                     if (error) {
                         reject(ScriptDownloadFailure, error.localizedFailureReason, nil);
                     } else {
-                        [self execute:bridge
+                        [self execute:jsRuntime
                               scriptId:config.scriptId
                                   url:config.url
                               resolve:resolve
@@ -58,11 +58,11 @@ RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
                     }
                 }];
             } else {
-                [self execute:bridge scriptId:scriptId url:config.url resolve:resolve reject:reject];
+                [self execute:jsRuntime scriptId:scriptId url:config.url resolve:resolve reject:reject];
             }
             
         } else if ([[config.url scheme] isEqualToString:@"file"]) {
-            [self executeFromFilesystem:bridge
+            [self executeFromFilesystem:jsRuntime
                                  config:config
                                 resolve:resolve
                                  reject:reject];
@@ -138,7 +138,7 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
     }];
 }
 
-- (void)execute:(RCTCxxBridge *)bridge
+- (void)execute:(facebook::jsi::Runtime *)jsRuntime
         scriptId:(NSString *)scriptId
             url:(NSURL *)url
         resolve:(RCTPromiseResolveBlock)resolve
@@ -148,7 +148,11 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
     @try {
         NSFileManager* manager = [NSFileManager defaultManager];
         NSData* data = [manager contentsAtPath:scriptPath];
-        [bridge executeApplicationScript:data url:url async:YES];
+        
+        auto &rt = *jsRuntime;
+        std::string source(static_cast<const char*>([data bytes]), [data length]);
+        std::string sourceUrl([[url absoluteString] UTF8String]);
+        rt.evaluateJavaScript(std::make_unique<facebook::jsi::StringBuffer>(std::move(source)), sourceUrl);
         resolve(nil);
     } @catch (NSError *error) {
         reject(CodeExecutionFailure, error.localizedDescription, nil);
@@ -239,7 +243,7 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
     
 }
 
-- (void)executeFromFilesystem:(RCTCxxBridge *)bridge
+- (void)executeFromFilesystem:(facebook::jsi::Runtime *)jsRuntime
                        config:(ScriptConfig *)config
                       resolve:(RCTPromiseResolveBlock)resolve
                        reject:(RCTPromiseRejectBlock)reject
@@ -257,12 +261,28 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
             filesystemScriptUrl = [[NSBundle mainBundle] URLForResource:scriptName withExtension:scriptExtension];
         }
         NSData *data = [[NSData alloc] initWithContentsOfFile:[filesystemScriptUrl path]];
-        [bridge executeApplicationScript:data url:url async:YES];
+        
+        auto &rt = *jsRuntime;
+        std::string source(static_cast<const char*>([data bytes]), [data length]);
+        std::string sourceUrl([[filesystemScriptUrl absoluteString] UTF8String]);
+        rt.evaluateJavaScript(std::make_unique<facebook::jsi::StringBuffer>(std::move(source)), sourceUrl);
         resolve(nil);
     } @catch (NSError *error) {
         reject(CodeExecutionFromFileSystemFailure, error.localizedDescription, nil);
     }
     
+}
+
+- (facebook::jsi::Runtime *)javaScriptRuntimePointer
+{
+    // gotta check for bridgeless in RN73 here as it's not supported!
+    RCTCxxBridge *cxxBridge = (RCTCxxBridge *)self.bridge;
+    if (!cxxBridge.runtime) {
+        return nil;
+    }
+    
+    facebook::jsi::Runtime *jsRuntime = (facebook::jsi::Runtime *)cxxBridge.runtime;
+    return jsRuntime;
 }
 
 - (void)runInBackground:(void(^)())callback

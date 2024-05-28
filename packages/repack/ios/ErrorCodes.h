@@ -8,5 +8,6 @@ extern ScriptManagerError const InvalidationFailure = @"InvalidationFailure";
 extern ScriptManagerError const ScriptDownloadFailure = @"ScriptDownloadFailure";
 extern ScriptManagerError const UnsupportedScheme = @"UnsupportedScheme";
 extern ScriptManagerError const ScriptConfigError = @"ScriptConfigError";
+extern ScriptManagerError const RuntimeUnavailableError = @"RuntimeUnavailableError";
 
 #endif /* ErrorCodes_h */
