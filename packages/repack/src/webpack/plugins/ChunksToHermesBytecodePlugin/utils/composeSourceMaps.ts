@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import execa from 'execa';
 
@@ -33,13 +33,10 @@ export const composeSourceMaps = async ({
   const composedSourceMapPath = packagerMapPath + '.composed';
 
   try {
-    await execa('node', [
-      path.join(reactNativePath, 'scripts/compose-source-maps.js'),
-      packagerMapPath,
-      compilerMapPath,
-      '-o',
-      composedSourceMapPath,
-    ]);
+    await execa.node(
+      path.join(reactNativePath, 'scripts', 'compose-source-maps.js'),
+      [packagerMapPath, compilerMapPath, '-o', composedSourceMapPath]
+    );
 
     // Remove intermediate files
     await fs.unlink(packagerMapPath);

@@ -84,15 +84,19 @@ describe('ChunksToHermesBytecodePlugin', () => {
         );
         pluginInstance.apply(compilerMock as unknown as webpack.Compiler);
       });
-
       const execaMock = execa as jest.MockedFunction<typeof execa>;
+      const execaNodeMock = execa.node as jest.MockedFunction<
+        typeof execa.node
+      >;
 
       expect(compilerMock.hooks.assetEmitted.tapPromise).toHaveBeenCalledTimes(
         1
       );
-      expect(execaMock).toHaveBeenCalledTimes(2);
+      expect(execaMock).toHaveBeenCalledTimes(1);
       expect(execaMock.mock.calls[0][0]).toEqual('path/to/hermesc');
-      expect(execaMock.mock.calls[1][1]?.[0]).toEqual(
+
+      expect(execaNodeMock).toHaveBeenCalledTimes(1);
+      expect(execaNodeMock.mock.calls[0][0]).toEqual(
         'path/to/react-native/scripts/compose-source-maps.js'
       );
     });
