@@ -4,9 +4,24 @@ import android.os.Handler
 import com.facebook.react.bridge.*
 
 class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManagerSpec(reactContext) {
-    private val remoteLoader: RemoteScriptLoader = RemoteScriptLoader(reactApplicationContext)
+    private external fun evaluateJavascript(jsiPtr: Long, code: ByteArray, url: String)
+
+    private fun evaluate(script: ByteArray, url: String) {
+        val contextHolder = reactApplicationContext.javaScriptContextHolder!!
+        val jsiPtr: Long = contextHolder.get()
+        evaluateJavascript(jsiPtr, script, url)
+    }
+
+    // pass as callback for now, refactor later
+    private val remoteLoader: RemoteScriptLoader = RemoteScriptLoader(reactApplicationContext) { code, path ->
+        evaluate(code, path)
+    }
+
+    // pass as callback for now, refactor later
     private val fileSystemLoader: FileSystemScriptLoader =
-        FileSystemScriptLoader(reactApplicationContext)
+            FileSystemScriptLoader(reactApplicationContext) { code, path ->
+                evaluate(code, path)
+            }
 
     override fun getName(): String {
         return NAME
@@ -43,8 +58,8 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
 
                 else -> {
                     promise.reject(
-                        ScriptLoadingError.UnsupportedScheme.code,
-                        "Scheme in URL: '${config.url}' is not supported"
+                            ScriptLoadingError.UnsupportedScheme.code,
+                            "Scheme in URL: '${config.url}' is not supported"
                     )
                 }
             }
@@ -67,8 +82,8 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
 
                 else -> {
                     promise.reject(
-                        ScriptLoadingError.UnsupportedScheme.code,
-                        "Scheme in URL: '${config.url}' is not supported"
+                            ScriptLoadingError.UnsupportedScheme.code,
+                            "Scheme in URL: '${config.url}' is not supported"
                     )
                 }
             }
@@ -91,8 +106,8 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
                     promise.resolve(null)
                 } catch (error: Exception) {
                     promise.reject(
-                        ScriptLoadingError.ScriptInvalidationFailure.code,
-                        "Cannot invalidate some of the scripts"
+                            ScriptLoadingError.ScriptInvalidationFailure.code,
+                            "Cannot invalidate some of the scripts"
                     )
                 }
             }
@@ -100,6 +115,11 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
     }
 
     companion object {
+        // is this safe to initialize this way?
+        init {
+            System.loadLibrary("callstack-repack")
+        }
+
         const val NAME = "ScriptManager"
     }
 }

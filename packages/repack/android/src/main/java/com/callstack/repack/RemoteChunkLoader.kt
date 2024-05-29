@@ -5,11 +5,11 @@ import com.facebook.react.bridge.ReactContext
 import okhttp3.*
 import java.io.BufferedOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.IOException
-import java.io.OutputStreamWriter
 import java.util.concurrent.TimeUnit
 
-class RemoteScriptLoader(private val reactContext: ReactContext) {
+class RemoteScriptLoader(private val reactContext: ReactContext, private val evaluate: (ByteArray, String) -> Unit) {
     private val scriptsDirName = "scripts"
     private val client = OkHttpClient()
 
@@ -92,12 +92,9 @@ class RemoteScriptLoader(private val reactContext: ReactContext) {
 
     fun execute(config: ScriptConfig, promise: Promise) {
         try {
-            val path = getScriptFilePath(config.id)
-            reactContext.catalystInstance.loadScriptFromFile(
-                    "${reactContext.filesDir}/${path}",
-                    config.url.toString(),
-                    false
-            )
+            val path = File(reactContext.filesDir, getScriptFilePath(config.id))
+            val code: ByteArray = FileInputStream(path).use { it.readBytes() }
+            evaluate(code, path.toString())
             promise.resolve(null)
         } catch (error: Exception) {
             promise.reject(

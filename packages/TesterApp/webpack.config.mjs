@@ -57,12 +57,13 @@ export default (env) => {
      */
     devtool: false,
     context,
-    experiments: {
-      lazyCompilation: devServer && {
-        imports: true,
-        entries: false,
-      },
-    },
+    // commented out for now, lazy comp needs specific port to be reversed
+    // experiments: {
+    //   lazyCompilation: devServer && {
+    //     imports: true,
+    //     entries: false,
+    //   },
+    // },
     cache: {
       type: 'filesystem',
       name: `${platform}-${mode}`,

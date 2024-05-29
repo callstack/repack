@@ -8,7 +8,7 @@ buildscript {
   }
 
   dependencies {
-    classpath("com.android.tools.build:gradle:4.1.0")
+    classpath("com.android.tools.build:gradle:7.3.1")
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
@@ -33,15 +33,46 @@ def getExtOrIntegerDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['RePack_' + name]).toInteger()
 }
 
+def reactNativeArchitectures() {
+  def value = project.getProperties().get("reactNativeArchitectures")
+  return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
+
+def resolveBuildType() {
+    Gradle gradle = getGradle()
+    String tskReqStr = gradle.getStartParameter().getTaskRequests()['args'].toString()
+
+    return tskReqStr.contains('Release') ? 'release' : 'debug'
+}
+
 android {
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
   buildToolsVersion getExtOrDefault('buildToolsVersion')
+
+  if (rootProject.hasProperty("ndkPath")) {
+    ndkPath rootProject.ext.ndkPath
+  }
+  if (rootProject.hasProperty("ndkVersion")) {
+    ndkVersion rootProject.ext.ndkVersion
+  }
+
+  buildFeatures {
+    prefab true
+  }
+
   defaultConfig {
-    minSdkVersion 21
+    minSdkVersion 23
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
     versionCode 1
     versionName "1.0"
     buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+    externalNativeBuild {
+      cmake {
+        cppFlags "-O2 -frtti -fexceptions -Wall -Wno-unused-variable -fstack-protector-all"
+        arguments "-DANDROID_STL=c++_shared"
+        abiFilters (*reactNativeArchitectures())
+      }
+    }
   }
 
   buildTypes {
@@ -49,12 +80,31 @@ android {
       minifyEnabled false
     }
   }
+
   lintOptions {
     disable 'GradleCompatible'
   }
+
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  externalNativeBuild {
+    cmake {
+      path "CMakeLists.txt"
+    }
+  }
+
+  // Do we need this?
+  packagingOptions {
+    doNotStrip resolveBuildType() == 'debug' ? "**/**/*.so" : ''
+    excludes = [
+            "META-INF",
+            "META-INF/**",
+            "**/libjsi.so",
+            "**/libc++_shared.so"
+    ]
   }
 
   sourceSets {
@@ -75,71 +125,6 @@ android {
 repositories {
   mavenCentral()
   google()
-
-  def found = false
-  def defaultDir = null
-  def androidSourcesName = 'React Native sources'
-
-  if (rootProject.ext.has('reactNativeAndroidRoot')) {
-    defaultDir = rootProject.ext.get('reactNativeAndroidRoot')
-  } else {
-    defaultDir = new File(
-            projectDir,
-            '/../../../node_modules/react-native/android'
-    )
-  }
-
-  if (defaultDir.exists()) {
-    maven {
-      url defaultDir.toString()
-      name androidSourcesName
-    }
-
-    logger.info(":${project.name}:reactNativeAndroidRoot ${defaultDir.canonicalPath}")
-    found = true
-  } else {
-    def parentDir = rootProject.projectDir
-
-    1.upto(5, {
-      if (found) return true
-      parentDir = parentDir.parentFile
-
-      def androidSourcesDir = new File(
-              parentDir,
-              'node_modules/react-native'
-      )
-
-      def androidPrebuiltBinaryDir = new File(
-              parentDir,
-              'node_modules/react-native/android'
-      )
-
-      if (androidPrebuiltBinaryDir.exists()) {
-        maven {
-          url androidPrebuiltBinaryDir.toString()
-          name androidSourcesName
-        }
-
-        logger.info(":${project.name}:reactNativeAndroidRoot ${androidPrebuiltBinaryDir.canonicalPath}")
-        found = true
-      } else if (androidSourcesDir.exists()) {
-        maven {
-          url androidSourcesDir.toString()
-          name androidSourcesName
-        }
-
-        logger.info(":${project.name}:reactNativeAndroidRoot ${androidSourcesDir.canonicalPath}")
-        found = true
-      }
-    })
-  }
-
-  if (!found) {
-    throw new GradleException(
-            "${project.name}: unable to locate React Native android sources. " +
-                    "Ensure you have you installed React Native as a dependency in your project and try again."
-    )
-  }
 }
 
 def kotlin_version = getExtOrDefault('kotlinVersion')
@@ -147,8 +132,27 @@ def kotlin_version = getExtOrDefault('kotlinVersion')
 dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
+  // TODO verify if we need this
+  //noinspection GradleDynamicVersion
+  implementation 'com.facebook.react:react-android'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "com.squareup.okhttp3:okhttp:4.9.0"
   implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.0"
   implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
+}
+
+// TODO verify if we need this
+// Resolves "LOCAL_SRC_FILES points to a missing file, Check that libfb.so exists or that its path is correct".
+tasks.whenTaskAdded { task ->
+  if (task.name.contains("configureCMakeDebug")) {
+    rootProject.getTasksByName("packageReactNdkDebugLibs", true).forEach {
+      task.dependsOn(it)
+    }
+  }
+  // We want to add a dependency for both configureCMakeRelease and configureCMakeRelWithDebInfo
+  if (task.name.contains("configureCMakeRel")) {
+    rootProject.getTasksByName("packageReactNdkReleaseLibs", true).forEach {
+      task.dependsOn(it)
+    }
+  }
 }

@@ -5,7 +5,7 @@
 
 using namespace facebook;
 
-std::string jbyteArrayToString(JNIEnv* env, jbyteArray byteArray) {
+std::string jByteArrayToString(JNIEnv* env, jbyteArray byteArray) {
     const auto arrayLength = env->GetArrayLength(byteArray);
     const auto byteArrayElements = env->GetByteArrayElements(byteArray, nullptr);
 
@@ -16,14 +16,14 @@ std::string jbyteArrayToString(JNIEnv* env, jbyteArray byteArray) {
     return result;
 }
 
-std::string jstringToStdString(JNIEnv* env, jstring jStr) {
+std::string jStringToStdString(JNIEnv* env, jstring jStr) {
   if (!jStr) return "";
 
   const auto stringClass = env->GetObjectClass(jStr);
   const auto getBytes = env->GetMethodID(stringClass, "getBytes", "(Ljava/lang/String;)[B");
   const auto stringJbytes = (jbyteArray)env->CallObjectMethod(jStr, getBytes, env->NewStringUTF("UTF-8"));
 
-  std::string result(jbyteArrayToString(env, stringJbytes));
+  std::string result(jByteArrayToString(env, stringJbytes));
 
   env->DeleteLocalRef(stringJbytes);
   env->DeleteLocalRef(stringClass);
@@ -32,12 +32,12 @@ std::string jstringToStdString(JNIEnv* env, jstring jStr) {
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_callstack_repack_ScriptManagerModule_evaluateJavascript(JNIEnv *env, jclass clazz, jlong jsiPtr, jbyteArray code, jstring url)
+Java_com_callstack_repack_ScriptManagerModule_evaluateJavascript(JNIEnv *env, jobject clazz, jlong jsiPtr, jbyteArray code, jstring url)
 {
   auto &rt = *reinterpret_cast<jsi::Runtime *>(jsiPtr);
   
-  std::string source(jbyteArrayToString(env, code));
-  std::string sourceUrl(jstringToStdString(env, url));
+  std::string source(jByteArrayToString(env, code));
+  std::string sourceUrl(jStringToStdString(env, url));
   
   rt.evaluateJavaScript(std::make_unique<jsi::StringBuffer>(std::move(source)), sourceUrl);
 }

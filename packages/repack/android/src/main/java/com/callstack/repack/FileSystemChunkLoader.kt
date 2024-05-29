@@ -2,19 +2,23 @@ package com.callstack.repack
 
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactContext
+import java.io.File
+import java.io.FileInputStream
 import java.lang.Exception
-import java.net.URL
 
-class FileSystemScriptLoader(private val reactContext: ReactContext) {
+class FileSystemScriptLoader(private val reactContext: ReactContext, private val evaluate: (ByteArray, String) -> Unit) {
     fun load(config: ScriptConfig, promise: Promise) {
         try {
             if (config.absolute) {
                 val path = config.url.path
-                reactContext.catalystInstance.loadScriptFromFile(path, path, false);
+                val file = File(path)
+                val code: ByteArray = FileInputStream(file).use { it.readBytes() }
+                evaluate(code, path)
             } else {
-                val filename = config.url.file.split("/").last()
-                val assetName = "assets://$filename"
-                reactContext.catalystInstance.loadScriptFromAssets(reactContext.assets, assetName, false)
+                val assetName = config.url.file.split("/").last()
+                val inputStream = reactContext.assets.open(assetName)
+                val code: ByteArray = inputStream.use { it.readBytes() }
+                evaluate(code, assetName)
             }
             promise.resolve(null);
         } catch (error: Exception) {
