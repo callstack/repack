@@ -32,7 +32,7 @@ std::string jStringToStdString(JNIEnv* env, jstring jStr) {
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_callstack_repack_FileSystemScriptLoader_evaluateJavascript(JNIEnv *env, jobject clazz, jlong jsiPtr, jbyteArray code, jstring url)
+Java_com_callstack_repack_ScriptLoader_evaluateJavascript(JNIEnv *env, jobject clazz, jlong jsiPtr, jbyteArray code, jstring url)
 {
   auto &rt = *reinterpret_cast<jsi::Runtime *>(jsiPtr);
   
@@ -40,15 +40,4 @@ Java_com_callstack_repack_FileSystemScriptLoader_evaluateJavascript(JNIEnv *env,
   std::string sourceUrl(jStringToStdString(env, url));
   
   rt.evaluateJavaScript(std::make_unique<jsi::StringBuffer>(std::move(source)), sourceUrl);
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_com_callstack_repack_RemoteScriptLoader_evaluateJavascript(JNIEnv *env, jobject clazz, jlong jsiPtr, jbyteArray code, jstring url)
-{
-    auto &rt = *reinterpret_cast<jsi::Runtime *>(jsiPtr);
-
-    std::string source(jByteArrayToString(env, code));
-    std::string sourceUrl(jStringToStdString(env, url));
-
-    rt.evaluateJavaScript(std::make_unique<jsi::StringBuffer>(std::move(source)), sourceUrl);
 }
