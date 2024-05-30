@@ -2,22 +2,18 @@ package com.callstack.repack
 
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactContext
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class RemoteScriptLoader(private val reactContext: ReactContext) {
-    private external fun evaluateJavascript(jsiPtr: Long, code: ByteArray, url: String)
-
-    private fun evaluate(script: ByteArray, url: String) {
-        val contextHolder = reactContext.javaScriptContextHolder!!
-        val jsiPtr: Long = contextHolder.get()
-        evaluateJavascript(jsiPtr, script, url)
-    }
-
+class RemoteScriptLoader(reactContext: ReactContext): ScriptLoader(reactContext) {
     private val scriptsDirName = "scripts"
     private val client = OkHttpClient()
 
@@ -117,7 +113,7 @@ class RemoteScriptLoader(private val reactContext: ReactContext) {
         downloadAndCache(config, { promise.resolve(null) }, { code, message -> promise.reject(code, message) })
     }
 
-    fun load(config: ScriptConfig, promise: Promise) {
+    override fun load(config: ScriptConfig, promise: Promise) {
         downloadAndCache(config, {
             execute(config, promise)
         }, { code, message -> promise.reject(code, message) })

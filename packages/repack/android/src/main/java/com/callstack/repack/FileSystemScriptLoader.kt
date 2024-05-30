@@ -6,16 +6,8 @@ import java.io.File
 import java.io.FileInputStream
 import java.lang.Exception
 
-class FileSystemScriptLoader(private val reactContext: ReactContext) {
-    private external fun evaluateJavascript(jsiPtr: Long, code: ByteArray, url: String)
-
-    private fun evaluate(script: ByteArray, url: String) {
-        val contextHolder = reactContext.javaScriptContextHolder!!
-        val jsiPtr: Long = contextHolder.get()
-        evaluateJavascript(jsiPtr, script, url)
-    }
-
-    fun load(config: ScriptConfig, promise: Promise) {
+class FileSystemScriptLoader(reactContext: ReactContext): ScriptLoader(reactContext) {
+    override fun load(config: ScriptConfig, promise: Promise) {
         try {
             if (config.absolute) {
                 val path = config.url.path
