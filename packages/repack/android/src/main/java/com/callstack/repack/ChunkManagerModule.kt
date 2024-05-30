@@ -4,24 +4,12 @@ import android.os.Handler
 import com.facebook.react.bridge.*
 
 class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManagerSpec(reactContext) {
-    private external fun evaluateJavascript(jsiPtr: Long, code: ByteArray, url: String)
-
-    private fun evaluate(script: ByteArray, url: String) {
-        val contextHolder = reactApplicationContext.javaScriptContextHolder!!
-        val jsiPtr: Long = contextHolder.get()
-        evaluateJavascript(jsiPtr, script, url)
-    }
-
     // pass as callback for now, refactor later
-    private val remoteLoader: RemoteScriptLoader = RemoteScriptLoader(reactApplicationContext) { code, path ->
-        evaluate(code, path)
-    }
+    private val remoteLoader: RemoteScriptLoader = RemoteScriptLoader(reactApplicationContext)
 
     // pass as callback for now, refactor later
     private val fileSystemLoader: FileSystemScriptLoader =
-            FileSystemScriptLoader(reactApplicationContext) { code, path ->
-                evaluate(code, path)
-            }
+            FileSystemScriptLoader(reactApplicationContext)
 
     override fun getName(): String {
         return NAME

@@ -9,7 +9,15 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class RemoteScriptLoader(private val reactContext: ReactContext, private val evaluate: (ByteArray, String) -> Unit) {
+class RemoteScriptLoader(private val reactContext: ReactContext) {
+    private external fun evaluateJavascript(jsiPtr: Long, code: ByteArray, url: String)
+
+    private fun evaluate(script: ByteArray, url: String) {
+        val contextHolder = reactContext.javaScriptContextHolder!!
+        val jsiPtr: Long = contextHolder.get()
+        evaluateJavascript(jsiPtr, script, url)
+    }
+
     private val scriptsDirName = "scripts"
     private val client = OkHttpClient()
 
