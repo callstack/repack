@@ -17,16 +17,16 @@
 + (nonnull ScriptConfig *)fromConfigDictionary:(nonnull NSDictionary *)config
                                   withScriptId:(nonnull NSString*)scriptId;
 
-- (ScriptConfig *)initWithScript:(nonnull NSString*)scriptId
-                       withURL:(nonnull NSURL*)url
-                    withMethod:(nonnull NSString*)method
-                     withQuery:(nullable NSString*)query
-                     withFetch:(BOOL)fetch
-                  withAbsolute:(BOOL)absolute
-                   withHeaders:(nullable NSDictionary*)headers
-                      withBody:(nullable NSData*)body
-                   withTimeout:(nonnull NSNumber*)timeout
-     withVerifyScriptSignature:(nonnull NSString*)verifyScriptSignature;
+- (nonnull ScriptConfig *)initWithScript:(nonnull NSString*)scriptId
+                         withURL:(nonnull NSURL*)url
+                      withMethod:(nonnull NSString*)method
+                       withQuery:(nullable NSString*)query
+                       withFetch:(BOOL)fetch
+                    withAbsolute:(BOOL)absolute
+                     withHeaders:(nullable NSDictionary*)headers
+                        withBody:(nullable NSData*)body
+                     withTimeout:(nonnull NSNumber*)timeout
+       withVerifyScriptSignature:(nonnull NSString*)verifyScriptSignature;
 
 @end
 

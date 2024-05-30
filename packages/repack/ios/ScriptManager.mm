@@ -9,7 +9,7 @@
 #import "callstack_repack-Swift.h"
 #endif
 
-#import <React/RCTBridge+Private.h>
+#import <React/RCTBridge.h>
 #import <jsi/jsi.h>
 
 @interface RCTBridge (JSIRuntime)
@@ -29,9 +29,9 @@ RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
 {
     [self runInBackground:^(){
         
-        auto jsRuntime = [self javaScriptRuntimePointer];
+        facebook::jsi::Runtime *jsRuntime = [self getJavaScriptRuntimePointer];
         if (!jsRuntime) {
-            reject(RuntimeUnavailableError, @"Can't access runtime", nil);
+            reject(RuntimeUnavailableError, @"Can't access JS runtime", nil);
             return;
         }
         
@@ -51,7 +51,7 @@ RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
                         reject(ScriptDownloadFailure, error.localizedFailureReason, nil);
                     } else {
                         [self execute:jsRuntime
-                              scriptId:config.scriptId
+                             scriptId:config.scriptId
                                   url:config.url
                               resolve:resolve
                                reject:reject];
@@ -139,7 +139,7 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
 }
 
 - (void)execute:(facebook::jsi::Runtime *)jsRuntime
-        scriptId:(NSString *)scriptId
+       scriptId:(NSString *)scriptId
             url:(NSURL *)url
         resolve:(RCTPromiseResolveBlock)resolve
          reject:(RCTPromiseRejectBlock)reject
@@ -149,7 +149,7 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
         NSFileManager* manager = [NSFileManager defaultManager];
         NSData* data = [manager contentsAtPath:scriptPath];
         
-        auto &rt = *jsRuntime;
+        facebook::jsi::Runtime &rt = *jsRuntime;
         std::string source(static_cast<const char*>([data bytes]), [data length]);
         std::string sourceUrl([[url absoluteString] UTF8String]);
         rt.evaluateJavaScript(std::make_unique<facebook::jsi::StringBuffer>(std::move(source)), sourceUrl);
@@ -262,7 +262,7 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
         }
         NSData *data = [[NSData alloc] initWithContentsOfFile:[filesystemScriptUrl path]];
         
-        auto &rt = *jsRuntime;
+        facebook::jsi::Runtime &rt = *jsRuntime;
         std::string source(static_cast<const char*>([data bytes]), [data length]);
         std::string sourceUrl([[filesystemScriptUrl absoluteString] UTF8String]);
         rt.evaluateJavaScript(std::make_unique<facebook::jsi::StringBuffer>(std::move(source)), sourceUrl);
@@ -273,15 +273,13 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
     
 }
 
-- (facebook::jsi::Runtime *)javaScriptRuntimePointer
+- (facebook::jsi::Runtime *)getJavaScriptRuntimePointer
 {
-    // gotta check for bridgeless in RN73 here as it's not supported!
-    RCTCxxBridge *cxxBridge = (RCTCxxBridge *)self.bridge;
-    if (!cxxBridge.runtime) {
+    if (!self.bridge.runtime) {
         return nil;
     }
     
-    facebook::jsi::Runtime *jsRuntime = (facebook::jsi::Runtime *)cxxBridge.runtime;
+    facebook::jsi::Runtime *jsRuntime = (facebook::jsi::Runtime *)self.bridge.runtime;
     return jsRuntime;
 }
 
@@ -293,7 +291,7 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
 // Don't compile this code when we build for the old architecture.
 #ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
+(const facebook::react::ObjCTurboModule::InitParams &)params
 {
     return std::make_shared<facebook::react::NativeScriptManagerSpecJSI>(params);
 }
