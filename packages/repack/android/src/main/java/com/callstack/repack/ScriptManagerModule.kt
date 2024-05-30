@@ -4,10 +4,8 @@ import android.os.Handler
 import com.facebook.react.bridge.*
 
 class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManagerSpec(reactContext) {
-    // pass as callback for now, refactor later
     private val remoteLoader: RemoteScriptLoader = RemoteScriptLoader(reactApplicationContext)
 
-    // pass as callback for now, refactor later
     private val fileSystemLoader: FileSystemScriptLoader =
             FileSystemScriptLoader(reactApplicationContext)
 
@@ -103,7 +101,6 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
     }
 
     companion object {
-        // is this safe to initialize this way?
         init {
             System.loadLibrary("callstack-repack")
         }
