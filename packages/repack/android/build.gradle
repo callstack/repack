@@ -61,7 +61,7 @@ android {
   }
 
   defaultConfig {
-    minSdkVersion 23
+    minSdkVersion getExtOrIntegerDefault('minSdkVersion')
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
     versionCode 1
     versionName "1.0"
@@ -130,29 +130,11 @@ repositories {
 def kotlin_version = getExtOrDefault('kotlinVersion')
 
 dependencies {
-  // noinspection GradleDynamicVersion
-  api 'com.facebook.react:react-native:+'
-  // TODO verify if we need this
-  //noinspection GradleDynamicVersion
-  implementation 'com.facebook.react:react-android'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "com.squareup.okhttp3:okhttp:4.9.0"
-  implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.0"
+  //noinspection GradleDynamicVersion
+  implementation 'com.facebook.react:react-android:+'
+  implementation "com.squareup.okhttp3:okhttp:4.9.2"
+  implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.2"
   implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
 }
 
-// TODO verify if we need this
-// Resolves "LOCAL_SRC_FILES points to a missing file, Check that libfb.so exists or that its path is correct".
-tasks.whenTaskAdded { task ->
-  if (task.name.contains("configureCMakeDebug")) {
-    rootProject.getTasksByName("packageReactNdkDebugLibs", true).forEach {
-      task.dependsOn(it)
-    }
-  }
-  // We want to add a dependency for both configureCMakeRelease and configureCMakeRelWithDebInfo
-  if (task.name.contains("configureCMakeRel")) {
-    rootProject.getTasksByName("packageReactNdkReleaseLibs", true).forEach {
-      task.dependsOn(it)
-    }
-  }
-}
