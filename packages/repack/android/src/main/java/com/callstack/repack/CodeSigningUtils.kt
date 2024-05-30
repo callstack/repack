@@ -44,8 +44,8 @@ class CodeSigningUtils {
 
         private fun parsePublicKey(stringPublicKey: String): PublicKey? {
             val formattedPublicKey = stringPublicKey.replace("-----BEGIN PUBLIC KEY-----", "")
-                .replace("-----END PUBLIC KEY-----", "")
-                .replace(System.getProperty("line.separator")!!, "")
+                    .replace("-----END PUBLIC KEY-----", "")
+                    .replace(System.getProperty("line.separator")!!, "")
 
             val byteKey: ByteArray = Base64.decode(formattedPublicKey.toByteArray(), Base64.DEFAULT)
             val x509Key = X509EncodedKeySpec(byteKey)
@@ -55,10 +55,10 @@ class CodeSigningUtils {
         }
 
         private fun verifyAndDecodeToken(
-            token: String, publicKey: PublicKey?
+                token: String, publicKey: PublicKey?
         ): Map<String, Any?> {
             val signedJWT = runCatching { SignedJWT.parse(token) }.getOrNull()
-                ?: throw Exception("The bundle verification failed because the token could not be decoded.")
+                    ?: throw Exception("The bundle verification failed because the token could not be decoded.")
             val verifier: JWSVerifier = RSASSAVerifier(publicKey as RSAPublicKey)
 
             val verificationSuccessful = runCatching { signedJWT.verify(verifier) }.getOrNull()
@@ -70,11 +70,11 @@ class CodeSigningUtils {
         }
 
         private fun getPublicKeyFromStringsIfExist(
-            context: Context
+                context: Context
         ): String? {
             val packageName: String = context.packageName
             val resId: Int =
-                context.resources.getIdentifier("RepackPublicKey", "string", packageName)
+                    context.resources.getIdentifier("RepackPublicKey", "string", packageName)
             if (resId != 0) {
                 return context.getString(resId).ifEmpty {
                     null
@@ -89,15 +89,15 @@ class CodeSigningUtils {
             }
 
             val stringPublicKey = getPublicKeyFromStringsIfExist(context)
-                ?: throw Exception("The bundle verification failed because PublicKey was not found in the bundle. Make sure you've added the PublicKey to the res/values/strings.xml under RepackPublicKey key.")
+                    ?: throw Exception("The bundle verification failed because PublicKey was not found in the bundle. Make sure you've added the PublicKey to the res/values/strings.xml under RepackPublicKey key.")
 
             val publicKey = parsePublicKey(stringPublicKey)
-                ?: throw Exception("The bundle verification failed because the PublicKey is invalid.")
+                    ?: throw Exception("The bundle verification failed because the PublicKey is invalid.")
 
             val claims: Map<String, Any?> = verifyAndDecodeToken(token, publicKey)
 
             val contentHash = claims["hash"] as String?
-                ?: throw Exception("The bundle verification failed because the token is invalid.")
+                    ?: throw Exception("The bundle verification failed because the token is invalid.")
 
             val fileHash = computeHash(fileContent)
 

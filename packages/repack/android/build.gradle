@@ -115,7 +115,6 @@ android {
     }
   }
 
-  // Do we need this?
   packagingOptions {
     doNotStrip resolveBuildType() == 'debug' ? "**/**/*.so" : ''
     excludes = [

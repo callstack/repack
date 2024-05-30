@@ -13,7 +13,7 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class RemoteScriptLoader(reactContext: ReactContext): ScriptLoader(reactContext) {
+class RemoteScriptLoader(reactContext: ReactContext) : ScriptLoader(reactContext) {
     private val scriptsDirName = "scripts"
     private val client = OkHttpClient()
 
@@ -22,8 +22,8 @@ class RemoteScriptLoader(reactContext: ReactContext): ScriptLoader(reactContext)
     }
 
     private fun createClientPerRequest(config: ScriptConfig): OkHttpClient {
-        val clientPerRequestBuilder = client.newBuilder();
-        clientPerRequestBuilder.connectTimeout(config.timeout.toLong(), TimeUnit.MILLISECONDS);
+        val clientPerRequestBuilder = client.newBuilder()
+        clientPerRequestBuilder.connectTimeout(config.timeout.toLong(), TimeUnit.MILLISECONDS)
         clientPerRequestBuilder.readTimeout(config.timeout.toLong(), TimeUnit.MILLISECONDS)
 
         return clientPerRequestBuilder.build()

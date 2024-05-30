@@ -4,9 +4,8 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactContext
 import java.io.File
 import java.io.FileInputStream
-import java.lang.Exception
 
-class FileSystemScriptLoader(reactContext: ReactContext): ScriptLoader(reactContext) {
+class FileSystemScriptLoader(reactContext: ReactContext) : ScriptLoader(reactContext) {
     override fun load(config: ScriptConfig, promise: Promise) {
         try {
             if (config.absolute) {
@@ -20,7 +19,7 @@ class FileSystemScriptLoader(reactContext: ReactContext): ScriptLoader(reactCont
                 val code: ByteArray = inputStream.use { it.readBytes() }
                 evaluate(code, assetName)
             }
-            promise.resolve(null);
+            promise.resolve(null)
         } catch (error: Exception) {
             promise.reject(
                     ScriptLoadingError.FileSystemEvalFailure.code,

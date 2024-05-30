@@ -59,7 +59,7 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
         val config = ScriptConfig.fromReadableMap(scriptId, configMap)
         if (!config.fetch) {
             // Do nothing, script is already prefetched
-            promise.resolve(null);
+            promise.resolve(null)
             return
         }
         runInBackground {
