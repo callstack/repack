@@ -1,41 +1,41 @@
 buildscript {
-  // Buildscript is evaluated before everything else so we can't use getExtOrDefault
-  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['RePack_kotlinVersion']
+    // Buildscript is evaluated before everything else so we can't use getExtOrDefault
+    def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['RePack_kotlinVersion']
 
-  repositories {
-    google()
-    mavenCentral()
-  }
+    repositories {
+        google()
+        mavenCentral()
+    }
 
-  dependencies {
-    classpath("com.android.tools.build:gradle:7.3.1")
-    // noinspection DifferentKotlinGradleVersion
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-  }
+    dependencies {
+        classpath("com.android.tools.build:gradle:7.3.1")
+        // noinspection DifferentKotlinGradleVersion
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
 }
 
 def isNewArchitectureEnabled() {
-  return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
+    return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 if (isNewArchitectureEnabled()) {
-  apply plugin: "com.facebook.react"
+    apply plugin: "com.facebook.react"
 }
 
 def getExtOrDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['RePack_' + name]
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['RePack_' + name]
 }
 
 def getExtOrIntegerDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['RePack_' + name]).toInteger()
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['RePack_' + name]).toInteger()
 }
 
 def reactNativeArchitectures() {
-  def value = project.getProperties().get("reactNativeArchitectures")
-  return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+    def value = project.getProperties().get("reactNativeArchitectures")
+    return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
 def resolveBuildType() {
@@ -46,113 +46,128 @@ def resolveBuildType() {
 }
 
 def supportsNamespace() {
-  def parsed = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')
-  def major = parsed[0].toInteger()
-  def minor = parsed[1].toInteger()
+    def parsed = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')
+    def major = parsed[0].toInteger()
+    def minor = parsed[1].toInteger()
 
-  // Namespace support was added in 7.3.0
-  return (major == 7 && minor >= 3) || major >= 8
+    // Namespace support was added in 7.3.0
+    return (major == 7 && minor >= 3) || major >= 8
 }
 
+def REACT_NATIVE_BUILD_FROM_SOURCE = findProject(":packages:react-native:ReactAndroid") != null
+def REACT_NATIVE_DIR = REACT_NATIVE_BUILD_FROM_SOURCE
+  ? findProject(":packages:react-native:ReactAndroid").getProjectDir().parent
+  : file(providers.exec {
+      workingDir(rootDir)
+      commandLine("node", "--print", "require.resolve('react-native/package.json')")
+    }.standardOutput.asText.get().trim()).parent
+
 android {
-  if (supportsNamespace()) {
-    namespace "com.callstack.repack"
+    if (supportsNamespace()) {
+        namespace "com.callstack.repack"
+
+        sourceSets {
+            main {
+                manifest.srcFile "src/main/AndroidManifestNew.xml"
+            }
+        }
+    }
+
+    compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
+    buildToolsVersion getExtOrDefault('buildToolsVersion')
+
+    if (rootProject.hasProperty("ndkPath")) {
+        ndkPath rootProject.ext.ndkPath
+    }
+    if (rootProject.hasProperty("ndkVersion")) {
+        ndkVersion rootProject.ext.ndkVersion
+    }
+
+    buildFeatures {
+        prefab true
+    }
+
+    defaultConfig {
+        minSdkVersion getExtOrIntegerDefault('minSdkVersion')
+        targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
+        versionCode 1
+        versionName "1.0"
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+        externalNativeBuild {
+            cmake {
+                cppFlags "-O2 -frtti -fexceptions -Wall -Wno-unused-variable -fstack-protector-all"
+                arguments "-DANDROID_STL=c++_shared",
+                        "-DREACT_NATIVE_DIR=${REACT_NATIVE_DIR}"
+                abiFilters(*reactNativeArchitectures())
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    lintOptions {
+        disable 'GradleCompatible'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+
+    packagingOptions {
+        doNotStrip resolveBuildType() == 'debug' ? "**/**/*.so" : ''
+        excludes = [
+                "META-INF",
+                "META-INF/**",
+                "**/libjsi.so",
+                "**/libc++_shared.so",
+                "**/libfbjni.so",
+                "**/libhermes.so",
+                "**/libhermes-executor-debug.so",
+                "**/libhermes_executor.so",
+                "**/libreactnativejni.so"
+        ]
+    }
 
     sourceSets {
-      main {
-        manifest.srcFile "src/main/AndroidManifestNew.xml"
-      }
+        main {
+            if (isNewArchitectureEnabled()) {
+                java.srcDirs += [
+                        "src/newarch",
+                        // This is needed to build Kotlin project with NewArch enabled
+                        "${project.buildDir}/generated/source/codegen/java"
+                ]
+            } else {
+                java.srcDirs += ["src/oldarch"]
+            }
+        }
     }
-  }
-
-  compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
-  buildToolsVersion getExtOrDefault('buildToolsVersion')
-
-  if (rootProject.hasProperty("ndkPath")) {
-    ndkPath rootProject.ext.ndkPath
-  }
-  if (rootProject.hasProperty("ndkVersion")) {
-    ndkVersion rootProject.ext.ndkVersion
-  }
-
-  buildFeatures {
-    prefab true
-  }
-
-  defaultConfig {
-    minSdkVersion getExtOrIntegerDefault('minSdkVersion')
-    targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
-    versionCode 1
-    versionName "1.0"
-    buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
-    externalNativeBuild {
-      cmake {
-        cppFlags "-O2 -frtti -fexceptions -Wall -Wno-unused-variable -fstack-protector-all"
-        arguments "-DANDROID_STL=c++_shared"
-        abiFilters (*reactNativeArchitectures())
-      }
-    }
-  }
-
-  buildTypes {
-    release {
-      minifyEnabled false
-    }
-  }
-
-  lintOptions {
-    disable 'GradleCompatible'
-  }
-
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
-
-  externalNativeBuild {
-    cmake {
-      path "CMakeLists.txt"
-    }
-  }
-
-  packagingOptions {
-    doNotStrip resolveBuildType() == 'debug' ? "**/**/*.so" : ''
-    excludes = [
-            "META-INF",
-            "META-INF/**",
-            "**/libjsi.so",
-            "**/libc++_shared.so"
-    ]
-  }
-
-  sourceSets {
-    main {
-      if (isNewArchitectureEnabled()) {
-        java.srcDirs += [
-          "src/newarch",
-          // This is needed to build Kotlin project with NewArch enabled
-          "${project.buildDir}/generated/source/codegen/java"
-        ]
-      } else {
-        java.srcDirs += ["src/oldarch"]
-      }
-    }
-  }
 }
 
 repositories {
-  mavenCentral()
-  google()
+    mavenCentral()
+    google()
 }
 
 def kotlin_version = getExtOrDefault('kotlinVersion')
 
 dependencies {
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  //noinspection GradleDynamicVersion
-  implementation 'com.facebook.react:react-android:+'
-  implementation "com.squareup.okhttp3:okhttp:4.9.2"
-  implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.2"
-  implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    //noinspection GradleDynamicVersion
+    implementation 'com.facebook.react:react-android:+'
+    //noinspection GradleDynamicVersion
+    implementation 'com.facebook.react:hermes-android:+'
+    implementation "com.squareup.okhttp3:okhttp:4.9.2"
+    implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.2"
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
 }
-

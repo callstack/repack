@@ -5,7 +5,7 @@ import com.facebook.react.bridge.ReactContext
 import java.io.File
 import java.io.FileInputStream
 
-class FileSystemScriptLoader(reactContext: ReactContext) : ScriptLoader(reactContext) {
+class FileSystemScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactContext) {
     override fun load(config: ScriptConfig, promise: Promise) {
         try {
             if (config.absolute) {

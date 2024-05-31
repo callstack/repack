@@ -13,7 +13,7 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class RemoteScriptLoader(reactContext: ReactContext) : ScriptLoader(reactContext) {
+class RemoteScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactContext) {
     private val scriptsDirName = "scripts"
     private val client = OkHttpClient()
 
