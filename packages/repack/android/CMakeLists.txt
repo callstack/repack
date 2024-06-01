@@ -7,16 +7,18 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
 
 # Add callstack-repack sources
-add_library(${PACKAGE_NAME}
+add_library(
+        ${PACKAGE_NAME}
         SHARED
         src/main/cpp/OnLoad.cpp
         src/main/cpp/NativeScriptLoader.h
         src/main/cpp/NativeScriptLoader.cpp
-        )
+)
 
 # Configure C++ 17
 set_target_properties(
-        ${PACKAGE_NAME} PROPERTIES
+        ${PACKAGE_NAME}
+        PROPERTIES
         CXX_STANDARD 17
         CXX_EXTENSIONS OFF
         POSITION_INDEPENDENT_CODE ON
@@ -37,8 +39,6 @@ target_link_libraries(
         ${PACKAGE_NAME}
         ReactAndroid::jsi
         ReactAndroid::reactnativejni
-        ReactAndroid::hermes_executor
-        hermes-engine::libhermes
         fbjni::fbjni
         android
 )

@@ -1,3 +1,5 @@
+import com.android.Version
+
 buildscript {
     // Buildscript is evaluated before everything else so we can't use getExtOrDefault
     def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['RePack_kotlinVersion']
@@ -12,6 +14,15 @@ buildscript {
         // noinspection DifferentKotlinGradleVersion
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
+}
+
+static def supportsNamespace() {
+    def parsed = Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')
+    def major = parsed[0].toInteger()
+    def minor = parsed[1].toInteger()
+
+    // Namespace support was added in 7.3.0
+    return (major == 7 && minor >= 3) || major >= 8
 }
 
 def isNewArchitectureEnabled() {
@@ -43,15 +54,6 @@ def resolveBuildType() {
     String tskReqStr = gradle.getStartParameter().getTaskRequests()['args'].toString()
 
     return tskReqStr.contains('Release') ? 'release' : 'debug'
-}
-
-def supportsNamespace() {
-    def parsed = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')
-    def major = parsed[0].toInteger()
-    def minor = parsed[1].toInteger()
-
-    // Namespace support was added in 7.3.0
-    return (major == 7 && minor >= 3) || major >= 8
 }
 
 def REACT_NATIVE_BUILD_FROM_SOURCE = findProject(":packages:react-native:ReactAndroid") != null
@@ -132,9 +134,6 @@ android {
                 "**/libjsi.so",
                 "**/libc++_shared.so",
                 "**/libfbjni.so",
-                "**/libhermes.so",
-                "**/libhermes-executor-debug.so",
-                "**/libhermes_executor.so",
                 "**/libreactnativejni.so"
         ]
     }
@@ -165,8 +164,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-android:+'
-    //noinspection GradleDynamicVersion
-    implementation 'com.facebook.react:hermes-android:+'
     implementation "com.squareup.okhttp3:okhttp:4.9.2"
     implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.2"
     implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
