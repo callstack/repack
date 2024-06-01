@@ -13,7 +13,6 @@ struct NativeScriptLoader : public jni::HybridClass<NativeScriptLoader> {
 
     static void evaluateJavascript(
             jni::alias_ref<jhybridobject> jThis,
-            jlong jsContext,
             jni::alias_ref<react::JRuntimeExecutor::javaobject> runtimeExecutorHolder,
             jni::alias_ref<JArrayByte> code,
             jni::alias_ref<JString> url

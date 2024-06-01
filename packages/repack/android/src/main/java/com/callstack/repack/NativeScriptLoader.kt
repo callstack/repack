@@ -5,31 +5,20 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.RuntimeExecutor
 
 
-open class NativeScriptLoader(protected val reactContext: ReactContext) {
+abstract class NativeScriptLoader(protected val reactContext: ReactContext) {
     private external fun evaluateJavascript(
-            jsContext: Long,
             runtimeExecutorHolder: RuntimeExecutor,
             code: ByteArray,
             url: String)
 
     protected fun evaluate(script: ByteArray, url: String) {
-        val contextHolder = reactContext.javaScriptContextHolder!!
-        val jsContext: Long = contextHolder.get()
-
+        // this works in both bridgeful and bridgeless modes except for 0.73
         val catalystInstance = reactContext.catalystInstance
         val runtimeExecutorHolder = catalystInstance.runtimeExecutor
+                ?: throw Exception("Failed to load JavaScript Bundle - can't access RuntimeExecutor - this can happen if you are trying to run the app with new arch + bridgeless on React Native 0.73")
 
-        if (runtimeExecutorHolder == null) {
-            // throw an error
-            // this might happen on bridgeless 0.73
-            // bridgelessCatalystInstance was only added in 0.74
-            throw Error()
-        }
-
-        evaluateJavascript(jsContext, runtimeExecutorHolder, script, url)
+        evaluateJavascript(runtimeExecutorHolder, script, url)
     }
 
-    open fun load(config: ScriptConfig, promise: Promise) {
-        // not implemented
-    }
+    abstract fun load(config: ScriptConfig, promise: Promise)
 }
