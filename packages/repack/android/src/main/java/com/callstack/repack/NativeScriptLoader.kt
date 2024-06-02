@@ -16,11 +16,16 @@ abstract class NativeScriptLoader(protected val reactContext: ReactContext) {
     )
 
     protected fun evaluate(script: ByteArray, url: String, promise: Promise) {
-        val catalystInstance = reactContext.catalystInstance
+        val catalystInstance = try {
+            reactContext.catalystInstance
+        } catch (e: Exception) {
+            throw Exception("Missing CatalystInstance - bridgeless on RN 0.73 is not supported")
+        }
+
         val callInvoker = catalystInstance?.jsCallInvokerHolder as? CallInvokerHolderImpl
-            ?: throw Exception("Missing CallInvoker - bridgeless on RN 0.73 is not supported")
+            ?: throw Exception("Missing CallInvoker")
         val jsRuntime = catalystInstance.javaScriptContextHolder?.get()
-            ?: throw Exception("Missing Runtime - bridgeless on RN 0.73 is not supported")
+            ?: throw Exception("Missing RN Runtime")
 
         evaluateJavascriptAsync(jsRuntime, callInvoker, script, url, promise)
     }

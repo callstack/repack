@@ -39,8 +39,8 @@ void NativeScriptLoader::evaluateJavascriptAsync(
                                            std::move(sourceUrl));
                     resolve(promiseRef.get(), nullptr);
                 } catch (std::exception &e) {
-                    reject(promiseRef.get(), jni::make_jstring("EvalFailure").get(),
-                           jni::make_jstring("failed to evaluateJavascript").get());
+                    reject(promiseRef.get(), jni::make_jstring("ScriptEvalFailure").get(),
+                           jni::make_jstring("Failed to evaluate Javascript").get());
                 }
             });
 };
