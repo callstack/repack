@@ -101,7 +101,7 @@ class RemoteScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactC
             evaluate(code, path.toString(), promise)
         } catch (error: Exception) {
             promise.reject(
-                    ScriptLoadingError.RemoteEvalFailure.code,
+                    ScriptLoadingError.ScriptEvalFailure.code,
                     error.message ?: error.toString()
             )
         }

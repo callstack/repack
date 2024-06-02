@@ -21,7 +21,7 @@ class FileSystemScriptLoader(reactContext: ReactContext) : NativeScriptLoader(re
             }
         } catch (error: Exception) {
             promise.reject(
-                    ScriptLoadingError.FileSystemEvalFailure.code,
+                    ScriptLoadingError.ScriptEvalFailure.code,
                     error.message ?: error.toString()
             )
         }

@@ -26,7 +26,6 @@ set_target_properties(
 
 find_package(fbjni REQUIRED CONFIG)
 find_package(ReactAndroid REQUIRED CONFIG)
-find_package(hermes-engine REQUIRED CONFIG)
 
 target_include_directories(
         ${PACKAGE_NAME}
@@ -38,8 +37,8 @@ target_include_directories(
 
 target_link_libraries(
         ${PACKAGE_NAME}
+        fbjni::fbjni
         ReactAndroid::jsi
         ReactAndroid::reactnativejni
-        fbjni::fbjni
         android
 )
