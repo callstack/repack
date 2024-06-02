@@ -9,12 +9,19 @@
 #import "callstack_repack-Swift.h"
 #endif
 
-#import <React/RCTBridge.h>
 #import <jsi/jsi.h>
+#import <React/RCTBridge.h>
+#import <ReactCommon/CallInvoker.h>
 
 @interface RCTBridge (JSIRuntime)
 - (void *)runtime;
 @end
+
+#ifndef RCT_NEW_ARCH_ENABLED
+@interface RCTBridge (RCTTurboModule)
+- (std::shared_ptr<facebook::react::CallInvoker>)jsCallInvoker;
+@end
+#endif
 
 @implementation ScriptManager
 
@@ -28,13 +35,6 @@ RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
                   reject:(RCTPromiseRejectBlock)reject)
 {
     [self runInBackground:^(){
-        
-        facebook::jsi::Runtime *jsRuntime = [self getJavaScriptRuntimePointer];
-        if (!jsRuntime) {
-            reject(RuntimeUnavailableError, @"Can't access JS runtime", nil);
-            return;
-        }
-        
         ScriptConfig *config;
         @try {
             config = [ScriptConfig fromConfigDictionary:configDictionary withScriptId:scriptId];
@@ -50,20 +50,18 @@ RCT_EXPORT_METHOD(loadScript:(nonnull NSString*)scriptId
                     if (error) {
                         reject(ScriptDownloadFailure, error.localizedFailureReason, nil);
                     } else {
-                        [self execute:jsRuntime
-                             scriptId:config.scriptId
+                        [self execute:config.scriptId
                                   url:config.url
                               resolve:resolve
                                reject:reject];
                     }
                 }];
             } else {
-                [self execute:jsRuntime scriptId:scriptId url:config.url resolve:resolve reject:reject];
+                [self execute:scriptId url:config.url resolve:resolve reject:reject];
             }
             
         } else if ([[config.url scheme] isEqualToString:@"file"]) {
-            [self executeFromFilesystem:jsRuntime
-                                 config:config
+            [self executeFromFilesystem:config
                                 resolve:resolve
                                  reject:reject];
         } else {
@@ -138,8 +136,7 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
     }];
 }
 
-- (void)execute:(facebook::jsi::Runtime *)jsRuntime
-       scriptId:(NSString *)scriptId
+- (void)execute:(NSString *)scriptId
             url:(NSURL *)url
         resolve:(RCTPromiseResolveBlock)resolve
          reject:(RCTPromiseRejectBlock)reject
@@ -148,12 +145,7 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
     @try {
         NSFileManager* manager = [NSFileManager defaultManager];
         NSData* data = [manager contentsAtPath:scriptPath];
-        
-        facebook::jsi::Runtime &rt = *jsRuntime;
-        std::string source(static_cast<const char*>([data bytes]), [data length]);
-        std::string sourceUrl([[url absoluteString] UTF8String]);
-        rt.evaluateJavaScript(std::make_unique<facebook::jsi::StringBuffer>(std::move(source)), sourceUrl);
-        resolve(nil);
+        [self evaluateJavascript:data url:url resolve:resolve reject:reject];
     } @catch (NSError *error) {
         reject(CodeExecutionFailure, error.localizedDescription, nil);
     }
@@ -240,11 +232,9 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
     if (error != nil) {
         throw error;
     }
-    
 }
 
-- (void)executeFromFilesystem:(facebook::jsi::Runtime *)jsRuntime
-                       config:(ScriptConfig *)config
+- (void)executeFromFilesystem:(ScriptConfig *)config
                       resolve:(RCTPromiseResolveBlock)resolve
                        reject:(RCTPromiseRejectBlock)reject
 {
@@ -261,16 +251,10 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
             filesystemScriptUrl = [[NSBundle mainBundle] URLForResource:scriptName withExtension:scriptExtension];
         }
         NSData *data = [[NSData alloc] initWithContentsOfFile:[filesystemScriptUrl path]];
-        
-        facebook::jsi::Runtime &rt = *jsRuntime;
-        std::string source(static_cast<const char*>([data bytes]), [data length]);
-        std::string sourceUrl([[filesystemScriptUrl absoluteString] UTF8String]);
-        rt.evaluateJavaScript(std::make_unique<facebook::jsi::StringBuffer>(std::move(source)), sourceUrl);
-        resolve(nil);
+        [self evaluateJavascript:data url:filesystemScriptUrl resolve:resolve reject:reject];
     } @catch (NSError *error) {
-        reject(CodeExecutionFromFileSystemFailure, error.localizedDescription, nil);
+        reject(CodeExecutionFailure, error.localizedDescription, nil);
     }
-    
 }
 
 - (facebook::jsi::Runtime *)getJavaScriptRuntimePointer
@@ -281,6 +265,41 @@ RCT_EXPORT_METHOD(invalidateScripts:(nonnull NSArray*)scripts
     
     facebook::jsi::Runtime *jsRuntime = (facebook::jsi::Runtime *)self.bridge.runtime;
     return jsRuntime;
+}
+
+- (void)evaluateJavascript:(NSData *)code
+                       url:(NSURL *)url
+                   resolve:(RCTPromiseResolveBlock)resolve
+                    reject:(RCTPromiseRejectBlock)reject
+{
+    std::shared_ptr<facebook::react::CallInvoker> callInvoker = self.bridge.jsCallInvoker;
+    if (!callInvoker) {
+        reject(CallInvokerUnavailableError, @"Missing CallInvoker - bridgeless on RN 0.73 is not supported", nil);
+        return;
+    }
+    
+    // There is no backwards compatible way to get runtime in an asynchronous manner
+    // we obtain the ptr here, and use it inside of invokeAsync callback
+    // TODO: Consider doing this during initialization step once to fail fast
+    facebook::jsi::Runtime *runtime = [self getJavaScriptRuntimePointer];
+    if(!runtime) {
+        reject(RuntimeUnavailableError, @"Can't access React Native runtime", nil);
+        return;
+    }
+    
+    std::string source(static_cast<const char*>([code bytes]), [code length]);
+    std::string sourceUrl([[url absoluteString] UTF8String]);
+    
+    callInvoker->invokeAsync([source = std::move(source), sourceUrl = std::move(sourceUrl), runtime, resolve, reject]() {
+        // use c++ error handling here
+        try {
+            runtime->evaluateJavaScript(std::make_unique<facebook::jsi::StringBuffer>(std::move(source)), sourceUrl);
+            resolve(nil);
+        } catch (const std::exception& e) {
+            NSString *errorString = [NSString stringWithUTF8String:e.what()];
+            reject(CodeExecutionFailure, errorString, nil);
+        }
+    });
 }
 
 - (void)runInBackground:(void(^)())callback
