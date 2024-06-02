@@ -12,14 +12,13 @@ class FileSystemScriptLoader(reactContext: ReactContext) : NativeScriptLoader(re
                 val path = config.url.path
                 val file = File(path)
                 val code: ByteArray = FileInputStream(file).use { it.readBytes() }
-                evaluate(code, path)
+                evaluate(code, path, promise)
             } else {
                 val assetName = config.url.file.split("/").last()
                 val inputStream = reactContext.assets.open(assetName)
                 val code: ByteArray = inputStream.use { it.readBytes() }
-                evaluate(code, assetName)
+                evaluate(code, assetName, promise)
             }
-            promise.resolve(null)
         } catch (error: Exception) {
             promise.reject(
                     ScriptLoadingError.FileSystemEvalFailure.code,

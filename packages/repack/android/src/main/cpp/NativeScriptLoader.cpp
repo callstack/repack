@@ -3,16 +3,27 @@
 
 void NativeScriptLoader::registerNatives() {
     registerHybrid({
-                           makeNativeMethod("evaluateJavascript",
-                                            NativeScriptLoader::evaluateJavascript)});
+                           makeNativeMethod("evaluateJavascriptAsync",
+                                            NativeScriptLoader::evaluateJavascriptAsync)});
 }
 
-void NativeScriptLoader::evaluateJavascript(
+void NativeScriptLoader::evaluateJavascriptAsync(
         jni::alias_ref<jhybridobject> jThis,
-        jni::alias_ref<react::JRuntimeExecutor::javaobject> runtimeExecutorHolder,
+        jlong jsRuntime,
+        jni::alias_ref<facebook::react::CallInvokerHolder::javaobject> jsCallInvokerHolder,
         jni::alias_ref<JArrayByte> code,
-        jni::alias_ref<JString> url
+        jni::alias_ref<JString> url,
+        jni::alias_ref<JObject::javaobject> promise
 ) {
+    // promise gets passed into callback for invokeAsync,
+    // we need to retain the reference longer than the scope of this function
+    auto promiseRef = make_global(promise);
+    // no type for Promise, extract the methods manually
+    static const auto resolve = promiseRef->getClass()->getMethod<void(jobject)>("resolve");
+    static const auto reject = promiseRef->getClass()->getMethod<void(jstring, jstring)>("reject");
+
+    std::shared_ptr<react::CallInvoker> callInvoker = jsCallInvokerHolder->cthis()->getCallInvoker();
+
     auto pinnedCode = code->pin();
     jbyte *sourcePtr = pinnedCode.get();
     size_t sourceSize = pinnedCode.size();
@@ -20,10 +31,16 @@ void NativeScriptLoader::evaluateJavascript(
     std::string source(reinterpret_cast<const char *>(sourcePtr), sourceSize);
     std::string sourceUrl = url->toString();
 
-    react::RuntimeExecutor runtimeExecutor = runtimeExecutorHolder->cthis()->get();
-    runtimeExecutor(
-            [source = std::move(source), sourceUrl = std::move(sourceUrl)](jsi::Runtime &rt) {
-                rt.evaluateJavaScript(std::make_unique<jsi::StringBuffer>(std::move(source)),
-                                      std::move(sourceUrl));
+    callInvoker->invokeAsync(
+            [source = std::move(source), sourceUrl = std::move(
+                    sourceUrl), rt = (jsi::Runtime *) jsRuntime, promiseRef]() {
+                try {
+                    rt->evaluateJavaScript(std::make_unique<jsi::StringBuffer>(std::move(source)),
+                                           std::move(sourceUrl));
+                    resolve(promiseRef.get(), nullptr);
+                } catch (std::exception &e) {
+                    reject(promiseRef.get(), jni::make_jstring("EvalFailure").get(),
+                           jni::make_jstring("failed to evaluateJavascript").get());
+                }
             });
 };

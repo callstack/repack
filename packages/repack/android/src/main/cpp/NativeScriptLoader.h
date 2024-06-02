@@ -1,7 +1,6 @@
 #include <jsi/jsi.h>
 #include <fbjni/fbjni.h>
-#include <react/jni/JRuntimeExecutor.h>
-#include <ReactCommon/RuntimeExecutor.h>
+#include <ReactCommon/CallInvokerHolder.h>
 
 using namespace facebook;
 using namespace facebook::jni;
@@ -11,10 +10,12 @@ struct NativeScriptLoader : public jni::HybridClass<NativeScriptLoader> {
 
     static void registerNatives();
 
-    static void evaluateJavascript(
+    static void evaluateJavascriptAsync(
             jni::alias_ref<jhybridobject> jThis,
-            jni::alias_ref<react::JRuntimeExecutor::javaobject> runtimeExecutorHolder,
+            jlong jsRuntime,
+            jni::alias_ref<facebook::react::CallInvokerHolder::javaobject> jsCallInvokerHolder,
             jni::alias_ref<JArrayByte> code,
-            jni::alias_ref<JString> url
+            jni::alias_ref<JString> url,
+            jni::alias_ref<JObject::javaobject> promise
     );
 };

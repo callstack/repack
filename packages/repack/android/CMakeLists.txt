@@ -32,7 +32,8 @@ target_include_directories(
         ${PACKAGE_NAME}
         PRIVATE
         "${REACT_NATIVE_DIR}/ReactCommon"
-        "${REACT_NATIVE_DIR}/ReactCommon/runtimeexecutor"
+        "${REACT_NATIVE_DIR}/ReactCommon/callinvoker"
+        "${REACT_NATIVE_DIR}/ReactAndroid/src/main/jni/react/turbomodule"
 )
 
 target_link_libraries(

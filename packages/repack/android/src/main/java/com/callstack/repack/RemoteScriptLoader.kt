@@ -98,8 +98,7 @@ class RemoteScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactC
         try {
             val path = File(reactContext.filesDir, getScriptFilePath(config.id))
             val code: ByteArray = FileInputStream(path).use { it.readBytes() }
-            evaluate(code, path.toString())
-            promise.resolve(null)
+            evaluate(code, path.toString(), promise)
         } catch (error: Exception) {
             promise.reject(
                     ScriptLoadingError.RemoteEvalFailure.code,
