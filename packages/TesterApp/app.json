@@ -7,12 +7,22 @@
       "displayName": "TesterApp"
     }
   ],
+  "android": {
+    "package": "com.testerapp",
+    "signingConfigs": {
+      "debug": {
+        "storeFile": "android/debug.keystore"
+      },
+      "release": {
+        "storeFile": "android/debug.keystore"
+      }
+    }
+  },
+  "ios": {
+    "bundleIdentifier": "com.testerapp"
+  },
   "resources": {
-    "android": [
-      "build/"
-    ],
-    "ios": [
-      "build/"
-    ]
+    "android": ["build/"],
+    "ios": ["build/"]
   }
 }
