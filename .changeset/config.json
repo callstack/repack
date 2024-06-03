@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@2.0.0/schema.json",
+  "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
   "changelog": ["@changesets/changelog-github", { "repo": "callstack/repack" }],
   "commit": false,
   "fixed": [
@@ -13,5 +13,8 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["metro-compat-test", "testerapp", "website"]
+  "ignore": ["metro-compat-test", "testerapp", "website"],
+  "snapshot": {
+    "useCalculatedVersion": true
+  }
 }
