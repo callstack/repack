@@ -64,6 +64,13 @@ def REACT_NATIVE_DIR = REACT_NATIVE_BUILD_FROM_SOURCE
       commandLine("node", "--print", "require.resolve('react-native/package.json')")
     }.standardOutput.asText.get().trim()).parent
 
+def reactProperties = new Properties()
+file("$REACT_NATIVE_DIR/ReactAndroid/gradle.properties").withInputStream { reactProperties.load(it) }
+
+def REACT_NATIVE_VERSION = reactProperties.getProperty("VERSION_NAME")
+def REACT_NATIVE_MINOR_VERSION = REACT_NATIVE_VERSION.startsWith("0.0.0-") ? 1000 : REACT_NATIVE_VERSION.split("\\.")[1].toInteger()
+def IS_NEW_ARCHITECTURE_ENABLED = isNewArchitectureEnabled()
+
 android {
     if (supportsNamespace()) {
         namespace "com.callstack.repack"
@@ -94,7 +101,7 @@ android {
         targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
         versionCode 1
         versionName "1.0"
-        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
         externalNativeBuild {
             cmake {
                 cppFlags "-O2 -frtti -fexceptions -Wall -Wno-unused-variable -fstack-protector-all"
@@ -138,9 +145,8 @@ android {
         ]
     }
 
-    sourceSets {
-        main {
-            if (isNewArchitectureEnabled()) {
+    sourceSets.main {
+        if (IS_NEW_ARCHITECTURE_ENABLED) {
                 java.srcDirs += [
                         "src/newarch",
                         // This is needed to build Kotlin project with NewArch enabled
@@ -149,7 +155,13 @@ android {
             } else {
                 java.srcDirs += ["src/oldarch"]
             }
-        }
+
+            // CallInvoker
+            if (REACT_NATIVE_MINOR_VERSION <= 73) {
+                java.srcDirs += "src/versioned/CallInvoker/73"
+            } else {
+                java.srcDirs += "src/versioned/CallInvoker/latest"
+            }
     }
 }
 
