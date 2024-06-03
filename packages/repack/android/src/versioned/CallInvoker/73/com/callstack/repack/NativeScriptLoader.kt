@@ -2,7 +2,6 @@ package com.callstack.repack
 
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.common.annotations.FrameworkAPI
 import com.facebook.react.turbomodule.core.CallInvokerHolderImpl
 
 abstract class NativeScriptLoader(protected val reactContext: ReactContext) {
