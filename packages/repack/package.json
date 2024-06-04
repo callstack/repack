@@ -49,7 +49,10 @@
     "lint": "eslint --ext \".js,.ts\" commands.js client.js src",
     "test": "jest",
     "typecheck": "tsc --noEmit",
-    "archive": "pnpm build && pnpm pack"
+    "archive": "pnpm build && pnpm pack",
+    "clang-format": "pnpm clang-format:ios && pnpm clang-format:android",
+    "clang-format:ios": "find ios/ -iname \"*.h\" -o -iname \"*.m\" -o -iname \"*.mm\" -o -iname \"*.cpp\" | xargs clang-format -i --Werror",
+    "clang-format:android": "find android/src/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i"
   },
   "peerDependencies": {
     "@react-native-community/cli": "*",
