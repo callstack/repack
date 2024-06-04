@@ -10,9 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(
         ${PACKAGE_NAME}
         SHARED
-        src/main/cpp/OnLoad.cpp
-        src/main/cpp/NativeScriptLoader.h
-        src/main/cpp/NativeScriptLoader.cpp
+        src/main/cpp
 )
 
 # Configure C++ 17

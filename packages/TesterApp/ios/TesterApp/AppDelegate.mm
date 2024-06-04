@@ -26,9 +26,5 @@
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 }
-- (BOOL)bridgelessEnabled
-{
-    return YES;
-}
 
 @end
