@@ -2,12 +2,10 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/react-native-test-app/trunk/schema.json",
   "name": "TesterApp",
   "displayName": "TesterApp",
-  "singleApp": "TesterApp",
   "components": [
     {
       "appKey": "TesterApp",
-      "displayName": "TesterApp",
-      "slug": "TesterApp"
+      "displayName": "TesterApp"
     }
   ],
   "android": {
