@@ -18,11 +18,11 @@ void NativeScriptLoader::evaluateJavascriptAsync(
   // promise gets passed into callback for invokeAsync,
   // we need to retain the reference longer than the scope of this function
   auto promiseRef = make_global(promise);
-  
+
   // no type for Promise, extract the methods manually
-  static const auto promiseClass = promiseRef->getClass();
-  static const auto resolve = promiseClass->getMethod<PromiseResolve>("resolve");
-  static const auto reject = promiseClass->getMethod<PromiseReject>("reject");
+  auto promiseClass = promiseRef->getClass();
+  auto resolve = promiseClass->getMethod<PromiseResolve>("resolve");
+  auto reject = promiseClass->getMethod<PromiseReject>("reject");
 
   std::shared_ptr<react::CallInvoker> callInvoker = jsCallInvokerHolder->cthis()->getCallInvoker();
 
@@ -30,19 +30,24 @@ void NativeScriptLoader::evaluateJavascriptAsync(
   jbyte *sourcePtr = pinnedCode.get();
   size_t sourceSize = pinnedCode.size();
 
-  std::string source(reinterpret_cast<const char *>(sourcePtr), sourceSize);
+  // Use initializer list for source and sourceUrl
+  std::string source{reinterpret_cast<const char *>(sourcePtr), sourceSize};
   std::string sourceUrl = url->toString();
 
-  callInvoker->invokeAsync(
-      [source = std::move(source), sourceUrl = std::move(sourceUrl), rt = (jsi::Runtime *)jsRuntime, promiseRef]() {
-        try {
-          rt->evaluateJavaScript(std::make_unique<jsi::StringBuffer>(std::move(source)), std::move(sourceUrl));
-          resolve(promiseRef.get(), nullptr);
-        } catch (std::exception &e) {
-          reject(
-              promiseRef.get(),
-              jni::make_jstring("ScriptEvalFailure").get(),
-              jni::make_jstring("Failed to evaluate Javascript").get());
-        }
-      });
+  callInvoker->invokeAsync([source = std::move(source),
+                            sourceUrl = std::move(sourceUrl),
+                            rt = (jsi::Runtime *)jsRuntime,
+                            promiseRef,
+                            resolve,
+                            reject]() {
+    try {
+      rt->evaluateJavaScript(std::make_unique<jsi::StringBuffer>(std::move(source)), std::move(sourceUrl));
+      resolve(promiseRef.get(), nullptr);
+    } catch (std::exception &e) {
+      reject(
+          promiseRef.get(),
+          jni::make_jstring("ScriptEvalFailure").get(),
+          jni::make_jstring("Failed to evaluate Javascript").get());
+    }
+  });
 };

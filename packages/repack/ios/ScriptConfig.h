@@ -3,29 +3,33 @@
 
 @interface ScriptConfig : NSObject
 
-@property (readonly, nonnull) NSString *scriptId;
-@property (readonly, nonnull) NSURL *url;
-@property (readonly, nonnull) NSString *method;
+NS_ASSUME_NONNULL_BEGIN
+
+@property (readonly) NSString *scriptId;
+@property (readonly) NSURL *url;
+@property (readonly) NSString *method;
 @property (readonly, nullable) NSString *query;
 @property (readonly) BOOL fetch;
 @property (readonly) BOOL absolute;
 @property (readonly, nullable) NSData *body;
 @property (readonly, nullable) NSDictionary *headers;
-@property (readonly, nonnull) NSNumber *timeout;
-@property (readonly, nonnull) NSString *verifyScriptSignature;
+@property (readonly) NSNumber *timeout;
+@property (readonly) NSString *verifyScriptSignature;
 
-+ (nonnull ScriptConfig *)fromConfigDictionary:(nonnull NSDictionary *)config withScriptId:(nonnull NSString *)scriptId;
++ (ScriptConfig *)fromConfigDictionary:(NSDictionary *)config withScriptId:(NSString *)scriptId;
 
-- (nonnull ScriptConfig *)initWithScript:(nonnull NSString *)scriptId
-                                 withURL:(nonnull NSURL *)url
-                              withMethod:(nonnull NSString *)method
-                               withQuery:(nullable NSString *)query
-                               withFetch:(BOOL)fetch
-                            withAbsolute:(BOOL)absolute
-                             withHeaders:(nullable NSDictionary *)headers
-                                withBody:(nullable NSData *)body
-                             withTimeout:(nonnull NSNumber *)timeout
-               withVerifyScriptSignature:(nonnull NSString *)verifyScriptSignature;
+- (ScriptConfig *)initWithScript:(NSString *)scriptId
+                         withURL:(NSURL *)url
+                      withMethod:(NSString *)method
+                       withQuery:(nullable NSString *)query
+                       withFetch:(BOOL)fetch
+                    withAbsolute:(BOOL)absolute
+                     withHeaders:(nullable NSDictionary *)headers
+                        withBody:(nullable NSData *)body
+                     withTimeout:(NSNumber *)timeout
+       withVerifyScriptSignature:(NSString *)verifyScriptSignature;
+
+NS_ASSUME_NONNULL_END
 
 @end
 

@@ -290,8 +290,8 @@ RCT_EXPORT_METHOD(invalidateScripts
     return;
   }
 
-  std::string source(static_cast<const char *>([code bytes]), [code length]);
-  std::string sourceUrl([[url absoluteString] UTF8String]);
+  std::string source{static_cast<const char *>([code bytes]), [code length]};
+  std::string sourceUrl{[[url absoluteString] UTF8String]};
 
   callInvoker->invokeAsync([source = std::move(source), sourceUrl = std::move(sourceUrl), runtime, resolve, reject]() {
     // use c++ error handling here
