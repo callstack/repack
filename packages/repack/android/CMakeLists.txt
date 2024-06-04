@@ -20,6 +20,7 @@ set_target_properties(
         CXX_STANDARD 17
         CXX_EXTENSIONS OFF
         POSITION_INDEPENDENT_CODE ON
+        LINKER_LANGUAGE CXX
 )
 
 find_package(fbjni REQUIRED CONFIG)
