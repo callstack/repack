@@ -3,7 +3,7 @@
   "version": "0.1.7",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native run-android --appId=com.testerapp",
     "ios": "react-native run-ios",
     "start": "react-native webpack-start",
     "bundle:android": "react-native webpack-bundle --platform android --entry-file index.js --dev=false --bundle-output build/output/android/index.android.bundle",
