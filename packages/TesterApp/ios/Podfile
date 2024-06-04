@@ -6,4 +6,10 @@ require "#{ws_dir}/node_modules/react-native-test-app/test_app.rb"
 
 workspace 'TesterApp.xcworkspace'
 
-use_test_app!
+options = {
+  :bridgeless_enabled => false,
+  :fabric_enabled => true,
+  :hermes_enabled => true,
+}
+
+use_test_app! options
