@@ -1,5 +1,20 @@
 # @callstack/repack
 
+## 4.1.0
+
+### Minor Changes
+
+- [#633](https://github.com/callstack/repack/pull/633) [`38a9ff0`](https://github.com/callstack/repack/commit/38a9ff013d9fb79a75e64a557be2cee75e964cc1) Thanks [@jbroma](https://github.com/jbroma)! - Support for bridgeless new architecture
+
+### Patch Changes
+
+- [#628](https://github.com/callstack/repack/pull/628) [`9485bd6`](https://github.com/callstack/repack/commit/9485bd6c6c377498159d0523f39eb98eee5e638a) Thanks [@jbroma](https://github.com/jbroma)! - Remove loader-utils in favor of webpack loader builtins
+
+- [#630](https://github.com/callstack/repack/pull/630) [`dc55cef`](https://github.com/callstack/repack/commit/dc55cef0d07749b64aded2854ed998964a0b2341) Thanks [@jbroma](https://github.com/jbroma)! - Use the current Node when composing Hermes sourcemaps
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.1.0
+
 ## 4.0.0
 
 ### Major Changes
@@ -121,10 +136,10 @@
 
   ```js
   // react-native.config.js
-  const commands = require("@callstack/repack/commands");
+  const commands = require('@callstack/repack/commands');
 
   module.exports = {
-    commands: commands.filter((command) => command.name.startsWith("webpack")),
+    commands: commands.filter((command) => command.name.startsWith('webpack')),
   };
   ```
 
@@ -378,7 +393,7 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   - All Repack plugins are consolidated under single `RepackPlugin`, all sub-plugins are available under `plugins`:
 
     ```ts
-    import * as Repack from "@callstack/repack";
+    import * as Repack from '@callstack/repack';
 
     new Repack.plugins.AssetResolverPlugin();
     ```
@@ -450,24 +465,24 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   For example, instead of using `webpack.container.ModuleFederationPlugin`, you can now use:
 
   ```js
-  import * as Repack from "@callstack/repack";
+  import * as Repack from '@callstack/repack';
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: "host",
+    name: 'host',
   });
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: "app1",
+    name: 'app1',
     remotes: {
-      module1: "module1@https://example.com/module1.container.bundle",
+      module1: 'module1@https://example.com/module1.container.bundle',
     },
   });
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: "app2",
+    name: 'app2',
     remotes: {
-      module1: "module1@https://example.com/module1.container.bundle",
-      module2: "module1@dynamic",
+      module1: 'module1@https://example.com/module1.container.bundle',
+      module2: 'module1@dynamic',
     },
   });
   ```
@@ -484,13 +499,13 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   To specify custom priority use 2nd options argument:
 
   ```js
-  import { ScriptManager } from "@callstack/repack/client";
+  import { ScriptManager } from '@callstack/repack/client';
 
   ScriptManager.shared.addResolver(
     async (scriptId, caller) => {
       // ...
     },
-    { priority: 1 },
+    { priority: 1 }
   ); // Default priority is `2`.
   ```
 
@@ -544,24 +559,24 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   For example, instead of using `webpack.container.ModuleFederationPlugin`, you can now use:
 
   ```js
-  import * as Repack from "@callstack/repack";
+  import * as Repack from '@callstack/repack';
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: "host",
+    name: 'host',
   });
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: "app1",
+    name: 'app1',
     remotes: {
-      module1: "module1@https://example.com/module1.container.bundle",
+      module1: 'module1@https://example.com/module1.container.bundle',
     },
   });
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: "app2",
+    name: 'app2',
     remotes: {
-      module1: "module1@https://example.com/module1.container.bundle",
-      module2: "module1@dynamic",
+      module1: 'module1@https://example.com/module1.container.bundle',
+      module2: 'module1@dynamic',
     },
   });
   ```
@@ -578,13 +593,13 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   To specify custom priority use 2nd options argument:
 
   ```js
-  import { ScriptManager } from "@callstack/repack/client";
+  import { ScriptManager } from '@callstack/repack/client';
 
   ScriptManager.shared.addResolver(
     async (scriptId, caller) => {
       // ...
     },
-    { priority: 1 },
+    { priority: 1 }
   ); // Default priority is `2`.
   ```
 
@@ -707,7 +722,7 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   - All Repack plugins are consolidated under single `RepackPlugin`, all sub-plugins are available under `plugins`:
 
     ```ts
-    import * as Repack from "@callstack/repack";
+    import * as Repack from '@callstack/repack';
 
     new Repack.plugins.AssetResolverPlugin();
     ```
