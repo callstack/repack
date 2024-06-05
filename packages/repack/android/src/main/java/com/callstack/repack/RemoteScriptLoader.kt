@@ -2,14 +2,18 @@ package com.callstack.repack
 
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactContext
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.BufferedOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.IOException
-import java.io.OutputStreamWriter
 import java.util.concurrent.TimeUnit
 
-class RemoteScriptLoader(private val reactContext: ReactContext) {
+class RemoteScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactContext) {
     private val scriptsDirName = "scripts"
     private val client = OkHttpClient()
 
@@ -18,8 +22,8 @@ class RemoteScriptLoader(private val reactContext: ReactContext) {
     }
 
     private fun createClientPerRequest(config: ScriptConfig): OkHttpClient {
-        val clientPerRequestBuilder = client.newBuilder();
-        clientPerRequestBuilder.connectTimeout(config.timeout.toLong(), TimeUnit.MILLISECONDS);
+        val clientPerRequestBuilder = client.newBuilder()
+        clientPerRequestBuilder.connectTimeout(config.timeout.toLong(), TimeUnit.MILLISECONDS)
         clientPerRequestBuilder.readTimeout(config.timeout.toLong(), TimeUnit.MILLISECONDS)
 
         return clientPerRequestBuilder.build()
@@ -92,16 +96,12 @@ class RemoteScriptLoader(private val reactContext: ReactContext) {
 
     fun execute(config: ScriptConfig, promise: Promise) {
         try {
-            val path = getScriptFilePath(config.id)
-            reactContext.catalystInstance.loadScriptFromFile(
-                    "${reactContext.filesDir}/${path}",
-                    config.url.toString(),
-                    false
-            )
-            promise.resolve(null)
+            val path = File(reactContext.filesDir, getScriptFilePath(config.id))
+            val code: ByteArray = FileInputStream(path).use { it.readBytes() }
+            evaluate(code, path.toString(), promise)
         } catch (error: Exception) {
             promise.reject(
-                    ScriptLoadingError.RemoteEvalFailure.code,
+                    ScriptLoadingError.ScriptEvalFailure.code,
                     error.message ?: error.toString()
             )
         }
@@ -112,7 +112,7 @@ class RemoteScriptLoader(private val reactContext: ReactContext) {
         downloadAndCache(config, { promise.resolve(null) }, { code, message -> promise.reject(code, message) })
     }
 
-    fun load(config: ScriptConfig, promise: Promise) {
+    override fun load(config: ScriptConfig, promise: Promise) {
         downloadAndCache(config, {
             execute(config, promise)
         }, { code, message -> promise.reject(code, message) })

@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
     install_modules_dependencies(s)
   else
     s.dependency "React-Core"
-
+    s.dependency "React-callinvoker"
     # Don't install the dependencies when we run `pod install` in the old architecture.
     if new_arch_enabled then
       s.compiler_flags = folly_compiler_flags + " -DRCT_NEW_ARCH_ENABLED=1"

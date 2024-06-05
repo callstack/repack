@@ -11,11 +11,11 @@ enum CodeSigningError : Int, Error {
 }
 
 extension CodeSigningError: CustomNSError {
-
+    
     public static var errorDomain: String {
         return "CodeSigningError"
     }
-
+    
     public var errorCode: Int {
         return self.rawValue
     }

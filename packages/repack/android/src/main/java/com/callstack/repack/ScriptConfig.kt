@@ -46,9 +46,9 @@ data class ScriptConfig(
             val keyIterator = headersMap?.keySetIterator()
             while (keyIterator?.hasNextKey() == true) {
                 val key = keyIterator.nextKey()
-                val value = headersMap.getString(key);
-                if (value != null) {
-                    headers[key] = value
+                val header = headersMap.getString(key)
+                if (header != null) {
+                    headers[key] = header
                 }
             }
 
