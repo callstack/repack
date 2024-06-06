@@ -432,6 +432,9 @@ importers:
       babel-loader:
         specifier: ^9.1.3
         version: 9.1.3(@babel/core@7.24.0)(webpack@5.91.0)
+      clang-format:
+        specifier: ^1.8.0
+        version: 1.8.0
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -2529,6 +2532,9 @@ packages:
   async@2.6.3:
     resolution: {integrity: sha512-zflvls11DCy+dQWzTW2dzuilv8Z5X/pjfmZOWba6TNIVDm+2UDaJmXSOXlasHKfNBs8oo3M0aT50fDEWfKZjXg==}
 
+  async@3.2.5:
+    resolution: {integrity: sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==}
+
   asynciterator.prototype@1.0.0:
     resolution: {integrity: sha512-wwHYEIS0Q80f5mosx3L/dfG5t5rjEa9Ft51GTaNt862EnpyGHpgz2RkZvLPp1oF5TnAiTohkEKVEu8pQPJI7Vg==}
 
@@ -2822,6 +2828,10 @@ packages:
 
   cjs-module-lexer@1.2.2:
     resolution: {integrity: sha512-cOU9usZw8/dXIXKtwa8pM0OTJQuJkxMN6w30csNRUerHfeQ5R6U3kkU/FtJeIf3M202OHfY2U8ccInBG7/xogA==}
+
+  clang-format@1.8.0:
+    resolution: {integrity: sha512-pK8gzfu55/lHzIpQ1givIbWfn3eXnU7SfxqIwVgnn5jEM6j4ZJYjpFqFs4iSBPNedzRMmfjYjuQhu657WAXHXw==}
+    hasBin: true
 
   cli-cursor@3.1.0:
     resolution: {integrity: sha512-I/zHAwsKf9FqGoXM4WWRACob9+SNukZTd94DWF57E4toouRulbCxcUh6RKUEOQlYTHJnzkPMySvPNaaSLNfLZw==}
@@ -10036,6 +10046,8 @@ snapshots:
     dependencies:
       lodash: 4.17.21
 
+  async@3.2.5: {}
+
   asynciterator.prototype@1.0.0:
     dependencies:
       has-symbols: 1.0.3
@@ -10392,6 +10404,12 @@ snapshots:
   ci-info@3.9.0: {}
 
   cjs-module-lexer@1.2.2: {}
+
+  clang-format@1.8.0:
+    dependencies:
+      async: 3.2.5
+      glob: 7.2.3
+      resolve: 1.22.8
 
   cli-cursor@3.1.0:
     dependencies:
