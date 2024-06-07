@@ -187,8 +187,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       react-native-test-app:
-        specifier: ^3.7.3
-        version: 3.7.3(react-native@0.74.1(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))(react@18.2.0)
+        specifier: ^3.7.4
+        version: 3.7.4(react-native@0.74.1(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))(react@18.2.0)
       terser-webpack-plugin:
         specifier: ^5.3.3
         version: 5.3.10(webpack@5.91.0)
@@ -5803,8 +5803,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  react-native-test-app@3.7.3:
-    resolution: {integrity: sha512-w6iJRpdaWNn0v10n6Nkjngmg9G2/2HA6E8NJs+cG087xd1w5JSUODvL5tT2U25cnMuyePCeqy/i7fv6quOqDIw==}
+  react-native-test-app@3.7.4:
+    resolution: {integrity: sha512-I8Qts5QXVnzu5S70KD+DUn5CJ35KRJO7Sk5rdc2dkNVU5ZQeB9csl2VUBUDxYiyekvKKLJg4XCOJbjfHsxYfiA==}
     engines: {node: '>=16.17'}
     hasBin: true
     peerDependencies:
@@ -14184,7 +14184,7 @@ snapshots:
       react: 18.2.0
       react-native: 0.74.1(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0)
 
-  react-native-test-app@3.7.3(react-native@0.74.1(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))(react@18.2.0):
+  react-native-test-app@3.7.4(react-native@0.74.1(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))(react@18.2.0):
     dependencies:
       '@rnx-kit/react-native-host': 0.4.9(react-native@0.74.1(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))
       ajv: 8.12.0

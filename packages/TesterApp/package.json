@@ -3,7 +3,7 @@
   "version": "0.1.7",
   "private": true,
   "scripts": {
-    "android": "react-native run-android --appId=com.testerapp",
+    "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native webpack-start",
     "bundle:android": "react-native webpack-bundle --platform android --entry-file index.js --dev=false --bundle-output build/output/android/index.android.bundle",
@@ -34,7 +34,7 @@
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
-    "react-native-test-app": "^3.7.3",
+    "react-native-test-app": "^3.7.4",
     "prettier": "^3.2.4",
     "react-native-event-source": "^1.1.0",
     "terser-webpack-plugin": "^5.3.3",
