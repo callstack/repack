@@ -59,7 +59,6 @@ export class Compiler {
     const platformCompiler = this.getCompilerForPlatform(platform);
     const platformFilesystem = memfs.createFsFromVolume(new memfs.Volume());
 
-    // @ts-expect-error memfs is compatible enough
     platformCompiler.outputFileSystem = platformFilesystem;
     platformCompiler.name = platform;
 
