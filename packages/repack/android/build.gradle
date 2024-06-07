@@ -84,7 +84,6 @@ android {
     }
 
     compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
-    buildToolsVersion getExtOrDefault('buildToolsVersion')
 
     if (rootProject.hasProperty("ndkPath")) {
         ndkPath rootProject.ext.ndkPath
