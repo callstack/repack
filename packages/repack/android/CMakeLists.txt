@@ -10,7 +10,8 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(
         ${PACKAGE_NAME}
         SHARED
-        src/main/cpp
+        src/main/cpp/OnLoad.cpp
+        src/main/cpp/NativeScriptLoader.cpp
 )
 
 # Configure C++ 17
@@ -29,6 +30,7 @@ find_package(ReactAndroid REQUIRED CONFIG)
 target_include_directories(
         ${PACKAGE_NAME}
         PRIVATE
+        "src/main/cpp"
         "${REACT_NATIVE_DIR}/ReactCommon"
         "${REACT_NATIVE_DIR}/ReactCommon/callinvoker"
         "${REACT_NATIVE_DIR}/ReactAndroid/src/main/jni/react/turbomodule"
