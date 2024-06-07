@@ -1,5 +1,14 @@
 # @callstack/repack
 
+## 4.1.1
+
+### Patch Changes
+
+- [#639](https://github.com/callstack/repack/pull/639) [`13db9ed`](https://github.com/callstack/repack/commit/13db9edb2786454d34303596d67cd6e412a42d43) Thanks [@jbroma](https://github.com/jbroma)! - Fix android native module configuration
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.1.1
+
 ## 4.1.0
 
 ### Minor Changes
