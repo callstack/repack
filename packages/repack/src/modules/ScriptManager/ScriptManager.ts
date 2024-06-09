@@ -2,12 +2,10 @@
 import EventEmitter from 'events';
 import { getWebpackContext } from './getWebpackContext';
 import { Script } from './Script';
-import type {
+import type { ScriptLocatorResolver, StorageApi } from './types';
+import NativeScriptManager, {
   NormalizedScriptLocator,
-  ScriptLocatorResolver,
-  StorageApi,
-} from './types';
-import NativeScriptManager from './NativeScriptManager';
+} from './NativeScriptManager';
 
 type Cache = Record<
   string,

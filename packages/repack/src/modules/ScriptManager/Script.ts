@@ -1,9 +1,10 @@
 import shallowEqual from 'shallowequal';
-import type {
+import type { ScriptLocator, WebpackContext } from './types';
+import {
   NormalizedScriptLocator,
-  ScriptLocator,
-  WebpackContext,
-} from './types';
+  NormalizedScriptLocatorMethod,
+  NormalizedScriptLocatorVerifyScriptSignature,
+} from './NativeScriptManager';
 
 /**
  * Representation of a Script to load and execute, used by {@link ScriptManager}.
@@ -93,7 +94,7 @@ export class Script {
       });
       body = JSON.stringify(bodyObject);
     } else {
-      body = locator.body ?? undefined;
+      body = locator.body ?? null;
     }
 
     if (typeof locator.url === 'function') {
@@ -104,15 +105,19 @@ export class Script {
       key.scriptId,
       key.caller,
       {
-        method: locator.method ?? 'GET',
+        method:
+          (locator.method as NormalizedScriptLocatorMethod) ??
+          NormalizedScriptLocatorMethod.GET,
         url: locator.url,
         absolute: locator.absolute ?? false,
         timeout: locator.timeout ?? Script.DEFAULT_TIMEOUT,
-        query: new URLSearchParams(locator.query).toString() || undefined,
+        query: new URLSearchParams(locator.query).toString() || null,
         body,
-        headers: Object.keys(headers).length ? headers : undefined,
+        headers: Object.keys(headers).length ? headers : null,
         fetch: locator.cache === false ? true : fetch,
-        verifyScriptSignature: locator.verifyScriptSignature ?? 'off',
+        verifyScriptSignature:
+          (locator.verifyScriptSignature as NormalizedScriptLocatorVerifyScriptSignature) ??
+          NormalizedScriptLocatorVerifyScriptSignature.OFF,
       },
       locator.cache
     );
