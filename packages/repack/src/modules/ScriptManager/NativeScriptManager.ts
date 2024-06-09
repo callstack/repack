@@ -1,19 +1,19 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
-export const enum NormalizedScriptLocatorMethod {
+export const enum NormalizedScriptLocatorHTTPMethod {
   GET = 'GET',
   POST = 'POST',
 }
 
-export const enum NormalizedScriptLocatorVerifyScriptSignature {
+export const enum NormalizedScriptLocatorSignatureVerificationMode {
   STRICT = 'strict',
   LAX = 'lax',
   OFF = 'off',
 }
 
 export interface NormalizedScriptLocator {
-  method: NormalizedScriptLocatorMethod;
+  method: NormalizedScriptLocatorHTTPMethod;
   url: string;
   fetch: boolean;
   timeout: number;
@@ -21,7 +21,7 @@ export interface NormalizedScriptLocator {
   query: string | null;
   headers: { [key: string]: string } | null;
   body: string | null;
-  verifyScriptSignature: NormalizedScriptLocatorVerifyScriptSignature | null;
+  verifyScriptSignature: NormalizedScriptLocatorSignatureVerificationMode | null;
 }
 
 export interface Spec extends TurboModule {

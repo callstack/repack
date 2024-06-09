@@ -2,8 +2,8 @@ import shallowEqual from 'shallowequal';
 import type { ScriptLocator, WebpackContext } from './types';
 import {
   NormalizedScriptLocator,
-  NormalizedScriptLocatorMethod,
-  NormalizedScriptLocatorVerifyScriptSignature,
+  NormalizedScriptLocatorHTTPMethod,
+  NormalizedScriptLocatorSignatureVerificationMode,
 } from './NativeScriptManager';
 
 /**
@@ -106,8 +106,8 @@ export class Script {
       key.caller,
       {
         method:
-          (locator.method as NormalizedScriptLocatorMethod) ??
-          NormalizedScriptLocatorMethod.GET,
+          (locator.method as NormalizedScriptLocatorHTTPMethod) ??
+          NormalizedScriptLocatorHTTPMethod.GET,
         url: locator.url,
         absolute: locator.absolute ?? false,
         timeout: locator.timeout ?? Script.DEFAULT_TIMEOUT,
@@ -116,8 +116,8 @@ export class Script {
         headers: Object.keys(headers).length ? headers : null,
         fetch: locator.cache === false ? true : fetch,
         verifyScriptSignature:
-          (locator.verifyScriptSignature as NormalizedScriptLocatorVerifyScriptSignature) ??
-          NormalizedScriptLocatorVerifyScriptSignature.OFF,
+          (locator.verifyScriptSignature as NormalizedScriptLocatorSignatureVerificationMode) ??
+          NormalizedScriptLocatorSignatureVerificationMode.OFF,
       },
       locator.cache
     );
