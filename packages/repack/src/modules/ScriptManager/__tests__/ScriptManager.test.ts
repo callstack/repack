@@ -7,6 +7,15 @@ jest.mock('../NativeScriptManager', () => ({
   loadScript: jest.fn(),
   prefetchScript: jest.fn(),
   invalidateScripts: jest.fn(),
+  NormalizedScriptLocatorHTTPMethod: {
+    GET: 'GET',
+    POST: 'POST',
+  },
+  NormalizedScriptLocatorSignatureVerificationMode: {
+    STRICT: 'strict',
+    LAX: 'lax',
+    OFF: 'off',
+  },
 }));
 
 // @ts-ignore
@@ -95,6 +104,9 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      body: null,
+      headers: null,
+      query: null,
     });
 
     const {
@@ -123,6 +135,9 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      body: null,
+      headers: null,
+      query: null,
     });
   });
 
@@ -150,6 +165,9 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      body: null,
+      headers: null,
+      query: null,
     });
   });
 
@@ -177,6 +195,8 @@ describe('ScriptManagerAPI', () => {
       query: 'accessCode=1234&accessUid=asdf',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      body: null,
+      headers: null,
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -217,6 +237,8 @@ describe('ScriptManagerAPI', () => {
       headers: { 'x-hello': 'world' },
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      body: null,
+      query: null,
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -241,6 +263,8 @@ describe('ScriptManagerAPI', () => {
       headers: { 'x-hello': 'world', 'x-changed': 'true' },
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      body: null,
+      query: null,
     });
   });
 
@@ -266,6 +290,8 @@ describe('ScriptManagerAPI', () => {
       body: 'hello_world',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      headers: null,
+      query: null,
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -288,6 +314,8 @@ describe('ScriptManagerAPI', () => {
       body: 'message',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      headers: null,
+      query: null,
     });
   });
 
@@ -316,6 +344,9 @@ describe('ScriptManagerAPI', () => {
       method: 'POST',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      body: null,
+      headers: null,
+      query: null,
     });
   });
 
