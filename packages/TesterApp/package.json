@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "android:release": "node ./scripts/release.js android",
     "ios": "react-native run-ios",
+    "ios:release": "node ./scripts/release.js android",
     "start": "react-native webpack-start",
     "bundle:android": "react-native webpack-bundle --platform android --entry-file index.js --dev=false --bundle-output build/output/android/index.android.bundle --assets-dest build/output/android/res",
     "bundle:ios": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false --bundle-output build/output/ios/main.jsbundle --assets-dest build/output/ios",
