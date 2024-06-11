@@ -1,4 +1,5 @@
 const { execSync } = require('child_process');
+const { rm, existsSync } = require('fs');
 
 function runCommand(command) {
   try {
@@ -17,11 +18,21 @@ function buildIOS() {
 }
 
 function buildAndroid() {
-  console.log('Building Android...');
   runCommand('pnpm bundle:android');
   runCommand(
     'npx react-native run-android --tasks assembleRelease,installRelease'
   );
+}
+
+const buildDir = 'build/generated';
+
+if (existsSync(buildDir)) {
+  rm(buildDir, { recursive: true }, (err) => {
+    if (err) {
+      console.error('Error removing build directory:', err);
+      process.exit(1);
+    }
+  });
 }
 
 const platform = process.argv[2] || '';
