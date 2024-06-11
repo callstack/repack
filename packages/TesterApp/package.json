@@ -3,7 +3,7 @@
   "version": "0.1.7",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native run-android --appId com.testerapp",
     "android:release": "node ./scripts/release.js android",
     "ios": "react-native run-ios",
     "ios:release": "node ./scripts/release.js ios",
