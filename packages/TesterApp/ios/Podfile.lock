@@ -1,6 +1,6 @@
 PODS:
   - boost (1.83.0)
-  - callstack-repack (4.0.0):
+  - callstack-repack (4.1.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1188,6 +1188,33 @@ PODS:
     - React-logger (= 0.74.1)
     - React-perflogger (= 0.74.1)
     - React-utils (= 0.74.1)
+  - ReactNativeHost (0.4.9):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-cxxreact
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTAppDelegate
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - ReactTestApp-DevSupport (3.7.4):
+    - React-Core
+    - React-jsi
+  - ReactTestApp-Resources (1.0.0-dev)
   - RNCAsyncStorage (1.23.1):
     - DoubleConversion
     - glog
@@ -1209,7 +1236,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.2.0-rc.0):
+  - RNSVG (15.3.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1229,9 +1256,9 @@ PODS:
     - React-utils
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNSVG/common (= 15.2.0-rc.0)
+    - RNSVG/common (= 15.3.0)
     - Yoga
-  - RNSVG/common (15.2.0-rc.0):
+  - RNSVG/common (15.3.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1315,6 +1342,9 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@3.7.4_react-native@0.74.1_@babel+core@7.24.0_@babel+preset-env@7.24.0_@_xo2g2bdwyxr2iccu654qlqc2hi/node_modules/@rnx-kit/react-native-host`)"
+  - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
+  - ReactTestApp-Resources (from `..`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -1435,6 +1465,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  ReactNativeHost:
+    :path: "../../../node_modules/.pnpm/react-native-test-app@3.7.4_react-native@0.74.1_@babel+core@7.24.0_@babel+preset-env@7.24.0_@_xo2g2bdwyxr2iccu654qlqc2hi/node_modules/@rnx-kit/react-native-host"
+  ReactTestApp-DevSupport:
+    :path: "../node_modules/react-native-test-app"
+  ReactTestApp-Resources:
+    :path: ".."
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNSVG:
@@ -1444,7 +1480,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  callstack-repack: cbf8c428d7450053e3d46c987c5929928986f5a6
+  callstack-repack: 13c4bb5459eb864c64f3f00052877481da47d777
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FBLazyVector: 898d14d17bf19e2435cafd9ea2a1033efe445709
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
@@ -1498,12 +1534,15 @@ SPEC CHECKSUMS:
   React-runtimescheduler: e2152ed146b6a35c07386fc2ac4827b27e6aad12
   React-utils: 3285151c9d1e3a28a9586571fc81d521678c196d
   ReactCommon: f42444e384d82ab89184aed5d6f3142748b54768
+  ReactNativeHost: 76f58edded6537ed8a03cfce6327e31d667bd802
+  ReactTestApp-DevSupport: 21c31f059f9dfb146ae31469b50a4ccb5ff221f3
+  ReactTestApp-Resources: 0fa9146ee546fb7447198c96d852a56b8e3bb94a
   RNCAsyncStorage: f2add1326156dc313df59d855c11f459059e4ffd
-  RNSVG: 5aca9d537e92d2a0282f69350b5d441f23271e62
+  RNSVG: 7b44aa4df2587946e28496adf2e10a16f08c1250
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
   Yoga: b9a182ab00cf25926e7f79657d08c5d23c2d03b0
 
-PODFILE CHECKSUM: 9c707e53c2ce4ed1572c73e490ef5ab242dd35fb
+PODFILE CHECKSUM: 6d7cbe03444d5e87210979fb32a0eca299d758fe
 
-COCOAPODS: 1.14.2
+COCOAPODS: 1.15.2

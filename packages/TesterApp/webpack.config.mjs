@@ -57,17 +57,20 @@ export default (env) => {
      */
     devtool: false,
     context,
-    // commented out for now, lazy comp needs specific port to be reversed
-    // experiments: {
-    //   lazyCompilation: devServer && {
-    //     imports: true,
-    //     entries: false,
-    //   },
-    // },
-    cache: {
-      type: 'filesystem',
-      name: `${platform}-${mode}`,
-    },
+    experiments: process.env.LAZY_COMPILATION
+      ? {
+          lazyCompilation: devServer && {
+            imports: true,
+            entries: false,
+          },
+        }
+      : undefined,
+    cache: process.env.NO_CACHE
+      ? undefined
+      : {
+          type: 'filesystem',
+          name: `${platform}-${mode}`,
+        },
     /**
      * `getInitializationEntries` will return necessary entries with setup and initialization code.
      * If you don't want to use Hot Module Replacement, set `hmr` option to `false`. By default,

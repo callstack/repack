@@ -1,12 +1,21 @@
-apply from: "./resolveNodePackage.gradle"
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        google()
+    }
+}
 
-rootProject.name = 'TesterApp'
+rootProject.name = "TesterApp"
 
-def reactNativePath = resolveNodePackage('react-native', rootDir)
-def cliPlatformAndroidPath = resolveNodePackage('@react-native-community/cli-platform-android', reactNativePath)
-def gradlePluginPath = resolveNodePackage("@react-native/gradle-plugin", reactNativePath)
-
-apply from: new File(cliPlatformAndroidPath, "native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
-
-include ':app'
-includeBuild(gradlePluginPath)
+apply(from: {
+    def searchDir = rootDir.toPath()
+    do {
+        def p = searchDir.resolve("node_modules/react-native-test-app/test-app.gradle")
+        if (p.toFile().exists()) {
+            return p.toRealPath().toString()
+        }
+    } while (searchDir = searchDir.getParent())
+    throw new GradleException("Could not find `react-native-test-app`");
+}())
+applyTestAppSettings(settings)
