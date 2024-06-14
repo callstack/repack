@@ -4,14 +4,6 @@ The specific implementation of Code Splitting in your application can be differe
 
 In general, we can identify 3 main categories of implementation. All of those approaches are based on the same underlying mechanism: Re.Pack's [`ScriptManager`](../../api/repack/client/classes/ScriptManager) and the native module for it.
 
-:::caution
-
-Because Code Splitting support is based on the native module, you need to be able to compile the native code in your project, meaning you cannot use it with Expo.
-
-It might be possible to use it in an ejected Expo app, but that scenario is not officially supported.
-
-:::
-
 :::tip
 
 Use [Glossary of terms](./glossary) to better understand the content of this documentation.
