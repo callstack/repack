@@ -229,7 +229,15 @@ export class OutputPlugin implements WebpackPlugin {
       chunk: webpack.StatsChunk,
       chunks: Map<string | number, webpack.StatsChunk>
     ): Array<webpack.StatsChunk> => {
-      if (!chunk.parents?.length) return [chunk];
+      if (!chunk.parents?.length) {
+        return [chunk];
+      }
+
+      // Chunk might reference itself as a parent and/or child
+      if (chunk.parents.length === 1 && chunk.parents[0] === chunk.id) {
+        return [chunk];
+      }
+
       return chunk.parents.flatMap((parent) => {
         return getAllInitialChunks(chunks.get(parent)!, chunks);
       });
