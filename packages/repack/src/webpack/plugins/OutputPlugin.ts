@@ -233,7 +233,7 @@ export class OutputPlugin implements WebpackPlugin {
         return [chunk];
       }
 
-      // Chunk might reference itself as a parent and/or child
+      // Chunk might reference itself as a parent (and/or child)
       if (chunk.parents.length === 1 && chunk.parents[0] === chunk.id) {
         return [chunk];
       }
