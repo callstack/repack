@@ -1,5 +1,6 @@
 const path = require('path');
 const { createRequire } = require('module');
+const { startCommandOptions } = require('./src/commands/utils/commandsOptions');
 
 function getCommands() {
   let cliPath;
@@ -76,50 +77,12 @@ const commands = [
   {
     name: 'bundle',
     description: bundleCommand.description,
-    options: bundleCommand.options.concat(
-      {
-        name: '--verbose',
-        description: 'Enables verbose logging',
-      },
-      webpackConfigOption,
-      {
-        name: '--json <statsFile>',
-        description: 'Stores stats in a file.',
-        parse: (val) => path.resolve(val),
-      },
-      {
-        name: '--stats <preset>',
-        description:
-          'It instructs Webpack on how to treat the stats e.g. normal',
-      }
-    ),
+    options: startCommandOptions.concat(webpackConfigOption),
     func: require('./dist/commands/bundle').bundle,
   },
   {
     name: 'start',
-    options: startCommand.options.concat(
-      {
-        name: '--verbose',
-        description: 'Enables verbose logging',
-      },
-      {
-        name: '--silent',
-        description: 'Silents all logs to the console/stdout',
-      },
-      {
-        name: '--json',
-        description: 'Log all messages to the console/stdout in JSON format',
-      },
-      {
-        name: '--reverse-port',
-        description: 'ADB reverse port on starting devServers only for Android',
-      },
-      {
-        name: '--log-file <string>',
-        description: 'Enables file logging to specified file',
-      },
-      webpackConfigOption
-    ),
+    options: startCommandOptions.concat(webpackConfigOption),
     description: startCommand.description,
     func: require('./dist/commands/start').start,
   },

@@ -1,3 +1,5 @@
+const path = require('path');
+
 const startCommandOptions = [
   {
     name: '--cert <path>',
@@ -54,4 +56,59 @@ const startCommandOptions = [
   },
 ];
 
-export { startCommandOptions };
+const bundleCommandOptions = [
+  {
+    name: '--assets-dest <string>',
+    description:
+      'Directory name where to store assets referenced in the bundle',
+  },
+  {
+    name: '--entry-file <path>',
+    description:
+      'Path to the root JS file, either absolute or relative to JS root',
+  },
+  {
+    name: '--minify [boolean]',
+    description:
+      'Allows overriding whether bundle is minified. This defaults to false if dev is true, and true if dev is false. Disabling minification can be useful for speeding up production builds for testing purposes.',
+  },
+  {
+    name: '--dev [boolean]',
+    description:
+      'If false, warnings are disabled and the bundle is minified (default: true)',
+  },
+  {
+    name: '--bundle-output <string>',
+    description:
+      'File name where to store the resulting bundle, ex. /tmp/groups.bundle',
+  },
+
+  {
+    name: '--sourcemap-output <string>',
+    description:
+      'File name where to store the sourcemap file for resulting bundle, ex. /tmp/groups.map',
+  },
+  {
+    name: '--platform <string>',
+    description: 'Either "ios" or "android" (default: "ios")',
+  },
+  {
+    name: '--reset-cache',
+    description: 'Removes cached files (default: false)',
+  },
+  {
+    name: '--verbose',
+    description: 'Enables verbose logging',
+  },
+  {
+    name: '--json <statsFile>',
+    description: 'Stores stats in a file.',
+    parse: (val) => path.resolve(val),
+  },
+  {
+    name: '--stats <preset>',
+    description: 'It instructs Webpack on how to treat the stats e.g. normal',
+  },
+];
+
+module.exports = { startCommandOptions, bundleCommandOptions };
