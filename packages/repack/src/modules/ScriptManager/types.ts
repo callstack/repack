@@ -147,37 +147,3 @@ export interface StorageApi {
   /** Removes the item based on the key. */
   removeItem: (key: string) => Promise<void>;
 }
-
-/**
- * Internal representation of script locator data.
- *
- * @internal
- */
-export interface NormalizedScriptLocator {
-  /** HTTP method. */
-  method: 'GET' | 'POST';
-
-  /** Path-only URL to a script's location. */
-  url: string;
-
-  /** Whether to fetch script from the network or use cached one. */
-  fetch: boolean;
-
-  /** Custom timeout for script fetch requests. */
-  timeout: number;
-
-  /** Whether script's URL is an absolute FileSystem URL on a target device. */
-  absolute: boolean;
-
-  /** Query params. */
-  query?: string;
-
-  /** Request headers. */
-  headers?: Record<string, string>;
-
-  /** Request body. */
-  body?: string;
-
-  /** Whether script's signature should be verified or not */
-  verifyScriptSignature?: 'strict' | 'lax' | 'off';
-}
