@@ -57,10 +57,11 @@ const startCommandOptions = [
   },
   {
     name: '--host <string>',
-    description: '(default: "")',
+    description: 'Set the server host',
+    default: '',
   },
   {
-    name: '--http',
+    name: '--https',
     description: 'Enables https connections to the server',
   },
   {
@@ -82,11 +83,7 @@ const startCommandOptions = [
   {
     name: '--experimental-debugger',
     description:
-      "[Experimental] Enable the new debugger experience and 'j' to debug. This enables the new frontend experience only: connection reliability and some basic features are unstable in this release.",
-  },
-  {
-    name: '--verbose',
-    description: 'Enables verbose logging',
+      '[Experimental] Enable the new debugger experience. Connection reliability and some basic features are unstable in this release.',
   },
   {
     name: '--silent',
@@ -101,14 +98,14 @@ const startCommandOptions = [
     description: 'ADB reverse port on starting devServers only for Android',
   },
   {
-    name: '--log-file <string>',
+    name: '--log-file <path>',
     description: 'Enables file logging to specified file',
   },
 ];
 
 const bundleCommandOptions = [
   {
-    name: '--assets-dest <string>',
+    name: '--assets-dest <path>',
     description:
       'Directory name where to store assets referenced in the bundle',
   },
@@ -118,37 +115,33 @@ const bundleCommandOptions = [
       'Path to the root JS file, either absolute or relative to JS root',
   },
   {
-    name: '--minify [boolean]',
+    name: '--minify',
     description:
       'Allows overriding whether bundle is minified. This defaults to false if dev is true, and true if dev is false. Disabling minification can be useful for speeding up production builds for testing purposes.',
   },
   {
-    name: '--dev [boolean]',
+    name: '--dev',
     description:
       'If false, warnings are disabled and the bundle is minified (default: true)',
   },
   {
-    name: '--bundle-output <string>',
+    name: '--bundle-output <path>',
     description:
       'File name where to store the resulting bundle, ex. /tmp/groups.bundle',
   },
 
   {
-    name: '--sourcemap-output <string>',
+    name: '--sourcemap-output <path>',
     description:
       'File name where to store the sourcemap file for resulting bundle, ex. /tmp/groups.map',
   },
   {
-    name: '--platform <string>',
+    name: '--platform <path>',
     description: 'Either "ios" or "android" (default: "ios")',
   },
   {
     name: '--reset-cache',
     description: 'Removes cached files (default: false)',
-  },
-  {
-    name: '--verbose',
-    description: 'Enables verbose logging',
   },
   {
     name: '--json <statsFile>',
@@ -157,7 +150,16 @@ const bundleCommandOptions = [
   },
   {
     name: '--stats <preset>',
-    description: 'It instructs Webpack on how to treat the stats e.g. normal',
+    description:
+      'It instructs Webpack on how to treat the stats:\n' +
+      "'errors-only'  - only output when errors happen\n" +
+      "'errors-warnings' - only output errors and warnings happen\n" +
+      "'minimal' - only output when errors or new compilation happen\n" +
+      "'none' - output nothing\n" +
+      "'normal' - standard output\n" +
+      "'verbose' - output everything\n" +
+      "'detailed' - output everything except chunkModules and chunkRootModules\n" +
+      "'summary' - output webpack version, warnings count and errors count",
   },
 ];
 
