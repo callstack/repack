@@ -120,9 +120,10 @@ const bundleCommandOptions = [
       'Allows overriding whether bundle is minified. This defaults to false if dev is true, and true if dev is false. Disabling minification can be useful for speeding up production builds for testing purposes.',
   },
   {
-    name: '--dev',
+    name: '--dev [boolean]',
     description:
-      'If false, warnings are disabled and the bundle is minified (default: true)',
+      'Enables development warnings and disables production optimisations',
+    default: true,
   },
   {
     name: '--bundle-output <path>',
