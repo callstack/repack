@@ -8,6 +8,12 @@ export interface Options {
   publicPath?: string;
   remote?: {
     enabled: boolean;
+    assetPath?: (args: {
+      resourcePath: string;
+      resourceFilename: string;
+      resourceDirname: string;
+      resourceExtensionType: string;
+    }) => string;
     publicPath: string;
   };
 }
@@ -32,6 +38,7 @@ export const optionsSchema: Schema = {
       required: ['enabled', 'publicPath'],
       properties: {
         enabled: { type: 'boolean' },
+        assetPath: { instanceOf: 'Function' },
         publicPath: { type: 'string', pattern: '^https?://' },
       },
     },
