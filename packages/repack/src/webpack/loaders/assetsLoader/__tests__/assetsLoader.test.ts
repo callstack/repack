@@ -17,7 +17,12 @@ async function compileBundle(
   inline?: boolean,
   remote?: {
     enabled: boolean;
-    assetPath?: (...props: any) => string;
+    assetPath?: (args: {
+      resourcePath: string;
+      resourceFilename: string;
+      resourceDirname: string;
+      resourceExtensionType: string;
+    }) => string;
     publicPath: string;
   }
 ) {
