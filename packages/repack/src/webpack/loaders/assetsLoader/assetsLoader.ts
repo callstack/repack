@@ -168,14 +168,15 @@ export default async function repackAssetsLoader(this: LoaderContext<Options>) {
 
           destination = path.join(destination, resourceNormalizedFilename);
         } else {
-          const name = `${remoteAssetResource?.filename || resourceFilename}${
+          const name = `${remoteAssetResource?.filename ?? resourceFilename}${
             scaleKey === '@1x' ? '' : scaleKey
           }.${resourceExtensionType}`;
 
           if (options.remote?.enabled) {
             destination = path.join(
               remoteAssetsDirname,
-              remoteAssetResource?.path || resourceDirname,
+              assetsDirname,
+              remoteAssetResource?.path ?? resourceDirname,
               name
             );
           } else {
@@ -229,9 +230,9 @@ export default async function repackAssetsLoader(this: LoaderContext<Options>) {
             assets,
             assetsDirname,
             remotePublicPath: options.remote.publicPath,
-            resourceDirname: remoteAssetResource?.path || resourceDirname,
+            resourceDirname: remoteAssetResource?.path ?? resourceDirname,
             resourceExtensionType,
-            resourceFilename: remoteAssetResource?.filename || resourceFilename,
+            resourceFilename: remoteAssetResource?.filename ?? resourceFilename,
             resourcePath,
             suffixPattern,
             pathSeparatorRegexp,
