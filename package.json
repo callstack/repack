@@ -7,8 +7,8 @@
     "typecheck": "turbo run typecheck --filter=!metro-compat-test",
     "test": "turbo run test",
     "release": "pnpm build && pnpm lint && pnpm test && pnpm changeset publish",
-    "website:start": "pnpm --filter new-website run start",
-    "website:build": "pnpm --filter new-website run export",
+    "website:start": "pnpm --filter website run start",
+    "website:build": "pnpm --filter website run export",
     "TesterApp:start": "turbo run build && pnpm --filter testerapp run start",
     "TesterApp:bundle": "turbo run build && pnpm --filter testerapp run bundle"
   },
