@@ -84,6 +84,26 @@ export default async function repackAssetsLoader(this: LoaderContext<Options>) {
       this.addDependency(filenameWithScale);
     }
 
+    const remoteAssetPathOption =
+      options.remote?.enabled && options.remote?.assetPath
+        ? options.remote?.assetPath({
+            resourcePath,
+            resourceFilename,
+            resourceDirname,
+            resourceExtensionType,
+          })
+        : null;
+
+    const remoteAssetResource = remoteAssetPathOption
+      ? {
+          filename: path.basename(
+            remoteAssetPathOption,
+            `.${resourceExtensionType}`
+          ),
+          path: path.dirname(remoteAssetPathOption),
+        }
+      : null;
+
     const assets = await Promise.all<Asset>(
       scaleKeys.map(async (scaleKey) => {
         const filenameWithScale = path.join(
@@ -148,15 +168,20 @@ export default async function repackAssetsLoader(this: LoaderContext<Options>) {
 
           destination = path.join(destination, resourceNormalizedFilename);
         } else {
-          const name = `${resourceFilename}${
+          const name = `${remoteAssetResource?.filename ?? resourceFilename}${
             scaleKey === '@1x' ? '' : scaleKey
           }.${resourceExtensionType}`;
-          destination = path.join(
-            options.remote?.enabled ? remoteAssetsDirname : '',
-            assetsDirname,
-            resourceDirname,
-            name
-          );
+
+          if (options.remote?.enabled) {
+            destination = path.join(
+              remoteAssetsDirname,
+              assetsDirname,
+              remoteAssetResource?.path ?? resourceDirname,
+              name
+            );
+          } else {
+            destination = path.join(assetsDirname, resourceDirname, name);
+          }
         }
 
         return {
@@ -205,9 +230,9 @@ export default async function repackAssetsLoader(this: LoaderContext<Options>) {
             assets,
             assetsDirname,
             remotePublicPath: options.remote.publicPath,
-            resourceDirname,
+            resourceDirname: remoteAssetResource?.path ?? resourceDirname,
             resourceExtensionType,
-            resourceFilename,
+            resourceFilename: remoteAssetResource?.filename ?? resourceFilename,
             resourcePath,
             suffixPattern,
             pathSeparatorRegexp,
