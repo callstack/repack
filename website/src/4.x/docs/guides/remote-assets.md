@@ -101,3 +101,30 @@ new Repack.RepackPlugin({
 ```
 
 The final step is to upload your remote assets to your CDN, which is located at `publicPath`, and then host them from that location, which will make them available to users of your app.
+
+### Customizing Asset Path
+
+The `assetPath` option offers finer control over how remote asset paths are constructed. This feature allows you to define a custom function for modifying paths, which can be helpful if you need to apply custom naming conventions or add extra directory layers.
+Specified pattern will be applied to both the generated folder path and URL. If `assetPath` is not provided, the default pattern will be used.
+
+```ts
+
+Example:
+```ts
+remote: {
+  enabled: true,
+  publicPath: 'http://localhost:9999',
+  assetPath: ({
+   resourceFilename,
+   resourceDirname,
+   resourceExtensionType,
+  }) => {
+    const customHash = getCustomHash();
+    return `my-remote-assets/${resourceFilename}-${customHash}.${resourceExtensionType}`;
+  },
+}
+```
+would result in the following:
+
+- Generated Folder Path: my-remote-assets/logo-customhash.png
+- Generated URL: http://localhost:9999/my-remote-assets/logo-customhash.png
