@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "rsbuild-plugin-open-graph": "^1.0.0",
-    "rspress": "1.20.1",
+    "rspress": "1.25.2",
     "rspress-plugin-font-open-sans": "^1.0.0",
     "rspress-plugin-vercel-analytics": "^0.3.0"
   },
