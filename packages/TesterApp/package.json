@@ -18,7 +18,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.23.1",
     "react": "18.2.0",
-    "react-native": "0.74.1",
+    "react-native": "0.74.3",
     "react-native-svg": "15.3.0"
   },
   "devDependencies": {
@@ -36,7 +36,7 @@
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
-    "react-native-test-app": "^3.7.4",
+    "react-native-test-app": "^3.8.9",
     "prettier": "^3.2.4",
     "react-native-event-source": "^1.1.0",
     "terser-webpack-plugin": "^5.3.3",
