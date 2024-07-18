@@ -4,6 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo watch --continue build",
+    "dev:tui": "pnpm dev --ui=tui",
     "lint": "turbo run lint --filter=!metro-compat-test",
     "typecheck": "turbo run typecheck --filter=!metro-compat-test",
     "test": "turbo run test",
