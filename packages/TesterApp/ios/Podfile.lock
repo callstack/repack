@@ -1188,7 +1188,7 @@ PODS:
     - React-logger (= 0.74.3)
     - React-perflogger (= 0.74.3)
     - React-utils (= 0.74.3)
-  - ReactNativeHost (0.4.9):
+  - ReactNativeHost (0.4.10):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1215,7 +1215,7 @@ PODS:
     - React-Core
     - React-jsi
   - ReactTestApp-Resources (1.0.0-dev)
-  - RNCAsyncStorage (1.23.1):
+  - RNCAsyncStorage (1.24.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1342,7 +1342,7 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@3.8.9_react-native@0.74.3_@babel+core@7.24.0_@babel+preset-env@7.24.0_@_mf2ppxx6gl3lpvmnun7q4fqj7u/node_modules/@rnx-kit/react-native-host`)"
+  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@3.8.9_react-native@0.74.3_@babel+core@7.24.9_@babel+preset-env@7.24.8_@_5gnl7gn4qdcfat774lcowqlmbu/node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
   - ReactTestApp-Resources (from `..`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
@@ -1466,7 +1466,7 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeHost:
-    :path: "../../../node_modules/.pnpm/react-native-test-app@3.8.9_react-native@0.74.3_@babel+core@7.24.0_@babel+preset-env@7.24.0_@_mf2ppxx6gl3lpvmnun7q4fqj7u/node_modules/@rnx-kit/react-native-host"
+    :path: "../../../node_modules/.pnpm/react-native-test-app@3.8.9_react-native@0.74.3_@babel+core@7.24.9_@babel+preset-env@7.24.8_@_5gnl7gn4qdcfat774lcowqlmbu/node_modules/@rnx-kit/react-native-host"
   ReactTestApp-DevSupport:
     :path: "../node_modules/react-native-test-app"
   ReactTestApp-Resources:
@@ -1534,10 +1534,10 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 0c80752bceb80924cb8a4babc2a8e3ed70d41e87
   React-utils: a06061b3887c702235d2dac92dacbd93e1ea079e
   ReactCommon: f00e436b3925a7ae44dfa294b43ef360fbd8ccc4
-  ReactNativeHost: 76f58edded6537ed8a03cfce6327e31d667bd802
+  ReactNativeHost: fd9d65f6ee7947f468537d35b3fefe8b2bf546da
   ReactTestApp-DevSupport: 874fb27318647f43f4243c5f3a47a246db9cec12
   ReactTestApp-Resources: 0fa9146ee546fb7447198c96d852a56b8e3bb94a
-  RNCAsyncStorage: f2add1326156dc313df59d855c11f459059e4ffd
+  RNCAsyncStorage: 7907926157e7c8d10ddfee0f6b3e9a105e060acf
   RNSVG: 7b44aa4df2587946e28496adf2e10a16f08c1250
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
