@@ -53,6 +53,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
 
       // setup HMR
       new rspack.HotModuleReplacementPlugin().apply(compiler);
+      // @ts-expect-error needs upstream fix
       new RspackReactRefreshPlugin().apply(compiler);
       new rspack.EntryPlugin(
         compiler.context,
