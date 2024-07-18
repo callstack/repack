@@ -42,10 +42,8 @@
   },
   "scripts": {
     "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start",
-    "build:js:watch": "pnpm build:js --watch",
     "build:ts": "tsc --emitDeclarationOnly",
-    "build:ts:watch": "pnpm build:ts --watch --preserveWatchOutput",
-    "build": "pnpm build:js && pnpm build:ts",
+    "build": "pnpm run \"/^build:.*/\"",
     "lint": "eslint --ext \".js,.ts\" commands.js client.js src",
     "test": "jest",
     "typecheck": "tsc --noEmit",

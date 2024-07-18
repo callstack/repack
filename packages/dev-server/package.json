@@ -35,12 +35,10 @@
   },
   "scripts": {
     "build:js": "babel src --out-dir dist --extensions \".js,.cjs,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start --copy-files",
-    "build:js:watch": "pnpm build:js --watch",
     "build:ts": "tsc --emitDeclarationOnly",
-    "build:ts:watch": "pnpm build:ts --watch --preserveWatchOutput",
-    "build": "pnpm build:js && pnpm build:ts",
-    "typecheck": "tsc --noEmit",
+    "build": "pnpm run \"/^build:.*/\"",
     "lint": "eslint --ext \".js,.ts\" src",
+    "typecheck": "tsc --noEmit",
     "archive": "pnpm build && pnpm pack"
   },
   "dependencies": {
