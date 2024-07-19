@@ -73,6 +73,8 @@ type source = {
 };
 ```
 
+### Default behaviour
+
 The `uri` prop will have a value of an URL that's constructed by joining `publicPath`, 'assets' and local path to the asset together. If `publicPath` is set to https://example.com and the local path to the asset is logo.png, then the resulting `uri` value would be: `https://example.com/assets/images/logo.png`.
 
 :::info
@@ -101,3 +103,28 @@ new Repack.RepackPlugin({
 ```
 
 The final step is to upload your remote assets to your CDN, which is located at `publicPath`, and then host them from that location, which will make them available to users of your app.
+
+### Customizing Asset Path
+
+The `assetPath` option offers finer control over how remote asset paths are constructed. This feature allows you to define a custom function for modifying paths, which can be helpful if you need to apply custom naming conventions or add extra directory layers.
+Specified pattern will be applied to both the generated folder path and URL. If `assetPath` is not provided, the [default behaviour](#default-behaviour) will be used.
+
+Example:
+```ts
+remote: {
+  enabled: true,
+  publicPath: 'http://localhost:9999',
+  assetPath: ({
+   resourceFilename,
+   resourceDirname,
+   resourceExtensionType,
+  }) => {
+    const customHash = getCustomHash();
+    return `my-remote-assets/${resourceFilename}-${customHash}.${resourceExtensionType}`;
+  },
+}
+```
+would result in the following:
+
+- generated asset path: `<buildFolder>/remote-assets/assets/my-remote-assets/logo-customhash.png`
+- generated URL: `http://localhost:9999/my-remote-assets/logo-customhash.png`
