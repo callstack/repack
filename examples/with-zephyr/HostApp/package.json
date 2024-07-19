@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-masked-view/masked-view": "catalog:examples",
     "@react-navigation/native": "catalog:examples",
     "@react-navigation/native-stack": "catalog:examples",
     "react": "catalog:examples",

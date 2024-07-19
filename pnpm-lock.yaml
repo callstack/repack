@@ -37,6 +37,9 @@ catalogs:
       specifier: ^5.5.3
       version: 5.5.3
   examples:
+    '@react-native-masked-view/masked-view':
+      specifier: ^0.3.1
+      version: 0.3.1
     '@react-native/babel-preset':
       specifier: 0.74.83
       version: 0.74.83
@@ -147,6 +150,9 @@ importers:
 
   examples/with-zephyr/HostApp:
     dependencies:
+      '@react-native-masked-view/masked-view':
+        specifier: catalog:examples
+        version: 0.3.1(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       '@react-navigation/native':
         specifier: catalog:examples
         version: 6.1.18(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
@@ -208,6 +214,9 @@ importers:
 
   examples/with-zephyr/MiniApp:
     dependencies:
+      '@react-native-masked-view/masked-view':
+        specifier: catalog:examples
+        version: 0.3.1(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       '@react-navigation/native':
         specifier: catalog:examples
         version: 6.1.18(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
@@ -1940,6 +1949,12 @@ packages:
     resolution: {integrity: sha512-hFJL4cgLPxncJJd/epQ4dHnMg5Jy/7Q56jFvA3MHViuKpzzfTCJCB+pGY54maZbtym53UJON9WTGpM3S81UfjQ==}
     engines: {node: '>=18'}
     hasBin: true
+
+  '@react-native-masked-view/masked-view@0.3.1':
+    resolution: {integrity: sha512-uVm8U6nwFIlUd1iDIB5cS+lDadApKR+l8k4k84d9hn+GN4lzAIJhUZ9syYX7c022MxNgAlbxoFLt0pqKoyaAGg==}
+    peerDependencies:
+      react: '>=16'
+      react-native: '>=0.57'
 
   '@react-native/assets-registry@0.74.85':
     resolution: {integrity: sha512-59YmIQxfGDw4aP9S/nAM+sjSFdW8fUP6fsqczCcXgL2YVEjyER9XCaUT0J1K+PdHep8pi05KUgIKUds8P3jbmA==}
@@ -9960,6 +9975,11 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
+
+  '@react-native-masked-view/masked-view@0.3.1(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      react: 18.2.0
+      react-native: 0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0)
 
   '@react-native/assets-registry@0.74.85': {}
 

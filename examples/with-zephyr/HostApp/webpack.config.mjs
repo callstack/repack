@@ -93,6 +93,34 @@ export default (env) => {
       rules: [
         Repack.REACT_NATIVE_LOADING_RULES,
         Repack.NODE_MODULES_LOADING_RULES,
+        /** Handle masked view which has flow */
+        {
+          test: /\.jsx?$/,
+          include: [
+            /node_modules(.*[/\\])+@react-native-masked-view\+masked-view@/,
+          ],
+          use: [
+            {
+              loader: 'builtin:swc-loader',
+              options: {
+                env: {
+                  targets: { 'react-native': '0.74' },
+                },
+                jsc: {
+                  externalHelpers: true,
+                  parser: { syntax: 'ecmascript', jsx: true },
+                },
+                module: {
+                  type: 'commonjs',
+                  strict: false,
+                  strictMode: false,
+                },
+              },
+            },
+            { loader: '@callstack/repack/flow-loader' },
+          ],
+          type: 'javascript/auto',
+        },
         /** Here you can adjust loader that will process your files. */
         {
           test: /\.[jt]sx?$/,
@@ -161,6 +189,41 @@ export default (env) => {
           bundleFilename,
           sourceMapFilename,
           assetsPath,
+        },
+      }),
+      new Repack.plugins.ModuleFederationPlugin({
+        name: 'HostApp',
+        shared: {
+          react: {
+            singleton: true,
+            eager: true,
+            requiredVersion: '18.2.0',
+          },
+          'react-native': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '0.74.3',
+          },
+          '@react-navigation/native': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '^6.1.18',
+          },
+          '@react-navigation/native-stack': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '^6.10.1',
+          },
+          'react-native-safe-area-context': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '^4.10.8',
+          },
+          'react-native-screens': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '^3.32.0',
+          },
         },
       }),
     ],

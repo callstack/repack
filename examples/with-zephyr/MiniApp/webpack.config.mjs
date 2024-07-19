@@ -20,6 +20,9 @@ const { resolve } = createRequire(import.meta.url);
  * @param env Environment options passed from either Webpack CLI or React Native CLI
  *            when running with `react-native start/bundle`.
  */
+
+const STANDALONE = Boolean(process.env.STANDALONE);
+
 export default (env) => {
   const {
     mode = 'development',
@@ -93,6 +96,33 @@ export default (env) => {
       rules: [
         Repack.REACT_NATIVE_LOADING_RULES,
         Repack.NODE_MODULES_LOADING_RULES,
+        {
+          test: /\.jsx?$/,
+          include: [
+            /node_modules(.*[/\\])+@react-native-masked-view\+masked-view@/,
+          ],
+          use: [
+            {
+              loader: 'builtin:swc-loader',
+              options: {
+                env: {
+                  targets: { 'react-native': '0.74' },
+                },
+                jsc: {
+                  externalHelpers: true,
+                  parser: { syntax: 'ecmascript', jsx: true },
+                },
+                module: {
+                  type: 'commonjs',
+                  strict: false,
+                  strictMode: false,
+                },
+              },
+            },
+            { loader: '@callstack/repack/flow-loader' },
+          ],
+          type: 'javascript/auto',
+        },
         /** Here you can adjust loader that will process your files. */
         {
           test: /\.[jt]sx?$/,
@@ -161,6 +191,44 @@ export default (env) => {
           bundleFilename,
           sourceMapFilename,
           assetsPath,
+        },
+      }),
+      new Repack.plugins.ModuleFederationPlugin({
+        name: 'MiniApp',
+        exposes: {
+          './MiniAppNavigator': './src/navigation/MainNavigator',
+        },
+        shared: {
+          react: {
+            singleton: true,
+            eager: STANDALONE,
+            requiredVersion: '18.2.0',
+          },
+          'react-native': {
+            singleton: true,
+            eager: STANDALONE,
+            requiredVersion: '0.74.3',
+          },
+          '@react-navigation/native': {
+            singleton: true,
+            eager: STANDALONE,
+            requiredVersion: '^6.1.18',
+          },
+          '@react-navigation/native-stack': {
+            singleton: true,
+            eager: STANDALONE,
+            requiredVersion: '^6.10.1',
+          },
+          'react-native-safe-area-context': {
+            singleton: true,
+            eager: STANDALONE,
+            requiredVersion: '^4.10.8',
+          },
+          'react-native-screens': {
+            singleton: true,
+            eager: STANDALONE,
+            requiredVersion: '^3.32.0',
+          },
         },
       }),
     ],
