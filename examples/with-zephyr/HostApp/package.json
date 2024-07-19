@@ -10,16 +10,20 @@
     "test": "jest"
   },
   "dependencies": {
-    "react": "catalog:",
-    "react-native": "catalog:"
+    "@react-navigation/native": "catalog:examples",
+    "@react-navigation/native-stack": "catalog:examples",
+    "react": "catalog:examples",
+    "react-native": "catalog:examples",
+    "react-native-safe-area-context": "catalog:examples",
+    "react-native-screens": "catalog:examples"
   },
   "devDependencies": {
     "@babel/core": "catalog:",
     "@babel/preset-env": "catalog:",
     "@babel/runtime": "catalog:",
     "@callstack/repack": "workspace:*",
-    "@react-native/babel-preset": "catalog:",
-    "@react-native/typescript-config": "catalog:",
+    "@react-native/babel-preset": "catalog:examples",
+    "@react-native/typescript-config": "catalog:examples",
     "@rspack/core": "catalog:",
     "@rspack/plugin-react-refresh": "catalog:",
     "@swc/helpers": "catalog:",
