@@ -127,4 +127,4 @@ remote: {
 would result in the following:
 
 - generated asset path: `<buildFolder>/remote-assets/assets/my-remote-assets/logo-customhash.png`
-- generated URL: http://localhost:9999/my-remote-assets/logo-customhash.png
+- generated URL: `http://localhost:9999/my-remote-assets/logo-customhash.png`
