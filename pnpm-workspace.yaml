@@ -6,3 +6,24 @@ packages:
   - "packages/init"
   - "website"
   - "metro-compat-test"
+  - "examples/with-zephyr/*"
+
+catalog:
+  "react": "18.2.0"
+  "react-native": "0.74.3"
+  # RN dev
+  "@react-native/babel-preset": "0.74.83"
+  "@react-native/eslint-config": "0.74.83"
+  "@react-native/typescript-config": "0.74.83"
+  # babel
+  "@babel/cli": "^7.23.9"
+  "@babel/core": "^7.23.9"
+  "@babel/preset-env": "^7.23.9"
+  "@babel/preset-typescript": "^7.23.3"
+  "@babel/runtime": "^7.23.9"
+  # bin
+  "eslint": "^8.57.0"
+  "prettier": "^3.2.4"
+  "typescript": "^5.5.3"
+  # types
+  "@types/react": "^18.2.6"

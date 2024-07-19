@@ -4,6 +4,39 @@ settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@babel/core':
+      specifier: ^7.23.9
+      version: 7.24.9
+    '@babel/preset-env':
+      specifier: ^7.23.9
+      version: 7.24.8
+    '@babel/runtime':
+      specifier: ^7.23.9
+      version: 7.24.8
+    '@react-native/babel-preset':
+      specifier: 0.74.83
+      version: 0.74.83
+    '@react-native/typescript-config':
+      specifier: 0.74.83
+      version: 0.74.83
+    '@types/react':
+      specifier: ^18.2.6
+      version: 18.3.3
+    prettier:
+      specifier: ^3.2.4
+      version: 3.3.3
+    react:
+      specifier: 18.2.0
+      version: 18.2.0
+    react-native:
+      specifier: 0.74.3
+      version: 0.74.3
+    typescript:
+      specifier: ^5.5.3
+      version: 5.5.3
+
 importers:
 
   .:
@@ -85,6 +118,40 @@ importers:
         version: 2.0.7
       typescript:
         specifier: ^5.5.3
+        version: 5.5.3
+
+  examples/with-zephyr/HostApp:
+    dependencies:
+      react:
+        specifier: 'catalog:'
+        version: 18.2.0
+      react-native:
+        specifier: 'catalog:'
+        version: 0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0)
+    devDependencies:
+      '@babel/core':
+        specifier: 'catalog:'
+        version: 7.24.9
+      '@babel/preset-env':
+        specifier: 'catalog:'
+        version: 7.24.8(@babel/core@7.24.9)
+      '@babel/runtime':
+        specifier: 'catalog:'
+        version: 7.24.8
+      '@react-native/babel-preset':
+        specifier: 'catalog:'
+        version: 0.74.83(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))
+      '@react-native/typescript-config':
+        specifier: 'catalog:'
+        version: 0.74.83
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.3
+      prettier:
+        specifier: 'catalog:'
+        version: 3.3.3
+      typescript:
+        specifier: 'catalog:'
         version: 5.5.3
 
   metro-compat-test:
@@ -470,13 +537,13 @@ importers:
         version: 1.0.1(@rsbuild/core@0.7.8)
       rspress:
         specifier: 1.25.2
-        version: 1.25.2(webpack@5.93.0)
+        version: 1.25.2(@swc/helpers@0.5.11)(webpack@5.93.0)
       rspress-plugin-font-open-sans:
         specifier: ^1.0.0
         version: 1.0.0
       rspress-plugin-vercel-analytics:
         specifier: ^0.3.0
-        version: 0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.93.0))
+        version: 0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.93.0))
     devDependencies:
       '@types/node':
         specifier: ^18
@@ -9983,7 +10050,7 @@ snapshots:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       '@swc/helpers': 0.5.3
       core-js: 3.36.1
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
       postcss: 8.4.39
 
   '@rsbuild/core@1.0.0-alpha.9':
@@ -9997,29 +10064,40 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)':
+  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)':
+  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
       '@rspack/plugin-react-refresh': 0.7.3(react-refresh@0.14.2)
       react-refresh: 0.14.2
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)':
+  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
       loader-utils: 2.0.4
       postcss: 8.4.39
       sass-embedded: 1.77.8
+    transitivePeerDependencies:
+      - '@swc/helpers'
+
+  '@rsbuild/shared@0.7.8(@swc/helpers@0.5.11)':
+    dependencies:
+      '@rspack/core': 0.7.3(@swc/helpers@0.5.11)
+      caniuse-lite: 1.0.30001642
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.11))
+      postcss: 8.4.39
+    optionalDependencies:
+      fsevents: 2.3.3
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -10027,7 +10105,7 @@ snapshots:
     dependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       caniuse-lite: 1.0.30001642
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
       postcss: 8.4.39
     optionalDependencies:
       fsevents: 2.3.3
@@ -10287,6 +10365,16 @@ snapshots:
       '@rspack/binding-win32-ia32-msvc': 1.0.0-alpha.5
       '@rspack/binding-win32-x64-msvc': 1.0.0-alpha.5
 
+  '@rspack/core@0.7.3(@swc/helpers@0.5.11)':
+    dependencies:
+      '@module-federation/runtime-tools': 0.1.6
+      '@rspack/binding': 0.7.3
+      caniuse-lite: 1.0.30001642
+      tapable: 2.2.1
+      webpack-sources: 3.2.3
+    optionalDependencies:
+      '@swc/helpers': 0.5.11
+
   '@rspack/core@0.7.3(@swc/helpers@0.5.3)':
     dependencies:
       '@module-federation/runtime-tools': 0.1.6
@@ -10330,7 +10418,7 @@ snapshots:
     optionalDependencies:
       react-refresh: 0.14.2
 
-  '@rspress/core@1.25.2(webpack@5.93.0)':
+  '@rspress/core@1.25.2(@swc/helpers@0.5.11)(webpack@5.93.0)':
     dependencies:
       '@loadable/component': 5.16.4(react@18.2.0)
       '@mdx-js/loader': 2.3.0(webpack@5.93.0)
@@ -10338,9 +10426,9 @@ snapshots:
       '@mdx-js/react': 2.3.0(react@18.2.0)
       '@modern-js/utils': 2.54.5
       '@rsbuild/core': 0.7.8
-      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)
-      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)
-      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
+      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
+      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
       '@rspress/mdx-rs': 0.5.7
       '@rspress/plugin-auto-nav-sidebar': 1.25.2
       '@rspress/plugin-container-syntax': 1.25.2
@@ -13117,7 +13205,11 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
-  html-rspack-plugin@5.7.2(@rspack/core@0.7.3):
+  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.11)):
+    optionalDependencies:
+      '@rspack/core': 0.7.3(@swc/helpers@0.5.11)
+
+  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3)):
     optionalDependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
 
@@ -15861,7 +15953,7 @@ snapshots:
     dependencies:
       fs-extra: 11.2.0
 
-  rspress-plugin-devkit@0.3.0(rspress@1.25.2(webpack@5.93.0)):
+  rspress-plugin-devkit@0.3.0(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.93.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@types/estree-jsx': 1.0.5
@@ -15876,7 +15968,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
       mdast-util-to-string: 4.0.0
       remark-mdc: 1.2.0
-      rspress: 1.25.2(webpack@5.93.0)
+      rspress: 1.25.2(@swc/helpers@0.5.11)(webpack@5.93.0)
       ts-morph: 22.0.0
       unified: 10.1.2
       unist-util-visit: 5.0.0
@@ -15889,21 +15981,21 @@ snapshots:
 
   rspress-plugin-font-open-sans@1.0.0: {}
 
-  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.93.0)):
+  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.93.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@vercel/analytics': 1.3.1(react@18.2.0)
-      rspress: 1.25.2(webpack@5.93.0)
-      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(webpack@5.93.0))
+      rspress: 1.25.2(@swc/helpers@0.5.11)(webpack@5.93.0)
+      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.93.0))
     transitivePeerDependencies:
       - next
       - react
       - supports-color
 
-  rspress@1.25.2(webpack@5.93.0):
+  rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.93.0):
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rspress/core': 1.25.2(webpack@5.93.0)
+      '@rspress/core': 1.25.2(@swc/helpers@0.5.11)(webpack@5.93.0)
       '@rspress/shared': 1.25.2
       cac: 6.7.14
       chalk: 5.3.0
