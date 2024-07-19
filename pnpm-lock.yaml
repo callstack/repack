@@ -154,6 +154,40 @@ importers:
         specifier: 'catalog:'
         version: 5.5.3
 
+  examples/with-zephyr/MiniApp:
+    dependencies:
+      react:
+        specifier: 'catalog:'
+        version: 18.2.0
+      react-native:
+        specifier: 'catalog:'
+        version: 0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0)
+    devDependencies:
+      '@babel/core':
+        specifier: 'catalog:'
+        version: 7.24.9
+      '@babel/preset-env':
+        specifier: 'catalog:'
+        version: 7.24.8(@babel/core@7.24.9)
+      '@babel/runtime':
+        specifier: 'catalog:'
+        version: 7.24.8
+      '@react-native/babel-preset':
+        specifier: 'catalog:'
+        version: 0.74.83(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))
+      '@react-native/typescript-config':
+        specifier: 'catalog:'
+        version: 0.74.83
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.3
+      prettier:
+        specifier: 'catalog:'
+        version: 3.3.3
+      typescript:
+        specifier: 'catalog:'
+        version: 5.5.3
+
   metro-compat-test:
     devDependencies:
       '@callstack/repack':
