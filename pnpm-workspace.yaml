@@ -21,6 +21,11 @@ catalog:
   "@babel/preset-env": "^7.23.9"
   "@babel/preset-typescript": "^7.23.3"
   "@babel/runtime": "^7.23.9"
+  # swc
+  "@swc/helpers": "^0.5.12"
+  # rspack
+  "@rspack/core": "1.0.0-alpha.5"
+  "@rspack/plugin-react-refresh": "1.0.0-alpha.5"
   # bin
   "eslint": "^8.57.0"
   "prettier": "^3.2.4"

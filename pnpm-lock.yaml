@@ -21,6 +21,15 @@ catalogs:
     '@react-native/typescript-config':
       specifier: 0.74.83
       version: 0.74.83
+    '@rspack/core':
+      specifier: 1.0.0-alpha.5
+      version: 1.0.0-alpha.5
+    '@rspack/plugin-react-refresh':
+      specifier: 1.0.0-alpha.5
+      version: 1.0.0-alpha.5
+    '@swc/helpers':
+      specifier: ^0.5.12
+      version: 0.5.12
     '@types/jest':
       specifier: ^29.5.12
       version: 29.5.12
@@ -141,12 +150,24 @@ importers:
       '@babel/runtime':
         specifier: 'catalog:'
         version: 7.24.8
+      '@callstack/repack':
+        specifier: workspace:*
+        version: link:../../../packages/repack
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.74.83(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))
       '@react-native/typescript-config':
         specifier: 'catalog:'
         version: 0.74.83
+      '@rspack/core':
+        specifier: 'catalog:'
+        version: 1.0.0-alpha.5(@swc/helpers@0.5.12)
+      '@rspack/plugin-react-refresh':
+        specifier: 'catalog:'
+        version: 1.0.0-alpha.5(react-refresh@0.14.2)
+      '@swc/helpers':
+        specifier: 'catalog:'
+        version: 0.5.12
       '@types/jest':
         specifier: 'catalog:'
         version: 29.5.12
@@ -178,12 +199,24 @@ importers:
       '@babel/runtime':
         specifier: 'catalog:'
         version: 7.24.8
+      '@callstack/repack':
+        specifier: workspace:*
+        version: link:../../../packages/repack
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.74.83(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))
       '@react-native/typescript-config':
         specifier: 'catalog:'
         version: 0.74.83
+      '@rspack/core':
+        specifier: 'catalog:'
+        version: 1.0.0-alpha.5(@swc/helpers@0.5.12)
+      '@rspack/plugin-react-refresh':
+        specifier: 'catalog:'
+        version: 1.0.0-alpha.5(react-refresh@0.14.2)
+      '@swc/helpers':
+        specifier: 'catalog:'
+        version: 0.5.12
       '@types/jest':
         specifier: 'catalog:'
         version: 29.5.12
@@ -2432,6 +2465,9 @@ packages:
 
   '@swc/helpers@0.5.11':
     resolution: {integrity: sha512-YNlnKRWF2sVojTpIyzwou9XoTNbzbzONwRhOoniEioF1AtaitTvVZblaQRrAzChWQ1bLYyYSWzM18y4WwgzJ+A==}
+
+  '@swc/helpers@0.5.12':
+    resolution: {integrity: sha512-KMZNXiGibsW9kvZAO1Pam2JPTDBm+KSHMMHWdsyI/1DbIZjT2A6Gy3hblVXUMEDvUAKq+e0vL0X0o54owWji7g==}
 
   '@swc/helpers@0.5.3':
     resolution: {integrity: sha512-FaruWX6KdudYloq1AHD/4nU+UsMTdNE8CKyrseXWEcgjDAbvkwJg2QGPAnfIJLIWsjZOSPLOAykK6fuYp4vp4A==}
@@ -10425,6 +10461,15 @@ snapshots:
     optionalDependencies:
       '@swc/helpers': 0.5.11
 
+  '@rspack/core@1.0.0-alpha.5(@swc/helpers@0.5.12)':
+    dependencies:
+      '@module-federation/runtime-tools': 0.2.3
+      '@rspack/binding': 1.0.0-alpha.5
+      '@rspack/lite-tapable': 1.0.0-alpha.5
+      caniuse-lite: 1.0.30001642
+    optionalDependencies:
+      '@swc/helpers': 0.5.12
+
   '@rspack/lite-tapable@1.0.0-alpha.3': {}
 
   '@rspack/lite-tapable@1.0.0-alpha.5': {}
@@ -10719,6 +10764,10 @@ snapshots:
       - typescript
 
   '@swc/helpers@0.5.11':
+    dependencies:
+      tslib: 2.6.3
+
+  '@swc/helpers@0.5.12':
     dependencies:
       tslib: 2.6.3
 
