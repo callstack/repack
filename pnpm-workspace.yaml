@@ -26,4 +26,5 @@ catalog:
   "prettier": "^3.2.4"
   "typescript": "^5.5.3"
   # types
+  "@types/jest": "^29.5.12"
   "@types/react": "^18.2.6"

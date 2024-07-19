@@ -19,6 +19,7 @@
     "@babel/runtime": "catalog:",
     "@react-native/babel-preset": "catalog:",
     "@react-native/typescript-config": "catalog:",
+    "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
