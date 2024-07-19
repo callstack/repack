@@ -14,6 +14,7 @@ export interface RepackTargetPluginConfig
    * Useful if you want to built for out-of-tree platforms.
    */
   initializeCoreLocation?: string;
+  entryName?: string | null;
 }
 
 /**
@@ -61,26 +62,29 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     compiler.options.output.chunkFormat = 'array-push';
     compiler.options.output.globalObject = globalObject;
 
-    const reactNativePath = this.getReactNativePath(
-      compiler.options.resolve.alias?.['react-native']
-    );
+    // Don't inject additional runtime entries for remotes
+    if (this.config?.entryName !== null) {
+      const reactNativePath = this.getReactNativePath(
+        compiler.options.resolve.alias?.['react-native']
+      );
 
-    const getReactNativePolyfills = require(
-      path.join(reactNativePath, 'rn-get-polyfills.js')
-    );
+      const getReactNativePolyfills = require(
+        path.join(reactNativePath, 'rn-get-polyfills.js')
+      );
 
-    const entries = [
-      ...getReactNativePolyfills(),
-      this.config?.initializeCoreLocation ||
-        path.join(reactNativePath, 'Libraries/Core/InitializeCore.js'),
-      require.resolve('../../../modules/configurePublicPath'),
-    ];
+      const entries = [
+        ...getReactNativePolyfills(),
+        this.config?.initializeCoreLocation ||
+          path.join(reactNativePath, 'Libraries/Core/InitializeCore.js'),
+        require.resolve('../../../modules/configurePublicPath'),
+      ];
 
-    // Add React-Native entries
-    for (const entry of entries) {
-      new rspack.EntryPlugin(compiler.context, entry, {
-        name: undefined,
-      }).apply(compiler);
+      // Add React-Native entries
+      for (const entry of entries) {
+        new rspack.EntryPlugin(compiler.context, entry, {
+          name: undefined,
+        }).apply(compiler);
+      }
     }
 
     // Normalize global object.

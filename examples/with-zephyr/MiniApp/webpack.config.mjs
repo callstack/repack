@@ -49,7 +49,7 @@ export default (env) => {
      */
     devtool: false,
     context,
-    entry,
+    entry: STANDALONE ? entry : {},
     resolve: {
       /**
        * `getResolveOptions` returns additional resolution configuration for React Native.
@@ -82,6 +82,7 @@ export default (env) => {
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
+      uniqueName: 'MiniApp-1',
     },
     /**
      * Configures optimization of the built bundle.
@@ -187,6 +188,7 @@ export default (env) => {
         mode,
         platform,
         devServer,
+        entryName: STANDALONE ? undefined : null,
         output: {
           bundleFilename,
           sourceMapFilename,
@@ -207,6 +209,11 @@ export default (env) => {
           'react-native': {
             singleton: true,
             eager: STANDALONE,
+            requiredVersion: '0.74.3',
+          },
+          'react-native/Libraries/Core/Devtools/getDevServer': {
+            singleton: true,
+            eager: true,
             requiredVersion: '0.74.3',
           },
           '@react-navigation/native': {

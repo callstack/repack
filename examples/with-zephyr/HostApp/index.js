@@ -27,4 +27,28 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
   }
 });
 
+// ScriptManager.shared.on('resolving', (...args) => {
+//   console.log('DEBUG/resolving', ...args);
+// });
+
+// ScriptManager.shared.on('resolved', (...args) => {
+//   console.log('DEBUG/resolved', ...args);
+// });
+
+// ScriptManager.shared.on('prefetching', (...args) => {
+//   console.log('DEBUG/prefetching', ...args);
+// });
+
+// ScriptManager.shared.on('loading', (...args) => {
+//   console.log('DEBUG/loading', ...args);
+// });
+
+// ScriptManager.shared.on('loaded', (...args) => {
+//   console.log('DEBUG/loaded', ...args);
+// });
+
+// ScriptManager.shared.on('error', (...args) => {
+//   console.log('DEBUG/error', ...args);
+// });
+
 AppRegistry.registerComponent(appName, () => App);

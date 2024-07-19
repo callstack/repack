@@ -43,11 +43,13 @@ void NativeScriptLoader::evaluateJavascriptAsync(
     try {
       rt->evaluateJavaScript(std::make_unique<jsi::StringBuffer>(std::move(source)), std::move(sourceUrl));
       resolve(promiseRef.get(), nullptr);
-    } catch (std::exception &e) {
+    } catch (JniException& e) {
+      local_ref<JThrowable> underlying = e.getThrowable();
+      const char* msg = e.what();
       reject(
           promiseRef.get(),
           jni::make_jstring("ScriptEvalFailure").get(),
-          jni::make_jstring("Failed to evaluate Javascript").get());
+          jni::make_jstring(msg).get());
     }
   });
 };

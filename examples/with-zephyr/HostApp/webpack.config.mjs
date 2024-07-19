@@ -79,6 +79,7 @@ export default (env) => {
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
+      uniqueName: 'HostApp-1',
     },
     /**
      * Configures optimization of the built bundle.

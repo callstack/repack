@@ -133,22 +133,27 @@ export class RepackPlugin implements RspackPluginInstance {
       __DEV__: JSON.stringify(this.config.mode === 'development'),
     }).apply(compiler);
 
-    new OutputPlugin({
-      platform: this.config.platform,
-      enabled: !this.config.devServer,
-      context: this.config.context,
-      output: this.config.output,
-      entryName: this.config.entryName,
-      extraChunks: this.config.extraChunks,
-    }).apply(compiler);
+    // disable OutputPlugin for remotes for now
+    if (this.config.entryName !== null) {
+      new OutputPlugin({
+        platform: this.config.platform,
+        enabled: false,
+        context: this.config.context,
+        output: this.config.output,
+        entryName: this.config.entryName,
+        extraChunks: this.config.extraChunks,
+      }).apply(compiler);
+    }
 
     new RepackTargetPlugin({
+      entryName: this.config.entryName,
       hmr: this.config.devServer?.hmr,
     }).apply(compiler);
 
     new DevelopmentPlugin({
       platform: this.config.platform,
       devServer: this.config.devServer,
+      entryName: this.config.entryName,
     }).apply(compiler);
 
     if (this.config.sourceMaps) {

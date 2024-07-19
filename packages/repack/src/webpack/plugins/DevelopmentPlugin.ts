@@ -8,6 +8,7 @@ import type { DevServerOptions } from '../../types';
 export interface DevelopmentPluginConfig {
   platform: string;
   devServer?: DevServerOptions;
+  entryName?: string | null;
 }
 
 /**
@@ -53,13 +54,17 @@ export class DevelopmentPlugin implements RspackPluginInstance {
 
       // setup HMR
       new rspack.HotModuleReplacementPlugin().apply(compiler);
+      // @ts-ignore
       new RspackReactRefreshPlugin().apply(compiler);
-      new rspack.EntryPlugin(
-        compiler.context,
-        require.resolve('../../modules/WebpackHMRClient'),
-        { name: undefined }
-      ).apply(compiler);
 
+      // dont inject WebpackHMRClient for remotes for now
+      if (this.config.entryName !== null) {
+        new rspack.EntryPlugin(
+          compiler.context,
+          require.resolve('../../modules/WebpackHMRClient'),
+          { name: undefined }
+        ).apply(compiler);
+      }
       // TODO Bring back lazy compilation when it's implemented in rspack
     }
   }

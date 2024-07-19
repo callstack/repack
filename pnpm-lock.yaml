@@ -37,33 +37,12 @@ catalogs:
       specifier: ^5.5.3
       version: 5.5.3
   examples:
-    '@react-native-masked-view/masked-view':
-      specifier: ^0.3.1
-      version: 0.3.1
     '@react-native/babel-preset':
       specifier: 0.74.83
       version: 0.74.83
     '@react-native/typescript-config':
       specifier: 0.74.83
       version: 0.74.83
-    '@react-navigation/native':
-      specifier: ^6.1.18
-      version: 6.1.18
-    '@react-navigation/native-stack':
-      specifier: ^6.10.1
-      version: 6.10.1
-    react:
-      specifier: 18.2.0
-      version: 18.2.0
-    react-native:
-      specifier: 0.74.3
-      version: 0.74.3
-    react-native-safe-area-context:
-      specifier: ^4.10.8
-      version: 4.10.8
-    react-native-screens:
-      specifier: ^3.32.0
-      version: 3.32.0
 
 importers:
 
@@ -151,25 +130,25 @@ importers:
   examples/with-zephyr/HostApp:
     dependencies:
       '@react-native-masked-view/masked-view':
-        specifier: catalog:examples
+        specifier: ^0.3.1
         version: 0.3.1(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       '@react-navigation/native':
-        specifier: catalog:examples
+        specifier: ^6.1.18
         version: 6.1.18(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       '@react-navigation/native-stack':
-        specifier: catalog:examples
+        specifier: ^6.10.1
         version: 6.10.1(@react-navigation/native@6.1.18(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0))(react-native-safe-area-context@4.10.8(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0))(react-native-screens@3.32.0(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0))(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       react:
-        specifier: catalog:examples
+        specifier: 18.2.0
         version: 18.2.0
       react-native:
-        specifier: catalog:examples
+        specifier: 0.74.3
         version: 0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0)
       react-native-safe-area-context:
-        specifier: catalog:examples
+        specifier: ^4.10.8
         version: 4.10.8(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       react-native-screens:
-        specifier: catalog:examples
+        specifier: ^3.32.0
         version: 3.32.0(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
     devDependencies:
       '@babel/core':
@@ -184,6 +163,9 @@ importers:
       '@callstack/repack':
         specifier: workspace:*
         version: link:../../../packages/repack
+      '@module-federation/runtime':
+        specifier: ^0.2.6
+        version: 0.2.6
       '@react-native/babel-preset':
         specifier: catalog:examples
         version: 0.74.83(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))
@@ -215,25 +197,25 @@ importers:
   examples/with-zephyr/MiniApp:
     dependencies:
       '@react-native-masked-view/masked-view':
-        specifier: catalog:examples
+        specifier: ^0.3.1
         version: 0.3.1(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       '@react-navigation/native':
-        specifier: catalog:examples
+        specifier: ^6.1.18
         version: 6.1.18(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       '@react-navigation/native-stack':
-        specifier: catalog:examples
+        specifier: ^6.10.1
         version: 6.10.1(@react-navigation/native@6.1.18(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0))(react-native-safe-area-context@4.10.8(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0))(react-native-screens@3.32.0(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0))(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       react:
-        specifier: catalog:examples
+        specifier: 18.2.0
         version: 18.2.0
       react-native:
-        specifier: catalog:examples
+        specifier: 0.74.3
         version: 0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0)
       react-native-safe-area-context:
-        specifier: catalog:examples
+        specifier: ^4.10.8
         version: 4.10.8(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       react-native-screens:
-        specifier: catalog:examples
+        specifier: ^3.32.0
         version: 3.32.0(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
     devDependencies:
       '@babel/core':
@@ -248,6 +230,9 @@ importers:
       '@callstack/repack':
         specifier: workspace:*
         version: link:../../../packages/repack
+      '@module-federation/runtime':
+        specifier: ^0.2.6
+        version: 0.2.6
       '@react-native/babel-preset':
         specifier: catalog:examples
         version: 0.74.83(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))
@@ -659,13 +644,13 @@ importers:
         version: 1.0.1(@rsbuild/core@0.7.8)
       rspress:
         specifier: 1.25.2
-        version: 1.25.2(webpack@5.93.0)
+        version: 1.25.2(@swc/helpers@0.5.12)(webpack@5.93.0)
       rspress-plugin-font-open-sans:
         specifier: ^1.0.0
         version: 1.0.0
       rspress-plugin-vercel-analytics:
         specifier: ^0.3.0
-        version: 0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.93.0))
+        version: 0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.12)(webpack@5.93.0))
     devDependencies:
       '@types/node':
         specifier: ^18
@@ -1823,11 +1808,17 @@ packages:
   '@module-federation/runtime@0.2.3':
     resolution: {integrity: sha512-N+ZxBUb1mkmfO9XT1BwgYQgShtUTlijHbukqQ4afFka5lRAT+ayC7RKfHJLz0HbuexKPCmPBDfdmCnErR5WyTQ==}
 
+  '@module-federation/runtime@0.2.6':
+    resolution: {integrity: sha512-G0vIZC6H5cmAa71vu7163CmnYFoZ5rAUDqYqQMMFLJ7ndw+QtrB3FLkgG99Smr+HTZECpt3s8HX7A40eHhTRUA==}
+
   '@module-federation/sdk@0.1.6':
     resolution: {integrity: sha512-qifXpyYLM7abUeEOIfv0oTkguZgRZuwh89YOAYIZJlkP6QbRG7DJMQvtM8X2yHXm9PTk0IYNnOJH0vNQCo6auQ==}
 
   '@module-federation/sdk@0.2.3':
     resolution: {integrity: sha512-W9zrPchLocyCBc/B8CW21akcfJXLl++9xBe1L1EtgxZGfj/xwHt0GcBWE/y+QGvYTL2a1iZjwscbftbUhxgxXg==}
+
+  '@module-federation/sdk@0.2.6':
+    resolution: {integrity: sha512-PvMWzEILKRKrmB3olRWNTfCJVoNHbDMa1l3/mE4eZUlerTjeP+H5QIxHXstFz7679WZ1Cq/cMrku/L+jP6NXxw==}
 
   '@module-federation/webpack-bundler-runtime@0.1.6':
     resolution: {integrity: sha512-K5WhKZ4RVNaMEtfHsd/9CNCgGKB0ipbm/tgweNNeC11mEuBTNxJ09Y630vg3WPkKv9vfMCuXg2p2Dk+Q/KWTSA==}
@@ -9605,9 +9596,15 @@ snapshots:
     dependencies:
       '@module-federation/sdk': 0.2.3
 
+  '@module-federation/runtime@0.2.6':
+    dependencies:
+      '@module-federation/sdk': 0.2.6
+
   '@module-federation/sdk@0.1.6': {}
 
   '@module-federation/sdk@0.2.3': {}
+
+  '@module-federation/sdk@0.2.6': {}
 
   '@module-federation/webpack-bundler-runtime@0.1.6':
     dependencies:
@@ -10303,7 +10300,7 @@ snapshots:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       '@swc/helpers': 0.5.3
       core-js: 3.36.1
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
       postcss: 8.4.39
 
   '@rsbuild/core@1.0.0-alpha.9':
@@ -10317,29 +10314,40 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)':
+  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.12)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.12)
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)':
+  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.12)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.12)
       '@rspack/plugin-react-refresh': 0.7.3(react-refresh@0.14.2)
       react-refresh: 0.14.2
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)':
+  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.12)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.12)
       loader-utils: 2.0.4
       postcss: 8.4.39
       sass-embedded: 1.77.8
+    transitivePeerDependencies:
+      - '@swc/helpers'
+
+  '@rsbuild/shared@0.7.8(@swc/helpers@0.5.12)':
+    dependencies:
+      '@rspack/core': 0.7.3(@swc/helpers@0.5.12)
+      caniuse-lite: 1.0.30001642
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.12))
+      postcss: 8.4.39
+    optionalDependencies:
+      fsevents: 2.3.3
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -10347,7 +10355,7 @@ snapshots:
     dependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       caniuse-lite: 1.0.30001642
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
       postcss: 8.4.39
     optionalDependencies:
       fsevents: 2.3.3
@@ -10607,6 +10615,16 @@ snapshots:
       '@rspack/binding-win32-ia32-msvc': 1.0.0-alpha.5
       '@rspack/binding-win32-x64-msvc': 1.0.0-alpha.5
 
+  '@rspack/core@0.7.3(@swc/helpers@0.5.12)':
+    dependencies:
+      '@module-federation/runtime-tools': 0.1.6
+      '@rspack/binding': 0.7.3
+      caniuse-lite: 1.0.30001642
+      tapable: 2.2.1
+      webpack-sources: 3.2.3
+    optionalDependencies:
+      '@swc/helpers': 0.5.12
+
   '@rspack/core@0.7.3(@swc/helpers@0.5.3)':
     dependencies:
       '@module-federation/runtime-tools': 0.1.6
@@ -10659,7 +10677,7 @@ snapshots:
     optionalDependencies:
       react-refresh: 0.14.2
 
-  '@rspress/core@1.25.2(webpack@5.93.0)':
+  '@rspress/core@1.25.2(@swc/helpers@0.5.12)(webpack@5.93.0)':
     dependencies:
       '@loadable/component': 5.16.4(react@18.2.0)
       '@mdx-js/loader': 2.3.0(webpack@5.93.0)
@@ -10667,9 +10685,9 @@ snapshots:
       '@mdx-js/react': 2.3.0(react@18.2.0)
       '@modern-js/utils': 2.54.5
       '@rsbuild/core': 0.7.8
-      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)
-      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)
-      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.12)
+      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.12)
+      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.12)
       '@rspress/mdx-rs': 0.5.7
       '@rspress/plugin-auto-nav-sidebar': 1.25.2
       '@rspress/plugin-container-syntax': 1.25.2
@@ -13454,7 +13472,11 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
-  html-rspack-plugin@5.7.2(@rspack/core@0.7.3):
+  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.12)):
+    optionalDependencies:
+      '@rspack/core': 0.7.3(@swc/helpers@0.5.12)
+
+  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3)):
     optionalDependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
 
@@ -16221,7 +16243,7 @@ snapshots:
     dependencies:
       fs-extra: 11.2.0
 
-  rspress-plugin-devkit@0.3.0(rspress@1.25.2(webpack@5.93.0)):
+  rspress-plugin-devkit@0.3.0(rspress@1.25.2(@swc/helpers@0.5.12)(webpack@5.93.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@types/estree-jsx': 1.0.5
@@ -16236,7 +16258,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
       mdast-util-to-string: 4.0.0
       remark-mdc: 1.2.0
-      rspress: 1.25.2(webpack@5.93.0)
+      rspress: 1.25.2(@swc/helpers@0.5.12)(webpack@5.93.0)
       ts-morph: 22.0.0
       unified: 10.1.2
       unist-util-visit: 5.0.0
@@ -16249,21 +16271,21 @@ snapshots:
 
   rspress-plugin-font-open-sans@1.0.0: {}
 
-  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.93.0)):
+  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.12)(webpack@5.93.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@vercel/analytics': 1.3.1(react@18.2.0)
-      rspress: 1.25.2(webpack@5.93.0)
-      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(webpack@5.93.0))
+      rspress: 1.25.2(@swc/helpers@0.5.12)(webpack@5.93.0)
+      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(@swc/helpers@0.5.12)(webpack@5.93.0))
     transitivePeerDependencies:
       - next
       - react
       - supports-color
 
-  rspress@1.25.2(webpack@5.93.0):
+  rspress@1.25.2(@swc/helpers@0.5.12)(webpack@5.93.0):
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rspress/core': 1.25.2(webpack@5.93.0)
+      '@rspress/core': 1.25.2(@swc/helpers@0.5.12)(webpack@5.93.0)
       '@rspress/shared': 1.25.2
       cac: 6.7.14
       chalk: 5.3.0
