@@ -57,14 +57,11 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       // @ts-ignore
       new RspackReactRefreshPlugin().apply(compiler);
 
-      // dont inject WebpackHMRClient for remotes for now
-      if (this.config.entryName !== null) {
-        new rspack.EntryPlugin(
-          compiler.context,
-          require.resolve('../../modules/WebpackHMRClient'),
-          { name: undefined }
-        ).apply(compiler);
-      }
+      new rspack.EntryPlugin(
+        compiler.context,
+        require.resolve('../../modules/WebpackHMRClient'),
+        { name: undefined }
+      ).apply(compiler);
       // TODO Bring back lazy compilation when it's implemented in rspack
     }
   }

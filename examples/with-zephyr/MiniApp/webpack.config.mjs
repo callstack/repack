@@ -215,6 +215,7 @@ export default (env) => {
             singleton: true,
             eager: true,
             requiredVersion: '0.74.3',
+            shareScope: 'internal',
           },
           '@react-navigation/native': {
             singleton: true,

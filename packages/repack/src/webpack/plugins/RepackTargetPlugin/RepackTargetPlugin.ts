@@ -76,7 +76,6 @@ export class RepackTargetPlugin implements RspackPluginInstance {
         ...getReactNativePolyfills(),
         this.config?.initializeCoreLocation ||
           path.join(reactNativePath, 'Libraries/Core/InitializeCore.js'),
-        require.resolve('../../../modules/configurePublicPath'),
       ];
 
       // Add React-Native entries
@@ -86,6 +85,14 @@ export class RepackTargetPlugin implements RspackPluginInstance {
         }).apply(compiler);
       }
     }
+
+    new rspack.EntryPlugin(
+      compiler.context,
+      require.resolve('../../../modules/configurePublicPath'),
+      {
+        name: undefined,
+      }
+    ).apply(compiler);
 
     // Normalize global object.
     new rspack.BannerPlugin({

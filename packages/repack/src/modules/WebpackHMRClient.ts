@@ -13,10 +13,8 @@ class HMRClient {
     private app: {
       reload: () => void;
       dismissErrors: () => void;
-      LoadingView: {
-        showMessage(text: string, type: 'load' | 'refresh'): void;
-        hide(): void;
-      };
+      showLoadingView: (text: string, type: 'load' | 'refresh') => void;
+      hideLoadingView: () => void;
     }
   ) {
     this.url = `ws://${
@@ -59,7 +57,7 @@ class HMRClient {
   processMessage(message: HMRMessage) {
     switch (message.action) {
       case 'building':
-        this.app.LoadingView.showMessage('Rebuilding...', 'refresh');
+        this.app.showLoadingView('Rebuilding...', 'refresh');
         console.debug('[HMRClient] Bundle rebuilding', {
           name: message.body?.name,
         });
@@ -80,7 +78,7 @@ class HMRClient {
           message.body.errors.forEach((error) => {
             console.error('Cannot apply update due to error:', error);
           });
-          this.app.LoadingView.hide();
+          this.app.hideLoadingView();
           return;
         }
 
@@ -107,7 +105,7 @@ class HMRClient {
 
   async checkUpdates(update: HMRMessageBody) {
     try {
-      this.app.LoadingView.showMessage('Refreshing...', 'refresh');
+      this.app.showLoadingView('Refreshing...', 'refresh');
       const updatedModules = await module.hot?.check(false);
       if (!updatedModules) {
         console.warn('[HMRClient] Cannot find update - full reload needed');
@@ -166,17 +164,19 @@ class HMRClient {
         console.warn('[HMRClient] Update check failed', { error });
       }
     } finally {
-      this.app.LoadingView.hide();
+      this.app.hideLoadingView();
     }
   }
 }
 
 if (__DEV__ && module.hot) {
-  const { DevSettings, Platform } = require('react-native');
-  const LoadingView = require('react-native/Libraries/Utilities/LoadingView');
+  const reload = () => {
+    const DevSettings = require('react-native/Libraries/Utilities/DevSettings');
+    DevSettings.reload();
+  };
 
-  const reload = () => DevSettings.reload();
   const dismissErrors = () => {
+    const Platform = require('react-native/Libraries/Utilities/Platform');
     if (Platform.OS === 'ios') {
       const NativeRedBox =
         require('react-native/Libraries/NativeModules/specs/NativeRedBox').default;
@@ -186,10 +186,24 @@ if (__DEV__ && module.hot) {
         require('react-native/Libraries/Core/NativeExceptionsManager').default;
       NativeExceptionsManager?.dismissRedbox();
     }
-
     const LogBoxData = require('react-native/Libraries/LogBox/Data/LogBoxData');
     LogBoxData.clear();
   };
 
-  new HMRClient({ reload, dismissErrors, LoadingView });
+  const showLoadingView = (text: string, type: 'load' | 'refresh') => {
+    const LoadingView = require('react-native/Libraries/Utilities/LoadingView');
+    LoadingView.showMessage(text, type);
+  };
+
+  const hideLoadingView = () => {
+    const LoadingView = require('react-native/Libraries/Utilities/LoadingView');
+    LoadingView.hide();
+  };
+
+  new HMRClient({
+    reload,
+    dismissErrors,
+    showLoadingView,
+    hideLoadingView,
+  });
 }
