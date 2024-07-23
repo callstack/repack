@@ -263,6 +263,7 @@ export class OutputPlugin implements WebpackPlugin {
       const entryChunk = compilationStats.chunks!.find((chunk) => {
         return chunk.initial && chunk.names?.includes(entryChunkName);
       });
+      localChunks.push(entryChunk!);
 
       for (const chunk of compilationStats.chunks!) {
         // Do not process shared chunks right now.
@@ -276,12 +277,9 @@ export class OutputPlugin implements WebpackPlugin {
             sharedChunks.add(sharedChunk);
           });
 
-        // Entry chunk
-        if (entryChunk === chunk) {
+        if (isLocalChunk(chunk.name ?? chunk.id?.toString())) {
           localChunks.push(chunk);
-        } else if (isLocalChunk(chunk.name ?? chunk.id?.toString())) {
-          localChunks.push(chunk);
-        } else {
+        } else if (entryChunk !== chunk) {
           remoteChunks.push(chunk);
         }
       }
