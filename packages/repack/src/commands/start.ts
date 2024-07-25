@@ -255,8 +255,20 @@ async function runAdbReverse(ctx: Server.DelegateContext, port: number) {
 }
 
 function parseFileUrl(fileUrl: string) {
-  const { pathname: filename, searchParams } = new URL(fileUrl);
+  const { pathname, searchParams } = new URL(fileUrl);
   let platform = searchParams.get('platform');
+  let filename = pathname;
+
+  if (!platform) {
+    const pathArray = pathname.split('/');
+    const platformFromPath = pathArray[1];
+
+    if (platformFromPath === 'ios' || platformFromPath === 'android') {
+      platform = platformFromPath;
+      filename = pathArray.slice(2).join('/');
+    }
+  }
+
   if (!platform) {
     const [, platformOrName, name] = filename.split('.').reverse();
     if (name !== undefined) {
