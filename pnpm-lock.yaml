@@ -87,43 +87,7 @@ importers:
         specifier: ^5.5.3
         version: 5.5.3
 
-  metro-compat-test:
-    devDependencies:
-      '@callstack/repack':
-        specifier: workspace:*
-        version: link:../packages/repack
-      '@types/jest':
-        specifier: ^29.5.12
-        version: 29.5.12
-      '@types/node':
-        specifier: ^18
-        version: 18.18.0
-      babel-jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@babel/core@7.24.0)
-      babel-plugin-module-resolver:
-        specifier: ^5.0.0
-        version: 5.0.0
-      babel-plugin-syntax-hermes-parser:
-        specifier: ^0.20.1
-        version: 0.20.1
-      enhanced-resolve:
-        specifier: ^5.16.0
-        version: 5.17.0
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@18.18.0)
-      memfs:
-        specifier: ^3.4.4
-        version: 3.4.4
-      type-fest:
-        specifier: ^4.12.0
-        version: 4.12.0
-
-  packages/TesterApp:
+  apps/tester-app:
     dependencies:
       '@react-native-async-storage/async-storage':
         specifier: ^1.23.1
@@ -143,7 +107,7 @@ importers:
         version: 7.24.0
       '@callstack/repack':
         specifier: workspace:*
-        version: link:../repack
+        version: link:../../packages/repack
       '@react-native/babel-preset':
         specifier: 0.74.83
         version: 0.74.83(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))
@@ -201,6 +165,42 @@ importers:
       webpack:
         specifier: ^5.91.0
         version: 5.91.0
+
+  metro-compat-test:
+    devDependencies:
+      '@callstack/repack':
+        specifier: workspace:*
+        version: link:../packages/repack
+      '@types/jest':
+        specifier: ^29.5.12
+        version: 29.5.12
+      '@types/node':
+        specifier: ^18
+        version: 18.18.0
+      babel-jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@babel/core@7.24.0)
+      babel-plugin-module-resolver:
+        specifier: ^5.0.0
+        version: 5.0.0
+      babel-plugin-syntax-hermes-parser:
+        specifier: ^0.20.1
+        version: 0.20.1
+      enhanced-resolve:
+        specifier: ^5.16.0
+        version: 5.17.0
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@18.18.0)
+      memfs:
+        specifier: ^3.4.4
+        version: 3.4.4
+      type-fest:
+        specifier: ^4.12.0
+        version: 4.12.0
 
   packages/dev-server:
     dependencies:
