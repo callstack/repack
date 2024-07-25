@@ -3,5 +3,6 @@ packages:
   - "packages/init"
   - "packages/repack"
   - "apps/tester-app"
+  - "apps/tester-federation"
   - "website"
   - "metro-compat-test"

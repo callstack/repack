@@ -1,6 +1,6 @@
 {
   "name": "tester-app",
-  "version": "0.1.7",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android --appId com.testerapp",

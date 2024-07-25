@@ -1,0 +1,27 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/react-native-test-app/trunk/schema.json",
+  "name": "ModuleFederationTester",
+  "displayName": "ModuleFederationTester",
+  "singleApp": "host-app",
+  "components": [
+    {
+      "appKey": "HostApp",
+      "displayName": "HostApp",
+      "slug": "host-app"
+    }
+  ],
+  "android": {
+    "package": "com.tester.federation",
+    "signingConfigs": {
+      "debug": {
+        "storeFile": "android/debug.keystore"
+      },
+      "release": {
+        "storeFile": "android/debug.keystore"
+      }
+    }
+  },
+  "ios": {
+    "bundleIdentifier": "com.tester.federation"
+  }
+}
