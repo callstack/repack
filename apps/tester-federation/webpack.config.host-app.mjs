@@ -118,6 +118,9 @@ export default (env) => {
           MiniApp:
             'MiniApp@http://localhost:8082/mf-manifest.json?platform=ios',
         },
+        runtimePlugins: [
+          path.resolve(dirname, 'src', 'utils', 'shared-strategy.ts'),
+        ],
         shared: {
           '@react-navigation/native': {
             singleton: true,
