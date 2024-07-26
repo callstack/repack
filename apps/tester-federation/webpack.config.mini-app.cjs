@@ -7,7 +7,7 @@ const Repack = require('@callstack/repack');
 const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
 
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
-export default (env) => {
+module.exports = (env) => {
   const {
     mode = 'development',
     context = __dirname,
