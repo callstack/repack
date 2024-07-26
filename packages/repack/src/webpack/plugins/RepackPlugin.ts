@@ -4,6 +4,7 @@ import { DevelopmentPlugin } from './DevelopmentPlugin';
 import { LoggerPlugin, LoggerPluginConfig } from './LoggerPlugin';
 import { OutputPlugin, OutputPluginConfig } from './OutputPlugin';
 import { RepackTargetPlugin } from './RepackTargetPlugin';
+import { NativeEntryPlugin } from './NativeEntryPlugin';
 
 /**
  * {@link RepackPlugin} configuration options.
@@ -129,18 +130,33 @@ export class RepackPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: rspack.Compiler) {
+    let entryName = this.config.entryName;
+    if (!entryName && typeof compiler.options.entry !== 'function') {
+      // 'main' is the default name for the entry chunk
+      if ('main' in compiler.options.entry) {
+        entryName = 'main';
+      }
+    }
+
     new rspack.DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
     }).apply(compiler);
 
     new OutputPlugin({
       platform: this.config.platform,
-      enabled: !this.config.devServer,
+      enabled: !this.config.devServer && !!entryName,
       context: this.config.context,
       output: this.config.output,
       entryName: this.config.entryName,
       extraChunks: this.config.extraChunks,
     }).apply(compiler);
+
+    if (entryName) {
+      new NativeEntryPlugin({
+        entryName,
+        initializeCoreLocation: this.config.initializeCore,
+      }).apply(compiler);
+    }
 
     new RepackTargetPlugin({
       hmr: this.config.devServer?.hmr,

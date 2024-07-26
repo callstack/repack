@@ -62,6 +62,13 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       // setup HMR
       new rspack.HotModuleReplacementPlugin().apply(compiler);
       new RspackReactRefreshPlugin().apply(compiler);
+
+      new rspack.EntryPlugin(
+        compiler.context,
+        require.resolve('../../modules/configurePublicPath'),
+        { name: undefined }
+      );
+
       new rspack.EntryPlugin(
         compiler.context,
         require.resolve('../../modules/WebpackHMRClient'),

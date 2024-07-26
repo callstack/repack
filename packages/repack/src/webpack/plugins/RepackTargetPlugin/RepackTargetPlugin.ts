@@ -1,5 +1,4 @@
-import path from 'node:path';
-import rspack, { RspackPluginInstance, ResolveAlias } from '@rspack/core';
+import rspack, { RspackPluginInstance } from '@rspack/core';
 import type { DevServerOptions } from '../../../types';
 import { generateLoadScriptRuntimeModule } from './runtime/RepackLoadScriptRuntimeModule';
 import { generateRepackInitRuntimeModule } from './runtime/RepackInitRuntimeModule';
@@ -8,13 +7,7 @@ import { generateRepackInitRuntimeModule } from './runtime/RepackInitRuntimeModu
  * {@link RepackTargetPlugin} configuration options.
  */
 export interface RepackTargetPluginConfig
-  extends Pick<DevServerOptions, 'hmr'> {
-  /**
-   * Absolute location to JS file with initialization logic for React Native.
-   * Useful if you want to built for out-of-tree platforms.
-   */
-  initializeCoreLocation?: string;
-}
+  extends Pick<DevServerOptions, 'hmr'> {}
 
 /**
  * Plugin for tweaking the JavaScript runtime code to account for React Native environment.
@@ -32,23 +25,6 @@ export class RepackTargetPlugin implements RspackPluginInstance {
    */
   constructor(private config?: RepackTargetPluginConfig) {}
 
-  private getReactNativePath(candidate: ResolveAlias[string] | undefined) {
-    let reactNativePath: string | undefined;
-    if (typeof candidate === 'string') {
-      reactNativePath = candidate;
-    }
-    if (typeof candidate === 'object') {
-      const candidates = candidate.filter(Boolean) as string[];
-      reactNativePath = candidates[0];
-    }
-    if (!reactNativePath) {
-      reactNativePath = require.resolve('react-native');
-    }
-
-    return path.extname(reactNativePath)
-      ? path.dirname(reactNativePath)
-      : reactNativePath;
-  }
   /**
    * Apply the plugin.
    *
@@ -60,28 +36,6 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     compiler.options.output.chunkLoading = 'jsonp';
     compiler.options.output.chunkFormat = 'array-push';
     compiler.options.output.globalObject = globalObject;
-
-    const reactNativePath = this.getReactNativePath(
-      compiler.options.resolve.alias?.['react-native']
-    );
-
-    const getReactNativePolyfills = require(
-      path.join(reactNativePath, 'rn-get-polyfills.js')
-    );
-
-    const entries = [
-      ...getReactNativePolyfills(),
-      this.config?.initializeCoreLocation ||
-        path.join(reactNativePath, 'Libraries/Core/InitializeCore.js'),
-      require.resolve('../../../modules/configurePublicPath'),
-    ];
-
-    // Add React-Native entries
-    for (const entry of entries) {
-      new rspack.EntryPlugin(compiler.context, entry, {
-        name: undefined,
-      }).apply(compiler);
-    }
 
     // Normalize global object.
     new rspack.BannerPlugin({

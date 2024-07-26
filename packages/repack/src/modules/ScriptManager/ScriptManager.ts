@@ -345,6 +345,8 @@ export class ScriptManager extends EventEmitter {
           this.emit('loading', script.toObject());
           this.on('__loaded__', onLoaded);
           await this.nativeScriptManager.loadScript(scriptId, script.locator);
+          // we need to do this here since it was removed from init
+          __webpack_require__.repack.shared.loadScriptCallback.push([scriptId]);
         } catch (error) {
           const { code } = error as Error & { code: string };
           this.handleError(
