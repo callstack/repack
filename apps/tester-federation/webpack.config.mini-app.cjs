@@ -15,6 +15,9 @@ module.exports = (env) => {
     minimize = mode === 'production',
     devServer = undefined,
     reactNativePath = require.resolve('react-native'),
+    bundleFilename,
+    sourceMapFilename,
+    assetsPath,
   } = env;
 
   if (!platform) {
