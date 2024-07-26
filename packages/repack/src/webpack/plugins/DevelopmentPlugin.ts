@@ -67,7 +67,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
         compiler.context,
         require.resolve('../../modules/configurePublicPath'),
         { name: undefined }
-      );
+      ).apply(compiler);
 
       new rspack.EntryPlugin(
         compiler.context,
