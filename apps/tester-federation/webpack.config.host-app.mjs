@@ -112,9 +112,6 @@ export default (env) => {
       new ModuleFederationPlugin({
         name: 'HostApp',
         filename: 'HostApp.container.bundle',
-        dev: true,
-        dts: false,
-        manifest: false,
         remotes: {
           MiniApp:
             'MiniApp@http://localhost:8082/mf-manifest.json?platform=ios',

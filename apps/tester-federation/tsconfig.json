@@ -2,5 +2,8 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "module": "ES2020", // for dynamic imports
-  },
+    "paths": {
+      "*": ["./@mf-types/*"]
+    }
+  }
 }
