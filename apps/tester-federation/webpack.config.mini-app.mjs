@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
+import { ModuleFederationPlugin } from '@module-federation/enhanced/webpack';
 
 const dirname = Repack.getDirname(import.meta.url);
 const { resolve } = createRequire(import.meta.url);
@@ -102,8 +103,9 @@ export default (env) => {
         devServer,
         output: { enabled: false },
       }),
-      new Repack.plugins.ModuleFederationPlugin({
+      new ModuleFederationPlugin({
         name: 'MiniApp',
+        filename: 'MiniApp.container.bundle',
         exposes: {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
@@ -113,7 +115,17 @@ export default (env) => {
             eager: false,
             requiredVersion: '18.2.0',
           },
+          'react/': {
+            singleton: true,
+            eager: false,
+            requiredVersion: '18.2.0',
+          },
           'react-native': {
+            singleton: true,
+            eager: false,
+            requiredVersion: '0.74.3',
+          },
+          'react-native/': {
             singleton: true,
             eager: false,
             requiredVersion: '0.74.3',

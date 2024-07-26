@@ -1,10 +1,7 @@
 import React from 'react';
-import { Federated } from '@callstack/repack/client';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-const MiniAppNavigator = React.lazy(() =>
-  Federated.importModule('MiniApp', './MiniAppNavigator')
-);
+const MiniAppNavigator = React.lazy(() => import('MiniApp/MiniAppNavigator'));
 
 const FallbackComponent = () => (
   <View style={styles.container}>

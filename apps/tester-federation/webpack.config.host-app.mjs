@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
+import { ModuleFederationPlugin } from '@module-federation/enhanced/webpack';
 
 const dirname = Repack.getDirname(import.meta.url);
 const { resolve } = createRequire(import.meta.url);
@@ -107,19 +108,17 @@ export default (env) => {
           assetsPath,
         },
       }),
-      new Repack.plugins.ModuleFederationPlugin({
+      new ModuleFederationPlugin({
         name: 'HostApp',
+        filename: 'HostApp.container.bundle',
+        dev: true,
+        dts: false,
+        manifest: false,
+        remotes: {
+          MiniApp:
+            'MiniApp@http://localhost:8082/mf-manifest.json?platform=ios',
+        },
         shared: {
-          react: {
-            singleton: true,
-            eager: true,
-            requiredVersion: '18.2.0',
-          },
-          'react-native': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '0.74.3',
-          },
           '@react-navigation/native': {
             singleton: true,
             eager: true,
