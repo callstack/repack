@@ -1,6 +1,8 @@
 // @ts-check
 /** @type {import('node:path')} */
 const path = require('node:path');
+/** @type {import('@rspack/core')} */
+const rspack = require('@rspack/core');
 /** @type {import('@callstack/repack')} */
 const Repack = require('@callstack/repack');
 /** @type {import('@rsdoctor/rspack-plugin')} */
@@ -67,7 +69,7 @@ module.exports = (env) => {
             },
           },
         },
-        /* Codebase rules */
+        /* codebase rules */
         {
           test: /\.[jt]sx?$/,
           type: 'javascript/auto',
@@ -93,7 +95,7 @@ module.exports = (env) => {
             },
           },
         },
-        Repack.REACT_NATIVE_CODEGEN_RULES,
+        // Repack.REACT_NATIVE_CODEGEN_RULES,
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
@@ -108,6 +110,7 @@ module.exports = (env) => {
       ],
     },
     plugins: [
+      new rspack.IgnorePlugin({ resourceRegExp: /@react-native-masked-view/ }),
       new Repack.RepackPlugin({
         context,
         mode,
