@@ -123,6 +123,26 @@ export default (env) => {
           path.resolve(dirname, 'src', 'utils', 'shared-strategy.ts'),
         ],
         shared: {
+          react: {
+            singleton: true,
+            eager: true,
+            requiredVersion: '18.2.0',
+          },
+          'react/': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '18.2.0',
+          },
+          'react-native': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '0.74.3',
+          },
+          'react-native/': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '0.74.3',
+          },
           '@react-navigation/native': {
             singleton: true,
             eager: true,
