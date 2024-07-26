@@ -1,22 +1,20 @@
-import { createRequire } from 'node:module';
-import path from 'node:path';
-import * as Repack from '@callstack/repack';
+// @ts-check
+/** @type {import('node:path')} */
+const path = require('node:path');
+/** @type {import('@callstack/repack')} */
+const Repack = require('@callstack/repack');
+/** @type {import('@rsdoctor/rspack-plugin')} */
+const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
 
-const dirname = Repack.getDirname(import.meta.url);
-const { resolve } = createRequire(import.meta.url);
-
+/** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
 export default (env) => {
   const {
     mode = 'development',
-    context = dirname,
-    entry = './index.js',
+    context = __dirname,
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
-    bundleFilename = undefined,
-    sourceMapFilename = undefined,
-    assetsPath = undefined,
-    reactNativePath = resolve('react-native'),
+    reactNativePath = require.resolve('react-native'),
   } = env;
 
   if (!platform) {
@@ -29,17 +27,17 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    entry: [
-      resolve('@callstack/repack/dist/modules/configurePublicPath'),
-      resolve('@callstack/repack/dist/modules/WebpackHMRClient'),
-    ],
+    entry: {},
     resolve: {
       ...Repack.getResolveOptions(platform),
+      alias: {
+        'react-native': reactNativePath,
+      },
     },
     output: {
       clean: true,
       hashFunction: 'xxhash64',
-      path: path.join(dirname, 'build', 'mini-app', platform),
+      path: path.join(__dirname, 'build', 'mini-app', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
@@ -51,35 +49,48 @@ export default (env) => {
     },
     module: {
       rules: [
-        {
-          test: /\.[cm]?[jt]sx?$/,
-          include: [
-            /node_modules(.*[/\\])+react-native/,
-            /node_modules(.*[/\\])+@react-native/,
-            /node_modules(.*[/\\])+@react-navigation/,
-            /node_modules(.*[/\\])+@react-native-community/,
-            /node_modules(.*[/\\])+react-freeze/,
-            /node_modules(.*[/\\])+expo/,
-            /node_modules(.*[/\\])+pretty-format/,
-            /node_modules(.*[/\\])+metro/,
-            /node_modules(.*[/\\])+abort-controller/,
-            /node_modules(.*[/\\])+@callstack[/\\]repack/,
-          ],
-          use: 'babel-loader',
-        },
+        Repack.REACT_NATIVE_LOADING_RULES,
+        Repack.NODE_MODULES_LOADING_RULES,
+        /* repack is symlinked to a local workspace */
         {
           test: /\.[jt]sx?$/,
-          exclude: /node_modules/,
+          type: 'javascript/auto',
+          include: [/repack[/\\]dist/],
           use: {
-            loader: 'babel-loader',
+            loader: 'builtin:swc-loader',
             options: {
-              plugins:
-                devServer && devServer.hmr
-                  ? ['module:react-refresh/babel']
-                  : undefined,
+              env: { targets: { 'react-native': '0.74' } },
+              jsc: { externalHelpers: true },
             },
           },
         },
+        /* Codebase rules */
+        {
+          test: /\.[jt]sx?$/,
+          type: 'javascript/auto',
+          exclude: [/node_modules/, /repack[/\\]dist/],
+          use: {
+            loader: 'builtin:swc-loader',
+            /** @type {import('@rspack/core').SwcLoaderOptions} */
+            options: {
+              sourceMaps: true,
+              env: {
+                targets: { 'react-native': '0.74' },
+              },
+              jsc: {
+                externalHelpers: true,
+                transform: {
+                  react: {
+                    runtime: 'automatic',
+                    development: mode === 'development',
+                    refresh: mode === 'development' && Boolean(devServer),
+                  },
+                },
+              },
+            },
+          },
+        },
+        Repack.REACT_NATIVE_CODEGEN_RULES,
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
@@ -87,7 +98,6 @@ export default (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
-              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
               inline: true,
             },
           },
@@ -151,6 +161,7 @@ export default (env) => {
           },
         },
       }),
-    ],
+      process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
+    ].filter(Boolean),
   };
 };
