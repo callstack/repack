@@ -1,8 +1,8 @@
 diff --git a/dist/index.cjs.js b/dist/index.cjs.js
-index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..96bd60ee01ebd84de26fb95f4371f6fd40099058 100644
+index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..31ccc081db9aa2b6d20f7a66e5cd67f42f8cc1fe 100644
 --- a/dist/index.cjs.js
 +++ b/dist/index.cjs.js
-@@ -604,66 +604,18 @@ function createScriptNode(url, cb, attrs, createScriptHook) {
+@@ -604,66 +604,14 @@ function createScriptNode(url, cb, attrs, createScriptHook) {
              url = hookResult.url;
          }
      }
@@ -15,13 +15,9 @@ index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..96bd60ee01ebd84de26fb95f4371f6fd
 -        return;
 +
 +    if (attrs && (attrs['globalName'])) {
-+      console.log('SDK: will load container', attrs['globalName'], attrs);
 +      __webpack_require__.repack.shared.scriptManager
 +        .loadScript(attrs['globalName'], undefined, __webpack_require__)
-+        .then(() => {
-+            const container = self[attrs['globalName']];
-+            cb(undefined, container);
-+        });
++        .then(() => cb(undefined, self[attrs['globalName']]));
 +    } else {
 +      cb(new Error('createScriptNode: attrs["globalName"] is required'));
      }
