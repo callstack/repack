@@ -145,9 +145,7 @@ export class Compiler {
 
         children.forEach((stats) => {
           stats.errors?.forEach((error) => {
-            const message = [
-              `Error in "${error.moduleName}":\n${error.formatted}`,
-            ];
+            const message = [error.message];
             this.reporter.process({
               type: 'error',
               issuer,
@@ -162,9 +160,7 @@ export class Compiler {
 
         children.forEach((stats) => {
           stats.warnings?.forEach((warning) => {
-            const message = [
-              `Warning in "${warning.moduleName}": ${warning.message}`,
-            ];
+            const message = [warning.message];
             this.reporter.process({ type: 'warn', issuer, timestamp, message });
           });
         });
