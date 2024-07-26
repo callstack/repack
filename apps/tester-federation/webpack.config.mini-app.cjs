@@ -145,6 +145,12 @@ module.exports = (env) => {
             eager: false,
             requiredVersion: '0.74.3',
           },
+          'react-native/Libraries/Core/Devtools/getDevServer': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '0.74.3',
+            shareScope: 'internal',
+          },
           '@react-navigation/native': {
             singleton: true,
             eager: false,
