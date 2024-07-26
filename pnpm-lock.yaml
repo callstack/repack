@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@module-federation/sdk@0.3.2':
+    hash: roznd65gueblak5x3iuursyzqq
+    path: patches/@module-federation__sdk@0.3.2.patch
+
 importers:
 
   .:
@@ -555,13 +560,13 @@ importers:
         version: 1.0.0(@rsbuild/core@0.7.8)
       rspress:
         specifier: 1.25.2
-        version: 1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)
+        version: 1.25.2(webpack@5.91.0)
       rspress-plugin-font-open-sans:
         specifier: ^1.0.0
         version: 1.0.0
       rspress-plugin-vercel-analytics:
         specifier: ^0.3.0
-        version: 0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0))
+        version: 0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.91.0))
     devDependencies:
       '@types/node':
         specifier: ^18
@@ -9251,12 +9256,12 @@ snapshots:
 
   '@module-federation/bridge-react-webpack-plugin@0.3.2':
     dependencies:
-      '@module-federation/sdk': 0.3.2
+      '@module-federation/sdk': 0.3.2(patch_hash=roznd65gueblak5x3iuursyzqq)
 
   '@module-federation/dts-plugin@0.3.2(typescript@5.5.3)':
     dependencies:
       '@module-federation/managers': 0.3.2
-      '@module-federation/sdk': 0.3.2
+      '@module-federation/sdk': 0.3.2(patch_hash=roznd65gueblak5x3iuursyzqq)
       '@module-federation/third-party-dts-extractor': 0.3.2
       adm-zip: 0.5.14
       ansi-colors: 4.1.3
@@ -9285,7 +9290,7 @@ snapshots:
       '@module-federation/manifest': 0.3.2(typescript@5.5.3)
       '@module-federation/rspack': 0.3.2(typescript@5.5.3)
       '@module-federation/runtime-tools': 0.3.2
-      '@module-federation/sdk': 0.3.2
+      '@module-federation/sdk': 0.3.2(patch_hash=roznd65gueblak5x3iuursyzqq)
       btoa: 1.2.1
       upath: 2.0.1
     optionalDependencies:
@@ -9299,7 +9304,7 @@ snapshots:
 
   '@module-federation/managers@0.3.2':
     dependencies:
-      '@module-federation/sdk': 0.3.2
+      '@module-federation/sdk': 0.3.2(patch_hash=roznd65gueblak5x3iuursyzqq)
       find-pkg: 2.0.0
       fs-extra: 9.1.0
 
@@ -9307,7 +9312,7 @@ snapshots:
     dependencies:
       '@module-federation/dts-plugin': 0.3.2(typescript@5.5.3)
       '@module-federation/managers': 0.3.2
-      '@module-federation/sdk': 0.3.2
+      '@module-federation/sdk': 0.3.2(patch_hash=roznd65gueblak5x3iuursyzqq)
       chalk: 3.0.0
       find-pkg: 2.0.0
     transitivePeerDependencies:
@@ -9325,7 +9330,7 @@ snapshots:
       '@module-federation/managers': 0.3.2
       '@module-federation/manifest': 0.3.2(typescript@5.5.3)
       '@module-federation/runtime-tools': 0.3.2
-      '@module-federation/sdk': 0.3.2
+      '@module-federation/sdk': 0.3.2(patch_hash=roznd65gueblak5x3iuursyzqq)
     optionalDependencies:
       typescript: 5.5.3
     transitivePeerDependencies:
@@ -9350,11 +9355,11 @@ snapshots:
 
   '@module-federation/runtime@0.3.2':
     dependencies:
-      '@module-federation/sdk': 0.3.2
+      '@module-federation/sdk': 0.3.2(patch_hash=roznd65gueblak5x3iuursyzqq)
 
   '@module-federation/sdk@0.1.6': {}
 
-  '@module-federation/sdk@0.3.2': {}
+  '@module-federation/sdk@0.3.2(patch_hash=roznd65gueblak5x3iuursyzqq)': {}
 
   '@module-federation/third-party-dts-extractor@0.3.2':
     dependencies:
@@ -9370,7 +9375,7 @@ snapshots:
   '@module-federation/webpack-bundler-runtime@0.3.2':
     dependencies:
       '@module-federation/runtime': 0.3.2
-      '@module-federation/sdk': 0.3.2
+      '@module-federation/sdk': 0.3.2(patch_hash=roznd65gueblak5x3iuursyzqq)
 
   '@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.3':
     optional: true
@@ -10026,17 +10031,17 @@ snapshots:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       '@swc/helpers': 0.5.3
       core-js: 3.36.1
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
       postcss: 8.4.39
 
-  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)':
+  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
       '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)':
+  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
       '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
@@ -10045,7 +10050,7 @@ snapshots:
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)':
+  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
       '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
@@ -10059,7 +10064,7 @@ snapshots:
     dependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       caniuse-lite: 1.0.30001640
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
       postcss: 8.4.39
     optionalDependencies:
       fsevents: 2.3.3
@@ -10119,7 +10124,7 @@ snapshots:
     optionalDependencies:
       react-refresh: 0.14.2
 
-  '@rspress/core@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)':
+  '@rspress/core@1.25.2(webpack@5.91.0)':
     dependencies:
       '@loadable/component': 5.16.4(react@18.2.0)
       '@mdx-js/loader': 2.3.0(webpack@5.91.0)
@@ -10127,9 +10132,9 @@ snapshots:
       '@mdx-js/react': 2.3.0(react@18.2.0)
       '@modern-js/utils': 2.54.5
       '@rsbuild/core': 0.7.8
-      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)
-      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)
-      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)
+      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)
       '@rspress/mdx-rs': 0.5.7
       '@rspress/plugin-auto-nav-sidebar': 1.25.2
       '@rspress/plugin-container-syntax': 1.25.2
@@ -12867,7 +12872,7 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
-  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3)):
+  html-rspack-plugin@5.7.2(@rspack/core@0.7.3):
     optionalDependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
 
@@ -15708,7 +15713,7 @@ snapshots:
     dependencies:
       fs-extra: 11.2.0
 
-  rspress-plugin-devkit@0.3.0(rspress@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)):
+  rspress-plugin-devkit@0.3.0(rspress@1.25.2(webpack@5.91.0)):
     dependencies:
       '@rspress/shared': 1.25.2
       '@types/estree-jsx': 1.0.5
@@ -15723,7 +15728,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
       mdast-util-to-string: 4.0.0
       remark-mdc: 1.2.0
-      rspress: 1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)
+      rspress: 1.25.2(webpack@5.91.0)
       ts-morph: 22.0.0
       unified: 10.1.2
       unist-util-visit: 5.0.0
@@ -15736,21 +15741,21 @@ snapshots:
 
   rspress-plugin-font-open-sans@1.0.0: {}
 
-  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)):
+  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.91.0)):
     dependencies:
       '@rspress/shared': 1.25.2
       '@vercel/analytics': 1.2.2(react@18.2.0)
-      rspress: 1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)
-      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0))
+      rspress: 1.25.2(webpack@5.91.0)
+      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(webpack@5.91.0))
     transitivePeerDependencies:
       - next
       - react
       - supports-color
 
-  rspress@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0):
+  rspress@1.25.2(webpack@5.91.0):
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rspress/core': 1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)
+      '@rspress/core': 1.25.2(webpack@5.91.0)
       '@rspress/shared': 1.25.2
       cac: 6.7.14
       chalk: 5.3.0

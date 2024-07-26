@@ -1,0 +1,82 @@
+diff --git a/dist/index.cjs.js b/dist/index.cjs.js
+index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..96bd60ee01ebd84de26fb95f4371f6fd40099058 100644
+--- a/dist/index.cjs.js
++++ b/dist/index.cjs.js
+@@ -604,66 +604,18 @@ function createScriptNode(url, cb, attrs, createScriptHook) {
+             url = hookResult.url;
+         }
+     }
+-    let urlObj;
+-    try {
+-        urlObj = new URL(url);
+-    } catch (e) {
+-        console.error('Error constructing URL:', e);
+-        cb(new Error(`Invalid URL: ${e}`));
+-        return;
++
++    if (attrs && (attrs['globalName'])) {
++      console.log('SDK: will load container', attrs['globalName'], attrs);
++      __webpack_require__.repack.shared.scriptManager
++        .loadScript(attrs['globalName'], undefined, __webpack_require__)
++        .then(() => {
++            const container = self[attrs['globalName']];
++            cb(undefined, container);
++        });
++    } else {
++      cb(new Error('createScriptNode: attrs["globalName"] is required'));
+     }
+-    const getFetch = async ()=>{
+-        //@ts-ignore
+-        if (typeof __webpack_require__ !== 'undefined') {
+-            try {
+-                //@ts-ignore
+-                const loaderHooks = __webpack_require__.federation.instance.loaderHook;
+-                if (loaderHooks.lifecycle.fetch) {
+-                    return lazyLoaderHookFetch;
+-                }
+-            } catch (e) {
+-                console.warn('federation.instance.loaderHook.lifecycle.fetch failed:', e);
+-            }
+-        }
+-        return typeof fetch === 'undefined' ? loadNodeFetch() : fetch;
+-    };
+-    const handleScriptFetch = async (f, urlObj)=>{
+-        try {
+-            var _vm_constants;
+-            const res = await f(urlObj.href);
+-            const data = await res.text();
+-            const [path, vm] = await Promise.all([
+-                importNodeModule('path'),
+-                importNodeModule('vm')
+-            ]);
+-            const scriptContext = {
+-                exports: {},
+-                module: {
+-                    exports: {}
+-                }
+-            };
+-            const urlDirname = urlObj.pathname.split('/').slice(0, -1).join('/');
+-            const filename = path.basename(urlObj.pathname);
+-            var _vm_constants_USE_MAIN_CONTEXT_DEFAULT_LOADER;
+-            const script = new vm.Script(`(function(exports, module, require, __dirname, __filename) {${data}\n})`, {
+-                filename,
+-                importModuleDynamically: (_vm_constants_USE_MAIN_CONTEXT_DEFAULT_LOADER = (_vm_constants = vm.constants) == null ? void 0 : _vm_constants.USE_MAIN_CONTEXT_DEFAULT_LOADER) != null ? _vm_constants_USE_MAIN_CONTEXT_DEFAULT_LOADER : importNodeModule
+-            });
+-            script.runInThisContext()(scriptContext.exports, scriptContext.module, eval('require'), urlDirname, filename);
+-            const exportedInterface = scriptContext.module.exports || scriptContext.exports;
+-            if (attrs && exportedInterface && attrs['globalName']) {
+-                const container = exportedInterface[attrs['globalName']] || exportedInterface;
+-                cb(undefined, container);
+-                return;
+-            }
+-            cb(undefined, exportedInterface);
+-        } catch (e) {
+-            cb(e instanceof Error ? e : new Error(`Script execution error: ${e}`));
+-        }
+-    };
+-    getFetch().then((f)=>handleScriptFetch(f, urlObj)).catch((err)=>{
+-        cb(err);
+-    });
+ }
+ function loadScriptNode(url, info) {
+     return new Promise((resolve, reject)=>{
