@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
+import webpack from 'webpack';
 import * as Repack from '@callstack/repack';
 import { ModuleFederationPlugin } from '@module-federation/enhanced/webpack';
 
@@ -152,6 +153,10 @@ export default (env) => {
             requiredVersion: '^3.32.0',
           },
         },
+      }),
+      // silence missing @react-native-masked-view optionally required by @react-navigation/elements
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^@react-native-masked-view/,
       }),
     ],
   };
