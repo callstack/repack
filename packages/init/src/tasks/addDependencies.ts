@@ -4,8 +4,8 @@ import ora from 'ora';
 import logger from '../utils/logger.js';
 
 const dependencies = [
-  '@rspack/core@1.0.0-alpha.5',
-  '@rspack/plugin-react-refresh@1.0.0-alpha.5',
+  '@rspack/core@1.0.0-beta.0',
+  '@rspack/plugin-react-refresh@1.0.0-beta.0',
   '@swc/helpers',
   '@callstack/repack@next',
 ];
