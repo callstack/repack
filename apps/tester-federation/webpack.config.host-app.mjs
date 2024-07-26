@@ -118,6 +118,7 @@ export default (env) => {
             'MiniApp@http://localhost:8082/mf-manifest.json?platform=ios',
         },
         runtimePlugins: [
+          path.resolve(dirname, 'src', 'utils', 'runtime-debug.ts'),
           path.resolve(dirname, 'src', 'utils', 'shared-strategy.ts'),
         ],
         shared: {
