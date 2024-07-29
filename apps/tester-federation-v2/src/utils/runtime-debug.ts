@@ -1,4 +1,4 @@
-import type { FederationRuntimePlugin } from '@module-federation/runtime';
+import type { FederationRuntimePlugin } from '@module-federation/enhanced/runtime';
 
 const runtimeDebug: () => FederationRuntimePlugin = () => ({
   name: 'runtime-debug-plugin',
