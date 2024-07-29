@@ -132,7 +132,8 @@ export interface ScriptLocator {
  */
 export type ScriptLocatorResolver = (
   scriptId: string,
-  caller?: string
+  caller?: string,
+  referenceUrl?: string
 ) => Promise<ScriptLocator | undefined>;
 
 /**

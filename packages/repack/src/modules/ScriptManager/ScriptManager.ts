@@ -239,7 +239,8 @@ export class ScriptManager extends EventEmitter {
   async resolveScript(
     scriptId: string,
     caller?: string,
-    webpackContext = getWebpackContext()
+    webpackContext = getWebpackContext(),
+    referenceUrl?: string
   ): Promise<Script> {
     await this.initCache();
     try {
@@ -253,7 +254,7 @@ export class ScriptManager extends EventEmitter {
 
       let locator;
       for (const [, resolve] of this.resolvers) {
-        locator = await resolve(scriptId, caller);
+        locator = await resolve(scriptId, caller, referenceUrl);
         if (locator) {
           break;
         }
@@ -331,9 +332,15 @@ export class ScriptManager extends EventEmitter {
   async loadScript(
     scriptId: string,
     caller?: string,
-    webpackContext = getWebpackContext()
+    webpackContext = getWebpackContext(),
+    referenceUrl?: string
   ) {
-    let script = await this.resolveScript(scriptId, caller, webpackContext);
+    let script = await this.resolveScript(
+      scriptId,
+      caller,
+      webpackContext,
+      referenceUrl
+    );
     return await new Promise<void>((resolve, reject) => {
       (async () => {
         const onLoaded = (data: { scriptId: string; caller?: string }) => {
