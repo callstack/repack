@@ -9,7 +9,8 @@ declare interface RepackRuntime {
   loadScript: (
     name: string,
     caller: string | undefined,
-    done: (event?: LoadScriptEvent) => void
+    done: (event?: LoadScriptEvent) => void,
+    referenceUrl: string
   ) => void;
   loadHotUpdate: (url: string, done: (event?: LoadScriptEvent) => void) => void;
   shared: {
