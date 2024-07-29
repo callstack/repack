@@ -7,10 +7,12 @@ import { ModuleFederationPlugin } from '@module-federation/enhanced/webpack';
 const dirname = Repack.getDirname(import.meta.url);
 const { resolve } = createRequire(import.meta.url);
 
+const rootDir = path.resolve(dirname, '..', '..');
+
 export default (env) => {
   const {
     mode = 'development',
-    context = dirname,
+    context = rootDir,
     entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
@@ -41,7 +43,7 @@ export default (env) => {
     output: {
       clean: true,
       hashFunction: 'xxhash64',
-      path: path.join(dirname, 'build', 'mini-app', platform),
+      path: path.join(rootDir, 'build', 'mini-app', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
@@ -103,11 +105,11 @@ export default (env) => {
         mode,
         platform,
         devServer,
-        output: { enabled: false },
+        output: {},
       }),
       new ModuleFederationPlugin({
         name: 'MiniApp',
-        filename: 'MiniApp.container.bundle',
+        filename: 'MiniApp.container.js.bundle',
         exposes: {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
