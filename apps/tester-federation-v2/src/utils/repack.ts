@@ -1,4 +1,4 @@
-import type { FederationRuntimePlugin } from '@module-federation/runtime';
+import type { FederationRuntimePlugin } from '@module-federation/enhanced/runtime';
 
 // Should add resolvers
 const runtimeDebug: () => FederationRuntimePlugin = () => ({
@@ -45,21 +45,6 @@ const runtimeDebug: () => FederationRuntimePlugin = () => ({
 
     return args;
   },
-  //   onLoad(args) {
-  //     console.log('onLoad: ', args);
-  //     return args;
-  //   },
-  //   async loadShare(args) {
-  //     console.log('loadShare:', args);
-  //   },
-  //   async beforeLoadShare(args) {
-  //     console.log('beforeloadShare:', args);
-  //     return args;
-  //   },
-  //   createScript(args) {
-  //     console.log('createScript:', args);
-  //     return args;
-  //   },
 });
 
 export default runtimeDebug;
