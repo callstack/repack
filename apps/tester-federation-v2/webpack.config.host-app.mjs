@@ -7,12 +7,10 @@ import { ModuleFederationPlugin } from '@module-federation/enhanced/webpack';
 const dirname = Repack.getDirname(import.meta.url);
 const { resolve } = createRequire(import.meta.url);
 
-const rootDir = path.resolve(dirname, '..', '..');
-
 export default (env) => {
   const {
     mode = 'development',
-    context = rootDir,
+    context = dirname,
     entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
@@ -45,7 +43,7 @@ export default (env) => {
     output: {
       clean: true,
       hashFunction: 'xxhash64',
-      path: path.join(rootDir, 'build', 'host-app', platform),
+      path: path.join(dirname, 'build', 'host-app', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
@@ -120,9 +118,9 @@ export default (env) => {
             'MiniApp@http://localhost:8082/mf-manifest.json?platform=ios',
         },
         runtimePlugins: [
-          path.resolve(rootDir, 'src', 'utils', 'runtime-debug.ts'),
-          path.resolve(rootDir, 'src', 'utils', 'shared-strategy.ts'),
-          path.resolve(rootDir, 'src', 'utils', 'repack.ts'),
+          path.resolve(dirname, 'src', 'utils', 'runtime-debug.ts'),
+          path.resolve(dirname, 'src', 'utils', 'shared-strategy.ts'),
+          path.resolve(dirname, 'src', 'utils', 'repack.ts'),
         ],
         shared: {
           react: {
