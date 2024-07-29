@@ -4,5 +4,6 @@ packages:
   - "packages/repack"
   - "apps/tester-app"
   - "apps/tester-federation"
+  - "apps/tester-federation-v2"
   - "website"
   - "metro-compat-test"
