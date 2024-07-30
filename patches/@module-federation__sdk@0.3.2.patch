@@ -1,5 +1,5 @@
 diff --git a/dist/index.cjs.js b/dist/index.cjs.js
-index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..6044ea42ccd0c7328c5ae94837d4ecad0b258ad6 100644
+index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..69c7c13158c06c07249fdbba059bcadee47b9e60 100644
 --- a/dist/index.cjs.js
 +++ b/dist/index.cjs.js
 @@ -51,6 +51,16 @@ var SharePlugin = /*#__PURE__*/Object.freeze({
@@ -50,7 +50,7 @@ index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..6044ea42ccd0c7328c5ae94837d4ecad
 +    );
 +  }
 +  
-+  export async function loadScriptReactNative(
++function loadScriptReactNative(
 +    url,
 +    info,
 +  ) {
@@ -83,7 +83,14 @@ index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..6044ea42ccd0c7328c5ae94837d4ecad
  exports.decodeName = decodeName;
  exports.encodeName = encodeName;
  exports.error = error;
-@@ -739,6 +799,7 @@ exports.isManifestProvider = isManifestProvider;
+@@ -734,11 +794,14 @@ exports.getProcessEnv = getProcessEnv;
+ exports.getResourceUrl = getResourceUrl;
+ exports.inferAutoPublicPath = inferAutoPublicPath;
+ exports.isBrowserEnv = isBrowserEnv;
++exports.isNodeEnv = isNodeEnv;
++exports.isReactNativeEnv = isReactNativeEnv;
+ exports.isDebugMode = isDebugMode;
+ exports.isManifestProvider = isManifestProvider;
  exports.isStaticResourcesEqual = isStaticResourcesEqual;
  exports.loadScript = loadScript;
  exports.loadScriptNode = loadScriptNode;
