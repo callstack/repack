@@ -1,5 +1,5 @@
 diff --git a/dist/index.cjs.js b/dist/index.cjs.js
-index 76c411c90b0d9c681277af6e31a62029c805eb33..c5268dfb24ab75a06ace0023a311c7de04ae5c95 100644
+index 76c411c90b0d9c681277af6e31a62029c805eb33..3de954b8f0fd61c387e90f6a2c339d4d591297e9 100644
 --- a/dist/index.cjs.js
 +++ b/dist/index.cjs.js
 @@ -142,37 +142,27 @@ async function loadEntryScript({ name, globalName, entry, createScriptHook }) {
@@ -42,7 +42,7 @@ index 76c411c90b0d9c681277af6e31a62029c805eb33..c5268dfb24ab75a06ace0023a311c7de
 -        createScriptHook
 -    }).then(()=>{
 +
-+    return loadScriptCallback(entry, attrs).then(()=>{
++    return loadScriptCallback(entry, { attrs, createScriptHook}).then(()=>{
          const { remoteEntryKey, entryExports } = share.getRemoteEntryExports(name, globalName);
          share.assert(entryExports, `
 -      Unable to use the ${name}'s '${entry}' URL with ${remoteEntryKey}'s globalName to get remoteEntry exports.

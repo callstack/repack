@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   '@module-federation/runtime@0.3.2':
-    hash: 2a5ih5bznacqzp7zb7bkk5w4gy
+    hash: rfjmtgcevh3zuqkswsc5r2xkwa
     path: patches/@module-federation__runtime@0.3.2.patch
   '@module-federation/sdk@0.3.2':
     hash: 6iglymuhn7uvmn45x7534uyule
@@ -9422,14 +9422,14 @@ snapshots:
 
   '@module-federation/runtime-tools@0.3.2':
     dependencies:
-      '@module-federation/runtime': 0.3.2(patch_hash=2a5ih5bznacqzp7zb7bkk5w4gy)
+      '@module-federation/runtime': 0.3.2(patch_hash=rfjmtgcevh3zuqkswsc5r2xkwa)
       '@module-federation/webpack-bundler-runtime': 0.3.2
 
   '@module-federation/runtime@0.1.6':
     dependencies:
       '@module-federation/sdk': 0.1.6
 
-  '@module-federation/runtime@0.3.2(patch_hash=2a5ih5bznacqzp7zb7bkk5w4gy)':
+  '@module-federation/runtime@0.3.2(patch_hash=rfjmtgcevh3zuqkswsc5r2xkwa)':
     dependencies:
       '@module-federation/sdk': 0.3.2(patch_hash=6iglymuhn7uvmn45x7534uyule)
 
@@ -9450,7 +9450,7 @@ snapshots:
 
   '@module-federation/webpack-bundler-runtime@0.3.2':
     dependencies:
-      '@module-federation/runtime': 0.3.2(patch_hash=2a5ih5bznacqzp7zb7bkk5w4gy)
+      '@module-federation/runtime': 0.3.2(patch_hash=rfjmtgcevh3zuqkswsc5r2xkwa)
       '@module-federation/sdk': 0.3.2(patch_hash=6iglymuhn7uvmn45x7534uyule)
 
   '@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.3':
