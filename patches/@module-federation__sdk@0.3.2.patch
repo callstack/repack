@@ -1,5 +1,5 @@
 diff --git a/dist/index.cjs.js b/dist/index.cjs.js
-index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..69c7c13158c06c07249fdbba059bcadee47b9e60 100644
+index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..17765fcfc96877f2d9a68569a52af94cf8e75ccc 100644
 --- a/dist/index.cjs.js
 +++ b/dist/index.cjs.js
 @@ -51,6 +51,16 @@ var SharePlugin = /*#__PURE__*/Object.freeze({
@@ -8,7 +8,7 @@ index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..69c7c13158c06c07249fdbba059bcade
  }
 +function isNodeEnv() {
 +    return (
-+        typeof process !== 'undefined' && process?.versions?.node !== 'undefined'
++        typeof process !== 'undefined' && process?.versions?.node !== undefined
 +    );
 +}
 +function isReactNativeEnv() {
