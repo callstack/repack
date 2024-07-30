@@ -1,0 +1,60 @@
+diff --git a/dist/index.cjs.js b/dist/index.cjs.js
+index 76c411c90b0d9c681277af6e31a62029c805eb33..c5268dfb24ab75a06ace0023a311c7de04ae5c95 100644
+--- a/dist/index.cjs.js
++++ b/dist/index.cjs.js
+@@ -142,37 +142,27 @@ async function loadEntryScript({ name, globalName, entry, createScriptHook }) {
+     if (remoteEntryExports) {
+         return remoteEntryExports;
+     }
+-    if (typeof document === 'undefined') {
+-        return sdk.loadScriptNode(entry, {
+-            attrs: {
+-                name,
+-                globalName
+-            },
+-            createScriptHook
+-        }).then(()=>{
+-            const { remoteEntryKey, entryExports } = share.getRemoteEntryExports(name, globalName);
+-            share.assert(entryExports, `
+-        Unable to use the ${name}'s '${entry}' URL with ${remoteEntryKey}'s globalName to get remoteEntry exports.
+-        Possible reasons could be:\n
+-        1. '${entry}' is not the correct URL, or the remoteEntry resource or name is incorrect.\n
+-        2. ${remoteEntryKey} cannot be used to get remoteEntry exports in the window object.
+-      `);
+-            return entryExports;
+-        }).catch((e)=>{
+-            throw e;
+-        });
++
++    let loadScriptCallback, attrs;
++    if (sdk.isNodeEnv()) {
++        loadScriptCallback = sdk.loadScriptNode;
++        attrs = { name, globalName };
++    } else if (sdk.isReactNativeEnv()) {
++        loadScriptCallback = sdk.loadScriptReactNative;
++        attrs = { name, globalName };
++    } else {
++        loadScriptCallback = loadScript;
++        attrs = {};
+     }
+-    return sdk.loadScript(entry, {
+-        attrs: {},
+-        createScriptHook
+-    }).then(()=>{
++
++    return loadScriptCallback(entry, attrs).then(()=>{
+         const { remoteEntryKey, entryExports } = share.getRemoteEntryExports(name, globalName);
+         share.assert(entryExports, `
+-      Unable to use the ${name}'s '${entry}' URL with ${remoteEntryKey}'s globalName to get remoteEntry exports.
+-      Possible reasons could be:\n
+-      1. '${entry}' is not the correct URL, or the remoteEntry resource or name is incorrect.\n
+-      2. ${remoteEntryKey} cannot be used to get remoteEntry exports in the window object.
+-    `);
++    Unable to use the ${name}'s '${entry}' URL with ${remoteEntryKey}'s globalName to get remoteEntry exports.
++    Possible reasons could be:\n
++    1. '${entry}' is not the correct URL, or the remoteEntry resource or name is incorrect.\n
++    2. ${remoteEntryKey} cannot be used to get remoteEntry exports in the window object.
++  `);
+         return entryExports;
+     }).catch((e)=>{
+         throw e;

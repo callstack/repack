@@ -1,78 +1,93 @@
 diff --git a/dist/index.cjs.js b/dist/index.cjs.js
-index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..31ccc081db9aa2b6d20f7a66e5cd67f42f8cc1fe 100644
+index 5ac66502f7e3230335fbab7bcf67ecb9614f938f..6044ea42ccd0c7328c5ae94837d4ecad0b258ad6 100644
 --- a/dist/index.cjs.js
 +++ b/dist/index.cjs.js
-@@ -604,66 +604,14 @@ function createScriptNode(url, cb, attrs, createScriptHook) {
-             url = hookResult.url;
-         }
-     }
--    let urlObj;
--    try {
--        urlObj = new URL(url);
--    } catch (e) {
--        console.error('Error constructing URL:', e);
--        cb(new Error(`Invalid URL: ${e}`));
--        return;
-+
-+    if (attrs && (attrs['globalName'])) {
-+      __webpack_require__.repack.shared.scriptManager
-+        .loadScript(attrs['globalName'], undefined, __webpack_require__)
-+        .then(() => cb(undefined, self[attrs['globalName']]));
-+    } else {
-+      cb(new Error('createScriptNode: attrs["globalName"] is required'));
-     }
--    const getFetch = async ()=>{
--        //@ts-ignore
--        if (typeof __webpack_require__ !== 'undefined') {
--            try {
--                //@ts-ignore
--                const loaderHooks = __webpack_require__.federation.instance.loaderHook;
--                if (loaderHooks.lifecycle.fetch) {
--                    return lazyLoaderHookFetch;
--                }
--            } catch (e) {
--                console.warn('federation.instance.loaderHook.lifecycle.fetch failed:', e);
--            }
--        }
--        return typeof fetch === 'undefined' ? loadNodeFetch() : fetch;
--    };
--    const handleScriptFetch = async (f, urlObj)=>{
--        try {
--            var _vm_constants;
--            const res = await f(urlObj.href);
--            const data = await res.text();
--            const [path, vm] = await Promise.all([
--                importNodeModule('path'),
--                importNodeModule('vm')
--            ]);
--            const scriptContext = {
--                exports: {},
--                module: {
--                    exports: {}
--                }
--            };
--            const urlDirname = urlObj.pathname.split('/').slice(0, -1).join('/');
--            const filename = path.basename(urlObj.pathname);
--            var _vm_constants_USE_MAIN_CONTEXT_DEFAULT_LOADER;
--            const script = new vm.Script(`(function(exports, module, require, __dirname, __filename) {${data}\n})`, {
--                filename,
--                importModuleDynamically: (_vm_constants_USE_MAIN_CONTEXT_DEFAULT_LOADER = (_vm_constants = vm.constants) == null ? void 0 : _vm_constants.USE_MAIN_CONTEXT_DEFAULT_LOADER) != null ? _vm_constants_USE_MAIN_CONTEXT_DEFAULT_LOADER : importNodeModule
--            });
--            script.runInThisContext()(scriptContext.exports, scriptContext.module, eval('require'), urlDirname, filename);
--            const exportedInterface = scriptContext.module.exports || scriptContext.exports;
--            if (attrs && exportedInterface && attrs['globalName']) {
--                const container = exportedInterface[attrs['globalName']] || exportedInterface;
--                cb(undefined, container);
--                return;
--            }
--            cb(undefined, exportedInterface);
--        } catch (e) {
--            cb(e instanceof Error ? e : new Error(`Script execution error: ${e}`));
--        }
--    };
--    getFetch().then((f)=>handleScriptFetch(f, urlObj)).catch((err)=>{
--        cb(err);
--    });
+@@ -51,6 +51,16 @@ var SharePlugin = /*#__PURE__*/Object.freeze({
+ function isBrowserEnv() {
+     return typeof window !== 'undefined';
  }
- function loadScriptNode(url, info) {
-     return new Promise((resolve, reject)=>{
++function isNodeEnv() {
++    return (
++        typeof process !== 'undefined' && process?.versions?.node !== 'undefined'
++    );
++}
++function isReactNativeEnv() {
++    return (
++        typeof navigator !== 'undefined' && navigator?.product === 'ReactNative'
++    );
++}
+ function isDebugMode() {
+     if (typeof process !== 'undefined' && process.env && process.env['FEDERATION_DEBUG']) {
+         return Boolean(process.env['FEDERATION_DEBUG']);
+@@ -702,6 +712,55 @@ function normalizeOptions(enableDefault, defaultOptions, key) {
+     };
+ }
+ 
++function createScriptReactNative(
++    url,
++    cb,
++    attrs,
++    createScriptHook,
++  ) {
++    if (createScriptHook) {
++      const hookResult = createScriptHook(url, attrs);
++      if (hookResult && typeof hookResult === 'object' && 'url' in hookResult) {
++        url = hookResult.url;
++      }
++    }
++  
++    if (!attrs || !attrs['globalName']) {
++      cb(new Error('createScriptReactNative: globalName is required'));
++      return;
++    }
++  
++    __webpack_require__.l(
++      url,
++      (e) => {
++        cb(e ? new Error(`Script execution failed`) : undefined);
++      },
++      attrs['globalName'],
++    );
++  }
++  
++  export async function loadScriptReactNative(
++    url,
++    info,
++  ) {
++    return new Promise((resolve, reject) => {
++      createScriptReactNative(
++        url,
++        (error) => {
++          if (error) {
++            reject(error);
++          } else {
++            const remoteEntryKey = info?.attrs?.['globalName'];
++            const entryExports = (globalThis)[remoteEntryKey];
++            resolve(entryExports);
++          }
++        },
++        info.attrs,
++        info.createScriptHook,
++      );
++    });
++  }
++
+ exports.BROWSER_LOG_KEY = BROWSER_LOG_KEY;
+ exports.BROWSER_LOG_VALUE = BROWSER_LOG_VALUE;
+ exports.ENCODE_NAME_PREFIX = ENCODE_NAME_PREFIX;
+@@ -724,6 +783,7 @@ exports.containerReferencePlugin = ContainerReferencePlugin;
+ exports.createLink = createLink;
+ exports.createScript = createScript;
+ exports.createScriptNode = createScriptNode;
++exports.createScriptReactNative = createScriptReactNative;
+ exports.decodeName = decodeName;
+ exports.encodeName = encodeName;
+ exports.error = error;
+@@ -739,6 +799,7 @@ exports.isManifestProvider = isManifestProvider;
+ exports.isStaticResourcesEqual = isStaticResourcesEqual;
+ exports.loadScript = loadScript;
+ exports.loadScriptNode = loadScriptNode;
++exports.loadScriptReactNative = loadScriptReactNative;
+ exports.logger = logger;
+ exports.moduleFederationPlugin = ModuleFederationPlugin;
+ exports.normalizeOptions = normalizeOptions;

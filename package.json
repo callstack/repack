@@ -43,7 +43,8 @@
   "packageManager": "pnpm@9.5.0",
   "pnpm": {
     "patchedDependencies": {
-      "@module-federation/sdk@0.3.2": "patches/@module-federation__sdk@0.3.2.patch"
+      "@module-federation/sdk@0.3.2": "patches/@module-federation__sdk@0.3.2.patch",
+      "@module-federation/runtime@0.3.2": "patches/@module-federation__runtime@0.3.2.patch"
     }
   }
 }
