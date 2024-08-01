@@ -15,7 +15,7 @@ export class ModuleFederationDevPlugin implements WebpackPlugin {
     const instance = compiler.options.plugins.find((plugin) => {
       if (typeof plugin !== 'object') return false;
       return (
-        plugin?.name.includes('ModuleFederationPlugin') ||
+        plugin?.name?.includes('ModuleFederationPlugin') ||
         plugin?.constructor?.name.includes('ModuleFederationPlugin')
       );
     }) as WebpackPluginInstance | undefined;

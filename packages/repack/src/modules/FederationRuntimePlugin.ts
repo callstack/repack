@@ -7,18 +7,16 @@ const repackFederationRuntimePlugin: () => FederationRuntimePlugin = () => ({
   name: 'repack-federation-runtime-plugin',
   afterResolve(args) {
     const { remoteInfo } = args;
-    const { Platform } = require('react-native');
     const ScriptManager: SM = require('./ScriptManager').ScriptManager;
-    const platformQuery = __DEV__ ? { platform: Platform.OS } : undefined;
 
     ScriptManager.shared.addResolver(
       // eslint-disable-next-line require-await
       async (scriptId, caller, referenceUrl) => {
         if (scriptId === remoteInfo.entryGlobalName) {
-          return { url: remoteInfo.entry, query: platformQuery };
+          return { url: remoteInfo.entry };
         }
         if (referenceUrl && caller === remoteInfo.entryGlobalName) {
-          return { url: referenceUrl, query: platformQuery };
+          return { url: referenceUrl };
         }
       },
       { key: remoteInfo.entryGlobalName }

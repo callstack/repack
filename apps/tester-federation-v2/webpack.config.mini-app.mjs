@@ -111,7 +111,7 @@ export default (env) => {
         exposes: {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
-        getPublicPath: 'return "http://localhost:8082/"',
+        getPublicPath: `return "http://localhost:8082/${platform}/"`,
         shared: {
           react: {
             singleton: true,

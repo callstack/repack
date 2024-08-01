@@ -114,7 +114,7 @@ export default (env) => {
         name: 'HostApp',
         filename: 'HostApp.container.js.bundle',
         remotes: {
-          MiniApp: `MiniApp@http://localhost:8082/mf-manifest.json?platform=${platform}`,
+          MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
         },
         runtimePlugins: [
           path.resolve(dirname, 'src', 'utils', 'runtime-debug.ts'),
