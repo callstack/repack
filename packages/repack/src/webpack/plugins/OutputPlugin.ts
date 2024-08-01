@@ -227,19 +227,22 @@ export class OutputPlugin implements WebpackPlugin {
 
     const getAllInitialChunks = (
       chunk: webpack.StatsChunk,
-      chunks: Map<string | number, webpack.StatsChunk>
+      chunks: Map<string | number, webpack.StatsChunk>,
+      visited = new Set<string | number>()
     ): Array<webpack.StatsChunk> => {
+      // Prevent cycles when traversing chunks graph
+      if (visited.has(chunk.id!)) {
+        return [];
+      }
+      visited.add(chunk.id!);
+
+      // If chunk has no parents, it's an initial chunk
       if (!chunk.parents?.length) {
         return [chunk];
       }
 
-      // Chunk might reference itself as a parent (and/or child)
-      if (chunk.parents.length === 1 && chunk.parents[0] === chunk.id) {
-        return [chunk];
-      }
-
       return chunk.parents.flatMap((parent) => {
-        return getAllInitialChunks(chunks.get(parent)!, chunks);
+        return getAllInitialChunks(chunks.get(parent)!, chunks, visited);
       });
     };
 
