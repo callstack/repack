@@ -7,8 +7,8 @@ const repackFederationRuntimePlugin: () => FederationRuntimePlugin = () => ({
   name: 'repack-federation-runtime-plugin',
   afterResolve(args) {
     const { remoteInfo } = args;
-    const Platform = require('react-native').Platform;
-    const ScriptManager: SM = require('@callstack/repack/client').ScriptManager;
+    const { Platform } = require('react-native');
+    const ScriptManager: SM = require('./ScriptManager').ScriptManager;
     const platformQuery = __DEV__ ? { platform: Platform.OS } : undefined;
 
     ScriptManager.shared.addResolver(

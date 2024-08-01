@@ -1,6 +1,7 @@
 import webpack from 'webpack';
 import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import type { DevServerOptions, WebpackPlugin } from '../../types';
+import { ModuleFederationDevPlugin } from './ModuleFederationDevPlugin';
 
 type ExtractEntryStaticNormalized<E> = E extends () => Promise<infer U>
   ? U
@@ -144,5 +145,7 @@ export class DevelopmentPlugin implements WebpackPlugin {
         EventSource: ['react-native-event-source', 'default'],
       }).apply(compiler);
     }
+
+    new ModuleFederationDevPlugin().apply(compiler);
   }
 }
