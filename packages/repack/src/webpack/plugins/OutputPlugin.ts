@@ -1,4 +1,5 @@
-import path from 'path';
+import path from 'node:path';
+import assert from 'node:assert';
 import webpack from 'webpack';
 import { Rule, WebpackPlugin } from '../../types';
 import { AssetsCopyProcessor } from './utils/AssetsCopyProcessor';
@@ -150,15 +151,6 @@ export class OutputPlugin implements WebpackPlugin {
    */
   constructor(private config: OutputPluginConfig) {
     this.config.enabled = this.config.enabled ?? true;
-
-    if (!this.config.platform) {
-      throw new Error('Missing `platform` option in `OutputPlugin`');
-    }
-
-    if (!this.config.output) {
-      throw new Error('Missing `output` option in `OutputPlugin`');
-    }
-
     this.config.extraChunks = this.config.extraChunks ?? [
       {
         include: /.*/,
@@ -173,75 +165,51 @@ export class OutputPlugin implements WebpackPlugin {
     ];
   }
 
+  private matchChunkToSpecs(
+    chunk: webpack.StatsChunk,
+    specs: DestinationSpec[]
+  ) {
+    const chunkIds = [chunk.names ?? [], chunk.id!].flat();
+    return specs.filter((spec) => {
+      const { test, include, exclude } = spec;
+      const config = { test, include, exclude };
+      return chunkIds.some((id) =>
+        webpack.ModuleFilenameHelpers.matchObject(config, id.toString())
+      );
+    });
+  }
+
+  private getRelatedSourceMap(chunk: webpack.StatsChunk) {
+    return chunk.auxiliaryFiles?.find((file) => /\.map$/.test(file));
+  }
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: webpack.Compiler) {
-    if (!this.config.enabled) {
-      return;
-    }
+    if (!this.config.enabled) return;
 
-    const outputPath = compiler.options.output?.path;
-    if (!outputPath) {
-      throw new Error('Cannot infer output path from compilation');
-    }
+    assert(this.config.platform, 'Missing `platform` option in `OutputPlugin`');
+    assert(this.config.output, 'Missing `output` option in `OutputPlugin`');
+    assert(compiler.options.output.path, "Can't infer output path from config");
 
     const logger = compiler.getInfrastructureLogger('RepackOutputPlugin');
+    const outputPath = compiler.options.output.path as string;
+    const nativeEntryChunkName = this.config.entryName ?? 'main';
 
-    const extraAssets = (this.config.extraChunks ?? []).map((spec) =>
-      spec.type === 'remote'
-        ? {
-            ...spec,
-            outputPath: !path.isAbsolute(spec.outputPath)
-              ? path.join(this.config.context, spec.outputPath)
-              : spec.outputPath,
-          }
-        : spec
-    );
+    // Split specs into types
+    const localSpecs: DestinationSpec[] = [];
+    const remoteSpecs: DestinationSpec[] = [];
 
-    const isLocalChunk = (chunkId: string): boolean => {
-      for (const spec of extraAssets) {
-        if (spec.type === 'local') {
-          if (
-            webpack.ModuleFilenameHelpers.matchObject(
-              {
-                test: spec.test,
-                include: spec.include,
-                exclude: spec.exclude,
-              },
-              chunkId
-            )
-          ) {
-            return true;
-          }
-        }
-      }
-      return false;
-    };
+    this.config.extraChunks?.forEach((spec) => {
+      if (spec.type === 'local') localSpecs.push(spec);
+      if (spec.type === 'remote') remoteSpecs.push(spec);
+    });
 
-    const getRelatedSourceMap = (chunk: webpack.StatsChunk) => {
-      return chunk.auxiliaryFiles?.find((file) => /\.map$/.test(file));
-    };
-
-    const getAllInitialChunks = (
-      chunk: webpack.StatsChunk,
-      chunks: Map<string | number, webpack.StatsChunk>
-    ): Array<webpack.StatsChunk> => {
-      if (!chunk.parents?.length) {
-        return [chunk];
-      }
-
-      // Chunk might reference itself as a parent (and/or child)
-      if (chunk.parents.length === 1 && chunk.parents[0] === chunk.id) {
-        return [chunk];
-      }
-
-      return chunk.parents.flatMap((parent) => {
-        return getAllInitialChunks(chunks.get(parent)!, chunks);
-      });
-    };
+    const localChunks = new Set<webpack.StatsChunk>();
+    const remoteChunks = new Set<webpack.StatsChunk>();
+    const auxiliaryAssets = new Set<string>();
 
     compiler.hooks.done.tapPromise('RepackOutputPlugin', async (stats) => {
       const compilationStats = stats.toJson({
@@ -251,64 +219,54 @@ export class OutputPlugin implements WebpackPlugin {
         chunkRelations: true,
         ids: true,
       });
-      const statsChunkMap = new Map(
-        compilationStats.chunks!.map((chunk) => [chunk.id!, chunk])
-      );
-      const entryChunkName = this.config.entryName ?? 'main';
-      const localChunks: webpack.StatsChunk[] = [];
-      const remoteChunks: webpack.StatsChunk[] = [];
-      const sharedChunks = new Set<webpack.StatsChunk>();
-      const auxiliaryAssets: Set<string> = new Set();
 
-      const entryChunk = compilationStats.chunks!.find((chunk) => {
-        return chunk.initial && chunk.names?.includes(entryChunkName);
-      });
-
-      for (const chunk of compilationStats.chunks!) {
-        // Do not process shared chunks right now.
-        if (sharedChunks.has(chunk)) {
-          continue;
-        }
-
-        getAllInitialChunks(chunk, statsChunkMap)
-          .filter((sharedChunk) => sharedChunk !== chunk)
-          .forEach((sharedChunk) => {
-            sharedChunks.add(sharedChunk);
-          });
-
-        // Entry chunk
-        if (entryChunk === chunk) {
-          localChunks.push(chunk);
-        } else if (isLocalChunk(chunk.name ?? chunk.id?.toString())) {
-          localChunks.push(chunk);
-        } else {
-          remoteChunks.push(chunk);
-        }
-      }
-
-      // Process shared chunks to add them either as local or remote chunk.
-      for (const sharedChunk of sharedChunks) {
-        const isUsedByLocalChunk = localChunks.some((localChunk) =>
-          getAllInitialChunks(localChunk, statsChunkMap).includes(sharedChunk)
-        );
-        if (
-          isUsedByLocalChunk ||
-          isLocalChunk(sharedChunk.name ?? sharedChunk.id?.toString())
-        ) {
-          localChunks.push(sharedChunk);
-        } else {
-          remoteChunks.push(sharedChunk);
-        }
-      }
-
+      const chunks = compilationStats.chunks!;
       const assets = compilationStats.assets!;
+
+      const chunksById = new Map(chunks.map((chunk) => [chunk.id!, chunk]));
+
+      // Add explicitly known initial chunks as local chunks
+      chunks
+        .filter((chunk) => chunk.initial && chunk.entry)
+        .filter((chunk) => chunk.id! in compiler.options.entry)
+        .forEach((chunk) => localChunks.add(chunk));
+
+      // Add siblings of known initial chunks as local chunks
+      chunks
+        .filter((chunk) => localChunks.has(chunk))
+        .flatMap((chunk) => chunk.siblings!)
+        .map((chunkId) => chunksById.get(chunkId))
+        .forEach((chunk) => localChunks.add(chunk!));
+
+      // Add chunks matching local specs as local chunks
+      chunks
+        .filter((chunk) => this.matchChunkToSpecs(chunk, localSpecs).length)
+        .forEach((chunk) => localChunks.add(chunk));
+
+      // Add parents of local chunks as local chunks
+      const addParentsOfLocalChunks = () => {
+        chunks
+          .filter((chunk) => localChunks.has(chunk))
+          .flatMap((chunk) => chunk.parents!)
+          .map((chunkId) => chunksById.get(chunkId))
+          .forEach((chunk) => localChunks.add(chunk!));
+        return localChunks.size;
+      };
+
+      // Iterate until no new chunks are added
+      while (localChunks.size - addParentsOfLocalChunks());
+
+      // Add all other chunks as remote chunks
+      chunks
+        .filter((chunk) => !localChunks.has(chunk))
+        .forEach((chunk) => remoteChunks.add(chunk));
+
       // Collect auxiliary assets (only remote-assets for now)
       assets
         .filter((asset) => /^remote-assets/.test(asset.name))
         .forEach((asset) => auxiliaryAssets.add(asset.name));
 
       let localAssetsCopyProcessor;
-
       let { bundleFilename, sourceMapFilename, assetsPath } =
         this.config.output;
 
@@ -353,44 +311,42 @@ export class OutputPlugin implements WebpackPlugin {
         {};
 
       for (const chunk of localChunks) {
-        // Process entry chunk
+        // Process entry chunk - only one entry chunk is allowed here
         localAssetsCopyProcessor?.enqueueChunk(chunk, {
-          isEntry: entryChunk === chunk,
-          sourceMapFile: getRelatedSourceMap(chunk),
+          isEntry: chunk.id! === nativeEntryChunkName,
+          sourceMapFile: this.getRelatedSourceMap(chunk),
         });
       }
 
       for (const chunk of remoteChunks) {
-        const spec = extraAssets.find((spec) =>
-          webpack.ModuleFilenameHelpers.matchObject(
-            {
-              test: spec.test,
-              include: spec.include,
-              exclude: spec.exclude,
-            },
-            chunk.name || chunk.id?.toString()
-          )
-        );
+        const specs = this.matchChunkToSpecs(chunk, remoteSpecs);
 
-        if (spec?.type === 'remote') {
-          if (!remoteAssetsCopyProcessors[spec.outputPath]) {
-            remoteAssetsCopyProcessors[spec.outputPath] =
-              new AssetsCopyProcessor({
-                platform: this.config.platform,
-                outputPath,
-                bundleOutput: '',
-                bundleOutputDir: spec.outputPath,
-                sourcemapOutput: '',
-                assetsDest: spec.outputPath,
-                logger,
-              });
-          }
-
-          remoteAssetsCopyProcessors[spec.outputPath].enqueueChunk(chunk, {
-            isEntry: false,
-            sourceMapFile: getRelatedSourceMap(chunk),
-          });
+        if (specs.length === 0) {
+          throw new Error(`No spec found for chunk ${chunk.id}`);
         }
+        if (specs.length > 1) {
+          logger.warn(`Multiple specs found for chunk ${chunk.id}`);
+        }
+
+        const spec = specs[0] as { outputPath: string };
+        if (!remoteAssetsCopyProcessors[spec.outputPath]) {
+          remoteAssetsCopyProcessors[spec.outputPath] = new AssetsCopyProcessor(
+            {
+              platform: this.config.platform,
+              outputPath,
+              bundleOutput: '',
+              bundleOutputDir: spec.outputPath,
+              sourcemapOutput: '',
+              assetsDest: spec.outputPath,
+              logger,
+            }
+          );
+        }
+
+        remoteAssetsCopyProcessors[spec.outputPath].enqueueChunk(chunk, {
+          isEntry: false,
+          sourceMapFile: this.getRelatedSourceMap(chunk),
+        });
       }
 
       let auxiliaryAssetsCopyProcessor;

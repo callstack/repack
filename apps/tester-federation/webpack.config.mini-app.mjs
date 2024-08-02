@@ -100,7 +100,11 @@ export default (env) => {
         mode,
         platform,
         devServer,
-        output: { enabled: false },
+        output: {
+          bundleFilename,
+          sourceMapFilename,
+          assetsPath,
+        },
       }),
       new Repack.plugins.ModuleFederationPlugin({
         name: 'MiniApp',
