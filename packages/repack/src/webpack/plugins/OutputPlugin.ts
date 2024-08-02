@@ -4,6 +4,7 @@ import { Rule, WebpackPlugin } from '../../types';
 import { AssetsCopyProcessor } from './utils/AssetsCopyProcessor';
 import { AuxiliaryAssetsCopyProcessor } from './utils/AuxiliaryAssetsCopyProcessor';
 
+type ChunkId = Exclude<webpack.StatsChunk['id'], undefined>;
 /**
  * Matching options to check if given {@link DestinationConfig} should be used.
  */
@@ -227,8 +228,8 @@ export class OutputPlugin implements WebpackPlugin {
 
     const getAllInitialChunks = (
       chunk: webpack.StatsChunk,
-      chunks: Map<string | number, webpack.StatsChunk>,
-      visited = new Set<string | number>()
+      chunks: Map<ChunkId, webpack.StatsChunk>,
+      visited = new Set<ChunkId>()
     ): Array<webpack.StatsChunk> => {
       // Prevent cycles when traversing chunks graph
       if (visited.has(chunk.id!)) {
