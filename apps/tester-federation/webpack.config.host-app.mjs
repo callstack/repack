@@ -106,6 +106,13 @@ export default (env) => {
           sourceMapFilename,
           assetsPath,
         },
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/host-app/${platform}/output-remote`,
+          },
+        ],
       }),
       new Repack.plugins.ModuleFederationPlugin({
         name: 'HostApp',

@@ -105,6 +105,13 @@ export default (env) => {
           sourceMapFilename,
           assetsPath,
         },
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/mini-app/${platform}/output-remote`,
+          },
+        ],
       }),
       new Repack.plugins.ModuleFederationPlugin({
         name: 'MiniApp',
