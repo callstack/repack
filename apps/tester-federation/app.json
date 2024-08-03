@@ -23,5 +23,9 @@
   },
   "ios": {
     "bundleIdentifier": "com.tester.federation"
+  },
+  "resources": {
+    "android": [],
+    "ios": []
   }
 }
