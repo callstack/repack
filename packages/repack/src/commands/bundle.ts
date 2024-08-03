@@ -24,7 +24,7 @@ export async function bundle(
   _: string[],
   config: Config,
   args: BundleArguments
-) {
+): Promise<void> {
   const webpackConfigPath = getWebpackConfigPath(
     config.root,
     args.webpackConfig

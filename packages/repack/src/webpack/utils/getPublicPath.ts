@@ -35,7 +35,7 @@ export interface GetPublicPathOptions {
  * };
  * ```
  */
-export function getPublicPath(options?: GetPublicPathOptions) {
+export function getPublicPath(options?: GetPublicPathOptions): string {
   if (options?.devServer) {
     const { port, host, https } = options.devServer;
     return `${https ? 'https' : 'http'}://${host || 'localhost'}:${port}/${

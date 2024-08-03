@@ -32,14 +32,14 @@ export class DevelopmentPlugin implements WebpackPlugin {
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config?: DevelopmentPluginConfig) {}
+  constructor(private config?: DevelopmentPluginConfig | undefined) {}
 
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: webpack.Compiler): void {
     const logger = compiler.getInfrastructureLogger('DevelopmentPlugin');
 
     if (!this.config?.devServer) {

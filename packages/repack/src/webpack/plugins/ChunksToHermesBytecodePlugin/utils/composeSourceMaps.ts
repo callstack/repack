@@ -29,7 +29,7 @@ export const composeSourceMaps = async ({
   reactNativePath,
   packagerMapPath,
   compilerMapPath,
-}: ComposeSourceMapsOptions) => {
+}: ComposeSourceMapsOptions): Promise<void> => {
   const composedSourceMapPath = packagerMapPath + '.composed';
 
   try {

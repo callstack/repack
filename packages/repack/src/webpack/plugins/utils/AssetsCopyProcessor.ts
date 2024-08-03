@@ -31,7 +31,7 @@ export class AssetsCopyProcessor {
   enqueueChunk(
     chunk: webpack.StatsChunk,
     { isEntry, sourceMapFile }: { isEntry: boolean; sourceMapFile?: string }
-  ) {
+  ): void {
     const {
       outputPath,
       bundleOutput,
@@ -187,7 +187,7 @@ export class AssetsCopyProcessor {
     }
   }
 
-  execute() {
+  execute(): Promise<void>[] {
     const queue = this.queue;
     this.queue = [];
     return queue.map((work) => work());

@@ -102,7 +102,7 @@ export class LoggerPlugin implements WebpackPlugin {
    *
    * @param entry Log entry to process
    */
-  processEntry(entry: LogEntry) {
+  processEntry(entry: LogEntry): void {
     if (
       !this.config.output?.console &&
       !this.config.output?.file &&
@@ -123,7 +123,7 @@ export class LoggerPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: webpack.Compiler): void {
     // Make sure webpack-cli doesn't print stats by default.
     if (compiler.options.stats === undefined) {
       compiler.options.stats = 'none';

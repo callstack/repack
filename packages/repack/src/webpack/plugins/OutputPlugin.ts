@@ -179,7 +179,7 @@ export class OutputPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: webpack.Compiler): void {
     if (!this.config.enabled) {
       return;
     }

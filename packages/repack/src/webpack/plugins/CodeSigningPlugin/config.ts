@@ -43,6 +43,6 @@ export const optionsSchema: Schema = {
   additionalProperties: false,
 };
 
-export function validateConfig(config: CodeSigningPluginConfig) {
+export function validateConfig(config: CodeSigningPluginConfig): void {
   validate(optionsSchema, config, { name: 'CodeSigningPlugin' });
 }

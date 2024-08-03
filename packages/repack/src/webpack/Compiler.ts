@@ -249,7 +249,7 @@ export class Compiler extends EventEmitter {
     );
   }
 
-  getMimeType(filename: string) {
+  getMimeType(filename: string): string {
     if (filename.endsWith('.bundle')) {
       return 'text/javascript';
     }

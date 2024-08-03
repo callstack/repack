@@ -112,7 +112,7 @@ export namespace Federated {
    * };
    * ```
    */
-  export function createRemote(remote: string) {
+  export function createRemote(remote: string): string {
     const [remoteName, url] = remote.split('@');
 
     if (!url) {

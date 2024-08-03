@@ -13,7 +13,10 @@ const DEFAULT_WEBPACK_CONFIG_LOCATIONS = [
   '.webpack/webpackfile',
 ];
 
-export function getWebpackConfigPath(root: string, customPath?: string) {
+export function getWebpackConfigPath(
+  root: string,
+  customPath?: string
+): string {
   const candidates = customPath
     ? [customPath]
     : DEFAULT_WEBPACK_CONFIG_LOCATIONS;

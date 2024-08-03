@@ -8,7 +8,7 @@ import type { ImageSize } from './types';
 export function getFilesInDirectory(
   dirname: string,
   fs: LoaderContext<Options>['fs']
-) {
+): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) =>
     fs.readdir(dirname, (error, results) => {
       if (error) {
@@ -24,12 +24,15 @@ export function getFilesInDirectory(
   );
 }
 
-export function getScaleNumber(scaleKey: string) {
+export function getScaleNumber(scaleKey: string): number {
   return parseFloat(scaleKey.replace(/[^\d.]/g, ''));
 }
 
-export function readFile(filename: string, fs: LoaderContext<Options>['fs']) {
-  return new Promise<string | Buffer>((resolve, reject) => {
+export function readFile(
+  filename: string,
+  fs: LoaderContext<Options>['fs']
+): Promise<Buffer> {
+  return new Promise<Buffer>((resolve, reject) => {
     fs.readFile(filename, (error, results) => {
       if (error) {
         reject(error);

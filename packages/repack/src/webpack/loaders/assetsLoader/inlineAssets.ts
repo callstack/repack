@@ -13,7 +13,7 @@ export function inlineAssets({
   resourcePath: string;
   resourceFilename: string;
   suffixPattern: string;
-}) {
+}): string {
   const mimeType = mimeTypes.lookup(resourcePath) || undefined;
   const size = getImageSize({ resourcePath, resourceFilename, suffixPattern });
 

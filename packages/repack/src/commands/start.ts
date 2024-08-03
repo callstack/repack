@@ -28,7 +28,13 @@ import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
  * @internal
  * @category CLI command
  */
-export async function start(_: string[], config: Config, args: StartArguments) {
+export async function start(
+  _: string[],
+  config: Config,
+  args: StartArguments
+): Promise<{
+  stop: () => Promise<void>;
+}> {
   const webpackConfigPath = getWebpackConfigPath(
     config.root,
     args.webpackConfig
@@ -51,7 +57,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   const isSilent = args.silent;
   const isVerbose = isSilent
     ? false
-    : args.verbose ?? process.argv.includes('--verbose');
+    : (args.verbose ?? process.argv.includes('--verbose'));
   const reporter = composeReporters(
     [
       new ConsoleReporter({

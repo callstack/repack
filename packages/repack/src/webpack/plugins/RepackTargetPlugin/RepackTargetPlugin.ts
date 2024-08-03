@@ -24,14 +24,14 @@ export class RepackTargetPlugin implements WebpackPlugin {
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config?: RepackTargetPluginConfig) {}
+  constructor(private config?: RepackTargetPluginConfig | undefined) {}
 
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: webpack.Compiler): void {
     const globalObject = 'self';
     compiler.options.target = false;
     compiler.options.output.chunkLoading = 'jsonp';

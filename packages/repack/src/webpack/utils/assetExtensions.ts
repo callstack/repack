@@ -1,5 +1,5 @@
 /** Extensions array of all scalable assets - images. */
-export const SCALABLE_ASSETS = [
+export const SCALABLE_ASSETS: string[] = [
   // Image formats
   'bmp',
   'gif',
@@ -13,7 +13,7 @@ export const SCALABLE_ASSETS = [
 ];
 
 /** Extensions array of all supported assets by Re.Pack's Assets loader. */
-export const ASSET_EXTENSIONS = [
+export const ASSET_EXTENSIONS: string[] = [
   ...SCALABLE_ASSETS,
   // Video formats
   'm4v',
@@ -68,6 +68,6 @@ export const ASSET_EXTENSIONS = [
  * };
  * ```
  */
-export function getAssetExtensionsRegExp(extensions: string[]) {
+export function getAssetExtensionsRegExp(extensions: string[]): RegExp {
   return new RegExp(`\\.(${extensions.join('|')})$`);
 }

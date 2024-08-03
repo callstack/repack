@@ -75,7 +75,7 @@ export class ChunksToHermesBytecodePlugin implements WebpackPlugin {
 
   constructor(private config: ChunksToHermesBytecodePluginConfig) {}
 
-  apply(compiler: Compiler) {
+  apply(compiler: Compiler): void {
     const logger = compiler.getInfrastructureLogger(this.name);
 
     if (!this.config.enabled) {

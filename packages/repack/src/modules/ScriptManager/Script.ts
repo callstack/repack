@@ -33,7 +33,7 @@ export class Script {
    * @param scriptId Id of the script.
    */
   static getFileSystemURL(scriptId: string) {
-    return (webpackContext: WebpackContext) =>
+    return (webpackContext: WebpackContext): string =>
       webpackContext.u(`file:///${scriptId}`);
   }
 
@@ -49,7 +49,7 @@ export class Script {
   static getRemoteURL(
     url: string,
     options: { excludeExtension?: boolean } = {}
-  ) {
+  ): string | ((webpackContext: WebpackContext) => string) {
     if (options.excludeExtension) {
       return url;
     }
@@ -69,7 +69,7 @@ export class Script {
     key: { scriptId: string; caller?: string },
     locator: ScriptLocator,
     fetch: boolean
-  ) {
+  ): Script {
     const headers: Record<string, string> = {};
     new Headers(locator.headers).forEach((value: string, key: string) => {
       headers[key.toLowerCase()] = value;
@@ -145,7 +145,7 @@ export class Script {
       NormalizedScriptLocator,
       'method' | 'url' | 'query' | 'headers' | 'body'
     >
-  ) {
+  ): boolean {
     if (!this.cache || !cachedData) {
       return false;
     }
@@ -166,7 +166,7 @@ export class Script {
       NormalizedScriptLocator,
       'method' | 'url' | 'query' | 'headers' | 'body'
     >
-  ) {
+  ): boolean {
     if (!this.cache) {
       return true;
     }
@@ -186,7 +186,7 @@ export class Script {
       NormalizedScriptLocator,
       'method' | 'url' | 'query' | 'headers' | 'body'
     >
-  ) {
+  ): boolean {
     const diffs = [
       cachedData.method !== this.locator.method,
       cachedData.url !== this.locator.url,
@@ -203,7 +203,13 @@ export class Script {
    *
    * @internal
    */
-  getCacheData() {
+  getCacheData(): {
+    method: 'GET' | 'POST';
+    url: string;
+    query: string | undefined;
+    headers: Record<string, string> | undefined;
+    body: string | undefined;
+  } {
     return {
       method: this.locator.method,
       url: this.locator.url,
@@ -213,7 +219,12 @@ export class Script {
     };
   }
 
-  toObject() {
+  toObject(): {
+    scriptId: string;
+    caller: string | undefined;
+    locator: NormalizedScriptLocator;
+    cache: boolean;
+  } {
     return {
       scriptId: this.scriptId,
       caller: this.caller,

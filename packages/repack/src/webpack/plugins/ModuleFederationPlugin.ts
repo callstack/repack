@@ -234,7 +234,7 @@ export class ModuleFederationPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: Compiler) {
+  apply(compiler: Compiler): void {
     const remotes = Array.isArray(this.config.remotes)
       ? this.config.remotes.map((remote) => this.replaceRemotes(remote))
       : this.replaceRemotes(this.config.remotes ?? {});

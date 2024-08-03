@@ -23,7 +23,7 @@ export function convertToRemoteAssets({
   resourcePath: string;
   suffixPattern: string;
   pathSeparatorRegexp: RegExp;
-}) {
+}): string {
   const assetPath = path
     .join(assetsDirname, resourceDirname)
     .replace(pathSeparatorRegexp, '/');

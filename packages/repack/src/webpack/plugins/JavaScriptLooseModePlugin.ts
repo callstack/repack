@@ -33,7 +33,7 @@ export class JavaScriptLooseModePlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: webpack.Compiler): void {
     const shouldUseLooseMode = (filename: string) =>
       webpack.ModuleFilenameHelpers.matchObject(this.config, filename);
 

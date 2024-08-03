@@ -45,7 +45,16 @@ export interface ResolveOptions {
  * ```
  */
 
-export function getResolveOptions(platform: string, options?: ResolveOptions) {
+export function getResolveOptions(
+  platform: string,
+  options?: ResolveOptions
+): {
+  mainFields: string[];
+  aliasFields: string[];
+  conditionNames: string[];
+  exportsFields: string[];
+  extensions: string[];
+} {
   const preferNativePlatform = options?.preferNativePlatform ?? true;
   const enablePackageExports = options?.enablePackageExports ?? false;
 

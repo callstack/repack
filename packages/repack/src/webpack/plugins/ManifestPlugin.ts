@@ -10,7 +10,7 @@ export class ManifestPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: webpack.Compiler): void {
     compiler.hooks.compilation.tap('TargetPlugin', (compilation) => {
       compilation.hooks.afterProcessAssets.tap('TargetPlugin', () => {
         for (const chunk of compilation.chunks) {

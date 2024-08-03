@@ -19,15 +19,15 @@ export class ConsoleReporter implements Reporter {
         : new InteractiveConsoleReporter(this.config);
   }
 
-  process(log: LogEntry) {
+  process(log: LogEntry): void {
     this.internalReporter.process(log);
   }
 
-  flush() {
+  flush(): void {
     this.internalReporter.flush();
   }
 
-  stop() {
+  stop(): void {
     this.internalReporter.stop();
   }
 }

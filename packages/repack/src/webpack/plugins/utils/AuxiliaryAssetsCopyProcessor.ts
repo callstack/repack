@@ -24,7 +24,7 @@ export class AuxiliaryAssetsCopyProcessor {
     await this.filesystem.copyFile(from, to);
   }
 
-  enqueueAsset(asset: string) {
+  enqueueAsset(asset: string): void {
     const { outputPath, assetsDest } = this.config;
 
     this.queue.push(() =>
@@ -32,7 +32,7 @@ export class AuxiliaryAssetsCopyProcessor {
     );
   }
 
-  execute() {
+  execute(): Promise<void>[] {
     const queue = this.queue;
     this.queue = [];
     return queue.map((work) => work());

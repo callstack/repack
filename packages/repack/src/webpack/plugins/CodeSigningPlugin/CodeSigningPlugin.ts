@@ -43,7 +43,7 @@ export class CodeSigningPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: webpack.Compiler): void {
     const pluginName = CodeSigningPlugin.name;
     const logger = compiler.getInfrastructureLogger(pluginName);
 
@@ -91,11 +91,13 @@ export class CodeSigningPlugin implements WebpackPlugin {
         }
         logger.debug(`Signing ${file}`);
         /** generate bundle hash */
+        // @ts-expect-error beta issue
         const hash = crypto.createHash('sha256').update(content).digest('hex');
         /** generate token */
         const token = jwt.sign({ hash }, privateKey, { algorithm: 'RS256' });
         /** combine the bundle and the token */
         const signedBundle = Buffer.concat(
+          // @ts-expect-error beta issues
           [content, Buffer.from(BEGIN_CS_MARK), Buffer.from(token)],
           content.length + TOKEN_BUFFER_SIZE
         );

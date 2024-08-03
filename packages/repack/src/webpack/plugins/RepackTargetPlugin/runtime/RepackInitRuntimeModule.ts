@@ -12,7 +12,7 @@ export class RepackInitRuntimeModule extends webpack.RuntimeModule {
     super('repack/init', webpack.RuntimeModule.STAGE_BASIC);
   }
 
-  generate() {
+  generate(): string {
     return webpack.Template.asString([
       '// Repack runtime initialization logic',
       webpack.Template.getFunctionContent(require('./implementation/init'))

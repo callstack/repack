@@ -11,7 +11,7 @@ type WebpackConfig =
 export async function loadWebpackConfig(
   webpackConfigPath: string,
   env: WebpackEnvOptions
-) {
+): Promise<webpack.Configuration> {
   let config: WebpackConfig;
 
   try {

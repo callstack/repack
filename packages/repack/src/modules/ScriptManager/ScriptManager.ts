@@ -6,6 +6,7 @@ import type {
   NormalizedScriptLocator,
   ScriptLocatorResolver,
   StorageApi,
+  WebpackContext,
 } from './types';
 import NativeScriptManager from './NativeScriptManager';
 
@@ -100,7 +101,9 @@ export class ScriptManager extends EventEmitter {
    *
    * @internal
    */
-  protected constructor(private nativeScriptManager = NativeScriptManager) {
+  protected constructor(
+    private nativeScriptManager: typeof NativeScriptManager = NativeScriptManager
+  ) {
     super();
 
     if (!nativeScriptManager) {
@@ -133,7 +136,7 @@ export class ScriptManager extends EventEmitter {
     __webpack_require__.repack.shared.scriptManager = this;
   }
 
-  __destroy() {
+  __destroy(): void {
     __webpack_require__.repack.shared.scriptManager = undefined;
     __webpack_require__.repack.shared.loadScriptCallback.push =
       Array.prototype.push.bind(
@@ -149,7 +152,7 @@ export class ScriptManager extends EventEmitter {
    *
    * @param storage Implementation of storage functions.
    */
-  setStorage(storage?: StorageApi) {
+  setStorage(storage?: StorageApi): void {
     this.storage = storage;
   }
 
@@ -172,7 +175,7 @@ export class ScriptManager extends EventEmitter {
   addResolver(
     resolver: ScriptLocatorResolver,
     { priority = 2 }: ResolverOptions = {}
-  ) {
+  ): void {
     this.resolvers = this.resolvers
       .concat([[priority, resolver]])
       .sort(([a], [b]) => b - a);
@@ -197,11 +200,11 @@ export class ScriptManager extends EventEmitter {
   /**
    * Removes all previously added resolvers.
    */
-  removeAllResolvers() {
+  removeAllResolvers(): void {
     this.resolvers = [];
   }
 
-  protected async initCache() {
+  protected async initCache(): Promise<void> {
     if (!this.cacheInitialized) {
       const cache: Cache | null | undefined = JSON.parse(
         (await this.storage?.getItem(CACHE_KEY)) ?? '{}'
@@ -211,7 +214,7 @@ export class ScriptManager extends EventEmitter {
     }
   }
 
-  protected async saveCache() {
+  protected async saveCache(): Promise<void> {
     await this.storage?.setItem(CACHE_KEY, JSON.stringify(this.cache));
   }
 
@@ -239,7 +242,7 @@ export class ScriptManager extends EventEmitter {
   async resolveScript(
     scriptId: string,
     caller?: string,
-    webpackContext = getWebpackContext()
+    webpackContext: WebpackContext = getWebpackContext()
   ): Promise<Script> {
     await this.initCache();
     try {
@@ -331,8 +334,8 @@ export class ScriptManager extends EventEmitter {
   async loadScript(
     scriptId: string,
     caller?: string,
-    webpackContext = getWebpackContext()
-  ) {
+    webpackContext: WebpackContext = getWebpackContext()
+  ): Promise<void> {
     let script = await this.resolveScript(scriptId, caller, webpackContext);
     return await new Promise<void>((resolve, reject) => {
       (async () => {
@@ -377,8 +380,8 @@ export class ScriptManager extends EventEmitter {
   async prefetchScript(
     scriptId: string,
     caller?: string,
-    webpackContext = getWebpackContext()
-  ) {
+    webpackContext: WebpackContext = getWebpackContext()
+  ): Promise<void> {
     let script = await this.resolveScript(scriptId, caller, webpackContext);
 
     try {
@@ -405,7 +408,7 @@ export class ScriptManager extends EventEmitter {
    *
    * @param scriptIds Array of script ids to clear from cache and remove from filesystem.
    */
-  async invalidateScripts(scriptIds: string[] = []) {
+  async invalidateScripts(scriptIds: string[] = []): Promise<void> {
     try {
       await this.initCache();
       const ids = scriptIds ?? Object.keys(this.cache);

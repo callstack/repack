@@ -15,7 +15,9 @@ const testMP4 = /\.(mp4)$/;
 const testImages = /\.(png|jpg|gif|webp)$/;
 const testFonts = /\.(ttf|otf|ttc)$/;
 
-export default async function repackAssetsLoader(this: LoaderContext<Options>) {
+export default async function repackAssetsLoader(
+  this: LoaderContext<Options>
+): Promise<void> {
   this.cacheable();
 
   const callback = this.async();

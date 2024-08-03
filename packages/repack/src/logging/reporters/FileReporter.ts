@@ -22,12 +22,12 @@ export class FileReporter implements Reporter {
     this.flush();
   }, 1000);
 
-  process(log: LogEntry) {
+  process(log: LogEntry): void {
     this.buffer.push(JSON.stringify(log));
     this.throttledFlush();
   }
 
-  flush() {
+  flush(): void {
     if (!this.buffer.length) {
       return;
     }
@@ -38,7 +38,7 @@ export class FileReporter implements Reporter {
     this.buffer = [];
   }
 
-  stop() {
+  stop(): void {
     this.flush();
   }
 }

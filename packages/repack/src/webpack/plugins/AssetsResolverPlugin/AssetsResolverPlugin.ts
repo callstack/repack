@@ -34,7 +34,7 @@ export class AssetsResolverPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: webpack.Compiler): void {
     const assetResolver = new AssetResolver(this.config, compiler);
 
     compiler.options.resolve.plugins = (

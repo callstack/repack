@@ -5,7 +5,7 @@ export class RepackLoadScriptRuntimeModule extends webpack.RuntimeModule {
     super('repack/load script', webpack.RuntimeModule.STAGE_BASIC);
   }
 
-  generate() {
+  generate(): string {
     return webpack.Template.asString([
       '// A bridge between Webpack runtime and Repack runtime for loading chunks and HMR updates',
       webpack.Template.getFunctionContent(

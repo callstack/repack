@@ -30,7 +30,7 @@ export async function extractAssets(
     devServerEnabled?: boolean;
   },
   logger: WebpackLogger
-) {
+): Promise<string> {
   let publicPath = path
     .join(assetsDirname, resourceDirname)
     .replace(pathSeparatorRegexp, '/');

@@ -1,4 +1,4 @@
-const commands: [
+declare const commands: [
   {
     name: 'bundle';
     description: string;

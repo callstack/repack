@@ -18,7 +18,7 @@ export const DEFAULT_PORT = 8081;
  *
  * @internal
  */
-export function isWorker() {
+export function isWorker(): boolean {
   return Boolean(process.env[WORKER_ENV_KEY]);
 }
 
@@ -29,6 +29,6 @@ export function isWorker() {
  *
  * @internal
  */
-export function isVerbose() {
+export function isVerbose(): boolean {
   return Boolean(process.env[VERBOSE_ENV_KEY]);
 }

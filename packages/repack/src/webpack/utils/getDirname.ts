@@ -21,6 +21,6 @@ import { fileURLToPath } from 'url';
  * };
  * ```
  */
-export function getDirname(fileUrl: string) {
+export function getDirname(fileUrl: string): string {
   return path.dirname(fileURLToPath(fileUrl));
 }

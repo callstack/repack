@@ -23,7 +23,9 @@ export const transformBundleToHermesBytecode = async ({
   hermesCLIPath,
   useSourceMaps,
   bundlePath,
-}: TransformBundleToHermesBytecodeOptions) => {
+}: TransformBundleToHermesBytecodeOptions): Promise<{
+  sourceMap: string;
+}> => {
   const hermesBundlePath = bundlePath + '.hbc';
   const hermesSourceMapPath = bundlePath + '.hbc.map';
 

@@ -82,7 +82,7 @@ export class AssetResolver {
     private compiler: webpack.Compiler
   ) {}
 
-  apply(resolver: Resolver) {
+  apply(resolver: Resolver): void {
     const platform = this.config.platform;
     const test = getAssetExtensionsRegExp(this.config.extensions!);
 
