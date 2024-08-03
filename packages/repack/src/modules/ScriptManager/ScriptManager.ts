@@ -203,10 +203,8 @@ export class ScriptManager extends EventEmitter {
 
   protected async initCache() {
     if (!this.cacheInitialized) {
-      const cache: Cache | null | undefined = JSON.parse(
-        (await this.storage?.getItem(CACHE_KEY)) ?? '{}'
-      );
-      this.cache = cache ?? {};
+      const cacheEntry = await this.storage?.getItem(CACHE_KEY);
+      this.cache = cacheEntry ? JSON.parse(cacheEntry) : {};
       this.cacheInitialized = true;
     }
   }
@@ -404,19 +402,20 @@ export class ScriptManager extends EventEmitter {
    * the invalidation completes.
    *
    * @param scriptIds Array of script ids to clear from cache and remove from filesystem.
+   * @returns Array of script ids that were invalidated.
    */
   async invalidateScripts(scriptIds: string[] = []) {
     try {
       await this.initCache();
-      const ids = scriptIds ?? Object.keys(this.cache);
 
-      for (const scriptId of ids) {
-        delete this.cache[scriptId];
-      }
+      const ids = scriptIds.length ? scriptIds : Object.keys(this.cache);
+      ids.forEach((scriptId) => delete this.cache[scriptId]);
+
       await this.saveCache();
+      await this.nativeScriptManager.invalidateScripts(scriptIds);
 
-      await this.nativeScriptManager.invalidateScripts(ids);
       this.emit('invalidated', ids);
+      return ids;
     } catch (error) {
       const { code } = error as Error & { code: string };
       this.handleError(
