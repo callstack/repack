@@ -182,6 +182,11 @@ export class OutputPlugin implements WebpackPlugin {
   private getRelatedSourceMap(chunk: webpack.StatsChunk) {
     return chunk.auxiliaryFiles?.find((file) => /\.map$/.test(file));
   }
+
+  private ensureAbsolutePath(filePath: string) {
+    if (path.isAbsolute(filePath)) return filePath;
+    return path.join(this.config.context, filePath);
+  }
   /**
    * Apply the plugin.
    *
@@ -271,23 +276,15 @@ export class OutputPlugin implements WebpackPlugin {
         this.config.output;
 
       if (bundleFilename) {
-        if (!path.isAbsolute(bundleFilename)) {
-          bundleFilename = path.join(this.config.context, bundleFilename);
-        }
+        bundleFilename = this.ensureAbsolutePath(bundleFilename);
 
         const bundlePath = path.dirname(bundleFilename);
 
-        if (!sourceMapFilename) {
-          sourceMapFilename = `${bundleFilename}.map`;
-        }
+        sourceMapFilename = this.ensureAbsolutePath(
+          sourceMapFilename || `${bundleFilename}.map`
+        );
 
-        if (!path.isAbsolute(sourceMapFilename)) {
-          sourceMapFilename = path.join(this.config.context, sourceMapFilename);
-        }
-
-        if (!assetsPath) {
-          assetsPath = bundlePath;
-        }
+        assetsPath = assetsPath || bundlePath;
 
         logger.debug('Detected output paths:', {
           bundleFilename,
@@ -329,33 +326,33 @@ export class OutputPlugin implements WebpackPlugin {
         }
 
         const spec = specs[0] as { outputPath: string };
-        if (!remoteAssetsCopyProcessors[spec.outputPath]) {
-          remoteAssetsCopyProcessors[spec.outputPath] = new AssetsCopyProcessor(
-            {
-              platform: this.config.platform,
-              outputPath,
-              bundleOutput: '',
-              bundleOutputDir: spec.outputPath,
-              sourcemapOutput: '',
-              assetsDest: spec.outputPath,
-              logger,
-            }
-          );
+        const specOutputPath = this.ensureAbsolutePath(spec.outputPath);
+
+        if (!remoteAssetsCopyProcessors[specOutputPath]) {
+          remoteAssetsCopyProcessors[specOutputPath] = new AssetsCopyProcessor({
+            platform: this.config.platform,
+            outputPath,
+            bundleOutput: '',
+            bundleOutputDir: specOutputPath,
+            sourcemapOutput: '',
+            assetsDest: specOutputPath,
+            logger,
+          });
         }
 
-        remoteAssetsCopyProcessors[spec.outputPath].enqueueChunk(chunk, {
+        remoteAssetsCopyProcessors[specOutputPath].enqueueChunk(chunk, {
           isEntry: false,
           sourceMapFile: this.getRelatedSourceMap(chunk),
         });
       }
 
       let auxiliaryAssetsCopyProcessor;
-      const { auxiliaryAssetsPath } = this.config.output;
+      const auxiliaryAssetsPath = this.config.output.auxiliaryAssetsPath;
       if (auxiliaryAssetsPath) {
         auxiliaryAssetsCopyProcessor = new AuxiliaryAssetsCopyProcessor({
           platform: this.config.platform,
           outputPath,
-          assetsDest: auxiliaryAssetsPath,
+          assetsDest: this.ensureAbsolutePath(auxiliaryAssetsPath),
           logger,
         });
 
