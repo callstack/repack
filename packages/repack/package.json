@@ -42,11 +42,11 @@
   },
   "scripts": {
     "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start",
-    "build:ts": "tsc --emitDeclarationOnly",
+    "build:ts": "tsc -p ./tsconfig.build.json --emitDeclarationOnly",
     "build": "pnpm run \"/^build:.*/\"",
     "lint": "eslint --ext \".js,.ts\" commands.js client.js src",
     "test": "jest",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -p ./tsconfig.build.json --noEmit",
     "archive": "pnpm build && pnpm pack",
     "clang-format": "pnpm clang-format:ios && pnpm clang-format:android",
     "clang-format:ios": "find ios/ -iname \"*.h\" -o -iname \"*.m\" -o -iname \"*.mm\" -o -iname \"*.cpp\" | xargs clang-format -i --Werror",
