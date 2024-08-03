@@ -18,7 +18,7 @@ const dependencies = [
 export default async function addDependencies(
   packageManager: PM,
   repackVersion?: string
-) {
+): Promise<void> {
   let installCommand: string;
 
   if (packageManager === 'yarn' || packageManager === 'bun') {

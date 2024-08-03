@@ -20,7 +20,7 @@ export default async function run({
   repackVersion,
   templateType,
   verbose,
-}: Options) {
+}: Options): Promise<void> {
   const cwd = process.cwd();
 
   if (verbose) {

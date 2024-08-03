@@ -95,7 +95,10 @@ function modifyNewConfig(config: string): string {
  * @param cwd path for the root directory of the project
  * @param reactNativeVersion version of react-native in project
  */
-export default function modifyAndroid(cwd: string, reactNativeVersion: SemVer) {
+export default function modifyAndroid(
+  cwd: string,
+  reactNativeVersion: SemVer
+): void {
   const buildGradlePath = path.join(cwd, 'android', 'app', 'build.gradle');
   const config = fs.readFileSync(buildGradlePath, 'utf-8');
 

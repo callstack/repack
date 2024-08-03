@@ -78,7 +78,7 @@ function modifyPbxprojConfig(pbxprojPath: string) {
  * @param cwd current working directory
  * @param reactNativeVersion version of react-native in project
  */
-export default function modifyIOS(cwd: string) {
+export default function modifyIOS(cwd: string): void {
   const projectPbxProjPath = findProjectPbxProjPath(cwd);
   const relativeProjectPbxProjPath = path.relative(cwd, projectPbxProjPath);
 
