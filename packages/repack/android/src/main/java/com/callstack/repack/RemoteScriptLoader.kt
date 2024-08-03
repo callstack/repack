@@ -95,10 +95,19 @@ class RemoteScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactC
     }
 
     fun execute(config: ScriptConfig, promise: Promise) {
+        val scriptPath = getScriptFilePath(config.id)
         try {
-            val path = File(reactContext.filesDir, getScriptFilePath(config.id))
-            val code: ByteArray = FileInputStream(path).use { it.readBytes() }
-            evaluate(code, path.toString(), promise)
+            val file = File(reactContext.filesDir, scriptPath)
+            if (!file.exists()) {
+                throw Exception("Script file does not exist: $file")
+            }
+            
+            val code = FileInputStream(file).use { it.readBytes() }
+            if (code.isEmpty()) {
+                throw Exception("Script file exists but could not be read: $file")
+            }
+
+            evaluate(code, scriptPath, promise)
         } catch (error: Exception) {
             promise.reject(
                     ScriptLoadingError.ScriptEvalFailure.code,
