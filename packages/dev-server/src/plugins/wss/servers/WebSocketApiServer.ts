@@ -27,7 +27,7 @@ export class WebSocketApiServer extends WebSocketServer {
    *
    * @param event Event string or object to send.
    */
-  send(event: any) {
+  send(event: any): void {
     const data = typeof event === 'string' ? event : JSON.stringify(event);
 
     for (const [, socket] of this.clients.entries()) {
@@ -44,7 +44,7 @@ export class WebSocketApiServer extends WebSocketServer {
    *
    * @param socket Incoming client's WebSocket connection.
    */
-  onConnection(socket: WebSocket) {
+  onConnection(socket: WebSocket): void {
     const clientId = `client#${this.nextClientId++}`;
     this.clients.set(clientId, socket);
 

@@ -44,11 +44,11 @@ export abstract class WebSocketServer implements WebSocketServerInterface {
     this.paths = Array.isArray(path) ? path : [path];
   }
 
-  shouldUpgrade(pathname: string) {
+  shouldUpgrade(pathname: string): boolean {
     return this.paths.includes(pathname);
   }
 
-  upgrade(request: IncomingMessage, socket: Socket, head: Buffer) {
+  upgrade(request: IncomingMessage, socket: Socket, head: Buffer): void {
     this.server.handleUpgrade(request, socket, head, (webSocket) => {
       this.server.emit('connection', webSocket, request);
     });

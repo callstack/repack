@@ -27,7 +27,7 @@ export class WebSocketDevClientServer extends WebSocketServer {
    *
    * @param message Stringified client message.
    */
-  processMessage(message: string) {
+  processMessage(message: string): void {
     const { type, ...body } = JSON.parse(message);
     switch (type) {
       case 'client-log':
@@ -49,7 +49,7 @@ export class WebSocketDevClientServer extends WebSocketServer {
    *
    * @param socket Incoming client's WebSocket connection.
    */
-  onConnection(socket: WebSocket) {
+  onConnection(socket: WebSocket): void {
     const clientId = `client#${this.nextClientId++}`;
     this.clients.set(clientId, socket);
 

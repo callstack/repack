@@ -11,7 +11,7 @@ async function symbolicatePlugin(
   }: {
     delegate: Server.Delegate;
   }
-) {
+): Promise<void> {
   const symbolicator = new Symbolicator(delegate.symbolicator);
 
   instance.post('/symbolicate', async (request, reply) => {
@@ -44,4 +44,4 @@ async function symbolicatePlugin(
 export default fastifyPlugin(symbolicatePlugin, {
   name: 'symbolicate-plugin',
   dependencies: ['@fastify/sensible'],
-});
+}) as Server.Plugin;

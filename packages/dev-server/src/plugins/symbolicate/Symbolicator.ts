@@ -26,7 +26,9 @@ export class Symbolicator {
    * @param stack Array of stack frames.
    * @returns Inferred platform or `undefined` if cannot infer.
    */
-  static inferPlatformFromStack(stack: ReactNativeStackFrame[]) {
+  static inferPlatformFromStack(
+    stack: ReactNativeStackFrame[]
+  ): string | undefined {
     for (const frame of stack) {
       if (!frame.file) {
         return;

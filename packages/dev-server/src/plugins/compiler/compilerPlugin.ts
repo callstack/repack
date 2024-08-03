@@ -6,7 +6,7 @@ import type { SendProgress } from '../../types';
 async function compilerPlugin(
   instance: FastifyInstance,
   { delegate }: { delegate: Server.Delegate }
-) {
+): Promise<void> {
   instance.route({
     method: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
     url: '/*',
@@ -86,4 +86,4 @@ async function compilerPlugin(
 export default fastifyPlugin(compilerPlugin, {
   name: 'compiler-plugin',
   dependencies: ['@fastify/sensible', 'multipart-plugin'],
-});
+}) as Server.Plugin;

@@ -1,5 +1,5 @@
 import { Writable } from 'stream';
-import Fastify from 'fastify';
+import Fastify, { FastifyInstance } from 'fastify';
 import fastifySensible from '@fastify/sensible';
 import middie from '@fastify/middie';
 // eslint-disable-next-line import/no-unresolved -- no main field in package.json
@@ -24,7 +24,11 @@ import devtoolsPlugin from './plugins/devtools';
  * @param config Server configuration.
  * @returns `start` and `stop` functions as well as an underlying Fastify `instance`.
  */
-export async function createServer(config: Server.Config) {
+export async function createServer(config: Server.Config): Promise<{
+  start: () => Promise<void>;
+  stop: () => Promise<void>;
+  instance: FastifyInstance;
+}> {
   let delegate: Server.Delegate;
 
   /** Fastify instance powering the development server. */

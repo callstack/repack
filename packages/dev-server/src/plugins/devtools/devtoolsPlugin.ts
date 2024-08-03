@@ -6,7 +6,7 @@ import type { Server } from '../../types';
 async function devtoolsPlugin(
   instance: FastifyInstance,
   { options }: { options: Server.Options }
-) {
+): Promise<void> {
   instance.route({
     method: ['GET', 'POST', 'PUT'],
     url: '/reload',
@@ -48,4 +48,4 @@ async function devtoolsPlugin(
 export default fastifyPlugin(devtoolsPlugin, {
   name: 'devtools-plugin',
   dependencies: ['wss-plugin'],
-});
+}) as Server.Plugin;

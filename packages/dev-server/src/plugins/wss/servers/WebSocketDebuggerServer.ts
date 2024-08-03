@@ -36,7 +36,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
   /**
    * Check if debugger UI is connected to the WebSocketDebuggerServer.
    */
-  isDebuggerConnected() {
+  isDebuggerConnected(): boolean {
     return Boolean(this.debuggerSocket);
   }
 
@@ -46,7 +46,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
    * @param socket WebSocket connection to send the message to.
    * @param message Message to send.
    */
-  send(socket: WebSocket | undefined, message: string) {
+  send(socket: WebSocket | undefined, message: string): void {
     try {
       socket?.send(message);
     } catch (error) {
@@ -61,7 +61,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
    * @param socket Incoming WebSocket connection.
    * @param request Upgrade request for the connection.
    */
-  onConnection(socket: WebSocket, request: IncomingMessage) {
+  onConnection(socket: WebSocket, request: IncomingMessage): void {
     const { url = '' } = request;
     if (url.indexOf('role=debugger') >= 0) {
       this.fastify.log.info({ msg: 'Chrome Remote JS debugger connected' });
@@ -80,7 +80,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
    *
    * @param socket Incoming debugger WebSocket connection.
    */
-  onDebuggerConnection(socket: WebSocket) {
+  onDebuggerConnection(socket: WebSocket): void {
     if (this.debuggerSocket) {
       socket.close(1011, 'Another debugger is already connected');
       return;
@@ -107,7 +107,7 @@ export class WebSocketDebuggerServer extends WebSocketServer {
    *
    * @param socket Incoming client WebSocket connection.
    */
-  onClientConnection(socket: WebSocket) {
+  onClientConnection(socket: WebSocket): void {
     if (this.clientSocket) {
       this.clientSocket.removeAllListeners();
       this.clientSocket.close(1011, 'Another client is connected');

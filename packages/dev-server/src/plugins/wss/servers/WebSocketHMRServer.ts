@@ -38,7 +38,7 @@ export class WebSocketHMRServer extends WebSocketServer {
    * @param platform Platform of clients to send the event to.
    * @param clientIds Ids of clients who should receive the event.
    */
-  send(event: any, platform: string, clientIds?: string[]) {
+  send(event: any, platform: string, clientIds?: string[]): void {
     const data = typeof event === 'string' ? event : JSON.stringify(event);
 
     for (const [key, socket] of this.clients) {
@@ -67,7 +67,7 @@ export class WebSocketHMRServer extends WebSocketServer {
    *
    * @param socket Incoming HMR client's WebSocket connection.
    */
-  onConnection(socket: WebSocket, request: IncomingMessage) {
+  onConnection(socket: WebSocket, request: IncomingMessage): void {
     const { searchParams } = new URL(request.url || '', 'http://localhost');
     const platform = searchParams.get('platform');
 

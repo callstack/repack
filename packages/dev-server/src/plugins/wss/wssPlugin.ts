@@ -42,7 +42,7 @@ async function wssPlugin(
     options: Server.Options;
     delegate: Server.Delegate;
   }
-) {
+): Promise<void> {
   const router = new WebSocketRouter(instance);
 
   const debuggerServer = new WebSocketDebuggerServer(instance);
@@ -91,4 +91,4 @@ async function wssPlugin(
 
 export default fastifyPlugin(wssPlugin, {
   name: 'wss-plugin',
-});
+}) as Server.Plugin;

@@ -16,7 +16,7 @@ type Params = { platform: string };
 async function apiPlugin(
   instance: FastifyInstance,
   { delegate }: { delegate: Server.Delegate }
-) {
+): Promise<void> {
   instance.get('/platforms', async (_request, reply) =>
     delegate.api
       ? reply.send({ data: await delegate.api.getPlatforms() })

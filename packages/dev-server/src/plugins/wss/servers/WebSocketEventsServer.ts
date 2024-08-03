@@ -94,7 +94,7 @@ export class WebSocketEventsServer extends WebSocketServer {
    * @param message Message to serialize.
    * @returns String representation of a `message` or `undefined` if serialization failed.
    */
-  serializeMessage(message: EventMessage) {
+  serializeMessage(message: EventMessage): string | undefined {
     let toSerialize = message;
     if (message.error && message.error instanceof Error) {
       toSerialize = {
@@ -135,7 +135,7 @@ export class WebSocketEventsServer extends WebSocketServer {
    *
    * @param event Event message to broadcast.
    */
-  broadcastEvent(event: EventMessage) {
+  broadcastEvent(event: EventMessage): void {
     if (!this.clients.size) {
       return;
     }
@@ -164,7 +164,7 @@ export class WebSocketEventsServer extends WebSocketServer {
    *
    * @param socket Incoming WebSocket connection.
    */
-  onConnection(socket: WebSocket) {
+  onConnection(socket: WebSocket): void {
     const clientId = `client#${this.nextClientId++}`;
     this.clients.set(clientId, socket);
     this.fastify.log.debug({ msg: 'Events client connected', clientId });

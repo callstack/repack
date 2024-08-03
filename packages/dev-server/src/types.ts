@@ -1,4 +1,4 @@
-import type { FastifyBaseLogger } from 'fastify';
+import type { FastifyBaseLogger, FastifyPluginCallback } from 'fastify';
 import type { WebSocketServer } from 'ws';
 import type { CompilerDelegate } from './plugins/compiler';
 import type { SymbolicatorDelegate } from './plugins/symbolicate';
@@ -180,6 +180,11 @@ export namespace Server {
       ) => Promise<CompilationStats | null>;
     }
   }
+
+  export type Plugin = FastifyPluginCallback<{
+    options?: Server.Options;
+    delegate?: Server.Delegate;
+  }>;
 }
 
 /** Representation of the compilation progress. */

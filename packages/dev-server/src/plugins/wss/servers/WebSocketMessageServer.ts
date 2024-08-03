@@ -45,7 +45,7 @@ export class WebSocketMessageServer extends WebSocketServer {
    * @returns True if message is a broadcast request and should be broadcasted
    * with {@link sendBroadcast}.
    */
-  static isBroadcast(message: Partial<ReactNativeMessage>) {
+  static isBroadcast(message: Partial<ReactNativeMessage>): boolean {
     return (
       typeof message.method === 'string' &&
       message.id === undefined &&
@@ -59,7 +59,7 @@ export class WebSocketMessageServer extends WebSocketServer {
    * @param message Message to check.
    * @returns True if message is a request.
    */
-  static isRequest(message: Partial<ReactNativeMessage>) {
+  static isRequest(message: Partial<ReactNativeMessage>): boolean {
     return (
       typeof message.method === 'string' && typeof message.target === 'string'
     );
@@ -71,7 +71,7 @@ export class WebSocketMessageServer extends WebSocketServer {
    * @param message Message to check.
    * @returns True if message is a response.
    */
-  static isResponse(message: Partial<ReactNativeMessage>) {
+  static isResponse(message: Partial<ReactNativeMessage>): boolean {
     return (
       typeof message.id === 'object' &&
       typeof message.id.requestId !== 'undefined' &&
@@ -137,7 +137,7 @@ export class WebSocketMessageServer extends WebSocketServer {
    * @param clientId Id of the client.
    * @returns WebSocket connection.
    */
-  getClientSocket(clientId: string) {
+  getClientSocket(clientId: string): WebSocketWithUpgradeReq {
     const socket = this.clients.get(clientId);
     if (socket === undefined) {
       throw new Error(`Could not find client with id "${clientId}"`);
@@ -157,7 +157,7 @@ export class WebSocketMessageServer extends WebSocketServer {
     clientId: string,
     message: Partial<ReactNativeMessage>,
     error: Error
-  ) {
+  ): void {
     const errorMessage = {
       id: message.id,
       method: message.method,
@@ -201,7 +201,7 @@ export class WebSocketMessageServer extends WebSocketServer {
    * @param clientId Id of the client that requested the forward.
    * @param message Message to forward.
    */
-  forwardRequest(clientId: string, message: Partial<ReactNativeMessage>) {
+  forwardRequest(clientId: string, message: Partial<ReactNativeMessage>): void {
     if (!message.target) {
       this.fastify.log.error({
         msg: 'Failed to forward request - message.target is missing',
@@ -232,7 +232,7 @@ export class WebSocketMessageServer extends WebSocketServer {
    *
    * @param message Message to forward.
    */
-  forwardResponse(message: Partial<ReactNativeMessage>) {
+  forwardResponse(message: Partial<ReactNativeMessage>): void {
     if (!message.id) {
       return;
     }
@@ -255,7 +255,10 @@ export class WebSocketMessageServer extends WebSocketServer {
    * @param clientId Id of the client who send the message.
    * @param message The message to process by the server.
    */
-  processServerRequest(clientId: string, message: Partial<ReactNativeMessage>) {
+  processServerRequest(
+    clientId: string,
+    message: Partial<ReactNativeMessage>
+  ): void {
     let result: string | Record<string, Record<string, string>>;
 
     switch (message.method) {
@@ -307,7 +310,7 @@ export class WebSocketMessageServer extends WebSocketServer {
   sendBroadcast(
     broadcasterId: string | undefined,
     message: Partial<ReactNativeMessage>
-  ) {
+  ): void {
     const forwarded = {
       version: WebSocketMessageServer.PROTOCOL_VERSION,
       method: message.method,
@@ -345,7 +348,7 @@ export class WebSocketMessageServer extends WebSocketServer {
    * @param method Method name to broadcast.
    * @param params Method parameters.
    */
-  broadcast(method: string, params?: Record<string, any>) {
+  broadcast(method: string, params?: Record<string, any>): void {
     this.sendBroadcast(undefined, { method, params });
   }
 
@@ -355,7 +358,7 @@ export class WebSocketMessageServer extends WebSocketServer {
    * @param socket Incoming WebSocket connection.
    * @param request Upgrade request for the connection.
    */
-  onConnection(socket: WebSocket, request: IncomingMessage) {
+  onConnection(socket: WebSocket, request: IncomingMessage): void {
     const clientId = `client#${this.nextClientId++}`;
     let client: WebSocketWithUpgradeReq = socket;
     client.upgradeReq = request;

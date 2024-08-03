@@ -2,6 +2,7 @@ import type { IncomingHttpHeaders } from 'http';
 import { PassThrough } from 'stream';
 import type { FastifyInstance, FastifyReply } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
+import type { Server } from '../../types';
 import type { MultipartHandler } from './types';
 
 /**
@@ -12,7 +13,7 @@ import type { MultipartHandler } from './types';
 const CRLF = '\r\n';
 const BOUNDARY = '3beqjf3apnqeu3h5jqorms4i';
 
-async function multipartPlugin(instance: FastifyInstance) {
+async function multipartPlugin(instance: FastifyInstance): Promise<void> {
   function asMultipart(this: FastifyReply): MultipartHandler | undefined {
     // We should check if is included in accept or if accept has multipart/* or */*,
     // but React Native will set accept to exactly `multipart/mixed`, so a simple check
@@ -76,4 +77,4 @@ async function multipartPlugin(instance: FastifyInstance) {
 
 export default fastifyPlugin(multipartPlugin, {
   name: 'multipart-plugin',
-});
+}) as Server.Plugin;
