@@ -37,18 +37,22 @@
 #else
 + (ScriptConfig *)fromConfig:(NSDictionary *)config withScriptId:(nonnull NSString *)scriptId
 {
-  NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config[@"url"]];
-  urlComponents.query = config[@"query"];
-  NSURL *url = urlComponents.URL;
+    NSString *query = config[@"query"] != [NSNull null] ? config[@"query"] : nil;
+    NSDictionary *headers = config[@"headers"] != [NSNull null] ? config[@"headers"] : nil;
+    NSData *body = config[@"body"] != [NSNull null] ? [config[@"body"] dataUsingEncoding:NSUTF8StringEncoding] : nil;
+    
+    NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config[@"url"]];
+    urlComponents.query = query;
+    NSURL *url = urlComponents.URL;
 
   return [[ScriptConfig alloc] initWithScript:scriptId
                                       withURL:url
                                    withMethod:config[@"method"]
-                                    withQuery:config[@"query"]
+                                    withQuery:query
                                     withFetch:[config[@"fetch"] boolValue]
                                  withAbsolute:[config[@"absolute"] boolValue]
-                                  withHeaders:config[@"headers"]
-                                     withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
+                                  withHeaders:headers
+                                     withBody:body
                                   withTimeout:config[@"timeout"]
                     withVerifyScriptSignature:config[@"verifyScriptSignature"]];
 }
@@ -65,7 +69,7 @@
 - (ScriptConfig *)initWithScript:(NSString *)scriptId
                          withURL:(NSURL *)url
                       withMethod:(NSString *)method
-                       withQuery:(NSString *)query
+                       withQuery:(nullable NSString *)query
                        withFetch:(BOOL)fetch
                     withAbsolute:(BOOL)absolute
                      withHeaders:(nullable NSDictionary *)headers
