@@ -43,7 +43,6 @@ RCT_EXPORT_METHOD(loadScript
                   : (RCTPromiseRejectBlock)reject)
 #endif
 {
-  [self runInBackground:^() {
     ScriptConfig *config;
     @try {
       config = [ScriptConfig fromConfig:scriptConfig withScriptId:scriptId];
@@ -51,7 +50,7 @@ RCT_EXPORT_METHOD(loadScript
       reject(ScriptConfigError, error.localizedDescription, nil);
       return;
     }
-
+  [self runInBackground:^() {
     // Handle http & https
     if ([[config.url scheme] hasPrefix:@"http"]) {
       if (config.fetch) {

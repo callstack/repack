@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) NSString *verifyScriptSignature;
 
 #ifdef RCT_NEW_ARCH_ENABLED
-+ (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator)config withScriptId:(NSString *)scriptId;
++ (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator &)config withScriptId:(NSString *)scriptId;
 #else
 + (ScriptConfig *)fromConfig:(NSDictionary *)config withScriptId:(NSString *)scriptId;
 #endif

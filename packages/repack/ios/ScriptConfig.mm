@@ -15,7 +15,7 @@
 @synthesize verifyScriptSignature = _verifyScriptSignature;
 
 #ifdef RCT_NEW_ARCH_ENABLED
-+ (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator)config withScriptId:(nonnull NSString *)scriptId
++ (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator &)config withScriptId:(nonnull NSString *)scriptId
 {
     NSDictionary * _Nullable headers = (NSDictionary * _Nullable) config.headers();
     NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config.url()];
