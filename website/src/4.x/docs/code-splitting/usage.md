@@ -4,14 +4,6 @@ The specific implementation of Code Splitting in your application can be differe
 
 In general, we can identify 3 main categories of implementation. All of those approaches are based on the same underlying mechanism: Re.Pack's [`ScriptManager`](../../api/repack/client/classes/ScriptManager) and the native module for it.
 
-:::caution
-
-Because Code Splitting support is based on the native module, you need to be able to compile the native code in your project, meaning you cannot use it with Expo.
-
-It might be possible to use it in an ejected Expo app, but that scenario is not officially supported.
-
-:::
-
 :::tip
 
 Use [Glossary of terms](./glossary) to better understand the content of this documentation.
@@ -151,7 +143,7 @@ To learn more or use async chunks in your project, check out our [dedicated Asyn
 :::tip
 
 To see `import(...)`, `React.lazy` and `React.Suspense` in action, check out
-[Re.Pack's `TesterApp`](https://github.com/callstack/repack/blob/main/packages/TesterApp/src/asyncChunks/AsyncContainer.tsx).
+[Re.Pack's `TesterApp`](https://github.com/callstack/repack/blob/main/apps/tester-app/src/asyncChunks/AsyncContainer.tsx).
 
 :::
 

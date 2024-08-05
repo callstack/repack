@@ -1,27 +1,26 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputMode": "errors-only"
+      "dependsOn": ["^build"]
     },
     "lint": {
       "dependsOn": ["build"],
       "inputs": ["src/**"],
       "outputs": [],
-      "outputMode": "errors-only"
+      "outputLogs": "errors-only"
     },
     "typecheck": {
       "dependsOn": ["build"],
       "inputs": ["src/**"],
       "outputs": [],
-      "outputMode": "errors-only"
+      "outputLogs": "errors-only"
     },
     "test": {
       "dependsOn": ["build"],
       "inputs": ["src/**"],
       "outputs": [],
-      "outputMode": "errors-only"
+      "outputLogs": "errors-only"
     }
   }
 }

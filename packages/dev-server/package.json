@@ -35,12 +35,10 @@
   },
   "scripts": {
     "build:js": "babel src --out-dir dist --extensions \".js,.cjs,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start --copy-files",
-    "build:js:watch": "pnpm build:js --watch",
     "build:ts": "tsc --emitDeclarationOnly",
-    "build:ts:watch": "pnpm build:ts --watch --preserveWatchOutput",
-    "build": "pnpm build:js && pnpm build:ts",
-    "typecheck": "tsc --noEmit",
+    "build": "pnpm run \"/^build:.*/\"",
     "lint": "eslint --ext \".js,.ts\" src",
+    "typecheck": "tsc --noEmit",
     "archive": "pnpm build && pnpm pack"
   },
   "dependencies": {
@@ -66,7 +64,7 @@
     "@types/ws": "^8.5.3",
     "babel-plugin-add-import-extension": "^1.6.0",
     "eslint": "^8.57.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.3"
   },
   "peerDependencies": {
     "@react-native-community/cli-debugger-ui": ">=11.3.1",

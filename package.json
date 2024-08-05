@@ -3,14 +3,14 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "dev": "turbo watch --continue build",
+    "dev:tui": "pnpm dev --ui=tui",
     "lint": "turbo run lint --filter=!metro-compat-test",
     "typecheck": "turbo run typecheck --filter=!metro-compat-test",
     "test": "turbo run test",
     "release": "pnpm build && pnpm lint && pnpm test && pnpm changeset publish",
-    "website:start": "pnpm --filter new-website run start",
-    "website:build": "pnpm --filter new-website run export",
-    "TesterApp:start": "turbo run build && pnpm --filter testerapp run start",
-    "TesterApp:bundle": "turbo run build && pnpm --filter testerapp run bundle"
+    "website:start": "pnpm --filter website run start",
+    "website:build": "pnpm --filter website run export"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.9",
@@ -37,8 +37,8 @@
     "eslint-plugin-react-native": "^4.1.0",
     "eslint-plugin-react-native-a11y": "^3.3.0",
     "prettier": "^3.2.4",
-    "turbo": "^1.13.3",
-    "typescript": "^5.4.5"
+    "turbo": "^2.0.7",
+    "typescript": "^5.5.3"
   },
-  "packageManager": "pnpm@9.1.2"
+  "packageManager": "pnpm@9.5.0"
 }

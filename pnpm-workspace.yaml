@@ -1,8 +1,8 @@
 packages:
   - "packages/dev-server"
-  - "packages/repack"
-  - "packages/TesterApp"
-  - "packages/debugger-app"
   - "packages/init"
+  - "packages/repack"
+  - "apps/tester-app"
+  - "apps/tester-federation"
   - "website"
   - "metro-compat-test"

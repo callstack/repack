@@ -19,7 +19,7 @@ All development is done directly on GitHub, and all work is public.
 
 1. Fork the repo and create your branch from default branch (usually `main`) (a guide on [how to fork a repository](https://help.github.com/articles/fork-a-repo/)).
 2. Run `pnpm install` to install & set up the development environment.
-3. Do the changes you want and test them out in the TesterApp (`packages/TesterApp`) before sending a pull request.
+3. Do the changes you want and test them out in the TesterApp (`apps/tester-app`) before sending a pull request.
 
 ### Commit message convention
 
@@ -62,7 +62,7 @@ We use `typescript` for type checking, `eslint` with `prettier` for linting and 
 
 The example TesterApp uses React Native CLI so make sure you have your [environment setup to build native apps](https://reactnative.dev/docs/environment-setup).
 
-You can then use Xcode/Android Studio/Gradle to build application or run `pnpm react-native webpack-start` and `pnpm react-native run-ios`/`pnpm react-native run-android` to start development server and run applications in development mode. You can also use `pnpm TesterApp:start`/`pnpm TesterApp:build` from the root directory.
+You can then use Xcode/Android Studio/Gradle to build application or run `pnpm react-native webpack-start` and `pnpm react-native run-ios`/`pnpm react-native run-android` to start development server and run applications in development mode.
 
 ### Working on documentation
 

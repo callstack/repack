@@ -17,6 +17,12 @@ async function compileBundle(
   inline?: boolean,
   remote?: {
     enabled: boolean;
+    assetPath?: (args: {
+      resourcePath: string;
+      resourceFilename: string;
+      resourceDirname: string;
+      resourceExtensionType: string;
+    }) => string;
     publicPath: string;
   }
 ) {
@@ -393,6 +399,79 @@ describe('assetLoader', () => {
         height: 393,
         width: 2292,
         scale: 1,
+      });
+    });
+
+    describe('with specified assetPath', () => {
+      it('without scales', async () => {
+        const { code } = await compileBundle(
+          'ios', // platform doesn't matter for remote-assets
+          {
+            './index.js': "export { default } from './__fixtures__/logo.png';",
+          },
+          false,
+          {
+            enabled: true,
+            assetPath: ({
+              resourceFilename,
+              resourceDirname,
+              resourceExtensionType,
+            }) => {
+              return `${resourceDirname}/nested-folder/${resourceFilename}-fake-hash.${resourceExtensionType}`;
+            },
+            publicPath: 'http://localhost:9999/remote-assets',
+          }
+        );
+
+        const context: { Export?: { default: Record<string, any> } } = {};
+        vm.runInNewContext(code, context);
+
+        expect(context.Export?.default).toEqual({
+          __packager_asset: true,
+          uri: `http://localhost:9999/remote-assets/assets/__fixtures__/nested-folder/logo-fake-hash.png`,
+          height: 393,
+          width: 2292,
+          scale: 1,
+        });
+      });
+
+      it.each([
+        { prefferedScale: 1 },
+        { prefferedScale: 2 },
+        { prefferedScale: 3 },
+      ])('with scales $prefferedScale', async ({ prefferedScale }) => {
+        const { code } = await compileBundle(
+          'ios', // platform doesn't matter for remote-assets
+          {
+            'node_modules/react-native/Libraries/Utilities/PixelRatio.js': `module.exports = { get: () => ${prefferedScale} };`,
+            './index.js': "export { default } from './__fixtures__/star.png';",
+          },
+          false,
+          {
+            enabled: true,
+            assetPath: ({
+              resourceFilename,
+              resourceDirname,
+              resourceExtensionType,
+            }) => {
+              return `${resourceDirname}/nested-folder/${resourceFilename}-fake-hash.${resourceExtensionType}`;
+            },
+            publicPath: 'http://localhost:9999',
+          }
+        );
+
+        const context: { Export?: { default: Record<string, any> } } = {};
+        vm.runInNewContext(code, context);
+
+        expect(context.Export?.default).toEqual({
+          __packager_asset: true,
+          uri: `http://localhost:9999/assets/__fixtures__/nested-folder/star-fake-hash${
+            prefferedScale === 1 ? '' : '@x' + prefferedScale
+          }.png`,
+          height: 272,
+          width: 286,
+          scale: prefferedScale,
+        });
       });
     });
   });

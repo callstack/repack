@@ -13,7 +13,7 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["metro-compat-test", "testerapp", "website"],
+  "ignore": ["metro-compat-test", "tester-app", "website"],
   "snapshot": {
     "useCalculatedVersion": true
   }

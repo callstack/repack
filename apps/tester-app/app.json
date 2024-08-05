@@ -1,0 +1,39 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/react-native-test-app/trunk/schema.json",
+  "name": "TesterApp",
+  "displayName": "TesterApp",
+  "singleApp": "tester-app",
+  "components": [
+    {
+      "appKey": "TesterApp",
+      "displayName": "TesterApp",
+      "slug": "tester-app"
+    }
+  ],
+  "android": {
+    "package": "com.testerapp",
+    "signingConfigs": {
+      "debug": {
+        "storeFile": "android/debug.keystore"
+      },
+      "release": {
+        "storeFile": "android/debug.keystore"
+      }
+    }
+  },
+  "ios": {
+    "bundleIdentifier": "com.testerapp"
+  },
+  "resources": {
+    "android": [
+      "build/output/android/index.android.bundle",
+      "build/output/android/src_asyncChunks_Async_local_tsx.chunk.bundle",
+      "build/output/android/res"
+    ],
+    "ios": [
+      "build/output/ios/main.jsbundle",
+      "build/output/ios/src_asyncChunks_Async_local_tsx.chunk.bundle",
+      "build/output/ios/assets"
+    ]
+  }
+}
