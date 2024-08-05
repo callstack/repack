@@ -21,14 +21,17 @@ export interface NormalizedScriptLocator {
   query: string | null;
   headers: { [key: string]: string } | null;
   body: string | null;
-  verifyScriptSignature: NormalizedScriptLocatorSignatureVerificationMode | null;
+  verifyScriptSignature: NormalizedScriptLocatorSignatureVerificationMode;
 }
 
 export interface Spec extends TurboModule {
-  loadScript(scriptId: string, config: NormalizedScriptLocator): Promise<null>;
+  loadScript(
+    scriptId: string,
+    scriptConfig: NormalizedScriptLocator
+  ): Promise<null>;
   prefetchScript(
     scriptId: string,
-    config: NormalizedScriptLocator
+    scriptConfig: NormalizedScriptLocator
   ): Promise<null>;
   invalidateScripts(scripts: Array<string>): Promise<null>;
 }

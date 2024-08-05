@@ -29,16 +29,25 @@ RCT_EXPORT_MODULE()
 
 @synthesize bridge = _bridge;
 
+#ifdef RCT_NEW_ARCH_ENABLED
 RCT_EXPORT_METHOD(loadScript
-                  : (nonnull NSString *)scriptId config
-                  : (nonnull NSDictionary *)configDictionary resolve
+                  : (nonnull NSString *)scriptId scriptConfig
+                  : (JS::NativeScriptManager::NormalizedScriptLocator &)scriptConfig resolve
                   : (RCTPromiseResolveBlock)resolve reject
                   : (RCTPromiseRejectBlock)reject)
+#else
+RCT_EXPORT_METHOD(loadScript
+                  : (nonnull NSString *)scriptId scriptConfig
+                  : (nonnull NSDictionary *)scriptConfig resolve
+                  : (RCTPromiseResolveBlock)resolve reject
+                  : (RCTPromiseRejectBlock)reject)
+#endif
 {
   [self runInBackground:^() {
     ScriptConfig *config;
     @try {
-      config = [ScriptConfig fromConfigDictionary:configDictionary withScriptId:scriptId];
+      NSDictionary *configDict = [self ensureConfigDictionary:scriptConfig];
+      config = [ScriptConfig fromConfigDictionary:configDict withScriptId:scriptId];
     } @catch (NSError *error) {
       reject(ScriptConfigError, error.localizedDescription, nil);
       return;
@@ -70,15 +79,24 @@ RCT_EXPORT_METHOD(loadScript
   }];
 }
 
+#ifdef RCT_NEW_ARCH_ENABLED
 RCT_EXPORT_METHOD(prefetchScript
-                  : (nonnull NSString *)scriptId config
-                  : (nonnull NSDictionary *)configDictionary resolve
+                  : (nonnull NSString *)scriptId scriptConfig
+                  : (JS::NativeScriptManager::NormalizedScriptLocator &)scriptConfig resolve
                   : (RCTPromiseResolveBlock)resolve reject
                   : (RCTPromiseRejectBlock)reject)
+#else
+RCT_EXPORT_METHOD(prefetchScript
+                  : (nonnull NSString *)scriptId scriptConfig
+                  : (nonnull NSDictionary *)scriptConfig resolve
+                  : (RCTPromiseResolveBlock)resolve reject
+                  : (RCTPromiseRejectBlock)reject)
+#endif
 {
   ScriptConfig *config;
   @try {
-    config = [ScriptConfig fromConfigDictionary:configDictionary withScriptId:scriptId];
+    NSDictionary *configDict = [self ensureConfigDictionary:scriptConfig];
+    config = [ScriptConfig fromConfigDictionary:configDict withScriptId:scriptId];
   } @catch (NSError *error) {
     reject(ScriptConfigError, error.localizedDescription, nil);
     return;
@@ -310,12 +328,31 @@ RCT_EXPORT_METHOD(invalidateScripts
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback);
 }
 
-// Don't compile this code when we build for the old architecture.
 #ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params
 {
   return std::make_shared<facebook::react::NativeScriptManagerSpecJSI>(params);
+}
+#endif
+
+#ifdef RCT_NEW_ARCH_ENABLED
+- (NSDictionary *)ensureConfigDictionary:(JS::NativeScriptManager::NormalizedScriptLocator &)locator {
+    return @{
+            @"method": locator.method(),
+            @"url": locator.url(),
+            @"fetch": @(locator.fetch()),
+            @"timeout": @(locator.timeout()),
+            @"absolute": @(locator.absolute()),
+            @"query": locator.query() ?: [NSNull null],
+            @"headers": locator.headers() ?: [NSNull null],
+            @"body": locator.body() ?: [NSNull null],
+            @"verifyScriptSignature": locator.verifyScriptSignature()
+    };
+}
+#else
+- (NSDictionary *)ensureConfigDictionary:(NSDictionary *)dict {
+    return dict;
 }
 #endif
 
