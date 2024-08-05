@@ -1,6 +1,10 @@
 #ifndef ScriptConfig_h
 #define ScriptConfig_h
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNScriptManagerSpec.h"
+#endif
+
 @interface ScriptConfig : NSObject
 
 NS_ASSUME_NONNULL_BEGIN
@@ -16,7 +20,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) NSNumber *timeout;
 @property (readonly) NSString *verifyScriptSignature;
 
-+ (ScriptConfig *)fromConfigDictionary:(NSDictionary *)config withScriptId:(NSString *)scriptId;
+#ifdef RCT_NEW_ARCH_ENABLED
++ (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator)config withScriptId:(NSString *)scriptId;
+#else
++ (ScriptConfig *)fromConfig:(NSDictionary *)config withScriptId:(NSString *)scriptId;
+#endif
 
 - (ScriptConfig *)initWithScript:(NSString *)scriptId
                          withURL:(NSURL *)url

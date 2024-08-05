@@ -46,8 +46,7 @@ RCT_EXPORT_METHOD(loadScript
   [self runInBackground:^() {
     ScriptConfig *config;
     @try {
-      NSDictionary *configDict = [self ensureConfigDictionary:scriptConfig];
-      config = [ScriptConfig fromConfigDictionary:configDict withScriptId:scriptId];
+      config = [ScriptConfig fromConfig:scriptConfig withScriptId:scriptId];
     } @catch (NSError *error) {
       reject(ScriptConfigError, error.localizedDescription, nil);
       return;
@@ -95,8 +94,7 @@ RCT_EXPORT_METHOD(prefetchScript
 {
   ScriptConfig *config;
   @try {
-    NSDictionary *configDict = [self ensureConfigDictionary:scriptConfig];
-    config = [ScriptConfig fromConfigDictionary:configDict withScriptId:scriptId];
+    config = [ScriptConfig fromConfig:scriptConfig withScriptId:scriptId];
   } @catch (NSError *error) {
     reject(ScriptConfigError, error.localizedDescription, nil);
     return;
@@ -333,26 +331,6 @@ RCT_EXPORT_METHOD(invalidateScripts
     (const facebook::react::ObjCTurboModule::InitParams &)params
 {
   return std::make_shared<facebook::react::NativeScriptManagerSpecJSI>(params);
-}
-#endif
-
-#ifdef RCT_NEW_ARCH_ENABLED
-- (NSDictionary *)ensureConfigDictionary:(JS::NativeScriptManager::NormalizedScriptLocator &)locator {
-    return @{
-            @"method": locator.method(),
-            @"url": locator.url(),
-            @"fetch": @(locator.fetch()),
-            @"timeout": @(locator.timeout()),
-            @"absolute": @(locator.absolute()),
-            @"query": locator.query() ?: [NSNull null],
-            @"headers": locator.headers() ?: [NSNull null],
-            @"body": locator.body() ?: [NSNull null],
-            @"verifyScriptSignature": locator.verifyScriptSignature()
-    };
-}
-#else
-- (NSDictionary *)ensureConfigDictionary:(NSDictionary *)dict {
-    return dict;
 }
 #endif
 
