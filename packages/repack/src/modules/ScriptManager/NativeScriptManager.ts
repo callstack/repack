@@ -18,9 +18,9 @@ export interface NormalizedScriptLocator {
   fetch: boolean;
   timeout: number;
   absolute: boolean;
-  query: string | null;
-  headers: { [key: string]: string } | null;
-  body: string | null;
+  query: string | undefined;
+  headers: { [key: string]: string } | undefined;
+  body: string | undefined;
   verifyScriptSignature: NormalizedScriptLocatorSignatureVerificationMode;
 }
 

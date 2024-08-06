@@ -18,7 +18,7 @@
 + (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator &)config
                 withScriptId:(nonnull NSString *)scriptId
 {
-  NSDictionary *_Nullable headers = (NSDictionary *_Nullable)config.headers();
+  NSDictionary *_Nullable headers = (NSDictionary *)config.headers();
   NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config.url()];
   urlComponents.query = config.query();
   NSURL *url = urlComponents.URL;
@@ -37,22 +37,18 @@
 #else
 + (ScriptConfig *)fromConfig:(NSDictionary *)config withScriptId:(nonnull NSString *)scriptId
 {
-    NSString *query = config[@"query"] != [NSNull null] ? config[@"query"] : nil;
-    NSDictionary *headers = config[@"headers"] != [NSNull null] ? config[@"headers"] : nil;
-    NSData *body = config[@"body"] != [NSNull null] ? [config[@"body"] dataUsingEncoding:NSUTF8StringEncoding] : nil;
-    
-    NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config[@"url"]];
-    urlComponents.query = query;
-    NSURL *url = urlComponents.URL;
+  NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config[@"url"]];
+  urlComponents.query = config[@"query"];
+  NSURL *url = urlComponents.URL;
 
   return [[ScriptConfig alloc] initWithScript:scriptId
                                       withURL:url
                                    withMethod:config[@"method"]
-                                    withQuery:query
+                                    withQuery:config[@"query"]
                                     withFetch:[config[@"fetch"] boolValue]
                                  withAbsolute:[config[@"absolute"] boolValue]
-                                  withHeaders:headers
-                                     withBody:body
+                                  withHeaders:config[@"headers"]
+                                     withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
                                   withTimeout:config[@"timeout"]
                     withVerifyScriptSignature:config[@"verifyScriptSignature"]];
 }

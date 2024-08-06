@@ -94,7 +94,7 @@ export class Script {
       });
       body = JSON.stringify(bodyObject);
     } else {
-      body = locator.body ?? null;
+      body = locator.body ?? undefined;
     }
 
     if (typeof locator.url === 'function') {
@@ -111,9 +111,9 @@ export class Script {
         url: locator.url,
         absolute: locator.absolute ?? false,
         timeout: locator.timeout ?? Script.DEFAULT_TIMEOUT,
-        query: new URLSearchParams(locator.query).toString() || null,
+        query: new URLSearchParams(locator.query).toString() || undefined,
         body,
-        headers: Object.keys(headers).length ? headers : null,
+        headers: Object.keys(headers).length ? headers : undefined,
         fetch: locator.cache === false ? true : fetch,
         verifyScriptSignature:
           (locator.verifyScriptSignature as NormalizedScriptLocatorSignatureVerificationMode) ??
