@@ -156,9 +156,7 @@ RCT_EXPORT_METHOD(invalidateScripts
   }];
 }
 
-- (void)execute:(ScriptConfig *)config
-        resolve:(RCTPromiseResolveBlock)resolve
-         reject:(RCTPromiseRejectBlock)reject
+- (void)execute:(ScriptConfig *)config resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
   NSString *scriptPath = [self getScriptFilePath:config.uniqueId];
   @try {
