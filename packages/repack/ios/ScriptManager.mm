@@ -148,10 +148,20 @@ RCT_EXPORT_METHOD(invalidateScripts
   NSString *scriptPath = [self getScriptFilePath:scriptId];
   @try {
     NSFileManager *manager = [NSFileManager defaultManager];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:scriptPath]) {
+      NSString *errorMessage = [NSString stringWithFormat:@"Script file does not exist at path: %@", scriptPath];
+      @throw [NSError errorWithDomain:errorMessage code:0 userInfo:nil];
+    }
+
     NSData *data = [manager contentsAtPath:scriptPath];
+    if (!data) {
+      NSString *errorMessage = [NSString stringWithFormat:@"Script file exists but could not be read: %@", scriptPath];
+      @throw [NSError errorWithDomain:errorMessage code:0 userInfo:nil];
+    }
+
     [self evaluateJavascript:data url:url resolve:resolve reject:reject];
   } @catch (NSError *error) {
-    reject(CodeExecutionFailure, error.localizedDescription, nil);
+    reject(CodeExecutionFailure, error.domain, nil);
   }
 }
 
