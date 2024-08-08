@@ -13,6 +13,7 @@
 @synthesize headers = _headers;
 @synthesize timeout = _timeout;
 @synthesize verifyScriptSignature = _verifyScriptSignature;
+@synthesize uniqueId = _uniqueId;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 + (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator &)config
@@ -32,7 +33,8 @@
                                   withHeaders:headers
                                      withBody:[config.body() dataUsingEncoding:NSUTF8StringEncoding]
                                   withTimeout:[NSNumber numberWithDouble:config.timeout()]
-                    withVerifyScriptSignature:config.verifyScriptSignature()];
+                    withVerifyScriptSignature:config.verifyScriptSignature()
+                                 withUniqueId:config.uniqueId()];
 }
 #else
 + (ScriptConfig *)fromConfig:(NSDictionary *)config withScriptId:(nonnull NSString *)scriptId
@@ -50,7 +52,8 @@
                                   withHeaders:config[@"headers"]
                                      withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
                                   withTimeout:config[@"timeout"]
-                    withVerifyScriptSignature:config[@"verifyScriptSignature"]];
+                    withVerifyScriptSignature:config[@"verifyScriptSignature"]
+                                 withUniqueId:config[@"uniqueId"]];
 }
 #endif
 
@@ -71,7 +74,8 @@
                      withHeaders:(nullable NSDictionary *)headers
                         withBody:(nullable NSData *)body
                      withTimeout:(nonnull NSNumber *)timeout
-       withVerifyScriptSignature:(NSString *)verifyScriptSignature;
+       withVerifyScriptSignature:(NSString *)verifyScriptSignature
+                    withUniqueId:(NSString *)uniqueId
 {
   _scriptId = scriptId;
   _url = url;
