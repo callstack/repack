@@ -12,9 +12,11 @@ type Cache = Record<
   Pick<NormalizedScriptLocator, 'method' | 'url' | 'query' | 'headers' | 'body'>
 >;
 
-const CACHE_KEY = `Repack.ScriptManager.Cache.v3.${
-  __DEV__ ? 'debug' : 'release'
-}`;
+const CACHE_NAME = 'Repack.ScriptManager.Cache';
+const CACHE_VERSION = 'v4';
+const CACHE_ENV = __DEV__ ? 'debug' : 'release';
+
+const CACHE_KEY = [CACHE_NAME, CACHE_VERSION, CACHE_ENV].join('.');
 
 /* Options for resolver when adding it to a `ScriptManager`. */
 export interface ResolverOptions {
