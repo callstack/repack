@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
+import webpack from 'webpack';
 import * as Repack from '@callstack/repack';
 
 const dirname = Repack.getDirname(import.meta.url);
@@ -149,6 +150,7 @@ export default (env) => {
           },
         },
       }),
+      new webpack.EnvironmentPlugin({ MF_CACHE: false }),
     ],
   };
 };
