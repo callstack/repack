@@ -17,8 +17,8 @@ class RemoteScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactC
     private val scriptsDirName = "scripts"
     private val client = OkHttpClient()
 
-    private fun getScriptFilePath(id: String): String {
-        return "${scriptsDirName}/$id.script.bundle"
+    private fun getScriptFilePath(scriptUniqueId: String): String {
+        return "${scriptsDirName}/$scriptUniqueId.script.bundle"
     }
 
     private fun createClientPerRequest(config: ScriptConfig): OkHttpClient {
@@ -30,7 +30,7 @@ class RemoteScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactC
     }
 
     private fun downloadAndCache(config: ScriptConfig, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
-        val path = getScriptFilePath(config.id)
+        val path = getScriptFilePath(config.uniqueId)
         val file = File(reactContext.filesDir, path)
 
         val callback = object : Callback {
@@ -95,7 +95,7 @@ class RemoteScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactC
     }
 
     fun execute(config: ScriptConfig, promise: Promise) {
-        val scriptPath = getScriptFilePath(config.id)
+        val scriptPath = getScriptFilePath(config.uniqueId)
         try {
             val file = File(reactContext.filesDir, scriptPath)
             if (!file.exists()) {
