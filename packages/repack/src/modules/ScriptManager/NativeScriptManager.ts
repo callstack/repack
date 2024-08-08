@@ -13,6 +13,7 @@ export const enum NormalizedScriptLocatorSignatureVerificationMode {
 }
 
 export interface NormalizedScriptLocator {
+  uniqueId: string;
   method: NormalizedScriptLocatorHTTPMethod;
   url: string;
   fetch: boolean;

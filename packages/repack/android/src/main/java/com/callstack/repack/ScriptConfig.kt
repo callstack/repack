@@ -8,7 +8,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URL
 
 data class ScriptConfig(
-        val id: String,
+        val scriptId: String,
         val url: URL,
         val query: String?,
         val fetch: Boolean,
@@ -18,21 +18,20 @@ data class ScriptConfig(
         val timeout: Int,
         val headers: Headers,
         val verifyScriptSignature: String,
+        val uniqueId: String
 ) {
     companion object {
-        fun fromReadableMap(id: String, value: ReadableMap): ScriptConfig {
-            val urlString = value.getString("url")
-                    ?: throw Error("ScriptManagerModule.load ScriptMissing url")
-            val method = value.getString("method")
-                    ?: throw Error("ScriptManagerModule.load ScriptMissing method")
+        fun fromReadableMap(scriptId: String, value: ReadableMap): ScriptConfig {
+            val urlString = requireNotNull(value.getString("url"))
+            val method = requireNotNull(value.getString("method"))
             val fetch = value.getBoolean("fetch")
             val absolute = value.getBoolean("absolute")
             val query = value.getString("query")
             val bodyString = value.getString("body")
             val headersMap = value.getMap("headers")
             val timeout = value.getInt("timeout")
-            val verifyScriptSignature = value.getString("verifyScriptSignature")
-                    ?: throw Error("ScriptManagerModule.load ScriptMissing verifyScriptSignature")
+            val verifyScriptSignature = requireNotNull(value.getString("verifyScriptSignature"))
+            val uniqueId = requireNotNull(value.getString("uniqueId"))
 
             val url = URL(
                     if (query != null) {
@@ -56,7 +55,7 @@ data class ScriptConfig(
             val body = bodyString?.toRequestBody(contentType)
 
             return ScriptConfig(
-                    id,
+                    scriptId,
                     url,
                     query,
                     fetch,
@@ -65,7 +64,8 @@ data class ScriptConfig(
                     body,
                     timeout,
                     headers.build(),
-                    verifyScriptSignature
+                    verifyScriptSignature,
+                    uniqueId
             )
         }
     }
