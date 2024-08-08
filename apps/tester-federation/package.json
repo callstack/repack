@@ -6,7 +6,14 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start:hostapp": "react-native webpack-start --webpackConfig webpack.config.host-app.mjs",
-    "start:miniapp": "react-native webpack-start --webpackConfig webpack.config.mini-app.mjs --port 8082"
+    "start:miniapp": "react-native webpack-start --webpackConfig webpack.config.mini-app.mjs --port 8082",
+    "bundle": "pnpm run \"/^bundle:(hostapp|miniapp)$/\"",
+    "bundle:hostapp": "pnpm run \"/^bundle:hostapp:(ios|android)$/\"",
+    "bundle:miniapp": "pnpm run \"/^bundle:miniapp:(ios|android)$/\"",
+    "bundle:hostapp:android": "react-native webpack-bundle --webpackConfig webpack.config.host-app.mjs --platform android --entry-file index.js --dev=false --bundle-output build/host-app/android/output-local/index.android.bundle --assets-dest build/host-app/android/output-local/res",
+    "bundle:hostapp:ios": "react-native webpack-bundle --webpackConfig webpack.config.host-app.mjs --platform ios --entry-file index.js --dev=false --bundle-output build/host-app/ios/output-local/main.jsbundle --assets-dest build/host-app/ios/output-local",
+    "bundle:miniapp:android": "react-native webpack-bundle --webpackConfig webpack.config.mini-app.mjs --platform android --entry-file index.js --dev=false --bundle-output build/mini-app/android/output-local/index.android.bundle --assets-dest build/mini-app/android/output-local/res",
+    "bundle:miniapp:ios": "react-native webpack-bundle --webpackConfig webpack.config.mini-app.mjs --platform ios --entry-file index.js --dev=false --bundle-output build/mini-app/ios/output-local/main.jsbundle --assets-dest build/mini-app/ios/output-local"
   },
   "dependencies": {
     "@callstack/repack": "workspace:*",
