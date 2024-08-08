@@ -7,6 +7,15 @@ jest.mock('../NativeScriptManager', () => ({
   loadScript: jest.fn(),
   prefetchScript: jest.fn(),
   invalidateScripts: jest.fn(),
+  NormalizedScriptLocatorHTTPMethod: {
+    GET: 'GET',
+    POST: 'POST',
+  },
+  NormalizedScriptLocatorSignatureVerificationMode: {
+    STRICT: 'strict',
+    LAX: 'lax',
+    OFF: 'off',
+  },
 }));
 
 // @ts-ignore
