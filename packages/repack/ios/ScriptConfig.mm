@@ -87,6 +87,7 @@
   _headers = headers;
   _timeout = timeout;
   _verifyScriptSignature = verifyScriptSignature;
+  _uniqueId = uniqueId;
   return self;
 }
 
