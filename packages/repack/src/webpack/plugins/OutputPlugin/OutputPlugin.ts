@@ -14,6 +14,9 @@ import type { DestinationSpec, OutputPluginConfig } from './types';
  * @category Webpack Plugin
  */
 export class OutputPlugin implements WebpackPlugin {
+  localSpecs: DestinationSpec[] = [];
+  remoteSpecs: DestinationSpec[] = [];
+
   constructor(private config: OutputPluginConfig) {
     validateConfig(config);
 
@@ -31,12 +34,14 @@ export class OutputPlugin implements WebpackPlugin {
         ),
       },
     ];
+
+    this.config.extraChunks?.forEach((spec) => {
+      if (spec.type === 'local') this.localSpecs.push(spec);
+      if (spec.type === 'remote') this.remoteSpecs.push(spec);
+    });
   }
 
-  private matchChunkToSpecs(
-    chunk: webpack.StatsChunk,
-    specs: DestinationSpec[]
-  ) {
+  matchChunkToSpecs(chunk: webpack.StatsChunk, specs: DestinationSpec[]) {
     const chunkIds = [chunk.names ?? [], chunk.id!].flat();
     return specs.filter((spec) => {
       const { test, include, exclude } = spec;
@@ -47,14 +52,66 @@ export class OutputPlugin implements WebpackPlugin {
     });
   }
 
-  private getRelatedSourceMap(chunk: webpack.StatsChunk) {
+  getRelatedSourceMap(chunk: webpack.StatsChunk) {
     return chunk.auxiliaryFiles?.find((file) => /\.map$/.test(file));
   }
 
-  private ensureAbsolutePath(filePath: string) {
+  ensureAbsolutePath(filePath: string) {
     if (path.isAbsolute(filePath)) return filePath;
     return path.join(this.config.context, filePath);
   }
+
+  classifyChunks({
+    chunks,
+    entryOptions,
+  }: {
+    chunks: webpack.StatsChunk[];
+    entryOptions: webpack.EntryNormalized;
+  }) {
+    const localChunks = new Set<webpack.StatsChunk>();
+    const remoteChunks = new Set<webpack.StatsChunk>();
+
+    const chunksById = new Map(chunks.map((chunk) => [chunk.id!, chunk]));
+
+    // Add explicitly known initial chunks as local chunks
+    chunks
+      .filter((chunk) => chunk.initial && chunk.entry)
+      .filter((chunk) => chunk.id! in entryOptions)
+      .forEach((chunk) => localChunks.add(chunk));
+
+    // Add siblings of known initial chunks as local chunks
+    chunks
+      .filter((chunk) => localChunks.has(chunk))
+      .flatMap((chunk) => chunk.siblings!)
+      .map((chunkId) => chunksById.get(chunkId))
+      .forEach((chunk) => localChunks.add(chunk!));
+
+    // Add chunks matching local specs as local chunks
+    chunks
+      .filter((chunk) => this.matchChunkToSpecs(chunk, this.localSpecs).length)
+      .forEach((chunk) => localChunks.add(chunk));
+
+    // Add parents of local chunks as local chunks
+    const addParentsOfLocalChunks = () => {
+      chunks
+        .filter((chunk) => localChunks.has(chunk))
+        .flatMap((chunk) => chunk.parents!)
+        .map((chunkId) => chunksById.get(chunkId))
+        .forEach((chunk) => localChunks.add(chunk!));
+      return localChunks.size;
+    };
+
+    // Iterate until no new chunks are added
+    while (localChunks.size - addParentsOfLocalChunks());
+
+    // Add all other chunks as remote chunks
+    chunks
+      .filter((chunk) => !localChunks.has(chunk))
+      .forEach((chunk) => remoteChunks.add(chunk));
+
+    return { localChunks, remoteChunks };
+  }
+
   /**
    * Apply the plugin.
    *
@@ -68,17 +125,6 @@ export class OutputPlugin implements WebpackPlugin {
     const logger = compiler.getInfrastructureLogger('RepackOutputPlugin');
     const outputPath = compiler.options.output.path as string;
 
-    // Split specs into types
-    const localSpecs: DestinationSpec[] = [];
-    const remoteSpecs: DestinationSpec[] = [];
-
-    this.config.extraChunks?.forEach((spec) => {
-      if (spec.type === 'local') localSpecs.push(spec);
-      if (spec.type === 'remote') remoteSpecs.push(spec);
-    });
-
-    const localChunks = new Set<webpack.StatsChunk>();
-    const remoteChunks = new Set<webpack.StatsChunk>();
     const auxiliaryAssets = new Set<string>();
 
     compiler.hooks.done.tapPromise('RepackOutputPlugin', async (stats) => {
@@ -90,46 +136,12 @@ export class OutputPlugin implements WebpackPlugin {
         ids: true,
       });
 
-      const chunks = compilationStats.chunks!;
       const assets = compilationStats.assets!;
 
-      const chunksById = new Map(chunks.map((chunk) => [chunk.id!, chunk]));
-
-      // Add explicitly known initial chunks as local chunks
-      chunks
-        .filter((chunk) => chunk.initial && chunk.entry)
-        .filter((chunk) => chunk.id! in compiler.options.entry)
-        .forEach((chunk) => localChunks.add(chunk));
-
-      // Add siblings of known initial chunks as local chunks
-      chunks
-        .filter((chunk) => localChunks.has(chunk))
-        .flatMap((chunk) => chunk.siblings!)
-        .map((chunkId) => chunksById.get(chunkId))
-        .forEach((chunk) => localChunks.add(chunk!));
-
-      // Add chunks matching local specs as local chunks
-      chunks
-        .filter((chunk) => this.matchChunkToSpecs(chunk, localSpecs).length)
-        .forEach((chunk) => localChunks.add(chunk));
-
-      // Add parents of local chunks as local chunks
-      const addParentsOfLocalChunks = () => {
-        chunks
-          .filter((chunk) => localChunks.has(chunk))
-          .flatMap((chunk) => chunk.parents!)
-          .map((chunkId) => chunksById.get(chunkId))
-          .forEach((chunk) => localChunks.add(chunk!));
-        return localChunks.size;
-      };
-
-      // Iterate until no new chunks are added
-      while (localChunks.size - addParentsOfLocalChunks());
-
-      // Add all other chunks as remote chunks
-      chunks
-        .filter((chunk) => !localChunks.has(chunk))
-        .forEach((chunk) => remoteChunks.add(chunk));
+      const { localChunks, remoteChunks } = this.classifyChunks({
+        chunks: compilationStats.chunks!,
+        entryOptions: compiler.options.entry,
+      });
 
       // Collect auxiliary assets (only remote-assets for now)
       assets
@@ -181,7 +193,7 @@ export class OutputPlugin implements WebpackPlugin {
       }
 
       for (const chunk of remoteChunks) {
-        const specs = this.matchChunkToSpecs(chunk, remoteSpecs);
+        const specs = this.matchChunkToSpecs(chunk, this.remoteSpecs);
 
         if (specs.length === 0) {
           throw new Error(`No spec found for chunk ${chunk.id}`);
