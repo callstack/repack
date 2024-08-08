@@ -67,7 +67,7 @@ export class Script {
    * @param caller Optional caller name to prefix the script id.
    */
   static getScriptUniqueId(scriptId: string, caller?: string) {
-    const prefix = caller ? caller + '::' : '';
+    const prefix = caller ? caller + '_' : '';
     return prefix + scriptId;
   }
 
