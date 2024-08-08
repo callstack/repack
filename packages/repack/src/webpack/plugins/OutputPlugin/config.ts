@@ -16,7 +16,7 @@ const ruleSchema: Schema = {
   ],
 };
 
-const outputPluginConfigSchema: Schema = {
+const configSchema: Schema = {
   type: 'object',
   properties: {
     context: { type: 'string' },
@@ -69,5 +69,5 @@ const outputPluginConfigSchema: Schema = {
 };
 
 export function validateConfig(config: OutputPluginConfig) {
-  validate(outputPluginConfigSchema, config, { name: 'OutputPlugin' });
+  validate(configSchema, config, { name: 'OutputPlugin' });
 }

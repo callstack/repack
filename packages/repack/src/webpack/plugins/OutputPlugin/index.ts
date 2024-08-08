@@ -1,2 +1,2 @@
 export { OutputPlugin } from './OutputPlugin';
-export type { OutputPluginConfig } from './types';
+export type * from './types';
