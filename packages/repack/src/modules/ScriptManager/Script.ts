@@ -59,6 +59,19 @@ export class Script {
   }
 
   /**
+   * Get unique identifier for the script.
+   *
+   * Used to create unique identifier for the script, which serves as its key in the cache.
+   *
+   * @param scriptId Id of the script.
+   * @param caller Optional caller name to prefix the script id.
+   */
+  static getScriptUniqueId(scriptId: string, caller?: string) {
+    const prefix = caller ? caller + '::' : '';
+    return prefix + scriptId;
+  }
+
+  /**
    * Create new instance of `Script` from non-normalized script locator data.
    *
    * @param locator Non-normalized locator data.
@@ -75,6 +88,8 @@ export class Script {
     new Headers(locator.headers).forEach((value: string, key: string) => {
       headers[key.toLowerCase()] = value;
     });
+
+    const uniqueId = Script.getScriptUniqueId(key.scriptId, key.caller);
 
     let body: NormalizedScriptLocator['body'];
     if (locator.body instanceof FormData) {
@@ -105,6 +120,7 @@ export class Script {
       key.scriptId,
       key.caller,
       {
+        uniqueId,
         method:
           (locator.method as NormalizedScriptLocatorHTTPMethod) ??
           NormalizedScriptLocatorHTTPMethod.GET,

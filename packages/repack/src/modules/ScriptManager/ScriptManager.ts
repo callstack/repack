@@ -266,7 +266,7 @@ export class ScriptManager extends EventEmitter {
       }
 
       const script = Script.from({ scriptId, caller }, locator, false);
-      const cacheKey = `${scriptId}_${caller ?? 'unknown'}`;
+      const cacheKey = script.locator.uniqueId;
 
       // Check if user provided a custom shouldUpdateScript function
       if (locator.shouldUpdateScript) {
