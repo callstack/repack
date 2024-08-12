@@ -2,4 +2,4 @@
 "@callstack/repack": minor
 ---
 
-fix bundle caching after invalidating scripts
+Fix bundle caching after invalidating scripts

@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-fix: correctly parse platform from file URL
+Correctly parse platform from file URL
