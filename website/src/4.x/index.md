@@ -10,7 +10,7 @@ hero:
       text: <span className="home-hero-primary-action">Get started</span>
       link: /docs/getting-started
     - theme: alt
-      text: Learn more
+      text: Learn more!
       link: /docs/about
 features:
   - title: Webpack-powered solution
