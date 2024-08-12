@@ -96,6 +96,7 @@ export interface ScriptLocator {
    * `off` means that the script's code-signature will not be verfied
    */
   verifyScriptSignature?: 'strict' | 'lax' | 'off';
+
   /**
    * Function called before loading or getting from the cache and after resolving the script locator.
    * It's an async function which should return a boolean indicating whether the script should be loaded or use default behaviour.

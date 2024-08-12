@@ -60,11 +60,11 @@ RCT_EXPORT_METHOD(loadScript
                if (error) {
                  reject(ScriptDownloadFailure, error.localizedFailureReason, nil);
                } else {
-                 [self execute:config.scriptId url:config.url resolve:resolve reject:reject];
+                 [self execute:config resolve:resolve reject:reject];
                }
              }];
       } else {
-        [self execute:scriptId url:config.url resolve:resolve reject:reject];
+        [self execute:config resolve:resolve reject:reject];
       }
 
     } else if ([[config.url scheme] isEqualToString:@"file"]) {
@@ -156,12 +156,9 @@ RCT_EXPORT_METHOD(invalidateScripts
   }];
 }
 
-- (void)execute:(NSString *)scriptId
-            url:(NSURL *)url
-        resolve:(RCTPromiseResolveBlock)resolve
-         reject:(RCTPromiseRejectBlock)reject
+- (void)execute:(ScriptConfig *)config resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
-  NSString *scriptPath = [self getScriptFilePath:scriptId];
+  NSString *scriptPath = [self getScriptFilePath:config.uniqueId];
   @try {
     NSFileManager *manager = [NSFileManager defaultManager];
     if (![[NSFileManager defaultManager] fileExistsAtPath:scriptPath]) {
@@ -175,7 +172,7 @@ RCT_EXPORT_METHOD(invalidateScripts
       @throw [NSError errorWithDomain:errorMessage code:0 userInfo:nil];
     }
 
-    [self evaluateJavascript:data url:url resolve:resolve reject:reject];
+    [self evaluateJavascript:data url:config.url resolve:resolve reject:reject];
   } @catch (NSError *error) {
     reject(CodeExecutionFailure, error.domain, nil);
   }
@@ -189,15 +186,15 @@ RCT_EXPORT_METHOD(invalidateScripts
   return [rootDirectoryPath stringByAppendingPathComponent:@"scripts"];
 }
 
-- (NSString *)getScriptFilePath:(NSString *)scriptId
+- (NSString *)getScriptFilePath:(NSString *)scriptUniqueId
 {
-  NSString *scriptPath = [[self getScriptsDirectoryPath] stringByAppendingPathComponent:scriptId];
+  NSString *scriptPath = [[self getScriptsDirectoryPath] stringByAppendingPathComponent:scriptUniqueId];
   return [scriptPath stringByAppendingPathExtension:@"script.bundle"];
 }
 
 - (void)downloadAndCache:(ScriptConfig *)config completionHandler:(void (^)(NSError *error))callback
 {
-  NSString *scriptFilePath = [self getScriptFilePath:config.scriptId];
+  NSString *scriptFilePath = [self getScriptFilePath:config.uniqueId];
   NSString *scriptsDirectoryPath = [self getScriptsDirectoryPath];
 
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:config.url];
