@@ -24,9 +24,9 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
 
     @ReactMethod
     override fun loadScript(scriptId: String, configMap: ReadableMap, promise: Promise) {
-        runInBackground {
-            val config = ScriptConfig.fromReadableMap(scriptId, configMap)
+        val config = ScriptConfig.fromReadableMap(scriptId, configMap)
 
+        runInBackground {
             // Currently, `loadScript` supports either `RemoteScriptLoader` or `FileSystemScriptLoader`
             // but not both at the same time - it will likely change in the future.
             when {

@@ -2,12 +2,10 @@
 import EventEmitter from 'events';
 import { getWebpackContext } from './getWebpackContext';
 import { Script } from './Script';
-import type {
+import type { ScriptLocatorResolver, StorageApi } from './types';
+import NativeScriptManager, {
   NormalizedScriptLocator,
-  ScriptLocatorResolver,
-  StorageApi,
-} from './types';
-import NativeScriptManager from './NativeScriptManager';
+} from './NativeScriptManager';
 
 type Cache = Record<
   string,
@@ -17,9 +15,11 @@ type Cache = Record<
 const DEFAULT_RESOLVER_PRIORITY = 2;
 const DEFAULT_RESOLVER_KEY = '__default__';
 
-const CACHE_KEY = `Repack.ScriptManager.Cache.v3.${
-  __DEV__ ? 'debug' : 'release'
-}`;
+const CACHE_NAME = 'Repack.ScriptManager.Cache';
+const CACHE_VERSION = 'v4';
+const CACHE_ENV = __DEV__ ? 'debug' : 'release';
+
+const CACHE_KEY = [CACHE_NAME, CACHE_VERSION, CACHE_ENV].join('.');
 
 /* Options for resolver when adding it to a `ScriptManager`. */
 export interface ResolverOptions {
@@ -218,10 +218,8 @@ export class ScriptManager extends EventEmitter {
 
   protected async initCache() {
     if (!this.cacheInitialized) {
-      const cache: Cache | null | undefined = JSON.parse(
-        (await this.storage?.getItem(CACHE_KEY)) ?? '{}'
-      );
-      this.cache = cache ?? {};
+      const cacheEntry = await this.storage?.getItem(CACHE_KEY);
+      this.cache = cacheEntry ? JSON.parse(cacheEntry) : {};
       this.cacheInitialized = true;
     }
   }
@@ -284,7 +282,7 @@ export class ScriptManager extends EventEmitter {
       }
 
       const script = Script.from({ scriptId, caller }, locator, false);
-      const cacheKey = `${scriptId}_${caller ?? 'unknown'}`;
+      const cacheKey = script.locator.uniqueId;
 
       // Check if user provided a custom shouldUpdateScript function
       if (locator.shouldUpdateScript) {
@@ -426,19 +424,20 @@ export class ScriptManager extends EventEmitter {
    * the invalidation completes.
    *
    * @param scriptIds Array of script ids to clear from cache and remove from filesystem.
+   * @returns Array of script ids that were invalidated.
    */
   async invalidateScripts(scriptIds: string[] = []) {
     try {
       await this.initCache();
-      const ids = scriptIds ?? Object.keys(this.cache);
 
-      for (const scriptId of ids) {
-        delete this.cache[scriptId];
-      }
+      const ids = scriptIds.length ? scriptIds : Object.keys(this.cache);
+      ids.forEach((scriptId) => delete this.cache[scriptId]);
+
       await this.saveCache();
+      await this.nativeScriptManager.invalidateScripts(scriptIds);
 
-      await this.nativeScriptManager.invalidateScripts(ids);
       this.emit('invalidated', ids);
+      return ids;
     } catch (error) {
       const { code } = error as Error & { code: string };
       this.handleError(

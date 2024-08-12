@@ -7,6 +7,15 @@ jest.mock('../NativeScriptManager', () => ({
   loadScript: jest.fn(),
   prefetchScript: jest.fn(),
   invalidateScripts: jest.fn(),
+  NormalizedScriptLocatorHTTPMethod: {
+    GET: 'GET',
+    POST: 'POST',
+  },
+  NormalizedScriptLocatorSignatureVerificationMode: {
+    STRICT: 'strict',
+    LAX: 'lax',
+    OFF: 'off',
+  },
 }));
 
 // @ts-ignore
@@ -72,6 +81,41 @@ describe('ScriptManagerAPI', () => {
     ).rejects.toThrow(/Error: No script resolvers were added/);
   });
 
+  it('should generate uniqueId', async () => {
+    const uniqueId = Script.getScriptUniqueId('src_App_js', 'main');
+    expect(uniqueId).toEqual('main_src_App_js');
+
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+      };
+    });
+
+    const script = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+    expect(script.locator.uniqueId).toEqual('main_src_App_js');
+  });
+
+  it('should generate uniqueId with undefined caller', async () => {
+    const uniqueId = Script.getScriptUniqueId('src_App_js', undefined);
+    expect(uniqueId).toEqual('src_App_js');
+
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual(undefined);
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+      };
+    });
+
+    const script = await ScriptManager.shared.resolveScript('src_App_js');
+    expect(script.locator.uniqueId).toEqual('src_App_js');
+  });
+
   it('should resolve with url only', async () => {
     const cache = new FakeCache();
 
@@ -95,6 +139,7 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      uniqueId: 'main_src_App_js',
     });
 
     const {
@@ -123,6 +168,7 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      uniqueId: 'main_src_App_js',
     });
   });
 
@@ -150,6 +196,7 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      uniqueId: 'main_src_App_js',
     });
   });
 
@@ -177,6 +224,7 @@ describe('ScriptManagerAPI', () => {
       query: 'accessCode=1234&accessUid=asdf',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      uniqueId: 'main_src_App_js',
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -217,6 +265,7 @@ describe('ScriptManagerAPI', () => {
       headers: { 'x-hello': 'world' },
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      uniqueId: 'main_src_App_js',
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -241,6 +290,7 @@ describe('ScriptManagerAPI', () => {
       headers: { 'x-hello': 'world', 'x-changed': 'true' },
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      uniqueId: 'main_src_App_js',
     });
   });
 
@@ -266,6 +316,7 @@ describe('ScriptManagerAPI', () => {
       body: 'hello_world',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      uniqueId: 'main_src_App_js',
     });
 
     ScriptManager.shared.removeAllResolvers();
@@ -288,6 +339,7 @@ describe('ScriptManagerAPI', () => {
       body: 'message',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      uniqueId: 'main_src_App_js',
     });
   });
 
@@ -316,6 +368,7 @@ describe('ScriptManagerAPI', () => {
       method: 'POST',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
+      uniqueId: 'main_src_App_js',
     });
   });
 

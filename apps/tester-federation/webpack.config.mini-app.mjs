@@ -100,7 +100,18 @@ export default (env) => {
         mode,
         platform,
         devServer,
-        output: { enabled: false },
+        output: {
+          bundleFilename,
+          sourceMapFilename,
+          assetsPath,
+        },
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/mini-app/${platform}/output-remote`,
+          },
+        ],
       }),
       new Repack.plugins.ModuleFederationPlugin({
         name: 'MiniApp',

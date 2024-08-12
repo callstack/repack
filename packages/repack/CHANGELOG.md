@@ -1,5 +1,32 @@
 # @callstack/repack
 
+## 4.2.0
+
+### Minor Changes
+
+- [#680](https://github.com/callstack/repack/pull/680) [`b936d63`](https://github.com/callstack/repack/commit/b936d6314d302ec8a5863bb65f11b88965567a2c) Thanks [@jbroma](https://github.com/jbroma)! - Fix bundle caching after invalidating scripts
+
+- [#683](https://github.com/callstack/repack/pull/683) [`8b07027`](https://github.com/callstack/repack/commit/8b070273f4e047d984e60f929d0022ed4d96592c) Thanks [@jbroma](https://github.com/jbroma)! - Fix bundle naming collisions when using device filesystem cache
+
+- [#641](https://github.com/callstack/repack/pull/641) [`c9eaef8`](https://github.com/callstack/repack/commit/c9eaef8e9e126572ad98d7f7daa126dda4acc160) Thanks [@jbroma](https://github.com/jbroma)! - Fix typing for methods exposed in native module
+
+- [#651](https://github.com/callstack/repack/pull/651) [`a385b2b`](https://github.com/callstack/repack/commit/a385b2b088f59f96ce48cbf54256d21632ef2481) Thanks [@adammruk](https://github.com/adammruk)! - Added 'assetPath' field to remote assets config, enabling granular control over the generated URL and server location to the asset
+
+### Patch Changes
+
+- [#679](https://github.com/callstack/repack/pull/679) [`d8924c6`](https://github.com/callstack/repack/commit/d8924c62303928b54cffc290f84423b23a468976) Thanks [@jbroma](https://github.com/jbroma)! - Fix infinite loop when traversing the chunk graph in OutputPlugin
+
+- [#647](https://github.com/callstack/repack/pull/647) [`e51b7a6`](https://github.com/callstack/repack/commit/e51b7a6ec2c90d7d75c1b2a11a85b97413b6b000) Thanks [@jhso-dev](https://github.com/jhso-dev)! - Correctly parse platform from file URL
+
+- [#656](https://github.com/callstack/repack/pull/656) [`1e27ae5`](https://github.com/callstack/repack/commit/1e27ae5c6def67d5e2862717af60881f792f72a3) Thanks [@barttom](https://github.com/barttom)! - Improved descriptions of start and bundle command options
+
+- [#678](https://github.com/callstack/repack/pull/678) [`46f1eb4`](https://github.com/callstack/repack/commit/46f1eb42949d70188ec3711f35282f097e4729f2) Thanks [@jbroma](https://github.com/jbroma)! - Refactor OutputPlugin's chunk categorization algorithm
+
+- [#646](https://github.com/callstack/repack/pull/646) [`9c119db`](https://github.com/callstack/repack/commit/9c119db8a6bd340b3655e4be80d52492d62f9c56) Thanks [@jbroma](https://github.com/jbroma)! - Prevent infinite recursion when tracking down initial chunks in Output Plugin
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.2.0
+
 ## 4.1.1
 
 ### Patch Changes
