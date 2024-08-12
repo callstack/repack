@@ -5,10 +5,10 @@
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
   "private": true,
-  "engineStrict": true,
   "engines": {
     "node": ">=18"
   },
+  "engineStrict": true,
   "scripts": {
     "lint": "eslint .",
     "test": "jest --noStackTrace",
