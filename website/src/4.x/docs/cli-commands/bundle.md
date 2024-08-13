@@ -1,4 +1,3 @@
-
 # bundle
 
 `bundle` or `webpack-bundle` is a command-line tool that builds the bundle for the provided project.
@@ -93,6 +92,13 @@ Instructs Webpack on how to treat the stats:
 - 'summary' - output webpack version, warnings count and errors count
 
 More details: [Webpack documentation](https://webpack.js.org/configuration/stats/)
+
+### --watch
+
+- Type: `boolean`
+- Default: `false`
+
+Watch for file changes.
 
 ### --webpackConfig <path>
 
