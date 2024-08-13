@@ -60,6 +60,7 @@ export interface BundleArguments extends CommonArguments {
   // sourcemapSourcesRoot?: string;
   // sourcemapUseAbsolutePath: boolean;
   stats?: string;
+  watch?: boolean;
 }
 
 /**

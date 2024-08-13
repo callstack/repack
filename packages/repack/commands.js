@@ -162,6 +162,10 @@ const bundleCommandOptions = [
       "'detailed' - output everything except chunkModules and chunkRootModules\n" +
       "'summary' - output webpack version, warnings count and errors count",
   },
+  {
+    name: '--watch',
+    description: 'Watch for file changes',
+  },
 ];
 
 const cliCommands = Object.values(getCommands());
