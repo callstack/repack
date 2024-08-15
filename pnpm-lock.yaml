@@ -245,42 +245,6 @@ importers:
         specifier: ^5.91.0
         version: 5.91.0
 
-  metro-compat-test:
-    devDependencies:
-      '@callstack/repack':
-        specifier: workspace:*
-        version: link:../packages/repack
-      '@types/jest':
-        specifier: ^29.5.12
-        version: 29.5.12
-      '@types/node':
-        specifier: ^18
-        version: 18.18.0
-      babel-jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@babel/core@7.24.0)
-      babel-plugin-module-resolver:
-        specifier: ^5.0.0
-        version: 5.0.0
-      babel-plugin-syntax-hermes-parser:
-        specifier: ^0.20.1
-        version: 0.20.1
-      enhanced-resolve:
-        specifier: ^5.16.0
-        version: 5.17.0
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@18.18.0)
-      memfs:
-        specifier: ^3.4.4
-        version: 3.4.4
-      type-fest:
-        specifier: ^4.12.0
-        version: 4.12.0
-
   packages/dev-server:
     dependencies:
       '@babel/code-frame':
@@ -410,7 +374,7 @@ importers:
         version: 0.5.7
       '@pmmmwh/react-refresh-webpack-plugin':
         specifier: ^0.5.13
-        version: 0.5.13(react-refresh@0.14.2)(type-fest@4.12.0)(webpack@5.91.0)
+        version: 0.5.13(react-refresh@0.14.2)(type-fest@0.21.3)(webpack@5.91.0)
       colorette:
         specifier: ^1.2.2
         version: 1.3.0
@@ -552,13 +516,13 @@ importers:
         version: 1.0.0(@rsbuild/core@0.7.8)
       rspress:
         specifier: 1.25.2
-        version: 1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)
+        version: 1.25.2(webpack@5.91.0)
       rspress-plugin-font-open-sans:
         specifier: ^1.0.0
         version: 1.0.0
       rspress-plugin-vercel-analytics:
         specifier: ^0.3.0
-        version: 0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0))
+        version: 0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.91.0))
     devDependencies:
       '@types/node':
         specifier: ^18
@@ -2721,10 +2685,6 @@ packages:
     resolution: {integrity: sha512-ESAc/RJvGTFEzRwOTT4+lNDk/GNHMkKbNzsvT0qKRfDyyYTskxB5rnU2njIDYVxXCBHHEI1c0YwHob3WaYujOg==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
 
-  babel-plugin-module-resolver@5.0.0:
-    resolution: {integrity: sha512-g0u+/ChLSJ5+PzYwLwP8Rp8Rcfowz58TJNCe+L/ui4rpzE/mg//JVX0EWBUYoxaextqnwuGHzfGp2hh0PPV25Q==}
-    engines: {node: '>= 16'}
-
   babel-plugin-polyfill-corejs2@0.3.3:
     resolution: {integrity: sha512-8hOdmFYFSZhqg2C/JgLUQ+t52o5nirNwaWM2B9LWteozwIvM14VSwdsCAUET10qT+kmySAlseadmfeeSWFCy+Q==}
     peerDependencies:
@@ -2754,9 +2714,6 @@ packages:
     resolution: {integrity: sha512-OJGYZlhLqBh2DDHeqAxWB1XIvr49CxiJ2gIt61/PU55CQK4Z58OzMqjDe1zwQdQk+rBYsRc+1rJmdajM3gimHg==}
     peerDependencies:
       '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
-
-  babel-plugin-syntax-hermes-parser@0.20.1:
-    resolution: {integrity: sha512-fTP6P0NV+0PrJLUQZSjAe7G4D/WvD2/Q38dNEsuBr9c6FUJ82VggApUQx6l3HnkvDtr5zHbNcJUIplGqumQ+Hg==}
 
   babel-plugin-transform-flow-enums@0.0.2:
     resolution: {integrity: sha512-g4aaCrDDOsWjbm0PUUeVnkcVd6AKJsVc/MbnPhEotEpkeJQP6b8nzewohQi7+QS8UyPehOhGWn0nOwjvWpmMvQ==}
@@ -3927,10 +3884,6 @@ packages:
     resolution: {integrity: sha512-aAWcW57uxVNrQZqFXjITpW3sIUQmHGG3qSb9mUah9MgMC4NeWhNOlNjXEYq3HjRAvL6arUviZGGJsBg6z0zsWA==}
     engines: {node: '>= 0.8'}
 
-  find-babel-config@2.0.0:
-    resolution: {integrity: sha512-dOKT7jvF3hGzlW60Gc3ONox/0rRZ/tz7WCil0bqA1In/3I8f1BctpXahRnEKDySZqci7u+dqq93sZST9fOJpFw==}
-    engines: {node: '>=16.0.0'}
-
   find-cache-dir@2.1.0:
     resolution: {integrity: sha512-Tq6PixE0w/VMFfCgbONnkiQIVol/JJL7nRMi20fqzA4NRs9AfeqMGeRdPi3wIhYkxjeBaWh2rxwapn5Tu3IqOQ==}
     engines: {node: '>=6'}
@@ -4102,11 +4055,6 @@ packages:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
     deprecated: Glob versions prior to v9 are no longer supported
 
-  glob@8.0.3:
-    resolution: {integrity: sha512-ull455NHSHI/Y1FqGaaYFaLGkNMMJbavMrEGFXG/PGrg6y7sutWHUHrz6gy6WEBH6akM1M414dWKCNs+IhKdiQ==}
-    engines: {node: '>=12'}
-    deprecated: Glob versions prior to v9 are no longer supported
-
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
     engines: {node: '>=4'}
@@ -4240,17 +4188,11 @@ packages:
   hermes-estree@0.19.1:
     resolution: {integrity: sha512-daLGV3Q2MKk8w4evNMKwS8zBE/rcpA800nu1Q5kM08IKijoSnPe9Uo1iIxzPKRkn95IxxsgBMPeYHt3VG4ej2g==}
 
-  hermes-estree@0.20.1:
-    resolution: {integrity: sha512-SQpZK4BzR48kuOg0v4pb3EAGNclzIlqMj3Opu/mu7bbAoFw6oig6cEt/RAi0zTFW/iW6Iz9X9ggGuZTAZ/yZHg==}
-
   hermes-parser@0.18.2:
     resolution: {integrity: sha512-1eQfvib+VPpgBZ2zYKQhpuOjw1tH+Emuib6QmjkJWJMhyjM8xnXMvA+76o9LhF0zOAJDZgPfQhg43cyXEyl5Ew==}
 
   hermes-parser@0.19.1:
     resolution: {integrity: sha512-Vp+bXzxYJWrpEuJ/vXxUsLnt0+y4q9zyi4zUlkLqD8FKv4LjIfOvP69R/9Lty3dCyKh0E2BU7Eypqr63/rKT/A==}
-
-  hermes-parser@0.20.1:
-    resolution: {integrity: sha512-BL5P83cwCogI8D7rrDCgsFY0tdYUtmFP9XaXtl2IQjC+2Xo+4okjfXintlTxcIwl4qeGddEl28Z11kbVIw0aNA==}
 
   hermes-profile-transformer@0.0.6:
     resolution: {integrity: sha512-cnN7bQUm65UWOy6cbGcCcZ3rpwW8Q/j4OP5aWRhEry4Z2t2aR1cjrbp0BS+KiBN0smvP1caBgAuxutvyvJILzQ==}
@@ -5398,10 +5340,6 @@ packages:
   minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
 
-  minimatch@5.1.0:
-    resolution: {integrity: sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==}
-    engines: {node: '>=10'}
-
   minimatch@9.0.3:
     resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==}
     engines: {node: '>=16 || 14 >=14.17'}
@@ -5785,10 +5723,6 @@ packages:
     resolution: {integrity: sha512-Ie9z/WINcxxLp27BKOCHGde4ITq9UklYKDzVo1nhk5sqGEXU3FpkwP5GM2voTGJkGd9B3Otl+Q4uwSOeSUtOBA==}
     engines: {node: '>=14.16'}
 
-  pkg-up@3.1.0:
-    resolution: {integrity: sha512-nDywThFk1i4BQK4twPQ6TA4RT8bDY96yeuCVBWL3ePARCiEKDRSrNGbFIgUJpLp+XeIR65v8ra7WuJOFUBtkMA==}
-    engines: {node: '>=8'}
-
   plist@3.0.6:
     resolution: {integrity: sha512-WiIVYyrp8TD4w8yCvyeIr+lkmrGRd5u0VbRnU+tP/aRLxP/YadJUYOMZJ/6hIa3oUyVCsycXvtNRgd5XBJIbiA==}
     engines: {node: '>=6'}
@@ -6165,9 +6099,6 @@ packages:
 
   requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
-
-  reselect@4.1.8:
-    resolution: {integrity: sha512-ab9EmR80F/zQTMNeneUr4cv+jSwPJgIlvEmVwLerwrWVbpLlBuls9XHzIeTFy4cegU2NHBp3va0LKOzU5qFEYQ==}
 
   resolve-cwd@3.0.0:
     resolution: {integrity: sha512-OrZaX2Mb+rJCpH/6CpSqt9xFVpN++x01XnN2ie9g6P5/3xelLAkXWVADpdz1IHD/KFfEXyE6V0U01OQ3UO2rEg==}
@@ -6962,10 +6893,6 @@ packages:
   type-fest@0.8.1:
     resolution: {integrity: sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==}
     engines: {node: '>=8'}
-
-  type-fest@4.12.0:
-    resolution: {integrity: sha512-5Y2/pp2wtJk8o08G0CMkuFPCO354FGwk/vbidxrdhRGZfd0tFnb4Qb8anp9XxXriwBgVPjdWbKpGl4J9lJY2jQ==}
-    engines: {node: '>=16'}
 
   type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
@@ -9002,7 +8929,7 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@pmmmwh/react-refresh-webpack-plugin@0.5.13(react-refresh@0.14.2)(type-fest@4.12.0)(webpack@5.91.0)':
+  '@pmmmwh/react-refresh-webpack-plugin@0.5.13(react-refresh@0.14.2)(type-fest@0.21.3)(webpack@5.91.0)':
     dependencies:
       ansi-html-community: 0.0.8
       core-js-pure: 3.23.3
@@ -9014,7 +8941,7 @@ snapshots:
       source-map: 0.7.4
       webpack: 5.91.0
     optionalDependencies:
-      type-fest: 4.12.0
+      type-fest: 0.21.3
 
   '@react-native-async-storage/async-storage@1.23.1(react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))':
     dependencies:
@@ -9635,17 +9562,17 @@ snapshots:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       '@swc/helpers': 0.5.3
       core-js: 3.36.1
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
       postcss: 8.4.39
 
-  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)':
+  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
       '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)':
+  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
       '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
@@ -9654,7 +9581,7 @@ snapshots:
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)':
+  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
       '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
@@ -9668,7 +9595,7 @@ snapshots:
     dependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       caniuse-lite: 1.0.30001640
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
       postcss: 8.4.39
     optionalDependencies:
       fsevents: 2.3.3
@@ -9728,7 +9655,7 @@ snapshots:
     optionalDependencies:
       react-refresh: 0.14.2
 
-  '@rspress/core@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)':
+  '@rspress/core@1.25.2(webpack@5.91.0)':
     dependencies:
       '@loadable/component': 5.16.4(react@18.2.0)
       '@mdx-js/loader': 2.3.0(webpack@5.91.0)
@@ -9736,9 +9663,9 @@ snapshots:
       '@mdx-js/react': 2.3.0(react@18.2.0)
       '@modern-js/utils': 2.54.5
       '@rsbuild/core': 0.7.8
-      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)
-      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)
-      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.3)
+      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)
       '@rspress/mdx-rs': 0.5.7
       '@rspress/plugin-auto-nav-sidebar': 1.25.2
       '@rspress/plugin-container-syntax': 1.25.2
@@ -10628,14 +10555,6 @@ snapshots:
       '@types/babel__core': 7.1.19
       '@types/babel__traverse': 7.14.2
 
-  babel-plugin-module-resolver@5.0.0:
-    dependencies:
-      find-babel-config: 2.0.0
-      glob: 8.0.3
-      pkg-up: 3.1.0
-      reselect: 4.1.8
-      resolve: 1.22.8
-
   babel-plugin-polyfill-corejs2@0.3.3(@babel/core@7.24.0):
     dependencies:
       '@babel/compat-data': 7.24.7
@@ -10683,10 +10602,6 @@ snapshots:
       '@babel/helper-define-polyfill-provider': 0.5.0(@babel/core@7.24.0)
     transitivePeerDependencies:
       - supports-color
-
-  babel-plugin-syntax-hermes-parser@0.20.1:
-    dependencies:
-      hermes-parser: 0.20.1
 
   babel-plugin-transform-flow-enums@0.0.2(@babel/core@7.24.0):
     dependencies:
@@ -11959,11 +11874,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  find-babel-config@2.0.0:
-    dependencies:
-      json5: 2.2.3
-      path-exists: 4.0.0
-
   find-cache-dir@2.1.0:
     dependencies:
       commondir: 1.0.1
@@ -12126,14 +12036,6 @@ snapshots:
       minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
-
-  glob@8.0.3:
-    dependencies:
-      fs.realpath: 1.0.0
-      inflight: 1.0.6
-      inherits: 2.0.4
-      minimatch: 5.1.0
-      once: 1.4.0
 
   globals@11.12.0: {}
 
@@ -12332,8 +12234,6 @@ snapshots:
 
   hermes-estree@0.19.1: {}
 
-  hermes-estree@0.20.1: {}
-
   hermes-parser@0.18.2:
     dependencies:
       hermes-estree: 0.18.2
@@ -12341,10 +12241,6 @@ snapshots:
   hermes-parser@0.19.1:
     dependencies:
       hermes-estree: 0.19.1
-
-  hermes-parser@0.20.1:
-    dependencies:
-      hermes-estree: 0.20.1
 
   hermes-profile-transformer@0.0.6:
     dependencies:
@@ -12366,7 +12262,7 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
-  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3)):
+  html-rspack-plugin@5.7.2(@rspack/core@0.7.3):
     optionalDependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
 
@@ -14147,10 +14043,6 @@ snapshots:
     dependencies:
       brace-expansion: 1.1.11
 
-  minimatch@5.1.0:
-    dependencies:
-      brace-expansion: 2.0.1
-
   minimatch@9.0.3:
     dependencies:
       brace-expansion: 2.0.1
@@ -14531,10 +14423,6 @@ snapshots:
   pkg-dir@7.0.0:
     dependencies:
       find-up: 6.3.0
-
-  pkg-up@3.1.0:
-    dependencies:
-      find-up: 3.0.0
 
   plist@3.0.6:
     dependencies:
@@ -15045,8 +14933,6 @@ snapshots:
 
   requires-port@1.0.0: {}
 
-  reselect@4.1.8: {}
-
   resolve-cwd@3.0.0:
     dependencies:
       resolve-from: 5.0.0
@@ -15109,7 +14995,7 @@ snapshots:
     dependencies:
       fs-extra: 11.2.0
 
-  rspress-plugin-devkit@0.3.0(rspress@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)):
+  rspress-plugin-devkit@0.3.0(rspress@1.25.2(webpack@5.91.0)):
     dependencies:
       '@rspress/shared': 1.25.2
       '@types/estree-jsx': 1.0.5
@@ -15124,7 +15010,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
       mdast-util-to-string: 4.0.0
       remark-mdc: 1.2.0
-      rspress: 1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)
+      rspress: 1.25.2(webpack@5.91.0)
       ts-morph: 22.0.0
       unified: 10.1.2
       unist-util-visit: 5.0.0
@@ -15137,21 +15023,21 @@ snapshots:
 
   rspress-plugin-font-open-sans@1.0.0: {}
 
-  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)):
+  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.91.0)):
     dependencies:
       '@rspress/shared': 1.25.2
       '@vercel/analytics': 1.2.2(react@18.2.0)
-      rspress: 1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)
-      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0))
+      rspress: 1.25.2(webpack@5.91.0)
+      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(webpack@5.91.0))
     transitivePeerDependencies:
       - next
       - react
       - supports-color
 
-  rspress@1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0):
+  rspress@1.25.2(webpack@5.91.0):
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rspress/core': 1.25.2(@swc/helpers@0.5.3)(webpack@5.91.0)
+      '@rspress/core': 1.25.2(webpack@5.91.0)
       '@rspress/shared': 1.25.2
       cac: 6.7.14
       chalk: 5.3.0
@@ -15803,8 +15689,6 @@ snapshots:
   type-fest@0.7.1: {}
 
   type-fest@0.8.1: {}
-
-  type-fest@4.12.0: {}
 
   type-is@1.6.18:
     dependencies:
