@@ -1,13 +1,35 @@
 import type { FederationRuntimePlugin } from '@module-federation/enhanced/runtime';
-import type { ScriptManager } from './ScriptManager';
-
-type SM = typeof ScriptManager;
+import type * as RepackClient from './ScriptManager';
 
 const repackFederationRuntimePlugin: () => FederationRuntimePlugin = () => ({
   name: 'repack-federation-runtime-plugin',
+  loadEntry: async ({ remoteInfo }) => {
+    const client = require('./ScriptManager') as typeof RepackClient;
+    const { ScriptManager, getWebpackContext } = client;
+    const { entry, entryGlobalName } = remoteInfo;
+
+    try {
+      await ScriptManager.shared.loadScript(
+        entryGlobalName,
+        undefined,
+        getWebpackContext(),
+        entry
+      );
+
+      // @ts-ignore
+      if (!globalThis[entryGlobalName]) {
+        throw new Error();
+      }
+
+      // @ts-ignore
+      return globalThis[entryGlobalName];
+    } catch {
+      console.error(`Failed to load ${entryGlobalName} entry`);
+    }
+  },
   afterResolve(args) {
+    const { ScriptManager } = require('./ScriptManager') as typeof RepackClient;
     const { remoteInfo } = args;
-    const ScriptManager: SM = require('./ScriptManager').ScriptManager;
 
     ScriptManager.shared.addResolver(
       // eslint-disable-next-line require-await
