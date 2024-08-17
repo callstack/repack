@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@callstack/repack": "workspace:*",
-    "@module-federation/enhanced": "^0.3.2",
+    "@module-federation/enhanced": "0.5.0",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.10.1",
     "react": "18.2.0",
