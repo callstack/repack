@@ -3,6 +3,29 @@ import type * as RepackClient from './ScriptManager';
 
 const repackFederationRuntimePlugin: () => FederationRuntimePlugin = () => ({
   name: 'repack-federation-runtime-plugin',
+  afterResolve(args) {
+    const { ScriptManager } = require('./ScriptManager') as typeof RepackClient;
+    const { remoteInfo } = args;
+
+    ScriptManager.shared.addResolver(
+      // eslint-disable-next-line require-await
+      async (scriptId, caller, referenceUrl) => {
+        console.log('afterResolve: ', scriptId, caller, referenceUrl);
+        if (scriptId === remoteInfo.entryGlobalName) {
+          return { url: remoteInfo.entry };
+        }
+
+        if (referenceUrl && caller === remoteInfo.entryGlobalName) {
+          const publicPath = remoteInfo.entry.split('/').slice(0, -1).join('/');
+          const bundlePath = scriptId + referenceUrl.split(scriptId)[1];
+          return { url: publicPath + '/' + bundlePath };
+        }
+      },
+      { key: remoteInfo.entryGlobalName }
+    );
+
+    return args;
+  },
   loadEntry: async ({ remoteInfo }) => {
     const client = require('./ScriptManager') as typeof RepackClient;
     const { ScriptManager, getWebpackContext } = client;
@@ -26,29 +49,6 @@ const repackFederationRuntimePlugin: () => FederationRuntimePlugin = () => ({
     } catch {
       console.error(`Failed to load ${entryGlobalName} entry`);
     }
-  },
-  afterResolve(args) {
-    const { ScriptManager } = require('./ScriptManager') as typeof RepackClient;
-    const { remoteInfo } = args;
-
-    ScriptManager.shared.addResolver(
-      // eslint-disable-next-line require-await
-      async (scriptId, caller, referenceUrl) => {
-        console.log('afterResolve: ', scriptId, caller, referenceUrl);
-        if (scriptId === remoteInfo.entryGlobalName) {
-          return { url: remoteInfo.entry };
-        }
-
-        if (referenceUrl && caller === remoteInfo.entryGlobalName) {
-          const publicPath = remoteInfo.entry.split('/').slice(0, -1).join('/');
-          const bundlePath = scriptId + referenceUrl.split(scriptId)[1];
-          return { url: publicPath + '/' + bundlePath };
-        }
-      },
-      { key: remoteInfo.entryGlobalName }
-    );
-
-    return args;
   },
 });
 
