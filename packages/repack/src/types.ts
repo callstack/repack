@@ -89,6 +89,11 @@ export interface CliOptions {
       };
 }
 
+export interface WebpackWorkerOptions {
+  cliOptions: CliOptions;
+  platform: string;
+}
+
 /**
  * Development server configuration options.
  */
