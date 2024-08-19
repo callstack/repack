@@ -41,10 +41,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       webpackConfigPath,
     },
     command: 'start',
-    arguments: {
-      // `platform` is empty, since it will be filled in later by `DevServerProxy`
-      start: { ...restArgs, platform: '' },
-    },
+    arguments: { start: { ...restArgs } },
   };
 
   const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
