@@ -100,6 +100,10 @@ const startCommandOptions = [
     name: '--silent',
     description: 'Silents all logs to the console/stdout',
   },
+  {
+    name: '--verbose',
+    description: 'Enables verbose logging',
+  },
 ];
 
 const bundleCommandOptions = [
@@ -165,6 +169,10 @@ const bundleCommandOptions = [
       "'verbose' - output everything\n" +
       "'detailed' - output everything except chunkModules and chunkRootModules\n" +
       "'summary' - output webpack version, warnings count and errors count",
+  },
+  {
+    name: '--verbose',
+    description: 'Enables verbose logging',
   },
 ];
 
