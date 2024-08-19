@@ -40,7 +40,6 @@ export interface BundleArguments {
   bundleOutput?: string;
   sourcemapOutput?: string;
   assetsDest?: string;
-  resetCache?: boolean;
   json?: string;
   stats?: string;
   verbose?: boolean;

@@ -147,10 +147,6 @@ const bundleCommandOptions = [
     description:
       'Directory name where to store assets referenced in the bundle',
   },
-  {
-    name: '--reset-cache',
-    description: 'Removes cached files (default: false)',
-  },
   // options specific to Re.Pack
   {
     name: '--json <statsFile>',
