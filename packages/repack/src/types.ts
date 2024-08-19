@@ -33,7 +33,7 @@ export interface WebpackPlugin {
  * @internal
  */
 export interface BundleArguments {
-  entryFile?: string;
+  entryFile: string;
   platform: string;
   dev: boolean;
   minify?: boolean;
