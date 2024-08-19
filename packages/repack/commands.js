@@ -185,17 +185,6 @@ const webpackConfigOption = {
   name: '--webpackConfig <path>',
   description: 'Path to a Webpack config',
   parse: (val) => path.resolve(val),
-  default: (config) => {
-    const {
-      getWebpackConfigPath,
-    } = require('./dist/commands/utils/getWebpackConfigPath');
-
-    try {
-      return getWebpackConfigPath(config.root);
-    } catch {
-      return '';
-    }
-  },
 };
 
 const commands = [
