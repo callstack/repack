@@ -43,6 +43,7 @@ export interface BundleArguments {
   json?: string;
   stats?: string;
   verbose?: boolean;
+  watch?: boolean;
   webpackConfig?: string;
 }
 

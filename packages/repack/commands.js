@@ -170,6 +170,10 @@ const bundleCommandOptions = [
     name: '--verbose',
     description: 'Enables verbose logging',
   },
+  {
+    name: '--watch',
+    description: 'Watch for file changes',
+  },
 ];
 
 const cliCommands = Object.values(getCommands());

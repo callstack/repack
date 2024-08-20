@@ -85,6 +85,13 @@ More details: [Webpack documentation](https://webpack.js.org/configuration/stats
 
 Enables verbose logging.
 
+### --watch
+
+- Type: `boolean`
+- Default: `false`
+
+Watch for file changes.
+
 ### --webpackConfig <path>
 
 - Type: `string`

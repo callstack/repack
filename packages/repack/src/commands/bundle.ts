@@ -1,3 +1,4 @@
+import { pipeline } from 'node:stream/promises';
 import { Config } from '@react-native-community/cli-types';
 import fs from 'fs-extra';
 import { stringifyStream } from '@discoveryjs/json-ext';
@@ -29,6 +30,7 @@ export async function bundle(
     config.root,
     args.webpackConfig
   );
+
   const cliOptions = {
     config: {
       root: config.root,
@@ -54,74 +56,63 @@ export async function bundle(
     webpackConfigPath,
     webpackEnvOptions
   );
-  const compiler = webpack(webpackConfig);
 
-  return new Promise<void>((resolve, reject) => {
-    compiler.run((error, stats) => {
-      if (error) {
-        reject();
+  const errorHandler = async (error: Error | null, stats?: webpack.Stats) => {
+    if (error) {
+      console.error(error);
+      process.exit(2);
+    }
+
+    if (stats?.hasErrors()) {
+      stats.compilation?.errors?.forEach((e) => {
+        console.error(e);
+      });
+      process.exit(2);
+    }
+
+    if (args.json && stats !== undefined) {
+      console.log(`Writing compiler stats`);
+
+      let statOptions: Parameters<typeof stats.toJson>[0];
+      if (args.stats !== undefined) {
+        statOptions = { preset: args.stats };
+      } else if (typeof compiler.options.stats === 'boolean') {
+        statOptions = compiler.options.stats
+          ? { preset: 'normal' }
+          : { preset: 'none' };
+      } else {
+        statOptions = compiler.options.stats;
+      }
+
+      try {
+        // Stats can be fairly big at which point their JSON no longer fits into a single string.
+        // Approach was copied from `webpack-cli`: https://github.com/webpack/webpack-cli/blob/c03fb03d0aa73d21f16bd9263fd3109efaf0cd28/packages/webpack-cli/src/webpack-cli.ts#L2471-L2482
+        const statsStream = stringifyStream(stats.toJson(statOptions));
+        const outputStream = fs.createWriteStream(args.json);
+        await pipeline(statsStream, outputStream);
+        console.log(`Wrote compiler stats to ${args.json}`);
+      } catch (error) {
         console.error(error);
         process.exit(2);
-      } else {
-        if (stats?.hasErrors()) {
-          reject();
-          stats.compilation?.errors?.forEach((e) => {
-            console.error(e);
-          });
-          process.exit(2);
-        }
-
-        if (args.json && stats !== undefined) {
-          console.log(`Writing compiler stats`);
-
-          let statOptions: Parameters<typeof stats.toJson>[0];
-          if (args.stats !== undefined) {
-            statOptions = { preset: args.stats };
-          } else if (typeof compiler.options.stats === 'boolean') {
-            statOptions = compiler.options.stats
-              ? { preset: 'normal' }
-              : { preset: 'none' };
-          } else {
-            statOptions = compiler.options.stats;
-          }
-
-          const statsJson = stats.toJson(statOptions);
-          // Stats can be fairly big at which point their JSON no longer fits into a single string.
-          // Approach was copied from `webpack-cli`: https://github.com/webpack/webpack-cli/blob/c03fb03d0aa73d21f16bd9263fd3109efaf0cd28/packages/webpack-cli/src/webpack-cli.ts#L2471-L2482
-          const outputStream = fs.createWriteStream(args.json);
-
-          stringifyStream(statsJson)
-            .on('error', (error) => {
-              reject();
-              console.error(error);
-              process.exit(2);
-            })
-            .pipe(outputStream)
-            .on('error', (error) => {
-              reject();
-              console.error(error);
-              process.exit(2);
-            })
-            .on('close', () => {
-              console.log(`Wrote compiler stats to ${args.json}`);
-              resolve();
-            });
-        } else {
-          resolve();
-        }
       }
-    });
-    // eslint-disable-next-line promise/prefer-await-to-then
-  }).then(() => {
-    return new Promise<void>((resolve, reject) => {
-      // make cache work: https://webpack.js.org/api/node/#run
-      compiler.close((error) => {
-        if (error) {
-          reject();
-        } else {
+    }
+  };
+
+  const compiler = webpack(webpackConfig);
+
+  return new Promise<void>((resolve) => {
+    if (args.watch) {
+      compiler.hooks.watchClose.tap('bundle', resolve);
+      compiler.watch(webpackConfig.watchOptions ?? {}, errorHandler);
+    } else {
+      compiler.run((error, stats) => {
+        // make cache work: https://webpack.js.org/api/node/#run
+        compiler.close(async (closeErr) => {
+          if (closeErr) console.error(closeErr);
+          await errorHandler(error, stats);
           resolve();
-        }
+        });
       });
-    });
+    }
   });
 }
