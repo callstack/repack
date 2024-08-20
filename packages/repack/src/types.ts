@@ -28,38 +28,22 @@ export interface WebpackPlugin {
 }
 
 /**
- * Common CLI arguments that are used across all commands.
- *
- * @internal
- */
-export interface CommonArguments {
-  /** Target application platform. */
-  platform: string;
-  /** Whether to clean any persistent cache. */
-  resetCache?: boolean;
-  /** Whether to log additional debug messages. */
-  verbose?: boolean;
-  /** Custom path to Webpack config. */
-  webpackConfig?: string;
-}
-
-/**
  * CLI arguments passed from React Native CLI when running bundle command.
  *
  * @internal
  */
-export interface BundleArguments extends CommonArguments {
-  assetsDest?: string;
+export interface BundleArguments {
   entryFile: string;
-  json?: string;
-  minify?: boolean;
+  platform: string;
   dev: boolean;
-  bundleOutput: string;
-  // bundleEncoding?: string;
+  minify?: boolean;
+  bundleOutput?: string;
   sourcemapOutput?: string;
-  // sourcemapSourcesRoot?: string;
-  // sourcemapUseAbsolutePath: boolean;
+  assetsDest?: string;
+  json?: string;
   stats?: string;
+  verbose?: boolean;
+  webpackConfig?: string;
 }
 
 /**
@@ -67,19 +51,20 @@ export interface BundleArguments extends CommonArguments {
  *
  * @internal
  */
-export interface StartArguments extends CommonArguments {
-  cert?: string;
-  host?: string;
+export interface StartArguments {
+  port?: number;
+  host: string;
   https?: boolean;
   key?: string;
-  port?: number;
+  cert?: string;
   interactive?: boolean;
+  experimentalDebugger?: boolean;
+  json?: boolean;
+  logFile?: string;
+  reversePort?: boolean;
   silent?: boolean;
   verbose?: boolean;
-  json?: boolean;
-  reversePort?: boolean;
-  logFile?: string;
-  experimentalDebugger?: boolean;
+  webpackConfig?: string;
 }
 
 /**
@@ -101,6 +86,11 @@ export interface CliOptions {
     | {
         start: StartArguments;
       };
+}
+
+export interface WebpackWorkerOptions {
+  cliOptions: CliOptions;
+  platform: string;
 }
 
 /**
