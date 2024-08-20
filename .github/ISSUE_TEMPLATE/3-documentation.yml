@@ -26,5 +26,6 @@ body:
     id: suggestion
     attributes:
       label: Your Suggestion for Changes
+      description: "Describe the changes you have in mind. If you want to submit a PR for this issue, tell us in the description!"
     validations:
       required: true

@@ -16,7 +16,8 @@ body:
     id: suggested-solution
     attributes:
       label: Suggested solution
-      description: "In module [xy] we could provide following implementation..."
+      description: "Describe the solution you have in mind. If you want to submit a PR for this issue, tell us in the description!"
+      placeholder: "In module X we could provide following implementation..."
   - type: textarea
     id: additional-context
     attributes:
