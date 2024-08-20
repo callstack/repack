@@ -1,10 +1,7 @@
 ---
 name: "\U0001F4AC Question"
-about: Describe this issue template's purpose here.
-title: ''
+about: Ask a question about Re.Pack.
 labels: status:new, type:question
-assignees: ''
-
 ---
 
 ## Ask your Question

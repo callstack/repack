@@ -4,8 +4,7 @@ labels: [status:new, type:documentation]
 body:
   - type: markdown
     attributes:
-      value: |
-        Thanks for taking the time to fill out this issue!
+      value: Thanks for taking the time to fill out this issue!
   - type: checkboxes
     id: documentation_is
     attributes:
@@ -19,7 +18,7 @@ body:
     id: description
     attributes:
       label: Explain in Detail
-      description: A clear and concise description of your suggestion. If you intend to submit a PR for this issue, tell us in the description. Thanks!
+      description: A clear and concise description of your suggestion.
       placeholder: The description of ... page is not clear. I thought it meant ... but it wasn't.
     validations:
       required: true
