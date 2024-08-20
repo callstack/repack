@@ -1,0 +1,24 @@
+name: "\U0001F5E3 Feature request"
+description: Propose a new feature to be added to Re.Pack
+labels: [status:new, type:feature]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for your interest in the project and taking the time to fill out this feature report!
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Description
+      description: "Clear and concise description of the problem."
+    validations:
+      required: true
+  - type: textarea
+    id: suggested-solution
+    attributes:
+      label: Suggested solution
+      description: "In module [xy] we could provide following implementation..."
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Any other context or screenshots about the feature request here.
