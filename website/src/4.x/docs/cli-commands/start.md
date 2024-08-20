@@ -1,4 +1,3 @@
-
 # start
 
 `start` or `webpack-start` is a command-line tool that starts the React Native development server with Webpack integration.
@@ -13,18 +12,11 @@ react-native start [options]
 
 ## Options
 
-### --verbose
+### --port <number>
 
-- Type: `boolean`
-- Default: `false`
+- Type: `number`
 
-Increase logging verbosity.
-
-### --cert <path>
-
-- Type: `string`
-
-Path to custom SSL certificate.
+The port number that runs the server on.
 
 ### --host <string>
 
@@ -36,7 +28,6 @@ Set the server host.
 ### --https
 
 - Type: `boolean`
-- Default: `false`
 
 Enables HTTPS connections to the server.
 
@@ -46,11 +37,11 @@ Enables HTTPS connections to the server.
 
 Path to custom SSL key.
 
-### --port <number>
+### --cert <path>
 
-- Type: `number`
+- Type: `string`
 
-The port number that runs the server on.
+Path to custom SSL certificate.
 
 ### --no-interactive
 
@@ -58,33 +49,17 @@ The port number that runs the server on.
 
 Disables interactive mode.
 
-### --silent
-
-- Type: `boolean`
-- Default: `false`
-
-Silences all logs to the console/stdout.
-
 ### --experimental-debugger
 
 - Type: `boolean`
-- Default: `false`
 
 Enable the new debugger experience. Connection reliability and some basic features are unstable in this release.
 
 ### --json
 
 - Type: `boolean`
-- Default: `false`
 
 Log all messages to the console/stdout in JSON format.
-
-### --reverse-port
-
-- Type: `boolean`
-- Default: `false`
-
-ADB reverse port on starting devServers only for Android.
 
 ### --log-file <path>
 
@@ -92,10 +67,27 @@ ADB reverse port on starting devServers only for Android.
 
 Enables file logging to specified file.
 
+### --reverse-port
+
+- Type: `boolean`
+
+ADB reverse port on starting devServers only for Android.
+
+### --silent
+
+- Type: `boolean`
+
+Silences all logs to the console/stdout.
+
+### --verbose
+
+- Type: `boolean`
+
+Enables verbose logging.
+
 ### --webpackConfig <path>
 
 - Type: `string`
-- Default: `"[project_root]/webpack.config.mjs"`
 
 Path to a Webpack config file.
 

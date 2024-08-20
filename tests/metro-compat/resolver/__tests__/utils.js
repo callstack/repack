@@ -9,8 +9,8 @@
  * @oncall react_native
  */
 
-import type { ResolutionContext } from '../index';
-import type { PackageJson } from '../types';
+import type {ResolutionContext} from '../index';
+import type {PackageJson} from '../types';
 
 import path from 'path';
 
@@ -19,7 +19,7 @@ import path from 'path';
  * paths mapping to file contents.
  */
 type MockFileMap = $ReadOnly<{
-  [path: string]: ?(string | $ReadOnly<{ realPath: ?string }>),
+  [path: string]: ?(string | $ReadOnly<{realPath: ?string}>),
 }>;
 
 /**
@@ -28,15 +28,20 @@ type MockFileMap = $ReadOnly<{
  * consuming tests.
  */
 export function createResolutionContext(
-  fileMap: MockFileMap,
-  { enableSymlinks }: $ReadOnly<{ enableSymlinks?: boolean }> = {}
-): $Diff<ResolutionContext, { originModulePath: string }> {
+  fileMap: MockFileMap = {},
+): $Diff<ResolutionContext, {originModulePath: string}> {
   return {
     dev: true,
     allowHaste: true,
     assetExts: new Set(['jpg', 'png']),
     customResolverOptions: {},
     disableHierarchicalLookup: false,
+    doesFileExist: (filePath: string) =>
+      // Should return false unless realpath(filePath) exists. We mock shallow
+      // dereferencing.
+      fileMap[filePath] != null &&
+      (typeof fileMap[filePath] === 'string' ||
+        typeof fileMap[filePath].realPath === 'string'),
     extraNodeModules: null,
     mainFields: ['browser', 'main'],
     nodeModulesPaths: [],
@@ -51,26 +56,22 @@ export function createResolutionContext(
       web: ['browser'],
     },
     unstable_enablePackageExports: false,
+    unstable_fileSystemLookup: filePath => {
+      const candidate = fileMap[filePath];
+      if (typeof candidate === 'string') {
+        return {exists: true, type: 'f', realPath: filePath};
+      }
+      if (candidate == null || candidate.realPath == null) {
+        return {exists: false};
+      }
+      return {
+        exists: true,
+        type: 'f',
+        realPath: candidate.realPath,
+      };
+    },
     unstable_logWarning: () => {},
     ...createPackageAccessors(fileMap),
-    ...(enableSymlinks === true
-      ? {
-          doesFileExist: (filePath: string) =>
-            // Should return false unless realpath(filePath) exists. We mock shallow
-            // dereferencing.
-            fileMap[filePath] != null &&
-            (typeof fileMap[filePath] === 'string' ||
-              typeof fileMap[filePath].realPath === 'string'),
-          unstable_getRealPath: (filePath) =>
-            typeof fileMap[filePath] === 'string'
-              ? filePath
-              : fileMap[filePath]?.realPath,
-        }
-      : {
-          doesFileExist: (filePath: string) =>
-            typeof fileMap[filePath] === 'string',
-          unstable_getRealPath: null,
-        }),
   };
 }
 
@@ -79,7 +80,7 @@ export function createResolutionContext(
  * `ResolutionContext` based on the input mock file/package.json map.
  */
 export function createPackageAccessors(
-  fileOrPackageJsonMap: MockFileMap | { [path: string]: PackageJson }
+  fileOrPackageJsonMap: MockFileMap | {[path: string]: PackageJson},
 ): $ReadOnly<{
   getPackage: ResolutionContext['getPackage'],
   getPackageForModule: ResolutionContext['getPackageForModule'],
@@ -113,6 +114,7 @@ export function createPackageAccessors(
         return {
           rootPath: dir,
           packageJson,
+          packageRelativePath: path.relative(dir, modulePath),
         };
       }
 

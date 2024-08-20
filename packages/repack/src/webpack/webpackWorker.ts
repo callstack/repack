@@ -1,16 +1,16 @@
-import { workerData, parentPort } from 'worker_threads';
-import path from 'path';
-import webpack from 'webpack';
+import path from 'node:path';
+import { workerData, parentPort } from 'node:worker_threads';
 import memfs from 'memfs';
-import type { CliOptions } from '../types';
-import { getWebpackEnvOptions } from './utils';
+import webpack from 'webpack';
+import type { WebpackWorkerOptions } from '../types';
 import { loadWebpackConfig } from './loadWebpackConfig';
+import { getWebpackEnvOptions } from './utils';
 
-async function main(cliOptions: CliOptions) {
+async function main({ cliOptions, platform }: WebpackWorkerOptions) {
   const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
   const webpackConfig = await loadWebpackConfig(
     cliOptions.config.webpackConfigPath,
-    webpackEnvOptions
+    { ...webpackEnvOptions, platform }
   );
   const watchOptions = webpackConfig.watchOptions ?? {};
 

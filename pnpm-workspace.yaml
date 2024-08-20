@@ -5,5 +5,5 @@ packages:
   - "apps/tester-app"
   - "apps/tester-federation"
   - "apps/tester-federation-v2"
+  - "tests/metro-compat"
   - "website"
-  - "metro-compat-test"

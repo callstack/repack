@@ -5,7 +5,7 @@ import EventEmitter from 'events';
 import webpack from 'webpack';
 import mimeTypes from 'mime-types';
 import { SendProgress } from '@callstack/repack-dev-server';
-import type { CliOptions, StartArguments } from '../types';
+import type { CliOptions, WebpackWorkerOptions } from '../types';
 import type { LogType, Reporter } from '../logging';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
 import { adaptFilenameToPlatform } from './utils';
@@ -36,14 +36,9 @@ export class Compiler extends EventEmitter {
   private spawnWorker(platform: string) {
     this.isCompilationInProgress[platform] = true;
 
-    const workerData = {
-      ...this.cliOptions,
-      arguments: {
-        start: {
-          ...(this.cliOptions.arguments as { start: StartArguments }).start,
-          platform,
-        },
-      },
+    const workerData: WebpackWorkerOptions = {
+      cliOptions: this.cliOptions,
+      platform,
     };
 
     process.env[WORKER_ENV_KEY] = '1';
