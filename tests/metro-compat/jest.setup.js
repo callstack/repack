@@ -13,11 +13,8 @@ const testsToSkip = {
     'should resolve assets using "exports" field and calling `resolveAsset`',
     // Resolving fails as expected but error messages are different
     'should use most specific pattern base',
+    'should use most specific pattern base - custom condition',
     'should throw FailedToResolvePathError when no conditions are matched',
-    // Root shorthand - pending fix in metro
-    'should expand array of strings as subpath mapping (root shorthand)',
-    // Restricted imports - pending fix in metro
-    'should resolve subpath patterns in "exports" matching import specifier',
   ]),
 };
 

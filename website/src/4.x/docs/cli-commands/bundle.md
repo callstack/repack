@@ -12,30 +12,18 @@ react-native bundle [options]
 
 ## Options
 
-### --verbose
-
-- Type: `boolean`
-
-Increase logging verbosity.
-
-### --assets-dest <path>
-
-- Type: `string`
-
-Directory name where to store assets referenced in the bundle.
-
 ### --entry-file <path>
 
 - Type: `string`
 
 Path to the root JS file, either absolute or relative to JS root.
 
-### --minify
+### --platform <string>
 
-- Type: `boolean`
-- Default: `false`
+- Type: `string`
+- Default: `"ios"`
 
-Allows overriding whether bundle is minified. This defaults to false if dev is true, and true if dev is false. Disabling minification can be useful for speeding up production builds for testing purposes.
+Either "ios" or "android".
 
 ### --dev [boolean]
 
@@ -44,31 +32,29 @@ Allows overriding whether bundle is minified. This defaults to false if dev is t
 
 Enables development warnings and disables production optimizations.
 
-### --bundle-output <path>
+### --minify [boolean]
+
+- Type: `boolean`
+
+Allows overriding whether bundle is minified. This defaults to false if dev is true, and true if dev is false. Disabling minification can be useful for speeding up production builds for testing purposes.
+
+### --bundle-output <string>
 
 - Type: `string`
 
 File name where to store the resulting bundle, ex. /tmp/groups.bundle.
 
-### --sourcemap-output <path>
+### --sourcemap-output <string>
 
 - Type: `string`
 
 File name where to store the sourcemap file for resulting bundle, ex. /tmp/groups.map.
 
-### --platform <path>
+### --assets-dest <string>
 
 - Type: `string`
-- Default: `"ios"`
 
-Either "ios" or "android".
-
-### --reset-cache
-
-- Type: `boolean`
-- Default: `false`
-
-Removes cached files.
+Directory name where to store assets referenced in the bundle.
 
 ### --json <statsFile>
 
@@ -93,6 +79,12 @@ Instructs Webpack on how to treat the stats:
 
 More details: [Webpack documentation](https://webpack.js.org/configuration/stats/)
 
+### --verbose
+
+- Type: `boolean`
+
+Enables verbose logging.
+
 ### --watch
 
 - Type: `boolean`
@@ -103,7 +95,6 @@ Watch for file changes.
 ### --webpackConfig <path>
 
 - Type: `string`
-- Default: `"[project_root]/webpack.config.mjs"`
 
 Path to a Webpack config file.
 

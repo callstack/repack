@@ -43,6 +43,10 @@ export async function bundle(
     },
   } as CliOptions;
 
+  if (!args.entryFile) {
+    throw new Error("Option '--entry-file <path>' argument is missing");
+  }
+
   if (args.verbose ?? process.argv.includes('--verbose')) {
     process.env[VERBOSE_ENV_KEY] = '1';
   }

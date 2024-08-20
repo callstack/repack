@@ -52,8 +52,9 @@ function getCommands() {
 
 const startCommandOptions = [
   {
-    name: '--cert <path>',
-    description: 'Path to custom SSL cert',
+    name: '--port <number>',
+    description: 'The port number that runs the server on',
+    parse: Number,
   },
   {
     name: '--host <string>',
@@ -69,81 +70,84 @@ const startCommandOptions = [
     description: 'Path to custom SSL key',
   },
   {
-    name: '--port <number>',
-    description: 'The port number that runs the server on',
+    name: '--cert <path>',
+    description: 'Path to custom SSL cert',
   },
   {
     name: '--no-interactive',
     description: 'Disables interactive mode',
   },
   {
-    name: '--silent',
-    description: 'Silents all logs to the console/stdout',
-  },
-  {
     name: '--experimental-debugger',
     description:
       '[Experimental] Enable the new debugger experience. Connection reliability and some basic features are unstable in this release.',
   },
-  {
-    name: '--silent',
-    description: 'Silents all logs to the console/stdout',
-  },
+  // options specific to Re.Pack
   {
     name: '--json',
     description: 'Log all messages to the console/stdout in JSON format',
+  },
+  {
+    name: '--log-file <path>',
+    description: 'Enables file logging to specified file',
+    parse: (val) => path.resolve(val),
   },
   {
     name: '--reverse-port',
     description: 'ADB reverse port on starting devServers only for Android',
   },
   {
-    name: '--log-file <path>',
-    description: 'Enables file logging to specified file',
+    name: '--silent',
+    description: 'Silents all logs to the console/stdout',
+  },
+  {
+    name: '--verbose',
+    description: 'Enables verbose logging',
   },
 ];
 
 const bundleCommandOptions = [
-  {
-    name: '--assets-dest <path>',
-    description:
-      'Directory name where to store assets referenced in the bundle',
-  },
   {
     name: '--entry-file <path>',
     description:
       'Path to the root JS file, either absolute or relative to JS root',
   },
   {
-    name: '--minify',
-    description:
-      'Allows overriding whether bundle is minified. This defaults to false if dev is true, and true if dev is false. Disabling minification can be useful for speeding up production builds for testing purposes.',
+    name: '--platform <string>',
+    description: 'Either "ios" or "android"',
+    default: 'ios',
   },
   {
     name: '--dev [boolean]',
     description:
       'Enables development warnings and disables production optimisations',
+    parse: (val) => val !== 'false',
     default: true,
   },
   {
-    name: '--bundle-output <path>',
+    name: '--minify [boolean]',
+    description:
+      'Allows overriding whether bundle is minified. This defaults to ' +
+      'false if dev is true, and true if dev is false. Disabling minification ' +
+      'can be useful for speeding up production builds for testing purposes.',
+    parse: (val) => val !== 'false',
+  },
+  {
+    name: '--bundle-output <string>',
     description:
       'File name where to store the resulting bundle, ex. /tmp/groups.bundle',
   },
-
   {
-    name: '--sourcemap-output <path>',
+    name: '--sourcemap-output <string>',
     description:
       'File name where to store the sourcemap file for resulting bundle, ex. /tmp/groups.map',
   },
   {
-    name: '--platform <path>',
-    description: 'Either "ios" or "android" (default: "ios")',
+    name: '--assets-dest <string>',
+    description:
+      'Directory name where to store assets referenced in the bundle',
   },
-  {
-    name: '--reset-cache',
-    description: 'Removes cached files (default: false)',
-  },
+  // options specific to Re.Pack
   {
     name: '--json <statsFile>',
     description: 'Stores stats in a file.',
@@ -163,6 +167,10 @@ const bundleCommandOptions = [
       "'summary' - output webpack version, warnings count and errors count",
   },
   {
+    name: '--verbose',
+    description: 'Enables verbose logging',
+  },
+  {
     name: '--watch',
     description: 'Watch for file changes',
   },
@@ -177,17 +185,6 @@ const webpackConfigOption = {
   name: '--webpackConfig <path>',
   description: 'Path to a Webpack config',
   parse: (val) => path.resolve(val),
-  default: (config) => {
-    const {
-      getWebpackConfigPath,
-    } = require('./dist/commands/utils/getWebpackConfigPath');
-
-    try {
-      return getWebpackConfigPath(config.root);
-    } catch {
-      return '';
-    }
-  },
 };
 
 const commands = [
