@@ -50,7 +50,6 @@ export class DevelopmentPlugin implements WebpackPlugin {
     compiler.options.output.filename = (pathData) =>
       pathData.chunk?.name === 'main' ? 'index.bundle' : '[name].bundle';
     compiler.options.output.chunkFilename = '[name].chunk.bundle';
-    compiler.options.output.sourceMapFilename = '[file].map[query]';
 
     new webpack.DefinePlugin({
       __PUBLIC_PORT__: JSON.stringify(this.config.devServer.port),
