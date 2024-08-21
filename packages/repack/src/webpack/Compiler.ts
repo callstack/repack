@@ -232,16 +232,11 @@ export class Compiler extends EventEmitter {
     filename: string,
     platform: string
   ): Promise<string | Buffer> {
-    const { info } = await this.getAsset(filename, platform);
-    const sourceMapFilename = info.related?.sourceMap as string | undefined;
-
-    if (sourceMapFilename) {
-      return (await this.getAsset(sourceMapFilename, platform)).data;
+    try {
+      return (await this.getAsset(`${filename}.map`, platform)).data;
+    } catch (error) {
+      throw new Error(`Source map for ${filename} for ${platform} is missing`);
     }
-
-    return Promise.reject(
-      new Error(`Source map for ${filename} for ${platform} is missing`)
-    );
   }
 
   getMimeType(filename: string) {
