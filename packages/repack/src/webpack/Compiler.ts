@@ -249,6 +249,10 @@ export class Compiler extends EventEmitter {
       return 'text/javascript';
     }
 
+    if (filename.endsWith('.map')) {
+      return 'application/json';
+    }
+
     return mimeTypes.lookup(filename) || 'text/plain';
   }
 }
