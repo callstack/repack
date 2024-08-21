@@ -21,7 +21,7 @@ async function compilerPlugin(
       },
     },
     handler: async (request, reply) => {
-      let file = (request.params as { '*'?: string })['*'];
+      const file = (request.params as { '*'?: string })['*'];
       let { platform } = request.query as { platform?: string };
 
       if (!file) {
@@ -37,11 +37,6 @@ async function compilerPlugin(
       if (!platform) {
         request.log.error('Cannot detect platform');
         return reply.badRequest('Cannot detect platform');
-      }
-
-      // If platform happens to be in front of an asset remove it.
-      if (file.startsWith(`${platform}/`)) {
-        file = file.replace(`${platform}/`, '');
       }
 
       const multipart = reply.asMultipart();
