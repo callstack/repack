@@ -119,26 +119,22 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
       return {
         compiler: {
-          getAsset: async (filename, platform, sendProgress) =>
-            (await compiler.getAsset(filename, platform, sendProgress)).data,
-          getMimeType: (filename) => compiler.getMimeType(filename),
-          inferPlatform: (uri) => {
-            const url = new URL(uri, 'protocol://domain');
-            if (!url.searchParams.get('platform')) {
-              const [, platform] = /^\/(.+)\/.+$/.exec(url.pathname) ?? [];
-              return platform;
-            }
-
-            return undefined;
+          getAsset: (fileUrl, sendProgress) => {
+            const url = new URL(fileUrl);
+            const { filename, platform } = parseUrl(url);
+            return compiler.getSource(filename, platform, sendProgress);
           },
+          getMimeType: (filename) => compiler.getMimeType(filename),
         },
         symbolicator: {
           getSource: (fileUrl) => {
-            const { filename, platform } = parseFileUrl(fileUrl);
+            const url = new URL(fileUrl);
+            const { filename, platform } = parseUrl(url);
             return compiler.getSource(filename, platform);
           },
           getSourceMap: (fileUrl) => {
-            const { filename, platform } = parseFileUrl(fileUrl);
+            const url = new URL(fileUrl);
+            const { filename, platform } = parseUrl(url);
             if (!platform) {
               throw new Error('Cannot infer platform for file URL');
             }
@@ -251,8 +247,8 @@ async function runAdbReverse(ctx: Server.DelegateContext, port: number) {
   }
 }
 
-function parseFileUrl(fileUrl: string) {
-  const { pathname, searchParams } = new URL(fileUrl);
+function parseUrl(url: URL) {
+  const { pathname, searchParams } = url;
   let platform = searchParams.get('platform');
   let filename = pathname;
 

@@ -216,10 +216,15 @@ export class Compiler extends EventEmitter {
 
   async getSource(
     filename: string,
-    platform?: string
+    platform: string | undefined,
+    sendProgress?: SendProgress
   ): Promise<string | Buffer> {
-    if (/\.bundle/.test(filename) && platform) {
-      return (await this.getAsset(filename, platform)).data;
+    if (/\.bundle/.test(filename)) {
+      if (!platform) {
+        throw new Error(`Cannot detect platform for ${filename}`);
+      }
+
+      return (await this.getAsset(filename, platform, sendProgress)).data;
     }
 
     return fs.promises.readFile(
