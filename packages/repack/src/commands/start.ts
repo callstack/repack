@@ -119,10 +119,10 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
       return {
         compiler: {
-          getAsset: (fileUrl, platform, sendProgress) => {
-            const url = new URL(fileUrl);
-            const { filename } = parseUrl(url);
-            return compiler.getSource(filename, platform, sendProgress);
+          getAsset: (filename, platform, sendProgress) => {
+            const url = new URL(filename);
+            const { filename: parsedFilename } = parseUrl(url);
+            return compiler.getSource(parsedFilename, platform, sendProgress);
           },
           getMimeType: (filename) => {
             return compiler.getMimeType(filename);
