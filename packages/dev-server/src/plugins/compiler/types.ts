@@ -15,7 +15,7 @@ export interface CompilerDelegate {
    */
   getAsset: (
     filename: string,
-    platform: string | undefined,
+    platform: string,
     sendProgress?: SendProgress
   ) => Promise<string | Buffer>;
 
@@ -23,8 +23,14 @@ export interface CompilerDelegate {
    * Detect MIME type of the asset from `filename`, `platform` or `data` (or from combination of either).
    *
    * @param filename Filename of the asset.
+   * @param platform Platform of the asset.
+   * @param data Asset's content.
    */
-  getMimeType: (filename: string) => string;
+  getMimeType: (
+    filename: string,
+    platform: string,
+    data: string | Buffer
+  ) => string;
 
   /**
    * Detect the platform from the URI - either from filename, query params or both.
