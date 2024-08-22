@@ -66,7 +66,7 @@ export class Script {
    * @param scriptId Id of the script.
    * @param caller Optional caller name to prefix the script id.
    */
-  static getScriptUniqueId(scriptId: string, caller?: string) {
+  static getScriptUniqueId(scriptId: string, caller?: string): string {
     const prefix = caller ? caller + '_' : '';
     return prefix + scriptId;
   }
@@ -225,7 +225,7 @@ export class Script {
    * @internal
    */
   getCacheData(): {
-    method: 'GET' | 'POST';
+    method: NormalizedScriptLocatorHTTPMethod;
     url: string;
     query: string | undefined;
     headers: Record<string, string> | undefined;

@@ -410,7 +410,7 @@ export class ScriptManager extends EventEmitter {
    * @param scriptIds Array of script ids to clear from cache and remove from filesystem.
    * @returns Array of script ids that were invalidated.
    */
-  async invalidateScripts(scriptIds: string[] = []): Promise<void> {
+  async invalidateScripts(scriptIds: string[] = []): Promise<string[]> {
     try {
       await this.initCache();
 
