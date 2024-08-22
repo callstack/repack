@@ -120,7 +120,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       return {
         compiler: {
           getAsset: (filename, platform, sendProgress) => {
-            const url = new URL(filename);
+            const url = new URL(filename, 'file:///');
             const { filename: parsedFilename } = parseUrl(url);
             return compiler.getSource(parsedFilename, platform, sendProgress);
           },
@@ -128,7 +128,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
             return compiler.getMimeType(filename);
           },
           inferPlatform: (uri) => {
-            const url = new URL(uri);
+            const url = new URL(uri, 'file:///');
             const { platform } = parseUrl(url);
             return platform;
           },

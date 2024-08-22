@@ -219,18 +219,24 @@ export class Compiler extends EventEmitter {
     platform: string | undefined,
     sendProgress?: SendProgress
   ): Promise<string | Buffer> {
-    if (/\.bundle/.test(filename)) {
+    const isBundle = /\.bundle$/.test(filename);
+    const isSourceMap = /\.map$/.test(filename);
+    const isStaticAsset = /^(remote-)?assets/.test(filename);
+
+    if (isBundle || isSourceMap || isStaticAsset) {
       if (!platform) {
         throw new Error(`Cannot detect platform for ${filename}`);
       }
-
       return (await this.getAsset(filename, platform, sendProgress)).data;
     }
 
-    return fs.promises.readFile(
-      path.join(this.cliOptions.config.root, filename),
-      'utf8'
-    );
+    try {
+      const filePath = path.join(this.cliOptions.config.root, filename);
+      const source = await fs.promises.readFile(filePath, 'utf8');
+      return source;
+    } catch {
+      throw new Error(`File ${filename} not found`);
+    }
   }
 
   async getSourceMap(
@@ -238,7 +244,7 @@ export class Compiler extends EventEmitter {
     platform: string
   ): Promise<string | Buffer> {
     try {
-      return (await this.getAsset(`${filename}.map`, platform)).data;
+      return await this.getSource(`${filename}.map`, platform);
     } catch (error) {
       throw new Error(`Source map for ${filename} for ${platform} is missing`);
     }
