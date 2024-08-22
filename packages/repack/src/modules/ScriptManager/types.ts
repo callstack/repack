@@ -96,6 +96,7 @@ export interface ScriptLocator {
    * `off` means that the script's code-signature will not be verfied
    */
   verifyScriptSignature?: 'strict' | 'lax' | 'off';
+
   /**
    * Function called before loading or getting from the cache and after resolving the script locator.
    * It's an async function which should return a boolean indicating whether the script should be loaded or use default behaviour.
@@ -146,38 +147,4 @@ export interface StorageApi {
   setItem: (key: string, value: string) => Promise<void>;
   /** Removes the item based on the key. */
   removeItem: (key: string) => Promise<void>;
-}
-
-/**
- * Internal representation of script locator data.
- *
- * @internal
- */
-export interface NormalizedScriptLocator {
-  /** HTTP method. */
-  method: 'GET' | 'POST';
-
-  /** Path-only URL to a script's location. */
-  url: string;
-
-  /** Whether to fetch script from the network or use cached one. */
-  fetch: boolean;
-
-  /** Custom timeout for script fetch requests. */
-  timeout: number;
-
-  /** Whether script's URL is an absolute FileSystem URL on a target device. */
-  absolute: boolean;
-
-  /** Query params. */
-  query?: string;
-
-  /** Request headers. */
-  headers?: Record<string, string>;
-
-  /** Request body. */
-  body?: string;
-
-  /** Whether script's signature should be verified or not */
-  verifyScriptSignature?: 'strict' | 'lax' | 'off';
 }

@@ -12,7 +12,8 @@
   "scripts": {
     "lint": "eslint .",
     "test": "jest --noStackTrace",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "update-tests": "node update-tests.js"
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",
