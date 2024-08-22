@@ -41,7 +41,10 @@ export class OutputPlugin implements WebpackPlugin {
     });
   }
 
-  matchChunkToSpecs(chunk: webpack.StatsChunk, specs: DestinationSpec[]) {
+  matchChunkToSpecs(
+    chunk: webpack.StatsChunk,
+    specs: DestinationSpec[]
+  ): DestinationSpec[] {
     const chunkIds = [chunk.names ?? [], chunk.id!].flat();
     return specs.filter((spec) => {
       const { test, include, exclude } = spec;
@@ -52,11 +55,11 @@ export class OutputPlugin implements WebpackPlugin {
     });
   }
 
-  getRelatedSourceMap(chunk: webpack.StatsChunk) {
+  getRelatedSourceMap(chunk: webpack.StatsChunk): string | undefined {
     return chunk.auxiliaryFiles?.find((file) => /\.map$/.test(file));
   }
 
-  ensureAbsolutePath(filePath: string) {
+  ensureAbsolutePath(filePath: string): string {
     if (path.isAbsolute(filePath)) return filePath;
     return path.join(this.config.context, filePath);
   }
@@ -67,7 +70,10 @@ export class OutputPlugin implements WebpackPlugin {
   }: {
     chunks: webpack.StatsChunk[];
     entryOptions: webpack.EntryNormalized;
-  }) {
+  }): {
+    localChunks: Set<webpack.StatsChunk>;
+    remoteChunks: Set<webpack.StatsChunk>;
+  } {
     const localChunks = new Set<webpack.StatsChunk>();
     const remoteChunks = new Set<webpack.StatsChunk>();
 
@@ -117,7 +123,7 @@ export class OutputPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: webpack.Compiler): void {
     if (!this.config.enabled) return;
 
     assert(compiler.options.output.path, "Can't infer output path from config");

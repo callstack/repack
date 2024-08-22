@@ -68,6 +68,6 @@ const configSchema: Schema = {
   additionalProperties: false,
 };
 
-export function validateConfig(config: OutputPluginConfig) {
+export function validateConfig(config: OutputPluginConfig): void {
   validate(configSchema, config, { name: 'OutputPlugin' });
 }
