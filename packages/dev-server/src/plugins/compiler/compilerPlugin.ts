@@ -34,11 +34,6 @@ async function compilerPlugin(
       // to platform query param.
       platform = delegate.compiler.inferPlatform?.(request.url) ?? platform;
 
-      if (!platform) {
-        request.log.error('Cannot detect platform');
-        return reply.badRequest('Cannot detect platform');
-      }
-
       const multipart = reply.asMultipart();
 
       const sendProgress: SendProgress = ({ completed, total }) => {
