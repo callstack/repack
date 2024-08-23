@@ -36,9 +36,13 @@ body:
       label: Reproduction
       description: Please provide a link to a repo that can reproduce the problem you ran into. Issues without reproduction steps are likely to stall.
       placeholder: Reproduction URL
+    validations:
+      required: true
   - type: textarea
     id: reproduction-steps
     attributes:
       label: Steps to reproduce
       description: Please provide any reproduction steps that may need to be described. For example, the problem happens only in release mode, or only on Android, etc.
       placeholder: Run `yarn install` followed by `yarn react-native webpack-bundle`
+    validations:
+      required: true
