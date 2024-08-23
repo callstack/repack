@@ -3,7 +3,7 @@ module.exports = {
   trailingComma: 'es5',
   overrides: [
     {
-      files: 'website*.css',
+      files: 'website/**/*.css',
       options: {
         printWidth: 120,
       },
