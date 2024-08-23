@@ -36,9 +36,9 @@ body:
       label: Reproduction
       description:
         "Please provide a link to a repository that can reproduce the problem you encountered.
-        **Issues without a reproduction repository are difficult to investigate and may be delayed**.
         A minimal reproduction is ideal—focus on isolating the bug without extra dependencies or irrelevant code.
-        If you need guidance, see [this guide on creating a minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example)."
+        If you need guidance, see [this guide on creating a minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example).
+        Issues without a reproduction repository are difficult to investigate and are very likely to stall."
       placeholder: Reproduction URL
     validations:
       required: true
