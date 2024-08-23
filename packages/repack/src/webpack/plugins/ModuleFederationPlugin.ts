@@ -246,6 +246,8 @@ export class ModuleFederationPlugin implements WebpackPlugin {
     new container.ModuleFederationPlugin({
       exposes: this.config.exposes,
       filename:
+        // TODO fix in a separate PR (jbroma)
+        // eslint-disable-next-line prettier/prettier
         this.config.filename ?? this.config.exposes
           ? `${this.config.name}.container.bundle`
           : undefined,
