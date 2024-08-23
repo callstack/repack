@@ -34,7 +34,11 @@ body:
     id: reproduction
     attributes:
       label: Reproduction
-      description: Please provide a link to a repo that can reproduce the problem you ran into. Issues without reproduction steps are likely to stall.
+      description:
+        "Please provide a link to a repository that can reproduce the problem you encountered.
+        **Issues without a reproduction repository are difficult to investigate and may be delayed**.
+        A minimal reproduction is ideal—focus on isolating the bug without extra dependencies or irrelevant code.
+        If you need guidance, see [this guide on creating a minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example)."
       placeholder: Reproduction URL
     validations:
       required: true
@@ -42,7 +46,10 @@ body:
     id: reproduction-steps
     attributes:
       label: Steps to reproduce
-      description: Please provide any reproduction steps that may need to be described. For example, the problem happens only in release mode, or only on Android, etc.
+      description:
+        "Please describe any additional steps needed to reproduce the issue. Include relevant details like
+        whether the problem only occurs in release mode, only on specific platforms, or under certain conditions.
+        The more precise and detailed your steps are, the easier it is for us to replicate and address the bug."
       placeholder: Run `yarn install` followed by `yarn react-native webpack-bundle`
     validations:
       required: true
