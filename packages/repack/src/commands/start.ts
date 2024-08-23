@@ -48,7 +48,9 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   const isSilent = args.silent;
   const isVerbose = isSilent
     ? false
-    : args.verbose ?? process.argv.includes('--verbose');
+    : // TODO fix in a separate PR (jbroma)
+      // eslint-disable-next-line prettier/prettier
+      args.verbose ?? process.argv.includes('--verbose');
   const reporter = composeReporters(
     [
       new ConsoleReporter({
