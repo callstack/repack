@@ -172,7 +172,7 @@ RCT_EXPORT_METHOD(invalidateScripts
       @throw [NSError errorWithDomain:errorMessage code:0 userInfo:nil];
     }
 
-    [self evaluateJavascript:data url:config.url resolve:resolve reject:reject];
+    [self evaluateJavascript:data url:config.uniqueId resolve:resolve reject:reject];
   } @catch (NSError *error) {
     reject(CodeExecutionFailure, error.domain, nil);
   }
@@ -277,7 +277,7 @@ RCT_EXPORT_METHOD(invalidateScripts
       filesystemScriptUrl = [[NSBundle mainBundle] URLForResource:scriptName withExtension:scriptExtension];
     }
     NSData *data = [[NSData alloc] initWithContentsOfFile:[filesystemScriptUrl path]];
-    [self evaluateJavascript:data url:filesystemScriptUrl resolve:resolve reject:reject];
+    [self evaluateJavascript:data url:config.uniqueId resolve:resolve reject:reject];
   } @catch (NSError *error) {
     reject(CodeExecutionFailure, error.localizedDescription, nil);
   }
