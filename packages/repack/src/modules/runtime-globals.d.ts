@@ -21,6 +21,9 @@ declare interface RepackRuntime {
 declare var __DEV__: boolean;
 declare var __PUBLIC_PORT__: number;
 declare var __PLATFORM__: string;
+declare var __REACT_NATIVE_MAJOR_VERSION__: number;
+declare var __REACT_NATIVE_MINOR_VERSION__: number;
+declare var __REACT_NATIVE_PATCH_VERSION__: number;
 declare var __webpack_public_path__: string;
 declare var __webpack_hash__: string;
 declare var __repack__: RepackRuntime;

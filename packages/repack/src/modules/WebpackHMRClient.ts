@@ -1,5 +1,5 @@
 /* eslint-env browser */
-/* globals __webpack_hash__, __DEV__, __PLATFORM__, __PUBLIC_PORT__ */
+/* globals __webpack_hash__, __DEV__, __PLATFORM__, __PUBLIC_PORT__, __REACT_NATIVE_MINOR_VERSION__ */
 
 import type { HMRMessage, HMRMessageBody } from '../types';
 import { getDevServerLocation } from './getDevServerLocation';
@@ -174,10 +174,10 @@ if (__DEV__ && module.hot) {
     hide: () => {},
   };
 
-  try {
-    LoadingView = require('react-native/Libraries/Utilities/LoadingView');
-  } catch (error) {
+  if (__REACT_NATIVE_MINOR_VERSION__ >= 75) {
     LoadingView = require('react-native/Libraries/Utilities/DevLoadingView');
+  } else {
+    LoadingView = require('react-native/Libraries/Utilities/LoadingView');
   }
 
   const reload = () => DevSettings.reload();
