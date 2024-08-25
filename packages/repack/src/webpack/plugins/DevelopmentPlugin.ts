@@ -50,14 +50,14 @@ export class DevelopmentPlugin implements WebpackPlugin {
 
     const reactNativePackageJson: PackageJSON = require('react-native/package.json');
     const [majorVersion, minorVersion, patchVersion] =
-      reactNativePackageJson.version.split('.');
+      reactNativePackageJson.version.split('-')[0].split('.');
 
     new webpack.DefinePlugin({
-      __PUBLIC_PORT__: JSON.stringify(this.config.devServer.port),
       __PLATFORM__: JSON.stringify(this.config.platform),
-      __REACT_NATIVE_MAJOR_VERSION__: JSON.stringify(majorVersion),
-      __REACT_NATIVE_MINOR_VERSION__: JSON.stringify(minorVersion),
-      __REACT_NATIVE_PATCH_VERSION__: JSON.stringify(patchVersion),
+      __PUBLIC_PORT__: Number(this.config.devServer.port),
+      __REACT_NATIVE_MAJOR_VERSION__: Number(majorVersion),
+      __REACT_NATIVE_MINOR_VERSION__: Number(minorVersion),
+      __REACT_NATIVE_PATCH_VERSION__: Number(patchVersion),
     }).apply(compiler);
 
     if (this.config?.devServer.hmr) {
