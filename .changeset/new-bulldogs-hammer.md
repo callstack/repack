@@ -1,5 +1,5 @@
 ---
-"@callstack/repack": minor
+'@callstack/repack': minor
 ---
 
-Added --watch flag to bundle command
+Added `--watch` flag to bundle command

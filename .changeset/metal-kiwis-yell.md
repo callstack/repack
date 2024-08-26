@@ -1,5 +1,5 @@
 ---
-"@callstack/repack": patch
+'@callstack/repack': patch
 ---
 
-fix: `LoadingView` import in `HMRClient` for React Native >=0.75
+Fix `LoadingView` import in `WebpackHMRClient` for React Native >=0.75
