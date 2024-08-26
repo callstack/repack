@@ -1,5 +1,7 @@
 # @callstack/repack-dev-server
 
+## 4.3.1
+
 ## 4.3.0
 
 ## 4.2.0
