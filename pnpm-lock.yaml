@@ -148,8 +148,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       react-native-test-app:
-        specifier: ^3.8.9
-        version: 3.8.9(react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))(react@18.2.0)
+        specifier: ^3.9.7
+        version: 3.9.7(react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))(react@18.2.0)
       terser-webpack-plugin:
         specifier: ^5.3.3
         version: 5.3.10(webpack@5.91.0)
@@ -227,8 +227,8 @@ importers:
         specifier: ^14.1.1
         version: 14.1.1
       react-native-test-app:
-        specifier: ^3.8.9
-        version: 3.8.9(react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))(react@18.2.0)
+        specifier: ^3.9.7
+        version: 3.9.7(react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))(react@18.2.0)
       terser-webpack-plugin:
         specifier: ^5.3.3
         version: 5.3.10(webpack@5.91.0)
@@ -1906,8 +1906,8 @@ packages:
     resolution: {integrity: sha512-lzD84av1ZQhYUS+jsGqJiCMaJO2dn9u+RTT9n9q6D3SaKVwWqv+7AoRKqBu19bkwyE+iFRl1ymr40QS90jVFYg==}
     engines: {node: '>=14.15'}
 
-  '@rnx-kit/react-native-host@0.4.9':
-    resolution: {integrity: sha512-S8cp6sOLDsrW5bYk6LEoxU90UEms/eC2J2inF4UJ2p/AT2ibzU9ftO+oSAfoRQIizpAqAf823fuAsSXdfdQA5w==}
+  '@rnx-kit/react-native-host@0.4.12':
+    resolution: {integrity: sha512-LVOoF6/+s8JnkCn5hjZTzdyjkL54LOh1vHAimeKeGc427SPEAmHLpOohDNiMhq0kR/jY3qn8TkX8X7C8gXNWKQ==}
     peerDependencies:
       react-native: '>=0.66'
 
@@ -5982,17 +5982,17 @@ packages:
       react: '*'
       react-native: '*'
 
-  react-native-test-app@3.8.9:
-    resolution: {integrity: sha512-Bd9sTtXXO3lWnZRgFTx2M4dbckKPbx40XC3caaMgpgQB3Csns4/gHmh+VQHbd9WjOEm7NoZ38g3Kxy//DaJW8Q==}
+  react-native-test-app@3.9.7:
+    resolution: {integrity: sha512-ZLtXi/pMvab63MUApeTQKXQelA/a3k6SCNqwyOVP03v93+H647xwPvjUENVY3DATXwSh8nvt3N2NJLdhE7APpg==}
     engines: {node: '>=16.17'}
     hasBin: true
     peerDependencies:
-      '@callstack/react-native-visionos': 0.73 - 0.74
+      '@callstack/react-native-visionos': 0.73 - 0.75
       '@expo/config-plugins': '>=5.0'
-      react: 17.0.1 - 18.3
-      react-native: 0.66 - 0.74 || >=0.75.0-0 <0.75.0
-      react-native-macos: ^0.0.0-0 || 0.66 || 0.68 || 0.71 - 0.73
-      react-native-windows: ^0.0.0-0 || 0.66 - 0.74
+      react: 17.0.1 - 19.0
+      react-native: 0.66 - 0.75 || >=0.76.0-0 <0.76.0
+      react-native-macos: ^0.0.0-0 || 0.66 || 0.68 || 0.71 - 0.74
+      react-native-windows: ^0.0.0-0 || 0.66 - 0.75
     peerDependenciesMeta:
       '@callstack/react-native-visionos':
         optional: true
@@ -7110,12 +7110,12 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
-  uuid@7.0.3:
-    resolution: {integrity: sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==}
+  uuid@10.0.0:
+    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
     hasBin: true
 
-  uuid@9.0.1:
-    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+  uuid@7.0.3:
+    resolution: {integrity: sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==}
     hasBin: true
 
   uvu@0.5.6:
@@ -9631,7 +9631,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@rnx-kit/react-native-host@0.4.9(react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))':
+  '@rnx-kit/react-native-host@0.4.12(react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))':
     dependencies:
       react-native: 0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0)
 
@@ -14744,9 +14744,9 @@ snapshots:
       react: 18.2.0
       react-native: 0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0)
 
-  react-native-test-app@3.8.9(react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))(react@18.2.0):
+  react-native-test-app@3.9.7(react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@rnx-kit/react-native-host': 0.4.9(react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))
+      '@rnx-kit/react-native-host': 0.4.12(react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0))
       ajv: 8.12.0
       cliui: 8.0.1
       fast-xml-parser: 4.3.2
@@ -14754,7 +14754,7 @@ snapshots:
       react: 18.2.0
       react-native: 0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0)
       semver: 7.5.4
-      uuid: 9.0.1
+      uuid: 10.0.0
 
   react-native@0.74.3(@babel/core@7.24.0)(@babel/preset-env@7.24.0(@babel/core@7.24.0))(@types/react@18.2.74)(react@18.2.0):
     dependencies:
@@ -15990,9 +15990,9 @@ snapshots:
 
   utils-merge@1.0.1: {}
 
-  uuid@7.0.3: {}
+  uuid@10.0.0: {}
 
-  uuid@9.0.1: {}
+  uuid@7.0.3: {}
 
   uvu@0.5.6:
     dependencies:
