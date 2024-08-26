@@ -1,5 +1,14 @@
 # @callstack/repack
 
+## 4.3.1
+
+### Patch Changes
+
+- [#714](https://github.com/callstack/repack/pull/714) [`bad76d7`](https://github.com/callstack/repack/commit/bad76d7e0386130d7cbd4da6fed7ca39bcc2bfd4) Thanks [@jbroma](https://github.com/jbroma)! - Fix missing `--reset-cache` flag for both start and bundle CLI commands
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.3.1
+
 ## 4.3.0
 
 ### Minor Changes
