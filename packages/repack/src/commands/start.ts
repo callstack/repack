@@ -14,7 +14,7 @@ import {
   makeLogEntryFromFastifyLog,
   Reporter,
 } from '../logging';
-import { Compiler } from '../webpack/Compiler';
+import { Compiler } from './Compiler';
 import { getConfigFilePath } from './utils/getConfigFilePath';
 
 /**

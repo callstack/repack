@@ -1,5 +1,5 @@
 import rspack from '@rspack/core';
-import { EnvOptions } from '../types';
+import { EnvOptions } from '../../types';
 
 type RspackConfig =
   | rspack.Configuration

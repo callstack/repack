@@ -5,7 +5,7 @@ import { stringifyStream } from '@discoveryjs/json-ext';
 import { rspack, Stats } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../env';
 import { BundleArguments, BundleCliOptions } from '../types';
-import { loadConfig } from '../webpack/loadConfig';
+import { loadConfig } from './utils/loadConfig';
 import { getEnvOptions } from '../webpack/utils';
 import { getConfigFilePath } from './utils/getConfigFilePath';
 
