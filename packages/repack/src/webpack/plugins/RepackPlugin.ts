@@ -5,6 +5,7 @@ import { LoggerPlugin, LoggerPluginConfig } from './LoggerPlugin';
 import { OutputPlugin, OutputPluginConfig } from './OutputPlugin';
 import { RepackTargetPlugin } from './RepackTargetPlugin';
 import { NativeEntryPlugin } from './NativeEntryPlugin';
+import { DefaultRulesPlugin } from './DefaultRulesPlugin';
 
 /**
  * {@link RepackPlugin} configuration options.
@@ -140,6 +141,10 @@ export class RepackPlugin implements RspackPluginInstance {
 
     new rspack.DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
+    }).apply(compiler);
+
+    new DefaultRulesPlugin({
+      platform: this.config.platform,
     }).apply(compiler);
 
     new OutputPlugin({
