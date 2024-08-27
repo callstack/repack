@@ -6,7 +6,6 @@ import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
 import packageJson from '../../package.json';
 import { StartArguments } from '../types';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../env';
 import {
   composeReporters,
   ConsoleReporter,
@@ -14,8 +13,9 @@ import {
   makeLogEntryFromFastifyLog,
   Reporter,
 } from '../logging';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from './consts';
 import { Compiler } from './Compiler';
-import { getConfigFilePath } from './utils/getConfigFilePath';
+import { getConfigFilePath } from './utils';
 
 /**
  * Start command for React Native CLI.
