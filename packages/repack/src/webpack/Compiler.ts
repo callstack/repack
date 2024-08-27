@@ -25,7 +25,7 @@ export class Compiler {
     private reporter: Reporter
   ) {
     // TODO validate platforms?
-    this.platforms = cliOptions.arguments.start.platforms;
+    this.platforms = ['ios', 'android'];
   }
 
   private getCompilerForPlatform(platform: string) {
