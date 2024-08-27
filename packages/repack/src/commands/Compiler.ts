@@ -10,12 +10,13 @@ import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from './utils';
 import type { CompilerAsset, MultiWatching } from './types';
 
 export class Compiler {
-  instance!: rspack.MultiCompiler;
+  compiler!: rspack.MultiCompiler;
+  filesystem!: memfs.IFs;
   platforms: string[];
   assetsCache: Record<string, Record<string, CompilerAsset> | undefined> = {};
   statsCache: Record<string, rspack.StatsCompilation | undefined> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
-  isCompilationInProgress: Record<string, boolean> = {};
+  isCompilationInProgress: boolean = false;
   watchOptions: rspack.WatchOptions = {};
   watching: MultiWatching | null = null;
 
@@ -27,153 +28,101 @@ export class Compiler {
     this.platforms = ['ios', 'android'];
   }
 
-  private getCompilerForPlatform(platform: string) {
-    if (!this.instance) {
-      throw new Error('[Compiler] Compiler not created yet');
-    }
-
-    const index = this.platforms.indexOf(platform);
-    if (index === -1) {
-      throw new Error(`[Compiler] Platform ${platform} not found`);
-    }
-
-    const compiler = this.instance.compilers[index];
-    if (!compiler) {
-      throw new Error(`[Compiler] Compiler for ${platform} not found`);
-    }
-
-    return compiler;
-  }
-
   private callPendingResolvers(platform: string, error?: Error) {
     this.resolvers[platform]?.forEach((resolver) => resolver(error));
     this.resolvers[platform] = [];
   }
 
-  private configureCompilerForPlatform(
-    ctx: Server.DelegateContext,
-    platform: string
-  ) {
-    const internalName = `${platform}-compiler`;
-    const platformCompiler = this.getCompilerForPlatform(platform);
-    const platformFilesystem = memfs.createFsFromVolume(new memfs.Volume());
+  async init(ctx: Server.DelegateContext) {
+    const webpackEnvOptions = getEnvOptions(this.cliOptions);
+    const configs = await Promise.all(
+      this.platforms.map(async (platform) => {
+        const env = { ...webpackEnvOptions, platform };
+        const config = await loadConfig(
+          this.cliOptions.config.webpackConfigPath,
+          env
+        );
 
+        config.name = platform;
+        return config;
+      })
+    );
+
+    this.compiler = rspack.rspack(configs);
+    this.filesystem = memfs.createFsFromVolume(new memfs.Volume());
     // @ts-expect-error memfs is compatible enough
-    platformCompiler.outputFileSystem = platformFilesystem;
-    platformCompiler.name = platform;
+    this.compiler.outputFileSystem = this.filesystem;
 
-    platformCompiler.hooks.watchRun.tap(internalName, () => {
-      this.isCompilationInProgress[platform] = true;
-      ctx.notifyBuildStart(platform);
+    this.watchOptions = configs[0].watchOptions ?? {};
+
+    this.compiler.hooks.watchRun.tap('repack:watch', () => {
+      this.isCompilationInProgress = true;
+      this.platforms.forEach((platform) => {
+        ctx.notifyBuildStart(platform);
+      });
     });
 
-    platformCompiler.hooks.invalid.tap(internalName, () => {
-      this.isCompilationInProgress[platform] = true;
-      ctx.notifyBuildStart(platform);
-      ctx.broadcastToHmrClients({ action: 'building' }, platform);
+    this.compiler.hooks.invalid.tap('repack:invalid', () => {
+      this.isCompilationInProgress = true;
+      this.platforms.forEach((platform) => {
+        ctx.notifyBuildStart(platform);
+        ctx.broadcastToHmrClients({ action: 'building' }, platform);
+      });
     });
 
-    platformCompiler.hooks.done.tap(internalName, (stats) => {
-      this.statsCache[platform] = stats.toJson({
+    this.compiler.hooks.done.tap('repack:done', (multiStats) => {
+      const stats = multiStats.toJson({
         all: false,
         assets: true,
         children: true,
+        outputPath: true,
         timings: true,
         hash: true,
         errors: true,
         warnings: true,
       });
-      const outputDirectory = stats.compilation.outputOptions.path!;
-      const assets = this.statsCache[platform]!.assets!;
 
-      this.assetsCache[platform] = assets.reduce(
-        (acc, { name, info, size }) => {
-          const assetPath = path.join(outputDirectory, name);
-          const data = platformFilesystem.readFileSync(assetPath) as Buffer;
-          const asset = { data, info, size };
-          return Object.assign(acc, { [adaptFilenameToPlatform(name)]: asset });
-        },
-        // keep old assets, discard HMR-related ones
-        Object.fromEntries(
-          Object.entries(this.assetsCache[platform] ?? {}).filter(
-            ([_, asset]) => !asset.info.hotModuleReplacement
-          )
-        )
-      );
+      try {
+        stats.children?.map((childStats) => {
+          const platform = childStats.name!;
+          this.statsCache[platform] = childStats;
 
-      this.isCompilationInProgress[platform] = false;
-      this.callPendingResolvers(platform);
+          const assets = this.statsCache[platform]!.assets!;
 
-      ctx.notifyBuildEnd(platform);
-      ctx.broadcastToHmrClients(
-        { action: 'built', body: this.getHmrBody(platform) },
-        platform
-      );
-    });
-  }
-
-  async init(ctx: Server.DelegateContext) {
-    const webpackEnvOptions = getEnvOptions(this.cliOptions);
-    const configs = await Promise.all(
-      this.platforms.map((platform) => {
-        const env = { ...webpackEnvOptions, platform };
-        return loadConfig(this.cliOptions.config.webpackConfigPath, env);
-      })
-    );
-
-    this.instance = rspack.rspack(configs);
-    this.watchOptions = configs[0].watchOptions ?? {};
-    this.platforms.forEach((platform) => {
-      this.configureCompilerForPlatform(ctx, platform);
-    });
-
-    this.instance.hooks.done.tap('Compiler', (multiStats) => {
-      const issuer = 'DevServer';
-      const timestamp = Date.now();
-      const {
-        children = [],
-        errors = [],
-        warnings = [],
-      } = multiStats.toJson({
-        preset: 'errors-warnings',
-        timings: true,
-      });
-
-      if (errors.length) {
-        const message = ['Bundle built with errors'];
-        this.reporter.process({ type: 'error', issuer, timestamp, message });
-
-        children.forEach((stats) => {
-          stats.errors?.forEach((error) => {
-            const message = [error.message];
-            this.reporter.process({
-              type: 'error',
-              issuer,
-              timestamp,
-              message,
-            });
-          });
+          this.assetsCache[platform] = assets
+            .filter((asset) => asset.type === 'asset')
+            .reduce(
+              (acc, { name, info, size }) => {
+                const assetPath = path.join(childStats.outputPath!, name);
+                const data = this.filesystem.readFileSync(assetPath) as Buffer;
+                const asset = { data, info, size };
+                return Object.assign(acc, {
+                  [adaptFilenameToPlatform(name)]: asset,
+                });
+              },
+              // keep old assets, discard HMR-related ones
+              Object.fromEntries(
+                Object.entries(this.assetsCache[platform] ?? {}).filter(
+                  ([_, asset]) => !asset.info.hotModuleReplacement
+                )
+              )
+            );
         });
-      } else if (warnings?.length) {
-        const message = ['Bundle built with warnings'];
-        this.reporter.process({ type: 'warn', issuer, timestamp, message });
-
-        children.forEach((stats) => {
-          stats.warnings?.forEach((warning) => {
-            const message = [warning.message];
-            this.reporter.process({ type: 'warn', issuer, timestamp, message });
-          });
-        });
-      } else {
-        const message = [
-          'Bundle built',
-          Object.fromEntries(children.map(({ name, time }) => [name, time])),
-        ];
-        this.reporter.process({ type: 'success', issuer, timestamp, message });
+      } catch (error) {
+        console.log('lol', error);
       }
 
-      this.reporter.flush();
-      this.reporter.stop();
+      this.isCompilationInProgress = false;
+
+      stats.children?.forEach((childStats) => {
+        const platform = childStats.name!;
+        this.callPendingResolvers(platform);
+        ctx.notifyBuildEnd(platform);
+        ctx.broadcastToHmrClients(
+          { action: 'built', body: this.getHmrBody(platform) },
+          platform
+        );
+      });
     });
   }
 
@@ -185,7 +134,7 @@ export class Compiler {
       message: ['Starting build for platforms:', this.platforms.join(', ')],
     });
 
-    this.watching = this.instance.watch(this.watchOptions, (error) => {
+    this.watching = this.compiler.watch(this.watchOptions, (error) => {
       if (!error) return;
       this.platforms.forEach((platform) => {
         this.callPendingResolvers(platform, error);
@@ -200,7 +149,7 @@ export class Compiler {
       return fileFromCache;
     }
 
-    if (!this.isCompilationInProgress[platform]) {
+    if (!this.isCompilationInProgress) {
       return Promise.reject(
         new Error(
           `File ${filename} for ${platform} not found in compilation assets (no compilation in progress)`
