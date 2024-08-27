@@ -58,7 +58,6 @@ module.exports = (env) => {
             path.join(context, 'src/assetsTest/inlineAssets'),
             path.join(context, 'src/assetsTest/remoteAssets'),
           ],
-          type: 'asset',
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {
@@ -69,7 +68,6 @@ module.exports = (env) => {
         },
         {
           test: /\.svg$/,
-          type: 'asset',
           use: [
             {
               loader: '@svgr/webpack',
@@ -85,7 +83,6 @@ module.exports = (env) => {
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
           include: [path.join(context, 'src/assetsTest/localAssets')],
-          type: 'asset',
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {
@@ -99,7 +96,6 @@ module.exports = (env) => {
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
           include: [path.join(context, 'src/assetsTest/inlineAssets')],
-          type: 'asset',
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {
