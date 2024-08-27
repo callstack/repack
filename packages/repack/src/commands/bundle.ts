@@ -97,7 +97,7 @@ export async function bundle(
   return new Promise<void>((resolve) => {
     if (args.watch) {
       compiler.hooks.watchClose.tap('bundle', resolve);
-      compiler.watch(webpackConfig.watchOptions ?? {}, errorHandler);
+      compiler.watch(config.watchOptions ?? {}, errorHandler);
     } else {
       compiler.run((error, stats) => {
         // make cache work: https://webpack.js.org/api/node/#run

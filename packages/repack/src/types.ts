@@ -5,6 +5,8 @@ export type Rule = string | RegExp;
 export type InfrastructureLogger = ReturnType<
   rspack.Compiler['getInfrastructureLogger']
 >;
+
+type StatsPreset = Exclude<rspack.StatsValue, Record<any, any> | boolean>;
 /**
  * CLI arguments passed from React Native CLI when running bundle command.
  *
@@ -19,7 +21,7 @@ export interface BundleArguments {
   sourcemapOutput?: string;
   assetsDest?: string;
   json?: string;
-  stats?: string;
+  stats?: StatsPreset;
   verbose?: boolean;
   watch?: boolean;
   webpackConfig?: string;

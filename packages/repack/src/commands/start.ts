@@ -5,8 +5,8 @@ import colorette from 'colorette';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
 import packageJson from '../../package.json';
-import { StartArguments, StartCliOptions } from '../types';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT, DEFAULT_PLATFORMS } from '../env';
+import { StartArguments } from '../types';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../env';
 import {
   composeReporters,
   ConsoleReporter,
@@ -35,11 +35,7 @@ export async function start(
   args: StartArguments
 ) {
   const configPath = getConfigFilePath(cliConfig.root, args.webpackConfig);
-  const {
-    platforms: platformsArg,
-    reversePort: reversePortArg,
-    ...restArgs
-  } = args;
+  const { reversePort: reversePortArg, ...restArgs } = args;
   const cliOptions = {
     config: {
       root: cliConfig.root,
@@ -72,6 +68,7 @@ export async function start(
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
   );
 
+  // @ts-ignore
   const compiler = new Compiler(cliOptions, reporter);
 
   const { createServer } = await import('@callstack/repack-dev-server');
@@ -86,9 +83,6 @@ export async function start(
             key: args.key,
           }
         : undefined,
-      logRequests:
-        isVerbose ||
-        (args.logRequests ?? process.argv.includes('--log-requests')),
     },
     experiments: {
       experimentalDebugger: args.experimentalDebugger,
