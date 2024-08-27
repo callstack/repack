@@ -24,6 +24,7 @@ export class DefaultRulesPlugin implements RspackPluginInstance {
     const devServer = compiler.options.devServer;
 
     compiler.options.module.defaultRules = [
+      '...',
       REACT_NATIVE_LOADING_RULES,
       NODE_MODULES_LOADING_RULES,
       /** Here you can adjust loader that will process your files. */

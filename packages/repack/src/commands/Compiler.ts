@@ -6,8 +6,7 @@ import rspack from '@rspack/core';
 import type { Server } from '@callstack/repack-dev-server';
 import type { Reporter } from '../logging';
 import type { StartCliOptions, HMRMessageBody } from '../types';
-import { adaptFilenameToPlatform } from '../webpack/utils';
-import { getEnvOptions, loadConfig } from './utils';
+import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from './utils';
 import type { CompilerAsset, MultiWatching } from './types';
 
 export class Compiler {

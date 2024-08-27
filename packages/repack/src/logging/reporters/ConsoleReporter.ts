@@ -51,11 +51,11 @@ const IS_SYMBOL_SUPPORTED =
   process.env.TERM === 'xterm-256color';
 
 const SYMBOLS: Record<LogType, string> = {
-  debug: colorette.gray('◉'),
-  info: colorette.blue('◉'),
-  warn: colorette.yellow('◉'),
-  error: colorette.red('◉'),
-  success: colorette.green('◉'),
+  debug: colorette.gray('?'),
+  info: colorette.blue('ℹ'),
+  warn: colorette.yellow('⚠'),
+  error: colorette.red('✖'),
+  success: colorette.green('✔'),
 };
 
 const FALLBACK_SYMBOLS: Record<LogType, string> = {
@@ -206,17 +206,13 @@ class InteractiveConsoleReporter implements Reporter {
       }
     }
 
-    let timestamp = '';
-    let issuer = '';
-
-    if (this.config.level === 'verbose') {
-      timestamp = colorette.gray(
+    return (
+      colorette.gray(
         `[${new Date(log.timestamp).toISOString().split('T')[1]}]`
-      );
-      issuer = colorette.bold(`[${log.issuer}]`);
-    }
-
-    return `${timestamp}${issuer} ${body}`;
+      ) +
+      colorette.bold(`[${log.issuer}]`) +
+      ` ${body}`
+    );
   }
 
   flush() {

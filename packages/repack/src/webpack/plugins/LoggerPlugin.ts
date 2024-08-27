@@ -1,5 +1,5 @@
 import rspack, { RspackPluginInstance } from '@rspack/core';
-import { isVerbose } from '../../env';
+import { VERBOSE_ENV_KEY } from '../../env';
 import {
   composeReporters,
   FileReporter,
@@ -61,7 +61,9 @@ export class LoggerPlugin implements RspackPluginInstance {
     const reporters = [];
     if (this.config.output.console) {
       reporters.push(
-        new ConsoleReporter({ level: isVerbose() ? 'verbose' : 'normal' })
+        new ConsoleReporter({
+          level: process.env[VERBOSE_ENV_KEY] ? 'verbose' : 'normal',
+        })
       );
     }
     if (this.config.output.file) {
