@@ -1,7 +1,12 @@
 import path from 'node:path';
 import assert from 'node:assert';
-import webpack from 'webpack';
-import { WebpackPlugin } from '../../../types';
+import {
+  Compiler,
+  EntryNormalized,
+  ModuleFilenameHelpers,
+  RspackPluginInstance,
+  StatsChunk,
+} from '@rspack/core';
 import { AssetsCopyProcessor } from '../utils/AssetsCopyProcessor';
 import { AuxiliaryAssetsCopyProcessor } from '../utils/AuxiliaryAssetsCopyProcessor';
 import { validateConfig } from './config';
@@ -13,7 +18,7 @@ import type { DestinationSpec, OutputPluginConfig } from './types';
  *
  * @category Webpack Plugin
  */
-export class OutputPlugin implements WebpackPlugin {
+export class OutputPlugin implements RspackPluginInstance {
   localSpecs: DestinationSpec[] = [];
   remoteSpecs: DestinationSpec[] = [];
 
@@ -41,18 +46,18 @@ export class OutputPlugin implements WebpackPlugin {
     });
   }
 
-  matchChunkToSpecs(chunk: webpack.StatsChunk, specs: DestinationSpec[]) {
+  matchChunkToSpecs(chunk: StatsChunk, specs: DestinationSpec[]) {
     const chunkIds = [chunk.names ?? [], chunk.id!].flat();
     return specs.filter((spec) => {
       const { test, include, exclude } = spec;
       const config = { test, include, exclude };
       return chunkIds.some((id) =>
-        webpack.ModuleFilenameHelpers.matchObject(config, id.toString())
+        ModuleFilenameHelpers.matchObject(config, id.toString())
       );
     });
   }
 
-  getRelatedSourceMap(chunk: webpack.StatsChunk) {
+  getRelatedSourceMap(chunk: StatsChunk) {
     return chunk.auxiliaryFiles?.find((file) => /\.map$/.test(file));
   }
 
@@ -65,11 +70,11 @@ export class OutputPlugin implements WebpackPlugin {
     chunks,
     entryOptions,
   }: {
-    chunks: webpack.StatsChunk[];
-    entryOptions: webpack.EntryNormalized;
+    chunks: StatsChunk[];
+    entryOptions: EntryNormalized;
   }) {
-    const localChunks = new Set<webpack.StatsChunk>();
-    const remoteChunks = new Set<webpack.StatsChunk>();
+    const localChunks = new Set<StatsChunk>();
+    const remoteChunks = new Set<StatsChunk>();
 
     const chunksById = new Map(chunks.map((chunk) => [chunk.id!, chunk]));
 
@@ -117,7 +122,7 @@ export class OutputPlugin implements WebpackPlugin {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: Compiler) {
     if (!this.config.enabled) return;
 
     assert(compiler.options.output.path, "Can't infer output path from config");
@@ -163,12 +168,15 @@ export class OutputPlugin implements WebpackPlugin {
 
         assetsPath = assetsPath || bundlePath;
 
-        logger.debug('Detected output paths:', {
-          bundleFilename,
-          bundlePath,
-          sourceMapFilename,
-          assetsPath,
-        });
+        logger.debug(
+          'Detected output paths:',
+          JSON.stringify({
+            bundleFilename,
+            bundlePath,
+            sourceMapFilename,
+            assetsPath,
+          })
+        );
 
         localAssetsCopyProcessor = new AssetsCopyProcessor({
           platform: this.config.platform,
