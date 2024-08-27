@@ -16,7 +16,6 @@ const dependencies = [
  * @param packageManager yarn, npm or pnpm
  */
 export default async function addDependencies(
-  cwd: string,
   packageManager: PM,
   repackVersion?: string
 ) {
@@ -29,14 +28,9 @@ export default async function addDependencies(
   }
 
   if (repackVersion) {
-    // const index = dependencies.indexOf('@callstack/repack');
-    // dependencies[index] = `@callstack/repack@${repackVersion}`;
-    // logger.info(`Using custom Re.Pack version ${repackVersion}`);
-    logger.warn(
-      'Ignoring --custom-version parameter. ' +
-        "This version of '@callstack/repack-init' " +
-        'supports only the latest preview release of Re.Pack'
-    );
+    const index = dependencies.indexOf('@callstack/repack');
+    dependencies[index] = `@callstack/repack@${repackVersion}`;
+    logger.info(`Using custom Re.Pack version ${repackVersion}`);
   }
 
   const deps = dependencies.join(' ');
@@ -48,7 +42,7 @@ export default async function addDependencies(
     spinner = ora(
       `Installing Re.Pack dependencies using ${packageManager}`
     ).start();
-    await execa(command, { cwd, stdio: 'pipe', shell: true });
+    await execa(command, { stdio: 'pipe', shell: true });
     spinner.succeed('Dependencies installed');
   } catch (error) {
     spinner?.fail(`Failed to install Re.Pack dependencies`);
