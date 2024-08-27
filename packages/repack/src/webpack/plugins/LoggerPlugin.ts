@@ -1,4 +1,4 @@
-import rspack, { RspackPluginInstance } from '@rspack/core';
+import { Compiler, RspackPluginInstance } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../../env';
 import {
   composeReporters,
@@ -127,7 +127,7 @@ export class LoggerPlugin implements RspackPluginInstance {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: rspack.Compiler) {
+  apply(compiler: Compiler) {
     // Make sure webpack-cli doesn't print stats by default.
     if (compiler.options.stats === undefined) {
       compiler.options.stats = 'none';
@@ -155,18 +155,56 @@ export class LoggerPlugin implements RspackPluginInstance {
       });
     });
 
-    if (!this.config.devServerEnabled) {
-      compiler.hooks.done.tap('LoggerPlugin', (stats) => {
+    compiler.hooks.done.tap('LoggerPlugin', (stats) => {
+      if (this.config.devServerEnabled) {
+        const { time, errors, warnings } = stats.toJson({
+          all: false,
+          timings: true,
+          errors: true,
+          warnings: true,
+        });
+
+        let entires: Array<LogEntry | undefined> = [];
+        if (errors?.length) {
+          entires = [
+            this.createEntry('LoggerPlugin', 'error', [
+              'Failed to build bundle due to errors',
+            ]),
+            ...errors.map((error) =>
+              this.createEntry('LoggerPlugin', 'error', [
+                `Error in "${error.moduleName}": ${error.message}`,
+              ])
+            ),
+          ];
+        } else {
+          entires = [
+            this.createEntry('LoggerPlugin', 'info', [
+              warnings?.length ? 'Bundle built with warnings' : 'Bundle built',
+              { time },
+            ]),
+            ...(warnings?.map((warning) =>
+              this.createEntry('LoggerPlugin', 'warn', [
+                `Warning in "${warning.moduleName}": ${warning.message}`,
+              ])
+            ) ?? []),
+          ];
+        }
+
+        for (const entry of entires.filter(Boolean) as LogEntry[]) {
+          this.processEntry(entry);
+        }
+      } else {
         const statsEntry = this.createEntry('LoggerPlugin', 'info', [
           stats.toString({ preset: 'normal', colors: true }),
         ]);
         if (statsEntry) {
           this.processEntry(statsEntry);
         }
-        this.reporter.flush();
-        this.reporter.stop();
-      });
-    }
+      }
+
+      this.reporter.flush();
+      this.reporter.stop();
+    });
 
     process.on('uncaughtException', (error) => {
       const errorEntry = this.createEntry('LoggerPlugin', 'error', [error]);
