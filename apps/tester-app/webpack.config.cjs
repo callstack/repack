@@ -49,58 +49,6 @@ module.exports = (env) => {
     },
     module: {
       rules: [
-        Repack.REACT_NATIVE_LOADING_RULES,
-        Repack.NODE_MODULES_LOADING_RULES,
-        /* repack is symlinked to a local workspace */
-        {
-          test: /\.[jt]sx?$/,
-          type: 'javascript/auto',
-          include: [/repack[/\\]dist/],
-          use: {
-            loader: 'builtin:swc-loader',
-            options: {
-              env: { targets: { 'react-native': '0.74' } },
-              jsc: { externalHelpers: true },
-            },
-          },
-        },
-        /* Codebase rules */
-        {
-          test: /\.[jt]sx?$/,
-          type: 'javascript/auto',
-          exclude: [/node_modules/, /repack[/\\]dist/],
-          use: {
-            loader: 'builtin:swc-loader',
-            /** @type {import('@rspack/core').SwcLoaderOptions} */
-            options: {
-              sourceMaps: true,
-              env: {
-                targets: { 'react-native': '0.74' },
-              },
-              jsc: {
-                externalHelpers: true,
-                transform: {
-                  react: {
-                    runtime: 'automatic',
-                    development: mode === 'development',
-                    refresh: mode === 'development' && Boolean(devServer),
-                  },
-                },
-              },
-            },
-          },
-        },
-        Repack.REACT_NATIVE_CODEGEN_RULES,
-        /**
-         * This loader handles all static assets (images, video, audio and others), so that you can
-         * use (reference) them inside your application.
-         *
-         * If you want to handle specific asset type manually, filter out the extension
-         * from `ASSET_EXTENSIONS`, for example:
-         * ```
-         * Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
-         * ```
-         */
         {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
@@ -110,6 +58,7 @@ module.exports = (env) => {
             path.join(context, 'src/assetsTest/inlineAssets'),
             path.join(context, 'src/assetsTest/remoteAssets'),
           ],
+          type: 'asset',
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {
@@ -120,6 +69,7 @@ module.exports = (env) => {
         },
         {
           test: /\.svg$/,
+          type: 'asset',
           use: [
             {
               loader: '@svgr/webpack',
@@ -135,6 +85,7 @@ module.exports = (env) => {
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
           include: [path.join(context, 'src/assetsTest/localAssets')],
+          type: 'asset',
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {
@@ -148,6 +99,7 @@ module.exports = (env) => {
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
           include: [path.join(context, 'src/assetsTest/inlineAssets')],
+          type: 'asset',
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {
