@@ -63,5 +63,5 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
       },
     },
   ],
-  type: 'javascript/auto',
+  type: 'javascript/dynamic',
 };
