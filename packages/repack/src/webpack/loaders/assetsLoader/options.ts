@@ -26,6 +26,8 @@ export interface AssetLoaderOptions {
   };
 }
 
+export interface AssetLoaderContext extends LoaderContext<AssetLoaderOptions> {}
+
 type Schema = Parameters<typeof validate>[0];
 
 export const optionsSchema: Schema = {

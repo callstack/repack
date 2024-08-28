@@ -1,6 +1,3 @@
-import type { LoaderContext } from '@rspack/core';
-import type { AssetLoaderOptions } from './options';
-
 export interface Asset {
   data: Buffer;
   default: boolean;
@@ -30,5 +27,3 @@ export interface CollectOptions {
   platform: string;
   type: string;
 }
-
-export interface AssetLoaderContext extends LoaderContext<AssetLoaderOptions> {}

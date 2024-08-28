@@ -19,12 +19,12 @@ export function inlineAssets({
 
   // keys are always converted to strings
   const sourceSet = assets.reduce(
-    (sources, asset) => {
-      sources[asset.scale] = {
-        uri: `data:${mimeType};base64,${asset.data.toString('base64')}`,
-        width: asset.dimensions?.width,
-        height: asset.dimensions?.height,
-        scale: asset.scale,
+    (sources, { data, dimensions, scale }) => {
+      sources[scale] = {
+        uri: `data:${mimeType};base64,${data.toString('base64')}`,
+        width: dimensions?.width,
+        height: dimensions?.height,
+        scale: scale,
       };
       return sources;
     },
