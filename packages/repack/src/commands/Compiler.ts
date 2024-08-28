@@ -10,8 +10,6 @@ import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from './utils';
 import type { CompilerAsset, MultiWatching } from './types';
 
 export class Compiler {
-  compiler!: rspack.MultiCompiler;
-  filesystem!: memfs.IFs;
   platforms: string[];
   assetsCache: Record<string, Record<string, CompilerAsset> | undefined> = {};
   statsCache: Record<string, rspack.StatsCompilation | undefined> = {};
@@ -19,6 +17,10 @@ export class Compiler {
   isCompilationInProgress: boolean = false;
   watchOptions: rspack.WatchOptions = {};
   watching: MultiWatching | null = null;
+  // late-init
+  compiler!: rspack.MultiCompiler;
+  filesystem!: memfs.IFs;
+  devServerContext!: Server.DelegateContext;
 
   constructor(
     private cliOptions: StartCliOptions,
@@ -33,7 +35,11 @@ export class Compiler {
     this.resolvers[platform] = [];
   }
 
-  async init(ctx: Server.DelegateContext) {
+  setDevServerContext(ctx: Server.DelegateContext) {
+    this.devServerContext = ctx;
+  }
+
+  async init() {
     const webpackEnvOptions = getEnvOptions(this.cliOptions);
     const configs = await Promise.all(
       this.platforms.map(async (platform) => {
@@ -58,15 +64,18 @@ export class Compiler {
     this.compiler.hooks.watchRun.tap('repack:watch', () => {
       this.isCompilationInProgress = true;
       this.platforms.forEach((platform) => {
-        ctx.notifyBuildStart(platform);
+        this.devServerContext.notifyBuildStart(platform);
       });
     });
 
     this.compiler.hooks.invalid.tap('repack:invalid', () => {
       this.isCompilationInProgress = true;
       this.platforms.forEach((platform) => {
-        ctx.notifyBuildStart(platform);
-        ctx.broadcastToHmrClients({ action: 'building' }, platform);
+        this.devServerContext.notifyBuildStart(platform);
+        this.devServerContext.broadcastToHmrClients(
+          { action: 'building' },
+          platform
+        );
       });
     });
 
@@ -117,8 +126,8 @@ export class Compiler {
       stats.children?.forEach((childStats) => {
         const platform = childStats.name!;
         this.callPendingResolvers(platform);
-        ctx.notifyBuildEnd(platform);
-        ctx.broadcastToHmrClients(
+        this.devServerContext.notifyBuildEnd(platform);
+        this.devServerContext.broadcastToHmrClients(
           { action: 'built', body: this.getHmrBody(platform) },
           platform
         );

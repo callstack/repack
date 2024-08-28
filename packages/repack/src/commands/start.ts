@@ -87,7 +87,7 @@ export async function start(
     experiments: {
       experimentalDebugger: args.experimentalDebugger,
     },
-    delegate: async (ctx) => {
+    delegate: (ctx) => {
       if (args.interactive) {
         bindKeypressInput(ctx);
       }
@@ -96,7 +96,7 @@ export async function start(
         void runAdbReverse(ctx, args.port);
       }
 
-      await compiler.init(ctx);
+      compiler.setDevServerContext(ctx);
 
       return {
         compiler: {
