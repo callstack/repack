@@ -1,4 +1,4 @@
-import rspack, { RspackPluginInstance } from '@rspack/core';
+import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import {
   REACT_NATIVE_CODEGEN_RULES,
   REACT_NATIVE_LOADING_RULES,
@@ -19,12 +19,9 @@ export interface DefaultRulesPluginConfig {
 export class DefaultRulesPlugin implements RspackPluginInstance {
   constructor(private config: DefaultRulesPluginConfig) {}
 
-  apply(compiler: rspack.Compiler) {
-    const mode = compiler.options.mode;
-    const devServer = compiler.options.devServer;
-
+  apply(compiler: Compiler) {
     compiler.options.module.defaultRules = [
-      '...',
+      '...', // TODO pick required defaults rules manually (jbroma)
       REACT_NATIVE_LOADING_RULES,
       NODE_MODULES_LOADING_RULES,
       {
