@@ -24,8 +24,8 @@ export function getWebpackConfigPath(root: string, customPath?: string) {
       : path.join(root, candidate);
     if (fs.existsSync(filename)) {
       if (
-        path.isAbsolute(candidate) &&
-        candidate.endsWith('.mjs') &&
+        path.isAbsolute(filename) &&
+        filename.endsWith('.mjs') &&
         Os.platform() === 'win32'
       ) {
         return `file:\\${filename}`;
