@@ -1,9 +1,9 @@
 import path from 'node:path';
 import assert from 'node:assert';
-import {
+import { ModuleFilenameHelpers } from '@rspack/core';
+import type {
   Compiler,
   EntryNormalized,
-  ModuleFilenameHelpers,
   RspackPluginInstance,
   StatsChunk,
 } from '@rspack/core';

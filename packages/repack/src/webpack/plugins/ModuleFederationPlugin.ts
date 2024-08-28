@@ -1,11 +1,12 @@
-import rspack, { RspackPluginInstance } from '@rspack/core';
+import { container } from '@rspack/core';
+import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import { Federated } from '../federated';
 
 type ModuleFederationPluginOptions =
-  typeof rspack.container.ModuleFederationPluginV1 extends {
+  typeof container.ModuleFederationPluginV1 extends {
     new (
       options: infer O
-    ): InstanceType<typeof rspack.container.ModuleFederationPluginV1>;
+    ): InstanceType<typeof container.ModuleFederationPluginV1>;
   }
     ? O
     : never;
@@ -233,7 +234,7 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: rspack.Compiler) {
+  apply(compiler: Compiler) {
     const remotes = Array.isArray(this.config.remotes)
       ? this.config.remotes.map((remote) => this.replaceRemotes(remote))
       : this.replaceRemotes(this.config.remotes ?? {});
@@ -242,12 +243,12 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
 
-    new rspack.container.ModuleFederationPluginV1({
+    new container.ModuleFederationPluginV1({
       exposes: this.config.exposes,
       filename:
         // TODO fix in a separate PR (jbroma)
         // eslint-disable-next-line prettier/prettier
-        this.config.filename ?? this.config.exposes
+        (this.config.filename ?? this.config.exposes)
           ? `${this.config.name}.container.bundle`
           : undefined,
       library: this.config.exposes

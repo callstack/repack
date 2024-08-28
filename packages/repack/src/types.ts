@@ -1,12 +1,12 @@
-import rspack from '@rspack/core';
+import type { Compiler, StatsCompilation, StatsValue } from '@rspack/core';
 
 export type Rule = string | RegExp;
 
 export type InfrastructureLogger = ReturnType<
-  rspack.Compiler['getInfrastructureLogger']
+  Compiler['getInfrastructureLogger']
 >;
 
-type StatsPreset = Exclude<rspack.StatsValue, Record<any, any> | boolean>;
+type StatsPreset = Exclude<StatsValue, Record<any, any> | boolean>;
 /**
  * CLI arguments passed from React Native CLI when running bundle command.
  *
@@ -163,8 +163,8 @@ export interface HMRMessageBody {
   name: string;
   time: number;
   hash: string;
-  warnings: rspack.StatsCompilation['warnings'];
-  errors: rspack.StatsCompilation['errors'];
+  warnings: StatsCompilation['warnings'];
+  errors: StatsCompilation['errors'];
 }
 
 /**

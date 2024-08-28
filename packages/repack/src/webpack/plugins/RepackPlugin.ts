@@ -1,4 +1,5 @@
-import rspack, { RspackPluginInstance } from '@rspack/core';
+import { DefinePlugin, SourceMapDevToolPlugin } from '@rspack/core';
+import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import type { DevServerOptions } from '../../types';
 import { DevelopmentPlugin } from './DevelopmentPlugin';
 import { LoggerPlugin, LoggerPluginConfig } from './LoggerPlugin';
@@ -130,7 +131,7 @@ export class RepackPlugin implements RspackPluginInstance {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: rspack.Compiler) {
+  apply(compiler: Compiler) {
     let entryName = this.config.entryName;
     if (!entryName && typeof compiler.options.entry !== 'function') {
       // 'main' is the default name for the entry chunk
@@ -139,7 +140,7 @@ export class RepackPlugin implements RspackPluginInstance {
       }
     }
 
-    new rspack.DefinePlugin({
+    new DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
     }).apply(compiler);
 
@@ -173,7 +174,7 @@ export class RepackPlugin implements RspackPluginInstance {
     }).apply(compiler);
 
     if (this.config.sourceMaps) {
-      new rspack.SourceMapDevToolPlugin({
+      new SourceMapDevToolPlugin({
         test: /\.(js)?bundle$/,
         filename: '[file].map',
         append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,

@@ -1,9 +1,9 @@
-import rspack from '@rspack/core';
+import { RuntimeGlobals, Template } from '@rspack/core';
 
 export function generateLoadScriptRuntimeModule(chunkId?: string | number) {
-  return rspack.Template.asString([
-    rspack.Template.getFunctionContent(require('./implementation/loadScript'))
-      .replaceAll('$loadScript$', rspack.RuntimeGlobals.loadScript)
+  return Template.asString([
+    Template.getFunctionContent(require('./implementation/loadScript'))
+      .replaceAll('$loadScript$', RuntimeGlobals.loadScript)
       .replaceAll('$caller$', `'${chunkId?.toString()}'`),
   ]);
 }

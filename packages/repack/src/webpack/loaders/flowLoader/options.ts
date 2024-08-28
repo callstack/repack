@@ -1,5 +1,5 @@
 import { validate } from 'schema-utils';
-import { LoaderContext } from '@rspack/core';
+import type { LoaderContext } from '@rspack/core';
 
 export interface FlowLoaderOptions {
   all?: boolean;

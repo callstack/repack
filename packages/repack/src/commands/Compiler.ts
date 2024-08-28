@@ -2,7 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import memfs from 'memfs';
 import mimeTypes from 'mime-types';
-import rspack from '@rspack/core';
+import { rspack } from '@rspack/core';
+import type {
+  MultiCompiler,
+  StatsCompilation,
+  WatchOptions,
+} from '@rspack/core';
 import type { Server } from '@callstack/repack-dev-server';
 import type { Reporter } from '../logging';
 import type { StartCliOptions, HMRMessageBody } from '../types';
@@ -12,13 +17,13 @@ import type { CompilerAsset, MultiWatching } from './types';
 export class Compiler {
   platforms: string[];
   assetsCache: Record<string, Record<string, CompilerAsset> | undefined> = {};
-  statsCache: Record<string, rspack.StatsCompilation | undefined> = {};
+  statsCache: Record<string, StatsCompilation | undefined> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
   isCompilationInProgress: boolean = false;
-  watchOptions: rspack.WatchOptions = {};
+  watchOptions: WatchOptions = {};
   watching: MultiWatching | null = null;
   // late-init
-  compiler!: rspack.MultiCompiler;
+  compiler!: MultiCompiler;
   filesystem!: memfs.IFs;
   devServerContext!: Server.DelegateContext;
 

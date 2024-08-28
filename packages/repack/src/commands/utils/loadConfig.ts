@@ -1,17 +1,17 @@
-import rspack from '@rspack/core';
+import type { Configuration } from '@rspack/core';
 import { EnvOptions } from '../../types';
 
 type RspackConfig =
-  | rspack.Configuration
+  | Configuration
   | ((
       env: EnvOptions,
       argv: Record<string, any>
-    ) => rspack.Configuration | Promise<rspack.Configuration>);
+    ) => Configuration | Promise<Configuration>);
 
 export async function loadConfig(
   configFilePath: string,
   env: EnvOptions
-): Promise<rspack.Configuration> {
+): Promise<Configuration> {
   let config: RspackConfig;
 
   try {

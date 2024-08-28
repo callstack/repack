@@ -1,7 +1,7 @@
 /// <reference types="@types/jest" />
 
 import fs from 'fs-extra';
-import rspack from '@rspack/core';
+import type { StatsChunk } from '@rspack/core';
 import { InfrastructureLogger } from '../../../../types';
 import { AssetsCopyProcessor } from '../AssetsCopyProcessor';
 
@@ -46,7 +46,7 @@ describe('AssetsCopyProcessor', () => {
             'assets/node_modules/react-native/libraries/newappscreen/components/logo.png',
             'index.bundle.map',
           ],
-        } as unknown as rspack.StatsChunk,
+        } as unknown as StatsChunk,
         { isEntry: true, sourceMapFile: 'index.bundle.map' }
       );
       await Promise.all(acp.execute());
@@ -92,7 +92,7 @@ describe('AssetsCopyProcessor', () => {
             'src_Async_js.chunk.bundle.map',
             'src_Async_js.chunk.bundle.json',
           ],
-        } as unknown as rspack.StatsChunk,
+        } as unknown as StatsChunk,
         { isEntry: false, sourceMapFile: 'src_Async_js.chunk.bundle.map' }
       );
       await Promise.all(acp.execute());
@@ -152,7 +152,7 @@ describe('AssetsCopyProcessor', () => {
             'drawable-mdpi/node_modules_reactnative_libraries_newappscreen_components_logo.png',
             'index.bundle.map',
           ],
-        } as unknown as rspack.StatsChunk,
+        } as unknown as StatsChunk,
         { isEntry: true, sourceMapFile: 'index.bundle.map' }
       );
       await Promise.all(acp.execute());
@@ -197,7 +197,7 @@ describe('AssetsCopyProcessor', () => {
             'src_Async_js.chunk.bundle.map',
             'src_Async_js.chunk.bundle.json',
           ],
-        } as unknown as rspack.StatsChunk,
+        } as unknown as StatsChunk,
         { isEntry: false, sourceMapFile: 'src_Async_js.chunk.bundle.map' }
       );
       await Promise.all(acp.execute());

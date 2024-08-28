@@ -1,4 +1,10 @@
-import rspack, { RspackPluginInstance } from '@rspack/core';
+import {
+  DefinePlugin,
+  EntryPlugin,
+  HotModuleReplacementPlugin,
+  SourceMapDevToolPlugin,
+} from '@rspack/core';
+import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import RspackReactRefreshPlugin from '@rspack/plugin-react-refresh';
 import type { DevServerOptions } from '../../types';
 
@@ -30,7 +36,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: rspack.Compiler) {
+  apply(compiler: Compiler) {
     if (!this.config?.devServer) {
       return;
     }
@@ -39,7 +45,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     const [majorVersion, minorVersion, patchVersion] =
       reactNativePackageJson.version.split('-')[0].split('.');
 
-    new rspack.DefinePlugin({
+    new DefinePlugin({
       __PLATFORM__: JSON.stringify(this.config.platform),
       __PUBLIC_PORT__: Number(this.config.devServer.port),
       __REACT_NATIVE_MAJOR_VERSION__: Number(majorVersion),
@@ -50,7 +56,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     if (this.config?.devServer.hmr) {
       // TODO Align this with output.hotModuleUpdateChunkFilename?
       // setup HMR source maps
-      new rspack.SourceMapDevToolPlugin({
+      new SourceMapDevToolPlugin({
         test: /\.hot-update\.js$/,
         filename: '[file].map',
         append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
@@ -60,16 +66,16 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       }).apply(compiler);
 
       // setup HMR
-      new rspack.HotModuleReplacementPlugin().apply(compiler);
+      new HotModuleReplacementPlugin().apply(compiler);
       new RspackReactRefreshPlugin().apply(compiler);
 
-      new rspack.EntryPlugin(
+      new EntryPlugin(
         compiler.context,
         require.resolve('../../modules/configurePublicPath'),
         { name: undefined }
       ).apply(compiler);
 
-      new rspack.EntryPlugin(
+      new EntryPlugin(
         compiler.context,
         require.resolve('../../modules/WebpackHMRClient'),
         { name: undefined }

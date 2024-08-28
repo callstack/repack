@@ -1,8 +1,8 @@
-import crypto from 'crypto';
-import path from 'path';
+import crypto from 'node:crypto';
+import path from 'node:path';
 import fs from 'fs-extra';
 import jwt from 'jsonwebtoken';
-import rspack, { RspackPluginInstance } from '@rspack/core';
+import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import { validateConfig, CodeSigningPluginConfig } from './config';
 
 export class CodeSigningPlugin implements RspackPluginInstance {
@@ -42,7 +42,7 @@ export class CodeSigningPlugin implements RspackPluginInstance {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: rspack.Compiler) {
+  apply(compiler: Compiler) {
     const pluginName = CodeSigningPlugin.name;
     const logger = compiler.getInfrastructureLogger(pluginName);
 

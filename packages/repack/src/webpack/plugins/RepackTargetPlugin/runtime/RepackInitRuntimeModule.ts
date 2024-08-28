@@ -1,4 +1,4 @@
-import rspack from '@rspack/core';
+import { Template } from '@rspack/core';
 
 interface RepackInitRuntimeModuleConfig {
   globalObject: string;
@@ -8,9 +8,9 @@ interface RepackInitRuntimeModuleConfig {
 export function generateRepackInitRuntimeModule(
   config: RepackInitRuntimeModuleConfig
 ) {
-  return rspack.Template.asString([
+  return Template.asString([
     '// Repack runtime initialization logic',
-    rspack.Template.getFunctionContent(require('./implementation/init'))
+    Template.getFunctionContent(require('./implementation/init'))
       .replaceAll('$hmrEnabled$', `${config.hmrEnabled ?? false}`)
       .replaceAll('$globalObject$', config.globalObject),
   ]);

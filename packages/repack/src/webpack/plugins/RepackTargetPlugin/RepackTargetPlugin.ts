@@ -1,4 +1,9 @@
-import rspack, { RspackPluginInstance } from '@rspack/core';
+import {
+  BannerPlugin,
+  NormalModuleReplacementPlugin,
+  Template,
+} from '@rspack/core';
+import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import type { DevServerOptions } from '../../../types';
 import { generateLoadScriptRuntimeModule } from './runtime/RepackLoadScriptRuntimeModule';
 import { generateRepackInitRuntimeModule } from './runtime/RepackInitRuntimeModule';
@@ -30,7 +35,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: rspack.Compiler) {
+  apply(compiler: Compiler) {
     const globalObject = 'self';
     compiler.options.target = false;
     compiler.options.output.chunkLoading = 'jsonp';
@@ -38,23 +43,23 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     compiler.options.output.globalObject = globalObject;
 
     // Normalize global object.
-    new rspack.BannerPlugin({
+    new BannerPlugin({
       raw: true,
       entryOnly: true,
-      banner: rspack.Template.asString([
+      banner: Template.asString([
         `/******/ var ${globalObject} = ${globalObject} || this || new Function("return this")() || ({}); // repackGlobal'`,
         '/******/',
       ]),
     }).apply(compiler);
 
     // Replace React Native's HMRClient.js with custom Webpack-powered DevServerClient.
-    new rspack.NormalModuleReplacementPlugin(
+    new NormalModuleReplacementPlugin(
       /react-native.*?([/\\]+)Libraries[/\\]Utilities[/\\]HMRClient\.js$/,
       require.resolve('../../../modules/DevServerClient')
     ).apply(compiler);
 
     // ReactNativeTypes.js is flow type only module
-    new rspack.NormalModuleReplacementPlugin(
+    new NormalModuleReplacementPlugin(
       /react-native.*?([/\\]+)Libraries[/\\]Renderer[/\\]shims[/\\]ReactNativeTypes\.js$/,
       require.resolve('../../../modules/EmptyModule')
     ).apply(compiler);

@@ -1,6 +1,6 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
-import rspack from '@rspack/core';
+import type { StatsChunk } from '@rspack/core';
 import { InfrastructureLogger } from '../../../types';
 
 export class AssetsCopyProcessor {
@@ -29,7 +29,7 @@ export class AssetsCopyProcessor {
   }
 
   enqueueChunk(
-    chunk: rspack.StatsChunk,
+    chunk: StatsChunk,
     { isEntry, sourceMapFile }: { isEntry: boolean; sourceMapFile?: string }
   ) {
     const {

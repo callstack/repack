@@ -1,10 +1,8 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 
-import rspack, {
-  ModuleFilenameHelpers,
-  RspackPluginInstance,
-} from '@rspack/core';
+import { ModuleFilenameHelpers } from '@rspack/core';
+import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import type { Rule } from '../../../types';
 
 import {
@@ -78,7 +76,7 @@ export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
 
   constructor(private config: ChunksToHermesBytecodePluginConfig) {}
 
-  apply(compiler: rspack.Compiler) {
+  apply(compiler: Compiler) {
     const logger = compiler.getInfrastructureLogger(this.name);
 
     if (!this.config.enabled) {

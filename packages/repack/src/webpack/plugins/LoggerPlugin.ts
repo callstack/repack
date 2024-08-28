@@ -1,4 +1,4 @@
-import { Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../../env';
 import {
   composeReporters,

@@ -1,5 +1,10 @@
 import path from 'node:path';
-import rspack, { RspackPluginInstance, ResolveAlias } from '@rspack/core';
+import { EntryPlugin } from '@rspack/core';
+import type {
+  Compiler,
+  ResolveAlias,
+  RspackPluginInstance,
+} from '@rspack/core';
 
 export interface NativeEntryPluginConfig {
   /**
@@ -33,7 +38,7 @@ export class NativeEntryPlugin implements RspackPluginInstance {
       : reactNativePath;
   }
 
-  apply(compiler: rspack.Compiler) {
+  apply(compiler: Compiler) {
     const reactNativePath = this.getReactNativePath(
       compiler.options.resolve.alias?.['react-native']
     );
@@ -50,7 +55,7 @@ export class NativeEntryPlugin implements RspackPluginInstance {
 
     // Add React-Native entries
     for (const entry of entries) {
-      new rspack.EntryPlugin(compiler.context, entry, {
+      new EntryPlugin(compiler.context, entry, {
         name: undefined,
       }).apply(compiler);
     }

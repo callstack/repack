@@ -1,4 +1,5 @@
-import rspack, { RspackPluginInstance } from '@rspack/core';
+import { sources } from '@rspack/core';
+import type { Compiler, RspackPluginInstance } from '@rspack/core';
 
 /**
  * @category Webpack Plugin
@@ -9,7 +10,7 @@ export class ManifestPlugin implements RspackPluginInstance {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: rspack.Compiler) {
+  apply(compiler: Compiler) {
     compiler.hooks.compilation.tap('ManifestPlugin', (compilation) => {
       compilation.hooks.afterProcessAssets.tap('ManifestPlugin', () => {
         for (const chunk of compilation.chunks) {
@@ -24,7 +25,7 @@ export class ManifestPlugin implements RspackPluginInstance {
             const manifestFilename = `${manifest.files[0]}.json`;
             compilation.emitAsset(
               manifestFilename,
-              new rspack.sources.RawSource(JSON.stringify(manifest))
+              new sources.RawSource(JSON.stringify(manifest))
             );
           }
         }
