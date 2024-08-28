@@ -1,5 +1,14 @@
 # @callstack/repack
 
+## 4.3.2
+
+### Patch Changes
+
+- [#723](https://github.com/callstack/repack/pull/723) [`d3c96b8`](https://github.com/callstack/repack/commit/d3c96b8f55237b714ac0eed03d94d0d1b6cff565) Thanks [@jbroma](https://github.com/jbroma)! - Fix reading `webpack.config.mjs` on Windows
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.3.2
+
 ## 4.3.1
 
 ### Patch Changes
