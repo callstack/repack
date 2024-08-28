@@ -116,29 +116,7 @@ export class ScriptManager extends EventEmitter {
       );
     }
 
-    __webpack_require__.repack.shared.loadScriptCallback.push = ((
-      parentPush: typeof Array.prototype.push,
-      ...data: string[][]
-    ) => {
-      const [[scriptId, caller]] = data;
-      this.emit('__loaded__', { scriptId, caller });
-      return parentPush(...data);
-    }).bind(
-      null,
-      __webpack_require__.repack.shared.loadScriptCallback.push.bind(
-        __webpack_require__.repack.shared.loadScriptCallback
-      )
-    );
-
     __webpack_require__.repack.shared.scriptManager = this;
-  }
-
-  __destroy() {
-    __webpack_require__.repack.shared.scriptManager = undefined;
-    __webpack_require__.repack.shared.loadScriptCallback.push =
-      Array.prototype.push.bind(
-        __webpack_require__.repack.shared.loadScriptCallback
-      );
   }
 
   /**
@@ -332,36 +310,20 @@ export class ScriptManager extends EventEmitter {
     webpackContext = getWebpackContext()
   ) {
     let script = await this.resolveScript(scriptId, caller, webpackContext);
-    return await new Promise<void>((resolve, reject) => {
-      (async () => {
-        const onLoaded = (data: { scriptId: string; caller?: string }) => {
-          if (data.scriptId === scriptId && data.caller === caller) {
-            this.emit('loaded', script.toObject());
-            resolve();
-          }
-        };
 
-        try {
-          this.emit('loading', script.toObject());
-          this.on('__loaded__', onLoaded);
-          await this.nativeScriptManager.loadScript(scriptId, script.locator);
-          // we need to do this here since it was removed from init
-          __webpack_require__.repack.shared.loadScriptCallback.push([scriptId]);
-        } catch (error) {
-          const { code } = error as Error & { code: string };
-          this.handleError(
-            error,
-            '[ScriptManager] Failed to load script:',
-            code ? `[${code}]` : '',
-            script.toObject()
-          );
-        } finally {
-          this.removeListener('__loaded__', onLoaded);
-        }
-      })().catch((error) => {
-        reject(error);
-      });
-    });
+    try {
+      this.emit('loading', script.toObject());
+      await this.nativeScriptManager.loadScript(scriptId, script.locator);
+      this.emit('loaded', script.toObject());
+    } catch (error) {
+      const { code } = error as Error & { code: string };
+      this.handleError(
+        error,
+        '[ScriptManager] Failed to load script:',
+        code ? `[${code}]` : '',
+        script.toObject()
+      );
+    }
   }
 
   /**

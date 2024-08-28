@@ -18,11 +18,14 @@ jest.mock('../NativeScriptManager', () => ({
   },
 }));
 
-// @ts-ignore
 globalThis.__webpack_require__ = {
   u: (id: string) => `${id}.chunk.bundle`,
-  p: '',
-  repack: { shared: { loadScriptCallback: [] } },
+  p: () => '',
+  repack: {
+    loadScript: jest.fn(),
+    loadHotUpdate: jest.fn(),
+    shared: { scriptManager: undefined },
+  },
 };
 
 class FakeCache {
@@ -42,16 +45,12 @@ class FakeCache {
 }
 
 beforeEach(() => {
-  try {
-    ScriptManager.shared.__destroy();
-  } catch {
-    // NOOP
-  }
+  globalThis.__webpack_require__.repack.shared.scriptManager = undefined;
 });
 
 describe('ScriptManagerAPI', () => {
   it('throw error if ScriptManager NativeModule was not found', async () => {
-    // @ts-ignore
+    // @ts-expect-error simulat missing native module
     await expect(() => new ScriptManager(null).shared).toThrow(
       /repack react-native module was not found/
     );
