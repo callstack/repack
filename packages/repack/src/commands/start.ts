@@ -174,7 +174,9 @@ export async function start(
     },
   });
 
+  await compiler.init();
   await start();
+
   compiler.start();
 
   return {
