@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* globals LoadScriptEvent __webpack_require__ */
 
 let $loadScript$;
 let $caller$ = '';

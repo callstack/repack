@@ -1,12 +1,3 @@
-/* eslint-disable no-restricted-globals */
-/* eslint-disable @typescript-eslint/prefer-optional-chain */
-/* eslint-disable promise/prefer-await-to-then */
-/* eslint-disable promise/no-callback-in-promise */
-/* eslint-env browser */
-/* global LoadScriptEvent RepackRuntime __webpack_require__ */
-
-const $chunkId$ = '';
-const $chunkLoadingGlobal$ = '';
 const $globalObject$ = {} as Record<string, any>;
 const $hmrEnabled$ = false;
 
@@ -16,35 +7,11 @@ module.exports = function () {
     loadHotUpdate,
     shared: ($globalObject$.__repack__ && $globalObject$.__repack__.shared) ||
       (__webpack_require__.repack && __webpack_require__.repack.shared) || {
-        loadScriptCallback: [[$chunkId$]],
         scriptManager: undefined,
       },
   };
 
   __webpack_require__.repack = $globalObject$.__repack__ = repackRuntime;
-
-  (function () {
-    function repackLoadScriptCallback(
-      parentPush: (data: string) => void,
-      data: string
-    ) {
-      if (parentPush) {
-        parentPush(data);
-      }
-      var chunkIds = data[0];
-      var i = 0;
-      for (; i < chunkIds.length; i++) {
-        repackRuntime.shared.loadScriptCallback.push([chunkIds[i], $chunkId$]);
-      }
-    }
-
-    var chunkLoadingGlobal = ($globalObject$[$chunkLoadingGlobal$] =
-      $globalObject$[$chunkLoadingGlobal$] || []);
-    chunkLoadingGlobal.push = repackLoadScriptCallback.bind(
-      null,
-      chunkLoadingGlobal.push.bind(chunkLoadingGlobal)
-    );
-  })();
 
   function loadScript(
     name: string,

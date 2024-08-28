@@ -74,8 +74,6 @@ export class RepackTargetPlugin implements RspackPluginInstance {
               chunk.id
             );
             const initRuntimeModule = generateRepackInitRuntimeModule({
-              chunkId: chunk.id,
-              chunkLoadingGlobal: compiler.options.output.chunkLoadingGlobal!,
               globalObject: globalObject,
               hmrEnabled: this.config?.hmr,
             });
