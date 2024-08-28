@@ -1,6 +1,6 @@
 /// <reference types="@types/jest" />
 
-import { getEnvOptions } from '../getEnvOptions';
+import { getEnvOptions } from '../utils/getEnvOptions';
 
 describe('getEnvOptions', () => {
   it('should return options for bundling', () => {
