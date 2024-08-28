@@ -164,7 +164,7 @@ module.exports = (env) => {
           },
         },
       }),
-      new webpack.EnvironmentPlugin({ MF_CACHE: false }),
+      new rspack.EnvironmentPlugin({ MF_CACHE: null }),
       process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
     ].filter(Boolean),
   };
