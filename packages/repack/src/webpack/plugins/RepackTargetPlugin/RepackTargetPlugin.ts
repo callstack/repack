@@ -63,7 +63,6 @@ export class RepackTargetPlugin implements RspackPluginInstance {
       compilation.hooks.runtimeModule.tap(
         'RepackTargetPlugin',
         (module, chunk) => {
-          // TODO determine if we need limit it to just the main chunk
           /**
            * We inject RePack's runtime modules only when load_script module is present.
            * This module is injected when:

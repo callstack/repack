@@ -27,7 +27,6 @@ export class DefaultRulesPlugin implements RspackPluginInstance {
       '...',
       REACT_NATIVE_LOADING_RULES,
       NODE_MODULES_LOADING_RULES,
-      /** Here you can adjust loader that will process your files. */
       {
         test: /\.[jt]sx?$/,
         exclude: [/node_modules/],
@@ -46,15 +45,13 @@ export class DefaultRulesPlugin implements RspackPluginInstance {
               transform: {
                 react: {
                   runtime: 'automatic',
-                  development: mode === 'development',
-                  refresh: mode === 'development' && Boolean(devServer),
                 },
               },
             },
           },
         },
       },
-      // codegen needs to run before
+      // codegen needs to run before other loaders since it needs to access types
       REACT_NATIVE_CODEGEN_RULES,
     ];
   }
