@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import type {
   Compiler,
   EntryNormalized,
+  ModuleFilenameHelpers,
   RspackPluginInstance,
   StatsChunk,
 } from '@rspack/core';
@@ -43,6 +44,17 @@ export class OutputPlugin implements RspackPluginInstance {
       if (spec.type === 'local') this.localSpecs.push(spec);
       if (spec.type === 'remote') this.remoteSpecs.push(spec);
     });
+  }
+
+  createChunkMatcher(matchObject: typeof ModuleFilenameHelpers.matchObject) {
+    return (chunk: StatsChunk, specs: DestinationSpec[]) => {
+      const chunkIds = [chunk.names ?? [], chunk.id!].flat();
+      return specs.filter((spec) => {
+        const { test, include, exclude } = spec;
+        const config = { test, include, exclude };
+        return chunkIds.some((id) => matchObject(config, id.toString()));
+      });
+    };
   }
 
   getRelatedSourceMap(chunk: StatsChunk) {
@@ -125,14 +137,7 @@ export class OutputPlugin implements RspackPluginInstance {
 
     // use ModuleFilenameHelpers.matchObject from compiler.webpack for compatibility
     const matchObject = compiler.webpack.ModuleFilenameHelpers.matchObject;
-    const matchChunkToSpecs = (chunk: StatsChunk, specs: DestinationSpec[]) => {
-      const chunkIds = [chunk.names ?? [], chunk.id!].flat();
-      return specs.filter((spec) => {
-        const { test, include, exclude } = spec;
-        const config = { test, include, exclude };
-        return chunkIds.some((id) => matchObject(config, id.toString()));
-      });
-    };
+    const matchChunkToSpecs = this.createChunkMatcher(matchObject);
 
     const auxiliaryAssets = new Set<string>();
 

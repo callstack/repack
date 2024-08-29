@@ -1,5 +1,8 @@
-/// <reference types="@types/jest" />
-import webpack from 'webpack';
+import {
+  EntryNormalized,
+  ModuleFilenameHelpers,
+  StatsChunk,
+} from '@rspack/core';
 import { OutputPlugin, OutputPluginConfig } from '../OutputPlugin';
 
 const makeChunk = ({
@@ -25,13 +28,17 @@ const makeChunk = ({
     parents,
     siblings,
     children,
-  } as webpack.StatsChunk;
+  } as StatsChunk;
+};
+
+const getChunkMatcher = (plugin: OutputPlugin) => {
+  return plugin.createChunkMatcher(ModuleFilenameHelpers.matchObject);
 };
 
 describe('OutputPlugin', () => {
   describe('classifyChunks', () => {
     let config: OutputPluginConfig;
-    let entryOptions: webpack.EntryNormalized;
+    let entryOptions: EntryNormalized;
 
     beforeEach(() => {
       config = {
@@ -51,6 +58,7 @@ describe('OutputPlugin', () => {
 
         const { localChunks, remoteChunks } = plugin.classifyChunks({
           chunks,
+          chunkMatcher: getChunkMatcher(plugin),
           entryOptions,
         });
 
@@ -74,6 +82,7 @@ describe('OutputPlugin', () => {
 
         const { localChunks, remoteChunks } = plugin.classifyChunks({
           chunks,
+          chunkMatcher: getChunkMatcher(plugin),
           entryOptions,
         });
 
@@ -98,6 +107,7 @@ describe('OutputPlugin', () => {
 
         const { localChunks, remoteChunks } = plugin.classifyChunks({
           chunks,
+          chunkMatcher: getChunkMatcher(plugin),
           entryOptions,
         });
 
@@ -117,6 +127,7 @@ describe('OutputPlugin', () => {
 
         const { localChunks, remoteChunks } = plugin.classifyChunks({
           chunks,
+          chunkMatcher: getChunkMatcher(plugin),
           entryOptions,
         });
 
@@ -161,6 +172,7 @@ describe('OutputPlugin', () => {
 
         const { localChunks, remoteChunks } = plugin.classifyChunks({
           chunks,
+          chunkMatcher: getChunkMatcher(plugin),
           entryOptions,
         });
 
@@ -178,6 +190,7 @@ describe('OutputPlugin', () => {
 
         const { localChunks, remoteChunks } = plugin.classifyChunks({
           chunks,
+          chunkMatcher: getChunkMatcher(plugin),
           entryOptions,
         });
 
