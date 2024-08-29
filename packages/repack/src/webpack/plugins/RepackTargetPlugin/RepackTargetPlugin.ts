@@ -82,8 +82,8 @@ export class RepackTargetPlugin implements RspackPluginInstance {
             const initRuntimeModule = Template.asString([
               '// Repack runtime initialization logic',
               Template.getFunctionContent(require('./implementation/init'))
-                .replaceAll('$hmrEnabled$', `${this.config?.hmr ?? false}`)
-                .replaceAll('$globalObject$', globalObject),
+                .replaceAll('$globalObject$', globalObject)
+                .replaceAll('$hmrEnabled$', `${this.config?.hmr ?? false}`),
             ]);
 
             // combine both runtime modules
