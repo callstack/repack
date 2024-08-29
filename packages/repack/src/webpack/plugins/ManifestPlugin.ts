@@ -1,4 +1,3 @@
-import { sources } from '@rspack/core';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 
 /**
@@ -25,7 +24,7 @@ export class ManifestPlugin implements RspackPluginInstance {
             const manifestFilename = `${manifest.files[0]}.json`;
             compilation.emitAsset(
               manifestFilename,
-              new sources.RawSource(JSON.stringify(manifest))
+              new compiler.webpack.sources.RawSource(JSON.stringify(manifest))
             );
           }
         }

@@ -1,4 +1,3 @@
-import { DefinePlugin, SourceMapDevToolPlugin } from '@rspack/core';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import type { DevServerOptions } from '../../types';
 import { DevelopmentPlugin } from './DevelopmentPlugin';
@@ -140,7 +139,7 @@ export class RepackPlugin implements RspackPluginInstance {
       }
     }
 
-    new DefinePlugin({
+    new compiler.webpack.DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
     }).apply(compiler);
 
@@ -174,7 +173,7 @@ export class RepackPlugin implements RspackPluginInstance {
     }).apply(compiler);
 
     if (this.config.sourceMaps) {
-      new SourceMapDevToolPlugin({
+      new compiler.webpack.SourceMapDevToolPlugin({
         test: /\.(js)?bundle$/,
         filename: '[file].map',
         append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,

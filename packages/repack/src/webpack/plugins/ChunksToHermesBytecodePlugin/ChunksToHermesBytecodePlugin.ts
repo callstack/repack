@@ -1,7 +1,6 @@
 import path from 'node:path';
 import fs from 'fs-extra';
 
-import { ModuleFilenameHelpers } from '@rspack/core';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import type { Rule } from '../../../types';
 
@@ -107,14 +106,15 @@ export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
     compiler.hooks.assetEmitted.tapPromise(
       { name: this.name, stage: 10 },
       async (file, { outputPath }) => {
-        const shouldTransformAsset = ModuleFilenameHelpers.matchObject(
-          {
-            test: this.config.test,
-            include: this.config.include,
-            exclude: this.config.exclude,
-          },
-          file
-        );
+        const shouldTransformAsset =
+          compiler.webpack.ModuleFilenameHelpers.matchObject(
+            {
+              test: this.config.test,
+              include: this.config.include,
+              exclude: this.config.exclude,
+            },
+            file
+          );
 
         if (!shouldTransformAsset) {
           return;

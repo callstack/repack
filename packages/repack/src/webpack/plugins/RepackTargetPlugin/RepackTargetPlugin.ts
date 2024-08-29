@@ -1,12 +1,5 @@
-import {
-  BannerPlugin,
-  NormalModuleReplacementPlugin,
-  Template,
-} from '@rspack/core';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import type { DevServerOptions } from '../../../types';
-import { generateLoadScriptRuntimeModule } from './runtime/RepackLoadScriptRuntimeModule';
-import { generateRepackInitRuntimeModule } from './runtime/RepackInitRuntimeModule';
 
 /**
  * {@link RepackTargetPlugin} configuration options.
@@ -36,6 +29,8 @@ export class RepackTargetPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
+    const Template = compiler.webpack.Template;
+
     const globalObject = 'self';
     compiler.options.target = false;
     compiler.options.output.chunkLoading = 'jsonp';
@@ -43,7 +38,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     compiler.options.output.globalObject = globalObject;
 
     // Normalize global object.
-    new BannerPlugin({
+    new compiler.webpack.BannerPlugin({
       raw: true,
       entryOnly: true,
       banner: Template.asString([
@@ -53,13 +48,13 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     }).apply(compiler);
 
     // Replace React Native's HMRClient.js with custom Webpack-powered DevServerClient.
-    new NormalModuleReplacementPlugin(
+    new compiler.webpack.NormalModuleReplacementPlugin(
       /react-native.*?([/\\]+)Libraries[/\\]Utilities[/\\]HMRClient\.js$/,
       require.resolve('../../../modules/DevServerClient')
     ).apply(compiler);
 
     // ReactNativeTypes.js is flow type only module
-    new NormalModuleReplacementPlugin(
+    new compiler.webpack.NormalModuleReplacementPlugin(
       /react-native.*?([/\\]+)Libraries[/\\]Renderer[/\\]shims[/\\]ReactNativeTypes\.js$/,
       require.resolve('../../../modules/EmptyModule')
     ).apply(compiler);
@@ -75,13 +70,21 @@ export class RepackTargetPlugin implements RspackPluginInstance {
            * 2. Dynamic import is used anywhere in the project
            */
           if (module.name === 'load_script') {
-            const loadScriptRuntimeModule = generateLoadScriptRuntimeModule(
-              chunk.id
-            );
-            const initRuntimeModule = generateRepackInitRuntimeModule({
-              globalObject: globalObject,
-              hmrEnabled: this.config?.hmr,
-            });
+            const loadScriptGlobal = compiler.webpack.RuntimeGlobals.loadScript;
+            const loadScriptRuntimeModule = Template.asString([
+              Template.getFunctionContent(
+                require('./implementation/loadScript')
+              )
+                .replaceAll('$loadScript$', loadScriptGlobal)
+                .replaceAll('$caller$', `'${chunk.id?.toString()}'`),
+            ]);
+
+            const initRuntimeModule = Template.asString([
+              '// Repack runtime initialization logic',
+              Template.getFunctionContent(require('./implementation/init'))
+                .replaceAll('$hmrEnabled$', `${this.config?.hmr ?? false}`)
+                .replaceAll('$globalObject$', globalObject),
+            ]);
 
             // combine both runtime modules
             const repackRuntimeModule = Buffer.from(

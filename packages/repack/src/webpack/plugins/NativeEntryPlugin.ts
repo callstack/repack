@@ -1,5 +1,4 @@
 import path from 'node:path';
-import { EntryPlugin } from '@rspack/core';
 import type {
   Compiler,
   ResolveAlias,
@@ -55,7 +54,7 @@ export class NativeEntryPlugin implements RspackPluginInstance {
 
     // Add React-Native entries
     for (const entry of entries) {
-      new EntryPlugin(compiler.context, entry, {
+      new compiler.webpack.EntryPlugin(compiler.context, entry, {
         name: undefined,
       }).apply(compiler);
     }

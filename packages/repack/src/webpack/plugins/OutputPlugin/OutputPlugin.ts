@@ -1,6 +1,5 @@
 import path from 'node:path';
 import assert from 'node:assert';
-import { ModuleFilenameHelpers } from '@rspack/core';
 import type {
   Compiler,
   EntryNormalized,
@@ -46,17 +45,6 @@ export class OutputPlugin implements RspackPluginInstance {
     });
   }
 
-  matchChunkToSpecs(chunk: StatsChunk, specs: DestinationSpec[]) {
-    const chunkIds = [chunk.names ?? [], chunk.id!].flat();
-    return specs.filter((spec) => {
-      const { test, include, exclude } = spec;
-      const config = { test, include, exclude };
-      return chunkIds.some((id) =>
-        ModuleFilenameHelpers.matchObject(config, id.toString())
-      );
-    });
-  }
-
   getRelatedSourceMap(chunk: StatsChunk) {
     return chunk.auxiliaryFiles?.find((file) => /\.map$/.test(file));
   }
@@ -68,9 +56,14 @@ export class OutputPlugin implements RspackPluginInstance {
 
   classifyChunks({
     chunks,
+    chunkMatcher,
     entryOptions,
   }: {
     chunks: StatsChunk[];
+    chunkMatcher: (
+      chunk: StatsChunk,
+      specs: DestinationSpec[]
+    ) => DestinationSpec[];
     entryOptions: EntryNormalized;
   }) {
     const localChunks = new Set<StatsChunk>();
@@ -93,7 +86,7 @@ export class OutputPlugin implements RspackPluginInstance {
 
     // Add chunks matching local specs as local chunks
     chunks
-      .filter((chunk) => this.matchChunkToSpecs(chunk, this.localSpecs).length)
+      .filter((chunk) => chunkMatcher(chunk, this.localSpecs).length)
       .forEach((chunk) => localChunks.add(chunk));
 
     // Add parents of local chunks as local chunks
@@ -130,6 +123,17 @@ export class OutputPlugin implements RspackPluginInstance {
     const logger = compiler.getInfrastructureLogger('RepackOutputPlugin');
     const outputPath = compiler.options.output.path as string;
 
+    // use ModuleFilenameHelpers.matchObject from compiler.webpack for compatibility
+    const matchObject = compiler.webpack.ModuleFilenameHelpers.matchObject;
+    const matchChunkToSpecs = (chunk: StatsChunk, specs: DestinationSpec[]) => {
+      const chunkIds = [chunk.names ?? [], chunk.id!].flat();
+      return specs.filter((spec) => {
+        const { test, include, exclude } = spec;
+        const config = { test, include, exclude };
+        return chunkIds.some((id) => matchObject(config, id.toString()));
+      });
+    };
+
     const auxiliaryAssets = new Set<string>();
 
     compiler.hooks.done.tapPromise('RepackOutputPlugin', async (stats) => {
@@ -145,6 +149,7 @@ export class OutputPlugin implements RspackPluginInstance {
 
       const { localChunks, remoteChunks } = this.classifyChunks({
         chunks: compilationStats.chunks!,
+        chunkMatcher: matchChunkToSpecs,
         entryOptions: compiler.options.entry,
       });
 
@@ -201,7 +206,7 @@ export class OutputPlugin implements RspackPluginInstance {
       }
 
       for (const chunk of remoteChunks) {
-        const specs = this.matchChunkToSpecs(chunk, this.remoteSpecs);
+        const specs = matchChunkToSpecs(chunk, this.remoteSpecs);
 
         if (specs.length === 0) {
           throw new Error(`No spec found for chunk ${chunk.id}`);

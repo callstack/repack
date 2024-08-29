@@ -1,3 +1,8 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable promise/prefer-await-to-then */
+/* eslint-disable @typescript-eslint/prefer-optional-chain */
+/* eslint-disable promise/no-callback-in-promise */
+
 const $globalObject$ = {} as Record<string, any>;
 const $hmrEnabled$ = false;
 
