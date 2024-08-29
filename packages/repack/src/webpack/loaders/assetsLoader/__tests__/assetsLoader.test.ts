@@ -4,7 +4,6 @@ import path from 'path';
 import { rspack } from '@rspack/core';
 import memfs from 'memfs';
 import { RspackVirtualModulePlugin } from 'rspack-plugin-virtual-module';
-import { AssetsResolverPlugin } from '../../../plugins/AssetsResolverPlugin';
 import {
   ASSET_EXTENSIONS,
   getAssetExtensionsRegExp,
@@ -52,7 +51,6 @@ async function compileBundle(
       ],
     },
     plugins: [
-      new AssetsResolverPlugin({ platform }),
       new RspackVirtualModulePlugin({
         'node_modules/react-native/Libraries/Image/AssetRegistry.js':
           'module.exports = { registerAsset: (spec) => spec };',
