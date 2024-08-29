@@ -1,7 +1,7 @@
 /* eslint-disable no-control-regex */
 
+import fs from 'node:fs';
 import path from 'node:path';
-import fs from 'fs-extra';
 import memfs from 'memfs';
 import jwt from 'jsonwebtoken';
 import { rspack } from '@rspack/core';
@@ -10,8 +10,8 @@ import {
   CodeSigningPluginConfig,
 } from '../CodeSigningPlugin';
 
-jest.mock('fs-extra', () => ({
-  ...jest.requireActual('fs-extra'),
+jest.mock('node:fs', () => ({
+  ...jest.requireActual('node:fs'),
   writeFile: jest.fn(),
 }));
 

@@ -1,9 +1,8 @@
+import fs from 'node:fs';
 import path from 'node:path';
-import fs from 'fs-extra';
 
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import type { Rule } from '../../../types';
-
 import {
   composeSourceMaps,
   getHermesCLIPath,
@@ -122,7 +121,10 @@ export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
 
         const bundlePath = path.join(outputPath, file);
         const sourceMapPath = `${bundlePath}.map`;
-        const useSourceMaps = await fs.pathExists(sourceMapPath);
+        const useSourceMaps = await fs.promises
+          .access(sourceMapPath)
+          .then(() => true)
+          .catch(() => false);
 
         logger.debug(`Starting hermes compilation for asset: ${bundlePath}`);
 

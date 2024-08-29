@@ -1,14 +1,17 @@
-import fs from 'fs-extra';
+import fs from 'node:fs';
 import { AuxiliaryAssetsCopyProcessor } from '../AuxiliaryAssetsCopyProcessor';
 import { InfrastructureLogger } from '../../../../types';
 
-jest.mock('fs-extra');
+jest.mock('node:fs');
 
 describe('AuxiliaryAssetsCopyProcessor', () => {
   it('should copy enqueued asset to the target directory', async () => {
-    await fs.ensureDir('/dist/remote-assets/example');
-    await fs.writeFile('/dist/remote-assets/example/pic.png', 'pic content');
-    await fs.writeFile(
+    await fs.promises.mkdir('/dist/remote-assets/example', { recursive: true });
+    await fs.promises.writeFile(
+      '/dist/remote-assets/example/pic.png',
+      'pic content'
+    );
+    await fs.promises.writeFile(
       '/dist/remote-assets/example/pic2.png',
       'different pic content'
     );
@@ -27,10 +30,14 @@ describe('AuxiliaryAssetsCopyProcessor', () => {
     await Promise.all(aacp.execute());
 
     expect(
-      await fs.readFile('/target/ios/remote/remote-assets/example/pic.png')
+      await fs.promises.readFile(
+        '/target/ios/remote/remote-assets/example/pic.png'
+      )
     ).toEqual('pic content');
     expect(
-      await fs.readFile('/target/ios/remote/remote-assets/example/pic2.png')
+      await fs.promises.readFile(
+        '/target/ios/remote/remote-assets/example/pic2.png'
+      )
     ).toEqual('different pic content');
   });
 });

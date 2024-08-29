@@ -1,5 +1,5 @@
+import fs from 'node:fs';
 import path from 'node:path';
-import fs from 'fs-extra';
 import type { StatsChunk } from '@rspack/core';
 import { InfrastructureLogger } from '../../../types';
 
@@ -16,15 +16,12 @@ export class AssetsCopyProcessor {
       assetsDest: string;
       logger: InfrastructureLogger;
     },
-    private filesystem: Pick<
-      typeof fs,
-      'ensureDir' | 'copyFile' | 'readFile' | 'writeFile'
-    > = fs
+    private filesystem = fs.promises
   ) {}
 
   private async copyAsset(from: string, to: string) {
     this.config.logger.debug('Copying asset:', from, 'to:', to);
-    await this.filesystem.ensureDir(path.dirname(to));
+    await this.filesystem.mkdir(path.dirname(to), { recursive: true });
     await this.filesystem.copyFile(from, to);
   }
 
@@ -90,7 +87,9 @@ export class AssetsCopyProcessor {
           chunkSource,
           'utf-8'
         );
-        await this.filesystem.ensureDir(path.dirname(bundleDestination));
+        await this.filesystem.mkdir(path.dirname(bundleDestination), {
+          recursive: true,
+        });
         await this.filesystem.writeFile(
           bundleDestination,
           bundleContent.replace(
@@ -116,7 +115,9 @@ export class AssetsCopyProcessor {
             sourceMapSource,
             'utf-8'
           );
-          await this.filesystem.ensureDir(path.dirname(sourceMapDestination));
+          await this.filesystem.mkdir(path.dirname(sourceMapDestination), {
+            recursive: true,
+          });
           await this.filesystem.writeFile(
             sourceMapDestination,
             sourceMapContent.replace(
@@ -168,7 +169,9 @@ export class AssetsCopyProcessor {
             manifestSource,
             'utf-8'
           );
-          await this.filesystem.ensureDir(path.dirname(manifestDestination));
+          await this.filesystem.mkdir(path.dirname(manifestDestination), {
+            recursive: true,
+          });
           await this.filesystem.writeFile(
             manifestDestination,
             manifestContent

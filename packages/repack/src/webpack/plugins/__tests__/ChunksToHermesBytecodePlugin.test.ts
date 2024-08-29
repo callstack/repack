@@ -1,12 +1,12 @@
-import fs from 'fs-extra';
+import fs from 'node:fs';
 import execa from 'execa';
 import type { Compiler } from '@rspack/core';
 import { ChunksToHermesBytecodePlugin } from '../ChunksToHermesBytecodePlugin';
 
-jest.mock('fs-extra', () => ({
+jest.mock('fs', () => ({
   __esModule: true,
-  default: {
-    pathExists: jest.fn(),
+  promises: {
+    access: jest.fn(),
     rename: jest.fn(),
     unlink: jest.fn(),
   },
@@ -71,8 +71,8 @@ describe('ChunksToHermesBytecodePlugin', () => {
       };
       const pluginInstance = new ChunksToHermesBytecodePlugin(config);
 
-      const fsMock = fs as jest.Mocked<typeof fs>;
-      fsMock.pathExists.mockImplementationOnce(() => Promise.resolve(true));
+      const fsMock = fs.promises as jest.Mocked<typeof fs.promises>;
+      fsMock.access.mockResolvedValueOnce();
 
       await new Promise<void>((resolve, reject) => {
         compilerMock.hooks.assetEmitted.tapPromise.mockImplementationOnce(
@@ -111,8 +111,8 @@ describe('ChunksToHermesBytecodePlugin', () => {
       };
       const pluginInstance = new ChunksToHermesBytecodePlugin(config);
 
-      const fsMock = fs as jest.Mocked<typeof fs>;
-      fsMock.pathExists.mockImplementationOnce(() => Promise.resolve(false));
+      const fsMock = fs.promises as jest.Mocked<typeof fs.promises>;
+      fsMock.access.mockRejectedValueOnce(new Error('File not found'));
 
       await new Promise<void>((resolve, reject) => {
         compilerMock.hooks.assetEmitted.tapPromise.mockImplementationOnce(

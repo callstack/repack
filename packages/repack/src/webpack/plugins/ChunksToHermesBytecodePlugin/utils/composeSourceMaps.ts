@@ -1,5 +1,5 @@
+import fs from 'node:fs';
 import path from 'node:path';
-import fs from 'fs-extra';
 import execa from 'execa';
 
 /**
@@ -39,10 +39,10 @@ export const composeSourceMaps = async ({
     );
 
     // Remove intermediate files
-    await fs.unlink(packagerMapPath);
-    await fs.unlink(compilerMapPath);
+    await fs.promises.unlink(packagerMapPath);
+    await fs.promises.unlink(compilerMapPath);
 
-    await fs.rename(composedSourceMapPath, packagerMapPath);
+    await fs.promises.rename(composedSourceMapPath, packagerMapPath);
   } catch (error) {
     const message = (error as Error).toString();
     throw new Error(

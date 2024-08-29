@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs from 'node:fs';
 import execa from 'execa';
 
 interface TransformBundleToHermesBytecodeOptions {
@@ -42,8 +42,8 @@ export const transformBundleToHermesBytecode = async ({
       ].filter(Boolean)
     );
 
-    await fs.unlink(bundlePath);
-    await fs.rename(hermesBundlePath, bundlePath);
+    await fs.promises.unlink(bundlePath);
+    await fs.promises.rename(hermesBundlePath, bundlePath);
 
     return { sourceMap: hermesSourceMapPath };
   } catch (error) {

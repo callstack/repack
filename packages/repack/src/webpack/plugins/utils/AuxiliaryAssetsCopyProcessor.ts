@@ -1,5 +1,5 @@
-import path from 'path';
-import fs from 'fs-extra';
+import fs from 'node:fs';
+import path from 'node:path';
 import { InfrastructureLogger } from '../../../types';
 
 export class AuxiliaryAssetsCopyProcessor {
@@ -12,15 +12,12 @@ export class AuxiliaryAssetsCopyProcessor {
       assetsDest: string;
       logger: InfrastructureLogger;
     },
-    private filesystem: Pick<
-      typeof fs,
-      'ensureDir' | 'copyFile' | 'readFile' | 'writeFile'
-    > = fs
+    private filesystem = fs.promises
   ) {}
 
   private async copyAsset(from: string, to: string) {
     this.config.logger.debug('Copying asset:', from, 'to:', to);
-    await this.filesystem.ensureDir(path.dirname(to));
+    await this.filesystem.mkdir(path.dirname(to), { recursive: true });
     await this.filesystem.copyFile(from, to);
   }
 

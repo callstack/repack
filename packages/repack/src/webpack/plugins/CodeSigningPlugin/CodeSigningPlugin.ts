@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
+import fs from 'node:fs';
 import path from 'node:path';
-import fs from 'fs-extra';
 import jwt from 'jsonwebtoken';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import { validateConfig, CodeSigningPluginConfig } from './config';
@@ -99,7 +99,7 @@ export class CodeSigningPlugin implements RspackPluginInstance {
           content.length + TOKEN_BUFFER_SIZE
         );
 
-        await fs.writeFile(path.join(outputPath, file), signedBundle);
+        await fs.promises.writeFile(path.join(outputPath, file), signedBundle);
         logger.debug(`Signed ${file}`);
       }
     );

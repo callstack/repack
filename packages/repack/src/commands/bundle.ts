@@ -1,6 +1,6 @@
+import fs from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 import { Config } from '@react-native-community/cli-types';
-import fs from 'fs-extra';
 import { stringifyStream } from '@discoveryjs/json-ext';
 import { rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
