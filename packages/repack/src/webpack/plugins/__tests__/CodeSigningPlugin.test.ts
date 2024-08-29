@@ -1,7 +1,6 @@
-/// <reference types="@types/jest" />
 /* eslint-disable no-control-regex */
 
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import memfs from 'memfs';
 import jwt from 'jsonwebtoken';

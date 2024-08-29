@@ -1,5 +1,3 @@
-/// <reference types="@types/jest" />
-
 import fs from 'fs-extra';
 import execa from 'execa';
 import type { Compiler } from '@rspack/core';

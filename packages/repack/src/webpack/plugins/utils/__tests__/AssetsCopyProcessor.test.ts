@@ -1,5 +1,3 @@
-/// <reference types="@types/jest" />
-
 import fs from 'fs-extra';
 import type { StatsChunk } from '@rspack/core';
 import { InfrastructureLogger } from '../../../../types';

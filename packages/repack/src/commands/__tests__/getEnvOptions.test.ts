@@ -1,5 +1,3 @@
-/// <reference types="@types/jest" />
-
 import { getEnvOptions } from '../utils/getEnvOptions';
 
 describe('getEnvOptions', () => {
