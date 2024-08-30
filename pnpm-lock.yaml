@@ -478,9 +478,6 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
-      headers-polyfill:
-        specifier: ^3.0.7
-        version: 3.3.0
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@18.19.41)
@@ -4610,9 +4607,6 @@ packages:
   he@1.2.0:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
-
-  headers-polyfill@3.3.0:
-    resolution: {integrity: sha512-5e57etwBpNcDc0b6KCVWEh/Ro063OxPvzVimUdM0/tsYM/T7Hfy3kknIGj78SFTOhNd8AZY41U8mOHoO4LzmIQ==}
 
   hermes-estree@0.19.1:
     resolution: {integrity: sha512-daLGV3Q2MKk8w4evNMKwS8zBE/rcpA800nu1Q5kM08IKijoSnPe9Uo1iIxzPKRkn95IxxsgBMPeYHt3VG4ej2g==}
@@ -13388,8 +13382,6 @@ snapshots:
       space-separated-tokens: 2.0.2
 
   he@1.2.0: {}
-
-  headers-polyfill@3.3.0: {}
 
   hermes-estree@0.19.1: {}
 
