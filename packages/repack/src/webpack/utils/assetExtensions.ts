@@ -71,6 +71,8 @@ export const ASSET_EXTENSIONS = [
  * };
  * ```
  */
-export function getAssetExtensionsRegExp(extensions: string[]) {
+export function getAssetExtensionsRegExp(
+  extensions: string[] = ASSET_EXTENSIONS
+) {
   return new RegExp(`\\.(${extensions.join('|')})$`);
 }
