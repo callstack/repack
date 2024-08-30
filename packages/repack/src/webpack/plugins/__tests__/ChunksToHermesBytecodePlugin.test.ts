@@ -1,14 +1,16 @@
 import fs from 'node:fs';
 import execa from 'execa';
-import type { Compiler } from '@rspack/core';
+import { ModuleFilenameHelpers, type Compiler } from '@rspack/core';
 import { ChunksToHermesBytecodePlugin } from '../ChunksToHermesBytecodePlugin';
 
-jest.mock('fs', () => ({
+jest.mock('node:fs', () => ({
   __esModule: true,
-  promises: {
-    access: jest.fn(),
-    rename: jest.fn(),
-    unlink: jest.fn(),
+  default: {
+    promises: {
+      access: jest.fn(),
+      rename: jest.fn(),
+      unlink: jest.fn(),
+    },
   },
 }));
 
@@ -26,7 +28,13 @@ const compilerMock = {
       tapPromise: jest.fn(),
     },
   },
-  getInfrastructureLogger: () => console,
+  getInfrastructureLogger: () => ({
+    debug: jest.fn(),
+    info: jest.fn(),
+  }),
+  webpack: {
+    ModuleFilenameHelpers: ModuleFilenameHelpers,
+  },
 };
 
 describe('ChunksToHermesBytecodePlugin', () => {
