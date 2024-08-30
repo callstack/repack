@@ -68,6 +68,7 @@ describe('getEnvOptions', () => {
         command: 'start',
         arguments: {
           start: {
+            host: 'localhost',
             platforms: [],
           },
         },
