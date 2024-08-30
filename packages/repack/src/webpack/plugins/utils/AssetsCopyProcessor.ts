@@ -16,13 +16,13 @@ export class AssetsCopyProcessor {
       assetsDest: string;
       logger: InfrastructureLogger;
     },
-    private filesystem = fs.promises
+    private filesystem = fs
   ) {}
 
   private async copyAsset(from: string, to: string) {
     this.config.logger.debug('Copying asset:', from, 'to:', to);
-    await this.filesystem.mkdir(path.dirname(to), { recursive: true });
-    await this.filesystem.copyFile(from, to);
+    await this.filesystem.promises.mkdir(path.dirname(to), { recursive: true });
+    await this.filesystem.promises.copyFile(from, to);
   }
 
   enqueueChunk(
@@ -83,14 +83,14 @@ export class AssetsCopyProcessor {
     // Otherwise, simply copy the file to it's target `bundleDestination`.
     if (shouldOverrideMappingInfo) {
       this.queue.push(async () => {
-        const bundleContent = await this.filesystem.readFile(
+        const bundleContent = await this.filesystem.promises.readFile(
           chunkSource,
           'utf-8'
         );
-        await this.filesystem.mkdir(path.dirname(bundleDestination), {
+        await this.filesystem.promises.mkdir(path.dirname(bundleDestination), {
           recursive: true,
         });
-        await this.filesystem.writeFile(
+        await this.filesystem.promises.writeFile(
           bundleDestination,
           bundleContent.replace(
             /\/\/# sourceMappingURL=.*$/,
@@ -111,14 +111,15 @@ export class AssetsCopyProcessor {
       // Otherwise, simply copy the file to it's target `sourceMapDestination`.
       if (isEntry) {
         this.queue.push(async () => {
-          const sourceMapContent = await this.filesystem.readFile(
+          const sourceMapContent = await this.filesystem.promises.readFile(
             sourceMapSource,
             'utf-8'
           );
-          await this.filesystem.mkdir(path.dirname(sourceMapDestination), {
-            recursive: true,
-          });
-          await this.filesystem.writeFile(
+          await this.filesystem.promises.mkdir(
+            path.dirname(sourceMapDestination),
+            { recursive: true }
+          );
+          await this.filesystem.promises.writeFile(
             sourceMapDestination,
             sourceMapContent.replace(
               chunkFile,
@@ -165,14 +166,15 @@ export class AssetsCopyProcessor {
       // Otherwise, simply copy the manifest.
       if (isEntry) {
         this.queue.push(async () => {
-          const manifestContent = await this.filesystem.readFile(
+          const manifestContent = await this.filesystem.promises.readFile(
             manifestSource,
             'utf-8'
           );
-          await this.filesystem.mkdir(path.dirname(manifestDestination), {
-            recursive: true,
-          });
-          await this.filesystem.writeFile(
+          await this.filesystem.promises.mkdir(
+            path.dirname(manifestDestination),
+            { recursive: true }
+          );
+          await this.filesystem.promises.writeFile(
             manifestDestination,
             manifestContent
               .replace(chunkFile, path.basename(bundleDestination))

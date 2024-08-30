@@ -2,11 +2,13 @@ import fs from 'node:fs';
 import { AuxiliaryAssetsCopyProcessor } from '../AuxiliaryAssetsCopyProcessor';
 import { InfrastructureLogger } from '../../../../types';
 
-jest.mock('node:fs');
+jest.mock('node:fs', () => jest.requireActual('memfs').fs);
 
 describe('AuxiliaryAssetsCopyProcessor', () => {
   it('should copy enqueued asset to the target directory', async () => {
-    await fs.promises.mkdir('/dist/remote-assets/example', { recursive: true });
+    await fs.promises.mkdir('/dist/remote-assets/example/', {
+      recursive: true,
+    });
     await fs.promises.writeFile(
       '/dist/remote-assets/example/pic.png',
       'pic content'
@@ -31,12 +33,14 @@ describe('AuxiliaryAssetsCopyProcessor', () => {
 
     expect(
       await fs.promises.readFile(
-        '/target/ios/remote/remote-assets/example/pic.png'
+        '/target/ios/remote/remote-assets/example/pic.png',
+        'utf-8'
       )
     ).toEqual('pic content');
     expect(
       await fs.promises.readFile(
-        '/target/ios/remote/remote-assets/example/pic2.png'
+        '/target/ios/remote/remote-assets/example/pic2.png',
+        'utf-8'
       )
     ).toEqual('different pic content');
   });

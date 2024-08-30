@@ -3,7 +3,17 @@ import type { StatsChunk } from '@rspack/core';
 import { InfrastructureLogger } from '../../../../types';
 import { AssetsCopyProcessor } from '../AssetsCopyProcessor';
 
-jest.mock('node:fs');
+jest.mock('node:fs', () => jest.requireActual('memfs').fs);
+
+const mkdirp = (path: string) => {
+  return fs.mkdirSync(path, { recursive: true });
+};
+const write = (path: string, content: string) => {
+  return fs.writeFileSync(path, content);
+};
+const read = (path: string) => {
+  return fs.readFileSync(path, 'utf-8');
+};
 
 describe('AssetsCopyProcessor', () => {
   describe('for ios', () => {
@@ -19,20 +29,13 @@ describe('AssetsCopyProcessor', () => {
     };
 
     it("should copy entry chunk's files into correct directories", async () => {
-      await fs.promises.mkdir('/dist', { recursive: true });
-      await fs.promises.writeFile(
-        '/dist/index.bundle',
-        '//# sourceMappingURL=index.bundle.map'
+      mkdirp('/dist');
+      write('/dist/index.bundle', '//# sourceMappingURL=index.bundle.map');
+      write('/dist/index.bundle.map', 'content of index.bundle.map');
+      mkdirp(
+        '/dist/assets/node_modules/react-native/libraries/newappscreen/components'
       );
-      await fs.promises.writeFile(
-        '/dist/index.bundle.map',
-        'content of index.bundle.map'
-      );
-      await fs.promises.mkdir(
-        '/dist/assets/node_modules/react-native/libraries/newappscreen/components',
-        { recursive: true }
-      );
-      await fs.promises.writeFile(
+      write(
         '/dist/assets/node_modules/react-native/libraries/newappscreen/components/logo.png',
         'image'
       );
@@ -52,33 +55,29 @@ describe('AssetsCopyProcessor', () => {
       expect(1).toBe(1);
 
       expect(
-        await fs.promises.readFile(
-          '/target/ios/build/Release-iphonesimulator/main.jsbundle'
-        )
+        read('/target/ios/build/Release-iphonesimulator/main.jsbundle')
       ).toEqual('//# sourceMappingURL=main.jsbundle.map');
       expect(
-        await fs.promises.readFile(
-          '/target/ios/build/Release-iphonesimulator/main.jsbundle.map'
-        )
+        read('/target/ios/build/Release-iphonesimulator/main.jsbundle.map')
       ).toEqual('content of main.jsbundle.map');
       expect(
-        await fs.promises.readFile(
+        read(
           '/target/ios/build/Release-iphonesimulator/App.app/assets/node_modules/react-native/libraries/newappscreen/components/logo.png'
         )
       ).toEqual('image');
     });
 
     it("should copy regular chunk's files into correct directories", async () => {
-      await fs.promises.mkdir('/dist', { recursive: true });
-      await fs.promises.writeFile(
+      mkdirp('/dist');
+      write(
         '/dist/src_Async_js.chunk.bundle',
         'content of src_Async_js.chunk.bundle'
       );
-      await fs.promises.writeFile(
+      write(
         '/dist/src_Async_js.chunk.bundle.map',
         'content of src_Async_js.chunk.bundle.map'
       );
-      await fs.promises.writeFile(
+      write(
         '/dist/src_Async_js.chunk.bundle.json',
         'content of src_Async_js.chunk.bundle.json'
       );
@@ -97,17 +96,17 @@ describe('AssetsCopyProcessor', () => {
       await Promise.all(acp.execute());
 
       expect(
-        await fs.promises.readFile(
+        read(
           '/target/ios/build/Release-iphonesimulator/App.app/src_Async_js.chunk.bundle'
         )
       ).toEqual('content of src_Async_js.chunk.bundle');
       expect(
-        await fs.promises.readFile(
+        read(
           '/target/ios/build/Release-iphonesimulator/App.app/src_Async_js.chunk.bundle.map'
         )
       ).toEqual('content of src_Async_js.chunk.bundle.map');
       expect(
-        await fs.promises.readFile(
+        read(
           '/target/ios/build/Release-iphonesimulator/App.app/src_Async_js.chunk.bundle.json'
         )
       ).toEqual('content of src_Async_js.chunk.bundle.json');
@@ -128,17 +127,11 @@ describe('AssetsCopyProcessor', () => {
     };
 
     it("should copy entry chunk's files into correct directories", async () => {
-      await fs.promises.mkdir('/dist', { recursive: true });
-      await fs.promises.writeFile(
-        '/dist/index.bundle',
-        '//# sourceMappingURL=index.bundle'
-      );
-      await fs.promises.writeFile(
-        '/dist/index.bundle.map',
-        'content of index.bundle.map'
-      );
-      await fs.promises.mkdir('/dist/drawable-mdpi', { recursive: true });
-      await fs.promises.writeFile(
+      mkdirp('/dist');
+      write('/dist/index.bundle', '//# sourceMappingURL=index.bundle');
+      write('/dist/index.bundle.map', 'content of index.bundle.map');
+      mkdirp('/dist/drawable-mdpi');
+      write(
         '/dist/drawable-mdpi/node_modules_reactnative_libraries_newappscreen_components_logo.png',
         'image'
       );
@@ -157,33 +150,31 @@ describe('AssetsCopyProcessor', () => {
       await Promise.all(acp.execute());
 
       expect(
-        await fs.promises.readFile(
-          '/target/generated/assets/react/release/index.android.bundle'
-        )
+        read('/target/generated/assets/react/release/index.android.bundle')
       ).toEqual('//# sourceMappingURL=index.android.bundle.map');
       expect(
-        await fs.promises.readFile(
+        read(
           '/target/generated/sourcemaps/react/release/index.android.bundle.map'
         )
       ).toEqual('content of index.android.bundle.map');
       expect(
-        await fs.promises.readFile(
+        read(
           '/target/generated/res/react/release/drawable-mdpi/node_modules_reactnative_libraries_newappscreen_components_logo.png'
         )
       ).toEqual('image');
     });
 
     it("should copy regular chunk's files into correct directories", async () => {
-      await fs.promises.mkdir('/dist', { recursive: true });
-      await fs.promises.writeFile(
+      mkdirp('/dist');
+      write(
         '/dist/src_Async_js.chunk.bundle',
         'content of src_Async_js.chunk.bundle'
       );
-      await fs.promises.writeFile(
+      write(
         '/dist/src_Async_js.chunk.bundle.map',
         'content of src_Async_js.chunk.bundle.map'
       );
-      await fs.promises.writeFile(
+      write(
         '/dist/src_Async_js.chunk.bundle.json',
         'content of src_Async_js.chunk.bundle.json'
       );
@@ -202,17 +193,15 @@ describe('AssetsCopyProcessor', () => {
       await Promise.all(acp.execute());
 
       expect(
-        await fs.promises.readFile(
-          '/target/generated/assets/react/release/src_Async_js.chunk.bundle'
-        )
+        read('/target/generated/assets/react/release/src_Async_js.chunk.bundle')
       ).toEqual('content of src_Async_js.chunk.bundle');
       expect(
-        await fs.promises.readFile(
+        read(
           '/target/generated/sourcemaps/react/release/src_Async_js.chunk.bundle.map'
         )
       ).toEqual('content of src_Async_js.chunk.bundle.map');
       expect(
-        await fs.promises.readFile(
+        read(
           '/target/generated/assets/react/release/src_Async_js.chunk.bundle.json'
         )
       ).toEqual('content of src_Async_js.chunk.bundle.json');

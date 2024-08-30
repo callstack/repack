@@ -12,13 +12,13 @@ export class AuxiliaryAssetsCopyProcessor {
       assetsDest: string;
       logger: InfrastructureLogger;
     },
-    private filesystem = fs.promises
+    private filesystem = fs
   ) {}
 
   private async copyAsset(from: string, to: string) {
     this.config.logger.debug('Copying asset:', from, 'to:', to);
-    await this.filesystem.mkdir(path.dirname(to), { recursive: true });
-    await this.filesystem.copyFile(from, to);
+    await this.filesystem.promises.mkdir(path.dirname(to), { recursive: true });
+    await this.filesystem.promises.copyFile(from, to);
   }
 
   enqueueAsset(asset: string) {
