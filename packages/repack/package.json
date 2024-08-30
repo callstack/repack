@@ -56,9 +56,18 @@
   "peerDependencies": {
     "@react-native-community/cli": "*",
     "@react-native-community/cli-types": "*",
-    "@rspack/core": "=>1.0.0-rc.1",
-    "@rspack/plugin-react-refresh": ">=1.0.0",
-    "react-native": ">=0.74"
+    "@rspack/core": "=>1",
+    "@rspack/plugin-react-refresh": ">=1",
+    "react-native": ">=0.74",
+    "webpack": ">=5.90"
+  },
+  "peerDependenciesMeta": {
+    "@rspack/core": {
+      "optional": true
+    },
+    "webpack": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@callstack/repack-dev-server": "workspace:^",
@@ -103,7 +112,8 @@
     "react": "18.2.0",
     "react-native": "0.74.3",
     "rspack-plugin-virtual-module": "^0.1.13",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "webpack": "^5.94.0"
   },
   "codegenConfig": {
     "name": "RNScriptManagerSpec",
