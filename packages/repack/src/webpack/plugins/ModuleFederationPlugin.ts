@@ -1,5 +1,4 @@
-import { container } from '@rspack/core';
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import type { container, Compiler, RspackPluginInstance } from '@rspack/core';
 import { Federated } from '../federated';
 
 type ModuleFederationPluginOptions =
@@ -243,7 +242,7 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
 
-    new container.ModuleFederationPluginV1({
+    new compiler.webpack.container.ModuleFederationPluginV1({
       exposes: this.config.exposes,
       filename:
         // TODO fix in a separate PR (jbroma)
