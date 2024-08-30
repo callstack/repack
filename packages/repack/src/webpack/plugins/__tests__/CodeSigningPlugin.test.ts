@@ -5,15 +5,11 @@ import path from 'node:path';
 import memfs from 'memfs';
 import jwt from 'jsonwebtoken';
 import { rspack } from '@rspack/core';
+import RspackVirtualModulePlugin from 'rspack-plugin-virtual-module';
 import {
   CodeSigningPlugin,
   CodeSigningPluginConfig,
 } from '../CodeSigningPlugin';
-
-jest.mock('node:fs', () => ({
-  ...jest.requireActual('node:fs'),
-  writeFile: jest.fn(),
-}));
 
 const BUNDLE_WITH_JWT_REGEX =
   /^(.+)?\/\* RCSSB \*\/(?:[\w-]*\.){2}[\w-]*(\x00)*$/m;
@@ -25,34 +21,25 @@ async function compileBundle(
 ) {
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
 
-  for (const [name, content] of Object.entries(virtualModules)) {
-    await fileSystem.promises.writeFile(`/${name}`, content);
-  }
-
   const compiler = rspack({
     context: __dirname,
     mode: 'production',
     devtool: false,
-    entry: './index.js',
+    entry: 'index.js',
     output: {
       filename: outputFilename,
       path: '/out',
       library: 'Export',
       chunkFilename: '[name].chunk.bundle',
     },
-    plugins: [new CodeSigningPlugin(codeSigningConfig)],
+    plugins: [
+      new CodeSigningPlugin(codeSigningConfig),
+      new RspackVirtualModulePlugin(virtualModules),
+    ],
   });
-
-  // @ts-ignore
-  fs.writeFile.mockImplementation(fileSystem.promises.writeFile);
 
   // @ts-expect-error memfs is compatible enough
   compiler.outputFileSystem = fileSystem;
-  /**
-   * Replacing inputFileSystem is not supported yet
-   * Tracked here: https://github.com/web-infra-dev/rspack/issues/5091
-   */
-  compiler.inputFileSystem = fileSystem;
 
   return await new Promise<{
     fileSystem: typeof memfs.fs;
@@ -73,11 +60,7 @@ async function compileBundle(
 }
 
 // TODO Fix when input filesystem is supported
-describe.skip('CodeSigningPlugin', () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
+describe('CodeSigningPlugin', () => {
   it('adds code-signing signatures to chunk files', async () => {
     const { getBundle } = await compileBundle(
       'index.bundle',
