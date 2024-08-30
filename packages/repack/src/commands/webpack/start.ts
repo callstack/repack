@@ -1,21 +1,20 @@
-import readline from 'node:readline';
-import { URL } from 'node:url';
+import readline from 'readline';
+import { URL } from 'url';
+import webpack from 'webpack';
 import execa from 'execa';
-import colorette from 'colorette';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
-import packageJson from '../../package.json';
-import { StartArguments } from '../types';
+import { CliOptions, HMRMessageBody, StartArguments } from '../../types';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../../env';
 import {
   composeReporters,
   ConsoleReporter,
   FileReporter,
   makeLogEntryFromFastifyLog,
   Reporter,
-} from '../logging';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from './consts';
+} from '../../logging';
 import { Compiler } from './Compiler';
-import { getConfigFilePath } from './utils';
+import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
 
 /**
  * Start command for React Native CLI.
@@ -29,18 +28,17 @@ import { getConfigFilePath } from './utils';
  * @internal
  * @category CLI command
  */
-export async function start(
-  _: string[],
-  cliConfig: Config,
-  args: StartArguments
-) {
-  const configPath = getConfigFilePath(cliConfig.root, args.webpackConfig);
+export async function start(_: string[], config: Config, args: StartArguments) {
+  const webpackConfigPath = getWebpackConfigPath(
+    config.root,
+    args.webpackConfig
+  );
   const { reversePort: reversePortArg, ...restArgs } = args;
-  const cliOptions = {
+  const cliOptions: CliOptions = {
     config: {
-      root: cliConfig.root,
-      reactNativePath: cliConfig.reactNativePath,
-      webpackConfigPath: configPath,
+      root: config.root,
+      reactNativePath: config.reactNativePath,
+      webpackConfigPath,
     },
     command: 'start',
     arguments: { start: { ...restArgs } },
@@ -62,14 +60,7 @@ export async function start(
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
     ].filter(Boolean) as Reporter[]
   );
-
-  const version = packageJson.version;
-  process.stdout.write(
-    colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
-  );
-
-  // @ts-ignore
-  const compiler = new Compiler(cliOptions, reporter);
+  const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
@@ -87,7 +78,7 @@ export async function start(
     experiments: {
       experimentalDebugger: args.experimentalDebugger,
     },
-    delegate: (ctx) => {
+    delegate: (ctx): Server.Delegate => {
       if (args.interactive) {
         bindKeypressInput(ctx);
       }
@@ -96,12 +87,42 @@ export async function start(
         void runAdbReverse(ctx, args.port);
       }
 
-      compiler.setDevServerContext(ctx);
+      const lastStats: Record<string, webpack.StatsCompilation> = {};
+
+      compiler.on('watchRun', ({ platform }) => {
+        ctx.notifyBuildStart(platform);
+        if (platform === 'android') {
+          void runAdbReverse(ctx, args.port ?? DEFAULT_PORT);
+        }
+      });
+
+      compiler.on('invalid', ({ platform }) => {
+        ctx.notifyBuildStart(platform);
+        ctx.broadcastToHmrClients({ action: 'building' }, platform);
+      });
+
+      compiler.on(
+        'done',
+        ({
+          platform,
+          stats,
+        }: {
+          platform: string;
+          stats: webpack.StatsCompilation;
+        }) => {
+          ctx.notifyBuildEnd(platform);
+          lastStats[platform] = stats;
+          ctx.broadcastToHmrClients(
+            { action: 'built', body: createHmrBody(stats) },
+            platform
+          );
+        }
+      );
 
       return {
         compiler: {
-          getAsset: async (filename, platform) =>
-            (await compiler.getAsset(filename, platform)).data,
+          getAsset: async (filename, platform, sendProgress) =>
+            (await compiler.getAsset(filename, platform, sendProgress)).data,
           getMimeType: (filename) => compiler.getMimeType(filename),
           inferPlatform: (uri) => {
             const url = new URL(uri, 'protocol://domain');
@@ -119,13 +140,6 @@ export async function start(
             return compiler.getSource(filename, platform);
           },
           getSourceMap: (fileUrl) => {
-            // TODO Align this with output.hotModuleUpdateChunkFilename
-            if (fileUrl.endsWith('.hot-update.js')) {
-              const { pathname } = new URL(fileUrl);
-              const [platform, filename] = pathname.split('/').filter(Boolean);
-              return compiler.getSourceMap(filename, platform);
-            }
-
             const { filename, platform } = parseFileUrl(fileUrl);
             if (!platform) {
               throw new Error('Cannot infer platform for file URL');
@@ -142,7 +156,7 @@ export async function start(
           getUriPath: () => '/__hmr',
           onClientConnected: (platform, clientId) => {
             ctx.broadcastToHmrClients(
-              { action: 'sync', body: compiler.getHmrBody(platform) },
+              { action: 'sync', body: createHmrBody(lastStats[platform]) },
               platform,
               [clientId]
             );
@@ -160,11 +174,14 @@ export async function start(
           },
         },
         api: {
-          getPlatforms: () => Promise.resolve(compiler.platforms),
+          getPlatforms: () => Promise.resolve(Object.keys(compiler.workers)),
           getAssets: (platform) =>
             Promise.resolve(
               Object.entries(compiler.assetsCache[platform] ?? {}).map(
-                ([name, asset]) => ({ name, size: asset.size })
+                ([name, asset]) => ({
+                  name,
+                  size: asset.info.size,
+                })
               )
             ),
           getCompilationStats: (platform) =>
@@ -174,10 +191,7 @@ export async function start(
     },
   });
 
-  await compiler.init();
   await start();
-
-  compiler.start();
 
   return {
     stop: async () => {
@@ -264,5 +278,30 @@ function parseFileUrl(fileUrl: string) {
   return {
     filename: filename.replace(/^\//, ''),
     platform: platform || undefined,
+  };
+}
+
+function createHmrBody(
+  stats?: webpack.StatsCompilation
+): HMRMessageBody | null {
+  if (!stats) {
+    return null;
+  }
+
+  const modules: Record<string, string> = {};
+  for (const module of stats.modules ?? []) {
+    const { identifier, name } = module;
+    if (identifier !== undefined && name) {
+      modules[identifier] = name;
+    }
+  }
+
+  return {
+    name: stats.name ?? '',
+    time: stats.time ?? 0,
+    hash: stats.hash ?? '',
+    warnings: stats.warnings || [],
+    errors: stats.errors || [],
+    modules,
   };
 }
