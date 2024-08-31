@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import type { Server } from '../../types';
+import type { SendProgress } from '../../types';
 
 async function compilerPlugin(
   instance: FastifyInstance,
@@ -45,8 +46,22 @@ async function compilerPlugin(
 
       const multipart = reply.asMultipart();
 
+      const sendProgress: SendProgress = ({ completed, total }) => {
+        multipart?.writeChunk(
+          { 'Content-Type': 'application/json' },
+          JSON.stringify({
+            done: completed,
+            total,
+          })
+        );
+      };
+
       try {
-        const asset = await delegate.compiler.getAsset(file, platform);
+        const asset = await delegate.compiler.getAsset(
+          file,
+          platform,
+          sendProgress
+        );
         const mimeType = delegate.compiler.getMimeType(file, platform, asset);
 
         if (multipart) {
