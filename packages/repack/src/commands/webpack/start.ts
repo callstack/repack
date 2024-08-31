@@ -1,7 +1,6 @@
 import readline from 'readline';
 import { URL } from 'url';
 import webpack from 'webpack';
-import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
 import {
@@ -11,7 +10,7 @@ import {
   makeLogEntryFromFastifyLog,
   Reporter,
 } from '../../logging';
-import { getWebpackConfigFilePath } from '../common';
+import { getWebpackConfigFilePath, runAdbReverse } from '../common';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
 import { CliOptions, StartArguments } from '../types';
 import { Compiler } from './Compiler';
@@ -86,7 +85,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       }
 
       if (reversePort && args.port) {
-        void runAdbReverse(ctx, args.port);
+        void runAdbReverse(args.port, ctx.log);
       }
 
       const lastStats: Record<string, webpack.StatsCompilation> = {};
@@ -94,7 +93,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
         if (platform === 'android') {
-          void runAdbReverse(ctx, args.port ?? DEFAULT_PORT);
+          void runAdbReverse(args.port ?? DEFAULT_PORT, ctx.log);
         }
       });
 
@@ -237,22 +236,6 @@ function bindKeypressInput(ctx: Server.DelegateContext) {
       });
     }
   });
-}
-
-async function runAdbReverse(ctx: Server.DelegateContext, port: number) {
-  const adbPath = process.env.ANDROID_HOME
-    ? `${process.env.ANDROID_HOME}/platform-tools/adb`
-    : 'adb';
-  const command = `${adbPath} reverse tcp:${port} tcp:${port}`;
-  try {
-    await execa.command(command);
-    ctx.log.info(`Successfully run: ${command}`);
-  } catch (error) {
-    // Get just the error message
-    const message =
-      (error as Error).message.split('error:')[1] || (error as Error).message;
-    ctx.log.warn(`Failed to run: ${command} - ${message.trim()}`);
-  }
 }
 
 function parseFileUrl(fileUrl: string) {

@@ -1,6 +1,5 @@
 import readline from 'node:readline';
 import { URL } from 'node:url';
-import execa from 'execa';
 import colorette from 'colorette';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
@@ -14,7 +13,7 @@ import {
 } from '../../logging';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
 import { StartArguments } from '../types';
-import { getRspackConfigFilePath } from '../common';
+import { getRspackConfigFilePath, runAdbReverse } from '../common';
 import { Compiler } from './Compiler';
 
 /**
@@ -96,7 +95,7 @@ export async function start(
       }
 
       if (reversePort && args.port) {
-        void runAdbReverse(ctx, args.port);
+        void runAdbReverse(args.port, ctx.log);
       }
 
       compiler.setDevServerContext(ctx);
@@ -224,22 +223,6 @@ function bindKeypressInput(ctx: Server.DelegateContext) {
       });
     }
   });
-}
-
-async function runAdbReverse(ctx: Server.DelegateContext, port: number) {
-  const adbPath = process.env.ANDROID_HOME
-    ? `${process.env.ANDROID_HOME}/platform-tools/adb`
-    : 'adb';
-  const command = `${adbPath} reverse tcp:${port} tcp:${port}`;
-  try {
-    await execa.command(command);
-    ctx.log.info(`Successfully run: ${command}`);
-  } catch (error) {
-    // Get just the error message
-    const message =
-      (error as Error).message.split('error:')[1] || (error as Error).message;
-    ctx.log.warn(`Failed to run: ${command} - ${message.trim()}`);
-  }
 }
 
 function parseFileUrl(fileUrl: string) {
