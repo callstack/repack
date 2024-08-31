@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { StatsChunk } from '@rspack/core';
-import { InfrastructureLogger } from '../../../types';
 
 export class AssetsCopyProcessor {
   queue: Array<() => Promise<void>> = [];
@@ -14,7 +13,9 @@ export class AssetsCopyProcessor {
       bundleOutputDir: string;
       sourcemapOutput: string;
       assetsDest: string;
-      logger: InfrastructureLogger;
+      logger: {
+        debug: (...args: string[]) => void;
+      };
     },
     private filesystem = fs
   ) {}

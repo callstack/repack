@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import { AuxiliaryAssetsCopyProcessor } from '../AuxiliaryAssetsCopyProcessor';
-import { InfrastructureLogger } from '../../../../types';
 
 jest.mock('node:fs', () => jest.requireActual('memfs').fs);
 
@@ -21,7 +20,7 @@ describe('AuxiliaryAssetsCopyProcessor', () => {
     const aacp = new AuxiliaryAssetsCopyProcessor(
       {
         platform: 'ios',
-        logger: { debug: jest.fn() } as unknown as InfrastructureLogger,
+        logger: { debug: jest.fn() },
         outputPath: '/dist',
         assetsDest: '/target/ios/remote',
       },

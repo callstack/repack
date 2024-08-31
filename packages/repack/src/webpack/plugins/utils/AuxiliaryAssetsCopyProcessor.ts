@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { InfrastructureLogger } from '../../../types';
 
 export class AuxiliaryAssetsCopyProcessor {
   queue: Array<() => Promise<void>> = [];
@@ -10,7 +9,9 @@ export class AuxiliaryAssetsCopyProcessor {
       platform: string;
       outputPath: string;
       assetsDest: string;
-      logger: InfrastructureLogger;
+      logger: {
+        debug: (...args: string[]) => void;
+      };
     },
     private filesystem = fs
   ) {}

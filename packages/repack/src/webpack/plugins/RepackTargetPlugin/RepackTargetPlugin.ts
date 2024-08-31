@@ -1,11 +1,11 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import type { DevServerOptions } from '../../../types';
 
 /**
  * {@link RepackTargetPlugin} configuration options.
  */
-export interface RepackTargetPluginConfig
-  extends Pick<DevServerOptions, 'hmr'> {}
+export interface RepackTargetPluginConfig {
+  hmr?: boolean;
+}
 
 /**
  * Plugin for tweaking the JavaScript runtime code to account for React Native environment.

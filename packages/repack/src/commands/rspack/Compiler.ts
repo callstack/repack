@@ -10,9 +10,10 @@ import type {
 } from '@rspack/core';
 import type { Server } from '@callstack/repack-dev-server';
 import type { Reporter } from '../../logging';
+import type { HMRMessageBody } from '../../types';
 import type { StartCliOptions } from '../types';
 import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from '../common';
-import type { CompilerAsset, HMRMessageBody, MultiWatching } from './types';
+import type { CompilerAsset, MultiWatching } from './types';
 
 export class Compiler {
   platforms: string[];

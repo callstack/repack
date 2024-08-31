@@ -1,7 +1,6 @@
 import path from 'node:path';
 import crypto from 'node:crypto';
 import dedent from 'dedent';
-import type { InfrastructureLogger } from '../../../types';
 import type { Asset } from './types';
 import { getDefaultAsset } from './utils';
 
@@ -28,7 +27,9 @@ export function extractAssets(
     publicPath?: string;
     devServerEnabled?: boolean;
   },
-  logger: InfrastructureLogger
+  logger: {
+    debug: (...args: string[]) => void;
+  }
 ) {
   let publicPath = path
     .join(assetsDirname, resourceDirname)

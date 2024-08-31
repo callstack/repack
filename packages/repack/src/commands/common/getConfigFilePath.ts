@@ -1,6 +1,6 @@
-import path from 'path';
-import fs from 'fs';
-import Os from 'os';
+import path from 'node:path';
+import fs from 'node:fs';
+import os from 'node:os';
 
 // Supports the same files as Webpack CLI.
 const DEFAULT_WEBPACK_CONFIG_LOCATIONS = [
@@ -26,7 +26,7 @@ export function getConfigFilePath(root: string, customPath?: string) {
       if (
         path.isAbsolute(candidate) &&
         candidate.endsWith('.mjs') &&
-        Os.platform() === 'win32'
+        os.platform() === 'win32'
       ) {
         return `file:\\${filename}`;
       } else {

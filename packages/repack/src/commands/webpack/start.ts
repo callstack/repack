@@ -39,6 +39,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       webpackConfigPath,
     },
     command: 'start',
+    // @ts-ignore TODO fix (jbroma)
     arguments: { start: { ...restArgs } },
   };
 
@@ -286,20 +287,11 @@ function createHmrBody(
     return null;
   }
 
-  const modules: Record<string, string> = {};
-  for (const module of stats.modules ?? []) {
-    const { identifier, name } = module;
-    if (identifier !== undefined && name) {
-      modules[identifier] = name;
-    }
-  }
-
   return {
     name: stats.name ?? '',
     time: stats.time ?? 0,
     hash: stats.hash ?? '',
     warnings: stats.warnings || [],
     errors: stats.errors || [],
-    modules,
   };
 }

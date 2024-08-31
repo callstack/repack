@@ -1,6 +1,7 @@
-import path from 'path';
-import type { CliOptions, EnvOptions } from '../../types';
+import path from 'node:path';
+import type { EnvOptions } from '../../types';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
+import type { CliOptions } from '../types';
 
 export function getEnvOptions(cliOptions: CliOptions): EnvOptions {
   const env: EnvOptions = { bundleFilename: '' };

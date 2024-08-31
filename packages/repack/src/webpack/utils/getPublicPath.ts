@@ -1,4 +1,4 @@
-import type { DevServerOptions } from '../../types';
+import { DevServerOptions } from '../../types';
 
 /** {@link getPublicPath} options. */
 export interface GetPublicPathOptions {
@@ -6,7 +6,7 @@ export interface GetPublicPathOptions {
   platform: string;
 
   /** Development server configuration options. */
-  devServer?: Pick<DevServerOptions, 'port' | 'host' | 'https'>;
+  devServer?: DevServerOptions;
 }
 
 /**
