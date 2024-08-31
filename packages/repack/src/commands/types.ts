@@ -39,9 +39,7 @@ interface CommonCliOptions {
 
 export interface StartCliOptions extends CommonCliOptions {
   command: 'start';
-  arguments: {
-    start: Omit<StartArguments, 'platforms'> & { platforms: string[] };
-  };
+  arguments: { start: StartArguments };
 }
 
 export interface BundleCliOptions extends CommonCliOptions {
