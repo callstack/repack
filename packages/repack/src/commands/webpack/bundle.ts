@@ -4,10 +4,8 @@ import { Config } from '@react-native-community/cli-types';
 import webpack from 'webpack';
 import { stringifyStream } from '@discoveryjs/json-ext';
 import { VERBOSE_ENV_KEY } from '../../env';
-import { BundleArguments, CliOptions } from '../../types';
-import { loadWebpackConfig } from '../webpack/loadWebpackConfig';
-import { getWebpackEnvOptions } from '../../webpack/utils';
-import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
+import { BundleArguments, CliOptions } from '../types';
+import { getConfigFilePath, getEnvOptions, loadConfig } from '../common';
 
 /**
  * Bundle command for React Native CLI.
@@ -26,10 +24,7 @@ export async function bundle(
   config: Config,
   args: BundleArguments
 ) {
-  const webpackConfigPath = getWebpackConfigPath(
-    config.root,
-    args.webpackConfig
-  );
+  const webpackConfigPath = getConfigFilePath(config.root, args.webpackConfig);
 
   const cliOptions = {
     config: {
@@ -51,11 +46,8 @@ export async function bundle(
     process.env[VERBOSE_ENV_KEY] = '1';
   }
 
-  const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
-  const webpackConfig = await loadWebpackConfig(
-    webpackConfigPath,
-    webpackEnvOptions
-  );
+  const webpackEnvOptions = getEnvOptions(cliOptions);
+  const webpackConfig = await loadConfig(webpackConfigPath, webpackEnvOptions);
 
   const errorHandler = async (error: Error | null, stats?: webpack.Stats) => {
     if (error) {
@@ -98,6 +90,7 @@ export async function bundle(
     }
   };
 
+  // @ts-ignore TODO fix (jbroma)
   const compiler = webpack(webpackConfig);
 
   return new Promise<void>((resolve) => {

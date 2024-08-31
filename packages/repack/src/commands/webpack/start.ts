@@ -4,8 +4,6 @@ import webpack from 'webpack';
 import execa from 'execa';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
-import { CliOptions, HMRMessageBody, StartArguments } from '../../types';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../../env';
 import {
   composeReporters,
   ConsoleReporter,
@@ -13,8 +11,11 @@ import {
   makeLogEntryFromFastifyLog,
   Reporter,
 } from '../../logging';
+import { getConfigFilePath } from '../common';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
+import { CliOptions, StartArguments } from '../types';
 import { Compiler } from './Compiler';
-import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
+import { HMRMessageBody } from './types';
 
 /**
  * Start command for React Native CLI.
@@ -29,10 +30,7 @@ import { getWebpackConfigPath } from './utils/getWebpackConfigPath';
  * @category CLI command
  */
 export async function start(_: string[], config: Config, args: StartArguments) {
-  const webpackConfigPath = getWebpackConfigPath(
-    config.root,
-    args.webpackConfig
-  );
+  const webpackConfigPath = getConfigFilePath(config.root, args.webpackConfig);
   const { reversePort: reversePortArg, ...restArgs } = args;
   const cliOptions: CliOptions = {
     config: {

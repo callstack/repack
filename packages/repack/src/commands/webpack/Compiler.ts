@@ -1,14 +1,15 @@
-import { Worker, SHARE_ENV } from 'worker_threads';
-import path from 'path';
-import fs from 'fs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { Worker, SHARE_ENV } from 'node:worker_threads';
 import EventEmitter from 'events';
 import webpack from 'webpack';
 import mimeTypes from 'mime-types';
 import { SendProgress } from '@callstack/repack-dev-server';
-import type { CliOptions, WebpackWorkerOptions } from '../types';
-import type { LogType, Reporter } from '../logging';
-import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
-import { adaptFilenameToPlatform } from './utils';
+import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../../env';
+import type { LogType, Reporter } from '../../logging';
+import { adaptFilenameToPlatform } from '../common';
+import type { CliOptions } from '../types';
+import type { WebpackWorkerOptions } from './types';
 
 export interface Asset {
   data: string | Buffer;

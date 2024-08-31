@@ -5,8 +5,8 @@ import { stringifyStream } from '@discoveryjs/json-ext';
 import { rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../../env';
-import { BundleArguments, BundleCliOptions } from '../../types';
-import { getConfigFilePath, getEnvOptions, loadConfig } from '../utils';
+import { BundleArguments, BundleCliOptions } from '../types';
+import { getConfigFilePath, getEnvOptions, loadConfig } from '../common';
 
 /**
  * Bundle command for React Native CLI.
@@ -68,6 +68,7 @@ export async function bundle(
 
       let statOptions: Parameters<typeof stats.toJson>[0];
       if (args.stats !== undefined) {
+        // @ts-ignore TODO fix (jbroma)
         statOptions = { preset: args.stats };
       } else if (typeof compiler.options.stats === 'boolean') {
         statOptions = compiler.options.stats

@@ -1,1 +1,3 @@
 export const VERBOSE_ENV_KEY = 'REPACK_VERBOSE';
+
+export const WORKER_ENV_KEY = 'REPACK_WORKER';

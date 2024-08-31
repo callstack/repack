@@ -12,10 +12,10 @@ import {
   makeLogEntryFromFastifyLog,
   Reporter,
 } from '../../logging';
-import { StartArguments } from '../../types';
-import { getConfigFilePath } from '../utils';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
+import { StartArguments } from '../types';
+import { getConfigFilePath } from '../common';
 import { Compiler } from './Compiler';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from './consts';
 
 /**
  * Start command for React Native CLI.
@@ -50,7 +50,7 @@ export async function start(
   const isSilent = args.silent;
   const isVerbose = isSilent
     ? false
-    : // TODO fix in a separate PR (jbroma)
+    : // TODO fix (jbroma)
       // eslint-disable-next-line prettier/prettier
       (args.verbose ?? process.argv.includes('--verbose'));
   const reporter = composeReporters(

@@ -1,17 +1,3 @@
-import type { Compiler, StatsCompilation, StatsValue } from '@rspack/core';
-
-export type Rule = string | RegExp;
-
-export type InfrastructureLogger = ReturnType<
-  Compiler['getInfrastructureLogger']
->;
-
-type StatsPreset = Exclude<StatsValue, Record<any, any> | boolean>;
-/**
- * CLI arguments passed from React Native CLI when running bundle command.
- *
- * @internal
- */
 export interface BundleArguments {
   entryFile: string;
   platform: string;
@@ -21,17 +7,12 @@ export interface BundleArguments {
   sourcemapOutput?: string;
   assetsDest?: string;
   json?: string;
-  stats?: StatsPreset;
+  stats?: string;
   verbose?: boolean;
   watch?: boolean;
   webpackConfig?: string;
 }
 
-/**
- * CLI arguments passed from React Native CLI when running start command.
- *
- * @internal
- */
 export interface StartArguments {
   port?: number;
   host: string;
@@ -56,11 +37,6 @@ interface CommonCliOptions {
   };
 }
 
-export interface WebpackWorkerOptions {
-  cliOptions: CliOptions;
-  platform: string;
-}
-
 export interface StartCliOptions extends CommonCliOptions {
   command: 'start';
   arguments: {
@@ -74,6 +50,8 @@ export interface BundleCliOptions extends CommonCliOptions {
 }
 
 export type CliOptions = StartCliOptions | BundleCliOptions;
+
+export type Rule = string | RegExp;
 
 /**
  * Development server configuration options.
@@ -152,27 +130,4 @@ export interface EnvOptions {
    * If `undefined`, then development server should not be run.
    */
   devServer?: DevServerOptions;
-}
-
-/**
- * Represent Hot Module Replacement Update body.
- *
- * @internal
- */
-export interface HMRMessageBody {
-  name: string;
-  time: number;
-  hash: string;
-  warnings: StatsCompilation['warnings'];
-  errors: StatsCompilation['errors'];
-}
-
-/**
- * Represent Hot Module Replacement Update message.
- *
- * @internal
- */
-export interface HMRMessage {
-  action: 'building' | 'built' | 'sync';
-  body: HMRMessageBody | null;
 }

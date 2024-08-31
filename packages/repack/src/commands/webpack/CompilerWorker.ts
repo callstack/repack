@@ -2,16 +2,15 @@ import path from 'node:path';
 import { workerData, parentPort } from 'node:worker_threads';
 import memfs from 'memfs';
 import webpack from 'webpack';
-import type { WebpackWorkerOptions } from '../types';
-import { loadWebpackConfig } from './loadWebpackConfig';
-import { getWebpackEnvOptions } from './utils';
+import { getEnvOptions, loadConfig } from '../common';
+import type { WebpackWorkerOptions } from './types';
 
 async function main({ cliOptions, platform }: WebpackWorkerOptions) {
-  const webpackEnvOptions = getWebpackEnvOptions(cliOptions);
-  const webpackConfig = await loadWebpackConfig(
-    cliOptions.config.webpackConfigPath,
-    { ...webpackEnvOptions, platform }
-  );
+  const webpackEnvOptions = getEnvOptions(cliOptions);
+  const webpackConfig = await loadConfig(cliOptions.config.webpackConfigPath, {
+    ...webpackEnvOptions,
+    platform,
+  });
   const watchOptions = webpackConfig.watchOptions ?? {};
 
   webpackConfig.plugins = (webpackConfig.plugins ?? []).concat(
@@ -28,6 +27,7 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
     })
   );
 
+  // @ts-ignore TODO fix (jbroma)
   const compiler = webpack(webpackConfig);
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
