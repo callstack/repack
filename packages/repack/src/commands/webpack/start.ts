@@ -1,4 +1,3 @@
-import readline from 'readline';
 import { URL } from 'url';
 import webpack from 'webpack';
 import { Config } from '@react-native-community/cli-types';
@@ -14,6 +13,7 @@ import {
   getWebpackConfigFilePath,
   parseFileUrl,
   runAdbReverse,
+  setupInteractions,
 } from '../common';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
 import { CliOptions, StartArguments } from '../types';
@@ -85,7 +85,17 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     },
     delegate: (ctx): Server.Delegate => {
       if (args.interactive) {
-        bindKeypressInput(ctx);
+        setupInteractions(
+          {
+            onReload: () => {
+              ctx.broadcastToMessageClients({ method: 'reload' });
+            },
+            onOpenDevMenu: () => {
+              ctx.broadcastToMessageClients({ method: 'devMenu' });
+            },
+          },
+          ctx.log
+        );
       }
 
       if (reversePort && args.port) {
@@ -204,42 +214,6 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       await stop();
     },
   };
-}
-
-function bindKeypressInput(ctx: Server.DelegateContext) {
-  if (!process.stdin.setRawMode) {
-    ctx.log.warn({
-      msg: 'Interactive mode is not supported in this environment',
-    });
-    return;
-  }
-
-  readline.emitKeypressEvents(process.stdin);
-  process.stdin.setRawMode(true);
-
-  process.stdin.on('keypress', (_key, data) => {
-    const { ctrl, name } = data;
-    if (ctrl === true) {
-      switch (name) {
-        case 'c':
-          process.exit();
-          break;
-        case 'z':
-          process.emit('SIGTSTP', 'SIGTSTP');
-          break;
-      }
-    } else if (name === 'r') {
-      ctx.broadcastToMessageClients({ method: 'reload' });
-      ctx.log.info({
-        msg: 'Reloading app',
-      });
-    } else if (name === 'd') {
-      ctx.broadcastToMessageClients({ method: 'devMenu' });
-      ctx.log.info({
-        msg: 'Opening developer menu',
-      });
-    }
-  });
 }
 
 function createHmrBody(

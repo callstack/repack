@@ -1,8 +1,6 @@
-import readline from 'node:readline';
 import { URL } from 'node:url';
 import colorette from 'colorette';
 import { Config } from '@react-native-community/cli-types';
-import type { Server } from '@callstack/repack-dev-server';
 import packageJson from '../../../package.json';
 import {
   composeReporters,
@@ -17,6 +15,7 @@ import {
   getRspackConfigFilePath,
   parseFileUrl,
   runAdbReverse,
+  setupInteractions,
 } from '../common';
 import { Compiler } from './Compiler';
 
@@ -95,7 +94,17 @@ export async function start(
     },
     delegate: (ctx) => {
       if (args.interactive) {
-        bindKeypressInput(ctx);
+        setupInteractions(
+          {
+            onReload: () => {
+              ctx.broadcastToMessageClients({ method: 'reload' });
+            },
+            onOpenDevMenu: () => {
+              ctx.broadcastToMessageClients({ method: 'devMenu' });
+            },
+          },
+          ctx.log
+        );
       }
 
       if (reversePort && args.port) {
@@ -191,40 +200,4 @@ export async function start(
       await stop();
     },
   };
-}
-
-function bindKeypressInput(ctx: Server.DelegateContext) {
-  if (!process.stdin.setRawMode) {
-    ctx.log.warn({
-      msg: 'Interactive mode is not supported in this environment',
-    });
-    return;
-  }
-
-  readline.emitKeypressEvents(process.stdin);
-  process.stdin.setRawMode(true);
-
-  process.stdin.on('keypress', (_key, data) => {
-    const { ctrl, name } = data;
-    if (ctrl === true) {
-      switch (name) {
-        case 'c':
-          process.exit();
-          break;
-        case 'z':
-          process.emit('SIGTSTP', 'SIGTSTP');
-          break;
-      }
-    } else if (name === 'r') {
-      ctx.broadcastToMessageClients({ method: 'reload' });
-      ctx.log.info({
-        msg: 'Reloading app',
-      });
-    } else if (name === 'd') {
-      ctx.broadcastToMessageClients({ method: 'devMenu' });
-      ctx.log.info({
-        msg: 'Opening developer menu',
-      });
-    }
-  });
 }
