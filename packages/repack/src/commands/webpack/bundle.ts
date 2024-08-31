@@ -5,7 +5,7 @@ import webpack, { Configuration } from 'webpack';
 import { stringifyStream } from '@discoveryjs/json-ext';
 import { VERBOSE_ENV_KEY } from '../../env';
 import { BundleArguments, CliOptions } from '../types';
-import { getConfigFilePath, getEnvOptions, loadConfig } from '../common';
+import { getWebpackConfigFilePath, getEnvOptions, loadConfig } from '../common';
 
 /**
  * Bundle command for React Native CLI.
@@ -24,7 +24,10 @@ export async function bundle(
   config: Config,
   args: BundleArguments
 ) {
-  const webpackConfigPath = getConfigFilePath(config.root, args.webpackConfig);
+  const webpackConfigPath = getWebpackConfigFilePath(
+    config.root,
+    args.webpackConfig
+  );
 
   const cliOptions = {
     config: {

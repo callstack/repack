@@ -11,7 +11,7 @@ import {
   makeLogEntryFromFastifyLog,
   Reporter,
 } from '../../logging';
-import { getConfigFilePath } from '../common';
+import { getWebpackConfigFilePath } from '../common';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
 import { CliOptions, StartArguments } from '../types';
 import { Compiler } from './Compiler';
@@ -30,7 +30,10 @@ import { HMRMessageBody } from './types';
  * @category CLI command
  */
 export async function start(_: string[], config: Config, args: StartArguments) {
-  const webpackConfigPath = getConfigFilePath(config.root, args.webpackConfig);
+  const webpackConfigPath = getWebpackConfigFilePath(
+    config.root,
+    args.webpackConfig
+  );
   const { reversePort: reversePortArg, ...restArgs } = args;
   const cliOptions: CliOptions = {
     config: {

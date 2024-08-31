@@ -14,7 +14,7 @@ import {
 } from '../../logging';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
 import { StartArguments } from '../types';
-import { getConfigFilePath } from '../common';
+import { getRspackConfigFilePath } from '../common';
 import { Compiler } from './Compiler';
 
 /**
@@ -34,7 +34,10 @@ export async function start(
   cliConfig: Config,
   args: StartArguments
 ) {
-  const configPath = getConfigFilePath(cliConfig.root, args.webpackConfig);
+  const configPath = getRspackConfigFilePath(
+    cliConfig.root,
+    args.webpackConfig
+  );
   const { reversePort: reversePortArg, ...restArgs } = args;
   const cliOptions = {
     config: {

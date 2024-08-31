@@ -1,23 +1,12 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
+import {
+  DEFAULT_RSPACK_CONFIG_LOCATIONS,
+  DEFAULT_WEBPACK_CONFIG_LOCATIONS,
+} from '../consts';
 
-// Supports the same files as Webpack CLI.
-const DEFAULT_WEBPACK_CONFIG_LOCATIONS = [
-  'webpack.config.mjs',
-  'webpack.config.cjs',
-  'webpack.config.js',
-  '.webpack/webpack.config.mjs',
-  '.webpack/webpack.config.cjs',
-  '.webpack/webpack.config.js',
-  '.webpack/webpackfile',
-];
-
-export function getConfigFilePath(root: string, customPath?: string) {
-  const candidates = customPath
-    ? [customPath]
-    : DEFAULT_WEBPACK_CONFIG_LOCATIONS;
-
+function getConfigFilePath(root: string, candidates: string[]) {
   for (const candidate of candidates) {
     const filename = path.isAbsolute(candidate)
       ? candidate
@@ -35,5 +24,29 @@ export function getConfigFilePath(root: string, customPath?: string) {
     }
   }
 
-  throw new Error('Cannot find Webpack configuration file');
+  throw new Error('Cannot find configuration file');
+}
+
+export function getWebpackConfigFilePath(root: string, customPath?: string) {
+  const candidates = customPath
+    ? [customPath]
+    : DEFAULT_WEBPACK_CONFIG_LOCATIONS;
+
+  try {
+    return getConfigFilePath(root, candidates);
+  } catch {
+    throw new Error('Cannot find Webpack configuration file');
+  }
+}
+
+export function getRspackConfigFilePath(root: string, customPath?: string) {
+  const candidates = customPath
+    ? [customPath]
+    : DEFAULT_RSPACK_CONFIG_LOCATIONS;
+
+  try {
+    return getConfigFilePath(root, candidates);
+  } catch {
+    throw new Error('Cannot find Rspack configuration file');
+  }
 }

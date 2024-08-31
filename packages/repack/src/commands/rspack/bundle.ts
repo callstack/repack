@@ -6,7 +6,7 @@ import { Configuration, rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../../env';
 import { BundleArguments, BundleCliOptions } from '../types';
-import { getConfigFilePath, getEnvOptions, loadConfig } from '../common';
+import { getRspackConfigFilePath, getEnvOptions, loadConfig } from '../common';
 
 /**
  * Bundle command for React Native CLI.
@@ -25,7 +25,10 @@ export async function bundle(
   cliConfig: Config,
   args: BundleArguments
 ) {
-  const webpackConfig = getConfigFilePath(cliConfig.root, args.webpackConfig);
+  const webpackConfig = getRspackConfigFilePath(
+    cliConfig.root,
+    args.webpackConfig
+  );
 
   const cliOptions = {
     config: {
