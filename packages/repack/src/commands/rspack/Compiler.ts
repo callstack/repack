@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import memfs from 'memfs';
 import mimeTypes from 'mime-types';
-import { rspack } from '@rspack/core';
+import { Configuration, rspack } from '@rspack/core';
 import type {
   MultiCompiler,
   StatsCompilation,
@@ -50,7 +50,7 @@ export class Compiler {
     const configs = await Promise.all(
       this.platforms.map(async (platform) => {
         const env = { ...webpackEnvOptions, platform };
-        const config = await loadConfig(
+        const config = await loadConfig<Configuration>(
           this.cliOptions.config.webpackConfigPath,
           env
         );

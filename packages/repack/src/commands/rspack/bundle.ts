@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 import { Config } from '@react-native-community/cli-types';
 import { stringifyStream } from '@discoveryjs/json-ext';
-import { rspack } from '@rspack/core';
+import { Configuration, rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../../env';
 import { BundleArguments, BundleCliOptions } from '../types';
@@ -48,7 +48,7 @@ export async function bundle(
   }
 
   const envOptions = getEnvOptions(cliOptions);
-  const config = await loadConfig(webpackConfig, envOptions);
+  const config = await loadConfig<Configuration>(webpackConfig, envOptions);
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {
     if (error) {

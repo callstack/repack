@@ -1,16 +1,19 @@
 import path from 'node:path';
 import { workerData, parentPort } from 'node:worker_threads';
 import memfs from 'memfs';
-import webpack from 'webpack';
+import webpack, { Configuration } from 'webpack';
 import { getEnvOptions, loadConfig } from '../common';
 import type { WebpackWorkerOptions } from './types';
 
 async function main({ cliOptions, platform }: WebpackWorkerOptions) {
   const webpackEnvOptions = getEnvOptions(cliOptions);
-  const webpackConfig = await loadConfig(cliOptions.config.webpackConfigPath, {
-    ...webpackEnvOptions,
-    platform,
-  });
+  const webpackConfig = await loadConfig<Configuration>(
+    cliOptions.config.webpackConfigPath,
+    {
+      ...webpackEnvOptions,
+      platform,
+    }
+  );
   const watchOptions = webpackConfig.watchOptions ?? {};
 
   webpackConfig.plugins = (webpackConfig.plugins ?? []).concat(

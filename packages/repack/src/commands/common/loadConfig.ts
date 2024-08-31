@@ -1,18 +1,14 @@
-import type { Configuration } from '@rspack/core';
 import { EnvOptions } from '../../types';
 
-type RspackConfig =
-  | Configuration
-  | ((
-      env: EnvOptions,
-      argv: Record<string, any>
-    ) => Configuration | Promise<Configuration>);
+type Configuration<T> =
+  | T
+  | ((env: EnvOptions, argv: Record<string, any>) => T | Promise<T>);
 
-export async function loadConfig(
+export async function loadConfig<C extends Record<string, any>>(
   configFilePath: string,
   env: EnvOptions
-): Promise<Configuration> {
-  let config: RspackConfig;
+): Promise<C> {
+  let config: Configuration<C>;
 
   try {
     config = require(configFilePath);
@@ -21,7 +17,7 @@ export async function loadConfig(
   }
 
   if ('default' in config) {
-    config = (config as { default: RspackConfig }).default;
+    config = config.default as Configuration<C>;
   }
 
   if (typeof config === 'function') {
