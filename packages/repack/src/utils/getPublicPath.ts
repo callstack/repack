@@ -1,4 +1,4 @@
-import { DevServerOptions } from '../../types';
+import { DevServerOptions } from '../types';
 
 /** {@link getPublicPath} options. */
 export interface GetPublicPathOptions {

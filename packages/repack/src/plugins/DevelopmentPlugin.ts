@@ -1,6 +1,6 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import RspackReactRefreshPlugin from '@rspack/plugin-react-refresh';
-import type { DevServerOptions } from '../../types';
+import type { DevServerOptions } from '../types';
 
 type PackageJSON = { version: string };
 /**

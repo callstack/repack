@@ -1,5 +1,5 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import type { DevServerOptions } from '../../types';
+import type { DevServerOptions } from '../types';
 import { DevelopmentPlugin } from './DevelopmentPlugin';
 import { LoggerPlugin, LoggerPluginConfig } from './LoggerPlugin';
 import { OutputPlugin, OutputPluginConfig } from './OutputPlugin';

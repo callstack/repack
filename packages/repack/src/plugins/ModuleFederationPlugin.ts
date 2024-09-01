@@ -1,5 +1,5 @@
 import type { container, Compiler, RspackPluginInstance } from '@rspack/core';
-import { Federated } from '../federated';
+import { Federated } from '../utils';
 
 type ModuleFederationPluginOptions =
   typeof container.ModuleFederationPluginV1 extends {

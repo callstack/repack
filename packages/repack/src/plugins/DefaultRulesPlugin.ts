@@ -3,7 +3,7 @@ import {
   REACT_NATIVE_CODEGEN_RULES,
   REACT_NATIVE_LOADING_RULES,
   NODE_MODULES_LOADING_RULES,
-} from '../../rules';
+} from '../rules';
 
 /**
  * {@link DefaultRulesPlugin} configuration options.

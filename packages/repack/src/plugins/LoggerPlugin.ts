@@ -1,5 +1,5 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import { VERBOSE_ENV_KEY } from '../../env';
+import { VERBOSE_ENV_KEY } from '../env';
 import {
   composeReporters,
   FileReporter,
@@ -7,7 +7,7 @@ import {
   Reporter,
   LogEntry,
   LogType,
-} from '../../logging';
+} from '../logging';
 
 export type GenericFilter = Array<string | RegExp>;
 
