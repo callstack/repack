@@ -1,9 +1,5 @@
 import readline from 'node:readline';
-
-type Logger = {
-  info: (...message: string[]) => void;
-  warn: (...message: string[]) => void;
-};
+import { Logger } from '../../types';
 
 export function setupInteractions(
   handlers: {

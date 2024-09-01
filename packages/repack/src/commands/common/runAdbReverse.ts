@@ -1,9 +1,5 @@
 import execa from 'execa';
-
-type Logger = {
-  info: (...message: string[]) => void;
-  warn: (...message: string[]) => void;
-};
+import { Logger } from '../../types';
 
 export async function runAdbReverse(port: number, logger: Logger = console) {
   const adbPath = process.env.ANDROID_HOME

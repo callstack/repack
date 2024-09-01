@@ -1,12 +1,7 @@
 import fs from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 import { stringifyStream } from '@discoveryjs/json-ext';
-
-type Logger = {
-  info: (...message: string[]) => void;
-  warn: (...message: string[]) => void;
-  error: (...message: string[]) => void;
-};
+import { Logger } from '../../types';
 
 export function normalizeStatsOptions<Stats>(
   options: Stats,
