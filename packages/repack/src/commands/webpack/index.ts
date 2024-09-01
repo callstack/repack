@@ -10,19 +10,24 @@ const commands = [
     func: bundle,
   },
   {
+    name: 'webpack-bundle',
+    description: 'Build the bundle for the provided JavaScript entry file.',
+    options: bundleCommandOptions,
+    func: bundle,
+  },
+  {
     name: 'start',
     description: 'Start the React Native development server.',
     options: startCommandOptions,
     func: start,
   },
-];
+  {
+    name: 'webpack-start',
+    description: 'Start the React Native development server.',
+    options: startCommandOptions,
+    func: start,
+  },
+] as const;
 
-const webpackCommands = commands.map((command) => ({
-  name: `webpack-${command.name}`,
-  description: command.description,
-  options: command.options,
-  func: command.func,
-}));
-
-export default [...commands, ...webpackCommands];
-module.exports = [...commands, ...webpackCommands];
+export default commands;
+module.exports = commands;
