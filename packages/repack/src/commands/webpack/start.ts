@@ -45,7 +45,6 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       webpackConfigPath,
     },
     command: 'start',
-    // @ts-ignore TODO fix (jbroma)
     arguments: { start: { ...restArgs } },
   };
 

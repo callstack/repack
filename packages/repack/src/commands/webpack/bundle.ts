@@ -82,7 +82,6 @@ export async function bundle(
     }
   };
 
-  // @ts-ignore TODO fix (jbroma)
   const compiler = webpack(webpackConfig);
 
   return new Promise<void>((resolve) => {

@@ -118,7 +118,6 @@ async function compileBundle(
   );
 }
 
-// TODO Fix when input filesystem is supported
 describe('assetLoader', () => {
   const fixtures = loadFixtures(
     'logo.png',

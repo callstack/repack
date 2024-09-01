@@ -9,10 +9,7 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
   const webpackEnvOptions = getEnvOptions(cliOptions);
   const webpackConfig = await loadConfig<Configuration>(
     cliOptions.config.webpackConfigPath,
-    {
-      ...webpackEnvOptions,
-      platform,
-    }
+    { ...webpackEnvOptions, platform }
   );
   const watchOptions = webpackConfig.watchOptions ?? {};
 
@@ -30,7 +27,6 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
     })
   );
 
-  // @ts-ignore TODO fix (jbroma)
   const compiler = webpack(webpackConfig);
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());

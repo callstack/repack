@@ -59,7 +59,6 @@ async function compileBundle(
   );
 }
 
-// TODO Fix when input filesystem is supported
 describe('CodeSigningPlugin', () => {
   it('adds code-signing signatures to chunk files', async () => {
     const { getBundle } = await compileBundle(
