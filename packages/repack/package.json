@@ -5,6 +5,18 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "react-native": "",
+  "exports": {
+    ".": "./dist/index.js",
+    "./commands/webpack": {
+      "import": "./dist/commands/webpack/index.js",
+      "require": "./dist/commands/webpack/index.js"
+    },
+    "./commands/rspack": {
+      "import": "./dist/commands/rspack/index.js",
+      "require": "./dist/commands/rspack/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist",
     "docs",
