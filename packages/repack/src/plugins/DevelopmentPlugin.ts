@@ -65,13 +65,13 @@ export class DevelopmentPlugin implements RspackPluginInstance {
 
       new compiler.webpack.EntryPlugin(
         compiler.context,
-        require.resolve('../../modules/configurePublicPath'),
+        require.resolve('../modules/configurePublicPath'),
         { name: undefined }
       ).apply(compiler);
 
       new compiler.webpack.EntryPlugin(
         compiler.context,
-        require.resolve('../../modules/WebpackHMRClient'),
+        require.resolve('../modules/WebpackHMRClient'),
         { name: undefined }
       ).apply(compiler);
 
