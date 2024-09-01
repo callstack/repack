@@ -1,11 +1,14 @@
-import fs from 'node:fs';
-import { pipeline } from 'node:stream/promises';
 import { Config } from '@react-native-community/cli-types';
 import webpack, { Configuration } from 'webpack';
-import { stringifyStream } from '@discoveryjs/json-ext';
 import { VERBOSE_ENV_KEY } from '../../env';
 import { BundleArguments, CliOptions } from '../types';
-import { getWebpackConfigFilePath, getEnvOptions, loadConfig } from '../common';
+import {
+  getWebpackConfigFilePath,
+  getEnvOptions,
+  loadConfig,
+  normalizeStatsOptions,
+  writeStats,
+} from '../common';
 
 /**
  * Bundle command for React Native CLI.
@@ -69,30 +72,13 @@ export async function bundle(
     }
 
     if (args.json && stats !== undefined) {
-      console.log(`Writing compiler stats`);
+      const statsOptions = normalizeStatsOptions(
+        compiler.options.stats,
+        args.stats
+      );
 
-      let statOptions: Parameters<typeof stats.toJson>[0];
-      if (args.stats !== undefined) {
-        statOptions = { preset: args.stats };
-      } else if (typeof compiler.options.stats === 'boolean') {
-        statOptions = compiler.options.stats
-          ? { preset: 'normal' }
-          : { preset: 'none' };
-      } else {
-        statOptions = compiler.options.stats;
-      }
-
-      try {
-        // Stats can be fairly big at which point their JSON no longer fits into a single string.
-        // Approach was copied from `webpack-cli`: https://github.com/webpack/webpack-cli/blob/c03fb03d0aa73d21f16bd9263fd3109efaf0cd28/packages/webpack-cli/src/webpack-cli.ts#L2471-L2482
-        const statsStream = stringifyStream(stats.toJson(statOptions));
-        const outputStream = fs.createWriteStream(args.json);
-        await pipeline(statsStream, outputStream);
-        console.log(`Wrote compiler stats to ${args.json}`);
-      } catch (error) {
-        console.error(error);
-        process.exit(2);
-      }
+      const statsJson = stats.toJson(statsOptions);
+      await writeStats(statsJson, args.json);
     }
   };
 
