@@ -15,7 +15,6 @@
   },
   "files": [
     "dist",
-    "docs",
     "android",
     "!android/build",
     "ios",
