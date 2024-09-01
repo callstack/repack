@@ -2,15 +2,34 @@
   "name": "@callstack/repack",
   "version": "4.3.1",
   "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "react-native": "",
   "exports": {
-    ".": "./dist/index.js",
-    "./commands/webpack": "./dist/commands/webpack/index.js",
-    "./commands/rspack": "./dist/commands/rspack/index.js",
-    "./assets-loader": "./dist/loaders/assetsLoader/index.js",
-    "./flow-loader": "./dist/loaders/flowLoader/index.js",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/modules/ScriptManager/index.d.ts",
+      "default": "./dist/modules/ScriptManager/index.js"
+    },
+    "./commands/webpack": {
+      "types": "./dist/commands/webpack/index.d.ts",
+      "default": "./dist/commands/webpack/index.js"
+    },
+    "./commands/rspack": {
+      "types": "./dist/commands/rspack/index.d.ts",
+      "default": "./dist/commands/rspack/index.js"
+    },
+    "./assets-loader": {
+      "types": "./dist/loaders/assetsLoader/index.d.ts",
+      "default": "./dist/loaders/assetsLoader/index.js"
+    },
+    "./flow-loader": {
+      "types": "./dist/loaders/flowLoader/index.d.ts",
+      "default": "./dist/loaders/flowLoader/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -22,8 +41,7 @@
     "client.js",
     "client.d.ts",
     "callstack-repack.podspec",
-    "src/modules/ScriptManager/NativeScriptManager.ts",
-    "CHANGELOG.md"
+    "src/modules/ScriptManager/NativeScriptManager.ts"
   ],
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
