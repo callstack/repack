@@ -61,7 +61,7 @@ export const optionsSchema: Schema = {
 export function getOptions(
   loaderContext: LoaderContext<AssetLoaderOptions>
 ): AssetLoaderOptions {
-  const options = loaderContext.getOptions(loaderContext) || {};
+  const options = loaderContext.getOptions() || {};
 
   validate(optionsSchema, options, { name: 'repackAssetsLoader' });
 
