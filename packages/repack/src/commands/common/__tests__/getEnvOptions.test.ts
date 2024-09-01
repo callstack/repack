@@ -69,7 +69,6 @@ describe('getEnvOptions', () => {
         arguments: {
           start: {
             host: 'localhost',
-            platforms: [],
           },
         },
       })
@@ -95,7 +94,6 @@ describe('getEnvOptions', () => {
         command: 'start',
         arguments: {
           start: {
-            platforms: [],
             port: 5000,
             host: 'local',
           },
