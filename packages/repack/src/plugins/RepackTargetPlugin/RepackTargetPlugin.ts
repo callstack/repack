@@ -1,4 +1,10 @@
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import path from 'node:path';
+import type { Compiler, Compilation, RspackPluginInstance } from '@rspack/core';
+import type { RuntimeModule as WebpackRuntimeModule } from 'webpack';
+
+type RspackRuntimeModule = Parameters<
+  Compilation['hooks']['runtimeModule']['call']
+>[0];
 
 /**
  * {@link RepackTargetPlugin} configuration options.
@@ -23,6 +29,24 @@ export class RepackTargetPlugin implements RspackPluginInstance {
    */
   constructor(private config?: RepackTargetPluginConfig) {}
 
+  replaceRuntimeModule(
+    module: RspackRuntimeModule | WebpackRuntimeModule,
+    content: string
+  ) {
+    // webpack
+    if ('getGeneratedCode' in module) {
+      module.getGeneratedCode = () => content;
+      return;
+    }
+
+    // rspack
+    if (module.source !== undefined) {
+      module.source.source = Buffer.from(content, 'utf-8');
+    } else {
+      // should never happen
+      throw new Error('Module source is not available');
+    }
+  }
   /**
    * Apply the plugin.
    *
@@ -49,8 +73,17 @@ export class RepackTargetPlugin implements RspackPluginInstance {
 
     // Replace React Native's HMRClient.js with custom Webpack-powered DevServerClient.
     new compiler.webpack.NormalModuleReplacementPlugin(
-      /react-native.*?([/\\]+)Libraries[/\\]Utilities[/\\]HMRClient\.js$/,
-      require.resolve('../../modules/DevServerClient')
+      /react-native.*?([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/,
+      function (resource) {
+        const request = require.resolve('../../modules/DevServerClient');
+        const context = path.dirname(request);
+        resource.request = request;
+        resource.context = context;
+        // @ts-ignore
+        resource.createData.resource = request;
+        // @ts-ignore
+        resource.createData.context = context;
+      }
     ).apply(compiler);
 
     // ReactNativeTypes.js is flow type only module
@@ -69,7 +102,8 @@ export class RepackTargetPlugin implements RspackPluginInstance {
            * 1. HMR is enabled
            * 2. Dynamic import is used anywhere in the project
            */
-          if (module.name === 'load_script') {
+          if (module.name === 'load_script' || module.name === 'load script') {
+            console.log('module', module.name);
             const loadScriptGlobal = compiler.webpack.RuntimeGlobals.loadScript;
             const loadScriptRuntimeModule = Template.asString([
               Template.getFunctionContent(
@@ -87,13 +121,10 @@ export class RepackTargetPlugin implements RspackPluginInstance {
             ]);
 
             // combine both runtime modules
-            const repackRuntimeModule = Buffer.from(
-              `${loadScriptRuntimeModule}\n${initRuntimeModule}`,
-              'utf-8'
-            );
+            const repackRuntimeModule = `${loadScriptRuntimeModule}\n${initRuntimeModule}`;
 
             // inject runtime module
-            module.source!.source = repackRuntimeModule;
+            this.replaceRuntimeModule(module, repackRuntimeModule.toString());
           }
 
           // Remove CSS runtime modules
@@ -101,7 +132,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
             module.name === 'css_loading' ||
             module.name === 'get css chunk filename'
           ) {
-            module.source!.source = Buffer.from(`// noop`, 'utf-8');
+            this.replaceRuntimeModule(module, '// noop');
           }
         }
       );
