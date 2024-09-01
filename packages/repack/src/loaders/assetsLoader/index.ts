@@ -1,1 +1,5 @@
-export { default, raw } from './assetsLoader';
+import assetsLoader, { raw } from './assetsLoader';
+
+export { raw };
+export default assetsLoader;
+module.exports = assetsLoader;

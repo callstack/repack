@@ -7,14 +7,10 @@
   "react-native": "",
   "exports": {
     ".": "./dist/index.js",
-    "./commands/webpack": {
-      "import": "./dist/commands/webpack/index.js",
-      "require": "./dist/commands/webpack/index.js"
-    },
-    "./commands/rspack": {
-      "import": "./dist/commands/rspack/index.js",
-      "require": "./dist/commands/rspack/index.js"
-    },
+    "./commands/webpack": "./dist/commands/webpack/index.js",
+    "./commands/rspack": "./dist/commands/rspack/index.js",
+    "./assets-loader": "./dist/loaders/assetsLoader/index.js",
+    "./flow-loader": "./dist/loaders/flowLoader/index.js",
     "./package.json": "./package.json"
   },
   "files": [
@@ -26,8 +22,6 @@
     "!ios/build",
     "client.js",
     "client.d.ts",
-    "assets-loader.js",
-    "flow-loader.js",
     "callstack-repack.podspec",
     "src/modules/ScriptManager/NativeScriptManager.ts",
     "CHANGELOG.md"
