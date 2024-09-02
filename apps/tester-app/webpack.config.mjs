@@ -94,12 +94,6 @@ export default (env) => {
           exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
-            options: {
-              plugins:
-                devServer && devServer.hmr
-                  ? ['module:react-refresh/babel']
-                  : undefined,
-            },
           },
         },
         {

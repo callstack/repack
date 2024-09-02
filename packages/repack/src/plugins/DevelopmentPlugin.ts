@@ -1,5 +1,5 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import RspackReactRefreshPlugin from '@rspack/plugin-react-refresh';
+import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
 import type { DevServerOptions } from '../types';
 
 type PackageJSON = { version: string };
@@ -48,20 +48,21 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     }).apply(compiler);
 
     if (this.config?.devServer.hmr) {
-      // TODO Align this with output.hotModuleUpdateChunkFilename?
-      // setup HMR source maps
-      new compiler.webpack.SourceMapDevToolPlugin({
-        test: /\.hot-update\.js$/,
-        filename: '[file].map',
-        append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
-        module: true,
-        columns: true,
-        noSources: false,
-      }).apply(compiler);
-
       // setup HMR
       new compiler.webpack.HotModuleReplacementPlugin().apply(compiler);
-      new RspackReactRefreshPlugin().apply(compiler);
+
+      // add react-refresh-loader fallback for compatibility with Webpack
+      compiler.options.resolveLoader = {
+        ...compiler.options.resolveLoader,
+        fallback: {
+          ...compiler.options.resolveLoader?.fallback,
+          'builtin:react-refresh-loader': require.resolve(
+            '../loaders/reactRefreshCompatLoader'
+          ),
+        },
+      };
+
+      new ReactRefreshPlugin({ overlay: false }).apply(compiler);
 
       new compiler.webpack.EntryPlugin(
         compiler.context,
@@ -75,7 +76,15 @@ export class DevelopmentPlugin implements RspackPluginInstance {
         { name: undefined }
       ).apply(compiler);
 
-      // TODO Bring back lazy compilation when it's implemented in rspack
+      // setup HMR source maps
+      new compiler.webpack.SourceMapDevToolPlugin({
+        test: /\.hot-update\.js$/,
+        filename: '[file].map',
+        append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
+        module: true,
+        columns: true,
+        noSources: false,
+      }).apply(compiler);
     }
   }
 }
