@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import throttle from 'lodash.throttle';
+import fs from 'node:fs';
+import path from 'node:path';
+import throttle from 'throttleit';
 import type { LogEntry, Reporter } from '../types';
 
 export interface FileReporterConfig {

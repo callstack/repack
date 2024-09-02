@@ -100,13 +100,13 @@
     "flow-remove-types": "2.236.0",
     "image-size": "^1.1.1",
     "jsonwebtoken": "^9.0.2",
-    "lodash.throttle": "^4.1.1",
     "memfs": "^4.11.1",
     "mime-types": "^2.1.35",
     "pretty-format": "^26.6.2",
     "react-refresh": "^0.14.0",
     "schema-utils": "^4.2.0",
-    "shallowequal": "^1.1.0"
+    "shallowequal": "^1.1.0",
+    "throttleit": "^2.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.9",
@@ -121,7 +121,6 @@
     "@types/dedent": "^0.7.0",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.0",
-    "@types/lodash.throttle": "^4.1.9",
     "@types/mime-types": "^2.1.1",
     "@types/node": "^18",
     "@types/react-dom": "^17.0.7",

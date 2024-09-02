@@ -1,5 +1,6 @@
-import util from 'util';
+import util from 'node:util';
 import colorette from 'colorette';
+import throttle from 'throttleit';
 import type { LogEntry, LogType, Reporter } from '../types';
 
 export interface ConsoleReporterConfig {
@@ -178,7 +179,7 @@ class InteractiveConsoleReporter implements Reporter {
     };
   }
 
-  private processProgress = (log: LogEntry) => {
+  private processProgress = throttle((log: LogEntry) => {
     const {
       progress: { value, label, message, platform },
     } = log.message[0] as {
@@ -204,7 +205,7 @@ class InteractiveConsoleReporter implements Reporter {
         ),
       })}\n`
     );
-  };
+  }, 1000);
 
   private prettifyLog(log: LogEntry) {
     let body = '';
