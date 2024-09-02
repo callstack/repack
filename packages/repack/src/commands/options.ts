@@ -47,6 +47,10 @@ export const startCommandOptions = [
     parse: (val: string) => path.resolve(val),
   },
   {
+    name: '--log-requests',
+    description: 'Enables logging of all requests to the server',
+  },
+  {
     name: '--reverse-port',
     description: 'ADB reverse port on starting devServers only for Android',
   },

@@ -23,6 +23,7 @@ export interface StartArguments {
   experimentalDebugger?: boolean;
   json?: boolean;
   logFile?: string;
+  logRequests?: boolean;
   reversePort?: boolean;
   silent?: boolean;
   verbose?: boolean;

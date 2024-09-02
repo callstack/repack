@@ -58,6 +58,8 @@ export async function start(
     : // TODO fix (jbroma)
       // eslint-disable-next-line prettier/prettier
       (args.verbose ?? process.argv.includes('--verbose'));
+
+  const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(
     [
       new ConsoleReporter({
@@ -88,6 +90,7 @@ export async function start(
             key: args.key,
           }
         : undefined,
+      logRequests: showHttpRequests,
     },
     experiments: {
       experimentalDebugger: args.experimentalDebugger,
