@@ -5,9 +5,9 @@ let enableDebugger: () => void;
 let disableDebugger: () => void;
 
 if (__DEV__) {
-  const { default: NativeDevSettings } = await import(
-    'react-native/Libraries/NativeModules/specs/NativeDevSettings'
-  );
+  const {
+    default: NativeDevSettings,
+  } = require('react-native/Libraries/NativeModules/specs/NativeDevSettings');
   enableDebugger = () => {
     NativeDevSettings.setIsDebuggingRemotely(true);
   };
