@@ -45,7 +45,7 @@ export class Compiler extends EventEmitter {
     process.env[WORKER_ENV_KEY] = '1';
     process.env[VERBOSE_ENV_KEY] = this.isVerbose ? '1' : undefined;
 
-    const worker = new Worker(path.join(__dirname, './webpackWorker.js'), {
+    const worker = new Worker(path.join(__dirname, './CompilerWorker.js'), {
       stdout: true,
       stderr: true,
       env: SHARE_ENV,
@@ -91,6 +91,8 @@ export class Compiler extends EventEmitter {
               event: 'progress';
               total: number;
               completed: number;
+              percentage: number;
+              label: string;
               message: string;
             }
           | { event: 'error'; error: Error }
@@ -125,16 +127,28 @@ export class Compiler extends EventEmitter {
         } else if (value.event === 'error') {
           this.emit(value.event, value.error);
         } else if (value.event === 'progress') {
-          this.progressSenders[platform].forEach((sendProgress) =>
+          this.progressSenders[platform].forEach((sendProgress) => {
+            if (Number.isNaN(value.total)) return;
+            if (Number.isNaN(value.completed)) return;
             sendProgress({
               total: value.total,
               completed: value.completed,
-            })
-          );
-          this.emit(value.event, {
-            total: value.total,
-            completed: value.completed,
-            message: value.message,
+            });
+          });
+          this.reporter.process({
+            issuer: 'DevServer',
+            message: [
+              {
+                progress: {
+                  value: value.percentage,
+                  label: value.label,
+                  message: value.message,
+                  platform,
+                },
+              },
+            ],
+            timestamp: Date.now(),
+            type: 'progress',
           });
         } else {
           this.isCompilationInProgress[platform] = true;

@@ -54,7 +54,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     ? false
     : // TODO fix in a separate PR (jbroma)
       // eslint-disable-next-line prettier/prettier
-      (args.verbose ?? process.argv.includes('--verbose'));
+      args.verbose ?? process.argv.includes('--verbose');
 
   const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(

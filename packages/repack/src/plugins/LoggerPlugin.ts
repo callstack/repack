@@ -134,25 +134,6 @@ export class LoggerPlugin implements RspackPluginInstance {
       compiler.options.stats = 'none';
     }
 
-    if (this.config.devServerEnabled) {
-      // @ts-ignore TODO compat (jbroma)
-      new compiler.webpack.ProgressPlugin((percentage, message, text) => {
-        const entry = this.createEntry('LoggerPlugin', 'info', [
-          {
-            progress: {
-              value: percentage,
-              label: message,
-              message: text,
-              platform: this.config.platform,
-            },
-          },
-        ]);
-        if (entry) {
-          this.processEntry(entry);
-        }
-      }).apply(compiler);
-    }
-
     compiler.hooks.infrastructureLog.tap(
       'LoggerPlugin',
       (issuer, type, args) => {

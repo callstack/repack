@@ -14,16 +14,21 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
   const watchOptions = webpackConfig.watchOptions ?? {};
 
   webpackConfig.plugins = (webpackConfig.plugins ?? []).concat(
-    new webpack.ProgressPlugin((_1, _2, message) => {
-      const [, completed, total] = /(\d+)\/(\d+) modules/.exec(message) ?? [];
-      if (completed !== undefined && total !== undefined) {
+    new webpack.ProgressPlugin({
+      entries: false,
+      dependencies: false,
+      modules: true,
+      handler: (percentage, message, text) => {
+        const [, completed, total] = /(\d+)\/(\d+) modules/.exec(text) ?? [];
         parentPort?.postMessage({
           event: 'progress',
           completed: parseInt(completed, 10),
           total: parseInt(total, 10),
-          message,
+          percentage: percentage,
+          label: message,
+          message: text,
         });
-      }
+      },
     })
   );
 
