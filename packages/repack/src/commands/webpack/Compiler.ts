@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { Worker, SHARE_ENV } from 'node:worker_threads';
+import { Worker } from 'node:worker_threads';
 import EventEmitter from 'events';
 import webpack from 'webpack';
 import mimeTypes from 'mime-types';
@@ -42,13 +42,14 @@ export class Compiler extends EventEmitter {
       platform,
     };
 
-    process.env[WORKER_ENV_KEY] = '1';
-    process.env[VERBOSE_ENV_KEY] = this.isVerbose ? '1' : undefined;
-
     const worker = new Worker(path.join(__dirname, './CompilerWorker.js'), {
       stdout: true,
       stderr: true,
-      env: SHARE_ENV,
+      env: {
+        ...process.env,
+        [WORKER_ENV_KEY]: '1',
+        [VERBOSE_ENV_KEY]: this.isVerbose ? '1' : undefined,
+      },
       workerData,
     });
 
