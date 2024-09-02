@@ -1,5 +1,5 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import { VERBOSE_ENV_KEY } from '../env';
+import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
 import {
   composeReporters,
   FileReporter,
@@ -62,6 +62,7 @@ export class LoggerPlugin implements RspackPluginInstance {
     if (this.config.output.console) {
       reporters.push(
         new ConsoleReporter({
+          isWorker: Boolean(process.env[WORKER_ENV_KEY]),
           level: process.env[VERBOSE_ENV_KEY] ? 'verbose' : 'normal',
         })
       );
@@ -131,6 +132,25 @@ export class LoggerPlugin implements RspackPluginInstance {
     // Make sure webpack-cli doesn't print stats by default.
     if (compiler.options.stats === undefined) {
       compiler.options.stats = 'none';
+    }
+
+    if (this.config.devServerEnabled) {
+      // @ts-ignore TODO compat (jbroma)
+      new compiler.webpack.ProgressPlugin((percentage, message, text) => {
+        const entry = this.createEntry('LoggerPlugin', 'info', [
+          {
+            progress: {
+              value: percentage,
+              label: message,
+              message: text,
+              platform: this.config.platform,
+            },
+          },
+        ]);
+        if (entry) {
+          this.processEntry(entry);
+        }
+      }).apply(compiler);
     }
 
     compiler.hooks.infrastructureLog.tap(

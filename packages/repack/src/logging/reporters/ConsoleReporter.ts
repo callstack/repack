@@ -5,15 +5,17 @@ import type { LogEntry, LogType, Reporter } from '../types';
 export interface ConsoleReporterConfig {
   asJson?: boolean;
   level?: 'silent' | 'normal' | 'verbose';
+  isWorker?: boolean;
 }
 
 export class ConsoleReporter implements Reporter {
   private internalReporter: Reporter;
 
   constructor(private config: ConsoleReporterConfig) {
-    this.internalReporter = this.config.asJson
-      ? new JsonConsoleReporter(this.config)
-      : new InteractiveConsoleReporter(this.config);
+    this.internalReporter =
+      this.config.isWorker || this.config.asJson
+        ? new JsonConsoleReporter(this.config)
+        : new InteractiveConsoleReporter(this.config);
   }
 
   process(log: LogEntry) {
@@ -56,6 +58,7 @@ const SYMBOLS: Record<LogType, string> = {
   warn: colorette.yellow('⚠'),
   error: colorette.red('✖'),
   success: colorette.green('✔'),
+  progress: colorette.green('⇢'),
 };
 
 const FALLBACK_SYMBOLS: Record<LogType, string> = {
@@ -64,6 +67,7 @@ const FALLBACK_SYMBOLS: Record<LogType, string> = {
   warn: colorette.yellow('!'),
   error: colorette.red('x'),
   success: colorette.green('✓'),
+  progress: colorette.green('->'),
 };
 
 class InteractiveConsoleReporter implements Reporter {
@@ -79,6 +83,12 @@ class InteractiveConsoleReporter implements Reporter {
 
     // Do not log debug messages in non-verbose mode
     if (log.type === 'debug' && this.config.level !== 'verbose') {
+      return;
+    }
+
+    const [firstMessage] = log.message;
+    if (typeof firstMessage === 'object' && 'progress' in firstMessage) {
+      this.processProgress(log);
       return;
     }
 
@@ -167,6 +177,34 @@ class InteractiveConsoleReporter implements Reporter {
       message,
     };
   }
+
+  private processProgress = (log: LogEntry) => {
+    const {
+      progress: { value, label, message, platform },
+    } = log.message[0] as {
+      progress: {
+        value: number;
+        label: string;
+        message: string;
+        platform: string;
+      };
+    };
+
+    const percentage = Math.floor(value * 100);
+
+    process.stdout.write(
+      `${
+        IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
+      } ${this.prettifyLog({
+        timestamp: log.timestamp,
+        issuer: log.issuer,
+        type: 'info',
+        message: [`Compiling ${platform}: ${percentage}% ${label}`].concat(
+          ...(message ? [`(${message})`] : [])
+        ),
+      })}\n`
+    );
+  };
 
   private prettifyLog(log: LogEntry) {
     let body = '';
