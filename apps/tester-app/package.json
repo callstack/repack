@@ -41,7 +41,9 @@
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
     "react-native-test-app": "^3.8.9",
+    "terser-webpack-plugin": "^5.3.10",
     "typescript": "^5.5.3",
-    "vitest": "^0.15.1"
+    "vitest": "^0.15.1",
+    "webpack": "^5.94.0"
   }
 }

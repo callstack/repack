@@ -159,12 +159,18 @@ importers:
       react-native-test-app:
         specifier: ^3.8.9
         version: 3.8.9(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
+      terser-webpack-plugin:
+        specifier: ^5.3.10
+        version: 5.3.10(webpack@5.94.0)
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
       vitest:
         specifier: ^0.15.1
         version: 0.15.2
+      webpack:
+        specifier: ^5.94.0
+        version: 5.94.0
 
   apps/tester-federation:
     dependencies:

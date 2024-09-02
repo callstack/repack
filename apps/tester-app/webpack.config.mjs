@@ -1,16 +1,15 @@
-// @ts-check
-/** @type {import('node:path')} */
-const path = require('node:path');
-/** @type {import('@callstack/repack')} */
-const Repack = require('@callstack/repack');
-/** @type {import('@rsdoctor/rspack-plugin')} */
-const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import TerserPlugin from 'terser-webpack-plugin';
+import * as Repack from '@callstack/repack';
 
-/** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
-module.exports = (env) => {
+const dirname = Repack.getDirname(import.meta.url);
+const { resolve } = createRequire(import.meta.url);
+
+export default (env) => {
   const {
     mode = 'development',
-    context = __dirname,
+    context = dirname,
     entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
@@ -18,8 +17,9 @@ module.exports = (env) => {
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
-    reactNativePath = require.resolve('react-native'),
+    reactNativePath = resolve('react-native'),
   } = env;
+
   if (!platform) {
     throw new Error('Missing platform');
   }
@@ -28,6 +28,20 @@ module.exports = (env) => {
     mode,
     devtool: false,
     context,
+    experiments: process.env.LAZY_COMPILATION
+      ? {
+          lazyCompilation: devServer && {
+            imports: true,
+            entries: false,
+          },
+        }
+      : undefined,
+    cache: process.env.NO_CACHE
+      ? undefined
+      : {
+          type: 'filesystem',
+          name: `${platform}-${mode}`,
+        },
     entry,
     resolve: {
       ...Repack.getResolveOptions(platform),
@@ -38,45 +52,56 @@ module.exports = (env) => {
     output: {
       clean: true,
       hashFunction: 'xxhash64',
-      path: path.join(context, 'build/generated', platform),
+      path: path.join(dirname, 'build/generated', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
     },
     optimization: {
       minimize,
+      minimizer: [
+        new TerserPlugin({
+          test: /\.(js)?bundle(\?.*)?$/i,
+          extractComments: false,
+          terserOptions: {
+            format: {
+              comments: false,
+            },
+          },
+        }),
+      ],
       chunkIds: 'named',
     },
     module: {
       rules: [
-        Repack.REACT_NATIVE_LOADING_RULES,
-        Repack.NODE_MODULES_LOADING_RULES,
+        {
+          test: /\.[cm]?[jt]sx?$/,
+          include: [
+            /node_modules(.*[/\\])+react-native/,
+            /node_modules(.*[/\\])+@react-native/,
+            /node_modules(.*[/\\])+@react-navigation/,
+            /node_modules(.*[/\\])+@react-native-community/,
+            /node_modules(.*[/\\])+expo/,
+            /node_modules(.*[/\\])+pretty-format/,
+            /node_modules(.*[/\\])+metro/,
+            /node_modules(.*[/\\])+abort-controller/,
+            /node_modules(.*[/\\])+@callstack[/\\]repack/,
+          ],
+          use: 'babel-loader',
+        },
         {
           test: /\.[jt]sx?$/,
-          exclude: [/node_modules/],
-          type: 'javascript/auto',
+          exclude: /node_modules/,
           use: {
-            loader: 'builtin:swc-loader',
-            /** @type {import('@rspack/core').SwcLoaderOptions} */
+            loader: 'babel-loader',
             options: {
-              env: {
-                targets: {
-                  'react-native': '0.74',
-                },
-              },
-              jsc: {
-                externalHelpers: true,
-                transform: {
-                  react: {
-                    runtime: 'automatic',
-                  },
-                },
-              },
+              plugins:
+                devServer && devServer.hmr
+                  ? ['module:react-refresh/babel']
+                  : undefined,
             },
           },
         },
-        // codegen needs to run before other loaders since it needs to access types
-        Repack.REACT_NATIVE_CODEGEN_RULES,
         {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
@@ -152,17 +177,7 @@ module.exports = (env) => {
         },
       ],
     },
-
     plugins: [
-      /**
-       * Configure other required and additional plugins to make the bundle
-       * work in React Native and provide good development experience with
-       * sensible defaults.
-       *
-       * `Repack.RepackPlugin` provides some degree of customization, but if you
-       * need more control, you can replace `Repack.RepackPlugin` with plugins
-       * from `Repack.plugins`.
-       */
       new Repack.RepackPlugin({
         context,
         mode,
@@ -191,7 +206,6 @@ module.exports = (env) => {
       //   test: /\.(js)?bundle$/,
       //   exclude: /index.bundle$/,
       // }),
-      process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
-    ].filter(Boolean),
+    ],
   };
 };
