@@ -70,10 +70,12 @@ export async function start(
     ].filter(Boolean) as Reporter[]
   );
 
-  const version = packageJson.version;
-  process.stdout.write(
-    colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
-  );
+  if (!isSilent) {
+    const version = packageJson.version;
+    process.stdout.write(
+      colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
+    );
+  }
 
   // @ts-ignore
   const compiler = new Compiler(cliOptions, reporter);
