@@ -103,7 +103,6 @@ export class RepackTargetPlugin implements RspackPluginInstance {
            * 2. Dynamic import is used anywhere in the project
            */
           if (module.name === 'load_script' || module.name === 'load script') {
-            console.log('module', module.name);
             const loadScriptGlobal = compiler.webpack.RuntimeGlobals.loadScript;
             const loadScriptRuntimeModule = Template.asString([
               Template.getFunctionContent(
