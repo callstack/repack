@@ -116,14 +116,12 @@ describe('bundle command', () => {
       });
 
       afterEach(() => {
-        delete process.env.TEST_WEBPACK_OUTPUT_PATH;
+        delete process.env.TEST_WEBPACK_OUTPUT_DIR;
       });
 
       it(
         `for ${platform}`,
         async () => {
-          const OUTPUT_DIR = path.join(TMP_DIR, platform);
-
           const config = {
             root: path.join(__dirname, '..'),
             platforms: { ios: {}, android: {} },
@@ -137,19 +135,19 @@ describe('bundle command', () => {
             platform,
             entryFile: 'index.js',
             bundleOutput: path.join(
-              OUTPUT_DIR,
+              TMP_DIR,
               'react-native-bundle-output',
               platform === 'ios' ? 'main.jsbundle' : `index.${platform}.bundle`
             ),
             dev: false,
             webpackConfig: path.join(__dirname, configFile),
           };
-          process.env.TEST_WEBPACK_OUTPUT_DIR = OUTPUT_DIR;
+          process.env.TEST_WEBPACK_OUTPUT_DIR = TMP_DIR;
 
           // @ts-ignore
           await bundleCommand.func([''], config, args);
 
-          const files = await globby([`**/*`], { cwd: OUTPUT_DIR, dot: true });
+          const files = await globby([`**/*`], { cwd: TMP_DIR, dot: true });
           expect(files.sort()).toEqual(assets.sort());
         },
         60 * 1000
