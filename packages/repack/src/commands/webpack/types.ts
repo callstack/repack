@@ -27,6 +27,12 @@ export interface CompilerAsset {
   size: number;
 }
 
+export interface WorkerAsset {
+  data: Uint8Array;
+  info: WebpackStatsAsset['info'];
+  size: number;
+}
+
 export namespace WorkerMessages {
   type WorkerMessageName =
     | 'watchRun'
@@ -63,7 +69,7 @@ export namespace WorkerMessages {
 
   export interface DoneMessage extends BaseWorkerMessage {
     event: 'done';
-    assets: Record<string, CompilerAsset>;
+    assets: Record<string, WorkerAsset>;
     stats: StatsCompilation;
   }
 

@@ -85,9 +85,23 @@ export class Compiler extends EventEmitter {
       if (value.event === 'done') {
         this.isCompilationInProgress[platform] = false;
         this.statsCache[platform] = value.stats;
-        this.assetsCache[platform] = value.assets;
-        callPendingResolvers();
+
+        this.assetsCache[platform] = {
+          // keep old assets, discard HMR-related ones
+          ...Object.fromEntries(
+            Object.entries(this.assetsCache[platform] ?? {}).filter(
+              ([_, asset]) => !asset.info.hotModuleReplacement
+            )
+          ),
+          // convert asset data Uint8Array to Buffer
+          ...Object.fromEntries(
+            Object.entries(value.assets).map(([name, { data, info, size }]) => {
+              return [name, { data: Buffer.from(data), info, size }];
+            })
+          ),
+        };
         this.emit(value.event, { platform, stats: value.stats });
+        callPendingResolvers();
       } else if (value.event === 'error') {
         this.emit(value.event, value.error);
       } else if (value.event === 'progress') {

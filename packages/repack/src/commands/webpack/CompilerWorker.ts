@@ -56,20 +56,50 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
   });
 
   compiler.hooks.done.tap('webpackWorker', (stats) => {
-    const outputDirectory = stats.compilation.outputOptions.path!;
-    const assets = stats.compilation
-      .getAssets()
-      .map(({ name, info }) => {
-        const filename = name;
-        const data = fileSystem.readFileSync(
-          path.join(outputDirectory, filename)
-        ) as Buffer;
-        return { data, filename, info, size: info.size! };
-      })
+    const compilerStats = stats.toJson({
+      all: false,
+      assets: true,
+      children: true,
+      outputPath: true,
+      timings: true,
+      hash: true,
+      errors: true,
+      warnings: true,
+    });
+
+    const assets = compilerStats.assets!;
+    const outputDirectory = compilerStats.outputPath!;
+
+    const compilerAssets = assets
+      .filter((asset) => asset.type === 'asset')
       .reduce(
-        (acc, asset) => {
-          const { filename, ...compilerAsset } = asset;
-          acc[adaptFilenameToPlatform(filename)] = compilerAsset;
+        (acc, { name, info, size }) => {
+          const assetPath = path.join(outputDirectory, name);
+          const data = fileSystem.readFileSync(assetPath) as Buffer;
+          const asset = { data, info, size };
+
+          acc[adaptFilenameToPlatform(name)] = asset;
+
+          if (info.related?.sourceMap) {
+            const sourceMapName = Array.isArray(info.related.sourceMap)
+              ? info.related.sourceMap[0]
+              : info.related.sourceMap;
+            const sourceMapPath = path.join(outputDirectory, sourceMapName);
+            const sourceMapData = fileSystem.readFileSync(
+              sourceMapPath
+            ) as Buffer;
+            const sourceMapAsset = {
+              data: sourceMapData,
+              info: {
+                hotModuleReplacement: info.hotModuleReplacement,
+                size: sourceMapData.length,
+              },
+              size: sourceMapData.length,
+            };
+
+            acc[adaptFilenameToPlatform(sourceMapName)] = sourceMapAsset;
+          }
+
           return acc;
         },
         {} as Record<string, CompilerAsset>
@@ -77,17 +107,8 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
 
     postMessage({
       event: 'done',
-      assets,
-      stats: stats.toJson({
-        all: false,
-        cached: true,
-        children: true,
-        modules: true,
-        timings: true,
-        hash: true,
-        errors: true,
-        warnings: false,
-      }),
+      assets: compilerAssets,
+      stats: compilerStats,
     });
   });
 

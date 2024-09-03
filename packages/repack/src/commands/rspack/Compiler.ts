@@ -127,7 +127,10 @@ export class Compiler {
                   ) as Buffer;
                   const sourceMapAsset = {
                     data: sourceMapData,
-                    info: {},
+                    info: {
+                      hotModuleReplacement: info.hotModuleReplacement,
+                      size: sourceMapData.length,
+                    },
                     size: sourceMapData.length,
                   };
 
