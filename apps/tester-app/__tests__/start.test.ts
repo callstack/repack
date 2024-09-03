@@ -103,6 +103,7 @@ describe('start command', () => {
 
           const args = {
             port,
+            platform,
             silent: true,
             logFile: path.join(TMP_DIR, 'server.log'),
             webpackConfig: path.join(__dirname, configFile),
