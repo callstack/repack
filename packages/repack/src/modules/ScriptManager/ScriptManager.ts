@@ -81,11 +81,14 @@ export interface ResolverOptions {
  * ```
  */
 export class ScriptManager extends EventEmitter {
-  static get shared(): ScriptManager {
+  static init() {
     if (!__webpack_require__.repack.shared.scriptManager) {
       __webpack_require__.repack.shared.scriptManager = new ScriptManager();
     }
-    return __webpack_require__.repack.shared.scriptManager;
+  }
+
+  static get shared(): ScriptManager {
+    return __webpack_require__.repack.shared.scriptManager!;
   }
 
   protected cache: Cache = {};
@@ -388,5 +391,21 @@ export class ScriptManager extends EventEmitter {
         code ? `[${code}]` : ''
       );
     }
+  }
+
+  /**
+   * Evaluates a script synchronously.
+   *
+   * This function sends the script source and its URL to the native script manager for evaluation.
+   * It is functionally identical to `globalEvalWithSourceUrl`.
+   *
+   * @param scriptSource The source code of the script to evaluate.
+   * @param scriptSourceUrl The URL of the script source, used for debugging purposes.
+   */
+  unstable_evaluateScript(scriptSource: string, scriptSourceUrl: string) {
+    this.nativeScriptManager.unstable_evaluateScript(
+      scriptSource,
+      scriptSourceUrl
+    );
   }
 }

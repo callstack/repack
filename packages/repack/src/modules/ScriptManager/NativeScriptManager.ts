@@ -35,6 +35,10 @@ export interface Spec extends TurboModule {
     scriptConfig: NormalizedScriptLocator
   ): Promise<null>;
   invalidateScripts(scripts: Array<string>): Promise<null>;
+  unstable_evaluateScript(
+    scriptSource: string,
+    scriptSourceUrl: string
+  ): boolean;
 }
 
 export default TurboModuleRegistry.get<Spec>('ScriptManager') as Spec;

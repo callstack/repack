@@ -63,16 +63,14 @@ module.exports = function () {
     )
       .then(function (script?: string) {
         if (script) {
-          // @ts-ignore
-          const globalEvalWithSourceUrl = self.globalEvalWithSourceUrl;
-          (function () {
-            if (globalEvalWithSourceUrl) {
-              globalEvalWithSourceUrl(script, url);
-            } else {
-              eval(script);
-            }
-          }).call(self);
-          done();
+          if (repackRuntime.shared.scriptManager) {
+            repackRuntime.shared.scriptManager.unstable_evaluateScript(
+              script,
+              url
+            );
+          } else {
+            eval(script);
+          }
         }
 
         return;

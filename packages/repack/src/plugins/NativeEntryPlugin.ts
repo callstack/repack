@@ -58,5 +58,12 @@ export class NativeEntryPlugin implements RspackPluginInstance {
         name: undefined,
       }).apply(compiler);
     }
+
+    // Initialize ScriptManager
+    new compiler.webpack.EntryPlugin(
+      compiler.context,
+      require.resolve('../modules/InitializeScriptManager'),
+      { name: undefined }
+    ).apply(compiler);
   }
 }

@@ -17,4 +17,10 @@ struct NativeScriptLoader : public jni::HybridClass<NativeScriptLoader> {
       jni::alias_ref<JArrayByte> code,
       jni::alias_ref<JString> url,
       jni::alias_ref<JObject::javaobject> promise);
+
+  static void evaluateJavascriptSync(
+      jni::alias_ref<jhybridobject> jThis,
+      jlong jsRuntime,
+      jni::alias_ref<JArrayByte> code,
+      jni::alias_ref<JString> url);
 };
