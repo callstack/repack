@@ -44,6 +44,7 @@ export async function start(
   const cliOptions = {
     config: {
       root: cliConfig.root,
+      platforms: Object.keys(cliConfig.platforms),
       reactNativePath: cliConfig.reactNativePath,
       webpackConfigPath: configPath,
     },
@@ -51,13 +52,17 @@ export async function start(
     arguments: { start: { ...restArgs } },
   };
 
+  if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
+    throw new Error('Unrecognized platform: ' + args.platform);
+  }
+
   const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
   const isSilent = args.silent;
   const isVerbose = isSilent
     ? false
     : // TODO fix (jbroma)
       // eslint-disable-next-line prettier/prettier
-      (args.verbose ?? process.argv.includes('--verbose'));
+      args.verbose ?? process.argv.includes('--verbose');
 
   const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(

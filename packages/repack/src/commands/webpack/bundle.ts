@@ -1,7 +1,7 @@
 import { Config } from '@react-native-community/cli-types';
 import webpack, { Configuration } from 'webpack';
 import { VERBOSE_ENV_KEY } from '../../env';
-import { BundleArguments, CliOptions } from '../types';
+import { BundleArguments, BundleCliOptions } from '../types';
 import {
   getWebpackConfigFilePath,
   getEnvOptions,
@@ -24,25 +24,24 @@ import {
  */
 export async function bundle(
   _: string[],
-  config: Config,
+  cliConfig: Config,
   args: BundleArguments
 ) {
   const webpackConfigPath = getWebpackConfigFilePath(
-    config.root,
+    cliConfig.root,
     args.webpackConfig
   );
 
-  const cliOptions = {
+  const cliOptions: BundleCliOptions = {
     config: {
-      root: config.root,
-      reactNativePath: config.reactNativePath,
-      webpackConfigPath,
+      root: cliConfig.root,
+      configPath: webpackConfigPath,
+      platforms: Object.keys(cliConfig.platforms),
+      reactNativePath: cliConfig.reactNativePath,
     },
     command: 'bundle',
-    arguments: {
-      bundle: args,
-    },
-  } as CliOptions;
+    arguments: { bundle: args },
+  };
 
   if (!args.entryFile) {
     throw new Error("Option '--entry-file <path>' argument is missing");
@@ -52,10 +51,10 @@ export async function bundle(
     process.env[VERBOSE_ENV_KEY] = '1';
   }
 
-  const webpackEnvOptions = getEnvOptions(cliOptions);
+  const envOptions = getEnvOptions(cliOptions);
   const webpackConfig = await loadConfig<Configuration>(
     webpackConfigPath,
-    webpackEnvOptions
+    envOptions
   );
 
   const errorHandler = async (error: Error | null, stats?: webpack.Stats) => {

@@ -28,22 +28,21 @@ export async function bundle(
   cliConfig: Config,
   args: BundleArguments
 ) {
-  const webpackConfig = getRspackConfigFilePath(
+  const rspackConfigPath = getRspackConfigFilePath(
     cliConfig.root,
     args.webpackConfig
   );
 
-  const cliOptions = {
+  const cliOptions: BundleCliOptions = {
     config: {
       root: cliConfig.root,
+      configPath: rspackConfigPath,
+      platforms: Object.keys(cliConfig.platforms),
       reactNativePath: cliConfig.reactNativePath,
-      webpackConfigPath: webpackConfig,
     },
     command: 'bundle',
-    arguments: {
-      bundle: args,
-    },
-  } as BundleCliOptions;
+    arguments: { bundle: args },
+  };
 
   if (!args.entryFile) {
     throw new Error("Option '--entry-file <path>' argument is missing");
@@ -54,7 +53,7 @@ export async function bundle(
   }
 
   const envOptions = getEnvOptions(cliOptions);
-  const config = await loadConfig<Configuration>(webpackConfig, envOptions);
+  const config = await loadConfig<Configuration>(rspackConfigPath, envOptions);
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {
     if (error) {

@@ -16,7 +16,7 @@ function postMessage(message: WorkerMessages.WorkerMessage): void {
 async function main({ cliOptions, platform }: WebpackWorkerOptions) {
   const webpackEnvOptions = getEnvOptions(cliOptions);
   const webpackConfig = await loadConfig<Configuration>(
-    cliOptions.config.webpackConfigPath,
+    cliOptions.config.configPath,
     { ...webpackEnvOptions, platform }
   );
   const watchOptions = webpackConfig.watchOptions ?? {};

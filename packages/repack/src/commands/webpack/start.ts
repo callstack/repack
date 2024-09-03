@@ -41,12 +41,17 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   const cliOptions: CliOptions = {
     config: {
       root: config.root,
+      configPath: webpackConfigPath,
+      platforms: Object.keys(config.platforms),
       reactNativePath: config.reactNativePath,
-      webpackConfigPath,
     },
     command: 'start',
     arguments: { start: { ...restArgs } },
   };
+
+  if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
+    throw new Error('Unrecognized platform: ' + args.platform);
+  }
 
   const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
   const isSilent = args.silent;

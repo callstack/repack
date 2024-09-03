@@ -32,8 +32,11 @@ export class Compiler {
     private cliOptions: StartCliOptions,
     private reporter: Reporter
   ) {
-    // TODO validate platforms?
-    this.platforms = ['ios', 'android'];
+    if (cliOptions.arguments.start.platform) {
+      this.platforms = [cliOptions.arguments.start.platform];
+    } else {
+      this.platforms = cliOptions.config.platforms;
+    }
   }
 
   private callPendingResolvers(platform: string, error?: Error) {
@@ -51,7 +54,7 @@ export class Compiler {
       this.platforms.map(async (platform) => {
         const env = { ...webpackEnvOptions, platform };
         const config = await loadConfig<Configuration>(
-          this.cliOptions.config.webpackConfigPath,
+          this.cliOptions.config.configPath,
           env
         );
 

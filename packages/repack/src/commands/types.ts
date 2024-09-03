@@ -24,6 +24,7 @@ export interface StartArguments {
   json?: boolean;
   logFile?: string;
   logRequests?: boolean;
+  platform?: string;
   reversePort?: boolean;
   silent?: boolean;
   verbose?: boolean;
@@ -33,8 +34,9 @@ export interface StartArguments {
 interface CommonCliOptions {
   config: {
     root: string;
+    configPath: string;
+    platforms: string[];
     reactNativePath: string;
-    webpackConfigPath: string;
   };
 }
 
