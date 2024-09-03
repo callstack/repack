@@ -18,6 +18,7 @@ module.exports = {
       files: ['**/__tests__/**'],
       extends: ['plugin:@typescript-eslint/disable-type-checked'],
       rules: {
+        'require-await': 0,
         'import/no-extraneous-dependencies': 0,
       },
     },

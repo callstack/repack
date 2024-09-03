@@ -1,5 +1,3 @@
-/* eslint-disable require-await */
-/* globals globalThis */
 import { Script } from '../Script';
 import { ScriptManager } from '../ScriptManager';
 
@@ -45,6 +43,10 @@ class FakeCache {
 }
 
 beforeEach(() => {
+  ScriptManager.init();
+});
+
+afterEach(() => {
   globalThis.__webpack_require__.repack.shared.scriptManager = undefined;
 });
 
