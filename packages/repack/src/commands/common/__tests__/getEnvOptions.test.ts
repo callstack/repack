@@ -6,8 +6,9 @@ describe('getEnvOptions', () => {
       getEnvOptions({
         config: {
           root: '/x/y/z',
+          platforms: ['ios', 'android'],
+          bundlerConfigPath: '/x/y/z/webpack.config.js',
           reactNativePath: '/x/y/z/node_modules/react-native',
-          webpackConfigPath: '/x/y/z/webpack.config.js',
         },
         command: 'bundle',
         arguments: {
@@ -33,8 +34,9 @@ describe('getEnvOptions', () => {
       getEnvOptions({
         config: {
           root: '/x/y/z',
+          platforms: ['ios', 'android'],
+          bundlerConfigPath: '/x/y/z/webpack.config.js',
           reactNativePath: '/x/y/z/node_modules/react-native',
-          webpackConfigPath: '/x/y/z/webpack.config.js',
         },
         command: 'bundle',
         arguments: {
@@ -62,8 +64,9 @@ describe('getEnvOptions', () => {
       getEnvOptions({
         config: {
           root: '/x/y/z',
+          platforms: ['ios', 'android'],
+          bundlerConfigPath: '/x/y/z/webpack.config.js',
           reactNativePath: '/x/y/z/node_modules/react-native',
-          webpackConfigPath: '/x/y/z/webpack.config.js',
         },
         command: 'start',
         arguments: {
@@ -88,8 +91,9 @@ describe('getEnvOptions', () => {
       getEnvOptions({
         config: {
           root: '/x/y/z',
+          platforms: ['ios', 'android'],
+          bundlerConfigPath: '/x/y/z/webpack.config.js',
           reactNativePath: '/x/y/z/node_modules/react-native',
-          webpackConfigPath: '/x/y/z/webpack.config.js',
         },
         command: 'start',
         arguments: {
