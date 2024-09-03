@@ -1,5 +1,5 @@
-import { StatsCompilation } from 'webpack';
-import { CliOptions } from '../types';
+import type { StatsCompilation, StatsAsset } from 'webpack';
+import type { CliOptions, RemoveRecord } from '../types';
 
 export interface WebpackWorkerOptions {
   cliOptions: CliOptions;
@@ -17,4 +17,60 @@ export interface HMRMessageBody {
 export interface HMRMessage {
   action: 'building' | 'built' | 'sync';
   body: HMRMessageBody | null;
+}
+
+type WebpackStatsAsset = RemoveRecord<StatsAsset>;
+
+export interface CompilerAsset {
+  data: Buffer;
+  info: WebpackStatsAsset['info'];
+  size: number;
+}
+
+export namespace WorkerMessages {
+  type WorkerMessageName =
+    | 'watchRun'
+    | 'invalid'
+    | 'progress'
+    | 'error'
+    | 'done';
+
+  interface BaseWorkerMessage {
+    event: WorkerMessageName;
+  }
+
+  export interface WatchRunMessage extends BaseWorkerMessage {
+    event: 'watchRun';
+  }
+
+  export interface InvalidMessage extends BaseWorkerMessage {
+    event: 'invalid';
+  }
+
+  export interface ProgressMessage extends BaseWorkerMessage {
+    event: 'progress';
+    total: number;
+    completed: number;
+    percentage: number;
+    label: string;
+    message: string;
+  }
+
+  export interface ErrorMessage extends BaseWorkerMessage {
+    event: 'error';
+    error: Error;
+  }
+
+  export interface DoneMessage extends BaseWorkerMessage {
+    event: 'done';
+    assets: Record<string, CompilerAsset>;
+    stats: StatsCompilation;
+  }
+
+  export type WorkerMessage =
+    | WatchRunMessage
+    | InvalidMessage
+    | ProgressMessage
+    | ErrorMessage
+    | DoneMessage;
 }

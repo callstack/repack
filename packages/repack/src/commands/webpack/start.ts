@@ -1,4 +1,4 @@
-import { URL } from 'url';
+import { URL } from 'node:url';
 import webpack from 'webpack';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
@@ -195,10 +195,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           getAssets: (platform) =>
             Promise.resolve(
               Object.entries(compiler.assetsCache[platform] ?? {}).map(
-                ([name, asset]) => ({
-                  name,
-                  size: asset.info.size,
-                })
+                ([name, asset]) => ({ name, size: asset.size })
               )
             ),
           getCompilationStats: (platform) =>

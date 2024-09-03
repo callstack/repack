@@ -7,20 +7,18 @@ import mimeTypes from 'mime-types';
 import { SendProgress } from '@callstack/repack-dev-server';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../../env';
 import type { LogType, Reporter } from '../../logging';
-import { adaptFilenameToPlatform } from '../common';
 import type { CliOptions } from '../types';
-import type { WebpackWorkerOptions } from './types';
-
-export interface Asset {
-  data: string | Buffer;
-  info: Record<string, any>;
-}
+import type {
+  CompilerAsset,
+  WorkerMessages,
+  WebpackWorkerOptions,
+} from './types';
 
 type Platform = string;
 
 export class Compiler extends EventEmitter {
   workers: Record<Platform, Worker> = {};
-  assetsCache: Record<Platform, Record<string, Asset>> = {};
+  assetsCache: Record<Platform, Record<string, CompilerAsset>> = {};
   statsCache: Record<Platform, webpack.StatsCompilation> = {};
   resolvers: Record<Platform, Array<(error?: Error) => void>> = {};
   progressSenders: Record<Platform, SendProgress[]> = {};
@@ -83,80 +81,44 @@ export class Compiler extends EventEmitter {
       this.resolvers[platform] = [];
     };
 
-    worker.on(
-      'message',
-      (
-        value:
-          | { event: 'watchRun' | 'invalid' }
-          | {
-              event: 'progress';
-              total: number;
-              completed: number;
-              percentage: number;
-              label: string;
-              message: string;
-            }
-          | { event: 'error'; error: Error }
-          | {
-              event: 'done';
-              assets: Array<{
-                filename: string;
-                data: Uint8Array;
-                info: Record<string, any>;
-              }>;
-              stats: webpack.StatsCompilation;
-            }
-      ) => {
-        if (value.event === 'done') {
-          this.isCompilationInProgress[platform] = false;
-          this.statsCache[platform] = value.stats;
-          this.assetsCache[platform] = value.assets.reduce(
-            (acc, { filename, data, info }) => {
-              const asset = {
-                data: Buffer.from(data),
-                info,
-              };
-              return {
-                ...acc,
-                [adaptFilenameToPlatform(filename)]: asset,
-              };
-            },
-            {}
-          );
-          callPendingResolvers();
-          this.emit(value.event, { platform, stats: value.stats });
-        } else if (value.event === 'error') {
-          this.emit(value.event, value.error);
-        } else if (value.event === 'progress') {
-          this.progressSenders[platform].forEach((sendProgress) => {
-            if (Number.isNaN(value.total)) return;
-            if (Number.isNaN(value.completed)) return;
-            sendProgress({
-              total: value.total,
-              completed: value.completed,
-            });
+    worker.on('message', (value: WorkerMessages.WorkerMessage) => {
+      if (value.event === 'done') {
+        this.isCompilationInProgress[platform] = false;
+        this.statsCache[platform] = value.stats;
+        this.assetsCache[platform] = value.assets;
+        callPendingResolvers();
+        this.emit(value.event, { platform, stats: value.stats });
+      } else if (value.event === 'error') {
+        this.emit(value.event, value.error);
+      } else if (value.event === 'progress') {
+        this.progressSenders[platform].forEach((sendProgress) => {
+          if (Number.isNaN(value.total)) return;
+          if (Number.isNaN(value.completed)) return;
+          sendProgress({
+            total: value.total,
+            completed: value.completed,
           });
-          this.reporter.process({
-            issuer: 'DevServer',
-            message: [
-              {
-                progress: {
-                  value: value.percentage,
-                  label: value.label,
-                  message: value.message,
-                  platform,
-                },
+        });
+        this.reporter.process({
+          issuer: 'DevServer',
+          message: [
+            {
+              progress: {
+                value: value.percentage,
+                label: value.label,
+                message: value.message,
+                platform,
               },
-            ],
-            timestamp: Date.now(),
-            type: 'progress',
-          });
-        } else {
-          this.isCompilationInProgress[platform] = true;
-          this.emit(value.event, { platform });
-        }
+            },
+          ],
+          timestamp: Date.now(),
+          type: 'progress',
+        });
+      } else {
+        this.isCompilationInProgress[platform] = true;
+        this.emit(value.event, { platform });
       }
-    );
+    });
 
     worker.on('error', (error) => {
       callPendingResolvers(error);
@@ -186,7 +148,7 @@ export class Compiler extends EventEmitter {
     filename: string,
     platform: string,
     sendProgress?: SendProgress
-  ): Promise<Asset> {
+  ): Promise<CompilerAsset> {
     // Return file from assetsCache if exists
     const fileFromCache = this.assetsCache[platform]?.[filename];
     if (fileFromCache) return fileFromCache;
@@ -205,7 +167,7 @@ export class Compiler extends EventEmitter {
       );
     }
 
-    return await new Promise<Asset>((resolve, reject) => {
+    return await new Promise<CompilerAsset>((resolve, reject) => {
       // Add new resolver to be executed when compilation is finished
       this.resolvers[platform] = (this.resolvers[platform] ?? []).concat(
         (error?: Error) => {
@@ -248,16 +210,25 @@ export class Compiler extends EventEmitter {
     filename: string,
     platform: string
   ): Promise<string | Buffer> {
-    const { info } = await this.getAsset(filename, platform);
-    const sourceMapFilename = info.related?.sourceMap as string | undefined;
+    try {
+      const { info } = await this.getAsset(filename, platform);
+      let sourceMapFilename = info.related?.sourceMap;
 
-    if (sourceMapFilename) {
-      return (await this.getAsset(sourceMapFilename, platform)).data;
+      if (!sourceMapFilename) {
+        throw new Error(
+          `No source map associated with ${filename} for ${platform}`
+        );
+      }
+
+      if (Array.isArray(sourceMapFilename)) {
+        sourceMapFilename = sourceMapFilename[0];
+      }
+
+      const sourceMap = await this.getAsset(sourceMapFilename, platform);
+      return sourceMap.data;
+    } catch {
+      throw new Error(`Source map for ${filename} for ${platform} is missing`);
     }
-
-    return Promise.reject(
-      new Error(`Source map for ${filename} for ${platform} is missing`)
-    );
   }
 
   getMimeType(filename: string) {

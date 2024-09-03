@@ -2,8 +2,16 @@ import path from 'node:path';
 import { workerData, parentPort } from 'node:worker_threads';
 import memfs from 'memfs';
 import webpack, { Configuration } from 'webpack';
-import { getEnvOptions, loadConfig } from '../common';
-import type { WebpackWorkerOptions } from './types';
+import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from '../common';
+import type {
+  WorkerMessages,
+  WebpackWorkerOptions,
+  CompilerAsset,
+} from './types';
+
+function postMessage(message: WorkerMessages.WorkerMessage): void {
+  parentPort?.postMessage(message);
+}
 
 async function main({ cliOptions, platform }: WebpackWorkerOptions) {
   const webpackEnvOptions = getEnvOptions(cliOptions);
@@ -20,7 +28,7 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
       modules: true,
       handler: (percentage, message, text) => {
         const [, completed, total] = /(\d+)\/(\d+) modules/.exec(text) ?? [];
-        parentPort?.postMessage({
+        postMessage({
           event: 'progress',
           completed: parseInt(completed, 10),
           total: parseInt(total, 10),
@@ -40,26 +48,34 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
   compiler.outputFileSystem = fileSystem;
 
   compiler.hooks.watchRun.tap('webpackWorker', () => {
-    parentPort?.postMessage({ event: 'watchRun' });
+    postMessage({ event: 'watchRun' });
   });
 
   compiler.hooks.invalid.tap('webpackWorker', () => {
-    parentPort?.postMessage({ event: 'invalid' });
+    postMessage({ event: 'invalid' });
   });
 
   compiler.hooks.done.tap('webpackWorker', (stats) => {
     const outputDirectory = stats.compilation.outputOptions.path!;
-    const assets = stats.compilation.getAssets().map((asset) => {
-      const data = fileSystem.readFileSync(
-        path.join(outputDirectory, asset.name)
-      ) as Buffer;
-      return {
-        filename: asset.name,
-        data,
-        info: asset.info,
-      };
-    });
-    parentPort?.postMessage({
+    const assets = stats.compilation
+      .getAssets()
+      .map(({ name, info }) => {
+        const filename = name;
+        const data = fileSystem.readFileSync(
+          path.join(outputDirectory, filename)
+        ) as Buffer;
+        return { data, filename, info, size: info.size! };
+      })
+      .reduce(
+        (acc, asset) => {
+          const { filename, ...compilerAsset } = asset;
+          acc[adaptFilenameToPlatform(filename)] = compilerAsset;
+          return acc;
+        },
+        {} as Record<string, CompilerAsset>
+      );
+
+    postMessage({
       event: 'done',
       assets,
       stats: stats.toJson({
@@ -77,12 +93,12 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
 
   compiler.watch(watchOptions, (error) => {
     if (error) {
-      parentPort?.postMessage({ event: 'error', error });
+      postMessage({ event: 'error', error });
     }
   });
 }
 
 main(workerData).catch((error) => {
-  parentPort?.postMessage({ event: 'error', error });
+  postMessage({ event: 'error', error });
   process.exit(1);
 });
