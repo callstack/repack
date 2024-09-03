@@ -121,7 +121,12 @@ describe('start command', () => {
             const [bundleRequest, ...assetsRequests] = requests;
 
             response = await fetch(`http://localhost:${port}/${bundleRequest}`);
-            expect((await response.text()).length).toBeGreaterThan(100000);
+
+            const responseText = await response.text();
+            if (responseText.length < 100000) {
+              console.log(response, responseText);
+            }
+            expect(responseText.length).toBeGreaterThan(100000);
 
             const responses = await Promise.all(
               assetsRequests.map((asset) =>
