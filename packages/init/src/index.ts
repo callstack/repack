@@ -37,7 +37,7 @@ export default async function run({
 
     await createBundlerConfig(bundler, cwd, templateType, entry);
 
-    handleReactNativeConfig(cwd);
+    handleReactNativeConfig(bundler, cwd);
 
     modifyAndroid(cwd, reactNativeVersion);
 
