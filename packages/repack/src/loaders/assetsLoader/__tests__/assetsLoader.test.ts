@@ -38,34 +38,6 @@ async function compileBundle(
     publicPath: string;
   }
 ) {
-  const vmp = new RspackVirtualModulePlugin({
-    'node_modules/react-native/Libraries/Image/AssetRegistry.js':
-      'module.exports = { registerAsset: (spec) => spec };',
-    'node_modules/react-native/Libraries/Utilities/PixelRatio.js':
-      'module.exports = { get: () => 1 };',
-    'node_modules/react-native/Libraries/Image/AssetSourceResolver.js': `
-      module.exports = class AssetSourceResolver { 
-        constructor(a,b,c) { 
-          this.asset = c 
-        } 
-        scaledAssetPath() { 
-          var scale = require('react-native/Libraries/Utilities/PixelRatio').get()
-          var scaleSuffix = scale === 1 ? '' : '@x' + scale;
-          return { 
-            __packager_asset: true, 
-            width: this.asset.width, 
-            height: this.asset.height, 
-            uri: this.asset.httpServerLocation + '/' + this.asset.name + scaleSuffix + '.' + this.asset.type,
-            scale: scale,
-          } 
-        }
-        static pickScale(scales, pixelRatio) {
-          return scales[pixelRatio - 1];
-        } 
-      };`,
-    ...virtualModules,
-  });
-
   const compiler = rspack({
     context: __dirname,
     mode: 'development',
@@ -91,7 +63,35 @@ async function compileBundle(
         },
       ],
     },
-    plugins: [vmp],
+    plugins: [
+      new RspackVirtualModulePlugin({
+        'node_modules/react-native/Libraries/Image/AssetRegistry.js':
+          'module.exports = { registerAsset: (spec) => spec };',
+        'node_modules/react-native/Libraries/Utilities/PixelRatio.js':
+          'module.exports = { get: () => 1 };',
+        'node_modules/react-native/Libraries/Image/AssetSourceResolver.js': `
+          module.exports = class AssetSourceResolver { 
+            constructor(a, b, c) { 
+              this.asset = c; 
+            } 
+            scaledAssetPath() { 
+              var scale = require('react-native/Libraries/Utilities/PixelRatio').get();
+              var scaleSuffix = scale === 1 ? '' : '@x' + scale;
+              return { 
+                __packager_asset: true, 
+                width: this.asset.width, 
+                height: this.asset.height, 
+                uri: this.asset.httpServerLocation + '/' + this.asset.name + scaleSuffix + '.' + this.asset.type,
+                scale: scale,
+              }; 
+            }
+            static pickScale(scales, pixelRatio) {
+              return scales[pixelRatio - 1];
+            } 
+          };`,
+        ...virtualModules,
+      }),
+    ],
   });
 
   const volume = new memfs.Volume();
@@ -141,6 +141,7 @@ describe('assetLoader', () => {
 
     it('should load and extract asset with scales', async () => {
       const { code, volume } = await compileBundle('ios', {
+        ...fixtures,
         './index.js': "export { default } from './__fixtures__/star.png';",
       });
 
@@ -155,6 +156,7 @@ describe('assetLoader', () => {
   describe('on android', () => {
     it('should load and extract asset without scales', async () => {
       const { code, volume } = await compileBundle('android', {
+        ...fixtures,
         './index.js': "export { default } from './__fixtures__/logo.png';",
       });
 
@@ -167,6 +169,7 @@ describe('assetLoader', () => {
 
     it('should load and extract asset with scales', async () => {
       const { code, volume } = await compileBundle('android', {
+        ...fixtures,
         './index.js': "export { default } from './__fixtures__/star.png';",
       });
 
