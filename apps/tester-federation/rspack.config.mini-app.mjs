@@ -1,39 +1,36 @@
 // @ts-check
-/** @type {import('node:path')} */
-const path = require('node:path');
-/** @type {import('@rspack/core')} */
-const rspack = require('@rspack/core');
-/** @type {import('@callstack/repack')} */
-const Repack = require('@callstack/repack');
-/** @type {import('@rsdoctor/rspack-plugin')} */
-const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import rspack from '@rspack/core';
+import * as Repack from '@callstack/repack';
+import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+
+const dirname = Repack.getDirname(import.meta.url);
+const { resolve } = createRequire(import.meta.url);
 
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
 module.exports = (env) => {
   const {
     mode = 'development',
-    context = __dirname,
-    entry = './index.js',
+    context = dirname,
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
-    reactNativePath = require.resolve('react-native'),
+    reactNativePath = resolve('react-native'),
   } = env;
 
   if (!platform) {
     throw new Error('Missing platform');
   }
 
-  process.env.BABEL_ENV = mode;
-
   return {
     mode,
     devtool: false,
     context,
-    entry,
+    entry: {},
     resolve: {
       ...Repack.getResolveOptions(platform),
       alias: {
@@ -43,11 +40,11 @@ module.exports = (env) => {
     output: {
       clean: true,
       hashFunction: 'xxhash64',
-      path: path.join(__dirname, 'build', 'host-app', platform),
+      path: path.join(dirname, 'build', 'mini-app', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MFTester-HostApp',
+      uniqueName: 'MFTester-MiniApp',
     },
     optimization: {
       minimize,
@@ -88,8 +85,6 @@ module.exports = (env) => {
                 transform: {
                   react: {
                     runtime: 'automatic',
-                    development: mode === 'development',
-                    refresh: mode === 'development' && Boolean(devServer),
                   },
                 },
               },
@@ -104,6 +99,7 @@ module.exports = (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
+              inline: true,
             },
           },
         },
@@ -125,46 +121,54 @@ module.exports = (env) => {
           {
             include: /.*/,
             type: 'remote',
-            outputPath: `build/host-app/${platform}/output-remote`,
+            outputPath: `build/mini-app/${platform}/output-remote`,
           },
         ],
       }),
       new Repack.plugins.ModuleFederationPlugin({
-        name: 'HostApp',
+        name: 'MiniApp',
+        exposes: {
+          './MiniAppNavigator': './src/mini/navigation/MainNavigator',
+        },
         shared: {
           react: {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '18.2.0',
           },
           'react-native': {
             singleton: true,
+            eager: false,
+            requiredVersion: '0.74.3',
+          },
+          'react-native/Libraries/Core/Devtools/getDevServer': {
+            singleton: true,
             eager: true,
             requiredVersion: '0.74.3',
+            shareScope: 'internal',
           },
           '@react-navigation/native': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^6.1.18',
           },
           '@react-navigation/native-stack': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^6.10.1',
           },
           'react-native-safe-area-context': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^4.10.8',
           },
           'react-native-screens': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^3.32.0',
           },
         },
       }),
-      new rspack.EnvironmentPlugin({ MF_CACHE: null }),
       process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
     ].filter(Boolean),
   };
