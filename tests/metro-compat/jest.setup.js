@@ -2,6 +2,8 @@ const testsToSkip = {
   describe: new Set([
     // unsupported in ehnanced-resolve as well
     '[unsupported] exotic nested arrays',
+    // irrelevant in webpack environment
+    '@babel/runtime compatibility (special case)',
   ]),
   test: new Set([
     // Non-strict package exports are not supported
