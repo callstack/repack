@@ -1,4 +1,5 @@
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 const Repack = require('@callstack/repack');
 
 /**
@@ -34,6 +35,29 @@ module.exports = (env) => {
     throw new Error('Missing platform');
   }
 
+  /**
+   * Using Module Federation might require disabling hmr.
+   * Uncomment below to set `devServer.hmr` to `false`.
+   *
+   * Keep in mind that `devServer` object is not available
+   * when running `webpack-bundle` command. Be sure
+   * to check its value to avoid accessing undefined value,
+   * otherwise an error might occur.
+   */
+  // if (devServer) {
+  //   devServer.hmr = false;
+  // }
+
+  /**
+   * Depending on your Babel configuration you might want to keep it.
+   * If you don't use `env` in your Babel config, you can remove it.
+   *
+   * Keep in mind that if you remove it you should set `BABEL_ENV` or `NODE_ENV`
+   * to `development` or `production`. Otherwise your production code might be compiled with
+   * in development mode by Babel.
+   */
+  process.env.BABEL_ENV = mode;
+
   return {
     mode,
     /**
@@ -42,7 +66,17 @@ module.exports = (env) => {
      */
     devtool: false,
     context,
-    entry,
+    /**
+     * `getInitializationEntries` will return necessary entries with setup and initialization code.
+     * If you don't want to use Hot Module Replacement, set `hmr` option to `false`. By default,
+     * HMR will be enabled in development mode.
+     */
+    entry: [
+      ...Repack.getInitializationEntries(reactNativePath, {
+        hmr: devServer && devServer.hmr,
+      }),
+      entry,
+    ],
     resolve: {
       /**
        * `getResolveOptions` returns additional resolution configuration for React Native.
@@ -76,10 +110,29 @@ module.exports = (env) => {
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
     },
-    /** Configures optimization of the built bundle. */
+    /**
+     * Configures optimization of the built bundle.
+     */
     optimization: {
       /** Enables minification based on values passed from React Native CLI or from fallback. */
       minimize,
+      /** Configure minimizer to process the bundle. */
+      minimizer: [
+        new TerserPlugin({
+          test: /\.(js)?bundle(\?.*)?$/i,
+          /**
+           * Prevents emitting text file with comments, licenses etc.
+           * If you want to gather in-file licenses, feel free to remove this line or configure it
+           * differently.
+           */
+          extractComments: false,
+          terserOptions: {
+            format: {
+              comments: false,
+            },
+          },
+        }),
+      ],
       chunkIds: 'named',
     },
     module: {
@@ -92,37 +145,41 @@ module.exports = (env) => {
        * https://github.com/babel/babel-loader#options
        */
       rules: [
-        Repack.REACT_NATIVE_LOADING_RULES,
-        Repack.NODE_MODULES_LOADING_RULES,
-        /** Here you can adjust loader that will process your files. */
+        {
+          test: /\.[cm]?[jt]sx?$/,
+          include: [
+            /node_modules(.*[/\\])+react-native/,
+            /node_modules(.*[/\\])+@react-native/,
+            /node_modules(.*[/\\])+@react-navigation/,
+            /node_modules(.*[/\\])+@react-native-community/,
+            /node_modules(.*[/\\])+expo/,
+            /node_modules(.*[/\\])+pretty-format/,
+            /node_modules(.*[/\\])+metro/,
+            /node_modules(.*[/\\])+abort-controller/,
+            /node_modules(.*[/\\])+@callstack[/\\]repack/,
+          ],
+          use: 'babel-loader',
+        },
+        /**
+         * Here you can adjust loader that will process your files.
+         *
+         * You can also enable persistent caching with `cacheDirectory` - please refer to:
+         * https://github.com/babel/babel-loader#options
+         */
         {
           test: /\.[jt]sx?$/,
-          exclude: [/node_modules/],
-          type: 'javascript/auto',
+          exclude: /node_modules/,
           use: {
-            loader: 'builtin:swc-loader',
-            /** @type {import('@rspack/core').SwcLoaderOptions} */
+            loader: 'babel-loader',
             options: {
-              env: {
-                targets: {
-                  'react-native': '0.74',
-                },
-              },
-              jsc: {
-                externalHelpers: true,
-                transform: {
-                  react: {
-                    runtime: 'automatic',
-                    development: mode === 'development',
-                    refresh: mode === 'development' && Boolean(devServer),
-                  },
-                },
-              },
+              /** Add React Refresh transform only when HMR is enabled. */
+              plugins:
+                devServer && devServer.hmr
+                  ? ['module:react-refresh/babel']
+                  : undefined,
             },
           },
         },
-        /** Run React Native codegen, required for utilizing new architecture */
-        Repack.REACT_NATIVE_CODEGEN_RULES,
         /**
          * This loader handles all static assets (images, video, audio and others), so that you can
          * use (reference) them inside your application.
@@ -140,6 +197,12 @@ module.exports = (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
+              /**
+               * Defines which assets are scalable - which assets can have
+               * scale suffixes: `@1x`, `@2x` and so on.
+               * By default all images are scalable.
+               */
+              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
             },
           },
         },
