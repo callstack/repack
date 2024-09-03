@@ -10,7 +10,7 @@ import {
   Reporter,
 } from '../../logging';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
-import { StartArguments } from '../types';
+import { StartArguments, StartCliOptions } from '../types';
 import {
   getRspackConfigFilePath,
   parseFileUrl,
@@ -36,17 +36,17 @@ export async function start(
   cliConfig: Config,
   args: StartArguments
 ) {
-  const configPath = getRspackConfigFilePath(
+  const rspackConfigPath = getRspackConfigFilePath(
     cliConfig.root,
     args.webpackConfig
   );
   const { reversePort: reversePortArg, ...restArgs } = args;
-  const cliOptions = {
+  const cliOptions: StartCliOptions = {
     config: {
       root: cliConfig.root,
       platforms: Object.keys(cliConfig.platforms),
+      bundlerConfigPath: rspackConfigPath,
       reactNativePath: cliConfig.reactNativePath,
-      webpackConfigPath: configPath,
     },
     command: 'start',
     arguments: { start: { ...restArgs } },

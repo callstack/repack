@@ -16,7 +16,7 @@ import {
   setupInteractions,
 } from '../common';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
-import { CliOptions, StartArguments } from '../types';
+import { StartArguments, StartCliOptions } from '../types';
 import { Compiler } from './Compiler';
 import { HMRMessageBody } from './types';
 
@@ -38,11 +38,11 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     args.webpackConfig
   );
   const { reversePort: reversePortArg, ...restArgs } = args;
-  const cliOptions: CliOptions = {
+  const cliOptions: StartCliOptions = {
     config: {
       root: config.root,
-      configPath: webpackConfigPath,
       platforms: Object.keys(config.platforms),
+      bundlerConfigPath: webpackConfigPath,
       reactNativePath: config.reactNativePath,
     },
     command: 'start',

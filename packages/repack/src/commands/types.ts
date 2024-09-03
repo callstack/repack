@@ -34,8 +34,8 @@ export interface StartArguments {
 interface CommonCliOptions {
   config: {
     root: string;
-    configPath: string;
     platforms: string[];
+    bundlerConfigPath: string;
     reactNativePath: string;
   };
 }

@@ -35,8 +35,8 @@ export async function bundle(
   const cliOptions: BundleCliOptions = {
     config: {
       root: cliConfig.root,
-      configPath: webpackConfigPath,
       platforms: Object.keys(cliConfig.platforms),
+      bundlerConfigPath: webpackConfigPath,
       reactNativePath: cliConfig.reactNativePath,
     },
     command: 'bundle',
