@@ -4,7 +4,6 @@ import { globby } from 'globby';
 import { describe, it, afterEach, beforeAll, expect } from 'vitest';
 import webpackCommands from '@callstack/repack/commands/webpack';
 import rspackCommands from '@callstack/repack/commands/rspack';
-import type { BundleCliOptions } from '../../../packages/repack/src/commands/types';
 
 const TMP_DIR = path.join(__dirname, 'out/bundle-test-output');
 const REACT_NATIVE_PATH = require.resolve('react-native', {
@@ -123,10 +122,9 @@ describe('bundle command', () => {
         `for ${platform}`,
         async () => {
           const OUTPUT_DIR = path.join(TMP_DIR, platform);
-          const config: BundleCliOptions['config'] = {
+          const config = {
             root: path.join(__dirname, '..'),
-            platforms: ['ios', 'android'],
-            bundlerConfigPath: path.join(__dirname, configFile),
+            platforms: { ios: {}, android: {} },
             reactNativePath: path.join(
               __dirname,
               '../node_modules/react-native'

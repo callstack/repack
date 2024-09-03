@@ -4,7 +4,6 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import getPort from 'get-port';
 import webpackCommands from '@callstack/repack/commands/webpack';
 import rspackCommands from '@callstack/repack/commands/rspack';
-import type { StartCliOptions } from '../../../packages/repack/src/commands/types';
 
 let port: number;
 let stopServer: () => Promise<void>;
@@ -88,10 +87,9 @@ describe('start command', () => {
           });
 
           port = await getPort();
-          const config: StartCliOptions['config'] = {
+          const config = {
             root: path.join(__dirname, '..'),
-            platforms: ['ios', 'android'],
-            bundlerConfigPath: path.join(__dirname, configFile),
+            platforms: { ios: {}, android: {} },
             reactNativePath: path.join(
               __dirname,
               '../node_modules/react-native'
