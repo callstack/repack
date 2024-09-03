@@ -2,7 +2,6 @@ import type { LoaderContext } from '@rspack/core';
 import { validate } from 'schema-utils';
 
 /**
- * Note: platform is not needed - can be removed
  * Note: devServer enabled can be inferred from loader context:
  *       - we can access this.mode & this.hot
  * Note: publicPath could be obtained from webpack config in the future

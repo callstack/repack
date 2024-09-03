@@ -40,8 +40,6 @@ export default async function repackAssetsLoader(
     const scalableAssetResolutions =
       options.scalableAssetResolutions ?? SCALABLE_RESOLUTIONS;
 
-    // const parsedPath = path.parse(this.resourcePath);
-    // console.log(parsedPath);
     const pathSeparatorRegexp = new RegExp(`\\${path.sep}`, 'g');
     const resourcePath = this.resourcePath;
     const resourceAbsoluteDirname = path.dirname(resourcePath);
