@@ -36,19 +36,6 @@ module.exports = (env) => {
   }
 
   /**
-   * Using Module Federation might require disabling hmr.
-   * Uncomment below to set `devServer.hmr` to `false`.
-   *
-   * Keep in mind that `devServer` object is not available
-   * when running `webpack-bundle` command. Be sure
-   * to check its value to avoid accessing undefined value,
-   * otherwise an error might occur.
-   */
-  // if (devServer) {
-  //   devServer.hmr = false;
-  // }
-
-  /**
    * Depending on your Babel configuration you might want to keep it.
    * If you don't use `env` in your Babel config, you can remove it.
    *
@@ -71,12 +58,7 @@ module.exports = (env) => {
      * If you don't want to use Hot Module Replacement, set `hmr` option to `false`. By default,
      * HMR will be enabled in development mode.
      */
-    entry: [
-      ...Repack.getInitializationEntries(reactNativePath, {
-        hmr: devServer && devServer.hmr,
-      }),
-      entry,
-    ],
+    entry,
     resolve: {
       /**
        * `getResolveOptions` returns additional resolution configuration for React Native.
@@ -169,16 +151,7 @@ module.exports = (env) => {
         {
           test: /\.[jt]sx?$/,
           exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              /** Add React Refresh transform only when HMR is enabled. */
-              plugins:
-                devServer && devServer.hmr
-                  ? ['module:react-refresh/babel']
-                  : undefined,
-            },
-          },
+          use: 'babel-loader',
         },
         /**
          * This loader handles all static assets (images, video, audio and others), so that you can
@@ -197,12 +170,6 @@ module.exports = (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
-              /**
-               * Defines which assets are scalable - which assets can have
-               * scale suffixes: `@1x`, `@2x` and so on.
-               * By default all images are scalable.
-               */
-              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
             },
           },
         },
