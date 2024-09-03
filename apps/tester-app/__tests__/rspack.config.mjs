@@ -1,6 +1,6 @@
-const baseConfig = require('../rspack.config.cjs');
+import baseConfig from '../rspack.config.mjs';
 
-module.exports = (env) => {
+export default (env) => {
   const config = baseConfig(env);
   return {
     ...config,

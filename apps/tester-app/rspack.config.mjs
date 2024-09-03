@@ -1,16 +1,17 @@
 // @ts-check
-/** @type {import('node:path')} */
-const path = require('node:path');
-/** @type {import('@callstack/repack')} */
-const Repack = require('@callstack/repack');
-/** @type {import('@rsdoctor/rspack-plugin')} */
-const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import * as Repack from '@callstack/repack';
+import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+
+const dirname = Repack.getDirname(import.meta.url);
+const { resolve } = createRequire(import.meta.url);
 
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
-module.exports = (env) => {
+export default (env) => {
   const {
     mode = 'development',
-    context = __dirname,
+    context = dirname,
     entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
@@ -18,7 +19,7 @@ module.exports = (env) => {
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
-    reactNativePath = require.resolve('react-native'),
+    reactNativePath = resolve('react-native'),
   } = env;
   if (!platform) {
     throw new Error('Missing platform');

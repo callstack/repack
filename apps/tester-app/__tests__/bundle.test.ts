@@ -27,7 +27,7 @@ describe('bundle command', () => {
     {
       bundler: 'rspack',
       commands: rspackCommands,
-      configFile: './rspack.config.cjs',
+      configFile: './rspack.config.mjs',
     },
   ])('using $bundler', ({ bundler, commands, configFile }) => {
     const bundleCommand = commands.find((command) => command.name === 'bundle');
