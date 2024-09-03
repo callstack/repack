@@ -4,9 +4,6 @@ export const DEFAULT_HOSTNAME = 'localhost';
 /** Default development server port. */
 export const DEFAULT_PORT = 8081;
 
-/** Default development server platforms. */
-export const DEFAULT_PLATFORMS = ['android', 'ios'];
-
 /** Default webpack config locations. */
 export const DEFAULT_WEBPACK_CONFIG_LOCATIONS = [
   'webpack.config.mjs',
