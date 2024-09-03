@@ -1,7 +1,7 @@
 import checkPackageManager from './tasks/checkPackageManager.js';
 import checkReactNative from './tasks/checkReactNative.js';
 import addDependencies from './tasks/addDependencies.js';
-import createWebpackConfig from './tasks/createWebpackConfig.js';
+import createBundlerConfig from './tasks/createBundlerConfig.js';
 import handleReactNativeConfig from './tasks/handleReactNativeConfig.js';
 import modifyIOS from './tasks/modifyIOS.js';
 import modifyAndroid from './tasks/modifyAndroid.js';
@@ -9,6 +9,7 @@ import modifyAndroid from './tasks/modifyAndroid.js';
 import logger, { enableVerboseLogging } from './utils/logger.js';
 
 interface Options {
+  bundler: 'rspack' | 'webpack';
   entry: string;
   repackVersion?: string;
   templateType: 'mjs' | 'cjs';
@@ -16,6 +17,7 @@ interface Options {
 }
 
 export default async function run({
+  bundler,
   entry,
   repackVersion,
   templateType,
@@ -31,9 +33,9 @@ export default async function run({
     const packageManager = await checkPackageManager(cwd);
     const reactNativeVersion = checkReactNative(cwd);
 
-    await addDependencies(packageManager, repackVersion);
+    await addDependencies(bundler, packageManager, repackVersion);
 
-    await createWebpackConfig(cwd, templateType, entry);
+    await createBundlerConfig(bundler, cwd, templateType, entry);
 
     handleReactNativeConfig(cwd);
 

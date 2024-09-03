@@ -3,11 +3,19 @@ import { execa } from 'execa';
 import ora from 'ora';
 import logger from '../utils/logger.js';
 
-const dependencies = [
+const rspackDependencies = [
   '@rspack/core',
   '@rspack/plugin-react-refresh',
   '@swc/helpers',
-  '@callstack/repack@next',
+  '@callstack/repack@alpha',
+];
+
+const webpackDependencies = [
+  'webpack',
+  'terser-webpack-plugin',
+  'babel-loader',
+  '@rspack/plugin-react-refresh',
+  '@callstack/repack',
 ];
 
 /**
@@ -16,9 +24,13 @@ const dependencies = [
  * @param packageManager yarn, npm or pnpm
  */
 export default async function addDependencies(
+  bundler: 'rspack' | 'webpack',
   packageManager: PM,
   repackVersion?: string
 ) {
+  const dependencies =
+    bundler === 'rspack' ? rspackDependencies : webpackDependencies;
+
   let installCommand: string;
 
   if (packageManager === 'yarn' || packageManager === 'bun') {
