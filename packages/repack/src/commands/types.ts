@@ -49,3 +49,7 @@ export interface BundleCliOptions extends CommonCliOptions {
 }
 
 export type CliOptions = StartCliOptions | BundleCliOptions;
+
+export type RemoveRecord<T> = T extends infer U & Record<string, any>
+  ? U
+  : never;

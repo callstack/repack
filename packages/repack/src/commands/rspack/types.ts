@@ -1,13 +1,11 @@
 import type { MultiCompiler, StatsAsset } from '@rspack/core';
+import type { RemoveRecord } from '../types';
 
-type RemoveRecord<T> = T extends infer U & Record<string, any> ? U : never;
+type RspackStatsAsset = RemoveRecord<StatsAsset>;
 
-type JsStatsAsset = RemoveRecord<StatsAsset> & {
-  info: { hotModuleReplacement: boolean };
-};
 export interface CompilerAsset {
   data: Buffer;
-  info: JsStatsAsset['info'];
+  info: RspackStatsAsset['info'];
   size: number;
 }
 

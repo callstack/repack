@@ -111,9 +111,30 @@ export class Compiler {
                 const assetPath = path.join(childStats.outputPath!, name);
                 const data = this.filesystem.readFileSync(assetPath) as Buffer;
                 const asset = { data, info, size };
-                return Object.assign(acc, {
-                  [adaptFilenameToPlatform(name)]: asset,
-                });
+
+                acc[adaptFilenameToPlatform(name)] = asset;
+
+                if (info.related?.sourceMap) {
+                  const sourceMapName = Array.isArray(info.related.sourceMap)
+                    ? info.related.sourceMap[0]
+                    : info.related.sourceMap;
+                  const sourceMapPath = path.join(
+                    childStats.outputPath!,
+                    sourceMapName
+                  );
+                  const sourceMapData = this.filesystem.readFileSync(
+                    sourceMapPath
+                  ) as Buffer;
+                  const sourceMapAsset = {
+                    data: sourceMapData,
+                    info: {},
+                    size: sourceMapData.length,
+                  };
+
+                  acc[adaptFilenameToPlatform(sourceMapName)] = sourceMapAsset;
+                }
+
+                return acc;
               },
               // keep old assets, discard HMR-related ones
               Object.fromEntries(
@@ -124,7 +145,15 @@ export class Compiler {
             );
         });
       } catch (error) {
-        console.log('lol', error);
+        this.reporter.process({
+          type: 'error',
+          issuer: 'DevServer',
+          timestamp: Date.now(),
+          message: [
+            'An error occured while processing assets from compilation:',
+            String(error),
+          ],
+        });
       }
 
       this.isCompilationInProgress = false;
@@ -221,13 +250,20 @@ export class Compiler {
     filename: string,
     platform: string
   ): Promise<string | Buffer> {
-    /**
-     * Inside dev server we can control the naming of sourcemaps
-     * so there is no need to look it up, we can just assume default naming scheme
-     */
-    const sourceMapFilename = filename + '.map';
-
     try {
+      const { info } = await this.getAsset(filename, platform);
+      let sourceMapFilename = info.related?.sourceMap;
+
+      if (!sourceMapFilename) {
+        throw new Error(
+          `No source map associated with ${filename} for ${platform}`
+        );
+      }
+
+      if (Array.isArray(sourceMapFilename)) {
+        sourceMapFilename = sourceMapFilename[0];
+      }
+
       const sourceMap = await this.getAsset(sourceMapFilename, platform);
       return sourceMap.data;
     } catch {
