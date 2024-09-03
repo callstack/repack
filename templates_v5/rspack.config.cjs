@@ -1,0 +1,170 @@
+const path = require('path');
+const Repack = require('@callstack/repack');
+
+/**
+ * More documentation, installation, usage, motivation and differences with Metro is available at:
+ * https://github.com/callstack/repack/blob/main/README.md
+ *
+ * The API documentation for the functions and plugins used in this file is available at:
+ * https://re-pack.dev
+ */
+
+/**
+ * Webpack configuration.
+ * You can also export a static object or a function returning a Promise.
+ *
+ * @param env Environment options passed from either Webpack CLI or React Native CLI
+ *            when running with `react-native start/bundle`.
+ */
+module.exports = (env) => {
+  const {
+    mode = 'development',
+    context = __dirname,
+    entry = './index.js',
+    platform = process.env.PLATFORM,
+    minimize = mode === 'production',
+    devServer = undefined,
+    bundleFilename = undefined,
+    sourceMapFilename = undefined,
+    assetsPath = undefined,
+    reactNativePath = require.resolve('react-native'),
+  } = env;
+
+  if (!platform) {
+    throw new Error('Missing platform');
+  }
+
+  return {
+    mode,
+    /**
+     * This should be always `false`, since the Source Map configuration is done
+     * by `SourceMapDevToolPlugin`.
+     */
+    devtool: false,
+    context,
+    entry,
+    resolve: {
+      /**
+       * `getResolveOptions` returns additional resolution configuration for React Native.
+       * If it's removed, you won't be able to use `<file>.<platform>.<ext>` (eg: `file.ios.js`)
+       * convention and some 3rd-party libraries that specify `react-native` field
+       * in their `package.json` might not work correctly.
+       */
+      ...Repack.getResolveOptions(platform),
+
+      /**
+       * Uncomment this to ensure all `react-native*` imports will resolve to the same React Native
+       * dependency. You might need it when using workspaces/monorepos or unconventional project
+       * structure. For simple/typical project you won't need it.
+       */
+      // alias: {
+      //   'react-native': reactNativePath,
+      // },
+    },
+    /**
+     * Configures output.
+     * It's recommended to leave it as it is unless you know what you're doing.
+     * By default Webpack will emit files into the directory specified under `path`. In order for the
+     * React Native app use them when bundling the `.ipa`/`.apk`, they need to be copied over with
+     * `Repack.OutputPlugin`, which is configured by default inside `Repack.RepackPlugin`.
+     */
+    output: {
+      clean: true,
+      hashFunction: 'xxhash64',
+      path: path.join(__dirname, 'build/generated', platform),
+      filename: 'index.bundle',
+      chunkFilename: '[name].chunk.bundle',
+      publicPath: Repack.getPublicPath({ platform, devServer }),
+    },
+    /** Configures optimization of the built bundle. */
+    optimization: {
+      /** Enables minification based on values passed from React Native CLI or from fallback. */
+      minimize,
+      chunkIds: 'named',
+    },
+    module: {
+      /**
+       * This rule will process all React Native related dependencies with Babel.
+       * If you have a 3rd-party dependency that you need to transpile, you can add it to the
+       * `include` list.
+       *
+       * You can also enable persistent caching with `cacheDirectory` - please refer to:
+       * https://github.com/babel/babel-loader#options
+       */
+      rules: [
+        Repack.REACT_NATIVE_LOADING_RULES,
+        Repack.NODE_MODULES_LOADING_RULES,
+        /** Here you can adjust loader that will process your files. */
+        {
+          test: /\.[jt]sx?$/,
+          exclude: [/node_modules/],
+          type: 'javascript/auto',
+          use: {
+            loader: 'builtin:swc-loader',
+            options: {
+              env: {
+                targets: {
+                  'react-native': '0.74',
+                },
+              },
+              jsc: {
+                externalHelpers: true,
+                transform: {
+                  react: {
+                    runtime: 'automatic',
+                    development: mode === 'development',
+                    refresh: mode === 'development' && Boolean(devServer),
+                  },
+                },
+              },
+            },
+          },
+        },
+        /** Run React Native codegen, required for utilizing new architecture */
+        Repack.REACT_NATIVE_CODEGEN_RULES,
+        /**
+         * This loader handles all static assets (images, video, audio and others), so that you can
+         * use (reference) them inside your application.
+         *
+         * If you want to handle specific asset type manually, filter out the extension
+         * from `ASSET_EXTENSIONS`, for example:
+         * ```
+         * Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+         * ```
+         */
+        {
+          test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
+          use: {
+            loader: '@callstack/repack/assets-loader',
+            options: {
+              platform,
+              devServerEnabled: Boolean(devServer),
+            },
+          },
+        },
+      ],
+    },
+    plugins: [
+      /**
+       * Configure other required and additional plugins to make the bundle
+       * work in React Native and provide good development experience with
+       * sensible defaults.
+       *
+       * `Repack.RepackPlugin` provides some degree of customization, but if you
+       * need more control, you can replace `Repack.RepackPlugin` with plugins
+       * from `Repack.plugins`.
+       */
+      new Repack.RepackPlugin({
+        context,
+        mode,
+        platform,
+        devServer,
+        output: {
+          bundleFilename,
+          sourceMapFilename,
+          assetsPath,
+        },
+      }),
+    ],
+  };
+};
