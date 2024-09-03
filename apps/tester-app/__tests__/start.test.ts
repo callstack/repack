@@ -8,7 +8,6 @@ import rspackCommands from '@callstack/repack/commands/rspack';
 let port: number;
 let stopServer: () => Promise<void>;
 
-const TMP_DIR = path.join(__dirname, 'out/server-test-output');
 const REACT_NATIVE_PATH = require.resolve('react-native', {
   paths: [path.dirname(__dirname)],
 });
@@ -29,7 +28,7 @@ describe('start command', () => {
       commands: rspackCommands,
       configFile: './rspack.config.cjs',
     },
-  ])('using $bundler', ({ commands, configFile }) => {
+  ])('using $bundler', ({ bundler, commands, configFile }) => {
     const startCommand = commands.find((command) => command.name === 'start');
     if (!startCommand) throw new Error('start command not found');
 
@@ -80,6 +79,11 @@ describe('start command', () => {
     ])(
       'should successfully produce bundle assets',
       ({ platform, requests }) => {
+        const TMP_DIR = path.join(
+          __dirname,
+          `out/start/${bundler}/${platform}`
+        );
+
         beforeAll(async () => {
           await fs.promises.rm(TMP_DIR, {
             recursive: true,
@@ -87,6 +91,7 @@ describe('start command', () => {
           });
 
           port = await getPort();
+
           const config = {
             root: path.join(__dirname, '..'),
             platforms: { ios: {}, android: {} },
@@ -95,6 +100,7 @@ describe('start command', () => {
               '../node_modules/react-native'
             ),
           };
+
           const args = {
             port,
             silent: true,

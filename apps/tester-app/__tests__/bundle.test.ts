@@ -5,7 +5,6 @@ import { describe, it, afterEach, beforeAll, expect } from 'vitest';
 import webpackCommands from '@callstack/repack/commands/webpack';
 import rspackCommands from '@callstack/repack/commands/rspack';
 
-const TMP_DIR = path.join(__dirname, 'out/bundle-test-output');
 const REACT_NATIVE_PATH = require.resolve('react-native', {
   paths: [path.dirname(__dirname)],
 });
@@ -30,7 +29,7 @@ describe('bundle command', () => {
       commands: rspackCommands,
       configFile: './rspack.config.cjs',
     },
-  ])('using $bundler', ({ commands, configFile }) => {
+  ])('using $bundler', ({ bundler, commands, configFile }) => {
     const bundleCommand = commands.find((command) => command.name === 'bundle');
     if (!bundleCommand) throw new Error('bundle command not found');
 
@@ -107,6 +106,8 @@ describe('bundle command', () => {
         ],
       },
     ])('should successfully produce bundle assets', ({ platform, assets }) => {
+      const TMP_DIR = path.join(__dirname, `out/bundle/${bundler}/${platform}`);
+
       beforeAll(async () => {
         await fs.promises.rm(TMP_DIR, {
           recursive: true,
@@ -122,6 +123,7 @@ describe('bundle command', () => {
         `for ${platform}`,
         async () => {
           const OUTPUT_DIR = path.join(TMP_DIR, platform);
+
           const config = {
             root: path.join(__dirname, '..'),
             platforms: { ios: {}, android: {} },
@@ -130,6 +132,7 @@ describe('bundle command', () => {
               '../node_modules/react-native'
             ),
           };
+
           const args = {
             platform,
             entryFile: 'index.js',
