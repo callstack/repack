@@ -48,14 +48,7 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
     },
     {
       loader: '@callstack/repack/flow-loader',
-      options: {
-        /**
-         *  Transforming React-Native requires us to use the `all` option, which
-         *  removes all Flow annotations, as not all files are marked with `@flow`
-         *  pragma.
-         */
-        all: true,
-      },
+      options: { all: true },
     },
   ],
 };
