@@ -2,16 +2,17 @@ import type { RuleSetRule } from '@rspack/core';
 import { REACT_NATIVE_LAZY_IMPORTS } from './lazyImports';
 
 export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
+  type: 'javascript/dynamic',
   test: /\.jsx?$/,
   include: [
     // classic paths
-    /node_modules(.*[/\\])+react-native[/\\]/,
-    /node_modules(.*[/\\])+@react-native[/\\]/,
+    /node_modules([/\\])+react-native[/\\]/,
+    /node_modules([/\\])+@react-native[/\\]/,
     // classic paths for OOT
-    /node_modules(.*[/\\])+react-native-macos[/\\]/,
-    /node_modules(.*[/\\])+react-native-windows[/\\]/,
-    /node_modules(.*[/\\])+react-native-tvos[/\\]/,
-    /node_modules(.*[/\\])+@callstack[/\\]react-native-visionos[/\\]/,
+    /node_modules([/\\])+react-native-macos[/\\]/,
+    /node_modules([/\\])+react-native-windows[/\\]/,
+    /node_modules([/\\])+react-native-tvos[/\\]/,
+    /node_modules([/\\])+@callstack[/\\]react-native-visionos[/\\]/,
     // exotic paths (e.g. pnpm)
     /node_modules(.*[/\\])+react-native@/,
     /node_modules(.*[/\\])+@react-native\+/,
@@ -34,6 +35,7 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
             jsx: true,
             exportDefaultFrom: true,
           },
+          loose: true,
           externalHelpers: true,
         },
         module: {
@@ -53,15 +55,7 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
          *  pragma.
          */
         all: true,
-        /*
-         *  IgnoreUninitializedFields is required to avoid errors (most notably in
-         *  places where event-target-shim is used) that occur when Flow types are
-         *  stripped from uninitialized fields. This flag removes the uninitialized
-         *  fields from the output. This can be fixed by using `declare` in front of them.
-         */
-        ignoreUninitializedFields: true,
       },
     },
   ],
-  type: 'javascript/dynamic',
 };
