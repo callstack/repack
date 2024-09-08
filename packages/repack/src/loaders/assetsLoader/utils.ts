@@ -44,10 +44,13 @@ export async function collectScales(
   scalableAssetResolutions: string[],
   readDirAsync: (path: string) => Promise<string[]>
 ): Promise<CollectedScales> {
-  // NOTE: assets can't have platform extensions!
-  // NOTE: this probably needs to handle nonscalable too
   if (!scalableAssetExtensions.includes(resourceExtension)) {
-    return { '@1x': resourceFilename + '.' + resourceExtension };
+    return {
+      '@1x': path.join(
+        resourceAbsoluteDirname,
+        resourceFilename + '.' + resourceExtension
+      ),
+    };
   }
 
   // explicit scales
