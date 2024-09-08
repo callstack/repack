@@ -97,7 +97,7 @@
     "dedent": "^0.7.0",
     "events": "^3.3.0",
     "execa": "^5.0.0",
-    "flow-remove-types": "2.236.0",
+    "flow-remove-types": "2.245.2",
     "image-size": "^1.1.1",
     "jsonwebtoken": "^9.0.2",
     "memfs": "^4.11.1",
