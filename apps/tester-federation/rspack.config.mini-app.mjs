@@ -9,7 +9,7 @@ const dirname = Repack.getDirname(import.meta.url);
 const { resolve } = createRequire(import.meta.url);
 
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
-module.exports = (env) => {
+export default (env) => {
   const {
     mode = 'development',
     context = dirname,
