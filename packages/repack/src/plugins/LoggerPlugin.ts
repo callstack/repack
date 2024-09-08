@@ -173,7 +173,7 @@ export class LoggerPlugin implements RspackPluginInstance {
             ]),
             ...errors.map((error) =>
               this.createEntry('LoggerPlugin', 'error', [
-                `Error in "${error.moduleName}": ${error.message}`,
+                `Error in "${error.moduleName}":\n${error.message}`,
               ])
             ),
           ];
@@ -185,7 +185,7 @@ export class LoggerPlugin implements RspackPluginInstance {
             ]),
             ...(warnings?.map((warning) =>
               this.createEntry('LoggerPlugin', 'warn', [
-                `Warning in "${warning.moduleName}": ${warning.message}`,
+                `Warning in "${warning.moduleName}":\n${warning.message}`,
               ])
             ) ?? []),
           ];
