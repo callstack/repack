@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -27,7 +27,8 @@ const MainNavigator = () => {
         headerStyle: styles.header,
         headerTitleStyle: styles.headerTitle,
         headerTintColor: 'rgba(255,255,255,1)',
-      }}>
+      }}
+    >
       <Main.Screen name="Home" component={HomeScreen} />
       <Main.Screen name="Gallery" component={GalleryScreen} />
     </Main.Navigator>

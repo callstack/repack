@@ -1,5 +1,40 @@
 # @callstack/repack
 
+## 4.3.2
+
+### Patch Changes
+
+- [#723](https://github.com/callstack/repack/pull/723) [`d3c96b8`](https://github.com/callstack/repack/commit/d3c96b8f55237b714ac0eed03d94d0d1b6cff565) Thanks [@jbroma](https://github.com/jbroma)! - Fix reading `webpack.config.mjs` on Windows
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.3.2
+
+## 4.3.1
+
+### Patch Changes
+
+- [#714](https://github.com/callstack/repack/pull/714) [`bad76d7`](https://github.com/callstack/repack/commit/bad76d7e0386130d7cbd4da6fed7ca39bcc2bfd4) Thanks [@jbroma](https://github.com/jbroma)! - Fix missing `--reset-cache` flag for both start and bundle CLI commands
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.3.1
+
+## 4.3.0
+
+### Minor Changes
+
+- [#687](https://github.com/callstack/repack/pull/687) [`8d823a7`](https://github.com/callstack/repack/commit/8d823a7097ef2642ba0a91e0cd3eb27c5002ae6b) Thanks [@jbroma](https://github.com/jbroma)! - Added `--watch` flag to bundle command
+
+### Patch Changes
+
+- [#710](https://github.com/callstack/repack/pull/710) [`a467bb5`](https://github.com/callstack/repack/commit/a467bb5e008f3b7725dc20970f2341a45a11e5c3) Thanks [@jbroma](https://github.com/jbroma)! - Use compile-time check to determine React-Native version in `WebpackHMRClient`
+
+- [#697](https://github.com/callstack/repack/pull/697) [`14550ab`](https://github.com/callstack/repack/commit/14550abbbc8a5cc8b69ec571f9279197ac09a32a) Thanks [@jbroma](https://github.com/jbroma)! - Align CLI options for `start` and `bundle` commands with `@react-native/community-cli-plugin`.
+
+- [#703](https://github.com/callstack/repack/pull/703) [`4de5305`](https://github.com/callstack/repack/commit/4de530504035c23a1d0004a26dc1d5368f9c82fb) Thanks [@hexboy](https://github.com/hexboy)! - Fix `LoadingView` import in `WebpackHMRClient` for React Native >=0.75
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.3.0
+
 ## 4.2.0
 
 ### Minor Changes

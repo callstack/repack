@@ -1,8 +1,13 @@
 /* eslint-env browser */
-/* globals __webpack_hash__, __DEV__, __PLATFORM__, __PUBLIC_PORT__ */
+/* globals __webpack_hash__, __DEV__, __PLATFORM__, __PUBLIC_PORT__, __REACT_NATIVE_MINOR_VERSION__ */
 
 import type { HMRMessage, HMRMessageBody } from '../types';
 import { getDevServerLocation } from './getDevServerLocation';
+
+type LoadingViewUtil = {
+  showMessage(text: string, type: 'load' | 'refresh'): void;
+  hide(): void;
+};
 
 class HMRClient {
   url: string;
@@ -13,10 +18,7 @@ class HMRClient {
     private app: {
       reload: () => void;
       dismissErrors: () => void;
-      LoadingView: {
-        showMessage(text: string, type: 'load' | 'refresh'): void;
-        hide(): void;
-      };
+      LoadingView: LoadingViewUtil;
     }
   ) {
     this.url = `ws://${
@@ -167,7 +169,16 @@ class HMRClient {
 
 if (__DEV__ && module.hot) {
   const { DevSettings, Platform } = require('react-native');
-  const LoadingView = require('react-native/Libraries/Utilities/LoadingView');
+  let LoadingView: LoadingViewUtil = {
+    showMessage: () => {},
+    hide: () => {},
+  };
+
+  if (__REACT_NATIVE_MINOR_VERSION__ >= 75) {
+    LoadingView = require('react-native/Libraries/Utilities/DevLoadingView');
+  } else {
+    LoadingView = require('react-native/Libraries/Utilities/LoadingView');
+  }
 
   const reload = () => DevSettings.reload();
   const dismissErrors = () => {

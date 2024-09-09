@@ -12,6 +12,8 @@ type EntryStaticNormalized =
   ExtractEntryStaticNormalized<webpack.EntryNormalized>;
 
 type ModuleDependency = webpack.dependencies.ModuleDependency;
+
+type PackageJSON = { version: string };
 /**
  * {@link DevelopmentPlugin} configuration options.
  */
@@ -51,9 +53,16 @@ export class DevelopmentPlugin implements WebpackPlugin {
       pathData.chunk?.name === 'main' ? 'index.bundle' : '[name].bundle';
     compiler.options.output.chunkFilename = '[name].chunk.bundle';
 
+    const reactNativePackageJson: PackageJSON = require('react-native/package.json');
+    const [majorVersion, minorVersion, patchVersion] =
+      reactNativePackageJson.version.split('-')[0].split('.');
+
     new webpack.DefinePlugin({
-      __PUBLIC_PORT__: JSON.stringify(this.config.devServer.port),
       __PLATFORM__: JSON.stringify(this.config.platform),
+      __PUBLIC_PORT__: Number(this.config.devServer.port),
+      __REACT_NATIVE_MAJOR_VERSION__: Number(majorVersion),
+      __REACT_NATIVE_MINOR_VERSION__: Number(minorVersion),
+      __REACT_NATIVE_PATCH_VERSION__: Number(patchVersion),
     }).apply(compiler);
 
     if (this.config?.devServer.hmr) {

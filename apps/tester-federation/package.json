@@ -38,7 +38,6 @@
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
-    "prettier": "^3.2.4",
     "react-native-test-app": "^3.8.9",
     "terser-webpack-plugin": "^5.3.3",
     "typescript": "^5.5.3",

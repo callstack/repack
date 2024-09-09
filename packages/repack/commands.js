@@ -82,6 +82,10 @@ const startCommandOptions = [
     description:
       '[Experimental] Enable the new debugger experience. Connection reliability and some basic features are unstable in this release.',
   },
+  // noop, but kept for compatibility
+  {
+    name: '--reset-cache, --resetCache',
+  },
   // options specific to Re.Pack
   {
     name: '--json',
@@ -146,6 +150,10 @@ const bundleCommandOptions = [
     name: '--assets-dest <string>',
     description:
       'Directory name where to store assets referenced in the bundle',
+  },
+  // noop, but kept for compatibility
+  {
+    name: '--reset-cache',
   },
   // options specific to Re.Pack
   {
