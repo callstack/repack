@@ -102,6 +102,7 @@ export async function createServer(config: Server.Config) {
   });
   instance.use('/debugger-ui', debuggerUIMiddleware());
   instance.use('/open-url', openURLMiddleware);
+  // @ts-ignore
   instance.use('/open-stack-frame', openStackFrameInEditorMiddleware);
 
   await instance.register(symbolicatePlugin, {
