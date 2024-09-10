@@ -20,9 +20,16 @@
                 withScriptId:(nonnull NSString *)scriptId
 {
   NSDictionary *_Nullable headers = (NSDictionary *)config.headers();
-  NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config.url()];
-  urlComponents.query = config.query();
-  NSURL *url = urlComponents.URL;
+
+  NSString *urlString = config[@"url"];
+  NSString *query = config[@"query"];
+  NSString *finalURLString;
+  if (query != nil) {
+      finalURLString = [NSString stringWithFormat:@"%@?%@", urlString, query];
+  } else {
+      finalURLString = urlString;
+  }
+  NSURL *url = [NSURL URLWithString:finalURLString];
 
   return [[ScriptConfig alloc] initWithScript:scriptId
                                       withURL:url
