@@ -167,7 +167,7 @@ importers:
         version: 5.5.3
       vitest:
         specifier: ^2.0.5
-        version: 2.0.5(@types/node@20.14.11)(sass-embedded@1.77.8)(terser@5.31.3)
+        version: 2.0.5(@types/node@22.5.4)(sass-embedded@1.77.8)(terser@5.31.3)
       webpack:
         specifier: ^5.94.0
         version: 5.94.0
@@ -323,6 +323,9 @@ importers:
 
   packages/init:
     dependencies:
+      '@inquirer/prompts':
+        specifier: ^5.5.0
+        version: 5.5.0
       '@manypkg/find-root':
         specifier: ^2.2.1
         version: 2.2.2
@@ -543,13 +546,13 @@ importers:
         version: 1.0.1(@rsbuild/core@0.7.8)
       rspress:
         specifier: 1.25.2
-        version: 1.25.2(webpack@5.94.0)
+        version: 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
       rspress-plugin-font-open-sans:
         specifier: ^1.0.0
         version: 1.0.0
       rspress-plugin-vercel-analytics:
         specifier: ^0.3.0
-        version: 0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.94.0))
+        version: 0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0))
     devDependencies:
       '@types/node':
         specifier: ^18
@@ -1605,6 +1608,62 @@ packages:
   '@humanwhocodes/object-schema@2.0.3':
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
     deprecated: Use @eslint/object-schema instead
+
+  '@inquirer/checkbox@2.5.0':
+    resolution: {integrity: sha512-sMgdETOfi2dUHT8r7TT1BTKOwNvdDGFDXYWtQ2J69SvlYNntk9I/gJe7r5yvMwwsuKnYbuRs3pNhx4tgNck5aA==}
+    engines: {node: '>=18'}
+
+  '@inquirer/confirm@3.2.0':
+    resolution: {integrity: sha512-oOIwPs0Dvq5220Z8lGL/6LHRTEr9TgLHmiI99Rj1PJ1p1czTys+olrgBqZk4E2qC0YTzeHprxSQmoHioVdJ7Lw==}
+    engines: {node: '>=18'}
+
+  '@inquirer/core@9.1.0':
+    resolution: {integrity: sha512-RZVfH//2ytTjmaBIzeKT1zefcQZzuruwkpTwwbe/i2jTl4o9M+iML5ChULzz6iw1Ok8iUBBsRCjY2IEbD8Ft4w==}
+    engines: {node: '>=18'}
+
+  '@inquirer/editor@2.2.0':
+    resolution: {integrity: sha512-9KHOpJ+dIL5SZli8lJ6xdaYLPPzB8xB9GZItg39MBybzhxA16vxmszmQFrRwbOA918WA2rvu8xhDEg/p6LXKbw==}
+    engines: {node: '>=18'}
+
+  '@inquirer/expand@2.3.0':
+    resolution: {integrity: sha512-qnJsUcOGCSG1e5DTOErmv2BPQqrtT6uzqn1vI/aYGiPKq+FgslGZmtdnXbhuI7IlT7OByDoEEqdnhUnVR2hhLw==}
+    engines: {node: '>=18'}
+
+  '@inquirer/figures@1.0.5':
+    resolution: {integrity: sha512-79hP/VWdZ2UVc9bFGJnoQ/lQMpL74mGgzSYX1xUqCVk7/v73vJCMw1VuyWN1jGkZ9B3z7THAbySqGbCNefcjfA==}
+    engines: {node: '>=18'}
+
+  '@inquirer/input@2.3.0':
+    resolution: {integrity: sha512-XfnpCStx2xgh1LIRqPXrTNEEByqQWoxsWYzNRSEUxJ5c6EQlhMogJ3vHKu8aXuTacebtaZzMAHwEL0kAflKOBw==}
+    engines: {node: '>=18'}
+
+  '@inquirer/number@1.1.0':
+    resolution: {integrity: sha512-ilUnia/GZUtfSZy3YEErXLJ2Sljo/mf9fiKc08n18DdwdmDbOzRcTv65H1jjDvlsAuvdFXf4Sa/aL7iw/NanVA==}
+    engines: {node: '>=18'}
+
+  '@inquirer/password@2.2.0':
+    resolution: {integrity: sha512-5otqIpgsPYIshqhgtEwSspBQE40etouR8VIxzpJkv9i0dVHIpyhiivbkH9/dGiMLdyamT54YRdGJLfl8TFnLHg==}
+    engines: {node: '>=18'}
+
+  '@inquirer/prompts@5.5.0':
+    resolution: {integrity: sha512-BHDeL0catgHdcHbSFFUddNzvx/imzJMft+tWDPwTm3hfu8/tApk1HrooNngB2Mb4qY+KaRWF+iZqoVUPeslEog==}
+    engines: {node: '>=18'}
+
+  '@inquirer/rawlist@2.3.0':
+    resolution: {integrity: sha512-zzfNuINhFF7OLAtGHfhwOW2TlYJyli7lOUoJUXw/uyklcwalV6WRXBXtFIicN8rTRK1XTiPWB4UY+YuW8dsnLQ==}
+    engines: {node: '>=18'}
+
+  '@inquirer/search@1.1.0':
+    resolution: {integrity: sha512-h+/5LSj51dx7hp5xOn4QFnUaKeARwUCLs6mIhtkJ0JYPBLmEYjdHSYh7I6GrLg9LwpJ3xeX0FZgAG1q0QdCpVQ==}
+    engines: {node: '>=18'}
+
+  '@inquirer/select@2.5.0':
+    resolution: {integrity: sha512-YmDobTItPP3WcEI86GvPo+T2sRHkxxOq/kXmsBjHS5BVXUgvgZ5AfJjkvQvZr03T81NnI3KrrRuMzeuYUQRFOA==}
+    engines: {node: '>=18'}
+
+  '@inquirer/type@1.5.3':
+    resolution: {integrity: sha512-xUQ14WQGR/HK5ei+2CvgcwoH9fQ4PgPGmVFSN0pc1+fVyDL3MREhyAY7nxEErSu6CkllBM3D7e3e+kOvtu+eIg==}
+    engines: {node: '>=18'}
 
   '@isaacs/ttlcache@1.4.1':
     resolution: {integrity: sha512-RQgQ4uQ+pLbqXfOmieB91ejmLwvSgv9nLx6sT6sD83s7umBypgg+OIBOBbEUiJXrfpnp9j0mRhYYdzp9uqq3lA==}
@@ -2699,6 +2758,9 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
+  '@types/mute-stream@0.0.4':
+    resolution: {integrity: sha512-CPM9nzrCPPJHQNA9keH9CVkVI+WR5kMa+7XEs5jcGQ0VoAGnLv242w8lIVgwAEfmE4oufJRaTc9PNLQl0ioAow==}
+
   '@types/node-forge@1.3.11':
     resolution: {integrity: sha512-FQx220y22OKNTqaByeBGqHWYz4cl94tpcxeFdvBo3wjG6XPBuZ0BNgNZRV5J5TFmmcsJ4IzsLkmGRiQbnYsBEQ==}
 
@@ -2710,6 +2772,9 @@ packages:
 
   '@types/node@20.14.11':
     resolution: {integrity: sha512-kprQpL8MMeszbz6ojB5/tU8PLN4kesnN8Gjzw349rDlNgsSzg90lAVj3llK99Dh7JON+t9AuscPPFW6mPbTnSA==}
+
+  '@types/node@22.5.4':
+    resolution: {integrity: sha512-FDuKUJQm/ju9fT/SeX/6+gBzoPzlVCzfzmGkwKvRHQVxi4BntVbyIwf6a4Xn62mrvndLiml6z/UBXIdEVjQLXg==}
 
   '@types/parse5@6.0.3':
     resolution: {integrity: sha512-SuT16Q1K51EAVPz1K29DJ/sXjhSQ0zjvsypYJ6tlwVsRV9jwW5Adq2ch8Dq8kDBCkYnELS7N7VNCSB5nC56t/g==}
@@ -2749,6 +2814,9 @@ packages:
 
   '@types/unist@3.0.2':
     resolution: {integrity: sha512-dqId9J8K/vGi5Zr7oo212BGii5m3q5Hxlkwy3WpYuKPklmBEvsbMYYyLxAQpSffdLl/gdW0XUpKWFvYmyoWCoQ==}
+
+  '@types/wrap-ansi@3.0.0':
+    resolution: {integrity: sha512-ltIpx+kM7g/MLRZfkbL7EsCEjfzCcScLpkg37eXEtx5kmrAKBkTJwd1GIAjDSL8wTpM6Hzn5YO4pSb91BEwu1g==}
 
   '@types/ws@8.5.11':
     resolution: {integrity: sha512-4+q7P5h3SpJxaBft0Dzpbr6lmMaqh0Jr2tbhJZ/luAwvD7ohSCniYkwz/pLxuT2h0EOa6QADgJj1Ko+TzRfZ+w==}
@@ -3472,6 +3540,10 @@ packages:
   cli-spinners@2.9.2:
     resolution: {integrity: sha512-ywqV+5MmyL4E7ybXgKys4DugZbX0FC6LnwrhjuykIjnK9k8OQacQ7axGKnjDXWNhns0xot3bZI5h55H8yo9cJg==}
     engines: {node: '>=6'}
+
+  cli-width@4.1.0:
+    resolution: {integrity: sha512-ouuZd4/dm2Sw5Gmqy6bGyNNNe1qt9RpmxveLSO7KcgsTnU7RXfsw+/bukWGo1abgBiMAic068rclZsO4IWmmxQ==}
+    engines: {node: '>= 12'}
 
   cliui@6.0.0:
     resolution: {integrity: sha512-t6wbgtoCXvAzst7QgXxJYqPt0usEfbgQdftEPbLL/cvv6HPE5VgvqCuAIDR0NgU52ds6rFwqrgakNLrHEjCbrQ==}
@@ -5918,6 +5990,10 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
+  mute-stream@1.0.0:
+    resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -7503,6 +7579,9 @@ packages:
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
+
   unicode-canonical-property-names-ecmascript@2.0.0:
     resolution: {integrity: sha512-yY5PpDlfVIU5+y/BSCxAJRBIS1Zc2dDG3Ujq+sR0U+JjUevW2JhocOF+soROYDSaAezOzOKuyyixhD6mBknSmQ==}
     engines: {node: '>=4'}
@@ -7939,6 +8018,10 @@ packages:
   yocto-queue@1.1.1:
     resolution: {integrity: sha512-b4JR1PFR10y1mKjhHY9LaGo6tmrgjit7hxVIeAmyMw3jegXR4dhYqLaQF5zMXZxY7tLpMyJeLjr1C4rLmkVe8g==}
     engines: {node: '>=12.20'}
+
+  yoctocolors-cjs@2.1.2:
+    resolution: {integrity: sha512-cYVsTjKl8b+FrnidjibDWskAv7UKOfcwaVZdp/it9n1s9fU3IkgDbhdIRKCW4JDsAlECJY0ytoVPT3sK6kideA==}
+    engines: {node: '>=18'}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -9296,6 +9379,103 @@ snapshots:
 
   '@humanwhocodes/object-schema@2.0.3': {}
 
+  '@inquirer/checkbox@2.5.0':
+    dependencies:
+      '@inquirer/core': 9.1.0
+      '@inquirer/figures': 1.0.5
+      '@inquirer/type': 1.5.3
+      ansi-escapes: 4.3.2
+      yoctocolors-cjs: 2.1.2
+
+  '@inquirer/confirm@3.2.0':
+    dependencies:
+      '@inquirer/core': 9.1.0
+      '@inquirer/type': 1.5.3
+
+  '@inquirer/core@9.1.0':
+    dependencies:
+      '@inquirer/figures': 1.0.5
+      '@inquirer/type': 1.5.3
+      '@types/mute-stream': 0.0.4
+      '@types/node': 22.5.4
+      '@types/wrap-ansi': 3.0.0
+      ansi-escapes: 4.3.2
+      cli-spinners: 2.9.2
+      cli-width: 4.1.0
+      mute-stream: 1.0.0
+      signal-exit: 4.1.0
+      strip-ansi: 6.0.1
+      wrap-ansi: 6.2.0
+      yoctocolors-cjs: 2.1.2
+
+  '@inquirer/editor@2.2.0':
+    dependencies:
+      '@inquirer/core': 9.1.0
+      '@inquirer/type': 1.5.3
+      external-editor: 3.1.0
+
+  '@inquirer/expand@2.3.0':
+    dependencies:
+      '@inquirer/core': 9.1.0
+      '@inquirer/type': 1.5.3
+      yoctocolors-cjs: 2.1.2
+
+  '@inquirer/figures@1.0.5': {}
+
+  '@inquirer/input@2.3.0':
+    dependencies:
+      '@inquirer/core': 9.1.0
+      '@inquirer/type': 1.5.3
+
+  '@inquirer/number@1.1.0':
+    dependencies:
+      '@inquirer/core': 9.1.0
+      '@inquirer/type': 1.5.3
+
+  '@inquirer/password@2.2.0':
+    dependencies:
+      '@inquirer/core': 9.1.0
+      '@inquirer/type': 1.5.3
+      ansi-escapes: 4.3.2
+
+  '@inquirer/prompts@5.5.0':
+    dependencies:
+      '@inquirer/checkbox': 2.5.0
+      '@inquirer/confirm': 3.2.0
+      '@inquirer/editor': 2.2.0
+      '@inquirer/expand': 2.3.0
+      '@inquirer/input': 2.3.0
+      '@inquirer/number': 1.1.0
+      '@inquirer/password': 2.2.0
+      '@inquirer/rawlist': 2.3.0
+      '@inquirer/search': 1.1.0
+      '@inquirer/select': 2.5.0
+
+  '@inquirer/rawlist@2.3.0':
+    dependencies:
+      '@inquirer/core': 9.1.0
+      '@inquirer/type': 1.5.3
+      yoctocolors-cjs: 2.1.2
+
+  '@inquirer/search@1.1.0':
+    dependencies:
+      '@inquirer/core': 9.1.0
+      '@inquirer/figures': 1.0.5
+      '@inquirer/type': 1.5.3
+      yoctocolors-cjs: 2.1.2
+
+  '@inquirer/select@2.5.0':
+    dependencies:
+      '@inquirer/core': 9.1.0
+      '@inquirer/figures': 1.0.5
+      '@inquirer/type': 1.5.3
+      ansi-escapes: 4.3.2
+      yoctocolors-cjs: 2.1.2
+
+  '@inquirer/type@1.5.3':
+    dependencies:
+      mute-stream: 1.0.0
+
   '@isaacs/ttlcache@1.4.1': {}
 
   '@istanbuljs/load-nyc-config@1.1.0':
@@ -10380,7 +10560,7 @@ snapshots:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       '@swc/helpers': 0.5.3
       core-js: 3.36.1
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
       postcss: 8.4.44
 
   '@rsbuild/core@1.0.0-alpha.9':
@@ -10394,29 +10574,40 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)':
+  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)':
+  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
       '@rspack/plugin-react-refresh': 0.7.3(react-refresh@0.14.2)
       react-refresh: 0.14.2
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)':
+  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
       loader-utils: 2.0.4
       postcss: 8.4.44
       sass-embedded: 1.77.8
+    transitivePeerDependencies:
+      - '@swc/helpers'
+
+  '@rsbuild/shared@0.7.8(@swc/helpers@0.5.11)':
+    dependencies:
+      '@rspack/core': 0.7.3(@swc/helpers@0.5.11)
+      caniuse-lite: 1.0.30001642
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.11))
+      postcss: 8.4.44
+    optionalDependencies:
+      fsevents: 2.3.3
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -10424,7 +10615,7 @@ snapshots:
     dependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       caniuse-lite: 1.0.30001642
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
       postcss: 8.4.44
     optionalDependencies:
       fsevents: 2.3.3
@@ -10659,6 +10850,16 @@ snapshots:
       '@rspack/binding-win32-ia32-msvc': 1.0.1
       '@rspack/binding-win32-x64-msvc': 1.0.1
 
+  '@rspack/core@0.7.3(@swc/helpers@0.5.11)':
+    dependencies:
+      '@module-federation/runtime-tools': 0.1.6
+      '@rspack/binding': 0.7.3
+      caniuse-lite: 1.0.30001642
+      tapable: 2.2.1
+      webpack-sources: 3.2.3
+    optionalDependencies:
+      '@swc/helpers': 0.5.11
+
   '@rspack/core@0.7.3(@swc/helpers@0.5.3)':
     dependencies:
       '@module-federation/runtime-tools': 0.1.6
@@ -10702,7 +10903,7 @@ snapshots:
     optionalDependencies:
       react-refresh: 0.14.2
 
-  '@rspress/core@1.25.2(webpack@5.94.0)':
+  '@rspress/core@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)':
     dependencies:
       '@loadable/component': 5.16.4(react@18.2.0)
       '@mdx-js/loader': 2.3.0(webpack@5.94.0)
@@ -10710,9 +10911,9 @@ snapshots:
       '@mdx-js/react': 2.3.0(react@18.2.0)
       '@modern-js/utils': 2.54.5
       '@rsbuild/core': 0.7.8
-      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)
-      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)
-      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
+      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
+      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
       '@rspress/mdx-rs': 0.5.7
       '@rspress/plugin-auto-nav-sidebar': 1.25.2
       '@rspress/plugin-container-syntax': 1.25.2
@@ -11104,6 +11305,10 @@ snapshots:
 
   '@types/ms@0.7.34': {}
 
+  '@types/mute-stream@0.0.4':
+    dependencies:
+      '@types/node': 18.19.41
+
   '@types/node-forge@1.3.11':
     dependencies:
       '@types/node': 18.19.41
@@ -11117,6 +11322,10 @@ snapshots:
   '@types/node@20.14.11':
     dependencies:
       undici-types: 5.26.5
+
+  '@types/node@22.5.4':
+    dependencies:
+      undici-types: 6.19.8
 
   '@types/parse5@6.0.3': {}
 
@@ -11154,6 +11363,8 @@ snapshots:
   '@types/unist@2.0.10': {}
 
   '@types/unist@3.0.2': {}
+
+  '@types/wrap-ansi@3.0.0': {}
 
   '@types/ws@8.5.11':
     dependencies:
@@ -12056,6 +12267,8 @@ snapshots:
       restore-cursor: 4.0.0
 
   cli-spinners@2.9.2: {}
+
+  cli-width@4.1.0: {}
 
   cliui@6.0.0:
     dependencies:
@@ -13522,7 +13735,11 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
-  html-rspack-plugin@5.7.2(@rspack/core@0.7.3):
+  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.11)):
+    optionalDependencies:
+      '@rspack/core': 0.7.3(@swc/helpers@0.5.11)
+
+  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3)):
     optionalDependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
 
@@ -15360,6 +15577,8 @@ snapshots:
 
   ms@2.1.3: {}
 
+  mute-stream@1.0.0: {}
+
   nanoid@3.3.7: {}
 
   natural-compare@1.4.0: {}
@@ -16309,7 +16528,7 @@ snapshots:
     dependencies:
       fs-extra: 11.2.0
 
-  rspress-plugin-devkit@0.3.0(rspress@1.25.2(webpack@5.94.0)):
+  rspress-plugin-devkit@0.3.0(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@types/estree-jsx': 1.0.5
@@ -16324,7 +16543,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
       mdast-util-to-string: 4.0.0
       remark-mdc: 1.2.0
-      rspress: 1.25.2(webpack@5.94.0)
+      rspress: 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
       ts-morph: 22.0.0
       unified: 10.1.2
       unist-util-visit: 5.0.0
@@ -16337,21 +16556,21 @@ snapshots:
 
   rspress-plugin-font-open-sans@1.0.0: {}
 
-  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.94.0)):
+  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@vercel/analytics': 1.3.1(react@18.2.0)
-      rspress: 1.25.2(webpack@5.94.0)
-      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(webpack@5.94.0))
+      rspress: 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
+      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0))
     transitivePeerDependencies:
       - next
       - react
       - supports-color
 
-  rspress@1.25.2(webpack@5.94.0):
+  rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0):
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rspress/core': 1.25.2(webpack@5.94.0)
+      '@rspress/core': 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
       '@rspress/shared': 1.25.2
       cac: 6.7.14
       chalk: 5.3.0
@@ -17076,6 +17295,8 @@ snapshots:
 
   undici-types@5.26.5: {}
 
+  undici-types@6.19.8: {}
+
   unicode-canonical-property-names-ecmascript@2.0.0: {}
 
   unicode-match-property-ecmascript@2.0.0:
@@ -17271,13 +17492,13 @@ snapshots:
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
 
-  vite-node@2.0.5(@types/node@20.14.11)(sass-embedded@1.77.8)(terser@5.31.3):
+  vite-node@2.0.5(@types/node@22.5.4)(sass-embedded@1.77.8)(terser@5.31.3):
     dependencies:
       cac: 6.7.14
       debug: 4.3.5
       pathe: 1.1.2
       tinyrainbow: 1.2.0
-      vite: 5.4.3(@types/node@20.14.11)(sass-embedded@1.77.8)(terser@5.31.3)
+      vite: 5.4.3(@types/node@22.5.4)(sass-embedded@1.77.8)(terser@5.31.3)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -17289,18 +17510,18 @@ snapshots:
       - supports-color
       - terser
 
-  vite@5.4.3(@types/node@20.14.11)(sass-embedded@1.77.8)(terser@5.31.3):
+  vite@5.4.3(@types/node@22.5.4)(sass-embedded@1.77.8)(terser@5.31.3):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.44
       rollup: 4.21.2
     optionalDependencies:
-      '@types/node': 20.14.11
+      '@types/node': 22.5.4
       fsevents: 2.3.3
       sass-embedded: 1.77.8
       terser: 5.31.3
 
-  vitest@2.0.5(@types/node@20.14.11)(sass-embedded@1.77.8)(terser@5.31.3):
+  vitest@2.0.5(@types/node@22.5.4)(sass-embedded@1.77.8)(terser@5.31.3):
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@vitest/expect': 2.0.5
@@ -17318,11 +17539,11 @@ snapshots:
       tinybench: 2.9.0
       tinypool: 1.0.1
       tinyrainbow: 1.2.0
-      vite: 5.4.3(@types/node@20.14.11)(sass-embedded@1.77.8)(terser@5.31.3)
-      vite-node: 2.0.5(@types/node@20.14.11)(sass-embedded@1.77.8)(terser@5.31.3)
+      vite: 5.4.3(@types/node@22.5.4)(sass-embedded@1.77.8)(terser@5.31.3)
+      vite-node: 2.0.5(@types/node@22.5.4)(sass-embedded@1.77.8)(terser@5.31.3)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 20.14.11
+      '@types/node': 22.5.4
     transitivePeerDependencies:
       - less
       - lightningcss
@@ -17572,5 +17793,7 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.1.1: {}
+
+  yoctocolors-cjs@2.1.2: {}
 
   zwitch@2.0.4: {}
