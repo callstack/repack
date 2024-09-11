@@ -33,7 +33,7 @@ export default async function run({
     const packageManager = await checkPackageManager(rootDir);
     const reactNativeVersion = checkReactNative(cwd);
 
-    await addDependencies(bundler, packageManager, repackVersion);
+    await addDependencies(bundler, cwd, packageManager, repackVersion);
 
     await createBundlerConfig(bundler, cwd, templateType, entry);
 
