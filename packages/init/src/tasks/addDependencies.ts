@@ -1,13 +1,16 @@
 import type { PM } from 'detect-package-manager';
 import { execa } from 'execa';
 import ora from 'ora';
+import packageJson from '../../package.json';
 import logger from '../utils/logger.js';
+
+const packageVersion = packageJson.version;
 
 const rspackDependencies = [
   '@rspack/core',
   '@rspack/plugin-react-refresh',
   '@swc/helpers',
-  '@callstack/repack@alpha',
+  '@callstack/repack',
 ];
 
 const webpackDependencies = [
@@ -26,7 +29,7 @@ const webpackDependencies = [
 export default async function addDependencies(
   bundler: 'rspack' | 'webpack',
   packageManager: PM,
-  repackVersion?: string
+  repackVersion: string = packageVersion
 ) {
   const dependencies =
     bundler === 'rspack' ? rspackDependencies : webpackDependencies;
@@ -39,11 +42,9 @@ export default async function addDependencies(
     installCommand = 'install';
   }
 
-  if (repackVersion) {
-    const index = dependencies.indexOf('@callstack/repack');
-    dependencies[index] = `@callstack/repack@${repackVersion}`;
-    logger.info(`Using custom Re.Pack version ${repackVersion}`);
-  }
+  const index = dependencies.indexOf('@callstack/repack');
+  dependencies[index] = `@callstack/repack@${repackVersion}`;
+  logger.info(`Using custom Re.Pack version ${repackVersion}`);
 
   const deps = dependencies.join(' ');
   const command = `${packageManager} ${installCommand} -D ${deps}`;
