@@ -1,7 +1,7 @@
 {
   "name": "@callstack/repack",
   "version": "5.0.0-alpha.0",
-  "description": "A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.",
+  "description": "A toolkit to build your React Native application with Rspack or Webpack.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "react-native": "",

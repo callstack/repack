@@ -12,12 +12,12 @@ import {
 } from '../common';
 
 /**
- * Bundle command for React Native CLI.
+ * Bundle command for React Native Community CLI.
  * It runs Rspack, builds bundle and saves it alongside any other assets and Source Map
  * to filesystem.
  *
  * @param _ Original, non-parsed arguments that were provided when running this command.
- * @param config React Native CLI configuration object.
+ * @param config React Native Community CLI configuration object.
  * @param args Parsed command line arguments.
  *
  * @internal

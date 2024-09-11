@@ -12,7 +12,7 @@ for an additional context on configuration, parameters and types.
 
 There are 2 ways to look at the content of the Re.Pack:
 
-- by command that are exposed to React Native CLI
+- by command that are exposed to React Native Community CLI
 - by Webpack plugins and utilities
 
 Here's a chart that represents both aspect of the codebase:
@@ -31,7 +31,7 @@ The following list describes the components that create Re.Pack:
       - `client/`
         - `runtime/` — Source code for runtime code embedded into a final bundle.
         - `chunks-api/` — Source code for `ChunkManager` used for dealing with Code Splitting.
-      - `commands/` — Source code for React Native CLI commands.
+      - `commands/` — Source code for React Native Community CLI commands.
       - `server/` — Source code for Development server, proxy and all related functionality.
       - `webpack/` — Source code for Webpack plugins and utilities.
   - `debugger-ui` — Source code for Chrome Remote JS debugger.
@@ -44,7 +44,7 @@ The core of bundling functionality is to load platform-specific Webpack configur
 
 Depending on how code is run, the final Webpack configuration might be different:
 
-- if Webpack and Re.Pack are run by React Native CLI, it provides data to functions like `getMode`, `getContext` etc.
+- if Webpack and Re.Pack are run by React Native Community CLI, it provides data to functions like `getMode`, `getContext` etc.
 - if Webpack and Re.Pack are run by Webpack CLI, the results for functions like `getMode`, `getContext`, etc is based on `fallback` values.
 
 ## Development server
