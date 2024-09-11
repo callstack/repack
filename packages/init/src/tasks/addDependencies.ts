@@ -1,10 +1,8 @@
+import fs from 'node:fs';
 import type { PM } from 'detect-package-manager';
 import { execa } from 'execa';
 import ora from 'ora';
-import packageJson from '../../package.json';
 import logger from '../utils/logger.js';
-
-const packageVersion = packageJson.version;
 
 const rspackDependencies = [
   '@rspack/core',
@@ -24,12 +22,14 @@ const webpackDependencies = [
 /**
  * Installs dependencies required by Re.Pack using the specified package manager
  *
+ * @param bundler rspack or webpack
  * @param packageManager yarn, npm or pnpm
+ * @param repackVersion custom Re.Pack version to install
  */
 export default async function addDependencies(
   bundler: 'rspack' | 'webpack',
   packageManager: PM,
-  repackVersion: string = packageVersion
+  repackVersion?: string
 ) {
   const dependencies =
     bundler === 'rspack' ? rspackDependencies : webpackDependencies;
@@ -42,9 +42,18 @@ export default async function addDependencies(
     installCommand = 'install';
   }
 
+  let version: string;
+
+  if (repackVersion) {
+    version = repackVersion;
+  } else {
+    const packageJson = fs.readFileSync('../../package.json', 'utf-8');
+    version = JSON.parse(packageJson).version!;
+  }
+
   const index = dependencies.indexOf('@callstack/repack');
-  dependencies[index] = `@callstack/repack@${repackVersion}`;
-  logger.info(`Using custom Re.Pack version ${repackVersion}`);
+  dependencies[index] = `@callstack/repack@${version}`;
+  logger.info(`Using custom Re.Pack version ${version}`);
 
   const deps = dependencies.join(' ');
   const command = `${packageManager} ${installCommand} -D ${deps}`;
