@@ -16,10 +16,10 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "bin": "build/bin.js",
-  "main": "build/index.js",
+  "bin": "dist/bin.js",
+  "main": "dist/index.js",
   "files": [
-    "build",
+    "dist",
     "!*.d.ts",
     "!*.map"
   ],
