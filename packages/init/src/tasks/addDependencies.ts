@@ -9,6 +9,7 @@ import logger from '../utils/logger.js';
 const rspackDependencies = [
   '@rspack/core',
   '@rspack/plugin-react-refresh',
+  'babel-loader', // still needed for codegen
   '@swc/helpers',
   '@callstack/repack',
 ];
