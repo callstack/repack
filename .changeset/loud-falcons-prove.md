@@ -2,4 +2,4 @@
 '@callstack/repack': patch
 ---
 
-Fix download bundle error not threw on iOS issue
+Fixed error message on iOS when the HTTP status is not 2xx.

@@ -2,4 +2,4 @@
 '@callstack/repack': patch
 ---
 
-Fix url encoded twice issue on iOS side
+Fix url query being encoded twice on iOS
