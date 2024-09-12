@@ -20,16 +20,11 @@
                 withScriptId:(nonnull NSString *)scriptId
 {
   NSDictionary *_Nullable headers = (NSDictionary *)config.headers();
-
-  NSString *urlString = config[@"url"];
-  NSString *query = config[@"query"];
-  NSString *finalURLString;
-  if (query != nil) {
-      finalURLString = [NSString stringWithFormat:@"%@?%@", urlString, query];
-  } else {
-      finalURLString = urlString;
+  NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config.url()];
+  if (config.query() != nil) {
+    urlComponents.percentEncodedQuery = config.query();
   }
-  NSURL *url = [NSURL URLWithString:finalURLString];
+  NSURL *url = urlComponents.URL;
 
   return [[ScriptConfig alloc] initWithScript:scriptId
                                       withURL:url
@@ -47,7 +42,9 @@
 + (ScriptConfig *)fromConfig:(NSDictionary *)config withScriptId:(nonnull NSString *)scriptId
 {
   NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config[@"url"]];
-  urlComponents.query = config[@"query"];
+  if (config[@"query"] != nil) {
+    urlComponents.percentEncodedQuery = config[@"query"];
+  }
   NSURL *url = urlComponents.URL;
 
   return [[ScriptConfig alloc] initWithScript:scriptId

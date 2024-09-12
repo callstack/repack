@@ -218,18 +218,8 @@ RCT_EXPORT_METHOD(invalidateScripts
   NSURLSessionDataTask *task = [[NSURLSession sharedSession]
       dataTaskWithRequest:request
         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-          NSInteger statusCode = [httpResponse statusCode];
           if (error != nil) {
             callback(error);
-          }else if(statusCode < 200 || statusCode >= 300){
-            NSDictionary *userInfo = @{
-                                          NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"Request should have returned with 200 HTTP status, but instead it received %ld", (long)statusCode]
-                                      };
-            NSError *httpError = [NSError errorWithDomain:NSURLErrorDomain
-                                                          code:statusCode
-                                                          userInfo:userInfo];
-            callback(httpError);
           } else {
             @try {
               NSDictionary<NSString *, id> *result = [CodeSigningUtils extractBundleAndTokenWithFileContent:data];
