@@ -16,10 +16,10 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "bin": "build/bin.js",
-  "main": "build/index.js",
+  "bin": "dist/bin.js",
+  "main": "dist/index.js",
   "files": [
-    "build",
+    "dist",
     "!*.d.ts",
     "!*.map"
   ],
@@ -30,10 +30,11 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint --ext .ts src",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@inquirer/prompts": "^5.5.0",
     "@manypkg/find-root": "^2.2.1",
     "chalk": "^5.2.0",
     "dedent": "^0.7.0",

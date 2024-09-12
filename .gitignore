@@ -372,3 +372,6 @@ packages/**/docs
 
 # turborepo
 .turbo/
+
+# clinic
+**/.clinic

@@ -1,6 +1,3 @@
-// @ts-ignore
-import getDevServer from 'react-native/Libraries/Core/Devtools/getDevServer';
-
 export interface DevServerLocation {
   host: string;
   hostname: string;
@@ -14,6 +11,8 @@ export interface DevServerLocation {
 let location: DevServerLocation | undefined;
 
 export function getDevServerLocation(): DevServerLocation {
+  const getDevServer = require('react-native/Libraries/Core/Devtools/getDevServer');
+
   if (!location) {
     const { url } = getDevServer() as { url: string };
     const origin = url.replace(/\/$/, '');

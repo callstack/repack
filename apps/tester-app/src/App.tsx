@@ -14,11 +14,6 @@ import DeprecatedRemoteDebuggerContainer from './deprecatedRemoteDebugger/Deprec
 Appearance.setColorScheme('light');
 
 const App = () => {
-  console.log(
-    'Bridgeless: ',
-    ('RN$Bridgeless' in global && RN$Bridgeless === true) || false
-  );
-
   return (
     <AppContainer>
       <SectionContainer>

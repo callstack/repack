@@ -156,6 +156,23 @@ RCT_EXPORT_METHOD(invalidateScripts
   }];
 }
 
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(unstable_evaluateScript
+                                       : (NSString *)scriptSource scriptSourceUrl
+                                       : (NSString *)scriptSourceUrl)
+{
+  facebook::jsi::Runtime *runtime = [self getJavaScriptRuntimePointer];
+
+  if (!runtime) {
+    @throw [NSError errorWithDomain:@"Can't access React Native runtime" code:0 userInfo:nil];
+  }
+
+  std::string source{[scriptSource UTF8String]};
+  std::string sourceUrl{[scriptSourceUrl UTF8String]};
+
+  runtime->evaluateJavaScript(std::make_unique<facebook::jsi::StringBuffer>(std::move(source)), sourceUrl);
+  return @YES;
+}
+
 - (void)execute:(ScriptConfig *)config resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
   NSString *scriptPath = [self getScriptFilePath:config.uniqueId];
