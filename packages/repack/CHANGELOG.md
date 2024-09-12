@@ -1,5 +1,16 @@
 # @callstack/repack
 
+## 5.0.0-alpha.0
+
+### Major Changes
+
+- [#720](https://github.com/callstack/repack/pull/720) [`a7b557e`](https://github.com/callstack/repack/commit/a7b557ed162166d9bc152b06d8be3169a0a2a176) Thanks [@jbroma](https://github.com/jbroma)! - Support for Rspack & Webpack simultaneously
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-alpha.0
+
 ## 4.3.3
 
 ### Patch Changes
