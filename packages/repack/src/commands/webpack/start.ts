@@ -1,7 +1,9 @@
 import { URL } from 'node:url';
+import colorette from 'colorette';
 import webpack from 'webpack';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
+import packageJson from '../../../package.json';
 import {
   composeReporters,
   ConsoleReporter,
@@ -59,7 +61,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     ? false
     : // TODO fix in a separate PR (jbroma)
       // eslint-disable-next-line prettier/prettier
-      args.verbose ?? process.argv.includes('--verbose');
+      (args.verbose ?? process.argv.includes('--verbose'));
 
   const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(
@@ -71,6 +73,14 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
     ].filter(Boolean) as Reporter[]
   );
+
+  if (!isSilent) {
+    const version = packageJson.version;
+    process.stdout.write(
+      colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
+    );
+  }
+
   const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
   const { createServer } = await import('@callstack/repack-dev-server');
