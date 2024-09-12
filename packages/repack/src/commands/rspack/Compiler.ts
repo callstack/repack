@@ -242,7 +242,7 @@ export class Compiler {
      * In reality, it's not that big a deal. This part is within a dev server
      * so we might override & enforce the format for the purpose of development
      */
-    if (/\.bundle/.test(filename) && platform) {
+    if (/\.(bundle|hot-update\.js)/.test(filename) && platform) {
       return (await this.getAsset(filename, platform)).data;
     }
 

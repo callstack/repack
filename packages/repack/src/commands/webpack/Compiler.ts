@@ -210,7 +210,7 @@ export class Compiler extends EventEmitter {
     filename: string,
     platform?: string
   ): Promise<string | Buffer> {
-    if (/\.bundle/.test(filename) && platform) {
+    if (/\.(bundle|hot-update\.js)/.test(filename) && platform) {
       return (await this.getAsset(filename, platform)).data;
     }
 
