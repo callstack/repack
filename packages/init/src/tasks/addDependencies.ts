@@ -7,7 +7,7 @@ import ora from 'ora';
 import logger from '../utils/logger.js';
 
 const rspackDependencies = [
-  '@rspack/core',
+  '@rspack/core@1.0.3', // 1.0.4 breaks sourcemaps
   '@rspack/plugin-react-refresh',
   'babel-loader', // still needed for codegen
   '@swc/helpers',
