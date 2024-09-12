@@ -91,7 +91,7 @@
     }
   },
   "dependencies": {
-    "@callstack/repack-dev-server": "workspace:^",
+    "@callstack/repack-dev-server": "workspace:*",
     "@discoveryjs/json-ext": "^0.5.7",
     "colorette": "^1.2.2",
     "dedent": "^0.7.0",
