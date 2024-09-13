@@ -3,6 +3,10 @@
   "namedInputs": {
     "default": ["{projectRoot}/src/**/*"]
   },
+  "workspaceLayout": {
+    "appsDir": "apps",
+    "libsDir": "packages"
+  },
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
