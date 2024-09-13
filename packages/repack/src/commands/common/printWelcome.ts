@@ -2,7 +2,9 @@ import colorette from 'colorette';
 import packageJson from '../../../package.json';
 
 export function printWelcome() {
-  const welcome = '📦 Re.Pack ' + packageJson.version + '\n\n';
+  const repack = colorette.bold(colorette.magenta('Re.Pack'));
+  const version = colorette.bold(colorette.magenta(packageJson.version));
+  const welcome = [repack, version].join(' ');
 
-  process.stdout.write(colorette.bold(colorette.cyan(welcome)));
+  process.stdout.write(welcome + '\n\n');
 }

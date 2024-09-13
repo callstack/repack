@@ -22,7 +22,7 @@ export function printSummary(stats: RspackStats | WebpackStats) {
   const output = dedent(`
   ─────────────────────────
    📦 Assets:\t${colorette.green(assetsCount.toString()).padStart(18)}
-   🔧 Modules:\t${colorette.green(modulesCount.toString()).padStart(18)}
+   📄 Modules:\t${colorette.green(modulesCount.toString()).padStart(18)}
    🕓 Time:\t${colorette.green(formatTime(compilationTime)).padStart(18)}
   ─────────────────────────`);
 
