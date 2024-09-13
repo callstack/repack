@@ -194,13 +194,6 @@ export class LoggerPlugin implements RspackPluginInstance {
         for (const entry of entires.filter(Boolean) as LogEntry[]) {
           this.processEntry(entry);
         }
-      } else {
-        const statsEntry = this.createEntry('LoggerPlugin', 'info', [
-          stats.toString({ preset: 'normal', colors: true }),
-        ]);
-        if (statsEntry) {
-          this.processEntry(statsEntry);
-        }
       }
 
       this.reporter.flush();

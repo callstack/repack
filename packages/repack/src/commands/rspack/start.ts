@@ -1,7 +1,5 @@
 import { URL } from 'node:url';
-import colorette from 'colorette';
 import { Config } from '@react-native-community/cli-types';
-import packageJson from '../../../package.json';
 import {
   composeReporters,
   ConsoleReporter,
@@ -14,6 +12,7 @@ import { StartArguments, StartCliOptions } from '../types';
 import {
   getRspackConfigFilePath,
   parseFileUrl,
+  printWelcome,
   runAdbReverse,
   setupInteractions,
 } from '../common';
@@ -62,7 +61,7 @@ export async function start(
     ? false
     : // TODO fix (jbroma)
       // eslint-disable-next-line prettier/prettier
-      args.verbose ?? process.argv.includes('--verbose');
+      (args.verbose ?? process.argv.includes('--verbose'));
 
   const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(
@@ -76,10 +75,7 @@ export async function start(
   );
 
   if (!isSilent) {
-    const version = packageJson.version;
-    process.stdout.write(
-      colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
-    );
+    printWelcome();
   }
 
   // @ts-ignore

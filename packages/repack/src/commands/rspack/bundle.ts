@@ -9,6 +9,8 @@ import {
   loadConfig,
   normalizeStatsOptions,
   writeStats,
+  printSummary,
+  printWelcome,
 } from '../common';
 
 /**
@@ -79,7 +81,13 @@ export async function bundle(
     }
   };
 
+  printWelcome();
+
   const compiler = rspack(config);
+
+  compiler.hooks.done.tap('bundle', (stats) => {
+    printSummary(stats);
+  });
 
   return new Promise<void>((resolve) => {
     if (args.watch) {

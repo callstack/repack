@@ -1,9 +1,7 @@
 import { URL } from 'node:url';
-import colorette from 'colorette';
 import webpack from 'webpack';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
-import packageJson from '../../../package.json';
 import {
   composeReporters,
   ConsoleReporter,
@@ -14,6 +12,7 @@ import {
 import {
   getWebpackConfigFilePath,
   parseFileUrl,
+  printWelcome,
   runAdbReverse,
   setupInteractions,
 } from '../common';
@@ -75,10 +74,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   );
 
   if (!isSilent) {
-    const version = packageJson.version;
-    process.stdout.write(
-      colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
-    );
+    printWelcome();
   }
 
   const compiler = new Compiler(cliOptions, reporter, isVerbose);

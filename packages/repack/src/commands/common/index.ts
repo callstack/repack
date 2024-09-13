@@ -6,3 +6,5 @@ export * from './runAdbReverse';
 export * from './parseFileUrl';
 export * from './setupInteractions';
 export * from './setupStatsWriter';
+export * from './printSummary';
+export * from './printWelcome';

@@ -8,6 +8,8 @@ import {
   loadConfig,
   normalizeStatsOptions,
   writeStats,
+  printWelcome,
+  printSummary,
 } from '../common';
 
 /**
@@ -81,7 +83,13 @@ export async function bundle(
     }
   };
 
+  printWelcome();
+
   const compiler = webpack(webpackConfig);
+
+  compiler.hooks.done.tap('bundle', (stats) => {
+    printSummary(stats);
+  });
 
   return new Promise<void>((resolve) => {
     if (args.watch) {
