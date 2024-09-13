@@ -38,7 +38,6 @@
     "eslint-plugin-react-native-a11y": "^3.3.0",
     "nx": "19.7.3",
     "prettier": "^3.3.3",
-    "turbo": "^2.0.14",
     "typescript": "^5.5.3"
   },
   "packageManager": "pnpm@9.5.0"
