@@ -1,0 +1,33 @@
+{
+  "name": "@callstack/repack-commands-webpack",
+  "description": "Re.Pack CLI commands that use webpack as the bundler",
+  "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
+  "license": "MIT",
+  "version": "5.0.0-alpha.0",
+  "homepage": "https://github.com/callstack/repack",
+  "repository": "github:callstack/repack",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "main": "dist/index.js",
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint --ext .ts src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/dedent": "^0.7.2",
+    "@types/node": "18",
+    "@types/semver": "^7.5.6",
+    "@types/yargs": "^17.0.32",
+    "eslint": "^8.57.0",
+    "typescript": "^5.5.3"
+  }
+}
