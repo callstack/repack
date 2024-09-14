@@ -1,6 +1,6 @@
-import { bundleCommandOptions, startCommandOptions } from '../options';
-import { bundle } from './bundle';
-import { start } from './start';
+import { bundleCommandOptions, startCommandOptions } from './options';
+import { bundle } from './rspack/bundle';
+import { start } from './rspack/start';
 
 const commands = [
   {

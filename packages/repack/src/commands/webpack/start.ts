@@ -20,7 +20,14 @@ import {
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
 import { StartArguments, StartCliOptions } from '../types';
 import { Compiler } from './Compiler';
-import { HMRMessageBody } from './types';
+
+interface HMRMessageBody {
+  name: string;
+  time: number;
+  hash: string;
+  warnings: StatsCompilation['warnings'];
+  errors: StatsCompilation['errors'];
+}
 
 /**
  * Start command for React Native Community CLI.
