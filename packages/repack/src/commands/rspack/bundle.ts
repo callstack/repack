@@ -75,7 +75,10 @@ export async function bundle(
       );
 
       const statsJson = stats.toJson(statsOptions);
-      await writeStats(statsJson, args.json);
+      await writeStats(statsJson, {
+        filepath: args.json,
+        rootDir: compiler.context,
+      });
     }
   };
 
