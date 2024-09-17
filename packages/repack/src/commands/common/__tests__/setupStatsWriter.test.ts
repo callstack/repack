@@ -6,6 +6,8 @@ import { Logger } from '../../../types';
 jest.mock('node:fs', () => jest.requireActual('memfs').fs);
 
 describe('setupStatsWriter', () => {
+  const logger = { info: jest.fn() } as unknown as Logger;
+
   describe('normalizeStatsOptions', () => {
     it('should return options with preset if preset is provided', () => {
       const options = {};
@@ -37,7 +39,17 @@ describe('setupStatsWriter', () => {
     it('should write stats to the specified file', async () => {
       const stats = { key: 'value' };
       const filepath = 'stats.json';
-      const logger = { info: jest.fn() } as unknown as Logger;
+
+      await writeStats(stats, { filepath, logger, rootDir: '/' });
+
+      const absoluteFilepath = path.resolve('/', filepath);
+      const fileContent = fs.readFileSync(absoluteFilepath, 'utf-8') as string;
+      expect(JSON.parse(fileContent)).toEqual(stats);
+    });
+
+    it('should ensure path exists', async () => {
+      const stats = { key: 'value' };
+      const filepath = './my/custom/dir/stats.json';
 
       await writeStats(stats, { filepath, logger, rootDir: '/' });
 
