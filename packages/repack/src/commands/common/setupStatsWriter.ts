@@ -29,25 +29,21 @@ export function normalizeStatsOptions<Stats>(
 interface WriteStatsOptions {
   filepath: string;
   logger?: Logger;
-  rootDir?: string;
+  rootDir: string;
 }
 
 export async function writeStats(
   stats: any,
-  { filepath, logger = console, rootDir = process.cwd() }: WriteStatsOptions
+  { filepath, logger = console, rootDir }: WriteStatsOptions
 ) {
   const outputPath = normalizeFilepath(filepath, rootDir);
   logger.info(`Writing compiler stats`);
 
-  try {
-    // Stats can be fairly big at which point their JSON no longer fits into a single string.
-    // Approach was copied from `webpack-cli`: https://github.com/webpack/webpack-cli/blob/c03fb03d0aa73d21f16bd9263fd3109efaf0cd28/packages/webpack-cli/src/webpack-cli.ts#L2471-L2482
-    const statsStream = stringifyStream(stats);
-    const outputStream = fs.createWriteStream(outputPath);
-    await pipeline(statsStream, outputStream);
-    logger.info(`Wrote compiler stats to ${outputPath}`);
-  } catch (error) {
-    logger.error(String(error));
-    process.exit(2);
-  }
+  // Stats can be fairly big at which point their JSON no longer fits into a single string.
+  // Approach was copied from `webpack-cli`: https://github.com/webpack/webpack-cli/blob/c03fb03d0aa73d21f16bd9263fd3109efaf0cd28/packages/webpack-cli/src/webpack-cli.ts#L2471-L2482
+  const statsStream = stringifyStream(stats);
+  const outputStream = fs.createWriteStream(outputPath);
+  await pipeline(statsStream, outputStream);
+
+  logger.info(`Wrote compiler stats to ${outputPath}`);
 }

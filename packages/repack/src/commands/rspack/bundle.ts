@@ -75,10 +75,16 @@ export async function bundle(
       );
 
       const statsJson = stats.toJson(statsOptions);
-      await writeStats(statsJson, {
-        filepath: args.json,
-        rootDir: compiler.context,
-      });
+
+      try {
+        await writeStats(statsJson, {
+          filepath: args.json,
+          rootDir: compiler.context,
+        });
+      } catch (e) {
+        console.error(String(e));
+        process.exit(2);
+      }
     }
   };
 
