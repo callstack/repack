@@ -109,12 +109,12 @@
     "throttleit": "^2.1.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.23.9",
-    "@babel/core": "^7.23.9",
+    "@babel/cli": "^7.25.2",
+    "@babel/core": "^7.25.2",
     "@babel/plugin-transform-export-namespace-from": "^7.24.6",
     "@babel/plugin-transform-modules-commonjs": "^7.23.2",
-    "@react-native-community/cli": "13.6.4",
-    "@react-native-community/cli-types": "13.6.4",
+    "@react-native-community/cli": "15.0.0-alpha.2",
+    "@react-native-community/cli-types": "15.0.0-alpha.2",
     "@rspack/core": "1.0.1",
     "@rspack/plugin-react-refresh": "1.0.0",
     "@swc/helpers": "0.5.11",
@@ -129,8 +129,8 @@
     "clang-format": "^1.8.0",
     "eslint": "^8.57.0",
     "jest": "^29.7.0",
-    "react": "18.2.0",
-    "react-native": "0.74.3",
+    "react": "18.3.1",
+    "react-native": "0.76.0-rc.1",
     "rspack-plugin-virtual-module": "^0.1.13",
     "typescript": "^5.5.3",
     "webpack": "^5.94.0"
