@@ -377,5 +377,6 @@ packages/**/docs
 **/.clinic
 
 # nx
+.nx
 .nx/cache
 .nx/workspace-data
