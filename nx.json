@@ -17,17 +17,20 @@
     "lint": {
       "dependsOn": ["build"],
       "inputs": ["default"],
-      "outputs": []
+      "outputs": [],
+      "cache": true
     },
     "typecheck": {
       "dependsOn": ["build"],
       "inputs": ["default"],
-      "outputs": []
+      "outputs": [],
+      "cache": true
     },
     "test": {
       "dependsOn": ["build"],
       "inputs": ["default"],
-      "outputs": []
+      "outputs": [],
+      "cache": true
     }
   }
 }
