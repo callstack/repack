@@ -1,0 +1,31 @@
+diff --git a/src/private/animated/NativeAnimatedHelper.js b/src/private/animated/NativeAnimatedHelper.js
+index fac57567b1e74772c3230e62a5946cbd11be564f..bff4b0f5b62d61b9992229206723cbb2997dd660 100644
+--- a/src/private/animated/NativeAnimatedHelper.js
++++ b/src/private/animated/NativeAnimatedHelper.js
+@@ -135,7 +135,7 @@ const API = {
+       }
+     : (tag, saveValueCallback) => {
+         NativeOperations.getValue(tag, saveValueCallback);
+-      }) as $NonMaybeType<typeof NativeAnimatedModule>['getValue'],
++      }),
+ 
+   setWaitingForIdentifier(id: string): void {
+     waitingForQueuedOperations.add(id);
+@@ -216,7 +216,7 @@ const API = {
+         if (Platform.OS === 'android') {
+           NativeAnimatedModule?.finishOperationBatch?.();
+         }
+-      }) as () => void,
++      }),
+ 
+   createAnimatedNode(tag: number, config: AnimatedNodeConfig): void {
+     NativeOperations.createAnimatedNode(tag, config);
+@@ -258,7 +258,7 @@ const API = {
+           config,
+           endCallback,
+         );
+-      }) as $NonMaybeType<typeof NativeAnimatedModule>['startAnimatingNode'],
++      }),
+ 
+   stopAnimation(animationId: number) {
+     NativeOperations.stopAnimation(animationId);
