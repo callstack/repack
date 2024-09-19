@@ -36,7 +36,9 @@ target_include_directories(
         "${REACT_NATIVE_DIR}/ReactAndroid/src/main/jni/react/turbomodule"
 )
 
-if (REACTNATIVE_MERGED_SO)
+# due to the following problem: https://github.com/react-native-community/discussions-and-proposals/discussions/816#discussioncomment-10659654
+# REACTNATIVE_MERGED_SO is not set, therefore - before it is fixed - the version is being compared
+if (REACTNATIVE_MERGED_SO OR ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
         target_link_libraries(
                 ${PACKAGE_NAME}
                 ReactAndroid::reactnative
