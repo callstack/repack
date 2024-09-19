@@ -39,12 +39,12 @@ target_include_directories(
 if (REACTNATIVE_MERGED_SO)
         target_link_libraries(
                 ${PACKAGE_NAME}
-                ReactAndroid::reactnativejni
+                ReactAndroid::reactnative
         )
 else()
         target_link_libraries(
                 ${PACKAGE_NAME}
-                ReactAndroid::reactnative
+                ReactAndroid::reactnativejni
         )
 endif()
 
