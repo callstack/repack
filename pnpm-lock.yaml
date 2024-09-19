@@ -119,15 +119,9 @@ importers:
       '@react-native-community/cli':
         specifier: 15.0.0-alpha.2
         version: 15.0.0-alpha.2(typescript@5.5.3)
-      '@react-native-community/cli-platform-android':
-        specifier: 15.0.0-alpha.2
-        version: 15.0.0-alpha.2
-      '@react-native-community/cli-platform-ios':
-        specifier: 15.0.0-alpha.2
-        version: 15.0.0-alpha.2
       '@react-native/babel-plugin-codegen':
-        specifier: ^0.75.3
-        version: 0.75.3(@babel/preset-env@7.25.4(@babel/core@7.25.2))
+        specifier: ^0.76.0-rc.1
+        version: 0.76.0-rc.1(@babel/preset-env@7.25.4(@babel/core@7.25.2))
       '@react-native/babel-preset':
         specifier: 0.76.0-rc.1
         version: 0.76.0-rc.1(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))
@@ -225,12 +219,6 @@ importers:
       '@react-native-community/cli':
         specifier: 15.0.0-alpha.2
         version: 15.0.0-alpha.2(typescript@5.5.3)
-      '@react-native-community/cli-platform-android':
-        specifier: 15.0.0-alpha.2
-        version: 15.0.0-alpha.2
-      '@react-native-community/cli-platform-ios':
-        specifier: 15.0.0-alpha.2
-        version: 15.0.0-alpha.2
       '@react-native/babel-preset':
         specifier: 0.76.0-rc.1
         version: 0.76.0-rc.1(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))
@@ -2129,10 +2117,6 @@ packages:
     resolution: {integrity: sha512-oQ32dqNQEnq5g+oDU+U7dgyknqIB6Ca2iGsZZpitoPHj0cEHdNAW3DwJZWQjh6oKWrL8cI5yk+10f5tqTRN6Dw==}
     engines: {node: '>=18'}
 
-  '@react-native/babel-plugin-codegen@0.75.3':
-    resolution: {integrity: sha512-8JmXEKq+Efb9AffsV48l8gmKe/ZQ2PbBygZjHdIf8DNZZhO/z5mt27J4B43MWNdp5Ww1l59T0mEaf8l/uywQUg==}
-    engines: {node: '>=18'}
-
   '@react-native/babel-plugin-codegen@0.76.0-rc.1':
     resolution: {integrity: sha512-o6aMC3+MQLfGScNPsgFsy4KqKEnyS6fwVFugMIzIHYZhSQwakP20qEe0VjtAnX/CHro2vUIWs3SJx/8gdoQtYQ==}
     engines: {node: '>=18'}
@@ -2142,12 +2126,6 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       '@babel/core': '*'
-
-  '@react-native/codegen@0.75.3':
-    resolution: {integrity: sha512-I0bz5jwOkiR7vnhYLGoV22RGmesErUg03tjsCiQgmsMpbyCYumudEtLNN5+DplHGK56bu8KyzBqKkWXGSKSCZQ==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@babel/preset-env': ^7.1.6
 
   '@react-native/codegen@0.76.0-rc.1':
     resolution: {integrity: sha512-uDRYQmq5x5/ECudIpedeKXnkOGi0SEEVLoGEAvUBcLc401yQI8zkipm8ScNosobncSUUqDb/ixOLH4tOSCK2aw==}
@@ -4906,17 +4884,11 @@ packages:
   hermes-estree@0.20.1:
     resolution: {integrity: sha512-SQpZK4BzR48kuOg0v4pb3EAGNclzIlqMj3Opu/mu7bbAoFw6oig6cEt/RAi0zTFW/iW6Iz9X9ggGuZTAZ/yZHg==}
 
-  hermes-estree@0.22.0:
-    resolution: {integrity: sha512-FLBt5X9OfA8BERUdc6aZS36Xz3rRuB0Y/mfocSADWEJfomc1xfene33GdyAmtTkKTBXTN/EgAy+rjTKkkZJHlw==}
-
   hermes-estree@0.23.1:
     resolution: {integrity: sha512-eT5MU3f5aVhTqsfIReZ6n41X5sYn4IdQL0nvz6yO+MMlPxw49aSARHLg/MSehQftyjnrE8X6bYregzSumqc6cg==}
 
   hermes-parser@0.20.1:
     resolution: {integrity: sha512-BL5P83cwCogI8D7rrDCgsFY0tdYUtmFP9XaXtl2IQjC+2Xo+4okjfXintlTxcIwl4qeGddEl28Z11kbVIw0aNA==}
-
-  hermes-parser@0.22.0:
-    resolution: {integrity: sha512-gn5RfZiEXCsIWsFGsKiykekktUoh0PdFWYocXsUdZIyWSckT6UIyPcyyUIPSR3kpnELWeK3n3ztAse7Mat6PSA==}
 
   hermes-parser@0.23.1:
     resolution: {integrity: sha512-oxl5h2DkFW83hT4DAUJorpah8ou4yvmweUzLJmmr6YV2cezduCdlil1AvU/a/xSsAFo4WUcNA4GoV5Bvq6JffA==}
@@ -9139,7 +9111,7 @@ snapshots:
       '@babel/helper-module-imports': 7.24.7
       '@babel/helper-plugin-utils': 7.24.8
       babel-plugin-polyfill-corejs2: 0.4.11(@babel/core@7.25.2)
-      babel-plugin-polyfill-corejs3: 0.10.4(@babel/core@7.25.2)
+      babel-plugin-polyfill-corejs3: 0.10.6(@babel/core@7.25.2)
       babel-plugin-polyfill-regenerator: 0.6.2(@babel/core@7.25.2)
       semver: 6.3.1
     transitivePeerDependencies:
@@ -10499,13 +10471,6 @@ snapshots:
 
   '@react-native/assets-registry@0.76.0-rc.1': {}
 
-  '@react-native/babel-plugin-codegen@0.75.3(@babel/preset-env@7.25.4(@babel/core@7.25.2))':
-    dependencies:
-      '@react-native/codegen': 0.75.3(@babel/preset-env@7.25.4(@babel/core@7.25.2))
-    transitivePeerDependencies:
-      - '@babel/preset-env'
-      - supports-color
-
   '@react-native/babel-plugin-codegen@0.76.0-rc.1(@babel/preset-env@7.25.4(@babel/core@7.25.2))':
     dependencies:
       '@react-native/codegen': 0.76.0-rc.1(@babel/preset-env@7.25.4(@babel/core@7.25.2))
@@ -10543,7 +10508,7 @@ snapshots:
       '@babel/plugin-transform-optional-catch-binding': 7.24.7(@babel/core@7.25.2)
       '@babel/plugin-transform-optional-chaining': 7.24.8(@babel/core@7.25.2)
       '@babel/plugin-transform-parameters': 7.24.7(@babel/core@7.25.2)
-      '@babel/plugin-transform-private-methods': 7.24.7(@babel/core@7.25.2)
+      '@babel/plugin-transform-private-methods': 7.25.4(@babel/core@7.25.2)
       '@babel/plugin-transform-private-property-in-object': 7.24.7(@babel/core@7.25.2)
       '@babel/plugin-transform-react-display-name': 7.24.7(@babel/core@7.25.2)
       '@babel/plugin-transform-react-jsx': 7.25.2(@babel/core@7.25.2)
@@ -10562,20 +10527,6 @@ snapshots:
       react-refresh: 0.14.2
     transitivePeerDependencies:
       - '@babel/preset-env'
-      - supports-color
-
-  '@react-native/codegen@0.75.3(@babel/preset-env@7.25.4(@babel/core@7.25.2))':
-    dependencies:
-      '@babel/parser': 7.25.6
-      '@babel/preset-env': 7.25.4(@babel/core@7.25.2)
-      glob: 7.2.3
-      hermes-parser: 0.22.0
-      invariant: 2.2.4
-      jscodeshift: 0.14.0(@babel/preset-env@7.25.4(@babel/core@7.25.2))
-      mkdirp: 0.5.6
-      nullthrows: 1.1.1
-      yargs: 17.7.2
-    transitivePeerDependencies:
       - supports-color
 
   '@react-native/codegen@0.76.0-rc.1(@babel/preset-env@7.25.4(@babel/core@7.25.2))':
@@ -14010,17 +13961,11 @@ snapshots:
 
   hermes-estree@0.20.1: {}
 
-  hermes-estree@0.22.0: {}
-
   hermes-estree@0.23.1: {}
 
   hermes-parser@0.20.1:
     dependencies:
       hermes-estree: 0.20.1
-
-  hermes-parser@0.22.0:
-    dependencies:
-      hermes-estree: 0.22.0
 
   hermes-parser@0.23.1:
     dependencies:
