@@ -110,18 +110,12 @@ importers:
       '@babel/core':
         specifier: ^7.25.2
         version: 7.25.2
-      '@babel/plugin-syntax-typescript':
-        specifier: ^7.25.4
-        version: 7.25.4(@babel/core@7.25.2)
       '@callstack/repack':
         specifier: workspace:*
         version: link:../../packages/repack
       '@react-native-community/cli':
         specifier: 15.0.0-alpha.2
         version: 15.0.0-alpha.2(typescript@5.5.3)
-      '@react-native/babel-plugin-codegen':
-        specifier: ^0.76.0-rc.1
-        version: 0.76.0-rc.1(@babel/preset-env@7.25.4(@babel/core@7.25.2))
       '@react-native/babel-preset':
         specifier: 0.76.0-rc.1
         version: 0.76.0-rc.1(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))
