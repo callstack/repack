@@ -325,8 +325,8 @@ export class ScriptManager extends EventEmitter {
     if (this.scriptsPromises[uniqueId]) {
       await this.scriptsPromises[uniqueId];
     }
-    const promise = new Promise<void>(async (resolve) => {
-      const script = await this.resolveScript(scriptId, caller, webpackContext);
+    const loadProcess = async () => {
+      let script = await this.resolveScript(scriptId, caller, webpackContext);
 
       try {
         this.emit('loading', script.toObject());
@@ -340,13 +340,11 @@ export class ScriptManager extends EventEmitter {
           code ? `[${code}]` : '',
           script.toObject()
         );
-      } finally {
-        resolve();
       }
-    });
+    };
 
-    this.scriptsPromises[uniqueId] = promise;
-    await promise;
+    this.scriptsPromises[uniqueId] = loadProcess();
+    await this.scriptsPromises[uniqueId];
   }
 
   /**
@@ -406,8 +404,8 @@ export class ScriptManager extends EventEmitter {
     if (this.scriptsPromises[uniqueId]) {
       await this.scriptsPromises[uniqueId];
     }
-    const promise = new Promise<void>(async (resolve) => {
-      const script = await this.resolveScript(scriptId, caller, webpackContext);
+    const loadProcess = async () => {
+      let script = await this.resolveScript(scriptId, caller, webpackContext);
 
       try {
         this.emit('prefetching', script.toObject());
@@ -420,13 +418,12 @@ export class ScriptManager extends EventEmitter {
           code ? `[${code}]` : '',
           script.toObject()
         );
-      } finally {
-        resolve();
       }
-    });
+    };
 
-    this.scriptsPromises[uniqueId] = promise;
-    await promise;
+    this.scriptsPromises[uniqueId] = loadProcess();
+
+    await this.scriptsPromises[uniqueId];
   }
 
   /**
