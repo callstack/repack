@@ -100,6 +100,7 @@ export class ScriptManager extends EventEmitter {
   }
 
   protected cache: Cache = {};
+  protected scriptsPromises: Record<string, Promise<void> | undefined> = {};
   protected cacheInitialized = false;
   protected resolvers: [number, ScriptLocatorResolver][] = [];
   protected storage?: StorageApi;
@@ -320,21 +321,32 @@ export class ScriptManager extends EventEmitter {
     caller?: string,
     webpackContext = getWebpackContext()
   ) {
-    const script = await this.resolveScript(scriptId, caller, webpackContext);
-
-    try {
-      this.emit('loading', script.toObject());
-      await this.loadScriptWithRetry(scriptId, script.locator);
-      this.emit('loaded', script.toObject());
-    } catch (error) {
-      const { code } = error as Error & { code: string };
-      this.handleError(
-        error,
-        '[ScriptManager] Failed to load script:',
-        code ? `[${code}]` : '',
-        script.toObject()
-      );
+    const uniqueId = Script.getScriptUniqueId(scriptId, caller);
+    if (this.scriptsPromises[uniqueId]) {
+      await this.scriptsPromises[uniqueId];
     }
+    const promise = new Promise<void>(async (resolve) => {
+      const script = await this.resolveScript(scriptId, caller, webpackContext);
+
+      try {
+        this.emit('loading', script.toObject());
+        await this.loadScriptWithRetry(scriptId, script.locator);
+        this.emit('loaded', script.toObject());
+      } catch (error) {
+        const { code } = error as Error & { code: string };
+        this.handleError(
+          error,
+          '[ScriptManager] Failed to load script:',
+          code ? `[${code}]` : '',
+          script.toObject()
+        );
+      } finally {
+        resolve();
+      }
+    });
+
+    this.scriptsPromises[uniqueId] = promise;
+    await promise;
   }
 
   /**
@@ -390,20 +402,31 @@ export class ScriptManager extends EventEmitter {
     caller?: string,
     webpackContext = getWebpackContext()
   ) {
-    const script = await this.resolveScript(scriptId, caller, webpackContext);
-
-    try {
-      this.emit('prefetching', script.toObject());
-      await this.nativeScriptManager.prefetchScript(scriptId, script.locator);
-    } catch (error) {
-      const { code } = error as Error & { code: string };
-      this.handleError(
-        error,
-        '[ScriptManager] Failed to prefetch script:',
-        code ? `[${code}]` : '',
-        script.toObject()
-      );
+    const uniqueId = Script.getScriptUniqueId(scriptId, caller);
+    if (this.scriptsPromises[uniqueId]) {
+      await this.scriptsPromises[uniqueId];
     }
+    const promise = new Promise<void>(async (resolve) => {
+      const script = await this.resolveScript(scriptId, caller, webpackContext);
+
+      try {
+        this.emit('prefetching', script.toObject());
+        await this.nativeScriptManager.prefetchScript(scriptId, script.locator);
+      } catch (error) {
+        const { code } = error as Error & { code: string };
+        this.handleError(
+          error,
+          '[ScriptManager] Failed to prefetch script:',
+          code ? `[${code}]` : '',
+          script.toObject()
+        );
+      } finally {
+        resolve();
+      }
+    });
+
+    this.scriptsPromises[uniqueId] = promise;
+    await promise;
   }
 
   /**
@@ -422,7 +445,10 @@ export class ScriptManager extends EventEmitter {
       await this.initCache();
 
       const ids = scriptIds.length ? scriptIds : Object.keys(this.cache);
-      ids.forEach((scriptId) => delete this.cache[scriptId]);
+      ids.forEach((scriptId) => {
+        delete this.cache[scriptId];
+        delete this.scriptsPromises[scriptId];
+      });
 
       await this.saveCache();
       await this.nativeScriptManager.invalidateScripts(scriptIds);
