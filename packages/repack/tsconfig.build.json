@@ -3,6 +3,8 @@
   "include": ["src/**/*"],
   "exclude": ["**/__tests__/**"],
   "compilerOptions": {
-    "rootDir": "./src"
-  }
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "references": [{ "path": "../dev-server" }]
 }
