@@ -1,6 +1,5 @@
 export default async (env) => {
   const config = (await import('../../webpack.config.mjs')).default(env);
-  console.log(process.env.TEST_WEBPACK_OUTPUT_DIR);
   return {
     ...config,
     cache: false,

@@ -106,7 +106,7 @@ describe('start command', () => {
             platform,
             silent: true,
             logFile: path.join(TMP_DIR, 'server.log'),
-            webpackConfig: path.join(__dirname, configFile),
+            webpackConfig: path.join(__dirname, 'configs', configFile),
           };
 
           // @ts-ignore
