@@ -6,6 +6,12 @@ module.exports = {
   },
   overrides: [
     {
+      files: ['client.js'],
+      rules: {
+        'import/no-unresolved': 0,
+      },
+    },
+    {
       files: ['jest.setup.js'],
       env: {
         jest: true,
@@ -26,6 +32,11 @@ module.exports = {
   settings: {
     jest: {
       version: 'latest',
+    },
+    'import/resolver': {
+      typescript: {
+        project: ['tsconfig.json', '../dev-server/tsconfig.json'],
+      },
     },
   },
 };

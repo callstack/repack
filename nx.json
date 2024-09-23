@@ -15,7 +15,6 @@
       "cache": true
     },
     "lint": {
-      "dependsOn": ["build"],
       "inputs": ["default"],
       "outputs": [],
       "cache": true
