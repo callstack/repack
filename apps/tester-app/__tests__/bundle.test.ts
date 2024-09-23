@@ -15,10 +15,8 @@ const RELATIVE_REACT_NATIVE_PATH = path.relative(
 const REACT_NATIVE_ANDROID_ASSET_PATH = RELATIVE_REACT_NATIVE_PATH.replaceAll(
   path.sep,
   '_'
-)
-  .replaceAll(/[-.@+]/g, '')
-  // when a module is patched with pnpm, its node_modules' path changes
-  .replaceAll(/patch_hash=/g, 'patch_hash');
+).replaceAll(/[-.@+=]/g, '');
+// when a module is patched with pnpm, its node_modules' path changes
 
 describe('bundle command', () => {
   describe.each([
@@ -143,7 +141,7 @@ describe('bundle command', () => {
               platform === 'ios' ? 'main.jsbundle' : `index.${platform}.bundle`
             ),
             dev: false,
-            webpackConfig: path.join(__dirname, configFile),
+            webpackConfig: path.join(__dirname, 'configs', configFile),
           };
           process.env.TEST_WEBPACK_OUTPUT_DIR = TMP_DIR;
 
