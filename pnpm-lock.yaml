@@ -149,6 +149,9 @@ importers:
       babel-loader:
         specifier: ^9.1.3
         version: 9.1.3(@babel/core@7.25.2)(webpack@5.94.0)
+      babel-plugin-syntax-hermes-parser:
+        specifier: ^0.23.1
+        version: 0.23.1
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -557,13 +560,13 @@ importers:
         version: 1.0.1(@rsbuild/core@0.7.8)
       rspress:
         specifier: 1.25.2
-        version: 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
+        version: 1.25.2(webpack@5.94.0)
       rspress-plugin-font-open-sans:
         specifier: ^1.0.0
         version: 1.0.0
       rspress-plugin-vercel-analytics:
         specifier: ^0.3.0
-        version: 0.3.0(react@18.3.1)(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0))
+        version: 0.3.0(react@18.3.1)(rspress@1.25.2(webpack@5.94.0))
     devDependencies:
       '@types/node':
         specifier: ^18
@@ -3219,6 +3222,9 @@ packages:
 
   babel-plugin-syntax-hermes-parser@0.20.1:
     resolution: {integrity: sha512-fTP6P0NV+0PrJLUQZSjAe7G4D/WvD2/Q38dNEsuBr9c6FUJ82VggApUQx6l3HnkvDtr5zHbNcJUIplGqumQ+Hg==}
+
+  babel-plugin-syntax-hermes-parser@0.23.1:
+    resolution: {integrity: sha512-uNLD0tk2tLUjGFdmCk+u/3FEw2o+BAwW4g+z2QVlxJrzZYOOPADroEcNtTPt5lNiScctaUmnsTkVEnOwZUOLhA==}
 
   babel-plugin-transform-flow-enums@0.0.2:
     resolution: {integrity: sha512-g4aaCrDDOsWjbm0PUUeVnkcVd6AKJsVc/MbnPhEotEpkeJQP6b8nzewohQi7+QS8UyPehOhGWn0nOwjvWpmMvQ==}
@@ -10178,7 +10184,7 @@ snapshots:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       '@swc/helpers': 0.5.3
       core-js: 3.36.1
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
       postcss: 8.4.44
 
   '@rsbuild/core@1.0.0-alpha.9':
@@ -10192,40 +10198,29 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
+  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
+  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
       '@rspack/plugin-react-refresh': 0.7.3(react-refresh@0.14.2)
       react-refresh: 0.14.2
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
+  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
       loader-utils: 2.0.4
       postcss: 8.4.44
       sass-embedded: 1.77.8
-    transitivePeerDependencies:
-      - '@swc/helpers'
-
-  '@rsbuild/shared@0.7.8(@swc/helpers@0.5.11)':
-    dependencies:
-      '@rspack/core': 0.7.3(@swc/helpers@0.5.11)
-      caniuse-lite: 1.0.30001660
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.11))
-      postcss: 8.4.44
-    optionalDependencies:
-      fsevents: 2.3.3
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -10233,7 +10228,7 @@ snapshots:
     dependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       caniuse-lite: 1.0.30001660
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
       postcss: 8.4.44
     optionalDependencies:
       fsevents: 2.3.3
@@ -10468,16 +10463,6 @@ snapshots:
       '@rspack/binding-win32-ia32-msvc': 1.0.1
       '@rspack/binding-win32-x64-msvc': 1.0.1
 
-  '@rspack/core@0.7.3(@swc/helpers@0.5.11)':
-    dependencies:
-      '@module-federation/runtime-tools': 0.1.6
-      '@rspack/binding': 0.7.3
-      caniuse-lite: 1.0.30001660
-      tapable: 2.2.1
-      webpack-sources: 3.2.3
-    optionalDependencies:
-      '@swc/helpers': 0.5.11
-
   '@rspack/core@0.7.3(@swc/helpers@0.5.3)':
     dependencies:
       '@module-federation/runtime-tools': 0.1.6
@@ -10521,7 +10506,7 @@ snapshots:
     optionalDependencies:
       react-refresh: 0.14.2
 
-  '@rspress/core@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)':
+  '@rspress/core@1.25.2(webpack@5.94.0)':
     dependencies:
       '@loadable/component': 5.16.4(react@18.3.1)
       '@mdx-js/loader': 2.3.0(webpack@5.94.0)
@@ -10529,9 +10514,9 @@ snapshots:
       '@mdx-js/react': 2.3.0(react@18.3.1)
       '@modern-js/utils': 2.54.5
       '@rsbuild/core': 0.7.8
-      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
-      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
-      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
+      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)
       '@rspress/mdx-rs': 0.5.7
       '@rspress/plugin-auto-nav-sidebar': 1.25.2
       '@rspress/plugin-container-syntax': 1.25.2
@@ -11619,6 +11604,10 @@ snapshots:
     dependencies:
       hermes-parser: 0.20.1
 
+  babel-plugin-syntax-hermes-parser@0.23.1:
+    dependencies:
+      hermes-parser: 0.23.1
+
   babel-plugin-transform-flow-enums@0.0.2(@babel/core@7.25.2):
     dependencies:
       '@babel/plugin-syntax-flow': 7.24.7(@babel/core@7.25.2)
@@ -12040,22 +12029,6 @@ snapshots:
       parse-json: 5.2.0
     optionalDependencies:
       typescript: 5.5.3
-
-  create-jest@29.7.0:
-    dependencies:
-      '@jest/types': 29.6.3
-      chalk: 4.1.2
-      exit: 0.1.2
-      graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@22.5.4)
-      jest-util: 29.7.0
-      prompts: 2.4.2
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - supports-color
-      - ts-node
-    optional: true
 
   create-jest@29.7.0(@types/node@18.19.41):
     dependencies:
@@ -13399,11 +13372,7 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
-  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.11)):
-    optionalDependencies:
-      '@rspack/core': 0.7.3(@swc/helpers@0.5.11)
-
-  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3)):
+  html-rspack-plugin@5.7.2(@rspack/core@0.7.3):
     optionalDependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
 
@@ -13807,26 +13776,6 @@ snapshots:
       - babel-plugin-macros
       - supports-color
 
-  jest-cli@29.7.0:
-    dependencies:
-      '@jest/core': 29.7.0
-      '@jest/test-result': 29.7.0
-      '@jest/types': 29.6.3
-      chalk: 4.1.2
-      create-jest: 29.7.0
-      exit: 0.1.2
-      import-local: 3.1.0
-      jest-config: 29.7.0(@types/node@22.5.4)
-      jest-util: 29.7.0
-      jest-validate: 29.7.0
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - supports-color
-      - ts-node
-    optional: true
-
   jest-cli@29.7.0(@types/node@18.19.41):
     dependencies:
       '@jest/core': 29.7.0
@@ -14153,7 +14102,7 @@ snapshots:
       '@jest/core': 29.7.0
       '@jest/types': 29.6.3
       import-local: 3.1.0
-      jest-cli: 29.7.0
+      jest-cli: 29.7.0(@types/node@22.5.4)
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -16292,7 +16241,7 @@ snapshots:
     dependencies:
       fs-extra: 11.2.0
 
-  rspress-plugin-devkit@0.3.0(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)):
+  rspress-plugin-devkit@0.3.0(rspress@1.25.2(webpack@5.94.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@types/estree-jsx': 1.0.5
@@ -16307,7 +16256,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
       mdast-util-to-string: 4.0.0
       remark-mdc: 1.2.0
-      rspress: 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
+      rspress: 1.25.2(webpack@5.94.0)
       ts-morph: 22.0.0
       unified: 10.1.2
       unist-util-visit: 5.0.0
@@ -16320,21 +16269,21 @@ snapshots:
 
   rspress-plugin-font-open-sans@1.0.0: {}
 
-  rspress-plugin-vercel-analytics@0.3.0(react@18.3.1)(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)):
+  rspress-plugin-vercel-analytics@0.3.0(react@18.3.1)(rspress@1.25.2(webpack@5.94.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@vercel/analytics': 1.3.1(react@18.3.1)
-      rspress: 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
-      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0))
+      rspress: 1.25.2(webpack@5.94.0)
+      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(webpack@5.94.0))
     transitivePeerDependencies:
       - next
       - react
       - supports-color
 
-  rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0):
+  rspress@1.25.2(webpack@5.94.0):
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rspress/core': 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
+      '@rspress/core': 1.25.2(webpack@5.94.0)
       '@rspress/shared': 1.25.2
       cac: 6.7.14
       chalk: 5.3.0
