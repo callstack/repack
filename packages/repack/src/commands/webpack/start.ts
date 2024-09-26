@@ -83,12 +83,16 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
   const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
+  const serverHost = args.host || DEFAULT_HOSTNAME,
+    serverPort = args.port ?? DEFAULT_PORT,
+    serverURL = `${args.https === true ? 'https' : 'http'}://${serverHost}:${serverPort}`;
+
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
     options: {
       rootDir: cliOptions.config.root,
-      host: args.host || DEFAULT_HOSTNAME,
-      port: args.port ?? DEFAULT_PORT,
+      host: serverHost,
+      port: serverPort,
       https: args.https
         ? {
             cert: args.cert,
@@ -104,11 +108,16 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       if (args.interactive) {
         setupInteractions(
           {
-            onReload: () => {
+            onReload() {
               ctx.broadcastToMessageClients({ method: 'reload' });
             },
-            onOpenDevMenu: () => {
+            onOpenDevMenu() {
               ctx.broadcastToMessageClients({ method: 'devMenu' });
+            },
+            onOpenDevTools() {
+              void fetch(`${serverURL}/open-debugger`, {
+                method: 'POST',
+              });
             },
           },
           ctx.log

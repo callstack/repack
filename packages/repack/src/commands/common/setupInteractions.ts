@@ -56,6 +56,25 @@ export function setupInteractions(
             handlers.onOpenDevMenu
           );
           break;
+
+        case 'j':
+          runOrReportUnsupported(
+            logger,
+            'Opening DevTools',
+            handlers.onOpenDevTools
+              ? () => {
+                  if (process.argv.includes('--experimental-debugger')) {
+                    handlers.onOpenDevTools!();
+                  } else {
+                    logger.warn(
+                      "DevTools require the '--experimental-debugger' flag to be passed to the bundler process"
+                    );
+                  }
+                }
+              : undefined
+          );
+
+          break;
       }
     }
   });
