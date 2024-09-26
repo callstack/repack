@@ -27,12 +27,18 @@ export function setupInteractions(
           process.emit('SIGTSTP', 'SIGTSTP');
           break;
       }
-    } else if (name === 'r') {
-      handlers.onReload?.();
-      logger.info('Reloading app');
-    } else if (name === 'd') {
-      handlers.onOpenDevMenu?.();
-      logger.info('Opening developer menu');
+    } else {
+      switch (name) {
+        case 'r':
+          handlers.onReload?.();
+          logger.info('Reloading app');
+          break;
+
+        case 'd':
+          handlers.onOpenDevMenu?.();
+          logger.info('Opening developer menu');
+          break;
+      }
     }
   });
 }
