@@ -1,10 +1,25 @@
 import readline from 'node:readline';
 import { Logger } from '../../types';
 
+function runOrReportUnsupported<Args extends Array<any>>(
+  logger: Logger,
+  message: string,
+  fun?: (...args: Args) => void,
+  ...args: Args
+) {
+  if (fun) {
+    fun(...args);
+    logger.info(message);
+  } else {
+    logger.warn(`${message} is not supported by the used bundler`);
+  }
+}
+
 export function setupInteractions(
   handlers: {
     onReload?: () => void;
     onOpenDevMenu?: () => void;
+    onOpenDevTools?: () => void;
   },
   logger: Logger = console
 ) {
@@ -23,6 +38,7 @@ export function setupInteractions(
         case 'c':
           process.exit();
           break;
+
         case 'z':
           process.emit('SIGTSTP', 'SIGTSTP');
           break;
@@ -30,13 +46,15 @@ export function setupInteractions(
     } else {
       switch (name) {
         case 'r':
-          handlers.onReload?.();
-          logger.info('Reloading app');
+          runOrReportUnsupported(logger, 'Reloading app', handlers.onReload);
           break;
 
         case 'd':
-          handlers.onOpenDevMenu?.();
-          logger.info('Opening developer menu');
+          runOrReportUnsupported(
+            logger,
+            'Opening developer menu',
+            handlers.onOpenDevMenu
+          );
           break;
       }
     }
