@@ -1,19 +1,38 @@
 import readline from 'node:readline';
+import { yellow, blueBright, italic } from 'colorette';
 import { Logger } from '../../types';
+import { EXPERIMENTAL_DEBUGGER_FLAG } from '../consts';
 
-function runOrReportUnsupported<Args extends Array<any>>(
-  logger: Logger,
-  message: string,
-  fun?: (...args: Args) => void,
-  ...args: Args
-) {
-  if (fun) {
-    fun(...args);
-    logger.info(message);
-  } else {
-    logger.warn(`${message} is not supported by the used bundler`);
-  }
-}
+type Interaction = {
+  /**
+   * The function to be executed when this interaction's keystroke is sent.
+   *
+   * @default undefined
+   */
+  action?: () => void;
+
+  /**
+   * The message to be displayed when the action is performed.
+   */
+  postPerformMessage: string;
+
+  /**
+   * The name of this interaction.
+   */
+  helpName: string;
+
+  /**
+   * The explanation why this action is not supported at runtime; will be displayed in help
+   * listing of interactions if provided.
+   *
+   * Will be logged in help listing of interactions as: `... (unsupported, ${actionUnsupportedExplanation})`.
+   *
+   * Will be logged in post-perform as: `${helpName} is not supported ${actionUnsupportedExplanation ?? 'by the used bundler'}`.
+   *
+   * @default undefined
+   */
+  actionUnsupportedExplanation?: string;
+};
 
 export function setupInteractions(
   handlers: {
@@ -44,38 +63,77 @@ export function setupInteractions(
           break;
       }
     } else {
-      switch (name) {
-        case 'r':
-          runOrReportUnsupported(logger, 'Reloading app', handlers.onReload);
-          break;
+      const interaction = plainInteractions[name];
 
-        case 'd':
-          runOrReportUnsupported(
-            logger,
-            'Opening developer menu',
-            handlers.onOpenDevMenu
+      if (interaction) {
+        const {
+          action,
+          postPerformMessage,
+          helpName,
+          actionUnsupportedExplanation,
+        } = interaction;
+
+        if (action && actionUnsupportedExplanation === undefined) {
+          logger.info(postPerformMessage);
+
+          action();
+        } else {
+          logger.warn(
+            `${helpName} is not supported ${actionUnsupportedExplanation ?? 'by the used bundler'}`
           );
-          break;
-
-        case 'j':
-          runOrReportUnsupported(
-            logger,
-            'Opening DevTools',
-            handlers.onOpenDevTools
-              ? () => {
-                  if (process.argv.includes('--experimental-debugger')) {
-                    handlers.onOpenDevTools!();
-                  } else {
-                    logger.warn(
-                      "DevTools require the '--experimental-debugger' flag to be passed to the bundler process"
-                    );
-                  }
-                }
-              : undefined
-          );
-
-          break;
+        }
       }
     }
   });
+
+  // since now Re.pack officially supports RN >= 0.73, it is sure that RN
+  // has the capability of the new debugger
+  const hasExperimentalDebuggerSupport = process.argv.includes(
+    EXPERIMENTAL_DEBUGGER_FLAG
+  );
+
+  const plainInteractions: Record<string, Interaction | undefined> = {
+    r: {
+      action: handlers.onReload,
+      postPerformMessage: 'Reloading app',
+      helpName: 'Reload app',
+    },
+    d: {
+      action: handlers.onOpenDevMenu,
+      postPerformMessage: 'Opening developer menu',
+      helpName: 'Open developer menu',
+    },
+    j: {
+      action: handlers.onOpenDevTools
+        ? () => {
+            if (hasExperimentalDebuggerSupport) {
+              handlers.onOpenDevTools!();
+            } else {
+              logger.warn(
+                `DevTools require the '${EXPERIMENTAL_DEBUGGER_FLAG}' flag to be passed to the bundler process`
+              );
+            }
+          }
+        : undefined,
+      postPerformMessage: 'Opening DevTools',
+      helpName: 'Open DevTools',
+      actionUnsupportedExplanation: hasExperimentalDebuggerSupport
+        ? undefined
+        : `${EXPERIMENTAL_DEBUGGER_FLAG} was not passed`,
+    },
+  };
+
+  console.log(blueBright('You can use the following keystrokes:'));
+  for (const [key, interaction] of Object.entries(plainInteractions)) {
+    const isSupported =
+        interaction?.actionUnsupportedExplanation === undefined &&
+        interaction?.action !== undefined,
+      text = `${key}: ${interaction?.helpName}${isSupported ? '' : yellow(` (unsupported${interaction?.actionUnsupportedExplanation ? `, ${interaction.actionUnsupportedExplanation}` : 'by the current bundler'})`)}`;
+
+    console.log(isSupported ? text : italic(text));
+  }
+
+  console.log('');
+  console.log('Press ctrl+c or ctrl+z to quit the dev server');
+  console.log('');
 }
