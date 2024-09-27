@@ -184,9 +184,8 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
         return dependencies.find((item) =>
           typeof item === 'string' ? item === name : Boolean(item[name])
         );
-      } else {
-        return dependencies[name];
       }
+        return dependencies[name];
     };
 
     const sharedReactNative = findSharedDependency('react-native', shared);
@@ -212,7 +211,7 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
         });
       }
       return adjustedSharedDependencies;
-    } else {
+    }
       const adjustedSharedDependencies = { ...shared };
       if (!findSharedDependency('react-native/', shared)) {
         Object.assign(adjustedSharedDependencies, {
@@ -225,7 +224,6 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
         });
       }
       return adjustedSharedDependencies;
-    }
   }
 
   /**

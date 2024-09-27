@@ -275,7 +275,8 @@ class InteractiveConsoleReporter implements Reporter {
 function colorizeText(logType: LogType, text: string) {
   if (logType === 'warn') {
     return colorette.yellow(text);
-  } else if (logType === 'error') {
+  }
+  if (logType === 'error') {
     return colorette.red(text);
   }
 

@@ -120,7 +120,7 @@ export default async function repackAssetsLoader(
         // use raw Buffer passed to loader to avoid unnecessary read
         const content = isDefault ? assetData : await readFileAsync(assetPath);
 
-        let destination;
+        let destination: string;
 
         if (
           !options.devServerEnabled &&
@@ -223,7 +223,7 @@ export default async function repackAssetsLoader(
       })
     );
 
-    let result;
+    let result: string;
     if (options.inline) {
       logger.debug(`Inlining assets for request ${resourcePath}`);
       result = inlineAssets({ assets, resourcePath });

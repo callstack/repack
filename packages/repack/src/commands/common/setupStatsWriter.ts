@@ -21,13 +21,14 @@ export function normalizeStatsOptions<Stats>(
 ): Stats {
   if (preset !== undefined) {
     return { preset: preset } as Stats;
-  } else if (options === true) {
-    return { preset: 'normal' } as Stats;
-  } else if (options === false) {
-    return { preset: 'none' } as Stats;
-  } else {
-    return options;
   }
+  if (options === true) {
+    return { preset: 'normal' } as Stats;
+  }
+  if (options === false) {
+    return { preset: 'none' } as Stats;
+  }
+  return options;
 }
 
 interface WriteStatsOptions {
@@ -41,7 +42,7 @@ export async function writeStats(
   { filepath, logger = console, rootDir }: WriteStatsOptions
 ) {
   const outputPath = normalizeFilepath(filepath, rootDir);
-  logger.info(`Writing compiler stats`);
+  logger.info('Writing compiler stats');
 
   // Stats can be fairly big at which point their JSON no longer fits into a single string.
   // Approach was copied from `webpack-cli`: https://github.com/webpack/webpack-cli/blob/c03fb03d0aa73d21f16bd9263fd3109efaf0cd28/packages/webpack-cli/src/webpack-cli.ts#L2471-L2482

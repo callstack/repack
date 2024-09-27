@@ -218,8 +218,8 @@ export namespace Federated {
   }
 
   declare function __webpack_init_sharing__(scope: string): Promise<void>;
-  declare var __webpack_share_scopes__: Record<string, any>;
-  declare var self: Record<string, any>;
+  declare let __webpack_share_scopes__: Record<string, any>;
+  declare let self: Record<string, any>;
 
   /**
    * Dynamically imports module from a Module Federation container. Similar to `import('file')`, but

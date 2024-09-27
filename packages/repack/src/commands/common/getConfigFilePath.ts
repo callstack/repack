@@ -16,9 +16,8 @@ function getConfigFilePath(root: string, candidates: string[]) {
     if (fs.existsSync(filename)) {
       if (path.extname(filename) === '.mjs' && os.platform() === 'win32') {
         return url.pathToFileURL(filename).href;
-      } else {
-        return filename;
       }
+      return filename;
     }
   }
 

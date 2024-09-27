@@ -2,7 +2,7 @@
 import EventEmitter from 'events';
 import { getWebpackContext } from './getWebpackContext';
 import { Script } from './Script';
-import type { ScriptLocatorResolver, StorageApi } from './types';
+import type { ScriptLocator, ScriptLocatorResolver, StorageApi } from './types';
 import NativeScriptManager, {
   type NormalizedScriptLocator,
 } from './NativeScriptManager';
@@ -230,7 +230,7 @@ export class ScriptManager extends EventEmitter {
 
       this.emit('resolving', { scriptId, caller });
 
-      let locator;
+      let locator: ScriptLocator | undefined;
       for (const [, resolve] of this.resolvers) {
         locator = await resolve(scriptId, caller);
         if (locator) {
