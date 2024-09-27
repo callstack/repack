@@ -44,7 +44,11 @@
         "noFallthroughSwitchClause": "off"
       }
     },
-    "ignore": ["tests/metro-compat/**/__tests__/**"]
+    "ignore": [
+      "templates/*",
+      "templates_v5/*",
+      "tests/metro-compat/**/__tests__/**"
+    ]
   },
   "javascript": {
     "formatter": {
