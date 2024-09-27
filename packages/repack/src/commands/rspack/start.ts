@@ -61,7 +61,7 @@ export async function start(
   const isVerbose = isSilent
     ? false
     : // TODO fix (jbroma)
-      // eslint-disable-next-line prettier/prettier
+      // biome-ignore format: fix in a separate PR
       args.verbose ?? process.argv.includes('--verbose');
 
   const showHttpRequests = isVerbose || args.logRequests;
