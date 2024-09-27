@@ -1,4 +1,4 @@
-import { Writable } from 'stream';
+import { Writable } from 'node:stream';
 import Fastify from 'fastify';
 import fastifySensible from '@fastify/sensible';
 import middie from '@fastify/middie';

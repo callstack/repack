@@ -1,5 +1,5 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import fastifyFavicon from 'fastify-favicon';
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';

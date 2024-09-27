@@ -1,4 +1,4 @@
-import type { IncomingMessage } from 'http';
+import type { IncomingMessage } from 'node:http';
 import type { FastifyInstance } from 'fastify';
 import type WebSocket from 'ws';
 import { WebSocketServer } from '../WebSocketServer';

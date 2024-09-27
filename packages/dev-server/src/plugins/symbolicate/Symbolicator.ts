@@ -1,4 +1,4 @@
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { codeFrameColumns } from '@babel/code-frame';
 import { SourceMapConsumer } from 'source-map';
 import type { FastifyLoggerInstance } from 'fastify';
@@ -36,13 +36,12 @@ export class Symbolicator {
       const platform = searchParams.get('platform');
       if (platform) {
         return platform;
-      } else {
+      }
         const [bundleFilename] = pathname.split('/').reverse();
         const [, platformOrExtension, extension] = bundleFilename.split('.');
         if (extension) {
           return platformOrExtension;
         }
-      }
     }
   }
 

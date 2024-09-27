@@ -1,5 +1,5 @@
-import { URL } from 'url';
-import type { IncomingMessage } from 'http';
+import { URL } from 'node:url';
+import type { IncomingMessage } from 'node:http';
 import type { FastifyInstance } from 'fastify';
 import type WebSocket from 'ws';
 import type { HmrDelegate } from '../types';
