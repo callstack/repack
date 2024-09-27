@@ -2,9 +2,9 @@ import React from 'react';
 import {
   Button as RNButton,
   type ButtonProps as RNButtonProps,
-  View,
-  StyleSheet,
   type StyleProp,
+  StyleSheet,
+  View,
   type ViewStyle,
 } from 'react-native';
 

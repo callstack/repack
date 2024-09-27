@@ -1,9 +1,9 @@
-import path from 'node:path';
 import fs from 'node:fs';
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import getPort from 'get-port';
-import webpackCommands from '@callstack/repack/commands/webpack';
+import path from 'node:path';
 import rspackCommands from '@callstack/repack/commands/rspack';
+import webpackCommands from '@callstack/repack/commands/webpack';
+import getPort from 'get-port';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 let port: number;
 let stopServer: () => Promise<void>;

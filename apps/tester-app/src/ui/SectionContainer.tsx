@@ -2,9 +2,9 @@ import React from 'react';
 import { View } from 'react-native';
 import { Colors, Header } from 'react-native/Libraries/NewAppScreen';
 
+import type { WithChildren } from './types';
 import DeveloperActivitySvg from './undraw_Developer_activity_re_39tg.svg';
 import { useIsDarkMode } from './utils';
-import type { WithChildren } from './types';
 
 type SectionContainerProps = WithChildren<{}>;
 

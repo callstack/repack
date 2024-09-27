@@ -1,9 +1,9 @@
-import path from 'node:path';
 import fs from 'node:fs';
-import { globby } from 'globby';
-import { describe, it, afterEach, beforeAll, expect } from 'vitest';
-import webpackCommands from '@callstack/repack/commands/webpack';
+import path from 'node:path';
 import rspackCommands from '@callstack/repack/commands/rspack';
+import webpackCommands from '@callstack/repack/commands/webpack';
+import { globby } from 'globby';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 const REACT_NATIVE_PATH = require.resolve('react-native', {
   paths: [path.dirname(__dirname)],
