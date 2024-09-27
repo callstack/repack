@@ -50,6 +50,7 @@ export default async function run({
     if (error instanceof Error) {
       logger.error(error.message);
     } else {
+      // biome-ignore lint: try to log anything
       logger.error(error as any);
     }
 

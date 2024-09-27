@@ -21,7 +21,16 @@
     ]
   },
   "organizeImports": { "enabled": true },
-  "linter": { "enabled": true, "rules": { "recommended": true } },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "useTemplate": "off"
+      }
+    },
+    "ignore": ["packages/init/src/types/xcode.d.ts"]
+  },
   "javascript": {
     "formatter": {
       "jsxQuoteStyle": "double",

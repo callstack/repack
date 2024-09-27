@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import semver, { SemVer } from 'semver';
+import semver, { type SemVer } from 'semver';
 import dedent from 'dedent';
 
 import logger from '../utils/logger.js';

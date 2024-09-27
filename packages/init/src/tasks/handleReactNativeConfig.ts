@@ -26,8 +26,8 @@ export default function handleReactNativeConfig(
     return;
   }
 
-  let configContent = fs.readFileSync(configPath, 'utf-8');
-  let updatedConfigContent;
+  const configContent = fs.readFileSync(configPath, 'utf-8');
+  let updatedConfigContent: string;
 
   if (!configContent.includes('commands:')) {
     updatedConfigContent = configContent.replace(

@@ -1,4 +1,4 @@
-import { detect, PM } from 'detect-package-manager';
+import { detect, type PM } from 'detect-package-manager';
 import logger from '../utils/logger.js';
 
 /**
