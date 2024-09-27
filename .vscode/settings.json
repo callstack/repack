@@ -1,4 +1,11 @@
 {
   "css.validate": false,
-  "editor.defaultFormatter": "biomejs.biome"
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "*.json": "jsonc"
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true
+  }
 }
