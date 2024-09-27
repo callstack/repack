@@ -4,7 +4,8 @@
   "scripts": {
     "build": "nx run-many -t build",
     "dev": "pnpm run build && nx watch --all -- pnpm run build",
-    "lint": "nx run-many -t lint --exclude tests/metro-compat",
+    "lint": "biome check --write",
+    "lint:ci": "biome check",
     "typecheck": "nx run-many -t typecheck --exclude tests/metro-compat",
     "test": "nx run-many -t test",
     "release": "pnpm build && pnpm lint && pnpm test && pnpm changeset publish",
