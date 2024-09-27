@@ -1,4 +1,4 @@
-/* globals __DEV__, __webpack_require__ */
+// biome-ignore lint/style/useNodejsImportProtocol: use 'events' module instead of node builtin
 import EventEmitter from 'events';
 import { getWebpackContext } from './getWebpackContext';
 import { Script } from './Script';
