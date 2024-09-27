@@ -5,6 +5,9 @@
   "files.associations": {
     "*.json": "jsonc"
   },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit"
+  },
   "[css]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "biomejs.biome"
