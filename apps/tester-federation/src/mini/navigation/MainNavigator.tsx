@@ -1,12 +1,12 @@
+import {
+  type NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import {
-  createNativeStackNavigator,
-  type NativeStackNavigationProp,
-} from '@react-navigation/native-stack';
 
-import HomeScreen from '../screens/HomeScreen';
 import GalleryScreen from '../screens/GalleryScreen';
+import HomeScreen from '../screens/HomeScreen';
 
 export type MainStackParamList = {
   Home: undefined;
