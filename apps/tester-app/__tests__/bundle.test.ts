@@ -116,7 +116,7 @@ describe('bundle command', () => {
       });
 
       afterEach(() => {
-        delete process.env.TEST_WEBPACK_OUTPUT_DIR;
+        process.env.TEST_WEBPACK_OUTPUT_DIR = undefined;
       });
 
       it(
@@ -147,7 +147,7 @@ describe('bundle command', () => {
           // @ts-ignore
           await bundleCommand.func([''], config, args);
 
-          const files = await globby([`**/*`], { cwd: TMP_DIR, dot: true });
+          const files = await globby(['**/*'], { cwd: TMP_DIR, dot: true });
           expect(files.sort()).toEqual(assets.sort());
         },
         60 * 1000

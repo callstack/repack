@@ -3,7 +3,7 @@ import React from 'react';
 import { SafeAreaView, ScrollView, StatusBar } from 'react-native';
 
 import { useIsDarkMode, getDefaultBackgroundStyle } from './utils';
-import { WithChildren } from './types';
+import type { WithChildren } from './types';
 
 type AppContainerProps = WithChildren<{}>;
 
