@@ -25,7 +25,14 @@
       "website/src/4.x/**"
     ]
   },
-  "organizeImports": { "enabled": true },
+  "organizeImports": {
+    "enabled": true,
+    "ignore": [
+      "templates/*",
+      "templates_v5/*",
+      "tests/metro-compat/**/__tests__/**"
+    ]
+  },
   "linter": {
     "enabled": true,
     "rules": {
