@@ -30,6 +30,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "complexity": {
+        "noForEach": "off"
+      },
       "style": {
         "noNonNullAssertion": "off",
         "useTemplate": "off"
