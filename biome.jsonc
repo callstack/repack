@@ -44,7 +44,7 @@
         "noFallthroughSwitchClause": "off"
       }
     },
-    "ignore": ["packages/init/src/types/xcode.d.ts"]
+    "ignore": ["tests/metro-compat/**/__tests__/**"]
   },
   "javascript": {
     "formatter": {

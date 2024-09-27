@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import memfs from 'memfs';
 import { getResolveOptions } from '@callstack/repack';
 import type * as EnhancedResolveNS from 'enhanced-resolve';

@@ -1,5 +1,5 @@
 // based on https://github.com/facebook/metro/blob/main/babel.config.js
-const path = require('path');
+const path = require('node:path');
 
 const pathMap = {
   resolver: {
@@ -14,9 +14,8 @@ const resolvePath = (sourcePath, currentFile) => {
   const dir = path.basename(path.dirname(path.dirname(currentFile)));
   if (sourcePath.startsWith('.') && pathMap[dir]?.[sourcePath]) {
     return path.join(__dirname, dir, pathMap[dir][sourcePath]);
-  } else {
-    return require.resolve(sourcePath, { paths: [path.dirname(currentFile)] });
   }
+  return require.resolve(sourcePath, { paths: [path.dirname(currentFile)] });
 };
 
 const jsPlugins = [
