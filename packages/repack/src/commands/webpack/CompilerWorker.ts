@@ -1,12 +1,12 @@
 import path from 'node:path';
-import { workerData, parentPort } from 'node:worker_threads';
+import { parentPort, workerData } from 'node:worker_threads';
 import memfs from 'memfs';
 import webpack, { type Configuration } from 'webpack';
 import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from '../common';
 import type {
-  WorkerMessages,
-  WebpackWorkerOptions,
   CompilerAsset,
+  WebpackWorkerOptions,
+  WorkerMessages,
 } from './types';
 
 function postMessage(message: WorkerMessages.WorkerMessage): void {

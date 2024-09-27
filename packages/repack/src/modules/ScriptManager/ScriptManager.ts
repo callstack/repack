@@ -1,11 +1,11 @@
 // biome-ignore lint/style/useNodejsImportProtocol: use 'events' module instead of node builtin
 import EventEmitter from 'events';
-import { getWebpackContext } from './getWebpackContext';
-import { Script } from './Script';
-import type { ScriptLocator, ScriptLocatorResolver, StorageApi } from './types';
 import NativeScriptManager, {
   type NormalizedScriptLocator,
 } from './NativeScriptManager';
+import { Script } from './Script';
+import { getWebpackContext } from './getWebpackContext';
+import type { ScriptLocator, ScriptLocatorResolver, StorageApi } from './types';
 
 type Cache = Record<
   string,

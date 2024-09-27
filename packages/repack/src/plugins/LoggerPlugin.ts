@@ -1,12 +1,12 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env';
 import {
-  composeReporters,
-  FileReporter,
   ConsoleReporter,
-  type Reporter,
+  FileReporter,
   type LogEntry,
   type LogType,
+  type Reporter,
+  composeReporters,
 } from '../logging';
 
 export type GenericFilter = Array<string | RegExp>;

@@ -1,22 +1,22 @@
 import { URL } from 'node:url';
-import colorette from 'colorette';
 import type { Config } from '@react-native-community/cli-types';
+import colorette from 'colorette';
 import packageJson from '../../../package.json';
 import {
-  composeReporters,
   ConsoleReporter,
   FileReporter,
-  makeLogEntryFromFastifyLog,
   type Reporter,
+  composeReporters,
+  makeLogEntryFromFastifyLog,
 } from '../../logging';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
-import type { StartArguments, StartCliOptions } from '../types';
 import {
   getRspackConfigFilePath,
   parseFileUrl,
   runAdbReverse,
   setupInteractions,
 } from '../common';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
+import type { StartArguments, StartCliOptions } from '../types';
 import { Compiler } from './Compiler';
 
 /**

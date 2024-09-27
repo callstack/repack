@@ -1,4 +1,4 @@
-import type { container, Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler, RspackPluginInstance, container } from '@rspack/core';
 import { Federated } from '../utils';
 
 type ModuleFederationPluginOptions =

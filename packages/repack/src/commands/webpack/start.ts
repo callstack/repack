@@ -1,15 +1,15 @@
 import { URL } from 'node:url';
+import type { Server } from '@callstack/repack-dev-server';
+import type { Config } from '@react-native-community/cli-types';
 import colorette from 'colorette';
 import type webpack from 'webpack';
-import type { Config } from '@react-native-community/cli-types';
-import type { Server } from '@callstack/repack-dev-server';
 import packageJson from '../../../package.json';
 import {
-  composeReporters,
   ConsoleReporter,
   FileReporter,
-  makeLogEntryFromFastifyLog,
   type Reporter,
+  composeReporters,
+  makeLogEntryFromFastifyLog,
 } from '../../logging';
 import {
   getWebpackConfigFilePath,

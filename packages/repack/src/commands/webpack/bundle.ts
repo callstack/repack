@@ -1,14 +1,14 @@
 import type { Config } from '@react-native-community/cli-types';
 import webpack, { type Configuration } from 'webpack';
 import { VERBOSE_ENV_KEY } from '../../env';
-import type { BundleArguments, BundleCliOptions } from '../types';
 import {
-  getWebpackConfigFilePath,
   getEnvOptions,
+  getWebpackConfigFilePath,
   loadConfig,
   normalizeStatsOptions,
   writeStats,
 } from '../common';
+import type { BundleArguments, BundleCliOptions } from '../types';
 
 /**
  * Bundle command for React Native Community CLI.

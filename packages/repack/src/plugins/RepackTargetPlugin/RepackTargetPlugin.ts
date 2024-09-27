@@ -1,5 +1,5 @@
 import path from 'node:path';
-import type { Compiler, Compilation, RspackPluginInstance } from '@rspack/core';
+import type { Compilation, Compiler, RspackPluginInstance } from '@rspack/core';
 import type { RuntimeModule as WebpackRuntimeModule } from 'webpack';
 
 type RspackRuntimeModule = Parameters<

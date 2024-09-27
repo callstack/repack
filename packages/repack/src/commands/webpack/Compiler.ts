@@ -2,16 +2,16 @@ import EventEmitter from 'node:events';
 import fs from 'node:fs';
 import path from 'node:path';
 import { Worker } from 'node:worker_threads';
-import type webpack from 'webpack';
-import mimeTypes from 'mime-types';
 import type { SendProgress } from '@callstack/repack-dev-server';
+import mimeTypes from 'mime-types';
+import type webpack from 'webpack';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../../env';
 import type { LogType, Reporter } from '../../logging';
 import type { CliOptions } from '../types';
 import type {
   CompilerAsset,
-  WorkerMessages,
   WebpackWorkerOptions,
+  WorkerMessages,
 } from './types';
 
 type Platform = string;

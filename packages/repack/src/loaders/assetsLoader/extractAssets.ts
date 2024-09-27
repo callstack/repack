@@ -1,5 +1,5 @@
-import path from 'node:path';
 import crypto from 'node:crypto';
+import path from 'node:path';
 import dedent from 'dedent';
 import type { Asset } from './types';
 import { getDefaultAsset } from './utils';

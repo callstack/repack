@@ -1,18 +1,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import memfs from 'memfs';
-import mimeTypes from 'mime-types';
+import type { Server } from '@callstack/repack-dev-server';
 import { type Configuration, rspack } from '@rspack/core';
 import type {
   MultiCompiler,
   StatsCompilation,
   WatchOptions,
 } from '@rspack/core';
-import type { Server } from '@callstack/repack-dev-server';
+import memfs from 'memfs';
+import mimeTypes from 'mime-types';
 import type { Reporter } from '../../logging';
 import type { HMRMessageBody } from '../../types';
-import type { StartCliOptions } from '../types';
 import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from '../common';
+import type { StartCliOptions } from '../types';
 import type { CompilerAsset, MultiWatching } from './types';
 
 export class Compiler {
