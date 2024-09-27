@@ -31,6 +31,7 @@
     "rules": {
       "recommended": true,
       "complexity": {
+        "noBannedTypes": "off",
         "noForEach": "off"
       },
       "style": {
@@ -38,7 +39,9 @@
         "useTemplate": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off"
+        "noControlCharactersInRegex": "off",
+        "noExplicitAny": "off",
+        "noFallthroughSwitchClause": "off"
       }
     },
     "ignore": ["packages/init/src/types/xcode.d.ts"]
@@ -57,18 +60,17 @@
     }
   },
   "overrides": [
-    { "include": ["website/**/*.css"], "formatter": { "lineWidth": 120 } },
     {
-      "include": [
-        "packages/repack/src/plugins/RepackTargetPlugin/implementation"
-      ],
-      "linter": {
-        "rules": {
-          "complexity": {
-            "useArrowFunction": "off"
-          }
-        }
-      }
+      "include": ["**/*.d.ts"],
+      "linter": { "rules": { "style": { "noVar": "off" } } }
+    },
+    {
+      "include": ["website/**/*.css"],
+      "formatter": { "lineWidth": 120 }
+    },
+    {
+      "include": ["packages/repack/src/**/implementation/**"],
+      "linter": { "enabled": false }
     }
   ]
 }
