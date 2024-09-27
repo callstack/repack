@@ -21,7 +21,6 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint --ext .ts src",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
