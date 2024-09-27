@@ -252,7 +252,7 @@ export namespace Federated {
   export async function importModule<Exports = any>(
     containerName: string,
     module: string,
-    scope: string = 'default'
+    scope = 'default'
   ): Promise<Exports> {
     if (!__webpack_share_scopes__[scope]?.__isInitialized) {
       // Initializes the share scope.

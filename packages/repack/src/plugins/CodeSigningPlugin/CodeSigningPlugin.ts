@@ -4,7 +4,7 @@ import path from 'node:path';
 import util from 'node:util';
 import jwt from 'jsonwebtoken';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import { validateConfig, CodeSigningPluginConfig } from './config';
+import { validateConfig, type CodeSigningPluginConfig } from './config';
 
 export class CodeSigningPlugin implements RspackPluginInstance {
   private chunkFilenames: Set<string>;

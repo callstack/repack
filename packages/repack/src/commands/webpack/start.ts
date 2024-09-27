@@ -1,7 +1,7 @@
 import { URL } from 'node:url';
 import colorette from 'colorette';
-import webpack from 'webpack';
-import { Config } from '@react-native-community/cli-types';
+import type webpack from 'webpack';
+import type { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
 import packageJson from '../../../package.json';
 import {
@@ -9,7 +9,7 @@ import {
   ConsoleReporter,
   FileReporter,
   makeLogEntryFromFastifyLog,
-  Reporter,
+  type Reporter,
 } from '../../logging';
 import {
   getWebpackConfigFilePath,
@@ -18,9 +18,9 @@ import {
   setupInteractions,
 } from '../common';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
-import { StartArguments, StartCliOptions } from '../types';
+import type { StartArguments, StartCliOptions } from '../types';
 import { Compiler } from './Compiler';
-import { HMRMessageBody } from './types';
+import type { HMRMessageBody } from './types';
 
 /**
  * Start command for React Native Community CLI.

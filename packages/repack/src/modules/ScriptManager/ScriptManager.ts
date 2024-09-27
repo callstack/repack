@@ -4,7 +4,7 @@ import { getWebpackContext } from './getWebpackContext';
 import { Script } from './Script';
 import type { ScriptLocatorResolver, StorageApi } from './types';
 import NativeScriptManager, {
-  NormalizedScriptLocator,
+  type NormalizedScriptLocator,
 } from './NativeScriptManager';
 
 type Cache = Record<
@@ -312,7 +312,7 @@ export class ScriptManager extends EventEmitter {
     caller?: string,
     webpackContext = getWebpackContext()
   ) {
-    let script = await this.resolveScript(scriptId, caller, webpackContext);
+    const script = await this.resolveScript(scriptId, caller, webpackContext);
 
     try {
       this.emit('loading', script.toObject());
@@ -344,7 +344,7 @@ export class ScriptManager extends EventEmitter {
     caller?: string,
     webpackContext = getWebpackContext()
   ) {
-    let script = await this.resolveScript(scriptId, caller, webpackContext);
+    const script = await this.resolveScript(scriptId, caller, webpackContext);
 
     try {
       this.emit('prefetching', script.toObject());

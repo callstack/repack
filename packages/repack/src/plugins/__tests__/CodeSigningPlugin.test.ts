@@ -8,7 +8,7 @@ import { rspack } from '@rspack/core';
 import RspackVirtualModulePlugin from 'rspack-plugin-virtual-module';
 import {
   CodeSigningPlugin,
-  CodeSigningPluginConfig,
+  type CodeSigningPluginConfig,
 } from '../CodeSigningPlugin';
 
 const BUNDLE_WITH_JWT_REGEX =

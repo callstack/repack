@@ -2,7 +2,7 @@ import path from 'node:path';
 import util from 'node:util';
 import type fs from 'node:fs';
 import { SCALABLE_ASSETS, SCALABLE_RESOLUTIONS } from '../../utils';
-import { getOptions, AssetLoaderContext } from './options';
+import { getOptions, type AssetLoaderContext } from './options';
 import { extractAssets } from './extractAssets';
 import { inlineAssets } from './inlineAssets';
 import { convertToRemoteAssets } from './convertToRemoteAssets';

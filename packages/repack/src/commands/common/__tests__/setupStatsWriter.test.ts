@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { fs } from 'memfs';
 import { normalizeStatsOptions, writeStats } from '../setupStatsWriter';
-import { Logger } from '../../../types';
+import type { Logger } from '../../../types';
 
 jest.mock('node:fs', () => jest.requireActual('memfs').fs);
 

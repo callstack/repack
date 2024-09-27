@@ -57,6 +57,18 @@
     }
   },
   "overrides": [
-    { "include": ["website/**/*.css"], "formatter": { "lineWidth": 120 } }
+    { "include": ["website/**/*.css"], "formatter": { "lineWidth": 120 } },
+    {
+      "include": [
+        "packages/repack/src/plugins/RepackTargetPlugin/implementation"
+      ],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "useArrowFunction": "off"
+          }
+        }
+      }
+    }
   ]
 }

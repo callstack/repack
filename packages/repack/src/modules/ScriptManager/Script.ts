@@ -1,7 +1,7 @@
 import shallowEqual from 'shallowequal';
 import type { ScriptLocator, WebpackContext } from './types';
 import {
-  NormalizedScriptLocator,
+  type NormalizedScriptLocator,
   NormalizedScriptLocatorHTTPMethod,
   NormalizedScriptLocatorSignatureVerificationMode,
 } from './NativeScriptManager';

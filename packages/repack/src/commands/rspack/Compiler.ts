@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import memfs from 'memfs';
 import mimeTypes from 'mime-types';
-import { Configuration, rspack } from '@rspack/core';
+import { type Configuration, rspack } from '@rspack/core';
 import type {
   MultiCompiler,
   StatsCompilation,
@@ -20,7 +20,7 @@ export class Compiler {
   assetsCache: Record<string, Record<string, CompilerAsset> | undefined> = {};
   statsCache: Record<string, StatsCompilation | undefined> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
-  isCompilationInProgress: boolean = false;
+  isCompilationInProgress = false;
   watchOptions: WatchOptions = {};
   watching: MultiWatching | null = null;
   // late-init

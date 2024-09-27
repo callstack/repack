@@ -4,9 +4,9 @@ import {
   composeReporters,
   FileReporter,
   ConsoleReporter,
-  Reporter,
-  LogEntry,
-  LogType,
+  type Reporter,
+  type LogEntry,
+  type LogType,
 } from '../logging';
 
 export type GenericFilter = Array<string | RegExp>;

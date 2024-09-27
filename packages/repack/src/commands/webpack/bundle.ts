@@ -1,7 +1,7 @@
-import { Config } from '@react-native-community/cli-types';
-import webpack, { Configuration } from 'webpack';
+import type { Config } from '@react-native-community/cli-types';
+import webpack, { type Configuration } from 'webpack';
 import { VERBOSE_ENV_KEY } from '../../env';
-import { BundleArguments, BundleCliOptions } from '../types';
+import type { BundleArguments, BundleCliOptions } from '../types';
 import {
   getWebpackConfigFilePath,
   getEnvOptions,

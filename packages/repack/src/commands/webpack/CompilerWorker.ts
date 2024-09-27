@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { workerData, parentPort } from 'node:worker_threads';
 import memfs from 'memfs';
-import webpack, { Configuration } from 'webpack';
+import webpack, { type Configuration } from 'webpack';
 import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from '../common';
 import type {
   WorkerMessages,
@@ -30,8 +30,8 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
         const [, completed, total] = /(\d+)\/(\d+) modules/.exec(text) ?? [];
         postMessage({
           event: 'progress',
-          completed: parseInt(completed, 10),
-          total: parseInt(total, 10),
+          completed: Number.parseInt(completed, 10),
+          total: Number.parseInt(total, 10),
           percentage: percentage,
           label: message,
           message: text,
