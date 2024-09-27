@@ -1,4 +1,4 @@
 {
   "css.validate": false,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "biomejs.biome"
 }
