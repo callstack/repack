@@ -61,7 +61,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     ? false
     : // TODO fix in a separate PR (jbroma)
       // eslint-disable-next-line prettier/prettier
-      (args.verbose ?? process.argv.includes('--verbose'));
+      args.verbose ?? process.argv.includes('--verbose');
 
   const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(
@@ -83,9 +83,9 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
   const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
-  const serverHost = args.host || DEFAULT_HOSTNAME,
-    serverPort = args.port ?? DEFAULT_PORT,
-    serverURL = `${args.https === true ? 'https' : 'http'}://${serverHost}:${serverPort}`;
+  const serverHost = args.host || DEFAULT_HOSTNAME;
+  const serverPort = args.port ?? DEFAULT_PORT;
+  const serverURL = `${args.https === true ? 'https' : 'http'}://${serverHost}:${serverPort}`;
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({

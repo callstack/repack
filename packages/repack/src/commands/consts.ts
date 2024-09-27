@@ -21,9 +21,3 @@ export const DEFAULT_RSPACK_CONFIG_LOCATIONS = [
   'rspack.config.cjs',
   'rspack.config.js',
 ];
-
-/**
- * The flag enabling the experimental RN debugger.
- * See https://reactnative.dev/docs/debugging#opening-the-debugger
- */
-export const EXPERIMENTAL_DEBUGGER_FLAG = '--experimental-debugger';

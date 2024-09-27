@@ -1,36 +1,18 @@
 import readline from 'node:readline';
-import { yellow, blueBright, italic } from 'colorette';
+import colorette from 'colorette';
 import { Logger } from '../../types';
-import { EXPERIMENTAL_DEBUGGER_FLAG } from '../consts';
 
 type Interaction = {
-  /**
-   * The function to be executed when this interaction's keystroke is sent.
-   *
-   * @default undefined
-   */
+  // The function to be executed when this interaction's keystroke is sent.
   action?: () => void;
 
-  /**
-   * The message to be displayed when the action is performed.
-   */
+  // The message to be displayed when the action is performed.
   postPerformMessage: string;
 
-  /**
-   * The name of this interaction.
-   */
+  // The name of this interaction.
   helpName: string;
 
-  /**
-   * The explanation why this action is not supported at runtime; will be displayed in help
-   * listing of interactions if provided.
-   *
-   * Will be logged in help listing of interactions as: `... (unsupported, ${actionUnsupportedExplanation})`.
-   *
-   * Will be logged in post-perform as: `${helpName} is not supported ${actionUnsupportedExplanation ?? 'by the used bundler'}`.
-   *
-   * @default undefined
-   */
+  // The explanation why this action is not supported at runtime; will be displayed in help listing of interactions if provided.
   actionUnsupportedExplanation?: string;
 };
 
@@ -86,12 +68,6 @@ export function setupInteractions(
     }
   });
 
-  // since now Re.pack officially supports RN >= 0.73, it is sure that RN
-  // has the capability of the new debugger
-  const hasExperimentalDebuggerSupport = process.argv.includes(
-    EXPERIMENTAL_DEBUGGER_FLAG
-  );
-
   const plainInteractions: Record<string, Interaction | undefined> = {
     r: {
       action: handlers.onReload,
@@ -104,36 +80,23 @@ export function setupInteractions(
       helpName: 'Open developer menu',
     },
     j: {
-      action: handlers.onOpenDevTools
-        ? () => {
-            if (hasExperimentalDebuggerSupport) {
-              handlers.onOpenDevTools!();
-            } else {
-              logger.warn(
-                `DevTools require the '${EXPERIMENTAL_DEBUGGER_FLAG}' flag to be passed to the bundler process`
-              );
-            }
-          }
-        : undefined,
-      postPerformMessage: 'Opening DevTools',
-      helpName: 'Open DevTools',
-      actionUnsupportedExplanation: hasExperimentalDebuggerSupport
-        ? undefined
-        : `${EXPERIMENTAL_DEBUGGER_FLAG} was not passed`,
+      action: handlers.onOpenDevTools,
+      postPerformMessage: 'Opening debugger',
+      helpName: 'Open debugger',
     },
   };
 
-  console.log(blueBright('You can use the following keystrokes:'));
+  process.stdout.write(
+    colorette.blueBright('You can use the following keystrokes:\n')
+  );
   for (const [key, interaction] of Object.entries(plainInteractions)) {
     const isSupported =
         interaction?.actionUnsupportedExplanation === undefined &&
         interaction?.action !== undefined,
-      text = `${key}: ${interaction?.helpName}${isSupported ? '' : yellow(` (unsupported${interaction?.actionUnsupportedExplanation ? `, ${interaction.actionUnsupportedExplanation}` : 'by the current bundler'})`)}`;
+      text = `${colorette.bold(key)}: ${interaction?.helpName}${isSupported ? '' : colorette.yellow(` (unsupported${interaction?.actionUnsupportedExplanation ? `, ${interaction.actionUnsupportedExplanation}` : 'by the current bundler'})`)}\n`;
 
-    console.log(isSupported ? text : italic(text));
+    process.stdout.write(isSupported ? text : colorette.italic(text));
   }
 
-  console.log('');
-  console.log('Press ctrl+c or ctrl+z to quit the dev server');
-  console.log('');
+  process.stdout.write('\nPress ctrl+c or ctrl+z to quit the dev server\n');
 }
