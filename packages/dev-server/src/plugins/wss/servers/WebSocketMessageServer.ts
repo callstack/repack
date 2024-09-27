@@ -1,7 +1,7 @@
 import type { IncomingMessage } from 'http';
 import { URL } from 'url';
 import type { FastifyInstance } from 'fastify';
-import WebSocket from 'ws';
+import type WebSocket from 'ws';
 import { WebSocketServer } from '../WebSocketServer';
 
 /**
@@ -357,7 +357,7 @@ export class WebSocketMessageServer extends WebSocketServer {
    */
   onConnection(socket: WebSocket, request: IncomingMessage) {
     const clientId = `client#${this.nextClientId++}`;
-    let client: WebSocketWithUpgradeReq = socket;
+    const client: WebSocketWithUpgradeReq = socket;
     client.upgradeReq = request;
     this.clients.set(clientId, client);
     this.fastify.log.debug({ msg: 'Message client connected', clientId });

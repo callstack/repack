@@ -1,8 +1,8 @@
 import { URL } from 'url';
-import { IncomingMessage } from 'http';
-import { FastifyInstance } from 'fastify';
-import WebSocket from 'ws';
-import { HmrDelegate } from '../types';
+import type { IncomingMessage } from 'http';
+import type { FastifyInstance } from 'fastify';
+import type WebSocket from 'ws';
+import type { HmrDelegate } from '../types';
 import { WebSocketServer } from '../WebSocketServer';
 
 /**

@@ -1,7 +1,7 @@
 import type { IncomingMessage } from 'node:http';
 import type { Socket } from 'node:net';
 import type { FastifyInstance } from 'fastify';
-import type { WebSocketServer as WebSocketServer } from 'ws';
+import type { WebSocketServer } from 'ws';
 import type { WebSocketServerInterface } from './types';
 
 export class WebSocketServerAdapter implements WebSocketServerInterface {

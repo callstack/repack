@@ -14,7 +14,7 @@ import compilerPlugin from './plugins/compiler';
 import apiPlugin from './plugins/api';
 import wssPlugin from './plugins/wss';
 import faviconPlugin from './plugins/favicon';
-import { Internal, Server } from './types';
+import { Internal, type Server } from './types';
 import symbolicatePlugin from './plugins/symbolicate';
 import devtoolsPlugin from './plugins/devtools';
 
