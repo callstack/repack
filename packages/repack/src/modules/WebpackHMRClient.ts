@@ -1,6 +1,3 @@
-/* eslint-env browser */
-/* globals __webpack_hash__, __DEV__, __PLATFORM__, __PUBLIC_PORT__, __REACT_NATIVE_MINOR_VERSION__ */
-
 import type { HMRMessage, HMRMessageBody } from '../types';
 import { getDevServerLocation } from './getDevServerLocation';
 

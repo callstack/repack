@@ -2,7 +2,6 @@ import { Writable } from 'node:stream';
 import Fastify from 'fastify';
 import fastifySensible from '@fastify/sensible';
 import middie from '@fastify/middie';
-// eslint-disable-next-line import/no-unresolved -- no main field in package.json
 import { createDevMiddleware } from '@react-native/dev-middleware';
 import { debuggerUIMiddleware } from '@react-native-community/cli-debugger-ui';
 import {

@@ -244,8 +244,8 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       exposes: this.config.exposes,
       filename:
         // TODO fix in a separate PR (jbroma)
-        // eslint-disable-next-line prettier/prettier
-        (this.config.filename ?? this.config.exposes)
+        // biome-ignore format: fix in a separate PR
+        this.config.filename ?? this.config.exposes
           ? `${this.config.name}.container.bundle`
           : undefined,
       library: this.config.exposes
