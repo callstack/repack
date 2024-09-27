@@ -31,7 +31,11 @@
     "rules": {
       "recommended": true,
       "style": {
+        "noNonNullAssertion": "off",
         "useTemplate": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
       }
     },
     "ignore": ["packages/init/src/types/xcode.d.ts"]
