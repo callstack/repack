@@ -1,8 +1,8 @@
 import * as path from 'node:path';
-import { defineConfig } from 'rspress/config';
+import { pluginOpenGraph } from 'rsbuild-plugin-open-graph';
 import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
 import vercelAnalytics from 'rspress-plugin-vercel-analytics';
-import { pluginOpenGraph } from 'rsbuild-plugin-open-graph';
+import { defineConfig } from 'rspress/config';
 
 export default defineConfig({
   root: path.join(__dirname, 'src'),
