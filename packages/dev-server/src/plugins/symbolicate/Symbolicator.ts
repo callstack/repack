@@ -1,7 +1,7 @@
 import { URL } from 'node:url';
 import { codeFrameColumns } from '@babel/code-frame';
-import { SourceMapConsumer } from 'source-map';
 import type { FastifyLoggerInstance } from 'fastify';
+import { SourceMapConsumer } from 'source-map';
 import type {
   CodeFrame,
   InputStackFrame,

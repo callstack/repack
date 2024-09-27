@@ -1,21 +1,21 @@
 import { Writable } from 'node:stream';
-import Fastify from 'fastify';
-import fastifySensible from '@fastify/sensible';
 import middie from '@fastify/middie';
-import { createDevMiddleware } from '@react-native/dev-middleware';
+import fastifySensible from '@fastify/sensible';
 import { debuggerUIMiddleware } from '@react-native-community/cli-debugger-ui';
 import {
-  openURLMiddleware,
   openStackFrameInEditorMiddleware,
+  openURLMiddleware,
 } from '@react-native-community/cli-server-api';
-import multipartPlugin from './plugins/multipart';
-import compilerPlugin from './plugins/compiler';
+import { createDevMiddleware } from '@react-native/dev-middleware';
+import Fastify from 'fastify';
 import apiPlugin from './plugins/api';
-import wssPlugin from './plugins/wss';
-import faviconPlugin from './plugins/favicon';
-import { Internal, type Server } from './types';
-import symbolicatePlugin from './plugins/symbolicate';
+import compilerPlugin from './plugins/compiler';
 import devtoolsPlugin from './plugins/devtools';
+import faviconPlugin from './plugins/favicon';
+import multipartPlugin from './plugins/multipart';
+import symbolicatePlugin from './plugins/symbolicate';
+import wssPlugin from './plugins/wss';
+import { Internal, type Server } from './types';
 
 /**
  * Create instance of development server, powered by Fastify.
