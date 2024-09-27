@@ -185,7 +185,7 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
           typeof item === 'string' ? item === name : Boolean(item[name])
         );
       }
-        return dependencies[name];
+      return dependencies[name];
     };
 
     const sharedReactNative = findSharedDependency('react-native', shared);
@@ -212,18 +212,18 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       }
       return adjustedSharedDependencies;
     }
-      const adjustedSharedDependencies = { ...shared };
-      if (!findSharedDependency('react-native/', shared)) {
-        Object.assign(adjustedSharedDependencies, {
-          'react-native/': sharedDependencyConfig(reactNativeEager),
-        });
-      }
-      if (!findSharedDependency('@react-native/', shared)) {
-        Object.assign(adjustedSharedDependencies, {
-          '@react-native/': sharedDependencyConfig(reactNativeEager),
-        });
-      }
-      return adjustedSharedDependencies;
+    const adjustedSharedDependencies = { ...shared };
+    if (!findSharedDependency('react-native/', shared)) {
+      Object.assign(adjustedSharedDependencies, {
+        'react-native/': sharedDependencyConfig(reactNativeEager),
+      });
+    }
+    if (!findSharedDependency('@react-native/', shared)) {
+      Object.assign(adjustedSharedDependencies, {
+        '@react-native/': sharedDependencyConfig(reactNativeEager),
+      });
+    }
+    return adjustedSharedDependencies;
   }
 
   /**

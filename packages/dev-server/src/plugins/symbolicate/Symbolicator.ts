@@ -37,11 +37,11 @@ export class Symbolicator {
       if (platform) {
         return platform;
       }
-        const [bundleFilename] = pathname.split('/').reverse();
-        const [, platformOrExtension, extension] = bundleFilename.split('.');
-        if (extension) {
-          return platformOrExtension;
-        }
+      const [bundleFilename] = pathname.split('/').reverse();
+      const [, platformOrExtension, extension] = bundleFilename.split('.');
+      if (extension) {
+        return platformOrExtension;
+      }
     }
   }
 
