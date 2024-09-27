@@ -20,8 +20,8 @@ export class WebSocketServerAdapter implements WebSocketServerInterface {
   }
 
   upgrade(request: IncomingMessage, socket: Socket, head: Buffer) {
-    this.server!.handleUpgrade(request, socket, head, (webSocket) => {
-      this.server!.emit('connection', webSocket, request);
+    this.server?.handleUpgrade(request, socket, head, (webSocket) => {
+      this.server?.emit('connection', webSocket, request);
     });
   }
 }

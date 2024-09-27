@@ -25,6 +25,7 @@ import devtoolsPlugin from './plugins/devtools';
  * @returns `start` and `stop` functions as well as an underlying Fastify `instance`.
  */
 export async function createServer(config: Server.Config) {
+  // biome-ignore lint/style/useConst: needed in fastify constructor
   let delegate: Server.Delegate;
 
   /** Fastify instance powering the development server. */

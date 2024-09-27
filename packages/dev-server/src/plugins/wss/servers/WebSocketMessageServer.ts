@@ -268,11 +268,11 @@ export class WebSocketMessageServer extends WebSocketServer {
           if (clientId !== peerId) {
             const { searchParams } = new URL(peerSocket.upgradeReq?.url || '');
             output[peerId] = [...searchParams.entries()].reduce(
-              (acc, [key, value]) => ({
-                ...acc,
-                [key]: value,
-              }),
-              {}
+              (acc, [key, value]) => {
+                acc[key] = value;
+                return acc;
+              },
+              {} as Record<string, string>
             );
           }
         });
