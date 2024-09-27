@@ -38,6 +38,12 @@ importers:
       '@changesets/cli':
         specifier: ^2.27.3
         version: 2.27.7
+      husky:
+        specifier: ^9.1.6
+        version: 9.1.6
+      is-in-ci:
+        specifier: ^1.0.0
+        version: 1.0.0
       nx:
         specifier: 19.7.3
         version: 19.7.3
@@ -4385,6 +4391,11 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
+  husky@9.1.6:
+    resolution: {integrity: sha512-sqbjZKK7kf44hfdE94EoX8MZNk0n7HeW37O4YrVGCF4wzgQjp+akPAkfUK5LZ6KuR/6sqeAVuXHji+RzQgOn5A==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   hyperdyperid@1.2.0:
     resolution: {integrity: sha512-Y93lCzHYgGWdrJ66yIktxiaGULYc6oGiABxhcO5AufBeOyoIdZF7bIfLaOrbM0iGIOXQQgxxRrFEnb+Y6w1n4A==}
     engines: {node: '>=10.18'}
@@ -4525,6 +4536,11 @@ packages:
   is-html@3.1.0:
     resolution: {integrity: sha512-eHrJ9L14RlcKIFXh+RlqVYiRPGp8YhSn5pSNibDLtouaJdDcn3R0Fyu3mWTXQeKCQiLoiR2V8sPPzoQSomukSg==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
+  is-in-ci@1.0.0:
+    resolution: {integrity: sha512-eUuAjybVTHMYWm/U+vBO1sY/JOCgoPCXRxzdju0K+K0BiGW0SChEL1MLC0PoCIR1OlPo5YAp8HuQoUlsWEICwg==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   is-interactive@1.0.0:
     resolution: {integrity: sha512-2HvIEKRoqS62guEC+qBjpvRubdX910WCMuJTZ+I9yvqKU2/12eSL549HMwtabb4oupdj2sMP50k+XJfB/8JE6w==}
@@ -12390,6 +12406,8 @@ snapshots:
 
   human-signals@5.0.0: {}
 
+  husky@9.1.6: {}
+
   hyperdyperid@1.2.0: {}
 
   iconv-lite@0.4.24:
@@ -12499,6 +12517,8 @@ snapshots:
   is-html@3.1.0:
     dependencies:
       html-tags: 3.3.1
+
+  is-in-ci@1.0.0: {}
 
   is-interactive@1.0.0: {}
 
