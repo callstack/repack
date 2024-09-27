@@ -70,7 +70,7 @@ export default defineConfig({
       }),
     ],
     tools: {
-      rspack(config, { addRules }) {
+      rspack(_config, { addRules }) {
         addRules([
           {
             resourceQuery: /raw/,

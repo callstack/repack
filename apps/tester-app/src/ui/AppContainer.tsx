@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { SafeAreaView, ScrollView, StatusBar } from 'react-native';
 
 import type { WithChildren } from './types';

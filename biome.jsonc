@@ -41,6 +41,10 @@
         "noBannedTypes": "off",
         "noForEach": "off"
       },
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
+      },
       "style": {
         "noNonNullAssertion": "off",
         "useTemplate": "off"

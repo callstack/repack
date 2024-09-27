@@ -2,7 +2,6 @@ import {
   type NativeStackNavigationProp,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import React from 'react';
 import { StyleSheet } from 'react-native';
 
 import GalleryScreen from '../screens/GalleryScreen';

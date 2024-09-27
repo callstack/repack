@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text as RNText, type StyleProp, type TextStyle } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 

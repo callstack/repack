@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Button as RNButton,
   type ButtonProps as RNButtonProps,

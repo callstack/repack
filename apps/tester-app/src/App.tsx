@@ -1,4 +1,3 @@
-import React from 'react';
 import { Appearance } from 'react-native';
 
 import { AppContainer } from './ui/AppContainer';
