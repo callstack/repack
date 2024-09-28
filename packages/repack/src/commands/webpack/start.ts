@@ -1,5 +1,5 @@
 import { URL } from 'node:url';
-import colorette from 'colorette';
+import * as colorette from 'colorette';
 import webpack from 'webpack';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
@@ -61,7 +61,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     ? false
     : // TODO fix in a separate PR (jbroma)
       // eslint-disable-next-line prettier/prettier
-      (args.verbose ?? process.argv.includes('--verbose'));
+      args.verbose ?? process.argv.includes('--verbose');
 
   const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(
@@ -83,12 +83,16 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
   const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
+  const serverHost = args.host || DEFAULT_HOSTNAME;
+  const serverPort = args.port ?? DEFAULT_PORT;
+  const serverURL = `${args.https === true ? 'https' : 'http'}://${serverHost}:${serverPort}`;
+
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
     options: {
       rootDir: cliOptions.config.root,
-      host: args.host || DEFAULT_HOSTNAME,
-      port: args.port ?? DEFAULT_PORT,
+      host: serverHost,
+      port: serverPort,
       https: args.https
         ? {
             cert: args.cert,
@@ -104,11 +108,16 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       if (args.interactive) {
         setupInteractions(
           {
-            onReload: () => {
+            onReload() {
               ctx.broadcastToMessageClients({ method: 'reload' });
             },
-            onOpenDevMenu: () => {
+            onOpenDevMenu() {
               ctx.broadcastToMessageClients({ method: 'devMenu' });
+            },
+            onOpenDevTools() {
+              void fetch(`${serverURL}/open-debugger`, {
+                method: 'POST',
+              });
             },
           },
           ctx.log

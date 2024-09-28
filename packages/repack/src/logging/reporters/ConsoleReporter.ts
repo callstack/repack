@@ -1,5 +1,5 @@
 import util from 'node:util';
-import colorette from 'colorette';
+import * as colorette from 'colorette';
 import throttle from 'throttleit';
 import type { LogEntry, LogType, Reporter } from '../types';
 
