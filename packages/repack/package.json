@@ -68,7 +68,7 @@
     "build": "pnpm run \"/^build:.*/\"",
     "lint": "eslint --ext \".js,.ts\" client.js src",
     "test": "jest",
-    "typecheck": "tsc -p ./tsconfig.build.json --noEmit",
+    "typecheck": "tsc --noEmit",
     "archive": "pnpm build && pnpm pack",
     "clang-format": "pnpm clang-format:ios && pnpm clang-format:android",
     "clang-format:ios": "find ios/ -iname \"*.h\" -o -iname \"*.m\" -o -iname \"*.mm\" -o -iname \"*.cpp\" | xargs clang-format -i --Werror",
