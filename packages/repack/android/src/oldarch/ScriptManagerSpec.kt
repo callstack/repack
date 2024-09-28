@@ -11,4 +11,5 @@ abstract class ScriptManagerSpec internal constructor(context: ReactApplicationC
     abstract fun loadScript(scriptId: String, configMap: ReadableMap, promise: Promise)
     abstract fun prefetchScript(scriptId: String, configMap: ReadableMap, promise: Promise)
     abstract fun invalidateScripts(scriptIds: ReadableArray, promise: Promise)
+    abstract fun unstable_evaluateScript(scriptSource: String, scriptSourceUrl: String): Boolean
 }

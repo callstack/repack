@@ -2,15 +2,8 @@ name: Test
 
 on:
   push:
-    branches:
-      - main
-    paths-ignore:
-      - "**/*.md"
-      - "website/**"
+    branches: [main]
   pull_request:
-    paths-ignore:
-      - "**/*.md"
-      - "website/**"
   workflow_dispatch:
 
 jobs:
@@ -18,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node_version: ["18", "20", "22.4.1"]
+        node_version: ['18', '20', '22.6']
         os: [ubuntu-latest]
 
     steps:
@@ -29,7 +22,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node_version }}
-          cache: "pnpm"
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

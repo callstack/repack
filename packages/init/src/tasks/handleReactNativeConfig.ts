@@ -1,12 +1,12 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import dedent from 'dedent';
 
 import logger from '../utils/logger.js';
 
-const defaultConfig = dedent`
+const createDefaultConfig = (bundler: 'rspack' | 'webpack') => dedent`
   module.exports = {
-    commands: require('@callstack/repack/commands'),
+    commands: require('@callstack/repack/commands/${bundler}'),
   };`;
 
 /**
@@ -14,11 +14,14 @@ const defaultConfig = dedent`
  *
  * @param cwd current working directory
  */
-export default function handleReactNativeConfig(cwd: string): void {
+export default function handleReactNativeConfig(
+  bundler: 'rspack' | 'webpack',
+  cwd: string
+): void {
   const configPath = path.join(cwd, 'react-native.config.js');
 
   if (!fs.existsSync(configPath)) {
-    fs.writeFileSync(configPath, defaultConfig);
+    fs.writeFileSync(configPath, createDefaultConfig(bundler));
     logger.success('Created react-native.config.js');
     return;
   }
@@ -29,14 +32,14 @@ export default function handleReactNativeConfig(cwd: string): void {
   if (!configContent.includes('commands:')) {
     updatedConfigContent = configContent.replace(
       'module.exports = {',
-      "module.exports = {\n  commands: require('@callstack/repack/commands'),"
+      `module.exports = {\n  commands: require('@callstack/repack/commands/${bundler}'),`
     );
   } else {
     const commandsIndex = configContent.indexOf('commands:');
     const commandsEndIndex = configContent.indexOf(',', commandsIndex);
     const commandsString = configContent.slice(commandsIndex, commandsEndIndex);
 
-    const newCommandsString = `commands: require('@callstack/repack/commands')`;
+    const newCommandsString = `commands: require('@callstack/repack/commands/${bundler}')`;
     if (commandsString === newCommandsString) {
       logger.success('File react-native.config.js is already up to date');
       return;

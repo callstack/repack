@@ -1,1 +1,10 @@
+pnpm-lock.yaml
+
+# imported tests
 tests/metro-compat/**/__tests__/
+
+# archived docs
+website/src/2.x/**
+website/src/3.x/**
+website/src/4.x/**
+

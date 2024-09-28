@@ -121,7 +121,7 @@ export class WebSocketMessageServer extends WebSocketServer {
         msg: 'Received message had wrong protocol version',
         message,
       });
-    } catch (e) {
+    } catch {
       this.fastify.log.error({
         msg: 'Failed to parse the message as JSON',
         data,
