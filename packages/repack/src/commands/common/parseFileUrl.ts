@@ -1,4 +1,7 @@
-export function parseFileUrl(fileUrl: string) {
+export function parseFileUrl(fileUrl: string): {
+  filename: string;
+  platform: string | undefined;
+} {
   const { pathname, searchParams } = new URL(fileUrl);
   let platform = searchParams.get('platform');
   let filename = pathname;

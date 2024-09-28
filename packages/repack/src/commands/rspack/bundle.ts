@@ -27,7 +27,7 @@ export async function bundle(
   _: string[],
   cliConfig: Config,
   args: BundleArguments
-) {
+): Promise<void> {
   const rspackConfigPath = getRspackConfigFilePath(
     cliConfig.root,
     args.webpackConfig

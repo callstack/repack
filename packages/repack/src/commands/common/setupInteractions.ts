@@ -7,7 +7,7 @@ export function setupInteractions(
     onOpenDevMenu?: () => void;
   },
   logger: Logger = console
-) {
+): void {
   if (!process.stdin.setRawMode) {
     logger.warn('Interactive mode is not supported in this environment');
     return;

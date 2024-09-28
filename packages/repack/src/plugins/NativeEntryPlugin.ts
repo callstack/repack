@@ -18,7 +18,7 @@ export interface NativeEntryPluginConfig {
 }
 
 export class NativeEntryPlugin implements RspackPluginInstance {
-  constructor(private config?: NativeEntryPluginConfig) {}
+  constructor(private config?: NativeEntryPluginConfig | undefined) {}
   private getReactNativePath(candidate: ResolveAlias[string] | undefined) {
     let reactNativePath: string | undefined;
     if (typeof candidate === 'string') {
@@ -37,7 +37,7 @@ export class NativeEntryPlugin implements RspackPluginInstance {
       : reactNativePath;
   }
 
-  apply(compiler: Compiler) {
+  apply(compiler: Compiler): void {
     const reactNativePath = this.getReactNativePath(
       compiler.options.resolve.alias?.['react-native']
     );

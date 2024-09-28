@@ -1,7 +1,10 @@
 import execa from 'execa';
 import { Logger } from '../../types';
 
-export async function runAdbReverse(port: number, logger: Logger = console) {
+export async function runAdbReverse(
+  port: number,
+  logger: Logger = console
+): Promise<void> {
   const adbPath = process.env.ANDROID_HOME
     ? `${process.env.ANDROID_HOME}/platform-tools/adb`
     : 'adb';

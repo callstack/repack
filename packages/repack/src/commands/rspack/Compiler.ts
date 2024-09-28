@@ -44,11 +44,11 @@ export class Compiler {
     this.resolvers[platform] = [];
   }
 
-  setDevServerContext(ctx: Server.DelegateContext) {
+  setDevServerContext(ctx: Server.DelegateContext): void {
     this.devServerContext = ctx;
   }
 
-  async init() {
+  async init(): Promise<void> {
     const webpackEnvOptions = getEnvOptions(this.cliOptions);
     const configs = await Promise.all(
       this.platforms.map(async (platform) => {
@@ -176,7 +176,7 @@ export class Compiler {
     });
   }
 
-  start() {
+  start(): void {
     this.reporter.process({
       type: 'info',
       issuer: 'DevServer',
@@ -277,7 +277,7 @@ export class Compiler {
     }
   }
 
-  getMimeType(filename: string) {
+  getMimeType(filename: string): string {
     /**
      * TODO potentially refactor
      *

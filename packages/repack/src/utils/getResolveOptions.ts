@@ -56,6 +56,8 @@ export function getResolveOptions(
   conditionNames: string[];
   exportsFields: string[];
   extensions: string[];
+  extensionAlias: Record<string, string[]>;
+  importsFields: string[];
 } {
   const preferNativePlatform = options?.preferNativePlatform ?? true;
   const enablePackageExports = options?.enablePackageExports ?? false;

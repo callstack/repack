@@ -408,7 +408,7 @@ export class ScriptManager extends EventEmitter {
    * @param scriptSource The source code of the script to evaluate.
    * @param scriptSourceUrl The URL of the script source, used for debugging purposes.
    */
-  unstable_evaluateScript(scriptSource: string, scriptSourceUrl: string) {
+  unstable_evaluateScript(scriptSource: string, scriptSourceUrl: string): void {
     this.nativeScriptManager.unstable_evaluateScript(
       scriptSource,
       scriptSourceUrl

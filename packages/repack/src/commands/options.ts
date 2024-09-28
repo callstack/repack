@@ -4,7 +4,7 @@ export const startCommandOptions = [
   {
     name: '--port <number>',
     description: 'The port number that runs the server on',
-    parse: (val: string) => Number(val),
+    parse: (val: string): number => Number(val),
   },
   {
     name: '--host <string>',
@@ -44,7 +44,7 @@ export const startCommandOptions = [
   {
     name: '--log-file <path>',
     description: 'Enables file logging to specified file',
-    parse: (val: string) => path.resolve(val),
+    parse: (val: string): string => path.resolve(val),
   },
   {
     name: '--log-requests',
@@ -70,9 +70,9 @@ export const startCommandOptions = [
   {
     name: '--webpackConfig <path>',
     description: 'Path to a Webpack config',
-    parse: (val: string) => path.resolve(val),
+    parse: (val: string): string => path.resolve(val),
   },
-];
+] as const;
 
 export const bundleCommandOptions = [
   {
@@ -89,16 +89,16 @@ export const bundleCommandOptions = [
     name: '--dev [boolean]',
     description:
       'Enables development warnings and disables production optimisations',
-    parse: (val: string) => val !== 'false',
+    parse: (val: string): boolean => val !== 'false',
     default: true,
   },
   {
     name: '--minify [boolean]',
     description:
-      'Allows overriding whether bundle is minified. This defaults to ' +
-      'false if dev is true, and true if dev is false. Disabling minification ' +
-      'can be useful for speeding up production builds for testing purposes.',
-    parse: (val: string) => val !== 'false',
+      ('Allows overriding whether bundle is minified. This defaults to ' +
+        'false if dev is true, and true if dev is false. Disabling minification ' +
+        'can be useful for speeding up production builds for testing purposes.') as string,
+    parse: (val: string): boolean => val !== 'false',
   },
   {
     name: '--bundle-output <string>',
@@ -123,12 +123,11 @@ export const bundleCommandOptions = [
   {
     name: '--json <statsFile>',
     description: 'Stores stats in a file.',
-    parse: (val: string) => path.resolve(val),
+    parse: (val: string): string => path.resolve(val),
   },
   {
     name: '--stats <preset>',
-    description:
-      'It instructs Webpack on how to treat the stats:\n' +
+    description: ('It instructs Webpack on how to treat the stats:\n' +
       "'errors-only'  - only output when errors happen\n" +
       "'errors-warnings' - only output errors and warnings happen\n" +
       "'minimal' - only output when errors or new compilation happen\n" +
@@ -136,7 +135,7 @@ export const bundleCommandOptions = [
       "'normal' - standard output\n" +
       "'verbose' - output everything\n" +
       "'detailed' - output everything except chunkModules and chunkRootModules\n" +
-      "'summary' - output webpack version, warnings count and errors count",
+      "'summary' - output webpack version, warnings count and errors count") as string,
   },
   {
     name: '--verbose',
@@ -149,6 +148,6 @@ export const bundleCommandOptions = [
   {
     name: '--webpackConfig <path>',
     description: 'Path to a Webpack config',
-    parse: (val: string) => path.resolve(val),
+    parse: (val: string): string => path.resolve(val),
   },
-];
+] as const;

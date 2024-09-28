@@ -27,12 +27,12 @@ export class RepackTargetPlugin implements RspackPluginInstance {
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config?: RepackTargetPluginConfig) {}
+  constructor(private config?: RepackTargetPluginConfig | undefined) {}
 
   replaceRuntimeModule(
     module: RspackRuntimeModule | WebpackRuntimeModule,
     content: string
-  ) {
+  ): void {
     // webpack
     if ('getGeneratedCode' in module) {
       module.getGeneratedCode = () => content;
@@ -52,7 +52,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: Compiler) {
+  apply(compiler: Compiler): void {
     const Template = compiler.webpack.Template;
 
     const globalObject = 'self';

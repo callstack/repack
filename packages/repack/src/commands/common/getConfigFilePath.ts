@@ -7,7 +7,7 @@ import {
   DEFAULT_WEBPACK_CONFIG_LOCATIONS,
 } from '../consts';
 
-function getConfigFilePath(root: string, candidates: string[]) {
+function getConfigFilePath(root: string, candidates: string[]): string {
   for (const candidate of candidates) {
     const filename = path.isAbsolute(candidate)
       ? candidate
@@ -25,7 +25,10 @@ function getConfigFilePath(root: string, candidates: string[]) {
   throw new Error('Cannot find configuration file');
 }
 
-export function getWebpackConfigFilePath(root: string, customPath?: string) {
+export function getWebpackConfigFilePath(
+  root: string,
+  customPath?: string
+): string {
   const candidates = customPath
     ? [customPath]
     : DEFAULT_WEBPACK_CONFIG_LOCATIONS;
@@ -37,7 +40,10 @@ export function getWebpackConfigFilePath(root: string, customPath?: string) {
   }
 }
 
-export function getRspackConfigFilePath(root: string, customPath?: string) {
+export function getRspackConfigFilePath(
+  root: string,
+  customPath?: string
+): string {
   const candidates = customPath
     ? [customPath]
     : DEFAULT_RSPACK_CONFIG_LOCATIONS;

@@ -3,7 +3,7 @@
  * Source: https://github.com/facebook/react-native/blob/main/packages/react-native-babel-preset/src/configs/lazy-imports.js
  */
 
-export const REACT_NATIVE_LAZY_IMPORTS = [
+export const REACT_NATIVE_LAZY_IMPORTS: string[] = [
   'AccessibilityInfo',
   'ActivityIndicator',
   'Button',

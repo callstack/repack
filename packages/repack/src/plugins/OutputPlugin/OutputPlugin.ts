@@ -47,7 +47,7 @@ export class OutputPlugin implements RspackPluginInstance {
   }
 
   createChunkMatcher(matchObject: typeof ModuleFilenameHelpers.matchObject) {
-    return (chunk: StatsChunk, specs: DestinationSpec[]) => {
+    return (chunk: StatsChunk, specs: DestinationSpec[]): DestinationSpec[] => {
       const chunkIds = [chunk.names ?? [], chunk.id!].flat();
       return specs.filter((spec) => {
         const { test, include, exclude } = spec;
@@ -57,7 +57,7 @@ export class OutputPlugin implements RspackPluginInstance {
     };
   }
 
-  getRelatedSourceMap(chunk: StatsChunk): string {
+  getRelatedSourceMap(chunk: StatsChunk): string | undefined {
     return chunk.auxiliaryFiles?.find((file) => /\.map$/.test(file));
   }
 

@@ -2,12 +2,12 @@ import path from 'node:path';
 import imageSize from 'image-size';
 import type { Asset, AssetDimensions, CollectedScales } from './types';
 
-export function getScaleNumber(scaleKey: string) {
+export function getScaleNumber(scaleKey: string): number {
   return parseFloat(scaleKey.replace(/[^\d.]/g, ''));
 }
 
 /** Default asset is the one with scale that was originally requested in the loader */
-export function getDefaultAsset(assets: Asset[]) {
+export function getDefaultAsset(assets: Asset[]): Asset {
   const defaultAsset = assets.find((asset) => asset.default === true);
   if (!defaultAsset) {
     throw new Error('Malformed assets array - no default asset found');

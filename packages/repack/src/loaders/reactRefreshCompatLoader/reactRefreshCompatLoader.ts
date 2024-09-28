@@ -29,7 +29,7 @@ export default function reactRefreshCompatLoader(
   originalSource: string,
   sourceMap: any,
   meta: any
-) {
+): void {
   const callback = this.async();
 
   const source = `${originalSource}\n\n${reactRefreshFooter}`;

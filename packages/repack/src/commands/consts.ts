@@ -5,7 +5,7 @@ export const DEFAULT_HOSTNAME = 'localhost';
 export const DEFAULT_PORT = 8081;
 
 /** Default webpack config locations. */
-export const DEFAULT_WEBPACK_CONFIG_LOCATIONS = [
+export const DEFAULT_WEBPACK_CONFIG_LOCATIONS: string[] = [
   'webpack.config.mjs',
   'webpack.config.cjs',
   'webpack.config.js',
@@ -16,7 +16,7 @@ export const DEFAULT_WEBPACK_CONFIG_LOCATIONS = [
 ];
 
 /** Default rspack config locations. */
-export const DEFAULT_RSPACK_CONFIG_LOCATIONS = [
+export const DEFAULT_RSPACK_CONFIG_LOCATIONS: string[] = [
   'rspack.config.mjs',
   'rspack.config.cjs',
   'rspack.config.js',

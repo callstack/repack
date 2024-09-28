@@ -23,14 +23,14 @@ export class DevelopmentPlugin implements RspackPluginInstance {
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config?: DevelopmentPluginConfig) {}
+  constructor(private config?: DevelopmentPluginConfig | undefined) {}
 
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: Compiler) {
+  apply(compiler: Compiler): void {
     if (!this.config?.devServer) {
       return;
     }

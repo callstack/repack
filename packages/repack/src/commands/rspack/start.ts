@@ -35,7 +35,9 @@ export async function start(
   _: string[],
   cliConfig: Config,
   args: StartArguments
-) {
+): Promise<{
+  stop: () => Promise<void>;
+}> {
   const rspackConfigPath = getRspackConfigFilePath(
     cliConfig.root,
     args.webpackConfig
@@ -62,7 +64,7 @@ export async function start(
     ? false
     : // TODO fix (jbroma)
       // eslint-disable-next-line prettier/prettier
-      args.verbose ?? process.argv.includes('--verbose');
+      (args.verbose ?? process.argv.includes('--verbose'));
 
   const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(

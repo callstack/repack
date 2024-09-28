@@ -13,7 +13,7 @@ export class AuxiliaryAssetsCopyProcessor {
         debug: (...args: string[]) => void;
       };
     },
-    private filesystem = fs
+    private filesystem: typeof fs = fs
   ) {}
 
   private async copyAsset(from: string, to: string) {

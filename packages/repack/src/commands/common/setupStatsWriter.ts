@@ -39,7 +39,7 @@ interface WriteStatsOptions {
 export async function writeStats(
   stats: any,
   { filepath, logger = console, rootDir }: WriteStatsOptions
-) {
+): Promise<void> {
   const outputPath = normalizeFilepath(filepath, rootDir);
   logger.info(`Writing compiler stats`);
 

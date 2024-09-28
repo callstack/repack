@@ -9,7 +9,7 @@ export class ManifestPlugin implements RspackPluginInstance {
    *
    * @param compiler Webpack compiler instance.
    */
-  apply(compiler: Compiler) {
+  apply(compiler: Compiler): void {
     compiler.hooks.compilation.tap('ManifestPlugin', (compilation) => {
       compilation.hooks.afterProcessAssets.tap('ManifestPlugin', () => {
         for (const chunk of compilation.chunks) {
