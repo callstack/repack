@@ -93,7 +93,7 @@ export function setupInteractions(
     const isSupported =
         interaction?.actionUnsupportedExplanation === undefined &&
         interaction?.action !== undefined,
-      text = `${colorette.bold(key)}: ${interaction?.helpName}${isSupported ? '' : colorette.yellow(` (unsupported${interaction?.actionUnsupportedExplanation ? `, ${interaction.actionUnsupportedExplanation}` : 'by the current bundler'})`)}\n`;
+      text = `${colorette.bold(key)}: ${interaction?.helpName}${isSupported ? '' : colorette.yellow(` (unsupported${interaction?.actionUnsupportedExplanation ? `, ${interaction.actionUnsupportedExplanation}` : ' by the current bundler'})`)}\n`;
 
     process.stdout.write(isSupported ? text : colorette.italic(text));
   }
