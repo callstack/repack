@@ -3,7 +3,7 @@
   "description": "Automates the integration of the @callstack/repack into React-Native projects",
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
-  "version": "4.2.0",
+  "version": "5.0.0-alpha.0",
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
   "keywords": [
@@ -20,6 +20,7 @@
   "main": "dist/index.js",
   "files": [
     "dist",
+    "!*.d.ts",
     "!*.map"
   ],
   "engineStrict": true,
@@ -29,10 +30,11 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint --ext .ts src",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@inquirer/prompts": "^5.5.0",
     "@manypkg/find-root": "^2.2.1",
     "chalk": "^5.2.0",
     "dedent": "^0.7.0",

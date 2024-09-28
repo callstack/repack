@@ -1,10 +1,31 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "target": "ES2020",
     "module": "commonjs",
+    "lib": ["ES2020", "ES2021"],
+    "declaration": true,
+    "strict": true,
     "moduleResolution": "node",
-    "rootDir": "./src",
-    "outDir": "./dist"
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "composite": true,
+    "rootDirs": ["src", "../dev-server/src"],
+    "paths": {
+      "@callstack/repack-dev-server": ["../dev-server/src/index.ts"],
+      "@callstack/repack-dev-server/*": ["../dev-server/src/*"],
+      "@react-native/dev-middleware": [
+        "../dev-server/node_modules/@react-native/dev-middleware/dist"
+      ]
+    }
   },
-  "include": ["src/**/*"]
+  "include": [
+    "./client.d.ts",
+    "./commands.d.ts",
+    "src/**/*",
+    "../dev-server/src"
+  ]
 }

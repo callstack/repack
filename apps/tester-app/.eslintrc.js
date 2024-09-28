@@ -5,6 +5,10 @@ module.exports = {
     project: true,
     tsconfigRootDir: __dirname,
   },
+  rules: {
+    // eslint doesnt support package exports
+    'import/no-unresolved': [2, { ignore: ['^@callstack/repack/commands'] }],
+  },
   overrides: [
     {
       files: ['*.config.{js,mjs,cjs}'],
@@ -13,9 +17,4 @@ module.exports = {
       },
     },
   ],
-  settings: {
-    jest: {
-      version: 'latest',
-    },
-  },
 };

@@ -4,10 +4,9 @@ import android.os.Handler
 import com.facebook.react.bridge.*
 
 class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManagerSpec(reactContext) {
-    private val remoteLoader: RemoteScriptLoader = RemoteScriptLoader(reactApplicationContext)
-
-    private val fileSystemLoader: FileSystemScriptLoader =
-            FileSystemScriptLoader(reactApplicationContext)
+    private val nativeLoader = NativeScriptLoader(reactApplicationContext)
+    private val remoteLoader = RemoteScriptLoader(reactApplicationContext, nativeLoader)
+    private val fileSystemLoader = FileSystemScriptLoader(reactApplicationContext, nativeLoader)
 
     override fun getName(): String {
         return NAME
@@ -98,6 +97,12 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
                 }
             }
         }
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    override fun unstable_evaluateScript(scriptSource: String, scriptSourceUrl: String): Boolean {
+        nativeLoader.evaluate(scriptSource.toByteArray(), scriptSourceUrl)
+        return true
     }
 
     companion object {

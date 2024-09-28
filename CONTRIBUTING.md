@@ -60,7 +60,7 @@ We use `typescript` for type checking, `eslint` with `prettier` for linting and 
 
 ### Running the example
 
-The example TesterApp uses React Native CLI so make sure you have your [environment setup to build native apps](https://reactnative.dev/docs/environment-setup).
+The example TesterApp uses React Native Community CLI so make sure you have your [environment setup to build native apps](https://reactnative.dev/docs/environment-setup).
 
 You can then use Xcode/Android Studio/Gradle to build application or run `pnpm react-native webpack-start` and `pnpm react-native run-ios`/`pnpm react-native run-android` to start development server and run applications in development mode.
 

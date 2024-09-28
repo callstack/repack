@@ -48,11 +48,11 @@ export class WebSocketApiServer extends WebSocketServer {
     const clientId = `client#${this.nextClientId++}`;
     this.clients.set(clientId, socket);
 
-    this.fastify.log.info({ msg: 'API client connected', clientId });
+    this.fastify.log.debug({ msg: 'API client connected', clientId });
     this.clients.set(clientId, socket);
 
     const onClose = () => {
-      this.fastify.log.info({
+      this.fastify.log.debug({
         msg: 'API client disconnected',
         clientId,
       });
