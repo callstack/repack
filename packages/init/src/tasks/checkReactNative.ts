@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import semver, { SemVer } from 'semver';
 
 import logger from '../utils/logger.js';
@@ -27,8 +27,8 @@ export default function checkReactNative(rootDir: string): SemVer {
 
   logger.info(`Found React-Native@${version} in package.json`);
 
-  if (semver.minor(version) < 69) {
-    logger.warn('Re.Pack officially supports React-Native >= 0.69.0');
+  if (semver.minor(version) < 73) {
+    logger.warn('Re.Pack officially supports React-Native >= 0.73.0');
     logger.warn(
       'You can still use Re.Pack with older versions of React-Native, but you might encounter some issues.'
     );

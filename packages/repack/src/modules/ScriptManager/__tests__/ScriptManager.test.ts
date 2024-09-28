@@ -1,5 +1,3 @@
-/* eslint-disable require-await */
-/* globals globalThis */
 import { Script } from '../Script';
 import { ScriptManager } from '../ScriptManager';
 
@@ -18,11 +16,14 @@ jest.mock('../NativeScriptManager', () => ({
   },
 }));
 
-// @ts-ignore
 globalThis.__webpack_require__ = {
   u: (id: string) => `${id}.chunk.bundle`,
-  p: '',
-  repack: { shared: { loadScriptCallback: [] } },
+  p: () => '',
+  repack: {
+    loadScript: jest.fn(),
+    loadHotUpdate: jest.fn(),
+    shared: { scriptManager: undefined },
+  },
 };
 
 class FakeCache {
@@ -42,36 +43,57 @@ class FakeCache {
 }
 
 beforeEach(() => {
-  try {
-    ScriptManager.shared.__destroy();
-  } catch {
-    // NOOP
-  }
+  ScriptManager.init();
+});
+
+afterEach(() => {
+  globalThis.__webpack_require__.repack.shared.scriptManager = undefined;
 });
 
 describe('ScriptManagerAPI', () => {
   it('throw error if ScriptManager NativeModule was not found', async () => {
+    // @ts-expect-error simulat missing native module
     await expect(() => new ScriptManager(null).shared).toThrow(
       /repack react-native module was not found/
     );
   });
 
   it('throw error if there are no resolvers', async () => {
+    const spy = jest.spyOn(console, 'error').mockImplementationOnce(() => {});
+
     await expect(
       ScriptManager.shared.resolveScript('src_App_js', 'main')
     ).rejects.toThrow(/Error: No script resolvers were added/);
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy.mock.calls[0][0]).toEqual(
+      expect.stringMatching(
+        /^\[ScriptManager\] Failed while resolving script locator/
+      )
+    );
   });
 
   it('throw error if no resolvers handled request', async () => {
+    const spy = jest.spyOn(console, 'error').mockImplementationOnce(() => {});
+
     ScriptManager.shared.addResolver(async () => undefined);
     ScriptManager.shared.addResolver(async () => undefined);
 
     await expect(
       ScriptManager.shared.resolveScript('src_App_js', 'main')
     ).rejects.toThrow(/No resolver was able to resolve script src_App_js/);
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy.mock.calls[0][0]).toEqual(
+      expect.stringMatching(
+        /^\[ScriptManager\] Failed while resolving script locator/
+      )
+    );
   });
 
   it('remove all resolvers', async () => {
+    const spy = jest.spyOn(console, 'error').mockImplementationOnce(() => {});
+
     ScriptManager.shared.addResolver(async () => undefined);
     ScriptManager.shared.addResolver(async () => undefined);
     ScriptManager.shared.removeAllResolvers();
@@ -79,6 +101,13 @@ describe('ScriptManagerAPI', () => {
     await expect(
       ScriptManager.shared.resolveScript('src_App_js', 'main')
     ).rejects.toThrow(/Error: No script resolvers were added/);
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy.mock.calls[0][0]).toEqual(
+      expect.stringMatching(
+        /^\[ScriptManager\] Failed while resolving script locator/
+      )
+    );
   });
 
   it('should generate uniqueId', async () => {

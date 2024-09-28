@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.png">
 </p>
 <p align="center">
-A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.
+A toolkit to build your React Native application with Rspack or Webpack.
 </p>
 
 ---

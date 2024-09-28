@@ -1,5 +1,27 @@
 # @callstack/repack
 
+## 5.0.0-alpha.0
+
+### Major Changes
+
+- [#720](https://github.com/callstack/repack/pull/720) [`a7b557e`](https://github.com/callstack/repack/commit/a7b557ed162166d9bc152b06d8be3169a0a2a176) Thanks [@jbroma](https://github.com/jbroma)! - Support for Rspack & Webpack simultaneously
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-alpha.0
+
+## 4.3.3
+
+### Patch Changes
+
+- [#745](https://github.com/callstack/repack/pull/745) [`dbbaf72`](https://github.com/callstack/repack/commit/dbbaf72ac08e4575237e824a3cdfd7277a4406f8) Thanks [@ra1nj](https://github.com/ra1nj)! - Fixed error message on iOS when the HTTP status is not 2xx.
+
+- [#739](https://github.com/callstack/repack/pull/739) [`300524b`](https://github.com/callstack/repack/commit/300524b33db1f08f257664826d7e160ba76b9f19) Thanks [@ra1nj](https://github.com/ra1nj)! - Fix url query being encoded twice on iOS
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.3.3
+
 ## 4.3.2
 
 ### Patch Changes

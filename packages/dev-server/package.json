@@ -2,7 +2,7 @@
   "name": "@callstack/repack-dev-server",
   "description": "A bundler-agnostic development server for React Native applications as part of @callstack/repack.",
   "license": "MIT",
-  "version": "4.3.2",
+  "version": "5.0.0-alpha.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -37,7 +37,7 @@
     "build:js": "babel src --out-dir dist --extensions \".js,.cjs,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start --copy-files",
     "build:ts": "tsc --emitDeclarationOnly",
     "build": "pnpm run \"/^build:.*/\"",
-    "lint": "eslint --ext \".js,.ts\" src",
+    "lint": "eslint --ext .ts src",
     "typecheck": "tsc --noEmit",
     "archive": "pnpm build && pnpm pack"
   },

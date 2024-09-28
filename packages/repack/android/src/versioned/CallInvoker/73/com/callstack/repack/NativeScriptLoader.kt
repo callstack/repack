@@ -4,7 +4,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.turbomodule.core.CallInvokerHolderImpl
 
-abstract class NativeScriptLoader(protected val reactContext: ReactContext) {
+class NativeScriptLoader(private val reactContext: ReactContext) {
     private external fun evaluateJavascriptAsync(
         jsRuntime: Long,
         callInvokerHolder: CallInvokerHolderImpl,
@@ -13,7 +13,13 @@ abstract class NativeScriptLoader(protected val reactContext: ReactContext) {
         promise: Any
     )
 
-    protected fun evaluate(script: ByteArray, url: String, promise: Promise) {
+    private external fun evaluateJavascriptSync(
+        jsRuntime: Long,
+        code: ByteArray,
+        url: String
+    )
+
+    fun evaluate(script: ByteArray, url: String, promise: Promise? = null) {
         val catalystInstance = try {
             reactContext.catalystInstance
         } catch (e: Exception) {
@@ -25,8 +31,11 @@ abstract class NativeScriptLoader(protected val reactContext: ReactContext) {
         val jsRuntime = catalystInstance.javaScriptContextHolder?.get()
             ?: throw Exception("Missing RN Runtime")
 
-        evaluateJavascriptAsync(jsRuntime, callInvoker, script, url, promise)
+        if (promise != null) {
+            evaluateJavascriptAsync(jsRuntime, callInvoker, script, url, promise)
+        } else {
+            // do we need the callinvoker when the call is sync?
+            evaluateJavascriptSync(jsRuntime, script, url)
+        }
     }
-
-    abstract fun load(config: ScriptConfig, promise: Promise)
 }

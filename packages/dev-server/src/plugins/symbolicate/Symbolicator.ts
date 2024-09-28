@@ -29,7 +29,7 @@ export class Symbolicator {
   static inferPlatformFromStack(stack: ReactNativeStackFrame[]) {
     for (const frame of stack) {
       if (!frame.file) {
-        return;
+        continue;
       }
 
       const { searchParams, pathname } = new URL(frame.file, 'file://');
@@ -166,6 +166,7 @@ export class Symbolicator {
     const lookup = consumer.originalPositionFor({
       line: frame.lineNumber,
       column: frame.column,
+      bias: SourceMapConsumer.LEAST_UPPER_BOUND,
     });
 
     // If lookup fails, we get the same shape object, but with

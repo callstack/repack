@@ -1,6 +1,6 @@
 {
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
-    "module": "ES2020" // for dynamic imports
+    "module": "ES2022" // for dynamic imports & top-level await
   }
 }
