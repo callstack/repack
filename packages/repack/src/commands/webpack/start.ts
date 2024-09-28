@@ -1,5 +1,5 @@
 import { URL } from 'node:url';
-import colorette from 'colorette';
+import * as colorette from 'colorette';
 import webpack from 'webpack';
 import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';

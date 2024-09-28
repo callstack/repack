@@ -1,5 +1,5 @@
 import { URL } from 'node:url';
-import colorette from 'colorette';
+import * as colorette from 'colorette';
 import { Config } from '@react-native-community/cli-types';
 import packageJson from '../../../package.json';
 import {

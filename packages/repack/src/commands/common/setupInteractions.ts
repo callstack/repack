@@ -1,5 +1,5 @@
 import readline from 'node:readline';
-import colorette from 'colorette';
+import * as colorette from 'colorette';
 import { Logger } from '../../types';
 
 type Interaction = {
