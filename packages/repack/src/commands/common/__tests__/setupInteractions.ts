@@ -4,11 +4,10 @@ import { setupInteractions } from '../setupInteractions';
 import { Logger } from '../../../types';
 
 jest.mock('node:readline');
+
+// eliminate ANSI colors formatting for proper assertions
 jest.mock('colorette', () => ({
-  blueBright: jest.fn((text) => text),
-  bold: jest.fn((text) => text),
-  yellow: jest.fn((text) => text),
-  italic: jest.fn((text) => text),
+  ...jest.requireActual('colorette').createColors({ useColor: false }),
 }));
 
 describe('setupInteractions', () => {
