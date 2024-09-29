@@ -154,11 +154,12 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       return {
         compiler: {
           getAsset: (filename, platform, sendProgress) => {
-            const { filename: parsedFilename } = parseFileUrl(
-              filename,
-              'file:///'
+            const parsedUrl = parseFileUrl(filename, 'file:///');
+            return compiler.getSource(
+              parsedUrl.filename,
+              platform,
+              sendProgress
             );
-            return compiler.getSource(parsedFilename, platform, sendProgress);
           },
           getMimeType: (filename) => getMimeType(filename),
           inferPlatform: (uri) => {
