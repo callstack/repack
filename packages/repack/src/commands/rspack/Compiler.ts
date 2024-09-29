@@ -231,24 +231,22 @@ export class Compiler {
 
   async getSource(
     filename: string,
-    platform?: string
+    platform: string | undefined
   ): Promise<string | Buffer> {
-    /**
-     * TODO refactor this part
-     *
-     * This code makes an assumption that filename ends with .bundle
-     * but this can be changed by the user, so is prone to breaking
-     * In reality, it's not that big a deal. This part is within a dev server
-     * so we might override & enforce the format for the purpose of development
-     */
-    if (/\.(bundle|hot-update\.js)/.test(filename) && platform) {
+    if (/(\.bundle|\.map|hot-update\.js|^(remote-)?assets)/.test(filename)) {
+      if (!platform) {
+        throw new Error(`Cannot detect platform for ${filename}`);
+      }
       return (await this.getAsset(filename, platform)).data;
     }
 
-    return fs.promises.readFile(
-      path.join(this.cliOptions.config.root, filename),
-      'utf8'
-    );
+    try {
+      const filePath = path.join(this.cliOptions.config.root, filename);
+      const source = await fs.promises.readFile(filePath, 'utf8');
+      return source;
+    } catch {
+      throw new Error(`File ${filename} not found`);
+    }
   }
 
   async getSourceMap(
