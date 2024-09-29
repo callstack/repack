@@ -173,10 +173,6 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           },
           getSourceMap: (fileUrl) => {
             const { filename, platform } = parseFileUrl(fileUrl);
-            if (!platform) {
-              throw new Error('Cannot infer platform for file URL');
-            }
-
             return compiler.getSourceMap(filename, platform);
           },
           shouldIncludeFrame: (frame) => {

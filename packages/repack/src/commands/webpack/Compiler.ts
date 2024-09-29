@@ -228,15 +228,21 @@ export class Compiler extends EventEmitter {
 
   async getSourceMap(
     filename: string,
-    platform: string
+    platform: string | undefined
   ): Promise<string | Buffer> {
+    if (!platform) {
+      throw new Error(
+        `Cannot determine platform for source map of ${filename}`
+      );
+    }
+
     try {
       const { info } = await this.getAsset(filename, platform);
       let sourceMapFilename = info.related?.sourceMap;
 
       if (!sourceMapFilename) {
         throw new Error(
-          `No source map associated with ${filename} for ${platform}`
+          `Cannot determine source map filename for ${filename} for ${platform}`
         );
       }
 
