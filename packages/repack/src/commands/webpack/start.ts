@@ -1,4 +1,3 @@
-import { URL } from 'node:url';
 import colorette from 'colorette';
 import webpack from 'webpack';
 import { Config } from '@react-native-community/cli-types';
@@ -154,28 +153,27 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       return {
         compiler: {
           getAsset: (filename, platform, sendProgress) => {
-            const url = new URL(filename, 'file:///');
-            const { filename: parsedFilename } = parseUrl(url);
+            const { filename: parsedFilename } = parseFileUrl(
+              filename,
+              'file:///'
+            );
             return compiler.getSource(parsedFilename, platform, sendProgress);
           },
           getMimeType: (filename) => {
             return compiler.getMimeType(filename);
           },
           inferPlatform: (uri) => {
-            const url = new URL(uri, 'file:///');
-            const { platform } = parseUrl(url);
+            const { platform } = parseFileUrl(uri, 'file:///');
             return platform;
           },
         },
         symbolicator: {
           getSource: (fileUrl) => {
-            const url = new URL(fileUrl);
-            const { filename, platform } = parseUrl(url);
+            const { filename, platform } = parseFileUrl(fileUrl);
             return compiler.getSource(filename, platform);
           },
           getSourceMap: (fileUrl) => {
-            const url = new URL(fileUrl);
-            const { filename, platform } = parseUrl(url);
+            const { filename, platform } = parseFileUrl(fileUrl);
             if (!platform) {
               throw new Error('Cannot infer platform for file URL');
             }
