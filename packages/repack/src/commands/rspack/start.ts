@@ -12,6 +12,7 @@ import {
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
 import { StartArguments, StartCliOptions } from '../types';
 import {
+  getMimeType,
   getRspackConfigFilePath,
   parseFileUrl,
   runAdbReverse,
@@ -127,7 +128,7 @@ export async function start(
         compiler: {
           getAsset: async (filename, platform) =>
             (await compiler.getAsset(filename, platform)).data,
-          getMimeType: (filename) => compiler.getMimeType(filename),
+          getMimeType: (filename) => getMimeType(filename),
           inferPlatform: (uri) => {
             const url = new URL(uri, 'protocol://domain');
             if (!url.searchParams.get('platform')) {

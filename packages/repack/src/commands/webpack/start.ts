@@ -11,6 +11,7 @@ import {
   Reporter,
 } from '../../logging';
 import {
+  getMimeType,
   getWebpackConfigFilePath,
   parseFileUrl,
   runAdbReverse,
@@ -159,9 +160,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
             );
             return compiler.getSource(parsedFilename, platform, sendProgress);
           },
-          getMimeType: (filename) => {
-            return compiler.getMimeType(filename);
-          },
+          getMimeType: (filename) => getMimeType(filename),
           inferPlatform: (uri) => {
             const { platform } = parseFileUrl(uri, 'file:///');
             return platform;

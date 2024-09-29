@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import memfs from 'memfs';
-import mimeTypes from 'mime-types';
 import { Configuration, rspack } from '@rspack/core';
 import type {
   MultiCompiler,
@@ -275,20 +274,6 @@ export class Compiler {
     } catch {
       throw new Error(`Source map for ${filename} for ${platform} is missing`);
     }
-  }
-
-  getMimeType(filename: string) {
-    /**
-     * TODO potentially refactor
-     *
-     * same as in getSource, this part is prone to breaking
-     * if the user changes the filename format
-     */
-    if (filename.endsWith('.bundle')) {
-      return 'text/javascript';
-    }
-
-    return mimeTypes.lookup(filename) || 'text/plain';
   }
 
   getHmrBody(platform: string): HMRMessageBody | null {

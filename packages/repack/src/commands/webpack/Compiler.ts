@@ -3,7 +3,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Worker } from 'node:worker_threads';
 import webpack from 'webpack';
-import mimeTypes from 'mime-types';
 import { SendProgress } from '@callstack/repack-dev-server';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../../env';
 import type { LogType, Reporter } from '../../logging';
@@ -250,17 +249,5 @@ export class Compiler extends EventEmitter {
     } catch {
       throw new Error(`Source map for ${filename} for ${platform} is missing`);
     }
-  }
-
-  getMimeType(filename: string) {
-    if (filename.endsWith('.bundle')) {
-      return 'text/javascript';
-    }
-
-    if (filename.endsWith('.map')) {
-      return 'application/json';
-    }
-
-    return mimeTypes.lookup(filename) || 'text/plain';
   }
 }
