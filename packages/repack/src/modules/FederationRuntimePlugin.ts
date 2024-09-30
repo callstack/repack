@@ -8,7 +8,6 @@ const repackFederationRuntimePlugin: () => FederationRuntimePlugin = () => ({
     const { remoteInfo } = args;
 
     ScriptManager.shared.addResolver(
-      // eslint-disable-next-line require-await
       async (scriptId, caller, referenceUrl) => {
         console.log('afterResolve: ', scriptId, caller, referenceUrl);
         if (scriptId === remoteInfo.entryGlobalName) {
