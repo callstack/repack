@@ -115,8 +115,8 @@ importers:
         specifier: ^14.1.1
         version: 14.1.1
       react-native-test-app:
-        specifier: ^3.8.9
-        version: 3.8.9(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
+        specifier: ^3.9.7
+        version: 3.9.7(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       terser-webpack-plugin:
         specifier: ^5.3.10
         version: 5.3.10(webpack@5.94.0)
@@ -200,8 +200,8 @@ importers:
         specifier: ^14.1.1
         version: 14.1.1
       react-native-test-app:
-        specifier: ^3.8.9
-        version: 3.8.9(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
+        specifier: ^3.9.7
+        version: 3.9.7(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -486,13 +486,13 @@ importers:
         version: 1.0.1(@rsbuild/core@0.7.8)
       rspress:
         specifier: 1.25.2
-        version: 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
+        version: 1.25.2(webpack@5.94.0)
       rspress-plugin-font-open-sans:
         specifier: ^1.0.0
         version: 1.0.0
       rspress-plugin-vercel-analytics:
         specifier: ^0.3.0
-        version: 0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0))
+        version: 0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.94.0))
     devDependencies:
       '@types/node':
         specifier: ^18
@@ -2125,8 +2125,8 @@ packages:
     resolution: {integrity: sha512-lzD84av1ZQhYUS+jsGqJiCMaJO2dn9u+RTT9n9q6D3SaKVwWqv+7AoRKqBu19bkwyE+iFRl1ymr40QS90jVFYg==}
     engines: {node: '>=14.15'}
 
-  '@rnx-kit/react-native-host@0.4.10':
-    resolution: {integrity: sha512-4Uc15bhkpA4x3OlQ+LkbeO0wFNmSIVdHMUi1GB/njoWmD15LILM3yvOXXWeX0d4emmngztIDRFoPWNPz6mgqgg==}
+  '@rnx-kit/react-native-host@0.4.12':
+    resolution: {integrity: sha512-LVOoF6/+s8JnkCn5hjZTzdyjkL54LOh1vHAimeKeGc427SPEAmHLpOohDNiMhq0kR/jY3qn8TkX8X7C8gXNWKQ==}
     peerDependencies:
       react-native: '>=0.66'
 
@@ -5959,17 +5959,17 @@ packages:
       react: '*'
       react-native: '*'
 
-  react-native-test-app@3.8.9:
-    resolution: {integrity: sha512-Bd9sTtXXO3lWnZRgFTx2M4dbckKPbx40XC3caaMgpgQB3Csns4/gHmh+VQHbd9WjOEm7NoZ38g3Kxy//DaJW8Q==}
+  react-native-test-app@3.9.7:
+    resolution: {integrity: sha512-ZLtXi/pMvab63MUApeTQKXQelA/a3k6SCNqwyOVP03v93+H647xwPvjUENVY3DATXwSh8nvt3N2NJLdhE7APpg==}
     engines: {node: '>=16.17'}
     hasBin: true
     peerDependencies:
-      '@callstack/react-native-visionos': 0.73 - 0.74
+      '@callstack/react-native-visionos': 0.73 - 0.75
       '@expo/config-plugins': '>=5.0'
-      react: 17.0.1 - 18.3
-      react-native: 0.66 - 0.74 || >=0.75.0-0 <0.75.0
-      react-native-macos: ^0.0.0-0 || 0.66 || 0.68 || 0.71 - 0.73
-      react-native-windows: ^0.0.0-0 || 0.66 - 0.74
+      react: 17.0.1 - 19.0
+      react-native: 0.66 - 0.75 || >=0.76.0-0 <0.76.0
+      react-native-macos: ^0.0.0-0 || 0.66 || 0.68 || 0.71 - 0.74
+      react-native-windows: ^0.0.0-0 || 0.66 - 0.75
     peerDependenciesMeta:
       '@callstack/react-native-visionos':
         optional: true
@@ -6988,12 +6988,12 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
-  uuid@7.0.3:
-    resolution: {integrity: sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==}
+  uuid@10.0.0:
+    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
     hasBin: true
 
-  uuid@9.0.1:
-    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+  uuid@7.0.3:
+    resolution: {integrity: sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==}
     hasBin: true
 
   uvu@0.5.6:
@@ -9766,7 +9766,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@rnx-kit/react-native-host@0.4.10(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))':
+  '@rnx-kit/react-native-host@0.4.12(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))':
     dependencies:
       react-native: 0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0)
 
@@ -9824,7 +9824,7 @@ snapshots:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       '@swc/helpers': 0.5.3
       core-js: 3.36.1
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
       postcss: 8.4.44
 
   '@rsbuild/core@1.0.0-alpha.9':
@@ -9838,40 +9838,29 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
+  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
+  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
       '@rspack/plugin-react-refresh': 0.7.3(react-refresh@0.14.2)
       react-refresh: 0.14.2
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)':
+  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.11)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
       loader-utils: 2.0.4
       postcss: 8.4.44
       sass-embedded: 1.77.8
-    transitivePeerDependencies:
-      - '@swc/helpers'
-
-  '@rsbuild/shared@0.7.8(@swc/helpers@0.5.11)':
-    dependencies:
-      '@rspack/core': 0.7.3(@swc/helpers@0.5.11)
-      caniuse-lite: 1.0.30001642
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.11))
-      postcss: 8.4.44
-    optionalDependencies:
-      fsevents: 2.3.3
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -9879,7 +9868,7 @@ snapshots:
     dependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       caniuse-lite: 1.0.30001642
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
       postcss: 8.4.44
     optionalDependencies:
       fsevents: 2.3.3
@@ -10114,16 +10103,6 @@ snapshots:
       '@rspack/binding-win32-ia32-msvc': 1.0.1
       '@rspack/binding-win32-x64-msvc': 1.0.1
 
-  '@rspack/core@0.7.3(@swc/helpers@0.5.11)':
-    dependencies:
-      '@module-federation/runtime-tools': 0.1.6
-      '@rspack/binding': 0.7.3
-      caniuse-lite: 1.0.30001642
-      tapable: 2.2.1
-      webpack-sources: 3.2.3
-    optionalDependencies:
-      '@swc/helpers': 0.5.11
-
   '@rspack/core@0.7.3(@swc/helpers@0.5.3)':
     dependencies:
       '@module-federation/runtime-tools': 0.1.6
@@ -10167,7 +10146,7 @@ snapshots:
     optionalDependencies:
       react-refresh: 0.14.2
 
-  '@rspress/core@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)':
+  '@rspress/core@1.25.2(webpack@5.94.0)':
     dependencies:
       '@loadable/component': 5.16.4(react@18.2.0)
       '@mdx-js/loader': 2.3.0(webpack@5.94.0)
@@ -10175,9 +10154,9 @@ snapshots:
       '@mdx-js/react': 2.3.0(react@18.2.0)
       '@modern-js/utils': 2.54.5
       '@rsbuild/core': 0.7.8
-      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
-      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
-      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.11)
+      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)
       '@rspress/mdx-rs': 0.5.7
       '@rspress/plugin-auto-nav-sidebar': 1.25.2
       '@rspress/plugin-container-syntax': 1.25.2
@@ -12321,11 +12300,7 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
-  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.11)):
-    optionalDependencies:
-      '@rspack/core': 0.7.3(@swc/helpers@0.5.11)
-
-  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3)):
+  html-rspack-plugin@5.7.2(@rspack/core@0.7.3):
     optionalDependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
 
@@ -14622,9 +14597,9 @@ snapshots:
       react: 18.2.0
       react-native: 0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0)
 
-  react-native-test-app@3.8.9(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0):
+  react-native-test-app@3.9.7(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@rnx-kit/react-native-host': 0.4.10(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))
+      '@rnx-kit/react-native-host': 0.4.12(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))
       ajv: 8.17.1
       cliui: 8.0.1
       fast-xml-parser: 4.4.0
@@ -14632,7 +14607,7 @@ snapshots:
       react: 18.2.0
       react-native: 0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0)
       semver: 7.6.3
-      uuid: 9.0.1
+      uuid: 10.0.0
 
   react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0):
     dependencies:
@@ -14986,7 +14961,7 @@ snapshots:
     dependencies:
       fs-extra: 11.2.0
 
-  rspress-plugin-devkit@0.3.0(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)):
+  rspress-plugin-devkit@0.3.0(rspress@1.25.2(webpack@5.94.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@types/estree-jsx': 1.0.5
@@ -15001,7 +14976,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
       mdast-util-to-string: 4.0.0
       remark-mdc: 1.2.0
-      rspress: 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
+      rspress: 1.25.2(webpack@5.94.0)
       ts-morph: 22.0.0
       unified: 10.1.2
       unist-util-visit: 5.0.0
@@ -15014,21 +14989,21 @@ snapshots:
 
   rspress-plugin-font-open-sans@1.0.0: {}
 
-  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)):
+  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.94.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@vercel/analytics': 1.3.1(react@18.2.0)
-      rspress: 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
-      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0))
+      rspress: 1.25.2(webpack@5.94.0)
+      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(webpack@5.94.0))
     transitivePeerDependencies:
       - next
       - react
       - supports-color
 
-  rspress@1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0):
+  rspress@1.25.2(webpack@5.94.0):
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rspress/core': 1.25.2(@swc/helpers@0.5.11)(webpack@5.94.0)
+      '@rspress/core': 1.25.2(webpack@5.94.0)
       '@rspress/shared': 1.25.2
       cac: 6.7.14
       chalk: 5.3.0
@@ -15746,9 +15721,9 @@ snapshots:
 
   utils-merge@1.0.1: {}
 
-  uuid@7.0.3: {}
+  uuid@10.0.0: {}
 
-  uuid@9.0.1: {}
+  uuid@7.0.3: {}
 
   uvu@0.5.6:
     dependencies:

@@ -107,7 +107,7 @@ class RemoteScriptLoader(val reactContext: ReactContext, private val nativeLoade
                 throw Exception("Script file exists but could not be read: $file")
             }
 
-            nativeLoader.evaluate(code, scriptPath, promise)
+            nativeLoader.evaluate(code, config.uniqueId, promise)
         } catch (error: Exception) {
             promise.reject(
                     ScriptLoadingError.ScriptEvalFailure.code,
