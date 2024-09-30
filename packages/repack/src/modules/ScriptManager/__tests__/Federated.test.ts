@@ -61,7 +61,7 @@ describe('Federated', () => {
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
 
-    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+    ScriptManager.shared.addResolver(async (scriptId, _caller) => {
       return {
         url: Script.getRemoteURL(scriptId),
         cache: true,
@@ -71,9 +71,9 @@ describe('Federated', () => {
     let loadingScriptIsFinished = false;
 
     // loadScript should wait first time called loadScript although we are not awaited, because scriptId is same
-    ScriptManager.shared
-      .loadScript('miniApp')
-      .then(() => (loadingScriptIsFinished = true));
+    ScriptManager.shared.loadScript('miniApp').then(() => {
+      loadingScriptIsFinished = true;
+    });
     await ScriptManager.shared.loadScript('miniApp');
 
     expect(loadingScriptIsFinished).toEqual(true);
@@ -83,7 +83,7 @@ describe('Federated', () => {
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
 
-    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+    ScriptManager.shared.addResolver(async (scriptId, _caller) => {
       return {
         url: Script.getRemoteURL(scriptId),
         cache: true,
@@ -94,21 +94,21 @@ describe('Federated', () => {
     let loadingScript2IsFinished = false;
 
     // loadScript should wait first time called loadScript although we are not awaited, because scriptId is same
-    ScriptManager.shared
-      .loadScript('miniApp')
-      .then(() => (loadingScriptIsFinished = true));
+    ScriptManager.shared.loadScript('miniApp').then(() => {
+      loadingScriptIsFinished = true;
+    });
 
-    ScriptManager.shared
-      .loadScript('miniApp2')
-      .then(() => (loadingScript2IsFinished = true));
+    ScriptManager.shared.loadScript('miniApp2').then(() => {
+      loadingScript2IsFinished = true;
+    });
 
     await ScriptManager.shared.loadScript('miniApp');
     expect(loadingScriptIsFinished).toEqual(true);
 
     loadingScriptIsFinished = false;
-    ScriptManager.shared
-      .loadScript('miniApp')
-      .then(() => (loadingScriptIsFinished = true));
+    ScriptManager.shared.loadScript('miniApp').then(() => {
+      loadingScriptIsFinished = true;
+    });
 
     ScriptManager.shared.loadScript('miniApp2');
 
@@ -124,7 +124,7 @@ describe('Federated', () => {
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
 
-    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+    ScriptManager.shared.addResolver(async (scriptId, _caller) => {
       return {
         url: Script.getRemoteURL(scriptId),
         cache: true,
@@ -134,9 +134,9 @@ describe('Federated', () => {
     let prefetchScriptIsFinished = false;
 
     // loadScript should wait first time called loadScript although we are not awaited, because scriptId is same
-    ScriptManager.shared
-      .prefetchScript('miniApp')
-      .then(() => (prefetchScriptIsFinished = true));
+    ScriptManager.shared.prefetchScript('miniApp').then(() => {
+      prefetchScriptIsFinished = true;
+    });
 
     await ScriptManager.shared.loadScript('miniApp');
 
