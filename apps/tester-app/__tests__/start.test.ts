@@ -59,6 +59,9 @@ describe('start command', () => {
           'ios/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
           'assets/src/miniapp/callstack-dark.png?platform=ios',
           `assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png?platform=ios`,
+          `remote-assets/assets/src/assetsTest/remoteAssets/webpack.png?platform=ios`,
+          `remote-assets/assets/src/assetsTest/remoteAssets/webpack@2x.png?platform=ios`,
+          `remote-assets/assets/src/assetsTest/remoteAssets/webpack@3x.png?platform=ios`,
         ],
       },
       {
@@ -74,6 +77,9 @@ describe('start command', () => {
           'android/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
           'assets/src/miniapp/callstack-dark.png?platform=android',
           `assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png?platform=android`,
+          `remote-assets/assets/src/assetsTest/remoteAssets/webpack.png?platform=android`,
+          `remote-assets/assets/src/assetsTest/remoteAssets/webpack@2x.png?platform=android`,
+          `remote-assets/assets/src/assetsTest/remoteAssets/webpack@3x.png?platform=android`,
         ],
       },
     ])(
