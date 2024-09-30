@@ -323,7 +323,7 @@ export class ScriptManager extends EventEmitter {
   ) {
     const uniqueId = Script.getScriptUniqueId(scriptId, caller);
     if (this.scriptsPromises[uniqueId]) {
-      await this.scriptsPromises[uniqueId];
+      return this.scriptsPromises[uniqueId];
     }
     const loadProcess = async () => {
       let script = await this.resolveScript(scriptId, caller, webpackContext);
@@ -346,7 +346,7 @@ export class ScriptManager extends EventEmitter {
     };
 
     this.scriptsPromises[uniqueId] = loadProcess();
-    await this.scriptsPromises[uniqueId];
+    return this.scriptsPromises[uniqueId];
   }
 
   /**
@@ -404,7 +404,7 @@ export class ScriptManager extends EventEmitter {
   ) {
     const uniqueId = Script.getScriptUniqueId(scriptId, caller);
     if (this.scriptsPromises[uniqueId]) {
-      await this.scriptsPromises[uniqueId];
+      return this.scriptsPromises[uniqueId];
     }
     const loadProcess = async () => {
       let script = await this.resolveScript(scriptId, caller, webpackContext);
@@ -427,7 +427,7 @@ export class ScriptManager extends EventEmitter {
 
     this.scriptsPromises[uniqueId] = loadProcess();
 
-    await this.scriptsPromises[uniqueId];
+    return this.scriptsPromises[uniqueId];
   }
 
   /**
