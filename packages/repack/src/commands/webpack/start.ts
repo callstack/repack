@@ -1,4 +1,3 @@
-import { URL } from 'node:url';
 import type { Server } from '@callstack/repack-dev-server';
 import type { Config } from '@react-native-community/cli-types';
 import colorette from 'colorette';
@@ -12,6 +11,7 @@ import {
   makeLogEntryFromFastifyLog,
 } from '../../logging';
 import {
+  getMimeType,
   getWebpackConfigFilePath,
   parseFileUrl,
   runAdbReverse,
@@ -153,17 +153,18 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
       return {
         compiler: {
-          getAsset: async (filename, platform, sendProgress) =>
-            (await compiler.getAsset(filename, platform, sendProgress)).data,
-          getMimeType: (filename) => compiler.getMimeType(filename),
+          getAsset: (filename, platform, sendProgress) => {
+            const parsedUrl = parseFileUrl(filename, 'file:///');
+            return compiler.getSource(
+              parsedUrl.filename,
+              platform,
+              sendProgress
+            );
+          },
+          getMimeType: (filename) => getMimeType(filename),
           inferPlatform: (uri) => {
-            const url = new URL(uri, 'protocol://domain');
-            if (!url.searchParams.get('platform')) {
-              const [, platform] = /^\/(.+)\/.+$/.exec(url.pathname) ?? [];
-              return platform;
-            }
-
-            return undefined;
+            const { platform } = parseFileUrl(uri, 'file:///');
+            return platform;
           },
         },
         symbolicator: {
@@ -173,10 +174,6 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           },
           getSourceMap: (fileUrl) => {
             const { filename, platform } = parseFileUrl(fileUrl);
-            if (!platform) {
-              throw new Error('Cannot infer platform for file URL');
-            }
-
             return compiler.getSourceMap(filename, platform);
           },
           shouldIncludeFrame: (frame) => {

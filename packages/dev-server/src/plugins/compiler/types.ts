@@ -15,7 +15,7 @@ export interface CompilerDelegate {
    */
   getAsset: (
     filename: string,
-    platform: string,
+    platform: string | undefined,
     sendProgress?: SendProgress
   ) => Promise<string | Buffer>;
 
@@ -28,7 +28,7 @@ export interface CompilerDelegate {
    */
   getMimeType: (
     filename: string,
-    platform: string,
+    platform: string | undefined,
     data: string | Buffer
   ) => string;
 

@@ -1,4 +1,3 @@
-import { URL } from 'node:url';
 import type { Config } from '@react-native-community/cli-types';
 import colorette from 'colorette';
 import packageJson from '../../../package.json';
@@ -10,6 +9,7 @@ import {
   makeLogEntryFromFastifyLog,
 } from '../../logging';
 import {
+  getMimeType,
   getRspackConfigFilePath,
   parseFileUrl,
   runAdbReverse,
@@ -125,17 +125,14 @@ export async function start(
 
       return {
         compiler: {
-          getAsset: async (filename, platform) =>
-            (await compiler.getAsset(filename, platform)).data,
-          getMimeType: (filename) => compiler.getMimeType(filename),
+          getAsset: (filename, platform) => {
+            const parsedUrl = parseFileUrl(filename, 'file:///');
+            return compiler.getSource(parsedUrl.filename, platform);
+          },
+          getMimeType: (filename) => getMimeType(filename),
           inferPlatform: (uri) => {
-            const url = new URL(uri, 'protocol://domain');
-            if (!url.searchParams.get('platform')) {
-              const [, platform] = /^\/(.+)\/.+$/.exec(url.pathname) ?? [];
-              return platform;
-            }
-
-            return undefined;
+            const { platform } = parseFileUrl(uri, 'file:///');
+            return platform;
           },
         },
         symbolicator: {
@@ -144,18 +141,7 @@ export async function start(
             return compiler.getSource(filename, platform);
           },
           getSourceMap: (fileUrl) => {
-            // TODO Align this with output.hotModuleUpdateChunkFilename
-            if (fileUrl.endsWith('.hot-update.js')) {
-              const { pathname } = new URL(fileUrl);
-              const [platform, filename] = pathname.split('/').filter(Boolean);
-              return compiler.getSourceMap(filename, platform);
-            }
-
             const { filename, platform } = parseFileUrl(fileUrl);
-            if (!platform) {
-              throw new Error('Cannot infer platform for file URL');
-            }
-
             return compiler.getSourceMap(filename, platform);
           },
           shouldIncludeFrame: (frame) => {
