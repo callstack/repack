@@ -46,7 +46,6 @@
     "client.d.ts",
     "federation-runtime-plugin.js",
     "federation-runtime-plugin.d.ts",
-    "assets-loader.js",
     "callstack-repack.podspec",
     "src/modules/ScriptManager/NativeScriptManager.ts"
   ],
