@@ -1,4 +1,4 @@
-import { EnvOptions } from '../../types';
+import type { EnvOptions } from '../../types';
 
 type Configuration<T> =
   | T

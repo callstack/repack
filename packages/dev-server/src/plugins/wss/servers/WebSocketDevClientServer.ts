@@ -1,5 +1,5 @@
-import WebSocket from 'ws';
 import type { FastifyInstance } from 'fastify';
+import type WebSocket from 'ws';
 import { WebSocketServer } from '../WebSocketServer';
 
 /**

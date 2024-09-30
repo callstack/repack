@@ -3,7 +3,7 @@ import imageSize from 'image-size';
 import type { Asset, AssetDimensions, CollectedScales } from './types';
 
 export function getScaleNumber(scaleKey: string) {
-  return parseFloat(scaleKey.replace(/[^\d.]/g, ''));
+  return Number.parseFloat(scaleKey.replace(/[^\d.]/g, ''));
 }
 
 /** Default asset is the one with scale that was originally requested in the loader */

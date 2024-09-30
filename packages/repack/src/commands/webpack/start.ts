@@ -1,14 +1,14 @@
-import colorette from 'colorette';
-import webpack from 'webpack';
-import { Config } from '@react-native-community/cli-types';
 import type { Server } from '@callstack/repack-dev-server';
+import type { Config } from '@react-native-community/cli-types';
+import colorette from 'colorette';
+import type webpack from 'webpack';
 import packageJson from '../../../package.json';
 import {
-  composeReporters,
   ConsoleReporter,
   FileReporter,
+  type Reporter,
+  composeReporters,
   makeLogEntryFromFastifyLog,
-  Reporter,
 } from '../../logging';
 import {
   getMimeType,
@@ -18,9 +18,9 @@ import {
   setupInteractions,
 } from '../common';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
-import { StartArguments, StartCliOptions } from '../types';
+import type { StartArguments, StartCliOptions } from '../types';
 import { Compiler } from './Compiler';
-import { HMRMessageBody } from './types';
+import type { HMRMessageBody } from './types';
 
 /**
  * Start command for React Native Community CLI.
@@ -60,8 +60,8 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   const isVerbose = isSilent
     ? false
     : // TODO fix in a separate PR (jbroma)
-      // eslint-disable-next-line prettier/prettier
-      (args.verbose ?? process.argv.includes('--verbose'));
+      // biome-ignore format: fix in a separate PR
+      args.verbose ?? process.argv.includes('--verbose');
 
   const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(

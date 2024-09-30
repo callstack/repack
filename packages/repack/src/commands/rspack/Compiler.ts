@@ -1,18 +1,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import memfs from 'memfs';
-import { Configuration, rspack } from '@rspack/core';
+import type { Server } from '@callstack/repack-dev-server';
+import { type Configuration, rspack } from '@rspack/core';
 import type {
   MultiCompiler,
   StatsCompilation,
   WatchOptions,
 } from '@rspack/core';
-import type { Server } from '@callstack/repack-dev-server';
+import memfs from 'memfs';
 import type { Reporter } from '../../logging';
 import type { HMRMessageBody } from '../../types';
-import type { StartCliOptions } from '../types';
 import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from '../common';
 import { DEV_SERVER_ASSET_TYPES } from '../consts';
+import type { StartCliOptions } from '../types';
 import type { CompilerAsset, MultiWatching } from './types';
 
 export class Compiler {
@@ -20,7 +20,7 @@ export class Compiler {
   assetsCache: Record<string, Record<string, CompilerAsset> | undefined> = {};
   statsCache: Record<string, StatsCompilation | undefined> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
-  isCompilationInProgress: boolean = false;
+  isCompilationInProgress = false;
   watchOptions: WatchOptions = {};
   watching: MultiWatching | null = null;
   // late-init

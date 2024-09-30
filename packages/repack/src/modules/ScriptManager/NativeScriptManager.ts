@@ -1,12 +1,12 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
-export const enum NormalizedScriptLocatorHTTPMethod {
+export enum NormalizedScriptLocatorHTTPMethod {
   GET = 'GET',
   POST = 'POST',
 }
 
-export const enum NormalizedScriptLocatorSignatureVerificationMode {
+export enum NormalizedScriptLocatorSignatureVerificationMode {
   STRICT = 'strict',
   LAX = 'lax',
   OFF = 'off',

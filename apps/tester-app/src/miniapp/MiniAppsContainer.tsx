@@ -1,6 +1,6 @@
+import { ScriptManager } from '@callstack/repack/client';
 import React, { useCallback, useRef, useState } from 'react';
 import { View } from 'react-native';
-import { ScriptManager } from '@callstack/repack/client';
 
 import { Button } from '../ui/Button';
 

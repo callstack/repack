@@ -1,5 +1,5 @@
 import readline from 'node:readline';
-import { Logger } from '../../types';
+import type { Logger } from '../../types';
 
 export function setupInteractions(
   handlers: {

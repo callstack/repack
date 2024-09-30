@@ -26,7 +26,7 @@ async function compilerPlugin(
 
       if (!filename) {
         // This technically should never happen - this route should not be called if file is missing.
-        request.log.error(`File was not provided`);
+        request.log.error('File was not provided');
         return reply.notFound();
       }
 

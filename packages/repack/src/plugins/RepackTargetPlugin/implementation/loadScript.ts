@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 let $loadScript$;
 let $caller$ = '';
 
@@ -13,7 +11,6 @@ module.exports = function () {
     if (key && chunkId) {
       __webpack_require__.repack.loadScript(chunkId, $caller$, done);
     } else {
-      // Load HMR update
       __webpack_require__.repack.loadHotUpdate(url, done);
     }
   };

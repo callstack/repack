@@ -1,5 +1,5 @@
-import path from 'node:path';
 import assert from 'node:assert';
+import path from 'node:path';
 import type {
   Compiler,
   EntryNormalized,
@@ -163,7 +163,7 @@ export class OutputPlugin implements RspackPluginInstance {
         .filter((asset) => /^remote-assets/.test(asset.name))
         .forEach((asset) => auxiliaryAssets.add(asset.name));
 
-      let localAssetsCopyProcessor;
+      let localAssetsCopyProcessor: AssetsCopyProcessor | undefined;
       let { bundleFilename, sourceMapFilename, assetsPath } =
         this.config.output;
 
@@ -241,7 +241,9 @@ export class OutputPlugin implements RspackPluginInstance {
         });
       }
 
-      let auxiliaryAssetsCopyProcessor;
+      let auxiliaryAssetsCopyProcessor:
+        | AuxiliaryAssetsCopyProcessor
+        | undefined;
       const auxiliaryAssetsPath = this.config.output.auxiliaryAssetsPath;
       if (auxiliaryAssetsPath) {
         auxiliaryAssetsCopyProcessor = new AuxiliaryAssetsCopyProcessor({
