@@ -92,7 +92,10 @@ export class ScriptManager extends EventEmitter {
   }
 
   protected cache: Cache = {};
-  protected scriptsPromises: Record<string, Promise<void> | undefined> = {};
+  protected scriptsPromises: Record<
+    string,
+    (Promise<void> & { isPrefetch?: true }) | undefined
+  > = {};
   protected cacheInitialized = false;
   protected resolvers: [number, ScriptLocatorResolver][] = [];
   protected storage?: StorageApi;
@@ -315,7 +318,12 @@ export class ScriptManager extends EventEmitter {
   ) {
     const uniqueId = Script.getScriptUniqueId(scriptId, caller);
     if (this.scriptsPromises[uniqueId]) {
-      return this.scriptsPromises[uniqueId];
+      const { isPrefetch } = this.scriptsPromises[uniqueId];
+      await this.scriptsPromises[uniqueId];
+      // prefetch is not execute the script so we need to run loadScript if promise is for prefetch
+      if (!isPrefetch) {
+        return Promise.resolve();
+      }
     }
     const loadProcess = async () => {
       let script = await this.resolveScript(scriptId, caller, webpackContext);
@@ -380,7 +388,7 @@ export class ScriptManager extends EventEmitter {
     };
 
     this.scriptsPromises[uniqueId] = loadProcess();
-
+    this.scriptsPromises[uniqueId].isPrefetch = true;
     return this.scriptsPromises[uniqueId];
   }
 
