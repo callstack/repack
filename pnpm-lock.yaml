@@ -168,16 +168,16 @@ importers:
         version: 0.74.83
       '@rsdoctor/rspack-plugin':
         specifier: ^0.4.1
-        version: 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.11))
+        version: 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
       '@rspack/core':
         specifier: 1.0.1
-        version: 1.0.1(@swc/helpers@0.5.11)
+        version: 1.0.1(@swc/helpers@0.5.13)
       '@rspack/plugin-react-refresh':
         specifier: 1.0.0
         version: 1.0.0(react-refresh@0.14.2)
       '@swc/helpers':
-        specifier: ^0.5.11
-        version: 0.5.11
+        specifier: ^0.5.13
+        version: 0.5.13
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
@@ -469,13 +469,13 @@ importers:
         version: 13.6.4
       '@rspack/core':
         specifier: 1.0.1
-        version: 1.0.1(@swc/helpers@0.5.11)
+        version: 1.0.1(@swc/helpers@0.5.13)
       '@rspack/plugin-react-refresh':
         specifier: 1.0.0
         version: 1.0.0(react-refresh@0.14.2)
       '@swc/helpers':
-        specifier: 0.5.11
-        version: 0.5.11
+        specifier: 0.5.13
+        version: 0.5.13
       '@types/dedent':
         specifier: ^0.7.0
         version: 0.7.2
@@ -2790,6 +2790,9 @@ packages:
 
   '@swc/helpers@0.5.11':
     resolution: {integrity: sha512-YNlnKRWF2sVojTpIyzwou9XoTNbzbzONwRhOoniEioF1AtaitTvVZblaQRrAzChWQ1bLYyYSWzM18y4WwgzJ+A==}
+
+  '@swc/helpers@0.5.13':
+    resolution: {integrity: sha512-UoKGxQ3r5kYI9dALKJapMmuK+1zWM/H17Z1+iwnNmzcJRnfFuevZs375TA5rW31pu4BS4NoSy1fRsexDXfWn5w==}
 
   '@swc/helpers@0.5.3':
     resolution: {integrity: sha512-FaruWX6KdudYloq1AHD/4nU+UsMTdNE8CKyrseXWEcgjDAbvkwJg2QGPAnfIJLIWsjZOSPLOAykK6fuYp4vp4A==}
@@ -10315,10 +10318,47 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  '@rsdoctor/core@0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))':
+    dependencies:
+      '@rsdoctor/graph': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@rsdoctor/sdk': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@rsdoctor/types': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@rsdoctor/utils': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      axios: 1.7.7
+      enhanced-resolve: 5.12.0
+      filesize: 10.1.4
+      fs-extra: 11.2.0
+      loader-utils: 2.0.4
+      lodash: 4.17.21
+      path-browserify: 1.0.1
+      semver: 7.6.3
+      source-map: 0.7.4
+      webpack-bundle-analyzer: 4.10.2
+      webpack-sources: 3.2.3
+    transitivePeerDependencies:
+      - '@rspack/core'
+      - bufferutil
+      - debug
+      - supports-color
+      - utf-8-validate
+
   '@rsdoctor/graph@0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.11))':
     dependencies:
       '@rsdoctor/types': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.11))
       '@rsdoctor/utils': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.11))
+      lodash: 4.17.21
+      socket.io: 4.7.2
+      source-map: 0.7.4
+    transitivePeerDependencies:
+      - '@rspack/core'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@rsdoctor/graph@0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))':
+    dependencies:
+      '@rsdoctor/types': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@rsdoctor/utils': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
       lodash: 4.17.21
       socket.io: 4.7.2
       source-map: 0.7.4
@@ -10336,6 +10376,22 @@ snapshots:
       '@rsdoctor/types': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.11))
       '@rsdoctor/utils': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.11))
       '@rspack/core': 1.0.1(@swc/helpers@0.5.11)
+      loader-utils: 2.0.4
+      lodash: 4.17.21
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - supports-color
+      - utf-8-validate
+
+  '@rsdoctor/rspack-plugin@0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))':
+    dependencies:
+      '@rsdoctor/core': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@rsdoctor/graph': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@rsdoctor/sdk': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@rsdoctor/types': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@rsdoctor/utils': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@rspack/core': 1.0.1(@swc/helpers@0.5.13)
       loader-utils: 2.0.4
       lodash: 4.17.21
     transitivePeerDependencies:
@@ -10367,6 +10423,29 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  '@rsdoctor/sdk@0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))':
+    dependencies:
+      '@rsdoctor/client': 0.4.1
+      '@rsdoctor/graph': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@rsdoctor/types': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@rsdoctor/utils': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
+      '@types/fs-extra': 11.0.4
+      body-parser: 1.20.2
+      cors: 2.8.5
+      dayjs: 1.11.13
+      fs-extra: 11.2.0
+      lodash: 4.17.21
+      open: 8.4.2
+      serve-static: 1.15.0
+      socket.io: 4.7.2
+      source-map: 0.7.4
+      tapable: 2.2.1
+    transitivePeerDependencies:
+      - '@rspack/core'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
   '@rsdoctor/types@0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.11))':
     dependencies:
       '@types/connect': 3.4.38
@@ -10376,10 +10455,43 @@ snapshots:
     optionalDependencies:
       '@rspack/core': 1.0.1(@swc/helpers@0.5.11)
 
+  '@rsdoctor/types@0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))':
+    dependencies:
+      '@types/connect': 3.4.38
+      '@types/estree': 1.0.5
+      '@types/tapable': 2.2.7
+      source-map: 0.7.4
+    optionalDependencies:
+      '@rspack/core': 1.0.1(@swc/helpers@0.5.13)
+
   '@rsdoctor/utils@0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.11))':
     dependencies:
       '@babel/code-frame': 7.24.7
       '@rsdoctor/types': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.11))
+      '@types/estree': 1.0.5
+      acorn: 8.12.1
+      acorn-import-assertions: 1.9.0(acorn@8.12.1)
+      acorn-walk: 8.3.3
+      chalk: 4.1.2
+      connect: 3.7.0
+      deep-eql: 4.1.4
+      envinfo: 7.13.0
+      filesize: 10.1.4
+      fs-extra: 11.2.0
+      get-port: 5.1.1
+      json-stream-stringify: 3.0.1
+      lines-and-columns: 2.0.4
+      lodash: 4.17.21
+      rslog: 1.2.2
+      strip-ansi: 6.0.1
+    transitivePeerDependencies:
+      - '@rspack/core'
+      - supports-color
+
+  '@rsdoctor/utils@0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))':
+    dependencies:
+      '@babel/code-frame': 7.24.7
+      '@rsdoctor/types': 0.4.1(@rspack/core@1.0.1(@swc/helpers@0.5.13))
       '@types/estree': 1.0.5
       acorn: 8.12.1
       acorn-import-assertions: 1.9.0(acorn@8.12.1)
@@ -10544,6 +10656,15 @@ snapshots:
       caniuse-lite: 1.0.30001642
     optionalDependencies:
       '@swc/helpers': 0.5.11
+
+  '@rspack/core@1.0.1(@swc/helpers@0.5.13)':
+    dependencies:
+      '@module-federation/runtime-tools': 0.5.1
+      '@rspack/binding': 1.0.1
+      '@rspack/lite-tapable': 1.0.0
+      caniuse-lite: 1.0.30001642
+    optionalDependencies:
+      '@swc/helpers': 0.5.13
 
   '@rspack/lite-tapable@1.0.0': {}
 
@@ -10839,6 +10960,10 @@ snapshots:
       - typescript
 
   '@swc/helpers@0.5.11':
+    dependencies:
+      tslib: 2.6.3
+
+  '@swc/helpers@0.5.13':
     dependencies:
       tslib: 2.6.3
 
