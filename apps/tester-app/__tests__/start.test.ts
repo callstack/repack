@@ -62,6 +62,9 @@ describe('start command', () => {
           `remote-assets/assets/src/assetsTest/remoteAssets/webpack.png?platform=ios`,
           `remote-assets/assets/src/assetsTest/remoteAssets/webpack@2x.png?platform=ios`,
           `remote-assets/assets/src/assetsTest/remoteAssets/webpack@3x.png?platform=ios`,
+          `index.js`,
+          `src/App.tsx`,
+          `src/ui/undraw_Developer_activity_re_39tg.svg`,
         ],
       },
       {
@@ -80,6 +83,9 @@ describe('start command', () => {
           `remote-assets/assets/src/assetsTest/remoteAssets/webpack.png?platform=android`,
           `remote-assets/assets/src/assetsTest/remoteAssets/webpack@2x.png?platform=android`,
           `remote-assets/assets/src/assetsTest/remoteAssets/webpack@3x.png?platform=android`,
+          `index.js`,
+          `src/App.tsx`,
+          `src/ui/undraw_Developer_activity_re_39tg.svg`,
         ],
       },
     ])(
