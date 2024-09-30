@@ -118,7 +118,7 @@
     "@react-native-community/cli": "13.6.4",
     "@react-native-community/cli-types": "13.6.4",
     "@module-federation/enhanced": "0.5.0",
-    "@rspack/core": "1.0.1",
+    "@rspack/core": "1.0.8",
     "@rspack/plugin-react-refresh": "1.0.0",
     "@swc/helpers": "0.5.13",
     "@types/dedent": "^0.7.0",
