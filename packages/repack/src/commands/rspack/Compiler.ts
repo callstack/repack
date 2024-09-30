@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import memfs from 'memfs';
-import mimeTypes from 'mime-types';
 import { Configuration, rspack } from '@rspack/core';
 import type {
   MultiCompiler,
@@ -13,6 +12,7 @@ import type { Reporter } from '../../logging';
 import type { HMRMessageBody } from '../../types';
 import type { StartCliOptions } from '../types';
 import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from '../common';
+import { DEV_SERVER_ASSET_TYPES } from '../consts';
 import type { CompilerAsset, MultiWatching } from './types';
 
 export class Compiler {
@@ -232,37 +232,42 @@ export class Compiler {
 
   async getSource(
     filename: string,
-    platform?: string
+    platform: string | undefined
   ): Promise<string | Buffer> {
-    /**
-     * TODO refactor this part
-     *
-     * This code makes an assumption that filename ends with .bundle
-     * but this can be changed by the user, so is prone to breaking
-     * In reality, it's not that big a deal. This part is within a dev server
-     * so we might override & enforce the format for the purpose of development
-     */
-    if (/\.(bundle|hot-update\.js)/.test(filename) && platform) {
-      return (await this.getAsset(filename, platform)).data;
+    if (DEV_SERVER_ASSET_TYPES.test(filename)) {
+      if (!platform) {
+        throw new Error(`Cannot detect platform for ${filename}`);
+      }
+      const asset = await this.getAsset(filename, platform);
+      return asset.data;
     }
 
-    return fs.promises.readFile(
-      path.join(this.cliOptions.config.root, filename),
-      'utf8'
-    );
+    try {
+      const filePath = path.join(this.cliOptions.config.root, filename);
+      const source = await fs.promises.readFile(filePath, 'utf8');
+      return source;
+    } catch {
+      throw new Error(`File ${filename} not found`);
+    }
   }
 
   async getSourceMap(
     filename: string,
-    platform: string
+    platform: string | undefined
   ): Promise<string | Buffer> {
+    if (!platform) {
+      throw new Error(
+        `Cannot determine platform for source map of ${filename}`
+      );
+    }
+
     try {
       const { info } = await this.getAsset(filename, platform);
       let sourceMapFilename = info.related?.sourceMap;
 
       if (!sourceMapFilename) {
         throw new Error(
-          `No source map associated with ${filename} for ${platform}`
+          `Cannot determine source map filename for ${filename} for ${platform}`
         );
       }
 
@@ -275,20 +280,6 @@ export class Compiler {
     } catch {
       throw new Error(`Source map for ${filename} for ${platform} is missing`);
     }
-  }
-
-  getMimeType(filename: string) {
-    /**
-     * TODO potentially refactor
-     *
-     * same as in getSource, this part is prone to breaking
-     * if the user changes the filename format
-     */
-    if (filename.endsWith('.bundle')) {
-      return 'text/javascript';
-    }
-
-    return mimeTypes.lookup(filename) || 'text/plain';
   }
 
   getHmrBody(platform: string): HMRMessageBody | null {
