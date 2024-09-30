@@ -1,8 +1,8 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import webpack from 'webpack';
 import * as Repack from '@callstack/repack';
 import { ModuleFederationPlugin } from '@module-federation/enhanced/webpack';
+import webpack from 'webpack';
 
 const dirname = Repack.getDirname(import.meta.url);
 const { resolve } = createRequire(import.meta.url);
@@ -33,7 +33,7 @@ export default (env) => {
     context,
     entry: [
       ...Repack.getInitializationEntries(reactNativePath, {
-        hmr: devServer && devServer.hmr,
+        hmr: devServer?.hmr,
       }),
       entry,
     ],
@@ -78,10 +78,9 @@ export default (env) => {
           use: {
             loader: 'babel-loader',
             options: {
-              plugins:
-                devServer && devServer.hmr
-                  ? ['module:react-refresh/babel']
-                  : undefined,
+              plugins: devServer?.hmr
+                ? ['module:react-refresh/babel']
+                : undefined,
             },
           },
         },

@@ -1,8 +1,8 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import webpack from 'webpack';
 import * as Repack from '@callstack/repack';
 import { ModuleFederationPlugin } from '@module-federation/enhanced/webpack';
+import webpack from 'webpack';
 
 const dirname = Repack.getDirname(import.meta.url);
 const { resolve } = createRequire(import.meta.url);
@@ -11,14 +11,9 @@ export default (env) => {
   const {
     mode = 'development',
     context = dirname,
-    entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
-    bundleFilename = undefined,
-    sourceMapFilename = undefined,
-    assetsPath = undefined,
-    reactNativePath = resolve('react-native'),
   } = env;
 
   if (!platform) {
@@ -76,10 +71,9 @@ export default (env) => {
           use: {
             loader: 'babel-loader',
             options: {
-              plugins:
-                devServer && devServer.hmr
-                  ? ['module:react-refresh/babel']
-                  : undefined,
+              plugins: devServer?.hmr
+                ? ['module:react-refresh/babel']
+                : undefined,
             },
           },
         },

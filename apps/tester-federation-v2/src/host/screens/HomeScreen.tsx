@@ -1,7 +1,6 @@
-import {useNavigation} from '@react-navigation/native';
-import React from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
-import {MainStackNavigationProp} from '../navigation/MainNavigator';
+import { useNavigation } from '@react-navigation/native';
+import { Button, StyleSheet, Text, View } from 'react-native';
+import type { MainStackNavigationProp } from '../navigation/MainNavigator';
 
 const HomeScreen = () => {
   const navigation = useNavigation<MainStackNavigationProp>();

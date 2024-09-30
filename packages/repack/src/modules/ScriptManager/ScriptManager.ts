@@ -329,7 +329,7 @@ export class ScriptManager extends EventEmitter {
     webpackContext = getWebpackContext(),
     referenceUrl?: string
   ) {
-    let script = await this.resolveScript(
+    const script = await this.resolveScript(
       scriptId,
       caller,
       webpackContext,

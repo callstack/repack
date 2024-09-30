@@ -1,12 +1,11 @@
-import React from 'react';
-import {StyleSheet} from 'react-native';
 import {
+  type NativeStackNavigationProp,
   createNativeStackNavigator,
-  NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
+import { StyleSheet } from 'react-native';
 
-import HomeScreen from '../screens/HomeScreen';
 import GalleryScreen from '../screens/GalleryScreen';
+import HomeScreen from '../screens/HomeScreen';
 
 export type MainStackParamList = {
   Home: undefined;
@@ -27,7 +26,8 @@ const MainNavigator = () => {
         headerStyle: styles.header,
         headerTitleStyle: styles.headerTitle,
         headerTintColor: 'rgba(255,255,255,1)',
-      }}>
+      }}
+    >
       <Main.Screen name="Home" component={HomeScreen} />
       <Main.Screen name="Gallery" component={GalleryScreen} />
     </Main.Navigator>

@@ -23,8 +23,8 @@ export class ModuleFederationDevPlugin implements RspackPluginInstance {
 
     // MF2 produces warning about not supporting async await
     // we can silence this warning since it works just fine
-    (compiler.options.ignoreWarnings =
-      compiler.options.ignoreWarnings ?? []).push(
+    compiler.options.ignoreWarnings = compiler.options.ignoreWarnings ?? [];
+    compiler.options.ignoreWarnings.push(
       (warning) => warning.name === 'EnvironmentNotSupportAsyncWarning'
     );
   }
