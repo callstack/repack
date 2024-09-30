@@ -1,9 +1,9 @@
 // @ts-check
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import rspack from '@rspack/core';
 import * as Repack from '@callstack/repack';
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+import rspack from '@rspack/core';
 
 const dirname = Repack.getDirname(import.meta.url);
 const { resolve } = createRequire(import.meta.url);

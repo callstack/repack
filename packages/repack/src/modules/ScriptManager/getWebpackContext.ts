@@ -1,5 +1,3 @@
-/* globals __webpack_require__ */
-
 import type { WebpackContext } from './types';
 
 /**

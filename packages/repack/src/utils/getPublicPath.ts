@@ -1,4 +1,4 @@
-import { DevServerOptions } from '../types';
+import type { DevServerOptions } from '../types';
 
 /** {@link getPublicPath} options. */
 export interface GetPublicPathOptions {
@@ -41,7 +41,6 @@ export function getPublicPath(options?: GetPublicPathOptions) {
     return `${https ? 'https' : 'http'}://${host || 'localhost'}:${port}/${
       options.platform
     }/`;
-  } else {
-    return `noop:///`;
   }
+  return 'noop:///';
 }

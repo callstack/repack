@@ -1,12 +1,11 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
 import {
+  type NativeStackNavigationProp,
   createNativeStackNavigator,
-  NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
+import { StyleSheet } from 'react-native';
 
-import HomeScreen from '../screens/HomeScreen';
 import DetailScreen from '../screens/DetailScreen';
+import HomeScreen from '../screens/HomeScreen';
 import MiniAppScreen from '../screens/MiniAppScreen';
 
 export type MainStackParamList = {

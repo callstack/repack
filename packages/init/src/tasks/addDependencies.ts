@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { PM } from 'detect-package-manager';
 import { execa } from 'execa';
-import ora from 'ora';
+import ora, { type Ora } from 'ora';
 import logger from '../utils/logger.js';
 
 const rspackDependencies = [
@@ -73,7 +73,7 @@ export default async function addDependencies(
   const deps = dependencies.join(' ');
   const command = `${packageManager} ${installCommand} -D ${deps}`;
 
-  let spinner;
+  let spinner: Ora | undefined;
 
   try {
     spinner = ora(
@@ -82,7 +82,7 @@ export default async function addDependencies(
     await execa(command, { cwd, stdio: 'pipe', shell: true });
     spinner.succeed('Dependencies installed');
   } catch (error) {
-    spinner?.fail(`Failed to install Re.Pack dependencies`);
+    spinner?.fail('Failed to install Re.Pack dependencies');
     throw error;
   }
 }

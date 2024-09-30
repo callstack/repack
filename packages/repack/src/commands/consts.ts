@@ -21,3 +21,19 @@ export const DEFAULT_RSPACK_CONFIG_LOCATIONS = [
   'rspack.config.cjs',
   'rspack.config.js',
 ];
+
+/**
+ * Dev Server supported asset types.
+ *
+ * These are the types of assets that will be served from the compiler output
+ * instead of the local filesystem.
+ */
+export const DEV_SERVER_ASSET_TYPES = new RegExp(
+  [
+    '\\.bundle$',
+    '\\.map$',
+    '\\.hot-update\\.js(on)?$',
+    '^assets',
+    '^remote-assets',
+  ].join('|')
+);

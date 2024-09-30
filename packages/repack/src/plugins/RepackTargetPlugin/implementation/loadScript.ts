@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 let $loadScript$;
 let $caller$ = '';
 
@@ -16,7 +14,6 @@ module.exports = function () {
       // MF2 containers
       __webpack_require__.repack.loadScript(key, undefined, done, url);
     } else {
-      // Load HMR update
       __webpack_require__.repack.loadHotUpdate(url, done);
     }
   };

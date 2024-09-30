@@ -1,11 +1,11 @@
-import ensureProjectExists from './tasks/ensureProjectExists.js';
+import addDependencies from './tasks/addDependencies.js';
 import checkPackageManager from './tasks/checkPackageManager.js';
 import checkReactNative from './tasks/checkReactNative.js';
-import addDependencies from './tasks/addDependencies.js';
 import createBundlerConfig from './tasks/createBundlerConfig.js';
+import ensureProjectExists from './tasks/ensureProjectExists.js';
 import handleReactNativeConfig from './tasks/handleReactNativeConfig.js';
-import modifyIOS from './tasks/modifyIOS.js';
 import modifyAndroid from './tasks/modifyAndroid.js';
+import modifyIOS from './tasks/modifyIOS.js';
 
 import logger, { enableVerboseLogging } from './utils/logger.js';
 

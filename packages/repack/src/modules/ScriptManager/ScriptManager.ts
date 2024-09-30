@@ -1,11 +1,11 @@
-/* globals __DEV__, __webpack_require__ */
+// biome-ignore lint/style/useNodejsImportProtocol: use 'events' module instead of node builtin
 import EventEmitter from 'events';
-import { getWebpackContext } from './getWebpackContext';
-import { Script } from './Script';
-import type { ScriptLocatorResolver, StorageApi } from './types';
 import NativeScriptManager, {
-  NormalizedScriptLocator,
+  type NormalizedScriptLocator,
 } from './NativeScriptManager';
+import { Script } from './Script';
+import { getWebpackContext } from './getWebpackContext';
+import type { ScriptLocator, ScriptLocatorResolver, StorageApi } from './types';
 
 type Cache = Record<
   string,
@@ -246,7 +246,7 @@ export class ScriptManager extends EventEmitter {
 
       this.emit('resolving', { scriptId, caller });
 
-      let locator;
+      let locator: ScriptLocator | undefined;
       for (const [, , resolve] of this.resolvers) {
         locator = await resolve(scriptId, caller, referenceUrl);
         if (locator) {
@@ -366,7 +366,7 @@ export class ScriptManager extends EventEmitter {
     caller?: string,
     webpackContext = getWebpackContext()
   ) {
-    let script = await this.resolveScript(scriptId, caller, webpackContext);
+    const script = await this.resolveScript(scriptId, caller, webpackContext);
 
     try {
       this.emit('prefetching', script.toObject());
