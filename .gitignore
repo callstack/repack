@@ -380,3 +380,6 @@ packages/**/docs
 .nx
 .nx/cache
 .nx/workspace-data
+
+# cocoapods
+**/Pods/
