@@ -78,4 +78,45 @@ describe('Federated', () => {
 
     expect(loadingScriptIsFinished).toEqual(true);
   });
+
+  it('should wait loadScript with same scriptId to finished in a complex scenario', async () => {
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      return {
+        url: Script.getRemoteURL(scriptId),
+        cache: true,
+      };
+    });
+
+    let loadingScriptIsFinished = false;
+    let loadingScript2IsFinished = false;
+
+    // loadScript should wait first time called loadScript although we are not awaited, because scriptId is same
+    ScriptManager.shared
+      .loadScript('miniApp')
+      .then(() => (loadingScriptIsFinished = true));
+
+    ScriptManager.shared
+      .loadScript('miniApp2')
+      .then(() => (loadingScript2IsFinished = true));
+
+    await ScriptManager.shared.loadScript('miniApp');
+    expect(loadingScriptIsFinished).toEqual(true);
+
+    loadingScriptIsFinished = false;
+    ScriptManager.shared
+      .loadScript('miniApp')
+      .then(() => (loadingScriptIsFinished = true));
+
+    ScriptManager.shared.loadScript('miniApp2');
+
+    await ScriptManager.shared.loadScript('miniApp');
+
+    expect(loadingScriptIsFinished).toEqual(true);
+
+    await ScriptManager.shared.loadScript('miniApp2');
+    expect(loadingScript2IsFinished).toEqual(true);
+  });
 });
