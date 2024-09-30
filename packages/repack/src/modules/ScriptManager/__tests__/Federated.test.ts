@@ -119,4 +119,27 @@ describe('Federated', () => {
     await ScriptManager.shared.loadScript('miniApp2');
     expect(loadingScript2IsFinished).toEqual(true);
   });
+
+  it('should wait loadScript and prefetchScript', async () => {
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      return {
+        url: Script.getRemoteURL(scriptId),
+        cache: true,
+      };
+    });
+
+    let prefetchScriptIsFinished = false;
+
+    // loadScript should wait first time called loadScript although we are not awaited, because scriptId is same
+    ScriptManager.shared
+      .prefetchScript('miniApp')
+      .then(() => (prefetchScriptIsFinished = true));
+
+    await ScriptManager.shared.loadScript('miniApp');
+
+    expect(prefetchScriptIsFinished).toEqual(true);
+  });
 });
