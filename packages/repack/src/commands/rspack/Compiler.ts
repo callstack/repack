@@ -12,6 +12,7 @@ import type { Reporter } from '../../logging';
 import type { HMRMessageBody } from '../../types';
 import type { StartCliOptions } from '../types';
 import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from '../common';
+import { DEV_SERVER_ASSET_TYPES } from '../consts';
 import type { CompilerAsset, MultiWatching } from './types';
 
 export class Compiler {
@@ -233,11 +234,12 @@ export class Compiler {
     filename: string,
     platform: string | undefined
   ): Promise<string | Buffer> {
-    if (/(\.bundle|\.map|hot-update\.js|^(remote-)?assets)/.test(filename)) {
+    if (DEV_SERVER_ASSET_TYPES.test(filename)) {
       if (!platform) {
         throw new Error(`Cannot detect platform for ${filename}`);
       }
-      return (await this.getAsset(filename, platform)).data;
+      const asset = await this.getAsset(filename, platform);
+      return asset.data;
     }
 
     try {

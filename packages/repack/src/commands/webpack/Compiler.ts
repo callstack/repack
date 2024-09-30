@@ -6,6 +6,7 @@ import webpack from 'webpack';
 import { SendProgress } from '@callstack/repack-dev-server';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../../env';
 import type { LogType, Reporter } from '../../logging';
+import { DEV_SERVER_ASSET_TYPES } from '../consts';
 import type { CliOptions } from '../types';
 import type {
   CompilerAsset,
@@ -210,11 +211,12 @@ export class Compiler extends EventEmitter {
     platform: string | undefined,
     sendProgress?: SendProgress
   ): Promise<string | Buffer> {
-    if (/(\.bundle|\.map|hot-update\.js|^(remote-)?assets)/.test(filename)) {
+    if (DEV_SERVER_ASSET_TYPES.test(filename)) {
       if (!platform) {
         throw new Error(`Cannot detect platform for ${filename}`);
       }
-      return (await this.getAsset(filename, platform, sendProgress)).data;
+      const asset = await this.getAsset(filename, platform, sendProgress);
+      return asset.data;
     }
 
     try {
