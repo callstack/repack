@@ -32,7 +32,7 @@ export const DEV_SERVER_ASSET_TYPES = new RegExp(
   [
     '\\.bundle$',
     '\\.map$',
-    '\\.hot-update\\.js$',
+    '\\.hot-update\\.js(on)?$',
     '^assets',
     '^remote-assets',
   ].join('|')
