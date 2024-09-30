@@ -341,6 +341,8 @@ export class ScriptManager extends EventEmitter {
           script.toObject()
         );
       }
+
+      delete this.scriptsPromises[uniqueId];
     };
 
     this.scriptsPromises[uniqueId] = loadProcess();
@@ -419,6 +421,8 @@ export class ScriptManager extends EventEmitter {
           script.toObject()
         );
       }
+
+      delete this.scriptsPromises[uniqueId];
     };
 
     this.scriptsPromises[uniqueId] = loadProcess();
