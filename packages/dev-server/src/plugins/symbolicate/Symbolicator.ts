@@ -1,7 +1,7 @@
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { codeFrameColumns } from '@babel/code-frame';
-import { SourceMapConsumer } from 'source-map';
 import type { FastifyLoggerInstance } from 'fastify';
+import { SourceMapConsumer } from 'source-map';
 import type {
   CodeFrame,
   InputStackFrame,
@@ -29,19 +29,18 @@ export class Symbolicator {
   static inferPlatformFromStack(stack: ReactNativeStackFrame[]) {
     for (const frame of stack) {
       if (!frame.file) {
-        return;
+        continue;
       }
 
       const { searchParams, pathname } = new URL(frame.file, 'file://');
       const platform = searchParams.get('platform');
       if (platform) {
         return platform;
-      } else {
-        const [bundleFilename] = pathname.split('/').reverse();
-        const [, platformOrExtension, extension] = bundleFilename.split('.');
-        if (extension) {
-          return platformOrExtension;
-        }
+      }
+      const [bundleFilename] = pathname.split('/').reverse();
+      const [, platformOrExtension, extension] = bundleFilename.split('.');
+      if (extension) {
+        return platformOrExtension;
       }
     }
   }
@@ -166,6 +165,7 @@ export class Symbolicator {
     const lookup = consumer.originalPositionFor({
       line: frame.lineNumber,
       column: frame.column,
+      bias: SourceMapConsumer.LEAST_UPPER_BOUND,
     });
 
     // If lookup fails, we get the same shape object, but with

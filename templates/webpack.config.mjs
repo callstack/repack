@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import TerserPlugin from 'terser-webpack-plugin';
 import * as Repack from '@callstack/repack';
+import TerserPlugin from 'terser-webpack-plugin';
 
 const dirname = Repack.getDirname(import.meta.url);
 const { resolve } = createRequire(import.meta.url);
@@ -18,7 +18,7 @@ const { resolve } = createRequire(import.meta.url);
  * Webpack configuration.
  * You can also export a static object or a function returning a Promise.
  *
- * @param env Environment options passed from either Webpack CLI or React Native CLI
+ * @param env Environment options passed from either Webpack CLI or React Native Community CLI
  *            when running with `react-native start/bundle`.
  */
 export default (env) => {
@@ -118,7 +118,7 @@ export default (env) => {
      * Configures optimization of the built bundle.
      */
     optimization: {
-      /** Enables minification based on values passed from React Native CLI or from fallback. */
+      /** Enables minification based on values passed from React Native Community CLI or from fallback. */
       minimize,
       /** Configure minimizer to process the bundle. */
       minimizer: [

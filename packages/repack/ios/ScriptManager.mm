@@ -156,6 +156,23 @@ RCT_EXPORT_METHOD(invalidateScripts
   }];
 }
 
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(unstable_evaluateScript
+                                       : (NSString *)scriptSource scriptSourceUrl
+                                       : (NSString *)scriptSourceUrl)
+{
+  facebook::jsi::Runtime *runtime = [self getJavaScriptRuntimePointer];
+
+  if (!runtime) {
+    @throw [NSError errorWithDomain:@"Can't access React Native runtime" code:0 userInfo:nil];
+  }
+
+  std::string source{[scriptSource UTF8String]};
+  std::string sourceUrl{[scriptSourceUrl UTF8String]};
+
+  runtime->evaluateJavaScript(std::make_unique<facebook::jsi::StringBuffer>(std::move(source)), sourceUrl);
+  return @YES;
+}
+
 - (void)execute:(ScriptConfig *)config resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
   NSString *scriptPath = [self getScriptFilePath:config.uniqueId];
@@ -218,8 +235,18 @@ RCT_EXPORT_METHOD(invalidateScripts
   NSURLSessionDataTask *task = [[NSURLSession sharedSession]
       dataTaskWithRequest:request
         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+          NSInteger statusCode = [httpResponse statusCode];
           if (error != nil) {
             callback(error);
+          } else if (statusCode < 200 || statusCode >= 300) {
+            NSDictionary *userInfo = @{
+              NSLocalizedFailureReasonErrorKey : [NSString
+                  stringWithFormat:@"Request should have returned with 200 HTTP status, but instead it received %ld",
+                                   (long)statusCode]
+            };
+            NSError *httpError = [NSError errorWithDomain:NSURLErrorDomain code:statusCode userInfo:userInfo];
+            callback(httpError);
           } else {
             @try {
               NSDictionary<NSString *, id> *result = [CodeSigningUtils extractBundleAndTokenWithFileContent:data];

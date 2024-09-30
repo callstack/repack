@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.png">
 </p>
 <p align="center">
-A Webpack-based toolkit to build your React Native application with full support of Webpack ecosystem.
+A toolkit to build your React Native application with Rspack or Webpack.
 </p>
 
 ---
@@ -15,7 +15,7 @@ A Webpack-based toolkit to build your React Native application with full support
 
 Re.Pack is a next generation of [Haul](https://github.com/callstack/haul) — a Webpack-based bundler for React Native applications.
 
-Re.Pack uses Webpack 5 and React Native CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
+Re.Pack uses Rspack (or Webpack 5) and React Native Community CLI's plugin system to allow you to bundle your application using Webpack and allow to easily switch from Metro.
 
 Check out our website at https://re-pack.dev for more info and documentation or out GitHub: https://github.com/callstack/repack.
 

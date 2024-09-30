@@ -3,26 +3,17 @@
   "description": "Automates the integration of the @callstack/repack into React-Native projects",
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
-  "version": "4.2.0",
+  "version": "5.0.0-alpha.0",
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
-  "keywords": [
-    "repack",
-    "re.pack",
-    "init",
-    "repack-init"
-  ],
+  "keywords": ["repack", "re.pack", "init", "repack-init"],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "bin": "build/bin.js",
-  "main": "build/index.js",
-  "files": [
-    "build",
-    "!*.d.ts",
-    "!*.map"
-  ],
+  "bin": "dist/bin.js",
+  "main": "dist/index.js",
+  "files": ["dist", "!*.d.ts", "!*.map"],
   "engineStrict": true,
   "engines": {
     "node": ">=18"
@@ -30,10 +21,10 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint . --ext .ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@inquirer/prompts": "^5.5.0",
     "@manypkg/find-root": "^2.2.1",
     "chalk": "^5.2.0",
     "dedent": "^0.7.0",
@@ -50,7 +41,6 @@
     "@types/node": "18",
     "@types/semver": "^7.5.6",
     "@types/yargs": "^17.0.32",
-    "eslint": "^8.57.0",
     "typescript": "^5.5.3"
   }
 }

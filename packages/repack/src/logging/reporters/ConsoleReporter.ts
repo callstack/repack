@@ -1,6 +1,6 @@
-import util from 'util';
+import util from 'node:util';
 import colorette from 'colorette';
-import throttle from 'lodash.throttle';
+import throttle from 'throttleit';
 import type { LogEntry, LogType, Reporter } from '../types';
 
 export interface ConsoleReporterConfig {
@@ -53,19 +53,21 @@ const IS_SYMBOL_SUPPORTED =
   process.env.CI ||
   process.env.TERM === 'xterm-256color';
 
-const SYMBOLS: Record<LogType | 'progress', string> = {
+const SYMBOLS: Record<LogType, string> = {
   debug: colorette.gray('?'),
   info: colorette.blue('ℹ'),
   warn: colorette.yellow('⚠'),
   error: colorette.red('✖'),
+  success: colorette.green('✔'),
   progress: colorette.green('⇢'),
 };
 
-const FALLBACK_SYMBOLS: Record<LogType | 'progress', string> = {
+const FALLBACK_SYMBOLS: Record<LogType, string> = {
   debug: colorette.gray('?'),
   info: colorette.blue('i'),
   warn: colorette.yellow('!'),
   error: colorette.red('x'),
+  success: colorette.green('✓'),
   progress: colorette.green('->'),
 };
 
@@ -100,34 +102,6 @@ class InteractiveConsoleReporter implements Reporter {
       );
     }
   }
-
-  private processProgress = throttle((log: LogEntry) => {
-    const {
-      progress: { value, label, message, platform },
-    } = log.message[0] as {
-      progress: {
-        value: number;
-        label: string;
-        message: string;
-        platform: string;
-      };
-    };
-
-    const percentage = Math.floor(value * 100);
-
-    process.stdout.write(
-      `${
-        IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
-      } ${this.prettifyLog({
-        timestamp: log.timestamp,
-        issuer: log.issuer,
-        type: 'info',
-        message: [`Compiling ${platform}: ${percentage}% ${label}`].concat(
-          ...(message ? [`(${message})`] : [])
-        ),
-      })}\n`
-    );
-  }, 2000);
 
   private normalizeLog(log: LogEntry): LogEntry | undefined {
     const message = [];
@@ -205,6 +179,34 @@ class InteractiveConsoleReporter implements Reporter {
     };
   }
 
+  private processProgress = throttle((log: LogEntry) => {
+    const {
+      progress: { value, label, message, platform },
+    } = log.message[0] as {
+      progress: {
+        value: number;
+        label: string;
+        message: string;
+        platform: string;
+      };
+    };
+
+    const percentage = Math.floor(value * 100);
+
+    process.stdout.write(
+      `${
+        IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
+      } ${this.prettifyLog({
+        timestamp: log.timestamp,
+        issuer: log.issuer,
+        type: 'info',
+        message: [`Compiling ${platform}: ${percentage}% ${label}`].concat(
+          ...(message ? [`(${message})`] : [])
+        ),
+      })}\n`
+    );
+  }, 1000);
+
   private prettifyLog(log: LogEntry) {
     let body = '';
 
@@ -222,7 +224,7 @@ class InteractiveConsoleReporter implements Reporter {
         const { request } = value as {
           request: { method: string; statusCode: number; url: string };
         };
-        let statusText = `${request.method} ${request.statusCode}`;
+        const statusText = `${request.method} ${request.statusCode}`;
 
         let status = colorette.green(statusText);
         if (request.statusCode >= 500) {
@@ -273,7 +275,8 @@ class InteractiveConsoleReporter implements Reporter {
 function colorizeText(logType: LogType, text: string) {
   if (logType === 'warn') {
     return colorette.yellow(text);
-  } else if (logType === 'error') {
+  }
+  if (logType === 'error') {
     return colorette.red(text);
   }
 

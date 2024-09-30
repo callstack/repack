@@ -5,15 +5,15 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start:hostapp": "react-native webpack-start --webpackConfig webpack.config.host-app.mjs",
-    "start:miniapp": "react-native webpack-start --webpackConfig webpack.config.mini-app.mjs --port 8082",
+    "start:hostapp": "react-native webpack-start --webpackConfig rspack.config.host-app.mjs",
+    "start:miniapp": "react-native webpack-start --webpackConfig rspack.config.mini-app.mjs --port 8082",
     "bundle": "pnpm run \"/^bundle:(hostapp|miniapp)$/\"",
     "bundle:hostapp": "pnpm run \"/^bundle:hostapp:(ios|android)$/\"",
     "bundle:miniapp": "pnpm run \"/^bundle:miniapp:(ios|android)$/\"",
-    "bundle:hostapp:android": "react-native webpack-bundle --webpackConfig webpack.config.host-app.mjs --platform android --entry-file index.js --dev=false --bundle-output build/host-app/android/output-local/index.android.bundle --assets-dest build/host-app/android/output-local/res",
-    "bundle:hostapp:ios": "react-native webpack-bundle --webpackConfig webpack.config.host-app.mjs --platform ios --entry-file index.js --dev=false --bundle-output build/host-app/ios/output-local/main.jsbundle --assets-dest build/host-app/ios/output-local",
-    "bundle:miniapp:android": "react-native webpack-bundle --webpackConfig webpack.config.mini-app.mjs --platform android --entry-file index.js --dev=false --bundle-output build/mini-app/android/output-local/index.android.bundle --assets-dest build/mini-app/android/output-local/res",
-    "bundle:miniapp:ios": "react-native webpack-bundle --webpackConfig webpack.config.mini-app.mjs --platform ios --entry-file index.js --dev=false --bundle-output build/mini-app/ios/output-local/main.jsbundle --assets-dest build/mini-app/ios/output-local"
+    "bundle:hostapp:android": "react-native webpack-bundle --webpackConfig rspack.config.host-app.mjs --platform android --entry-file index.js --dev=false --bundle-output build/host-app/android/output-local/index.android.bundle --assets-dest build/host-app/android/output-local/res",
+    "bundle:hostapp:ios": "react-native webpack-bundle --webpackConfig rspack.config.host-app.mjs --platform ios --entry-file index.js --dev=false --bundle-output build/host-app/ios/output-local/main.jsbundle --assets-dest build/host-app/ios/output-local",
+    "bundle:miniapp:android": "react-native webpack-bundle --webpackConfig rspack.config.mini-app.mjs --platform android --entry-file index.js --dev=false --bundle-output build/mini-app/android/output-local/index.android.bundle --assets-dest build/mini-app/android/output-local/res",
+    "bundle:miniapp:ios": "react-native webpack-bundle --webpackConfig rspack.config.mini-app.mjs --platform ios --entry-file index.js --dev=false --bundle-output build/mini-app/ios/output-local/main.jsbundle --assets-dest build/mini-app/ios/output-local"
   },
   "dependencies": {
     "@callstack/repack": "workspace:*",
@@ -28,19 +28,19 @@
   "devDependencies": {
     "@babel/core": "^7.23.9",
     "@react-native/babel-preset": "0.74.83",
-    "@react-native/eslint-config": "0.74.83",
     "@react-native/typescript-config": "0.74.83",
+    "@rsdoctor/rspack-plugin": "^0.4.1",
+    "@rspack/core": "1.0.1",
+    "@rspack/plugin-react-refresh": "1.0.0",
+    "@swc/helpers": "^0.5.11",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.2.51",
     "babel-loader": "^9.1.3",
-    "eslint": "^8.57.0",
     "execa": "^6.1.0",
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
     "react-native-test-app": "^3.9.7",
-    "terser-webpack-plugin": "^5.3.3",
-    "typescript": "^5.5.3",
-    "webpack": "^5.91.0"
+    "typescript": "^5.5.3"
   }
 }

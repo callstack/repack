@@ -1,0 +1,14 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "tester-app": "0.0.1",
+    "tester-federation": "0.0.1",
+    "@callstack/repack-dev-server": "4.3.3",
+    "@callstack/repack-init": "4.3.3",
+    "@callstack/repack": "4.3.3",
+    "metro-compat-test": "0.0.1",
+    "website": "0.0.1"
+  },
+  "changesets": ["spicy-pumas-whisper"]
+}

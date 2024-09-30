@@ -1,5 +1,5 @@
-const { execSync } = require('child_process');
-const { rm, existsSync } = require('fs');
+const { execSync } = require('node:child_process');
+const { rm, existsSync } = require('node:fs');
 
 function runCommand(command) {
   try {

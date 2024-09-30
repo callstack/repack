@@ -1,5 +1,5 @@
-import WebSocket from 'ws';
 import type { FastifyInstance } from 'fastify';
+import type WebSocket from 'ws';
 import { WebSocketServer } from '../WebSocketServer';
 
 /**
@@ -35,8 +35,11 @@ export class WebSocketDevClientServer extends WebSocketServer {
           this.fastify.log.error({ issuer: 'Console', msg: body.data });
         } else if (body.level === 'warn') {
           this.fastify.log.warn({ issuer: 'Console', msg: body.data });
-        } else {
+        } else if (body.level === 'info' || body.level === 'log') {
           this.fastify.log.info({ issuer: 'Console', msg: body.data });
+        } else {
+          // body.level === 'debug' || body.level === 'trace'
+          this.fastify.log.debug({ issuer: 'Console', msg: body.data });
         }
         break;
       default:
@@ -52,12 +55,10 @@ export class WebSocketDevClientServer extends WebSocketServer {
   onConnection(socket: WebSocket) {
     const clientId = `client#${this.nextClientId++}`;
     this.clients.set(clientId, socket);
-
-    this.fastify.log.info({ msg: 'React Native client connected', clientId });
-    this.clients.set(clientId, socket);
+    this.fastify.log.debug({ msg: 'React Native client connected', clientId });
 
     const onClose = () => {
-      this.fastify.log.info({
+      this.fastify.log.debug({
         msg: 'React Native client disconnected',
         clientId,
       });

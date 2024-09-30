@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Image,
-  ImageRequireSource,
+  type ImageRequireSource,
   ScrollView,
   StyleSheet,
   Text,

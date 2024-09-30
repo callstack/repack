@@ -21,7 +21,9 @@
 {
   NSDictionary *_Nullable headers = (NSDictionary *)config.headers();
   NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config.url()];
-  urlComponents.query = config.query();
+  if (config.query() != nil) {
+    urlComponents.percentEncodedQuery = config.query();
+  }
   NSURL *url = urlComponents.URL;
 
   return [[ScriptConfig alloc] initWithScript:scriptId
@@ -40,7 +42,9 @@
 + (ScriptConfig *)fromConfig:(NSDictionary *)config withScriptId:(nonnull NSString *)scriptId
 {
   NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config[@"url"]];
-  urlComponents.query = config[@"query"];
+  if (config[@"query"] != nil) {
+    urlComponents.percentEncodedQuery = config[@"query"];
+  }
   NSURL *url = urlComponents.URL;
 
   return [[ScriptConfig alloc] initWithScript:scriptId

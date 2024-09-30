@@ -2,7 +2,7 @@
   "name": "@callstack/repack-dev-server",
   "description": "A bundler-agnostic development server for React Native applications as part of @callstack/repack.",
   "license": "MIT",
-  "version": "4.2.0",
+  "version": "5.0.0-alpha.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,21 +10,10 @@
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist",
-    "docs",
-    "vendor",
-    "CHANGELOG.md"
-  ],
+  "files": ["dist", "docs", "vendor", "CHANGELOG.md"],
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
-  "keywords": [
-    "react-native",
-    "repack",
-    "re.pack",
-    "server",
-    "dev-server"
-  ],
+  "keywords": ["react-native", "repack", "re.pack", "server", "dev-server"],
   "author": "zamotany <zamotany.oss@gmail.com>",
   "engines": {
     "node": ">=18"
@@ -37,7 +26,6 @@
     "build:js": "babel src --out-dir dist --extensions \".js,.cjs,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start --copy-files",
     "build:ts": "tsc --emitDeclarationOnly",
     "build": "pnpm run \"/^build:.*/\"",
-    "lint": "eslint --ext \".js,.ts\" src",
     "typecheck": "tsc --noEmit",
     "archive": "pnpm build && pnpm pack"
   },
@@ -63,7 +51,6 @@
     "@types/node": "18",
     "@types/ws": "^8.5.3",
     "babel-plugin-add-import-extension": "^1.6.0",
-    "eslint": "^8.57.0",
     "typescript": "^5.5.3"
   },
   "peerDependencies": {

@@ -1,15 +1,18 @@
-import React from 'react';
 import { Button } from '../ui/Button';
 
-let enableRemoteDebugger = () => {};
-let disableRemoteDebugger = () => {};
+let enableDebugger: () => void;
+let disableDebugger: () => void;
 
 if (__DEV__) {
   const {
     default: NativeDevSettings,
   } = require('react-native/Libraries/NativeModules/specs/NativeDevSettings');
-  enableRemoteDebugger = () => NativeDevSettings.setIsDebuggingRemotely(true);
-  disableRemoteDebugger = () => NativeDevSettings.setIsDebuggingRemotely(false);
+  enableDebugger = () => {
+    NativeDevSettings.setIsDebuggingRemotely(true);
+  };
+  disableDebugger = () => {
+    NativeDevSettings.setIsDebuggingRemotely(false);
+  };
 }
 
 export default function DeprecatedRemoteDebuggerContainer() {
@@ -18,12 +21,12 @@ export default function DeprecatedRemoteDebuggerContainer() {
       <Button
         disabled={!__DEV__}
         title={'Open remote debugger'}
-        onPress={enableRemoteDebugger}
+        onPress={enableDebugger}
       />
       <Button
         disabled={!__DEV__}
         title={'Close remote debugger'}
-        onPress={disableRemoteDebugger}
+        onPress={disableDebugger}
       />
     </>
   );

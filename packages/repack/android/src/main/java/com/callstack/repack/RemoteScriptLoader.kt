@@ -13,7 +13,7 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class RemoteScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactContext) {
+class RemoteScriptLoader(val reactContext: ReactContext, private val nativeLoader: NativeScriptLoader) {
     private val scriptsDirName = "scripts"
     private val client = OkHttpClient()
 
@@ -107,7 +107,7 @@ class RemoteScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactC
                 throw Exception("Script file exists but could not be read: $file")
             }
 
-            evaluate(code, config.uniqueId, promise)
+            nativeLoader.evaluate(code, config.uniqueId, promise)
         } catch (error: Exception) {
             promise.reject(
                     ScriptLoadingError.ScriptEvalFailure.code,
@@ -121,7 +121,7 @@ class RemoteScriptLoader(reactContext: ReactContext) : NativeScriptLoader(reactC
         downloadAndCache(config, { promise.resolve(null) }, { code, message -> promise.reject(code, message) })
     }
 
-    override fun load(config: ScriptConfig, promise: Promise) {
+    fun load(config: ScriptConfig, promise: Promise) {
         downloadAndCache(config, {
             execute(config, promise)
         }, { code, message -> promise.reject(code, message) })
