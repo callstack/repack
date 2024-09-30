@@ -327,10 +327,12 @@ export class ScriptManager extends EventEmitter {
     const uniqueId = Script.getScriptUniqueId(scriptId, caller);
     if (this.scriptsPromises[uniqueId]) {
       const { isPrefetch } = this.scriptsPromises[uniqueId];
-      await this.scriptsPromises[uniqueId];
+
       // prefetch is not execute the script so we need to run loadScript if promise is for prefetch
-      if (!isPrefetch) {
-        return Promise.resolve();
+      if (isPrefetch) {
+        await this.scriptsPromises[uniqueId];
+      } else {
+        return this.scriptsPromises[uniqueId];
       }
     }
     const loadProcess = async () => {
