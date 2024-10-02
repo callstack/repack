@@ -16,7 +16,6 @@ const REACT_NATIVE_ANDROID_ASSET_PATH = RELATIVE_REACT_NATIVE_PATH.replaceAll(
   path.sep,
   '_'
 ).replaceAll(/[-.@+=]/g, '');
-// when a module is patched with pnpm, its node_modules' path changes
 
 describe('bundle command', () => {
   describe.each([
