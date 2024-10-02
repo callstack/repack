@@ -1,8 +1,8 @@
-import vm from 'node:vm';
 import fs from 'node:fs';
 import path from 'node:path';
-import memfs from 'memfs';
+import vm from 'node:vm';
 import { rspack } from '@rspack/core';
+import memfs from 'memfs';
 import { RspackVirtualModulePlugin } from 'rspack-plugin-virtual-module';
 import { getAssetExtensionsRegExp, getResolveOptions } from '../../../utils';
 

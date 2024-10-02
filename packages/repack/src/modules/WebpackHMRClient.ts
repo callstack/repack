@@ -1,8 +1,10 @@
-/* eslint-env browser */
-/* globals __webpack_hash__, __DEV__, __PLATFORM__, __PUBLIC_PORT__, __REACT_NATIVE_MINOR_VERSION__ */
-
 import type { HMRMessage, HMRMessageBody } from '../types';
 import { getDevServerLocation } from './getDevServerLocation';
+
+interface LoadingViewModule {
+  hide(): void;
+  showMessage(text: string, type: string): void;
+}
 
 class HMRClient {
   url: string;
@@ -191,7 +193,7 @@ if (__DEV__ && module.hot) {
   };
 
   const showLoadingView = (text: string, type: 'load' | 'refresh') => {
-    let LoadingView;
+    let LoadingView: LoadingViewModule;
     if (__REACT_NATIVE_MINOR_VERSION__ >= 75) {
       LoadingView = require('react-native/Libraries/Utilities/DevLoadingView');
     } else {
@@ -203,7 +205,7 @@ if (__DEV__ && module.hot) {
   };
 
   const hideLoadingView = () => {
-    let LoadingView;
+    let LoadingView: LoadingViewModule;
     if (__REACT_NATIVE_MINOR_VERSION__ >= 75) {
       LoadingView = require('react-native/Libraries/Utilities/DevLoadingView');
     } else {

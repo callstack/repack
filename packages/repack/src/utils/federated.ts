@@ -1,4 +1,4 @@
-import { URL } from 'url';
+import { URL } from 'node:url';
 import dedent from 'dedent';
 
 /**
@@ -120,11 +120,10 @@ export namespace Federated {
         throw new Error(
           'Missing URL after @. Use `dynamic` or provide full URL to container bundle.'
         );
-      } else {
-        throw new Error(
-          'Remote must provide @ with either full URL to container bundle or `dynamic`.'
-        );
       }
+      throw new Error(
+        'Remote must provide @ with either full URL to container bundle or `dynamic`.'
+      );
     }
 
     const containerUrl = url === 'dynamic' ? undefined : url;

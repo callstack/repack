@@ -5,7 +5,6 @@ import { getDevServerLocation } from './getDevServerLocation';
 // If the public path doesn't have `localhost` in it, it usually means a custom `host` was
 // provided, so the replace won't change that.
 const { hostname } = getDevServerLocation();
-// eslint-disable-next-line
 __webpack_public_path__ = __webpack_public_path__.replace(
   'localhost',
   hostname

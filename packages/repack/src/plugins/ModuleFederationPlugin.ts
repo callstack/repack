@@ -1,4 +1,4 @@
-import type { container, Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler, RspackPluginInstance, container } from '@rspack/core';
 import { Federated } from '../utils';
 
 type ModuleFederationPluginOptions =
@@ -184,9 +184,8 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
         return dependencies.find((item) =>
           typeof item === 'string' ? item === name : Boolean(item[name])
         );
-      } else {
-        return dependencies[name];
       }
+      return dependencies[name];
     };
 
     const sharedReactNative = findSharedDependency('react-native', shared);
@@ -212,20 +211,19 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
         });
       }
       return adjustedSharedDependencies;
-    } else {
-      const adjustedSharedDependencies = { ...shared };
-      if (!findSharedDependency('react-native/', shared)) {
-        Object.assign(adjustedSharedDependencies, {
-          'react-native/': sharedDependencyConfig(reactNativeEager),
-        });
-      }
-      if (!findSharedDependency('@react-native/', shared)) {
-        Object.assign(adjustedSharedDependencies, {
-          '@react-native/': sharedDependencyConfig(reactNativeEager),
-        });
-      }
-      return adjustedSharedDependencies;
     }
+    const adjustedSharedDependencies = { ...shared };
+    if (!findSharedDependency('react-native/', shared)) {
+      Object.assign(adjustedSharedDependencies, {
+        'react-native/': sharedDependencyConfig(reactNativeEager),
+      });
+    }
+    if (!findSharedDependency('@react-native/', shared)) {
+      Object.assign(adjustedSharedDependencies, {
+        '@react-native/': sharedDependencyConfig(reactNativeEager),
+      });
+    }
+    return adjustedSharedDependencies;
   }
 
   /**
@@ -246,8 +244,8 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       exposes: this.config.exposes,
       filename:
         // TODO fix in a separate PR (jbroma)
-        // eslint-disable-next-line prettier/prettier
-        (this.config.filename ?? this.config.exposes)
+        // biome-ignore format: fix in a separate PR
+        this.config.filename ?? this.config.exposes
           ? `${this.config.name}.container.bundle`
           : undefined,
       library: this.config.exposes

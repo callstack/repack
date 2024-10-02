@@ -1,5 +1,5 @@
-import path from 'path';
-import os from 'os';
+import os from 'node:os';
+import path from 'node:path';
 
 /**
  * Folder name of the Hermes compiler binary for the current OS.

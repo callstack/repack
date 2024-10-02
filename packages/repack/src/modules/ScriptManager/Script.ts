@@ -1,10 +1,10 @@
 import shallowEqual from 'shallowequal';
-import type { ScriptLocator, WebpackContext } from './types';
 import {
-  NormalizedScriptLocator,
+  type NormalizedScriptLocator,
   NormalizedScriptLocatorHTTPMethod,
   NormalizedScriptLocatorSignatureVerificationMode,
 } from './NativeScriptManager';
+import type { ScriptLocator, WebpackContext } from './types';
 
 /**
  * Representation of a Script to load and execute, used by {@link ScriptManager}.

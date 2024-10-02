@@ -1,6 +1,3 @@
-/* eslint-env browser */
-/* global __DEV__ */
-
 import prettyFormat from 'pretty-format';
 import { getDevServerLocation } from './getDevServerLocation';
 

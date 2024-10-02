@@ -1,9 +1,9 @@
-import path from 'node:path';
 import fs from 'node:fs';
-import { globby } from 'globby';
-import { describe, it, afterEach, beforeAll, expect } from 'vitest';
-import webpackCommands from '@callstack/repack/commands/webpack';
+import path from 'node:path';
 import rspackCommands from '@callstack/repack/commands/rspack';
+import webpackCommands from '@callstack/repack/commands/webpack';
+import { globby } from 'globby';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 const REACT_NATIVE_PATH = require.resolve('react-native', {
   paths: [path.dirname(__dirname)],
@@ -117,7 +117,7 @@ describe('bundle command', () => {
       });
 
       afterEach(() => {
-        delete process.env.TEST_WEBPACK_OUTPUT_DIR;
+        process.env.TEST_WEBPACK_OUTPUT_DIR = undefined;
       });
 
       it(
@@ -148,7 +148,7 @@ describe('bundle command', () => {
           // @ts-ignore
           await bundleCommand.func([''], config, args);
 
-          const files = await globby([`**/*`], { cwd: TMP_DIR, dot: true });
+          const files = await globby(['**/*'], { cwd: TMP_DIR, dot: true });
           expect(files.sort()).toEqual(assets.sort());
         },
         60 * 1000

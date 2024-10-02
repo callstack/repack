@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import fetch from 'node-fetch';
-import ora from 'ora';
+import ora, { type Ora } from 'ora';
 
 import logger from '../utils/logger.js';
 
@@ -23,7 +23,8 @@ async function fetchConfigTemplate(
 ) {
   const url = TEMPLATES[bundler][templateType];
 
-  let spinner;
+  let spinner: Ora | undefined;
+
   try {
     spinner = ora(
       `Downloading ${bundler}.config.${templateType} template`

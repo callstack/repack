@@ -1,6 +1,6 @@
-import open from 'open';
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
+import open from 'open';
 import type { Server } from '../../types';
 
 async function devtoolsPlugin(

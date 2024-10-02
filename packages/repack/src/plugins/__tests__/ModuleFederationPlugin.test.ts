@@ -1,6 +1,6 @@
 import type { Compiler } from '@rspack/core';
-import { ModuleFederationPlugin } from '../ModuleFederationPlugin';
 import { Federated } from '../../utils';
+import { ModuleFederationPlugin } from '../ModuleFederationPlugin';
 
 const mockPlugin = jest.fn().mockImplementation(() => ({
   apply: jest.fn(),

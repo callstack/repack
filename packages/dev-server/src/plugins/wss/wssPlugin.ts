@@ -1,14 +1,14 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import type { Server } from '../../types';
-import { WebSocketDebuggerServer } from './servers/WebSocketDebuggerServer';
-import { WebSocketDevClientServer } from './servers/WebSocketDevClientServer';
-import { WebSocketMessageServer } from './servers/WebSocketMessageServer';
-import { WebSocketEventsServer } from './servers/WebSocketEventsServer';
-import { WebSocketApiServer } from './servers/WebSocketApiServer';
-import { WebSocketHMRServer } from './servers/WebSocketHMRServer';
 import { WebSocketRouter } from './WebSocketRouter';
 import { WebSocketServerAdapter } from './WebSocketServerAdapter';
+import { WebSocketApiServer } from './servers/WebSocketApiServer';
+import { WebSocketDebuggerServer } from './servers/WebSocketDebuggerServer';
+import { WebSocketDevClientServer } from './servers/WebSocketDevClientServer';
+import { WebSocketEventsServer } from './servers/WebSocketEventsServer';
+import { WebSocketHMRServer } from './servers/WebSocketHMRServer';
+import { WebSocketMessageServer } from './servers/WebSocketMessageServer';
 
 declare module 'fastify' {
   interface FastifyInstance {

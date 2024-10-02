@@ -1,13 +1,13 @@
+import type fs from 'node:fs';
 import path from 'node:path';
 import util from 'node:util';
-import type fs from 'node:fs';
 import { SCALABLE_ASSETS, SCALABLE_RESOLUTIONS } from '../../utils';
-import { getOptions, AssetLoaderContext } from './options';
+import { convertToRemoteAssets } from './convertToRemoteAssets';
 import { extractAssets } from './extractAssets';
 import { inlineAssets } from './inlineAssets';
-import { convertToRemoteAssets } from './convertToRemoteAssets';
-import { collectScales, getAssetDimensions, getScaleNumber } from './utils';
+import { type AssetLoaderContext, getOptions } from './options';
 import type { Asset } from './types';
+import { collectScales, getAssetDimensions, getScaleNumber } from './utils';
 
 type AsyncFS = (typeof fs)['promises'];
 
@@ -120,7 +120,7 @@ export default async function repackAssetsLoader(
         // use raw Buffer passed to loader to avoid unnecessary read
         const content = isDefault ? assetData : await readFileAsync(assetPath);
 
-        let destination;
+        let destination: string;
 
         if (
           !options.devServerEnabled &&
@@ -223,7 +223,7 @@ export default async function repackAssetsLoader(
       })
     );
 
-    let result;
+    let result: string;
     if (options.inline) {
       logger.debug(`Inlining assets for request ${resourcePath}`);
       result = inlineAssets({ assets, resourcePath });
