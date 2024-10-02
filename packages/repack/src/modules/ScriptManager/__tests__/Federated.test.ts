@@ -57,7 +57,7 @@ afterEach(() => {
 });
 
 describe('Federated', () => {
-  it('should wait loadScript with same scriptId to finished ', async () => {
+  it('should await loadScript with same scriptId to finish ', async () => {
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
 
