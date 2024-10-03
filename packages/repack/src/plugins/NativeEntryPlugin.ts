@@ -50,20 +50,23 @@ export class NativeEntryPlugin implements RspackPluginInstance {
       this.config?.initializeCoreLocation ??
       path.join(reactNativePath, 'Libraries/Core/InitializeCore.js');
 
-    const entries = getReactNativePolyfills().concat(initializeCorePath);
+    const initializeScriptManagerPath = require.resolve(
+      '../modules/InitializeScriptManager'
+    );
 
-    // Add React-Native entries
-    for (const entry of entries) {
-      new compiler.webpack.EntryPlugin(compiler.context, entry, {
-        name: undefined,
-      }).apply(compiler);
-    }
+    const entries = [
+      ...getReactNativePolyfills(),
+      initializeCorePath,
+      initializeScriptManagerPath,
+    ];
 
-    // Initialize ScriptManager
-    new compiler.webpack.EntryPlugin(
-      compiler.context,
-      require.resolve('../modules/InitializeScriptManager'),
-      { name: undefined }
-    ).apply(compiler);
+    // Add entries after the rspack MF entry is added during `hook.afterPlugins` stage
+    compiler.hooks.initialize.tap('NativeEntryPlugin', () => {
+      for (const entry of entries) {
+        new compiler.webpack.EntryPlugin(compiler.context, entry, {
+          name: undefined,
+        }).apply(compiler);
+      }
+    });
   }
 }

@@ -67,20 +67,6 @@ export class DevelopmentPlugin implements RspackPluginInstance {
         },
       };
 
-      new ReactRefreshPlugin({ overlay: false }).apply(compiler);
-
-      new compiler.webpack.EntryPlugin(
-        compiler.context,
-        require.resolve('../modules/configurePublicPath'),
-        { name: undefined }
-      ).apply(compiler);
-
-      new compiler.webpack.EntryPlugin(
-        compiler.context,
-        require.resolve('../modules/WebpackHMRClient'),
-        { name: undefined }
-      ).apply(compiler);
-
       // setup HMR source maps
       new compiler.webpack.SourceMapDevToolPlugin({
         test: /\.hot-update\.js$/,
@@ -90,6 +76,23 @@ export class DevelopmentPlugin implements RspackPluginInstance {
         columns: true,
         noSources: false,
       }).apply(compiler);
+
+      // add HMR entries after the rspack MF entry is added during `hook.afterPlugins` stage
+      compiler.hooks.initialize.tap('DevelopmentPlugin', () => {
+        new ReactRefreshPlugin({ overlay: false }).apply(compiler);
+
+        new compiler.webpack.EntryPlugin(
+          compiler.context,
+          require.resolve('../modules/configurePublicPath'),
+          { name: undefined }
+        ).apply(compiler);
+
+        new compiler.webpack.EntryPlugin(
+          compiler.context,
+          require.resolve('../modules/WebpackHMRClient'),
+          { name: undefined }
+        ).apply(compiler);
+      });
     }
   }
 }
