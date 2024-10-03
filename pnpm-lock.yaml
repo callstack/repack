@@ -242,9 +242,15 @@ importers:
       '@react-native/typescript-config':
         specifier: 0.74.83
         version: 0.74.83
+      '@rspack/core':
+        specifier: 1.0.8
+        version: 1.0.8(@swc/helpers@0.5.13)
       '@rspack/plugin-react-refresh':
         specifier: 1.0.0
         version: 1.0.0(react-refresh@0.14.2)
+      '@swc/helpers':
+        specifier: ^0.5.13
+        version: 0.5.13
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
