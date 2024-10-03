@@ -4,7 +4,7 @@
   "exclude": ["**/__tests__/**"],
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src"
-  },
-  "references": [{ "path": "../dev-server" }]
+    "rootDir": "src",
+    "paths": {}
+  }
 }
