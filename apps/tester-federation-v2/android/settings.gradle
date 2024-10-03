@@ -6,7 +6,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "ModuleFederationTester"
+rootProject.name = "ModuleFederationTesterV2"
 
 apply(from: {
     def searchDir = rootDir.toPath()

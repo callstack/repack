@@ -68,14 +68,7 @@ export default (env) => {
         {
           test: /\.[jt]sx?$/,
           exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              plugins: devServer?.hmr
-                ? ['module:react-refresh/babel']
-                : undefined,
-            },
-          },
+          use: 'babel-loader',
         },
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),

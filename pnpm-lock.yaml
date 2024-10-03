@@ -115,8 +115,8 @@ importers:
         specifier: ^14.1.1
         version: 14.1.1
       react-native-test-app:
-        specifier: ^3.9.7
-        version: 3.9.7(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
+        specifier: ^3.10.14
+        version: 3.10.14(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       terser-webpack-plugin:
         specifier: ^5.3.10
         version: 5.3.10(webpack@5.94.0)
@@ -200,8 +200,8 @@ importers:
         specifier: ^14.1.1
         version: 14.1.1
       react-native-test-app:
-        specifier: ^3.9.7
-        version: 3.9.7(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
+        specifier: ^3.10.14
+        version: 3.10.14(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -212,8 +212,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/repack
       '@module-federation/enhanced':
-        specifier: 0.5.0
-        version: 0.5.0(typescript@5.5.3)(webpack@5.94.0)
+        specifier: 0.6.7
+        version: 0.6.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.3)(webpack@5.94.0)
       '@react-navigation/native':
         specifier: ^6.1.18
         version: 6.1.18(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
@@ -242,6 +242,9 @@ importers:
       '@react-native/typescript-config':
         specifier: 0.74.83
         version: 0.74.83
+      '@rspack/plugin-react-refresh':
+        specifier: 1.0.0
+        version: 1.0.0(react-refresh@0.14.2)
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
@@ -267,8 +270,8 @@ importers:
         specifier: ^3.2.4
         version: 3.3.3
       react-native-test-app:
-        specifier: ^3.8.9
-        version: 3.9.7(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
+        specifier: ^3.10.14
+        version: 3.10.14(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0)
       terser-webpack-plugin:
         specifier: ^5.3.3
         version: 5.3.10(webpack@5.94.0)
@@ -562,13 +565,13 @@ importers:
         version: 1.0.1(@rsbuild/core@0.7.8)
       rspress:
         specifier: 1.25.2
-        version: 1.25.2(@swc/helpers@0.5.13)(webpack@5.94.0)
+        version: 1.25.2(webpack@5.94.0)
       rspress-plugin-font-open-sans:
         specifier: ^1.0.0
         version: 1.0.0
       rspress-plugin-vercel-analytics:
         specifier: ^0.3.0
-        version: 0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.13)(webpack@5.94.0))
+        version: 0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.94.0))
     devDependencies:
       '@types/node':
         specifier: ^18
@@ -1867,8 +1870,26 @@ packages:
   '@module-federation/bridge-react-webpack-plugin@0.5.0':
     resolution: {integrity: sha512-uOb5p4MNj/ySD3uIgSNaMOOAiDuSe8Z++6I3wyde1knWqgiBBx3RXqp91ygkRX1JysTG8eqI3yuBcObG/W/05A==}
 
+  '@module-federation/bridge-react-webpack-plugin@0.6.7':
+    resolution: {integrity: sha512-BlEeNJVubcQiKJYBZfG9LyhRGcxQtdHGcCR4P0aid5WIY8CekjE9HtGv+xqTONnVsaLpN0ilNkNJ1j8bqhiKZA==}
+
+  '@module-federation/data-prefetch@0.6.7':
+    resolution: {integrity: sha512-JjehCpSYQrpk11CVy3dxxRki7JWEI7GpkW+1X5CetQ/6l/UpbnQ6bReBFXPKY1MYiM6glJkUvxfTUA+9wcGZJg==}
+    peerDependencies:
+      react: '>=16.9.0'
+      react-dom: '>=16.9.0'
+
   '@module-federation/dts-plugin@0.5.0':
     resolution: {integrity: sha512-4MIUOTu1OMfgGnJwMTBPv1oiMDe4AalOFtZkNfE3nRfKFRDqf6c2nOedvSOpaNBm+7aMhTnHAf3Zpg69WMLQ2Q==}
+    peerDependencies:
+      typescript: ^4.9.0 || ^5.0.0
+      vue-tsc: '>=1.0.24'
+    peerDependenciesMeta:
+      vue-tsc:
+        optional: true
+
+  '@module-federation/dts-plugin@0.6.7':
+    resolution: {integrity: sha512-wEeLjsXX18pLI4Wq0QY32vfzC1kRoDfLN4OdYZYIOxbmMIzj2pGJzTh53mpoXuz9FKM6BxMOBtv1bpAXKK4R6g==}
     peerDependencies:
       typescript: ^4.9.0 || ^5.0.0
       vue-tsc: '>=1.0.24'
@@ -1890,14 +1911,45 @@ packages:
       webpack:
         optional: true
 
+  '@module-federation/enhanced@0.6.7':
+    resolution: {integrity: sha512-GAKVr4RIbzAT+L+MLRot/VOxDjPLcW56i5zO0gxUbC/LHqNNhN6pGBoGRehs3q7HCKiwNdk+r8bFBNTmRSTRGQ==}
+    peerDependencies:
+      typescript: ^4.9.0 || ^5.0.0
+      vue-tsc: '>=1.0.24'
+      webpack: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      vue-tsc:
+        optional: true
+      webpack:
+        optional: true
+
   '@module-federation/managers@0.5.0':
     resolution: {integrity: sha512-C+2O4fYBSEK9i28JmGrAdEYulMo4PQAE6r6lnqE/NflPsyn95d2kgyEX1S4qXW1XyWMtpf/BIJrCjMOpZxrMQw==}
+
+  '@module-federation/managers@0.6.7':
+    resolution: {integrity: sha512-745IDPIgNMGjbgqQqVxO/KsUFnot6PRJXVGpRQXnwVT+c/aTjRDSJZJMoRm2M9QVcBHohHfLW1SadkJVFRXH3A==}
 
   '@module-federation/manifest@0.5.0':
     resolution: {integrity: sha512-Pd65As9rPk+TmGzpEjTj9q04JGSJxef9U4DMDk1zVZjzGxnOIz1aSP9lf2bfVPTtCaCws0qNFofzZpTKnR9AKg==}
 
+  '@module-federation/manifest@0.6.7':
+    resolution: {integrity: sha512-7faajyTNRrt17n+s/PZtJBZxPE6IMa+cAyfYIP8+mnlK5jo+b9XWheKlhqZeX/GvTvmer5rKUIvYLM/V4Am7VA==}
+
   '@module-federation/rspack@0.5.0':
     resolution: {integrity: sha512-Qo2y3MYUVbW18o7piziZDeY3TnUYqAgr1h9mlY2vTdiKZm64Z0LmHapZMxNNXUfFeKaZzjsdQJno3jvXnIIE8A==}
+    peerDependencies:
+      typescript: ^4.9.0 || ^5.0.0
+      vue-tsc: '>=1.0.24'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      vue-tsc:
+        optional: true
+
+  '@module-federation/rspack@0.6.7':
+    resolution: {integrity: sha512-iLg5oMZ2NroLOqbAnlC+xqqY4lHs/kvtbesSLGP7LEWi2Q3KuoFsCs3n2hd7HsM5vWWb8uZ1ywIDlGNwdZ4kug==}
     peerDependencies:
       typescript: ^4.9.0 || ^5.0.0
       vue-tsc: '>=1.0.24'
@@ -1919,6 +1971,9 @@ packages:
   '@module-federation/runtime-tools@0.5.1':
     resolution: {integrity: sha512-nfBedkoZ3/SWyO0hnmaxuz0R0iGPSikHZOAZ0N/dVSQaIzlffUo35B5nlC2wgWIc0JdMZfkwkjZRrnuuDIJbzg==}
 
+  '@module-federation/runtime-tools@0.6.7':
+    resolution: {integrity: sha512-txJSz00tp1nbljqejAhZEOc+kdvkEHHvbOf4onzBTUWWDrfv1pVx5C8YM1bGGUUUuUjhXqRfmVjNs8SH8I+DAw==}
+
   '@module-federation/runtime@0.1.6':
     resolution: {integrity: sha512-nj6a+yJ+QxmcE89qmrTl4lphBIoAds0PFPVGnqLRWflwAP88jrCcrrTqRhARegkFDL+wE9AE04+h6jzlbIfMKg==}
 
@@ -1930,6 +1985,9 @@ packages:
 
   '@module-federation/runtime@0.5.1':
     resolution: {integrity: sha512-xgiMUWwGLWDrvZc9JibuEbXIbhXg6z2oUkemogSvQ4LKvrl/n0kbqP1Blk669mXzyWbqtSp6PpvNdwaE1aN5xQ==}
+
+  '@module-federation/runtime@0.6.7':
+    resolution: {integrity: sha512-tPf6Ng7IEGVsjfv+iD0gD0vrrHvUEAz197/KB0gr24ryYtxRHx8TQsszcJQi9eI0jtMm84o3cXf7e9gDqkrwjQ==}
 
   '@module-federation/sdk@0.1.6':
     resolution: {integrity: sha512-qifXpyYLM7abUeEOIfv0oTkguZgRZuwh89YOAYIZJlkP6QbRG7DJMQvtM8X2yHXm9PTk0IYNnOJH0vNQCo6auQ==}
@@ -1943,8 +2001,14 @@ packages:
   '@module-federation/sdk@0.5.1':
     resolution: {integrity: sha512-exvchtjNURJJkpqjQ3/opdbfeT2wPKvrbnGnyRkrwW5o3FH1LaST1tkiNviT6OXTexGaVc2DahbdniQHVtQ7pA==}
 
+  '@module-federation/sdk@0.6.7':
+    resolution: {integrity: sha512-UxqtPADLv2fwSh7BqZv/JCWh+n29LaaRAgMGXw5rREvByv2CoaCEbWf/8tCW+cA4WGwavz1myMoaPIl1FMh9rw==}
+
   '@module-federation/third-party-dts-extractor@0.5.0':
     resolution: {integrity: sha512-D8lsofmNCRbphYwjsTJX/MbYc6N/0R2WI2NWwGoueKIj6PUhzbKuOg+J0smZoWJoaBNS/7OKm6osijZHA6a4MQ==}
+
+  '@module-federation/third-party-dts-extractor@0.6.7':
+    resolution: {integrity: sha512-6wFZn1AxTQssUCMj865ncwxiQ25BYuE8cd6//rXOdH2bcO4VPMHx2h/XERPxwRdkrxHNigS8pjttRaCa9F7mUA==}
 
   '@module-federation/webpack-bundler-runtime@0.1.6':
     resolution: {integrity: sha512-K5WhKZ4RVNaMEtfHsd/9CNCgGKB0ipbm/tgweNNeC11mEuBTNxJ09Y630vg3WPkKv9vfMCuXg2p2Dk+Q/KWTSA==}
@@ -1957,6 +2021,9 @@ packages:
 
   '@module-federation/webpack-bundler-runtime@0.5.1':
     resolution: {integrity: sha512-mMhRFH0k2VjwHt3Jol9JkUsmI/4XlrAoBG3E0o7HoyoPYv1UFOWyqAflfANcUPgbYpvqmyLzDcO+3IT36LXnrA==}
+
+  '@module-federation/webpack-bundler-runtime@0.6.7':
+    resolution: {integrity: sha512-CFfD91RKMsTjRiB84iWuSZeTmNHozFZtukYKslrsIbzfAh3f2ntASbKudVemjFmKcPJgUUmuOsNsjjaPaZX1Nw==}
 
   '@napi-rs/wasm-runtime@0.2.4':
     resolution: {integrity: sha512-9zESzOO5aDByvhIAsOy9TbpZ0Ur2AJbUI7UT73kcUTS2mxAMHOBaa1st/jAymNoCtvrit99kkzT1FZuXVcgfIQ==}
@@ -2259,8 +2326,9 @@ packages:
     resolution: {integrity: sha512-lzD84av1ZQhYUS+jsGqJiCMaJO2dn9u+RTT9n9q6D3SaKVwWqv+7AoRKqBu19bkwyE+iFRl1ymr40QS90jVFYg==}
     engines: {node: '>=14.15'}
 
-  '@rnx-kit/react-native-host@0.4.12':
-    resolution: {integrity: sha512-LVOoF6/+s8JnkCn5hjZTzdyjkL54LOh1vHAimeKeGc427SPEAmHLpOohDNiMhq0kR/jY3qn8TkX8X7C8gXNWKQ==}
+  '@rnx-kit/react-native-host@0.5.0':
+    resolution: {integrity: sha512-ZuHDl899uZyqk4qcBkGMRmVp2u6EXLikMAVd0ry7u2gWll0dZSfM2TbDHGq5Z0d8qpdAdSTRB0bYpvwmEznxVQ==}
+    engines: {node: '>=16.17'}
     peerDependencies:
       react-native: '>=0.66'
 
@@ -6247,8 +6315,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  react-native-test-app@3.9.7:
-    resolution: {integrity: sha512-ZLtXi/pMvab63MUApeTQKXQelA/a3k6SCNqwyOVP03v93+H647xwPvjUENVY3DATXwSh8nvt3N2NJLdhE7APpg==}
+  react-native-test-app@3.10.14:
+    resolution: {integrity: sha512-QN0N/XZYIzUv9cmbVCk9/Y+9rwxuLxzaC4aRpLIlfpnIlvNs1d/Yelk7wwYi5SFm9uBwoJb+hzKdeCnOKbxnIw==}
     engines: {node: '>=16.17'}
     hasBin: true
     peerDependencies:
@@ -6256,7 +6324,7 @@ packages:
       '@expo/config-plugins': '>=5.0'
       react: 17.0.1 - 19.0
       react-native: 0.66 - 0.75 || >=0.76.0-0 <0.76.0
-      react-native-macos: ^0.0.0-0 || 0.66 || 0.68 || 0.71 - 0.74
+      react-native-macos: ^0.0.0-0 || 0.66 || 0.68 || 0.71 - 0.75
       react-native-windows: ^0.0.0-0 || 0.66 - 0.75
     peerDependenciesMeta:
       '@callstack/react-native-visionos':
@@ -9351,11 +9419,49 @@ snapshots:
     dependencies:
       '@module-federation/sdk': 0.5.0
 
+  '@module-federation/bridge-react-webpack-plugin@0.6.7':
+    dependencies:
+      '@module-federation/sdk': 0.6.7
+      '@types/semver': 7.5.8
+      semver: 7.6.3
+
+  '@module-federation/data-prefetch@0.6.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      '@module-federation/runtime': 0.6.7
+      '@module-federation/sdk': 0.6.7
+      fs-extra: 9.1.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
   '@module-federation/dts-plugin@0.5.0(typescript@5.5.3)':
     dependencies:
       '@module-federation/managers': 0.5.0
       '@module-federation/sdk': 0.5.0
       '@module-federation/third-party-dts-extractor': 0.5.0
+      adm-zip: 0.5.16
+      ansi-colors: 4.1.3
+      axios: 1.7.7
+      chalk: 3.0.0
+      fs-extra: 9.1.0
+      isomorphic-ws: 5.0.0(ws@8.17.1)
+      koa: 2.15.3
+      lodash.clonedeepwith: 4.5.0
+      log4js: 6.9.1
+      node-schedule: 2.1.1
+      rambda: 9.3.0
+      typescript: 5.5.3
+      ws: 8.17.1
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - supports-color
+      - utf-8-validate
+
+  '@module-federation/dts-plugin@0.6.7(typescript@5.5.3)':
+    dependencies:
+      '@module-federation/managers': 0.6.7
+      '@module-federation/sdk': 0.6.7
+      '@module-federation/third-party-dts-extractor': 0.6.7
       adm-zip: 0.5.16
       ansi-colors: 4.1.3
       axios: 1.7.7
@@ -9395,9 +9501,38 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  '@module-federation/enhanced@0.6.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.3)(webpack@5.94.0)':
+    dependencies:
+      '@module-federation/bridge-react-webpack-plugin': 0.6.7
+      '@module-federation/data-prefetch': 0.6.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@module-federation/dts-plugin': 0.6.7(typescript@5.5.3)
+      '@module-federation/managers': 0.6.7
+      '@module-federation/manifest': 0.6.7(typescript@5.5.3)
+      '@module-federation/rspack': 0.6.7(typescript@5.5.3)
+      '@module-federation/runtime-tools': 0.6.7
+      '@module-federation/sdk': 0.6.7
+      btoa: 1.2.1
+      upath: 2.0.1
+    optionalDependencies:
+      typescript: 5.5.3
+      webpack: 5.94.0
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - react
+      - react-dom
+      - supports-color
+      - utf-8-validate
+
   '@module-federation/managers@0.5.0':
     dependencies:
       '@module-federation/sdk': 0.5.0
+      find-pkg: 2.0.0
+      fs-extra: 9.1.0
+
+  '@module-federation/managers@0.6.7':
+    dependencies:
+      '@module-federation/sdk': 0.6.7
       find-pkg: 2.0.0
       fs-extra: 9.1.0
 
@@ -9416,6 +9551,21 @@ snapshots:
       - utf-8-validate
       - vue-tsc
 
+  '@module-federation/manifest@0.6.7(typescript@5.5.3)':
+    dependencies:
+      '@module-federation/dts-plugin': 0.6.7(typescript@5.5.3)
+      '@module-federation/managers': 0.6.7
+      '@module-federation/sdk': 0.6.7
+      chalk: 3.0.0
+      find-pkg: 2.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - supports-color
+      - typescript
+      - utf-8-validate
+      - vue-tsc
+
   '@module-federation/rspack@0.5.0(typescript@5.5.3)':
     dependencies:
       '@module-federation/bridge-react-webpack-plugin': 0.5.0
@@ -9424,6 +9574,22 @@ snapshots:
       '@module-federation/manifest': 0.5.0(typescript@5.5.3)
       '@module-federation/runtime-tools': 0.5.0
       '@module-federation/sdk': 0.5.0
+    optionalDependencies:
+      typescript: 5.5.3
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - supports-color
+      - utf-8-validate
+
+  '@module-federation/rspack@0.6.7(typescript@5.5.3)':
+    dependencies:
+      '@module-federation/bridge-react-webpack-plugin': 0.6.7
+      '@module-federation/dts-plugin': 0.6.7(typescript@5.5.3)
+      '@module-federation/managers': 0.6.7
+      '@module-federation/manifest': 0.6.7(typescript@5.5.3)
+      '@module-federation/runtime-tools': 0.6.7
+      '@module-federation/sdk': 0.6.7
     optionalDependencies:
       typescript: 5.5.3
     transitivePeerDependencies:
@@ -9452,6 +9618,11 @@ snapshots:
       '@module-federation/runtime': 0.5.1
       '@module-federation/webpack-bundler-runtime': 0.5.1
 
+  '@module-federation/runtime-tools@0.6.7':
+    dependencies:
+      '@module-federation/runtime': 0.6.7
+      '@module-federation/webpack-bundler-runtime': 0.6.7
+
   '@module-federation/runtime@0.1.6':
     dependencies:
       '@module-federation/sdk': 0.1.6
@@ -9468,6 +9639,10 @@ snapshots:
     dependencies:
       '@module-federation/sdk': 0.5.1
 
+  '@module-federation/runtime@0.6.7':
+    dependencies:
+      '@module-federation/sdk': 0.6.7
+
   '@module-federation/sdk@0.1.6': {}
 
   '@module-federation/sdk@0.2.3': {}
@@ -9476,7 +9651,15 @@ snapshots:
 
   '@module-federation/sdk@0.5.1': {}
 
+  '@module-federation/sdk@0.6.7': {}
+
   '@module-federation/third-party-dts-extractor@0.5.0':
+    dependencies:
+      find-pkg: 2.0.0
+      fs-extra: 9.1.0
+      resolve: 1.22.8
+
+  '@module-federation/third-party-dts-extractor@0.6.7':
     dependencies:
       find-pkg: 2.0.0
       fs-extra: 9.1.0
@@ -9501,6 +9684,11 @@ snapshots:
     dependencies:
       '@module-federation/runtime': 0.5.1
       '@module-federation/sdk': 0.5.1
+
+  '@module-federation/webpack-bundler-runtime@0.6.7':
+    dependencies:
+      '@module-federation/runtime': 0.6.7
+      '@module-federation/sdk': 0.6.7
 
   '@napi-rs/wasm-runtime@0.2.4':
     dependencies:
@@ -10184,7 +10372,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@rnx-kit/react-native-host@0.4.12(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))':
+  '@rnx-kit/react-native-host@0.5.0(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))':
     dependencies:
       react-native: 0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0)
 
@@ -10242,7 +10430,7 @@ snapshots:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       '@swc/helpers': 0.5.3
       core-js: 3.36.1
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
       postcss: 8.4.44
 
   '@rsbuild/core@1.0.0-alpha.9':
@@ -10256,40 +10444,29 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.13)':
+  '@rsbuild/plugin-less@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.13)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.13)':
+  '@rsbuild/plugin-react@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.13)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
       '@rspack/plugin-react-refresh': 0.7.3(react-refresh@0.14.2)
       react-refresh: 0.14.2
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.13)':
+  '@rsbuild/plugin-sass@0.7.8(@rsbuild/core@0.7.8)':
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.13)
+      '@rsbuild/shared': 0.7.8(@swc/helpers@0.5.3)
       loader-utils: 2.0.4
       postcss: 8.4.44
       sass-embedded: 1.77.8
-    transitivePeerDependencies:
-      - '@swc/helpers'
-
-  '@rsbuild/shared@0.7.8(@swc/helpers@0.5.13)':
-    dependencies:
-      '@rspack/core': 0.7.3(@swc/helpers@0.5.13)
-      caniuse-lite: 1.0.30001642
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.13))
-      postcss: 8.4.44
-    optionalDependencies:
-      fsevents: 2.3.3
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -10297,7 +10474,7 @@ snapshots:
     dependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
       caniuse-lite: 1.0.30001642
-      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3))
+      html-webpack-plugin: html-rspack-plugin@5.7.2(@rspack/core@0.7.3)
       postcss: 8.4.44
     optionalDependencies:
       fsevents: 2.3.3
@@ -10535,16 +10712,6 @@ snapshots:
       '@rspack/binding-win32-ia32-msvc': 1.0.8
       '@rspack/binding-win32-x64-msvc': 1.0.8
 
-  '@rspack/core@0.7.3(@swc/helpers@0.5.13)':
-    dependencies:
-      '@module-federation/runtime-tools': 0.1.6
-      '@rspack/binding': 0.7.3
-      caniuse-lite: 1.0.30001642
-      tapable: 2.2.1
-      webpack-sources: 3.2.3
-    optionalDependencies:
-      '@swc/helpers': 0.5.13
-
   '@rspack/core@0.7.3(@swc/helpers@0.5.3)':
     dependencies:
       '@module-federation/runtime-tools': 0.1.6
@@ -10588,7 +10755,7 @@ snapshots:
     optionalDependencies:
       react-refresh: 0.14.2
 
-  '@rspress/core@1.25.2(@swc/helpers@0.5.13)(webpack@5.94.0)':
+  '@rspress/core@1.25.2(webpack@5.94.0)':
     dependencies:
       '@loadable/component': 5.16.4(react@18.2.0)
       '@mdx-js/loader': 2.3.0(webpack@5.94.0)
@@ -10596,9 +10763,9 @@ snapshots:
       '@mdx-js/react': 2.3.0(react@18.2.0)
       '@modern-js/utils': 2.54.5
       '@rsbuild/core': 0.7.8
-      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.13)
-      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.13)
-      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)(@swc/helpers@0.5.13)
+      '@rsbuild/plugin-less': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-react': 0.7.8(@rsbuild/core@0.7.8)
+      '@rsbuild/plugin-sass': 0.7.8(@rsbuild/core@0.7.8)
       '@rspress/mdx-rs': 0.5.7
       '@rspress/plugin-auto-nav-sidebar': 1.25.2
       '@rspress/plugin-container-syntax': 1.25.2
@@ -12828,11 +12995,7 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
-  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.13)):
-    optionalDependencies:
-      '@rspack/core': 0.7.3(@swc/helpers@0.5.13)
-
-  html-rspack-plugin@5.7.2(@rspack/core@0.7.3(@swc/helpers@0.5.3)):
+  html-rspack-plugin@5.7.2(@rspack/core@0.7.3):
     optionalDependencies:
       '@rspack/core': 0.7.3(@swc/helpers@0.5.3)
 
@@ -15217,9 +15380,9 @@ snapshots:
       react: 18.2.0
       react-native: 0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0)
 
-  react-native-test-app@3.9.7(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0):
+  react-native-test-app@3.10.14(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@rnx-kit/react-native-host': 0.4.12(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))
+      '@rnx-kit/react-native-host': 0.5.0(react-native@0.74.3(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))(@types/react@18.3.3)(react@18.2.0))
       ajv: 8.17.1
       cliui: 8.0.1
       fast-xml-parser: 4.4.0
@@ -15586,7 +15749,7 @@ snapshots:
     dependencies:
       fs-extra: 11.2.0
 
-  rspress-plugin-devkit@0.3.0(rspress@1.25.2(@swc/helpers@0.5.13)(webpack@5.94.0)):
+  rspress-plugin-devkit@0.3.0(rspress@1.25.2(webpack@5.94.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@types/estree-jsx': 1.0.5
@@ -15601,7 +15764,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
       mdast-util-to-string: 4.0.0
       remark-mdc: 1.2.0
-      rspress: 1.25.2(@swc/helpers@0.5.13)(webpack@5.94.0)
+      rspress: 1.25.2(webpack@5.94.0)
       ts-morph: 22.0.0
       unified: 10.1.2
       unist-util-visit: 5.0.0
@@ -15614,21 +15777,21 @@ snapshots:
 
   rspress-plugin-font-open-sans@1.0.0: {}
 
-  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(@swc/helpers@0.5.13)(webpack@5.94.0)):
+  rspress-plugin-vercel-analytics@0.3.0(react@18.2.0)(rspress@1.25.2(webpack@5.94.0)):
     dependencies:
       '@rspress/shared': 1.26.2
       '@vercel/analytics': 1.3.1(react@18.2.0)
-      rspress: 1.25.2(@swc/helpers@0.5.13)(webpack@5.94.0)
-      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(@swc/helpers@0.5.13)(webpack@5.94.0))
+      rspress: 1.25.2(webpack@5.94.0)
+      rspress-plugin-devkit: 0.3.0(rspress@1.25.2(webpack@5.94.0))
     transitivePeerDependencies:
       - next
       - react
       - supports-color
 
-  rspress@1.25.2(@swc/helpers@0.5.13)(webpack@5.94.0):
+  rspress@1.25.2(webpack@5.94.0):
     dependencies:
       '@rsbuild/core': 0.7.8
-      '@rspress/core': 1.25.2(@swc/helpers@0.5.13)(webpack@5.94.0)
+      '@rspress/core': 1.25.2(webpack@5.94.0)
       '@rspress/shared': 1.25.2
       cac: 6.7.14
       chalk: 5.3.0

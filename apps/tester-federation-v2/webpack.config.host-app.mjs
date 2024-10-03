@@ -18,7 +18,6 @@ export default (env) => {
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
-    reactNativePath = resolve('react-native'),
   } = env;
 
   if (!platform) {
@@ -31,12 +30,7 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    entry: [
-      ...Repack.getInitializationEntries(reactNativePath, {
-        hmr: devServer?.hmr,
-      }),
-      entry,
-    ],
+    entry,
     resolve: {
       ...Repack.getResolveOptions(platform),
     },
@@ -67,7 +61,7 @@ export default (env) => {
             /node_modules(.*[/\\])+pretty-format/,
             /node_modules(.*[/\\])+metro/,
             /node_modules(.*[/\\])+abort-controller/,
-            /node_modules(.*[/\\])+@callstack[/\\]repack/,
+            /packages[/\\]repack/,
             /node_modules(.*[/\\])+@module-federation/,
           ],
           use: 'babel-loader',
@@ -75,14 +69,7 @@ export default (env) => {
         {
           test: /\.[jt]sx?$/,
           exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              plugins: devServer?.hmr
-                ? ['module:react-refresh/babel']
-                : undefined,
-            },
-          },
+          use: 'babel-loader',
         },
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),

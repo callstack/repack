@@ -15,8 +15,8 @@
       "default": "./dist/modules/ScriptManager/index.js"
     },
     "./federation-runtime-plugin": {
-      "types": "./dist/modules/federationRuntimePlugin/index.d.ts",
-      "default": "./dist/modules/federationRuntimePlugin/index.js"
+      "types": "./dist/modules/FederationRuntimePlugin.d.ts",
+      "default": "./dist/modules/FederationRuntimePlugin.js"
     },
     "./commands/webpack": {
       "types": "./dist/commands/webpack/index.d.ts",

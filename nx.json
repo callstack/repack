@@ -1,7 +1,11 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
-    "default": ["{projectRoot}/src/**/*"]
+    "default": [
+      "{projectRoot}/**/*",
+      "!{projectRoot}/jest.config.js",
+      "!{projectRoot}/jest.setup.js"
+    ]
   },
   "workspaceLayout": {
     "appsDir": "apps",
