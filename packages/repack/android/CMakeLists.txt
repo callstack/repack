@@ -36,10 +36,21 @@ target_include_directories(
         "${REACT_NATIVE_DIR}/ReactAndroid/src/main/jni/react/turbomodule"
 )
 
+if(REACTNATIVE_MERGED_SO)
+        target_link_libraries(
+                ${PACKAGE_NAME}
+                ReactAndroid::reactnative
+        )
+else()
+        target_link_libraries(
+                ${PACKAGE_NAME}
+                ReactAndroid::reactnativejni
+        )
+endif()
+
 target_link_libraries(
         ${PACKAGE_NAME}
+        android
         fbjni::fbjni
         ReactAndroid::jsi
-        ReactAndroid::reactnativejni
-        android
 )

@@ -151,7 +151,9 @@ android {
                 "**/libjsi.so",
                 "**/libc++_shared.so",
                 "**/libfbjni.so",
-                "**/libreactnativejni.so"
+                "**/libreactnativejni.so",
+                "**/libreactnative.so",
+                "**/libhermestooling.so",
         ]
     }
 

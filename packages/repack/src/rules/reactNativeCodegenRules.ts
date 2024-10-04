@@ -32,7 +32,7 @@ export const REACT_NATIVE_CODEGEN_RULES: RuleSetRule = {
             configFile: false,
             compact: false,
             plugins: [
-              '@babel/plugin-syntax-flow',
+              'babel-plugin-syntax-hermes-parser',
               '@react-native/babel-plugin-codegen',
             ],
           },
