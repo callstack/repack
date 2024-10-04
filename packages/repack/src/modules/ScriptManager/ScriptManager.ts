@@ -316,7 +316,7 @@ export class ScriptManager extends EventEmitter {
 
     try {
       this.emit('loading', script.toObject());
-      await this.nativeScriptManager.loadScript(scriptId, script.locator);
+      await this.loadScriptWithRetry(scriptId, script.locator);
       this.emit('loaded', script.toObject());
     } catch (error) {
       const { code } = error as Error & { code: string };
@@ -326,6 +326,43 @@ export class ScriptManager extends EventEmitter {
         code ? `[${code}]` : '',
         script.toObject()
       );
+    }
+  }
+
+  /**
+   * Loads a script with retry logic.
+   *
+   * This function attempts to load a script using the nativeScriptManager.
+   * If the initial attempt fails, it retries the specified number of times
+   * with an optional delay between retries.
+   *
+   * @param {string} scriptId - The ID of the script to load.
+   * @param {NormalizedScriptLocator} locator - An NormalizedScriptLocator containing retry configuration.
+   * @param {number} [locator.retry=0] - The number of retry attempts.
+   * @param {number} [locator.retryDelay=0] - The delay in milliseconds between retries.
+   * @throws {Error} Throws an error if all retry attempts fail.
+   */
+  async loadScriptWithRetry(
+    scriptId: string,
+    locator: NormalizedScriptLocator
+  ) {
+    const { retry = 0, retryDelay = 0 } = locator;
+    let attempts = retry + 1; // Include the initial attempt
+
+    while (attempts > 0) {
+      try {
+        await this.nativeScriptManager.loadScript(scriptId, locator);
+        return; // Successfully loaded the script, exit the loop
+      } catch (error) {
+        attempts--;
+        if (attempts > 0) {
+          if (retryDelay > 0) {
+            await waitMs(retryDelay);
+          }
+        } else {
+          throw error; // No more retries, throw the error
+        }
+      }
     }
   }
 
@@ -408,4 +445,17 @@ export class ScriptManager extends EventEmitter {
       scriptSourceUrl
     );
   }
+}
+
+/**
+ * Waits for a specified number of milliseconds.
+ *
+ * This function returns a Promise that resolves after the specified delay.
+ * It is useful for introducing delays in asynchronous code.
+ *
+ * @param {number} ms - The number of milliseconds to wait.
+ * @returns {Promise} A promise that resolves after the specified delay.
+ */
+async function waitMs(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

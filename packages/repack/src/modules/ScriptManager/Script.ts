@@ -127,6 +127,8 @@ export class Script {
         url: locator.url,
         absolute: locator.absolute ?? false,
         timeout: locator.timeout ?? Script.DEFAULT_TIMEOUT,
+        retry: locator.retry,
+        retryDelay: locator.retryDelay,
         query: new URLSearchParams(locator.query).toString() || undefined,
         body,
         headers: Object.keys(headers).length ? headers : undefined,

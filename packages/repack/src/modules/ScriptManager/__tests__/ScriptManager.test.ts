@@ -1,3 +1,4 @@
+import NativeScriptManager from '../NativeScriptManager';
 import { Script } from '../Script';
 import { ScriptManager } from '../ScriptManager';
 
@@ -531,5 +532,120 @@ describe('ScriptManagerAPI', () => {
       'main'
     );
     expect(script6.locator.fetch).toBe(true);
+  });
+
+  it('should load script with retry', async () => {
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        retry: 2,
+        retryDelay: 100,
+      };
+    });
+
+    const scriptId = 'src_App_js';
+    const script = await ScriptManager.shared.resolveScript(scriptId, 'main');
+    expect(script.locator).toEqual({
+      url: 'http://domain.ext/src_App_js.chunk.bundle',
+      fetch: true,
+      absolute: false,
+      method: 'GET',
+      timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: 'off',
+      uniqueId: 'main_src_App_js',
+      retry: 2,
+      retryDelay: 100,
+    });
+
+    // Mock the nativeScriptManager.loadScript to fail twice and succeed on the third attempt
+    jest
+      .mocked(NativeScriptManager.loadScript)
+      .mockRejectedValueOnce(new Error('First attempt failed'))
+      .mockRejectedValueOnce(new Error('Second attempt failed'))
+      .mockResolvedValueOnce(null);
+
+    jest.useFakeTimers({ advanceTimers: true });
+    await ScriptManager.shared.loadScriptWithRetry(scriptId, script.locator);
+
+    expect(NativeScriptManager.loadScript).toHaveBeenCalledTimes(3);
+    expect(NativeScriptManager.loadScript).toHaveBeenCalledWith(
+      scriptId,
+      script.locator
+    );
+    jest.useRealTimers();
+  });
+
+  it('should throw error if all retry attempts fail', async () => {
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        retry: 2,
+        retryDelay: 100,
+      };
+    });
+
+    const scriptId = 'src_App_js';
+    const script = await ScriptManager.shared.resolveScript(scriptId);
+
+    // Mock the nativeScriptManager.loadScript to fail all attempts
+    jest
+      .mocked(NativeScriptManager.loadScript)
+      .mockRejectedValueOnce(new Error('First attempt failed'))
+      .mockRejectedValueOnce(new Error('Second attempt failed'))
+      .mockRejectedValueOnce(new Error('Third attempt failed'));
+
+    jest.useFakeTimers({ advanceTimers: true });
+    await expect(
+      ScriptManager.shared.loadScriptWithRetry(scriptId, script.locator)
+    ).rejects.toThrow('Third attempt failed');
+
+    expect(NativeScriptManager.loadScript).toHaveBeenCalledTimes(3);
+    expect(NativeScriptManager.loadScript).toHaveBeenCalledWith(
+      scriptId,
+      script.locator
+    );
+    jest.useRealTimers();
+  });
+
+  it('should retry with delay', async () => {
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        retry: 2,
+        retryDelay: 100,
+      };
+    });
+
+    const scriptId = 'src_App_js';
+    const script = await ScriptManager.shared.resolveScript(scriptId);
+
+    // Mock the nativeScriptManager.loadScript to fail twice and succeed on the third attempt
+    jest
+      .mocked(NativeScriptManager.loadScript)
+      .mockRejectedValueOnce(new Error('First attempt failed'))
+      .mockRejectedValueOnce(new Error('Second attempt failed'))
+      .mockResolvedValueOnce(null);
+
+    jest.useFakeTimers({ advanceTimers: true });
+    jest.spyOn(global, 'setTimeout');
+
+    const loadScriptPromise = ScriptManager.shared.loadScriptWithRetry(
+      scriptId,
+      script.locator
+    );
+
+    await expect(loadScriptPromise).resolves.toBeUndefined();
+
+    expect(setTimeout).toHaveBeenCalledTimes(2);
+    expect(NativeScriptManager.loadScript).toHaveBeenCalledTimes(3);
+    jest.useRealTimers();
   });
 });
