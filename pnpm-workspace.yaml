@@ -1,8 +1,11 @@
 packages:
-  - 'packages/dev-server'
-  - 'packages/init'
-  - 'packages/repack'
-  - 'apps/tester-app'
-  - 'apps/tester-federation'
-  - 'tests/metro-compat'
-  - 'website'
+  - "packages/commands-rspack"
+  - "packages/commands-webpack"
+  - "packages/commands-shared"
+  - "packages/dev-server"
+  - "packages/init"
+  - "packages/repack"
+  - "apps/tester-app"
+  - "apps/tester-federation"
+  - "tests/metro-compat"
+  - "website"

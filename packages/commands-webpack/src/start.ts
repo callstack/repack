@@ -1,33 +1,11 @@
+import { URL } from 'node:url';
 import type { Server } from '@callstack/repack-dev-server';
-import type { Config } from '@react-native-community/cli-types';
-import colorette from 'colorette';
 import type webpack from 'webpack';
-import packageJson from '../../../package.json';
-import {
-  ConsoleReporter,
-  FileReporter,
-  type Reporter,
-  composeReporters,
-  makeLogEntryFromFastifyLog,
-} from '../../logging';
-import {
-  getMimeType,
-  getWebpackConfigFilePath,
-  parseFileUrl,
-  runAdbReverse,
-  setupInteractions,
-} from '../common';
+import { parseFileUrl, runAdbReverse, setupInteractions } from '../common';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
-import type { StartArguments, StartCliOptions } from '../types';
+import type { StartArguments } from '../types';
 import { Compiler } from './Compiler';
-
-interface HMRMessageBody {
-  name: string;
-  time: number;
-  hash: string;
-  warnings: StatsCompilation['warnings'];
-  errors: StatsCompilation['errors'];
-}
+import type { HMRMessageBody } from './types';
 
 /**
  * Start command for React Native Community CLI.
@@ -41,53 +19,11 @@ interface HMRMessageBody {
  * @internal
  * @category CLI command
  */
-export async function start(_: string[], config: Config, args: StartArguments) {
-  const webpackConfigPath = getWebpackConfigFilePath(
-    config.root,
-    args.webpackConfig
-  );
-  const { reversePort: reversePortArg, ...restArgs } = args;
-  const cliOptions: StartCliOptions = {
-    config: {
-      root: config.root,
-      platforms: Object.keys(config.platforms),
-      bundlerConfigPath: webpackConfigPath,
-      reactNativePath: config.reactNativePath,
-    },
-    command: 'start',
-    arguments: { start: { ...restArgs } },
-  };
-
-  if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
-    throw new Error('Unrecognized platform: ' + args.platform);
-  }
-
-  const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
-  const isSilent = args.silent;
-  const isVerbose = isSilent
-    ? false
-    : // TODO fix in a separate PR (jbroma)
-      // biome-ignore format: fix in a separate PR
-      args.verbose ?? process.argv.includes('--verbose');
-
-  const showHttpRequests = isVerbose || args.logRequests;
-  const reporter = composeReporters(
-    [
-      new ConsoleReporter({
-        asJson: args.json,
-        level: isSilent ? 'silent' : isVerbose ? 'verbose' : 'normal',
-      }),
-      args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
-    ].filter(Boolean) as Reporter[]
-  );
-
-  if (!isSilent) {
-    const version = packageJson.version;
-    process.stdout.write(
-      colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
-    );
-  }
-
+export async function start(
+  _: string[],
+  // config: Config,
+  args: StartArguments
+) {
   const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
   const { createServer } = await import('@callstack/repack-dev-server');
@@ -160,18 +96,17 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
       return {
         compiler: {
-          getAsset: (filename, platform, sendProgress) => {
-            const parsedUrl = parseFileUrl(filename, 'file:///');
-            return compiler.getSource(
-              parsedUrl.filename,
-              platform,
-              sendProgress
-            );
-          },
-          getMimeType: (filename) => getMimeType(filename),
+          getAsset: async (filename, platform, sendProgress) =>
+            (await compiler.getAsset(filename, platform, sendProgress)).data,
+          getMimeType: (filename) => compiler.getMimeType(filename),
           inferPlatform: (uri) => {
-            const { platform } = parseFileUrl(uri, 'file:///');
-            return platform;
+            const url = new URL(uri, 'protocol://domain');
+            if (!url.searchParams.get('platform')) {
+              const [, platform] = /^\/(.+)\/.+$/.exec(url.pathname) ?? [];
+              return platform;
+            }
+
+            return undefined;
           },
         },
         symbolicator: {
@@ -181,6 +116,10 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           },
           getSourceMap: (fileUrl) => {
             const { filename, platform } = parseFileUrl(fileUrl);
+            if (!platform) {
+              throw new Error('Cannot infer platform for file URL');
+            }
+
             return compiler.getSourceMap(filename, platform);
           },
           shouldIncludeFrame: (frame) => {
