@@ -19,7 +19,11 @@ import type { HMRMessageBody } from './types';
  * @internal
  * @category CLI command
  */
-export async function start(_: string[], config: Config, args: StartArguments) {
+export async function start(
+  _: string[],
+  // config: Config,
+  args: StartArguments
+) {
   const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
   const { createServer } = await import('@callstack/repack-dev-server');

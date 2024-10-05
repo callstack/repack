@@ -19,7 +19,7 @@ import { Compiler } from './Compiler';
  */
 export async function start(
   _: string[],
-  cliConfig: Config,
+  // cliConfig: Config,
   args: StartArguments
 ) {
   // @ts-ignore
