@@ -1,6 +1,7 @@
 packages:
   - "packages/commands-rspack"
   - "packages/commands-webpack"
+  - "packages/commands-shared"
   - "packages/dev-server"
   - "packages/init"
   - "packages/repack"
