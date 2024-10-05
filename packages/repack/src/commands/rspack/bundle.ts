@@ -1,15 +1,15 @@
-import { Config } from '@react-native-community/cli-types';
-import { Configuration, rspack } from '@rspack/core';
+import type { Config } from '@react-native-community/cli-types';
+import { type Configuration, rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../../env';
-import { BundleArguments, BundleCliOptions } from '../types';
 import {
-  getRspackConfigFilePath,
   getEnvOptions,
+  getRspackConfigFilePath,
   loadConfig,
   normalizeStatsOptions,
   writeStats,
 } from '../common';
+import type { BundleArguments, BundleCliOptions } from '../types';
 
 /**
  * Bundle command for React Native Community CLI.
@@ -75,7 +75,16 @@ export async function bundle(
       );
 
       const statsJson = stats.toJson(statsOptions);
-      await writeStats(statsJson, args.json);
+
+      try {
+        await writeStats(statsJson, {
+          filepath: args.json,
+          rootDir: compiler.context,
+        });
+      } catch (e) {
+        console.error(String(e));
+        process.exit(2);
+      }
     }
   };
 

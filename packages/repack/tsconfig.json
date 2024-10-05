@@ -4,15 +4,26 @@
     "module": "commonjs",
     "lib": ["ES2020", "ES2021"],
     "declaration": true,
-    "outDir": "./dist",
-    "rootDir": ".",
     "strict": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "rootDirs": ["src", "../dev-server/src"],
+    "paths": {
+      "@callstack/repack-dev-server": ["../dev-server/src/index.ts"],
+      "@callstack/repack-dev-server/*": ["../dev-server/src/*"],
+      "@react-native/dev-middleware": [
+        "../dev-server/node_modules/@react-native/dev-middleware/dist"
+      ]
+    }
   },
-  "include": ["./src/**/*", "./client.d.ts", "./commands.d.ts"]
+  "include": [
+    "./client.d.ts",
+    "./commands.d.ts",
+    "src/**/*",
+    "../dev-server/src"
+  ]
 }

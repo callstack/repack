@@ -1,7 +1,7 @@
 import path from 'node:path';
-import { execa } from 'execa';
-import { findRoot } from '@manypkg/find-root';
 import { input } from '@inquirer/prompts';
+import { findRoot } from '@manypkg/find-root';
+import { execa } from 'execa';
 import logger from '../utils/logger.js';
 
 /**

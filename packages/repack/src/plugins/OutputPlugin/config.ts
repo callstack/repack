@@ -1,5 +1,5 @@
 import { validate } from 'schema-utils';
-import { OutputPluginConfig } from './types';
+import type { OutputPluginConfig } from './types';
 
 type Schema = Parameters<typeof validate>[0];
 

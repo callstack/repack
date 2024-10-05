@@ -1,0 +1,38 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "!{projectRoot}/jest.config.js",
+      "!{projectRoot}/jest.setup.js"
+    ]
+  },
+  "workspaceLayout": {
+    "appsDir": "apps",
+    "libsDir": "packages"
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["default"],
+      "outputs": ["{projectRoot}/dist"],
+      "cache": true
+    },
+    "lint": {
+      "inputs": ["default"],
+      "outputs": [],
+      "cache": true
+    },
+    "typecheck": {
+      "inputs": ["default"],
+      "outputs": [],
+      "cache": true
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": ["default"],
+      "outputs": [],
+      "cache": true
+    }
+  }
+}

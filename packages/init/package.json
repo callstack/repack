@@ -6,23 +6,14 @@
   "version": "5.0.0-alpha.0",
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
-  "keywords": [
-    "repack",
-    "re.pack",
-    "init",
-    "repack-init"
-  ],
+  "keywords": ["repack", "re.pack", "init", "repack-init"],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "bin": "dist/bin.js",
   "main": "dist/index.js",
-  "files": [
-    "dist",
-    "!*.d.ts",
-    "!*.map"
-  ],
+  "files": ["dist", "!*.d.ts", "!*.map"],
   "engineStrict": true,
   "engines": {
     "node": ">=18"
@@ -30,7 +21,6 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint --ext .ts src",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -51,7 +41,6 @@
     "@types/node": "18",
     "@types/semver": "^7.5.6",
     "@types/yargs": "^17.0.32",
-    "eslint": "^8.57.0",
     "typescript": "^5.5.3"
   }
 }

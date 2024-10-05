@@ -1,6 +1,7 @@
 export * from './adaptFilenameToPlatform';
 export * from './getConfigFilePath';
 export * from './getEnvOptions';
+export * from './getMimeType';
 export * from './loadConfig';
 export * from './runAdbReverse';
 export * from './parseFileUrl';

@@ -1,11 +1,11 @@
 import { URL } from 'node:url';
-import webpack from 'webpack';
 import type { Server } from '@callstack/repack-dev-server';
+import type webpack from 'webpack';
 import { parseFileUrl, runAdbReverse, setupInteractions } from '../common';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
-import { StartArguments, StartCliOptions } from '../types';
+import type { StartArguments } from '../types';
 import { Compiler } from './Compiler';
-import { HMRMessageBody } from './types';
+import type { HMRMessageBody } from './types';
 
 /**
  * Start command for React Native Community CLI.

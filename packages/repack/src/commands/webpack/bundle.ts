@@ -1,14 +1,14 @@
-import { Config } from '@react-native-community/cli-types';
-import webpack, { Configuration } from 'webpack';
+import type { Config } from '@react-native-community/cli-types';
+import webpack, { type Configuration } from 'webpack';
 import { VERBOSE_ENV_KEY } from '../../env';
-import { BundleArguments, BundleCliOptions } from '../types';
 import {
-  getWebpackConfigFilePath,
   getEnvOptions,
+  getWebpackConfigFilePath,
   loadConfig,
   normalizeStatsOptions,
   writeStats,
 } from '../common';
+import type { BundleArguments, BundleCliOptions } from '../types';
 
 /**
  * Bundle command for React Native Community CLI.
@@ -77,7 +77,15 @@ export async function bundle(
       );
 
       const statsJson = stats.toJson(statsOptions);
-      await writeStats(statsJson, args.json);
+      try {
+        await writeStats(statsJson, {
+          filepath: args.json,
+          rootDir: compiler.context,
+        });
+      } catch (e) {
+        console.error(String(e));
+        process.exit(2);
+      }
     }
   };
 

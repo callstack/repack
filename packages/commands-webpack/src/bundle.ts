@@ -1,7 +1,6 @@
-import webpack, { Configuration } from 'webpack';
-import { VERBOSE_ENV_KEY } from '../../env';
-import { BundleArguments, BundleCliOptions } from '../types';
+import webpack, { type Configuration } from 'webpack';
 import { normalizeStatsOptions, writeStats } from '../common';
+import type { BundleArguments } from '../types';
 
 /**
  * Bundle command for React Native Community CLI.

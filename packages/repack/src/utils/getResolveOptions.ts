@@ -73,11 +73,15 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
 
       if (preferNativePlatform) {
         return [platformExt, nativeExt, ext];
-      } else {
-        return [platformExt, ext];
       }
+      return [platformExt, ext];
     });
   }
+
+  /**
+   * Disable importsFields completely since it's not supported by metro at all.
+   */
+  const importsFields: string[] = [];
 
   /**
    * Match what React Native uses from metro-config.
@@ -125,5 +129,9 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
      * Reference: Webpack's [configuration.resolve.extensionAlias](https://webpack.js.org/configuration/resolve/#resolveextensionalias)
      */
     extensionAlias: extensionAlias,
+    /**
+     * Reference: Webpack's [configuration.resolve.importsFields](https://webpack.js.org/configuration/resolve/#resolveimportsfields)
+     */
+    importsFields: importsFields,
   };
 }

@@ -1,14 +1,12 @@
-/* eslint-disable no-control-regex */
-
 import fs from 'node:fs';
 import path from 'node:path';
-import memfs from 'memfs';
-import jwt from 'jsonwebtoken';
 import { rspack } from '@rspack/core';
+import jwt from 'jsonwebtoken';
+import memfs from 'memfs';
 import RspackVirtualModulePlugin from 'rspack-plugin-virtual-module';
 import {
   CodeSigningPlugin,
-  CodeSigningPluginConfig,
+  type CodeSigningPluginConfig,
 } from '../CodeSigningPlugin';
 
 const BUNDLE_WITH_JWT_REGEX =

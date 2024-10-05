@@ -1,8 +1,8 @@
 import { URL } from 'node:url';
 import { makeLogEntryFromFastifyLog } from '../../logging';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
-import { StartArguments, StartCliOptions } from '../types';
 import { parseFileUrl, runAdbReverse, setupInteractions } from '../common';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
+import type { StartArguments } from '../types';
 import { Compiler } from './Compiler';
 
 /**

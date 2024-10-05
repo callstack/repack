@@ -224,7 +224,7 @@ class InteractiveConsoleReporter implements Reporter {
         const { request } = value as {
           request: { method: string; statusCode: number; url: string };
         };
-        let statusText = `${request.method} ${request.statusCode}`;
+        const statusText = `${request.method} ${request.statusCode}`;
 
         let status = colorette.green(statusText);
         if (request.statusCode >= 500) {
@@ -275,7 +275,8 @@ class InteractiveConsoleReporter implements Reporter {
 function colorizeText(logType: LogType, text: string) {
   if (logType === 'warn') {
     return colorette.yellow(text);
-  } else if (logType === 'error') {
+  }
+  if (logType === 'error') {
     return colorette.red(text);
   }
 

@@ -1,7 +1,5 @@
 import { rspack } from '@rspack/core';
 import type { Configuration, Stats } from '@rspack/core';
-import { VERBOSE_ENV_KEY } from '../../env';
-import { BundleArguments, BundleCliOptions } from '../types';
 import { normalizeStatsOptions, writeStats } from '../common';
 
 /**

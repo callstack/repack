@@ -1,4 +1,4 @@
-import type { StatsCompilation, StatsAsset } from 'webpack';
+import type { StatsAsset, StatsCompilation } from 'webpack';
 import type { CliOptions, RemoveRecord } from '../types';
 
 export interface WebpackWorkerOptions {
