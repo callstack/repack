@@ -60,6 +60,12 @@ export class NativeEntryPlugin implements RspackPluginInstance {
       initializeScriptManagerPath,
     ];
 
+    new compiler.webpack.EntryPlugin(
+      compiler.context,
+      'data:text/javascript,globalThis.setImmediate = globalThis.setImmediate || function(){}',
+      { name: undefined }
+    ).apply(compiler);
+
     // Add entries after the rspack MF entry is added during `hook.afterPlugins` stage
     compiler.hooks.initialize.tap('NativeEntryPlugin', () => {
       for (const entry of entries) {
