@@ -1,15 +1,28 @@
 import { getModulePaths } from '../getModulePaths';
 
 describe('getModulePaths', () => {
-  const packageName = 'react-native';
-  const [classicPath, exoticPath] = getModulePaths([packageName]);
+  const packages = [
+    'react-native',
+    'react-native-windows',
+    'react-native-macos',
+    'react-native-tvos',
+    '@callstack/react-native-visionos',
+    '@react-native/core',
+    '@babel/core',
+    '@types/react',
+    '@expo/vector-icons',
+    'socket.io',
+  ];
 
-  it('should generate classic path', () => {
+  it.each(packages)('should generate classic path - %s', (packageName) => {
+    const [classicPath] = getModulePaths([packageName]);
+
     const classicTest = `node_modules/${packageName}/`;
     expect(classicPath.test(classicTest)).toBe(true);
   });
 
-  it('should generate exotic path', () => {
+  it.each(packages)('should generate exotic path - %s', (packageName) => {
+    const [_, exoticPath] = getModulePaths([packageName]);
     const exoticPackageName = packageName.replace(/[/\\]/g, '+');
 
     const exoticTestAtSymbol = `node_modules/.pnpm/${exoticPackageName}@`;
@@ -19,7 +32,8 @@ describe('getModulePaths', () => {
     expect(exoticPath.test(exoticTestPlusSymbol)).toBe(true);
   });
 
-  it('should handle backslashes', () => {
+  it.each(packages)('should handle backslashes - %s', (packageName) => {
+    const [classicPath, exoticPath] = getModulePaths([packageName]);
     const exoticPackageName = packageName.replace(/[/\\]/g, '+');
 
     const classicTestBackslash = `node_modules\\${packageName}\\`;
