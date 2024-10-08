@@ -11,56 +11,47 @@ describe('getModulePaths', () => {
     '@babel/core',
     '@types/react',
     '@expo/vector-icons',
-    'lodash',
-    'axios',
-    'moment',
     'socket.io',
   ];
 
   it.each(examplePackages)(
-    'should correctly generate classic paths',
+    'should correctly generate classic paths - %s',
     (packageName) => {
-      test(packageName, () => {
-        const [classicPath] = getModulePaths(packageName);
+      const [classicPath] = getModulePaths(packageName);
 
-        const classicTest = `node_modules/${packageName}/`;
-        const classicTestBackslash = `node_modules\\${packageName}\\`;
+      const classicTest = `node_modules/${packageName}/`;
+      const classicTestBackslash = `node_modules\\${packageName}\\`;
 
-        expect(classicPath.test(classicTest)).toBe(true);
-        expect(classicPath.test(classicTestBackslash)).toBe(true);
-      });
+      expect(classicPath.test(classicTest)).toBe(true);
+      expect(classicPath.test(classicTestBackslash)).toBe(true);
     }
   );
 
   it.each(examplePackages)(
-    'should correctly generate exotic paths',
+    'should correctly generate exotic paths - %s',
     (packageName) => {
-      test(packageName, () => {
-        const [_, exoticPath] = getModulePaths(packageName);
+      const [_, exoticPath] = getModulePaths(packageName);
 
-        const exoticPackageName = packageName.replace(/[/\\]/g, '+');
-        const exoticTestAtSymbol = `node_modules/.pnpm/${exoticPackageName}@`;
-        const exoticTestPlusSymbol = `node_modules/.pnpm/${exoticPackageName}+`;
+      const exoticPackageName = packageName.replace(/[/\\]/g, '+');
+      const exoticTestAtSymbol = `node_modules/.pnpm/${exoticPackageName}@`;
+      const exoticTestPlusSymbol = `node_modules/.pnpm/${exoticPackageName}+`;
 
-        expect(exoticPath.test(exoticTestAtSymbol)).toBe(true);
-        expect(exoticPath.test(exoticTestPlusSymbol)).toBe(true);
-      });
+      expect(exoticPath.test(exoticTestAtSymbol)).toBe(true);
+      expect(exoticPath.test(exoticTestPlusSymbol)).toBe(true);
     }
   );
 
-  it.each(examplePackages)('should handle backslashes', (packageName) => {
-    test(packageName, () => {
-      const [classicPath, exoticPath] = getModulePaths(packageName);
+  it.each(examplePackages)('should handle backslashes - %s', (packageName) => {
+    const [classicPath, exoticPath] = getModulePaths(packageName);
 
-      const classicTestBackslash = `node_modules\\${packageName}\\`;
+    const classicTestBackslash = `node_modules\\${packageName}\\`;
 
-      const exoticPackageName = packageName.replace(/[/\\]/g, '+');
-      const exoticTestAtSymbolBackslash = `node_modules\\.pnpm\\${exoticPackageName}@`;
-      const exoticTestPlusSymbolBackslash = `node_modules\\.pnpm\\${exoticPackageName}+`;
+    const exoticPackageName = packageName.replace(/[/\\]/g, '+');
+    const exoticTestAtSymbolBackslash = `node_modules\\.pnpm\\${exoticPackageName}@`;
+    const exoticTestPlusSymbolBackslash = `node_modules\\.pnpm\\${exoticPackageName}+`;
 
-      expect(classicPath.test(classicTestBackslash)).toBe(true);
-      expect(exoticPath.test(exoticTestAtSymbolBackslash)).toBe(true);
-      expect(exoticPath.test(exoticTestPlusSymbolBackslash)).toBe(true);
-    });
+    expect(classicPath.test(classicTestBackslash)).toBe(true);
+    expect(exoticPath.test(exoticTestAtSymbolBackslash)).toBe(true);
+    expect(exoticPath.test(exoticTestPlusSymbolBackslash)).toBe(true);
   });
 });
