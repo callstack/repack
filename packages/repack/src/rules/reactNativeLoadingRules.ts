@@ -6,12 +6,14 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
   type: 'javascript/dynamic',
   test: /\.jsx?$/,
   include: [
-    ...getModulePaths('react-native'),
-    ...getModulePaths('@react-native'),
-    ...getModulePaths('react-native-macos'),
-    ...getModulePaths('react-native-windows'),
-    ...getModulePaths('react-native-tvos'),
-    ...getModulePaths('@callstack/react-native-visionos'),
+    ...getModulePaths([
+      'react-native',
+      '@react-native',
+      'react-native-macos',
+      'react-native-windows',
+      'react-native-tvos',
+      '@callstack/react-native-visionos',
+    ]),
   ],
   use: [
     {
