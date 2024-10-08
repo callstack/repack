@@ -5,16 +5,14 @@ import { REACT_NATIVE_LAZY_IMPORTS } from './lazyImports';
 export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
   type: 'javascript/dynamic',
   test: /\.jsx?$/,
-  include: [
-    ...getModulePaths([
-      'react-native',
-      '@react-native',
-      'react-native-macos',
-      'react-native-windows',
-      'react-native-tvos',
-      '@callstack/react-native-visionos',
-    ]),
-  ],
+  include: getModulePaths([
+    'react-native',
+    '@react-native',
+    'react-native-macos',
+    'react-native-windows',
+    'react-native-tvos',
+    '@callstack/react-native-visionos',
+  ]),
   use: [
     {
       loader: 'builtin:swc-loader',
