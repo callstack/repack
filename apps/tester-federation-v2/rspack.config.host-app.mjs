@@ -121,6 +121,7 @@ export default (env) => {
         remotes: {
           MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
         },
+        dts: false,
         shareStrategy: 'loaded-first',
         runtimePlugins: [
           resolve('@callstack/repack/federation-runtime-plugin'),

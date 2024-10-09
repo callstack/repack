@@ -36,11 +36,11 @@ export default (env) => {
     output: {
       clean: true,
       hashFunction: 'xxhash64',
-      path: path.join(dirname, 'build', 'host-app', platform),
+      path: path.join(dirname, 'build', 'mini-app', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MFTester-HostApp',
+      uniqueName: 'MFTester-MiniApp',
     },
     optimization: {
       minimize,
@@ -119,6 +119,7 @@ export default (env) => {
         exposes: {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
+        dts: false,
         getPublicPath: `return "http://localhost:8082/${platform}/"`,
         shareStrategy: 'loaded-first',
         shared: {
@@ -127,7 +128,17 @@ export default (env) => {
             eager: false,
             requiredVersion: '18.2.0',
           },
+          'react/': {
+            singleton: true,
+            eager: false,
+            requiredVersion: '18.2.0',
+          },
           'react-native': {
+            singleton: true,
+            eager: false,
+            requiredVersion: '0.74.3',
+          },
+          'react-native/': {
             singleton: true,
             eager: false,
             requiredVersion: '0.74.3',

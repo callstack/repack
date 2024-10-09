@@ -9,7 +9,6 @@ const repackFederationRuntimePlugin: () => FederationRuntimePlugin = () => ({
 
     ScriptManager.shared.addResolver(
       async (scriptId, caller, referenceUrl) => {
-        console.log('afterResolve: ', scriptId, caller, referenceUrl);
         if (scriptId === remoteInfo.entryGlobalName) {
           return { url: remoteInfo.entry };
         }
