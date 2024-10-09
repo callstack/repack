@@ -125,19 +125,31 @@ export class RepackPlugin implements RspackPluginInstance {
     this.config.logger = this.config.logger ?? true;
   }
 
+  private getEntryName(compiler: Compiler): string {
+    if (this.config.entryName) {
+      return this.config.entryName;
+    }
+
+    if (
+      typeof compiler.options.entry === 'object' &&
+      'main' in compiler.options.entry
+    ) {
+      return 'main';
+    }
+
+    throw new Error(
+      'RepackPlugin cannot determine the name of the main entrypoint. ' +
+        'Did you forget to pass `entryName` to RepackPlugin configuration?'
+    );
+  }
+
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    let entryName = this.config.entryName;
-    if (!entryName && typeof compiler.options.entry !== 'function') {
-      // 'main' is the default name for the entry chunk
-      if ('main' in compiler.options.entry) {
-        entryName = 'main';
-      }
-    }
+    const entryName = this.getEntryName(compiler);
 
     new compiler.webpack.DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
