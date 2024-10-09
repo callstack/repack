@@ -125,7 +125,7 @@ export class RepackPlugin implements RspackPluginInstance {
     this.config.logger = this.config.logger ?? true;
   }
 
-  private getEntryName(compiler: Compiler): string {
+  private getEntryName(compiler: Compiler) {
     if (this.config.entryName) {
       return this.config.entryName;
     }
@@ -137,10 +137,7 @@ export class RepackPlugin implements RspackPluginInstance {
       return 'main';
     }
 
-    throw new Error(
-      'RepackPlugin cannot determine the name of the main entrypoint. ' +
-        'Did you forget to pass `entryName` to RepackPlugin configuration?'
-    );
+    return undefined;
   }
 
   /**
@@ -176,8 +173,9 @@ export class RepackPlugin implements RspackPluginInstance {
     }).apply(compiler);
 
     new DevelopmentPlugin({
-      platform: this.config.platform,
       devServer: this.config.devServer,
+      entryName,
+      platform: this.config.platform,
     }).apply(compiler);
 
     new ModuleFederationDevPlugin().apply(compiler);

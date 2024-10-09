@@ -1,12 +1,14 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
 import type { DevServerOptions } from '../types';
+import { isRspackCompiler } from './utils/isRspackCompiler';
 
 type PackageJSON = { version: string };
 /**
  * {@link DevelopmentPlugin} configuration options.
  */
 export interface DevelopmentPluginConfig {
+  entryName?: string;
   platform: string;
   devServer?: DevServerOptions;
 }
@@ -77,22 +79,66 @@ export class DevelopmentPlugin implements RspackPluginInstance {
         noSources: false,
       }).apply(compiler);
 
-      // add HMR entries after the rspack MF entry is added during `hook.afterPlugins` stage
-      compiler.hooks.initialize.tap('DevelopmentPlugin', () => {
-        new ReactRefreshPlugin({ overlay: false }).apply(compiler);
+      new ReactRefreshPlugin({ overlay: false }).apply(compiler);
 
-        new compiler.webpack.EntryPlugin(
-          compiler.context,
-          require.resolve('../modules/configurePublicPath'),
-          { name: undefined }
-        ).apply(compiler);
+      const devEntries = [
+        require.resolve('../modules/configurePublicPath'),
+        require.resolve('../modules/WebpackHMRClient'),
+      ];
 
-        new compiler.webpack.EntryPlugin(
-          compiler.context,
-          require.resolve('../modules/WebpackHMRClient'),
-          { name: undefined }
-        ).apply(compiler);
-      });
+      // TODO (jbroma): refactor this to be more maintainable
+      // This is a very hacky way to reorder entrypoints, and needs to be done differently
+      // depending on the compiler type (rspack/webpack)
+      if (isRspackCompiler(compiler)) {
+        // Add entries after the rspack MF entry is added during `hook.afterPlugins` stage
+        compiler.hooks.initialize.tap(
+          { name: 'DevelopmentPlugin', stage: 200 },
+          () => {
+            for (const entry of devEntries) {
+              new compiler.webpack.EntryPlugin(compiler.context, entry, {
+                name: undefined,
+              }).apply(compiler);
+            }
+          }
+        );
+      } else {
+        if (!this.config.entryName) {
+          // Add dev entries as global entries
+          for (const entry of devEntries) {
+            new compiler.webpack.EntryPlugin(compiler.context, entry, {
+              name: undefined,
+            }).apply(compiler);
+          }
+        } else {
+          if (typeof compiler.options.entry === 'function') {
+            // TODO (jbroma): Support function entry points?
+            throw new Error(
+              'DevelopmentPlugin is not compatible with function entry points'
+            );
+          }
+
+          const entries =
+            compiler.options.entry[this.config.entryName].import ?? [];
+          const scriptManagerEntryIndex = entries.findIndex((entry) =>
+            entry.includes('InitializeScriptManager')
+          );
+
+          if (scriptManagerEntryIndex !== -1) {
+            // Insert devEntries after 'InitializeScriptManager'
+            compiler.options.entry[this.config.entryName].import = [
+              ...entries.slice(0, scriptManagerEntryIndex + 1),
+              ...devEntries,
+              ...entries.slice(scriptManagerEntryIndex + 1),
+            ];
+          } else {
+            // 'InitializeScriptManager' entry not found, insert devEntries before the normal entries
+            compiler.options.entry[this.config.entryName].import = [
+              ...devEntries,
+              ...entries,
+            ];
+          }
+        }
+      }
     }
   }
 }
