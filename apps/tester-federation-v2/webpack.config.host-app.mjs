@@ -1,3 +1,4 @@
+// @ts-check
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
@@ -7,6 +8,7 @@ import webpack from 'webpack';
 const dirname = Repack.getDirname(import.meta.url);
 const { resolve } = createRequire(import.meta.url);
 
+/** @type {(env: import('@callstack/repack').EnvOptions) => import('webpack').Configuration} */
 export default (env) => {
   const {
     mode = 'development',
@@ -85,6 +87,7 @@ export default (env) => {
       ],
     },
     plugins: [
+      // @ts-ignore
       new Repack.RepackPlugin({
         context,
         mode,
@@ -104,8 +107,8 @@ export default (env) => {
         },
         shareStrategy: 'loaded-first',
         runtimePlugins: [
-          path.resolve(dirname, 'src', 'utils', 'runtime-debug.ts'),
           resolve('@callstack/repack/federation-runtime-plugin'),
+          path.resolve(dirname, 'src', 'utils', 'runtime-debug.ts'),
         ],
         shared: {
           react: {

@@ -1,12 +1,12 @@
-import { createRequire } from 'node:module';
+// @ts-check
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import { ModuleFederationPlugin } from '@module-federation/enhanced/webpack';
 import webpack from 'webpack';
 
 const dirname = Repack.getDirname(import.meta.url);
-const { resolve } = createRequire(import.meta.url);
 
+/** @type {(env: import('@callstack/repack').EnvOptions) => import('webpack').Configuration} */
 export default (env) => {
   const {
     mode = 'development',
@@ -26,10 +26,7 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    entry: [
-      resolve('@callstack/repack/dist/modules/configurePublicPath'),
-      resolve('@callstack/repack/dist/modules/WebpackHMRClient'),
-    ],
+    entry: {},
     resolve: {
       ...Repack.getResolveOptions(platform),
     },
@@ -85,6 +82,7 @@ export default (env) => {
       ],
     },
     plugins: [
+      // @ts-ignore
       new Repack.RepackPlugin({
         context,
         mode,
@@ -99,6 +97,7 @@ export default (env) => {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
         getPublicPath: `return "http://localhost:8082/${platform}/"`,
+        shareStrategy: 'loaded-first',
         shared: {
           react: {
             singleton: true,

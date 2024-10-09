@@ -123,8 +123,8 @@ export default (env) => {
         },
         shareStrategy: 'loaded-first',
         runtimePlugins: [
-          path.resolve(dirname, 'src', 'utils', 'runtime-debug.ts'),
           resolve('@callstack/repack/federation-runtime-plugin'),
+          path.resolve(dirname, 'src', 'utils', 'runtime-debug.ts'),
         ],
         shared: {
           react: {

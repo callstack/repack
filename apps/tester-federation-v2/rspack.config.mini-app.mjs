@@ -1,12 +1,10 @@
 // @ts-check
-import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import { ModuleFederationPlugin } from '@module-federation/enhanced/rspack';
 import rspack from '@rspack/core';
 
 const dirname = Repack.getDirname(import.meta.url);
-const { resolve } = createRequire(import.meta.url);
 
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
 export default (env) => {
@@ -31,10 +29,7 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    entry: [
-      resolve('@callstack/repack/dist/modules/configurePublicPath'),
-      resolve('@callstack/repack/dist/modules/WebpackHMRClient'),
-    ],
+    entry: {},
     resolve: {
       ...Repack.getResolveOptions(platform),
     },
@@ -119,12 +114,13 @@ export default (env) => {
         },
       }),
       new ModuleFederationPlugin({
-        name: 'HostApp',
+        name: 'MiniApp',
         filename: 'MiniApp.container.js.bundle',
         exposes: {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
         getPublicPath: `return "http://localhost:8082/${platform}/"`,
+        shareStrategy: 'loaded-first',
         shared: {
           react: {
             singleton: true,
@@ -135,12 +131,6 @@ export default (env) => {
             singleton: true,
             eager: false,
             requiredVersion: '0.74.3',
-          },
-          'react-native/Libraries/Core/Devtools/getDevServer': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '0.74.3',
-            shareScope: 'internal',
           },
           '@react-navigation/native': {
             singleton: true,
