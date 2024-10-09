@@ -1,32 +1,15 @@
-export interface DevServerLocation {
-  host: string;
-  hostname: string;
-  href: string;
-  origin: string;
-  pathname: string;
-  port?: string;
-  protocol?: string;
-}
+const location = {
+  host: `${__PUBLIC_HOST__}:${__PUBLIC_PORT__}`,
+  hostname: __PUBLIC_HOST__,
+  href: `${__PUBLIC_PROTOCOL__}://${__PUBLIC_HOST__}:${__PUBLIC_PORT__}/`,
+  origin: `${__PUBLIC_PROTOCOL__}://${__PUBLIC_HOST__}:${__PUBLIC_PORT__}`,
+  pathname: '/',
+  port: __PUBLIC_PORT__,
+  protocol: __PUBLIC_PROTOCOL__,
+};
 
-let location: DevServerLocation | undefined;
+type DevServerLocation = typeof location;
 
 export function getDevServerLocation(): DevServerLocation {
-  const getDevServer = require('react-native/Libraries/Core/Devtools/getDevServer');
-
-  if (!location) {
-    const { url } = getDevServer() as { url: string };
-    const origin = url.replace(/\/$/, '');
-    const host = origin.replace(/https?:\/\//, '');
-    location = {
-      host,
-      hostname: host.split(':')[0],
-      href: url,
-      origin,
-      pathname: url.split(host)[1],
-      port: host.split(':')[1],
-      protocol: (url.match(/^([a-z])+:\/\//) || [undefined, undefined])[1],
-    };
-  }
-
   return location;
 }

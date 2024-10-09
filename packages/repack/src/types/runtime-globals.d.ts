@@ -19,6 +19,8 @@ declare interface RepackRuntime {
 }
 
 declare var __DEV__: boolean;
+declare var __PUBLIC_PROTOCOL__: string;
+declare var __PUBLIC_HOST__: string;
 declare var __PUBLIC_PORT__: number;
 declare var __PLATFORM__: string;
 declare var __REACT_NATIVE_MAJOR_VERSION__: number;
@@ -32,14 +34,14 @@ declare var __webpack_require__: import('../modules/ScriptManager').WebpackConte
   repack: RepackRuntime;
 };
 
-interface HMRInfo {
+declare interface HMRInfo {
   type: string;
   chain: Array<string | number>;
   error?: Error;
   moduleId: string | number;
 }
 
-interface HotApi {
+declare interface HotApi {
   status():
     | 'idle'
     | 'check'
@@ -62,6 +64,6 @@ interface HotApi {
   }): Promise<Array<string | number>>;
 }
 
-interface NodeModule {
+declare interface NodeModule {
   hot?: HotApi;
 }

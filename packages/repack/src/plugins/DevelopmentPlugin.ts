@@ -43,6 +43,8 @@ export class DevelopmentPlugin implements RspackPluginInstance {
 
     new compiler.webpack.DefinePlugin({
       __PLATFORM__: JSON.stringify(this.config.platform),
+      __PUBLIC_PROTOCOL__: this.config.devServer.https ? '"https"' : '"http"',
+      __PUBLIC_HOST__: JSON.stringify(this.config.devServer.host),
       __PUBLIC_PORT__: Number(this.config.devServer.port),
       __REACT_NATIVE_MAJOR_VERSION__: Number(majorVersion),
       __REACT_NATIVE_MINOR_VERSION__: Number(minorVersion),
