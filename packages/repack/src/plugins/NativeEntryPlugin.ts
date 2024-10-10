@@ -67,7 +67,7 @@ export class NativeEntryPlugin implements RspackPluginInstance {
     // to shim it here to prevent ReferenceError
     new compiler.webpack.EntryPlugin(
       compiler.context,
-      'data:text/javascript,globalThis.setImmediate = globalThis.setImmediate || function(){}',
+      'data:text/javascript,globalThis.setImmediate = globalThis.setImmediate || function(){ /* noop */ };',
       { name: undefined }
     ).apply(compiler);
 
