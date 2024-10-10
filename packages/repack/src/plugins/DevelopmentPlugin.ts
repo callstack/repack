@@ -1,7 +1,11 @@
+import path from 'node:path';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
 import type { DevServerOptions } from '../types';
 import { isRspackCompiler } from './utils/isRspackCompiler';
+
+const [reactRefreshEntryPath, reactRefreshPath, refreshUtilsPath] =
+  ReactRefreshPlugin.deprecated_runtimePaths;
 
 type PackageJSON = { version: string };
 /**
@@ -81,9 +85,41 @@ export class DevelopmentPlugin implements RspackPluginInstance {
         noSources: false,
       }).apply(compiler);
 
-      new ReactRefreshPlugin({ overlay: false }).apply(compiler);
+      // setup React Refresh manually instead of using the official plugin
+      // to avoid issues with placement of reactRefreshEntry
+      new compiler.webpack.ProvidePlugin({
+        $ReactRefreshRuntime$: reactRefreshPath,
+      }).apply(compiler);
+
+      new compiler.webpack.DefinePlugin({
+        __react_refresh_error_overlay__: false,
+        __react_refresh_socket__: false,
+        __react_refresh_library__: JSON.stringify(
+          compiler.webpack.Template.toIdentifier(
+            compiler.options.output.uniqueName ||
+              compiler.options.output.library
+          )
+        ),
+      }).apply(compiler);
+
+      new compiler.webpack.ProvidePlugin({
+        __react_refresh_utils__: refreshUtilsPath,
+      });
+
+      const refreshPath = path.dirname(require.resolve('react-refresh'));
+      compiler.options.resolve.alias = {
+        'react-refresh': refreshPath,
+        ...compiler.options.resolve.alias,
+      };
+
+      compiler.options.module.rules.unshift({
+        include: /\.([cm]js|[jt]sx?|flow)$/i,
+        exclude: /node_modules/i,
+        use: 'builtin:react-refresh-loader',
+      });
 
       const devEntries = [
+        reactRefreshEntryPath,
         require.resolve('../modules/configurePublicPath'),
         require.resolve('../modules/WebpackHMRClient'),
       ];
