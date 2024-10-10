@@ -40,7 +40,7 @@ export default (env) => {
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MFTester-MiniApp',
+      uniqueName: 'MF2-MiniApp',
     },
     optimization: {
       minimize,
@@ -87,7 +87,7 @@ export default (env) => {
             },
           },
         },
-        // Repack.REACT_NATIVE_CODEGEN_RULES,
+        Repack.REACT_NATIVE_CODEGEN_RULES,
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
