@@ -1,6 +1,7 @@
 import path from 'node:path';
 import type {
   Compiler,
+  EntryStaticNormalized,
   ResolveAlias,
   RspackPluginInstance,
 } from '@rspack/core';
@@ -86,24 +87,25 @@ export class NativeEntryPlugin implements RspackPluginInstance {
         }
       );
     } else {
+      const prependEntries = (entryConfig: EntryStaticNormalized) => {
+        if (!(this.config.entryName in entryConfig)) {
+          throw new Error(
+            `Entry '${this.config.entryName}' does not exist in the entry configuration`
+          );
+        }
+        entryConfig[this.config.entryName].import = [
+          ...entries,
+          ...(entryConfig[this.config.entryName].import ?? []),
+        ];
+        return entryConfig;
+      };
+
       if (typeof compiler.options.entry === 'function') {
-        // TODO (jbroma): Support function entry points?
-        throw new Error(
-          'NativeEntryPlugin is not compatible with function entry points'
-        );
+        const dynamicEntry = compiler.options.entry;
+        compiler.options.entry = () => dynamicEntry().then(prependEntries);
+      } else {
+        compiler.options.entry = prependEntries(compiler.options.entry);
       }
-
-      if (!(this.config.entryName in compiler.options.entry)) {
-        throw new Error(
-          `Entry name ${this.config.entryName} doesn't exist in the entry configuration`
-        );
-      }
-
-      // Prepend entries to the native entry point
-      compiler.options.entry[this.config.entryName].import = [
-        ...entries,
-        ...(compiler.options.entry[this.config.entryName].import ?? []),
-      ];
     }
   }
 }
