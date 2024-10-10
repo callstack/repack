@@ -35,5 +35,9 @@ export const DEV_SERVER_ASSET_TYPES = new RegExp(
     '\\.hot-update\\.js(on)?$',
     '^assets',
     '^remote-assets',
+    // TODO (jbroma): Find a more generic way to handle this
+    '^mf-manifest.json$',
+    '^@mf-types.zip$',
+    '^@mf-types.d.ts$',
   ].join('|')
 );

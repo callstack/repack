@@ -2,6 +2,7 @@ import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import type { DevServerOptions } from '../types';
 import { DevelopmentPlugin } from './DevelopmentPlugin';
 import { LoggerPlugin, type LoggerPluginConfig } from './LoggerPlugin';
+import { ModuleFederationDevPlugin } from './ModuleFederationDevPlugin';
 import { NativeEntryPlugin } from './NativeEntryPlugin';
 import { OutputPlugin, type OutputPluginConfig } from './OutputPlugin';
 import { RepackTargetPlugin } from './RepackTargetPlugin';
@@ -124,19 +125,28 @@ export class RepackPlugin implements RspackPluginInstance {
     this.config.logger = this.config.logger ?? true;
   }
 
+  private getEntryName(compiler: Compiler) {
+    if (this.config.entryName) {
+      return this.config.entryName;
+    }
+
+    if (
+      typeof compiler.options.entry === 'object' &&
+      'main' in compiler.options.entry
+    ) {
+      return 'main';
+    }
+
+    return undefined;
+  }
+
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    let entryName = this.config.entryName;
-    if (!entryName && typeof compiler.options.entry !== 'function') {
-      // 'main' is the default name for the entry chunk
-      if ('main' in compiler.options.entry) {
-        entryName = 'main';
-      }
-    }
+    const entryName = this.getEntryName(compiler);
 
     new compiler.webpack.DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
@@ -163,9 +173,12 @@ export class RepackPlugin implements RspackPluginInstance {
     }).apply(compiler);
 
     new DevelopmentPlugin({
-      platform: this.config.platform,
       devServer: this.config.devServer,
+      entryName,
+      platform: this.config.platform,
     }).apply(compiler);
+
+    new ModuleFederationDevPlugin().apply(compiler);
 
     if (this.config.sourceMaps) {
       new compiler.webpack.SourceMapDevToolPlugin({
