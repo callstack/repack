@@ -1,6 +1,11 @@
 import type { RuleSetRule } from '@rspack/core';
 import { getModulePaths } from '../utils';
 
+/**
+ * @constant NODE_MODULES_LOADING_RULES
+ * @type {RuleSetRule}
+ * @description Module rule configuration for loading node_modules, excluding React Native Core & out-of-tree platform packages.
+ */
 export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
   type: 'javascript/auto',
   test: /\.[cm]?[jt]sx?$/,
