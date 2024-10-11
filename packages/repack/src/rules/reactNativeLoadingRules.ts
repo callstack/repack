@@ -1,7 +1,12 @@
 import type { RuleSetRule } from '@rspack/core';
-import { getModulePaths } from '../utils/getModulePaths';
+import { getModulePaths } from '../utils';
 import { REACT_NATIVE_LAZY_IMPORTS } from './lazyImports';
 
+/**
+ * @constant REACT_NATIVE_LOADING_RULES
+ * @type {RuleSetRule}
+ * @description Module rule configuration for loading React Native Core & out-of-tree platform packages.
+ */
 export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
   type: 'javascript/dynamic',
   test: /\.jsx?$/,
