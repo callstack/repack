@@ -21,7 +21,7 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
   ]),
   rules: [
     {
-      test: /\.jsx?$/,
+      test: /jsx?$/,
       use: [
         {
           loader: 'builtin:swc-loader',
@@ -47,7 +47,7 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
       ],
     },
     {
-      test: /\.tsx?$/,
+      test: /tsx?$/,
       use: [
         {
           loader: 'builtin:swc-loader',
