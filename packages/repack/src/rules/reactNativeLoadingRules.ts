@@ -1,5 +1,5 @@
 import type { RuleSetRule } from '@rspack/core';
-import { getModulePaths } from '../utils/getModulePaths';
+import { getModulePaths } from '../utils';
 import { REACT_NATIVE_LAZY_IMPORTS } from './lazyImports';
 
 export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {

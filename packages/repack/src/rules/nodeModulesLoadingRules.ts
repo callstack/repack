@@ -1,5 +1,5 @@
 import type { RuleSetRule } from '@rspack/core';
-import { getModulePaths } from '../utils/getModulePaths';
+import { getModulePaths } from '../utils';
 
 export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
   type: 'javascript/auto',
