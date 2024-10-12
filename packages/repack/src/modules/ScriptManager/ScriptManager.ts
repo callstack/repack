@@ -18,6 +18,14 @@ const CACHE_ENV = __DEV__ ? 'debug' : 'release';
 
 const CACHE_KEY = [CACHE_NAME, CACHE_VERSION, CACHE_ENV].join('.');
 
+const LOADING_ERROR_CODES = [
+  // android
+  'NetworkFailure',
+  'RequestFailure',
+  // ios
+  'ScriptDownloadFailure',
+];
+
 /* Options for resolver when adding it to a `ScriptManager`. */
 export interface ResolverOptions {
   /**
@@ -355,7 +363,8 @@ export class ScriptManager extends EventEmitter {
         return; // Successfully loaded the script, exit the loop
       } catch (error) {
         attempts--;
-        if (attempts > 0) {
+        const { code } = error as Error & { code: string };
+        if (attempts > 0 && LOADING_ERROR_CODES.includes(code)) {
           if (retryDelay > 0) {
             await new Promise((resolve) => setTimeout(resolve, retryDelay));
           }

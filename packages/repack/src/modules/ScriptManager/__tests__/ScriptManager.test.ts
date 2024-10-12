@@ -43,6 +43,15 @@ class FakeCache {
   }
 }
 
+class ScriptLoaderError extends Error {
+  code: string;
+
+  constructor(message: string, code: string) {
+    super(message);
+    this.code = code;
+  }
+}
+
 beforeEach(() => {
   ScriptManager.init();
 });
@@ -534,6 +543,56 @@ describe('ScriptManagerAPI', () => {
     expect(script6.locator.fetch).toBe(true);
   });
 
+  it('should throw an error on non-network errors occurrence in load script with retry', async () => {
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        retry: 2,
+        retryDelay: 100,
+      };
+    });
+
+    const scriptId = 'src_App_js';
+    const script = await ScriptManager.shared.resolveScript(scriptId, 'main');
+    expect(script.locator).toEqual({
+      url: 'http://domain.ext/src_App_js.chunk.bundle',
+      fetch: true,
+      absolute: false,
+      method: 'GET',
+      timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: 'off',
+      uniqueId: 'main_src_App_js',
+      retry: 2,
+      retryDelay: 100,
+    });
+
+    jest.useFakeTimers({ advanceTimers: true });
+    jest.spyOn(global, 'setTimeout');
+
+    // Mock the nativeScriptManager.loadScript to fail immediately on non network error
+    jest
+      .mocked(NativeScriptManager.loadScript)
+      .mockRejectedValueOnce(
+        new ScriptLoaderError('First attempt failed', 'ScriptEvalFailure')
+      );
+
+    await expect(
+      ScriptManager.shared.loadScriptWithRetry(scriptId, script.locator)
+    ).rejects.toThrow('First attempt failed');
+
+    expect(setTimeout).toHaveBeenCalledTimes(0);
+    expect(NativeScriptManager.loadScript).toHaveBeenCalledTimes(1);
+    expect(NativeScriptManager.loadScript).toHaveBeenCalledWith(
+      scriptId,
+      script.locator
+    );
+    jest.useRealTimers();
+  });
+
   it('should load script with retry', async () => {
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
@@ -564,8 +623,12 @@ describe('ScriptManagerAPI', () => {
     // Mock the nativeScriptManager.loadScript to fail twice and succeed on the third attempt
     jest
       .mocked(NativeScriptManager.loadScript)
-      .mockRejectedValueOnce(new Error('First attempt failed'))
-      .mockRejectedValueOnce(new Error('Second attempt failed'))
+      .mockRejectedValueOnce(
+        new ScriptLoaderError('First attempt failed', 'RequestFailure')
+      )
+      .mockRejectedValueOnce(
+        new ScriptLoaderError('Second attempt failed', 'RequestFailure')
+      )
       .mockResolvedValueOnce(null);
 
     jest.useFakeTimers({ advanceTimers: true });
@@ -596,9 +659,15 @@ describe('ScriptManagerAPI', () => {
     // Mock the nativeScriptManager.loadScript to fail all attempts
     jest
       .mocked(NativeScriptManager.loadScript)
-      .mockRejectedValueOnce(new Error('First attempt failed'))
-      .mockRejectedValueOnce(new Error('Second attempt failed'))
-      .mockRejectedValueOnce(new Error('Third attempt failed'));
+      .mockRejectedValueOnce(
+        new ScriptLoaderError('First attempt failed', 'NetworkFailure')
+      )
+      .mockRejectedValueOnce(
+        new ScriptLoaderError('Second attempt failed', 'NetworkFailure')
+      )
+      .mockRejectedValueOnce(
+        new ScriptLoaderError('Third attempt failed', 'NetworkFailure')
+      );
 
     jest.useFakeTimers({ advanceTimers: true });
     await expect(
@@ -630,8 +699,12 @@ describe('ScriptManagerAPI', () => {
     // Mock the nativeScriptManager.loadScript to fail twice and succeed on the third attempt
     jest
       .mocked(NativeScriptManager.loadScript)
-      .mockRejectedValueOnce(new Error('First attempt failed'))
-      .mockRejectedValueOnce(new Error('Second attempt failed'))
+      .mockRejectedValueOnce(
+        new ScriptLoaderError('First attempt failed', 'ScriptDownloadFailure')
+      )
+      .mockRejectedValueOnce(
+        new ScriptLoaderError('Second attempt failed', 'ScriptDownloadFailure')
+      )
       .mockResolvedValueOnce(null);
 
     jest.useFakeTimers({ advanceTimers: true });
