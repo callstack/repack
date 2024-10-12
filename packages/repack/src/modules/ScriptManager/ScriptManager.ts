@@ -350,7 +350,7 @@ export class ScriptManager extends EventEmitter {
    * @param {number} [locator.retryDelay=0] - The delay in milliseconds between retries.
    * @throws {Error} Throws an error if all retry attempts fail.
    */
-  async loadScriptWithRetry(
+  protected async loadScriptWithRetry(
     scriptId: string,
     locator: NormalizedScriptLocator & { retryDelay?: number; retry?: number }
   ) {
