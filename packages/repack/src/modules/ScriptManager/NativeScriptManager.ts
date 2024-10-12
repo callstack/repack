@@ -18,8 +18,6 @@ export interface NormalizedScriptLocator {
   url: string;
   fetch: boolean;
   timeout: number;
-  retry: number | undefined;
-  retryDelay: number | undefined;
   absolute: boolean;
   query: string | undefined;
   headers: { [key: string]: string } | undefined;

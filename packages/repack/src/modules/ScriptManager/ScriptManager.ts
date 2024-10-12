@@ -344,7 +344,7 @@ export class ScriptManager extends EventEmitter {
    */
   async loadScriptWithRetry(
     scriptId: string,
-    locator: NormalizedScriptLocator
+    locator: NormalizedScriptLocator & { retryDelay?: number; retry?: number }
   ) {
     const { retry = 0, retryDelay = 0 } = locator;
     let attempts = retry + 1; // Include the initial attempt

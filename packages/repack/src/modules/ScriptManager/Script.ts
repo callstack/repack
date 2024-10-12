@@ -152,7 +152,10 @@ export class Script {
   constructor(
     public readonly scriptId: string,
     public readonly caller: string | undefined,
-    public readonly locator: NormalizedScriptLocator,
+    public readonly locator: NormalizedScriptLocator & {
+      retry?: number;
+      retryDelay?: number;
+    },
     public readonly cache: boolean = true
   ) {}
 
