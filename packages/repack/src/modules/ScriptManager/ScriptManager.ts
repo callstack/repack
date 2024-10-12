@@ -357,7 +357,7 @@ export class ScriptManager extends EventEmitter {
         attempts--;
         if (attempts > 0) {
           if (retryDelay > 0) {
-            await waitMs(retryDelay);
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
           }
         } else {
           throw error; // No more retries, throw the error
@@ -445,17 +445,4 @@ export class ScriptManager extends EventEmitter {
       scriptSourceUrl
     );
   }
-}
-
-/**
- * Waits for a specified number of milliseconds.
- *
- * This function returns a Promise that resolves after the specified delay.
- * It is useful for introducing delays in asynchronous code.
- *
- * @param {number} ms - The number of milliseconds to wait.
- * @returns {Promise} A promise that resolves after the specified delay.
- */
-async function waitMs(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
