@@ -23,11 +23,13 @@ const HomeScreen = () => {
         <Text style={styles.sectionTitle}>Mini Apps</Text>
         <View style={styles.miniAppContainer}>
           <TouchableOpacity
-            style={styles.miniAppButton}
+            style={[styles.miniAppButton, styles.galleryButton]}
             onPress={() => navigation.navigate('MiniApp')}
           >
-            <Text style={styles.miniAppIcon}>🖼️</Text>
-            <Text style={styles.miniAppText}>Gallery</Text>
+            <Text style={[styles.miniAppIcon, styles.galleryIconText]}>🖼️</Text>
+            <Text style={[styles.miniAppText, styles.galleryIconText]}>
+              Gallery
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.miniAppButton, styles.disabledMiniApp]}
@@ -56,10 +58,11 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E8F3F3', // Light teal background
+    backgroundColor: '#F5F9FF', // Very light blue background
   },
   hostSection: {
     flex: 1,
+    marginTop: 150,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -92,7 +95,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    shadowColor: '#34495E', // Blue-gray shadow
+    shadowColor: '#34495E', // Blue gray shadow
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -112,7 +115,7 @@ const styles = StyleSheet.create({
     minHeight: 150,
   },
   miniAppButton: {
-    backgroundColor: '#ECF0F1', // Very light gray
+    backgroundColor: '#ECF0F1',
     width: 100,
     height: 100,
     borderRadius: 15,
@@ -125,20 +128,30 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  galleryButton: {
+    backgroundColor: '#FF9F00', // Keep the orange background
+  },
   miniAppIcon: {
     fontSize: 40,
     marginBottom: 5,
+    color: '#FFFFFF', // Change icon color to white for better contrast
   },
   miniAppText: {
-    color: '#2C3E50', // Dark blue-gray
-    fontSize: 14,
-    fontWeight: '500',
+    color: '#FFFFFF', // Keep text color white for consistency
+    fontSize: 16,
+    fontWeight: '700',
   },
   disabledMiniApp: {
     opacity: 0.5,
   },
   disabledText: {
-    color: '#95A5A6', // Light gray for disabled text
+    color: '#95A5A6', // Medium gray for disabled text
+  },
+  galleryIconText: {
+    color: '#FFFFFF', // White color for better contrast on orange background
+    textShadowColor: 'rgba(0, 0, 0, 0.3)', // Add a subtle text shadow
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
 });
 

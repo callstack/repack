@@ -35,10 +35,10 @@ const MainNavigator = () => {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#F1BC9C', // Vibrant teal color
+    backgroundColor: '#E68A00', // Slightly darker vibrant orange
   },
   headerTitle: {
-    color: '#FFFFFF', // White text to ensure readability
+    color: '#FFFFFF', // White text
   },
 });
 

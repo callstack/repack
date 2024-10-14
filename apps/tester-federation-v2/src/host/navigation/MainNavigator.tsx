@@ -26,6 +26,7 @@ const MainNavigator = () => {
         headerTitle: 'Host App',
         headerBackTitleVisible: true,
         headerBackTitle: 'Back',
+        headerLargeTitle: true,
         headerStyle: styles.header,
         headerTitleStyle: styles.headerTitle,
         headerTintColor: 'rgba(255,255,255,1)',
@@ -33,17 +34,21 @@ const MainNavigator = () => {
     >
       <Main.Screen name="Home" component={HomeScreen} />
       <Main.Screen name="Detail" component={DetailScreen} />
-      <Main.Screen name="MiniApp" component={MiniAppScreen} />
+      <Main.Screen
+        name="MiniApp"
+        component={MiniAppScreen}
+        options={{ headerStyle: { backgroundColor: '#FF9F00' } }}
+      />
     </Main.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#3498DB', // Bright blue to match the button in HomeScreen
+    backgroundColor: '#3498DB', // Bright blue
   },
   headerTitle: {
-    color: '#FFFFFF', // White text to ensure readability
+    color: '#FFFFFF', // White text
   },
 });
 

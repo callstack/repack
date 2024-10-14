@@ -40,7 +40,10 @@ const Row = ({
 
 const GalleryScreen = () => {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.contentContainer}
+      style={styles.container}
+    >
       {data.map(({ title, source }) => (
         <Row key={title} title={title} source={source} />
       ))}
@@ -51,15 +54,17 @@ const GalleryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FDF2E9', // Very light orange background
+  },
+  contentContainer: {
     marginTop: 20,
-    backgroundColor: '#E8F3F3', // Light teal background to match HostApp
   },
   row: {
     marginBottom: 20,
     backgroundColor: 'white',
     borderRadius: 10,
     overflow: 'hidden',
-    shadowColor: '#34495E',
+    shadowColor: '#D35400', // Dark orange shadow
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -77,12 +82,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#2C3E50', // Dark blue-gray to match HostApp
+    color: '#000000',
     marginBottom: 5,
   },
   subtitle: {
     fontSize: 14,
-    color: '#34495E', // Slightly lighter blue-gray
+    color: '#E67E22', // Soft orange
     fontWeight: '400',
   },
 });
