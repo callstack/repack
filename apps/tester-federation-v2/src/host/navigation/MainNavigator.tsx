@@ -23,7 +23,7 @@ const MainNavigator = () => {
   return (
     <Main.Navigator
       screenOptions={{
-        headerTitle: 'HostApp',
+        headerTitle: 'Host App',
         headerBackTitleVisible: false,
         headerStyle: styles.header,
         headerTitleStyle: styles.headerTitle,
@@ -39,10 +39,10 @@ const MainNavigator = () => {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: 'rgba(56, 30, 114, 1)',
+    backgroundColor: '#3498DB', // Bright blue to match the button in HomeScreen
   },
   headerTitle: {
-    color: 'rgba(255,255,255,1)',
+    color: '#FFFFFF', // White text to ensure readability
   },
 });
 
