@@ -547,7 +547,7 @@ describe('ScriptManagerAPI', () => {
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
     ScriptManager.shared.addResolver(async (scriptId, caller) => {
-      expect(caller).toEqual('main');
+      expect(caller).toEqual('appB');
 
       return {
         url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
@@ -557,7 +557,7 @@ describe('ScriptManagerAPI', () => {
     });
 
     const scriptId = 'src_App_js';
-    const script = await ScriptManager.shared.resolveScript(scriptId, 'main');
+    const script = await ScriptManager.shared.resolveScript(scriptId, 'appB');
     expect(script.locator).toEqual({
       url: 'http://domain.ext/src_App_js.chunk.bundle',
       fetch: true,
@@ -565,7 +565,7 @@ describe('ScriptManagerAPI', () => {
       method: 'GET',
       timeout: Script.DEFAULT_TIMEOUT,
       verifyScriptSignature: 'off',
-      uniqueId: 'main_src_App_js',
+      uniqueId: 'appB_' + scriptId,
       retry: 2,
       retryDelay: 100,
     });
@@ -581,15 +581,22 @@ describe('ScriptManagerAPI', () => {
       );
 
     await expect(
-      ScriptManager.shared.loadScriptWithRetry(scriptId, script.locator)
+      ScriptManager.shared.loadScript(scriptId, 'appB')
     ).rejects.toThrow('First attempt failed');
 
     expect(setTimeout).toHaveBeenCalledTimes(0);
     expect(NativeScriptManager.loadScript).toHaveBeenCalledTimes(1);
-    expect(NativeScriptManager.loadScript).toHaveBeenCalledWith(
-      scriptId,
-      script.locator
-    );
+    expect(NativeScriptManager.loadScript).toHaveBeenCalledWith(scriptId, {
+      absolute: false,
+      fetch: false,
+      method: 'GET',
+      retry: 2,
+      retryDelay: 100,
+      timeout: 30000,
+      uniqueId: 'appB_' + scriptId,
+      url: 'http://domain.ext/src_App_js.chunk.bundle',
+      verifyScriptSignature: 'off',
+    });
     jest.useRealTimers();
   });
 
@@ -632,13 +639,20 @@ describe('ScriptManagerAPI', () => {
       .mockResolvedValueOnce(null);
 
     jest.useFakeTimers({ advanceTimers: true });
-    await ScriptManager.shared.loadScriptWithRetry(scriptId, script.locator);
+    await ScriptManager.shared.loadScript(scriptId, 'main');
 
     expect(NativeScriptManager.loadScript).toHaveBeenCalledTimes(3);
-    expect(NativeScriptManager.loadScript).toHaveBeenCalledWith(
-      scriptId,
-      script.locator
-    );
+    expect(NativeScriptManager.loadScript).toHaveBeenCalledWith(scriptId, {
+      absolute: false,
+      fetch: false,
+      method: 'GET',
+      retry: 2,
+      retryDelay: 100,
+      timeout: 30000,
+      uniqueId: 'main_src_App_js',
+      url: 'http://domain.ext/src_App_js.chunk.bundle',
+      verifyScriptSignature: 'off',
+    });
     jest.useRealTimers();
   });
 
@@ -649,13 +663,12 @@ describe('ScriptManagerAPI', () => {
       return {
         url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
         retry: 2,
+        fetch: false,
         retryDelay: 100,
       };
     });
 
     const scriptId = 'src_App_js';
-    const script = await ScriptManager.shared.resolveScript(scriptId);
-
     // Mock the nativeScriptManager.loadScript to fail all attempts
     jest
       .mocked(NativeScriptManager.loadScript)
@@ -670,15 +683,22 @@ describe('ScriptManagerAPI', () => {
       );
 
     jest.useFakeTimers({ advanceTimers: true });
-    await expect(
-      ScriptManager.shared.loadScriptWithRetry(scriptId, script.locator)
-    ).rejects.toThrow('Third attempt failed');
+    await expect(ScriptManager.shared.loadScript(scriptId)).rejects.toThrow(
+      'Third attempt failed'
+    );
 
     expect(NativeScriptManager.loadScript).toHaveBeenCalledTimes(3);
-    expect(NativeScriptManager.loadScript).toHaveBeenCalledWith(
-      scriptId,
-      script.locator
-    );
+    expect(NativeScriptManager.loadScript).toHaveBeenCalledWith(scriptId, {
+      absolute: false,
+      fetch: true,
+      method: 'GET',
+      retry: 2,
+      retryDelay: 100,
+      timeout: 30000,
+      uniqueId: scriptId,
+      url: 'http://domain.ext/src_App_js.chunk.bundle',
+      verifyScriptSignature: 'off',
+    });
     jest.useRealTimers();
   });
 
@@ -694,8 +714,6 @@ describe('ScriptManagerAPI', () => {
     });
 
     const scriptId = 'src_App_js';
-    const script = await ScriptManager.shared.resolveScript(scriptId);
-
     // Mock the nativeScriptManager.loadScript to fail twice and succeed on the third attempt
     jest
       .mocked(NativeScriptManager.loadScript)
@@ -710,10 +728,7 @@ describe('ScriptManagerAPI', () => {
     jest.useFakeTimers({ advanceTimers: true });
     jest.spyOn(global, 'setTimeout');
 
-    const loadScriptPromise = ScriptManager.shared.loadScriptWithRetry(
-      scriptId,
-      script.locator
-    );
+    const loadScriptPromise = ScriptManager.shared.loadScript(scriptId);
 
     await expect(loadScriptPromise).resolves.toBeUndefined();
 
