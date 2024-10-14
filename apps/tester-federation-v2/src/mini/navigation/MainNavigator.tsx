@@ -5,7 +5,6 @@ import {
 import { StyleSheet } from 'react-native';
 
 import GalleryScreen from '../screens/GalleryScreen';
-import HomeScreen from '../screens/HomeScreen';
 
 export type MainStackParamList = {
   Home: undefined;
@@ -21,14 +20,14 @@ const MainNavigator = () => {
   return (
     <Main.Navigator
       screenOptions={{
-        headerTitle: 'MiniApp',
-        headerBackTitleVisible: false,
+        headerTitle: 'Gallery Mini App',
+        headerBackTitleVisible: true,
+        headerBackTitle: 'Back',
         headerStyle: styles.header,
         headerTitleStyle: styles.headerTitle,
         headerTintColor: 'rgba(255,255,255,1)',
       }}
     >
-      <Main.Screen name="Home" component={HomeScreen} />
       <Main.Screen name="Gallery" component={GalleryScreen} />
     </Main.Navigator>
   );
@@ -36,10 +35,10 @@ const MainNavigator = () => {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: 'rgba(79, 55, 139, 1)',
+    backgroundColor: '#F1BC9C', // Vibrant teal color
   },
   headerTitle: {
-    color: 'rgba(255,255,255,1)',
+    color: '#FFFFFF', // White text to ensure readability
   },
 });
 

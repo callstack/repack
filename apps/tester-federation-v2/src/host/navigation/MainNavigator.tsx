@@ -24,7 +24,8 @@ const MainNavigator = () => {
     <Main.Navigator
       screenOptions={{
         headerTitle: 'Host App',
-        headerBackTitleVisible: false,
+        headerBackTitleVisible: true,
+        headerBackTitle: 'Back',
         headerStyle: styles.header,
         headerTitleStyle: styles.headerTitle,
         headerTintColor: 'rgba(255,255,255,1)',
