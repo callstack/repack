@@ -52,6 +52,7 @@ export default (env) => {
       rules: [
         Repack.REACT_NATIVE_LOADING_RULES,
         Repack.NODE_MODULES_LOADING_RULES,
+        Repack.FLOW_TYPED_MODULES_LOADING_RULES,
         {
           test: /\.[jt]sx?$/,
           exclude: [/node_modules/],

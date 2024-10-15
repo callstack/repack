@@ -21,6 +21,14 @@ const CACHE_ENV = __DEV__ ? 'debug' : 'release';
 
 const CACHE_KEY = [CACHE_NAME, CACHE_VERSION, CACHE_ENV].join('.');
 
+const LOADING_ERROR_CODES = [
+  // android
+  'NetworkFailure',
+  'RequestFailure',
+  // ios
+  'ScriptDownloadFailure',
+];
+
 /* Options for resolver when adding it to a `ScriptManager`. */
 export interface ResolverOptions {
   /**
@@ -338,7 +346,7 @@ export class ScriptManager extends EventEmitter {
 
     try {
       this.emit('loading', script.toObject());
-      await this.nativeScriptManager.loadScript(scriptId, script.locator);
+      await this.loadScriptWithRetry(scriptId, script.locator);
       this.emit('loaded', script.toObject());
     } catch (error) {
       const { code } = error as Error & { code: string };
@@ -348,6 +356,44 @@ export class ScriptManager extends EventEmitter {
         code ? `[${code}]` : '',
         script.toObject()
       );
+    }
+  }
+
+  /**
+   * Loads a script with retry logic.
+   *
+   * This function attempts to load a script using the nativeScriptManager.
+   * If the initial attempt fails, it retries the specified number of times
+   * with an optional delay between retries.
+   *
+   * @param {string} scriptId - The ID of the script to load.
+   * @param {NormalizedScriptLocator} locator - An NormalizedScriptLocator containing retry configuration.
+   * @param {number} [locator.retry=0] - The number of retry attempts.
+   * @param {number} [locator.retryDelay=0] - The delay in milliseconds between retries.
+   * @throws {Error} Throws an error if all retry attempts fail.
+   */
+  protected async loadScriptWithRetry(
+    scriptId: string,
+    locator: NormalizedScriptLocator & { retryDelay?: number; retry?: number }
+  ) {
+    const { retry = 0, retryDelay = 0 } = locator;
+    let attempts = retry + 1; // Include the initial attempt
+
+    while (attempts > 0) {
+      try {
+        await this.nativeScriptManager.loadScript(scriptId, locator);
+        return; // Successfully loaded the script, exit the loop
+      } catch (error) {
+        attempts--;
+        const { code } = error as Error & { code: string };
+        if (attempts > 0 && LOADING_ERROR_CODES.includes(code)) {
+          if (retryDelay > 0) {
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
+          }
+        } else {
+          throw error; // No more retries, throw the error
+        }
+      }
     }
   }
 

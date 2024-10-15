@@ -69,6 +69,26 @@ export interface ScriptLocator {
   timeout?: number;
 
   /**
+   * Number of times to retry fetching the script in case of failure.
+   *
+   * If the script fails to download due to network issues or server errors,
+   * this field determines how many additional attempts should be made to fetch it.
+   * A value of `0` means no retries will be attempted.
+   * Defaults to `0` if not specified.
+   */
+  retry?: number;
+
+  /**
+   * Delay in milliseconds between each retry attempt.
+   *
+   * This field specifies the wait time between consecutive retry attempts
+   * if the script download fails. It helps to avoid immediate retries and allows
+   * the network or server to recover before trying again.
+   * Defaults to `0` if not specified.
+   */
+  retryDelay?: number;
+
+  /**
    * Flag indicating whether the URL is an absolute FileSystem URL on a target device.
    * Useful if you're using custom code to download the script and you want `ScriptManager` to
    * execute it only from a custom FileSystem path.
