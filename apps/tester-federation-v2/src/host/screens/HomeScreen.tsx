@@ -26,8 +26,8 @@ const HomeScreen = () => {
             style={[styles.miniAppButton, styles.galleryButton]}
             onPress={() => navigation.navigate('MiniApp')}
           >
-            <Text style={[styles.miniAppIcon, styles.galleryIconText]}>🖼️</Text>
-            <Text style={[styles.miniAppText, styles.galleryIconText]}>
+            <Text style={styles.miniAppIcon}>🖼️</Text>
+            <Text style={[styles.miniAppText, styles.galleryButtonText]}>
               Gallery
             </Text>
           </TouchableOpacity>
@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
   },
   hostSection: {
     flex: 1,
-    marginTop: 150,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -118,6 +117,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ECF0F1',
     width: 100,
     height: 100,
+    borderColor: '#BDC3C7',
+    borderWidth: 1,
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
@@ -129,7 +130,11 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   galleryButton: {
-    backgroundColor: '#FF9F00', // Keep the orange background
+    borderColor: '#FF9F00',
+    backgroundColor: '#FFF5E6',
+  },
+  galleryButtonText: {
+    color: '#FF9F00',
   },
   miniAppIcon: {
     fontSize: 40,
@@ -146,12 +151,6 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     color: '#95A5A6', // Medium gray for disabled text
-  },
-  galleryIconText: {
-    color: '#FFFFFF', // White color for better contrast on orange background
-    textShadowColor: 'rgba(0, 0, 0, 0.3)', // Add a subtle text shadow
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
 });
 
