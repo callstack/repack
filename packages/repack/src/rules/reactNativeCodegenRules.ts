@@ -1,5 +1,10 @@
 import type { RuleSetRule } from '@rspack/core';
 
+/**
+ * @constant REACT_NATIVE_CODEGEN_RULES
+ * @type {RuleSetRule}
+ * @description Module rule configuration for handling React Native codegen files.
+ */
 export const REACT_NATIVE_CODEGEN_RULES: RuleSetRule = {
   test: /(?:^|[\\/])(?:Native\w+|(\w+)NativeComponent)\.[jt]sx?$/,
   rules: [

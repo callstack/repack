@@ -94,6 +94,7 @@ module.exports = (env) => {
       rules: [
         Repack.REACT_NATIVE_LOADING_RULES,
         Repack.NODE_MODULES_LOADING_RULES,
+        Repack.FLOW_TYPED_MODULES_LOADING_RULES,
         /** Here you can adjust loader that will process your files. */
         {
           test: /\.[jt]sx?$/,

@@ -11,7 +11,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "composite": true,
     "rootDirs": ["src", "../dev-server/src"],
     "paths": {
       "@callstack/repack-dev-server": ["../dev-server/src/index.ts"],

@@ -54,6 +54,7 @@ export default (env) => {
       rules: [
         Repack.REACT_NATIVE_LOADING_RULES,
         Repack.NODE_MODULES_LOADING_RULES,
+        Repack.FLOW_TYPED_MODULES_LOADING_RULES,
         /* repack is symlinked to a local workspace */
         {
           test: /\.[jt]sx?$/,
