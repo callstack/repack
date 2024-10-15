@@ -2,14 +2,8 @@ import type { Compiler, RspackPluginInstance, container } from '@rspack/core';
 import { Federated } from '../utils';
 import { isRspackCompiler } from './utils/isRspackCompiler';
 
-type ModuleFederationPluginOptions =
-  typeof container.ModuleFederationPluginV1 extends {
-    new (
-      options: infer O
-    ): InstanceType<typeof container.ModuleFederationPluginV1>;
-  }
-    ? O
-    : never;
+type MFPluginV1 = typeof container.ModuleFederationPluginV1;
+type MFPluginV1Options = ConstructorParameters<MFPluginV1>[0];
 
 type ExtractObject<T> = T extends {}
   ? T extends Array<any>
@@ -17,12 +11,9 @@ type ExtractObject<T> = T extends {}
     : T
   : never;
 
-type RemotesObject = ExtractObject<ModuleFederationPluginOptions['remotes']>;
+type RemotesObject = ExtractObject<MFPluginV1Options['remotes']>;
 
-type SharedDependencies = Exclude<
-  ModuleFederationPluginOptions['shared'],
-  undefined
->;
+type SharedDependencies = Exclude<MFPluginV1Options['shared'], undefined>;
 
 type SharedObject = ExtractObject<SharedDependencies>;
 
@@ -37,8 +28,7 @@ type SharedConfig = SharedObject extends { [key: string]: infer U }
  *
  * You can check documentation for all supported options here: https://webpack.js.org/plugins/module-federation-plugin/
  */
-export interface ModuleFederationPluginConfig
-  extends ModuleFederationPluginOptions {
+export interface ModuleFederationPluginConfig extends MFPluginV1Options {
   /** Enable or disable adding React Native deep imports to shared dependencies */
   reactNativeDeepImports?: boolean;
 }
@@ -112,6 +102,22 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
   constructor(private config: ModuleFederationPluginConfig) {
     this.config.reactNativeDeepImports =
       this.config.reactNativeDeepImports ?? true;
+  }
+
+  /**
+   * This method provides compatibility between webpack and Rspack for the ModuleFederation plugin.
+   * In Rspack, Module Federation 1.5 is implemented under the name that's used in webpack for the original version.
+   * This method adjusts for this naming difference to ensure we use the correct plugin version.
+   *
+   * @param compiler - The compiler instance (either webpack or Rspack)
+   * @returns The appropriate ModuleFederationPlugin class
+   */
+  private getModuleFederationPlugin(compiler: Compiler): MFPluginV1 {
+    if (isRspackCompiler(compiler)) {
+      return compiler.webpack.container.ModuleFederationPluginV1;
+    }
+    // @ts-expect-error webpack has MF1 under ModuleFederationPlugin
+    return compiler.webpack.container.ModuleFederationPlugin;
   }
 
   private replaceRemotes<T extends string | string[] | RemotesObject>(
@@ -233,6 +239,8 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
+    const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
+
     const remotes = Array.isArray(this.config.remotes)
       ? this.config.remotes.map((remote) => this.replaceRemotes(remote))
       : this.replaceRemotes(this.config.remotes ?? {});
@@ -240,16 +248,6 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
     const sharedDependencies = this.adaptSharedDependencies(
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
-
-    let ModuleFederationPlugin: typeof container.ModuleFederationPluginV1;
-    if (isRspackCompiler(compiler)) {
-      ModuleFederationPlugin =
-        compiler.webpack.container.ModuleFederationPluginV1;
-    } else {
-      // @ts-ignore webpack compat
-      ModuleFederationPlugin =
-        compiler.webpack.container.ModuleFederationPlugin;
-    }
 
     new ModuleFederationPlugin({
       exposes: this.config.exposes,
