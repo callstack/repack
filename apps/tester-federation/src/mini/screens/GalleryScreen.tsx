@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Image,
   type ImageRequireSource,
@@ -16,7 +15,10 @@ const pics = [
 
 const data = Array(3)
   .fill('')
-  .map((_, i) => ({ title: `Picture ${i}`, source: pics[i] }));
+  .map((_, i) => ({
+    title: `Picture ${i + 1}`,
+    source: pics[i % pics.length],
+  }));
 
 const Row = ({
   title,
@@ -26,24 +28,24 @@ const Row = ({
   source: ImageRequireSource;
 }) => (
   <View style={styles.row}>
+    <Image source={source} style={styles.image} />
     <View style={styles.titleContainer}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.subtitle}>
         The quick brown fox jumps over the lazy dog
       </Text>
     </View>
-    <Image source={source} style={styles.image} />
   </View>
 );
 
 const GalleryScreen = () => {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.contentContainer}
+      style={styles.container}
+    >
       {data.map(({ title, source }) => (
-        <React.Fragment key={title}>
-          <Row title={title} source={source} />
-          <View style={styles.separator} />
-        </React.Fragment>
+        <Row key={title} title={title} source={source} />
       ))}
     </ScrollView>
   );
@@ -52,36 +54,41 @@ const GalleryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FDF2E9',
+  },
+  contentContainer: {
+    marginTop: 20,
   },
   row: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 100,
-    paddingRight: 20,
+    marginBottom: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    overflow: 'hidden',
+    shadowColor: '#D35400',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginHorizontal: 15,
   },
   image: {
-    width: 90,
-    height: 90,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '500',
-  },
-  subtitle: {
-    fontSize: 12,
-    fontWeight: '200',
+    width: '100%',
+    height: 250,
+    resizeMode: 'cover',
   },
   titleContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    paddingLeft: 20,
+    padding: 15,
   },
-  separator: {
-    height: 1,
-    backgroundColor: 'rgba(127, 103, 190, 1)',
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 5,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#E67E22',
+    fontWeight: '400',
   },
 });
 

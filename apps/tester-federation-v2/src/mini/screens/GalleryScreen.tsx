@@ -54,7 +54,7 @@ const GalleryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF2E9', // Very light orange background
+    backgroundColor: '#FDF2E9',
   },
   contentContainer: {
     marginTop: 20,
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     overflow: 'hidden',
-    shadowColor: '#D35400', // Dark orange shadow
+    shadowColor: '#D35400',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: '#E67E22', // Soft orange
+    color: '#E67E22',
     fontWeight: '400',
   },
 });

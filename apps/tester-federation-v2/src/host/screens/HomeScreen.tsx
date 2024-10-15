@@ -58,7 +58,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F9FF', // Very light blue background
+    backgroundColor: '#F5F9FF',
   },
   hostSection: {
     flex: 1,
@@ -70,16 +70,16 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#2C3E50', // Dark blue-gray
+    color: '#2C3E50',
   },
   subtitle: {
     fontSize: 16,
-    color: '#34495E', // Slightly lighter blue-gray
+    color: '#34495E',
     marginBottom: 30,
     textAlign: 'center',
   },
   button: {
-    backgroundColor: '#3498DB', // Bright blue
+    backgroundColor: '#3498DB',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    shadowColor: '#34495E', // Blue gray shadow
+    shadowColor: '#34495E',
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
     marginBottom: 20,
-    color: '#2C3E50', // Dark blue-gray
+    color: '#2C3E50',
     textAlign: 'center',
   },
   miniAppContainer: {
@@ -139,10 +139,10 @@ const styles = StyleSheet.create({
   miniAppIcon: {
     fontSize: 40,
     marginBottom: 5,
-    color: '#FFFFFF', // Change icon color to white for better contrast
+    color: '#FFFFFF',
   },
   miniAppText: {
-    color: '#FFFFFF', // Keep text color white for consistency
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
   },
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   disabledText: {
-    color: '#95A5A6', // Medium gray for disabled text
+    color: '#95A5A6',
   },
 });
 

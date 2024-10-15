@@ -7,7 +7,6 @@ import { StyleSheet } from 'react-native';
 import GalleryScreen from '../screens/GalleryScreen';
 
 export type MainStackParamList = {
-  Home: undefined;
   Gallery: undefined;
 };
 
@@ -35,10 +34,10 @@ const MainNavigator = () => {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#E68A00', // Slightly darker vibrant orange
+    backgroundColor: '#E68A00',
   },
   headerTitle: {
-    color: '#FFFFFF', // White text
+    color: '#FFFFFF',
   },
 });
 
