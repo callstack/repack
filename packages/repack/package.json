@@ -80,6 +80,7 @@
     "clang-format:android": "find android/src/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i"
   },
   "peerDependencies": {
+    "@module-federation/enhanced": ">=0.6.10",
     "@react-native-community/cli": "*",
     "@react-native-community/cli-types": "*",
     "@rspack/core": "=>1",
@@ -88,6 +89,9 @@
     "webpack": ">=5.90"
   },
   "peerDependenciesMeta": {
+    "@module-federation/enhanced": {
+      "optional": true
+    },
     "@rspack/core": {
       "optional": true
     },
