@@ -12,6 +12,11 @@ type Cache = Record<
   Pick<NormalizedScriptLocator, 'method' | 'url' | 'query' | 'headers' | 'body'>
 >;
 
+type ScriptsPromises = Record<
+  string,
+  (Promise<void> & { isPrefetch?: true }) | undefined
+>;
+
 const CACHE_NAME = 'Repack.ScriptManager.Cache';
 const CACHE_VERSION = 'v4';
 const CACHE_ENV = __DEV__ ? 'debug' : 'release';
@@ -100,10 +105,7 @@ export class ScriptManager extends EventEmitter {
   }
 
   protected cache: Cache = {};
-  protected scriptsPromises: Record<
-    string,
-    (Promise<void> & { isPrefetch?: true }) | undefined
-  > = {};
+  protected scriptsPromises: ScriptsPromises = {};
   protected cacheInitialized = false;
   protected resolvers: [number, ScriptLocatorResolver][] = [];
   protected storage?: StorageApi;
