@@ -157,4 +157,21 @@ describe('ModuleFederationPlugin', () => {
     expect(config.runtimePlugins).toContain(runtimePluginPath);
     expect(config.runtimePlugins).toHaveLength(1);
   });
+
+  it('should use loaded-first as default shareStrategy', () => {
+    new ModuleFederationPlugin({ name: 'test' }).apply(mockCompiler);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config.shareStrategy).toEqual('loaded-first');
+  });
+
+  it('should allow overriding shareStartegy', () => {
+    new ModuleFederationPlugin({
+      name: 'test',
+      shareStrategy: 'version-first',
+    }).apply(mockCompiler);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config.shareStrategy).toEqual('version-first');
+  });
 });

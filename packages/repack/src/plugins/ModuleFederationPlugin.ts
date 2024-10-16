@@ -243,6 +243,8 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
 
+    const shareStrategyConfig = this.config.shareStrategy ?? 'loaded-first';
+
     const runtimePluginsConfig = this.adaptRuntimePlugins(
       compiler.context,
       this.config.runtimePlugins
@@ -252,6 +254,7 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       ...this.config,
       library: libraryConfig,
       shared: sharedConfig,
+      shareStrategy: shareStrategyConfig,
       runtimePlugins: runtimePluginsConfig,
     };
 
