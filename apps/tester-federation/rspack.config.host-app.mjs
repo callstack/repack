@@ -126,7 +126,7 @@ export default (env) => {
           },
         ],
       }),
-      new Repack.plugins.ModuleFederationPlugin({
+      new Repack.plugins.ModuleFederationPluginV1({
         name: 'HostApp',
         shared: {
           react: {
