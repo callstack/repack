@@ -2,7 +2,6 @@ import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import type { DevServerOptions } from '../types';
 import { DevelopmentPlugin } from './DevelopmentPlugin';
 import { LoggerPlugin, type LoggerPluginConfig } from './LoggerPlugin';
-import { ModuleFederationDevPlugin } from './ModuleFederationDevPlugin';
 import { NativeEntryPlugin } from './NativeEntryPlugin';
 import { OutputPlugin, type OutputPluginConfig } from './OutputPlugin';
 import { RepackTargetPlugin } from './RepackTargetPlugin';
@@ -177,8 +176,6 @@ export class RepackPlugin implements RspackPluginInstance {
       entryName,
       platform: this.config.platform,
     }).apply(compiler);
-
-    new ModuleFederationDevPlugin().apply(compiler);
 
     if (this.config.sourceMaps) {
       new compiler.webpack.SourceMapDevToolPlugin({

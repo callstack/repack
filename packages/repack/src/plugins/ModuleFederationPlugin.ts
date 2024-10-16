@@ -1,43 +1,16 @@
-import type { Compiler, RspackPluginInstance, container } from '@rspack/core';
-import { Federated } from '../utils';
-
-type ModuleFederationPluginOptions =
-  typeof container.ModuleFederationPluginV1 extends {
-    new (
-      options: infer O
-    ): InstanceType<typeof container.ModuleFederationPluginV1>;
-  }
-    ? O
-    : never;
-
-type ExtractObject<T> = T extends {}
-  ? T extends Array<any>
-    ? never
-    : T
-  : never;
-
-type RemotesObject = ExtractObject<ModuleFederationPluginOptions['remotes']>;
-
-type SharedDependencies = Exclude<
-  ModuleFederationPluginOptions['shared'],
-  undefined
->;
-
-type SharedObject = ExtractObject<SharedDependencies>;
-
-type SharedConfig = SharedObject extends { [key: string]: infer U }
-  ? Exclude<U, string>
-  : never;
+import type { moduleFederationPlugin as MF } from '@module-federation/sdk';
+import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import { isRspackCompiler } from './utils/isRspackCompiler';
 
 /**
  * {@link ModuleFederationPlugin} configuration options.
  *
- * The fields and types are exactly the same as in `webpack.container.ModuleFederationPlugin`.
+ * The fields and types are exactly the same as in the official `ModuleFederationPlugin`.
  *
- * You can check documentation for all supported options here: https://webpack.js.org/plugins/module-federation-plugin/
+ * You can check documentation for all supported options here: https://module-federation.io/configure/
  */
 export interface ModuleFederationPluginConfig
-  extends ModuleFederationPluginOptions {
+  extends MF.ModuleFederationPluginOptions {
   /** Enable or disable adding React Native deep imports to shared dependencies */
   reactNativeDeepImports?: boolean;
 }
@@ -113,39 +86,30 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       this.config.reactNativeDeepImports ?? true;
   }
 
-  private replaceRemotes<T extends string | string[] | RemotesObject>(
-    remote: T
-  ): T {
-    if (typeof remote === 'string') {
-      return remote.startsWith('promise new Promise')
-        ? remote
-        : (Federated.createRemote(remote) as T);
+  private ensureModuleFederationModuleInstalled(context: string) {
+    try {
+      require.resolve('@module-federation/enhanced', { paths: [context] });
+    } catch {
+      throw new Error(
+        "ModuleFederationPlugin requires '@module-federation/enhanced' to be present in your project. " +
+          'Did you forget to install it?'
+      );
     }
-
-    if (Array.isArray(remote)) {
-      return remote.map((remoteItem) => this.replaceRemotes(remoteItem)) as T;
-    }
-
-    const replaced = {} as RemotesObject;
-    for (const key in remote as RemotesObject) {
-      const value = remote[key];
-      if (typeof value === 'string' || Array.isArray(value)) {
-        replaced[key] = this.replaceRemotes(value);
-      } else {
-        replaced[key] = {
-          ...value,
-          external: this.replaceRemotes(value.external),
-        };
-      }
-    }
-
-    return replaced as T;
   }
 
-  private getDefaultSharedDependencies(): SharedObject {
+  private getModuleFederationPlugin(compiler: Compiler) {
+    if (isRspackCompiler(compiler)) {
+      return require('@module-federation/enhanced/rspack')
+        .ModuleFederationPlugin;
+    }
+    return require('@module-federation/enhanced/webpack')
+      .ModuleFederationPlugin;
+  }
+
+  private getDefaultSharedDependencies() {
     return {
-      react: Federated.SHARED_REACT,
-      'react-native': Federated.SHARED_REACT_NATIVE,
+      react: { singleton: true, eager: true },
+      'react-native': { singleton: true, eager: true },
     };
   }
 
@@ -167,9 +131,7 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
    *
    * @internal
    */
-  private adaptSharedDependencies(
-    shared: SharedDependencies
-  ): SharedDependencies {
+  private adaptSharedDependencies(shared: MF.Shared): MF.Shared {
     const sharedDependencyConfig = (eager?: boolean) => ({
       singleton: true,
       eager: eager ?? true,
@@ -178,8 +140,8 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
 
     const findSharedDependency = (
       name: string,
-      dependencies: SharedDependencies
-    ): SharedConfig | string | undefined => {
+      dependencies: MF.Shared
+    ): MF.SharedConfig | string | undefined => {
       if (Array.isArray(dependencies)) {
         return dependencies.find((item) =>
           typeof item === 'string' ? item === name : Boolean(item[name])
@@ -226,28 +188,25 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
     return adjustedSharedDependencies;
   }
 
-  /**
-   * Apply the plugin.
-   *
-   * @param compiler Webpack compiler instance.
-   */
   apply(compiler: Compiler) {
-    const remotes = Array.isArray(this.config.remotes)
-      ? this.config.remotes.map((remote) => this.replaceRemotes(remote))
-      : this.replaceRemotes(this.config.remotes ?? {});
+    this.ensureModuleFederationModuleInstalled(compiler.context);
+
+    // MF2 produces warning about not supporting async await
+    // we can silence this warning since it works just fine
+    compiler.options.ignoreWarnings = compiler.options.ignoreWarnings ?? [];
+    compiler.options.ignoreWarnings.push(
+      (warning) => warning.name === 'EnvironmentNotSupportAsyncWarning'
+    );
+
+    const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
 
     const sharedDependencies = this.adaptSharedDependencies(
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
 
-    new compiler.webpack.container.ModuleFederationPluginV1({
+    new ModuleFederationPlugin({
       exposes: this.config.exposes,
-      filename:
-        // TODO fix in a separate PR (jbroma)
-        // biome-ignore format: fix in a separate PR
-        this.config.filename ?? this.config.exposes
-          ? `${this.config.name}.container.bundle`
-          : undefined,
+      filename: this.config.filename,
       library: this.config.exposes
         ? {
             name: this.config.name,
@@ -258,7 +217,7 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       name: this.config.name,
       shared: sharedDependencies,
       shareScope: this.config.shareScope,
-      remotes,
+      remotes: this.config.remotes,
       remoteType: this.config.remoteType,
       runtime: this.config.runtime,
     }).apply(compiler);
