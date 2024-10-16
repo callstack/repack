@@ -86,7 +86,7 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       this.config.reactNativeDeepImports ?? true;
   }
 
-  private ensureModuleFederationModuleInstalled(context: string) {
+  private ensureModuleFederationPackageInstalled(context: string) {
     try {
       require.resolve('@module-federation/enhanced', { paths: [context] });
     } catch {
@@ -95,6 +95,33 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
           'Did you forget to install it?'
       );
     }
+  }
+
+  private adaptRuntimePlugins(
+    context: string,
+    runtimePlugins: string[] | undefined = []
+  ) {
+    const repackRuntimePlugin = require.resolve(
+      '../modules/FederationRuntimePlugin'
+    );
+
+    const plugins = runtimePlugins
+      .map((pluginPath) => {
+        try {
+          // resolve the paths to compare against absolute paths
+          return require.resolve(pluginPath, { paths: [context] });
+        } catch {
+          // ignore invalid paths
+          return undefined;
+        }
+      })
+      .filter((pluginPath) => !!pluginPath) as string[];
+
+    if (!plugins.includes(repackRuntimePlugin)) {
+      return [repackRuntimePlugin, ...runtimePlugins];
+    }
+
+    return runtimePlugins;
   }
 
   private getModuleFederationPlugin(compiler: Compiler) {
@@ -189,7 +216,7 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
   }
 
   apply(compiler: Compiler) {
-    this.ensureModuleFederationModuleInstalled(compiler.context);
+    this.ensureModuleFederationPackageInstalled(compiler.context);
 
     // MF2 produces warning about not supporting async await
     // we can silence this warning since it works just fine
@@ -199,13 +226,24 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
     );
 
     const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
+
     const sharedDependencies = this.adaptSharedDependencies(
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
 
+    const runtimePlugins = this.adaptRuntimePlugins(
+      compiler.context,
+      this.config.runtimePlugins
+    );
+
     const config: MF.ModuleFederationPluginOptions = {
+      async: this.config.async,
+      dev: this.config.dev,
+      dts: this.config.dts,
       exposes: this.config.exposes,
       filename: this.config.filename,
+      getPublicPath: this.config.getPublicPath,
+      implementation: this.config.implementation,
       library: this.config.exposes
         ? {
             name: this.config.name,
@@ -213,12 +251,14 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
             ...this.config.library,
           }
         : undefined,
+      manifest: this.config.manifest,
       name: this.config.name,
       shared: sharedDependencies,
       shareScope: this.config.shareScope,
       remotes: this.config.remotes,
       remoteType: this.config.remoteType,
       runtime: this.config.runtime,
+      runtimePlugins: runtimePlugins,
     };
 
     new ModuleFederationPlugin(config).apply(compiler);

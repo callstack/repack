@@ -1,6 +1,5 @@
 import type { Compiler } from '@rspack/core';
-import { Federated } from '../../utils';
-import { ModuleFederationPlugin } from '../ModuleFederationPluginV1';
+import { ModuleFederationPlugin } from '../ModuleFederationPlugin';
 
 const mockPlugin = jest.fn().mockImplementation(() => ({
   apply: jest.fn(),
@@ -9,6 +8,10 @@ const mockPlugin = jest.fn().mockImplementation(() => ({
 const mockCompiler = {
   webpack: { container: { ModuleFederationPluginV1: mockPlugin } },
 } as unknown as Compiler;
+
+const runtimePluginPath = require.resolve(
+  '../../modules/FederationRuntimePlugin'
+);
 
 describe('ModuleFederationPlugin', () => {
   it('should add default shared dependencies', () => {
@@ -40,8 +43,8 @@ describe('ModuleFederationPlugin', () => {
     new ModuleFederationPlugin({
       name: 'test',
       shared: {
-        react: Federated.SHARED_REACT,
-        'react-native': Federated.SHARED_REACT_NATIVE,
+        react: { singleton: true, eager: true },
+        'react-native': { singleton: true, eager: true },
       },
     }).apply(mockCompiler);
 
@@ -56,8 +59,8 @@ describe('ModuleFederationPlugin', () => {
       name: 'test',
       reactNativeDeepImports: false,
       shared: {
-        react: Federated.SHARED_REACT,
-        'react-native': Federated.SHARED_REACT_NATIVE,
+        react: { singleton: true, eager: true },
+        'react-native': { singleton: true, eager: true },
       },
     }).apply(mockCompiler);
 
@@ -71,7 +74,7 @@ describe('ModuleFederationPlugin', () => {
     new ModuleFederationPlugin({
       name: 'test',
       shared: {
-        react: Federated.SHARED_REACT,
+        react: { singleton: true, eager: true },
       },
     }).apply(mockCompiler);
 
@@ -97,8 +100,8 @@ describe('ModuleFederationPlugin', () => {
     new ModuleFederationPlugin({
       name: 'test',
       shared: {
-        react: Federated.SHARED_REACT,
-        'react-native': Federated.SHARED_REACT_NATIVE,
+        react: { singleton: true, eager: true },
+        'react-native': { singleton: true, eager: true },
         'react-native/': { singleton: true, eager: true },
       },
     }).apply(mockCompiler);
@@ -128,5 +131,23 @@ describe('ModuleFederationPlugin', () => {
     expect(config.shared['react-native/'].eager).toBe(false);
     expect(config.shared['@react-native/'].eager).toBe(false);
     mockPlugin.mockClear();
+  });
+
+  it('should add FederationRuntimePlugin to runtime plugins', () => {
+    new ModuleFederationPlugin({ name: 'test' }).apply(mockCompiler);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config.runtimePlugins).toHaveProperty(runtimePluginPath);
+  });
+
+  it('should not add FederationRuntimePlugin to runtime plugins when already present', () => {
+    new ModuleFederationPlugin({
+      name: 'test',
+      runtimePlugins: [runtimePluginPath],
+    }).apply(mockCompiler);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config.runtimePlugins).toHaveProperty(runtimePluginPath);
+    expect(config.runtimePlugins).toHaveLength(1);
   });
 });
