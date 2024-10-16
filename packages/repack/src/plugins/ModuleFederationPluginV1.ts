@@ -28,7 +28,7 @@ type SharedConfig = SharedObject extends { [key: string]: infer U }
  *
  * You can check documentation for all supported options here: https://webpack.js.org/plugins/module-federation-plugin/
  */
-export interface ModuleFederationPluginConfig extends MFPluginV1Options {
+export interface ModuleFederationPluginV1Config extends MFPluginV1Options {
   /** Enable or disable adding React Native deep imports to shared dependencies */
   reactNativeDeepImports?: boolean;
 }
@@ -98,8 +98,8 @@ export interface ModuleFederationPluginConfig extends MFPluginV1Options {
  *
  * @category Webpack Plugin
  */
-export class ModuleFederationPlugin implements RspackPluginInstance {
-  constructor(private config: ModuleFederationPluginConfig) {
+export class ModuleFederationPluginV1 implements RspackPluginInstance {
+  constructor(private config: ModuleFederationPluginV1Config) {
     this.config.reactNativeDeepImports =
       this.config.reactNativeDeepImports ?? true;
   }

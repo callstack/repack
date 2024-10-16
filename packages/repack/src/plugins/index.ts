@@ -4,5 +4,6 @@ export * from './ManifestPlugin';
 export * from './OutputPlugin';
 export * from './RepackTargetPlugin';
 export * from './ModuleFederationPlugin';
+export * from './ModuleFederationPluginV1';
 export * from './CodeSigningPlugin';
 export * from './ChunksToHermesBytecodePlugin';
