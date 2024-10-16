@@ -1,15 +1,11 @@
-import NativeScriptManager from '../NativeScriptManager';
+import NativeScriptManager, {
+  type NormalizedScriptLocator,
+} from '../NativeScriptManager';
 import { Script } from '../Script';
 import { ScriptManager } from '../ScriptManager';
 
 jest.mock('../NativeScriptManager', () => ({
-  loadScript: jest.fn((locator) =>
-    locator.fetch
-      ? new Promise<void>((resolve) => {
-          setTimeout(() => resolve(), 10);
-        })
-      : Promise.resolve()
-  ),
+  loadScript: jest.fn(),
   prefetchScript: jest.fn(),
   invalidateScripts: jest.fn(),
   NormalizedScriptLocatorHTTPMethod: {
@@ -741,9 +737,11 @@ describe('ScriptManagerAPI', () => {
     expect(setTimeout).toHaveBeenCalledTimes(2);
     expect(NativeScriptManager.loadScript).toHaveBeenCalledTimes(3);
     jest.useRealTimers();
-  })
-  
+  });
+
   it('should await loadScript with same scriptId to finish', async () => {
+    const spy = mockLoadScriptBasedOnFetch();
+
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
 
@@ -763,9 +761,13 @@ describe('ScriptManagerAPI', () => {
     await ScriptManager.shared.loadScript('miniApp');
 
     expect(loadingScriptIsFinished).toEqual(true);
+    spy.mockReset();
+    spy.mockRestore();
   });
 
   it('should wait loadScript with same scriptId to finished in a complex scenario', async () => {
+    const spy = mockLoadScriptBasedOnFetch();
+
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
 
@@ -787,7 +789,6 @@ describe('ScriptManagerAPI', () => {
     ScriptManager.shared.loadScript('miniApp2').then(() => {
       loadingScript2IsFinished = true;
     });
-
     await ScriptManager.shared.loadScript('miniApp');
     expect(loadingScriptIsFinished).toEqual(true);
 
@@ -797,16 +798,18 @@ describe('ScriptManagerAPI', () => {
     });
 
     ScriptManager.shared.loadScript('miniApp2');
-
     await ScriptManager.shared.loadScript('miniApp');
 
     expect(loadingScriptIsFinished).toEqual(true);
-
     await ScriptManager.shared.loadScript('miniApp2');
     expect(loadingScript2IsFinished).toEqual(true);
+    spy.mockReset();
+    spy.mockRestore();
   });
 
   it('should wait loadScript and prefetchScript', async () => {
+    const spy = mockLoadScriptBasedOnFetch();
+
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
 
@@ -823,9 +826,26 @@ describe('ScriptManagerAPI', () => {
     ScriptManager.shared.prefetchScript('miniApp').then(() => {
       prefetchScriptIsFinished = true;
     });
-
     await ScriptManager.shared.loadScript('miniApp');
 
     expect(prefetchScriptIsFinished).toEqual(true);
+    spy.mockReset();
+    spy.mockRestore();
   });
 });
+
+function mockLoadScriptBasedOnFetch() {
+  jest.useFakeTimers({ advanceTimers: true });
+  const spy = jest.spyOn(NativeScriptManager, 'loadScript');
+
+  spy.mockImplementation(
+    (_scriptId: string, scriptConfig: NormalizedScriptLocator) =>
+      scriptConfig.fetch
+        ? new Promise<null>((resolve) => {
+            setTimeout(() => resolve(null), 10);
+          })
+        : Promise.resolve(null)
+  );
+
+  return spy;
+}
