@@ -199,12 +199,11 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
     );
 
     const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
-
     const sharedDependencies = this.adaptSharedDependencies(
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
 
-    new ModuleFederationPlugin({
+    const config: MF.ModuleFederationPluginOptions = {
       exposes: this.config.exposes,
       filename: this.config.filename,
       library: this.config.exposes
@@ -220,6 +219,8 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
       remotes: this.config.remotes,
       remoteType: this.config.remoteType,
       runtime: this.config.runtime,
-    }).apply(compiler);
+    };
+
+    new ModuleFederationPlugin(config).apply(compiler);
   }
 }
