@@ -1,7 +1,6 @@
 // @ts-check
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
-import { ModuleFederationPlugin } from '@module-federation/enhanced/webpack';
 import webpack from 'webpack';
 
 const dirname = Repack.getDirname(import.meta.url);
@@ -90,31 +89,21 @@ export default (env) => {
         devServer,
         output: {},
       }),
-      new ModuleFederationPlugin({
+      // @ts-ignore
+      new Repack.plugins.ModuleFederationPlugin({
         name: 'MiniApp',
         filename: 'MiniApp.container.js.bundle',
         exposes: {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
         getPublicPath: `return "http://localhost:8082/${platform}/"`,
-        shareStrategy: 'loaded-first',
         shared: {
           react: {
             singleton: true,
             eager: false,
             requiredVersion: '18.2.0',
           },
-          'react/': {
-            singleton: true,
-            eager: false,
-            requiredVersion: '18.2.0',
-          },
           'react-native': {
-            singleton: true,
-            eager: false,
-            requiredVersion: '0.74.3',
-          },
-          'react-native/': {
             singleton: true,
             eager: false,
             requiredVersion: '0.74.3',

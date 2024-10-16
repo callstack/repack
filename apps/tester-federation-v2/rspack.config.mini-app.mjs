@@ -1,7 +1,6 @@
 // @ts-check
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
-import { ModuleFederationPlugin } from '@module-federation/enhanced/rspack';
 import rspack from '@rspack/core';
 
 const dirname = Repack.getDirname(import.meta.url);
@@ -113,7 +112,7 @@ export default (env) => {
           assetsPath,
         },
       }),
-      new ModuleFederationPlugin({
+      new Repack.plugins.ModuleFederationPlugin({
         name: 'MiniApp',
         filename: 'MiniApp.container.js.bundle',
         exposes: {
@@ -121,24 +120,13 @@ export default (env) => {
         },
         dts: false,
         getPublicPath: `return "http://localhost:8082/${platform}/"`,
-        shareStrategy: 'loaded-first',
         shared: {
           react: {
             singleton: true,
             eager: false,
             requiredVersion: '18.2.0',
           },
-          'react/': {
-            singleton: true,
-            eager: false,
-            requiredVersion: '18.2.0',
-          },
           'react-native': {
-            singleton: true,
-            eager: false,
-            requiredVersion: '0.74.3',
-          },
-          'react-native/': {
             singleton: true,
             eager: false,
             requiredVersion: '0.74.3',

@@ -2,7 +2,6 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
-import { ModuleFederationPlugin } from '@module-federation/enhanced/rspack';
 import rspack from '@rspack/core';
 
 const dirname = Repack.getDirname(import.meta.url);
@@ -115,14 +114,13 @@ export default (env) => {
           assetsPath,
         },
       }),
-      new ModuleFederationPlugin({
+      new Repack.plugins.ModuleFederationPlugin({
         name: 'HostApp',
         filename: 'HostApp.container.js.bundle',
         remotes: {
           MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
         },
         dts: false,
-        shareStrategy: 'loaded-first',
         runtimePlugins: [
           resolve('@callstack/repack/federation-runtime-plugin'),
           path.resolve(dirname, 'src', 'utils', 'runtime-debug.ts'),
@@ -133,17 +131,7 @@ export default (env) => {
             eager: true,
             requiredVersion: '18.2.0',
           },
-          'react/': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '18.2.0',
-          },
           'react-native': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '0.74.3',
-          },
-          'react-native/': {
             singleton: true,
             eager: true,
             requiredVersion: '0.74.3',
