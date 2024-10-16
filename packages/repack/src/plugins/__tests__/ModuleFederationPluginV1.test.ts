@@ -7,7 +7,12 @@ const mockPlugin = jest.fn().mockImplementation(() => ({
 }));
 
 const mockCompiler = {
-  webpack: { container: { ModuleFederationPluginV1: mockPlugin } },
+  webpack: {
+    container: {
+      ModuleFederationPluginV1: mockPlugin, // rspack
+      ModuleFederationPlugin: mockPlugin, // webpack
+    },
+  },
 } as unknown as Compiler;
 
 describe('ModuleFederationPlugin', () => {

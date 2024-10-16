@@ -1,13 +1,20 @@
+import { ModuleFederationPlugin as MFPluginRspack } from '@module-federation/enhanced/rspack';
 import type { Compiler } from '@rspack/core';
 import { ModuleFederationPlugin } from '../ModuleFederationPlugin';
 
-const mockPlugin = jest.fn().mockImplementation(() => ({
-  apply: jest.fn(),
-}));
+jest.mock('@module-federation/enhanced/rspack');
 
 const mockCompiler = {
-  webpack: { container: { ModuleFederationPluginV1: mockPlugin } },
+  context: __dirname,
+  options: {},
+  webpack: {
+    rspackVersion: '1.0.0',
+  },
 } as unknown as Compiler;
+
+const mockPlugin = MFPluginRspack as unknown as jest.Mock<
+  typeof MFPluginRspack
+>;
 
 const runtimePluginPath = require.resolve(
   '../../modules/FederationRuntimePlugin'
@@ -137,7 +144,7 @@ describe('ModuleFederationPlugin', () => {
     new ModuleFederationPlugin({ name: 'test' }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
-    expect(config.runtimePlugins).toHaveProperty(runtimePluginPath);
+    expect(config.runtimePlugins).toContain(runtimePluginPath);
   });
 
   it('should not add FederationRuntimePlugin to runtime plugins when already present', () => {
@@ -147,7 +154,7 @@ describe('ModuleFederationPlugin', () => {
     }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
-    expect(config.runtimePlugins).toHaveProperty(runtimePluginPath);
+    expect(config.runtimePlugins).toContain(runtimePluginPath);
     expect(config.runtimePlugins).toHaveLength(1);
   });
 });
