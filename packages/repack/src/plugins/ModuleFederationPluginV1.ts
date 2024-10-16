@@ -99,9 +99,13 @@ export interface ModuleFederationPluginV1Config extends MFPluginV1Options {
  * @category Webpack Plugin
  */
 export class ModuleFederationPluginV1 implements RspackPluginInstance {
-  constructor(private config: ModuleFederationPluginV1Config) {
-    this.config.reactNativeDeepImports =
-      this.config.reactNativeDeepImports ?? true;
+  private config: MFPluginV1Options;
+  private deepImports: boolean;
+
+  constructor(pluginConfig: ModuleFederationPluginV1Config) {
+    const { reactNativeDeepImports, ...config } = pluginConfig;
+    this.config = config;
+    this.deepImports = reactNativeDeepImports ?? true;
   }
 
   /**
@@ -201,7 +205,7 @@ export class ModuleFederationPluginV1 implements RspackPluginInstance {
         ? sharedReactNative.eager
         : undefined;
 
-    if (!this.config.reactNativeDeepImports || !sharedReactNative) {
+    if (!this.deepImports || !sharedReactNative) {
       return shared;
     }
 
@@ -241,35 +245,35 @@ export class ModuleFederationPluginV1 implements RspackPluginInstance {
   apply(compiler: Compiler) {
     const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
 
-    const remotes = Array.isArray(this.config.remotes)
+    // TODO fix in a separate PR (jbroma)
+    // biome-ignore format: fix in a separate PR
+    const filenameConfig =
+      this.config.filename ?? this.config.exposes
+        ? `${this.config.name}.container.bundle`
+        : undefined;
+
+    const libraryConfig = this.config.exposes
+      ? {
+          name: this.config.name,
+          type: 'self',
+          ...this.config.library,
+        }
+      : undefined;
+
+    const remotesConfig = Array.isArray(this.config.remotes)
       ? this.config.remotes.map((remote) => this.replaceRemotes(remote))
       : this.replaceRemotes(this.config.remotes ?? {});
 
-    const sharedDependencies = this.adaptSharedDependencies(
+    const sharedConfig = this.adaptSharedDependencies(
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
 
     new ModuleFederationPlugin({
-      exposes: this.config.exposes,
-      filename:
-        // TODO fix in a separate PR (jbroma)
-        // biome-ignore format: fix in a separate PR
-        this.config.filename ?? this.config.exposes
-          ? `${this.config.name}.container.bundle`
-          : undefined,
-      library: this.config.exposes
-        ? {
-            name: this.config.name,
-            type: 'self',
-            ...this.config.library,
-          }
-        : undefined,
-      name: this.config.name,
-      shared: sharedDependencies,
-      shareScope: this.config.shareScope,
-      remotes,
-      remoteType: this.config.remoteType,
-      runtime: this.config.runtime,
+      ...this.config,
+      filename: filenameConfig,
+      library: libraryConfig,
+      remotes: remotesConfig,
+      shared: sharedConfig,
     }).apply(compiler);
   }
 }

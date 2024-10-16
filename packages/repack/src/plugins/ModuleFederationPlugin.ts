@@ -81,9 +81,13 @@ export interface ModuleFederationPluginConfig
  * @category Webpack Plugin
  */
 export class ModuleFederationPlugin implements RspackPluginInstance {
-  constructor(private config: ModuleFederationPluginConfig) {
-    this.config.reactNativeDeepImports =
-      this.config.reactNativeDeepImports ?? true;
+  private config: MF.ModuleFederationPluginOptions;
+  private deepImports: boolean;
+
+  constructor(pluginConfig: ModuleFederationPluginConfig) {
+    const { reactNativeDeepImports, ...config } = pluginConfig;
+    this.config = config;
+    this.deepImports = reactNativeDeepImports ?? true;
   }
 
   private ensureModuleFederationPackageInstalled(context: string) {
@@ -183,7 +187,7 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
         ? sharedReactNative.eager
         : undefined;
 
-    if (!this.config.reactNativeDeepImports || !sharedReactNative) {
+    if (!this.deepImports || !sharedReactNative) {
       return shared;
     }
 
@@ -227,38 +231,28 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
 
     const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
 
-    const sharedDependencies = this.adaptSharedDependencies(
+    const libraryConfig = this.config.exposes
+      ? {
+          name: this.config.name,
+          type: 'self',
+          ...this.config.library,
+        }
+      : undefined;
+
+    const sharedConfig = this.adaptSharedDependencies(
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
 
-    const runtimePlugins = this.adaptRuntimePlugins(
+    const runtimePluginsConfig = this.adaptRuntimePlugins(
       compiler.context,
       this.config.runtimePlugins
     );
 
     const config: MF.ModuleFederationPluginOptions = {
-      async: this.config.async,
-      dev: this.config.dev,
-      dts: this.config.dts,
-      exposes: this.config.exposes,
-      filename: this.config.filename,
-      getPublicPath: this.config.getPublicPath,
-      implementation: this.config.implementation,
-      library: this.config.exposes
-        ? {
-            name: this.config.name,
-            type: 'self',
-            ...this.config.library,
-          }
-        : undefined,
-      manifest: this.config.manifest,
-      name: this.config.name,
-      shared: sharedDependencies,
-      shareScope: this.config.shareScope,
-      remotes: this.config.remotes,
-      remoteType: this.config.remoteType,
-      runtime: this.config.runtime,
-      runtimePlugins: runtimePlugins,
+      ...this.config,
+      library: libraryConfig,
+      shared: sharedConfig,
+      runtimePlugins: runtimePluginsConfig,
     };
 
     new ModuleFederationPlugin(config).apply(compiler);
