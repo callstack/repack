@@ -1,4 +1,4 @@
-import baseConfig from '../rspack.config.mjs';
+import baseConfig from '../../rspack.config.mjs';
 
 export default (env) => {
   const config = baseConfig(env);
