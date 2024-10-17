@@ -1,25 +1,25 @@
 diff --git a/android/CMakeLists.txt b/android/CMakeLists.txt
-index 1745fb576b33dafdbe627ae4a8044353b7ddbb81..25f760767235f631e65b0ea1cb97485e13d825cf 100644
+index 1745fb576b33dafdbe627ae4a8044353b7ddbb81..678127b97f95b933c507f4b7d74fa571a5a5156d 100644
 --- a/android/CMakeLists.txt
 +++ b/android/CMakeLists.txt
-@@ -2,7 +2,16 @@ cmake_minimum_required(VERSION 3.9.0)
+@@ -38,7 +38,16 @@ target_compile_definitions(
  
- project(rnscreens)
+ find_package(ReactAndroid REQUIRED CONFIG)
  
 -if(${RNS_NEW_ARCH_ENABLED})
 +if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
 +    find_package(fbjni REQUIRED CONFIG)
-+
++ 
 +    target_link_libraries(rnscreens
-+        ReactAndroid::reactnative
-+        ReactAndroid::jsi
-+        fbjni::fbjni
-+        android
++      ReactAndroid::reactnative
++      ReactAndroid::jsi
++      fbjni::fbjni
++      android
 +    )
 +elseif(${RNS_NEW_ARCH_ENABLED})
- add_library(rnscreens
-     SHARED
-     ../cpp/RNScreensTurboModule.cpp
+     find_package(fbjni REQUIRED CONFIG)
+     
+     target_link_libraries(
 diff --git a/android/src/main/jni/CMakeLists.txt b/android/src/main/jni/CMakeLists.txt
 index eaab6697af04afc87a13807f97c1529d6e874b26..000c21ccd280afc75bb291cbe86335bc8f3bb8d5 100644
 --- a/android/src/main/jni/CMakeLists.txt
