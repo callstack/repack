@@ -349,8 +349,8 @@ importers:
         specifier: ^5.0.0
         version: 5.1.1
       flow-remove-types:
-        specifier: 2.247.1
-        version: 2.247.1
+        specifier: ^2.249.0
+        version: 2.249.0
       image-size:
         specifier: ^1.1.1
         version: 1.1.1
@@ -4014,8 +4014,8 @@ packages:
     resolution: {integrity: sha512-82yKXpz7iWknWFsognZUf5a6mBQLnVrYoYSU9Nbu7FTOpKlu3v9ehpiI9mYXuaIO3J0ojX1b83M/InXvld9HUw==}
     engines: {node: '>=0.4.0'}
 
-  flow-remove-types@2.247.1:
-    resolution: {integrity: sha512-6mbhNdQ4re2JO9vblOypfnVAVJIs31tcgdt9c2ONyMroX0OGDZ3wBJkCub9EF4mZW+takHNf+Z4+6l4ewxZpkQ==}
+  flow-remove-types@2.249.0:
+    resolution: {integrity: sha512-G24HfCE0NDC/pn2wsEINcwV87euqGP1eCj49OwHqZ5e42mK8SL/9P75j9upotHWC1ap3kuUFRjy5kaAVpZ/4bw==}
     engines: {node: '>=4'}
     hasBin: true
 
@@ -4234,11 +4234,17 @@ packages:
   hermes-estree@0.23.1:
     resolution: {integrity: sha512-eT5MU3f5aVhTqsfIReZ6n41X5sYn4IdQL0nvz6yO+MMlPxw49aSARHLg/MSehQftyjnrE8X6bYregzSumqc6cg==}
 
+  hermes-estree@0.24.0:
+    resolution: {integrity: sha512-LyoXLB7IFzeZW0EvAbGZacbxBN7t6KKSDqFJPo3Ydow7wDlrDjXwsdiAHV6XOdvEN9MEuWXsSIFN4tzpyrXIHw==}
+
   hermes-parser@0.20.1:
     resolution: {integrity: sha512-BL5P83cwCogI8D7rrDCgsFY0tdYUtmFP9XaXtl2IQjC+2Xo+4okjfXintlTxcIwl4qeGddEl28Z11kbVIw0aNA==}
 
   hermes-parser@0.23.1:
     resolution: {integrity: sha512-oxl5h2DkFW83hT4DAUJorpah8ou4yvmweUzLJmmr6YV2cezduCdlil1AvU/a/xSsAFo4WUcNA4GoV5Bvq6JffA==}
+
+  hermes-parser@0.24.0:
+    resolution: {integrity: sha512-IJooSvvu2qNRe7oo9Rb04sUT4omtZqZqf9uq9WM25Tb6v3usmvA93UqfnnoWs5V0uYjEl9Al6MNU10MCGKLwpg==}
 
   highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
@@ -11648,9 +11654,9 @@ snapshots:
 
   flow-parser@0.241.0: {}
 
-  flow-remove-types@2.247.1:
+  flow-remove-types@2.249.0:
     dependencies:
-      hermes-parser: 0.23.1
+      hermes-parser: 0.24.0
       pirates: 3.0.2
       vlq: 0.2.3
 
@@ -11923,6 +11929,8 @@ snapshots:
 
   hermes-estree@0.23.1: {}
 
+  hermes-estree@0.24.0: {}
+
   hermes-parser@0.20.1:
     dependencies:
       hermes-estree: 0.20.1
@@ -11930,6 +11938,10 @@ snapshots:
   hermes-parser@0.23.1:
     dependencies:
       hermes-estree: 0.23.1
+
+  hermes-parser@0.24.0:
+    dependencies:
+      hermes-estree: 0.24.0
 
   highlight.js@10.7.3: {}
 
