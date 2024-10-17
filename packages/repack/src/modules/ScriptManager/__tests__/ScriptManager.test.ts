@@ -1,4 +1,6 @@
-import NativeScriptManager from '../NativeScriptManager';
+import NativeScriptManager, {
+  type NormalizedScriptLocator,
+} from '../NativeScriptManager';
 import { Script } from '../Script';
 import { ScriptManager } from '../ScriptManager';
 
@@ -736,4 +738,114 @@ describe('ScriptManagerAPI', () => {
     expect(NativeScriptManager.loadScript).toHaveBeenCalledTimes(3);
     jest.useRealTimers();
   });
+
+  it('should await loadScript with same scriptId to finish', async () => {
+    const spy = mockLoadScriptBasedOnFetch();
+
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+
+    ScriptManager.shared.addResolver(async (scriptId, _caller) => {
+      return {
+        url: Script.getRemoteURL(scriptId),
+        cache: true,
+      };
+    });
+
+    let loadingScriptIsFinished = false;
+
+    // loadScript should wait first time called loadScript although we are not awaited, because scriptId is same
+    ScriptManager.shared.loadScript('miniApp').then(() => {
+      loadingScriptIsFinished = true;
+    });
+    await ScriptManager.shared.loadScript('miniApp');
+
+    expect(loadingScriptIsFinished).toEqual(true);
+    spy.mockReset();
+    spy.mockRestore();
+  });
+
+  it('should wait loadScript with same scriptId to finished in a complex scenario', async () => {
+    const spy = mockLoadScriptBasedOnFetch();
+
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+
+    ScriptManager.shared.addResolver(async (scriptId, _caller) => {
+      return {
+        url: Script.getRemoteURL(scriptId),
+        cache: true,
+      };
+    });
+
+    let loadingScriptIsFinished = false;
+    let loadingScript2IsFinished = false;
+
+    // loadScript should wait first time called loadScript although we are not awaited, because scriptId is same
+    ScriptManager.shared.loadScript('miniApp').then(() => {
+      loadingScriptIsFinished = true;
+    });
+
+    ScriptManager.shared.loadScript('miniApp2').then(() => {
+      loadingScript2IsFinished = true;
+    });
+    await ScriptManager.shared.loadScript('miniApp');
+    expect(loadingScriptIsFinished).toEqual(true);
+
+    loadingScriptIsFinished = false;
+    ScriptManager.shared.loadScript('miniApp').then(() => {
+      loadingScriptIsFinished = true;
+    });
+
+    ScriptManager.shared.loadScript('miniApp2');
+    await ScriptManager.shared.loadScript('miniApp');
+
+    expect(loadingScriptIsFinished).toEqual(true);
+    await ScriptManager.shared.loadScript('miniApp2');
+    expect(loadingScript2IsFinished).toEqual(true);
+    spy.mockReset();
+    spy.mockRestore();
+  });
+
+  it('should wait loadScript and prefetchScript', async () => {
+    const spy = mockLoadScriptBasedOnFetch();
+
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+
+    ScriptManager.shared.addResolver(async (scriptId, _caller) => {
+      return {
+        url: Script.getRemoteURL(scriptId),
+        cache: true,
+      };
+    });
+
+    let prefetchScriptIsFinished = false;
+
+    // loadScript should wait first time called loadScript although we are not awaited, because scriptId is same
+    ScriptManager.shared.prefetchScript('miniApp').then(() => {
+      prefetchScriptIsFinished = true;
+    });
+    await ScriptManager.shared.loadScript('miniApp');
+
+    expect(prefetchScriptIsFinished).toEqual(true);
+    spy.mockReset();
+    spy.mockRestore();
+  });
 });
+
+function mockLoadScriptBasedOnFetch() {
+  jest.useFakeTimers({ advanceTimers: true });
+  const spy = jest.spyOn(NativeScriptManager, 'loadScript');
+
+  spy.mockImplementation(
+    (_scriptId: string, scriptConfig: NormalizedScriptLocator) =>
+      scriptConfig.fetch
+        ? new Promise<null>((resolve) => {
+            setTimeout(() => resolve(null), 10);
+          })
+        : Promise.resolve(null)
+  );
+
+  return spy;
+}
