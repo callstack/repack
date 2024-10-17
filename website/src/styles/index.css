@@ -83,6 +83,16 @@
   --rp-container-info-text: #9b6dff !important;
 }
 
+/* Home background gradient */
+:root {
+  --rp-home-mask-background-image: conic-gradient(
+    from 180deg at 50% 50%,
+    var(--rp-c-brand) 0deg,
+    180deg,
+    var(--rp-c-brand-darker) 1turn
+  );
+}
+
 /* Nav header */
 .rspress-nav {
   background-color: var(--rp-c-bg-soft) !important;
@@ -177,17 +187,6 @@ div:has(> p.rspress-home-hero-text) {
 
 a:has(> span.home-hero-primary-action) {
   background: var(--rp-c-brand) !important;
-}
-
-/* Home background gradient */
-*:not([id="search-container"]) > div[class^="mask"] {
-  display: block !important;
-  background-image: conic-gradient(
-    from 180deg at 50% 50%,
-    var(--rp-c-brand) 0deg,
-    180deg,
-    var(--rp-c-brand-darker) 1turn
-  );
 }
 
 p.rspress-home-hero-text {
