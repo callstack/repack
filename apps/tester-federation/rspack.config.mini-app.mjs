@@ -140,12 +140,12 @@ export default (env) => {
           'react-native': {
             singleton: true,
             eager: false,
-            requiredVersion: '0.76.0-rc.5',
+            requiredVersion: '0.76.0-rc.6',
           },
           'react-native/Libraries/Core/Devtools/getDevServer': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.76.0-rc.5',
+            requiredVersion: '0.76.0-rc.6',
             shareScope: 'internal',
           },
           '@react-navigation/native': {
