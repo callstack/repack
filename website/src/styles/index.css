@@ -1,5 +1,4 @@
 :root {
-  --rp-nav-height: 60px !important;
   --rp-sidebar-width: 320px !important;
   --rp-aside-width: 268px !important;
 }
@@ -74,43 +73,14 @@
 
 /* MD Containers */
 :root {
-  --rp-container-details-border: rgba(128, 128, 128, 1) !important;
-  --rp-container-details-text: #666666 !important;
-  --rp-container-details-bg: rgba(128, 128, 128, 0.1) !important;
-  --rp-container-details-code-bg: rgba(128, 128, 128, 0.15) !important;
-
-  --rp-container-info-border: var(--rp-c-brand) !important;
-  --rp-container-info-text: var(--rp-c-brand-dark) !important;
-  --rp-container-info-bg: rgba(155, 109, 255, 0.1) !important;
-  --rp-container-info-code-bg: rgba(155, 109, 255, 0.15) !important;
-
-  --rp-container-warning-border: rgba(255, 197, 23, 1) !important;
-  --rp-container-warning-text: #ad850e !important;
-  --rp-container-warning-bg: rgba(255, 197, 23, 0.1) !important;
-  --rp-container-warning-code-bg: rgba(255, 197, 23, 0.15) !important;
-
-  --rp-container-danger-border: rgba(237, 60, 80, 1) !important;
-  --rp-container-danger-text: #ab2131 !important;
-  --rp-container-danger-bg: rgba(237, 60, 80, 0.1) !important;
-  --rp-container-danger-code-bg: rgba(237, 60, 80, 0.15) !important;
+  --rp-container-info-border: rgba(155, 109, 255, 0.2) !important;
+  --rp-container-info-text: #9b6dff !important;
+  --rp-container-info-bg: rgba(155, 109, 255, 0.06) !important;
+  --rp-container-info-code-bg: rgba(155, 109, 255, 0.1) !important;
 }
 
 .dark {
-  --rp-container-details-text: var(--rp-text-1) !important;
-  --rp-container-info-text: var(--rp-text-1) !important;
-  --rp-container-warning-text: var(--rp-text-1) !important;
-  --rp-container-danger-text: var(--rp-text-1) !important;
-}
-
-/* Home Page */
-:root {
-  --rp-home-feature-bg: var(--rp-c-bg-soft) !important;
-  --rp-home-feature-hover-bg: var(--rp-c-bg-mute) !important;
-}
-
-.dark {
-  --rp-home-feature-bg: var(--rp-c-bg-mute) !important;
-  --rp-home-feature-hover-bg: var(--rp-c-bg-soft) !important;
+  --rp-container-info-text: #9b6dff !important;
 }
 
 /* Nav header */
