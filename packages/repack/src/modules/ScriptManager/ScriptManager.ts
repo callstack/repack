@@ -12,6 +12,11 @@ type Cache = Record<
   Pick<NormalizedScriptLocator, 'method' | 'url' | 'query' | 'headers' | 'body'>
 >;
 
+type ScriptsPromises = Record<
+  string,
+  (Promise<void> & { isPrefetch?: true }) | undefined
+>;
+
 const DEFAULT_RESOLVER_PRIORITY = 2;
 const DEFAULT_RESOLVER_KEY = '__default__';
 
@@ -109,6 +114,7 @@ export class ScriptManager extends EventEmitter {
   }
 
   protected cache: Cache = {};
+  protected scriptsPromises: ScriptsPromises = {};
   protected cacheInitialized = false;
   protected resolvers: [string, number, ScriptLocatorResolver][] = [];
   protected storage?: StorageApi;
@@ -337,26 +343,44 @@ export class ScriptManager extends EventEmitter {
     webpackContext = getWebpackContext(),
     referenceUrl?: string
   ) {
-    const script = await this.resolveScript(
-      scriptId,
-      caller,
-      webpackContext,
-      referenceUrl
-    );
+    const uniqueId = Script.getScriptUniqueId(scriptId, caller);
+    if (this.scriptsPromises[uniqueId]) {
+      const { isPrefetch } = this.scriptsPromises[uniqueId];
 
-    try {
-      this.emit('loading', script.toObject());
-      await this.loadScriptWithRetry(scriptId, script.locator);
-      this.emit('loaded', script.toObject());
-    } catch (error) {
-      const { code } = error as Error & { code: string };
-      this.handleError(
-        error,
-        '[ScriptManager] Failed to load script:',
-        code ? `[${code}]` : '',
-        script.toObject()
-      );
+      // prefetch is not execute the script so we need to run loadScript if promise is for prefetch
+      if (isPrefetch) {
+        await this.scriptsPromises[uniqueId];
+      } else {
+        return this.scriptsPromises[uniqueId];
+      }
     }
+    const loadProcess = async () => {
+      const script = await this.resolveScript(
+        scriptId,
+        caller,
+        webpackContext,
+        referenceUrl
+      );
+
+      try {
+        this.emit('loading', script.toObject());
+        await this.loadScriptWithRetry(scriptId, script.locator);
+        this.emit('loaded', script.toObject());
+      } catch (error) {
+        const { code } = error as Error & { code: string };
+        this.handleError(
+          error,
+          '[ScriptManager] Failed to load script:',
+          code ? `[${code}]` : '',
+          script.toObject()
+        );
+      }
+
+      delete this.scriptsPromises[uniqueId];
+    };
+
+    this.scriptsPromises[uniqueId] = loadProcess();
+    return this.scriptsPromises[uniqueId];
   }
 
   /**
@@ -412,20 +436,32 @@ export class ScriptManager extends EventEmitter {
     caller?: string,
     webpackContext = getWebpackContext()
   ) {
-    const script = await this.resolveScript(scriptId, caller, webpackContext);
-
-    try {
-      this.emit('prefetching', script.toObject());
-      await this.nativeScriptManager.prefetchScript(scriptId, script.locator);
-    } catch (error) {
-      const { code } = error as Error & { code: string };
-      this.handleError(
-        error,
-        '[ScriptManager] Failed to prefetch script:',
-        code ? `[${code}]` : '',
-        script.toObject()
-      );
+    const uniqueId = Script.getScriptUniqueId(scriptId, caller);
+    if (this.scriptsPromises[uniqueId]) {
+      return this.scriptsPromises[uniqueId];
     }
+    const loadProcess = async () => {
+      const script = await this.resolveScript(scriptId, caller, webpackContext);
+
+      try {
+        this.emit('prefetching', script.toObject());
+        await this.nativeScriptManager.prefetchScript(scriptId, script.locator);
+      } catch (error) {
+        const { code } = error as Error & { code: string };
+        this.handleError(
+          error,
+          '[ScriptManager] Failed to prefetch script:',
+          code ? `[${code}]` : '',
+          script.toObject()
+        );
+      }
+
+      delete this.scriptsPromises[uniqueId];
+    };
+
+    this.scriptsPromises[uniqueId] = loadProcess();
+    this.scriptsPromises[uniqueId].isPrefetch = true;
+    return this.scriptsPromises[uniqueId];
   }
 
   /**
@@ -444,7 +480,10 @@ export class ScriptManager extends EventEmitter {
       await this.initCache();
 
       const ids = scriptIds.length ? scriptIds : Object.keys(this.cache);
-      ids.forEach((scriptId) => delete this.cache[scriptId]);
+      ids.forEach((scriptId) => {
+        delete this.cache[scriptId];
+        delete this.scriptsPromises[scriptId];
+      });
 
       await this.saveCache();
       await this.nativeScriptManager.invalidateScripts(scriptIds);
