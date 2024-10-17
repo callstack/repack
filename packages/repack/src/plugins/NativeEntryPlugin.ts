@@ -65,6 +65,7 @@ export class NativeEntryPlugin implements RspackPluginInstance {
     // Initialization of MF entry requires setImmediate to be defined
     // but in React Native it happens during InitializeCore so we need
     // to shim it here to prevent ReferenceError
+    // TBD if this has any sort of impact
     new compiler.webpack.EntryPlugin(
       compiler.context,
       'data:text/javascript,globalThis.setImmediate = globalThis.setImmediate || function(){ /* noop */ };',
