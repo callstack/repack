@@ -35,8 +35,9 @@ target_include_directories(
         "${REACT_NATIVE_DIR}/ReactCommon/callinvoker"
         "${REACT_NATIVE_DIR}/ReactAndroid/src/main/jni/react/turbomodule"
 )
-
-if(REACTNATIVE_MERGED_SO)
+# REACT_NATIVE_MERGED_SO is not set properly
+# use version check instead
+if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
         target_link_libraries(
                 ${PACKAGE_NAME}
                 ReactAndroid::reactnative
