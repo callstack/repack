@@ -1,0 +1,80 @@
+diff --git a/android/CMakeLists.txt b/android/CMakeLists.txt
+index 1745fb576b33dafdbe627ae4a8044353b7ddbb81..25f760767235f631e65b0ea1cb97485e13d825cf 100644
+--- a/android/CMakeLists.txt
++++ b/android/CMakeLists.txt
+@@ -2,7 +2,16 @@ cmake_minimum_required(VERSION 3.9.0)
+ 
+ project(rnscreens)
+ 
+-if(${RNS_NEW_ARCH_ENABLED})
++if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
++    find_package(fbjni REQUIRED CONFIG)
++
++    target_link_libraries(rnscreens
++        ReactAndroid::reactnative
++        ReactAndroid::jsi
++        fbjni::fbjni
++        android
++    )
++elseif(${RNS_NEW_ARCH_ENABLED})
+ add_library(rnscreens
+     SHARED
+     ../cpp/RNScreensTurboModule.cpp
+diff --git a/android/src/main/jni/CMakeLists.txt b/android/src/main/jni/CMakeLists.txt
+index eaab6697af04afc87a13807f97c1529d6e874b26..000c21ccd280afc75bb291cbe86335bc8f3bb8d5 100644
+--- a/android/src/main/jni/CMakeLists.txt
++++ b/android/src/main/jni/CMakeLists.txt
+@@ -38,25 +38,34 @@ target_include_directories(
+   ${LIB_ANDROID_GENERATED_COMPONENTS_DIR}
+ )
+ 
+-target_link_libraries(
+-  ${LIB_TARGET_NAME}
+-  fbjni
+-  folly_runtime
+-  glog
+-  jsi
+-  react_codegen_rncore
+-  react_debug
+-  react_nativemodule_core
+-  react_render_core
+-  react_render_debug
+-  react_render_graphics
+-  react_render_mapbuffer
+-  react_render_componentregistry
+-  react_utils
+-  rrc_view
+-  turbomodulejsijni
+-  yoga
+-)
++if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
++  target_link_libraries(
++    ${LIB_TARGET_NAME}
++    ReactAndroid::reactnative
++    ReactAndroid::jsi
++    fbjni::fbjni
++  )
++else()
++  target_link_libraries(
++    ${LIB_TARGET_NAME}
++    fbjni
++    folly_runtime
++    glog
++    jsi
++    react_codegen_rncore
++    react_debug
++    react_nativemodule_core
++    react_render_core
++    react_render_debug
++    react_render_graphics
++    react_render_mapbuffer
++    react_render_componentregistry
++    react_utils
++    rrc_view
++    turbomodulejsijni
++    yoga
++  )
++endif()
+ 
+ target_compile_options(
+   ${LIB_TARGET_NAME}
