@@ -1556,7 +1556,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - ReactTestApp-DevSupport (3.10.6):
+  - ReactTestApp-DevSupport (3.10.14):
     - React-Core
     - React-jsi
   - ReactTestApp-Resources (1.0.0-dev)
@@ -1696,7 +1696,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@3.10.6_react-native@0.76.0-rc.6_@babel+core@7.25.2_@babel+preset-env@7._jnc5b3losnxyfzhli62dpvggx4/node_modules/@rnx-kit/react-native-host`)"
+  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@3.10.14_react-native@0.76.0-rc.6_@babel+core@7.25.2_@babel+preset-env@7_4hoym5y635xztqjr6vc3r7wfte/node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
   - ReactTestApp-Resources (from `..`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
@@ -1838,7 +1838,7 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeHost:
-    :path: "../../../node_modules/.pnpm/react-native-test-app@3.10.6_react-native@0.76.0-rc.6_@babel+core@7.25.2_@babel+preset-env@7._jnc5b3losnxyfzhli62dpvggx4/node_modules/@rnx-kit/react-native-host"
+    :path: "../../../node_modules/.pnpm/react-native-test-app@3.10.14_react-native@0.76.0-rc.6_@babel+core@7.25.2_@babel+preset-env@7_4hoym5y635xztqjr6vc3r7wfte/node_modules/@rnx-kit/react-native-host"
   ReactTestApp-DevSupport:
     :path: "../node_modules/react-native-test-app"
   ReactTestApp-Resources:
@@ -1916,7 +1916,7 @@ SPEC CHECKSUMS:
   ReactCodegen: f4ec52507766ae9229e6daff936ef4819cd38d64
   ReactCommon: 964a21f03865d9b98dcc64df7b172be083e108c9
   ReactNativeHost: a27bb5af1c4d73dd3e80cc7ce295407f414e0e8c
-  ReactTestApp-DevSupport: eaa57f45a3a9d3c14415037f0a26eea7f55799d7
+  ReactTestApp-DevSupport: ed439cce949caf074af3ae05051b4bd157ed4019
   ReactTestApp-Resources: 155b35f70d032289bb4d2abc6caa9502748a166d
   RNCAsyncStorage: 3ad840f7b17b45ca7ebbbb0e80948564a9513315
   RNSVG: 08750404f92a36162a92522cc77dee437be1d257

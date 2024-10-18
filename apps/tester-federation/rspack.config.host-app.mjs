@@ -93,7 +93,7 @@ export default (env) => {
             },
           },
         },
-        // Repack.REACT_NATIVE_CODEGEN_RULES,
+        Repack.REACT_NATIVE_CODEGEN_RULES,
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
@@ -126,7 +126,7 @@ export default (env) => {
           },
         ],
       }),
-      new Repack.plugins.ModuleFederationPlugin({
+      new Repack.plugins.ModuleFederationPluginV1({
         name: 'HostApp',
         shared: {
           react: {

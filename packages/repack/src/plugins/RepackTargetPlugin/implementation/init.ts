@@ -16,11 +16,12 @@ module.exports = function () {
   function loadScript(
     name: string,
     caller: string | undefined,
-    done: (event?: LoadScriptEvent) => void
+    done: (event?: LoadScriptEvent) => void,
+    referenceUrl: string
   ) {
     if (repackRuntime.shared.scriptManager) {
       repackRuntime.shared.scriptManager
-        .loadScript(name, caller, __webpack_require__)
+        .loadScript(name, caller, __webpack_require__, referenceUrl)
         .then(function () {
           done();
           return;
