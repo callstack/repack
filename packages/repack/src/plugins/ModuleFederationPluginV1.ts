@@ -181,10 +181,14 @@ export class ModuleFederationPluginV1 implements RspackPluginInstance {
   private adaptSharedDependencies(
     shared: SharedDependencies
   ): SharedDependencies {
-    const sharedDependencyConfig = (eager?: boolean) => ({
+    const sharedDependencyConfig = (
+      eager?: boolean,
+      version?: string | false
+    ) => ({
       singleton: true,
       eager: eager ?? true,
-      requiredVersion: '*',
+      version: version || '*',
+      requiredVersion: version || '*',
     });
 
     const findSharedDependency = (
@@ -204,6 +208,10 @@ export class ModuleFederationPluginV1 implements RspackPluginInstance {
       typeof sharedReactNative === 'object'
         ? sharedReactNative.eager
         : undefined;
+    const reactNativeVersion =
+      typeof sharedReactNative === 'object'
+        ? sharedReactNative.requiredVersion || sharedReactNative.version
+        : undefined;
 
     if (!this.deepImports || !sharedReactNative) {
       return shared;
@@ -213,12 +221,18 @@ export class ModuleFederationPluginV1 implements RspackPluginInstance {
       const adjustedSharedDependencies = [...shared];
       if (!findSharedDependency('react-native/', shared)) {
         adjustedSharedDependencies.push({
-          'react-native/': sharedDependencyConfig(reactNativeEager),
+          'react-native/': sharedDependencyConfig(
+            reactNativeEager,
+            reactNativeVersion
+          ),
         });
       }
       if (!findSharedDependency('@react-native/', shared)) {
         adjustedSharedDependencies.push({
-          '@react-native/': sharedDependencyConfig(reactNativeEager),
+          '@react-native/': sharedDependencyConfig(
+            reactNativeEager,
+            reactNativeVersion
+          ),
         });
       }
       return adjustedSharedDependencies;
