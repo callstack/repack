@@ -15,9 +15,7 @@ export const REACT_NATIVE_CODEGEN_RULES: RuleSetRule = {
           loader: 'babel-loader',
           options: {
             babelrc: false,
-            browserslistConfigFile: false,
             configFile: false,
-            compact: false,
             plugins: [
               '@babel/plugin-syntax-typescript',
               '@react-native/babel-plugin-codegen',
@@ -33,11 +31,9 @@ export const REACT_NATIVE_CODEGEN_RULES: RuleSetRule = {
           loader: 'babel-loader',
           options: {
             babelrc: false,
-            browserslistConfigFile: false,
             configFile: false,
-            compact: false,
             plugins: [
-              '@babel/plugin-syntax-flow',
+              'babel-plugin-syntax-hermes-parser',
               '@react-native/babel-plugin-codegen',
             ],
           },

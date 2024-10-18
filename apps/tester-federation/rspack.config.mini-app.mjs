@@ -135,17 +135,17 @@ export default (env) => {
           react: {
             singleton: true,
             eager: false,
-            requiredVersion: '18.2.0',
+            requiredVersion: '18.3.1',
           },
           'react-native': {
             singleton: true,
             eager: false,
-            requiredVersion: '0.74.3',
+            requiredVersion: '0.76.0-rc.6',
           },
           'react-native/Libraries/Core/Devtools/getDevServer': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.74.3',
+            requiredVersion: '0.76.0-rc.6',
             shareScope: 'internal',
           },
           '@react-navigation/native': {
@@ -161,12 +161,17 @@ export default (env) => {
           'react-native-safe-area-context': {
             singleton: true,
             eager: false,
-            requiredVersion: '^4.10.8',
+            requiredVersion: '^4.11.0',
           },
           'react-native-screens': {
             singleton: true,
             eager: false,
-            requiredVersion: '^3.32.0',
+            requiredVersion: '^3.34.0',
+          },
+          '@react-native-async-storage/async-storage': {
+            singleton: true,
+            eager: false,
+            requiredVersion: '^1.23.1',
           },
         },
       }),
