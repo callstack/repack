@@ -275,8 +275,6 @@ export class ScriptManager extends EventEmitter {
         // If it returns true, we need to fetch the script
         if (fetch) {
           script.locator.fetch = true;
-          this.cache[cacheKey] = script.getCacheData();
-          await this.saveCache();
         }
 
         this.emit('resolved', script.toObject());
@@ -288,12 +286,8 @@ export class ScriptManager extends EventEmitter {
       // If no custom shouldUpdateScript function was provided, we use the default behaviour
       if (!this.cache[cacheKey]) {
         script.locator.fetch = true;
-        this.cache[cacheKey] = script.getCacheData();
-        await this.saveCache();
       } else if (script.shouldRefetch(this.cache[cacheKey])) {
         script.locator.fetch = true;
-        this.cache[cacheKey] = script.getCacheData();
-        await this.saveCache();
       }
 
       this.emit('resolved', script.toObject());
@@ -305,6 +299,14 @@ export class ScriptManager extends EventEmitter {
         '[ScriptManager] Failed while resolving script locator:',
         { scriptId, caller }
       );
+    }
+  }
+
+  private async updateCache(script: Script) {
+    if (script.locator.fetch) {
+      const cacheKey = script.locator.uniqueId;
+      this.cache[cacheKey] = script.getCacheData();
+      await this.saveCache();
     }
   }
 
@@ -344,6 +346,7 @@ export class ScriptManager extends EventEmitter {
         this.emit('loading', script.toObject());
         await this.loadScriptWithRetry(scriptId, script.locator);
         this.emit('loaded', script.toObject());
+        await this.updateCache(script);
       } catch (error) {
         const { code } = error as Error & { code: string };
         this.handleError(
@@ -352,9 +355,10 @@ export class ScriptManager extends EventEmitter {
           code ? `[${code}]` : '',
           script.toObject()
         );
+      } finally {
+        // should delete script promise even script failed
+        delete this.scriptsPromises[uniqueId];
       }
-
-      delete this.scriptsPromises[uniqueId];
     };
 
     this.scriptsPromises[uniqueId] = loadProcess();
@@ -424,6 +428,7 @@ export class ScriptManager extends EventEmitter {
       try {
         this.emit('prefetching', script.toObject());
         await this.nativeScriptManager.prefetchScript(scriptId, script.locator);
+        await this.updateCache(script);
       } catch (error) {
         const { code } = error as Error & { code: string };
         this.handleError(
@@ -432,9 +437,10 @@ export class ScriptManager extends EventEmitter {
           code ? `[${code}]` : '',
           script.toObject()
         );
+      } finally {
+        // should delete script promise even script failed
+        delete this.scriptsPromises[uniqueId];
       }
-
-      delete this.scriptsPromises[uniqueId];
     };
 
     this.scriptsPromises[uniqueId] = loadProcess();
