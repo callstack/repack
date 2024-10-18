@@ -1,0 +1,138 @@
+diff --git a/android/CMakeLists.txt b/android/CMakeLists.txt
+index 1745fb576b33dafdbe627ae4a8044353b7ddbb81..c26f51b343dcb926600973a3055fb2ee45e762c8 100644
+--- a/android/CMakeLists.txt
++++ b/android/CMakeLists.txt
+@@ -3,20 +3,20 @@ cmake_minimum_required(VERSION 3.9.0)
+ project(rnscreens)
+ 
+ if(${RNS_NEW_ARCH_ENABLED})
+-add_library(rnscreens
+-    SHARED
+-    ../cpp/RNScreensTurboModule.cpp
+-    ../cpp/RNSScreenRemovalListener.cpp
+-    ./src/main/cpp/jni-adapter.cpp
+-    ./src/main/cpp/NativeProxy.cpp
+-    ./src/main/cpp/OnLoad.cpp
+-)
++    add_library(rnscreens
++        SHARED
++        ../cpp/RNScreensTurboModule.cpp
++        ../cpp/RNSScreenRemovalListener.cpp
++        ./src/main/cpp/jni-adapter.cpp
++        ./src/main/cpp/NativeProxy.cpp
++        ./src/main/cpp/OnLoad.cpp
++    )
+ else()
+-add_library(rnscreens
+-    SHARED
+-    ../cpp/RNScreensTurboModule.cpp
+-    ./src/main/cpp/jni-adapter.cpp
+-)
++    add_library(rnscreens
++        SHARED
++        ../cpp/RNScreensTurboModule.cpp
++        ./src/main/cpp/jni-adapter.cpp
++    )
+ endif()
+ 
+ include_directories(
+@@ -40,9 +40,17 @@ find_package(ReactAndroid REQUIRED CONFIG)
+ 
+ if(${RNS_NEW_ARCH_ENABLED})
+     find_package(fbjni REQUIRED CONFIG)
+-    
+-    target_link_libraries(
+-        rnscreens
++
++    if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
++        target_link_libraries(rnscreens
++            ReactAndroid::reactnative
++            ReactAndroid::jsi
++            fbjni::fbjni
++            android
++        )
++    else()
++        target_link_libraries(
++            rnscreens
+             ReactAndroid::jsi
+             ReactAndroid::react_nativemodule_core
+             ReactAndroid::react_utils
+@@ -62,7 +70,8 @@ if(${RNS_NEW_ARCH_ENABLED})
+             ReactAndroid::react_render_observers_events
+             fbjni::fbjni
+             android
+-    )
++        )
++    endif()
+ else()
+     target_link_libraries(rnscreens
+         ReactAndroid::jsi
+diff --git a/android/src/main/jni/CMakeLists.txt b/android/src/main/jni/CMakeLists.txt
+index eaab6697af04afc87a13807f97c1529d6e874b26..0930c02ec1ad0fb79eed567a029211a22e91012b 100644
+--- a/android/src/main/jni/CMakeLists.txt
++++ b/android/src/main/jni/CMakeLists.txt
+@@ -38,25 +38,34 @@ target_include_directories(
+   ${LIB_ANDROID_GENERATED_COMPONENTS_DIR}
+ )
+ 
+-target_link_libraries(
+-  ${LIB_TARGET_NAME}
+-  fbjni
+-  folly_runtime
+-  glog
+-  jsi
+-  react_codegen_rncore
+-  react_debug
+-  react_nativemodule_core
+-  react_render_core
+-  react_render_debug
+-  react_render_graphics
+-  react_render_mapbuffer
+-  react_render_componentregistry
+-  react_utils
+-  rrc_view
+-  turbomodulejsijni
+-  yoga
+-)
++if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
++  target_link_libraries(
++    ${LIB_TARGET_NAME}
++    ReactAndroid::reactnative
++    ReactAndroid::jsi
++    fbjni::fbjni
++  )
++else()
++  target_link_libraries(
++    ${LIB_TARGET_NAME}
++    fbjni
++    folly_runtime
++    glog
++    jsi
++    react_codegen_rncore
++    react_debug
++    react_nativemodule_core
++    react_render_core
++    react_render_debug
++    react_render_graphics
++    react_render_mapbuffer
++    react_render_componentregistry
++    react_utils
++    rrc_view
++    turbomodulejsijni
++    yoga
++  )
++endif()
+ 
+ target_compile_options(
+   ${LIB_TARGET_NAME}
+@@ -69,7 +78,7 @@ target_compile_options(
+ )
+ 
+ target_include_directories(
+- ${CMAKE_PROJECT_NAME}
+- PUBLIC
+- ${CMAKE_CURRENT_SOURCE_DIR}
++  ${CMAKE_PROJECT_NAME}
++  PUBLIC
++  ${CMAKE_CURRENT_SOURCE_DIR}
+ )

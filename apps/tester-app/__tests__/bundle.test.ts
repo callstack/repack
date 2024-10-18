@@ -19,7 +19,7 @@ const RELATIVE_REACT_NATIVE_PATH = path.relative(
 const REACT_NATIVE_ANDROID_ASSET_PATH = RELATIVE_REACT_NATIVE_PATH.replaceAll(
   path.sep,
   '_'
-).replaceAll(/[-.@+]/g, '');
+).replaceAll(/[-.@+=]/g, '');
 
 describe('bundle command', () => {
   it("should be also available under 'webpack-bundle' alias", () => {
