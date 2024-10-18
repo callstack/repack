@@ -92,7 +92,7 @@ export default (env) => {
             },
           },
         },
-        // Repack.REACT_NATIVE_CODEGEN_RULES,
+        Repack.REACT_NATIVE_CODEGEN_RULES,
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
@@ -141,12 +141,6 @@ export default (env) => {
             singleton: true,
             eager: false,
             requiredVersion: '0.76.0-rc.6',
-          },
-          'react-native/Libraries/Core/Devtools/getDevServer': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '0.76.0-rc.6',
-            shareScope: 'internal',
           },
           '@react-navigation/native': {
             singleton: true,
