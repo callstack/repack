@@ -129,7 +129,7 @@ export default (env) => {
           react: {
             singleton: true,
             eager: true,
-            requiredVersion: '18.3.2',
+            requiredVersion: '18.3.1',
           },
           'react-native': {
             singleton: true,
