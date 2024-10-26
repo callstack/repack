@@ -61,7 +61,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     ? false
     : // TODO fix in a separate PR (jbroma)
       // eslint-disable-next-line prettier/prettier
-      args.verbose ?? process.argv.includes('--verbose');
+      (args.verbose ?? process.argv.includes('--verbose'));
 
   const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(
@@ -106,22 +106,19 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     },
     delegate: (ctx): Server.Delegate => {
       if (args.interactive) {
-        setupInteractions(
-          {
-            onReload() {
-              ctx.broadcastToMessageClients({ method: 'reload' });
-            },
-            onOpenDevMenu() {
-              ctx.broadcastToMessageClients({ method: 'devMenu' });
-            },
-            onOpenDevTools() {
-              void fetch(`${serverURL}/open-debugger`, {
-                method: 'POST',
-              });
-            },
+        setupInteractions({
+          onReload() {
+            ctx.broadcastToMessageClients({ method: 'reload' });
           },
-          ctx.log
-        );
+          onOpenDevMenu() {
+            ctx.broadcastToMessageClients({ method: 'devMenu' });
+          },
+          onOpenDevTools() {
+            void fetch(`${serverURL}/open-debugger`, {
+              method: 'POST',
+            });
+          },
+        });
       }
 
       if (reversePort && args.port) {
