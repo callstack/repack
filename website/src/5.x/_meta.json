@@ -1,0 +1,11 @@
+[
+  {
+    "text": "Docs",
+    "link": "/docs/getting-started",
+    "activeMatch": "^/docs/"
+  },
+  {
+    "text": "Examples",
+    "link": "https://github.com/callstack/repack-examples"
+  }
+]
