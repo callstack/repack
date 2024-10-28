@@ -107,19 +107,22 @@ export async function start(
     },
     delegate: (ctx) => {
       if (args.interactive) {
-        setupInteractions({
-          onReload() {
-            ctx.broadcastToMessageClients({ method: 'reload' });
+        setupInteractions(
+          {
+            onReload() {
+              ctx.broadcastToMessageClients({ method: 'reload' });
+            },
+            onOpenDevMenu() {
+              ctx.broadcastToMessageClients({ method: 'devMenu' });
+            },
+            onOpenDevTools() {
+              void fetch(`${serverURL}/open-debugger`, {
+                method: 'POST',
+              });
+            },
           },
-          onOpenDevMenu() {
-            ctx.broadcastToMessageClients({ method: 'devMenu' });
-          },
-          onOpenDevTools() {
-            void fetch(`${serverURL}/open-debugger`, {
-              method: 'POST',
-            });
-          },
-        });
+          ctx.log
+        );
       }
 
       if (reversePort && args.port) {

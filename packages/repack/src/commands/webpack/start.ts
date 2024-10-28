@@ -106,19 +106,22 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     },
     delegate: (ctx): Server.Delegate => {
       if (args.interactive) {
-        setupInteractions({
-          onReload() {
-            ctx.broadcastToMessageClients({ method: 'reload' });
+        setupInteractions(
+          {
+            onReload() {
+              ctx.broadcastToMessageClients({ method: 'reload' });
+            },
+            onOpenDevMenu() {
+              ctx.broadcastToMessageClients({ method: 'devMenu' });
+            },
+            onOpenDevTools() {
+              void fetch(`${serverURL}/open-debugger`, {
+                method: 'POST',
+              });
+            },
           },
-          onOpenDevMenu() {
-            ctx.broadcastToMessageClients({ method: 'devMenu' });
-          },
-          onOpenDevTools() {
-            void fetch(`${serverURL}/open-debugger`, {
-              method: 'POST',
-            });
-          },
-        });
+          ctx.log
+        );
       }
 
       if (reversePort && args.port) {
