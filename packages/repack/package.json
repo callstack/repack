@@ -102,7 +102,7 @@
   "dependencies": {
     "@callstack/repack-dev-server": "workspace:*",
     "@discoveryjs/json-ext": "^0.5.7",
-    "colorette": "^1.2.2",
+    "colorette": "^2.0.20",
     "dedent": "^0.7.0",
     "events": "^3.3.0",
     "execa": "^5.0.0",
