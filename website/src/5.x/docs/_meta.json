@@ -25,12 +25,6 @@
     "label": "Module Federation"
   },
   {
-    "type": "dir",
-    "name": "cli-commands",
-    "label": "CLI commands",
-    "collapsed": true
-  },
-  {
     "type": "file",
     "name": "known-issues",
     "label": "Known Issues"
@@ -48,16 +42,6 @@
     "type": "dir",
     "name": "configuration",
     "label": "Configuration"
-  },
-  {
-    "type": "dir",
-    "name": "loaders",
-    "label": "Loaders"
-  },
-  {
-    "type": "dir",
-    "name": "plugins",
-    "label": "Plugins"
   },
   {
     "type": "dir",

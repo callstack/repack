@@ -1,0 +1,25 @@
+[
+  {
+    "type": "file",
+    "name": "about",
+    "label": "About"
+  },
+  {
+    "type": "dir",
+    "name": "cli",
+    "label": "Command Line Interface (CLI)",
+    "collapsed": false
+  },
+  {
+    "type": "dir",
+    "name": "loaders",
+    "label": "Loaders",
+    "collapsed": false
+  },
+  {
+    "type": "dir",
+    "name": "plugins",
+    "label": "Plugins",
+    "collapsed": false
+  }
+]
