@@ -88,17 +88,15 @@ export function setupInteractions(
     },
   };
 
-  process.stdout.write(
-    colorette.blueBright('You can use the following keystrokes:\n')
-  );
+  // use process.stdout for sync output at startup
   for (const [key, interaction] of Object.entries(plainInteractions)) {
     const isSupported =
       interaction?.actionUnsupportedExplanation === undefined &&
       interaction?.action !== undefined;
-    const text = `${colorette.bold(key)}: ${interaction?.helpName}${isSupported ? '' : colorette.yellow(` (unsupported${interaction?.actionUnsupportedExplanation ? `, ${interaction.actionUnsupportedExplanation}` : ' by the current bundler'})`)}\n`;
+    const text = ` ${colorette.bold(key)}: ${interaction?.helpName}${isSupported ? '' : colorette.yellow(` (unsupported${interaction?.actionUnsupportedExplanation ? `, ${interaction.actionUnsupportedExplanation}` : ' by the current bundler'})`)}\n`;
 
     process.stdout.write(isSupported ? text : colorette.italic(text));
   }
 
-  process.stdout.write('\nPress ctrl+c or ctrl+z to quit the dev server\n');
+  process.stdout.write('\nPress Ctrl+c or Ctrl+z to quit the dev server\n\n');
 }

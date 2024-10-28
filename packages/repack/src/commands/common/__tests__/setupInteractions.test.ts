@@ -111,9 +111,9 @@ describe('setupInteractions', () => {
 
     setupInteractions(handlers, mockLogger, mockProcess, mockReadline);
 
-    expect(mockProcess.stdout.write).toHaveBeenCalledWith('r: Reload app\n');
+    expect(mockProcess.stdout.write).toHaveBeenCalledWith(' r: Reload app\n');
     expect(mockProcess.stdout.write).toHaveBeenCalledWith(
-      'd: Open developer menu (unsupported by the current bundler)\n'
+      ' d: Open developer menu (unsupported by the current bundler)\n'
     );
 
     const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
@@ -206,23 +206,19 @@ describe('setupInteractions', () => {
 
         expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
           1,
-          'You can use the following keystrokes:\n'
+          ' r: Reload app\n'
         );
         expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
           2,
-          'r: Reload app\n'
+          ' d: Open developer menu\n'
         );
         expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
           3,
-          'd: Open developer menu\n'
+          ` j: Open debugger${debuggerSupport ? '' : ' (unsupported by the current bundler)'}\n`
         );
         expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
           4,
-          `j: Open debugger${debuggerSupport ? '' : ' (unsupported by the current bundler)'}\n`
-        );
-        expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
-          5,
-          '\nPress ctrl+c or ctrl+z to quit the dev server\n'
+          '\nPress Ctrl+c or Ctrl+z to quit the dev server\n\n'
         );
       });
     }
