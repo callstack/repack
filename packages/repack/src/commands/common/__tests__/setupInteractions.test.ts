@@ -4,9 +4,11 @@ import type { Logger } from '../../../types';
 import { setupInteractions } from '../setupInteractions';
 
 // eliminate ANSI colors formatting for proper assertions
-jest.mock('colorette', () => ({
-  ...jest.requireActual('colorette').createColors({ useColor: false }),
-}));
+jest.mock('colorette', () =>
+  jest.requireActual('colorette').createColors({
+    useColor: false,
+  })
+);
 
 describe('setupInteractions', () => {
   let mockLogger: Logger;
