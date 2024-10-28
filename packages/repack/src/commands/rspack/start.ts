@@ -1,5 +1,5 @@
 import type { Config } from '@react-native-community/cli-types';
-import colorette from 'colorette';
+import * as colorette from 'colorette';
 import packageJson from '../../../package.json';
 import {
   ConsoleReporter,
