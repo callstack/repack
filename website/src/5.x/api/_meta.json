@@ -12,6 +12,12 @@
   },
   {
     "type": "dir",
+    "name": "runtime",
+    "label": "Runtime",
+    "collapsed": false
+  },
+  {
+    "type": "dir",
     "name": "loaders",
     "label": "Loaders",
     "collapsed": false
