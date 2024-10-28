@@ -342,8 +342,8 @@ importers:
         specifier: ^0.5.7
         version: 0.5.7
       colorette:
-        specifier: ^1.2.2
-        version: 1.4.0
+        specifier: ^2.0.20
+        version: 2.0.20
       dedent:
         specifier: ^0.7.0
         version: 0.7.0
@@ -3243,6 +3243,8 @@ packages:
   colorette@1.4.0:
     resolution: {integrity: sha512-Y2oEozpomLn7Q3HFP7dpww7AtMJplbM9lGZP6RDfHqmbeRjiwRg4n6VM6j4KLmRke85uWEI7JqF17f3pqdRA0g==}
 
+  colorette@2.0.20:
+    resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
   colorjs.io@0.5.2:
     resolution: {integrity: sha512-twmVoizEW7ylZSN32OgKdXRmo1qg+wT5/6C3xu5b9QsWzSFAhHLn2xd8ro0diCsKfCj1RdaTP/nrcW+vAoQPIw==}
 
@@ -10713,6 +10715,7 @@ snapshots:
 
   colorette@1.4.0: {}
 
+  colorette@2.0.20: {}
   colorjs.io@0.5.2: {}
 
   combined-stream@1.0.8:
