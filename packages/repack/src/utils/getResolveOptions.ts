@@ -55,7 +55,6 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
 
   let conditionNames: string[];
   let exportsFields: string[];
-  let importsFields: string[];
 
   if (enablePackageExports) {
     /**
@@ -74,16 +73,15 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
 
       if (preferNativePlatform) {
         return [platformExt, nativeExt, ext];
-      } else {
-        return [platformExt, ext];
       }
+      return [platformExt, ext];
     });
   }
 
   /**
    * Disable importsFields completely since it's not supported by metro at all.
    */
-  importsFields = [];
+  const importsFields: string[] = [];
 
   /**
    * Match what React Native uses from metro-config.

@@ -1,9 +1,9 @@
 import {
-  EntryNormalized,
+  type EntryNormalized,
   ModuleFilenameHelpers,
-  StatsChunk,
+  type StatsChunk,
 } from '@rspack/core';
-import { OutputPlugin, OutputPluginConfig } from '../OutputPlugin';
+import { OutputPlugin, type OutputPluginConfig } from '../OutputPlugin';
 
 const makeChunk = ({
   name,

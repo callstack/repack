@@ -44,16 +44,16 @@ You can learn more about changesets here: https://github.com/changesets/changese
 
 ### Linting and tests
 
-We use `typescript` for type checking, `eslint` with `prettier` for linting and formatting the code, and `jest`/`vitest` for testing. You should run the following commands before sending a pull request:
+We use `typescript` for type checking and `biome` for linting and formatting the code, and `jest`/`vitest` for testing. You should run the following commands before sending a pull request:
 
 - `pnpm typecheck`: type-check files with `tsc`.
-- `pnpm lint`: lint files with `eslint` and `prettier`.
+- `pnpm lint`: lint files with `biome`.
 - `pnpm test`: run unit tests with `jest`/`vitest`.
 
 ### Sending a pull request
 
 - Prefer small pull requests focused on one change.
-- Verify that `typescript`, `eslint` and all tests are passing.
+- Verify that `typescript`, `biome` and all tests are passing.
 - Verify all in-code documentation is correct (it will be used to generate API documentation).
 - Write changeset if necessary.
 - Follow the pull request template when opening a pull request.

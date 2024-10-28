@@ -1,11 +1,10 @@
-import React from 'react';
 import {
   Button as RNButton,
-  ButtonProps as RNButtonProps,
-  View,
+  type ButtonProps as RNButtonProps,
+  type StyleProp,
   StyleSheet,
-  StyleProp,
-  ViewStyle,
+  View,
+  type ViewStyle,
 } from 'react-native';
 
 type ButtonProps = RNButtonProps & {

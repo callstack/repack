@@ -10,8 +10,8 @@
     "diff:v3-v4:mjs": "git diff @callstack/repack@3.0.0:templates/webpack.config.mjs HEAD:templates/webpack.config.mjs > src/public/diffs/repack_v3-v4_mjs.diff"
   },
   "dependencies": {
-    "rsbuild-plugin-open-graph": "^1.0.0",
-    "rspress": "1.25.2",
+    "rsbuild-plugin-open-graph": "^1.0.2",
+    "rspress": "1.33.1",
     "rspress-plugin-font-open-sans": "^1.0.0",
     "rspress-plugin-vercel-analytics": "^0.3.0"
   },

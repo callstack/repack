@@ -1,6 +1,6 @@
-import path from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
+import path from 'node:path';
 import url from 'node:url';
 import {
   DEFAULT_RSPACK_CONFIG_LOCATIONS,
@@ -16,9 +16,8 @@ function getConfigFilePath(root: string, candidates: string[]) {
     if (fs.existsSync(filename)) {
       if (path.extname(filename) === '.mjs' && os.platform() === 'win32') {
         return url.pathToFileURL(filename).href;
-      } else {
-        return filename;
       }
+      return filename;
     }
   }
 

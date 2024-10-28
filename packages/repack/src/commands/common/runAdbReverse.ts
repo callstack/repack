@@ -1,5 +1,5 @@
 import execa from 'execa';
-import { Logger } from '../../types';
+import type { Logger } from '../../types';
 
 export async function runAdbReverse(port: number, logger: Logger = console) {
   const adbPath = process.env.ANDROID_HOME

@@ -38,10 +38,12 @@ const handler = {
   apply(target, _, args) {
     if (testsToSkip[target.name].has(args[0])) {
       return target.skip(...args);
-    } else if (testsToSkipOnce[target.name].has(args[0])) {
+    }
+    if (testsToSkipOnce[target.name].has(args[0])) {
       testsToSkipOnce[target.name].delete(args[0]);
       return target.skip(...args);
-    } else return target(...args);
+    }
+    return target(...args);
   },
 };
 

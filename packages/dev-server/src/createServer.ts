@@ -1,22 +1,21 @@
-import { Writable } from 'stream';
-import Fastify from 'fastify';
-import fastifySensible from '@fastify/sensible';
+import { Writable } from 'node:stream';
 import middie from '@fastify/middie';
-// eslint-disable-next-line import/no-unresolved -- no main field in package.json
-import { createDevMiddleware } from '@react-native/dev-middleware';
+import fastifySensible from '@fastify/sensible';
 import { debuggerUIMiddleware } from '@react-native-community/cli-debugger-ui';
 import {
-  openURLMiddleware,
   openStackFrameInEditorMiddleware,
+  openURLMiddleware,
 } from '@react-native-community/cli-server-api';
-import multipartPlugin from './plugins/multipart';
-import compilerPlugin from './plugins/compiler';
+import { createDevMiddleware } from '@react-native/dev-middleware';
+import Fastify from 'fastify';
 import apiPlugin from './plugins/api';
-import wssPlugin from './plugins/wss';
-import faviconPlugin from './plugins/favicon';
-import { Internal, Server } from './types';
-import symbolicatePlugin from './plugins/symbolicate';
+import compilerPlugin from './plugins/compiler';
 import devtoolsPlugin from './plugins/devtools';
+import faviconPlugin from './plugins/favicon';
+import multipartPlugin from './plugins/multipart';
+import symbolicatePlugin from './plugins/symbolicate';
+import wssPlugin from './plugins/wss';
+import { Internal, type Server } from './types';
 
 /**
  * Create instance of development server, powered by Fastify.
@@ -25,6 +24,7 @@ import devtoolsPlugin from './plugins/devtools';
  * @returns `start` and `stop` functions as well as an underlying Fastify `instance`.
  */
 export async function createServer(config: Server.Config) {
+  // biome-ignore lint/style/useConst: needed in fastify constructor
   let delegate: Server.Delegate;
 
   /** Fastify instance powering the development server. */

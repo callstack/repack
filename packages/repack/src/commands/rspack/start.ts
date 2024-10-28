@@ -1,22 +1,22 @@
-import { URL } from 'node:url';
-import * as colorette from 'colorette';
-import { Config } from '@react-native-community/cli-types';
+import type { Config } from '@react-native-community/cli-types';
+import colorette from 'colorette';
 import packageJson from '../../../package.json';
 import {
-  composeReporters,
   ConsoleReporter,
   FileReporter,
+  type Reporter,
+  composeReporters,
   makeLogEntryFromFastifyLog,
-  Reporter,
 } from '../../logging';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
-import { StartArguments, StartCliOptions } from '../types';
 import {
+  getMimeType,
   getRspackConfigFilePath,
   parseFileUrl,
   runAdbReverse,
   setupInteractions,
 } from '../common';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
+import type { StartArguments, StartCliOptions } from '../types';
 import { Compiler } from './Compiler';
 
 /**
@@ -61,8 +61,8 @@ export async function start(
   const isVerbose = isSilent
     ? false
     : // TODO fix (jbroma)
-      // eslint-disable-next-line prettier/prettier
-      (args.verbose ?? process.argv.includes('--verbose'));
+      // biome-ignore format: fix in a separate PR
+      args.verbose ?? process.argv.includes('--verbose');
 
   const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(
@@ -130,17 +130,14 @@ export async function start(
 
       return {
         compiler: {
-          getAsset: async (filename, platform) =>
-            (await compiler.getAsset(filename, platform)).data,
-          getMimeType: (filename) => compiler.getMimeType(filename),
+          getAsset: (filename, platform) => {
+            const parsedUrl = parseFileUrl(filename, 'file:///');
+            return compiler.getSource(parsedUrl.filename, platform);
+          },
+          getMimeType: (filename) => getMimeType(filename),
           inferPlatform: (uri) => {
-            const url = new URL(uri, 'protocol://domain');
-            if (!url.searchParams.get('platform')) {
-              const [, platform] = /^\/(.+)\/.+$/.exec(url.pathname) ?? [];
-              return platform;
-            }
-
-            return undefined;
+            const { platform } = parseFileUrl(uri, 'file:///');
+            return platform;
           },
         },
         symbolicator: {
@@ -149,18 +146,7 @@ export async function start(
             return compiler.getSource(filename, platform);
           },
           getSourceMap: (fileUrl) => {
-            // TODO Align this with output.hotModuleUpdateChunkFilename
-            if (fileUrl.endsWith('.hot-update.js')) {
-              const { pathname } = new URL(fileUrl);
-              const [platform, filename] = pathname.split('/').filter(Boolean);
-              return compiler.getSourceMap(filename, platform);
-            }
-
             const { filename, platform } = parseFileUrl(fileUrl);
-            if (!platform) {
-              throw new Error('Cannot infer platform for file URL');
-            }
-
             return compiler.getSourceMap(filename, platform);
           },
           shouldIncludeFrame: (frame) => {

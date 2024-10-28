@@ -13,7 +13,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "preserveWatchOutput": true,
-    "composite": true,
     "paths": {
       "@react-native/dev-middleware": [
         "./node_modules/@react-native/dev-middleware/dist"

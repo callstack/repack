@@ -1,6 +1,3 @@
-/* eslint-env browser */
-/* global __DEV__ */
-
 import prettyFormat from 'pretty-format';
 import { getDevServerLocation } from './getDevServerLocation';
 
@@ -95,3 +92,4 @@ export function registerBundle() {}
 export function log(level: string, data: any[]) {
   client.log(level, data);
 }
+export function unstable_notifyFuseboxConsoleEnabled() {}

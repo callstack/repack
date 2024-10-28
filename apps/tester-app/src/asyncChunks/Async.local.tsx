@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Text } from '../ui/Text';
 
 export default function Async() {

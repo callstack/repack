@@ -1,6 +1,6 @@
 import defaultReadline from 'node:readline';
 import * as colorette from 'colorette';
-import { Logger } from '../../types';
+import type { Logger } from '../../types';
 
 type Interaction = {
   // The function to be executed when this interaction's keystroke is sent.
@@ -93,9 +93,9 @@ export function setupInteractions(
   );
   for (const [key, interaction] of Object.entries(plainInteractions)) {
     const isSupported =
-        interaction?.actionUnsupportedExplanation === undefined &&
-        interaction?.action !== undefined,
-      text = `${colorette.bold(key)}: ${interaction?.helpName}${isSupported ? '' : colorette.yellow(` (unsupported${interaction?.actionUnsupportedExplanation ? `, ${interaction.actionUnsupportedExplanation}` : ' by the current bundler'})`)}\n`;
+      interaction?.actionUnsupportedExplanation === undefined &&
+      interaction?.action !== undefined;
+    const text = `${colorette.bold(key)}: ${interaction?.helpName}${isSupported ? '' : colorette.yellow(` (unsupported${interaction?.actionUnsupportedExplanation ? `, ${interaction.actionUnsupportedExplanation}` : ' by the current bundler'})`)}\n`;
 
     process.stdout.write(isSupported ? text : colorette.italic(text));
   }

@@ -63,7 +63,7 @@ function modifyBundleReactNativeShellScript(
 }
 
 function modifyPbxprojConfig(pbxprojPath: string) {
-  let project = xcode.project(pbxprojPath);
+  const project = xcode.project(pbxprojPath);
   project.parseSync();
 
   const bundleReactNativePhase = getBundleReactNativePhase(project);

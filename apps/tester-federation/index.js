@@ -1,9 +1,9 @@
-import { AppRegistry, Platform } from 'react-native';
-import { ScriptManager, Federated } from '@callstack/repack/client';
+import { Federated, ScriptManager } from '@callstack/repack/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppRegistry, Platform } from 'react-native';
 
-import App from './src/host/App';
 import { components } from './app.json';
+import App from './src/host/App';
 
 ScriptManager.shared.setStorage(AsyncStorage);
 
