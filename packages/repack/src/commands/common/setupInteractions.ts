@@ -1,4 +1,4 @@
-import readline from 'node:readline';
+import defaultReadline from 'node:readline';
 import * as colorette from 'colorette';
 import { Logger } from '../../types';
 
@@ -22,7 +22,9 @@ export function setupInteractions(
     onOpenDevMenu?: () => void;
     onOpenDevTools?: () => void;
   },
-  logger: Logger = console
+  logger: Logger = console,
+  process: NodeJS.Process = global.process,
+  readline: typeof defaultReadline = defaultReadline
 ) {
   if (!process.stdin.setRawMode) {
     logger.warn('Interactive mode is not supported in this environment');

@@ -3,8 +3,6 @@ import readline from 'node:readline';
 import { setupInteractions } from '../setupInteractions';
 import { Logger } from '../../../types';
 
-jest.mock('node:readline');
-
 // eliminate ANSI colors formatting for proper assertions
 jest.mock('colorette', () => ({
   ...jest.requireActual('colorette').createColors({ useColor: false }),
@@ -13,6 +11,7 @@ jest.mock('colorette', () => ({
 describe('setupInteractions', () => {
   let mockLogger: Logger;
   let mockProcess: NodeJS.Process;
+  let mockReadline: typeof readline;
 
   beforeEach(() => {
     mockLogger = {
@@ -33,7 +32,9 @@ describe('setupInteractions', () => {
       emit: jest.fn(),
     } as unknown as NodeJS.Process;
 
-    global.process = mockProcess;
+    mockReadline = {
+      emitKeypressEvents: jest.fn(),
+    } as unknown as typeof readline;
   });
 
   afterEach(() => {
@@ -43,7 +44,7 @@ describe('setupInteractions', () => {
   it('should log a warning if setRawMode is not available', () => {
     mockProcess.stdin.setRawMode = undefined as any;
 
-    setupInteractions({}, mockLogger);
+    setupInteractions({}, mockLogger, mockProcess, mockReadline);
 
     expect(mockLogger.warn).toHaveBeenCalledWith(
       'Interactive mode is not supported in this environment'
@@ -51,9 +52,11 @@ describe('setupInteractions', () => {
   });
 
   it('should set up keypress events and interactions', () => {
-    setupInteractions({}, mockLogger);
+    setupInteractions({}, mockLogger, mockProcess, mockReadline);
 
-    expect(readline.emitKeypressEvents).toHaveBeenCalledWith(mockProcess.stdin);
+    expect(mockReadline.emitKeypressEvents).toHaveBeenCalledWith(
+      mockProcess.stdin
+    );
     expect(mockProcess.stdin.setRawMode).toHaveBeenCalledWith(true);
     expect(mockProcess.stdin.on).toHaveBeenCalledWith(
       'keypress',
@@ -62,7 +65,7 @@ describe('setupInteractions', () => {
   });
 
   it('should handle ctrl+c and ctrl+z keypresses', () => {
-    setupInteractions({}, mockLogger);
+    setupInteractions({}, mockLogger, mockProcess, mockReadline);
 
     const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
       .calls[0][1];
@@ -81,7 +84,7 @@ describe('setupInteractions', () => {
       onOpenDevTools: jest.fn(),
     };
 
-    setupInteractions(handlers, mockLogger);
+    setupInteractions(handlers, mockLogger, mockProcess, mockReadline);
 
     const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
       .calls[0][1];
@@ -104,10 +107,10 @@ describe('setupInteractions', () => {
       onReload: jest.fn(),
     };
 
-    setupInteractions(handlers, mockLogger);
+    setupInteractions(handlers, mockLogger, mockProcess, mockReadline);
 
-    expect(process.stdout.write).toHaveBeenCalledWith('r: Reload app\n');
-    expect(process.stdout.write).toHaveBeenCalledWith(
+    expect(mockProcess.stdout.write).toHaveBeenCalledWith('r: Reload app\n');
+    expect(mockProcess.stdout.write).toHaveBeenCalledWith(
       'd: Open developer menu (unsupported by the current bundler)\n'
     );
 
@@ -127,7 +130,7 @@ describe('setupInteractions', () => {
       // onOpenDevMenu - unsupported
     };
 
-    setupInteractions(handlers, mockLogger);
+    setupInteractions(handlers, mockLogger, mockProcess, mockReadline);
 
     const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
       .calls[0][1];
@@ -159,7 +162,7 @@ describe('setupInteractions', () => {
       onOpenDevTools: jest.fn(),
     };
 
-    setupInteractions(handlers, mockLogger);
+    setupInteractions(handlers, mockLogger, mockProcess, mockReadline);
 
     const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
       .calls[0][1];
@@ -174,7 +177,7 @@ describe('setupInteractions', () => {
       onOpenDevTools: jest.fn(),
     };
 
-    setupInteractions(handlers, mockLogger);
+    setupInteractions(handlers, mockLogger, mockProcess, mockReadline);
 
     const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
       .calls[0][1];
@@ -194,7 +197,9 @@ describe('setupInteractions', () => {
             onOpenDevMenu() {},
             onReload() {},
           },
-          mockLogger
+          mockLogger,
+          mockProcess,
+          mockReadline
         );
 
         expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
