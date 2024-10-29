@@ -768,7 +768,7 @@ describe('ScriptManagerAPI', () => {
     await ScriptManager.shared.loadScript('miniApp');
 
     expect(loadingScriptIsFinished).toEqual(true);
-    spy.mockReset();
+
     spy.mockRestore();
   });
 
@@ -810,7 +810,7 @@ describe('ScriptManagerAPI', () => {
     expect(loadingScriptIsFinished).toEqual(true);
     await ScriptManager.shared.loadScript('miniApp2');
     expect(loadingScript2IsFinished).toEqual(true);
-    spy.mockReset();
+
     spy.mockRestore();
   });
 
@@ -836,7 +836,7 @@ describe('ScriptManagerAPI', () => {
     await ScriptManager.shared.loadScript('miniApp');
 
     expect(prefetchScriptIsFinished).toEqual(true);
-    spy.mockReset();
+
     spy.mockRestore();
   });
 
@@ -844,7 +844,7 @@ describe('ScriptManagerAPI', () => {
     jest.useFakeTimers({ advanceTimers: true });
     const spy = jest.spyOn(NativeScriptManager, 'loadScript');
 
-    spy.mockImplementation(
+    spy.mockRejectedValueOnce(
       (_scriptId: string, _scriptConfig: NormalizedScriptLocator) =>
         Promise.reject({ code: 'NetworkFailed' })
     );
@@ -866,14 +866,11 @@ describe('ScriptManagerAPI', () => {
     // //expected to cache be empty
     expect(Object.keys(cache.data).length).toBe(0);
 
-    await expect(async () =>
-      ScriptManager.shared.loadScript('miniApp')
-    ).rejects.toThrow();
+    await ScriptManager.shared.loadScript('miniApp');
 
     // expected to fetch again
-    // expect(spy.mock.lastCall?.[1].fetch).toBe(true);
+    expect(spy.mock.lastCall?.[1].fetch).toBe(true);
 
-    spy.mockReset();
     spy.mockRestore();
   });
 });
