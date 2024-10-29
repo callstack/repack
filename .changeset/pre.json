@@ -1,14 +1,30 @@
 {
   "mode": "pre",
-  "tag": "alpha",
+  "tag": "rc",
   "initialVersions": {
     "tester-app": "0.0.1",
     "tester-federation": "0.0.1",
-    "@callstack/repack-dev-server": "4.3.3",
-    "@callstack/repack-init": "4.3.3",
-    "@callstack/repack": "4.3.3",
+    "tester-federation-v2": "0.0.1",
+    "@callstack/repack-dev-server": "5.0.0-alpha.0",
+    "@callstack/repack-init": "5.0.0-alpha.0",
+    "@callstack/repack": "5.0.0-alpha.0",
     "metro-compat-test": "0.0.1",
     "website": "0.0.1"
   },
-  "changesets": ["spicy-pumas-whisper"]
+  "changesets": [
+    "big-insects-move",
+    "fast-falcons-joke",
+    "happy-pets-yawn",
+    "healthy-monkeys-relate",
+    "heavy-drinks-heal",
+    "honest-schools-tap",
+    "lucky-paws-shop",
+    "nervous-laws-try",
+    "olive-singers-attack",
+    "proud-students-return",
+    "serious-falcons-burn",
+    "spicy-pumas-whisper",
+    "tidy-eels-clean",
+    "tricky-donuts-fly"
+  ]
 }

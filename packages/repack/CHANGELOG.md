@@ -1,5 +1,41 @@
 # @callstack/repack
 
+## 5.0.0-rc.0
+
+### Minor Changes
+
+- [#674](https://github.com/callstack/repack/pull/674) [`9f4ad85`](https://github.com/callstack/repack/commit/9f4ad85648f02a127113e7c56d726a923cc0dc12) Thanks [@jbroma](https://github.com/jbroma)! - Add support for Module Federation V2
+
+- [#765](https://github.com/callstack/repack/pull/765) [`efff0c2`](https://github.com/callstack/repack/commit/efff0c29801db04eddbbc8f3776cb3e56457f585) Thanks [@jbroma](https://github.com/jbroma)! - Add default rules for transpiling popular flow typed packages
+
+- [#702](https://github.com/callstack/repack/pull/702) [`495203d`](https://github.com/callstack/repack/commit/495203dc3a1d219aea623afe99912957d8f0e0a1) Thanks [@jbroma](https://github.com/jbroma)! - Enable dev-server to serve source assets alongside build artifacts
+
+- [#763](https://github.com/callstack/repack/pull/763) [`e433584`](https://github.com/callstack/repack/commit/e4335840a4b1ed59affc89375988ba6a9db57891) Thanks [@thiagobrez](https://github.com/thiagobrez)! - Add getModulePaths utility to generate include and exclude paths for modules in the bundler config
+
+- [#757](https://github.com/callstack/repack/pull/757) [`8a90731`](https://github.com/callstack/repack/commit/8a9073146c6541ed374541b9bcf9ebe3c4f70e9a) Thanks [@artus9033](https://github.com/artus9033)! - Display list of available interactions on dev server startup & add support for 'j' to debug
+
+- [#753](https://github.com/callstack/repack/pull/753) [`176324a`](https://github.com/callstack/repack/commit/176324a8d09d34dd1fbc68e0e227640834138f5a) Thanks [@artus9033](https://github.com/artus9033)! - Add support for React Native 0.76
+
+- [#750](https://github.com/callstack/repack/pull/750) [`c4a3235`](https://github.com/callstack/repack/commit/c4a32354feaccdfda8570b6a065dc6f7a6b9f6d0) Thanks [@jbroma](https://github.com/jbroma)! - Normalize filepath & ensure path exists when writing stats to a file
+
+- [#734](https://github.com/callstack/repack/pull/734) [`b455503`](https://github.com/callstack/repack/commit/b4555030b7827e14084db282accd138945d532c5) Thanks [@hexboy](https://github.com/hexboy)! - Add a mechanism for retrying downloads of scripts through `retry` and `retryDelay` properties
+
+### Patch Changes
+
+- [#711](https://github.com/callstack/repack/pull/711) [`7af6d5b`](https://github.com/callstack/repack/commit/7af6d5bad8288ea58dd246243fe96439709cbe97) Thanks [@jbroma](https://github.com/jbroma)! - fix: always use URL from Script config as `sourceUrl` when evaluating bundles on Android
+
+- [#766](https://github.com/callstack/repack/pull/766) [`206d76f`](https://github.com/callstack/repack/commit/206d76f30a4858680839fa53b9f8a3a2070ed9f8) Thanks [@jbroma](https://github.com/jbroma)! - Fix handling of cjs,mjs,cts,mts files when transpiling node modules with swc
+
+- [#755](https://github.com/callstack/repack/pull/755) [`90faeeb`](https://github.com/callstack/repack/commit/90faeeb7d6be9ddf5aa74c9552df01ec58d5372c) Thanks [@jbroma](https://github.com/jbroma)! - Disable package imports by default
+
+- [#756](https://github.com/callstack/repack/pull/756) [`f119ab3`](https://github.com/callstack/repack/commit/f119ab3eb94eff9d2cc1aec8fcf9f835c3025abc) Thanks [@hosseinmd](https://github.com/hosseinmd)! - Prevent to loadScript which is already is loading
+  issue: https://github.com/callstack/repack/issues/749
+
+- [#771](https://github.com/callstack/repack/pull/771) [`df1d587`](https://github.com/callstack/repack/commit/df1d587115abb61a7168d02d04e451ee3f8066de) Thanks [@hosseinmd](https://github.com/hosseinmd)! - script should be cached after successfully loaded
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-rc.1
+
 ## 5.0.0-alpha.0
 
 ### Major Changes
@@ -229,10 +265,10 @@
 
   ```js
   // react-native.config.js
-  const commands = require('@callstack/repack/commands');
+  const commands = require("@callstack/repack/commands");
 
   module.exports = {
-    commands: commands.filter((command) => command.name.startsWith('webpack')),
+    commands: commands.filter((command) => command.name.startsWith("webpack")),
   };
   ```
 
@@ -486,7 +522,7 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   - All Repack plugins are consolidated under single `RepackPlugin`, all sub-plugins are available under `plugins`:
 
     ```ts
-    import * as Repack from '@callstack/repack';
+    import * as Repack from "@callstack/repack";
 
     new Repack.plugins.AssetResolverPlugin();
     ```
@@ -558,24 +594,24 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   For example, instead of using `webpack.container.ModuleFederationPlugin`, you can now use:
 
   ```js
-  import * as Repack from '@callstack/repack';
+  import * as Repack from "@callstack/repack";
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: 'host',
+    name: "host",
   });
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: 'app1',
+    name: "app1",
     remotes: {
-      module1: 'module1@https://example.com/module1.container.bundle',
+      module1: "module1@https://example.com/module1.container.bundle",
     },
   });
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: 'app2',
+    name: "app2",
     remotes: {
-      module1: 'module1@https://example.com/module1.container.bundle',
-      module2: 'module1@dynamic',
+      module1: "module1@https://example.com/module1.container.bundle",
+      module2: "module1@dynamic",
     },
   });
   ```
@@ -592,7 +628,7 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   To specify custom priority use 2nd options argument:
 
   ```js
-  import { ScriptManager } from '@callstack/repack/client';
+  import { ScriptManager } from "@callstack/repack/client";
 
   ScriptManager.shared.addResolver(
     async (scriptId, caller) => {
@@ -652,24 +688,24 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   For example, instead of using `webpack.container.ModuleFederationPlugin`, you can now use:
 
   ```js
-  import * as Repack from '@callstack/repack';
+  import * as Repack from "@callstack/repack";
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: 'host',
+    name: "host",
   });
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: 'app1',
+    name: "app1",
     remotes: {
-      module1: 'module1@https://example.com/module1.container.bundle',
+      module1: "module1@https://example.com/module1.container.bundle",
     },
   });
 
   new Repack.plugins.ModuleFederationPlugin({
-    name: 'app2',
+    name: "app2",
     remotes: {
-      module1: 'module1@https://example.com/module1.container.bundle',
-      module2: 'module1@dynamic',
+      module1: "module1@https://example.com/module1.container.bundle",
+      module2: "module1@dynamic",
     },
   });
   ```
@@ -686,7 +722,7 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   To specify custom priority use 2nd options argument:
 
   ```js
-  import { ScriptManager } from '@callstack/repack/client';
+  import { ScriptManager } from "@callstack/repack/client";
 
   ScriptManager.shared.addResolver(
     async (scriptId, caller) => {
@@ -815,7 +851,7 @@ This Release candidate introduces a new feature – **Code Signing**. It allows 
   - All Repack plugins are consolidated under single `RepackPlugin`, all sub-plugins are available under `plugins`:
 
     ```ts
-    import * as Repack from '@callstack/repack';
+    import * as Repack from "@callstack/repack";
 
     new Repack.plugins.AssetResolverPlugin();
     ```
