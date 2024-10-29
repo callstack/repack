@@ -90,7 +90,7 @@ export default (env) => {
         output: {},
       }),
       // @ts-ignore
-      new Repack.plugins.ModuleFederationPlugin({
+      new Repack.plugins.ModuleFederationPluginV2({
         name: 'MiniApp',
         filename: 'MiniApp.container.js.bundle',
         exposes: {

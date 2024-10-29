@@ -114,7 +114,7 @@ export default (env) => {
           assetsPath,
         },
       }),
-      new Repack.plugins.ModuleFederationPlugin({
+      new Repack.plugins.ModuleFederationPluginV2({
         name: 'HostApp',
         filename: 'HostApp.container.js.bundle',
         remotes: {

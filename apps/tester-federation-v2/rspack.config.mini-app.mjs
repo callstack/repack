@@ -112,7 +112,7 @@ export default (env) => {
           assetsPath,
         },
       }),
-      new Repack.plugins.ModuleFederationPlugin({
+      new Repack.plugins.ModuleFederationPluginV2({
         name: 'MiniApp',
         filename: 'MiniApp.container.js.bundle',
         exposes: {

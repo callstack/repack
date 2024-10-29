@@ -99,7 +99,7 @@ export default (env) => {
         },
       }),
       // @ts-ignore
-      new Repack.plugins.ModuleFederationPlugin({
+      new Repack.plugins.ModuleFederationPluginV2({
         name: 'HostApp',
         filename: 'HostApp.container.js.bundle',
         remotes: {
