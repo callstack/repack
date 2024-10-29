@@ -6,6 +6,8 @@ import dedent from 'dedent';
  */
 export namespace Federated {
   /**
+   * @deprecated
+   *
    * Predefined options for shared `react` dependency.
    *
    * @example Basic example.
@@ -41,6 +43,8 @@ export namespace Federated {
   };
 
   /**
+   * @deprecated
+   *
    * Predefined options for shared `react-native` dependency.
    *
    * @example Basic example.
@@ -76,6 +80,8 @@ export namespace Federated {
   };
 
   /**
+   * @deprecated
+   *
    * Creates JavaScript loading code for the given Module Federation remote
    * allowing to import that remote without creating an async boundary, but with
    * simple import statement, eg: `import MyComponent from 'my-remote/MyComponent';`.
