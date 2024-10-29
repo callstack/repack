@@ -1,6 +1,6 @@
 import { ModuleFederationPlugin as MFPluginRspack } from '@module-federation/enhanced/rspack';
 import type { Compiler } from '@rspack/core';
-import { ModuleFederationPlugin } from '../ModuleFederationPlugin';
+import { ModuleFederationPluginV2 } from '../ModuleFederationPluginV2';
 
 jest.mock('@module-federation/enhanced/rspack');
 
@@ -22,7 +22,7 @@ const runtimePluginPath = require.resolve(
 
 describe('ModuleFederationPlugin', () => {
   it('should add default shared dependencies', () => {
-    new ModuleFederationPlugin({ name: 'test' }).apply(mockCompiler);
+    new ModuleFederationPluginV2({ name: 'test' }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
     expect(config.shared).toHaveProperty('react');
@@ -33,7 +33,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should not add deep imports to defaulted shared dependencies', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV2({
       name: 'test',
       reactNativeDeepImports: false,
     }).apply(mockCompiler);
@@ -47,7 +47,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should add deep imports to existing shared dependencies', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV2({
       name: 'test',
       shared: {
         react: { singleton: true, eager: true },
@@ -62,7 +62,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should not add deep imports to existing shared dependencies', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV2({
       name: 'test',
       reactNativeDeepImports: false,
       shared: {
@@ -78,7 +78,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should not add deep imports to existing shared dependencies when react-native is not present', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV2({
       name: 'test',
       shared: {
         react: { singleton: true, eager: true },
@@ -92,7 +92,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should add deep imports to existing shared dependencies array', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV2({
       name: 'test',
       shared: ['react', 'react-native'],
     }).apply(mockCompiler);
@@ -104,7 +104,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should not duplicate or override existing deep imports', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV2({
       name: 'test',
       shared: {
         react: { singleton: true, eager: true },
@@ -124,7 +124,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should determine eager based on shared react-native config', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV2({
       name: 'test',
       shared: {
         react: { singleton: true, eager: true },
@@ -141,14 +141,14 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should add FederationRuntimePlugin to runtime plugins', () => {
-    new ModuleFederationPlugin({ name: 'test' }).apply(mockCompiler);
+    new ModuleFederationPluginV2({ name: 'test' }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
     expect(config.runtimePlugins).toContain(runtimePluginPath);
   });
 
   it('should not add FederationRuntimePlugin to runtime plugins when already present', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV2({
       name: 'test',
       runtimePlugins: [runtimePluginPath],
     }).apply(mockCompiler);
@@ -159,14 +159,14 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should use loaded-first as default shareStrategy', () => {
-    new ModuleFederationPlugin({ name: 'test' }).apply(mockCompiler);
+    new ModuleFederationPluginV2({ name: 'test' }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
     expect(config.shareStrategy).toEqual('loaded-first');
   });
 
   it('should allow overriding shareStartegy', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV2({
       name: 'test',
       shareStrategy: 'version-first',
     }).apply(mockCompiler);
