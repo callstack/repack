@@ -1,18 +1,23 @@
 import type { Compiler } from '@rspack/core';
 import { Federated } from '../../utils';
-import { ModuleFederationPlugin } from '../ModuleFederationPlugin';
+import { ModuleFederationPluginV1 } from '../ModuleFederationPluginV1';
 
 const mockPlugin = jest.fn().mockImplementation(() => ({
   apply: jest.fn(),
 }));
 
 const mockCompiler = {
-  webpack: { container: { ModuleFederationPluginV1: mockPlugin } },
+  webpack: {
+    container: {
+      ModuleFederationPluginV1: mockPlugin, // rspack
+      ModuleFederationPlugin: mockPlugin, // webpack
+    },
+  },
 } as unknown as Compiler;
 
 describe('ModuleFederationPlugin', () => {
   it('should replace RemotesObject remotes', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       remotes: {
         external: 'external1@dynamic',
@@ -23,7 +28,7 @@ describe('ModuleFederationPlugin', () => {
     expect(config.remotes.external).toMatch('promise new Promise');
     mockPlugin.mockClear();
 
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       remotes: {
         external: ['external1@dynamic', 'external2@dynamic'],
@@ -37,7 +42,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should replace string[] remotes', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       remotes: ['remote1@dynamic', 'remote2@dynamic'],
     }).apply(mockCompiler);
@@ -49,7 +54,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should replace RemotesObject[] remotes', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       remotes: [
         { external: 'external1@dynamic' },
@@ -65,7 +70,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should not add default resolver for remote', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       remotes: {
         app1: 'app1@dynamic',
@@ -79,7 +84,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should add default resolver for remote', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       remotes: {
         app1: 'app1@http://localhost:6789/static/app1.container.bundle',
@@ -99,7 +104,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should add default shared dependencies', () => {
-    new ModuleFederationPlugin({ name: 'test' }).apply(mockCompiler);
+    new ModuleFederationPluginV1({ name: 'test' }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
     expect(config.shared).toHaveProperty('react');
@@ -110,7 +115,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should not add deep imports to defaulted shared dependencies', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       reactNativeDeepImports: false,
     }).apply(mockCompiler);
@@ -124,7 +129,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should add deep imports to existing shared dependencies', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       shared: {
         react: Federated.SHARED_REACT,
@@ -139,7 +144,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should not add deep imports to existing shared dependencies', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       reactNativeDeepImports: false,
       shared: {
@@ -155,7 +160,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should not add deep imports to existing shared dependencies when react-native is not present', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       shared: {
         react: Federated.SHARED_REACT,
@@ -169,7 +174,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should add deep imports to existing shared dependencies array', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       shared: ['react', 'react-native'],
     }).apply(mockCompiler);
@@ -181,7 +186,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should not duplicate or override existing deep imports', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       shared: {
         react: Federated.SHARED_REACT,
@@ -201,7 +206,7 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should determine eager based on shared react-native config', () => {
-    new ModuleFederationPlugin({
+    new ModuleFederationPluginV1({
       name: 'test',
       shared: {
         react: { singleton: true, eager: true },

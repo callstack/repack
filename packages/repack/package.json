@@ -14,6 +14,10 @@
       "types": "./dist/modules/ScriptManager/index.d.ts",
       "default": "./dist/modules/ScriptManager/index.js"
     },
+    "./federation-runtime-plugin": {
+      "types": "./dist/modules/FederationRuntimePlugin.d.ts",
+      "default": "./dist/modules/FederationRuntimePlugin.js"
+    },
     "./commands/webpack": {
       "types": "./dist/commands/webpack/index.d.ts",
       "default": "./dist/commands/webpack/index.js"
@@ -40,6 +44,8 @@
     "!ios/build",
     "client.js",
     "client.d.ts",
+    "federation-runtime-plugin.js",
+    "federation-runtime-plugin.d.ts",
     "callstack-repack.podspec",
     "src/modules/ScriptManager/NativeScriptManager.ts"
   ],
@@ -74,6 +80,7 @@
     "clang-format:android": "find android/src/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i"
   },
   "peerDependencies": {
+    "@module-federation/enhanced": ">=0.6.10",
     "@react-native-community/cli": "*",
     "@react-native-community/cli-types": "*",
     "@rspack/core": "=>1",
@@ -82,6 +89,9 @@
     "webpack": ">=5.90"
   },
   "peerDependenciesMeta": {
+    "@module-federation/enhanced": {
+      "optional": true
+    },
     "@rspack/core": {
       "optional": true
     },
@@ -114,9 +124,11 @@
     "@babel/plugin-transform-modules-commonjs": "^7.23.2",
     "@react-native-community/cli": "15.0.0-alpha.2",
     "@react-native-community/cli-types": "15.0.0-alpha.2",
-    "@rspack/core": "1.0.1",
+    "@module-federation/enhanced": "0.6.10",
+    "@module-federation/sdk": "0.6.10",
+    "@rspack/core": "1.0.8",
     "@rspack/plugin-react-refresh": "1.0.0",
-    "@swc/helpers": "0.5.11",
+    "@swc/helpers": "0.5.13",
     "@types/dedent": "^0.7.0",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.0",
