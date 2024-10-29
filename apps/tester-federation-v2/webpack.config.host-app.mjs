@@ -107,7 +107,6 @@ export default (env) => {
         },
         runtimePlugins: [
           resolve('@callstack/repack/federation-runtime-plugin'),
-          path.resolve(dirname, 'src', 'utils', 'runtime-debug.ts'),
         ],
         shared: {
           react: {
