@@ -1,4 +1,4 @@
-name: Close Stale Issues
+name: Stale bot
 on:
   schedule:
     - cron: '0 0 * * *'  # Run every day at midnight
