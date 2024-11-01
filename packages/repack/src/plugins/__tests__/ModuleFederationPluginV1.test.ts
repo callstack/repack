@@ -221,4 +221,31 @@ describe('ModuleFederationPlugin', () => {
     expect(config.shared['@react-native/'].eager).toBe(false);
     mockPlugin.mockClear();
   });
+
+  it('should set default federated entry filename', () => {
+    new ModuleFederationPluginV1({
+      name: 'test',
+      exposes: {
+        './App': './src/App',
+      },
+    }).apply(mockCompiler);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config.filename).toBe('test.container.bundle');
+    mockPlugin.mockClear();
+  });
+
+  it('should allow for custom federated entry name through filename', () => {
+    new ModuleFederationPluginV1({
+      name: 'test',
+      exposes: {
+        './App': './src/App',
+      },
+      filename: 'remoteEntry.js',
+    }).apply(mockCompiler);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config.filename).toBe('remoteEntry.js');
+    mockPlugin.mockClear();
+  });
 });
