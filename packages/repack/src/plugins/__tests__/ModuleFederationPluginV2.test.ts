@@ -21,6 +21,10 @@ const runtimePluginPath = require.resolve(
 );
 
 describe('ModuleFederationPlugin', () => {
+  afterEach(() => {
+    mockPlugin.mockClear();
+  });
+
   it('should add default shared dependencies', () => {
     new ModuleFederationPluginV2({ name: 'test' }).apply(mockCompiler);
 
@@ -29,7 +33,6 @@ describe('ModuleFederationPlugin', () => {
     expect(config.shared).toHaveProperty('react-native');
     expect(config.shared).toHaveProperty('react-native/');
     expect(config.shared).toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should not add deep imports to defaulted shared dependencies', () => {
@@ -43,7 +46,6 @@ describe('ModuleFederationPlugin', () => {
     expect(config.shared).toHaveProperty('react-native');
     expect(config.shared).not.toHaveProperty('react-native/');
     expect(config.shared).not.toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should add deep imports to existing shared dependencies', () => {
@@ -58,7 +60,6 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.shared).toHaveProperty('react-native/');
     expect(config.shared).toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should not add deep imports to existing shared dependencies', () => {
@@ -74,7 +75,6 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.shared).not.toHaveProperty('react-native/');
     expect(config.shared).not.toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should not add deep imports to existing shared dependencies when react-native is not present', () => {
@@ -88,7 +88,6 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.shared).not.toHaveProperty('react-native/');
     expect(config.shared).not.toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should add deep imports to existing shared dependencies array', () => {
@@ -100,7 +99,6 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.shared[2]).toHaveProperty('react-native/');
     expect(config.shared[3]).toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should not duplicate or override existing deep imports', () => {
@@ -120,7 +118,6 @@ describe('ModuleFederationPlugin', () => {
       singleton: true,
       eager: true,
     });
-    mockPlugin.mockClear();
   });
 
   it('should determine eager based on shared react-native config', () => {
@@ -137,7 +134,6 @@ describe('ModuleFederationPlugin', () => {
     expect(config.shared).toHaveProperty('@react-native/');
     expect(config.shared['react-native/'].eager).toBe(false);
     expect(config.shared['@react-native/'].eager).toBe(false);
-    mockPlugin.mockClear();
   });
 
   it('should add FederationRuntimePlugin to runtime plugins', () => {

@@ -181,10 +181,12 @@ export namespace Federated {
    * ```
    *
    * @param config Configuration for the resolver.
+   * @param containerExt Extension of container bundles. Defaults to `.container.bundle`.
    * @returns A resolver function which will try to resolve URL based on given `scriptId` and `caller`.
    */
   export function createURLResolver(
-    config: Federated.URLResolverConfig
+    config: Federated.URLResolverConfig,
+    containerExt = '.container.bundle'
   ): Federated.URLResolver {
     const resolvers: Record<string, Federated.URLResolver> = {};
 
@@ -193,7 +195,7 @@ export namespace Federated {
         if (scriptId === key) {
           const url = config.containers[key]
             .replace(/\[name\]/g, scriptId)
-            .replace(/\[ext\]/g, '.container.bundle');
+            .replace(/\[ext\]/g, containerExt);
           return url;
         }
 

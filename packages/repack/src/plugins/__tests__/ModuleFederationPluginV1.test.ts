@@ -16,6 +16,10 @@ const mockCompiler = {
 } as unknown as Compiler;
 
 describe('ModuleFederationPlugin', () => {
+  afterEach(() => {
+    mockPlugin.mockClear();
+  });
+
   it('should replace RemotesObject remotes', () => {
     new ModuleFederationPluginV1({
       name: 'test',
@@ -38,7 +42,6 @@ describe('ModuleFederationPlugin', () => {
     config = mockPlugin.mock.calls[0][0];
     expect(config.remotes.external[0]).toMatch('promise new Promise');
     expect(config.remotes.external[1]).toMatch('promise new Promise');
-    mockPlugin.mockClear();
   });
 
   it('should replace string[] remotes', () => {
@@ -50,7 +53,6 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.remotes[0]).toMatch('promise new Promise');
     expect(config.remotes[1]).toMatch('promise new Promise');
-    mockPlugin.mockClear();
   });
 
   it('should replace RemotesObject[] remotes', () => {
@@ -66,7 +68,6 @@ describe('ModuleFederationPlugin', () => {
     expect(config.remotes[0].external).toMatch('promise new Promise');
     expect(config.remotes[1].external[0]).toMatch('promise new Promise');
     expect(config.remotes[1].external[1]).toMatch('promise new Promise');
-    mockPlugin.mockClear();
   });
 
   it('should not add default resolver for remote', () => {
@@ -80,7 +81,6 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.remotes.app1).toMatch('promise new Promise');
     expect(config.remotes.app1).not.toMatch('scriptManager.addResolver');
-    mockPlugin.mockClear();
   });
 
   it('should add default resolver for remote', () => {
@@ -100,7 +100,6 @@ describe('ModuleFederationPlugin', () => {
     expect(config.remotes.app1).toMatch(
       'http://localhost:6789/static/[name][ext]'
     );
-    mockPlugin.mockClear();
   });
 
   it('should add default shared dependencies', () => {
@@ -111,7 +110,6 @@ describe('ModuleFederationPlugin', () => {
     expect(config.shared).toHaveProperty('react-native');
     expect(config.shared).toHaveProperty('react-native/');
     expect(config.shared).toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should not add deep imports to defaulted shared dependencies', () => {
@@ -125,7 +123,6 @@ describe('ModuleFederationPlugin', () => {
     expect(config.shared).toHaveProperty('react-native');
     expect(config.shared).not.toHaveProperty('react-native/');
     expect(config.shared).not.toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should add deep imports to existing shared dependencies', () => {
@@ -140,7 +137,6 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.shared).toHaveProperty('react-native/');
     expect(config.shared).toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should not add deep imports to existing shared dependencies', () => {
@@ -156,7 +152,6 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.shared).not.toHaveProperty('react-native/');
     expect(config.shared).not.toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should not add deep imports to existing shared dependencies when react-native is not present', () => {
@@ -170,7 +165,6 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.shared).not.toHaveProperty('react-native/');
     expect(config.shared).not.toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should add deep imports to existing shared dependencies array', () => {
@@ -182,7 +176,6 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.shared[2]).toHaveProperty('react-native/');
     expect(config.shared[3]).toHaveProperty('@react-native/');
-    mockPlugin.mockClear();
   });
 
   it('should not duplicate or override existing deep imports', () => {
@@ -202,7 +195,6 @@ describe('ModuleFederationPlugin', () => {
       singleton: true,
       eager: true,
     });
-    mockPlugin.mockClear();
   });
 
   it('should determine eager based on shared react-native config', () => {
@@ -219,6 +211,30 @@ describe('ModuleFederationPlugin', () => {
     expect(config.shared).toHaveProperty('@react-native/');
     expect(config.shared['react-native/'].eager).toBe(false);
     expect(config.shared['@react-native/'].eager).toBe(false);
-    mockPlugin.mockClear();
+  });
+
+  it('should set default federated entry filename', () => {
+    new ModuleFederationPluginV1({
+      name: 'test',
+      exposes: {
+        './App': './src/App',
+      },
+    }).apply(mockCompiler);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config.filename).toBe('test.container.bundle');
+  });
+
+  it('should allow for custom federated entry name through filename', () => {
+    new ModuleFederationPluginV1({
+      name: 'test',
+      exposes: {
+        './App': './src/App',
+      },
+      filename: 'remoteEntry.js',
+    }).apply(mockCompiler);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config.filename).toBe('remoteEntry.js');
   });
 });

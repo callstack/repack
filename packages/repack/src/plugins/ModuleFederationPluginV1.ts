@@ -259,12 +259,11 @@ export class ModuleFederationPluginV1 implements RspackPluginInstance {
   apply(compiler: Compiler) {
     const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
 
-    // TODO fix in a separate PR (jbroma)
-    // biome-ignore format: fix in a separate PR
     const filenameConfig =
-      this.config.filename ?? this.config.exposes
+      this.config.filename ??
+      (this.config.exposes
         ? `${this.config.name}.container.bundle`
-        : undefined;
+        : undefined);
 
     const libraryConfig = this.config.exposes
       ? {
