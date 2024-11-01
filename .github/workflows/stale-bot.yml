@@ -5,6 +5,7 @@ on:
 jobs:
   close_stale_prs:
     runs-on: ubuntu-latest
+    if: github.repository == 'callstack/repack'
     steps:
       - name: Close stale pull requests
         uses: actions/stale@v9
