@@ -5,8 +5,8 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start:hostapp": "react-native webpack-start --webpackConfig rspack.config.host-app.mjs",
-    "start:miniapp": "react-native webpack-start --webpackConfig rspack.config.mini-app.mjs --port 8082"
+    "start:hostapp": "react-native webpack-start --config rspack.config.host-app.mjs",
+    "start:miniapp": "react-native webpack-start --config rspack.config.mini-app.mjs --port 8082"
   },
   "dependencies": {
     "@callstack/repack": "workspace:*",
