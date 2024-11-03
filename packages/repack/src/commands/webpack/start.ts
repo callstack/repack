@@ -37,7 +37,7 @@ import type { HMRMessageBody } from './types';
 export async function start(_: string[], config: Config, args: StartArguments) {
   const webpackConfigPath = getWebpackConfigFilePath(
     config.root,
-    args.webpackConfig
+    args.config ?? args.webpackConfig
   );
   const { reversePort: reversePortArg, ...restArgs } = args;
   const cliOptions: StartCliOptions = {

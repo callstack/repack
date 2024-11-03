@@ -30,7 +30,7 @@ export async function bundle(
 ) {
   const rspackConfigPath = getRspackConfigFilePath(
     cliConfig.root,
-    args.webpackConfig
+    args.config ?? args.webpackConfig
   );
 
   const cliOptions: BundleCliOptions = {
