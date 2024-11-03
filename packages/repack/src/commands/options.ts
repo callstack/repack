@@ -68,8 +68,13 @@ export const startCommandOptions = [
     description: 'Enables verbose logging',
   },
   {
+    name: '--config <path>',
+    description: 'Path to a bundler config file, e.g webpack.config.js',
+    parse: (val: string) => path.resolve(val),
+  },
+  {
     name: '--webpackConfig <path>',
-    description: 'Path to a Webpack config',
+    description: 'Path to a bundler config file, e.g webpack.config.js',
     parse: (val: string) => path.resolve(val),
   },
 ];
@@ -147,8 +152,14 @@ export const bundleCommandOptions = [
     description: 'Watch for file changes',
   },
   {
+    name: '--config <path>',
+    description: 'Path to a bundler config file, e.g webpack.config.js',
+    parse: (val: string) => path.resolve(val),
+  },
+  {
     name: '--webpackConfig <path>',
-    description: 'Path to a Webpack config',
+    description:
+      '[DEPRECATED] Path to a bundler config file, e.g webpack.config.js. Please use --config instead.',
     parse: (val: string) => path.resolve(val),
   },
 ];

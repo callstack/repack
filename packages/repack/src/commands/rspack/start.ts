@@ -38,7 +38,7 @@ export async function start(
 ) {
   const rspackConfigPath = getRspackConfigFilePath(
     cliConfig.root,
-    args.webpackConfig
+    args.config ?? args.webpackConfig
   );
   const { reversePort: reversePortArg, ...restArgs } = args;
   const cliOptions: StartCliOptions = {

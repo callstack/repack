@@ -29,7 +29,7 @@ export async function bundle(
 ) {
   const webpackConfigPath = getWebpackConfigFilePath(
     cliConfig.root,
-    args.webpackConfig
+    args.config ?? args.webpackConfig
   );
 
   const cliOptions: BundleCliOptions = {
