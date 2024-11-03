@@ -3,6 +3,7 @@ import type { Config } from '@react-native-community/cli-types';
 import * as colorette from 'colorette';
 import type webpack from 'webpack';
 import packageJson from '../../../package.json';
+import { VERBOSE_ENV_KEY } from '../../env';
 import {
   ConsoleReporter,
   FileReporter,
@@ -39,7 +40,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     config.root,
     args.config ?? args.webpackConfig
   );
-  const { reversePort: reversePortArg, ...restArgs } = args;
+  const { reversePort, ...restArgs } = args;
   const cliOptions: StartCliOptions = {
     config: {
       root: config.root,
@@ -55,14 +56,13 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     throw new Error('Unrecognized platform: ' + args.platform);
   }
 
-  const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
-
-  const isVerbose = args.verbose;
-  const showHttpRequests = isVerbose || args.logRequests;
+  if (args.verbose) {
+    process.env[VERBOSE_ENV_KEY] = '1';
+  }
 
   const reporter = composeReporters(
     [
-      new ConsoleReporter({ asJson: args.json, isVerbose }),
+      new ConsoleReporter({ asJson: args.json, isVerbose: args.verbose }),
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
     ].filter(Boolean) as Reporter[]
   );
@@ -72,11 +72,12 @@ export async function start(_: string[], config: Config, args: StartArguments) {
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
   );
 
-  const compiler = new Compiler(cliOptions, reporter, isVerbose);
+  const compiler = new Compiler(cliOptions, reporter);
 
   const serverHost = args.host || DEFAULT_HOSTNAME;
   const serverPort = args.port ?? DEFAULT_PORT;
   const serverURL = `${args.https === true ? 'https' : 'http'}://${serverHost}:${serverPort}`;
+  const showHttpRequests = args.verbose || args.logRequests;
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({

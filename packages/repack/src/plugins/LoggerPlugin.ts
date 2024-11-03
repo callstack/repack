@@ -58,12 +58,16 @@ export class LoggerPlugin implements RspackPluginInstance {
       this.config.output = { console: true };
     }
 
+    const isTruthyEnv = (env: string | undefined) => {
+      return !!env && env !== 'false' && env !== '0';
+    };
+
     const reporters = [];
     if (this.config.output.console) {
       reporters.push(
         new ConsoleReporter({
-          isWorker: Boolean(process.env[WORKER_ENV_KEY]),
-          isVerbose: Boolean(process.env[VERBOSE_ENV_KEY]),
+          isWorker: isTruthyEnv(process.env[WORKER_ENV_KEY]),
+          isVerbose: isTruthyEnv(process.env[VERBOSE_ENV_KEY]),
         })
       );
     }
