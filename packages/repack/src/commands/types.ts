@@ -27,7 +27,6 @@ export interface StartArguments {
   logRequests?: boolean;
   platform?: string;
   reversePort?: boolean;
-  silent?: boolean;
   verbose?: boolean;
   config?: string;
   webpackConfig?: string;

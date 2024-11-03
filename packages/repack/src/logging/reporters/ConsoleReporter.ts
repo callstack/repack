@@ -5,7 +5,7 @@ import type { LogEntry, LogType, Reporter } from '../types';
 
 export interface ConsoleReporterConfig {
   asJson?: boolean;
-  level?: 'silent' | 'normal' | 'verbose';
+  isVerbose?: boolean;
   isWorker?: boolean;
 }
 
@@ -77,13 +77,8 @@ class InteractiveConsoleReporter implements Reporter {
   constructor(private config: ConsoleReporterConfig) {}
 
   process(log: LogEntry) {
-    // Do not log anything in silent mode
-    if (this.config.level === 'silent') {
-      return;
-    }
-
     // Do not log debug messages in non-verbose mode
-    if (log.type === 'debug' && this.config.level !== 'verbose') {
+    if (log.type === 'debug' && !this.config.isVerbose) {
       return;
     }
 

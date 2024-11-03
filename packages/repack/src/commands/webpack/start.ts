@@ -57,27 +57,20 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
   const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
 
-  const isSilent = args.silent;
   const isVerbose = args.verbose;
-
-  const showHttpRequests = isSilent ? false : isVerbose || args.logRequests;
+  const showHttpRequests = isVerbose || args.logRequests;
 
   const reporter = composeReporters(
     [
-      new ConsoleReporter({
-        asJson: args.json,
-        level: isSilent ? 'silent' : isVerbose ? 'verbose' : 'normal',
-      }),
+      new ConsoleReporter({ asJson: args.json, isVerbose }),
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
     ].filter(Boolean) as Reporter[]
   );
 
-  if (!isSilent) {
-    const version = packageJson.version;
-    process.stdout.write(
-      colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
-    );
-  }
+  const version = packageJson.version;
+  process.stdout.write(
+    colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
+  );
 
   const compiler = new Compiler(cliOptions, reporter, isVerbose);
 
@@ -118,7 +111,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
               });
             },
           },
-          { logger: ctx.log, silent: isSilent }
+          { logger: ctx.log }
         );
       }
 
