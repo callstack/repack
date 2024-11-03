@@ -60,10 +60,6 @@ export const startCommandOptions = [
     description: 'ADB reverse port on starting devServers only for Android',
   },
   {
-    name: '--silent',
-    description: 'Silents all logs to the console/stdout',
-  },
-  {
     name: '--verbose',
     description: 'Enables verbose logging',
   },

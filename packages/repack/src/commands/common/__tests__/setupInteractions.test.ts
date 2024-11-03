@@ -46,7 +46,14 @@ describe('setupInteractions', () => {
   it('should log a warning if setRawMode is not available', () => {
     mockProcess.stdin.setRawMode = undefined as any;
 
-    setupInteractions({}, mockLogger, mockProcess, mockReadline);
+    setupInteractions(
+      {},
+      {
+        logger: mockLogger,
+        process: mockProcess,
+        readline: mockReadline,
+      }
+    );
 
     expect(mockLogger.warn).toHaveBeenCalledWith(
       'Interactive mode is not supported in this environment'
@@ -54,7 +61,14 @@ describe('setupInteractions', () => {
   });
 
   it('should set up keypress events and interactions', () => {
-    setupInteractions({}, mockLogger, mockProcess, mockReadline);
+    setupInteractions(
+      {},
+      {
+        logger: mockLogger,
+        process: mockProcess,
+        readline: mockReadline,
+      }
+    );
 
     expect(mockReadline.emitKeypressEvents).toHaveBeenCalledWith(
       mockProcess.stdin
@@ -67,7 +81,14 @@ describe('setupInteractions', () => {
   });
 
   it('should handle ctrl+c and ctrl+z keypresses', () => {
-    setupInteractions({}, mockLogger, mockProcess, mockReadline);
+    setupInteractions(
+      {},
+      {
+        logger: mockLogger,
+        process: mockProcess,
+        readline: mockReadline,
+      }
+    );
 
     const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
       .calls[0][1];
@@ -86,7 +107,11 @@ describe('setupInteractions', () => {
       onOpenDevTools: jest.fn(),
     };
 
-    setupInteractions(handlers, mockLogger, mockProcess, mockReadline);
+    setupInteractions(handlers, {
+      logger: mockLogger,
+      process: mockProcess,
+      readline: mockReadline,
+    });
 
     const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
       .calls[0][1];
@@ -109,7 +134,11 @@ describe('setupInteractions', () => {
       onReload: jest.fn(),
     };
 
-    setupInteractions(handlers, mockLogger, mockProcess, mockReadline);
+    setupInteractions(handlers, {
+      logger: mockLogger,
+      process: mockProcess,
+      readline: mockReadline,
+    });
 
     expect(mockProcess.stdout.write).toHaveBeenCalledWith(' r: Reload app\n');
     expect(mockProcess.stdout.write).toHaveBeenCalledWith(
@@ -132,7 +161,11 @@ describe('setupInteractions', () => {
       // onOpenDevMenu - unsupported
     };
 
-    setupInteractions(handlers, mockLogger, mockProcess, mockReadline);
+    setupInteractions(handlers, {
+      logger: mockLogger,
+      process: mockProcess,
+      readline: mockReadline,
+    });
 
     const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
       .calls[0][1];
@@ -164,7 +197,11 @@ describe('setupInteractions', () => {
       onOpenDevTools: jest.fn(),
     };
 
-    setupInteractions(handlers, mockLogger, mockProcess, mockReadline);
+    setupInteractions(handlers, {
+      logger: mockLogger,
+      process: mockProcess,
+      readline: mockReadline,
+    });
 
     const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
       .calls[0][1];
@@ -179,7 +216,11 @@ describe('setupInteractions', () => {
       onOpenDevTools: jest.fn(),
     };
 
-    setupInteractions(handlers, mockLogger, mockProcess, mockReadline);
+    setupInteractions(handlers, {
+      logger: mockLogger,
+      process: mockProcess,
+      readline: mockReadline,
+    });
 
     const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
       .calls[0][1];
@@ -199,9 +240,11 @@ describe('setupInteractions', () => {
             onOpenDevMenu() {},
             onReload() {},
           },
-          mockLogger,
-          mockProcess,
-          mockReadline
+          {
+            logger: mockLogger,
+            process: mockProcess,
+            readline: mockReadline,
+          }
         );
 
         expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
