@@ -56,14 +56,12 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   }
 
   const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
-  const isSilent = args.silent;
-  const isVerbose = isSilent
-    ? false
-    : // TODO fix in a separate PR (jbroma)
-      // biome-ignore format: fix in a separate PR
-      args.verbose ?? process.argv.includes('--verbose');
 
-  const showHttpRequests = isVerbose || args.logRequests;
+  const isSilent = args.silent;
+  const isVerbose = args.verbose;
+
+  const showHttpRequests = isSilent ? false : isVerbose || args.logRequests;
+
   const reporter = composeReporters(
     [
       new ConsoleReporter({
