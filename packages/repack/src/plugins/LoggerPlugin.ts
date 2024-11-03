@@ -63,7 +63,7 @@ export class LoggerPlugin implements RspackPluginInstance {
       reporters.push(
         new ConsoleReporter({
           isWorker: Boolean(process.env[WORKER_ENV_KEY]),
-          level: process.env[VERBOSE_ENV_KEY] ? 'verbose' : 'normal',
+          isVerbose: Boolean(process.env[VERBOSE_ENV_KEY]),
         })
       );
     }
