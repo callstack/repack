@@ -40,7 +40,7 @@ export async function start(
     cliConfig.root,
     args.config ?? args.webpackConfig
   );
-  const { reversePort: reversePortArg, ...restArgs } = args;
+  const { reversePort, ...restArgs } = args;
   const cliOptions: StartCliOptions = {
     config: {
       root: cliConfig.root,
@@ -55,8 +55,6 @@ export async function start(
   if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
     throw new Error('Unrecognized platform: ' + args.platform);
   }
-
-  const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
 
   const isVerbose = args.verbose;
   const showHttpRequests = isVerbose || args.logRequests;
