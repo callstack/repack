@@ -4,7 +4,7 @@ import path from 'node:path';
 import { Worker } from 'node:worker_threads';
 import type { SendProgress } from '@callstack/repack-dev-server';
 import type webpack from 'webpack';
-import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../../env';
+import { WORKER_ENV_KEY } from '../../env';
 import type { LogType, Reporter } from '../../logging';
 import { DEV_SERVER_ASSET_TYPES } from '../consts';
 import type { CliOptions } from '../types';
@@ -26,8 +26,7 @@ export class Compiler extends EventEmitter {
 
   constructor(
     private cliOptions: CliOptions,
-    private reporter: Reporter,
-    private isVerbose?: boolean
+    private reporter: Reporter
   ) {
     super();
   }
@@ -46,7 +45,6 @@ export class Compiler extends EventEmitter {
       env: {
         ...process.env,
         [WORKER_ENV_KEY]: '1',
-        [VERBOSE_ENV_KEY]: this.isVerbose ? '1' : undefined,
       },
       workerData,
     });
