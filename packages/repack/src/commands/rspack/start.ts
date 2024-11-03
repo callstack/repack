@@ -119,7 +119,7 @@ export async function start(
               });
             },
           },
-          ctx.log
+          { logger: ctx.log, silent: isSilent }
         );
       }
 

@@ -118,7 +118,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
               });
             },
           },
-          ctx.log
+          { logger: ctx.log, silent: isSilent }
         );
       }
 
