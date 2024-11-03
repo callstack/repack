@@ -60,7 +60,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   const isSilent = args.silent;
   const isVerbose = args.verbose;
 
-  const showHttpRequests = isVerbose || args.logRequests;
+  const showHttpRequests = isSilent ? false : isVerbose || args.logRequests;
 
   const reporter = composeReporters(
     [
