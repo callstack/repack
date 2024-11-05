@@ -19,6 +19,7 @@ export const FLOW_TYPED_MODULES_LOADING_RULES: RuleSetRule = {
     'react-native-performance',
     'react-native-vector-icons',
     '@react-native-community/datetimepicker',
+    'react-native-linear-gradient',
   ]),
   use: {
     loader: '@callstack/repack/flow-loader',
