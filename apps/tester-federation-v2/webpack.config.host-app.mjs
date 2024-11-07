@@ -137,7 +137,7 @@ export default (env) => {
           'react-native-screens': {
             singleton: true,
             eager: true,
-            requiredVersion: '^3.34.0',
+            requiredVersion: '^3.35.0',
           },
         },
       }),

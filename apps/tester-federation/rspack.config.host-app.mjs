@@ -157,7 +157,7 @@ export default (env) => {
           'react-native-screens': {
             singleton: true,
             eager: true,
-            requiredVersion: '^3.34.0',
+            requiredVersion: '^3.35.0',
           },
           '@react-native-async-storage/async-storage': {
             singleton: true,
