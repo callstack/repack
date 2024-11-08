@@ -36,24 +36,24 @@ data class ScriptConfig(
             val uniqueId = requireNotNull(value.getString("uniqueId"))
 
             val initialUrl = URL(urlString)
-            val initialUri = initialUrl.toURI()
+            val uri = initialUrl.toURI()
 
             val sourceUrl = initialUrl.toString()
 
             // overrides any existing query in the URL with config.query
-            val uri = if (query != null) {
+            val finalUri = if (query != null) {
                 URI(
-                    initialUri.scheme,
-                    initialUri.authority,
-                    initialUri.path,
+                    uri.scheme,
+                    uri.authority,
+                    uri.path,
                     query,
-                    initialUri.fragment
+                    uri.fragment
                 )
             } else {
-                initialUri
+                uri
             }
 
-            val url = uri.toURL()
+            val url = finalUri.toURL()
 
             val headers = Headers.Builder()
             val keyIterator = headersMap?.keySetIterator()
