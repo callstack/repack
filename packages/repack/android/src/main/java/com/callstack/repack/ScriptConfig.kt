@@ -6,6 +6,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URL
+import java.net.URI
 
 data class ScriptConfig(
     val scriptId: String,
@@ -34,15 +35,25 @@ data class ScriptConfig(
             val verifyScriptSignature = requireNotNull(value.getString("verifyScriptSignature"))
             val uniqueId = requireNotNull(value.getString("uniqueId"))
 
-            val url = URL(
-                    if (query != null) {
-                        "$urlString?$query"
-                    } else {
-                        urlString
-                    }
-            )
+            val initialUrl = URL(urlString)
+            val initialUri = initialUrl.toURI()
 
-            val sourceUrl = URL(urlString).toString()
+            val sourceUrl = initialUrl.toString()
+
+            // overrides any existing query in the URL with config.query
+            val uri = if (query != null) {
+                URI(
+                    initialUri.scheme,
+                    initialUri.authority,
+                    initialUri.path,
+                    query,
+                    initialUri.fragment
+                )
+            } else {
+                initialUri
+            }
+
+            val url = uri.toURL()
 
             val headers = Headers.Builder()
             val keyIterator = headersMap?.keySetIterator()
@@ -58,18 +69,18 @@ data class ScriptConfig(
             val body = bodyString?.toRequestBody(contentType)
 
             return ScriptConfig(
-                    scriptId,
-                    url,
-                    query,
-                    fetch,
-                    absolute,
-                    method,
-                    body,
-                    timeout,
-                    headers.build(),
-                    verifyScriptSignature,
-                    uniqueId,
-                    sourceUrl
+                scriptId,
+                url,
+                query,
+                fetch,
+                absolute,
+                method,
+                body,
+                timeout,
+                headers.build(),
+                verifyScriptSignature,
+                uniqueId,
+                sourceUrl
             )
         }
     }
