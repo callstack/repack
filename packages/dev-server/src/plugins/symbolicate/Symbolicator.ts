@@ -78,7 +78,7 @@ export class Symbolicator {
     const frames: InputStackFrame[] = [];
     for (const frame of stack) {
       const { file } = frame;
-      if (file?.startsWith('http') && !file.includes('debuggerWorker')) {
+      if (file?.startsWith('http')) {
         frames.push(frame as InputStackFrame);
       }
     }
