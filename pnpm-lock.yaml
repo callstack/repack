@@ -338,9 +338,6 @@ importers:
       fastify-plugin:
         specifier: ^4.5.1
         version: 4.5.1
-      open:
-        specifier: ^8.4.0
-        version: 8.4.2
       pretty-format:
         specifier: ^28.1.0
         version: 28.1.3
