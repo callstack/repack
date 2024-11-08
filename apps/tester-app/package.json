@@ -19,15 +19,15 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.23.1",
     "react": "18.3.1",
-    "react-native": "0.76.0-rc.6",
+    "react-native": "0.76.1",
     "react-native-svg": "15.8.0-rc.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@callstack/repack": "workspace:*",
     "@react-native-community/cli": "15.0.0-alpha.2",
-    "@react-native/babel-preset": "0.76.0-rc.6",
-    "@react-native/typescript-config": "0.76.0-rc.6",
+    "@react-native/babel-preset": "0.76.1",
+    "@react-native/typescript-config": "0.76.1",
     "@rsdoctor/rspack-plugin": "^0.4.5",
     "@rspack/core": "1.0.8",
     "@rspack/plugin-react-refresh": "1.0.0",
