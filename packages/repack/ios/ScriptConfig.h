@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) NSNumber *timeout;
 @property (readonly) NSString *verifyScriptSignature;
 @property (readonly) NSString *uniqueId;
+@property (readonly) NSString *sourceUrl;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 + (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator &)config
@@ -38,7 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
                         withBody:(nullable NSData *)body
                      withTimeout:(NSNumber *)timeout
        withVerifyScriptSignature:(NSString *)verifyScriptSignature
-                    withUniqueId:(NSString *)uniqueId;
+                    withUniqueId:(NSString *)uniqueId
+                   withSourceUrl:(NSString *)sourceUrl;
 
 NS_ASSUME_NONNULL_END
 
