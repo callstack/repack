@@ -39,7 +39,7 @@ export default (env) => {
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MF2-MiniApp',
+      uniqueName: 'MF2Tester-MiniApp',
     },
     optimization: {
       minimize,
