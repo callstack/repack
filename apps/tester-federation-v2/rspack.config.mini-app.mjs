@@ -144,7 +144,7 @@ export default (env) => {
           'react-native-safe-area-context': {
             singleton: true,
             eager: false,
-            requiredVersion: '^4.11.0',
+            requiredVersion: '^4.14.0',
           },
           'react-native-screens': {
             singleton: true,
