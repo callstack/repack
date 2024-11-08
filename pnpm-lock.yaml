@@ -75,6 +75,12 @@ importers:
       '@react-native-community/cli':
         specifier: 15.0.1
         version: 15.0.1(typescript@5.5.3)
+      '@react-native-community/cli-platform-android':
+        specifier: 15.0.1
+        version: 15.0.1
+      '@react-native-community/cli-platform-ios':
+        specifier: 15.0.1
+        version: 15.0.1
       '@react-native/babel-preset':
         specifier: 0.76.1
         version: 0.76.1(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))
@@ -166,6 +172,12 @@ importers:
       '@react-native-community/cli':
         specifier: 15.0.1
         version: 15.0.1(typescript@5.5.3)
+      '@react-native-community/cli-platform-android':
+        specifier: 15.0.1
+        version: 15.0.1
+      '@react-native-community/cli-platform-ios':
+        specifier: 15.0.1
+        version: 15.0.1
       '@react-native/babel-preset':
         specifier: 0.76.1
         version: 0.76.1(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))
@@ -245,6 +257,12 @@ importers:
       '@react-native-community/cli':
         specifier: 15.0.1
         version: 15.0.1(typescript@5.5.3)
+      '@react-native-community/cli-platform-android':
+        specifier: 15.0.1
+        version: 15.0.1
+      '@react-native-community/cli-platform-ios':
+        specifier: 15.0.1
+        version: 15.0.1
       '@react-native/babel-preset':
         specifier: 0.76.1
         version: 0.76.1(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))
