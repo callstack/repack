@@ -8,17 +8,18 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URL
 
 data class ScriptConfig(
-        val scriptId: String,
-        val url: URL,
-        val query: String?,
-        val fetch: Boolean,
-        val absolute: Boolean,
-        val method: String,
-        val body: RequestBody?,
-        val timeout: Int,
-        val headers: Headers,
-        val verifyScriptSignature: String,
-        val uniqueId: String
+    val scriptId: String,
+    val url: URL,
+    val query: String?,
+    val fetch: Boolean,
+    val absolute: Boolean,
+    val method: String,
+    val body: RequestBody?,
+    val timeout: Int,
+    val headers: Headers,
+    val verifyScriptSignature: String,
+    val uniqueId: String,
+    val sourceUrl: String
 ) {
     companion object {
         fun fromReadableMap(scriptId: String, value: ReadableMap): ScriptConfig {
@@ -40,6 +41,8 @@ data class ScriptConfig(
                         urlString
                     }
             )
+
+            val sourceUrl = URL(urlString).toString()
 
             val headers = Headers.Builder()
             val keyIterator = headersMap?.keySetIterator()
@@ -65,7 +68,8 @@ data class ScriptConfig(
                     timeout,
                     headers.build(),
                     verifyScriptSignature,
-                    uniqueId
+                    uniqueId,
+                    sourceUrl
             )
         }
     }
