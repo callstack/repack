@@ -52,7 +52,7 @@
     "typescript": "^5.5.3"
   },
   "peerDependencies": {
-    "@react-native-community/cli-server-api": ">=11.3.1"
+    "@react-native-community/cli-server-api": ">=13.6.4"
   },
   "peerDependenciesMeta": {
     "@react-native-community/cli-server-api": {
