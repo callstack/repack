@@ -185,6 +185,9 @@ export class RepackPlugin implements RspackPluginInstance {
         module: true,
         columns: true,
         noSources: false,
+        namespace:
+          compiler.options.output.devtoolNamespace ??
+          compiler.options.output.uniqueName,
       }).apply(compiler);
     }
 
