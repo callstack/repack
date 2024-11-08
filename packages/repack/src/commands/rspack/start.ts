@@ -95,9 +95,6 @@ export async function start(
         : undefined,
       logRequests: showHttpRequests,
     },
-    experiments: {
-      experimentalDebugger: args.experimentalDebugger,
-    },
     delegate: (ctx) => {
       if (args.interactive) {
         setupInteractions(

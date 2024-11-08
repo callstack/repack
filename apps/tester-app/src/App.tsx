@@ -6,7 +6,6 @@ import { SectionContainer } from './ui/SectionContainer';
 
 import { AssetsTestContainer } from './assetsTest/AssetsTestContainer';
 import { AsyncContainer } from './asyncChunks/AsyncContainer';
-import DeprecatedRemoteDebuggerContainer from './deprecatedRemoteDebugger/DeprecatedRemoteDebuggerContainer';
 import { MiniAppsContainer } from './miniapp/MiniAppsContainer';
 import { RemoteContainer } from './remoteChunks/RemoteContainer';
 
@@ -27,9 +26,6 @@ const App = () => {
         </Section>
         <Section title="Assets test">
           <AssetsTestContainer />
-        </Section>
-        <Section title="Deprecated remote debugger">
-          <DeprecatedRemoteDebuggerContainer />
         </Section>
       </SectionContainer>
     </AppContainer>

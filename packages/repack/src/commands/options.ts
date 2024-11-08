@@ -27,11 +27,6 @@ export const startCommandOptions = [
     name: '--no-interactive',
     description: 'Disables interactive mode',
   },
-  {
-    name: '--experimental-debugger',
-    description:
-      '[Experimental] Enable the new debugger experience. Connection reliability and some basic features are unstable in this release.',
-  },
   // noop, but kept for compatibility
   {
     name: '--reset-cache, --resetCache',
