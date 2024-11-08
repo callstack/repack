@@ -10,6 +10,8 @@
     "typecheck": "nx run-many -t typecheck --exclude tests/metro-compat",
     "test": "nx run-many -t test",
     "release": "pnpm build && pnpm lint && pnpm test && pnpm changeset publish",
+    "pods": "nx run-many -t pods",
+    "pods:update": "nx run-many -t pods:update",
     "website:start": "pnpm --filter website run start",
     "website:build": "pnpm --filter website run export"
   },
