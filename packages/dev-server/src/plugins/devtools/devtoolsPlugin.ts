@@ -1,7 +1,24 @@
+import {
+  openStackFrameInEditorMiddleware,
+  openURLMiddleware,
+} from '@react-native-community/cli-server-api';
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
+import type { Server } from '../../types';
 
-async function devtoolsPlugin(instance: FastifyInstance) {
+async function devtoolsPlugin(
+  instance: FastifyInstance,
+  { options }: { options: Server.Options }
+) {
+  instance.use('/open-url', openURLMiddleware);
+
+  instance.use(
+    '/open-stack-frame',
+    openStackFrameInEditorMiddleware({
+      watchFolders: [options.rootDir],
+    })
+  );
+
   instance.route({
     method: ['GET', 'POST', 'PUT'],
     url: '/reload',

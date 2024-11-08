@@ -1,10 +1,6 @@
 import { Writable } from 'node:stream';
 import middie from '@fastify/middie';
 import fastifySensible from '@fastify/sensible';
-import {
-  openStackFrameInEditorMiddleware,
-  openURLMiddleware,
-} from '@react-native-community/cli-server-api';
 import { createDevMiddleware } from '@react-native/dev-middleware';
 import Fastify from 'fastify';
 import apiPlugin from './plugins/api';
@@ -93,19 +89,9 @@ export async function createServer(config: Server.Config) {
   await instance.register(compilerPlugin, {
     delegate,
   });
-
   await instance.register(devtoolsPlugin, {
     options: config.options,
   });
-
-  instance.use('/open-url', openURLMiddleware);
-  instance.use(
-    '/open-stack-frame',
-    openStackFrameInEditorMiddleware({
-      watchFolders: [config.options.rootDir],
-    })
-  );
-
   await instance.register(symbolicatePlugin, {
     delegate,
   });
