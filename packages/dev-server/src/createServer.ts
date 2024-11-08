@@ -1,7 +1,6 @@
 import { Writable } from 'node:stream';
 import middie from '@fastify/middie';
 import fastifySensible from '@fastify/sensible';
-import { debuggerUIMiddleware } from '@react-native-community/cli-debugger-ui';
 import {
   openStackFrameInEditorMiddleware,
   openURLMiddleware,
@@ -95,14 +94,10 @@ export async function createServer(config: Server.Config) {
     delegate,
   });
 
-  // TODO: devtoolsPlugin and the following deprecated remote debugger middlewares should be removed after
-  //  the new (experimental) debugger is stable AND the remote debugger is finally removed from the React Native core.
-  //  When that happens remember to remove @react-native-community/cli-server-api & @react-native-community/cli-debugger-ui
-  //  from the dependencies.
   await instance.register(devtoolsPlugin, {
     options: config.options,
   });
-  instance.use('/debugger-ui', debuggerUIMiddleware());
+
   instance.use('/open-url', openURLMiddleware);
   instance.use(
     '/open-stack-frame',

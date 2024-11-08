@@ -44,7 +44,6 @@
   "devDependencies": {
     "@babel/cli": "^7.23.9",
     "@babel/core": "^7.23.9",
-    "@react-native-community/cli-debugger-ui": ">=11.3.1",
     "@react-native-community/cli-server-api": ">=11.3.1",
     "@types/babel__code-frame": "^7.0.3",
     "@types/node": "18",
@@ -53,13 +52,9 @@
     "typescript": "^5.5.3"
   },
   "peerDependencies": {
-    "@react-native-community/cli-debugger-ui": ">=11.3.1",
     "@react-native-community/cli-server-api": ">=11.3.1"
   },
   "peerDependenciesMeta": {
-    "@react-native-community/cli-debugger-ui": {
-      "optional": true
-    },
     "@react-native-community/cli-server-api": {
       "optional": true
     }

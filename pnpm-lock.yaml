@@ -354,9 +354,6 @@ importers:
       '@babel/core':
         specifier: ^7.23.9
         version: 7.25.2
-      '@react-native-community/cli-debugger-ui':
-        specifier: '>=11.3.1'
-        version: 15.0.1
       '@react-native-community/cli-server-api':
         specifier: '>=11.3.1'
         version: 15.0.1
