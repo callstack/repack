@@ -71,7 +71,8 @@ export async function createServer(config: Server.Config) {
     serverBaseUrl: `http://${config.options.host}:${config.options.port}`,
     logger: instance.log,
     unstable_experiments: {
-      enableNewDebugger: config.experiments?.experimentalDebugger,
+      // @ts-expect-error removed in 0.76, keep this for backkwards compatibility
+      enableNewDebugger: true,
     },
   });
 

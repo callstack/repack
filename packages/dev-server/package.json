@@ -33,7 +33,7 @@
     "@babel/code-frame": "^7.16.7",
     "@fastify/middie": "^8.3.0",
     "@fastify/sensible": "^5.5.0",
-    "@react-native/dev-middleware": "^0.73.8",
+    "@react-native/dev-middleware": "^0.76.1",
     "fastify": "^4.24.3",
     "fastify-favicon": "^4.3.0",
     "fastify-plugin": "^4.5.1",
