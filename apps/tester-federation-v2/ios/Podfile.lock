@@ -1625,7 +1625,7 @@ PODS:
   - ReactTestApp-DevSupport (3.10.14):
     - React-Core
     - React-jsi
-  - RNScreens (3.34.0):
+  - RNScreens (3.35.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1646,9 +1646,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 3.34.0)
+    - RNScreens/common (= 3.35.0)
     - Yoga
-  - RNScreens/common (3.34.0):
+  - RNScreens/common (3.35.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1961,7 +1961,7 @@ SPEC CHECKSUMS:
   ReactCommon: 964a21f03865d9b98dcc64df7b172be083e108c9
   ReactNativeHost: 3aa90998ab38ddbcfd0075b88d1062d1488cf749
   ReactTestApp-DevSupport: ed439cce949caf074af3ae05051b4bd157ed4019
-  RNScreens: de6e57426ba0e6cbc3fb5b4f496e7f08cb2773c2
+  RNScreens: e389d6a6a66a4f0d3662924ecae803073ccce8ec
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
   Yoga: dcf6b28b5105d538537e656bf4e239f4d87fc546
