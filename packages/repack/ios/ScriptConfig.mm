@@ -21,15 +21,15 @@
                 withScriptId:(nonnull NSString *)scriptId
 {
   NSDictionary *_Nullable headers = (NSDictionary *)config.headers();
-  
+
   NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config.url()];
   NSString *sourceUrl = urlComponents.URL.absoluteString;
-    
+
   // overrides any existing query in the URL with config.query
   if (config.query() != nil) {
     urlComponents.percentEncodedQuery = config.query();
   }
-    
+
   NSURL *url = urlComponents.URL;
 
   return [[ScriptConfig alloc] initWithScript:scriptId
