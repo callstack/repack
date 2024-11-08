@@ -42,7 +42,7 @@ export default (env) => {
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MFTester-HostApp',
+      uniqueName: 'MF2Tester-HostApp',
     },
     optimization: {
       minimize,
