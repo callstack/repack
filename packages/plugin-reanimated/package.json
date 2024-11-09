@@ -1,0 +1,28 @@
+{
+  "name": "@callstack/repack-plugin-reanimated",
+  "description": "A plugin for @callstack/repack that helps integrating react-native-reanimated",
+  "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
+  "license": "MIT",
+  "version": "0.0.1",
+  "type": "module",
+  "homepage": "https://github.com/callstack/repack",
+  "repository": "github:callstack/repack",
+  "keywords": [
+    "repack",
+    "re.pack",
+    "plugin",
+    "repack-plugin",
+    "reanimated",
+    "react-native-reanimated"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
