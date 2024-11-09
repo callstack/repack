@@ -425,7 +425,11 @@ importers:
         specifier: ^5.5.3
         version: 5.5.3
 
-  packages/plugin-reanimated: {}
+  packages/plugin-reanimated:
+    devDependencies:
+      '@types/node':
+        specifier: ^18
+        version: 18.19.41
 
   packages/repack:
     dependencies:
