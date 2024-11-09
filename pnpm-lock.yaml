@@ -425,6 +425,8 @@ importers:
         specifier: ^5.5.3
         version: 5.5.3
 
+  packages/plugin-reanimated: {}
+
   packages/repack:
     dependencies:
       '@callstack/repack-dev-server':
