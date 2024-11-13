@@ -1,5 +1,37 @@
 # @callstack/repack
 
+## 5.0.0-rc.1
+
+### Major Changes
+
+- [#780](https://github.com/callstack/repack/pull/780) [`e937211`](https://github.com/callstack/repack/commit/e93721194e3d8eae64fa5da6f5e296378ad407e9) Thanks [@jbroma](https://github.com/jbroma)! - Removed `--silent` CLI flag for start command.
+
+  For silencing output, you can use shell redirection instead:
+
+  - Unix/macOS: `npx react-native start > /dev/null 2>&1`
+  - Windows: `npx react-native start > nul 2>&1`
+
+- [#786](https://github.com/callstack/repack/pull/786) [`cf42d14`](https://github.com/callstack/repack/commit/cf42d149ca1ccb8caae9085ab7710ff7b603a9d0) Thanks [@jbroma](https://github.com/jbroma)! - Enable new debugger (React Native DevTools) by default, remove support for legacy remote debugging
+
+### Minor Changes
+
+- [#784](https://github.com/callstack/repack/pull/784) [`f8af03c`](https://github.com/callstack/repack/commit/f8af03cd231c3d95a92099719d827e368f707b5c) Thanks [@zmzlois](https://github.com/zmzlois)! - add `react-native-linear-gradient` to flow type module loading rule support
+
+- [#778](https://github.com/callstack/repack/pull/778) [`2344162`](https://github.com/callstack/repack/commit/23441620335e91382dda01d0cc06278efede45cf) Thanks [@jbroma](https://github.com/jbroma)! - Add `--config` option to commands, deprecate `--webpackConfig` option
+
+### Patch Changes
+
+- [#776](https://github.com/callstack/repack/pull/776) [`31d0e32`](https://github.com/callstack/repack/commit/31d0e32e6a4b9aa9d9d0fbd3f1ddd18e95a16757) Thanks [@jbroma](https://github.com/jbroma)! - Fix peer dependency config for @rspack/core in repack package
+
+- [#775](https://github.com/callstack/repack/pull/775) [`76738de`](https://github.com/callstack/repack/commit/76738de12fdf29f5af78aaa23f03337c33c7926a) Thanks [@jbroma](https://github.com/jbroma)! - Fix customization of MF1 federated entry filename
+
+- [#787](https://github.com/callstack/repack/pull/787) [`acdd0c8`](https://github.com/callstack/repack/commit/acdd0c801ab611a25164fce5302e20e61ae25292) Thanks [@jbroma](https://github.com/jbroma)! - Fix sourceURL of bundles so source maps can be matched in dev tools
+
+- [#779](https://github.com/callstack/repack/pull/779) [`679bcd8`](https://github.com/callstack/repack/commit/679bcd8917aca587c36d550101e9dd9578e1e172) Thanks [@jbroma](https://github.com/jbroma)! - More intuitive behaviour of `--verbose` flag in start command
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-rc.1
+
 ## 5.0.0-rc.0
 
 ### Minor Changes

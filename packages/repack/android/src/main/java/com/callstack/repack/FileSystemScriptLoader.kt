@@ -12,12 +12,12 @@ class FileSystemScriptLoader(private val reactContext: ReactContext, private val
                 val path = config.url.path
                 val file = File(path)
                 val code: ByteArray = FileInputStream(file).use { it.readBytes() }
-                nativeLoader.evaluate(code, config.uniqueId, promise)
+                nativeLoader.evaluate(code, config.sourceUrl, promise)
             } else {
                 val assetName = config.url.file.split("/").last()
                 val inputStream = reactContext.assets.open(assetName)
                 val code: ByteArray = inputStream.use { it.readBytes() }
-                nativeLoader.evaluate(code, config.uniqueId, promise)
+                nativeLoader.evaluate(code, config.sourceUrl, promise)
             }
         } catch (error: Exception) {
             promise.reject(

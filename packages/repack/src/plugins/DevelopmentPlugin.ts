@@ -83,6 +83,9 @@ export class DevelopmentPlugin implements RspackPluginInstance {
         module: true,
         columns: true,
         noSources: false,
+        namespace:
+          compiler.options.output.devtoolNamespace ??
+          compiler.options.output.uniqueName,
       }).apply(compiler);
 
       // setup React Refresh manually instead of using the official plugin

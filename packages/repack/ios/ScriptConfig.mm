@@ -14,16 +14,22 @@
 @synthesize timeout = _timeout;
 @synthesize verifyScriptSignature = _verifyScriptSignature;
 @synthesize uniqueId = _uniqueId;
+@synthesize sourceUrl = _sourceUrl;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 + (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator &)config
                 withScriptId:(nonnull NSString *)scriptId
 {
   NSDictionary *_Nullable headers = (NSDictionary *)config.headers();
+
   NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config.url()];
+  NSString *sourceUrl = urlComponents.URL.absoluteString;
+
+  // overrides any existing query in the URL with config.query
   if (config.query() != nil) {
     urlComponents.percentEncodedQuery = config.query();
   }
+
   NSURL *url = urlComponents.URL;
 
   return [[ScriptConfig alloc] initWithScript:scriptId
@@ -36,7 +42,8 @@
                                      withBody:[config.body() dataUsingEncoding:NSUTF8StringEncoding]
                                   withTimeout:[NSNumber numberWithDouble:config.timeout()]
                     withVerifyScriptSignature:config.verifyScriptSignature()
-                                 withUniqueId:config.uniqueId()];
+                                 withUniqueId:config.uniqueId()
+                                withSourceUrl:sourceUrl];
 }
 #else
 + (ScriptConfig *)fromConfig:(NSDictionary *)config withScriptId:(nonnull NSString *)scriptId
@@ -46,6 +53,9 @@
     urlComponents.percentEncodedQuery = config[@"query"];
   }
   NSURL *url = urlComponents.URL;
+
+  urlComponents.query = nil;
+  NSString *sourceUrl = urlComponents.URL.absoluteString;
 
   return [[ScriptConfig alloc] initWithScript:scriptId
                                       withURL:url
@@ -57,7 +67,8 @@
                                      withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
                                   withTimeout:config[@"timeout"]
                     withVerifyScriptSignature:config[@"verifyScriptSignature"]
-                                 withUniqueId:config[@"uniqueId"]];
+                                 withUniqueId:config[@"uniqueId"]
+                                withSourceUrl:sourceUrl];
 }
 #endif
 
@@ -80,6 +91,7 @@
                      withTimeout:(nonnull NSNumber *)timeout
        withVerifyScriptSignature:(NSString *)verifyScriptSignature
                     withUniqueId:(NSString *)uniqueId
+                   withSourceUrl:(nonnull NSString *)sourceUrl
 {
   _scriptId = scriptId;
   _url = url;
@@ -92,6 +104,7 @@
   _timeout = timeout;
   _verifyScriptSignature = verifyScriptSignature;
   _uniqueId = uniqueId;
+  _sourceUrl = sourceUrl;
   return self;
 }
 

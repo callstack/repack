@@ -21,7 +21,6 @@ export interface StartArguments {
   key?: string;
   cert?: string;
   interactive?: boolean;
-  experimentalDebugger?: boolean;
   json?: boolean;
   logFile?: string;
   logRequests?: boolean;

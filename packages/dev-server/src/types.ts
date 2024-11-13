@@ -21,14 +21,8 @@ export namespace Server {
     /** Development server options to configure e.g: `port`, `host` etc. */
     options: Options;
 
-    experiments?: Experiments;
-
     /** Function to create a delegate, which implements crucial functionalities. */
     delegate: (context: DelegateContext) => Delegate;
-  }
-
-  export interface Experiments {
-    experimentalDebugger?: boolean;
   }
 
   /** Development server options. */
