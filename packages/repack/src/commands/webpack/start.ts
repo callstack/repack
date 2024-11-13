@@ -93,9 +93,6 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         : undefined,
       logRequests: showHttpRequests,
     },
-    experiments: {
-      experimentalDebugger: args.experimentalDebugger,
-    },
     delegate: (ctx): Server.Delegate => {
       if (args.interactive) {
         setupInteractions(

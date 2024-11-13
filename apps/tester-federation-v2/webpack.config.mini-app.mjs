@@ -36,7 +36,7 @@ export default (env) => {
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MFTester-MiniApp',
+      uniqueName: 'MF2Tester-MiniApp',
     },
     optimization: {
       minimize,
@@ -106,7 +106,7 @@ export default (env) => {
           'react-native': {
             singleton: true,
             eager: false,
-            requiredVersion: '0.76.0-rc.6',
+            requiredVersion: '0.76.1',
           },
           '@react-navigation/native': {
             singleton: true,
@@ -121,12 +121,12 @@ export default (env) => {
           'react-native-safe-area-context': {
             singleton: true,
             eager: false,
-            requiredVersion: '^4.11.0',
+            requiredVersion: '^4.14.0',
           },
           'react-native-screens': {
             singleton: true,
             eager: false,
-            requiredVersion: '^3.34.0',
+            requiredVersion: '^3.35.0',
           },
         },
       }),

@@ -4,7 +4,6 @@ import type { Server } from '../../types';
 import { WebSocketRouter } from './WebSocketRouter';
 import { WebSocketServerAdapter } from './WebSocketServerAdapter';
 import { WebSocketApiServer } from './servers/WebSocketApiServer';
-import { WebSocketDebuggerServer } from './servers/WebSocketDebuggerServer';
 import { WebSocketDevClientServer } from './servers/WebSocketDevClientServer';
 import { WebSocketEventsServer } from './servers/WebSocketEventsServer';
 import { WebSocketHMRServer } from './servers/WebSocketHMRServer';
@@ -13,7 +12,6 @@ import { WebSocketMessageServer } from './servers/WebSocketMessageServer';
 declare module 'fastify' {
   interface FastifyInstance {
     wss: {
-      debuggerServer: WebSocketDebuggerServer;
       devClientServer: WebSocketDevClientServer;
       messageServer: WebSocketMessageServer;
       eventsServer: WebSocketEventsServer;
@@ -45,7 +43,6 @@ async function wssPlugin(
 ) {
   const router = new WebSocketRouter(instance);
 
-  const debuggerServer = new WebSocketDebuggerServer(instance);
   const devClientServer = new WebSocketDevClientServer(instance);
   const messageServer = new WebSocketMessageServer(instance);
   const eventsServer = new WebSocketEventsServer(instance, {
@@ -67,7 +64,6 @@ async function wssPlugin(
     options.endpoints?.[WS_DEBUGGER_URL]
   );
 
-  router.registerServer(debuggerServer);
   router.registerServer(devClientServer);
   router.registerServer(messageServer);
   router.registerServer(eventsServer);
@@ -77,7 +73,6 @@ async function wssPlugin(
   router.registerServer(debuggerConnectionServer);
 
   instance.decorate('wss', {
-    debuggerServer,
     devClientServer,
     messageServer,
     eventsServer,
