@@ -83,8 +83,10 @@ export interface ModuleFederationPluginV2Config
 export class ModuleFederationPluginV2 implements RspackPluginInstance {
   private config: MF.ModuleFederationPluginOptions;
   private deepImports: boolean;
+  public _options!: ModuleFederationPluginV2Config;
 
   constructor(pluginConfig: ModuleFederationPluginV2Config) {
+    this._options = pluginConfig;
     const { reactNativeDeepImports, ...config } = pluginConfig;
     this.config = config;
     this.deepImports = reactNativeDeepImports ?? true;
