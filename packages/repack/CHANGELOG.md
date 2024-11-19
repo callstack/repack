@@ -1,5 +1,14 @@
 # @callstack/repack
 
+## 5.0.0-rc.2
+
+### Patch Changes
+
+- [#799](https://github.com/callstack/repack/pull/799) [`f801083`](https://github.com/callstack/repack/commit/f801083f7ba616e77fa77c1c6321875de6886388) Thanks [@jbroma](https://github.com/jbroma)! - Expose MF2 config property to external tooling
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-rc.2
+
 ## 5.0.0-rc.1
 
 ### Major Changes
