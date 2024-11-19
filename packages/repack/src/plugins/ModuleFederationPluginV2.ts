@@ -81,7 +81,7 @@ export interface ModuleFederationPluginV2Config
  * @category Webpack Plugin
  */
 export class ModuleFederationPluginV2 implements RspackPluginInstance {
-  private config: MF.ModuleFederationPluginOptions;
+  public config: MF.ModuleFederationPluginOptions;
   private deepImports: boolean;
 
   constructor(pluginConfig: ModuleFederationPluginV2Config) {
