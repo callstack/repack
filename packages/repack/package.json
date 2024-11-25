@@ -14,9 +14,13 @@
       "types": "./dist/modules/ScriptManager/index.d.ts",
       "default": "./dist/modules/ScriptManager/index.js"
     },
-    "./federation-runtime-plugin": {
-      "types": "./dist/modules/FederationRuntimePlugin.d.ts",
-      "default": "./dist/modules/FederationRuntimePlugin.js"
+    "./mf/core-plugin": {
+      "types": "./dist/modules/FederationRuntimePlugins/CorePlugin.d.ts",
+      "default": "./dist/modules/FederationRuntimePlugins/CorePlugin.js"
+    },
+    "./mf/resolver-plugin": {
+      "types": "./dist/modules/FederationRuntimePlugins/ResolverPlugin.d.ts",
+      "default": "./dist/modules/FederationRuntimePlugins/ResolverPlugin.js"
     },
     "./commands/webpack": {
       "types": "./dist/commands/webpack/index.d.ts",
