@@ -19,7 +19,7 @@ const createScriptLocator = async (
   return { url: entryUrl };
 };
 
-export const repackResolverPlugin: (
+export const RepackResolverPlugin: (
   config?: RepackResolverPluginConfiguration
 ) => FederationRuntimePlugin = (config) => ({
   name: 'repack-resolver-plugin',
