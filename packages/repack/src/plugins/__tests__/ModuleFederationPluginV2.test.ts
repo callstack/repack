@@ -16,8 +16,11 @@ const mockPlugin = MFPluginRspack as unknown as jest.Mock<
   typeof MFPluginRspack
 >;
 
-const runtimePluginPath = require.resolve(
-  '../../modules/FederationRuntimePlugin'
+const corePluginPath = require.resolve(
+  '../../modules/FederationRuntimePlugins/CorePlugin'
+);
+const resolverPluginPath = require.resolve(
+  '../../modules/FederationRuntimePlugins/ResolverPlugin'
 );
 
 describe('ModuleFederationPlugin', () => {
@@ -136,22 +139,24 @@ describe('ModuleFederationPlugin', () => {
     expect(config.shared['@react-native/'].eager).toBe(false);
   });
 
-  it('should add FederationRuntimePlugin to runtime plugins', () => {
+  it('should add CorePlugin & ResolverPlugin to runtime plugins by default', () => {
     new ModuleFederationPluginV2({ name: 'test' }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
-    expect(config.runtimePlugins).toContain(runtimePluginPath);
+    expect(config.runtimePlugins).toContain(corePluginPath);
+    expect(config.runtimePlugins).toContain(resolverPluginPath);
   });
 
-  it('should not add FederationRuntimePlugin to runtime plugins when already present', () => {
+  it('should not add duplicate default runtime plugins when already present', () => {
     new ModuleFederationPluginV2({
       name: 'test',
-      runtimePlugins: [runtimePluginPath],
+      runtimePlugins: [corePluginPath, resolverPluginPath],
     }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
-    expect(config.runtimePlugins).toContain(runtimePluginPath);
-    expect(config.runtimePlugins).toHaveLength(1);
+    expect(config.runtimePlugins).toContain(corePluginPath);
+    expect(config.runtimePlugins).toContain(resolverPluginPath);
+    expect(config.runtimePlugins).toHaveLength(2);
   });
 
   it('should use loaded-first as default shareStrategy', () => {
