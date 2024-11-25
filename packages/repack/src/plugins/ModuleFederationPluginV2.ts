@@ -11,6 +11,8 @@ import { isRspackCompiler } from './utils/isRspackCompiler';
  */
 export interface ModuleFederationPluginV2Config
   extends MF.ModuleFederationPluginOptions {
+  /** Whether to disable adding default runtime plugins to the configuration. */
+  disableDefaultRuntimePlugins?: boolean;
   /** Enable or disable adding React Native deep imports to shared dependencies. Defaults to true */
   reactNativeDeepImports?: boolean;
 }
@@ -83,11 +85,14 @@ export interface ModuleFederationPluginV2Config
 export class ModuleFederationPluginV2 implements RspackPluginInstance {
   public config: MF.ModuleFederationPluginOptions;
   private deepImports: boolean;
+  private disableDefaultRuntimePlugins: boolean;
 
   constructor(pluginConfig: ModuleFederationPluginV2Config) {
-    const { reactNativeDeepImports, ...config } = pluginConfig;
+    const { disableDefaultRuntimePlugins, reactNativeDeepImports, ...config } =
+      pluginConfig;
     this.config = config;
     this.deepImports = reactNativeDeepImports ?? true;
+    this.disableDefaultRuntimePlugins = disableDefaultRuntimePlugins ?? false;
   }
 
   private ensureModuleFederationPackageInstalled(context: string) {
@@ -105,9 +110,14 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     context: string,
     runtimePlugins: string[] | undefined = []
   ) {
-    const repackRuntimePlugin = require.resolve(
-      '../modules/FederationRuntimePlugin'
-    );
+    if (this.disableDefaultRuntimePlugins) {
+      return runtimePlugins;
+    }
+
+    const defaultRuntimePlugins = [
+      require.resolve('../modules/FederationRuntimePlugins/CorePlugin'),
+      require.resolve('../modules/FederationRuntimePlugins/ResolverPlugin'),
+    ];
 
     const plugins = runtimePlugins
       .map((pluginPath) => {
@@ -121,11 +131,13 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
       })
       .filter((pluginPath) => !!pluginPath) as string[];
 
-    if (!plugins.includes(repackRuntimePlugin)) {
-      return [repackRuntimePlugin, ...runtimePlugins];
+    for (const plugin of defaultRuntimePlugins) {
+      if (!plugins.includes(plugin)) {
+        plugins.unshift(plugin);
+      }
     }
 
-    return runtimePlugins;
+    return plugins;
   }
 
   private getModuleFederationPlugin(compiler: Compiler) {
