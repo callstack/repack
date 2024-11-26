@@ -6,38 +6,13 @@
   "types": "./dist/index.d.ts",
   "react-native": "",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./client": {
-      "types": "./dist/modules/ScriptManager/index.d.ts",
-      "default": "./dist/modules/ScriptManager/index.js"
-    },
-    "./mf/core-plugin": {
-      "types": "./dist/modules/FederationRuntimePlugins/CorePlugin.d.ts",
-      "default": "./dist/modules/FederationRuntimePlugins/CorePlugin.js"
-    },
-    "./mf/resolver-plugin": {
-      "types": "./dist/modules/FederationRuntimePlugins/ResolverPlugin.d.ts",
-      "default": "./dist/modules/FederationRuntimePlugins/ResolverPlugin.js"
-    },
-    "./commands/webpack": {
-      "types": "./dist/commands/webpack/index.d.ts",
-      "default": "./dist/commands/webpack/index.js"
-    },
-    "./commands/rspack": {
-      "types": "./dist/commands/rspack/index.d.ts",
-      "default": "./dist/commands/rspack/index.js"
-    },
-    "./assets-loader": {
-      "types": "./dist/loaders/assetsLoader/index.d.ts",
-      "default": "./dist/loaders/assetsLoader/index.js"
-    },
-    "./flow-loader": {
-      "types": "./dist/loaders/flowLoader/index.d.ts",
-      "default": "./dist/loaders/flowLoader/index.js"
-    },
+    ".": "./dist/index.js",
+    "./client": "./client/index.js",
+    "./commands/rspack": "./dist/commands/rspack/index.js",
+    "./commands/webpack": "./dist/commands/webpack/index.js",
+    "./assets-loader": "./dist/loaders/assetsLoader/index.js",
+    "./flow-loader": "./dist/loaders/flowLoader/index.js",
+    "./mf/*": "./mf/*.js",
     "./package.json": "./package.json"
   },
   "files": [
@@ -46,10 +21,8 @@
     "!android/build",
     "ios",
     "!ios/build",
-    "client.js",
-    "client.d.ts",
-    "federation-runtime-plugin.js",
-    "federation-runtime-plugin.d.ts",
+    "client",
+    "mf",
     "callstack-repack.podspec",
     "src/modules/ScriptManager/NativeScriptManager.ts"
   ],
