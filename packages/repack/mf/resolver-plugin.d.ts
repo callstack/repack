@@ -1,1 +1,1 @@
-export { RepackResolverPlugin } from '../dist/modules/FederationRuntimePlugins/ResolverPlugin';
+export { default } from '../dist/modules/FederationRuntimePlugins/ResolverPlugin';

@@ -1,10 +1,10 @@
 import type { FederationRuntimePlugin } from '@module-federation/enhanced/runtime';
 import type * as RepackClient from '../ScriptManager';
 
-export const RepackCorePlugin: () => FederationRuntimePlugin = () => ({
+const RepackCorePlugin: () => FederationRuntimePlugin = () => ({
   name: 'repack-core-plugin',
   loadEntry: async ({ remoteInfo }) => {
-    const client = require('./ScriptManager') as typeof RepackClient;
+    const client = require('../ScriptManager') as typeof RepackClient;
     const { ScriptManager, getWebpackContext } = client;
     const { entry, entryGlobalName } = remoteInfo;
 
@@ -28,3 +28,5 @@ export const RepackCorePlugin: () => FederationRuntimePlugin = () => ({
     }
   },
 });
+
+export default RepackCorePlugin;

@@ -1,1 +1,1 @@
-export { RepackCorePlugin } from '../dist/modules/FederationRuntimePlugins/CorePlugin';
+export { default } from '../dist/modules/FederationRuntimePlugins/CorePlugin';

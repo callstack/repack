@@ -1,2 +1,2 @@
-import { RepackCorePlugin } from '../dist/modules/FederationRuntimePlugins/CorePlugin';
-export { RepackCorePlugin };
+import RepackCorePlugin from '../dist/modules/FederationRuntimePlugins/CorePlugin';
+export default RepackCorePlugin;

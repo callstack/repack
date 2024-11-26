@@ -19,12 +19,13 @@ const createScriptLocator = async (
   return { url: entryUrl };
 };
 
-export const RepackResolverPlugin: (
+const RepackResolverPlugin: (
   config?: RepackResolverPluginConfiguration
 ) => FederationRuntimePlugin = (config) => ({
   name: 'repack-resolver-plugin',
   afterResolve(args) {
-    const { ScriptManager } = require('./ScriptManager') as typeof RepackClient;
+    const { ScriptManager } =
+      require('../ScriptManager') as typeof RepackClient;
     const { remoteInfo } = args;
 
     ScriptManager.shared.addResolver(
@@ -50,3 +51,5 @@ export const RepackResolverPlugin: (
     return args;
   },
 });
+
+export default RepackResolverPlugin;

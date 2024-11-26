@@ -1,2 +1,2 @@
-import { RepackResolverPlugin } from '../dist/modules/FederationRuntimePlugins/ResolverPlugin';
-export { RepackResolverPlugin };
+import RepackResolverPlugin from '../dist/modules/FederationRuntimePlugins/ResolverPlugin';
+export default RepackResolverPlugin;
