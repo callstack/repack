@@ -4,7 +4,6 @@
   "description": "A toolkit to build your React Native application with Rspack or Webpack.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "react-native": "",
   "exports": {
     ".": "./dist/index.js",
     "./client": "./client/index.js",
