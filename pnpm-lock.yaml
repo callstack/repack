@@ -427,6 +427,9 @@ importers:
 
   packages/plugin-reanimated:
     devDependencies:
+      '@rspack/core':
+        specifier: 1.0.8
+        version: 1.0.8(@swc/helpers@0.5.13)
       '@types/node':
         specifier: ^18
         version: 18.19.41
