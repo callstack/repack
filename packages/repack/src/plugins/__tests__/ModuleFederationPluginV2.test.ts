@@ -16,11 +16,9 @@ const mockPlugin = MFPluginRspack as unknown as jest.Mock<
   typeof MFPluginRspack
 >;
 
-const corePluginPath = require.resolve(
-  '../../modules/FederationRuntimePlugins/CorePlugin'
-);
+const corePluginPath = require.resolve('@callstack/repack/mf/core-plugin');
 const resolverPluginPath = require.resolve(
-  '../../modules/FederationRuntimePlugins/ResolverPlugin'
+  '@callstack/repack/mf/resolver-plugin'
 );
 
 describe('ModuleFederationPlugin', () => {
