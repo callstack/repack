@@ -4,7 +4,7 @@ const commonBabelOptions = {
   compact: false,
 };
 
-const babelLoaderOptionsTS = ({ tsx }: { tsx: boolean }) => ({
+const babelLoaderTS = ({ tsx }: { tsx: boolean }) => ({
   loader: 'babel-loader',
   options: {
     ...commonBabelOptions,
@@ -18,7 +18,7 @@ const babelLoaderOptionsTS = ({ tsx }: { tsx: boolean }) => ({
   },
 });
 
-const babelLoaderOptionsJS = {
+const babelLoaderJS = {
   loader: 'babel-loader',
   options: {
     ...commonBabelOptions,
@@ -33,15 +33,15 @@ export const moduleRules = {
   oneOf: [
     {
       test: /\.ts$/,
-      use: babelLoaderOptionsTS({ tsx: false }),
+      use: babelLoaderTS({ tsx: false }),
     },
     {
       test: /\.tsx$/,
-      use: babelLoaderOptionsTS({ tsx: true }),
+      use: babelLoaderTS({ tsx: true }),
     },
     {
       test: /\.jsx?$/,
-      use: babelLoaderOptionsJS,
+      use: babelLoaderJS,
     },
   ],
 };
