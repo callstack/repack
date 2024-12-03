@@ -1,11 +1,9 @@
 // @ts-check
-import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import rspack from '@rspack/core';
 
 const dirname = Repack.getDirname(import.meta.url);
-const { resolve } = createRequire(import.meta.url);
 
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
 export default (env) => {
@@ -121,9 +119,6 @@ export default (env) => {
           MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
         },
         dts: false,
-        runtimePlugins: [
-          resolve('@callstack/repack/federation-runtime-plugin'),
-        ],
         shared: {
           react: {
             singleton: true,
