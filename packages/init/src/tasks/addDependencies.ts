@@ -8,7 +8,6 @@ import logger from '../utils/logger.js';
 
 const rspackDependencies = [
   '@rspack/core@1.0.3', // 1.0.4 breaks sourcemaps
-  '@rspack/plugin-react-refresh',
   'babel-loader', // still needed for codegen
   '@swc/helpers',
   '@callstack/repack',
@@ -18,7 +17,6 @@ const webpackDependencies = [
   'webpack',
   'terser-webpack-plugin',
   'babel-loader',
-  '@rspack/plugin-react-refresh',
   '@callstack/repack',
 ];
 
