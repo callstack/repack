@@ -26,13 +26,18 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
           targets: { 'react-native': '0.74' },
         },
         jsc: {
+          externalHelpers: true,
+          loose: true,
           parser: {
             syntax: 'ecmascript',
             jsx: true,
             exportDefaultFrom: true,
           },
-          loose: true,
-          externalHelpers: true,
+          transform: {
+            react: {
+              runtime: 'automatic',
+            },
+          },
         },
         module: {
           type: 'commonjs',
