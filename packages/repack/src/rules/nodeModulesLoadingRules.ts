@@ -19,7 +19,7 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
     'react-native-tvos',
     '@callstack/react-native-visionos',
   ]),
-  rules: [
+  oneOf: [
     {
       test: /jsx?$/,
       use: [
@@ -35,6 +35,11 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
                 syntax: 'ecmascript',
                 jsx: true,
               },
+              transform: {
+                react: {
+                  runtime: 'automatic',
+                },
+              },
               externalHelpers: true,
             },
             module: {
@@ -47,7 +52,38 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
       ],
     },
     {
-      test: /tsx?$/,
+      test: /ts$/,
+      use: [
+        {
+          loader: 'builtin:swc-loader',
+          options: {
+            env: {
+              targets: { 'react-native': '0.74' },
+            },
+            jsc: {
+              parser: {
+                syntax: 'typescript',
+                tsx: false,
+              },
+              transform: {
+                react: {
+                  runtime: 'automatic',
+                },
+              },
+              loose: true,
+              externalHelpers: true,
+            },
+            module: {
+              type: 'commonjs',
+              strict: false,
+              strictMode: false,
+            },
+          },
+        },
+      ],
+    },
+    {
+      test: /tsx$/,
       use: [
         {
           loader: 'builtin:swc-loader',
@@ -59,6 +95,11 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
               parser: {
                 syntax: 'typescript',
                 tsx: true,
+              },
+              transform: {
+                react: {
+                  runtime: 'automatic',
+                },
               },
               loose: true,
               externalHelpers: true,
