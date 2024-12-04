@@ -31,6 +31,11 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
             jsx: true,
             exportDefaultFrom: true,
           },
+          transform: {
+            react: {
+              runtime: 'automatic',
+            },
+          },
           loose: true,
           externalHelpers: true,
         },
