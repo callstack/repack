@@ -26,6 +26,8 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
           targets: { 'react-native': '0.74' },
         },
         jsc: {
+          externalHelpers: true,
+          loose: true,
           parser: {
             syntax: 'ecmascript',
             jsx: true,
@@ -36,8 +38,6 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
               runtime: 'automatic',
             },
           },
-          loose: true,
-          externalHelpers: true,
         },
         module: {
           type: 'commonjs',

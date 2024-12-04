@@ -30,6 +30,7 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
               targets: { 'react-native': '0.74' },
             },
             jsc: {
+              externalHelpers: true,
               loose: true,
               parser: {
                 syntax: 'ecmascript',
@@ -40,7 +41,6 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
                   runtime: 'automatic',
                 },
               },
-              externalHelpers: true,
             },
             module: {
               type: 'commonjs',
@@ -61,6 +61,8 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
               targets: { 'react-native': '0.74' },
             },
             jsc: {
+              externalHelpers: true,
+              loose: true,
               parser: {
                 syntax: 'typescript',
                 tsx: false,
@@ -70,8 +72,6 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
                   runtime: 'automatic',
                 },
               },
-              loose: true,
-              externalHelpers: true,
             },
             module: {
               type: 'commonjs',
@@ -92,6 +92,8 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
               targets: { 'react-native': '0.74' },
             },
             jsc: {
+              externalHelpers: true,
+              loose: true,
               parser: {
                 syntax: 'typescript',
                 tsx: true,
@@ -101,8 +103,6 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
                   runtime: 'automatic',
                 },
               },
-              loose: true,
-              externalHelpers: true,
             },
             module: {
               type: 'commonjs',
