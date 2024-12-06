@@ -93,9 +93,6 @@ importers:
       '@rspack/core':
         specifier: 1.0.8
         version: 1.0.8(@swc/helpers@0.5.13)
-      '@rspack/plugin-react-refresh':
-        specifier: 1.0.0
-        version: 1.0.0(react-refresh@0.14.2)
       '@svgr/webpack':
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.5.3)
@@ -190,9 +187,6 @@ importers:
       '@rspack/core':
         specifier: 1.0.8
         version: 1.0.8(@swc/helpers@0.5.13)
-      '@rspack/plugin-react-refresh':
-        specifier: 1.0.0
-        version: 1.0.0(react-refresh@0.14.2)
       '@swc/helpers':
         specifier: ^0.5.13
         version: 0.5.13
@@ -275,9 +269,6 @@ importers:
       '@rspack/core':
         specifier: 1.0.8
         version: 1.0.8(@swc/helpers@0.5.13)
-      '@rspack/plugin-react-refresh':
-        specifier: 1.0.0
-        version: 1.0.0(react-refresh@0.14.2)
       '@swc/helpers':
         specifier: ^0.5.13
         version: 0.5.13
@@ -433,6 +424,9 @@ importers:
       '@discoveryjs/json-ext':
         specifier: ^0.5.7
         version: 0.5.7
+      '@rspack/plugin-react-refresh':
+        specifier: 1.0.0
+        version: 1.0.0(react-refresh@0.14.2)
       colorette:
         specifier: ^2.0.20
         version: 2.0.20
@@ -503,9 +497,6 @@ importers:
       '@rspack/core':
         specifier: 1.0.8
         version: 1.0.8(@swc/helpers@0.5.13)
-      '@rspack/plugin-react-refresh':
-        specifier: 1.0.0
-        version: 1.0.0(react-refresh@0.14.2)
       '@swc/helpers':
         specifier: 0.5.13
         version: 0.5.13
