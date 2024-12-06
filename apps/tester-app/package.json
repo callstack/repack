@@ -19,7 +19,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.23.1",
     "react": "18.3.1",
-    "react-native": "0.76.1",
+    "react-native": "0.76.3",
     "react-native-svg": "15.8.0"
   },
   "devDependencies": {
@@ -28,8 +28,8 @@
     "@react-native-community/cli": "15.0.1",
     "@react-native-community/cli-platform-ios": "15.0.1",
     "@react-native-community/cli-platform-android": "15.0.1",
-    "@react-native/babel-preset": "0.76.1",
-    "@react-native/typescript-config": "0.76.1",
+    "@react-native/babel-preset": "0.76.3",
+    "@react-native/typescript-config": "0.76.3",
     "@rsdoctor/rspack-plugin": "^0.4.5",
     "@rspack/core": "1.0.8",
     "@svgr/webpack": "^8.1.0",
@@ -41,7 +41,7 @@
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
-    "react-native-test-app": "^3.10.21",
+    "react-native-test-app": "^4.0.4",
     "terser-webpack-plugin": "^5.3.10",
     "typescript": "^5.5.3",
     "vitest": "^2.0.5",
