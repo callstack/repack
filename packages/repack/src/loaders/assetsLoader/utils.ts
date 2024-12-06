@@ -6,13 +6,10 @@ export function getScaleNumber(scaleKey: string) {
   return Number.parseFloat(scaleKey.replace(/[^\d.]/g, ''));
 }
 
-/** Default asset is the one with scale that was originally requested in the loader */
-export function getDefaultAsset(assets: Asset[]) {
-  const defaultAsset = assets.find((asset) => asset.default === true);
-  if (!defaultAsset) {
-    throw new Error('Malformed assets array - no default asset found');
-  }
-  return defaultAsset;
+export function getAssetSize(assets: Asset[]) {
+  // Use first asset for reference as size, just like in metro:
+  // https://github.com/facebook/metro/blob/main/packages/metro/src/Assets.js#L223
+  return assets[0].dimensions;
 }
 
 export function getAssetDimensions({
