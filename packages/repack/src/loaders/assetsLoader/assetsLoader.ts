@@ -81,6 +81,7 @@ export default async function repackAssetsLoader(
       resourceExtensionType,
       scalableAssetExtensions,
       scalableAssetResolutions,
+      options.platform,
       readDirAsync
     );
 

@@ -39,28 +39,32 @@ export async function collectScales(
   resourceExtension: string,
   scalableAssetExtensions: string[],
   scalableAssetResolutions: string[],
+  platform: string,
   readDirAsync: (path: string) => Promise<string[]>
 ): Promise<CollectedScales> {
-  if (!scalableAssetExtensions.includes(resourceExtension)) {
-    return {
-      '@1x': path.join(
-        resourceAbsoluteDirname,
-        resourceFilename + '.' + resourceExtension
-      ),
-    };
-  }
+  // implicit 1x scale
+  let candidates = [
+    ['@1x', resourceFilename + '.' + resourceExtension],
+    ['@1x', resourceFilename + '.' + platform + '.' + resourceExtension],
+  ];
 
   // explicit scales
-  const candidates = scalableAssetResolutions.map((scaleKey) => {
-    const scale = '@' + scaleKey + 'x';
-    return [scale, resourceFilename + scale + '.' + resourceExtension];
-  });
-  // implicit 1x scale
-  candidates.push(['@1x', resourceFilename + '.' + resourceExtension]);
+  if (scalableAssetExtensions.includes(resourceExtension)) {
+    candidates = candidates.concat(
+      scalableAssetResolutions.flatMap((scaleKey) => {
+        const scale = '@' + scaleKey + 'x';
+        return [
+          [scale, resourceFilename + scale + '.' + resourceExtension],
+          [scale, resourceFilename + '.' + platform + '.' + resourceExtension],
+        ];
+      })
+    );
+  }
 
   const contents = await readDirAsync(resourceAbsoluteDirname);
   const entries = new Set(contents);
 
+  // assets with platform extensions are more specific and take precedence
   const collectedScales: Record<string, string> = {};
   for (const candidate of candidates) {
     const [scaleKey, candidateFilename] = candidate;
