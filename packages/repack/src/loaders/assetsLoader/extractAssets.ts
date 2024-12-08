@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import path from 'node:path';
 import dedent from 'dedent';
 import type { Asset } from './types';
-import { getDefaultAsset } from './utils';
+import { getAssetSize } from './utils';
 
 export function extractAssets(
   {
@@ -39,7 +39,7 @@ export function extractAssets(
     publicPath = path.join(customPublicPath, publicPath);
   }
 
-  const size = getDefaultAsset(assets).dimensions;
+  const size = getAssetSize(assets);
   const scales = assets.map((asset) => asset.scale);
   const hashes = assets.map((asset) =>
     crypto.createHash('md5').update(asset.data).digest('hex')

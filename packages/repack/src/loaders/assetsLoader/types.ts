@@ -1,6 +1,5 @@
 export interface Asset {
   data: Buffer;
-  default: boolean;
   dimensions: AssetDimensions | null;
   filename: string;
   scale: number;
