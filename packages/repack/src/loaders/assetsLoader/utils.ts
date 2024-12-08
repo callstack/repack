@@ -55,7 +55,10 @@ export async function collectScales(
         const scale = '@' + scaleKey + 'x';
         return [
           [scale, resourceFilename + scale + '.' + resourceExtension],
-          [scale, resourceFilename + '.' + platform + '.' + resourceExtension],
+          [
+            scale,
+            resourceFilename + scale + '.' + platform + '.' + resourceExtension,
+          ],
         ];
       })
     );
