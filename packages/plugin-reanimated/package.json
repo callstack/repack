@@ -1,15 +1,15 @@
 {
   "name": "@callstack/repack-plugin-reanimated",
+  "version": "5.0.0-rc.2",
   "description": "A plugin for @callstack/repack that integrates react-native-reanimated",
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
-  "version": "0.0.1",
-  "type": "commonjs",
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
-  "files": ["dist"],
+  "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": ["dist"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
