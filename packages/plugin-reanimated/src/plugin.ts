@@ -1,15 +1,12 @@
 import path from 'node:path';
-import { getDirname } from '@callstack/repack';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import { reanimatedModuleRules } from './rules.js';
 
-const dirname = getDirname(import.meta.url);
-
-export class pluginReanimated implements RspackPluginInstance {
+export class ReanimatedPlugin implements RspackPluginInstance {
   apply(compiler: Compiler) {
     // add alias for reanimated loader
     const aliases = compiler.options.resolveLoader.alias ?? {};
-    const loaderPath = path.resolve(dirname, './loader.js');
+    const loaderPath = path.resolve(__dirname, './loader.js');
     aliases['@callstack/repack-plugin-reanimated'] = loaderPath;
     compiler.options.resolveLoader.alias = aliases;
 

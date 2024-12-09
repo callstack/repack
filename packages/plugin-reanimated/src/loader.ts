@@ -1,6 +1,5 @@
 import { transform } from '@babel/core';
 import type { LoaderContext } from '@rspack/core';
-export const raw = false;
 
 interface ReanimatedLoaderOptions {
   babelPlugins?: string[];
@@ -29,6 +28,8 @@ const REANIMATED_AUTOWORKLETIZATION_KEYWORDS = [
 const REANIMATED_REGEX = new RegExp(
   REANIMATED_AUTOWORKLETIZATION_KEYWORDS.join('|')
 );
+
+export const raw = false;
 
 export default function reanimatedLoader(
   this: LoaderContext<ReanimatedLoaderOptions>,

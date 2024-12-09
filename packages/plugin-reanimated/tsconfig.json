@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ES2021",
     "lib": ["ES2021"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "rootDir": "src",
     "outDir": "dist",
     "esModuleInterop": true,

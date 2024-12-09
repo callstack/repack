@@ -4,7 +4,7 @@
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
   "version": "0.0.1",
-  "type": "module",
+  "type": "commonjs",
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
   "files": ["dist"],
