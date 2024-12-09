@@ -1,1 +1,1 @@
-module.exports = require('../dist/loader');
+module.exports = require('../dist/loader.js');

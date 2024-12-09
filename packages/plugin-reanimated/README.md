@@ -13,7 +13,11 @@ A toolkit to build your React Native application with Rspack or Webpack.
 [![PRs Welcome][prs-welcome-badge]][prs-welcome]
 [![Code of Conduct][coc-badge]][coc]
 
-`@callstack/repack-plugin-reanimated` is a plugin for `@callstack/repack` that integrates `react-native-reanimated` into your React-Native projects.
+`@callstack/repack-plugin-reanimated` is a plugin for `@callstack/repack` that integrates `react-native-reanimated` into your React Native projects.
+
+## About
+
+This plugin exists in order to simplify the setup required to get `react-native-reanimated` working with Re.Pack and to minimize the impact on build performance. It looks for relevant keywords like `worklet` inside the source before transforming the file with `babel`.
 
 ## Installation
 
@@ -23,21 +27,54 @@ npm install -D @callstack/repack-plugin-reanimated
 
 ## Usage
 
+### Plugin
+
 To add the plugin to your Re.Pack configuration, update your `rspack.config.js` or `webpack.config.js` as follows:
 
 ```js
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 
 export default (env) => {
+  // ...
+  return {
     // ...
-    return {
-        // ...
-        plugins: [
-            // ...
-            new ReanimatedPlugin(),
-        ],
-    };
-}
+    plugins: [
+      // ...
+      new ReanimatedPlugin(),
+    ],
+  };
+};
+```
+
+### Loader
+
+The plugin also comes with it's own loader, which you can use on it's own inside `rspack.config.js` or `webpack.config.js` like this:
+
+```js
+export default (env) => {
+  // ...
+  return {
+    // ...
+    module: {
+      rules: [
+        {
+          test: /\.ts$/,
+          use: {
+            loader: '@callstack/repack-plugin-reanimated/loader',
+            options: {
+              babelPlugins: [
+                [
+                  '@babel/plugin-syntax-typescript',
+                  { isTSX: false, allowNamespaces: true },
+                ],
+              ],
+            },
+          },
+        },
+      ],
+    },
+  };
+};
 ```
 
 ---
