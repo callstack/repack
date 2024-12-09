@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
     "lib": ["ES2020", "ES2021"],
     "declaration": true,
     "strict": true,
-    "moduleResolution": "node",
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -20,10 +20,5 @@
       ]
     }
   },
-  "include": [
-    "./client.d.ts",
-    "./commands.d.ts",
-    "src/**/*",
-    "../dev-server/src"
-  ]
+  "include": ["./commands.d.ts", "src/**/*", "../dev-server/src"]
 }

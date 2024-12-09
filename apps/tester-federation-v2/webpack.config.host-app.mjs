@@ -1,11 +1,9 @@
 // @ts-check
-import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import webpack from 'webpack';
 
 const dirname = Repack.getDirname(import.meta.url);
-const { resolve } = createRequire(import.meta.url);
 
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('webpack').Configuration} */
 export default (env) => {
@@ -105,9 +103,6 @@ export default (env) => {
         remotes: {
           MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
         },
-        runtimePlugins: [
-          resolve('@callstack/repack/federation-runtime-plugin'),
-        ],
         shared: {
           react: {
             singleton: true,
@@ -117,7 +112,7 @@ export default (env) => {
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.76.1',
+            requiredVersion: '0.76.3',
           },
           '@react-navigation/native': {
             singleton: true,

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import dedent from 'dedent';
 import type { Asset } from './types';
-import { getDefaultAsset } from './utils';
+import { getAssetSize } from './utils';
 
 export function convertToRemoteAssets({
   assets,
@@ -29,7 +29,8 @@ export function convertToRemoteAssets({
   // works on both unix & windows
   const publicPathURL = new URL(path.join(remotePublicPath, assetPath));
 
-  const size = getDefaultAsset(assets).dimensions;
+  const size = getAssetSize(assets);
+
   const asset = JSON.stringify({
     name: resourceFilename,
     type: resourceExtensionType,

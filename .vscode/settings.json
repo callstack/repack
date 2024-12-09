@@ -3,11 +3,13 @@
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnSave": true,
   "files.associations": {
+    "package.json": "json",
     "*.json": "jsonc"
   },
   "editor.codeActionsOnSave": {
     "source.organizeImports.biome": "explicit"
   },
+  "npm.packageManager": "pnpm",
   "[css]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "biomejs.biome"

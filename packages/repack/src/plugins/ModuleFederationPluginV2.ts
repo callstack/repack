@@ -11,6 +11,15 @@ import { isRspackCompiler } from './utils/isRspackCompiler';
  */
 export interface ModuleFederationPluginV2Config
   extends MF.ModuleFederationPluginOptions {
+  /**
+   *  List of default runtime plugins for Federation Runtime.
+   *  Useful if you want to modify or disable behaviour of runtime plugins.
+   *
+   *  Defaults to an array containing:
+   *    - '@callstack/repack/mf/core-plugin
+   *    - '@callstack/repack/mf/resolver-plugin
+   */
+  defaultRuntimePlugins?: string[];
   /** Enable or disable adding React Native deep imports to shared dependencies. Defaults to true */
   reactNativeDeepImports?: boolean;
 }
@@ -81,13 +90,19 @@ export interface ModuleFederationPluginV2Config
  * @category Webpack Plugin
  */
 export class ModuleFederationPluginV2 implements RspackPluginInstance {
-  private config: MF.ModuleFederationPluginOptions;
+  public config: MF.ModuleFederationPluginOptions;
   private deepImports: boolean;
+  private defaultRuntimePlugins: string[];
 
   constructor(pluginConfig: ModuleFederationPluginV2Config) {
-    const { reactNativeDeepImports, ...config } = pluginConfig;
+    const { defaultRuntimePlugins, reactNativeDeepImports, ...config } =
+      pluginConfig;
     this.config = config;
     this.deepImports = reactNativeDeepImports ?? true;
+    this.defaultRuntimePlugins = defaultRuntimePlugins ?? [
+      '@callstack/repack/mf/core-plugin',
+      '@callstack/repack/mf/resolver-plugin',
+    ];
   }
 
   private ensureModuleFederationPackageInstalled(context: string) {
@@ -105,10 +120,6 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     context: string,
     runtimePlugins: string[] | undefined = []
   ) {
-    const repackRuntimePlugin = require.resolve(
-      '../modules/FederationRuntimePlugin'
-    );
-
     const plugins = runtimePlugins
       .map((pluginPath) => {
         try {
@@ -121,11 +132,14 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
       })
       .filter((pluginPath) => !!pluginPath) as string[];
 
-    if (!plugins.includes(repackRuntimePlugin)) {
-      return [repackRuntimePlugin, ...runtimePlugins];
+    for (const plugin of this.defaultRuntimePlugins) {
+      const pluginPath = require.resolve(plugin);
+      if (!plugins.includes(pluginPath)) {
+        plugins.unshift(pluginPath);
+      }
     }
 
-    return runtimePlugins;
+    return plugins;
   }
 
   private getModuleFederationPlugin(compiler: Compiler) {

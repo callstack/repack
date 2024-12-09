@@ -1,6 +1,33 @@
 import type { RuleSetRule } from '@rspack/core';
 import { getModulePaths } from '../utils';
 
+const makeSwcLoaderConfig = (syntax: 'js' | 'ts', jsx: boolean) => ({
+  loader: 'builtin:swc-loader',
+  options: {
+    env: {
+      targets: { 'react-native': '0.74' },
+    },
+    jsc: {
+      externalHelpers: true,
+      loose: true,
+      parser:
+        syntax === 'js'
+          ? { syntax: 'ecmascript', jsx: jsx }
+          : { syntax: 'typescript', tsx: jsx },
+      transform: {
+        react: {
+          runtime: 'automatic',
+        },
+      },
+    },
+    module: {
+      type: 'commonjs',
+      strict: false,
+      strictMode: false,
+    },
+  },
+});
+
 /**
  * @constant NODE_MODULES_LOADING_RULES
  * @type {RuleSetRule}
@@ -19,58 +46,18 @@ export const NODE_MODULES_LOADING_RULES: RuleSetRule = {
     'react-native-tvos',
     '@callstack/react-native-visionos',
   ]),
-  rules: [
+  oneOf: [
     {
       test: /jsx?$/,
-      use: [
-        {
-          loader: 'builtin:swc-loader',
-          options: {
-            env: {
-              targets: { 'react-native': '0.74' },
-            },
-            jsc: {
-              loose: true,
-              parser: {
-                syntax: 'ecmascript',
-                jsx: true,
-              },
-              externalHelpers: true,
-            },
-            module: {
-              type: 'commonjs',
-              strict: false,
-              strictMode: false,
-            },
-          },
-        },
-      ],
+      use: [makeSwcLoaderConfig('js', true)],
     },
     {
-      test: /tsx?$/,
-      use: [
-        {
-          loader: 'builtin:swc-loader',
-          options: {
-            env: {
-              targets: { 'react-native': '0.74' },
-            },
-            jsc: {
-              parser: {
-                syntax: 'typescript',
-                tsx: true,
-              },
-              loose: true,
-              externalHelpers: true,
-            },
-            module: {
-              type: 'commonjs',
-              strict: false,
-              strictMode: false,
-            },
-          },
-        },
-      ],
+      test: /ts$/,
+      use: [makeSwcLoaderConfig('ts', false)],
+    },
+    {
+      test: /tsx$/,
+      use: [makeSwcLoaderConfig('ts', true)],
     },
   ],
 };
