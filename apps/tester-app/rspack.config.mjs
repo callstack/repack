@@ -2,6 +2,7 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
+import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 
 const dirname = Repack.getDirname(import.meta.url);
@@ -195,6 +196,7 @@ export default (env) => {
       //   exclude: /index.bundle$/,
       // }),
       process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
+      new ReanimatedPlugin(),
     ].filter(Boolean),
   };
 };
