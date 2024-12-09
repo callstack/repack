@@ -10,7 +10,7 @@ export class ReanimatedPlugin implements RspackPluginInstance {
     aliases['@callstack/repack-plugin-reanimated'] = loaderPath;
     compiler.options.resolveLoader.alias = aliases;
 
-    // add rules for transpiling wih repack-reanimated loader
+    // add rules for transpiling wih reanimated loader
     compiler.options.module.rules.push(reanimatedModuleRules);
   }
 }
