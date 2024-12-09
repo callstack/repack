@@ -14,7 +14,7 @@ export const reanimatedModuleRules = {
     {
       test: /\.ts$/,
       use: {
-        loader: '@callstack/repack-plugin-reanimated',
+        loader: '@callstack/repack-plugin-reanimated/loader',
         options: {
           babelPlugins: [
             [
@@ -28,7 +28,7 @@ export const reanimatedModuleRules = {
     {
       test: /\.tsx$/,
       use: {
-        loader: '@callstack/repack-plugin-reanimated',
+        loader: '@callstack/repack-plugin-reanimated/loader',
         options: {
           babelPlugins: [
             [
@@ -42,7 +42,7 @@ export const reanimatedModuleRules = {
     {
       test: /\.jsx?$/,
       use: {
-        loader: '@callstack/repack-plugin-reanimated',
+        loader: '@callstack/repack-plugin-reanimated/loader',
         options: {
           babelPlugins: ['babel-plugin-syntax-hermes-parser'],
         },

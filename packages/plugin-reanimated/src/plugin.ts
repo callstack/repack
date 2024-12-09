@@ -1,15 +1,8 @@
-import path from 'node:path';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import { reanimatedModuleRules } from './rules.js';
 
 export class ReanimatedPlugin implements RspackPluginInstance {
   apply(compiler: Compiler) {
-    // add alias for reanimated loader
-    const aliases = compiler.options.resolveLoader.alias ?? {};
-    const loaderPath = path.resolve(__dirname, './loader.js');
-    aliases['@callstack/repack-plugin-reanimated'] = loaderPath;
-    compiler.options.resolveLoader.alias = aliases;
-
     // add rules for transpiling wih reanimated loader
     compiler.options.module.rules.push(reanimatedModuleRules);
   }
