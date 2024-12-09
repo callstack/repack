@@ -1,19 +1,16 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-// import packageJson from '../package.json';
-import { moduleRules } from './rules';
+import packageJson from '../package.json' with { type: 'json' };
+import { reanimatedModuleRules } from './rules';
 
 export class pluginReanimated implements RspackPluginInstance {
-  constructor() {
-    console.log('pluginReanimated constructor');
-  }
-
   apply(compiler: Compiler) {
-    // // add alias for reanimated loader
-    // const aliases = compiler.options.resolveLoader.alias ?? {};
-    // aliases[packageJson.name] = require.resolve('./loader');
-    // compiler.options.resolveLoader.alias = aliases;
+    // add alias for reanimated loader
+    const aliases = compiler.options.resolveLoader.alias ?? {};
+    const loaderPath = require.resolve('./loader');
+    aliases[packageJson.name] = loaderPath;
+    compiler.options.resolveLoader.alias = aliases;
 
-    // add rules for transpiling wih babel-loader
-    compiler.options.module.rules.push(moduleRules);
+    // add rules for transpiling wih repack-reanimated loader
+    compiler.options.module.rules.push(reanimatedModuleRules);
   }
 }

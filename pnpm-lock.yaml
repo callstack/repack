@@ -430,9 +430,15 @@ importers:
       '@rspack/core':
         specifier: 1.0.8
         version: 1.0.8(@swc/helpers@0.5.13)
+      '@types/babel__core':
+        specifier: 7.20.5
+        version: 7.20.5
       '@types/node':
         specifier: ^18
         version: 18.19.41
+      babel-loader:
+        specifier: ^9.1.3
+        version: 9.1.3(@babel/core@7.25.2)(webpack@5.94.0)
 
   packages/repack:
     dependencies:

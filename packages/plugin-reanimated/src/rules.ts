@@ -1,47 +1,41 @@
-const commonBabelOptions = {
-  babelrc: false,
-  configFile: false,
-  compact: false,
-};
-
-const babelLoaderTS = ({ tsx }: { tsx: boolean }) => ({
-  loader: 'babel-loader',
-  options: {
-    ...commonBabelOptions,
-    plugins: [
-      [
-        '@babel/plugin-syntax-typescript',
-        { isTSX: tsx, allowNamespaces: true },
-      ],
-      'react-native-reanimated/plugin',
-    ],
-  },
-});
-
-const babelLoaderJS = {
-  loader: 'babel-loader',
-  options: {
-    ...commonBabelOptions,
-    plugins: [
-      'babel-plugin-syntax-hermes-parser',
-      'react-native-reanimated/plugin',
-    ],
-  },
-};
-
-export const moduleRules = {
+export const reanimatedModuleRules = {
   oneOf: [
     {
       test: /\.ts$/,
-      use: babelLoaderTS({ tsx: false }),
+      use: {
+        loader: '@callstack/repack-reanimated-plugin',
+        options: {
+          babelPlugins: [
+            [
+              '@babel/plugin-syntax-typescript',
+              { isTSX: false, allowNamespaces: true },
+            ],
+          ],
+        },
+      },
     },
     {
       test: /\.tsx$/,
-      use: babelLoaderTS({ tsx: true }),
+      use: {
+        loader: '@callstack/repack-reanimated-plugin',
+        options: {
+          babelPlugins: [
+            [
+              '@babel/plugin-syntax-typescript',
+              { isTSX: true, allowNamespaces: true },
+            ],
+          ],
+        },
+      },
     },
     {
       test: /\.jsx?$/,
-      use: babelLoaderJS,
+      use: {
+        loader: '@callstack/repack-reanimated-plugin',
+        options: {
+          babelPlugins: ['babel-plugin-syntax-hermes-parser'],
+        },
+      },
     },
   ],
 };
