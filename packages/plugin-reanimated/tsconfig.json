@@ -4,15 +4,18 @@
     "lib": ["ES2021"],
     "module": "commonjs",
     "moduleResolution": "node",
-    "rootDir": "src",
-    "outDir": "dist",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
     "declaration": true,
-    "sourceMap": false
+    "sourceMap": false,
+    "rootDirs": ["src", "../repack/src"],
+    "paths": {
+      "@callstack/repack": ["../repack/src/index.ts"],
+      "@callstack/repack/*": ["../repack/src/*"]
+    }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*"]
 }
