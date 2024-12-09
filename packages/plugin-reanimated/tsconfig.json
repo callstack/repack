@@ -11,10 +11,15 @@
     "strict": true,
     "declaration": true,
     "sourceMap": false,
-    "rootDirs": ["src", "../repack/src"],
+    "rootDirs": ["src", "../repack/src", "../dev-server/src"],
     "paths": {
       "@callstack/repack": ["../repack/src/index.ts"],
-      "@callstack/repack/*": ["../repack/src/*"]
+      "@callstack/repack/*": ["../repack/src/*"],
+      "@callstack/repack-dev-server": ["../dev-server/src/index.ts"],
+      "@callstack/repack-dev-server/*": ["../dev-server/src/*"],
+      "@react-native/dev-middleware": [
+        "../dev-server/node_modules/@react-native/dev-middleware/dist"
+      ]
     }
   },
   "include": ["src/**/*"]
