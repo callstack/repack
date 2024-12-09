@@ -1,9 +1,20 @@
+import { getModulePaths } from '@callstack/repack';
+
 export const reanimatedModuleRules = {
+  exclude: getModulePaths([
+    'react',
+    'react-native',
+    '@react-native',
+    'react-native-macos',
+    'react-native-windows',
+    'react-native-tvos',
+    '@callstack/react-native-visionos',
+  ]),
   oneOf: [
     {
       test: /\.ts$/,
       use: {
-        loader: '@callstack/repack-reanimated-plugin',
+        loader: '@callstack/repack-plugin-reanimated',
         options: {
           babelPlugins: [
             [
@@ -17,7 +28,7 @@ export const reanimatedModuleRules = {
     {
       test: /\.tsx$/,
       use: {
-        loader: '@callstack/repack-reanimated-plugin',
+        loader: '@callstack/repack-plugin-reanimated',
         options: {
           babelPlugins: [
             [
@@ -31,7 +42,7 @@ export const reanimatedModuleRules = {
     {
       test: /\.jsx?$/,
       use: {
-        loader: '@callstack/repack-reanimated-plugin',
+        loader: '@callstack/repack-plugin-reanimated',
         options: {
           babelPlugins: ['babel-plugin-syntax-hermes-parser'],
         },
