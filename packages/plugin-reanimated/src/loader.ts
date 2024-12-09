@@ -48,6 +48,7 @@ export default function reanimatedLoader(
   transform(
     source,
     {
+      filename: this.resourcePath,
       babelrc: false,
       configFile: false,
       compact: false,
