@@ -152,6 +152,20 @@ describe('assetLoader', () => {
       expect(context.Export?.default).toMatchSnapshot();
       expect(volume.toTree()).toMatchSnapshot();
     });
+
+    it('should prefer platform specific asset', async () => {
+      const platformFixtures = loadFixtures('logo.png', `logo.${platform}.png`);
+      const { code, volume } = await compileBundle(platform, {
+        ...platformFixtures,
+        './index.js': "export { default } from './__fixtures__/logo.png';",
+      });
+
+      const context: { Export?: { default: Record<string, any> } } = {};
+      vm.runInNewContext(code, context);
+
+      expect(context.Export?.default).toMatchSnapshot();
+      expect(volume.toTree()).toMatchSnapshot();
+    });
   });
 
   describe('should inline asset', () => {
