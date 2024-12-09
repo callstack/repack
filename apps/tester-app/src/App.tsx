@@ -7,6 +7,7 @@ import { SectionContainer } from './ui/SectionContainer';
 import { AssetsTestContainer } from './assetsTest/AssetsTestContainer';
 import { AsyncContainer } from './asyncChunks/AsyncContainer';
 import { MiniAppsContainer } from './miniapp/MiniAppsContainer';
+import { ReanimatedBox } from './reanimated/ReanimatedBox';
 import { RemoteContainer } from './remoteChunks/RemoteContainer';
 
 Appearance.setColorScheme('light');
@@ -26,6 +27,9 @@ const App = () => {
         </Section>
         <Section title="Assets test">
           <AssetsTestContainer />
+        </Section>
+        <Section title="Reanimated test">
+          <ReanimatedBox />
         </Section>
       </SectionContainer>
     </AppContainer>
