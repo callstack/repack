@@ -32,7 +32,7 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
             exportDefaultFrom: true,
           },
           loose: true,
-          externalHelpers: true,
+          externalHelpers: false,
         },
         module: {
           type: 'commonjs',
