@@ -233,9 +233,7 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     return adjustedSharedDependencies;
   }
 
-  apply(compiler: Compiler) {
-    this.ensureModuleFederationPackageInstalled(compiler.context);
-
+  private setupIgnoredWarnings(compiler: Compiler) {
     // MF2 produces warning about not supporting async await
     // we can silence this warning since it works just fine
     compiler.options.ignoreWarnings = compiler.options.ignoreWarnings ?? [];
@@ -256,8 +254,14 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
       if (isMF2Runtime && requestExpressionWarning.test(warning.message)) {
         return true;
       }
+
       return false;
     });
+  }
+
+  apply(compiler: Compiler) {
+    this.ensureModuleFederationPackageInstalled(compiler.context);
+    this.setupIgnoredWarnings(compiler);
 
     const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
 
