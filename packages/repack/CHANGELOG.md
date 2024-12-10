@@ -1,5 +1,34 @@
 # @callstack/repack
 
+## 5.0.0-rc.3
+
+### Minor Changes
+
+- [#817](https://github.com/callstack/repack/pull/817) [`c97da24`](https://github.com/callstack/repack/commit/c97da241876ec8dbe6c2d206590d697f429e86b4) Thanks [@jbroma](https://github.com/jbroma)! - Add Repack Reanimated Plugin which integrates react-native-reanimated into the project
+
+- [#810](https://github.com/callstack/repack/pull/810) [`46330d7`](https://github.com/callstack/repack/commit/46330d70db99a372046baf8ee4565e4a21e5b4f3) Thanks [@jbroma](https://github.com/jbroma)! - Include `@rspack/plugin-react-refresh` with Re.Pack instead of requiring user to install it
+
+- [#816](https://github.com/callstack/repack/pull/816) [`6ed9a6f`](https://github.com/callstack/repack/commit/6ed9a6fcb40ba946b39dfe1d302ad2ebf9dffacf) Thanks [@jbroma](https://github.com/jbroma)! - Support platform specific assets
+
+- [#803](https://github.com/callstack/repack/pull/803) [`daffbf7`](https://github.com/callstack/repack/commit/daffbf72088ba666d956e35a265546a89ee84f42) Thanks [@jbroma](https://github.com/jbroma)! - Refactor FederationRuntimePlugin into two separate plugins for more granular control over the MF2 runtime behaviour (CorePlugin & ResolverPlugin)
+
+### Patch Changes
+
+- [#821](https://github.com/callstack/repack/pull/821) [`287991e`](https://github.com/callstack/repack/commit/287991eb002725f78c23aafe89131fcadb8edaf1) Thanks [@jbroma](https://github.com/jbroma)! - Ignore irrelevant MF2 runtime warning about request of a dependency being an expression
+
+- [#814](https://github.com/callstack/repack/pull/814) [`592fbe3`](https://github.com/callstack/repack/commit/592fbe3fe8eeeeb856d260c3106f5f6cd6eeaef8) Thanks [@jbroma](https://github.com/jbroma)! - Fix how size of a scaled assets is obtained (aligned with metro)
+
+- [#808](https://github.com/callstack/repack/pull/808) [`f600e07`](https://github.com/callstack/repack/commit/f600e075645c5f310abe67591cbdf11221944cba) Thanks [@jbroma](https://github.com/jbroma)! - Fix type JSX runtime transform when transpiling node modules
+
+- [#819](https://github.com/callstack/repack/pull/819) [`9890400`](https://github.com/callstack/repack/commit/9890400fe5ac750698ceb3eaf72e0b3a86ae4a73) Thanks [@jbroma](https://github.com/jbroma)! - Fix missing sourcemap generation for codegen related files and configure separate rules for ts & tsx files
+
+- [#802](https://github.com/callstack/repack/pull/802) [`502527e`](https://github.com/callstack/repack/commit/502527e8c44990fb544ff500034dbdbd687c5d60) Thanks [@thymikee](https://github.com/thymikee)! - Export commands from package entrypoint
+
+- [#820](https://github.com/callstack/repack/pull/820) [`39f80b3`](https://github.com/callstack/repack/commit/39f80b3661a348b9d778f76af2848ed615582d23) Thanks [@jbroma](https://github.com/jbroma)! - Ignore setUpTests warning from Reanimated by default
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-rc.3
+
 ## 5.0.0-rc.2
 
 ### Patch Changes
