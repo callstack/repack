@@ -7,9 +7,9 @@ import type { RuleSetRule } from '@rspack/core';
  */
 export const REACT_NATIVE_CODEGEN_RULES: RuleSetRule = {
   test: /(?:^|[\\/])(?:Native\w+|(\w+)NativeComponent)\.[jt]sx?$/,
-  rules: [
+  oneOf: [
     {
-      test: /\.tsx?$/,
+      test: /\.ts$/,
       use: [
         {
           loader: 'babel-loader',
@@ -17,7 +17,29 @@ export const REACT_NATIVE_CODEGEN_RULES: RuleSetRule = {
             babelrc: false,
             configFile: false,
             plugins: [
-              '@babel/plugin-syntax-typescript',
+              [
+                '@babel/plugin-syntax-typescript',
+                { isTSX: false, allowNamespaces: true },
+              ],
+              '@react-native/babel-plugin-codegen',
+            ],
+          },
+        },
+      ],
+    },
+    {
+      test: /\.tsx$/,
+      use: [
+        {
+          loader: 'babel-loader',
+          options: {
+            babelrc: false,
+            configFile: false,
+            plugins: [
+              [
+                '@babel/plugin-syntax-typescript',
+                { isTSX: true, allowNamespaces: true },
+              ],
               '@react-native/babel-plugin-codegen',
             ],
           },
