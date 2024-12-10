@@ -1,9 +1,5 @@
 packages:
-  - "packages/dev-server"
-  - "packages/init"
-  - "packages/repack"
-  - "apps/tester-app"
-  - "apps/tester-federation"
-  - "apps/tester-federation-v2"
-  - "tests/metro-compat"
+  - "packages/*"
+  - "apps/*"
+  - "tests/*"
   - "website"

@@ -26,7 +26,10 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
           targets: { 'react-native': '0.74' },
         },
         jsc: {
-          externalHelpers: true,
+          // helpers alter the order of execution and cause weird issues with reanimated
+          // this is very likely an SWC issue
+          // TODO - investigate and reenable helpers in the future
+          externalHelpers: false,
           loose: true,
           parser: {
             syntax: 'ecmascript',

@@ -6,7 +6,8 @@
     [
       "@callstack/repack",
       "@callstack/repack-dev-server",
-      "@callstack/repack-init"
+      "@callstack/repack-init",
+      "@callstack/repack-plugin-reanimated"
     ]
   ],
   "linked": [],
