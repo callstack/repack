@@ -242,6 +242,22 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     compiler.options.ignoreWarnings.push(
       (warning) => warning.name === 'EnvironmentNotSupportAsyncWarning'
     );
+    // MF2 produces warning about dynamic import in loadEsmEntry but it's not relevant
+    // in RN env since we override the loadEntry logic through a hook
+    // https://github.com/module-federation/core/blob/fa7a0bd20eb64eccd6648fea340c6078a2268e39/packages/runtime/src/utils/load.ts#L28-L37
+    compiler.options.ignoreWarnings.push((warning) => {
+      // @ts-expect-error moduleDescriptor is present in the warning object
+      const modulePath = warning.moduleDescriptor.name;
+      const moduleName = '@module-federation/runtime/dist/index.cjs.js';
+      const isMF2Runtime = modulePath.endsWith(moduleName);
+      const requestExpressionWarning =
+        /Critical dependency: the request of a dependency is an expression/;
+
+      if (isMF2Runtime && requestExpressionWarning.test(warning.message)) {
+        return true;
+      }
+      return false;
+    });
 
     const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
 
