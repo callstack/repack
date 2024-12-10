@@ -1,5 +1,11 @@
 # @callstack/repack-init
 
+## 5.0.0-rc.3
+
+### Minor Changes
+
+- [#810](https://github.com/callstack/repack/pull/810) [`46330d7`](https://github.com/callstack/repack/commit/46330d70db99a372046baf8ee4565e4a21e5b4f3) Thanks [@jbroma](https://github.com/jbroma)! - Include `@rspack/plugin-react-refresh` with Re.Pack instead of requiring user to install it
+
 ## 5.0.0-rc.2
 
 ## 5.0.0-rc.1

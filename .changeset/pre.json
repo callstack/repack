@@ -9,9 +9,11 @@
     "@callstack/repack-init": "5.0.0-alpha.0",
     "@callstack/repack": "5.0.0-alpha.0",
     "metro-compat-test": "0.0.1",
-    "website": "0.0.1"
+    "website": "0.0.1",
+    "@callstack/repack-plugin-reanimated": "5.0.0-rc.2"
   },
   "changesets": [
+    "angry-foxes-applaud",
     "big-insects-move",
     "big-wolves-tell",
     "bright-scissors-kiss",
@@ -19,8 +21,10 @@
     "clever-frogs-type",
     "clever-timers-decide",
     "cold-apes-swim",
+    "cold-chefs-confess",
     "fast-falcons-joke",
     "happy-pets-yawn",
+    "healthy-dots-tap",
     "healthy-monkeys-relate",
     "heavy-drinks-heal",
     "honest-items-happen",
@@ -30,10 +34,17 @@
     "odd-cars-yawn",
     "olive-singers-attack",
     "proud-students-return",
+    "rude-points-ring",
     "serious-falcons-burn",
+    "shaggy-planets-mate",
+    "slimy-dragons-swim",
+    "smooth-zebras-hunt",
     "spicy-pumas-whisper",
+    "tasty-dolls-lie",
+    "thick-pillows-act",
     "tidy-eels-clean",
     "tricky-donuts-fly",
-    "two-ghosts-refuse"
+    "two-ghosts-refuse",
+    "wet-countries-sin"
   ]
 }
