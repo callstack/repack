@@ -113,8 +113,8 @@ export async function start(_: string[], config: Config, args: StartArguments) {
         );
       }
 
-      if (reversePort && args.port) {
-        void runAdbReverse(args.port, ctx.log);
+      if (reversePort) {
+        void runAdbReverse(serverPort, ctx.log);
       }
 
       const lastStats: Record<string, webpack.StatsCompilation> = {};
