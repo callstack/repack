@@ -21,6 +21,7 @@ export function setupInteractions(
     onReload?: () => void;
     onOpenDevMenu?: () => void;
     onOpenDevTools?: () => void;
+    onAdbReverse?: () => void;
   },
   options?: {
     logger?: Logger;
@@ -91,6 +92,11 @@ export function setupInteractions(
       action: handlers.onOpenDevTools,
       postPerformMessage: 'Opening debugger',
       helpName: 'Open debugger',
+    },
+    a: {
+      action: handlers.onAdbReverse,
+      postPerformMessage: 'Running ADB reverse',
+      helpName: 'Run ADB reverse',
     },
   };
 

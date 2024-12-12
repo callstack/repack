@@ -108,13 +108,20 @@ export async function start(_: string[], config: Config, args: StartArguments) {
                 method: 'POST',
               });
             },
+            onAdbReverse() {
+              void runAdbReverse({
+                port: serverPort,
+                logger: ctx.log,
+                verbose: true,
+              });
+            },
           },
           { logger: ctx.log }
         );
       }
 
       if (reversePort) {
-        void runAdbReverse(serverPort, ctx.log);
+        void runAdbReverse({ port: serverPort, logger: ctx.log });
       }
 
       const lastStats: Record<string, webpack.StatsCompilation> = {};
@@ -122,7 +129,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
         if (platform === 'android') {
-          void runAdbReverse(args.port ?? DEFAULT_PORT, ctx.log);
+          void runAdbReverse({ port: serverPort, logger: ctx.log });
         }
       });
 

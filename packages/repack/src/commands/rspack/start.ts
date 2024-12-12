@@ -110,13 +110,20 @@ export async function start(
                 method: 'POST',
               });
             },
+            onAdbReverse() {
+              void runAdbReverse({
+                port: serverPort,
+                logger: ctx.log,
+                verbose: true,
+              });
+            },
           },
           { logger: ctx.log }
         );
       }
 
       if (reversePort) {
-        void runAdbReverse(serverPort, ctx.log);
+        void runAdbReverse({ port: serverPort, logger: ctx.log });
       }
 
       compiler.setDevServerContext(ctx);
