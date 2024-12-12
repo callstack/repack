@@ -21,15 +21,15 @@ export async function runAdbReverse({
   try {
     await execa.command(command);
     if (verbose) {
-      logger.info('ADB reverse success');
+      logger.info('adb reverse success');
     }
-    logger.debug(`ADB reverse success: ${info}`);
+    logger.debug(`adb reverse success: ${info}`);
   } catch (error) {
     const message =
       (error as Error).message.split('error:')[1] || (error as Error).message;
     if (verbose) {
-      logger.warn(`ADB reverse failed: "${message.trim()}"`);
+      logger.warn(`adb reverse failed: "${message.trim()}"`);
     }
-    logger.debug(`ADB reverse failed: "${message.trim()}" ${info}`);
+    logger.debug(`adb reverse failed: "${message.trim()}" ${info}`);
   }
 }

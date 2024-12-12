@@ -95,8 +95,8 @@ export function setupInteractions(
     },
     a: {
       action: handlers.onAdbReverse,
-      postPerformMessage: 'Running ADB reverse',
-      helpName: 'Run ADB reverse',
+      postPerformMessage: 'Running adb reverse',
+      helpName: 'Run adb reverse',
     },
   };
 
