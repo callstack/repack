@@ -51,9 +51,8 @@ export const startCommandOptions = [
       'Run the dev server for the specified platform only. By default, the dev server will bundle for all platforms.',
   },
   {
-    name: '--no-reverse-port',
-    description:
-      'Disables running ADB reverse automatically when bundling for Android',
+    name: '--reverse-port',
+    description: 'ADB reverse port on starting devServers only for Android',
   },
   {
     name: '--verbose',
