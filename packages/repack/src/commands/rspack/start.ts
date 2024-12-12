@@ -42,6 +42,13 @@ export async function start(
     args.config ?? args.webpackConfig
   );
   const { reversePort, ...restArgs } = args;
+
+  const serverProtocol = args.https ? 'https' : 'http';
+  const serverHost = args.host || DEFAULT_HOSTNAME;
+  const serverPort = args.port ?? DEFAULT_PORT;
+  const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
+  const showHttpRequests = args.verbose || args.logRequests;
+
   const cliOptions: StartCliOptions = {
     config: {
       root: cliConfig.root,
@@ -50,7 +57,9 @@ export async function start(
       reactNativePath: cliConfig.reactNativePath,
     },
     command: 'start',
-    arguments: { start: { ...restArgs } },
+    arguments: {
+      start: { ...restArgs, host: serverHost, port: serverPort },
+    },
   };
 
   if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
@@ -75,11 +84,6 @@ export async function start(
 
   // @ts-ignore
   const compiler = new Compiler(cliOptions, reporter);
-
-  const serverHost = args.host || DEFAULT_HOSTNAME;
-  const serverPort = args.port ?? DEFAULT_PORT;
-  const serverURL = `${args.https === true ? 'https' : 'http'}://${serverHost}:${serverPort}`;
-  const showHttpRequests = args.verbose || args.logRequests;
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
