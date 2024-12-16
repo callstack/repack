@@ -1,10 +1,21 @@
+import { Announcement } from '@callstack/rspress-theme';
 import Theme, {
   Link,
   PrevNextPage,
   getCustomMDXComponent,
 } from 'rspress/theme';
 
-const Layout = () => <Theme.Layout />;
+const Layout = () => (
+  <Theme.Layout
+    beforeNav={
+      <Announcement
+        href="5.x/docs/getting-started"
+        message="Re.Pack 5 with support for Rspack is coming!"
+        localStorageKey="repack-announcement"
+      />
+    }
+  />
+);
 
 export default {
   ...Theme,
