@@ -183,6 +183,8 @@ describe('ScriptManagerAPI', () => {
       uniqueId: 'main_src_App_js',
     });
 
+    await ScriptManager.shared.loadScript('src_App_js', 'main');
+
     const {
       locator: { fetch },
     } = await ScriptManager.shared.resolveScript('src_App_js', 'main');
@@ -435,6 +437,7 @@ describe('ScriptManagerAPI', () => {
       'src_App_js',
       'main'
     );
+    await ScriptManager.shared.loadScript('src_App_js', 'main');
     expect(script1.locator.fetch).toBe(false);
 
     ScriptManager.shared.removeAllResolvers();
@@ -454,6 +457,7 @@ describe('ScriptManagerAPI', () => {
       'src_App_js',
       'main'
     );
+    await ScriptManager.shared.loadScript('src_App_js', 'main');
     expect(script2.locator.fetch).toBe(true);
 
     ScriptManager.shared.removeAllResolvers();
@@ -473,6 +477,7 @@ describe('ScriptManagerAPI', () => {
       'src_App_js',
       'main'
     );
+    await ScriptManager.shared.loadScript('src_App_js', 'main');
     expect(script3.locator.fetch).toBe(true);
 
     ScriptManager.shared.removeAllResolvers();
@@ -496,6 +501,7 @@ describe('ScriptManagerAPI', () => {
       'src_App_js',
       'main'
     );
+    await ScriptManager.shared.loadScript('src_App_js', 'main');
     expect(script4.locator.fetch).toBe(true);
 
     ScriptManager.shared.removeAllResolvers();
@@ -519,6 +525,7 @@ describe('ScriptManagerAPI', () => {
       'src_App_js',
       'main'
     );
+    await ScriptManager.shared.loadScript('src_App_js', 'main');
     expect(script5.locator.fetch).toBe(false);
 
     ScriptManager.shared.removeAllResolvers();
@@ -590,7 +597,7 @@ describe('ScriptManagerAPI', () => {
     expect(NativeScriptManager.loadScript).toHaveBeenCalledTimes(1);
     expect(NativeScriptManager.loadScript).toHaveBeenCalledWith(scriptId, {
       absolute: false,
-      fetch: false,
+      fetch: true,
       method: 'GET',
       retry: 2,
       retryDelay: 100,
@@ -646,7 +653,7 @@ describe('ScriptManagerAPI', () => {
     expect(NativeScriptManager.loadScript).toHaveBeenCalledTimes(3);
     expect(NativeScriptManager.loadScript).toHaveBeenCalledWith(scriptId, {
       absolute: false,
-      fetch: false,
+      fetch: true,
       method: 'GET',
       retry: 2,
       retryDelay: 100,
@@ -761,7 +768,7 @@ describe('ScriptManagerAPI', () => {
     await ScriptManager.shared.loadScript('miniApp');
 
     expect(loadingScriptIsFinished).toEqual(true);
-    spy.mockReset();
+
     spy.mockRestore();
   });
 
@@ -803,7 +810,7 @@ describe('ScriptManagerAPI', () => {
     expect(loadingScriptIsFinished).toEqual(true);
     await ScriptManager.shared.loadScript('miniApp2');
     expect(loadingScript2IsFinished).toEqual(true);
-    spy.mockReset();
+
     spy.mockRestore();
   });
 
@@ -829,7 +836,41 @@ describe('ScriptManagerAPI', () => {
     await ScriptManager.shared.loadScript('miniApp');
 
     expect(prefetchScriptIsFinished).toEqual(true);
-    spy.mockReset();
+
+    spy.mockRestore();
+  });
+
+  it('should refetch failed script', async () => {
+    jest.useFakeTimers({ advanceTimers: true });
+    const spy = jest.spyOn(NativeScriptManager, 'loadScript');
+
+    spy.mockRejectedValueOnce(
+      (_scriptId: string, _scriptConfig: NormalizedScriptLocator) =>
+        Promise.reject({ code: 'NetworkFailed' })
+    );
+
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+
+    ScriptManager.shared.addResolver(async (scriptId, _caller) => {
+      return {
+        url: Script.getRemoteURL(scriptId),
+        cache: true,
+      };
+    });
+
+    await expect(async () =>
+      ScriptManager.shared.loadScript('miniApp')
+    ).rejects.toThrow();
+
+    // //expected to cache be empty
+    expect(Object.keys(cache.data).length).toBe(0);
+
+    await ScriptManager.shared.loadScript('miniApp');
+
+    // expected to fetch again
+    expect(spy.mock.lastCall?.[1].fetch).toBe(true);
+
     spy.mockRestore();
   });
 });

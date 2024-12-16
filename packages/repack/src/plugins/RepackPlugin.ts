@@ -124,19 +124,28 @@ export class RepackPlugin implements RspackPluginInstance {
     this.config.logger = this.config.logger ?? true;
   }
 
+  private getEntryName(compiler: Compiler) {
+    if (this.config.entryName) {
+      return this.config.entryName;
+    }
+
+    if (
+      typeof compiler.options.entry === 'object' &&
+      'main' in compiler.options.entry
+    ) {
+      return 'main';
+    }
+
+    return undefined;
+  }
+
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    let entryName = this.config.entryName;
-    if (!entryName && typeof compiler.options.entry !== 'function') {
-      // 'main' is the default name for the entry chunk
-      if ('main' in compiler.options.entry) {
-        entryName = 'main';
-      }
-    }
+    const entryName = this.getEntryName(compiler);
 
     new compiler.webpack.DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
@@ -163,11 +172,16 @@ export class RepackPlugin implements RspackPluginInstance {
     }).apply(compiler);
 
     new DevelopmentPlugin({
-      platform: this.config.platform,
       devServer: this.config.devServer,
+      entryName,
+      platform: this.config.platform,
     }).apply(compiler);
 
     if (this.config.sourceMaps) {
+      // TODO Fix sourcemap directory structure
+      // Right now its very messy and not every node module is inside of the node module
+      // like React Devtools backend etc or some symilinked module appear with relative path
+      // We should normalize this through a custom handler and provide an output similar to Metro
       new compiler.webpack.SourceMapDevToolPlugin({
         test: /\.(js)?bundle$/,
         filename: '[file].map',
@@ -175,6 +189,9 @@ export class RepackPlugin implements RspackPluginInstance {
         module: true,
         columns: true,
         noSources: false,
+        namespace:
+          compiler.options.output.devtoolNamespace ??
+          compiler.options.output.uniqueName,
       }).apply(compiler);
     }
 

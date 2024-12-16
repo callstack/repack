@@ -29,7 +29,7 @@ export async function bundle(
 ) {
   const webpackConfigPath = getWebpackConfigFilePath(
     cliConfig.root,
-    args.webpackConfig
+    args.config ?? args.webpackConfig
   );
 
   const cliOptions: BundleCliOptions = {
@@ -47,7 +47,7 @@ export async function bundle(
     throw new Error("Option '--entry-file <path>' argument is missing");
   }
 
-  if (args.verbose ?? process.argv.includes('--verbose')) {
+  if (args.verbose) {
     process.env[VERBOSE_ENV_KEY] = '1';
   }
 

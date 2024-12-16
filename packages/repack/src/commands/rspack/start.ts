@@ -1,6 +1,7 @@
 import type { Config } from '@react-native-community/cli-types';
 import * as colorette from 'colorette';
 import packageJson from '../../../package.json';
+import { VERBOSE_ENV_KEY } from '../../env';
 import {
   ConsoleReporter,
   FileReporter,
@@ -38,9 +39,16 @@ export async function start(
 ) {
   const rspackConfigPath = getRspackConfigFilePath(
     cliConfig.root,
-    args.webpackConfig
+    args.config ?? args.webpackConfig
   );
-  const { reversePort: reversePortArg, ...restArgs } = args;
+  const { reversePort, ...restArgs } = args;
+
+  const serverProtocol = args.https ? 'https' : 'http';
+  const serverHost = args.host || DEFAULT_HOSTNAME;
+  const serverPort = args.port ?? DEFAULT_PORT;
+  const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
+  const showHttpRequests = args.verbose || args.logRequests;
+
   const cliOptions: StartCliOptions = {
     config: {
       root: cliConfig.root,
@@ -49,45 +57,34 @@ export async function start(
       reactNativePath: cliConfig.reactNativePath,
     },
     command: 'start',
-    arguments: { start: { ...restArgs } },
+    arguments: {
+      start: { ...restArgs, host: serverHost, port: serverPort },
+    },
   };
 
   if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
     throw new Error('Unrecognized platform: ' + args.platform);
   }
 
-  const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
-  const isSilent = args.silent;
-  const isVerbose = isSilent
-    ? false
-    : // TODO fix (jbroma)
-      // biome-ignore format: fix in a separate PR
-      args.verbose ?? process.argv.includes('--verbose');
+  if (args.verbose) {
+    process.env[VERBOSE_ENV_KEY] = '1';
+  }
 
-  const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(
     [
-      new ConsoleReporter({
-        asJson: args.json,
-        level: isSilent ? 'silent' : isVerbose ? 'verbose' : 'normal',
-      }),
+      new ConsoleReporter({ asJson: args.json, isVerbose: args.verbose }),
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
     ].filter(Boolean) as Reporter[]
   );
 
-  if (!isSilent) {
-    const version = packageJson.version;
-    process.stdout.write(
-      colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
-    );
-  }
+  const version = packageJson.version;
+  process.stdout.write(
+    colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
+  );
 
   // @ts-ignore
   const compiler = new Compiler(cliOptions, reporter);
 
-  const serverHost = args.host || DEFAULT_HOSTNAME;
-  const serverPort = args.port ?? DEFAULT_PORT;
-  const serverURL = `${args.https === true ? 'https' : 'http'}://${serverHost}:${serverPort}`;
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
     options: {
@@ -101,9 +98,6 @@ export async function start(
           }
         : undefined,
       logRequests: showHttpRequests,
-    },
-    experiments: {
-      experimentalDebugger: args.experimentalDebugger,
     },
     delegate: (ctx) => {
       if (args.interactive) {
@@ -120,13 +114,20 @@ export async function start(
                 method: 'POST',
               });
             },
+            onAdbReverse() {
+              void runAdbReverse({
+                port: serverPort,
+                logger: ctx.log,
+                verbose: true,
+              });
+            },
           },
-          ctx.log
+          { logger: ctx.log }
         );
       }
 
-      if (reversePort && args.port) {
-        void runAdbReverse(args.port, ctx.log);
+      if (reversePort) {
+        void runAdbReverse({ port: serverPort, logger: ctx.log });
       }
 
       compiler.setDevServerContext(ctx);

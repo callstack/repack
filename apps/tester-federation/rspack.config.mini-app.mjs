@@ -92,7 +92,7 @@ export default (env) => {
             },
           },
         },
-        // Repack.REACT_NATIVE_CODEGEN_RULES,
+        Repack.REACT_NATIVE_CODEGEN_RULES,
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
@@ -126,7 +126,7 @@ export default (env) => {
           },
         ],
       }),
-      new Repack.plugins.ModuleFederationPlugin({
+      new Repack.plugins.ModuleFederationPluginV1({
         name: 'MiniApp',
         exposes: {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
@@ -140,13 +140,7 @@ export default (env) => {
           'react-native': {
             singleton: true,
             eager: false,
-            requiredVersion: '0.76.0-rc.6',
-          },
-          'react-native/Libraries/Core/Devtools/getDevServer': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '0.76.0-rc.6',
-            shareScope: 'internal',
+            requiredVersion: '0.76.3',
           },
           '@react-navigation/native': {
             singleton: true,
@@ -161,12 +155,12 @@ export default (env) => {
           'react-native-safe-area-context': {
             singleton: true,
             eager: false,
-            requiredVersion: '^4.11.0',
+            requiredVersion: '^4.14.0',
           },
           'react-native-screens': {
             singleton: true,
             eager: false,
-            requiredVersion: '^3.34.0',
+            requiredVersion: '^3.35.0',
           },
           '@react-native-async-storage/async-storage': {
             singleton: true,

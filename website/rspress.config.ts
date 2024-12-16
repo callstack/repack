@@ -1,4 +1,5 @@
 import * as path from 'node:path';
+import { pluginCallstackTheme } from '@callstack/rspress-theme/plugin';
 import { pluginOpenGraph } from 'rsbuild-plugin-open-graph';
 import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
 import vercelAnalytics from 'rspress-plugin-vercel-analytics';
@@ -53,7 +54,6 @@ export default defineConfig({
       },
     ],
   },
-  globalStyles: path.join(__dirname, 'src/styles/index.css'),
   builderConfig: {
     plugins: [
       pluginOpenGraph({
@@ -80,5 +80,5 @@ export default defineConfig({
       },
     },
   },
-  plugins: [pluginFontOpenSans(), vercelAnalytics()],
+  plugins: [pluginFontOpenSans(), vercelAnalytics(), pluginCallstackTheme()],
 });

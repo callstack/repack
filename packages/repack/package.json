@@ -1,35 +1,17 @@
 {
   "name": "@callstack/repack",
-  "version": "5.0.0-alpha.0",
+  "version": "5.0.0-rc.3",
   "description": "A toolkit to build your React Native application with Rspack or Webpack.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "react-native": "",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./client": {
-      "types": "./dist/modules/ScriptManager/index.d.ts",
-      "default": "./dist/modules/ScriptManager/index.js"
-    },
-    "./commands/webpack": {
-      "types": "./dist/commands/webpack/index.d.ts",
-      "default": "./dist/commands/webpack/index.js"
-    },
-    "./commands/rspack": {
-      "types": "./dist/commands/rspack/index.d.ts",
-      "default": "./dist/commands/rspack/index.js"
-    },
-    "./assets-loader": {
-      "types": "./dist/loaders/assetsLoader/index.d.ts",
-      "default": "./dist/loaders/assetsLoader/index.js"
-    },
-    "./flow-loader": {
-      "types": "./dist/loaders/flowLoader/index.d.ts",
-      "default": "./dist/loaders/flowLoader/index.js"
-    },
+    ".": "./dist/index.js",
+    "./client": "./client/index.js",
+    "./commands/rspack": "./dist/commands/rspack/index.js",
+    "./commands/webpack": "./dist/commands/webpack/index.js",
+    "./assets-loader": "./dist/loaders/assetsLoader/index.js",
+    "./flow-loader": "./dist/loaders/flowLoader/index.js",
+    "./mf/*": "./mf/*.js",
     "./package.json": "./package.json"
   },
   "files": [
@@ -38,8 +20,8 @@
     "!android/build",
     "ios",
     "!ios/build",
-    "client.js",
-    "client.d.ts",
+    "client",
+    "mf",
     "callstack-repack.podspec",
     "src/modules/ScriptManager/NativeScriptManager.ts"
   ],
@@ -74,14 +56,17 @@
     "clang-format:android": "find android/src/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i"
   },
   "peerDependencies": {
+    "@module-federation/enhanced": ">=0.6.10",
     "@react-native-community/cli": "*",
     "@react-native-community/cli-types": "*",
-    "@rspack/core": "=>1",
-    "@rspack/plugin-react-refresh": ">=1",
+    "@rspack/core": ">=1",
     "react-native": ">=0.74",
     "webpack": ">=5.90"
   },
   "peerDependenciesMeta": {
+    "@module-federation/enhanced": {
+      "optional": true
+    },
     "@rspack/core": {
       "optional": true
     },
@@ -92,6 +77,7 @@
   "dependencies": {
     "@callstack/repack-dev-server": "workspace:*",
     "@discoveryjs/json-ext": "^0.5.7",
+    "@rspack/plugin-react-refresh": "1.0.0",
     "colorette": "^2.0.20",
     "dedent": "^0.7.0",
     "events": "^3.3.0",
@@ -112,11 +98,12 @@
     "@babel/core": "^7.25.2",
     "@babel/plugin-transform-export-namespace-from": "^7.24.6",
     "@babel/plugin-transform-modules-commonjs": "^7.23.2",
-    "@react-native-community/cli": "15.0.0-alpha.2",
-    "@react-native-community/cli-types": "15.0.0-alpha.2",
-    "@rspack/core": "1.0.1",
-    "@rspack/plugin-react-refresh": "1.0.0",
-    "@swc/helpers": "0.5.11",
+    "@react-native-community/cli": "15.0.1",
+    "@react-native-community/cli-types": "15.0.1",
+    "@module-federation/enhanced": "0.6.10",
+    "@module-federation/sdk": "0.6.10",
+    "@rspack/core": "1.0.8",
+    "@swc/helpers": "0.5.13",
     "@types/dedent": "^0.7.0",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.0",
@@ -128,7 +115,7 @@
     "clang-format": "^1.8.0",
     "jest": "^29.7.0",
     "react": "18.3.1",
-    "react-native": "0.76.0-rc.6",
+    "react-native": "0.76.3",
     "rspack-plugin-virtual-module": "^0.1.13",
     "typescript": "^5.5.3",
     "webpack": "^5.94.0"

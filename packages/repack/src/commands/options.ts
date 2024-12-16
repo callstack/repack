@@ -27,11 +27,6 @@ export const startCommandOptions = [
     name: '--no-interactive',
     description: 'Disables interactive mode',
   },
-  {
-    name: '--experimental-debugger',
-    description:
-      '[Experimental] Enable the new debugger experience. Connection reliability and some basic features are unstable in this release.',
-  },
   // noop, but kept for compatibility
   {
     name: '--reset-cache, --resetCache',
@@ -56,20 +51,22 @@ export const startCommandOptions = [
       'Run the dev server for the specified platform only. By default, the dev server will bundle for all platforms.',
   },
   {
-    name: '--reverse-port',
-    description: 'ADB reverse port on starting devServers only for Android',
-  },
-  {
-    name: '--silent',
-    description: 'Silents all logs to the console/stdout',
+    name: '--no-reverse-port',
+    description:
+      'Disables running ADB reverse automatically when bundling for Android',
   },
   {
     name: '--verbose',
     description: 'Enables verbose logging',
   },
   {
+    name: '--config <path>',
+    description: 'Path to a bundler config file, e.g webpack.config.js',
+    parse: (val: string) => path.resolve(val),
+  },
+  {
     name: '--webpackConfig <path>',
-    description: 'Path to a Webpack config',
+    description: 'Path to a bundler config file, e.g webpack.config.js',
     parse: (val: string) => path.resolve(val),
   },
 ];
@@ -147,8 +144,14 @@ export const bundleCommandOptions = [
     description: 'Watch for file changes',
   },
   {
+    name: '--config <path>',
+    description: 'Path to a bundler config file, e.g webpack.config.js',
+    parse: (val: string) => path.resolve(val),
+  },
+  {
     name: '--webpackConfig <path>',
-    description: 'Path to a Webpack config',
+    description:
+      '[DEPRECATED] Path to a bundler config file, e.g webpack.config.js. Please use --config instead.',
     parse: (val: string) => path.resolve(val),
   },
 ];

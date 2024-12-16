@@ -1,5 +1,13 @@
 # @callstack/repack-dev-server
 
+## 5.0.0-rc.3
+
+## 5.0.0-rc.2
+
+## 5.0.0-rc.1
+
+## 5.0.0-rc.0
+
 ## 5.0.0-alpha.0
 
 ## 4.3.3

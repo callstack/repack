@@ -81,6 +81,7 @@ export default async function repackAssetsLoader(
       resourceExtensionType,
       scalableAssetExtensions,
       scalableAssetResolutions,
+      options.platform,
       readDirAsync
     );
 
@@ -113,12 +114,13 @@ export default async function repackAssetsLoader(
         }
       : null;
 
+    // assets are sorted by scale, in ascending order
     const assets = await Promise.all<Asset>(
       scaleKeys.map(async (scaleKey) => {
         const assetPath = scales[scaleKey];
-        const isDefault = assetPath === resourcePath;
+        const isLoaded = assetPath === resourcePath;
         // use raw Buffer passed to loader to avoid unnecessary read
-        const content = isDefault ? assetData : await readFileAsync(assetPath);
+        const content = isLoaded ? assetData : await readFileAsync(assetPath);
 
         let destination: string;
 
@@ -197,7 +199,6 @@ export default async function repackAssetsLoader(
 
         return {
           data: content,
-          default: isDefault,
           dimensions,
           filename: destination,
           scale,

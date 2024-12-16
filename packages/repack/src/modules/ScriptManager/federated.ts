@@ -6,6 +6,8 @@ import type { WebpackContext } from './types';
  */
 export namespace Federated {
   /**
+   * @deprecated
+   *
    * Resolves URL to a container or a chunk when using Module Federation,
    * based on given `scriptId` and `caller`.
    */
@@ -15,6 +17,8 @@ export namespace Federated {
   ) => string | ((webpackContext: WebpackContext) => string) | undefined;
 
   /**
+   * @deprecated
+   *
    * Configuration options for {@link createURLResolver} for Module Federation.
    * Allows to configure how created {@link URLResolver} will behave.
    */
@@ -99,6 +103,8 @@ export namespace Federated {
   }
 
   /**
+   * @deprecated
+   *
    * Creates URL resolver for Module Federation from provided config.
    *
    * @example
@@ -175,10 +181,12 @@ export namespace Federated {
    * ```
    *
    * @param config Configuration for the resolver.
+   * @param containerExt Extension of container bundles. Defaults to `.container.bundle`.
    * @returns A resolver function which will try to resolve URL based on given `scriptId` and `caller`.
    */
   export function createURLResolver(
-    config: Federated.URLResolverConfig
+    config: Federated.URLResolverConfig,
+    containerExt = '.container.bundle'
   ): Federated.URLResolver {
     const resolvers: Record<string, Federated.URLResolver> = {};
 
@@ -187,7 +195,7 @@ export namespace Federated {
         if (scriptId === key) {
           const url = config.containers[key]
             .replace(/\[name\]/g, scriptId)
-            .replace(/\[ext\]/g, '.container.bundle');
+            .replace(/\[ext\]/g, containerExt);
           return url;
         }
 
@@ -222,6 +230,8 @@ export namespace Federated {
   declare let self: Record<string, any>;
 
   /**
+   * @deprecated
+   *
    * Dynamically imports module from a Module Federation container. Similar to `import('file')`, but
    * specific to Module Federation. Calling `importModule` will create an async boundary.
    *

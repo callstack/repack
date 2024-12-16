@@ -3,6 +3,7 @@ import type { Config } from '@react-native-community/cli-types';
 import * as colorette from 'colorette';
 import type webpack from 'webpack';
 import packageJson from '../../../package.json';
+import { VERBOSE_ENV_KEY } from '../../env';
 import {
   ConsoleReporter,
   FileReporter,
@@ -37,9 +38,16 @@ import type { HMRMessageBody } from './types';
 export async function start(_: string[], config: Config, args: StartArguments) {
   const webpackConfigPath = getWebpackConfigFilePath(
     config.root,
-    args.webpackConfig
+    args.config ?? args.webpackConfig
   );
-  const { reversePort: reversePortArg, ...restArgs } = args;
+  const { reversePort, ...restArgs } = args;
+
+  const serverProtocol = args.https ? 'https' : 'http';
+  const serverHost = args.host || DEFAULT_HOSTNAME;
+  const serverPort = args.port ?? DEFAULT_PORT;
+  const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
+  const showHttpRequests = args.verbose || args.logRequests;
+
   const cliOptions: StartCliOptions = {
     config: {
       root: config.root,
@@ -48,44 +56,32 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       reactNativePath: config.reactNativePath,
     },
     command: 'start',
-    arguments: { start: { ...restArgs } },
+    arguments: {
+      start: { ...restArgs, host: serverHost, port: serverPort },
+    },
   };
 
   if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
     throw new Error('Unrecognized platform: ' + args.platform);
   }
 
-  const reversePort = reversePortArg ?? process.argv.includes('--reverse-port');
-  const isSilent = args.silent;
-  const isVerbose = isSilent
-    ? false
-    : // TODO fix in a separate PR (jbroma)
-      // biome-ignore format: fix in a separate PR
-      args.verbose ?? process.argv.includes('--verbose');
+  if (args.verbose) {
+    process.env[VERBOSE_ENV_KEY] = '1';
+  }
 
-  const showHttpRequests = isVerbose || args.logRequests;
   const reporter = composeReporters(
     [
-      new ConsoleReporter({
-        asJson: args.json,
-        level: isSilent ? 'silent' : isVerbose ? 'verbose' : 'normal',
-      }),
+      new ConsoleReporter({ asJson: args.json, isVerbose: args.verbose }),
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
     ].filter(Boolean) as Reporter[]
   );
 
-  if (!isSilent) {
-    const version = packageJson.version;
-    process.stdout.write(
-      colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
-    );
-  }
+  const version = packageJson.version;
+  process.stdout.write(
+    colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
+  );
 
-  const compiler = new Compiler(cliOptions, reporter, isVerbose);
-
-  const serverHost = args.host || DEFAULT_HOSTNAME;
-  const serverPort = args.port ?? DEFAULT_PORT;
-  const serverURL = `${args.https === true ? 'https' : 'http'}://${serverHost}:${serverPort}`;
+  const compiler = new Compiler(cliOptions, reporter);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
@@ -100,9 +96,6 @@ export async function start(_: string[], config: Config, args: StartArguments) {
           }
         : undefined,
       logRequests: showHttpRequests,
-    },
-    experiments: {
-      experimentalDebugger: args.experimentalDebugger,
     },
     delegate: (ctx): Server.Delegate => {
       if (args.interactive) {
@@ -119,13 +112,20 @@ export async function start(_: string[], config: Config, args: StartArguments) {
                 method: 'POST',
               });
             },
+            onAdbReverse() {
+              void runAdbReverse({
+                port: serverPort,
+                logger: ctx.log,
+                verbose: true,
+              });
+            },
           },
-          ctx.log
+          { logger: ctx.log }
         );
       }
 
-      if (reversePort && args.port) {
-        void runAdbReverse(args.port, ctx.log);
+      if (reversePort) {
+        void runAdbReverse({ port: serverPort, logger: ctx.log });
       }
 
       const lastStats: Record<string, webpack.StatsCompilation> = {};
@@ -133,7 +133,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
         if (platform === 'android') {
-          void runAdbReverse(args.port ?? DEFAULT_PORT, ctx.log);
+          void runAdbReverse({ port: serverPort, logger: ctx.log });
         }
       });
 

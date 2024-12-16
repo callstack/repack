@@ -10,6 +10,7 @@ export interface BundleArguments {
   stats?: string;
   verbose?: boolean;
   watch?: boolean;
+  config?: string;
   webpackConfig?: string;
 }
 
@@ -20,14 +21,13 @@ export interface StartArguments {
   key?: string;
   cert?: string;
   interactive?: boolean;
-  experimentalDebugger?: boolean;
   json?: boolean;
   logFile?: string;
   logRequests?: boolean;
   platform?: string;
   reversePort?: boolean;
-  silent?: boolean;
   verbose?: boolean;
+  config?: string;
   webpackConfig?: string;
 }
 

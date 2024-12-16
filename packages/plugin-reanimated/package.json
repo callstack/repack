@@ -1,0 +1,54 @@
+{
+  "name": "@callstack/repack-plugin-reanimated",
+  "version": "5.0.0-rc.3",
+  "description": "A plugin for @callstack/repack that integrates react-native-reanimated",
+  "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/callstack/repack",
+  "repository": "github:callstack/repack",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist", "loader"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./loader": {
+      "types": "./loader/index.d.ts",
+      "default": "./loader/index.js"
+    }
+  },
+  "keywords": [
+    "repack",
+    "re.pack",
+    "plugin",
+    "repack-plugin",
+    "reanimated",
+    "react-native-reanimated"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "@babel/core": "^7.20",
+    "@callstack/repack": "^5.0.0-rc.3"
+  },
+  "devDependencies": {
+    "@callstack/repack": "workspace:*",
+    "@rspack/core": "1.0.8",
+    "@types/babel__core": "7.20.5",
+    "@types/node": "^18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit"
+  }
+}

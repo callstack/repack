@@ -7,39 +7,47 @@ import type { RuleSetRule } from '@rspack/core';
  */
 export const REACT_NATIVE_CODEGEN_RULES: RuleSetRule = {
   test: /(?:^|[\\/])(?:Native\w+|(\w+)NativeComponent)\.[jt]sx?$/,
-  rules: [
-    {
-      test: /\.tsx?$/,
-      use: [
+  use: {
+    loader: 'babel-loader',
+    options: {
+      babelrc: false,
+      configFile: false,
+      parserOpts: {
+        // hermes-parser strips all comments so the information about flow pragma is lost
+        // assume flow when dealing with JS files as a workaround
+        flow: 'all',
+      },
+      plugins: [
+        'babel-plugin-syntax-hermes-parser',
+        ['@babel/plugin-syntax-typescript', false],
+        '@react-native/babel-plugin-codegen',
+      ],
+      // config merging reference: https://babeljs.io/docs/options#pluginpreset-entries
+      overrides: [
         {
-          loader: 'babel-loader',
-          options: {
-            babelrc: false,
-            configFile: false,
-            plugins: [
+          test: /\.ts$/,
+          plugins: [
+            [
               '@babel/plugin-syntax-typescript',
-              '@react-native/babel-plugin-codegen',
+              { isTSX: false, allowNamespaces: true },
             ],
-          },
+          ],
         },
-      ],
-    },
-    {
-      test: /\.jsx?$/,
-      use: [
         {
-          loader: 'babel-loader',
-          options: {
-            babelrc: false,
-            configFile: false,
-            plugins: [
-              'babel-plugin-syntax-hermes-parser',
-              '@react-native/babel-plugin-codegen',
+          test: /\.tsx$/,
+          plugins: [
+            [
+              '@babel/plugin-syntax-typescript',
+              { isTSX: true, allowNamespaces: true },
             ],
-          },
+          ],
         },
       ],
+      // source maps are usually set based on the devtool option in config
+      // Re.Pack templates disable the devtool by default and the flag in loader is not set
+      // we need to enable sourcemaps for the loader explicitly here
+      sourceMaps: true,
     },
-  ],
+  },
   type: 'javascript/auto',
 };
