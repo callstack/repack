@@ -1,7 +1,7 @@
 [
   {
     "text": "Docs",
-    "link": "/docs/getting-started",
+    "link": "/docs/getting-started/quick-start",
     "activeMatch": "^/docs/"
   },
   {

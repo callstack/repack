@@ -8,10 +8,10 @@ hero:
   actions:
     - theme: brand
       text: <span className="home-hero-primary-action">Get started</span>
-      link: /docs/getting-started
+      link: /docs/getting-started/quick-start
     - theme: alt
       text: Learn more
-      link: /docs/about
+      link: /docs/getting-started/introduction
 features:
   - title: Webpack-powered solution
     details: Leverage full Webpack ecosystem of plugins and loaders. Use plethora of configuration options to adjust the bundling to your needs.
