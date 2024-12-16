@@ -126,11 +126,7 @@ export async function start(
         );
       }
 
-      if (
-        reversePort ||
-        args.platform === undefined ||
-        args.platform === 'android'
-      ) {
+      if (reversePort) {
         void runAdbReverse({ port: serverPort, logger: ctx.log });
       }
 
