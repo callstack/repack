@@ -10,7 +10,12 @@ import type {
 import memfs from 'memfs';
 import type { Reporter } from '../../logging';
 import type { HMRMessageBody } from '../../types';
-import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from '../common';
+import {
+  adaptFilenameToPlatform,
+  getEnvOptions,
+  loadConfig,
+  runAdbReverse,
+} from '../common';
 import { DEV_SERVER_ASSET_TYPES } from '../consts';
 import type { StartCliOptions } from '../types';
 import type { CompilerAsset, MultiWatching } from './types';
@@ -73,6 +78,12 @@ export class Compiler {
     this.compiler.hooks.watchRun.tap('repack:watch', () => {
       this.isCompilationInProgress = true;
       this.platforms.forEach((platform) => {
+        if (platform === 'android') {
+          void runAdbReverse({
+            port: this.cliOptions.arguments.start.port!,
+            logger: this.devServerContext.log,
+          });
+        }
         this.devServerContext.notifyBuildStart(platform);
       });
     });
