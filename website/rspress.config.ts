@@ -20,7 +20,7 @@ export default defineConfig({
     codeHighlighter: 'prism',
   },
   multiVersion: {
-    default: '5.x',
+    default: '4.x',
     versions: ['2.x', '3.x', '4.x', '5.x'],
   },
   route: {
