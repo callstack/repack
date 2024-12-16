@@ -602,6 +602,9 @@ importers:
 
   website:
     dependencies:
+      '@callstack/rspress-theme':
+        specifier: ^0.0.2
+        version: 0.0.2(react@18.3.1)
       rsbuild-plugin-open-graph:
         specifier: ^1.0.2
         version: 1.0.2(@rsbuild/core@1.0.13)
@@ -1420,6 +1423,11 @@ packages:
 
   '@bufbuild/protobuf@2.2.0':
     resolution: {integrity: sha512-+imAQkHf7U/Rwvu0wk1XWgsP3WnpCWmK7B48f0XqSNzgk64+grljTKC7pnO/xBiEMUziF7vKRfbBnOQhg126qQ==}
+
+  '@callstack/rspress-theme@0.0.2':
+    resolution: {integrity: sha512-gMg00zFUB6dqqYIbv8HcJAhN7fBKPwaMqKlzawY5v35Lb17LUiSzBOwayha8OtEw8+reAYVEpb1jImdlx4SDXQ==}
+    peerDependencies:
+      react: ^18.3.1
 
   '@changesets/apply-release-plan@7.0.4':
     resolution: {integrity: sha512-HLFwhKWayKinWAul0Vj+76jVx1Pc2v55MGPVjZ924Y/ROeSsBMFutv9heHmCUj48lJyRfOTJG5+ar+29FUky/A==}
@@ -8531,6 +8539,10 @@ snapshots:
     optional: true
 
   '@bufbuild/protobuf@2.2.0': {}
+
+  '@callstack/rspress-theme@0.0.2(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
 
   '@changesets/apply-release-plan@7.0.4':
     dependencies:
