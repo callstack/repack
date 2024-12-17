@@ -1,35 +1,56 @@
+import path from 'node:path';
 import execa from 'execa';
 import type { Logger } from '../../types';
 
 interface RunAdbReverseParams {
+  logger?: Logger;
   port: number;
   verbose?: boolean;
-  logger?: Logger;
+  wait?: boolean;
+}
+
+function getAdbPath() {
+  const androidHome = process.env.ANDROID_HOME;
+  return androidHome
+    ? path.resolve(androidHome, 'platform-tools', 'adb')
+    : 'adb';
+}
+
+async function waitForDevice() {
+  const adbPath = getAdbPath();
+  const command = `${adbPath} wait-for-device`;
+  return execa.command(command);
+}
+
+async function reversePort(port: number) {
+  const adbPath = getAdbPath();
+  const command = `${adbPath} reverse tcp:${port} tcp:${port}`;
+  return execa.command(command);
 }
 
 export async function runAdbReverse({
+  logger = console,
   port,
   verbose = false,
-  logger = console,
+  wait = false,
 }: RunAdbReverseParams) {
-  const adbPath = process.env.ANDROID_HOME
-    ? `${process.env.ANDROID_HOME}/platform-tools/adb`
-    : 'adb';
-  const command = `${adbPath} reverse tcp:${port} tcp:${port}`;
-  const info = JSON.stringify({ port, adbPath, command });
-
   try {
-    await execa.command(command);
+    if (wait) {
+      await waitForDevice();
+    }
+    await reversePort(port);
     if (verbose) {
       logger.info('adb reverse success');
     }
-    logger.debug(`adb reverse success: ${info}`);
+    logger.debug(`adb reverse success: ${{ port }}`);
   } catch (error) {
-    const message =
-      (error as Error).message.split('error:')[1] || (error as Error).message;
+    const errorMessage = (error as Error).message;
+    const message = errorMessage.includes('error:')
+      ? errorMessage.split('error:')[1].trim()
+      : errorMessage;
     if (verbose) {
       logger.warn(`adb reverse failed: "${message.trim()}"`);
     }
-    logger.debug(`adb reverse failed: "${message.trim()}" ${info}`);
+    logger.debug(`adb reverse failed: "${message.trim()}" ${{ port }}`);
   }
 }
