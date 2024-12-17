@@ -125,7 +125,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
       }
 
       if (reversePort) {
-        void runAdbReverse({ port: serverPort, logger: ctx.log });
+        void runAdbReverse({ logger: ctx.log, port: serverPort, wait: true });
       }
 
       const lastStats: Record<string, webpack.StatsCompilation> = {};
