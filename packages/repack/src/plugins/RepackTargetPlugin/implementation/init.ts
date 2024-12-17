@@ -13,6 +13,18 @@ module.exports = function () {
 
   __webpack_require__.repack = $globalObject$.__repack__ = repackRuntime;
 
+  // intercept module factory calls to forward errors to global.ErrorUtils
+  __webpack_require__.i.push(function (options) {
+    var originalFactory = options.factory;
+    options.factory = function (moduleObject, moduleExports, webpackRequire) {
+      try {
+        originalFactory.call(this, moduleObject, moduleExports, webpackRequire);
+      } catch (e) {
+        $globalObject$.ErrorUtils.reportFatalError(e);
+      }
+    };
+  });
+
   function loadScript(
     name: string,
     caller: string | undefined,
