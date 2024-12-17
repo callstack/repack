@@ -11,9 +11,7 @@ interface RunAdbReverseParams {
 
 function getAdbPath() {
   const androidHome = process.env.ANDROID_HOME;
-  return androidHome
-    ? path.resolve(androidHome, 'platform-tools', 'adb')
-    : 'adb';
+  return androidHome ? path.join(androidHome, 'platform-tools', 'adb') : 'adb';
 }
 
 async function waitForDevice() {
