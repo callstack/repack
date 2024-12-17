@@ -127,8 +127,8 @@ importers:
         specifier: ^14.1.1
         version: 14.1.1
       react-native-test-app:
-        specifier: ^4.0.4
-        version: 4.0.4(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
+        specifier: ^4.0.7
+        version: 4.0.7(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
       terser-webpack-plugin:
         specifier: ^5.3.10
         version: 5.3.10(webpack@5.94.0)
@@ -218,8 +218,8 @@ importers:
         specifier: ^14.1.1
         version: 14.1.1
       react-native-test-app:
-        specifier: ^4.0.4
-        version: 4.0.4(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
+        specifier: ^4.0.7
+        version: 4.0.7(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -300,8 +300,8 @@ importers:
         specifier: ^14.1.1
         version: 14.1.1
       react-native-test-app:
-        specifier: ^4.0.4
-        version: 4.0.4(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
+        specifier: ^4.0.7
+        version: 4.0.7(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
       terser-webpack-plugin:
         specifier: ^5.3.3
         version: 5.3.10(webpack@5.94.0)
@@ -2205,8 +2205,8 @@ packages:
     resolution: {integrity: sha512-mUnk8rPJBI9loFDZ+YzPGdeniYK+FTmRD1TMCz7ev2SNIozyKKpnGgsxO34u6Z4z/t0ITuu7voi/AshfsGsgFg==}
     engines: {node: '>=14.0.0'}
 
-  '@rnx-kit/react-native-host@0.5.0':
-    resolution: {integrity: sha512-ZuHDl899uZyqk4qcBkGMRmVp2u6EXLikMAVd0ry7u2gWll0dZSfM2TbDHGq5Z0d8qpdAdSTRB0bYpvwmEznxVQ==}
+  '@rnx-kit/react-native-host@0.5.2':
+    resolution: {integrity: sha512-m3vZlQgQIVIogHKWUsukn+kiDQid3zen+C9UOlzZ6mMzNoZ0onL6cs6np4jBQoOaUtXPV9I8yueS02vwvhKjWA==}
     engines: {node: '>=16.17'}
     peerDependencies:
       react-native: '>=0.66'
@@ -6169,8 +6169,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  react-native-test-app@4.0.4:
-    resolution: {integrity: sha512-s+tsPoOuK9cMyCS5KXqfLIClwXz6Wpd1ObaEqx0CEOFcF7tFQTd8gTUyMUKwFmFPwx/OuzoyT0X3Qo8kqD9Xgg==}
+  react-native-test-app@4.0.7:
+    resolution: {integrity: sha512-dJrcq6aSVGEpYuM2EjB3jSeW6Cvm++XFx/Nc15q15UFnn1A4uoECVHwpmZd7AwwsXXyb1me/sOeo/tEePab27Q==}
     engines: {node: '>=16.17'}
     hasBin: true
     peerDependencies:
@@ -9784,7 +9784,7 @@ snapshots:
 
   '@remix-run/router@1.20.0': {}
 
-  '@rnx-kit/react-native-host@0.5.0(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))':
+  '@rnx-kit/react-native-host@0.5.2(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))':
     dependencies:
       react-native: 0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1)
 
@@ -14881,9 +14881,9 @@ snapshots:
       react-native: 0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1)
       warn-once: 0.1.1
 
-  react-native-test-app@4.0.4(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1):
+  react-native-test-app@4.0.7(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@rnx-kit/react-native-host': 0.5.0(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))
+      '@rnx-kit/react-native-host': 0.5.2(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))
       '@rnx-kit/tools-react-native': 2.0.3
       ajv: 8.17.1
       cliui: 8.0.1
