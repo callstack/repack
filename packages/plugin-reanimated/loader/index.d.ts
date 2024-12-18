@@ -1,1 +1,1 @@
-export * from '../dist/loader.js';
+export * from '../dist/loader.ts';
