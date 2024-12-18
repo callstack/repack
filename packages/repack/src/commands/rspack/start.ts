@@ -127,7 +127,7 @@ export async function start(
       }
 
       if (reversePort) {
-        void runAdbReverse({ port: serverPort, logger: ctx.log });
+        void runAdbReverse({ logger: ctx.log, port: serverPort, wait: true });
       }
 
       compiler.setDevServerContext(ctx);
