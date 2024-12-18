@@ -20,6 +20,8 @@ module.exports = function () {
       try {
         originalFactory.call(this, moduleObject, moduleExports, webpackRequire);
       } catch (e) {
+        // exposed as global early on, part of `@react-native/js-polyfills` error-guard
+        // https://github.com/facebook/react-native/blob/4dac99cf6d308e804efc098b37f5c24c1eb611cf/packages/polyfills/error-guard.js#L121
         $globalObject$.ErrorUtils.reportFatalError(e);
       }
     };
