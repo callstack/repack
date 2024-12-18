@@ -7,10 +7,10 @@ import type {
   RspackPluginInstance,
   StatsChunk,
 } from '@rspack/core';
-import { AssetsCopyProcessor } from '../utils/AssetsCopyProcessor';
-import { AuxiliaryAssetsCopyProcessor } from '../utils/AuxiliaryAssetsCopyProcessor';
-import { validateConfig } from './config';
-import type { DestinationSpec, OutputPluginConfig } from './types';
+import { AssetsCopyProcessor } from '../utils/AssetsCopyProcessor.ts';
+import { AuxiliaryAssetsCopyProcessor } from '../utils/AuxiliaryAssetsCopyProcessor.ts';
+import { validateConfig } from './config.ts';
+import type { DestinationSpec, OutputPluginConfig } from './types.ts';
 
 /**
  * Plugin for copying generated files (bundle, chunks, assets) from Webpack's built location to the

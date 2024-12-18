@@ -1,6 +1,6 @@
 import nodeReadline from 'node:readline';
 import * as colorette from 'colorette';
-import type { Logger } from '../../types';
+import type { Logger } from '../../types.ts';
 
 type Interaction = {
   // The function to be executed when this interaction's keystroke is sent.

@@ -1,6 +1,6 @@
 import path from 'node:path';
 import imageSize from 'image-size';
-import type { Asset, AssetDimensions, CollectedScales } from './types';
+import type { Asset, AssetDimensions, CollectedScales } from './types.ts';
 
 export function getScaleNumber(scaleKey: string) {
   return Number.parseFloat(scaleKey.replace(/[^\d.]/g, ''));

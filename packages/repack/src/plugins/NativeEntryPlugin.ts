@@ -5,7 +5,7 @@ import type {
   ResolveAlias,
   RspackPluginInstance,
 } from '@rspack/core';
-import { isRspackCompiler } from './utils/isRspackCompiler';
+import { isRspackCompiler } from './utils/isRspackCompiler.ts';
 
 export interface NativeEntryPluginConfig {
   /**

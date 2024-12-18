@@ -2,17 +2,18 @@ import EventEmitter from 'node:events';
 import fs from 'node:fs';
 import path from 'node:path';
 import { Worker } from 'node:worker_threads';
+// @ts-expect-error type-only import
 import type { SendProgress } from '@callstack/repack-dev-server';
 import type webpack from 'webpack';
-import { WORKER_ENV_KEY } from '../../env';
-import type { LogType, Reporter } from '../../logging';
-import { DEV_SERVER_ASSET_TYPES } from '../consts';
-import type { CliOptions } from '../types';
+import { WORKER_ENV_KEY } from '../../env.ts';
+import type { LogType, Reporter } from '../../logging/types.ts';
+import { DEV_SERVER_ASSET_TYPES } from '../consts.ts';
+import type { CliOptions } from '../types.ts';
 import type {
   CompilerAsset,
   WebpackWorkerOptions,
   WorkerMessages,
-} from './types';
+} from './types.ts';
 
 type Platform = string;
 

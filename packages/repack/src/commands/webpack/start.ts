@@ -1,27 +1,28 @@
+// @ts-expect-error type-only import
 import type { Server } from '@callstack/repack-dev-server';
 import type { Config } from '@react-native-community/cli-types';
 import * as colorette from 'colorette';
 import type webpack from 'webpack';
 import packageJson from '../../../package.json';
-import { VERBOSE_ENV_KEY } from '../../env';
+import { VERBOSE_ENV_KEY } from '../../env.ts';
 import {
   ConsoleReporter,
   FileReporter,
   type Reporter,
   composeReporters,
   makeLogEntryFromFastifyLog,
-} from '../../logging';
+} from '../../logging/index.ts';
 import {
   getMimeType,
   getWebpackConfigFilePath,
   parseFileUrl,
   runAdbReverse,
   setupInteractions,
-} from '../common';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
-import type { StartArguments, StartCliOptions } from '../types';
-import { Compiler } from './Compiler';
-import type { HMRMessageBody } from './types';
+} from '../common/index.ts';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts.ts';
+import type { StartArguments, StartCliOptions } from '../types.ts';
+import { Compiler } from './Compiler.ts';
+import type { HMRMessageBody } from './types.ts';
 
 /**
  * Start command for React Native Community CLI.

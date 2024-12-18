@@ -1,6 +1,6 @@
 import type { LoaderContext } from '@rspack/core';
 import flowRemoveTypes from 'flow-remove-types';
-import { getOptions } from './options';
+import { getOptions } from './options.ts';
 
 export const raw = false;
 

@@ -78,7 +78,21 @@
     {
       "include": ["packages/**/*"],
       "linter": {
-        "rules": { "correctness": { "useImportExtensions": "error" } }
+        "rules": {
+          "correctness": {
+            "useImportExtensions": {
+              "level": "error",
+              "options": {
+                "suggestedExtensions": {
+                  "ts": {
+                    "module": "ts",
+                    "component": "ts"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     {

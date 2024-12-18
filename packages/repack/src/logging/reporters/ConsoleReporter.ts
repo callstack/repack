@@ -1,7 +1,7 @@
 import util from 'node:util';
 import * as colorette from 'colorette';
 import throttle from 'throttleit';
-import type { LogEntry, LogType, Reporter } from '../types';
+import type { LogEntry, LogType, Reporter } from '../types.ts';
 
 export interface ConsoleReporterConfig {
   asJson?: boolean;

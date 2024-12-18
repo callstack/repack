@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import type { StatsChunk } from '@rspack/core';
-import { AssetsCopyProcessor } from '../AssetsCopyProcessor';
+import { AssetsCopyProcessor } from '../AssetsCopyProcessor.ts';
 
 jest.mock('node:fs', () => jest.requireActual('memfs').fs);
 

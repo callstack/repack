@@ -2,12 +2,16 @@ import path from 'node:path';
 import { parentPort, workerData } from 'node:worker_threads';
 import memfs from 'memfs';
 import webpack, { type Configuration } from 'webpack';
-import { adaptFilenameToPlatform, getEnvOptions, loadConfig } from '../common';
+import {
+  adaptFilenameToPlatform,
+  getEnvOptions,
+  loadConfig,
+} from '../common/index.ts';
 import type {
   CompilerAsset,
   WebpackWorkerOptions,
   WorkerMessages,
-} from './types';
+} from './types.ts';
 
 function postMessage(message: WorkerMessages.WorkerMessage): void {
   parentPort?.postMessage(message);

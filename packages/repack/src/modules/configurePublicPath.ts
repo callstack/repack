@@ -1,4 +1,4 @@
-import { getDevServerLocation } from './getDevServerLocation';
+import { getDevServerLocation } from './getDevServerLocation.ts';
 
 // We need to teak Webpack's public path, especially for Android, where `localhost`
 // is not a correct host but eg `10.0.2.2` is.

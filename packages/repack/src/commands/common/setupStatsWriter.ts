@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import { stringifyStream } from '@discoveryjs/json-ext';
-import type { Logger } from '../../types';
+import type { Logger } from '../../types.ts';
 
 function normalizeFilepath(filepath: string, root: string): string {
   if (path.isAbsolute(filepath)) {

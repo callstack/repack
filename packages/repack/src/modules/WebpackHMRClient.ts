@@ -1,5 +1,5 @@
-import type { HMRMessage, HMRMessageBody } from '../types';
-import { getDevServerLocation } from './getDevServerLocation';
+import type { HMRMessage, HMRMessageBody } from '../types.ts';
+import { getDevServerLocation } from './getDevServerLocation.ts';
 
 interface LoadingViewModule {
   hide(): void;

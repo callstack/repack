@@ -1,5 +1,5 @@
-export * from './ScriptManager';
-export * from './Script';
-export * from './types';
-export * from './getWebpackContext';
-export { Federated } from './federated';
+export * from './ScriptManager.ts';
+export * from './Script.ts';
+export * from './types.ts';
+export * from './getWebpackContext.ts';
+export { Federated } from './federated.ts';

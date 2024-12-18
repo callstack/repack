@@ -111,7 +111,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
             const loadScriptGlobal = compiler.webpack.RuntimeGlobals.loadScript;
             const loadScriptRuntimeModule = Template.asString([
               Template.getFunctionContent(
-                require('./implementation/loadScript')
+                require('./implementation/loadScript.ts')
               )
                 .replaceAll('$loadScript$', loadScriptGlobal)
                 .replaceAll('$caller$', `'${chunk.id?.toString()}'`),
@@ -119,7 +119,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
 
             const initRuntimeModule = Template.asString([
               '// Repack runtime initialization logic',
-              Template.getFunctionContent(require('./implementation/init'))
+              Template.getFunctionContent(require('./implementation/init.ts'))
                 .replaceAll('$globalObject$', globalObject)
                 .replaceAll('$hmrEnabled$', `${this.config?.hmr ?? false}`),
             ]);

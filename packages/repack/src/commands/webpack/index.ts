@@ -1,6 +1,6 @@
-import { bundleCommandOptions, startCommandOptions } from '../options';
-import { bundle } from './bundle';
-import { start } from './start';
+import { bundleCommandOptions, startCommandOptions } from '../options.ts';
+import { bundle } from './bundle.ts';
+import { start } from './start.ts';
 
 const commands = [
   {

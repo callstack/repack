@@ -1,7 +1,7 @@
 import path from 'node:path';
 import dedent from 'dedent';
-import type { Asset } from './types';
-import { getAssetSize } from './utils';
+import type { Asset } from './types.ts';
+import { getAssetSize } from './utils.ts';
 
 export function convertToRemoteAssets({
   assets,

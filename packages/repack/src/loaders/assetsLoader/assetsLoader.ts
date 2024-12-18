@@ -1,13 +1,13 @@
 import type fs from 'node:fs';
 import path from 'node:path';
 import util from 'node:util';
-import { SCALABLE_ASSETS, SCALABLE_RESOLUTIONS } from '../../utils';
-import { convertToRemoteAssets } from './convertToRemoteAssets';
-import { extractAssets } from './extractAssets';
-import { inlineAssets } from './inlineAssets';
-import { type AssetLoaderContext, getOptions } from './options';
-import type { Asset } from './types';
-import { collectScales, getAssetDimensions, getScaleNumber } from './utils';
+import { SCALABLE_ASSETS, SCALABLE_RESOLUTIONS } from '../../utils/index.ts';
+import { convertToRemoteAssets } from './convertToRemoteAssets.ts';
+import { extractAssets } from './extractAssets.ts';
+import { inlineAssets } from './inlineAssets.ts';
+import { type AssetLoaderContext, getOptions } from './options.ts';
+import type { Asset } from './types.ts';
+import { collectScales, getAssetDimensions, getScaleNumber } from './utils.ts';
 
 type AsyncFS = (typeof fs)['promises'];
 

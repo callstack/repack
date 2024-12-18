@@ -4,7 +4,10 @@ import vm from 'node:vm';
 import { rspack } from '@rspack/core';
 import memfs from 'memfs';
 import { RspackVirtualModulePlugin } from 'rspack-plugin-virtual-module';
-import { getAssetExtensionsRegExp, getResolveOptions } from '../../../utils';
+import {
+  getAssetExtensionsRegExp,
+  getResolveOptions,
+} from '../../../utils/index.ts';
 
 function loadFixtures(...filenames: string[]) {
   return filenames

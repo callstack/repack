@@ -1,4 +1,4 @@
-import { getEnvOptions } from '../../common';
+import { getEnvOptions } from '../../common/index.ts';
 
 describe('getEnvOptions', () => {
   it('should return options for bundling', () => {

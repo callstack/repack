@@ -1,2 +1,2 @@
-export { OutputPlugin } from './OutputPlugin';
-export type * from './types';
+export { OutputPlugin } from './OutputPlugin.ts';
+export type * from './types.ts';

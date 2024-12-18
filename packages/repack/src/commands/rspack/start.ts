@@ -1,24 +1,24 @@
 import type { Config } from '@react-native-community/cli-types';
 import * as colorette from 'colorette';
 import packageJson from '../../../package.json';
-import { VERBOSE_ENV_KEY } from '../../env';
+import { VERBOSE_ENV_KEY } from '../../env.ts';
 import {
   ConsoleReporter,
   FileReporter,
   type Reporter,
   composeReporters,
   makeLogEntryFromFastifyLog,
-} from '../../logging';
+} from '../../logging/index.ts';
 import {
   getMimeType,
   getRspackConfigFilePath,
   parseFileUrl,
   runAdbReverse,
   setupInteractions,
-} from '../common';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts';
-import type { StartArguments, StartCliOptions } from '../types';
-import { Compiler } from './Compiler';
+} from '../common/index.ts';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts.ts';
+import type { StartArguments, StartCliOptions } from '../types.ts';
+import { Compiler } from './Compiler.ts';
 
 /**
  * Start command for React Native Community CLI.

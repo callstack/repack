@@ -1,5 +1,5 @@
-import { ScriptManager } from './ScriptManager';
-import type { WebpackContext } from './types';
+import { ScriptManager } from './ScriptManager.ts';
+import type { WebpackContext } from './types.ts';
 
 /**
  * Namespace for runtime utilities for Module Federation.
