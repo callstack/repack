@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import dedent from 'dedent';
 
-import logger from '../utils/logger.js';
+import logger from '../utils/logger.ts';
 
 const createDefaultConfig = (bundler: 'rspack' | 'webpack') => dedent`
   module.exports = {

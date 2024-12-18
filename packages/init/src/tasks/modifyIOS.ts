@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import xcode from 'xcode';
 
-import logger from '../utils/logger.js';
+import logger from '../utils/logger.ts';
 
 interface ShellScriptBuildPhase {
   isa: 'PBXShellScriptBuildPhase';

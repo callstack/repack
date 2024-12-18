@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import run from './index.js';
+import run from './index.ts';
 
 const require = createRequire(import.meta.url);
 const info = require('../package.json');

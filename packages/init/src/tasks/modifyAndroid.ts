@@ -3,7 +3,7 @@ import path from 'node:path';
 import dedent from 'dedent';
 import semver, { type SemVer } from 'semver';
 
-import logger from '../utils/logger.js';
+import logger from '../utils/logger.ts';
 
 const defaultOldConfig = dedent`
   project.ext.react = [
