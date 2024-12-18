@@ -1,18 +1,21 @@
 type ModuleExports = Record<string | number | symbol, any>;
 
+type ModuleObject = {
+  id: number;
+  loaded: boolean;
+  error?: any;
+  exports: ModuleExports;
+};
+
 export interface WebpackContext {
   i: ((options: {
     id: number;
     factory: (
-      moduleObject: Record<string, ModuleExports>,
+      moduleObject: ModuleObject,
       moduleExports: ModuleExports,
       webpackRequire: WebpackContext
     ) => void;
-    module: {
-      id: number;
-      loaded: boolean;
-      exports: Record<string | number | symbol, any>;
-    };
+    module: ModuleObject;
     require: WebpackContext;
   }) => void)[];
   p: () => string;
