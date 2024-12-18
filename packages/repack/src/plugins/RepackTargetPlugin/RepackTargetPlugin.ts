@@ -61,6 +61,11 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     compiler.options.output.chunkFormat = 'array-push';
     compiler.options.output.globalObject = globalObject;
 
+    // Disable built-in strict module error handling
+    // this is handled through an interceptor in the
+    // init module added to __webpack_require__.i array
+    compiler.options.output.strictModuleErrorHandling = false;
+
     // Normalize global object.
     new compiler.webpack.BannerPlugin({
       raw: true,

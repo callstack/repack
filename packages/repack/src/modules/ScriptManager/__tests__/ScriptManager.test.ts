@@ -20,6 +20,7 @@ jest.mock('../NativeScriptManager', () => ({
 }));
 
 globalThis.__webpack_require__ = {
+  i: [],
   u: (id: string) => `${id}.chunk.bundle`,
   p: () => '',
   repack: {
