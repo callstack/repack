@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify';
 import * as prettyFormat from 'pretty-format';
 import type WebSocket from 'ws';
-import { WebSocketServer } from '../WebSocketServer';
-import type { WebSocketMessageServer } from './WebSocketMessageServer';
+import { WebSocketServer } from '../WebSocketServer.ts';
+import type { WebSocketMessageServer } from './WebSocketMessageServer.ts';
 
 /**
  * {@link WebSocketEventsServer} configuration options.
@@ -99,7 +99,7 @@ export class WebSocketEventsServer extends WebSocketServer {
     if (message.error && message.error instanceof Error) {
       toSerialize = {
         ...message,
-        error: prettyFormat.default(message.error, {
+        error: prettyFormat.default.default(message.error, {
           escapeString: true,
           highlight: true,
           maxDepth: 3,
@@ -112,7 +112,7 @@ export class WebSocketEventsServer extends WebSocketServer {
         data: message.data.map((item: any) =>
           typeof item === 'string'
             ? item
-            : prettyFormat.default(item, {
+            : prettyFormat.default.default(item, {
                 escapeString: true,
                 highlight: true,
                 maxDepth: 3,

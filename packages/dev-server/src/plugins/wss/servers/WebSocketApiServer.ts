@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type WebSocket from 'ws';
-import { WebSocketServer } from '../WebSocketServer';
+import { WebSocketServer } from '../WebSocketServer.ts';
 
 /**
  * Class for creating a WebSocket server for API clients.

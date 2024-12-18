@@ -1,4 +1,4 @@
-import type { SendProgress } from '../../types';
+import type { SendProgress } from '../../types.ts';
 
 /**
  * Delegate with implementation for compiler-specific functions.

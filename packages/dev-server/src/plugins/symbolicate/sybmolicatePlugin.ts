@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import type { Server } from '../../types';
-import { Symbolicator } from './Symbolicator';
-import type { ReactNativeStackFrame } from './types';
+import type { Server } from '../../types.ts';
+import { Symbolicator } from './Symbolicator.ts';
+import type { ReactNativeStackFrame } from './types.ts';
 
 async function symbolicatePlugin(
   instance: FastifyInstance,

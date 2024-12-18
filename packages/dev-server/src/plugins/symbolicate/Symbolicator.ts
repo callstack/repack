@@ -9,7 +9,7 @@ import type {
   StackFrame,
   SymbolicatorDelegate,
   SymbolicatorResults,
-} from './types';
+} from './types.ts';
 
 /**
  * Class for transforming stack traces from React Native application with using Source Map.
