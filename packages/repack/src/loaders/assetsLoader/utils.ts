@@ -1,5 +1,5 @@
 import path from 'node:path';
-import imageSize from 'image-size';
+import { imageSize } from 'image-size';
 import type { Asset, AssetDimensions, CollectedScales } from './types.ts';
 
 export function getScaleNumber(scaleKey: string) {

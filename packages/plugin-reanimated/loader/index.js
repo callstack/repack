@@ -1,1 +1,2 @@
-module.exports = require('../dist/loader.js');
+export * from '../dist/loader.js';
+export { default } from '../dist/loader.js';

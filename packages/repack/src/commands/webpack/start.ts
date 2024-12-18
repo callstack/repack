@@ -1,9 +1,8 @@
-// @ts-expect-error type-only import
 import type { Server } from '@callstack/repack-dev-server';
 import type { Config } from '@react-native-community/cli-types';
 import * as colorette from 'colorette';
 import type webpack from 'webpack';
-import packageJson from '../../../package.json';
+import packageJson from '../../../package.json' with { type: 'json' };
 import { VERBOSE_ENV_KEY } from '../../env.ts';
 import {
   ConsoleReporter,

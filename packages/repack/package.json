@@ -2,6 +2,7 @@
   "name": "@callstack/repack",
   "version": "5.0.0-rc.3",
   "description": "A toolkit to build your React Native application with Rspack or Webpack.",
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {

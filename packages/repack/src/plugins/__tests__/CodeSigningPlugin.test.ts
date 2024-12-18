@@ -3,7 +3,7 @@ import path from 'node:path';
 import { rspack } from '@rspack/core';
 import jwt from 'jsonwebtoken';
 import memfs from 'memfs';
-import RspackVirtualModulePlugin from 'rspack-plugin-virtual-module';
+import { RspackVirtualModulePlugin } from 'rspack-plugin-virtual-module';
 import {
   CodeSigningPlugin,
   type CodeSigningPluginConfig,
