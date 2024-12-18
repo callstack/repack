@@ -49,7 +49,7 @@
     "@types/node": "18",
     "@types/ws": "^8.5.3",
     "babel-plugin-add-import-extension": "^1.6.0",
-    "typescript": "^5.5.3"
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
     "@react-native-community/cli-server-api": ">=13.6.4"

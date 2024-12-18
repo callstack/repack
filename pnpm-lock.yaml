@@ -48,8 +48,8 @@ importers:
         specifier: 19.7.3
         version: 19.7.3
       typescript:
-        specifier: ^5.5.3
-        version: 5.5.3
+        specifier: ^5.7.2
+        version: 5.7.2
 
   apps/tester-app:
     dependencies:
@@ -80,7 +80,7 @@ importers:
         version: link:../../packages/plugin-reanimated
       '@react-native-community/cli':
         specifier: 15.0.1
-        version: 15.0.1(typescript@5.5.3)
+        version: 15.0.1(typescript@5.7.2)
       '@react-native-community/cli-platform-android':
         specifier: 15.0.1
         version: 15.0.1
@@ -101,7 +101,7 @@ importers:
         version: 1.0.8(@swc/helpers@0.5.13)
       '@svgr/webpack':
         specifier: ^8.1.0
-        version: 8.1.0(typescript@5.5.3)
+        version: 8.1.0(typescript@5.7.2)
       '@swc/helpers':
         specifier: ^0.5.13
         version: 0.5.13
@@ -133,8 +133,8 @@ importers:
         specifier: ^5.3.10
         version: 5.3.10(webpack@5.94.0)
       typescript:
-        specifier: ^5.5.3
-        version: 5.5.3
+        specifier: ^5.7.2
+        version: 5.7.2
       vitest:
         specifier: ^2.0.5
         version: 2.0.5(@types/node@22.5.4)(sass-embedded@1.80.1)(terser@5.31.3)
@@ -174,7 +174,7 @@ importers:
         version: 7.25.2
       '@react-native-community/cli':
         specifier: 15.0.1
-        version: 15.0.1(typescript@5.5.3)
+        version: 15.0.1(typescript@5.7.2)
       '@react-native-community/cli-platform-android':
         specifier: 15.0.1
         version: 15.0.1
@@ -221,8 +221,8 @@ importers:
         specifier: ^4.0.7
         version: 4.0.7(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
       typescript:
-        specifier: ^5.5.3
-        version: 5.5.3
+        specifier: ^5.7.2
+        version: 5.7.2
 
   apps/tester-federation-v2:
     dependencies:
@@ -231,7 +231,7 @@ importers:
         version: link:../../packages/repack
       '@module-federation/enhanced':
         specifier: 0.6.10
-        version: 0.6.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)(webpack@5.94.0)
+        version: 0.6.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(webpack@5.94.0)
       '@react-navigation/native':
         specifier: ^6.1.18
         version: 6.1.18(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
@@ -256,7 +256,7 @@ importers:
         version: 7.25.2
       '@react-native-community/cli':
         specifier: 15.0.1
-        version: 15.0.1(typescript@5.5.3)
+        version: 15.0.1(typescript@5.7.2)
       '@react-native-community/cli-platform-android':
         specifier: 15.0.1
         version: 15.0.1
@@ -306,8 +306,8 @@ importers:
         specifier: ^5.3.3
         version: 5.3.10(webpack@5.94.0)
       typescript:
-        specifier: ^5.5.3
-        version: 5.5.3
+        specifier: ^5.7.2
+        version: 5.7.2
       webpack:
         specifier: ^5.91.0
         version: 5.94.0
@@ -367,8 +367,8 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@babel/core@7.25.2)
       typescript:
-        specifier: ^5.5.3
-        version: 5.5.3
+        specifier: ^5.7.2
+        version: 5.7.2
 
   packages/init:
     dependencies:
@@ -419,8 +419,8 @@ importers:
         specifier: ^17.0.32
         version: 17.0.32
       typescript:
-        specifier: ^5.5.3
-        version: 5.5.3
+        specifier: ^5.7.2
+        version: 5.7.2
 
   packages/plugin-reanimated:
     devDependencies:
@@ -505,13 +505,13 @@ importers:
         version: 7.24.8(@babel/core@7.25.2)
       '@module-federation/enhanced':
         specifier: 0.6.10
-        version: 0.6.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)(webpack@5.94.0)
+        version: 0.6.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(webpack@5.94.0)
       '@module-federation/sdk':
         specifier: 0.6.10
         version: 0.6.10
       '@react-native-community/cli':
         specifier: 15.0.1
-        version: 15.0.1(typescript@5.5.3)
+        version: 15.0.1(typescript@5.7.2)
       '@react-native-community/cli-types':
         specifier: 15.0.1
         version: 15.0.1
@@ -561,8 +561,8 @@ importers:
         specifier: ^0.1.13
         version: 0.1.13
       typescript:
-        specifier: ^5.5.3
-        version: 5.5.3
+        specifier: ^5.7.2
+        version: 5.7.2
       webpack:
         specifier: ^5.94.0
         version: 5.94.0
@@ -625,8 +625,8 @@ importers:
         specifier: ^18.2.64
         version: 18.3.3
       typescript:
-        specifier: ^5.5.3
-        version: 5.5.3
+        specifier: ^5.7.2
+        version: 5.7.2
 
 packages:
 
@@ -7092,8 +7092,8 @@ packages:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
     engines: {node: '>= 0.6'}
 
-  typescript@5.5.3:
-    resolution: {integrity: sha512-/hreyEujaB0w76zKo6717l3L0o/qEUtRgdvUBvlkhoWeOVMjMuHNHk0BRBzikzuGDqNmPQbg5ifMEqsHLiIUcQ==}
+  typescript@5.7.2:
+    resolution: {integrity: sha512-i5t66RHxDvVN40HfDd1PsEThGNnlMCMT3jMUuoh9/0TaqWevNontacunWyN02LA9/fIbEWlcHZcgTKb9QoaLfg==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -9258,7 +9258,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@module-federation/dts-plugin@0.6.10(typescript@5.5.3)':
+  '@module-federation/dts-plugin@0.6.10(typescript@5.7.2)':
     dependencies:
       '@module-federation/managers': 0.6.10
       '@module-federation/sdk': 0.6.10
@@ -9274,7 +9274,7 @@ snapshots:
       log4js: 6.9.1
       node-schedule: 2.1.1
       rambda: 9.3.0
-      typescript: 5.5.3
+      typescript: 5.7.2
       ws: 8.18.0
     transitivePeerDependencies:
       - bufferutil
@@ -9282,20 +9282,20 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@module-federation/enhanced@0.6.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)(webpack@5.94.0)':
+  '@module-federation/enhanced@0.6.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(webpack@5.94.0)':
     dependencies:
       '@module-federation/bridge-react-webpack-plugin': 0.6.10
       '@module-federation/data-prefetch': 0.6.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@module-federation/dts-plugin': 0.6.10(typescript@5.5.3)
+      '@module-federation/dts-plugin': 0.6.10(typescript@5.7.2)
       '@module-federation/managers': 0.6.10
-      '@module-federation/manifest': 0.6.10(typescript@5.5.3)
-      '@module-federation/rspack': 0.6.10(typescript@5.5.3)
+      '@module-federation/manifest': 0.6.10(typescript@5.7.2)
+      '@module-federation/rspack': 0.6.10(typescript@5.7.2)
       '@module-federation/runtime-tools': 0.6.10
       '@module-federation/sdk': 0.6.10
       btoa: 1.2.1
       upath: 2.0.1
     optionalDependencies:
-      typescript: 5.5.3
+      typescript: 5.7.2
       webpack: 5.94.0
     transitivePeerDependencies:
       - bufferutil
@@ -9311,9 +9311,9 @@ snapshots:
       find-pkg: 2.0.0
       fs-extra: 9.1.0
 
-  '@module-federation/manifest@0.6.10(typescript@5.5.3)':
+  '@module-federation/manifest@0.6.10(typescript@5.7.2)':
     dependencies:
-      '@module-federation/dts-plugin': 0.6.10(typescript@5.5.3)
+      '@module-federation/dts-plugin': 0.6.10(typescript@5.7.2)
       '@module-federation/managers': 0.6.10
       '@module-federation/sdk': 0.6.10
       chalk: 3.0.0
@@ -9326,16 +9326,16 @@ snapshots:
       - utf-8-validate
       - vue-tsc
 
-  '@module-federation/rspack@0.6.10(typescript@5.5.3)':
+  '@module-federation/rspack@0.6.10(typescript@5.7.2)':
     dependencies:
       '@module-federation/bridge-react-webpack-plugin': 0.6.10
-      '@module-federation/dts-plugin': 0.6.10(typescript@5.5.3)
+      '@module-federation/dts-plugin': 0.6.10(typescript@5.7.2)
       '@module-federation/managers': 0.6.10
-      '@module-federation/manifest': 0.6.10(typescript@5.5.3)
+      '@module-federation/manifest': 0.6.10(typescript@5.7.2)
       '@module-federation/runtime-tools': 0.6.10
       '@module-federation/sdk': 0.6.10
     optionalDependencies:
-      typescript: 5.5.3
+      typescript: 5.7.2
     transitivePeerDependencies:
       - bufferutil
       - debug
@@ -9461,11 +9461,11 @@ snapshots:
       execa: 5.1.1
       fast-glob: 3.3.2
 
-  '@react-native-community/cli-config@15.0.1(typescript@5.5.3)':
+  '@react-native-community/cli-config@15.0.1(typescript@5.7.2)':
     dependencies:
       '@react-native-community/cli-tools': 15.0.1
       chalk: 4.1.2
-      cosmiconfig: 9.0.0(typescript@5.5.3)
+      cosmiconfig: 9.0.0(typescript@5.7.2)
       deepmerge: 4.3.1
       fast-glob: 3.3.2
       joi: 17.13.3
@@ -9478,9 +9478,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@react-native-community/cli-doctor@15.0.1(typescript@5.5.3)':
+  '@react-native-community/cli-doctor@15.0.1(typescript@5.7.2)':
     dependencies:
-      '@react-native-community/cli-config': 15.0.1(typescript@5.5.3)
+      '@react-native-community/cli-config': 15.0.1(typescript@5.7.2)
       '@react-native-community/cli-platform-android': 15.0.1
       '@react-native-community/cli-platform-apple': 15.0.1
       '@react-native-community/cli-platform-ios': 15.0.1
@@ -9554,12 +9554,12 @@ snapshots:
     dependencies:
       joi: 17.13.3
 
-  '@react-native-community/cli@15.0.1(typescript@5.5.3)':
+  '@react-native-community/cli@15.0.1(typescript@5.7.2)':
     dependencies:
       '@react-native-community/cli-clean': 15.0.1
-      '@react-native-community/cli-config': 15.0.1(typescript@5.5.3)
+      '@react-native-community/cli-config': 15.0.1(typescript@5.7.2)
       '@react-native-community/cli-debugger-ui': 15.0.1
-      '@react-native-community/cli-doctor': 15.0.1(typescript@5.5.3)
+      '@react-native-community/cli-doctor': 15.0.1(typescript@5.7.2)
       '@react-native-community/cli-server-api': 15.0.1
       '@react-native-community/cli-tools': 15.0.1
       '@react-native-community/cli-types': 15.0.1
@@ -10423,12 +10423,12 @@ snapshots:
       '@svgr/babel-plugin-transform-react-native-svg': 8.1.0(@babel/core@7.25.2)
       '@svgr/babel-plugin-transform-svg-component': 8.0.0(@babel/core@7.25.2)
 
-  '@svgr/core@8.1.0(typescript@5.5.3)':
+  '@svgr/core@8.1.0(typescript@5.7.2)':
     dependencies:
       '@babel/core': 7.25.2
       '@svgr/babel-preset': 8.1.0(@babel/core@7.25.2)
       camelcase: 6.3.0
-      cosmiconfig: 8.3.6(typescript@5.5.3)
+      cosmiconfig: 8.3.6(typescript@5.7.2)
       snake-case: 3.0.4
     transitivePeerDependencies:
       - supports-color
@@ -10439,35 +10439,35 @@ snapshots:
       '@babel/types': 7.25.6
       entities: 4.5.0
 
-  '@svgr/plugin-jsx@8.1.0(@svgr/core@8.1.0(typescript@5.5.3))':
+  '@svgr/plugin-jsx@8.1.0(@svgr/core@8.1.0(typescript@5.7.2))':
     dependencies:
       '@babel/core': 7.25.2
       '@svgr/babel-preset': 8.1.0(@babel/core@7.25.2)
-      '@svgr/core': 8.1.0(typescript@5.5.3)
+      '@svgr/core': 8.1.0(typescript@5.7.2)
       '@svgr/hast-util-to-babel-ast': 8.0.0
       svg-parser: 2.0.4
     transitivePeerDependencies:
       - supports-color
 
-  '@svgr/plugin-svgo@8.1.0(@svgr/core@8.1.0(typescript@5.5.3))(typescript@5.5.3)':
+  '@svgr/plugin-svgo@8.1.0(@svgr/core@8.1.0(typescript@5.7.2))(typescript@5.7.2)':
     dependencies:
-      '@svgr/core': 8.1.0(typescript@5.5.3)
-      cosmiconfig: 8.3.6(typescript@5.5.3)
+      '@svgr/core': 8.1.0(typescript@5.7.2)
+      cosmiconfig: 8.3.6(typescript@5.7.2)
       deepmerge: 4.3.1
       svgo: 3.3.2
     transitivePeerDependencies:
       - typescript
 
-  '@svgr/webpack@8.1.0(typescript@5.5.3)':
+  '@svgr/webpack@8.1.0(typescript@5.7.2)':
     dependencies:
       '@babel/core': 7.25.2
       '@babel/plugin-transform-react-constant-elements': 7.24.7(@babel/core@7.25.2)
       '@babel/preset-env': 7.25.4(@babel/core@7.25.2)
       '@babel/preset-react': 7.24.7(@babel/core@7.25.2)
       '@babel/preset-typescript': 7.24.7(@babel/core@7.25.2)
-      '@svgr/core': 8.1.0(typescript@5.5.3)
-      '@svgr/plugin-jsx': 8.1.0(@svgr/core@8.1.0(typescript@5.5.3))
-      '@svgr/plugin-svgo': 8.1.0(@svgr/core@8.1.0(typescript@5.5.3))(typescript@5.5.3)
+      '@svgr/core': 8.1.0(typescript@5.7.2)
+      '@svgr/plugin-jsx': 8.1.0(@svgr/core@8.1.0(typescript@5.7.2))
+      '@svgr/plugin-svgo': 8.1.0(@svgr/core@8.1.0(typescript@5.7.2))(typescript@5.7.2)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -11463,23 +11463,23 @@ snapshots:
       js-yaml: 3.14.1
       parse-json: 4.0.0
 
-  cosmiconfig@8.3.6(typescript@5.5.3):
+  cosmiconfig@8.3.6(typescript@5.7.2):
     dependencies:
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       parse-json: 5.2.0
       path-type: 4.0.0
     optionalDependencies:
-      typescript: 5.5.3
+      typescript: 5.7.2
 
-  cosmiconfig@9.0.0(typescript@5.5.3):
+  cosmiconfig@9.0.0(typescript@5.7.2):
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       parse-json: 5.2.0
     optionalDependencies:
-      typescript: 5.5.3
+      typescript: 5.7.2
 
   create-jest@29.7.0(@types/node@18.19.41):
     dependencies:
@@ -15898,7 +15898,7 @@ snapshots:
       media-typer: 0.3.0
       mime-types: 2.1.35
 
-  typescript@5.5.3: {}
+  typescript@5.7.2: {}
 
   undici-types@5.26.5: {}
 

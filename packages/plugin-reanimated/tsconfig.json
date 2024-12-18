@@ -12,6 +12,8 @@
     "declaration": true,
     "sourceMap": false,
     "rootDirs": ["src", "../repack/src", "../dev-server/src"],
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
     "paths": {
       "@callstack/repack": ["../repack/src/index.ts"],
       "@callstack/repack/*": ["../repack/src/*"],

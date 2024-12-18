@@ -13,6 +13,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "preserveWatchOutput": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
     "paths": {
       "@react-native/dev-middleware": [
         "./node_modules/@react-native/dev-middleware/dist"
