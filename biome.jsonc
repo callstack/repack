@@ -76,6 +76,12 @@
   },
   "overrides": [
     {
+      "include": ["packages/**/*"],
+      "linter": {
+        "rules": { "correctness": { "useImportExtensions": "error" } }
+      }
+    },
+    {
       "include": ["**/*.d.ts"],
       "linter": { "rules": { "style": { "noVar": "off" } } }
     },
