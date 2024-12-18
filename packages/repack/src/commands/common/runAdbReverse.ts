@@ -40,6 +40,8 @@ async function waitForDevice(logger: Logger) {
     await executeAdbCommand('wait-for-device', logger);
   } catch (error) {
     const message = (error as Error).message;
+    // Ignore the error if there are multiple devices/emulators
+    // we only care about about at least 1 device being online
     if (/more than one device\/emulator/.test(message)) {
       return;
     }
