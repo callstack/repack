@@ -2,6 +2,7 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
+import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 
@@ -74,6 +75,7 @@ export default (env) => {
                 transform: {
                   react: {
                     runtime: 'automatic',
+                    importSource: 'react-native-css-interop',
                   },
                 },
               },
@@ -198,6 +200,13 @@ export default (env) => {
       // }),
       process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
       new ReanimatedPlugin(),
+      new NativeWindPlugin({
+        input: './src/nativewind/global.css',
+      }),
     ].filter(Boolean),
+
+    experiments: {
+      css: true,
+    },
   };
 };

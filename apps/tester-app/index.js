@@ -1,10 +1,12 @@
 import { Script, ScriptManager } from '@callstack/repack/client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
 import App from './src/App';
 
-ScriptManager.shared.setStorage(AsyncStorage);
+// if (!__DEV__) {
+//   ScriptManager.shared.setStorage(AsyncStorage);
+// }
+
 ScriptManager.shared.addResolver((scriptId, _caller) => {
   if (__DEV__) {
     return {
