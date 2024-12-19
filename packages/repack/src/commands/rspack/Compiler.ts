@@ -9,17 +9,17 @@ import type {
   WatchOptions,
 } from '@rspack/core';
 import memfs from 'memfs';
-import type { Reporter } from '../../logging/types.ts';
-import type { HMRMessageBody } from '../../types.ts';
+import type { Reporter } from '../../logging/types.js';
+import type { HMRMessageBody } from '../../types.js';
 import {
   adaptFilenameToPlatform,
   getEnvOptions,
   loadConfig,
   runAdbReverse,
-} from '../common/index.ts';
-import { DEV_SERVER_ASSET_TYPES } from '../consts.ts';
-import type { StartCliOptions } from '../types.ts';
-import type { CompilerAsset, MultiWatching } from './types.ts';
+} from '../common/index.js';
+import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
+import type { StartCliOptions } from '../types.js';
+import type { CompilerAsset, MultiWatching } from './types.js';
 
 export class Compiler {
   platforms: string[];

@@ -1,3 +1,3 @@
-import { ScriptManager } from './ScriptManager/ScriptManager.ts';
+import { ScriptManager } from './ScriptManager/ScriptManager.js';
 
 ScriptManager.init();

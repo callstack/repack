@@ -4,25 +4,25 @@ import type { Config } from '@react-native-community/cli-types';
 import * as colorette from 'colorette';
 import type webpack from 'webpack';
 import packageJson from '../../../package.json';
-import { VERBOSE_ENV_KEY } from '../../env.ts';
+import { VERBOSE_ENV_KEY } from '../../env.js';
 import {
   ConsoleReporter,
   FileReporter,
   type Reporter,
   composeReporters,
   makeLogEntryFromFastifyLog,
-} from '../../logging/index.ts';
+} from '../../logging/index.js';
 import {
   getMimeType,
   getWebpackConfigFilePath,
   parseFileUrl,
   runAdbReverse,
   setupInteractions,
-} from '../common/index.ts';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts.ts';
-import type { StartArguments, StartCliOptions } from '../types.ts';
-import { Compiler } from './Compiler.ts';
-import type { HMRMessageBody } from './types.ts';
+} from '../common/index.js';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts.js';
+import type { StartArguments, StartCliOptions } from '../types.js';
+import { Compiler } from './Compiler.js';
+import type { HMRMessageBody } from './types.js';
 
 /**
  * Start command for React Native Community CLI.

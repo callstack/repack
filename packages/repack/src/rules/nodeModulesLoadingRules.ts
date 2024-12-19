@@ -1,5 +1,5 @@
 import type { RuleSetRule } from '@rspack/core';
-import { getModulePaths } from '../utils/getModulePaths.ts';
+import { getModulePaths } from '../utils/getModulePaths.js';
 
 const makeSwcLoaderConfig = (syntax: 'js' | 'ts', jsx: boolean) => ({
   loader: 'builtin:swc-loader',

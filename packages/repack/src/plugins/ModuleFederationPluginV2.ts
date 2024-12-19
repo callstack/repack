@@ -1,6 +1,6 @@
 import type { moduleFederationPlugin as MF } from '@module-federation/sdk';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import { isRspackCompiler } from './utils/isRspackCompiler.ts';
+import { isRspackCompiler } from './utils/isRspackCompiler.js';
 
 /**
  * {@link ModuleFederationPlugin} configuration options.

@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import mimeTypes from 'mime-types';
-import type { Asset, URISource } from './types.ts';
+import type { Asset, URISource } from './types.js';
 
 export function inlineAssets({
   assets,

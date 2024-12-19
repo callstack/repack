@@ -1,7 +1,7 @@
 import type readline from 'node:readline';
 
-import type { Logger } from '../../../types.ts';
-import { setupInteractions } from '../setupInteractions.ts';
+import type { Logger } from '../../../types.js';
+import { setupInteractions } from '../setupInteractions.js';
 
 // eliminate ANSI colors formatting for proper assertions
 jest.mock('colorette', () =>

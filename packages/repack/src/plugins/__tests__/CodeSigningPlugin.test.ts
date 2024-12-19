@@ -7,7 +7,7 @@ import RspackVirtualModulePlugin from 'rspack-plugin-virtual-module';
 import {
   CodeSigningPlugin,
   type CodeSigningPluginConfig,
-} from '../CodeSigningPlugin/index.ts';
+} from '../CodeSigningPlugin/index.js';
 
 const BUNDLE_WITH_JWT_REGEX =
   /^(.+)?\/\* RCSSB \*\/(?:[\w-]*\.){2}[\w-]*(\x00)*$/m;

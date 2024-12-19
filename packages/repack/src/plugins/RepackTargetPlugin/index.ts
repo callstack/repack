@@ -1,1 +1,1 @@
-export * from './RepackTargetPlugin.ts';
+export * from './RepackTargetPlugin.js';

@@ -1,5 +1,5 @@
 import type { FederationRuntimePlugin } from '@module-federation/enhanced/runtime';
-import type * as RepackClient from '../ScriptManager/index.ts';
+import type * as RepackClient from '../ScriptManager/index.js';
 
 export type RepackResolverPluginConfiguration =
   | Omit<RepackClient.ScriptLocator, 'url'>

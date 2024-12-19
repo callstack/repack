@@ -1,5 +1,5 @@
 import type { RuleSetRule } from '@rspack/core';
-import { getModulePaths } from '../utils/getModulePaths.ts';
+import { getModulePaths } from '../utils/getModulePaths.js';
 
 /**
  * @constant FLOW_TYPED_MODULES_LOADING_RULES

@@ -1,5 +1,5 @@
 import type { FederationRuntimePlugin } from '@module-federation/enhanced/runtime';
-import type * as RepackClient from '../ScriptManager/index.ts';
+import type * as RepackClient from '../ScriptManager/index.js';
 
 const RepackCorePlugin: () => FederationRuntimePlugin = () => ({
   name: 'repack-core-plugin',

@@ -1,4 +1,4 @@
-import type { Rule } from '../../types.ts';
+import type { Rule } from '../../types.js';
 
 /**
  * Matching options to check if given {@link DestinationConfig} should be used.

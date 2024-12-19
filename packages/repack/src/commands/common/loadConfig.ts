@@ -1,4 +1,4 @@
-import type { EnvOptions } from '../../types.ts';
+import type { EnvOptions } from '../../types.js';
 
 type Configuration<T> =
   | T

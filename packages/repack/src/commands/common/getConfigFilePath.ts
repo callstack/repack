@@ -5,7 +5,7 @@ import url from 'node:url';
 import {
   DEFAULT_RSPACK_CONFIG_LOCATIONS,
   DEFAULT_WEBPACK_CONFIG_LOCATIONS,
-} from '../consts.ts';
+} from '../consts.js';
 
 function getConfigFilePath(root: string, candidates: string[]) {
   for (const candidate of candidates) {

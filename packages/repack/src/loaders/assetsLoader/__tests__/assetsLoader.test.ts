@@ -7,7 +7,7 @@ import { RspackVirtualModulePlugin } from 'rspack-plugin-virtual-module';
 import {
   getAssetExtensionsRegExp,
   getResolveOptions,
-} from '../../../utils/index.ts';
+} from '../../../utils/index.js';
 
 function loadFixtures(...filenames: string[]) {
   return filenames

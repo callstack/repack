@@ -2,14 +2,14 @@
 import EventEmitter from 'events';
 import NativeScriptManager, {
   type NormalizedScriptLocator,
-} from './NativeScriptManager.ts';
-import { Script } from './Script.ts';
-import { getWebpackContext } from './getWebpackContext.ts';
+} from './NativeScriptManager.js';
+import { Script } from './Script.js';
+import { getWebpackContext } from './getWebpackContext.js';
 import type {
   ScriptLocator,
   ScriptLocatorResolver,
   StorageApi,
-} from './types.ts';
+} from './types.js';
 
 type Cache = Record<
   string,

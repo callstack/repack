@@ -1,5 +1,5 @@
 import type { StatsAsset, StatsCompilation } from 'webpack';
-import type { CliOptions, RemoveRecord } from '../types.ts';
+import type { CliOptions, RemoveRecord } from '../types.js';
 
 export interface WebpackWorkerOptions {
   cliOptions: CliOptions;

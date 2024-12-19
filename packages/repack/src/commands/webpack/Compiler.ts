@@ -5,15 +5,15 @@ import { Worker } from 'node:worker_threads';
 // @ts-expect-error type-only import
 import type { SendProgress } from '@callstack/repack-dev-server';
 import type webpack from 'webpack';
-import { WORKER_ENV_KEY } from '../../env.ts';
-import type { LogType, Reporter } from '../../logging/types.ts';
-import { DEV_SERVER_ASSET_TYPES } from '../consts.ts';
-import type { CliOptions } from '../types.ts';
+import { WORKER_ENV_KEY } from '../../env.js';
+import type { LogType, Reporter } from '../../logging/types.js';
+import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
+import type { CliOptions } from '../types.js';
 import type {
   CompilerAsset,
   WebpackWorkerOptions,
   WorkerMessages,
-} from './types.ts';
+} from './types.js';
 
 type Platform = string;
 

@@ -6,7 +6,7 @@ import {
 import {
   OutputPlugin,
   type OutputPluginConfig,
-} from '../OutputPlugin/index.ts';
+} from '../OutputPlugin/index.js';
 
 const makeChunk = ({
   name,

@@ -1,8 +1,8 @@
 import path from 'node:path';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
-import type { DevServerOptions } from '../types.ts';
-import { isRspackCompiler } from './utils/isRspackCompiler.ts';
+import type { DevServerOptions } from '../types.js';
+import { isRspackCompiler } from './utils/isRspackCompiler.js';
 
 const [reactRefreshEntryPath, reactRefreshPath, refreshUtilsPath] =
   ReactRefreshPlugin.deprecated_runtimePaths;

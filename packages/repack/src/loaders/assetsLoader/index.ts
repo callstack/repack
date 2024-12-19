@@ -1,4 +1,4 @@
-import assetsLoader, { raw } from './assetsLoader.ts';
+import assetsLoader, { raw } from './assetsLoader.js';
 
 export { raw };
 export default assetsLoader;

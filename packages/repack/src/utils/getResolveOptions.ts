@@ -1,4 +1,4 @@
-import { SCALABLE_ASSETS, SCALABLE_RESOLUTIONS } from './assetExtensions.ts';
+import { SCALABLE_ASSETS, SCALABLE_RESOLUTIONS } from './assetExtensions.js';
 
 /**
  * {@link getResolveOptions} additional options.

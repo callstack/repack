@@ -1,5 +1,5 @@
 import prettyFormat from 'pretty-format';
-import { getDevServerLocation } from './getDevServerLocation.ts';
+import { getDevServerLocation } from './getDevServerLocation.js';
 
 /**
  * With Webpack we don't use built-in metro-specific HMR client,

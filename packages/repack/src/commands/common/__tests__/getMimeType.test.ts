@@ -1,4 +1,4 @@
-import { getMimeType } from '../getMimeType.ts';
+import { getMimeType } from '../getMimeType.js';
 
 describe('getMimeType', () => {
   it('should return correct MIME types for various file extensions', () => {

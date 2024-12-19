@@ -1,6 +1,6 @@
-export * as plugins from './plugins/index.ts';
-export * from './plugins/RepackPlugin.ts';
-export * from './types.ts';
-export * from './logging/index.ts';
-export * from './rules/index.ts';
-export * from './utils/index.ts';
+export * as plugins from './plugins/index.js';
+export * from './plugins/RepackPlugin.js';
+export * from './types.js';
+export * from './logging/index.js';
+export * from './rules/index.js';
+export * from './utils/index.js';

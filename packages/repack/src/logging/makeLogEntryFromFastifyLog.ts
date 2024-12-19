@@ -1,4 +1,4 @@
-import type { LogEntry, LogType } from './types.ts';
+import type { LogEntry, LogType } from './types.js';
 
 export function makeLogEntryFromFastifyLog(data: any): LogEntry {
   const { level, time, pid, hostname, ...rest } = data;

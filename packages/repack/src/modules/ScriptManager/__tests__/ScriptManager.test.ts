@@ -1,8 +1,8 @@
 import NativeScriptManager, {
   type NormalizedScriptLocator,
-} from '../NativeScriptManager.ts';
-import { Script } from '../Script.ts';
-import { ScriptManager } from '../ScriptManager.ts';
+} from '../NativeScriptManager.js';
+import { Script } from '../Script.js';
+import { ScriptManager } from '../ScriptManager.js';
 
 jest.mock('../NativeScriptManager', () => ({
   loadScript: jest.fn(),

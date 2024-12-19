@@ -6,12 +6,12 @@ import {
   adaptFilenameToPlatform,
   getEnvOptions,
   loadConfig,
-} from '../common/index.ts';
+} from '../common/index.js';
 import type {
   CompilerAsset,
   WebpackWorkerOptions,
   WorkerMessages,
-} from './types.ts';
+} from './types.js';
 
 function postMessage(message: WorkerMessages.WorkerMessage): void {
   parentPort?.postMessage(message);
