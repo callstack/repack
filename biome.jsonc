@@ -85,8 +85,8 @@
               "options": {
                 "suggestedExtensions": {
                   "ts": {
-                    "module": "ts",
-                    "component": "ts"
+                    "module": "js",
+                    "component": "js"
                   }
                 }
               }
