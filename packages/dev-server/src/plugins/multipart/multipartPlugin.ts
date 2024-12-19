@@ -2,7 +2,7 @@ import type { IncomingHttpHeaders } from 'node:http';
 import { PassThrough } from 'node:stream';
 import type { FastifyInstance, FastifyReply } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import type { MultipartHandler } from './types.ts';
+import type { MultipartHandler } from './types.js';
 
 /**
  * Implementation is based on:

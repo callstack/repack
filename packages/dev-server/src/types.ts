@@ -1,6 +1,6 @@
 import type { FastifyBaseLogger } from 'fastify';
 import type { WebSocketServer } from 'ws';
-import type { CompilerDelegate } from './plugins/compiler/types.ts';
+import type { CompilerDelegate } from './plugins/compiler/types.js';
 import type {
   CodeFrame,
   InputStackFrame,
@@ -8,8 +8,8 @@ import type {
   StackFrame,
   SymbolicatorDelegate,
   SymbolicatorResults,
-} from './plugins/symbolicate/types.ts';
-import type { HmrDelegate } from './plugins/wss/types.ts';
+} from './plugins/symbolicate/types.js';
+import type { HmrDelegate } from './plugins/wss/types.js';
 
 export type { CompilerDelegate };
 export type {

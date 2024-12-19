@@ -1,1 +1,1 @@
-export { default } from './apiPlugin.ts';
+export { default } from './apiPlugin.js';

@@ -1,2 +1,2 @@
-export { default } from './multipartPlugin.ts';
-export * from './types.ts';
+export { default } from './multipartPlugin.js';
+export * from './types.js';

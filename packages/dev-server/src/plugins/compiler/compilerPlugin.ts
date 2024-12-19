@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import type { Server } from '../../types.ts';
-import type { SendProgress } from '../../types.ts';
+import type { Server } from '../../types.js';
+import type { SendProgress } from '../../types.js';
 
 async function compilerPlugin(
   instance: FastifyInstance,

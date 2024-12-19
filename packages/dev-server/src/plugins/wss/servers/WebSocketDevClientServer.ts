@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type WebSocket from 'ws';
-import { WebSocketServer } from '../WebSocketServer.ts';
+import { WebSocketServer } from '../WebSocketServer.js';
 
 /**
  * Class for creating a WebSocket server for communication with React Native clients.

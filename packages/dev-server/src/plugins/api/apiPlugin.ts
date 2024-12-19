@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import type { Server } from '../../types.ts';
+import type { Server } from '../../types.js';
 
 const paramsSchema = {
   type: 'object',

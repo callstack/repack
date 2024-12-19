@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify';
 import * as prettyFormat from 'pretty-format';
 import type WebSocket from 'ws';
-import { WebSocketServer } from '../WebSocketServer.ts';
-import type { WebSocketMessageServer } from './WebSocketMessageServer.ts';
+import { WebSocketServer } from '../WebSocketServer.js';
+import type { WebSocketMessageServer } from './WebSocketMessageServer.js';
 
 /**
  * {@link WebSocketEventsServer} configuration options.

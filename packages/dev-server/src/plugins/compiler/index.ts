@@ -1,2 +1,2 @@
-export { default } from './compilerPlugin.ts';
-export * from './types.ts';
+export { default } from './compilerPlugin.js';
+export * from './types.js';

@@ -1,13 +1,13 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import type { Server } from '../../types.ts';
-import { WebSocketRouter } from './WebSocketRouter.ts';
-import { WebSocketServerAdapter } from './WebSocketServerAdapter.ts';
-import { WebSocketApiServer } from './servers/WebSocketApiServer.ts';
-import { WebSocketDevClientServer } from './servers/WebSocketDevClientServer.ts';
-import { WebSocketEventsServer } from './servers/WebSocketEventsServer.ts';
-import { WebSocketHMRServer } from './servers/WebSocketHMRServer.ts';
-import { WebSocketMessageServer } from './servers/WebSocketMessageServer.ts';
+import type { Server } from '../../types.js';
+import { WebSocketRouter } from './WebSocketRouter.js';
+import { WebSocketServerAdapter } from './WebSocketServerAdapter.js';
+import { WebSocketApiServer } from './servers/WebSocketApiServer.js';
+import { WebSocketDevClientServer } from './servers/WebSocketDevClientServer.js';
+import { WebSocketEventsServer } from './servers/WebSocketEventsServer.js';
+import { WebSocketHMRServer } from './servers/WebSocketHMRServer.js';
+import { WebSocketMessageServer } from './servers/WebSocketMessageServer.js';
 
 declare module 'fastify' {
   interface FastifyInstance {

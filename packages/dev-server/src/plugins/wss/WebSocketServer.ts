@@ -6,7 +6,7 @@ import {
   type WebSocket,
   WebSocketServer as WebSocketServerImpl,
 } from 'ws';
-import type { WebSocketServerInterface } from './types.ts';
+import type { WebSocketServerInterface } from './types.js';
 
 /**
  * Abstract class for providing common logic (eg routing) for all WebSocket servers.

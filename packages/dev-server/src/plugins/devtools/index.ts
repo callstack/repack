@@ -1,1 +1,1 @@
-export { default } from './devtoolsPlugin.ts';
+export { default } from './devtoolsPlugin.js';
