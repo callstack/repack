@@ -1,5 +1,26 @@
 # @callstack/repack
 
+## 5.0.0-rc.4
+
+### Major Changes
+
+- [#825](https://github.com/callstack/repack/pull/825) [`18f2eef`](https://github.com/callstack/repack/commit/18f2eef7dbb2a79e709c1810c69a34b0a0fe9004) Thanks [@jbroma](https://github.com/jbroma)! - Removed `--reverse-port` CLI option and replaced it with `--no-reverse-port` CLI option.
+
+### Minor Changes
+
+- [#828](https://github.com/callstack/repack/pull/828) [`b1a010a`](https://github.com/callstack/repack/commit/b1a010a7dd8af5612759e134249ae0587e42aef7) Thanks [@jbroma](https://github.com/jbroma)! - Run adb reverse for all available devices by default
+
+- [#828](https://github.com/callstack/repack/pull/828) [`b1a010a`](https://github.com/callstack/repack/commit/b1a010a7dd8af5612759e134249ae0587e42aef7) Thanks [@jbroma](https://github.com/jbroma)! - Wait for android device before running adb reverse when starting dev-server
+
+- [#824](https://github.com/callstack/repack/pull/824) [`8cf7cc3`](https://github.com/callstack/repack/commit/8cf7cc3622ad85cf093005c5c55c8dd63940a57b) Thanks [@jbroma](https://github.com/jbroma)! - Added `adb reverse` interaction & `adb reverse` command is now run by default when bundling for Android
+
+### Patch Changes
+
+- [#829](https://github.com/callstack/repack/pull/829) [`617c501`](https://github.com/callstack/repack/commit/617c5018e1f2b0520f6f978b2c1440239196f662) Thanks [@jbroma](https://github.com/jbroma)! - Fix early JS errors not being displayed in LogBox
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-rc.4
+
 ## 5.0.0-rc.3
 
 ### Minor Changes
