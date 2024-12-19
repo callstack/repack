@@ -14,7 +14,7 @@ declare interface RepackRuntime {
   ) => void;
   loadHotUpdate: (url: string, done: (event?: LoadScriptEvent) => void) => void;
   shared: {
-    scriptManager?: import('../modules/ScriptManager/ScriptManager.ts').ScriptManager;
+    scriptManager?: import('../modules/ScriptManager/ScriptManager.js').ScriptManager;
   };
 }
 
@@ -29,7 +29,7 @@ declare var __REACT_NATIVE_PATCH_VERSION__: number;
 declare var __webpack_public_path__: string;
 declare var __webpack_hash__: string;
 declare var __repack__: RepackRuntime;
-declare var __webpack_require__: import('../modules/ScriptManager/types.ts').WebpackContext & {
+declare var __webpack_require__: import('../modules/ScriptManager/types.js').WebpackContext & {
   x?: Function;
   repack: RepackRuntime;
 };

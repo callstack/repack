@@ -1,2 +1,2 @@
-export * from '../dist/loader.ts';
-export { default } from '../dist/loader.ts';
+export * from '../dist/loader.js';
+export { default } from '../dist/loader.js';
