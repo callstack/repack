@@ -12,8 +12,6 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "rootDirs": ["src", "../dev-server/src"],
-    "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true,
     "paths": {
       "@callstack/repack-dev-server": ["../dev-server/src/index.ts"],
       "@callstack/repack-dev-server/*": ["../dev-server/src/*"],
