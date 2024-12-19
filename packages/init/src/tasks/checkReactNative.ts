@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import semver, { type SemVer } from 'semver';
 
-import logger from '../utils/logger.ts';
+import logger from '../utils/logger.js';
 
 /**
  * Checks whether React-Native is installed and returns it's version

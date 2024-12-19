@@ -1,13 +1,13 @@
-import addDependencies from './tasks/addDependencies.ts';
-import checkPackageManager from './tasks/checkPackageManager.ts';
-import checkReactNative from './tasks/checkReactNative.ts';
-import createBundlerConfig from './tasks/createBundlerConfig.ts';
-import ensureProjectExists from './tasks/ensureProjectExists.ts';
-import handleReactNativeConfig from './tasks/handleReactNativeConfig.ts';
-import modifyAndroid from './tasks/modifyAndroid.ts';
-import modifyIOS from './tasks/modifyIOS.ts';
+import addDependencies from './tasks/addDependencies.js';
+import checkPackageManager from './tasks/checkPackageManager.js';
+import checkReactNative from './tasks/checkReactNative.js';
+import createBundlerConfig from './tasks/createBundlerConfig.js';
+import ensureProjectExists from './tasks/ensureProjectExists.js';
+import handleReactNativeConfig from './tasks/handleReactNativeConfig.js';
+import modifyAndroid from './tasks/modifyAndroid.js';
+import modifyIOS from './tasks/modifyIOS.js';
 
-import logger, { enableVerboseLogging } from './utils/logger.ts';
+import logger, { enableVerboseLogging } from './utils/logger.js';
 
 interface Options {
   bundler: 'rspack' | 'webpack';

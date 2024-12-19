@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import type { PM } from 'detect-package-manager';
 import { execa } from 'execa';
 import ora, { type Ora } from 'ora';
-import logger from '../utils/logger.ts';
+import logger from '../utils/logger.js';
 
 const rspackDependencies = [
   '@rspack/core@1.0.3', // 1.0.4 breaks sourcemaps

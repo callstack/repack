@@ -2,7 +2,7 @@ import path from 'node:path';
 import { input } from '@inquirer/prompts';
 import { findRoot } from '@manypkg/find-root';
 import { execa } from 'execa';
-import logger from '../utils/logger.ts';
+import logger from '../utils/logger.js';
 
 /**
  * Ensures that the project exists and prompts the user to create one if it doesn't

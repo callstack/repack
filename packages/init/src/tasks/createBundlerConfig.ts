@@ -3,7 +3,7 @@ import path from 'node:path';
 import fetch from 'node-fetch';
 import ora, { type Ora } from 'ora';
 
-import logger from '../utils/logger.ts';
+import logger from '../utils/logger.js';
 
 // TODO adjust before publishing a stable release (jbroma)
 const TEMPLATES = {

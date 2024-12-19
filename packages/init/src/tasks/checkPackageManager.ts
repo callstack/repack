@@ -1,5 +1,5 @@
 import { type PM, detect } from 'detect-package-manager';
-import logger from '../utils/logger.ts';
+import logger from '../utils/logger.js';
 
 /**
  * Determines which package manager to use
