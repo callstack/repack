@@ -1,4 +1,4 @@
-import flowLoader, { raw } from './flowLoader';
+import flowLoader, { raw } from './flowLoader.js';
 
 export { raw };
 export default flowLoader;

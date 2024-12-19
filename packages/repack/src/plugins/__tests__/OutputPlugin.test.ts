@@ -3,7 +3,10 @@ import {
   ModuleFilenameHelpers,
   type StatsChunk,
 } from '@rspack/core';
-import { OutputPlugin, type OutputPluginConfig } from '../OutputPlugin';
+import {
+  OutputPlugin,
+  type OutputPluginConfig,
+} from '../OutputPlugin/index.js';
 
 const makeChunk = ({
   name,

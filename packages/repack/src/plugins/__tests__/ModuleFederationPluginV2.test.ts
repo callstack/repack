@@ -1,6 +1,6 @@
 import { ModuleFederationPlugin as MFPluginRspack } from '@module-federation/enhanced/rspack';
 import type { Compiler } from '@rspack/core';
-import { ModuleFederationPluginV2 } from '../ModuleFederationPluginV2';
+import { ModuleFederationPluginV2 } from '../ModuleFederationPluginV2.js';
 
 jest.mock('@module-federation/enhanced/rspack');
 

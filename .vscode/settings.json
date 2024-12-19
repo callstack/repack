@@ -6,6 +6,8 @@
     "package.json": "json",
     "*.json": "jsonc"
   },
+  "javascript.preferences.importModuleSpecifierEnding": "js",
+  "typescript.preferences.importModuleSpecifierEnding": "js",
   "editor.codeActionsOnSave": {
     "source.organizeImports.biome": "explicit"
   },
@@ -41,5 +43,6 @@
   "[typescriptreact]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "biomejs.biome"
-  }
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

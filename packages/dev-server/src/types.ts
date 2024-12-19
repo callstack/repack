@@ -1,19 +1,26 @@
 import type { FastifyBaseLogger } from 'fastify';
 import type { WebSocketServer } from 'ws';
-import type { CompilerDelegate } from './plugins/compiler';
-import type { SymbolicatorDelegate } from './plugins/symbolicate';
-import type { HmrDelegate } from './plugins/wss';
-
-export type { CompilerDelegate } from './plugins/compiler';
-export type {
-  SymbolicatorDelegate,
-  ReactNativeStackFrame,
-  InputStackFrame,
-  StackFrame,
+import type { CompilerDelegate } from './plugins/compiler/types.js';
+import type {
   CodeFrame,
+  InputStackFrame,
+  ReactNativeStackFrame,
+  StackFrame,
+  SymbolicatorDelegate,
   SymbolicatorResults,
-} from './plugins/symbolicate';
-export type { HmrDelegate } from './plugins/wss';
+} from './plugins/symbolicate/types.js';
+import type { HmrDelegate } from './plugins/wss/types.js';
+
+export type { CompilerDelegate };
+export type {
+  CodeFrame,
+  InputStackFrame,
+  ReactNativeStackFrame,
+  StackFrame,
+  SymbolicatorDelegate,
+  SymbolicatorResults,
+};
+export type { HmrDelegate };
 
 export namespace Server {
   /** Development server configuration. */

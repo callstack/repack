@@ -1,1 +1,1 @@
-export * from './RepackTargetPlugin';
+export * from './RepackTargetPlugin.js';

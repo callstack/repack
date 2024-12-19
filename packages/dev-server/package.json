@@ -10,7 +10,7 @@
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "docs", "vendor", "CHANGELOG.md"],
+  "files": ["dist", "static"],
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
   "keywords": ["react-native", "repack", "re.pack", "server", "dev-server"],
@@ -23,9 +23,7 @@
     "access": "public"
   },
   "scripts": {
-    "build:js": "babel src --out-dir dist --extensions \".js,.cjs,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start --copy-files",
-    "build:ts": "tsc --emitDeclarationOnly",
-    "build": "pnpm run \"/^build:.*/\"",
+    "build": "tsc -b",
     "typecheck": "tsc --noEmit",
     "archive": "pnpm build && pnpm pack"
   },
@@ -49,7 +47,7 @@
     "@types/node": "18",
     "@types/ws": "^8.5.3",
     "babel-plugin-add-import-extension": "^1.6.0",
-    "typescript": "^5.5.3"
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
     "@react-native-community/cli-server-api": ">=13.6.4"

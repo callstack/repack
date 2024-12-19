@@ -1,15 +1,15 @@
 import type { Config } from '@react-native-community/cli-types';
 import { type Configuration, rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
-import { VERBOSE_ENV_KEY } from '../../env';
+import { VERBOSE_ENV_KEY } from '../../env.js';
 import {
   getEnvOptions,
   getRspackConfigFilePath,
   loadConfig,
   normalizeStatsOptions,
   writeStats,
-} from '../common';
-import type { BundleArguments, BundleCliOptions } from '../types';
+} from '../common/index.js';
+import type { BundleArguments, BundleCliOptions } from '../types.js';
 
 /**
  * Bundle command for React Native Community CLI.

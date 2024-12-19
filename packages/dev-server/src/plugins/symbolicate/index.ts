@@ -1,3 +1,3 @@
-export { default } from './sybmolicatePlugin';
-export * from './Symbolicator';
-export * from './types';
+export { default } from './sybmolicatePlugin.js';
+export * from './Symbolicator.js';
+export * from './types.js';

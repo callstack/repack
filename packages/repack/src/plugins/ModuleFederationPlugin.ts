@@ -1,10 +1,10 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 // biome-ignore lint/correctness/noUnusedImports: needed for jsdoc
-import type { Federated } from '../utils/federated';
+import type { Federated } from '../utils/federated.js';
 import {
   ModuleFederationPluginV1,
   type ModuleFederationPluginV1Config,
-} from './ModuleFederationPluginV1';
+} from './ModuleFederationPluginV1.js';
 
 /**
  * {@link ModuleFederationPluginV1Config} configuration options.

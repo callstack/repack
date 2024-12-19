@@ -1,7 +1,7 @@
 import type { IncomingMessage } from 'node:http';
 import type { Socket } from 'node:net';
 import type { FastifyInstance } from 'fastify';
-import type { WebSocketServerInterface } from './types';
+import type { WebSocketServerInterface } from './types.js';
 
 /**
  * Class for creating a WebSocket router to forward connections to the

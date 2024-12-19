@@ -1,3 +1,3 @@
-export { composeSourceMaps } from './composeSourceMaps';
-export { getHermesCLIPath } from './getHermesCLIPath';
-export { transformBundleToHermesBytecode } from './transformBundleToHermesBytecode';
+export { composeSourceMaps } from './composeSourceMaps.js';
+export { getHermesCLIPath } from './getHermesCLIPath.js';
+export { transformBundleToHermesBytecode } from './transformBundleToHermesBytecode.js';

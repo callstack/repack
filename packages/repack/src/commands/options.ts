@@ -30,6 +30,7 @@ export const startCommandOptions = [
   // noop, but kept for compatibility
   {
     name: '--reset-cache, --resetCache',
+    description: '(unsupported) Resets the transformation cache',
   },
   // options specific to Re.Pack
   {
@@ -115,6 +116,7 @@ export const bundleCommandOptions = [
   // noop, but kept for compatibility
   {
     name: '--reset-cache',
+    description: '(unsupported) Resets the transformation cache',
   },
   // options specific to Re.Pack
   {

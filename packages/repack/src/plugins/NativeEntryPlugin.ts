@@ -5,7 +5,7 @@ import type {
   ResolveAlias,
   RspackPluginInstance,
 } from '@rspack/core';
-import { isRspackCompiler } from './utils/isRspackCompiler';
+import { isRspackCompiler } from './utils/isRspackCompiler.js';
 
 export interface NativeEntryPluginConfig {
   /**
@@ -53,7 +53,7 @@ export class NativeEntryPlugin implements RspackPluginInstance {
       path.join(reactNativePath, 'Libraries/Core/InitializeCore.js');
 
     const initializeScriptManagerPath = require.resolve(
-      '../modules/InitializeScriptManager'
+      '../modules/InitializeScriptManager.js'
     );
 
     const entries = [

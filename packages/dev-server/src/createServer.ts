@@ -3,14 +3,14 @@ import middie from '@fastify/middie';
 import fastifySensible from '@fastify/sensible';
 import { createDevMiddleware } from '@react-native/dev-middleware';
 import Fastify from 'fastify';
-import apiPlugin from './plugins/api';
-import compilerPlugin from './plugins/compiler';
-import devtoolsPlugin from './plugins/devtools';
-import faviconPlugin from './plugins/favicon';
-import multipartPlugin from './plugins/multipart';
-import symbolicatePlugin from './plugins/symbolicate';
-import wssPlugin from './plugins/wss';
-import { Internal, type Server } from './types';
+import apiPlugin from './plugins/api/apiPlugin.js';
+import compilerPlugin from './plugins/compiler/compilerPlugin.js';
+import devtoolsPlugin from './plugins/devtools/devtoolsPlugin.js';
+import faviconPlugin from './plugins/favicon/faviconPlugin.js';
+import multipartPlugin from './plugins/multipart/multipartPlugin.js';
+import symbolicatePlugin from './plugins/symbolicate/sybmolicatePlugin.js';
+import wssPlugin from './plugins/wss/wssPlugin.js';
+import { Internal, type Server } from './types.js';
 
 /**
  * Create instance of development server, powered by Fastify.

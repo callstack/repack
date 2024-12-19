@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+// @ts-expect-error type-only import
 import type { Server } from '@callstack/repack-dev-server';
 import { type Configuration, rspack } from '@rspack/core';
 import type {
@@ -8,17 +9,17 @@ import type {
   WatchOptions,
 } from '@rspack/core';
 import memfs from 'memfs';
-import type { Reporter } from '../../logging';
-import type { HMRMessageBody } from '../../types';
+import type { Reporter } from '../../logging/types.js';
+import type { HMRMessageBody } from '../../types.js';
 import {
   adaptFilenameToPlatform,
   getEnvOptions,
   loadConfig,
   runAdbReverse,
-} from '../common';
-import { DEV_SERVER_ASSET_TYPES } from '../consts';
-import type { StartCliOptions } from '../types';
-import type { CompilerAsset, MultiWatching } from './types';
+} from '../common/index.js';
+import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
+import type { StartCliOptions } from '../types.js';
+import type { CompilerAsset, MultiWatching } from './types.js';
 
 export class Compiler {
   platforms: string[];

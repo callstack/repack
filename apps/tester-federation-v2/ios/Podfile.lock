@@ -1599,7 +1599,7 @@ PODS:
     - React-logger (= 0.76.3)
     - React-perflogger (= 0.76.3)
     - React-utils (= 0.76.3)
-  - ReactNativeHost (0.5.0):
+  - ReactNativeHost (0.5.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1622,7 +1622,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - ReactTestApp-DevSupport (4.0.4):
+  - ReactTestApp-DevSupport (4.0.7):
     - React-Core
     - React-jsi
   - RNScreens (3.35.0):
@@ -1743,7 +1743,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@4.0.4_react-native@0.76.3_@babel+core@7.25.2_@babel+preset-env@7.25.4_@_5qr4uzjupfedleyuhhntdk3ovq/node_modules/@rnx-kit/react-native-host`)"
+  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@4.0.7_react-native@0.76.3_@babel+core@7.25.2_@babel+preset-env@7.25.4_@_kcvmkmgigxx2fblhu2xcq3h4qu/node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -1885,7 +1885,7 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeHost:
-    :path: "../../../node_modules/.pnpm/react-native-test-app@4.0.4_react-native@0.76.3_@babel+core@7.25.2_@babel+preset-env@7.25.4_@_5qr4uzjupfedleyuhhntdk3ovq/node_modules/@rnx-kit/react-native-host"
+    :path: "../../../node_modules/.pnpm/react-native-test-app@4.0.7_react-native@0.76.3_@babel+core@7.25.2_@babel+preset-env@7.25.4_@_kcvmkmgigxx2fblhu2xcq3h4qu/node_modules/@rnx-kit/react-native-host"
   ReactTestApp-DevSupport:
     :path: "../node_modules/react-native-test-app"
   RNScreens:
@@ -1959,8 +1959,8 @@ SPEC CHECKSUMS:
   React-utils: 2bcaf4f4dfe361344bce2fae428603d518488630
   ReactCodegen: ae99a130606068ed40d1d9c0d5f25fda142a0647
   ReactCommon: 89c87b343deacc8610b099ac764848f0ce937e3e
-  ReactNativeHost: 3aa90998ab38ddbcfd0075b88d1062d1488cf749
-  ReactTestApp-DevSupport: aa137b52b223ebecf49fd5569290759a6d0b5590
+  ReactNativeHost: ac28612b0443705f9aa90563ffb9647f5608613c
+  ReactTestApp-DevSupport: 4aa6f6bc658a2577bcf896c63c411cb375b89d7d
   RNScreens: e389d6a6a66a4f0d3662924ecae803073ccce8ec
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6

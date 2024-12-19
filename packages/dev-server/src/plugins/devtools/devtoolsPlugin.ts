@@ -4,7 +4,7 @@ import {
 } from '@react-native-community/cli-server-api';
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import type { Server } from '../../types';
+import type { Server } from '../../types.js';
 
 async function devtoolsPlugin(
   instance: FastifyInstance,

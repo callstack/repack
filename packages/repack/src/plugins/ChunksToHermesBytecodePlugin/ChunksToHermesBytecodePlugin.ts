@@ -2,12 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import type { Rule } from '../../types';
+import type { Rule } from '../../types.js';
 import {
   composeSourceMaps,
   getHermesCLIPath,
   transformBundleToHermesBytecode,
-} from './utils';
+} from './utils/index.js';
 
 /**
  * {@link ChunksToHermesBytecodePlugin} configuration options.

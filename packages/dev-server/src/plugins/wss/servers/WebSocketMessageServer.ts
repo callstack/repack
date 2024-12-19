@@ -2,7 +2,7 @@ import type { IncomingMessage } from 'node:http';
 import { URL } from 'node:url';
 import type { FastifyInstance } from 'fastify';
 import type WebSocket from 'ws';
-import { WebSocketServer } from '../WebSocketServer';
+import { WebSocketServer } from '../WebSocketServer.js';
 
 /**
  * Holds {@link ReactNativeMessage} `id` data.

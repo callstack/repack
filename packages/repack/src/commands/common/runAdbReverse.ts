@@ -1,6 +1,6 @@
 import path from 'node:path';
 import execa from 'execa';
-import type { Logger } from '../../types';
+import type { Logger } from '../../types.js';
 
 interface RunAdbReverseParams {
   logger?: Logger;

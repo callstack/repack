@@ -76,6 +76,26 @@
   },
   "overrides": [
     {
+      "include": ["packages/**/*"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useImportExtensions": {
+              "level": "error",
+              "options": {
+                "suggestedExtensions": {
+                  "ts": {
+                    "module": "js",
+                    "component": "js"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "include": ["**/*.d.ts"],
       "linter": { "rules": { "style": { "noVar": "off" } } }
     },

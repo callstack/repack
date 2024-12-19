@@ -1,4 +1,4 @@
-import { getModulePaths } from '../getModulePaths';
+import { getModulePaths } from '../getModulePaths.js';
 
 describe('getModulePaths', () => {
   const packages = [

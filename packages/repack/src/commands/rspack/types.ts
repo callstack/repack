@@ -1,5 +1,5 @@
 import type { MultiCompiler, StatsAsset } from '@rspack/core';
-import type { RemoveRecord } from '../types';
+import type { RemoveRecord } from '../types.js';
 
 type RspackStatsAsset = RemoveRecord<StatsAsset>;
 

@@ -80,7 +80,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     new compiler.webpack.NormalModuleReplacementPlugin(
       /react-native.*?([/\\]+)Libraries([/\\]+)Utilities([/\\]+)HMRClient\.js$/,
       (resource) => {
-        const request = require.resolve('../../modules/DevServerClient');
+        const request = require.resolve('../../modules/DevServerClient.js');
         const context = path.dirname(request);
         resource.request = request;
         resource.context = context;
@@ -94,7 +94,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     // ReactNativeTypes.js is flow type only module
     new compiler.webpack.NormalModuleReplacementPlugin(
       /react-native.*?([/\\]+)Libraries[/\\]Renderer[/\\]shims[/\\]ReactNativeTypes\.js$/,
-      require.resolve('../../modules/EmptyModule')
+      require.resolve('../../modules/EmptyModule.js')
     ).apply(compiler);
 
     compiler.hooks.thisCompilation.tap('RepackTargetPlugin', (compilation) => {
@@ -111,7 +111,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
             const loadScriptGlobal = compiler.webpack.RuntimeGlobals.loadScript;
             const loadScriptRuntimeModule = Template.asString([
               Template.getFunctionContent(
-                require('./implementation/loadScript')
+                require('./implementation/loadScript.js')
               )
                 .replaceAll('$loadScript$', loadScriptGlobal)
                 .replaceAll('$caller$', `'${chunk.id?.toString()}'`),
@@ -119,7 +119,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
 
             const initRuntimeModule = Template.asString([
               '// Repack runtime initialization logic',
-              Template.getFunctionContent(require('./implementation/init'))
+              Template.getFunctionContent(require('./implementation/init.js'))
                 .replaceAll('$globalObject$', globalObject)
                 .replaceAll('$hmrEnabled$', `${this.config?.hmr ?? false}`),
             ]);

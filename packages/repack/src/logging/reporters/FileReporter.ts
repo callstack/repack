@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import throttle from 'throttleit';
-import type { LogEntry, Reporter } from '../types';
+import type { LogEntry, Reporter } from '../types.js';
 
 export interface FileReporterConfig {
   filename: string;

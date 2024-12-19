@@ -1,5 +1,5 @@
 import type { FederationRuntimePlugin } from '@module-federation/enhanced/runtime';
-import type * as RepackClient from '../ScriptManager';
+import type * as RepackClient from '../ScriptManager/index.js';
 
 export type RepackResolverPluginConfiguration =
   | Omit<RepackClient.ScriptLocator, 'url'>
@@ -25,7 +25,7 @@ const RepackResolverPlugin: (
   name: 'repack-resolver-plugin',
   afterResolve(args) {
     const { ScriptManager } =
-      require('../ScriptManager') as typeof RepackClient;
+      require('../ScriptManager.js') as typeof RepackClient;
     const { remoteInfo } = args;
 
     ScriptManager.shared.addResolver(

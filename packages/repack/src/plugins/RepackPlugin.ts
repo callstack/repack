@@ -1,10 +1,10 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import type { DevServerOptions } from '../types';
-import { DevelopmentPlugin } from './DevelopmentPlugin';
-import { LoggerPlugin, type LoggerPluginConfig } from './LoggerPlugin';
-import { NativeEntryPlugin } from './NativeEntryPlugin';
-import { OutputPlugin, type OutputPluginConfig } from './OutputPlugin';
-import { RepackTargetPlugin } from './RepackTargetPlugin';
+import type { DevServerOptions } from '../types.js';
+import { DevelopmentPlugin } from './DevelopmentPlugin.js';
+import { LoggerPlugin, type LoggerPluginConfig } from './LoggerPlugin.js';
+import { NativeEntryPlugin } from './NativeEntryPlugin.js';
+import { OutputPlugin, type OutputPluginConfig } from './OutputPlugin/index.js';
+import { RepackTargetPlugin } from './RepackTargetPlugin/index.js';
 
 /**
  * {@link RepackPlugin} configuration options.

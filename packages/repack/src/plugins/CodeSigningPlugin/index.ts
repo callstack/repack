@@ -1,2 +1,2 @@
-export { CodeSigningPlugin } from './CodeSigningPlugin';
-export type { CodeSigningPluginConfig } from './config';
+export { CodeSigningPlugin } from './CodeSigningPlugin.js';
+export type { CodeSigningPluginConfig } from './config.js';

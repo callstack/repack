@@ -1,8 +1,8 @@
 import path from 'node:path';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
-import type { DevServerOptions } from '../types';
-import { isRspackCompiler } from './utils/isRspackCompiler';
+import type { DevServerOptions } from '../types.js';
+import { isRspackCompiler } from './utils/isRspackCompiler.js';
 
 const [reactRefreshEntryPath, reactRefreshPath, refreshUtilsPath] =
   ReactRefreshPlugin.deprecated_runtimePaths;
@@ -123,8 +123,8 @@ export class DevelopmentPlugin implements RspackPluginInstance {
 
       const devEntries = [
         reactRefreshEntryPath,
-        require.resolve('../modules/configurePublicPath'),
-        require.resolve('../modules/WebpackHMRClient'),
+        require.resolve('../modules/configurePublicPath.js'),
+        require.resolve('../modules/WebpackHMRClient.js'),
       ];
 
       // TODO (jbroma): refactor this to be more maintainable

@@ -1,6 +1,6 @@
-import { bundleCommandOptions, startCommandOptions } from '../options';
-import { bundle } from './bundle';
-import { start } from './start';
+import { bundleCommandOptions, startCommandOptions } from '../options.js';
+import { bundle } from './bundle.js';
+import { start } from './start.js';
 
 const commands = [
   {
@@ -30,4 +30,3 @@ const commands = [
 ] as const;
 
 export default commands;
-module.exports = commands;

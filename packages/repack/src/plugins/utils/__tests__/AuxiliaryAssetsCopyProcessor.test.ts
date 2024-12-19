@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { AuxiliaryAssetsCopyProcessor } from '../AuxiliaryAssetsCopyProcessor';
+import { AuxiliaryAssetsCopyProcessor } from '../AuxiliaryAssetsCopyProcessor.js';
 
 jest.mock('node:fs', () => jest.requireActual('memfs').fs);
 

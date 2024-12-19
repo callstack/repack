@@ -3,8 +3,8 @@ import {
   type NormalizedScriptLocator,
   NormalizedScriptLocatorHTTPMethod,
   NormalizedScriptLocatorSignatureVerificationMode,
-} from './NativeScriptManager';
-import type { ScriptLocator, WebpackContext } from './types';
+} from './NativeScriptManager.js';
+import type { ScriptLocator, WebpackContext } from './types.js';
 
 /**
  * Representation of a Script to load and execute, used by {@link ScriptManager}.

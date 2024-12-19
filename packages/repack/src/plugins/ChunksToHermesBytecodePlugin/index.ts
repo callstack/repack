@@ -1,1 +1,1 @@
-export * from './ChunksToHermesBytecodePlugin';
+export * from './ChunksToHermesBytecodePlugin.js';

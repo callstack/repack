@@ -1,3 +1,3 @@
-export { default } from './wssPlugin';
-export * from './WebSocketServer';
-export * from './types';
+export { default } from './wssPlugin.js';
+export * from './WebSocketServer.js';
+export * from './types.js';

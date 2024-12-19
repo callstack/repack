@@ -2,8 +2,8 @@ import type { IncomingMessage } from 'node:http';
 import { URL } from 'node:url';
 import type { FastifyInstance } from 'fastify';
 import type WebSocket from 'ws';
-import { WebSocketServer } from '../WebSocketServer';
-import type { HmrDelegate } from '../types';
+import { WebSocketServer } from '../WebSocketServer.js';
+import type { HmrDelegate } from '../types.js';
 
 /**
  * Class for creating a WebSocket server for Hot Module Replacement.

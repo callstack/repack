@@ -7,7 +7,7 @@ import RspackVirtualModulePlugin from 'rspack-plugin-virtual-module';
 import {
   CodeSigningPlugin,
   type CodeSigningPluginConfig,
-} from '../CodeSigningPlugin';
+} from '../CodeSigningPlugin/index.js';
 
 const BUNDLE_WITH_JWT_REGEX =
   /^(.+)?\/\* RCSSB \*\/(?:[\w-]*\.){2}[\w-]*(\x00)*$/m;
@@ -32,7 +32,10 @@ async function compileBundle(
     },
     plugins: [
       new CodeSigningPlugin(codeSigningConfig),
-      new RspackVirtualModulePlugin(virtualModules),
+      new RspackVirtualModulePlugin({
+        'package.json': '{ "type": "module" }',
+        ...virtualModules,
+      }),
     ],
   });
 
@@ -63,7 +66,7 @@ describe('CodeSigningPlugin', () => {
       'index.bundle',
       {
         'index.js': `
-          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk'); 
+          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk.js'); 
           chunk.then(console.log);
         `,
         'myChunk.js': `
@@ -87,10 +90,10 @@ describe('CodeSigningPlugin', () => {
       'index.bundle',
       {
         'index.js': `
-          const signed1 = import(/* webpackChunkName: "firstSignedChunk" */'./firstSignedChunk'); 
+          const signed1 = import(/* webpackChunkName: "firstSignedChunk" */'./firstSignedChunk.js'); 
           signed1.then(console.log);
 
-          const signed2 = import(/* webpackChunkName: "secondSignedChunk" */'./secondSignedChunk'); 
+          const signed2 = import(/* webpackChunkName: "secondSignedChunk" */'./secondSignedChunk.js'); 
           signed2.then(console.log);
         `,
         'firstSignedChunk.js': `
@@ -126,7 +129,7 @@ describe('CodeSigningPlugin', () => {
       'index.bundle',
       {
         'index.js': `
-          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk'); 
+          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk.js'); 
           chunk.then(console.log);
         `,
         'myChunk.js': `
@@ -145,7 +148,7 @@ describe('CodeSigningPlugin', () => {
       'index.bundle',
       {
         'index.js': `
-          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk'); 
+          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk.js'); 
           chunk.then(console.log);
         `,
         'myChunk.js': `
@@ -164,10 +167,10 @@ describe('CodeSigningPlugin', () => {
       'index.bundle',
       {
         'index.js': `
-          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk'); 
+          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk.js'); 
           chunk.then(console.log);
 
-          const noSign = import(/* webpackChunkName: "noSign" */'./noSign');
+          const noSign = import(/* webpackChunkName: "noSign" */'./noSign.js');
           noSign.then(console.log);
         `,
         'myChunk.js': `

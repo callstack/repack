@@ -4,7 +4,10 @@ import vm from 'node:vm';
 import { rspack } from '@rspack/core';
 import memfs from 'memfs';
 import { RspackVirtualModulePlugin } from 'rspack-plugin-virtual-module';
-import { getAssetExtensionsRegExp, getResolveOptions } from '../../../utils';
+import {
+  getAssetExtensionsRegExp,
+  getResolveOptions,
+} from '../../../utils/index.js';
 
 function loadFixtures(...filenames: string[]) {
   return filenames
@@ -65,6 +68,8 @@ async function compileBundle(
     },
     plugins: [
       new RspackVirtualModulePlugin({
+        'package.json': '{ "type": "module" }',
+        'node_modules/react-native/package.json': '{ "name": "react-native" }',
         'node_modules/react-native/Libraries/Image/AssetRegistry.js':
           'module.exports = { registerAsset: (spec) => spec };',
         'node_modules/react-native/Libraries/Utilities/PixelRatio.js':
