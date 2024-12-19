@@ -1,5 +1,5 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import { reanimatedModuleRules } from './rules.ts';
+import { reanimatedModuleRules } from './rules.js';
 
 export class ReanimatedPlugin implements RspackPluginInstance {
   apply(compiler: Compiler) {
