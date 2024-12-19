@@ -1,16 +1,7 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2021",
-    "lib": ["ES2021"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "declaration": true,
-    "sourceMap": false,
+    "outDir": "dist",
     "rootDirs": ["src", "../repack/src", "../dev-server/src"],
     "paths": {
       "@callstack/repack": ["../repack/src/index.ts"],
