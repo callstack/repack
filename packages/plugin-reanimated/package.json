@@ -6,7 +6,7 @@
   "license": "MIT",
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
-  "type": "module",
+  "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": ["dist", "loader"],
