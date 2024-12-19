@@ -30,4 +30,3 @@ const commands = [
 ] as const;
 
 export default commands;
-module.exports = commands;

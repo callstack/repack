@@ -8,8 +8,7 @@
   "exports": {
     ".": "./dist/index.js",
     "./client": "./client/index.js",
-    "./commands/rspack": "./dist/commands/rspack/index.js",
-    "./commands/webpack": "./dist/commands/webpack/index.js",
+    "./commands/*": "./commands/*.js",
     "./assets-loader": "./dist/loaders/assetsLoader/index.js",
     "./flow-loader": "./dist/loaders/flowLoader/index.js",
     "./mf/*": "./mf/*.js",
@@ -22,6 +21,7 @@
     "ios",
     "!ios/build",
     "client",
+    "commands",
     "mf",
     "callstack-repack.podspec",
     "src/modules/ScriptManager/NativeScriptManager.ts"
