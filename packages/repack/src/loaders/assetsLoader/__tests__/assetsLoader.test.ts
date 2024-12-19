@@ -68,6 +68,8 @@ async function compileBundle(
     },
     plugins: [
       new RspackVirtualModulePlugin({
+        'package.json': '{ "type": "module" }',
+        'node_modules/react-native/package.json': '{ "name": "react-native" }',
         'node_modules/react-native/Libraries/Image/AssetRegistry.js':
           'module.exports = { registerAsset: (spec) => spec };',
         'node_modules/react-native/Libraries/Utilities/PixelRatio.js':

@@ -123,8 +123,8 @@ export class DevelopmentPlugin implements RspackPluginInstance {
 
       const devEntries = [
         reactRefreshEntryPath,
-        require.resolve('../modules/configurePublicPath'),
-        require.resolve('../modules/WebpackHMRClient'),
+        require.resolve('../modules/configurePublicPath.js'),
+        require.resolve('../modules/WebpackHMRClient.js'),
       ];
 
       // TODO (jbroma): refactor this to be more maintainable

@@ -1,1 +1,1 @@
-export * from '../dist/modules/ScriptManager.js';
+export * from '../dist/modules/ScriptManager/index.js';

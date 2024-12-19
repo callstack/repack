@@ -53,7 +53,7 @@ export class NativeEntryPlugin implements RspackPluginInstance {
       path.join(reactNativePath, 'Libraries/Core/InitializeCore.js');
 
     const initializeScriptManagerPath = require.resolve(
-      '../modules/InitializeScriptManager'
+      '../modules/InitializeScriptManager.js'
     );
 
     const entries = [

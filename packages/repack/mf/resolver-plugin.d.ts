@@ -1,1 +1,1 @@
-export { default } from '../dist/modules/FederationRuntimePlugins/ResolverPlugin.d.ts';
+export { default } from '../dist/modules/FederationRuntimePlugins/ResolverPlugin.ts';

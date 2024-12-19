@@ -1,1 +1,1 @@
-export * from '../dist/modules/ScriptManager.d.ts';
+export * from '../dist/modules/ScriptManager/index.ts';

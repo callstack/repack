@@ -1,1 +1,1 @@
-export { default } from '../dist/modules/FederationRuntimePlugins/CorePlugin.d.ts';
+export { default } from '../dist/modules/FederationRuntimePlugins/CorePlugin.ts';
