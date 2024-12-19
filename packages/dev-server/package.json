@@ -10,7 +10,7 @@
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "docs", "vendor", "CHANGELOG.md"],
+  "files": ["dist", "static"],
   "homepage": "https://github.com/callstack/repack",
   "repository": "github:callstack/repack",
   "keywords": ["react-native", "repack", "re.pack", "server", "dev-server"],
