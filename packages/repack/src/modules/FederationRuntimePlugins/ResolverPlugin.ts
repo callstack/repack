@@ -25,7 +25,7 @@ const RepackResolverPlugin: (
   name: 'repack-resolver-plugin',
   afterResolve(args) {
     const { ScriptManager } =
-      require('../ScriptManager/ScriptManager.js') as typeof RepackClient;
+      require('../ScriptManager.js') as typeof RepackClient;
     const { remoteInfo } = args;
 
     ScriptManager.shared.addResolver(
