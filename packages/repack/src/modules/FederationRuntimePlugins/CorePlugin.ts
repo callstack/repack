@@ -4,8 +4,7 @@ import type * as RepackClient from '../ScriptManager/index.js';
 const RepackCorePlugin: () => FederationRuntimePlugin = () => ({
   name: 'repack-core-plugin',
   loadEntry: async ({ remoteInfo }) => {
-    const client =
-      require('../ScriptManager/index.js') as typeof RepackClient;
+    const client = require('../ScriptManager/index.js') as typeof RepackClient;
     const { ScriptManager, getWebpackContext } = client;
     const { entry, entryGlobalName } = remoteInfo;
 
