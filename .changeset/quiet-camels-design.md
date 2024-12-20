@@ -1,5 +1,5 @@
 ---
-"@callstack/repack": major
+"@callstack/repack": patch
 ---
 
-Module Resolution Errors for ScriptManager Imports in FederationRuntimePlugin
+Fix ScriptManager import path in MF runtime plugins (CorePlugin & ResolverPlugin)
