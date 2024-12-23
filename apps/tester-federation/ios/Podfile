@@ -7,7 +7,7 @@ require "#{ws_dir}/node_modules/react-native-test-app/test_app.rb"
 workspace 'ModuleFederationTester.xcworkspace'
 
 options = {
-  :bridgeless_enabled => false,
+  :bridgeless_enabled => true,
   :fabric_enabled => true,
   :hermes_enabled => true,
 }
