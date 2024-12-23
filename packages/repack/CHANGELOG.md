@@ -1,5 +1,14 @@
 # @callstack/repack
 
+## 5.0.0-rc.5
+
+### Patch Changes
+
+- [#835](https://github.com/callstack/repack/pull/835) [`ae89e38`](https://github.com/callstack/repack/commit/ae89e38fd13fab7c133f8e1c68bc7f02f5cdf04d) Thanks [@mrsasuu](https://github.com/mrsasuu)! - Fix ScriptManager import path in MF runtime plugins (CorePlugin & ResolverPlugin)
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-rc.5
+
 ## 5.0.0-rc.4
 
 ### Major Changes
