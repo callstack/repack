@@ -6,9 +6,6 @@ import type { ServerOptions } from 'ws';
  * Delegate with implementation for HMR-specific functions.
  */
 export interface HmrDelegate {
-  /** Get URI under which HMR server will be running, e.g: `/hmr` */
-  getUriPath: () => string;
-
   /**
    * Callback for when the new HMR client is connected.
    *

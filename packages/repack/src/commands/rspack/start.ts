@@ -159,7 +159,6 @@ export async function start(
           },
         },
         hmr: {
-          getUriPath: () => '/__hmr',
           onClientConnected: (platform, clientId) => {
             ctx.broadcastToHmrClients(
               { action: 'sync', body: compiler.getHmrBody(platform) },
