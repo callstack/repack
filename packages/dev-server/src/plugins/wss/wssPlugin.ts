@@ -49,7 +49,7 @@ async function wssPlugin(
     webSocketMessageServer: messageServer,
   });
   const apiServer = new WebSocketApiServer(instance);
-  const hmrServer = new WebSocketHMRServer(instance, delegate.hmr);
+  const hmrServer = new WebSocketHMRServer(instance);
 
   // @react-native/dev-middleware servers
   const deviceConnectionServer = new WebSocketServerAdapter(
