@@ -12,6 +12,7 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
+import type { HMRMessageBody } from '../../types.js';
 import {
   getMimeType,
   getWebpackConfigFilePath,
@@ -22,7 +23,6 @@ import {
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts.js';
 import type { StartArguments, StartCliOptions } from '../types.js';
 import { Compiler } from './Compiler.js';
-import type { HMRMessageBody } from './types.js';
 
 /**
  * Start command for React Native Community CLI.
@@ -247,7 +247,9 @@ function createHmrBody(
     name: stats.name ?? '',
     time: stats.time ?? 0,
     hash: stats.hash ?? '',
+    // @ts-expect-error rspack warnings are identical in shape to webpack warnings
     warnings: stats.warnings || [],
+    // @ts-expect-error rspack errors are identical in shape to webpack errors
     errors: stats.errors || [],
   };
 }

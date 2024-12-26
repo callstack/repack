@@ -1,4 +1,4 @@
-import type { HMRMessage, HMRMessageBody } from '../types.js';
+import type { HMRMessage } from '../types.js';
 import { getDevServerLocation } from './getDevServerLocation.js';
 
 interface LoadingViewModule {
@@ -9,7 +9,10 @@ interface LoadingViewModule {
 class HMRClient {
   url: string;
   socket: WebSocket;
-  lastHash = '';
+  // state
+  isFirstCompilation = true;
+  lastCompilationHash: string | null = null;
+  hasCompileErrors = false;
 
   constructor(
     private app: {
@@ -47,125 +50,154 @@ class HMRClient {
     };
   }
 
-  upToDate(hash?: string) {
-    if (hash) {
-      this.lastHash = hash;
-    }
-    return this.lastHash === __webpack_hash__;
-  }
-
   processMessage(message: HMRMessage) {
     switch (message.action) {
-      case 'building':
-        this.app.showLoadingView('Rebuilding...', 'refresh');
-        console.debug('[HMRClient] Bundle rebuilding', {
-          name: message.body?.name,
-        });
+      case 'compiling':
+        this.handleCompilationInProgress();
         break;
-      case 'built':
-        console.debug('[HMRClient] Bundle rebuilt', {
-          name: message.body?.name,
-          time: message.body?.time,
-        });
-      // Fall through
-      case 'sync':
-        if (!message.body) {
-          console.warn('[HMRClient] HMR message body is empty');
-          return;
-        }
-
-        if (message.body.errors?.length) {
-          message.body.errors.forEach((error) => {
-            console.error('Cannot apply update due to error:', error);
-          });
-          this.app.hideLoadingView();
-          return;
-        }
-
-        if (message.body.warnings?.length) {
-          message.body.warnings.forEach((warning) => {
-            console.warn('[HMRClient] Bundle contains warnings:', warning);
-          });
-        }
-
-        this.applyUpdate(message.body);
+      case 'hash':
+        this.handleHashUpdate(message.body.hash);
+        break;
+      case 'still-ok':
+      case 'ok':
+        this.handleSuccess();
+        break;
+      case 'warnings':
+        this.handleWarnings(message.body.warnings);
+        break;
+      case 'errors':
+        this.handleErrors(message.body.errors);
+        break;
     }
   }
 
-  applyUpdate(update: HMRMessageBody) {
+  handleCompilationInProgress() {
+    console.debug('[HMRClient] Processing progress update');
+
+    this.app.showLoadingView(
+      'Compiling...',
+      this.isFirstCompilation ? 'load' : 'refresh'
+    );
+  }
+
+  handleHashUpdate(hash: string) {
+    console.debug('[HMRClient] Processing hash update');
+
+    this.lastCompilationHash = hash;
+
+    if (this.isUpdateAvailable()) {
+      this.app.dismissErrors();
+    }
+  }
+
+  handleSuccess() {
+    console.debug('[HMRClient] Processing bundle update');
+
+    this.app.dismissErrors();
+
+    const isHotUpdate = !this.isFirstCompilation;
+    this.isFirstCompilation = false;
+    this.hasCompileErrors = false;
+
+    // Attempt to apply hot updates or reload.
+    if (isHotUpdate) {
+      this.tryApplyUpdates();
+    }
+
+    this.app.hideLoadingView();
+  }
+
+  // Compilation with warnings (e.g. ESLint).
+  handleWarnings(warnings: any[] = []) {
+    console.debug('[HMRClient] Processing bundle warnings');
+
+    this.app.dismissErrors();
+
+    const isHotUpdate = !this.isFirstCompilation;
+    this.isFirstCompilation = false;
+    this.hasCompileErrors = false;
+
+    for (let i = 0; i < warnings.length; i++) {
+      if (i === 5) {
+        console.warn(
+          'There were more warnings in other files, you can find a complete log in the terminal.'
+        );
+        break;
+      }
+      console.warn(warnings[i]);
+    }
+
+    // Attempt to apply hot updates or reload.
+    if (isHotUpdate) {
+      this.tryApplyUpdates();
+    }
+
+    this.app.hideLoadingView();
+  }
+
+  // Compilation with errors (e.g. syntax error or missing modules).
+  handleErrors(errors: any[] = []) {
+    console.debug('[HMRClient] Processing bundle errors');
+
+    this.app.dismissErrors();
+
+    this.isFirstCompilation = false;
+    this.hasCompileErrors = true;
+
+    // Also log them to the console.
+    for (const error of errors) {
+      console.error(error);
+    }
+
+    this.app.hideLoadingView();
+  }
+
+  isUpdateAvailable() {
+    return this.lastCompilationHash === __webpack_hash__;
+  }
+
+  // Attempt to update code on the fly, fall back to a hard reload.
+  tryApplyUpdates() {
+    // detect is there a newer version of this code available
+    if (!this.isUpdateAvailable()) {
+      return;
+    }
+
     if (!module.hot) {
-      throw new Error('[HMRClient] Hot Module Replacement is disabled.');
+      // HMR is not enabled
+      this.app.reload();
+      return;
     }
 
-    if (!this.upToDate(update.hash) && module.hot.status() === 'idle') {
-      console.debug('[HMRClient] Checking for updates on the server...');
-      void this.checkUpdates(update);
+    if (module.hot.status() !== 'idle') {
+      // HMR is disallowed in other states than 'idle'
+      return;
     }
-  }
 
-  async checkUpdates(update: HMRMessageBody) {
-    try {
-      this.app.showLoadingView('Refreshing...', 'refresh');
-      const updatedModules = await module.hot?.check(false);
-      if (!updatedModules) {
-        console.warn('[HMRClient] Cannot find update - full reload needed');
+    const handleApplyUpdates = (
+      err: unknown,
+      updatedModules: (string | number)[] | null
+    ) => {
+      const forcedReload = err || !updatedModules;
+      if (forcedReload) {
+        if (err) {
+          console.error('[HMR] Forced reload caused by: ', err);
+        }
         this.app.reload();
         return;
       }
 
-      const renewedModules = await module.hot?.apply({
-        ignoreDeclined: true,
-        ignoreUnaccepted: false,
-        ignoreErrored: false,
-        onDeclined: (data) => {
-          // This module declined update, no need to do anything
-          console.warn('[HMRClient] Ignored an update due to declined module', {
-            chain: data.chain,
-          });
-        },
-      });
-
-      if (!this.upToDate()) {
-        void this.checkUpdates(update);
-        return;
+      if (this.isUpdateAvailable()) {
+        // While we were updating, there was a new update! Do it again.
+        this.tryApplyUpdates();
       }
+    };
 
-      // No modules updated - leave everything as it is (including errors)
-      if (!renewedModules || renewedModules.length === 0) {
-        console.debug('[HMRClient] No renewed modules - app is up to date');
-        return;
-      }
-
-      // Double check to make sure all updated modules were accepted (renewed)
-      const unacceptedModules = updatedModules.filter((moduleId) => {
-        return renewedModules.indexOf(moduleId) < 0;
-      });
-
-      if (unacceptedModules.length) {
-        console.warn(
-          '[HMRClient] Not every module was accepted - full reload needed',
-          { unacceptedModules }
-        );
-        this.app.reload();
-      } else {
-        console.debug('[HMRClient] Renewed modules - app is up to date', {
-          renewedModules,
-        });
-        this.app.dismissErrors();
-      }
-    } catch (error) {
-      if (module.hot?.status() === 'fail' || module.hot?.status() === 'abort') {
-        console.warn(
-          '[HMRClient] Cannot check for update - full reload needed'
-        );
-        console.warn('[HMRClient]', error);
-        this.app.reload();
-      } else {
-        console.warn('[HMRClient] Update check failed', { error });
-      }
-    } finally {
-      this.app.hideLoadingView();
-    }
+    console.debug('[HMRClient] Checking for updates on the server...');
+    module.hot.check(true).then(
+      (outdatedModules) => handleApplyUpdates(null, outdatedModules),
+      (err) => handleApplyUpdates(err, null)
+    );
   }
 }
 

@@ -90,8 +90,8 @@ export interface HMRMessageBody {
 }
 
 export interface HMRMessage {
-  action: 'building' | 'built' | 'sync';
-  body: HMRMessageBody | null;
+  action: 'compiling' | 'hash' | 'still-ok' | 'ok' | 'warnings' | 'errors';
+  body: HMRMessageBody;
 }
 
 export interface Logger {

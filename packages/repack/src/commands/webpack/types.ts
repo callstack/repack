@@ -6,19 +6,6 @@ export interface WebpackWorkerOptions {
   platform: string;
 }
 
-export interface HMRMessageBody {
-  name: string;
-  time: number;
-  hash: string;
-  warnings: StatsCompilation['warnings'];
-  errors: StatsCompilation['errors'];
-}
-
-export interface HMRMessage {
-  action: 'building' | 'built' | 'sync';
-  body: HMRMessageBody | null;
-}
-
 type WebpackStatsAsset = RemoveRecord<StatsAsset>;
 
 export interface CompilerAsset {
