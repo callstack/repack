@@ -15,3 +15,9 @@ declare module 'fastify' {
     asMultipart: () => MultipartHandler | undefined;
   }
 }
+
+declare module 'ws' {
+  interface WebSocket {
+    isAlive?: boolean;
+  }
+}

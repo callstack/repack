@@ -28,6 +28,8 @@ export abstract class WebSocketServer<T extends WebSocket = WebSocket>
   protected clients: Map<string, T>;
   protected nextClientId = 0;
 
+  private timer: NodeJS.Timer | null = null;
+
   /**
    * Create a new instance of the WebSocketServer.
    * Any logging information, will be passed through standard `fastify.log` API.
@@ -44,6 +46,18 @@ export abstract class WebSocketServer<T extends WebSocket = WebSocket>
     this.server.on('connection', this.onConnection.bind(this));
 
     this.clients = new Map();
+
+    // setup heartbeat timer
+    this.timer = setInterval(() => {
+      this.clients.forEach((socket) => {
+        if (!socket.isAlive) {
+          socket.terminate();
+        } else {
+          socket.isAlive = false;
+          socket.ping(() => {});
+        }
+      });
+    }, 30000);
   }
 
   shouldUpgrade(pathname: string) {
@@ -72,6 +86,12 @@ export abstract class WebSocketServer<T extends WebSocket = WebSocket>
 
     socket.addEventListener('error', errorHandler);
     socket.addEventListener('close', errorHandler);
+
+    // heartbeat
+    socket.isAlive = true;
+    socket.on('pong', () => {
+      socket.isAlive = true;
+    });
 
     return clientId;
   }
