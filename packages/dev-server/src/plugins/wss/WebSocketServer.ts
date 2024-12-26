@@ -38,13 +38,10 @@ export abstract class WebSocketServer<T extends WebSocket = WebSocket>
    */
   constructor(fastify: FastifyInstance, options: WebSocketServerOptions) {
     this.fastify = fastify;
-
     this.name = options.name;
-
+    this.paths = Array.isArray(options.path) ? options.path : [options.path];
     this.server = new WebSocketServerImpl({ noServer: true, ...options.wss });
     this.server.on('connection', this.onConnection.bind(this));
-
-    this.paths = Array.isArray(options.path) ? options.path : [options.path];
 
     this.clients = new Map();
   }
@@ -62,10 +59,13 @@ export abstract class WebSocketServer<T extends WebSocket = WebSocket>
   onConnection(socket: T, _request: IncomingMessage): string {
     const clientId = `client#${this.nextClientId++}`;
     this.clients.set(clientId, socket);
-    this.fastify.log.debug({ msg: 'API client connected', clientId });
+    this.fastify.log.debug({ msg: `${this.name} client connected`, clientId });
 
     const errorHandler = () => {
-      this.fastify.log.debug({ msg: 'API client disconnected', clientId });
+      this.fastify.log.debug({
+        msg: `${this.name} client disconnected`,
+        clientId,
+      });
       socket.removeAllListeners(); // should we do this?
       this.clients.delete(clientId);
     };
