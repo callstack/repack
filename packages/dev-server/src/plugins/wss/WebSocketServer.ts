@@ -1,26 +1,32 @@
 import type { IncomingMessage } from 'node:http';
 import type { Socket } from 'node:net';
 import type { FastifyInstance } from 'fastify';
-import {
-  type ServerOptions,
-  type WebSocket,
-  WebSocketServer as WebSocketServerImpl,
-} from 'ws';
-import type { WebSocketServerInterface } from './types.js';
+import { type WebSocket, WebSocketServer as WebSocketServerImpl } from 'ws';
+import type {
+  WebSocketServerInterface,
+  WebSocketServerOptions,
+} from './types.js';
 
 /**
  * Abstract class for providing common logic (eg routing) for all WebSocket servers.
  *
  * @category Development server
  */
-export abstract class WebSocketServer implements WebSocketServerInterface {
+export abstract class WebSocketServer<T extends WebSocket = WebSocket>
+  implements WebSocketServerInterface
+{
   /** An instance of the underlying WebSocket server. */
   protected server: WebSocketServerImpl;
 
   /** Fastify instance from which {@link server} will receive upgrade connections. */
   protected fastify: FastifyInstance;
 
+  protected name: string;
+
   protected paths: string[];
+
+  protected clients: Map<string, T>;
+  protected nextClientId = 0;
 
   /**
    * Create a new instance of the WebSocketServer.
@@ -28,20 +34,19 @@ export abstract class WebSocketServer implements WebSocketServerInterface {
    *
    * @param fastify Fastify instance to which the WebSocket will be attached to.
    * @param path Path on which this WebSocketServer will be accepting connections.
-   * @param wssOptions WebSocket Server options.
+   * @param options WebSocketServer options.
    */
-  constructor(
-    fastify: FastifyInstance,
-    path: string | string[],
-    wssOptions: Omit<
-      ServerOptions,
-      'noServer' | 'server' | 'host' | 'port' | 'path'
-    > = {}
-  ) {
+  constructor(fastify: FastifyInstance, options: WebSocketServerOptions) {
     this.fastify = fastify;
-    this.server = new WebSocketServerImpl({ noServer: true, ...wssOptions });
+
+    this.name = options.name;
+
+    this.server = new WebSocketServerImpl({ noServer: true, ...options.wss });
     this.server.on('connection', this.onConnection.bind(this));
-    this.paths = Array.isArray(path) ? path : [path];
+
+    this.paths = Array.isArray(options.path) ? options.path : [options.path];
+
+    this.clients = new Map();
   }
 
   shouldUpgrade(pathname: string) {
@@ -54,11 +59,20 @@ export abstract class WebSocketServer implements WebSocketServerInterface {
     });
   }
 
-  /**
-   * Process incoming WebSocket connection.
-   *
-   * @param socket Incoming WebSocket connection.
-   * @param request Upgrade request for the connection.
-   */
-  abstract onConnection(socket: WebSocket, request: IncomingMessage): void;
+  onConnection(socket: T, _request: IncomingMessage): string {
+    const clientId = `client#${this.nextClientId++}`;
+    this.clients.set(clientId, socket);
+    this.fastify.log.debug({ msg: 'API client connected', clientId });
+
+    const errorHandler = () => {
+      this.fastify.log.debug({ msg: 'API client disconnected', clientId });
+      socket.removeAllListeners(); // should we do this?
+      this.clients.delete(clientId);
+    };
+
+    socket.addEventListener('error', errorHandler);
+    socket.addEventListener('close', errorHandler);
+
+    return clientId;
+  }
 }

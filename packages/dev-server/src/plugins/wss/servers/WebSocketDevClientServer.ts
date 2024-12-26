@@ -1,3 +1,4 @@
+import type { IncomingMessage } from 'node:http';
 import type { FastifyInstance } from 'fastify';
 import type WebSocket from 'ws';
 import { WebSocketServer } from '../WebSocketServer.js';
@@ -9,9 +10,6 @@ import { WebSocketServer } from '../WebSocketServer.js';
  * @category Development server
  */
 export class WebSocketDevClientServer extends WebSocketServer {
-  private clients = new Map<string, WebSocket>();
-  private nextClientId = 0;
-
   /**
    * Create new instance of WebSocketDevClientServer and attach it to the given Fastify instance.
    * Any logging information, will be passed through standard `fastify.log` API.
@@ -19,7 +17,7 @@ export class WebSocketDevClientServer extends WebSocketServer {
    * @param fastify Fastify instance to attach the WebSocket server to.
    */
   constructor(fastify: FastifyInstance) {
-    super(fastify, '/__client');
+    super(fastify, { name: 'React Native', path: '/__client' });
   }
 
   /**
@@ -47,28 +45,13 @@ export class WebSocketDevClientServer extends WebSocketServer {
     }
   }
 
-  /**
-   * Process new WebSocket connection from client application.
-   *
-   * @param socket Incoming client's WebSocket connection.
-   */
-  onConnection(socket: WebSocket) {
-    const clientId = `client#${this.nextClientId++}`;
-    this.clients.set(clientId, socket);
-    this.fastify.log.debug({ msg: 'React Native client connected', clientId });
+  override onConnection(socket: WebSocket, request: IncomingMessage): string {
+    const clientId = super.onConnection(socket, request);
 
-    const onClose = () => {
-      this.fastify.log.debug({
-        msg: 'React Native client disconnected',
-        clientId,
-      });
-      this.clients.delete(clientId);
-    };
-
-    socket.addEventListener('error', onClose);
-    socket.addEventListener('close', onClose);
     socket.addEventListener('message', (event) => {
       this.processMessage(event.data.toString());
     });
+
+    return clientId;
   }
 }
