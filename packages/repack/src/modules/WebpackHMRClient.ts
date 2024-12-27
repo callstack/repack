@@ -153,7 +153,7 @@ class HMRClient {
   }
 
   isUpdateAvailable() {
-    return this.lastCompilationHash === __webpack_hash__;
+    return this.lastCompilationHash !== __webpack_hash__;
   }
 
   // Attempt to update code on the fly, fall back to a hard reload.

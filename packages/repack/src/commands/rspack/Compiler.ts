@@ -86,6 +86,10 @@ export class Compiler {
           });
         }
         this.devServerContext.notifyBuildStart(platform);
+        // @ts-ignore
+        this.devServerContext.broadcastToHmrClients({
+          action: 'compiling',
+        });
       });
     });
 
@@ -110,6 +114,13 @@ export class Compiler {
         hash: true,
         errors: true,
         warnings: true,
+      });
+
+      // @ts-ignore
+      this.devServerContext.broadcastToHmrClients({
+        action: 'hash',
+        // @ts-ignore
+        body: { hash: stats.children[0].hash },
       });
 
       try {
@@ -156,9 +167,7 @@ export class Compiler {
               },
               // keep old assets, discard HMR-related ones
               Object.fromEntries(
-                Object.entries(this.assetsCache[platform] ?? {}).filter(
-                  ([_, asset]) => !asset.info.hotModuleReplacement
-                )
+                Object.entries(this.assetsCache[platform] ?? {})
               )
             );
         });
@@ -180,10 +189,11 @@ export class Compiler {
         const platform = childStats.name!;
         this.callPendingResolvers(platform);
         this.devServerContext.notifyBuildEnd(platform);
-        this.devServerContext.broadcastToHmrClients(
-          { action: 'built', body: this.getHmrBody(platform) },
-          platform
-        );
+        // @ts-ignore
+        this.devServerContext.broadcastToHmrClients({
+          action: 'ok',
+          body: this.getHmrBody(platform),
+        });
       });
     });
   }
