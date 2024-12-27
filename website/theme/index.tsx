@@ -1,9 +1,16 @@
 import { Announcement } from '@callstack/rspress-theme';
+import { useVersion } from 'rspress/runtime';
 import Theme, {
+  Badge,
   Link,
   PrevNextPage,
   getCustomMDXComponent,
 } from 'rspress/theme';
+
+const VersionBadge = () => {
+  const version = useVersion();
+  return <Badge type="info" outline text={`Version ${version}`} />;
+};
 
 const Layout = () => (
   <Theme.Layout
@@ -14,6 +21,7 @@ const Layout = () => (
         localStorageKey="repack-announcement"
       />
     }
+    beforeDocContent={<VersionBadge />}
   />
 );
 
