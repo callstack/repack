@@ -5,23 +5,12 @@
     "label": "Getting Started"
   },
   {
-    "type": "dir",
-    "name": "code-splitting",
-    "label": "Code Splitting"
-  },
-  {
-    "type": "file",
-    "name": "module-federation",
-    "label": "Module Federation"
-  },
-  {
-    "type": "dir",
-    "name": "migration-guides",
-    "label": "Migration Guides",
-    "collapsed": true
-  },
-  {
     "type": "divider"
+  },
+  {
+    "type": "dir",
+    "name": "guides",
+    "label": "Guides"
   },
   {
     "type": "dir",
@@ -30,7 +19,7 @@
   },
   {
     "type": "dir",
-    "name": "guides",
-    "label": "Guides"
+    "name": "migration",
+    "label": "Migration"
   }
 ]
