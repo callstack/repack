@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.bg-red-500 {
-  background-color: #f56565;
-}
-
-.text-white {
-  color: #fff;
+.custom-style-test {
+  color: red;
 }
