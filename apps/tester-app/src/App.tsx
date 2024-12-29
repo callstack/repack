@@ -1,5 +1,8 @@
 import { Appearance } from 'react-native';
 
+// nativewind styles
+import '../global.css';
+
 import { AssetsTestContainer } from './assetsTest/AssetsTestContainer';
 import { AsyncContainer } from './asyncChunks/AsyncContainer';
 import { MiniAppsContainer } from './miniapp/MiniAppsContainer';

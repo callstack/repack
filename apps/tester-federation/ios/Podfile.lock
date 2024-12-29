@@ -1,6 +1,6 @@
 PODS:
   - boost (1.84.0)
-  - callstack-repack (5.0.0-rc.4):
+  - callstack-repack (5.0.0-rc.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1919,7 +1919,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 1dca942403ed9342f98334bf4c3621f011aa7946
-  callstack-repack: 8972107231b7175b8340e84ca0370aa2c735dcc7
+  callstack-repack: dee6e27f84a4e1e153c9bd63744f02e19527ba5f
   DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
   FBLazyVector: be7314029d6ec6b90f0f75ce1195b8130ed9ac4f
   fmt: 10c6e61f4be25dc963c36bd73fc7b1705fe975be
@@ -1983,7 +1983,7 @@ SPEC CHECKSUMS:
   React-utils: 2bcaf4f4dfe361344bce2fae428603d518488630
   ReactCodegen: ae99a130606068ed40d1d9c0d5f25fda142a0647
   ReactCommon: 89c87b343deacc8610b099ac764848f0ce937e3e
-  ReactNativeHost: ac28612b0443705f9aa90563ffb9647f5608613c
+  ReactNativeHost: 40da1d9878e16dd3b647d4c31e5afeb0ed84683d
   ReactTestApp-DevSupport: 4aa6f6bc658a2577bcf896c63c411cb375b89d7d
   RNCAsyncStorage: 3ad840f7b17b45ca7ebbbb0e80948564a9513315
   RNScreens: e389d6a6a66a4f0d3662924ecae803073ccce8ec
@@ -1991,6 +1991,6 @@ SPEC CHECKSUMS:
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
   Yoga: f6dc1b6029519815d5516a1241821c6a9074af6d
 
-PODFILE CHECKSUM: 4c9029e45ee3e3768bd4a64f9850e265c1f11ced
+PODFILE CHECKSUM: 16a059e985a55bc49163512a311428a48f715334
 
 COCOAPODS: 1.15.2

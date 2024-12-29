@@ -43,13 +43,17 @@
   "dependencies": {},
   "peerDependencies": {
     "@babel/core": "^7.20",
-    "@callstack/repack": "^5.0.0-rc.5"
+    "@callstack/repack": "^5.0.0-rc.5",
+    "nativewind": ">=4.1.23",
+    "react-native-css-interop": ">=0.1.22"
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",
     "@rspack/core": "1.0.8",
     "@types/babel__core": "7.20.5",
-    "@types/node": "^18"
+    "@types/node": "^18",
+    "nativewind": "^4.1.23",
+    "react-native-css-interop": "^0.1.22"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
