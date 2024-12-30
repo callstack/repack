@@ -40,7 +40,9 @@
   "engines": {
     "node": ">=18"
   },
-  "dependencies": {},
+  "dependencies": {
+    "dedent": "^0.7.0"
+  },
   "peerDependencies": {
     "@babel/core": "^7.20",
     "@callstack/repack": "^5.0.0-rc.5",
@@ -51,6 +53,7 @@
     "@callstack/repack": "workspace:*",
     "@rspack/core": "1.0.8",
     "@types/babel__core": "7.20.5",
+    "@types/dedent": "0.7.2",
     "@types/node": "^18",
     "nativewind": "^4.1.23",
     "react-native-css-interop": "^0.1.22"
