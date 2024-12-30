@@ -107,7 +107,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
 
       new compiler.webpack.ProvidePlugin({
         __react_refresh_utils__: refreshUtilsPath,
-      });
+      }).apply(compiler);
 
       const refreshPath = path.dirname(require.resolve('react-refresh'));
       compiler.options.resolve.alias = {
