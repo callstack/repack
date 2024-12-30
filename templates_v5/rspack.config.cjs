@@ -104,7 +104,6 @@ module.exports = (env) => {
             loader: 'builtin:swc-loader',
             options: {
               env: {
-                bugfixes: true,
                 loose: true,
                 targets: {
                   'react-native': '0.74',

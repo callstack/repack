@@ -5,7 +5,6 @@ const makeSwcLoaderConfig = (syntax: 'js' | 'ts', jsx: boolean) => ({
   loader: 'builtin:swc-loader',
   options: {
     env: {
-      bugfixes: true,
       loose: true,
       targets: { 'react-native': '0.74' },
     },
