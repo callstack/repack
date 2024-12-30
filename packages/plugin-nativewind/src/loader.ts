@@ -16,7 +16,7 @@ export default function nativeWindLoader(
   const callback = this.async();
 
   try {
-    const jsCss = stringify(cssToReactNativeRuntime(source));
+    const jsCss = cssToReactNativeRuntime(source);
     const code = dedent`
       import { StyleSheet } from "nativewind";
       StyleSheet.registerCompiled((${stringify(jsCss)}));
