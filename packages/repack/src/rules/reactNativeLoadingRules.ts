@@ -23,6 +23,7 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
       loader: 'builtin:swc-loader',
       options: {
         env: {
+          loose: true,
           targets: { 'react-native': '0.74' },
         },
         jsc: {
@@ -47,6 +48,7 @@ export const REACT_NATIVE_LOADING_RULES: RuleSetRule = {
           strict: false,
           strictMode: false,
           lazy: REACT_NATIVE_LAZY_IMPORTS,
+          noInterop: false,
         },
       },
     },

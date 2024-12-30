@@ -58,7 +58,10 @@ export default (env) => {
           use: {
             loader: 'builtin:swc-loader',
             options: {
-              env: { targets: { 'react-native': '0.74' } },
+              env: {
+                loose: true,
+                targets: { 'react-native': '0.74' },
+              },
               jsc: { externalHelpers: true },
             },
           },
@@ -74,6 +77,7 @@ export default (env) => {
             options: {
               sourceMaps: true,
               env: {
+                loose: true,
                 targets: { 'react-native': '0.74' },
               },
               jsc: {

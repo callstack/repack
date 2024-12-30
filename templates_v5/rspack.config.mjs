@@ -102,6 +102,7 @@ export default (env) => {
             /** @type {import('@rspack/core').SwcLoaderOptions} */
             options: {
               env: {
+                loose: true,
                 targets: {
                   'react-native': '0.74',
                 },
