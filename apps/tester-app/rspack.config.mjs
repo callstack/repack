@@ -199,9 +199,7 @@ export default (env) => {
       // }),
       process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
       new ReanimatedPlugin(),
-      new NativeWindPlugin({
-        input: './src/nativewind/global.css',
-      }),
+      new NativeWindPlugin(),
     ].filter(Boolean),
   };
 };

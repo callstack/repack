@@ -18,6 +18,7 @@ const makeSwcLoaderConfig = (syntax: 'js' | 'ts', jsx: boolean) => ({
       transform: {
         react: {
           runtime: 'automatic',
+          // TODO make this configurable
           importSource: 'nativewind',
         },
       },
