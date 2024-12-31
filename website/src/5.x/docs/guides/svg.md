@@ -1,4 +1,4 @@
-# SVG
+# SVG support
 
 By default, Re.Pack's [Assets loader](../loaders/assets-loader) is configured to allow you to import SVGs in you code, but that doesn't mean you can render them immediately.
 

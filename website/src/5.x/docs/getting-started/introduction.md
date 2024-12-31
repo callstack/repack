@@ -1,4 +1,4 @@
-# About Re.Pack
+# Introduction
 
 Before diving deep into Re.Pack and introducing it into project, it's important to understand when and why to use Re.Pack and how does it compare with alternatives.
 

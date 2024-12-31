@@ -1,4 +1,4 @@
-# Remote Assets
+# Remote assets
 
 RePack provides you with a way to extract and serve your assets externally, such as on a CDN,
 instead of bundling them directly into your application. When working with ModuleFederation

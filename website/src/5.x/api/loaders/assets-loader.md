@@ -1,4 +1,4 @@
-# Assets Loader
+# AssetsLoader
 
 Assets loader allows you to use images in your application as well as to reference other static assets (video, audio, etc).
 

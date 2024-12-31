@@ -5,7 +5,9 @@
     "label": "Getting Started"
   },
   {
-    "type": "divider"
+    "type": "dir",
+    "name": "features",
+    "label": "Features"
   },
   {
     "type": "dir",
@@ -14,12 +16,12 @@
   },
   {
     "type": "dir",
-    "name": "configuration",
-    "label": "Configuration"
+    "name": "migration-guides",
+    "label": "Migration"
   },
   {
     "type": "dir",
-    "name": "migration",
-    "label": "Migration"
+    "name": "resources",
+    "label": "Additional resources"
   }
 ]

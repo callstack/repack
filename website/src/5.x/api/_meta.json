@@ -13,7 +13,7 @@
   {
     "type": "dir",
     "name": "runtime",
-    "label": "Runtime",
+    "label": "Runtime client",
     "collapsed": false
   },
   {
@@ -26,6 +26,12 @@
     "type": "dir",
     "name": "plugins",
     "label": "Plugins",
+    "collapsed": false
+  },
+  {
+    "type": "file",
+    "name": "utils",
+    "label": "Configuration utilities",
     "collapsed": false
   }
 ]

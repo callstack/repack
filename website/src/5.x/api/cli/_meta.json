@@ -6,11 +6,6 @@
   },
   {
     "type": "file",
-    "name": "init",
-    "label": "Init"
-  },
-  {
-    "type": "file",
     "name": "start",
     "label": "Start"
   },
@@ -18,5 +13,10 @@
     "type": "file",
     "name": "bundle",
     "label": "Bundle"
+  },
+  {
+    "type": "file",
+    "name": "init",
+    "label": "Init"
   }
 ]

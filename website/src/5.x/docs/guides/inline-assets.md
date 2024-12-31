@@ -1,4 +1,4 @@
-# Inlining Assets
+# Inlining assets
 
 There are some situations when you might want to inline assets into the JavaScript bundle, instead of extracting them into standalone files.
 

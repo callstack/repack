@@ -1,1 +1,8 @@
-["inline-assets", "remote-assets", "svg", "lazy-compilation"]
+[
+  "configuration",
+  "debugging",
+  "bundle-analysis",
+  "inline-assets",
+  "remote-assets",
+  "svg"
+]
