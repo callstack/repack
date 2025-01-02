@@ -1,6 +1,6 @@
 # FlowLoader
 
-The `FlowLoader` is used for stripping the flow types from the JS files. It should run before other loaders like `builtin:swc-loader` which don't support JS with Flow typings
+The `FlowLoader` removes Flow type annotations from JavaScript files, ensuring they can be processed by loaders that do not support Flow syntax. It should be positioned before other loaders (e.g. `builtin:swc-loader`) to prevent parsing errors when encountering Flow-specific code.
 
 :::details
 This loader uses `flow-remove-types` under the hood. You can learn more about it [here](https://github.com/facebook/flow/tree/main/packages/flow-remove-types).
