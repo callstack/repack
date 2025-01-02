@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import ComponentWithVariants from './ComponentWithVariants.tsx';
 import CustomComponent from './CustomComponent.tsx';
-import { Input } from './Input.tsx';
+import Reusables from './Reusables.tsx';
 
 export function NativeWindView() {
   return (
@@ -14,7 +14,7 @@ export function NativeWindView() {
       </View>
       <CustomComponent className="bg-green-600" />
       <ComponentWithVariants variant="primary" className="bg-yellow-500" />
-      <Input />
+      <Reusables />
     </View>
   );
 }
