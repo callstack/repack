@@ -1,0 +1,27 @@
+[
+  {
+    "type": "file",
+    "name": "index",
+    "label": "Overview"
+  },
+  {
+    "type": "file",
+    "name": "repack",
+    "label": "RepackPlugin"
+  },
+  {
+    "type": "file",
+    "name": "code-signing",
+    "label": "CodeSigningPlugin"
+  },
+  {
+    "type": "file",
+    "name": "chunks-to-hermes",
+    "label": "ChunksToHermesBytecodePlugin"
+  },
+  {
+    "type": "file",
+    "name": "internal",
+    "label": "Internal plugins"
+  }
+]
