@@ -1,5 +1,5 @@
 import { Announcement } from '@callstack/rspress-theme';
-import { useVersion } from 'rspress/runtime';
+import { usePageData } from 'rspress/runtime';
 import Theme, {
   Badge,
   Link,
@@ -8,15 +8,25 @@ import Theme, {
 } from 'rspress/theme';
 
 const VersionBadge = () => {
-  const version = useVersion();
-  return <Badge type="info" outline text={`Version ${version}`} />;
+  const pageData = usePageData();
+
+  // hide on overview pages since it's badly positioned
+  if (pageData.page.frontmatter.overview) {
+    return null;
+  }
+
+  return (
+    <div className="py-2">
+      <Badge type="info" outline text={`Version ${pageData.page.version}`} />
+    </div>
+  );
 };
 
 const Layout = () => (
   <Theme.Layout
     beforeNav={
       <Announcement
-        href="5.x/docs/getting-started"
+        href="5.x/docs/getting-started/quick-start"
         message="Re.Pack 5 with support for Rspack is coming!"
         localStorageKey="repack-announcement"
       />
