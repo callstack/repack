@@ -16,11 +16,26 @@ type FlowLoaderOptions = {
 };
 ```
 
-| Name                      | Description                                                                                                         | Default |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------- |
-| all                       | If true, bypasses looking for an `@flow` pragma comment before parsing.                                             | false   |
-| ignoreUninitializedFields | If true, removes uninitialized class fields (`foo;`, `foo: string;`) completely rather than only removing the type. | false   |
-| pretty                    | If true, removes types completely rather than replacing with spaces. This may require using source maps.            | false   |
+### all
+
+- Type: `boolean`
+- Default: `false`
+
+If true, bypasses looking for an `@flow` pragma comment before parsing.
+
+### ignoreUninitializedFields
+
+- Type: `boolean`
+- Default: `false`
+
+If true, removes uninitialized class fields (`foo;`, `foo: string;`) completely rather than only removing the type.
+
+### pretty
+
+- Type: `boolean`
+- Default: `false`
+
+If true, removes types completely rather than replacing with spaces. This may require using source maps.
 
 ## Example
 
