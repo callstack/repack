@@ -81,5 +81,12 @@ export default defineConfig({
       },
     },
   },
-  plugins: [pluginFontOpenSans(), vercelAnalytics(), pluginCallstackTheme()],
+  plugins: [
+    // @ts-ignore
+    pluginFontOpenSans(),
+    // @ts-ignore
+    vercelAnalytics(),
+    // @ts-ignore
+    pluginCallstackTheme(),
+  ],
 });
