@@ -6,7 +6,7 @@
   },
   {
     "text": "API",
-    "link": "/api/about",
+    "link": "/api/index",
     "activeMatch": "^/api/"
   },
   {

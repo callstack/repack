@@ -1,5 +1,4 @@
 [
-  "index",
   "constants",
   "get-asset-extension-regexp",
   "get-dirname",

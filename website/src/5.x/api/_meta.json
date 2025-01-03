@@ -1,8 +1,8 @@
 [
   {
     "type": "file",
-    "name": "about",
-    "label": "About"
+    "name": "index",
+    "label": "Overview"
   },
   {
     "type": "dir",

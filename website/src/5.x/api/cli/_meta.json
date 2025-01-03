@@ -1,11 +1,6 @@
 [
   {
     "type": "file",
-    "name": "index",
-    "label": "Overview"
-  },
-  {
-    "type": "file",
     "name": "start",
     "label": "Start"
   },
