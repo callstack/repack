@@ -4,6 +4,35 @@
 
 ## getDirname
 
+Convert a `file:///` URL to an absolute directory path. This utility is particularly useful in ESM Rspack/Webpack configs where `__dirname` is not available.
+
+### Parameters
+
+```ts
+type GetDirname = (fileUrl: string) => string;
+```
+
+#### fileUrl
+
+- Type: `string`
+- Required: `true`
+
+The `file:///` URL of a module, typically obtained from `import.meta.url`.
+
+### Example
+
+```js title=rspack.config.mjs
+import * as Repack from "@callstack/repack";
+
+export default (env) => {
+  const { context = Repack.getDirname(import.meta.url) } = env;
+
+  return {
+    // ... config
+  };
+};
+```
+
 ## getModulePaths
 
 ## getPublicPath
@@ -16,13 +45,16 @@ Get resolve options preset to properly resolve files within the project. The pre
 - resolve native extensions (e.g. `file.native.js`)
 - optionally use package exports (`exports` field in `package.json`) instead of main fields (e.g. `main` or `browser` or `react-native`)
 
-### Options
+### Parameters
 
 ```ts
-type GetResolveOptions = (platform: string, {
-  enablePackageExports?: boolean;
-  preferNativePlatform?: boolean;
-}) => ResolveOptions;
+type GetResolveOptions = (
+  platform: string,
+  options: {
+    enablePackageExports?: boolean;
+    preferNativePlatform?: boolean;
+  }
+) => ResolveOptions;
 ```
 
 #### platform
@@ -32,7 +64,7 @@ type GetResolveOptions = (platform: string, {
 
 Target application platform (e.g. `ios` or `android`).
 
-#### enablePackageExports
+#### options.enablePackageExports
 
 - Type: `boolean`
 - Default: `false`
@@ -45,7 +77,7 @@ Package Exports support differs significantly between Metro and Re.Pack. Since t
 For more details, please refer to the [Module Resolution guide](../guides/module-resolution).
 :::
 
-#### preferNativePlatform
+#### options.preferNativePlatform
 
 - Type: `boolean`
 - Default: `true`
