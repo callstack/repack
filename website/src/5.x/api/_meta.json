@@ -29,7 +29,7 @@
     "collapsed": false
   },
   {
-    "type": "file",
+    "type": "dir",
     "name": "utils",
     "label": "Configuration utilities",
     "collapsed": false
