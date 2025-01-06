@@ -9,7 +9,6 @@ This component demonstrates compatibility with different NativeWind features:
 * custom components styled with className
 * components using the variants pattern
 * using component libraries (React Native Reusables)
-* TODO: themes https://www.nativewind.dev/guides/themes
 * responsive design
 * dark mode
 * functions & directives
