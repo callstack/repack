@@ -265,14 +265,6 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
 
     const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
 
-    const libraryConfig = this.config.exposes
-      ? {
-          name: this.config.name,
-          type: 'self',
-          ...this.config.library,
-        }
-      : undefined;
-
     const sharedConfig = this.adaptSharedDependencies(
       this.config.shared ?? this.getDefaultSharedDependencies()
     );
@@ -284,9 +276,12 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
       this.config.runtimePlugins
     );
 
+    // NOTE: we keep the default library config since it's the most compatible
+    // Default library config uses 'externalType': 'script' and 'type': 'var'
+    // var works identical to 'self' since declaring var in a global scope is
+    // equal to assigning to the globalObject (normalized by Re.Pack to 'self')
     const config: MF.ModuleFederationPluginOptions = {
       ...this.config,
-      library: libraryConfig,
       shared: sharedConfig,
       shareStrategy: shareStrategyConfig,
       runtimePlugins: runtimePluginsConfig,
