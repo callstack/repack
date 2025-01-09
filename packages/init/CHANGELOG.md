@@ -1,5 +1,7 @@
 # @callstack/repack-init
 
+## 4.4.0
+
 ## 4.3.3
 
 ## 4.3.2
