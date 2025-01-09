@@ -96,4 +96,5 @@ module.exports = {
   log(level: string, data: any[]) {
     client.log(level, data);
   },
+  unstable_notifyFuseboxConsoleEnabled() {},
 };
