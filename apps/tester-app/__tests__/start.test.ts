@@ -79,7 +79,7 @@ describe('start command', () => {
         port,
         silent: true,
         logFile: path.join(TMP_DIR, 'server.log'),
-        webpackConfig: path.join(__dirname, './webpack.config.mjs'),
+        webpackConfig: path.join(__dirname, 'configs', 'webpack.config.mjs'),
       };
 
       const { stop } = await start.func([], config as Config, args as Args);

@@ -121,7 +121,7 @@ describe('bundle command', () => {
             platform === 'ios' ? 'main.jsbundle' : `index.${platform}.bundle`
           ),
           dev: false,
-          webpackConfig: path.join(__dirname, './webpack.config.mjs'),
+          webpackConfig: path.join(__dirname, 'configs', 'webpack.config.mjs'),
         };
         process.env.TEST_WEBPACK_OUTPUT_DIR = OUTPUT_DIR;
 
