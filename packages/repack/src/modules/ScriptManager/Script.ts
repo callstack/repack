@@ -213,15 +213,13 @@ export class Script {
       'method' | 'url' | 'query' | 'headers' | 'body'
     >
   ) {
-    const diffs = [
-      cachedData.method !== this.locator.method,
-      cachedData.url !== this.locator.url,
-      cachedData.query !== this.locator.query,
-      !shallowEqual(cachedData.headers, this.locator.headers),
-      cachedData.body !== this.locator.body,
-    ];
-
-    return diffs.some((diff) => diff);
+    return (
+      cachedData.method !== this.locator.method ||
+      cachedData.url !== this.locator.url ||
+      cachedData.query !== this.locator.query ||
+      !shallowEqual(cachedData.headers, this.locator.headers) ||
+      cachedData.body !== this.locator.body
+    );
   }
 
   /**
