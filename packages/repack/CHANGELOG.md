@@ -1,5 +1,16 @@
 # @callstack/repack
 
+## 4.4.0
+
+### Minor Changes
+
+- [#858](https://github.com/callstack/repack/pull/858) [`afc4e23`](https://github.com/callstack/repack/commit/afc4e233481e8dd0475a921a9dae9d3783b9c16f) Thanks [@jbroma](https://github.com/jbroma)! - Add support for React Native 0.76
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.4.0
+
 ## 4.3.3
 
 ### Patch Changes
