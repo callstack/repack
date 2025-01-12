@@ -51,7 +51,7 @@ const CODEGEN_RULE = {
 } as const satisfies RuleSetRule;
 
 /**
- * Plugin for handling React Native codegen files by adding appropriate babel-loader rules.
+ * Plugin for handling React Native codegen transforms required by the new architecture.
  *
  * @category Webpack Plugin
  */
