@@ -24,12 +24,13 @@ export const raw = false;
  *
  * Reference implementation: https://github.com/web-infra-dev/rspack/blob/main/crates/rspack_loader_react_refresh/src/lib.rs
  */
-export default function reactRefreshCompatLoader(
+export default function reactRefreshLoader(
   this: LoaderContext,
   originalSource: string,
   sourceMap: any,
   meta: any
 ) {
+  this.cacheable();
   const callback = this.async();
 
   const source = `${originalSource}\n\n${reactRefreshFooter}`;
