@@ -30,6 +30,7 @@ export default function reactRefreshLoader(
   sourceMap: any,
   meta: any
 ) {
+  this.cacheable();
   const callback = this.async();
 
   const source = `${originalSource}\n\n${reactRefreshFooter}`;
