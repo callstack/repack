@@ -1,5 +1,6 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import type { DevServerOptions } from '../types.js';
+import { BabelPlugin } from './BabelPlugin.js';
 import { DevelopmentPlugin } from './DevelopmentPlugin.js';
 import { LoggerPlugin, type LoggerPluginConfig } from './LoggerPlugin.js';
 import { NativeEntryPlugin } from './NativeEntryPlugin.js';
@@ -150,6 +151,8 @@ export class RepackPlugin implements RspackPluginInstance {
     new compiler.webpack.DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
     }).apply(compiler);
+
+    new BabelPlugin().apply(compiler);
 
     new OutputPlugin({
       platform: this.config.platform,
