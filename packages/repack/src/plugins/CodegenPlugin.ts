@@ -56,7 +56,36 @@ const CODEGEN_RULE = {
  * @category Webpack Plugin
  */
 export class CodegenPlugin implements RspackPluginInstance {
+  private ensureReactNativeCodegenInstalled(context: string) {
+    try {
+      require.resolve('@react-native/babel-plugin-codegen', {
+        paths: [context],
+      });
+    } catch {
+      throw new Error(
+        "CodegenPlugin requires '@react-native/babel-preset' to be present in your project. " +
+          'Did you forget to install it?'
+      );
+    }
+  }
+
+  private ensureHermesParserSyntaxPluginInstalled(context: string) {
+    try {
+      require.resolve('babel-plugin-syntax-hermes-parser', {
+        paths: [context],
+      });
+    } catch {
+      throw new Error(
+        "CodegenPlugin requires 'babel-plugin-syntax-hermes-parser' to be present in your project. " +
+          'Did you forget to install it?'
+      );
+    }
+  }
+
   apply(compiler: Compiler) {
+    this.ensureHermesParserSyntaxPluginInstalled(compiler.context);
+    this.ensureReactNativeCodegenInstalled(compiler.context);
+
     compiler.options.module.rules.push(CODEGEN_RULE);
   }
 }
