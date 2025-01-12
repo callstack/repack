@@ -1,6 +1,7 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import type { DevServerOptions } from '../types.js';
 import { BabelPlugin } from './BabelPlugin.js';
+import { CodegenPlugin } from './CodegenPlugin.js';
 import { DevelopmentPlugin } from './DevelopmentPlugin.js';
 import { LoggerPlugin, type LoggerPluginConfig } from './LoggerPlugin.js';
 import { NativeEntryPlugin } from './NativeEntryPlugin.js';
@@ -153,6 +154,8 @@ export class RepackPlugin implements RspackPluginInstance {
     }).apply(compiler);
 
     new BabelPlugin().apply(compiler);
+
+    new CodegenPlugin().apply(compiler);
 
     new OutputPlugin({
       platform: this.config.platform,
