@@ -1,4 +1,5 @@
 import type { Compiler, RspackPluginInstance, RuleSetRule } from '@rspack/core';
+import { isRspackCompiler } from './utils/isRspackCompiler.js';
 
 const CODEGEN_RULE = {
   test: /(?:^|[\\/])(?:Native\w+|(\w+)NativeComponent)\.[jt]sx?$/,
@@ -83,6 +84,11 @@ export class CodegenPlugin implements RspackPluginInstance {
   }
 
   apply(compiler: Compiler) {
+    if (!isRspackCompiler(compiler)) {
+      // webpack uses RN babel preset, so we don't need to do anything here
+      return;
+    }
+
     this.ensureHermesParserSyntaxPluginInstalled(compiler.context);
     this.ensureReactNativeCodegenInstalled(compiler.context);
 
