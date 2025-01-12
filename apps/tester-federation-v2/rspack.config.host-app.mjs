@@ -91,7 +91,6 @@ export default (env) => {
             },
           },
         },
-        Repack.REACT_NATIVE_CODEGEN_RULES,
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {

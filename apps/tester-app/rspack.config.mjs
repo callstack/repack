@@ -80,8 +80,6 @@ export default (env) => {
             },
           },
         },
-        // codegen needs to run before other loaders since it needs to access types
-        Repack.REACT_NATIVE_CODEGEN_RULES,
         {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
