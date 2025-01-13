@@ -3,9 +3,9 @@ import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
 import App from './src/App';
 
-// if (!__DEV__) {
-//   ScriptManager.shared.setStorage(AsyncStorage);
-// }
+if (!__DEV__) {
+  ScriptManager.shared.setStorage(AsyncStorage);
+}
 
 ScriptManager.shared.addResolver((scriptId, _caller) => {
   if (__DEV__) {
