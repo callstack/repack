@@ -1,22 +1,52 @@
-/// <reference lib="DOM" />
-
 declare interface LoadScriptEvent {
   type: 'load' | string;
   target?: { src: string };
 }
 
 declare interface RepackRuntime {
-  loadScript: (
-    name: string,
-    caller: string | undefined,
-    done: (event?: LoadScriptEvent) => void,
-    referenceUrl: string
-  ) => void;
-  loadHotUpdate: (url: string, done: (event?: LoadScriptEvent) => void) => void;
   shared: {
     scriptManager?: import('../modules/ScriptManager/ScriptManager.js').ScriptManager;
   };
 }
+
+declare type ModuleExports = Record<string | number | symbol, any>;
+
+declare type ModuleObject = {
+  id: number;
+  loaded: boolean;
+  error?: any;
+  exports: ModuleExports;
+};
+
+declare type WebpackModuleExecutionInterceptor = ((options: {
+  id: number;
+  factory: (
+    moduleObject: ModuleObject,
+    moduleExports: ModuleExports,
+    webpackRequire: WebpackRequire
+  ) => void;
+  module: ModuleObject;
+  require: WebpackRequire;
+}) => void)[];
+
+declare type WebpackLoadScript = (
+  url: string,
+  done: (event?: LoadScriptEvent) => void,
+  key?: string,
+  chunkId?: string
+) => void;
+
+declare type WebpackPublicPath = () => string;
+
+declare type WebpackGetChunkScriptFilename = (id: string) => string;
+
+declare type WebpackRequire = {
+  i: WebpackModuleExecutionInterceptor;
+  l: WebpackLoadScript;
+  p: WebpackPublicPath;
+  u: WebpackGetChunkScriptFilename;
+  repack: RepackRuntime;
+};
 
 declare var __DEV__: boolean;
 declare var __PUBLIC_PROTOCOL__: string;
@@ -29,10 +59,7 @@ declare var __REACT_NATIVE_PATCH_VERSION__: number;
 declare var __webpack_public_path__: string;
 declare var __webpack_hash__: string;
 declare var __repack__: RepackRuntime;
-declare var __webpack_require__: import('../modules/ScriptManager/types.js').WebpackContext & {
-  x?: Function;
-  repack: RepackRuntime;
-};
+declare var __webpack_require__: WebpackRequire;
 
 declare interface HMRInfo {
   type: string;
