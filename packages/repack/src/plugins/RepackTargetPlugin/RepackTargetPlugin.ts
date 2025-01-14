@@ -1,9 +1,9 @@
 import path from 'node:path';
 import type { Compilation, Compiler, RspackPluginInstance } from '@rspack/core';
 import type { RuntimeModule as WebpackRuntimeModule } from 'webpack';
-import { InitRuntimeModule } from './InitRuntimeModule.js';
-import { LoadScriptRuntimeModule } from './LoadScriptRuntimeModule.js';
-import { ModuleErrorHandlerRuntimeModule } from './ModuleErrorHandlerRuntimeModule.js';
+import { makeInitRuntimeModule } from './InitRuntimeModule.js';
+import { makeLoadScriptRuntimeModule } from './LoadScriptRuntimeModule.js';
+import { makeModuleErrorHandlerRuntimeModule } from './ModuleErrorHandlerRuntimeModule.js';
 
 type RspackRuntimeModule = Parameters<
   Compilation['hooks']['runtimeModule']['call']
@@ -56,8 +56,6 @@ export class RepackTargetPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    const Template = compiler.webpack.Template;
-
     const globalObject = 'self';
     compiler.options.target = false;
     compiler.options.output.chunkLoading = 'jsonp';
@@ -73,7 +71,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     new compiler.webpack.BannerPlugin({
       raw: true,
       entryOnly: true,
-      banner: Template.asString([
+      banner: compiler.webpack.Template.asString([
         `/******/ var ${globalObject} = ${globalObject} || this || new Function("return this")() || ({}); // repackGlobal'`,
         '/******/',
       ]),
@@ -106,12 +104,12 @@ export class RepackTargetPlugin implements RspackPluginInstance {
         (chunk) => {
           compilation.addRuntimeModule(
             chunk,
-            new InitRuntimeModule({ globalObject })
+            makeInitRuntimeModule(compiler, { globalObject })
           );
 
           compilation.addRuntimeModule(
             chunk,
-            new ModuleErrorHandlerRuntimeModule({ globalObject })
+            makeModuleErrorHandlerRuntimeModule(compiler, { globalObject })
           );
         }
       );
@@ -122,10 +120,13 @@ export class RepackTargetPlugin implements RspackPluginInstance {
         'RepackTargetPlugin',
         (module, chunk) => {
           if (module.name === 'load_script' || module.name === 'load script') {
-            const loadScriptRuntimeModule = new LoadScriptRuntimeModule({
-              chunkId: chunk.id ?? undefined,
-              hmrEnabled: this.config.hmr ?? false,
-            });
+            const loadScriptRuntimeModule = makeLoadScriptRuntimeModule(
+              compiler,
+              {
+                chunkId: chunk.id ?? undefined,
+                hmrEnabled: this.config.hmr ?? false,
+              }
+            );
 
             // inject runtime module
             this.replaceRuntimeModule(
