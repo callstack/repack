@@ -84,9 +84,9 @@ export class RepackTargetPlugin implements RspackPluginInstance {
         const context = path.dirname(request);
         resource.request = request;
         resource.context = context;
-        // @ts-ignore
+        // @ts-expect-error incomplete rspack types
         resource.createData.resource = request;
-        // @ts-ignore
+        // @ts-expect-error incomplete rspack types
         resource.createData.context = context;
       }
     ).apply(compiler);
