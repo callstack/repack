@@ -24,7 +24,7 @@ export class Script {
    * @param scriptId Id of the script.
    */
   static getDevServerURL(scriptId: string) {
-    return (webpackContext: WebpackRequire) =>
+    return (webpackContext: RepackRuntimeGlobals.WebpackRequire) =>
       `${webpackContext.p}${webpackContext.u(scriptId)}`;
   }
 
@@ -34,7 +34,7 @@ export class Script {
    * @param scriptId Id of the script.
    */
   static getFileSystemURL(scriptId: string) {
-    return (webpackContext: WebpackRequire) =>
+    return (webpackContext: RepackRuntimeGlobals.WebpackRequire) =>
       webpackContext.u(`file:///${scriptId}`);
   }
 
@@ -55,7 +55,8 @@ export class Script {
       return url;
     }
 
-    return (webpackContext: WebpackRequire) => webpackContext.u(url);
+    return (webpackContext: RepackRuntimeGlobals.WebpackRequire) =>
+      webpackContext.u(url);
   }
 
   /**

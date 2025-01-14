@@ -13,7 +13,10 @@ export namespace Federated {
   export type URLResolver = (
     scriptId: string,
     caller?: string
-  ) => string | ((webpackContext: WebpackRequire) => string) | undefined;
+  ) =>
+    | string
+    | ((webpackContext: RepackRuntimeGlobals.WebpackRequire) => string)
+    | undefined;
 
   /**
    * @deprecated
@@ -205,7 +208,7 @@ export namespace Federated {
           );
 
           if (url.includes('[ext]')) {
-            return (webpackContext: WebpackRequire) =>
+            return (webpackContext: RepackRuntimeGlobals.WebpackRequire) =>
               webpackContext.u(url.replace(/\[ext\]/g, ''));
           }
 

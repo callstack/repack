@@ -1,5 +1,5 @@
 var $globalObject$: Record<string, any>;
-var $interceptModuleExecution$: WebpackModuleExecutionInterceptor;
+var $interceptModuleExecution$: RepackRuntimeGlobals.WebpackModuleExecutionInterceptor;
 
 module.exports = function () {
   // intercept module factory calls to forward errors to global.ErrorUtils

@@ -3,6 +3,6 @@
  *
  * __You likely don't need to use it.__
  */
-export function getWebpackContext(): WebpackRequire {
+export function getWebpackContext(): RepackRuntimeGlobals.WebpackRequire {
   return __webpack_require__;
 }

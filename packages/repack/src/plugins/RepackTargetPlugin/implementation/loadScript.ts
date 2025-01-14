@@ -1,12 +1,12 @@
 var $caller$: string;
 var $hmrEnabled$: boolean;
-var $loadScript$: WebpackLoadScript;
+var $loadScript$: RepackRuntimeGlobals.WebpackLoadScript;
 
 module.exports = function () {
   function loadScriptHandler(
     name: string,
     caller: string | undefined,
-    done: (event?: LoadScriptEvent) => void,
+    done: (event?: RepackRuntimeGlobals.LoadScriptEvent) => void,
     referenceUrl: string
   ) {
     if (__webpack_require__.repack.shared.scriptManager) {
@@ -28,7 +28,7 @@ module.exports = function () {
 
   function loadHotUpdateHandler(
     url: string,
-    done: (event?: LoadScriptEvent) => void
+    done: (event?: RepackRuntimeGlobals.LoadScriptEvent) => void
   ) {
     if (!$hmrEnabled$) {
       console.error('[RepackRuntime] Loading HMR update chunks is disabled');
@@ -75,7 +75,7 @@ module.exports = function () {
 
   $loadScript$ = function loadScript(
     url: string,
-    done: (event?: LoadScriptEvent) => void,
+    done: (event?: RepackRuntimeGlobals.LoadScriptEvent) => void,
     key?: string,
     chunkId?: string
   ) {
