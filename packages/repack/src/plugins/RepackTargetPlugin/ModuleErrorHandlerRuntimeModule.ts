@@ -7,6 +7,8 @@ interface ModuleErrorHandlerRuntimeModuleConfig {
   globalObject: string;
 }
 
+// runtime module class is generated dynamically based on the compiler instance
+// this way it's compatible with both webpack and rspack
 export const makeModuleErrorHandlerRuntimeModule = (
   compiler: Compiler,
   moduleConfig: ModuleErrorHandlerRuntimeModuleConfig

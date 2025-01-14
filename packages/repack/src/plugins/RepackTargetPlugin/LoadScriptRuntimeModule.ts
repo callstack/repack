@@ -8,6 +8,8 @@ interface LoadScriptRuntimeModuleConfig {
   hmrEnabled: boolean;
 }
 
+// runtime module class is generated dynamically based on the compiler instance
+// this way it's compatible with both webpack and rspack
 export const makeLoadScriptRuntimeModule = (
   compiler: Compiler,
   moduleConfig: LoadScriptRuntimeModuleConfig
