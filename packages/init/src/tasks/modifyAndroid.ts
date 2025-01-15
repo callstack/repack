@@ -2,15 +2,16 @@ import fs from 'node:fs';
 import path from 'node:path';
 import dedent from 'dedent';
 
+import semver, { type SemVer } from 'semver';
 import logger from '../utils/logger.js';
 
-const defaultNewConfig = dedent`
+const getDefaultConfig = (withAutolinking: boolean) => dedent`
   react {
-      bundleCommand = ""
       cliFile = new File()
-      
-      /* Autolinking */
-      autolinkLibrariesWithApp()
+      bundleCommand = ""
+
+      ${withAutolinking ? '/* Autolinking */' : ''}
+      ${withAutolinking ? 'autolinkLibrariesWithApp()' : ''}
   }`;
 
 function updateBundleCommand(config: string): string {
@@ -37,7 +38,10 @@ function updateCliFile(config: string): string {
   return config.replace('react {', `react {\n    ${cliFileContent}`);
 }
 
-function modifyAppBuildGradleConfig(config: string): string {
+function modifyAppBuildGradleConfig(
+  config: string,
+  withAutolinking: boolean
+): string {
   logger.info('Modifying android/app/build.gradle');
 
   let updatedConfig = config;
@@ -46,10 +50,11 @@ function modifyAppBuildGradleConfig(config: string): string {
   const reactConfigIndex = config.indexOf('react {');
 
   if (reactConfigIndex === -1) {
+    const defaultConfig = getDefaultConfig(withAutolinking);
     // Add the default react config (just before android config) if it doesn't exist
     updatedConfig = config.replace(
       androidConfig,
-      defaultNewConfig + '\n\n' + androidConfig
+      defaultConfig + '\n\n' + androidConfig
     );
   }
 
@@ -65,7 +70,7 @@ function modifyAppBuildGradleConfig(config: string): string {
  * @param cwd path for the root directory of the project
  * @param reactNativeVersion version of react-native in project
  */
-export default function modifyAndroid(cwd: string) {
+export default function modifyAndroid(cwd: string, reactNativeVersion: SemVer) {
   const buildGradlePath = path.join(cwd, 'android', 'app', 'build.gradle');
   const config = fs.readFileSync(buildGradlePath, 'utf-8');
 
@@ -77,9 +82,14 @@ export default function modifyAndroid(cwd: string) {
 
   logger.info('Found android/app/build.gradle');
 
-  const updatedConfig = modifyAppBuildGradleConfig(config);
+  const includeAutolinking = semver.minor(reactNativeVersion) >= 75;
+
+  const updatedConfig = modifyAppBuildGradleConfig(config, includeAutolinking);
 
   fs.writeFileSync(buildGradlePath, updatedConfig);
+
+  logger.success('Added RNC CLI as cliFile to android/app/build.gradle');
+
   logger.success(
     'Added "webpack-bundle" as bundleCommand to android/app/build.gradle'
   );

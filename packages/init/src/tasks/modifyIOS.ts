@@ -101,6 +101,11 @@ export default function modifyIOS(cwd: string) {
   const updatedConfig = modifyPbxprojConfig(projectPbxProjPath);
 
   fs.writeFileSync(projectPbxProjPath, updatedConfig);
+
+  logger.success(
+    'Added RNC CLI as CLI_PATH to build phase shellScript in ${relativeProjectPbxProjPath}'
+  );
+
   logger.success(
     `Added "webpack-bundle" as BUNDLE_COMMAND to build phase shellScript in ${relativeProjectPbxProjPath}`
   );
