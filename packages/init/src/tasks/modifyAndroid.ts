@@ -28,7 +28,7 @@ function updateBundleCommand(config: string): string {
 
 function updateCliFile(config: string): string {
   const cliFileRegex = /(\/\/\s)?cliFile\s*=\s*((file|new\sFile)\(.*\))/;
-  const cliFileContent = `cliFile = new File(["node", "--print", "require('path').dirname(require.resolve('@react-native-community/cli/package.json')) + '/build/bin.js'""].execute(null, rootDir).text.trim())`;
+  const cliFileContent = `cliFile = new File(["node", "--print", "require('path').dirname(require.resolve('@react-native-community/cli/package.json')) + '/build/bin.js'"].execute(null, rootDir).text.trim())`;
 
   if (cliFileRegex.test(config)) {
     return config.replace(cliFileRegex, cliFileContent);
