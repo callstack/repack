@@ -6,46 +6,57 @@ import logger from '../utils/logger.js';
 
 const defaultNewConfig = dedent`
   react {
-      bundleCommand = "webpack-bundle"
+      bundleCommand = ""
+      cliFile = new File()
+      
+      /* Autolinking */
+      autolinkLibrariesWithApp()
   }`;
 
-function modifyNewConfig(config: string): string {
+function updateBundleCommand(config: string): string {
+  const bundleCommandRegex = /(\/\/\s)?bundleCommand\s*=\s*".*?"/;
+  const bundleCommandContent = `bundleCommand = "webpack-bundle"`;
+
+  if (bundleCommandRegex.test(config)) {
+    return config.replace(bundleCommandRegex, bundleCommandContent);
+  }
+
+  // prepend the bundleCommand to the existing react config
+  return config.replace('react {', `react {\n    ${bundleCommandContent}`);
+}
+
+function updateCliFile(config: string): string {
+  const cliFileRegex = /(\/\/\s)?cliFile\s*=\s*((file|new\sFile)\(.*\))/;
+  const cliFileContent = `cliFile = new File(["node", "--print", "require('path').dirname(require.resolve('@react-native-community/cli/package.json')) + '/build/bin.js'""].execute(null, rootDir).text.trim())`;
+
+  if (cliFileRegex.test(config)) {
+    return config.replace(cliFileRegex, cliFileContent);
+  }
+
+  // prepend the bundleCommand to the existing react config
+  return config.replace('react {', `react {\n    ${cliFileContent}`);
+}
+
+function modifyAppBuildGradleConfig(config: string): string {
   logger.info('Modifying android/app/build.gradle');
+
+  let updatedConfig = config;
 
   const androidConfig = 'android {';
   const reactConfigIndex = config.indexOf('react {');
 
   if (reactConfigIndex === -1) {
-    // Add the default react config if it doesn't exist
-    return config.replace(
+    // Add the default react config (just before android config) if it doesn't exist
+    updatedConfig = config.replace(
       androidConfig,
       defaultNewConfig + '\n\n' + androidConfig
     );
   }
 
-  const bundleCommandRegex = /\/\/\sbundleCommand\s*=\s*".*?"/;
-  if (bundleCommandRegex.test(config)) {
-    // Replace the commented out bundleCommand
-    return config.replace(
-      bundleCommandRegex,
-      'bundleCommand = "webpack-bundle"'
-    );
-  }
+  updatedConfig = updateBundleCommand(updatedConfig);
+  updatedConfig = updateCliFile(updatedConfig);
 
-  const existingBundleCommandRegex = /bundleCommand\s*=\s*".*?"/;
-  if (existingBundleCommandRegex.test(config)) {
-    // Replace existing bundleCommand
-    return config.replace(
-      existingBundleCommandRegex,
-      'bundleCommand = "webpack-bundle"'
-    );
-  }
-
-  // Otherwise, add the bundleCommand to the existing config
-  return config.replace(
-    'react {',
-    'react {\n    bundleCommand: "webpack-bundle"'
-  );
+  return updatedConfig;
 }
 
 /**
@@ -66,7 +77,7 @@ export default function modifyAndroid(cwd: string) {
 
   logger.info('Found android/app/build.gradle');
 
-  const updatedConfig = modifyNewConfig(config);
+  const updatedConfig = modifyAppBuildGradleConfig(config);
 
   fs.writeFileSync(buildGradlePath, updatedConfig);
   logger.success(
