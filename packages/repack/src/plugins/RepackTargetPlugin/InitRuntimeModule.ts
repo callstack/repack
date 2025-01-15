@@ -18,7 +18,7 @@ export const makeInitRuntimeModule = (
 
   const InitRuntimeModule = class extends RuntimeModule {
     constructor(private config: InitRuntimeModuleConfig) {
-      super('repack/init', RuntimeModule.STAGE_BASIC);
+      super('repack/init', RuntimeModule.STAGE_NORMAL);
     }
 
     generate() {
