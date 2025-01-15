@@ -65,7 +65,7 @@ function replaceBundleReactNativeShellScript(
     /bin/sh -c "$WITH_ENVIRONMENT $REACT_NATIVE_XCODE"
   `;
 
-  phase.shellScript = script;
+  phase.shellScript = `"${script.replace(/"/g, '\\"').split('\n').join('\\n')}\\n"`;
 
   return phase;
 }
