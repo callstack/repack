@@ -3,7 +3,7 @@ import type {
   RuntimeModule as RuntimeModuleType,
 } from '@rspack/core';
 
-interface ModuleErrorHandlerRuntimeModuleConfig {
+interface GuardedRequireRuntimeModuleConfig {
   globalObject: string;
 }
 
@@ -11,13 +11,13 @@ interface ModuleErrorHandlerRuntimeModuleConfig {
 // this way it's compatible with both webpack and rspack
 export const makeGuardedRequireRuntimeModule = (
   compiler: Compiler,
-  moduleConfig: ModuleErrorHandlerRuntimeModuleConfig
+  moduleConfig: GuardedRequireRuntimeModuleConfig
 ): RuntimeModuleType => {
   const Template = compiler.webpack.Template;
   const RuntimeModule = compiler.webpack.RuntimeModule;
 
   const GuardedRequireRuntimeModule = class extends RuntimeModule {
-    constructor(private config: ModuleErrorHandlerRuntimeModuleConfig) {
+    constructor(private config: GuardedRequireRuntimeModuleConfig) {
       super('repack/guarded require', RuntimeModule.STAGE_NORMAL);
     }
 
