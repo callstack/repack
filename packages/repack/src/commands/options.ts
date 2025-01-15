@@ -113,10 +113,15 @@ export const bundleCommandOptions = [
     description:
       'Directory name where to store assets referenced in the bundle',
   },
-  // noop, but kept for compatibility
+  // noop, needed for compatibility
   {
     name: '--reset-cache',
     description: '(unsupported) Resets the transformation cache',
+  },
+  // noop, needed for compatibility
+  {
+    name: '--config-cmd',
+    description: '(unsupported) Command to generate a JSON project config',
   },
   // options specific to Re.Pack
   {
