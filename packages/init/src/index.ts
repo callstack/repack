@@ -31,7 +31,7 @@ export default async function run({
   try {
     const { cwd, rootDir } = await ensureProjectExists();
     const packageManager = await checkPackageManager(rootDir);
-    const reactNativeVersion = checkReactNative(cwd);
+    checkReactNative(cwd);
 
     await addDependencies(bundler, cwd, packageManager, repackVersion);
 
@@ -39,7 +39,7 @@ export default async function run({
 
     handleReactNativeConfig(bundler, cwd);
 
-    modifyAndroid(cwd, reactNativeVersion);
+    modifyAndroid(cwd);
 
     modifyIOS(cwd);
 
