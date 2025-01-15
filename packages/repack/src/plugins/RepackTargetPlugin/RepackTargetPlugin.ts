@@ -1,6 +1,9 @@
 import path from 'node:path';
 import type { Compilation, Compiler, RspackPluginInstance } from '@rspack/core';
 import type { RuntimeModule as WebpackRuntimeModule } from 'webpack';
+import { makeInitRuntimeModule } from './InitRuntimeModule.js';
+import { makeLoadScriptRuntimeModule } from './LoadScriptRuntimeModule.js';
+import { makeModuleErrorHandlerRuntimeModule } from './ModuleErrorHandlerRuntimeModule.js';
 
 type RspackRuntimeModule = Parameters<
   Compilation['hooks']['runtimeModule']['call']
@@ -27,7 +30,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config?: RepackTargetPluginConfig) {}
+  constructor(private config: RepackTargetPluginConfig) {}
 
   replaceRuntimeModule(
     module: RspackRuntimeModule | WebpackRuntimeModule,
@@ -53,8 +56,6 @@ export class RepackTargetPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    const Template = compiler.webpack.Template;
-
     const globalObject = 'self';
     compiler.options.target = false;
     compiler.options.output.chunkLoading = 'jsonp';
@@ -70,7 +71,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     new compiler.webpack.BannerPlugin({
       raw: true,
       entryOnly: true,
-      banner: Template.asString([
+      banner: compiler.webpack.Template.asString([
         `/******/ var ${globalObject} = ${globalObject} || this || new Function("return this")() || ({}); // repackGlobal'`,
         '/******/',
       ]),
@@ -84,9 +85,9 @@ export class RepackTargetPlugin implements RspackPluginInstance {
         const context = path.dirname(request);
         resource.request = request;
         resource.context = context;
-        // @ts-ignore
+        // @ts-expect-error incomplete rspack types
         resource.createData.resource = request;
-        // @ts-ignore
+        // @ts-expect-error incomplete rspack types
         resource.createData.context = context;
       }
     ).apply(compiler);
@@ -97,38 +98,41 @@ export class RepackTargetPlugin implements RspackPluginInstance {
       require.resolve('../../modules/EmptyModule.js')
     ).apply(compiler);
 
+    compiler.hooks.compilation.tap('RepackTargetPlugin', (compilation) => {
+      compilation.hooks.additionalTreeRuntimeRequirements.tap(
+        'RepackTargetPlugin',
+        (chunk) => {
+          compilation.addRuntimeModule(
+            chunk,
+            makeInitRuntimeModule(compiler, { globalObject })
+          );
+
+          compilation.addRuntimeModule(
+            chunk,
+            makeModuleErrorHandlerRuntimeModule(compiler, { globalObject })
+          );
+        }
+      );
+    });
+
     compiler.hooks.thisCompilation.tap('RepackTargetPlugin', (compilation) => {
       compilation.hooks.runtimeModule.tap(
         'RepackTargetPlugin',
         (module, chunk) => {
-          /**
-           * We inject RePack's runtime modules only when load_script module is present.
-           * This module is injected when:
-           * 1. HMR is enabled
-           * 2. Dynamic import is used anywhere in the project
-           */
           if (module.name === 'load_script' || module.name === 'load script') {
-            const loadScriptGlobal = compiler.webpack.RuntimeGlobals.loadScript;
-            const loadScriptRuntimeModule = Template.asString([
-              Template.getFunctionContent(
-                require('./implementation/loadScript.js')
-              )
-                .replaceAll('$loadScript$', loadScriptGlobal)
-                .replaceAll('$caller$', `'${chunk.id?.toString()}'`),
-            ]);
-
-            const initRuntimeModule = Template.asString([
-              '// Repack runtime initialization logic',
-              Template.getFunctionContent(require('./implementation/init.js'))
-                .replaceAll('$globalObject$', globalObject)
-                .replaceAll('$hmrEnabled$', `${this.config?.hmr ?? false}`),
-            ]);
-
-            // combine both runtime modules
-            const repackRuntimeModule = `${loadScriptRuntimeModule}\n${initRuntimeModule}`;
+            const loadScriptRuntimeModule = makeLoadScriptRuntimeModule(
+              compiler,
+              {
+                chunkId: chunk.id ?? undefined,
+                hmrEnabled: this.config.hmr ?? false,
+              }
+            );
 
             // inject runtime module
-            this.replaceRuntimeModule(module, repackRuntimeModule.toString());
+            this.replaceRuntimeModule(
+              module,
+              loadScriptRuntimeModule.generate()
+            );
           }
 
           // Remove CSS runtime modules

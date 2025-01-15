@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
+import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import TerserPlugin from 'terser-webpack-plugin';
 
 const dirname = Repack.getDirname(import.meta.url);
@@ -196,6 +197,7 @@ export default (env) => {
           },
         ],
       }),
+      new ReanimatedPlugin(),
       // new Repack.plugins.ChunksToHermesBytecodePlugin({
       //   enabled: mode === 'production' && !devServer,
       //   test: /\.(js)?bundle$/,

@@ -1,27 +1,3 @@
-type ModuleExports = Record<string | number | symbol, any>;
-
-type ModuleObject = {
-  id: number;
-  loaded: boolean;
-  error?: any;
-  exports: ModuleExports;
-};
-
-export interface WebpackContext {
-  i: ((options: {
-    id: number;
-    factory: (
-      moduleObject: ModuleObject,
-      moduleExports: ModuleExports,
-      webpackRequire: WebpackContext
-    ) => void;
-    module: ModuleObject;
-    require: WebpackContext;
-  }) => void)[];
-  p: () => string;
-  u: (id: string) => string;
-}
-
 /**
  * Interface specifying how to fetch a script.
  * It represents the output of {@link ScriptLocatorResolver} function used by {@link ScriptManager}.
@@ -38,7 +14,7 @@ export interface ScriptLocator {
    *
    * **Passing query params might lead to unexpected results. To pass query params use `query` field.**
    */
-  url: string | ((webpackContext: WebpackContext) => string);
+  url: string | ((webpackContext: typeof __webpack_require__) => string);
 
   /**
    * Query params to append when building the final URL.
