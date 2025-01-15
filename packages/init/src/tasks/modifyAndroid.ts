@@ -88,7 +88,9 @@ export default function modifyAndroid(cwd: string, reactNativeVersion: SemVer) {
 
   fs.writeFileSync(buildGradlePath, updatedConfig);
 
-  logger.success('Added RNC CLI as cliFile to android/app/build.gradle');
+  logger.success(
+    `Added "@react-native-community/cli" as cliFile to android/app/build.gradle`
+  );
 
   logger.success(
     'Added "webpack-bundle" as bundleCommand to android/app/build.gradle'
