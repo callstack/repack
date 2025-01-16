@@ -3,32 +3,32 @@ import type {
   RuntimeModule as RuntimeModuleType,
 } from '@rspack/core';
 
-interface InitRuntimeModuleConfig {
+interface GuardedRequireRuntimeModuleConfig {
   globalObject: string;
 }
 
 // runtime module class is generated dynamically based on the compiler instance
 // this way it's compatible with both webpack and rspack
-export const makeInitRuntimeModule = (
+export const makeGuardedRequireRuntimeModule = (
   compiler: Compiler,
-  moduleConfig: InitRuntimeModuleConfig
+  moduleConfig: GuardedRequireRuntimeModuleConfig
 ): RuntimeModuleType => {
   const Template = compiler.webpack.Template;
   const RuntimeModule = compiler.webpack.RuntimeModule;
 
-  const InitRuntimeModule = class extends RuntimeModule {
-    constructor(private config: InitRuntimeModuleConfig) {
-      super('repack/init', RuntimeModule.STAGE_NORMAL);
+  const GuardedRequireRuntimeModule = class extends RuntimeModule {
+    constructor(private config: GuardedRequireRuntimeModuleConfig) {
+      super('repack/guarded require', RuntimeModule.STAGE_NORMAL);
     }
 
     generate() {
       return Template.asString([
         Template.getFunctionContent(
-          require('./implementation/init.js')
+          require('./implementation/guardedRequire.js')
         ).replaceAll('$globalObject$', this.config.globalObject),
       ]);
     }
   };
 
-  return new InitRuntimeModule(moduleConfig);
+  return new GuardedRequireRuntimeModule(moduleConfig);
 };

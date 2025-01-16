@@ -1,9 +1,9 @@
 import path from 'node:path';
 import type { Compilation, Compiler, RspackPluginInstance } from '@rspack/core';
 import type { RuntimeModule as WebpackRuntimeModule } from 'webpack';
+import { makeGuardedRequireRuntimeModule } from './GuardedRequireRuntimeModule.js';
 import { makeInitRuntimeModule } from './InitRuntimeModule.js';
 import { makeLoadScriptRuntimeModule } from './LoadScriptRuntimeModule.js';
-import { makeModuleErrorHandlerRuntimeModule } from './ModuleErrorHandlerRuntimeModule.js';
 
 type RspackRuntimeModule = Parameters<
   Compilation['hooks']['runtimeModule']['call']
@@ -62,11 +62,6 @@ export class RepackTargetPlugin implements RspackPluginInstance {
     compiler.options.output.chunkFormat = 'array-push';
     compiler.options.output.globalObject = globalObject;
 
-    // Disable built-in strict module error handling
-    // this is handled through an interceptor in the
-    // init module added to __webpack_require__.i array
-    compiler.options.output.strictModuleErrorHandling = false;
-
     // Normalize global object.
     new compiler.webpack.BannerPlugin({
       raw: true,
@@ -112,12 +107,12 @@ export class RepackTargetPlugin implements RspackPluginInstance {
         (chunk) => {
           compilation.addRuntimeModule(
             chunk,
-            makeInitRuntimeModule(compiler, { globalObject })
+            makeGuardedRequireRuntimeModule(compiler, { globalObject })
           );
 
           compilation.addRuntimeModule(
             chunk,
-            makeModuleErrorHandlerRuntimeModule(compiler, { globalObject })
+            makeInitRuntimeModule(compiler, { globalObject })
           );
         }
       );

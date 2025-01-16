@@ -72,6 +72,7 @@ declare namespace RepackRuntimeGlobals {
   declare type WebpackGetChunkScriptFilename = (id: string) => string;
 
   declare type WebpackRequire = {
+    (moduleId: string): ModuleExports;
     i: WebpackModuleExecutionInterceptor;
     l: WebpackLoadScript;
     p: WebpackPublicPath;
