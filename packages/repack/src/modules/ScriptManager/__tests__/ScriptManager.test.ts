@@ -19,15 +19,17 @@ jest.mock('../NativeScriptManager', () => ({
   },
 }));
 
-globalThis.__webpack_require__ = {
-  i: [],
-  l: () => {},
-  u: (id: string) => `${id}.chunk.bundle`,
-  p: () => '',
-  repack: {
-    shared: { scriptManager: undefined },
-  },
+const webpackRequire = () => [];
+
+webpackRequire.i = [] as any[];
+webpackRequire.l = () => {};
+webpackRequire.u = (id: string) => `${id}.chunk.bundle`;
+webpackRequire.p = () => '';
+webpackRequire.repack = {
+  shared: { scriptManager: undefined },
 };
+
+globalThis.__webpack_require__ = webpackRequire;
 
 class FakeCache {
   data: Record<string, string> = {};
