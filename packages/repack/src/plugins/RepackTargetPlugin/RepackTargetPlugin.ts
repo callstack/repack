@@ -92,6 +92,14 @@ export class RepackTargetPlugin implements RspackPluginInstance {
       }
     ).apply(compiler);
 
+    // ReactNativePrivateInitializeCore.js is an unnecessary module exisiting in order to make metro happy
+    // it reexports InitializeCore which is included as one of the initial modules running before main entrypoint
+    // making this module noop makes inlining entry modules possible which might improve startup time
+    new compiler.webpack.NormalModuleReplacementPlugin(
+      /react-native.*?([/\\]+)Libraries[/\\]ReactPrivate[/\\]ReactNativePrivateInitializeCore\.js$/,
+      require.resolve('../../modules/EmptyModule.js')
+    ).apply(compiler);
+
     // ReactNativeTypes.js is flow type only module
     new compiler.webpack.NormalModuleReplacementPlugin(
       /react-native.*?([/\\]+)Libraries[/\\]Renderer[/\\]shims[/\\]ReactNativeTypes\.js$/,
