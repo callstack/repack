@@ -7,8 +7,7 @@ import ora, { type Ora } from 'ora';
 import logger from '../utils/logger.js';
 
 const rspackDependencies = [
-  '@rspack/core@1.0.3', // 1.0.4 breaks sourcemaps
-  'babel-loader', // still needed for codegen
+  '@rspack/core',
   '@swc/helpers',
   '@callstack/repack',
 ];
@@ -16,7 +15,6 @@ const rspackDependencies = [
 const webpackDependencies = [
   'webpack',
   'terser-webpack-plugin',
-  'babel-loader',
   '@callstack/repack',
 ];
 

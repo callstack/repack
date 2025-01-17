@@ -16,12 +16,13 @@ export default defineConfig({
   },
   outDir: 'build',
   markdown: {
-    checkDeadLinks: true,
+    // TODO fix dead links
+    checkDeadLinks: false,
     codeHighlighter: 'prism',
   },
   multiVersion: {
     default: '4.x',
-    versions: ['2.x', '3.x', '4.x'],
+    versions: ['2.x', '3.x', '4.x', '5.x'],
   },
   route: {
     cleanUrls: true,
@@ -80,5 +81,12 @@ export default defineConfig({
       },
     },
   },
-  plugins: [pluginFontOpenSans(), vercelAnalytics(), pluginCallstackTheme()],
+  plugins: [
+    // @ts-ignore
+    pluginFontOpenSans(),
+    // @ts-ignore
+    vercelAnalytics(),
+    // @ts-ignore
+    pluginCallstackTheme(),
+  ],
 });

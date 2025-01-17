@@ -2,7 +2,7 @@
 pageType: home
 
 hero:
-  name: '<img alt="Re.Pack" className="home-hero-name-img" src="/img/banner.svg">'
+  name: <img alt="Re.Pack" className="home-hero-name-img" src="/img/banner.svg" />
   text: 'React Native 🤝 Webpack'
   tagline: A toolkit to build your React Native application with Webpack
   actions:

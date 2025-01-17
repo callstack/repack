@@ -1,5 +1,12 @@
 # @callstack/repack-plugin-reanimated
 
+## 5.0.0-rc.6
+
+### Patch Changes
+
+- Updated dependencies [[`9570c83`](https://github.com/callstack/repack/commit/9570c83918348a38f2fd01385755e9da0ef6fc08), [`d8eb77e`](https://github.com/callstack/repack/commit/d8eb77e1ebade637d96e44a8b8f3bf0eaf00846b), [`3029ab6`](https://github.com/callstack/repack/commit/3029ab6d48312a51c19a257c11fcd02016a44af3), [`6421e0b`](https://github.com/callstack/repack/commit/6421e0b9b5a91116bad280bae9462f6974f66caa)]:
+  - @callstack/repack@5.0.0-rc.6
+
 ## 5.0.0-rc.5
 
 ### Patch Changes

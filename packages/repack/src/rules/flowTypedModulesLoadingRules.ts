@@ -20,6 +20,7 @@ export const FLOW_TYPED_MODULES_LOADING_RULES: RuleSetRule = {
     'react-native-vector-icons',
     '@react-native-community/datetimepicker',
     'react-native-linear-gradient',
+    'react-native-inappbrowser-reborn',
   ]),
   use: {
     loader: '@callstack/repack/flow-loader',

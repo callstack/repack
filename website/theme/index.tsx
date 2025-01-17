@@ -1,10 +1,39 @@
+import { Announcement } from '@callstack/rspress-theme';
+import { usePageData } from 'rspress/runtime';
 import Theme, {
+  Badge,
   Link,
   PrevNextPage,
   getCustomMDXComponent,
 } from 'rspress/theme';
 
-const Layout = () => <Theme.Layout />;
+const VersionBadge = () => {
+  const pageData = usePageData();
+
+  // hide on overview pages since it's badly positioned
+  if (pageData.page.frontmatter.overview) {
+    return null;
+  }
+
+  return (
+    <div className="py-2">
+      <Badge type="info" outline text={`Version ${pageData.page.version}`} />
+    </div>
+  );
+};
+
+const Layout = () => (
+  <Theme.Layout
+    beforeNav={
+      <Announcement
+        href="5.x/docs/getting-started/quick-start"
+        message="Re.Pack 5 with support for Rspack is coming!"
+        localStorageKey="repack-announcement"
+      />
+    }
+    beforeDocContent={<VersionBadge />}
+  />
+);
 
 export default {
   ...Theme,

@@ -27,6 +27,14 @@ const RepackCorePlugin: () => FederationRuntimePlugin = () => ({
       console.error(`Failed to load remote entry: ${entryGlobalName}`);
     }
   },
+  generatePreloadAssets: async () => {
+    // noop for compatibility
+    return Promise.resolve({
+      cssAssets: [],
+      jsAssetsWithoutEntry: [],
+      entryAssets: [],
+    });
+  },
 });
 
 export default RepackCorePlugin;
