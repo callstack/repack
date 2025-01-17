@@ -88,6 +88,7 @@ export default (env) => {
             /node_modules(.*[/\\])+pretty-format/,
             /node_modules(.*[/\\])+metro/,
             /node_modules(.*[/\\])+abort-controller/,
+            /node_modules(.*[/\\])+@rn-primitives/,
             /node_modules(.*[/\\])+@callstack[/\\]repack/,
           ],
           use: 'babel-loader',
@@ -95,9 +96,7 @@ export default (env) => {
         {
           test: /\.[jt]sx?$/,
           exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-          },
+          use: 'babel-loader',
         },
         {
           test: Repack.getAssetExtensionsRegExp(
