@@ -57,8 +57,6 @@ function replaceBundleReactNativeShellScript(
 
     export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('@react-native-community/cli/package.json')) + '/build/bin.js'")"
 
-    export BUNDLE_COMMAND="webpack-bundle"
-
     WITH_ENVIRONMENT="$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
     REACT_NATIVE_XCODE="$REACT_NATIVE_PATH/scripts/react-native-xcode.sh"
 
@@ -102,11 +100,9 @@ export default function modifyIOS(cwd: string) {
 
   fs.writeFileSync(projectPbxProjPath, updatedConfig);
 
-  logger.success(
+  logger.info(
     `Added "@react-native-community/cli" as CLI_PATH to build phase shellScript in ${relativeProjectPbxProjPath}`
   );
 
-  logger.success(
-    `Added "webpack-bundle" as BUNDLE_COMMAND to build phase shellScript in ${relativeProjectPbxProjPath}`
-  );
+  logger.success('Successfully modified iOS project files');
 }
