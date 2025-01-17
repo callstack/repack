@@ -30,20 +30,12 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    experiments: process.env.LAZY_COMPILATION
+    cache: process.env.USE_CACHE
       ? {
-          lazyCompilation: devServer && {
-            imports: true,
-            entries: false,
-          },
-        }
-      : undefined,
-    cache: process.env.NO_CACHE
-      ? undefined
-      : {
           type: 'filesystem',
           name: `${platform}-${mode}`,
-        },
+        }
+      : undefined,
     entry,
     resolve: {
       ...Repack.getResolveOptions(platform),
@@ -79,24 +71,8 @@ export default (env) => {
       rules: [
         {
           test: /\.[cm]?[jt]sx?$/,
-          include: [
-            /node_modules(.*[/\\])+react-native/,
-            /node_modules(.*[/\\])+@react-native/,
-            /node_modules(.*[/\\])+@react-navigation/,
-            /node_modules(.*[/\\])+@react-native-community/,
-            /node_modules(.*[/\\])+expo/,
-            /node_modules(.*[/\\])+pretty-format/,
-            /node_modules(.*[/\\])+metro/,
-            /node_modules(.*[/\\])+abort-controller/,
-            /node_modules(.*[/\\])+@rn-primitives/,
-            /node_modules(.*[/\\])+@callstack[/\\]repack/,
-          ],
           use: 'babel-loader',
-        },
-        {
-          test: /\.[jt]sx?$/,
-          exclude: /node_modules/,
-          use: 'babel-loader',
+          type: 'javascript/auto',
         },
         {
           test: Repack.getAssetExtensionsRegExp(
