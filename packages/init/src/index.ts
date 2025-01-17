@@ -4,7 +4,6 @@ import checkReactNative from './tasks/checkReactNative.js';
 import createBundlerConfig from './tasks/createBundlerConfig.js';
 import ensureProjectExists from './tasks/ensureProjectExists.js';
 import handleReactNativeConfig from './tasks/handleReactNativeConfig.js';
-import modifyAndroid from './tasks/modifyAndroid.js';
 import modifyIOS from './tasks/modifyIOS.js';
 
 import logger, { enableVerboseLogging } from './utils/logger.js';
@@ -31,15 +30,14 @@ export default async function run({
   try {
     const { cwd, rootDir } = await ensureProjectExists();
     const packageManager = await checkPackageManager(rootDir);
-    const reactNativeVersion = checkReactNative(cwd);
+
+    checkReactNative(cwd);
 
     await addDependencies(bundler, cwd, packageManager, repackVersion);
 
     await createBundlerConfig(bundler, cwd, templateType, entry);
 
     handleReactNativeConfig(bundler, cwd);
-
-    modifyAndroid(cwd, reactNativeVersion);
 
     modifyIOS(cwd);
 
