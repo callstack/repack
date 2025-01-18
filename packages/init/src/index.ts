@@ -38,7 +38,7 @@ export default async function run({
       const isCI = process.env.CI === 'true';
       if (isCI) {
         bundler = 'rspack';
-        logger.info('Running in CI, using rspack');
+        logger.info('Running in CI, using rspack. Use --bundler flag to override.');
       } else {
         bundler = await select({
           message: 'Which bundler would you like to use?',
