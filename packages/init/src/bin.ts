@@ -16,7 +16,6 @@ const argv = yargs(hideBin(process.argv))
     type: 'string',
     choices: ['rspack', 'webpack'],
     description: 'Specify the bundler to use',
-    default: 'rspack',
   })
   .option('custom-version', {
     alias: 'c',

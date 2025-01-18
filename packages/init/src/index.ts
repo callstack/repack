@@ -1,3 +1,4 @@
+import { select } from '@inquirer/prompts';
 import addDependencies from './tasks/addDependencies.js';
 import checkPackageManager from './tasks/checkPackageManager.js';
 import checkReactNative from './tasks/checkReactNative.js';
@@ -32,6 +33,29 @@ export default async function run({
     const packageManager = await checkPackageManager(rootDir);
 
     checkReactNative(cwd);
+
+    if (!bundler) {
+      const isCI = process.env.CI === 'true';
+      if (isCI) {
+        bundler = 'rspack';
+        logger.info('Running in CI, using rspack');
+      } else {
+        bundler = await select({
+          message: 'Which bundler would you like to use?',
+          choices: [
+          {
+            name: 'Rspack (recommended)',
+            value: 'rspack',
+          },
+          {
+            name: 'Webpack',
+            value: 'webpack',
+          }
+        ],
+        default: 'rspack'
+      });
+    }
+  }
 
     await addDependencies(bundler, cwd, packageManager, repackVersion);
 
