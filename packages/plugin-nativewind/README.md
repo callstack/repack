@@ -13,30 +13,50 @@ A toolkit to build your React Native application with Rspack or Webpack.
 [![PRs Welcome][prs-welcome-badge]][prs-welcome]
 [![Code of Conduct][coc-badge]][coc]
 
-`@callstack/repack-plugin-nativewind` is a plugin for `@callstack/repack` that integrates [NativeWind](https://github.com/nativewind/nativewind) into your React Native projects.
+`@callstack/repack-plugin-nativewind` is a plugin for `@callstack/repack` that enables integrating [NativeWind](https://github.com/nativewind/nativewind) into your React Native projects.
 
 ## About
 
-Use NativeWind in Re.Pack projects.
+This plugin seamlessly integrates NativeWind with Re.Pack's build process by:
+
+- Configuring PostCSS and Tailwind CSS processing for your stylesheets
+- Handling conversion of CSS to React Native-compatible styles
+- Setting up proper SWC transformations for NativeWind's JSX runtime
 
 ## Installation
+
+First, follow these steps from the official [NativeWind installation guide](https://www.nativewind.dev/getting-started/react-native):
+
+1. [Install the required dependencies](https://www.nativewind.dev/getting-started/react-native#1-install-the-required-dependencies)
+2. [Setup your Tailwind configuration](https://www.nativewind.dev/getting-started/react-native#2-setup-your-tailwind-configuration)
+3. [Configure Babel plugin](https://www.nativewind.dev/getting-started/react-native#5-configure-babel-plugin)
+4. (Optional) [Setup TypeScript support](https://www.nativewind.dev/getting-started/react-native#7-setup-typescript-support)
+
+Then install the Re.Pack NativeWind plugin:
 
 ```sh
 npm install -D @callstack/repack-plugin-nativewind
 ```
 
-```sh
-npm install nativewind react-native-css-interop
-```
-
 ## Usage
+
+> **Note**: If you are using Webpack (not Rspack), you need to add the following configuration to your `babel.config.js`:
+>
+> ```js
+> plugins: [
+>   [
+>     '@babel/plugin-transform-react-jsx',
+>     {
+>       runtime: 'automatic',
+>       importSource: 'nativewind',
+>     },
+>   ],
+> ],
+> ```
 
 ### Plugin
 
-To add the plugin to your Re.Pack configuration follow this guide: https://www.nativewind.dev/getting-started/react-native
-
-- Follow step 1, 2, and 5 (and optionally 7)
-- At step 3 and 4, instead of editing `babel.config.js` (which is not used) or changing Metro config (again, not used) update your `rspack.config.js` or `webpack.config.js` as follows:
+To add the plugin to your Re.Pack configuration, update your `rspack.config.js` or `webpack.config.js` as follows:
 
 ```js
 import { NativeWindPlugin } from "@callstack/repack-plugin-nativewind";
@@ -47,42 +67,8 @@ export default (env) => {
     // ...
     plugins: [
       // ...
-      new NativeWindPlugin({
-        input: "./global.css",
-      }),
+      new NativeWindPlugin(),
     ],
-  };
-};
-```
-
-### Loader
-
-The plugin also comes with it's own loader, which you can use on it's own inside `rspack.config.js` or `webpack.config.js` like this:
-
-```js
-export default (env) => {
-  // ...
-  return {
-    // ...
-    module: {
-      rules: [
-        {
-          test: /\.ts$/,
-          use: {
-            loader: "@callstack/repack-plugin-nativewind/loader",
-            options: {
-              babelPlugins: [
-                [
-                  "@babel/plugin-syntax-typescript",
-                  { isTSX: false, allowNamespaces: true },
-                ],
-                "nativewind/babel",
-              ],
-            },
-          },
-        },
-      ],
-    },
   };
 };
 ```
