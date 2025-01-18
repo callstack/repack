@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@callstack/rspress-theme": "^0.0.2",
+    "@rspress/plugin-client-redirects": "^1.40.0",
     "rsbuild-plugin-open-graph": "^1.0.2",
     "rspress": "1.39.3",
     "rspress-plugin-font-open-sans": "^1.0.0",

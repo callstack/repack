@@ -599,6 +599,9 @@ importers:
       '@callstack/rspress-theme':
         specifier: ^0.0.2
         version: 0.0.2(react@18.3.1)
+      '@rspress/plugin-client-redirects':
+        specifier: ^1.40.0
+        version: 1.40.0(@rspress/runtime@1.39.3)
       rsbuild-plugin-open-graph:
         specifier: ^1.0.2
         version: 1.0.2(@rsbuild/core@1.1.13)
@@ -2610,6 +2613,12 @@ packages:
     resolution: {integrity: sha512-Z64FILjUaBKNE7c6mRcSL64S11DLpS84CFVQrAEANx1GkliacWoCZO84mWGDirj5iTsuiS6augMJxIaC2RS5tA==}
     engines: {node: '>=14.17.6'}
 
+  '@rspress/plugin-client-redirects@1.40.0':
+    resolution: {integrity: sha512-UTf3dwKYjtDxkX4X2sAPWXPLlNwpm+9rGOjTEhi3knLqo7BjI18H+p3QWFuZtKevDA8Cwh9nMaKxjhCXE2XXGA==}
+    engines: {node: '>=14.17.6'}
+    peerDependencies:
+      '@rspress/runtime': ^1.40.0
+
   '@rspress/plugin-container-syntax@1.39.3':
     resolution: {integrity: sha512-wO/Rk6nGesKmZ/b+HIotkMT3HAeR0Z3QdtpT5qj29CseBeY9L1NhtHiEc0nn2nR3kQKndcEIqRFumvnE01ry7Q==}
     engines: {node: '>=14.17.6'}
@@ -2633,6 +2642,9 @@ packages:
 
   '@rspress/shared@1.39.3':
     resolution: {integrity: sha512-lzOHBJNN4POkSaIWoehXi9iWZvjclLhny+RGP53oTRuOlS6MWORKc3Q2V/ga+2uh2c99DgvPa62dRtqdfazkQQ==}
+
+  '@rspress/shared@1.40.0':
+    resolution: {integrity: sha512-ajIeCBvcv+omuRqIPOue1tAemQA4+FGVJ0C9ZPA1bZeiRSoOmrI+kbcuL7DcI9fL5j/uYwsX0IrmIII74ClJ/w==}
 
   '@rspress/theme-default@1.39.3':
     resolution: {integrity: sha512-3eJc/loocaUpAbrgDJY7a9iX+Og8hLkuIkgCwf4orl57oFdldm8xbAZHtNro71tIgi/c/13kdGDZCCygwut/9A==}
@@ -6927,6 +6939,7 @@ packages:
 
   sudo-prompt@9.2.1:
     resolution: {integrity: sha512-Mu7R0g4ig9TUuGSxJavny5Rv0egCEtpZRNMrZaYS1vxkiIxGiGUwoezU3LazIQ+KE04hTrTfNPgxU5gzi7F5Pw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
@@ -10372,6 +10385,11 @@ snapshots:
     dependencies:
       '@rspress/shared': 1.39.3
 
+  '@rspress/plugin-client-redirects@1.40.0(@rspress/runtime@1.39.3)':
+    dependencies:
+      '@rspress/runtime': 1.39.3
+      '@rspress/shared': 1.40.0
+
   '@rspress/plugin-container-syntax@1.39.3':
     dependencies:
       '@rspress/shared': 1.39.3
@@ -10403,6 +10421,16 @@ snapshots:
       unified: 10.1.2
 
   '@rspress/shared@1.39.3':
+    dependencies:
+      '@rsbuild/core': 1.1.13
+      chalk: 5.4.1
+      execa: 5.1.1
+      fs-extra: 11.2.0
+      gray-matter: 4.0.3
+      lodash-es: 4.17.21
+      unified: 10.1.2
+
+  '@rspress/shared@1.40.0':
     dependencies:
       '@rsbuild/core': 1.1.13
       chalk: 5.4.1
@@ -15245,7 +15273,7 @@ snapshots:
 
   rspress-plugin-devkit@0.3.0(rspress@1.39.3(webpack@5.94.0)):
     dependencies:
-      '@rspress/shared': 1.33.1
+      '@rspress/shared': 1.39.3
       '@types/estree-jsx': 1.0.5
       '@types/hast': 2.3.10
       '@types/mdast': 3.0.15
