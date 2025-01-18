@@ -1,10 +1,10 @@
 import * as path from 'node:path';
 import { pluginCallstackTheme } from '@callstack/rspress-theme/plugin';
+import { pluginClientRedirects } from '@rspress/plugin-client-redirects';
 import { pluginOpenGraph } from 'rsbuild-plugin-open-graph';
 import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
 import vercelAnalytics from 'rspress-plugin-vercel-analytics';
 import { defineConfig } from 'rspress/config';
-import { pluginClientRedirects } from '@rspress/plugin-client-redirects';
 
 export default defineConfig({
   root: path.join(__dirname, 'src'),
@@ -98,7 +98,7 @@ export default defineConfig({
         {
           from: '/docs/$',
           to: '/docs/getting-started',
-        }
+        },
       ],
     }),
   ],
