@@ -38,24 +38,26 @@ export default async function run({
       const isCI = process.env.CI === 'true';
       if (isCI) {
         bundler = 'rspack';
-        logger.info('Running in CI, using rspack. Use --bundler flag to override.');
+        logger.info(
+          'Running in CI, using rspack. Use --bundler flag to override.'
+        );
       } else {
         bundler = await select({
           message: 'Which bundler would you like to use?',
           choices: [
-          {
-            name: 'Rspack (recommended)',
-            value: 'rspack',
-          },
-          {
-            name: 'Webpack',
-            value: 'webpack',
-          }
-        ],
-        default: 'rspack'
-      });
+            {
+              name: 'Rspack (recommended)',
+              value: 'rspack',
+            },
+            {
+              name: 'Webpack',
+              value: 'webpack',
+            },
+          ],
+          default: 'rspack',
+        });
+      }
     }
-  }
 
     await addDependencies(bundler, cwd, packageManager, repackVersion);
 
