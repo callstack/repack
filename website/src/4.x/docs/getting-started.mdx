@@ -45,6 +45,10 @@ To create a new React Native project with Re.Pack or adapt an existing one:
   ```bash 
   npx @callstack/repack-init
   ```
+  ### [Optional] Install project CocoaPods dependencies
+  ```bash 
+  npx pod-install
+  ```
 </Steps>
 
 {/* prettier-ignore-end */}
@@ -159,3 +163,13 @@ react {
     bundleCommand = "webpack-bundle"
 }
 ```
+
+### 6. Install CocoaPods dependencies
+
+For iOS development, you need to install CocoaPods dependencies. From the project root directory run:
+
+```bash
+npx pod-install
+```
+
+This will install all the necessary iOS dependencies for your project, including the Re.Pack native module.
