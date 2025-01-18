@@ -27,7 +27,7 @@ const Layout = () => (
     beforeNav={
       <Announcement
         href="/5.x/docs/getting-started/quick-start"
-        message="Re.Pack 5 with support for Rspack is coming!"
+        message="Preview Re.Pack 5 RC documentation"
         localStorageKey="repack-announcement"
       />
     }
