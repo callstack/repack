@@ -26,7 +26,7 @@ const Layout = () => (
   <Theme.Layout
     beforeNav={
       <Announcement
-        href="5.x/docs/getting-started/quick-start"
+        href="/5.x/docs/getting-started/quick-start"
         message="Re.Pack 5 with support for Rspack is coming!"
         localStorageKey="repack-announcement"
       />
