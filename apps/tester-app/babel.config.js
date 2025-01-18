@@ -6,7 +6,7 @@ module.exports = {
       '@babel/plugin-transform-react-jsx',
       {
         runtime: 'automatic',
-        importSource: 'react-native-css-interop',
+        importSource: 'nativewind',
       },
     ],
   ],
