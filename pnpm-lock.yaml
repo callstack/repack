@@ -464,9 +464,6 @@ importers:
       '@rspack/core':
         specifier: 1.0.8
         version: 1.0.8(@swc/helpers@0.5.15)
-      '@types/babel__core':
-        specifier: 7.20.5
-        version: 7.20.5
       '@types/dedent':
         specifier: 0.7.2
         version: 0.7.2
