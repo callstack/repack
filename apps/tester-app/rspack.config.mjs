@@ -61,15 +61,17 @@ export default (env) => {
           type: 'javascript/auto',
           use: {
             loader: 'builtin:swc-loader',
-            /** @type {import('@rspack/core').SwcLoaderOptions} */
             options: {
               env: {
-                loose: true,
                 targets: {
                   'react-native': '0.74',
                 },
               },
               jsc: {
+                assumptions: {
+                  setPublicClassFields: true,
+                  privateFieldsAsProperties: true,
+                },
                 externalHelpers: true,
                 transform: {
                   react: {

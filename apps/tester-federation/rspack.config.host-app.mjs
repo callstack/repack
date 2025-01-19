@@ -56,37 +56,21 @@ export default (env) => {
         Repack.REACT_NATIVE_LOADING_RULES,
         Repack.NODE_MODULES_LOADING_RULES,
         Repack.FLOW_TYPED_MODULES_LOADING_RULES,
-        /* repack is symlinked to a local workspace */
         {
           test: /\.[jt]sx?$/,
           type: 'javascript/auto',
-          include: [/repack[/\\]dist/],
+          exclude: [/node_modules/],
           use: {
             loader: 'builtin:swc-loader',
             options: {
               env: {
-                loose: true,
-                targets: { 'react-native': '0.74' },
-              },
-              jsc: { externalHelpers: true },
-            },
-          },
-        },
-        /* codebase rules */
-        {
-          test: /\.[jt]sx?$/,
-          type: 'javascript/auto',
-          exclude: [/node_modules/, /repack[/\\]dist/],
-          use: {
-            loader: 'builtin:swc-loader',
-            /** @type {import('@rspack/core').SwcLoaderOptions} */
-            options: {
-              sourceMaps: true,
-              env: {
-                loose: true,
                 targets: { 'react-native': '0.74' },
               },
               jsc: {
+                assumptions: {
+                  setPublicClassFields: true,
+                  privateFieldsAsProperties: true,
+                },
                 externalHelpers: true,
                 transform: {
                   react: {

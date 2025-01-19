@@ -5,12 +5,14 @@ const makeSwcLoaderConfig = (syntax: 'js' | 'ts', jsx: boolean) => ({
   loader: 'builtin:swc-loader',
   options: {
     env: {
-      loose: true,
       targets: { 'react-native': '0.74' },
     },
     jsc: {
+      assumptions: {
+        setPublicClassFields: true,
+        privateFieldsAsProperties: true,
+      },
       externalHelpers: true,
-      loose: true,
       parser:
         syntax === 'js'
           ? { syntax: 'ecmascript', jsx: jsx }
