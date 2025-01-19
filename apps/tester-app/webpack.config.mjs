@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
+import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import TerserPlugin from 'terser-webpack-plugin';
 
@@ -29,20 +30,12 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    experiments: process.env.LAZY_COMPILATION
+    cache: process.env.USE_CACHE
       ? {
-          lazyCompilation: devServer && {
-            imports: true,
-            entries: false,
-          },
-        }
-      : undefined,
-    cache: process.env.NO_CACHE
-      ? undefined
-      : {
           type: 'filesystem',
           name: `${platform}-${mode}`,
-        },
+        }
+      : undefined,
     entry,
     resolve: {
       ...Repack.getResolveOptions(platform),
@@ -78,25 +71,8 @@ export default (env) => {
       rules: [
         {
           test: /\.[cm]?[jt]sx?$/,
-          include: [
-            /node_modules(.*[/\\])+react-native/,
-            /node_modules(.*[/\\])+@react-native/,
-            /node_modules(.*[/\\])+@react-navigation/,
-            /node_modules(.*[/\\])+@react-native-community/,
-            /node_modules(.*[/\\])+expo/,
-            /node_modules(.*[/\\])+pretty-format/,
-            /node_modules(.*[/\\])+metro/,
-            /node_modules(.*[/\\])+abort-controller/,
-            /node_modules(.*[/\\])+@callstack[/\\]repack/,
-          ],
           use: 'babel-loader',
-        },
-        {
-          test: /\.[jt]sx?$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-          },
+          type: 'javascript/auto',
         },
         {
           test: Repack.getAssetExtensionsRegExp(
@@ -198,6 +174,7 @@ export default (env) => {
         ],
       }),
       new ReanimatedPlugin(),
+      new NativeWindPlugin(),
       // new Repack.plugins.ChunksToHermesBytecodePlugin({
       //   enabled: mode === 'production' && !devServer,
       //   test: /\.(js)?bundle$/,

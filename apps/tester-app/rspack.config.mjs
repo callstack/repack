@@ -2,6 +2,7 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
+import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 
@@ -76,6 +77,7 @@ export default (env) => {
                 transform: {
                   react: {
                     runtime: 'automatic',
+                    importSource: 'nativewind',
                   },
                 },
               },
@@ -157,7 +159,6 @@ export default (env) => {
         },
       ],
     },
-
     plugins: [
       /**
        * Configure other required and additional plugins to make the bundle
@@ -198,6 +199,7 @@ export default (env) => {
       // }),
       process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
       new ReanimatedPlugin(),
+      new NativeWindPlugin(),
     ].filter(Boolean),
   };
 };
