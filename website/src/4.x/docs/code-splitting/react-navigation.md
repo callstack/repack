@@ -9,6 +9,7 @@ import * as React from 'react';
 import { Text } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStaticNavigation } from '@react-navigation/native';
 
 const StudentSide = React.lazy(
   () => import(/* webpackChunkName: "student" */ './StudentSide.js')
@@ -20,30 +21,51 @@ const TeacherSide = React.lazy(
 
 const StudentSideScreen = () => {
   const { params: { user } } = useRoute();
+
   return (
-    <React.Suspense fallback={<Text>Loading...</Text>}>
-      <StudentSide user={user} />
-    </React.Suspense>
+    <StudentSide user={user} />
   );
 };
 
 const TeacherSideScreen = () => {
   const { params: { user } } = useRoute();
+
   return (
-    <React.Suspense fallback={<Text>Loading...</Text>}>
-      <TeacherSide user={user} />
-    </React.Suspense>
+    <TeacherSide user={user} />
   );
 };
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator({
+  groups: {
+    App: {
+      screenLayout: ({ children }) => (
+        <React.Suspense fallback={<Text>Loading...</Text>}>
+          {children}
+        </React.Suspense>
+      ),
+      screens: {
+        StudentScreen: {
+          screen: StudentSideScreen,
+          options: {
+            title: "Student",
+          },
+        },
+        TeacherScreen: {
+          screen: TeacherSideScreen,
+          options: {
+            title: "Teacher",
+          },
+        },
+      },
+    },
+  },
+});
+
+const Navigation = createStaticNavigation(Stack);
 
 export function Home() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="StudentScreen" component={StudentSizeScreen} />
-      <Stack.Screen name="TeacherScreen" component={TeacherSideScreen} />
-    </Stack.Navigator>
+    <Navigation />
   )
 }
 
