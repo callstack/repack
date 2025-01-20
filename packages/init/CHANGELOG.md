@@ -1,5 +1,13 @@
 # @callstack/repack-init
 
+## 5.0.0-rc.7
+
+### Minor Changes
+
+- [#869](https://github.com/callstack/repack/pull/869) [`30fa495`](https://github.com/callstack/repack/commit/30fa4955008460fc94926a8d2cefb2efbd198cb5) Thanks [@jbroma](https://github.com/jbroma)! - Use `@react-native-community/cli` explictly iOS project settings (through `CLI_PATH`).
+
+  Drop (unofficial) support for modyfing Android config for RN versions < 0.71.
+
 ## 5.0.0-rc.6
 
 ## 5.0.0-rc.5
