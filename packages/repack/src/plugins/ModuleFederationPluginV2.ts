@@ -252,6 +252,8 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     compiler.options.ignoreWarnings.push((warning) => {
       if ('moduleDescriptor' in warning) {
         const moduleDescriptor = warning.moduleDescriptor as JsModuleDescriptor;
+
+        // warning can come from either runtime or runtime-core (in newer versions of MF2)
         const isMF2Runtime = moduleDescriptor.name.endsWith(
           '@module-federation/runtime/dist/index.cjs.js'
         );
