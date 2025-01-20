@@ -6,7 +6,19 @@ import type {
   SwcLoaderOptions,
 } from '@rspack/core';
 
+interface NativeWindPluginOptions {
+  /**
+   * Whether to check if the required dependencies are installed in the project.
+   * If not, an error will be thrown. Defaults to `true`.
+   */
+  checkDependencies?: boolean;
+}
+
 export class NativeWindPlugin implements RspackPluginInstance {
+  constructor(private options: NativeWindPluginOptions = {}) {
+    this.options.checkDependencies = this.options.checkDependencies ?? true;
+  }
+
   private configureSwcLoaderForNativeWind(
     swcOptions: SwcLoaderOptions = {}
   ): SwcLoaderOptions {
@@ -82,7 +94,9 @@ export class NativeWindPlugin implements RspackPluginInstance {
   }
 
   apply(compiler: Compiler) {
-    this.ensureNativewindDependenciesInstalled(compiler.context);
+    if (this.options.checkDependencies) {
+      this.ensureNativewindDependenciesInstalled(compiler.context);
+    }
 
     /**
      * First, we need to process the CSS files using PostCSS.
