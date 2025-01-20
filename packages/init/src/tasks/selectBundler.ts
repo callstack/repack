@@ -1,6 +1,6 @@
 import { select } from '@inquirer/prompts';
-import logger from '../utils/logger.js';
 import { isTruthyEnv } from '../utils/isTruthyEnv.js';
+import logger from '../utils/logger.js';
 
 export default async function selectBundler(): Promise<'rspack' | 'webpack'> {
   if (isTruthyEnv(process.env.CI)) {

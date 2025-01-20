@@ -1,4 +1,3 @@
-import { select } from '@inquirer/prompts';
 import addDependencies from './tasks/addDependencies.js';
 import checkPackageManager from './tasks/checkPackageManager.js';
 import checkReactNative from './tasks/checkReactNative.js';
