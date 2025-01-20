@@ -32,11 +32,13 @@ First, follow these steps from the official [NativeWind installation guide](http
 3. [Configure Babel plugin](https://www.nativewind.dev/getting-started/react-native#5-configure-babel-plugin)
 4. (Optional) [Setup TypeScript support](https://www.nativewind.dev/getting-started/react-native#7-setup-typescript-support)
 
-Then install the Re.Pack NativeWind plugin:
+Then install the Re.Pack NativeWind plugin and it's dependencies:
 
 ```sh
-npm install -D @callstack/repack-plugin-nativewind
+npm install -D @callstack/repack-plugin-nativewind postcss postcss-loader autoprefixer
 ```
+
+These additional dependencies (`postcss`, `postcss-loader`, and `autoprefixer`) are required for processing Tailwind CSS with Webpack/Rspack, as specified in the [official Tailwind CSS Rspack guide](https://tailwindcss.com/docs/guides/rspack). They enable PostCSS processing and autoprefixing of CSS styles in your build pipeline.
 
 ## Usage
 
