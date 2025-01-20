@@ -4,5 +4,6 @@
   "bundle-analysis",
   "inline-assets",
   "remote-assets",
-  "svg"
+  "svg",
+  "running-on-device"
 ]

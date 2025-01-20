@@ -1,0 +1,44 @@
+import { PackageManagerTabs } from 'rspress/theme';
+
+# Running on device
+
+Follow the necessary steps for both platforms as outlined in the [official React Native documentation](https://reactnative.dev/docs/running-on-device?platform=ios#running-your-app-on-ios-devices) to run the app on your devices. 
+After completing those steps, refer to this guide to set up connectivity to the development server!
+
+## Connecting to development server
+
+:::info 
+Before doing any further steps, ensure to be on the same Wi-Fi network as your computer. 
+:::
+
+To run the app development server, you need to specify your _IP address_ as the host:
+
+<PackageManagerTabs command="run start --host IP_ADDRESS" />
+
+## [Optional] With Module Federation
+
+To run the development server for both the host app and micro-frontends on a device, follow these steps:
+
+1. Modify `your` configuration file (`webpack.config.{mjs,cjs,js}`) to replace `localhost` with your _IP address_ in the `ModuleFederationPluginV2` settings for your remotes:
+
+```
+new Repack.plugins.ModuleFederationPlugin({
+  name: 'host',
+  dts: false,
+  remotes: {
+    booking: `booking@http://IP_ADDRESS:9000/${platform}/mf-manifest.json`,
+    shopping: `shopping@http://IP_ADDRESS:9001/${platform}/mf-manifest.json`,
+    dashboard: `dashboard@http://IP_ADDRESS:9002/${platform}/mf-manifest.json`,
+    auth: `auth@http://IP_ADDRESS:9003/${platform}/mf-manifest.json`,
+  },
+}),
+```
+
+2. Start the host app development server by navigating to its directory and running the command below, specifying your _IP address_ as the host:
+
+<PackageManagerTabs command="run start --host IP_ADDRESS" />
+
+3. Start the micro-frontend development servers by navigating to each micro-frontend directory and running the command below, specifying your _IP address_ as the host:
+
+<PackageManagerTabs command="run start --host IP_ADDRESS" />
+
