@@ -6,6 +6,7 @@ import createBundlerConfig from './tasks/createBundlerConfig.js';
 import ensureProjectExists from './tasks/ensureProjectExists.js';
 import handleReactNativeConfig from './tasks/handleReactNativeConfig.js';
 import modifyIOS from './tasks/modifyIOS.js';
+import selectBundler from './tasks/selectBundler.js';
 
 import logger, { enableVerboseLogging } from './utils/logger.js';
 
@@ -35,28 +36,7 @@ export default async function run({
     checkReactNative(cwd);
 
     if (!bundler) {
-      const isCI = process.env.CI === 'true';
-      if (isCI) {
-        bundler = 'rspack';
-        logger.info(
-          'Running in CI, using rspack. Use --bundler flag to override.'
-        );
-      } else {
-        bundler = await select({
-          message: 'Which bundler would you like to use?',
-          choices: [
-            {
-              name: 'Rspack (recommended)',
-              value: 'rspack',
-            },
-            {
-              name: 'Webpack',
-              value: 'webpack',
-            },
-          ],
-          default: 'rspack',
-        });
-      }
+      bundler = await selectBundler();
     }
 
     await addDependencies(bundler, cwd, packageManager, repackVersion);
