@@ -55,7 +55,35 @@ export class NativeWindPlugin implements RspackPluginInstance {
     return this.configureSwcLoaderForNativeWind(ruleOptionsField);
   }
 
+  private ensureDependencyInstalled(context: string, dependency: string) {
+    try {
+      require.resolve(dependency, { paths: [context] });
+    } catch {
+      throw new Error(
+        `[RepackNativeWindPlugin] ${dependency} is required but not found in your project. ` +
+          'Did you forget to install it?'
+      );
+    }
+  }
+
+  private ensureNativewindDependenciesInstalled(context: string) {
+    const dependencies = [
+      'nativewind',
+      'react-native-css-interop',
+      'postcss',
+      'postcss-loader',
+      'tailwindcss',
+      'autoprefixer',
+    ];
+
+    dependencies.forEach((dependency) => {
+      this.ensureDependencyInstalled(context, dependency);
+    });
+  }
+
   apply(compiler: Compiler) {
+    this.ensureNativewindDependenciesInstalled(compiler.context);
+
     /**
      * First, we need to process the CSS files using PostCSS.
      * The PostCSS loader will use Tailwind CSS to generate the necessary utility classes
