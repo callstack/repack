@@ -252,13 +252,17 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     compiler.options.ignoreWarnings.push((warning) => {
       if ('moduleDescriptor' in warning) {
         const moduleDescriptor = warning.moduleDescriptor as JsModuleDescriptor;
-        const moduleName = '@module-federation/runtime/dist/index.cjs.js';
-        const isMF2Runtime = moduleDescriptor.name.endsWith(moduleName);
-        const requestExpressionWarning =
-          /Critical dependency: the request of a dependency is an expression/;
+        const isMF2Runtime = moduleDescriptor.name.endsWith(
+          '@module-federation/runtime/dist/index.cjs.js'
+        );
+        const isMF2RuntimeCore = moduleDescriptor.name.endsWith(
+          '@module-federation/runtime-core/dist/index.cjs.js'
+        );
 
-        if (isMF2Runtime && requestExpressionWarning.test(warning.message)) {
-          return true;
+        if (isMF2Runtime || isMF2RuntimeCore) {
+          const requestExpressionWarning =
+            /Critical dependency: the request of a dependency is an expression/;
+          return requestExpressionWarning.test(warning.message);
         }
       }
 
