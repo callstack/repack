@@ -5,6 +5,7 @@ import createBundlerConfig from './tasks/createBundlerConfig.js';
 import ensureProjectExists from './tasks/ensureProjectExists.js';
 import handleReactNativeConfig from './tasks/handleReactNativeConfig.js';
 import modifyIOS from './tasks/modifyIOS.js';
+import selectBundler from './tasks/selectBundler.js';
 
 import logger, { enableVerboseLogging } from './utils/logger.js';
 
@@ -32,6 +33,10 @@ export default async function run({
     const packageManager = await checkPackageManager(rootDir);
 
     checkReactNative(cwd);
+
+    if (!bundler) {
+      bundler = await selectBundler();
+    }
 
     await addDependencies(bundler, cwd, packageManager, repackVersion);
 
