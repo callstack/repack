@@ -1,5 +1,38 @@
 # @callstack/repack
 
+## 5.0.0-rc.7
+
+### Minor Changes
+
+- [#872](https://github.com/callstack/repack/pull/872) [`0e600d4`](https://github.com/callstack/repack/commit/0e600d4d8df577622ba8cbc49ff1ef80f257620d) Thanks [@jbroma](https://github.com/jbroma)! - Enable inlining entry modules by making runtime initialization from React renderers a no-op
+
+- [#841](https://github.com/callstack/repack/pull/841) [`d9d64ef`](https://github.com/callstack/repack/commit/d9d64ef6438e75086bd970cd600e936e46e7962f) Thanks [@borisyankov](https://github.com/borisyankov)! - Add support for NativeWind through a dedicated optional plugin called `@callstack/repack-plugin-nativewind`
+
+- [#869](https://github.com/callstack/repack/pull/869) [`30fa495`](https://github.com/callstack/repack/commit/30fa4955008460fc94926a8d2cefb2efbd198cb5) Thanks [@jbroma](https://github.com/jbroma)! - Use `@react-native-community/cli` explictly iOS project settings (through `CLI_PATH`).
+
+  Drop (unofficial) support for modyfing Android config for RN versions < 0.71.
+
+- [#865](https://github.com/callstack/repack/pull/865) [`3bfb690`](https://github.com/callstack/repack/commit/3bfb6909d7363787bbfd1584e1749b4ff516aa92) Thanks [@jbroma](https://github.com/jbroma)! - Add CodegenPlugin as part of RepackPlugin to handle React Native Codegen babel transforms
+
+- [#864](https://github.com/callstack/repack/pull/864) [`5aa009c`](https://github.com/callstack/repack/commit/5aa009c9ea1fada2572813effc0d88499a509c0f) Thanks [@jbroma](https://github.com/jbroma)! - Make babel-loader a dependecy
+
+### Patch Changes
+
+- [#870](https://github.com/callstack/repack/pull/870) [`abf190e`](https://github.com/callstack/repack/commit/abf190e7e2571b3ef66cba9d26dd65d1548e4ab7) Thanks [@jbroma](https://github.com/jbroma)! - Install latest version of `@rspack/core` with repack-init
+
+- [#869](https://github.com/callstack/repack/pull/869) [`30fa495`](https://github.com/callstack/repack/commit/30fa4955008460fc94926a8d2cefb2efbd198cb5) Thanks [@jbroma](https://github.com/jbroma)! - Add `--config-cmd` to options for bundle command for compatibility with RN >= 0.76
+
+- [#880](https://github.com/callstack/repack/pull/880) [`cdfdca4`](https://github.com/callstack/repack/commit/cdfdca4aa481020d4b2cbd260297e39984384d1c) Thanks [@jbroma](https://github.com/jbroma)! - Fix swc loader module rules loose mode configuration
+
+- [#871](https://github.com/callstack/repack/pull/871) [`93f2c74`](https://github.com/callstack/repack/commit/93f2c745092ae83e31bc1ac9fe5c89a5b64c495f) Thanks [@jbroma](https://github.com/jbroma)! - Add error boundary around webpack's require function to match Metro's error handling behavior more closely
+
+- [#868](https://github.com/callstack/repack/pull/868) [`96915f8`](https://github.com/callstack/repack/commit/96915f80b08e474127271475d132644efeab4bee) Thanks [@jbroma](https://github.com/jbroma)! - Decouple init & module error handling from load script runtime module inside RepackTargetPlugin
+
+- [#867](https://github.com/callstack/repack/pull/867) [`153d1d4`](https://github.com/callstack/repack/commit/153d1d4513498a85ccc7303222455c3372108406) Thanks [@ra1nj](https://github.com/ra1nj)! - Add 'react-native-inappbrowser-reborn' in flowTypedModulesLoadingRules.
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-rc.7
+
 ## 5.0.0-rc.6
 
 ### Minor Changes
