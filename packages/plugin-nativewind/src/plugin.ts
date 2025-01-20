@@ -71,10 +71,13 @@ export class NativeWindPlugin implements RspackPluginInstance {
     try {
       require.resolve(dependency, { paths: [context] });
     } catch {
-      throw new Error(
-        `[RepackNativeWindPlugin] ${dependency} is required but not found in your project. ` +
+      const error = new Error(
+        `[RepackNativeWindPlugin] Dependency named '${dependency}' is required but not found in your project. ` +
           'Did you forget to install it?'
       );
+      // remove the stack trace to make the error more readable
+      error.stack = undefined;
+      throw error;
     }
   }
 
