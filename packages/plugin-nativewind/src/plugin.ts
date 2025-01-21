@@ -6,7 +6,19 @@ import type {
   SwcLoaderOptions,
 } from '@rspack/core';
 
+interface NativeWindPluginOptions {
+  /**
+   * Whether to check if the required dependencies are installed in the project.
+   * If not, an error will be thrown. Defaults to `true`.
+   */
+  checkDependencies?: boolean;
+}
+
 export class NativeWindPlugin implements RspackPluginInstance {
+  constructor(private options: NativeWindPluginOptions = {}) {
+    this.options.checkDependencies = this.options.checkDependencies ?? true;
+  }
+
   private configureSwcLoaderForNativeWind(
     swcOptions: SwcLoaderOptions = {}
   ): SwcLoaderOptions {
@@ -55,7 +67,40 @@ export class NativeWindPlugin implements RspackPluginInstance {
     return this.configureSwcLoaderForNativeWind(ruleOptionsField);
   }
 
+  private ensureDependencyInstalled(context: string, dependency: string) {
+    try {
+      require.resolve(dependency, { paths: [context] });
+    } catch {
+      const error = new Error(
+        `[RepackNativeWindPlugin] Dependency named '${dependency}' is required but not found in your project. ` +
+          'Did you forget to install it?'
+      );
+      // remove the stack trace to make the error more readable
+      error.stack = undefined;
+      throw error;
+    }
+  }
+
+  private ensureNativewindDependenciesInstalled(context: string) {
+    const dependencies = [
+      'nativewind',
+      'react-native-css-interop',
+      'postcss',
+      'postcss-loader',
+      'tailwindcss',
+      'autoprefixer',
+    ];
+
+    dependencies.forEach((dependency) => {
+      this.ensureDependencyInstalled(context, dependency);
+    });
+  }
+
   apply(compiler: Compiler) {
+    if (this.options.checkDependencies) {
+      this.ensureNativewindDependenciesInstalled(compiler.context);
+    }
+
     /**
      * First, we need to process the CSS files using PostCSS.
      * The PostCSS loader will use Tailwind CSS to generate the necessary utility classes
