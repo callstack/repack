@@ -100,7 +100,7 @@
     "@babel/core": "^7.25.2",
     "@babel/plugin-transform-export-namespace-from": "^7.24.6",
     "@babel/plugin-transform-modules-commonjs": "^7.23.2",
-    "@module-federation/enhanced": "0.6.10",
+    "@module-federation/enhanced": "0.8.9",
     "@module-federation/sdk": "0.6.10",
     "@react-native-community/cli": "15.0.1",
     "@react-native-community/cli-types": "15.0.1",
