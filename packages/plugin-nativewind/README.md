@@ -29,7 +29,7 @@ First, follow these steps from the official [NativeWind installation guide](http
 
 1. [Install NativeWind](https://www.nativewind.dev/getting-started/react-native#installation)
 2. [Setup Tailwind CSS](https://www.nativewind.dev/getting-started/react-native#2-setup-tailwind-css)
-3. [Add the Babel preset](https://www.nativewind.dev/getting-started/react-native#3-add-the-babel-preset)
+3. [Import your CSS file](https://www.nativewind.dev/getting-started/react-native#5-import-your-css-file)
 4. (Optional) [Setup TypeScript support](https://www.nativewind.dev/getting-started/typescript)
 
 Then install the Re.Pack NativeWind plugin:
