@@ -27,10 +27,10 @@ This plugin seamlessly integrates NativeWind with Re.Pack's build process by:
 
 First, follow these steps from the official [NativeWind installation guide](https://www.nativewind.dev/getting-started/react-native):
 
-1. [Install the required dependencies](https://www.nativewind.dev/getting-started/react-native#1-install-the-required-dependencies)
-2. [Setup your Tailwind configuration](https://www.nativewind.dev/getting-started/react-native#2-setup-your-tailwind-configuration)
-3. [Configure Babel plugin](https://www.nativewind.dev/getting-started/react-native#5-configure-babel-plugin)
-4. (Optional) [Setup TypeScript support](https://www.nativewind.dev/getting-started/react-native#7-setup-typescript-support)
+1. [Install NativeWind](https://www.nativewind.dev/getting-started/react-native#installation)
+2. [Setup Tailwind CSS](https://www.nativewind.dev/getting-started/react-native#2-setup-tailwind-css)
+3. [Import your CSS file](https://www.nativewind.dev/getting-started/react-native#5-import-your-css-file)
+4. (Optional) [Setup TypeScript support](https://www.nativewind.dev/getting-started/typescript)
 
 Then install the Re.Pack NativeWind plugin and it's dependencies:
 
