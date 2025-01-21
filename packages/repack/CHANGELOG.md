@@ -1,5 +1,18 @@
 # @callstack/repack
 
+## 5.0.0-rc.8
+
+### Minor Changes
+
+- [#877](https://github.com/callstack/repack/pull/877) [`919ffb8`](https://github.com/callstack/repack/commit/919ffb869588cef0eb120e5195d16952e0e45808) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Add prompt for choosing the bundler in `repack-init`
+
+### Patch Changes
+
+- [#883](https://github.com/callstack/repack/pull/883) [`2e953c5`](https://github.com/callstack/repack/commit/2e953c56157dad3e131be25e2eeb93ddf60919ed) Thanks [@jbroma](https://github.com/jbroma)! - Fix crash when warning without moduleDescriptor was being thrown
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-rc.8
+
 ## 5.0.0-rc.7
 
 ### Minor Changes

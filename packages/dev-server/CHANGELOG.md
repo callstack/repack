@@ -1,5 +1,7 @@
 # @callstack/repack-dev-server
 
+## 5.0.0-rc.8
+
 ## 5.0.0-rc.7
 
 ## 5.0.0-rc.6
