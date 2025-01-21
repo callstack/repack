@@ -1,5 +1,14 @@
 # @callstack/repack
 
+## 4.4.1
+
+### Patch Changes
+
+- [#887](https://github.com/callstack/repack/pull/887) [`5521287`](https://github.com/callstack/repack/commit/5521287762cc6e34b7ed2cef107c7b7d6d8604ae) Thanks [@jbroma](https://github.com/jbroma)! - Fix bundling for RN 76
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@4.4.1
+
 ## 4.4.0
 
 ### Minor Changes
