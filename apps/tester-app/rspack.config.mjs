@@ -199,7 +199,7 @@ export default (env) => {
       // }),
       process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
       new ReanimatedPlugin(),
-      new NativeWindPlugin(),
+      new NativeWindPlugin({ cssInteropOptions: { inlineRem: 16 } }),
     ].filter(Boolean),
   };
 };

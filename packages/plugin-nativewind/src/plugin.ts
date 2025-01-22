@@ -5,6 +5,7 @@ import type {
   RuleSetUseItem,
   SwcLoaderOptions,
 } from '@rspack/core';
+import type { CssToReactNativeRuntimeOptions } from 'react-native-css-interop/css-to-rn';
 
 interface NativeWindPluginOptions {
   /**
@@ -12,6 +13,11 @@ interface NativeWindPluginOptions {
    * If not, an error will be thrown. Defaults to `true`.
    */
   checkDependencies?: boolean;
+
+  /**
+   * Custom cssToReactNativeRuntime options.
+   */
+  cssInteropOptions?: Omit<CssToReactNativeRuntimeOptions, 'cache'>;
 }
 
 export class NativeWindPlugin implements RspackPluginInstance {
@@ -113,7 +119,10 @@ export class NativeWindPlugin implements RspackPluginInstance {
     compiler.options.module.rules.push({
       test: /\.css$/,
       use: [
-        { loader: '@callstack/repack-plugin-nativewind/loader' },
+        {
+          loader: '@callstack/repack-plugin-nativewind/loader',
+          options: this.options.cssInteropOptions,
+        },
         {
           loader: 'postcss-loader',
           options: {
