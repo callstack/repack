@@ -1,8 +1,9 @@
 import path from 'node:path';
-import { input } from '@inquirer/prompts';
+import { select, text } from '@clack/prompts';
 import { findRoot } from '@manypkg/find-root';
 import { execa } from 'execa';
 import logger from '../utils/logger.js';
+import { checkCancelPrompt } from '../utils/prompts.js';
 
 /**
  * Ensures that the project exists and prompts the user to create one if it doesn't
@@ -25,20 +26,27 @@ export default async function ensureProjectExists(): Promise<{
   let projectName: string;
 
   try {
-    const shouldCreateNewProject = await input({
-      default: 'y',
-      message: 'Would you like to create a new project? [y/n]',
-      validate: (value) => value === 'y' || value === 'n',
-    });
+    const shouldCreateNewProject = checkCancelPrompt(
+      await select({
+        message: 'Would you like to create a new project? [y/n]',
+        initialValue: 'y',
+        options: [
+          { label: 'Yes', value: 'y' },
+          { label: 'No', value: 'n' },
+        ],
+      })
+    );
 
     if (shouldCreateNewProject !== 'y') {
       throw new Error('Cancelled by user');
     }
 
-    projectName = await input({
-      message: 'How would you like to name the app?',
-      validate: (value) => !!value,
-    });
+    projectName = checkCancelPrompt(
+      await text({
+        defaultValue: 'repack-app',
+        message: 'How would you like to name the app?',
+      })
+    );
   } catch (error) {
     logger.warn('Re.Pack setup cancelled by user');
     logger.info(`Reason: ${error}`);
