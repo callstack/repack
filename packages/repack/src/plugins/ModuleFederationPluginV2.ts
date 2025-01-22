@@ -117,7 +117,7 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     if (!isIdentifier(name)) {
       const error = new Error(
         `[ModuleFederationPlugin] The container's name: '${name}' must be a valid JavaScript identifier. ` +
-          'Please correct it to proceed.'
+          'Please correct it to proceed. For more information, see: https://developer.mozilla.org/en-US/docs/Glossary/Identifier'
       );
       // remove the stack trace to make the error more readable
       error.stack = undefined;

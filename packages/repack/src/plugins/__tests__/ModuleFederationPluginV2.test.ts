@@ -264,14 +264,14 @@ describe('ModuleFederationPlugin', () => {
   });
 
   it('should not throw an error for a valid container name', () => {
-    const invalidContainerNames = [
+    const validContainerNames = [
       'app_name',
       'appName',
       'appName123',
       '$appName',
     ];
 
-    invalidContainerNames.forEach((name) => {
+    validContainerNames.forEach((name) => {
       expect(() => {
         new ModuleFederationPluginV2({ name }).apply(mockCompiler);
       }).not.toThrow();
