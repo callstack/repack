@@ -1,15 +1,13 @@
-import chalk from 'chalk';
+import { log } from '@clack/prompts';
 
 let verbose = false;
 
 const logger = {
-  success: (message: string) => console.log(`${chalk.green('✔')} ${message}`),
-  warn: (message: string) => console.log(`${chalk.yellow('⚑')} ${message}`),
-  error: (message: string) => console.log(`${chalk.red('✖')} ${message}`),
-  fatal: (message: string) => console.log(`\n💥 ${chalk.redBright(message)}`),
-  done: (message: string) => console.log(`\n🎉 ${chalk.greenBright(message)}`),
-  info: (message: string) =>
-    verbose && console.log(`${chalk.blue('ℹ')} ${message}`),
+  success: log.success,
+  warn: log.warn,
+  error: log.error,
+  fatal: log.error,
+  info: (message: string) => (verbose ? log.info(message) : undefined),
 };
 
 export default logger;
