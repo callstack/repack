@@ -75,12 +75,7 @@ export default async function run(options: Options) {
   } catch (error) {
     logger.fatal('Re.Pack setup failed\n\nWhat went wrong:');
 
-    if (error instanceof Error) {
-      logger.fatal(error.message);
-    } else {
-      logger.fatal(error as any);
-    }
-
-    cancelPromptAndExit();
+    const message = error instanceof Error ? error.message : String(error);
+    cancelPromptAndExit(message);
   }
 }
