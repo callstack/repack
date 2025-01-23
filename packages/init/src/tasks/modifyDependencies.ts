@@ -4,36 +4,27 @@ import { fileURLToPath } from 'node:url';
 import { execa } from 'execa';
 import logger from '../utils/logger.js';
 
-const rspackDependencies = [
-  '\\@rspack/core',
-  '\\@swc/helpers',
-  '\\@callstack/repack',
-];
+const rspackDependencies = ['@rspack/core', '@swc/helpers'];
+const webpackDependencies = ['webpack', 'terser-webpack-plugin'];
 
-const webpackDependencies = [
-  'webpack',
-  'terser-webpack-plugin',
-  '\\@callstack/repack',
-];
-
-function getCurrentVersion() {
+function getOwnCurrentVersion() {
   const dirname = fileURLToPath(import.meta.url);
   const packageJsonPath = path.join(dirname, '../../../package.json');
 
   const packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
   const { version } = JSON.parse(packageJson) as { version: string };
 
-  return version;
+  return '~' + version;
 }
 
 async function getLatestVersion(dependency: string) {
   try {
     const { stdout } = await execa('npm', ['view', dependency, 'version']);
-    return stdout.trim();
-  } catch (error) {
-    logger.warn(
-      `Failed to fetch latest version for ${dependency}: ${error instanceof Error ? error.message : String(error)}`
-    );
+    const version = stdout.trim();
+    logger.info(`Latest version for ${dependency} is ${version}`);
+    return version;
+  } catch {
+    logger.error(`Failed to fetch latest version for ${dependency}`);
     return 'latest';
   }
 }
@@ -53,46 +44,36 @@ export default async function modifyDependencies(
   const devDependencies =
     bundler === 'rspack' ? rspackDependencies : webpackDependencies;
 
-  let version: string;
+  let _repackVersion: string;
 
   if (repackVersion) {
-    version = repackVersion;
-    logger.info(`Using custom Re.Pack version ${version}`);
+    _repackVersion = repackVersion;
+    logger.info(`Using custom Re.Pack version ${_repackVersion}`);
   } else {
-    version = getCurrentVersion();
-    logger.info(`Using default Re.Pack version ${version}`);
+    _repackVersion = getOwnCurrentVersion();
+    logger.info(`Using default Re.Pack version ${_repackVersion}`);
   }
-
-  const index = devDependencies.indexOf('@callstack/repack');
-  devDependencies[index] = `@callstack/repack@${version}`;
 
   const packageJsonPath = path.join(projectRootDir, 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
   try {
-    // Convert dependencies array to object with versions
-    const dependencyEntries = await Promise.all(
-      devDependencies.map(async (dep) => {
-        const [name, specifiedVersion] = dep.split('@').filter(Boolean);
-        const packageName = `@callstack/${name}` === name ? dep : name;
-
-        // Skip version check for repack as we handle it separately
-        if (packageName === '@callstack/repack') {
-          return [packageName, version];
-        }
-
-        const latestVersion =
-          specifiedVersion || (await getLatestVersion(packageName));
-        return [packageName, `^${latestVersion}`];
+    const entries = await Promise.all(
+      devDependencies.map(async (packageName) => {
+        const latestVersion = await getLatestVersion(packageName);
+        return [packageName, `~${latestVersion}`];
       })
     );
 
-    const newDependencies = Object.fromEntries(dependencyEntries);
+    // Add @callstack/repack to the list of dependencies
+    entries.push(['@callstack/repack', _repackVersion]);
+
+    const newDevDependencies = Object.fromEntries(entries);
 
     // Merge existing and new dependencies
     const mergedDependencies = {
       ...packageJson.devDependencies,
-      ...newDependencies,
+      ...newDevDependencies,
     };
 
     // Sort dependencies alphabetically
@@ -102,9 +83,7 @@ export default async function modifyDependencies(
 
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
   } catch (error) {
-    logger.error(
-      `Failed to fetch latest versions for some dependencies: ${error instanceof Error ? error.message : String(error)}`
-    );
+    logger.error('Failed to modify project dependencies.');
     throw error;
   }
 }
