@@ -35,11 +35,11 @@ export default async function run({
     const cwd = process.cwd();
 
     const { projectRootDir } = await checkProjectExists(cwd);
-    const packageManager = await checkPackageManager({ projectRootDir });
-    checkReactNative({ projectRootDir });
+    const packageManager = await checkPackageManager(projectRootDir);
+    checkReactNative(projectRootDir);
 
     const { bundler, projectName, shouldCreateProject } =
-      await collectProjectOptions({ projectExists: !!projectRootDir });
+      await collectProjectOptions(cwd, projectRootDir !== undefined);
 
     if (shouldCreateProject) {
       await createNewProject({ projectName: projectName ?? '' });

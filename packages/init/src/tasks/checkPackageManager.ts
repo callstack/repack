@@ -25,23 +25,19 @@ const PM_COMMANDS: Record<PM, PackageManager> = {
   bun: { name: 'bun', runCommand: 'bun', dlxCommand: 'bunx' },
 };
 
-interface ProjectOptions {
-  projectRootDir: string | undefined;
-}
-
 /**
  * Determines which package manager to use
  *
  * @param projectRootDir root directory of the project
  * @returns package manager details including name and commands
  */
-export default async function checkPackageManager({
-  projectRootDir,
-}: ProjectOptions): Promise<PackageManager> {
+export default async function checkPackageManager(
+  rootDir: string | undefined
+): Promise<PackageManager> {
   let packageManager: PM;
 
-  if (projectRootDir) {
-    packageManager = await detect({ cwd: projectRootDir });
+  if (rootDir) {
+    packageManager = await detect({ cwd: rootDir });
     logger.info(`Detected ${packageManager} as package manager`);
   } else {
     const candidate = process.argv0;
