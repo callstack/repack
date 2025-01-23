@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import fetch from 'node-fetch';
 import logger from '../utils/logger.js';
 import spinner from '../utils/spinner.js';
 
@@ -24,7 +23,7 @@ async function fetchConfigTemplate(
 
   try {
     spinner.message(`Downloading ${bundler}.config.${templateType} template`);
-    const template = await fetch(url);
+    const template = await global.fetch(url);
     return template.text();
   } catch (error) {
     logger.error(`Failed to fetch ${bundler}.config template from ${url}`);
