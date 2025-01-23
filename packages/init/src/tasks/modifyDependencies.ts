@@ -1,32 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import packageJson from '../../package.json' assert { type: 'json' };
+import versionsJson from '../../versions.json' assert { type: 'json' };
 import { RepackInitError } from '../utils/error.js';
 import logger from '../utils/logger.js';
 
-interface VersionsJSON {
-  rspack: Record<string, string>;
-  webpack: Record<string, string>;
-}
-
-const dirname = fileURLToPath(import.meta.url);
-
 function getOwnCurrentVersion() {
-  const packageJsonPath = path.join(dirname, '../../../package.json');
-
-  const packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
-  const { version } = JSON.parse(packageJson) as { version: string };
-
-  return '~' + version;
+  return '~' + packageJson.version;
 }
 
 function getBundlerSpecificDependencies(bundler: 'rspack' | 'webpack') {
-  const versionsJsonPath = path.join(dirname, '../../../versions.json');
-
-  const versionsJson = fs.readFileSync(versionsJsonPath, 'utf-8');
-  const versions = JSON.parse(versionsJson) as VersionsJSON;
-
-  return versions[bundler];
+  return versionsJson[bundler];
 }
 
 /**
