@@ -13,6 +13,8 @@ const logger = {
   info: verboseWrapper(log.info),
   success: verboseWrapper(log.success),
   warn: verboseWrapper(log.warn),
+  // always log fatal errors
+  fatal: log.error,
 };
 
 export default logger;

@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import semver, { type SemVer } from 'semver';
+import { RepackInitError } from '../utils/error.js';
 import logger from '../utils/logger.js';
 
 /**
@@ -21,14 +22,15 @@ export default function checkReactNative(
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
   if (!packageJson?.dependencies['react-native']) {
-    logger.error('React-Native not found in package.json');
-    throw new Error('React-Native not found in package.json');
+    throw new RepackInitError('React Native not found in package.json');
   }
 
   const version = semver.coerce(packageJson.dependencies['react-native']);
 
   if (!version) {
-    throw new Error('Failed to parse React-Native version');
+    throw new RepackInitError(
+      'Failed to parse React Native version from package.json'
+    );
   }
 
   logger.info(`Found React-Native@${version} in package.json`);

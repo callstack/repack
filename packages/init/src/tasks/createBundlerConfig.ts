@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { RepackInitError } from '../utils/error.js';
 import logger from '../utils/logger.js';
 import spinner from '../utils/spinner.js';
 
@@ -25,9 +26,10 @@ async function fetchConfigTemplate(
     spinner.message(`Downloading ${bundler}.config.${templateType} template`);
     const template = await global.fetch(url);
     return template.text();
-  } catch (error) {
-    logger.error(`Failed to fetch ${bundler}.config template from ${url}`);
-    throw error;
+  } catch {
+    throw new RepackInitError(
+      `Failed to fetch ${bundler}.config template from ${url}`
+    );
   }
 }
 

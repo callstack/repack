@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { RepackInitError } from '../utils/error.js';
 import logger from '../utils/logger.js';
 
 interface VersionsJSON {
@@ -67,8 +68,7 @@ export default async function modifyDependencies(
     );
 
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-  } catch (error) {
-    logger.error('Failed to modify project dependencies.');
-    throw error;
+  } catch {
+    throw new RepackInitError('Failed to modify project dependencies.');
   }
 }

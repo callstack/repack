@@ -1,6 +1,6 @@
 import { execa } from 'execa';
 import type { PackageManager } from '../types/pm.js';
-import logger from '../utils/logger.js';
+import { RepackInitError } from '../utils/error.js';
 import spinner from '../utils/spinner.js';
 
 export default async function createNewProject(
@@ -29,7 +29,7 @@ export default async function createNewProject(
       shell: true,
     });
   } catch {
-    logger.error(
+    throw new RepackInitError(
       "Failed to create a new project using '@react-native-community/cli'"
     );
   }

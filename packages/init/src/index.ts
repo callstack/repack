@@ -73,12 +73,12 @@ export default async function run(options: Options) {
 
     completeSetup(projectName, packageManager);
   } catch (error) {
-    logger.error('Re.Pack setup failed\n\nWhat went wrong:');
+    logger.fatal('Re.Pack setup failed\n\nWhat went wrong:');
 
     if (error instanceof Error) {
-      logger.error(error.message);
+      logger.fatal(error.message);
     } else {
-      logger.error(error as any);
+      logger.fatal(error as any);
     }
 
     cancelPromptAndExit();
