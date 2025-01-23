@@ -512,6 +512,9 @@ importers:
       dedent:
         specifier: ^0.7.0
         version: 0.7.0
+      estree-util-is-identifier-name:
+        specifier: ^1.1.0
+        version: 1.1.0
       events:
         specifier: ^3.3.0
         version: 3.3.0
@@ -4228,6 +4231,9 @@ packages:
 
   estree-util-build-jsx@2.2.2:
     resolution: {integrity: sha512-m56vOXcOBuaF+Igpb9OPAy7f9w9OIkb5yhjsZuaPm7HoGi4oTOQi0h2+yZ+AtKklYFZ+rPC4n0wYCJCEU1ONqg==}
+
+  estree-util-is-identifier-name@1.1.0:
+    resolution: {integrity: sha512-OVJZ3fGGt9By77Ix9NhaRbzfbDV/2rx9EP7YIDJTmsZSEc5kYn2vWcNccYyahJL2uAQZK2a5Or2i0wtIKTPoRQ==}
 
   estree-util-is-identifier-name@2.1.0:
     resolution: {integrity: sha512-bEN9VHRyXAUOjkKVQVvArFym08BTWB0aJPppZZr0UNyAqWsLaVfAqP7hbaTJjzHifmB5ebnR8Wm7r7yGN/HonQ==}
@@ -12420,6 +12426,8 @@ snapshots:
       '@types/estree-jsx': 1.0.5
       estree-util-is-identifier-name: 2.1.0
       estree-walker: 3.0.3
+
+  estree-util-is-identifier-name@1.1.0: {}
 
   estree-util-is-identifier-name@2.1.0: {}
 

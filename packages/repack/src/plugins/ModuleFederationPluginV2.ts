@@ -1,5 +1,6 @@
 import type { moduleFederationPlugin as MF } from '@module-federation/sdk';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import { name as isIdentifier } from 'estree-util-is-identifier-name';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
 
 type JsModuleDescriptor = {
@@ -53,7 +54,7 @@ export interface ModuleFederationPluginV2Config
  * import * as Repack from '@callstack/repack';
  *
  * new Repack.plugins.ModuleFederationPlugin({
- *   name: 'host,
+ *   name: 'host',
  * });
  * ```
  *
@@ -62,7 +63,7 @@ export interface ModuleFederationPluginV2Config
  * import * as Repack from '@callstack/repack';
  *
  * new Repack.plugins.ModuleFederationPlugin({
- *   name: 'host,
+ *   name: 'host',
  *   shared: {
  *     react: Repack.Federated.SHARED_REACT,
  *     'react-native': Repack.Federated.SHARED_REACT,
@@ -111,12 +112,25 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     ];
   }
 
+  private validateModuleFederationContainerName(name: string | undefined) {
+    if (!name) return;
+    if (!isIdentifier(name)) {
+      const error = new Error(
+        `[ModuleFederationPlugin] The container's name: '${name}' must be a valid JavaScript identifier. ` +
+          'Please correct it to proceed. For more information, see: https://developer.mozilla.org/en-US/docs/Glossary/Identifier'
+      );
+      // remove the stack trace to make the error more readable
+      error.stack = undefined;
+      throw error;
+    }
+  }
+
   private ensureModuleFederationPackageInstalled(context: string) {
     try {
       require.resolve('@module-federation/enhanced', { paths: [context] });
     } catch {
       throw new Error(
-        "ModuleFederationPlugin requires '@module-federation/enhanced' to be present in your project. " +
+        "[ModuleFederationPlugin] Dependency '@module-federation/enhanced' is required, but not found in your project. " +
           'Did you forget to install it?'
       );
     }
@@ -273,6 +287,7 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
   }
 
   apply(compiler: Compiler) {
+    this.validateModuleFederationContainerName(this.config.name);
     this.ensureModuleFederationPackageInstalled(compiler.context);
     this.setupIgnoredWarnings(compiler);
 

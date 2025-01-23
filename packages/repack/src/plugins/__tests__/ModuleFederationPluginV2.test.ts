@@ -244,4 +244,37 @@ describe('ModuleFederationPlugin', () => {
 
     expect(() => ignoreWarnings[1](warning)).not.toThrow();
   });
+
+  it('should throw an error for an invalid container name', () => {
+    const invalidContainerNames = [
+      'app-name',
+      '123AppName',
+      'app@name',
+      'app name',
+    ];
+
+    invalidContainerNames.forEach((name) => {
+      expect(() => {
+        new ModuleFederationPluginV2({ name }).apply(mockCompiler);
+      }).toThrow(
+        `[ModuleFederationPlugin] The container's name: '${name}' must be a valid JavaScript identifier. ` +
+          'Please correct it to proceed.'
+      );
+    });
+  });
+
+  it('should not throw an error for a valid container name', () => {
+    const validContainerNames = [
+      'app_name',
+      'appName',
+      'appName123',
+      '$appName',
+    ];
+
+    validContainerNames.forEach((name) => {
+      expect(() => {
+        new ModuleFederationPluginV2({ name }).apply(mockCompiler);
+      }).not.toThrow();
+    });
+  });
 });
