@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-Force container name to be a valid JS identifier
+Require MF2 container name to be a valid JS identifier
