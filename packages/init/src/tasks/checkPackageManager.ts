@@ -23,7 +23,7 @@ const PM_COMMANDS: Record<PM, PackageManager> = {
 /**
  * Determines which package manager to use
  *
- * @param projectRootDir root directory of the project
+ * @param rootDir root directory of the project
  * @returns package manager details including name and commands
  */
 export default async function checkPackageManager(
@@ -34,17 +34,19 @@ export default async function checkPackageManager(
   if (rootDir) {
     packageManager = await detect({ cwd: rootDir });
     logger.info(`Detected ${packageManager} as package manager`);
+    return PM_COMMANDS[packageManager];
+  }
+
+  const candidate = process.argv0;
+  packageManager = PM_MAPPING[candidate];
+
+  if (packageManager) {
+    logger.info(
+      `Detected ${packageManager} as package manager from executor ${candidate}`
+    );
   } else {
-    const candidate = process.argv0;
-    packageManager = PM_MAPPING[candidate];
-    if (packageManager) {
-      logger.info(
-        `Detected ${packageManager} as package manager from executor ${candidate}`
-      );
-    } else {
-      logger.info('No package manager detected, defaulting to npm');
-      packageManager = 'npm';
-    }
+    logger.info('No package manager detected, defaulting to npm');
+    packageManager = 'npm';
   }
 
   return PM_COMMANDS[packageManager];

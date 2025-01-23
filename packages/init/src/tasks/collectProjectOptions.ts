@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { confirm, select, text } from '@clack/prompts';
 import { cancelPromptAndExit, checkCancelPrompt } from '../utils/prompts.js';
+import { validateProjectName } from '../utils/validators.js';
 
 interface ProjectOptions {
   projectName: string;
@@ -17,13 +18,12 @@ export default async function collectProjectOptions(
   let projectName: string;
 
   if (!projectExists) {
-    // TODO validate project name
-    // steal from RNEF
     projectName = checkCancelPrompt<string>(
       await text({
         message: 'How would you like to name the app?',
         defaultValue: 'RepackApp',
         placeholder: 'RepackApp',
+        validate: validateProjectName,
       })
     );
 

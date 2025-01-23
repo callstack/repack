@@ -7,7 +7,7 @@ import logger from '../utils/logger.js';
 /**
  * Checks whether React-Native is installed and returns it's version
  *
- * @param projectRootDir root directory of the project
+ * @param rootDir root directory of the project
  * @returns React-Native version
  */
 export default function checkReactNative(
