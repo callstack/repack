@@ -1,4 +1,4 @@
-import type { PM } from 'detect-package-manager';
+export type PM = 'npm' | 'yarn' | 'pnpm' | 'bun';
 
 export interface PackageManager {
   name: PM;

@@ -28,9 +28,9 @@
     "@manypkg/find-root": "^2.2.3",
     "chalk": "^5.4.1",
     "dedent": "^1.5.3",
-    "detect-package-manager": "^3.0.2",
     "execa": "^9.5.2",
     "gradient-string": "^3.0.0",
+    "preferred-pm": "^4.0.0",
     "semver": "^7.6.3",
     "xcode": "^3.0.1",
     "yargs": "^17.7.2"

@@ -1,5 +1,5 @@
-import { type PM, detect } from 'detect-package-manager';
-import type { PackageManager } from '../types/pm.js';
+import preferredPM from 'preferred-pm';
+import type { PM, PackageManager } from '../types/pm.js';
 import logger from '../utils/logger.js';
 
 const PM_MAPPING: Record<string, PM> = {
@@ -32,9 +32,12 @@ export default async function checkPackageManager(
   let packageManager: PM;
 
   if (rootDir) {
-    packageManager = await detect({ cwd: rootDir });
-    logger.info(`Detected ${packageManager} as package manager`);
-    return PM_COMMANDS[packageManager];
+    const result = await preferredPM(rootDir);
+    if (result) {
+      packageManager = result.name;
+      logger.info(`Detected ${packageManager} as package manager`);
+      return PM_COMMANDS[packageManager];
+    }
   }
 
   const candidate = process.argv0;
