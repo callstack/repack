@@ -18,12 +18,13 @@ export default async function collectProjectOptions(
   let projectName: string;
 
   if (!projectExists) {
+    const defaultProjectName = 'RepackApp';
     projectName = checkCancelPrompt<string>(
       await text({
         message: 'How would you like to name the app?',
-        defaultValue: 'RepackApp',
+        defaultValue: defaultProjectName,
         placeholder: 'RepackApp',
-        validate: validateProjectName,
+        validate: (value) => validateProjectName(value || defaultProjectName),
       })
     );
 

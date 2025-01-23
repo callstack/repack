@@ -24,7 +24,10 @@ export default async function createNewProject(
       'Creating new project from the React Native Community Template'
     );
 
-    return await execa(packageManager.dlxCommand, args, { stdio: 'ignore' });
+    return await execa(packageManager.dlxCommand, args, {
+      stdio: 'ignore',
+      shell: true,
+    });
   } catch {
     logger.error(
       "Failed to create a new project using '@react-native-community/cli'"

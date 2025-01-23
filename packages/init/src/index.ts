@@ -1,5 +1,4 @@
 import path from 'node:path';
-
 import checkPackageManager from './tasks/checkPackageManager.js';
 import checkProjectExists from './tasks/checkProjectExists.js';
 import checkReactNative from './tasks/checkReactNative.js';
@@ -10,7 +9,6 @@ import createNewProject from './tasks/createNewProject.js';
 import modifyDependencies from './tasks/modifyDependencies.js';
 import modifyIOS from './tasks/modifyIOS.js';
 import modifyReactNativeConfig from './tasks/modifyReactNativeConfig.js';
-
 import logger, { enableVerboseLogging } from './utils/logger.js';
 import spinner from './utils/spinner.js';
 

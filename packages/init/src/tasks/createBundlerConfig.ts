@@ -1,9 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import fetch from 'node-fetch';
-import type { Ora } from 'ora';
-
 import logger from '../utils/logger.js';
+import spinner from '../utils/spinner.js';
 
 // TODO adjust before publishing a stable release (jbroma)
 const TEMPLATES = {
@@ -23,17 +22,12 @@ async function fetchConfigTemplate(
 ) {
   const url = TEMPLATES[bundler][templateType];
 
-  let spinner: Ora | undefined;
-
   try {
-    // spinner = ora(
-    //   `Downloading ${bundler}.config.${templateType} template`
-    // ).start();
+    spinner.message(`Downloading ${bundler}.config.${templateType} template`);
     const template = await fetch(url);
-    // spinner.succeed();
     return template.text();
   } catch (error) {
-    spinner?.fail(`Failed to fetch ${bundler}.config template from ${url}`);
+    logger.error(`Failed to fetch ${bundler}.config template from ${url}`);
     throw error;
   }
 }
@@ -48,6 +42,7 @@ function adjustEntryFilename(template: string, entry: string) {
 /**
  * Adds bundler config file to the project
  *
+ * @param bundler bundler to use
  * @param cwd current working directory
  * @param templateType mjs or cjs
  * @param entry name of the entry file for the application
@@ -61,7 +56,7 @@ export default async function createBundlerConfig(
   const configPath = path.join(cwd, `${bundler}.config.${templateType}`);
 
   if (fs.existsSync(configPath)) {
-    logger.warn(
+    logger.info(
       `File "${bundler}.config.${templateType}" already exists. Overwriting...`
     );
   }

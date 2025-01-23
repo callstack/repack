@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import semver, { type SemVer } from 'semver';
-
 import logger from '../utils/logger.js';
 
 /**

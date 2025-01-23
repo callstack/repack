@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import dedent from 'dedent';
 import xcode from 'xcode';
-
 import logger from '../utils/logger.js';
 
 interface ShellScriptBuildPhase {
