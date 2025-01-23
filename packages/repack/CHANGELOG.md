@@ -1,5 +1,20 @@
 # @callstack/repack
 
+## 5.0.0-rc.9
+
+### Minor Changes
+
+- [#890](https://github.com/callstack/repack/pull/890) [`361b7b9`](https://github.com/callstack/repack/commit/361b7b95c686912a0ed9e50e8cc18b0db2605309) Thanks [@ceopaludetto](https://github.com/ceopaludetto)! - Add cssInteropOptions to Nativewind plugin.
+
+- [#893](https://github.com/callstack/repack/pull/893) [`aa3802f`](https://github.com/callstack/repack/commit/aa3802f8a9a06c3cbcaa932ea45cf27f2a523927) Thanks [@jbroma](https://github.com/jbroma)! - Prettify `repack-init` and make it behave similarly to other tools in the ecosystem
+
+### Patch Changes
+
+- [#892](https://github.com/callstack/repack/pull/892) [`3a68e15`](https://github.com/callstack/repack/commit/3a68e157a6a5e07dc2e0003ead02b8f965fd3d49) Thanks [@lukewalczak](https://github.com/lukewalczak)! - Require MF2 container name to be a valid JS identifier
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-rc.9
+
 ## 5.0.0-rc.8
 
 ### Minor Changes
