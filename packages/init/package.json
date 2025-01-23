@@ -30,6 +30,7 @@
     "dedent": "^1.5.3",
     "detect-package-manager": "^3.0.2",
     "execa": "^9.5.2",
+    "gradient-string": "^3.0.0",
     "semver": "^7.6.3",
     "xcode": "^3.0.1",
     "yargs": "^17.7.2"
