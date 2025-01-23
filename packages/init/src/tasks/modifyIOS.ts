@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import dedent from 'dedent';
 import xcode from 'xcode';
-
+import { RepackInitError } from '../utils/error.js';
 import logger from '../utils/logger.js';
 
 interface ShellScriptBuildPhase {
@@ -17,7 +17,7 @@ function findProjectPbxProjPath(cwd: string) {
   const xcodeProjDir = iosDir.find((dir) => dir.endsWith('.xcodeproj'));
 
   if (!xcodeProjDir) {
-    throw new Error('No directory with "project.pbxproj" found');
+    throw new RepackInitError('No directory with "project.pbxproj" found');
   }
 
   const pbxprojPath = path.join(iosPath, xcodeProjDir, 'project.pbxproj');
@@ -34,7 +34,7 @@ function getBundleReactNativePhase(
   );
 
   if (!bundleReactNative) {
-    throw new Error(
+    throw new RepackInitError(
       `Couldn't find a build phase "Bundle React Native code and images"`
     );
   }
@@ -89,7 +89,7 @@ export default function modifyIOS(cwd: string) {
   const relativeProjectPbxProjPath = path.relative(cwd, projectPbxProjPath);
 
   if (!fs.existsSync(projectPbxProjPath)) {
-    throw Error(
+    throw new RepackInitError(
       `${relativeProjectPbxProjPath} not found. Make sure you are running this command from the root of your project`
     );
   }
@@ -103,6 +103,4 @@ export default function modifyIOS(cwd: string) {
   logger.info(
     `Added "@react-native-community/cli" as CLI_PATH to build phase shellScript in ${relativeProjectPbxProjPath}`
   );
-
-  logger.success('Successfully modified iOS project files');
 }
