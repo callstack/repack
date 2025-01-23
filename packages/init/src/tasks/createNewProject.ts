@@ -1,24 +1,33 @@
-import { spinner } from '@clack/prompts';
 import { execa } from 'execa';
+import type { PackageManager } from '../types/pm.js';
+import logger from '../utils/logger.js';
+import spinner from '../utils/spinner.js';
 
-interface ProjectOptions {
-  projectName: string;
-}
-
-export default async function createNewProject(options: ProjectOptions) {
-  const _spinner = spinner();
+export default async function createNewProject(
+  projectName: string,
+  packageManager: PackageManager,
+  override: boolean
+) {
   try {
-    _spinner.start('Creating new project using @react-native-community/cli');
-    return await execa(
-      `npx @react-native-community/cli@latest init ${options.projectName} --skip-install --replace-directory`,
-      { stdio: 'ignore', shell: true }
+    const args = [
+      '@react-native-community/cli@latest',
+      'init',
+      projectName,
+      '--skip-install',
+    ];
+
+    if (override) {
+      args.push('--replace-directory');
+    }
+
+    spinner.message(
+      'Creating new project from the React Native Community Template'
     );
+
+    return await execa(packageManager.dlxCommand, args, { stdio: 'ignore' });
   } catch {
-    // CLI will print the detailed error message
-    throw new Error(
+    logger.error(
       "Failed to create a new project using '@react-native-community/cli'"
     );
-  } finally {
-    _spinner.stop('', 0);
   }
 }

@@ -1,11 +1,6 @@
 import { type PM, detect } from 'detect-package-manager';
+import type { PackageManager } from '../types/pm.js';
 import logger from '../utils/logger.js';
-
-interface PackageManager {
-  name: PM;
-  runCommand: string;
-  dlxCommand: string;
-}
 
 const PM_MAPPING: Record<string, PM> = {
   npm: 'npm',

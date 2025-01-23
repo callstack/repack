@@ -1,20 +1,13 @@
 import { note, outro } from '@clack/prompts';
 import chalk from 'chalk';
 import dedent from 'dedent';
-import type { PM } from 'detect-package-manager';
-
-interface PackageManager {
-  name: PM;
-  runCommand: string;
-  dlxCommand: string;
-}
+import type { PackageManager } from '../types/pm.js';
 
 export default function completeSetup(
-  projectName: string | undefined,
+  projectName: string,
   packageManager: PackageManager
 ) {
-  note(
-    dedent`
+  const nextSteps = dedent`
     cd ${projectName}
     ${packageManager.runCommand} install
     ${packageManager.runCommand} start
@@ -25,9 +18,8 @@ export default function completeSetup(
     
     ${chalk.green('[android]')}
     ${packageManager.runCommand} react-native run-android
-  `,
-    'Next steps'
-  );
+  `;
 
+  note(nextSteps, 'Next steps');
   outro('Done.');
 }

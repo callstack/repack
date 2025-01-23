@@ -2,12 +2,17 @@ import { log } from '@clack/prompts';
 
 let verbose = false;
 
+type LogFn = (message: string) => void;
+
+const verboseWrapper = (logFn: LogFn) => {
+  return (message: string) => (verbose ? logFn(message) : undefined);
+};
+
 const logger = {
-  success: log.success,
-  warn: log.warn,
-  error: log.error,
-  fatal: log.error,
-  info: (message: string) => (verbose ? log.info(message) : undefined),
+  error: verboseWrapper(log.error),
+  info: verboseWrapper(log.info),
+  success: verboseWrapper(log.success),
+  warn: verboseWrapper(log.warn),
 };
 
 export default logger;

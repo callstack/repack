@@ -1,39 +1,22 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { confirm, select, text } from '@clack/prompts';
-import logger from '../utils/logger.js';
-import { checkCancelPrompt } from '../utils/prompts.js';
-
-interface ProjectSetup {
-  projectExists: boolean;
-  overrides?: {
-    bundler: 'rspack' | 'webpack';
-  };
-}
+import { cancelPromptAndExit, checkCancelPrompt } from '../utils/prompts.js';
 
 interface ProjectOptions {
-  projectName?: string;
-  shouldCreateProject: boolean;
+  projectName: string;
+  shouldOverrideProject: boolean;
   bundler: 'rspack' | 'webpack';
 }
 
-export default async function collectProjectOptions({
-  projectExists,
-}: ProjectSetup): Promise<ProjectOptions> {
-  let shouldCreateProject = false;
-  let projectName: string | undefined;
+export default async function collectProjectOptions(
+  cwd: string,
+  projectExists: boolean
+): Promise<ProjectOptions> {
+  let shouldOverrideProject = false;
+  let projectName: string;
 
   if (!projectExists) {
-    shouldCreateProject = checkCancelPrompt<boolean>(
-      await confirm({
-        message: 'Would you like to create a new project?',
-        initialValue: true,
-      })
-    );
-
-    if (!shouldCreateProject) {
-      logger.warn('Re.Pack setup cancelled by user');
-      process.exit(0);
-    }
-
     // TODO validate project name
     // steal from RNEF
     projectName = checkCancelPrompt<string>(
@@ -43,6 +26,24 @@ export default async function collectProjectOptions({
         placeholder: 'RepackApp',
       })
     );
+
+    const projectPath = path.join(cwd, projectName);
+    if (fs.existsSync(projectPath)) {
+      shouldOverrideProject = checkCancelPrompt<boolean>(
+        await confirm({
+          message: `Directory "${projectName}" is not empty. Would you like to override it?`,
+          initialValue: false,
+        })
+      );
+
+      if (!shouldOverrideProject) {
+        cancelPromptAndExit();
+      }
+    }
+  } else {
+    const packageJsonPath = path.join(cwd, 'package.json');
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+    projectName = packageJson.name;
   }
 
   // Select bundler
@@ -66,7 +67,7 @@ export default async function collectProjectOptions({
 
   return {
     projectName,
-    shouldCreateProject,
+    shouldOverrideProject,
     bundler,
   };
 }

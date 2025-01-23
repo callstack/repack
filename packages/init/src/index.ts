@@ -12,6 +12,7 @@ import modifyIOS from './tasks/modifyIOS.js';
 import modifyReactNativeConfig from './tasks/modifyReactNativeConfig.js';
 
 import logger, { enableVerboseLogging } from './utils/logger.js';
+import spinner from './utils/spinner.js';
 
 interface Options {
   bundler: 'rspack' | 'webpack';
@@ -38,11 +39,19 @@ export default async function run({
     const packageManager = await checkPackageManager(projectRootDir);
     checkReactNative(projectRootDir);
 
-    const { bundler, projectName, shouldCreateProject } =
-      await collectProjectOptions(cwd, projectRootDir !== undefined);
+    const projectExists = projectRootDir !== undefined;
 
-    if (shouldCreateProject) {
-      await createNewProject({ projectName: projectName ?? '' });
+    const { bundler, projectName, shouldOverrideProject } =
+      await collectProjectOptions(cwd, projectExists);
+
+    spinner.start();
+
+    if (!projectExists) {
+      await createNewProject(
+        projectName,
+        packageManager,
+        shouldOverrideProject
+      );
     }
 
     const rootDir = projectRootDir ?? path.join(cwd, projectName!);
@@ -55,9 +64,11 @@ export default async function run({
 
     modifyIOS(rootDir);
 
+    spinner.stop('Setup complete.');
+
     completeSetup(projectName, packageManager);
   } catch (error) {
-    logger.fatal('Re.Pack setup failed\n\nWhat went wrong:');
+    logger.error('Re.Pack setup failed\n\nWhat went wrong:');
 
     if (error instanceof Error) {
       logger.error(error.message);
