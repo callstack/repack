@@ -13,7 +13,7 @@
   },
   "bin": "dist/bin.js",
   "main": "dist/index.js",
-  "files": ["dist", "!*.d.ts", "!*.map"],
+  "files": ["dist", "versions.json", "!*.d.ts", "!*.map"],
   "engineStrict": true,
   "engines": {
     "node": ">=18"
