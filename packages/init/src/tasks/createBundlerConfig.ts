@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import fetch from 'node-fetch';
-import ora, { type Ora } from 'ora';
+import type { Ora } from 'ora';
 
 import logger from '../utils/logger.js';
 
