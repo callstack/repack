@@ -25,20 +25,19 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.9.1",
-    "@manypkg/find-root": "^2.2.1",
-    "chalk": "^5.2.0",
-    "dedent": "^0.7.0",
+    "@manypkg/find-root": "^2.2.3",
+    "chalk": "^5.4.1",
+    "dedent": "^1.5.3",
     "detect-package-manager": "^3.0.2",
-    "execa": "^7.1.1",
-    "semver": "^7.5.1",
+    "execa": "^9.5.2",
+    "semver": "^7.6.3",
     "xcode": "^3.0.1",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@types/dedent": "^0.7.2",
     "@types/node": "18",
-    "@types/semver": "^7.5.6",
-    "@types/yargs": "^17.0.32",
+    "@types/semver": "^7.5.8",
+    "@types/yargs": "^17.0.33",
     "typescript": "^5.7.2"
   }
 }
