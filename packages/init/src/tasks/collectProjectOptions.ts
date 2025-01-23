@@ -12,7 +12,6 @@ interface ProjectSetup {
 interface ProjectOptions {
   projectName?: string;
   shouldCreateProject: boolean;
-  shouldInitGit: boolean;
   bundler: 'rspack' | 'webpack';
 }
 
@@ -20,7 +19,6 @@ export default async function collectProjectOptions({
   projectExists,
 }: ProjectSetup): Promise<ProjectOptions> {
   let shouldCreateProject = false;
-  let shouldInitGit = false;
   let projectName: string | undefined;
 
   if (!projectExists) {
@@ -49,17 +47,6 @@ export default async function collectProjectOptions({
         placeholder: 'RepackApp',
       })
     );
-
-    shouldInitGit = checkCancelPrompt<boolean>(
-      await select({
-        message: 'Would you like to initialize a git repository?',
-        options: [
-          { label: 'Yes', value: true },
-          { label: 'No', value: false },
-        ],
-        initialValue: true,
-      })
-    );
   }
 
   // Select bundler
@@ -84,7 +71,6 @@ export default async function collectProjectOptions({
   return {
     projectName,
     shouldCreateProject,
-    shouldInitGit,
     bundler,
   };
 }

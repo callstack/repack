@@ -39,14 +39,11 @@ export default async function run({
     const packageManager = await checkPackageManager({ projectRootDir });
     checkReactNative({ projectRootDir });
 
-    const { bundler, projectName, shouldCreateProject, shouldInitGit } =
+    const { bundler, projectName, shouldCreateProject } =
       await collectProjectOptions({ projectExists: !!projectRootDir });
 
     if (shouldCreateProject) {
-      await createNewProject({
-        projectName: projectName ?? '',
-        shouldInitGit: shouldInitGit,
-      });
+      await createNewProject({ projectName: projectName ?? '' });
     }
 
     const rootDir = projectRootDir ?? path.join(cwd, projectName!);

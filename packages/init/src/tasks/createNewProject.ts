@@ -3,7 +3,6 @@ import { execa } from 'execa';
 
 interface ProjectOptions {
   projectName: string;
-  shouldInitGit: boolean;
 }
 
 export default async function createNewProject(options: ProjectOptions) {
@@ -11,7 +10,7 @@ export default async function createNewProject(options: ProjectOptions) {
   try {
     _spinner.start('Creating new project using @react-native-community/cli');
     return await execa(
-      `npx @react-native-community/cli@latest init ${options.projectName} --skip-install --skip-git-init --replace-directory`,
+      `npx @react-native-community/cli@latest init ${options.projectName} --skip-install --replace-directory`,
       { stdio: 'ignore', shell: true }
     );
   } catch {
