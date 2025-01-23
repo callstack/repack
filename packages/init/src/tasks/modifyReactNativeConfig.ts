@@ -22,7 +22,7 @@ export default function modifyReactNativeConfig(
 
   if (!fs.existsSync(configPath)) {
     fs.writeFileSync(configPath, createDefaultConfig(bundler));
-    // logger.success('Created react-native.config.js');
+    logger.info('Created react-native.config.js');
     return;
   }
 

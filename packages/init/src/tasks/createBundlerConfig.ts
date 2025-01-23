@@ -70,5 +70,6 @@ export default async function createBundlerConfig(
   configTemplate = adjustEntryFilename(configTemplate, entry);
 
   fs.writeFileSync(configPath, configTemplate);
-  // logger.success(`Created ${bundler}.config.${templateType} from template`);
+
+  logger.info(`Created ${bundler}.config.${templateType} from template`);
 }
