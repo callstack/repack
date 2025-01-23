@@ -10,23 +10,19 @@ import modifyDependencies from './tasks/modifyDependencies.js';
 import modifyIOS from './tasks/modifyIOS.js';
 import modifyReactNativeConfig from './tasks/modifyReactNativeConfig.js';
 import logger, { enableVerboseLogging } from './utils/logger.js';
+import { cancelPromptAndExit } from './utils/prompts.js';
 import spinner from './utils/spinner.js';
 
 interface Options {
-  bundler: 'rspack' | 'webpack';
+  bundler: 'rspack' | 'webpack' | undefined;
   entry: string;
-  repackVersion?: string;
+  repackVersion: string | undefined;
   templateType: 'mjs' | 'cjs';
   verbose: boolean;
 }
 
-export default async function run({
-  entry,
-  repackVersion,
-  templateType,
-  verbose,
-}: Options) {
-  if (verbose) {
+export default async function run(options: Options) {
+  if (options.verbose) {
     enableVerboseLogging();
   }
 
@@ -40,7 +36,9 @@ export default async function run({
     const projectExists = projectRootDir !== undefined;
 
     const { bundler, projectName, shouldOverrideProject } =
-      await collectProjectOptions(cwd, projectExists);
+      await collectProjectOptions(cwd, projectExists, {
+        bundler: options.bundler,
+      });
 
     spinner.start();
 
@@ -54,9 +52,14 @@ export default async function run({
 
     const rootDir = projectRootDir ?? path.join(cwd, projectName!);
 
-    await modifyDependencies(bundler, rootDir, repackVersion);
+    await modifyDependencies(bundler, rootDir, options.repackVersion);
 
-    await createBundlerConfig(bundler, rootDir, templateType, entry);
+    await createBundlerConfig(
+      bundler,
+      rootDir,
+      options.templateType,
+      options.entry
+    );
 
     modifyReactNativeConfig(bundler, rootDir);
 
@@ -74,6 +77,6 @@ export default async function run({
       logger.error(error as any);
     }
 
-    process.exit(1);
+    cancelPromptAndExit();
   }
 }

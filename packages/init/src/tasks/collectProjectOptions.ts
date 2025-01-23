@@ -12,12 +12,17 @@ interface ProjectOptions {
 
 export default async function collectProjectOptions(
   cwd: string,
-  projectExists: boolean
+  projectExists: boolean,
+  overrides: {
+    bundler: 'rspack' | 'webpack' | undefined;
+  }
 ): Promise<ProjectOptions> {
+  let bundler: 'rspack' | 'webpack';
   let shouldOverrideProject = false;
   let projectName: string;
 
   if (!projectExists) {
+    // Project name
     const defaultProjectName = 'RepackApp';
     projectName = checkCancelPrompt<string>(
       await text({
@@ -28,6 +33,7 @@ export default async function collectProjectOptions(
       })
     );
 
+    // Confirm override
     const projectPath = path.join(cwd, projectName);
     if (fs.existsSync(projectPath)) {
       shouldOverrideProject = checkCancelPrompt<boolean>(
@@ -47,24 +53,28 @@ export default async function collectProjectOptions(
     projectName = packageJson.name;
   }
 
-  // Select bundler
-  const bundler = checkCancelPrompt<'rspack' | 'webpack'>(
-    await select({
-      message: 'Which bundler would you like to use?',
-      options: [
-        {
-          label: 'Rspack',
-          value: 'rspack',
-          hint: 'recommended',
-        },
-        {
-          label: 'Webpack',
-          value: 'webpack',
-        },
-      ],
-      initialValue: 'rspack',
-    })
-  );
+  // Bundler
+  if (overrides?.bundler) {
+    bundler = overrides.bundler;
+  } else {
+    bundler = checkCancelPrompt<'rspack' | 'webpack'>(
+      await select({
+        message: 'Which bundler would you like to use?',
+        options: [
+          {
+            label: 'Rspack',
+            value: 'rspack',
+            hint: 'recommended',
+          },
+          {
+            label: 'Webpack',
+            value: 'webpack',
+          },
+        ],
+        initialValue: 'rspack',
+      })
+    );
+  }
 
   return {
     projectName,
