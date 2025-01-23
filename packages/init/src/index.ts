@@ -1,17 +1,16 @@
-import { note, outro } from '@clack/prompts';
-import chalk from 'chalk';
+import path from 'node:path';
+
+import checkPackageManager from './tasks/checkPackageManager.js';
 import checkProjectExists from './tasks/checkProjectExists.js';
 import checkReactNative from './tasks/checkReactNative.js';
 import collectProjectOptions from './tasks/collectProjectOptions.js';
+import completeSetup from './tasks/completeSetup.js';
 import createBundlerConfig from './tasks/createBundlerConfig.js';
+import createNewProject from './tasks/createNewProject.js';
 import modifyDependencies from './tasks/modifyDependencies.js';
 import modifyIOS from './tasks/modifyIOS.js';
 import modifyReactNativeConfig from './tasks/modifyReactNativeConfig.js';
 
-import path from 'node:path';
-import dedent from 'dedent';
-import checkPackageManager from './tasks/checkPackageManager.js';
-import createNewProject from './tasks/createNewProject.js';
 import logger, { enableVerboseLogging } from './utils/logger.js';
 
 interface Options {
@@ -56,23 +55,7 @@ export default async function run({
 
     modifyIOS(rootDir);
 
-    note(
-      dedent`
-      cd ${projectName}
-      ${packageManager.runCommand} install
-      ${packageManager.runCommand} start
-
-      ${chalk.blue('[ios]')}
-      ${packageManager.dlxCommand} pod-install
-      ${packageManager.runCommand} run ios
-      
-      ${chalk.green('[android]')}
-      ${packageManager.runCommand} react-native run-android
-    `,
-      'Next steps'
-    );
-
-    outro('Done.');
+    completeSetup(projectName, packageManager);
   } catch (error) {
     logger.fatal('Re.Pack setup failed\n\nWhat went wrong:');
 
