@@ -19,7 +19,7 @@ To run the app development server, you need to specify your _IP address_ as the 
 
 To run the development server for both the host app and micro-frontends on a device, follow these steps:
 
-1. Modify `your` configuration file (`webpack.config.{mjs,cjs,js}`) to replace `localhost` with your _IP address_ in the `ModuleFederationPluginV2` settings for your remotes:
+1. Modify `your` configuration file (`webpack.config.{mjs,cjs,js}`) to replace `localhost` with your _IP address_ in the `ModuleFederationPlugin` settings for your remotes:
 
 ```
 new Repack.plugins.ModuleFederationPlugin({
