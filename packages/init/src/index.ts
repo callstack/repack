@@ -48,8 +48,7 @@ export default async function run({
 
     const rootDir = projectRootDir ?? path.join(cwd, projectName!);
 
-    // @ts-ignore
-    await modifyDependencies(bundler, rootDir, packageManager, repackVersion);
+    await modifyDependencies(bundler, rootDir, repackVersion);
 
     await createBundlerConfig(bundler, rootDir, templateType, entry);
 
@@ -60,22 +59,20 @@ export default async function run({
     note(
       dedent`
       cd ${projectName}
-      ${packageManager} install
-      ${packageManager} start
+      ${packageManager.runCommand} install
+      ${packageManager.runCommand} start
 
       ${chalk.blue('[ios]')}
-      ${packageManager} pod-install
-      ${packageManager} run ios
+      ${packageManager.dlxCommand} pod-install
+      ${packageManager.runCommand} run ios
       
       ${chalk.green('[android]')}
-      ${packageManager} run android
+      ${packageManager.runCommand} react-native run-android
     `,
       'Next steps'
     );
 
     outro('Done.');
-
-    // logger.done('Setup complete. Thanks for using Re.Pack!');
   } catch (error) {
     logger.fatal('Re.Pack setup failed\n\nWhat went wrong:');
 

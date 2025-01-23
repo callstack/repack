@@ -1,7 +1,29 @@
 import { type PM, detect } from 'detect-package-manager';
 import logger from '../utils/logger.js';
 
-const PACKAGE_MANAGERS = ['npm', 'yarn', 'pnpm', 'bun'];
+interface PackageManager {
+  name: PM;
+  runCommand: string;
+  dlxCommand: string;
+}
+
+const PM_MAPPING: Record<string, PM> = {
+  npm: 'npm',
+  npx: 'npm',
+  yarn: 'yarn',
+  yarnpkg: 'yarn',
+  pnpm: 'pnpm',
+  pnpx: 'pnpm',
+  bun: 'bun',
+  bunx: 'bun',
+};
+
+const PM_COMMANDS: Record<PM, PackageManager> = {
+  npm: { name: 'npm', runCommand: 'npm', dlxCommand: 'npx' },
+  yarn: { name: 'yarn', runCommand: 'yarn', dlxCommand: 'yarn dlx' },
+  pnpm: { name: 'pnpm', runCommand: 'pnpm', dlxCommand: 'pnpm dlx' },
+  bun: { name: 'bun', runCommand: 'bun', dlxCommand: 'bunx' },
+};
 
 interface ProjectOptions {
   projectRootDir: string | undefined;
@@ -11,23 +33,28 @@ interface ProjectOptions {
  * Determines which package manager to use
  *
  * @param projectRootDir root directory of the project
- * @returns package manager name (one of 'npm', 'yarn', 'pnpm', 'bun')
+ * @returns package manager details including name and commands
  */
 export default async function checkPackageManager({
   projectRootDir,
-}: ProjectOptions): Promise<PM> {
+}: ProjectOptions): Promise<PackageManager> {
+  let packageManager: PM;
+
   if (projectRootDir) {
-    const packageManager = await detect({ cwd: projectRootDir });
+    packageManager = await detect({ cwd: projectRootDir });
     logger.info(`Detected ${packageManager} as package manager`);
-    return packageManager;
+  } else {
+    const candidate = process.argv0;
+    packageManager = PM_MAPPING[candidate];
+    if (packageManager) {
+      logger.info(
+        `Detected ${packageManager} as package manager from executor ${candidate}`
+      );
+    } else {
+      logger.info('No package manager detected, defaulting to npm');
+      packageManager = 'npm';
+    }
   }
 
-  const candidate = process.argv0;
-  if (PACKAGE_MANAGERS.includes(candidate)) {
-    logger.info(`Detected ${candidate} as package manager`);
-    return candidate as PM;
-  }
-
-  logger.info('No package manager detected, defaulting to npm');
-  return 'npm';
+  return PM_COMMANDS[packageManager];
 }

@@ -1,4 +1,4 @@
-import { select, text } from '@clack/prompts';
+import { confirm, select, text } from '@clack/prompts';
 import logger from '../utils/logger.js';
 import { checkCancelPrompt } from '../utils/prompts.js';
 
@@ -23,13 +23,9 @@ export default async function collectProjectOptions({
 
   if (!projectExists) {
     shouldCreateProject = checkCancelPrompt<boolean>(
-      await select({
+      await confirm({
         message: 'Would you like to create a new project?',
         initialValue: true,
-        options: [
-          { label: 'Yes', value: true },
-          { label: 'No', value: false },
-        ],
       })
     );
 
