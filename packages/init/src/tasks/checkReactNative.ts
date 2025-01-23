@@ -4,14 +4,25 @@ import semver, { type SemVer } from 'semver';
 
 import logger from '../utils/logger.js';
 
+interface ProjectOptions {
+  projectRootDir: string | undefined;
+}
+
 /**
  * Checks whether React-Native is installed and returns it's version
  *
- * @param cwd current working directory
+ * @param projectRootDir root directory of the project
  * @returns React-Native version
  */
-export default function checkReactNative(rootDir: string): SemVer {
-  const packageJsonPath = path.join(rootDir, 'package.json');
+export default function checkReactNative({
+  projectRootDir,
+}: ProjectOptions): SemVer | undefined {
+  if (!projectRootDir) {
+    logger.info('Unknown React Native version');
+    return undefined;
+  }
+
+  const packageJsonPath = path.join(projectRootDir, 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
   if (!packageJson?.dependencies['react-native']) {

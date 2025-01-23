@@ -104,5 +104,5 @@ export default function modifyIOS(cwd: string) {
     `Added "@react-native-community/cli" as CLI_PATH to build phase shellScript in ${relativeProjectPbxProjPath}`
   );
 
-  logger.success('Successfully modified iOS project files');
+  // logger.success('Successfully modified iOS project files');
 }

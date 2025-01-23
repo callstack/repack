@@ -1,0 +1,90 @@
+import { select, text } from '@clack/prompts';
+import logger from '../utils/logger.js';
+import { checkCancelPrompt } from '../utils/prompts.js';
+
+interface ProjectSetup {
+  projectExists: boolean;
+  overrides?: {
+    bundler: 'rspack' | 'webpack';
+  };
+}
+
+interface ProjectOptions {
+  projectName?: string;
+  shouldCreateProject: boolean;
+  shouldInitGit: boolean;
+  bundler: 'rspack' | 'webpack';
+}
+
+export default async function collectProjectOptions({
+  projectExists,
+}: ProjectSetup): Promise<ProjectOptions> {
+  let shouldCreateProject = false;
+  let shouldInitGit = false;
+  let projectName: string | undefined;
+
+  if (!projectExists) {
+    shouldCreateProject = checkCancelPrompt<boolean>(
+      await select({
+        message: 'Would you like to create a new project?',
+        initialValue: true,
+        options: [
+          { label: 'Yes', value: true },
+          { label: 'No', value: false },
+        ],
+      })
+    );
+
+    if (!shouldCreateProject) {
+      logger.warn('Re.Pack setup cancelled by user');
+      process.exit(0);
+    }
+
+    // TODO validate project name
+    // steal from RNEF
+    projectName = checkCancelPrompt<string>(
+      await text({
+        message: 'How would you like to name the app?',
+        defaultValue: 'RepackApp',
+        placeholder: 'RepackApp',
+      })
+    );
+
+    shouldInitGit = checkCancelPrompt<boolean>(
+      await select({
+        message: 'Would you like to initialize a git repository?',
+        options: [
+          { label: 'Yes', value: true },
+          { label: 'No', value: false },
+        ],
+        initialValue: true,
+      })
+    );
+  }
+
+  // Select bundler
+  const bundler = checkCancelPrompt<'rspack' | 'webpack'>(
+    await select({
+      message: 'Which bundler would you like to use?',
+      options: [
+        {
+          label: 'Rspack',
+          value: 'rspack',
+          hint: 'recommended',
+        },
+        {
+          label: 'Webpack',
+          value: 'webpack',
+        },
+      ],
+      initialValue: 'rspack',
+    })
+  );
+
+  return {
+    projectName,
+    shouldCreateProject,
+    shouldInitGit,
+    bundler,
+  };
+}

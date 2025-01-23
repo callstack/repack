@@ -14,7 +14,7 @@ const createDefaultConfig = (bundler: 'rspack' | 'webpack') => dedent`
  *
  * @param cwd current working directory
  */
-export default function handleReactNativeConfig(
+export default function modifyReactNativeConfig(
   bundler: 'rspack' | 'webpack',
   cwd: string
 ): void {
@@ -22,7 +22,7 @@ export default function handleReactNativeConfig(
 
   if (!fs.existsSync(configPath)) {
     fs.writeFileSync(configPath, createDefaultConfig(bundler));
-    logger.success('Created react-native.config.js');
+    // logger.success('Created react-native.config.js');
     return;
   }
 
@@ -41,7 +41,7 @@ export default function handleReactNativeConfig(
 
     const newCommandsString = `commands: require('@callstack/repack/commands/${bundler}')`;
     if (commandsString === newCommandsString) {
-      logger.success('File react-native.config.js is already up to date');
+      logger.info('File react-native.config.js is already up to date');
       return;
     }
 
@@ -56,5 +56,6 @@ export default function handleReactNativeConfig(
   }
 
   fs.writeFileSync(configPath, updatedConfigContent);
-  logger.success('Updated react-native.config.js');
+
+  logger.info('Updated react-native.config.js');
 }

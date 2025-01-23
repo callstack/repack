@@ -26,11 +26,11 @@ async function fetchConfigTemplate(
   let spinner: Ora | undefined;
 
   try {
-    spinner = ora(
-      `Downloading ${bundler}.config.${templateType} template`
-    ).start();
+    // spinner = ora(
+    //   `Downloading ${bundler}.config.${templateType} template`
+    // ).start();
     const template = await fetch(url);
-    spinner.succeed();
+    // spinner.succeed();
     return template.text();
   } catch (error) {
     spinner?.fail(`Failed to fetch ${bundler}.config template from ${url}`);
@@ -70,5 +70,5 @@ export default async function createBundlerConfig(
   configTemplate = adjustEntryFilename(configTemplate, entry);
 
   fs.writeFileSync(configPath, configTemplate);
-  logger.success(`Created ${bundler}.config.${templateType} from template`);
+  // logger.success(`Created ${bundler}.config.${templateType} from template`);
 }

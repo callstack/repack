@@ -1,12 +1,17 @@
-import addDependencies from './tasks/addDependencies.js';
-import checkPackageManager from './tasks/checkPackageManager.js';
+import { note, outro } from '@clack/prompts';
+import chalk from 'chalk';
+import checkProjectExists from './tasks/checkProjectExists.js';
 import checkReactNative from './tasks/checkReactNative.js';
+import collectProjectOptions from './tasks/collectProjectOptions.js';
 import createBundlerConfig from './tasks/createBundlerConfig.js';
-import ensureProjectExists from './tasks/ensureProjectExists.js';
-import handleReactNativeConfig from './tasks/handleReactNativeConfig.js';
+import modifyDependencies from './tasks/modifyDependencies.js';
 import modifyIOS from './tasks/modifyIOS.js';
-import selectBundler from './tasks/selectBundler.js';
+import modifyReactNativeConfig from './tasks/modifyReactNativeConfig.js';
 
+import path from 'node:path';
+import dedent from 'dedent';
+import checkPackageManager from './tasks/checkPackageManager.js';
+import createNewProject from './tasks/createNewProject.js';
 import logger, { enableVerboseLogging } from './utils/logger.js';
 
 interface Options {
@@ -18,7 +23,6 @@ interface Options {
 }
 
 export default async function run({
-  bundler,
   entry,
   repackVersion,
   templateType,
@@ -29,24 +33,52 @@ export default async function run({
   }
 
   try {
-    const { cwd, rootDir } = await ensureProjectExists();
-    const packageManager = await checkPackageManager(rootDir);
+    const cwd = process.cwd();
 
-    checkReactNative(cwd);
+    const { projectRootDir } = await checkProjectExists(cwd);
+    const packageManager = await checkPackageManager({ projectRootDir });
+    const reactNativeVersion = checkReactNative({ projectRootDir });
 
-    if (!bundler) {
-      bundler = await selectBundler();
+    const { bundler, projectName, shouldCreateProject, shouldInitGit } =
+      await collectProjectOptions({ projectExists: !!projectRootDir });
+
+    if (shouldCreateProject) {
+      await createNewProject({
+        projectName: projectName ?? '',
+        shouldInitGit: shouldInitGit,
+      });
     }
 
-    await addDependencies(bundler, cwd, packageManager, repackVersion);
+    const rootDir = projectRootDir ?? path.join(cwd, projectName!);
 
-    await createBundlerConfig(bundler, cwd, templateType, entry);
+    // @ts-ignore
+    await modifyDependencies(bundler, rootDir, packageManager, repackVersion);
 
-    handleReactNativeConfig(bundler, cwd);
+    await createBundlerConfig(bundler, rootDir, templateType, entry);
 
-    modifyIOS(cwd);
+    modifyReactNativeConfig(bundler, rootDir);
 
-    logger.done('Setup complete. Thanks for using Re.Pack!');
+    modifyIOS(rootDir);
+
+    note(
+      dedent`
+      cd ${projectName}
+      ${packageManager} install
+      ${packageManager} start
+
+      ${chalk.blue('[ios]')}
+      ${packageManager} pod-install
+      ${packageManager} run ios
+      
+      ${chalk.green('[android]')}
+      ${packageManager} run android
+    `,
+      'Next steps'
+    );
+
+    outro('Done.');
+
+    // logger.done('Setup complete. Thanks for using Re.Pack!');
   } catch (error) {
     logger.fatal('Re.Pack setup failed\n\nWhat went wrong:');
 
