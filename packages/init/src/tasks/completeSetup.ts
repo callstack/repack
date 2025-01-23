@@ -17,7 +17,7 @@ export default function completeSetup(
     ${packageManager.runCommand} run ios
     
     ${chalk.green('[android]')}
-    ${packageManager.runCommand} react-native run-android
+    ${packageManager.runCommand} run android
   `;
 
   note(nextSteps, 'Next steps');
