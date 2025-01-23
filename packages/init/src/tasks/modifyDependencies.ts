@@ -1,14 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execa } from 'execa';
 import logger from '../utils/logger.js';
 
-const rspackDependencies = ['@rspack/core', '@swc/helpers'];
-const webpackDependencies = ['webpack', 'terser-webpack-plugin'];
+interface VersionsJSON {
+  rspack: Record<string, string>;
+  webpack: Record<string, string>;
+}
+
+const dirname = fileURLToPath(import.meta.url);
 
 function getOwnCurrentVersion() {
-  const dirname = fileURLToPath(import.meta.url);
   const packageJsonPath = path.join(dirname, '../../../package.json');
 
   const packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
@@ -17,16 +19,13 @@ function getOwnCurrentVersion() {
   return '~' + version;
 }
 
-async function getLatestVersion(dependency: string) {
-  try {
-    const { stdout } = await execa('npm', ['view', dependency, 'version']);
-    const version = stdout.trim();
-    logger.info(`Latest version for ${dependency} is ${version}`);
-    return version;
-  } catch {
-    logger.error(`Failed to fetch latest version for ${dependency}`);
-    return 'latest';
-  }
+function getBundlerSpecificDependencies(bundler: 'rspack' | 'webpack') {
+  const versionsJsonPath = path.join(dirname, '../../../versions.json');
+
+  const versionsJson = fs.readFileSync(versionsJsonPath, 'utf-8');
+  const versions = JSON.parse(versionsJson) as VersionsJSON;
+
+  return versions[bundler];
 }
 
 /**
@@ -41,9 +40,6 @@ export default async function modifyDependencies(
   projectRootDir: string,
   repackVersion?: string
 ) {
-  const devDependencies =
-    bundler === 'rspack' ? rspackDependencies : webpackDependencies;
-
   let _repackVersion: string;
 
   if (repackVersion) {
@@ -58,22 +54,11 @@ export default async function modifyDependencies(
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
   try {
-    const entries = await Promise.all(
-      devDependencies.map(async (packageName) => {
-        const latestVersion = await getLatestVersion(packageName);
-        return [packageName, `~${latestVersion}`];
-      })
-    );
-
-    // Add @callstack/repack to the list of dependencies
-    entries.push(['@callstack/repack', _repackVersion]);
-
-    const newDevDependencies = Object.fromEntries(entries);
-
     // Merge existing and new dependencies
     const mergedDependencies = {
       ...packageJson.devDependencies,
-      ...newDevDependencies,
+      ...getBundlerSpecificDependencies(bundler),
+      '@callstack/repack': _repackVersion,
     };
 
     // Sort dependencies alphabetically
