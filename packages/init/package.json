@@ -32,12 +32,14 @@
     "gradient-string": "^3.0.0",
     "preferred-pm": "^4.0.0",
     "semver": "^7.6.3",
+    "which-pm-runs": "^1.1.0",
     "xcode": "^3.0.1",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@types/node": "18",
     "@types/semver": "^7.5.8",
+    "@types/which-pm-runs": "^1.0.2",
     "@types/yargs": "^17.0.33",
     "typescript": "^5.7.2"
   }
