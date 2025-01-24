@@ -13,16 +13,16 @@ A toolkit to build your React Native application with Rspack or Webpack.
 [![PRs Welcome][prs-welcome-badge]][prs-welcome]
 [![Code of Conduct][coc-badge]][coc]
 
-`@callstack/repack-plugin-reanimated` is a plugin for `@callstack/repack` that integrates `react-native-reanimated` into your React Native projects.
+`@callstack/repack-plugin-expo-modules` is a plugin for `@callstack/repack` that compliments the integration of Expo Modules into your React Native projects.
 
 ## About
 
-This plugin exists in order to simplify the setup required to get `react-native-reanimated` working with Re.Pack and to minimize the impact on build performance. It looks for relevant keywords like `worklet` inside the source before transforming the file with `babel`.
+This plugin helps and compliments the process of enabling Expo Modules in Re.Pack projects by defining necessary globals that are expected by Expo Modules at runtime. However, it is not sufficient on its own for a complete setup. For comprehensive guidance on using Expo Modules with Re.Pack, please refer to our [official documentation](https://re-pack.dev/).
 
 ## Installation
 
 ```sh
-npm install -D @callstack/repack-plugin-reanimated
+npm install -D @callstack/repack-plugin-expo-modules
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ npm install -D @callstack/repack-plugin-reanimated
 To add the plugin to your Re.Pack configuration, update your `rspack.config.js` or `webpack.config.js` as follows:
 
 ```js
-import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
+import { ExpoModulesPlugin } from "@callstack/repack-plugin-expo-modules";
 
 export default (env) => {
   // ...
@@ -40,39 +40,8 @@ export default (env) => {
     // ...
     plugins: [
       // ...
-      new ReanimatedPlugin(),
+      new ExpoModulesPlugin(),
     ],
-  };
-};
-```
-
-### Loader
-
-The plugin also comes with it's own loader, which you can use on it's own inside `rspack.config.js` or `webpack.config.js` like this:
-
-```js
-export default (env) => {
-  // ...
-  return {
-    // ...
-    module: {
-      rules: [
-        {
-          test: /\.ts$/,
-          use: {
-            loader: '@callstack/repack-plugin-reanimated/loader',
-            options: {
-              babelPlugins: [
-                [
-                  '@babel/plugin-syntax-typescript',
-                  { isTSX: false, allowNamespaces: true },
-                ],
-              ],
-            },
-          },
-        },
-      ],
-    },
   };
 };
 ```
@@ -86,9 +55,9 @@ Check out our website at https://re-pack.dev for more info and documentation or 
 [callstack-readme-with-love]: https://callstack.com/?utm_source=github.com&utm_medium=referral&utm_campaign=react-native-paper&utm_term=readme-with-love
 [build-badge]: https://img.shields.io/github/workflow/status/callstack/repack/CI/main?style=flat-square
 [build]: https://github.com/callstack/repack/actions/workflows/main.yml
-[version-badge]: https://img.shields.io/npm/v/@callstack/repack-plugin-reanimated?style=flat-square
-[version]: https://www.npmjs.com/package/@callstack/repack-plugin-reanimated
-[license-badge]: https://img.shields.io/npm/l/@callstack/repack-plugin-reanimated?style=flat-square
+[version-badge]: https://img.shields.io/npm/v/@callstack/repack-plugin-expo-modules?style=flat-square
+[version]: https://www.npmjs.com/package/@callstack/repack-plugin-expo-modules
+[license-badge]: https://img.shields.io/npm/l/@callstack/repack-plugin-expo-modules?style=flat-square
 [license]: https://github.com/callstack/repack/blob/master/LICENSE
 [prs-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
 [prs-welcome]: ./CONTRIBUTING.md
