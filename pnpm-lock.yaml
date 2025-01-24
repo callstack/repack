@@ -455,6 +455,18 @@ importers:
         specifier: ^17.7.2
         version: 17.7.2
 
+  packages/plugin-expo-modules:
+    devDependencies:
+      '@callstack/repack':
+        specifier: workspace:*
+        version: link:../repack
+      '@rspack/core':
+        specifier: 1.0.8
+        version: 1.0.8(@swc/helpers@0.5.15)
+      '@types/node':
+        specifier: ^18
+        version: 18.19.41
+
   packages/plugin-nativewind:
     dependencies:
       dedent:

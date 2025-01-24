@@ -1,0 +1,47 @@
+{
+  "name": "@callstack/repack-plugin-expo-modules",
+  "version": "5.0.0-rc.9",
+  "description": "A plugin for @callstack/repack that integrates expo-modules",
+  "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/callstack/repack",
+  "repository": "github:callstack/repack",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "keywords": [
+    "repack",
+    "re.pack",
+    "plugin",
+    "repack-plugin",
+    "expo-modules",
+    "expo"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "peerDependencies": {
+    "@callstack/repack": "^5.0.0-rc.9"
+  },
+  "devDependencies": {
+    "@callstack/repack": "workspace:*",
+    "@rspack/core": "1.0.8",
+    "@types/node": "^18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit"
+  }
+}
