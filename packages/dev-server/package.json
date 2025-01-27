@@ -2,7 +2,7 @@
   "name": "@callstack/repack-dev-server",
   "description": "A bundler-agnostic development server for React Native applications as part of @callstack/repack.",
   "license": "MIT",
-  "version": "5.0.0-rc.9",
+  "version": "5.0.0-rc.10",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

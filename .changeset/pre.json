@@ -11,7 +11,8 @@
     "metro-compat-test": "0.0.1",
     "website": "0.0.1",
     "@callstack/repack-plugin-reanimated": "5.0.0-rc.2",
-    "@callstack/repack-plugin-nativewind": "5.0.0-rc.6"
+    "@callstack/repack-plugin-nativewind": "5.0.0-rc.6",
+    "@callstack/repack-plugin-expo-modules": "5.0.0-rc.9"
   },
   "changesets": [
     "angry-foxes-applaud",
@@ -72,6 +73,8 @@
     "tricky-keys-kneel",
     "two-ghosts-refuse",
     "unlucky-starfishes-thank",
+    "violet-keys-trade",
+    "weak-birds-change",
     "wet-countries-sin"
   ]
 }
