@@ -1,5 +1,18 @@
 # @callstack/repack
 
+## 5.0.0-rc.10
+
+### Minor Changes
+
+- [#901](https://github.com/callstack/repack/pull/901) [`3515dd6`](https://github.com/callstack/repack/commit/3515dd689f78f26215d4a4ee9b46a432fad1e8cc) Thanks [@jbroma](https://github.com/jbroma)! - Normalize compiler.name to always be equal to the target platform across all commands
+
+- [#896](https://github.com/callstack/repack/pull/896) [`44273d2`](https://github.com/callstack/repack/commit/44273d2d064ed91f6e6a4ce7dc8c56d8c7de1b88) Thanks [@jbroma](https://github.com/jbroma)! - Add support for Expo Modules through a dedicated optional plugin called @callstack/repack-plugin-expo-modules
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.0-rc.10
+
 ## 5.0.0-rc.9
 
 ### Minor Changes
