@@ -41,7 +41,7 @@ async function normalizeConfig<C extends ConfigurationObject>(
   // normalize the selected properties
   configObject.name = env.platform;
 
-  // return the original config object
+  // return the normalized config object
   return configObject;
 }
 
