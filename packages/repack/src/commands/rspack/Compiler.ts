@@ -58,14 +58,10 @@ export class Compiler {
     const webpackEnvOptions = getEnvOptions(this.cliOptions);
     const configs = await Promise.all(
       this.platforms.map(async (platform) => {
-        const env = { ...webpackEnvOptions, platform };
-        const config = await loadConfig<Configuration>(
+        return loadConfig<Configuration>(
           this.cliOptions.config.bundlerConfigPath,
-          env
+          { ...webpackEnvOptions, platform }
         );
-
-        config.name = platform;
-        return config;
       })
     );
 
