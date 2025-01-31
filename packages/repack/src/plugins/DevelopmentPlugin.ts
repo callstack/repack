@@ -1,7 +1,6 @@
 import path from 'node:path';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
-import type { DevServerOptions } from '../types.js';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
 
 const [reactRefreshEntryPath, reactRefreshPath, refreshUtilsPath] =
@@ -14,7 +13,6 @@ type PackageJSON = { version: string };
 export interface DevelopmentPluginConfig {
   entryName?: string;
   platform: string;
-  devServer?: DevServerOptions;
 }
 
 /**
@@ -29,7 +27,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config?: DevelopmentPluginConfig) {}
+  constructor(private config: DevelopmentPluginConfig) {}
 
   /**
    * Apply the plugin.
@@ -37,7 +35,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    if (!this.config?.devServer) {
+    if (!compiler.options.devServer) {
       return;
     }
 
@@ -45,11 +43,18 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     const [majorVersion, minorVersion, patchVersion] =
       reactNativePackageJson.version.split('-')[0].split('.');
 
+    // TODO (jbroma) this check should be done in commands
+    const protocol = compiler.options.devServer.server;
+    if (protocol !== 'http' || protocol !== 'https') {
+      console.warn('Unsupported protocol', protocol);
+    }
+
+    // TODO (jbroma) devServer types
     new compiler.webpack.DefinePlugin({
       __PLATFORM__: JSON.stringify(this.config.platform),
-      __PUBLIC_PROTOCOL__: this.config.devServer.https ? '"https"' : '"http"',
-      __PUBLIC_HOST__: JSON.stringify(this.config.devServer.host),
-      __PUBLIC_PORT__: Number(this.config.devServer.port),
+      __PUBLIC_PROTOCOL__: protocol,
+      __PUBLIC_HOST__: JSON.stringify(compiler.options.devServer.host),
+      __PUBLIC_PORT__: Number(compiler.options.devServer.port),
       __REACT_NATIVE_MAJOR_VERSION__: Number(majorVersion),
       __REACT_NATIVE_MINOR_VERSION__: Number(minorVersion),
       __REACT_NATIVE_PATCH_VERSION__: Number(patchVersion),
@@ -60,7 +65,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       pathData.chunk?.name === 'main' ? 'index.bundle' : '[name].bundle';
     compiler.options.output.chunkFilename = '[name].chunk.bundle';
 
-    if (this.config?.devServer.hmr) {
+    if (compiler.options.devServer.hot) {
       // setup HMR
       new compiler.webpack.HotModuleReplacementPlugin().apply(compiler);
 
