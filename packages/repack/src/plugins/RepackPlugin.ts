@@ -204,7 +204,6 @@ export class RepackPlugin implements RspackPluginInstance {
     if (this.config.logger) {
       new LoggerPlugin({
         platform: this.config.platform,
-        devServerEnabled: Boolean(this.config.devServer),
         output: {
           console: true,
           ...(typeof this.config.logger === 'object' ? this.config.logger : {}),
