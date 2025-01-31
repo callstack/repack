@@ -21,6 +21,8 @@ export const FLOW_TYPED_MODULES_LOADING_RULES: RuleSetRule = {
     '@react-native-community/datetimepicker',
     'react-native-linear-gradient',
     'react-native-inappbrowser-reborn',
+    'react-native-camera',
+    'react-native-view-shot',
   ]),
   use: {
     loader: '@callstack/repack/flow-loader',
