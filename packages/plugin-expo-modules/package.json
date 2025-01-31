@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",
-    "@rspack/core": "1.0.8",
+    "@rspack/core": "1.2.2",
     "@types/node": "^18"
   },
   "scripts": {
