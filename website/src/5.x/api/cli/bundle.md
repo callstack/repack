@@ -12,6 +12,15 @@ react-native bundle [options]
 
 ## Options
 
+:::info
+
+To stay compatible with the `@react-native-community/cli` command, the following flags are included but are not functional:
+
+- `--reset-cache`
+- `--config-cmd`
+
+:::
+
 ### --entry-file <path>
 
 - Type: `string`

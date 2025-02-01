@@ -10,6 +10,15 @@ In the root of an existing React Native project with re.pack, run this command i
 react-native start [options]
 ```
 
+:::info
+
+To stay compatible with the `@react-native-community/cli` command, the following flags are included but are not functional:
+
+- `--reset-cache`
+- `--resetCache`
+
+:::
+
 ## Options
 
 ### --port <number>
