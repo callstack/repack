@@ -21,6 +21,28 @@ export type {
 };
 export type { HmrDelegate };
 
+export interface DevServerOptions {
+  /**
+   * Hostname or IP address under which to run the development server.
+   * Can be 'local-ip', 'local-ipv4', 'local-ipv6' or a custom string.
+   * When left unspecified, it will listen on all available network interfaces.
+   */
+  host?: 'local-ip' | 'local-ipv4' | 'local-ipv6' | string;
+
+  /** Port under which to run the development server. */
+  port?: number;
+
+  /** Whether to enable Hot Module Replacement. */
+  hot?: boolean;
+
+  /** Options for running the server as HTTPS. If `undefined`, the server will run as HTTP. */
+  server?:
+    | 'http'
+    | 'https'
+    | { type: 'http' }
+    | { type: 'https'; options?: import('node:https').ServerOptions };
+}
+
 export namespace Server {
   /** Development server configuration. */
   export interface Config {
@@ -31,30 +53,8 @@ export namespace Server {
     delegate: (context: DelegateContext) => Delegate;
   }
 
-  export interface DevOptions {
-    /**
-     * Hostname or IP address under which to run the development server.
-     * Can be 'local-ip', 'local-ipv4', 'local-ipv6' or a custom string.
-     * When left unspecified, it will listen on all available network interfaces.
-     */
-    host?: 'local-ip' | 'local-ipv4' | 'local-ipv6' | string;
-
-    /** Port under which to run the development server. */
-    port?: number;
-
-    /** Whether to enable Hot Module Replacement. */
-    hot?: boolean;
-
-    /** Options for running the server as HTTPS. If `undefined`, the server will run as HTTP. */
-    server?:
-      | 'http'
-      | 'https'
-      | { type: 'http' }
-      | { type: 'https'; options?: import('node:https').ServerOptions };
-  }
-
   /** Development server options. */
-  export interface Options extends DevOptions {
+  export interface Options extends DevServerOptions {
     /** Root directory of the project. */
     rootDir: string;
 
