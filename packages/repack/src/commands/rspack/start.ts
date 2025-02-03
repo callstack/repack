@@ -1,4 +1,5 @@
 import type { Config } from '@react-native-community/cli-types';
+import type { Configuration } from '@rspack/core';
 import * as colorette from 'colorette';
 import packageJson from '../../../package.json';
 import { VERBOSE_ENV_KEY } from '../../env.js';
@@ -86,7 +87,9 @@ export async function start(
   );
 
   const env = getEnvOptions(cliOptions);
-  const config = await loadConfig(cliOptions.config.bundlerConfigPath);
+  const config = await loadConfig<Configuration>(
+    cliOptions.config.bundlerConfigPath
+  );
   const options = await Promise.all(
     cliOptions.config.platforms.map((platform) => {
       return normalizeConfig(config, { ...env, platform });

@@ -1,4 +1,5 @@
 import type { EnvOptions } from '../../types.js';
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts.js';
 import type { Configuration, ConfigurationObject } from '../types.js';
 
 export async function normalizeConfig<C extends ConfigurationObject>(
@@ -16,21 +17,27 @@ export async function normalizeConfig<C extends ConfigurationObject>(
   // normalize compiler name to be equal to platform
   configObject.name = env.platform;
 
+  // normalize dev server options
   if (env.devServer) {
     configObject.devServer = {
-      host: env.devServer.host,
-      port: env.devServer.port,
-      server: env.devServer.https
+      host: env.devServer.host ?? DEFAULT_HOSTNAME,
+      port: env.devServer.port ?? DEFAULT_PORT,
+      hot: env.devServer.hmr ?? true,
+      ...configObject.devServer,
+    };
+
+    configObject.devServer.server = {
+      ...(env.devServer.https
         ? {
             type: 'https',
             options: {
               cert: env.devServer.https.cert,
               key: env.devServer.https.key,
+              ...configObject.devServer?.server?.options,
             },
           }
-        : 'http',
-      hot: env.devServer.hmr,
-      ...configObject.devServer,
+        : { type: 'http' as const }),
+      ...configObject.devServer?.server,
     };
   }
 
