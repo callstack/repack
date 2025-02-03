@@ -26,12 +26,12 @@ export async function normalizeConfig<C extends ConfigurationObject>(
     configObject.devServer = {
       ...configObject.devServer,
       host:
-        env.devServer.host ?? configObject.devServer.host ?? DEFAULT_HOSTNAME,
-      port: env.devServer.port ?? configObject.devServer.port ?? DEFAULT_PORT,
-      hot: env.devServer.hmr ?? configObject.devServer.hmr,
+        env.devServer.host ?? configObject.devServer?.host ?? DEFAULT_HOSTNAME,
+      port: env.devServer.port ?? configObject.devServer?.port ?? DEFAULT_PORT,
+      hot: env.devServer.hmr ?? configObject.devServer?.hmr,
     };
 
-    configObject.devServer.server = configObject.devServer.server ?? {
+    configObject.devServer.server = configObject.devServer?.server ?? {
       type: 'http',
     };
 

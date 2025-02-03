@@ -27,7 +27,9 @@ export function getEnvOptions(cliOptions: CliOptions): EnvOptions {
     env.mode = 'development';
     env.devServer = {
       port: cliOptions.arguments.start.port,
-      host: cliOptions.arguments.start.host,
+      host: cliOptions.arguments.start.host
+        ? cliOptions.arguments.start.host
+        : undefined,
       https: cliOptions.arguments.start.https
         ? {
             cert: cliOptions.arguments.start.cert,
