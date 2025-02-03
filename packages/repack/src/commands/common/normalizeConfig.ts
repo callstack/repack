@@ -17,28 +17,37 @@ export async function normalizeConfig<C extends ConfigurationObject>(
   // normalize compiler name to be equal to platform
   configObject.name = env.platform;
 
+  // normalize properties where env always takes precedence
+  configObject.context = env.context;
+  configObject.mode = env.mode;
+
   // normalize dev server options
   if (env.devServer) {
     configObject.devServer = {
-      host: env.devServer.host ?? DEFAULT_HOSTNAME,
-      port: env.devServer.port ?? DEFAULT_PORT,
-      hot: env.devServer.hmr ?? true,
       ...configObject.devServer,
+      host:
+        env.devServer.host ?? configObject.devServer.host ?? DEFAULT_HOSTNAME,
+      port: env.devServer.port ?? configObject.devServer.port ?? DEFAULT_PORT,
+      hot: env.devServer.hmr ?? configObject.devServer.hmr,
     };
 
-    configObject.devServer.server = {
-      ...(env.devServer.https
-        ? {
-            type: 'https',
-            options: {
-              cert: env.devServer.https.cert,
-              key: env.devServer.https.key,
-              ...configObject.devServer?.server?.options,
-            },
-          }
-        : { type: 'http' as const }),
-      ...configObject.devServer?.server,
+    configObject.devServer.server = configObject.devServer.server ?? {
+      type: 'http',
     };
+
+    if (env.devServer.https) {
+      const serverOptionsFromConfig =
+        configObject.devServer.server.options ?? {};
+
+      configObject.devServer.server = {
+        type: 'https',
+        options: {
+          ...serverOptionsFromConfig,
+          cert: env.devServer.https.cert,
+          key: env.devServer.https.key,
+        },
+      };
+    }
   }
 
   // return the normalized config object

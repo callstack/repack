@@ -1,19 +1,18 @@
 import path from 'node:path';
 import type { EnvOptions } from '../../types.js';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts.js';
 import type { CliOptions } from '../types.js';
 
 export function getEnvOptions(cliOptions: CliOptions): EnvOptions {
-  const env: EnvOptions = { bundleFilename: '' };
-
-  env.context = cliOptions.config.root;
-  env.reactNativePath = cliOptions.config.reactNativePath;
+  const env: EnvOptions = {
+    context: cliOptions.config.root,
+    mode: 'production',
+    reactNativePath: cliOptions.config.reactNativePath,
+  };
 
   if ('bundle' in cliOptions.arguments) {
     env.mode = cliOptions.arguments.bundle.dev ? 'development' : 'production';
     env.platform = cliOptions.arguments.bundle.platform;
-    env.minimize =
-      cliOptions.arguments.bundle.minify ?? env.mode === 'production';
+    env.minimize = cliOptions.arguments.bundle.minify;
 
     const { entryFile } = cliOptions.arguments.bundle;
     env.entry =
@@ -27,8 +26,8 @@ export function getEnvOptions(cliOptions: CliOptions): EnvOptions {
   } else {
     env.mode = 'development';
     env.devServer = {
-      port: cliOptions.arguments.start.port ?? DEFAULT_PORT,
-      host: cliOptions.arguments.start.host || DEFAULT_HOSTNAME,
+      port: cliOptions.arguments.start.port,
+      host: cliOptions.arguments.start.host,
       https: cliOptions.arguments.start.https
         ? {
             cert: cliOptions.arguments.start.cert,

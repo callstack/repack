@@ -1,5 +1,4 @@
 import type { FastifyBaseLogger } from 'fastify';
-import type { WebSocketServer } from 'ws';
 import type { CompilerDelegate } from './plugins/compiler/types.js';
 import type {
   CodeFrame,
@@ -32,31 +31,32 @@ export namespace Server {
     delegate: (context: DelegateContext) => Delegate;
   }
 
-  /** Development server options. */
-  export interface Options {
-    /** Root directory of the project. */
-    rootDir: string;
-
-    /** Port under which to run the development server. */
-    port: number;
-
+  export interface DevOptions {
     /**
      * Hostname or IP address under which to run the development server.
-     * When left unspecified, it will listen on all available network interfaces, similarly to listening on '0.0.0.0'.
+     * Can be 'local-ip', 'local-ipv4', 'local-ipv6' or a custom string.
+     * When left unspecified, it will listen on all available network interfaces.
      */
-    host?: string;
+    host?: 'local-ip' | 'local-ipv4' | 'local-ipv6' | string;
+
+    /** Port under which to run the development server. */
+    port?: number;
+
+    /** Whether to enable Hot Module Replacement. */
+    hot?: boolean;
 
     /** Options for running the server as HTTPS. If `undefined`, the server will run as HTTP. */
-    https?: {
-      /** Path to certificate when running server as HTTPS. */
-      cert?: string;
+    server?:
+      | 'http'
+      | 'https'
+      | { type: 'http' }
+      | { type: 'https'; options?: import('node:https').ServerOptions };
+  }
 
-      /** Path to certificate key when running server as HTTPS. */
-      key?: string;
-    };
-
-    /** Additional endpoints with pre-configured servers */
-    endpoints?: Record<string, WebSocketServer>;
+  /** Development server options. */
+  export interface Options extends DevOptions {
+    /** Root directory of the project. */
+    rootDir: string;
 
     /** Whether to enable logging requests. */
     logRequests?: boolean;

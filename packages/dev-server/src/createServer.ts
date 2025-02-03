@@ -22,6 +22,13 @@ export async function createServer(config: Server.Config) {
   // biome-ignore lint/style/useConst: needed in fastify constructor
   let delegate: Server.Delegate;
 
+  const httpsOptions =
+    config.options.server &&
+    typeof config.options.server === 'object' &&
+    config.options.server.type === 'https'
+      ? config.options.server.options
+      : undefined;
+
   /** Fastify instance powering the development server. */
   const instance = Fastify({
     disableRequestLogging: !config.options.logRequests,
@@ -36,7 +43,7 @@ export async function createServer(config: Server.Config) {
         },
       }),
     },
-    ...(config.options.https ? { https: config.options.https } : undefined),
+    ...(httpsOptions ? { https: httpsOptions } : {}),
   });
 
   delegate = await config.delegate({
@@ -75,11 +82,8 @@ export async function createServer(config: Server.Config) {
   await instance.register(fastifySensible);
   await instance.register(middie);
   await instance.register(wssPlugin, {
-    options: {
-      ...config.options,
-      endpoints: devMiddleware.websocketEndpoints,
-    },
     delegate,
+    endpoints: devMiddleware.websocketEndpoints,
   });
   await instance.register(multipartPlugin);
   await instance.register(apiPlugin, {

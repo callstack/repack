@@ -60,6 +60,8 @@ export type RemoveRecord<T> = T extends infer U & Record<string, any>
 
 export type ConfigurationObject = {
   name?: string;
+  context?: string;
+  mode?: string;
   devServer?: any;
 } & Record<string, any>;
 

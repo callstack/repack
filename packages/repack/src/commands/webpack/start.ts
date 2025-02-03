@@ -22,7 +22,6 @@ import {
   runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts.js';
 import type { StartArguments, StartCliOptions } from '../types.js';
 import { Compiler } from './Compiler.js';
 import type { HMRMessageBody } from './types.js';
@@ -48,13 +47,6 @@ export async function start(
     cliConfig.root,
     args.config ?? args.webpackConfig
   );
-  const { reversePort, ...restArgs } = args;
-
-  const serverProtocol = args.https ? 'https' : 'http';
-  const serverHost = args.host || DEFAULT_HOSTNAME;
-  const serverPort = args.port ?? DEFAULT_PORT;
-  const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
-  const showHttpRequests = args.verbose || args.logRequests;
 
   const cliOptions: StartCliOptions = {
     config: {
@@ -64,10 +56,31 @@ export async function start(
       reactNativePath: cliConfig.reactNativePath,
     },
     command: 'start',
-    arguments: {
-      start: { ...restArgs, host: serverHost, port: serverPort },
-    },
+    arguments: { start: args },
   };
+
+  // we have to evaluate config here to gain access to devServer options
+  // it can't be reused in the workers because it is not serializable
+  const env = getEnvOptions(cliOptions);
+  const config = await loadConfig<webpack.Configuration>(
+    cliOptions.config.bundlerConfigPath
+  );
+  const options = await Promise.all(
+    cliOptions.config.platforms.map((platform) => {
+      return normalizeConfig(config, { ...env, platform });
+    })
+  );
+
+  const devServerOptions = options[0].devServer ?? {};
+
+  const serverProtocol =
+    typeof devServerOptions.server === 'string'
+      ? devServerOptions.server
+      : devServerOptions.server!.type;
+  const serverHost = devServerOptions.host!;
+  const serverPort = devServerOptions.port!;
+  const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
+  const showHttpRequests = args.verbose || args.logRequests;
 
   if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
     throw new Error('Unrecognized platform: ' + args.platform);
@@ -89,33 +102,13 @@ export async function start(
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
   );
 
-  // we have to evaluate config here to gain access to devServer options
-  // it can't be reused in the workers because it is not serializable
-  const env = getEnvOptions(cliOptions);
-  const config = await loadConfig<webpack.Configuration>(
-    cliOptions.config.bundlerConfigPath
-  );
-  // biome-ignore lint/correctness/noUnusedVariables: wip
-  const options = await Promise.all(
-    cliOptions.config.platforms.map((platform) => {
-      return normalizeConfig(config, { ...env, platform });
-    })
-  );
-
   const compiler = new Compiler(cliOptions, reporter);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
     options: {
+      ...devServerOptions,
       rootDir: cliOptions.config.root,
-      host: serverHost,
-      port: serverPort,
-      https: args.https
-        ? {
-            cert: args.cert,
-            key: args.key,
-          }
-        : undefined,
       logRequests: showHttpRequests,
     },
     delegate: (ctx): Server.Delegate => {
@@ -145,7 +138,7 @@ export async function start(
         );
       }
 
-      if (reversePort) {
+      if (args.reversePort) {
         void runAdbReverse({ logger: ctx.log, port: serverPort, wait: true });
       }
 

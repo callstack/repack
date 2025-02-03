@@ -20,7 +20,6 @@ import {
   runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts.js';
 import type { StartArguments, StartCliOptions } from '../types.js';
 import { Compiler } from './Compiler.js';
 
@@ -45,13 +44,6 @@ export async function start(
     cliConfig.root,
     args.config ?? args.webpackConfig
   );
-  const { reversePort, ...restArgs } = args;
-
-  const serverProtocol = args.https ? 'https' : 'http';
-  const serverHost = args.host || DEFAULT_HOSTNAME;
-  const serverPort = args.port ?? DEFAULT_PORT;
-  const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
-  const showHttpRequests = args.verbose || args.logRequests;
 
   const cliOptions: StartCliOptions = {
     config: {
@@ -61,10 +53,30 @@ export async function start(
       reactNativePath: cliConfig.reactNativePath,
     },
     command: 'start',
-    arguments: {
-      start: { ...restArgs, host: serverHost, port: serverPort },
-    },
+    arguments: { start: args },
   };
+
+  const env = getEnvOptions(cliOptions);
+  const config = await loadConfig<Configuration>(
+    cliOptions.config.bundlerConfigPath
+  );
+  const options = await Promise.all(
+    cliOptions.config.platforms.map((platform) => {
+      return normalizeConfig(config, { ...env, platform });
+    })
+  );
+
+  const devServerOptions = options[0].devServer ?? {};
+  const watchOptions = options[0].watchOptions ?? {};
+
+  const serverProtocol =
+    typeof devServerOptions.server === 'string'
+      ? devServerOptions.server
+      : devServerOptions.server!.type;
+  const serverHost = devServerOptions.host!;
+  const serverPort = devServerOptions.port!;
+  const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
+  const showHttpRequests = args.verbose || args.logRequests;
 
   if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
     throw new Error('Unrecognized platform: ' + args.platform);
@@ -86,32 +98,14 @@ export async function start(
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
   );
 
-  const env = getEnvOptions(cliOptions);
-  const config = await loadConfig<Configuration>(
-    cliOptions.config.bundlerConfigPath
-  );
-  const options = await Promise.all(
-    cliOptions.config.platforms.map((platform) => {
-      return normalizeConfig(config, { ...env, platform });
-    })
-  );
-  const watchOptions = options[0].watchOptions ?? {};
-
   const compiler = new Compiler(cliOptions, reporter);
   compiler.init(options, watchOptions);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
     options: {
+      ...devServerOptions,
       rootDir: cliOptions.config.root,
-      host: serverHost,
-      port: serverPort,
-      https: args.https
-        ? {
-            cert: args.cert,
-            key: args.key,
-          }
-        : undefined,
       logRequests: showHttpRequests,
     },
     delegate: (ctx) => {
@@ -141,7 +135,7 @@ export async function start(
         );
       }
 
-      if (reversePort) {
+      if (args.reversePort) {
         void runAdbReverse({ logger: ctx.log, port: serverPort, wait: true });
       }
 
