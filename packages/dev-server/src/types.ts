@@ -1,3 +1,4 @@
+import type { ServerOptions } from 'node:https';
 import type { FastifyBaseLogger } from 'fastify';
 import type { CompilerDelegate } from './plugins/compiler/types.js';
 import type {
@@ -40,7 +41,7 @@ export interface DevServerOptions {
     | 'http'
     | 'https'
     | { type: 'http' }
-    | { type: 'https'; options?: import('node:https').ServerOptions };
+    | { type: 'https'; options?: ServerOptions };
 }
 
 export namespace Server {

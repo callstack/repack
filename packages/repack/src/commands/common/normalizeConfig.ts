@@ -31,7 +31,7 @@ export async function normalizeConfig<C extends ConfigurationObject>(
       hot: env.devServer.hmr ?? configObject.devServer?.hmr,
     };
 
-    configObject.devServer.server = configObject.devServer?.server ?? {
+    configObject.devServer.server = configObject.devServer.server ?? {
       type: 'http',
     };
 

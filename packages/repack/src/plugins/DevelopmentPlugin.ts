@@ -39,10 +39,6 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       return;
     }
 
-    if (!compiler.options.devServer) {
-      throw new Error('devServer is not defined');
-    }
-
     const reactNativePackageJson: PackageJSON = require('react-native/package.json');
     const [majorVersion, minorVersion, patchVersion] =
       reactNativePackageJson.version.split('-')[0].split('.');
