@@ -25,7 +25,8 @@ export default async function repackAssetsLoader(
   this.cacheable();
   const callback = this.async();
   const logger = this.getLogger('repackAssetsLoader');
-  const isDev = !!this._compiler.options.devServer;
+  const isDev =
+    this.mode === 'development' && !!this._compiler.options.devServer;
 
   const readDirAsync: AsyncFS['readdir'] = util.promisify(this.fs.readdir);
   const readFileAsync: AsyncFS['readFile'] = util.promisify(this.fs.readFile);
