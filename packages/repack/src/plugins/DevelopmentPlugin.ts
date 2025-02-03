@@ -39,17 +39,23 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       return;
     }
 
+    if (!compiler.options.devServer) {
+      throw new Error('devServer is not defined');
+    }
+
     const reactNativePackageJson: PackageJSON = require('react-native/package.json');
     const [majorVersion, minorVersion, patchVersion] =
       reactNativePackageJson.version.split('-')[0].split('.');
 
-    // TODO (jbroma) this check should be done in commands
-    const protocol = compiler.options.devServer.server;
-    if (protocol !== 'http' && protocol !== 'https') {
-      console.warn('Unsupported protocol', protocol);
+    let protocol: 'http' | 'https';
+    if (typeof compiler.options.devServer.server === 'string') {
+      protocol = compiler.options.devServer.server;
+    } else if (compiler.options.devServer.server) {
+      protocol = compiler.options.devServer.server.type;
+    } else {
+      throw new Error('devServer.server is not defined');
     }
 
-    // TODO (jbroma) devServer types
     new compiler.webpack.DefinePlugin({
       __PLATFORM__: JSON.stringify(this.config.platform),
       __PUBLIC_PROTOCOL__: protocol,
