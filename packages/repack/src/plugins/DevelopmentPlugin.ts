@@ -45,7 +45,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
 
     // TODO (jbroma) this check should be done in commands
     const protocol = compiler.options.devServer.server;
-    if (protocol !== 'http' || protocol !== 'https') {
+    if (protocol !== 'http' && protocol !== 'https') {
       console.warn('Unsupported protocol', protocol);
     }
 
