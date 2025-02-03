@@ -20,13 +20,12 @@ function postMessage(message: WorkerMessages.WorkerMessage): void {
 
 async function main({ cliOptions, platform }: WebpackWorkerOptions) {
   const env = getEnvOptions(cliOptions);
-  const config = await loadConfig<Configuration>(
+  const rawConfig = await loadConfig<Configuration>(
     cliOptions.config.bundlerConfigPath
   );
-  const options = await normalizeConfig(config, { ...env, platform });
-  const watchOptions = options.watchOptions ?? {};
+  const config = await normalizeConfig(rawConfig, { ...env, platform });
 
-  options.plugins = (options.plugins ?? []).concat(
+  config.plugins = (config.plugins ?? []).concat(
     new webpack.ProgressPlugin({
       entries: false,
       dependencies: false,
@@ -45,7 +44,7 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
     })
   );
 
-  const compiler = webpack(options);
+  const compiler = webpack(config);
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
 
@@ -117,7 +116,7 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
     });
   });
 
-  compiler.watch(watchOptions, (error) => {
+  compiler.watch(config.watchOptions ?? {}, (error) => {
     if (error) {
       postMessage({ event: 'error', error });
     }
