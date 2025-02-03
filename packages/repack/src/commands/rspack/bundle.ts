@@ -6,6 +6,7 @@ import {
   getEnvOptions,
   getRspackConfigFilePath,
   loadConfig,
+  normalizeConfig,
   normalizeStatsOptions,
   writeStats,
 } from '../common/index.js';
@@ -52,8 +53,10 @@ export async function bundle(
     process.env[VERBOSE_ENV_KEY] = '1';
   }
 
-  const envOptions = getEnvOptions(cliOptions);
-  const config = await loadConfig<Configuration>(rspackConfigPath, envOptions);
+  const env = getEnvOptions(cliOptions);
+  const config = await loadConfig<Configuration>(rspackConfigPath);
+  const options = await normalizeConfig(config, env);
+  const watchOptions = options.watchOptions ?? {};
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {
     if (error) {
@@ -88,12 +91,12 @@ export async function bundle(
     }
   };
 
-  const compiler = rspack(config);
+  const compiler = rspack(options);
 
   return new Promise<void>((resolve) => {
     if (args.watch) {
       compiler.hooks.watchClose.tap('bundle', resolve);
-      compiler.watch(config.watchOptions ?? {}, errorHandler);
+      compiler.watch(watchOptions, errorHandler);
     } else {
       compiler.run((error, stats) => {
         // make cache work: https://webpack.js.org/api/node/#run

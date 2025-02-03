@@ -5,6 +5,7 @@ import {
   getEnvOptions,
   getWebpackConfigFilePath,
   loadConfig,
+  normalizeConfig,
   normalizeStatsOptions,
   writeStats,
 } from '../common/index.js';
@@ -51,11 +52,10 @@ export async function bundle(
     process.env[VERBOSE_ENV_KEY] = '1';
   }
 
-  const envOptions = getEnvOptions(cliOptions);
-  const webpackConfig = await loadConfig<Configuration>(
-    webpackConfigPath,
-    envOptions
-  );
+  const env = getEnvOptions(cliOptions);
+  const config = await loadConfig<Configuration>(webpackConfigPath);
+  const options = await normalizeConfig(config, env);
+  const watchOptions = options.watchOptions ?? {};
 
   const errorHandler = async (error: Error | null, stats?: webpack.Stats) => {
     if (error) {
@@ -89,12 +89,12 @@ export async function bundle(
     }
   };
 
-  const compiler = webpack(webpackConfig);
+  const compiler = webpack(options);
 
   return new Promise<void>((resolve) => {
     if (args.watch) {
       compiler.hooks.watchClose.tap('bundle', resolve);
-      compiler.watch(webpackConfig.watchOptions ?? {}, errorHandler);
+      compiler.watch(watchOptions, errorHandler);
     } else {
       compiler.run((error, stats) => {
         // make cache work: https://webpack.js.org/api/node/#run

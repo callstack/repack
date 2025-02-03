@@ -1,3 +1,5 @@
+import type { EnvOptions } from '../types.js';
+
 export interface BundleArguments {
   entryFile: string;
   platform: string;
@@ -55,3 +57,12 @@ export type CliOptions = StartCliOptions | BundleCliOptions;
 export type RemoveRecord<T> = T extends infer U & Record<string, any>
   ? U
   : never;
+
+export type ConfigurationObject = {
+  name?: string;
+  devServer?: any;
+} & Record<string, any>;
+
+export type Configuration<T> =
+  | T
+  | ((env: EnvOptions, argv: Record<string, any>) => T | Promise<T>);

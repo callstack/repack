@@ -13,8 +13,11 @@ import {
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
 import {
+  getEnvOptions,
   getMimeType,
   getWebpackConfigFilePath,
+  loadConfig,
+  normalizeConfig,
   parseFileUrl,
   runAdbReverse,
   setupInteractions,
@@ -36,9 +39,13 @@ import type { HMRMessageBody } from './types.js';
  * @internal
  * @category CLI command
  */
-export async function start(_: string[], config: Config, args: StartArguments) {
+export async function start(
+  _: string[],
+  cliConfig: Config,
+  args: StartArguments
+) {
   const webpackConfigPath = getWebpackConfigFilePath(
-    config.root,
+    cliConfig.root,
     args.config ?? args.webpackConfig
   );
   const { reversePort, ...restArgs } = args;
@@ -51,10 +58,10 @@ export async function start(_: string[], config: Config, args: StartArguments) {
 
   const cliOptions: StartCliOptions = {
     config: {
-      root: config.root,
-      platforms: Object.keys(config.platforms),
+      root: cliConfig.root,
+      platforms: Object.keys(cliConfig.platforms),
       bundlerConfigPath: webpackConfigPath,
-      reactNativePath: config.reactNativePath,
+      reactNativePath: cliConfig.reactNativePath,
     },
     command: 'start',
     arguments: {
@@ -80,6 +87,19 @@ export async function start(_: string[], config: Config, args: StartArguments) {
   const version = packageJson.version;
   process.stdout.write(
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
+  );
+
+  // we have to evaluate config here to gain access to devServer options
+  // it can't be reused in the workers because it is not serializable
+  const env = getEnvOptions(cliOptions);
+  const config = await loadConfig<webpack.Configuration>(
+    cliOptions.config.bundlerConfigPath
+  );
+  // biome-ignore lint/correctness/noUnusedVariables: wip
+  const options = await Promise.all(
+    cliOptions.config.platforms.map((platform) => {
+      return normalizeConfig(config, { ...env, platform });
+    })
   );
 
   const compiler = new Compiler(cliOptions, reporter);

@@ -3,6 +3,7 @@ export * from './getConfigFilePath.js';
 export * from './getEnvOptions.js';
 export * from './getMimeType.js';
 export * from './loadConfig.js';
+export * from './normalizeConfig.js';
 export * from './runAdbReverse.js';
 export * from './parseFileUrl.js';
 export * from './setupInteractions.js';

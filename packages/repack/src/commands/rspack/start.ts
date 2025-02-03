@@ -10,8 +10,11 @@ import {
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
 import {
+  getEnvOptions,
   getMimeType,
   getRspackConfigFilePath,
+  loadConfig,
+  normalizeConfig,
   parseFileUrl,
   runAdbReverse,
   setupInteractions,
@@ -82,8 +85,17 @@ export async function start(
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
   );
 
-  // @ts-ignore
+  const env = getEnvOptions(cliOptions);
+  const config = await loadConfig(cliOptions.config.bundlerConfigPath);
+  const options = await Promise.all(
+    cliOptions.config.platforms.map((platform) => {
+      return normalizeConfig(config, { ...env, platform });
+    })
+  );
+  const watchOptions = options[0].watchOptions ?? {};
+
   const compiler = new Compiler(cliOptions, reporter);
+  compiler.init(options, watchOptions);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
@@ -194,9 +206,7 @@ export async function start(
     },
   });
 
-  await compiler.init();
   await start();
-
   compiler.start();
 
   return {

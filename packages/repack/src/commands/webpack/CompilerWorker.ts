@@ -6,6 +6,7 @@ import {
   adaptFilenameToPlatform,
   getEnvOptions,
   loadConfig,
+  normalizeConfig,
 } from '../common/index.js';
 import type {
   CompilerAsset,
@@ -18,14 +19,14 @@ function postMessage(message: WorkerMessages.WorkerMessage): void {
 }
 
 async function main({ cliOptions, platform }: WebpackWorkerOptions) {
-  const webpackEnvOptions = getEnvOptions(cliOptions);
-  const webpackConfig = await loadConfig<Configuration>(
-    cliOptions.config.bundlerConfigPath,
-    { ...webpackEnvOptions, platform }
+  const env = getEnvOptions(cliOptions);
+  const config = await loadConfig<Configuration>(
+    cliOptions.config.bundlerConfigPath
   );
-  const watchOptions = webpackConfig.watchOptions ?? {};
+  const options = await normalizeConfig(config, { ...env, platform });
+  const watchOptions = options.watchOptions ?? {};
 
-  webpackConfig.plugins = (webpackConfig.plugins ?? []).concat(
+  options.plugins = (options.plugins ?? []).concat(
     new webpack.ProgressPlugin({
       entries: false,
       dependencies: false,
@@ -44,7 +45,7 @@ async function main({ cliOptions, platform }: WebpackWorkerOptions) {
     })
   );
 
-  const compiler = webpack(webpackConfig);
+  const compiler = webpack(options);
 
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
 

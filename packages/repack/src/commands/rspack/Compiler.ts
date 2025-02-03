@@ -2,21 +2,17 @@ import fs from 'node:fs';
 import path from 'node:path';
 // @ts-expect-error type-only import
 import type { Server } from '@callstack/repack-dev-server';
-import { type Configuration, rspack } from '@rspack/core';
+import { rspack } from '@rspack/core';
 import type {
   MultiCompiler,
+  MultiRspackOptions,
   StatsCompilation,
   WatchOptions,
 } from '@rspack/core';
 import memfs from 'memfs';
 import type { Reporter } from '../../logging/types.js';
 import type { HMRMessageBody } from '../../types.js';
-import {
-  adaptFilenameToPlatform,
-  getEnvOptions,
-  loadConfig,
-  runAdbReverse,
-} from '../common/index.js';
+import { adaptFilenameToPlatform, runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
 import type { StartCliOptions } from '../types.js';
 import type { CompilerAsset, MultiWatching } from './types.js';
@@ -54,23 +50,12 @@ export class Compiler {
     this.devServerContext = ctx;
   }
 
-  async init() {
-    const webpackEnvOptions = getEnvOptions(this.cliOptions);
-    const configs = await Promise.all(
-      this.platforms.map(async (platform) => {
-        return loadConfig<Configuration>(
-          this.cliOptions.config.bundlerConfigPath,
-          { ...webpackEnvOptions, platform }
-        );
-      })
-    );
-
-    this.compiler = rspack.rspack(configs);
+  init(options: MultiRspackOptions, watchOptions: WatchOptions) {
+    this.compiler = rspack.rspack(options);
+    this.watchOptions = watchOptions;
     this.filesystem = memfs.createFsFromVolume(new memfs.Volume());
     // @ts-expect-error memfs is compatible enough
     this.compiler.outputFileSystem = this.filesystem;
-
-    this.watchOptions = configs[0].watchOptions ?? {};
 
     this.compiler.hooks.watchRun.tap('repack:watch', () => {
       this.isCompilationInProgress = true;
