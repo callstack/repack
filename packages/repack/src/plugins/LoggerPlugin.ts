@@ -159,7 +159,10 @@ export class LoggerPlugin implements RspackPluginInstance {
     });
 
     compiler.hooks.done.tap('LoggerPlugin', (stats) => {
-      if (compiler.options.devServer) {
+      if (
+        compiler.options.mode === 'development' &&
+        compiler.options.devServer
+      ) {
         const { time, errors, warnings } = stats.toJson({
           all: false,
           timings: true,
