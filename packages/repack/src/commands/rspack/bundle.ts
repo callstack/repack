@@ -54,9 +54,8 @@ export async function bundle(
   }
 
   const env = getEnvOptions(cliOptions);
-  const config = await loadConfig<Configuration>(rspackConfigPath);
-  const options = await normalizeConfig(config, env);
-  const watchOptions = options.watchOptions ?? {};
+  const rawConfig = await loadConfig<Configuration>(rspackConfigPath);
+  const config = await normalizeConfig(rawConfig, env);
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {
     if (error) {
@@ -91,12 +90,12 @@ export async function bundle(
     }
   };
 
-  const compiler = rspack(options);
+  const compiler = rspack(config);
 
   return new Promise<void>((resolve) => {
     if (args.watch) {
       compiler.hooks.watchClose.tap('bundle', resolve);
-      compiler.watch(watchOptions, errorHandler);
+      compiler.watch(config.watchOptions ?? {}, errorHandler);
     } else {
       compiler.run((error, stats) => {
         // make cache work: https://webpack.js.org/api/node/#run

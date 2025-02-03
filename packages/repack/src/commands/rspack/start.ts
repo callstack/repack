@@ -57,17 +57,17 @@ export async function start(
   };
 
   const env = getEnvOptions(cliOptions);
-  const config = await loadConfig<Configuration>(
+  const rawConfig = await loadConfig<Configuration>(
     cliOptions.config.bundlerConfigPath
   );
-  const options = await Promise.all(
+  const configs = await Promise.all(
     cliOptions.config.platforms.map((platform) => {
-      return normalizeConfig(config, { ...env, platform });
+      return normalizeConfig(rawConfig, { ...env, platform });
     })
   );
 
-  const devServerOptions = options[0].devServer ?? {};
-  const watchOptions = options[0].watchOptions ?? {};
+  const devServerOptions = configs[0].devServer ?? {};
+  const watchOptions = configs[0].watchOptions ?? {};
 
   const serverProtocol =
     typeof devServerOptions.server === 'string'
@@ -99,7 +99,7 @@ export async function start(
   );
 
   const compiler = new Compiler(cliOptions, reporter);
-  compiler.init(options, watchOptions);
+  compiler.init(configs, watchOptions);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({

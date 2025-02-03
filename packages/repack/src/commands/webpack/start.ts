@@ -62,16 +62,16 @@ export async function start(
   // we have to evaluate config here to gain access to devServer options
   // it can't be reused in the workers because it is not serializable
   const env = getEnvOptions(cliOptions);
-  const config = await loadConfig<webpack.Configuration>(
+  const rawConfig = await loadConfig<webpack.Configuration>(
     cliOptions.config.bundlerConfigPath
   );
-  const options = await Promise.all(
+  const configs = await Promise.all(
     cliOptions.config.platforms.map((platform) => {
-      return normalizeConfig(config, { ...env, platform });
+      return normalizeConfig(rawConfig, { ...env, platform });
     })
   );
 
-  const devServerOptions = options[0].devServer ?? {};
+  const devServerOptions = configs[0].devServer ?? {};
 
   const serverProtocol =
     typeof devServerOptions.server === 'string'
