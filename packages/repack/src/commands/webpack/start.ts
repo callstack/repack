@@ -114,7 +114,7 @@ export async function start(_: string[], config: Config, args: StartArguments) {
                   method: 'POST',
                 });
               } catch (error) {
-                ctx.log.error('Failed to open React Native DevTools', error);
+                ctx.log.warn('Failed to open React Native DevTools', error);
               }
             },
             onAdbReverse() {
