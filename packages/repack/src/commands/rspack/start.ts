@@ -114,8 +114,8 @@ export async function start(
                 void fetch(`${serverURL}/open-debugger`, {
                   method: 'POST',
                 });
-              } catch (error) {
-                ctx.log.warn('Failed to open React Native DevTools', error);
+              } catch {
+                ctx.log.warn('Failed to open React Native DevTools');
               }
             },
             onAdbReverse() {
