@@ -5,11 +5,12 @@ import type { PackageManager } from '../types/pm.js';
 
 export default function completeSetup(
   projectName: string,
-  packageManager: PackageManager
+  packageManager: PackageManager,
+  projectExists: boolean
 ) {
   const nextSteps = dedent`
-    cd ${projectName}
-    ${packageManager.runCommand} install
+    ${projectExists ? '' : `cd ${projectName}`}
+    ${projectExists ? '' : `${packageManager.runCommand} install`}
     ${packageManager.runCommand} start
 
     ${chalk.blue('[ios]')}
