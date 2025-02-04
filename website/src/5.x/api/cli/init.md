@@ -1,45 +1,58 @@
-# repack-init
+# Initialize Re.Pack in your project
 
-`@callstack/repack-init` is a command-line tool that helps you to set up Re.Pack in your React Native project. It installs all required dependencies and configures your project to use Re.Pack.
+`@callstack/repack-init` is a command-line tool that initializes Re.Pack setup in React Native projects.
+
+The tool detects whether it's being run in an existing React Native project. If not, it will create a new React Native app with Re.Pack pre-configured. If run inside an existing project, it will install all necessary dependencies and configure your project to use Re.Pack.
 
 ## Usage
 
-In the root of an existing React Native project, run this command in your terminal of choice:
-
 ```bash
-npx @callstack/repack-init [options]
+npx @callstack/repack-init
 ```
+
+![repack-init](/img/init.png)
 
 ## Options
 
-### --custom-version, -c
+### `--bundler`, `-b`
+
+- Type: `rspack` | `webpack`
+- Required: `true`
+
+Specify the bundler to use.
+
+### `--custom-version`, `-c`
 
 - Type: `string`
 - Default: `latest`
 
-Use a custom version of Re.Pack.
+Specify the version of `@callstack/repack` to install.
 
-### --entry, -e
+### `--entry`, `-e`
 
 - Type: `string`
 - Default: `index.js`
 
-Path to the entry file of your `react-native` application.
+Path to the main entry point of the React-Native project.
 
-### --format, -f
+### `--format`, `-f`
 
 - Type: `mjs` | `cjs`
 - Default: `mjs`
 
-Format of the Webpack config file. Available choices `mjs`, `cjs`.
+Format of the config file.
 
-### --verbose, -v
+### `--verbose`, `-v`
 
 - Type: `boolean`
 - Default: `false`
 
-Enable verbose output.
+Enable verbose logging.
 
-### --version
+### `--version`
 
 Show version number.
+
+### `--help`
+
+Show help information.
