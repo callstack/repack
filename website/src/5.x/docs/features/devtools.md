@@ -2,6 +2,15 @@
 
 React Native Devtools are currently recommended way of debugging your React Native application. Re.Pack comes with built-in support for React Native Devtools.
 
+## Features
+
+All the features of React Native Devtools are available in Re.Pack:
+
+- [Console](https://reactnative.dev/docs/react-native-devtools#console)
+- [Source & breakpoints](https://reactnative.dev/docs/react-native-devtools#sources--breakpoints)
+- [Memory](https://reactnative.dev/docs/react-native-devtools#memory)
+- [Built-in support for React DevTools](https://reactnative.dev/docs/react-native-devtools#react-devtools-features)
+
 ## Usage
 
 To start debugging your application, all you need to do is to press `j` in the terminal where Re.Pack dev server is running (remember to have at least one device connected).
@@ -20,15 +29,6 @@ For example, if you have a host application with two remotes named "shop" and "c
 ![React Native Devtools with Module Federation](./devtools-mf.png)
 
 This separation helps maintain clear boundaries between different parts of your federated application during debugging sessions.
-
-## Features
-
-All the features of React Native Devtools are available in Re.Pack:
-
-- [Console](https://reactnative.dev/docs/react-native-devtools#console)
-- [Source & breakpoints](https://reactnative.dev/docs/react-native-devtools#sources--breakpoints)
-- [Memory](https://reactnative.dev/docs/react-native-devtools#memory)
-- [Built-in support for React DevTools](https://reactnative.dev/docs/react-native-devtools#react-devtools-features)
 
 :::tip
 
