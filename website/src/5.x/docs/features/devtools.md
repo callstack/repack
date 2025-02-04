@@ -13,7 +13,17 @@ All the features of React Native Devtools are available in Re.Pack:
 
 ## Usage
 
-To start debugging your application, all you need to do is to press `j` in the terminal where Re.Pack dev server is running (remember to have at least one device connected).
+To start debugging your application, you can either:
+
+- Press `j` in the terminal where Re.Pack dev server is running (remember to have at least one device connected)
+
+- Open the Developer Menu by:
+
+  - iOS Simulator: `Cmd (⌘) + D`
+
+  - Android Emulator: `Cmd (⌘) + M`
+
+  Then select "Open DevTools".
 
 ![React Native Devtools](./devtools.png)
 
