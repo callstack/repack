@@ -1,8 +1,8 @@
 # Initialize Re.Pack in your project
 
-`@callstack/repack-init` is a command-line tool that initializes Re.Pack setup in React Native projects.
+`@callstack/repack-init` is a command-line tool that initializes Re.Pack setup in React Native projects or creates a new React Native app with Re.Pack pre-configured.
 
-The tool detects whether it's being run in an existing React Native project. If not, it will create a new React Native app with Re.Pack pre-configured. If run inside an existing project, it will install all necessary dependencies and configure your project to use Re.Pack.
+The tool detects whether it's being run in an existing React Native project or outside of it and decies what to do based on that.
 
 ## Usage
 
