@@ -5,7 +5,6 @@ import type { CliOptions } from '../types.js';
 export function getEnvOptions(cliOptions: CliOptions): EnvOptions {
   const env: EnvOptions = {
     context: cliOptions.config.root,
-    mode: 'production',
     reactNativePath: cliOptions.config.reactNativePath,
   };
 
@@ -24,7 +23,6 @@ export function getEnvOptions(cliOptions: CliOptions): EnvOptions {
     env.sourceMapFilename = cliOptions.arguments.bundle.sourcemapOutput;
     env.assetsPath = cliOptions.arguments.bundle.assetsDest;
   } else {
-    env.mode = 'development';
     env.devServer = {
       port: cliOptions.arguments.start.port,
       host: cliOptions.arguments.start.host
@@ -36,6 +34,7 @@ export function getEnvOptions(cliOptions: CliOptions): EnvOptions {
             key: cliOptions.arguments.start.key,
           }
         : undefined,
+      // left for compatibility right now
       hmr: true,
     };
   }

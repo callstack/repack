@@ -47,7 +47,7 @@ export interface EnvOptions {
   context: string;
 
   /** Compilation mode. */
-  mode: 'production' | 'development';
+  mode?: 'production' | 'development';
 
   /** Target application platform. */
   platform?: string;

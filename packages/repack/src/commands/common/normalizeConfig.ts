@@ -17,9 +17,13 @@ export async function normalizeConfig<C extends ConfigurationObject>(
   // normalize compiler name to be equal to platform
   configObject.name = env.platform;
 
-  // normalize properties where env always takes precedence
-  configObject.context = env.context;
-  configObject.mode = env.mode;
+  // normalize properties where env can override config
+  // fallback to development mode if dev server is enabled
+  // otherwise fallback to production mode
+  configObject.mode =
+    env.mode ??
+    configObject.mode ??
+    (env.devServer ? 'development' : 'production');
 
   // normalize dev server options
   if (env.devServer) {
@@ -28,7 +32,7 @@ export async function normalizeConfig<C extends ConfigurationObject>(
       host:
         env.devServer.host ?? configObject.devServer?.host ?? DEFAULT_HOSTNAME,
       port: env.devServer.port ?? configObject.devServer?.port ?? DEFAULT_PORT,
-      hot: env.devServer.hmr ?? configObject.devServer?.hmr,
+      hot: configObject.devServer?.hot ?? true,
     };
 
     configObject.devServer.server = configObject.devServer.server ?? {
