@@ -10,7 +10,7 @@ export default function completeSetup(
 ) {
   const nextSteps = dedent`
     ${projectExists ? '' : `cd ${projectName}`}
-    ${projectExists ? '' : `${packageManager.runCommand} install`}
+    ${packageManager.runCommand} install
     ${packageManager.runCommand} start
 
     ${chalk.blue('[ios]')}
