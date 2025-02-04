@@ -25,7 +25,7 @@ To start debugging your application, you can either:
 
   Then select "Open DevTools".
 
-![React Native Devtools](./devtools.png)
+![React Native Devtools](/img/devtools.png)
 
 ## Usage with Module Federation
 
@@ -36,7 +36,7 @@ When using [Module Federation](./module-federation.md), each remote will appear 
 
 For example, if you have a host application with two remotes named "shop" and "checkout" each one will appear as a separate entry in the Sources panel.
 
-![React Native Devtools with Module Federation](./devtools-mf.png)
+![React Native Devtools with Module Federation](/img/devtools-mf.png)
 
 This separation helps maintain clear boundaries between different parts of your federated application during debugging sessions.
 
