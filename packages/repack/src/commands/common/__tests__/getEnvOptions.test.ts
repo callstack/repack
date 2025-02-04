@@ -23,11 +23,13 @@ describe('getEnvOptions', () => {
     ).toEqual({
       context: '/x/y/z',
       entry: './main.js',
-      minimize: true,
+      minimize: undefined,
       mode: 'production',
       platform: 'android',
       reactNativePath: '/x/y/z/node_modules/react-native',
       bundleFilename: '/a/b/c/main.js',
+      sourceMapFilename: undefined,
+      assetsPath: undefined,
     });
 
     expect(
@@ -44,6 +46,8 @@ describe('getEnvOptions', () => {
             platform: 'android',
             dev: true,
             bundleOutput: '/a/b/c/main.js',
+            sourcemapOutput: '/a/b/c/main.js.map',
+            assetsDest: '/a/b/c/assets',
             entryFile: '/x/y/z/src/main.js',
           },
         },
@@ -51,11 +55,13 @@ describe('getEnvOptions', () => {
     ).toEqual({
       context: '/x/y/z',
       entry: '/x/y/z/src/main.js',
-      minimize: false,
+      minimize: undefined,
       mode: 'development',
       platform: 'android',
       reactNativePath: '/x/y/z/node_modules/react-native',
       bundleFilename: '/a/b/c/main.js',
+      sourceMapFilename: '/a/b/c/main.js.map',
+      assetsPath: '/a/b/c/assets',
     });
   });
 
@@ -77,14 +83,13 @@ describe('getEnvOptions', () => {
       })
     ).toEqual({
       context: '/x/y/z',
-      mode: 'development',
       reactNativePath: '/x/y/z/node_modules/react-native',
       devServer: {
-        hmr: true,
-        port: 8081,
         host: 'localhost',
+        port: undefined,
+        hmr: true,
+        https: undefined,
       },
-      bundleFilename: '',
     });
 
     expect(
@@ -105,14 +110,13 @@ describe('getEnvOptions', () => {
       })
     ).toEqual({
       context: '/x/y/z',
-      mode: 'development',
       reactNativePath: '/x/y/z/node_modules/react-native',
       devServer: {
-        hmr: true,
-        port: 5000,
         host: 'local',
+        port: 5000,
+        hmr: true,
+        https: undefined,
       },
-      bundleFilename: '',
     });
   });
 });
