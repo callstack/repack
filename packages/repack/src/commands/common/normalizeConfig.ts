@@ -6,7 +6,7 @@ export async function normalizeConfig<C extends ConfigurationObject>(
   config: Configuration<C>,
   env: EnvOptions
 ): Promise<C> {
-  // normalize the config into object
+  /* normalize the config into object */
   let configObject: C;
   if (typeof config === 'function') {
     configObject = await config(env, {});
@@ -14,10 +14,10 @@ export async function normalizeConfig<C extends ConfigurationObject>(
     configObject = config;
   }
 
-  // normalize compiler name to be equal to platform
+  /* normalize compiler name to be equal to platform */
   configObject.name = env.platform;
 
-  // normalize properties where env can override config
+  /* normalize properties where env can override config */
   // fallback to development mode if dev server is enabled
   // otherwise fallback to production mode
   configObject.mode =
@@ -25,7 +25,7 @@ export async function normalizeConfig<C extends ConfigurationObject>(
     configObject.mode ??
     (env.devServer ? 'development' : 'production');
 
-  // normalize dev server options
+  /* normalize dev server options */
   if (env.devServer) {
     configObject.devServer = {
       ...configObject.devServer,
