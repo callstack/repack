@@ -110,9 +110,13 @@ export async function start(
               ctx.broadcastToMessageClients({ method: 'devMenu' });
             },
             onOpenDevTools() {
-              void fetch(`${serverURL}/open-debugger`, {
-                method: 'POST',
-              });
+              try {
+                void fetch(`${serverURL}/open-debugger`, {
+                  method: 'POST',
+                });
+              } catch (error) {
+                ctx.log.error('Failed to open React Native DevTools', error);
+              }
             },
             onAdbReverse() {
               void runAdbReverse({
