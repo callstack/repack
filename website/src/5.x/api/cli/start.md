@@ -4,11 +4,13 @@
 
 ## Usage
 
-In the root of an existing React Native project with re.pack, run this command in your terminal of choice:
+In the root of an existing React Native project with Re.Pack, run this command in your terminal of choice:
 
 ```bash
 react-native start [options]
 ```
+
+![start](/img/start.png)
 
 :::info
 
@@ -21,85 +23,77 @@ To stay compatible with the `@react-native-community/cli` command, the following
 
 ## Options
 
-### --port <number>
+### `--port`
 
 - Type: `number`
-
 The port number that runs the server on.
 
-### --host <string>
+### `--host`
 
 - Type: `string`
 - Default: `""`
-
 Set the server host.
 
-### --https
+### `--https`
 
 - Type: `boolean`
-
 Enables HTTPS connections to the server.
 
-### --key <path>
+### `--key`
 
-- Type: `string`
-
+- Type: `path`
 Path to custom SSL key.
 
-### --cert <path>
+### `--cert`
 
-- Type: `string`
-
+- Type: `path`
 Path to custom SSL certificate.
 
-### --no-interactive
+### `--no-interactive`
 
 - Type: `boolean`
-
 Disables interactive mode.
 
-### --experimental-debugger
+### `--reset-cache`, `--resetCache`
 
 - Type: `boolean`
+(unsupported) Resets the transformation cache.
 
-Enable the new debugger experience. Connection reliability and some basic features are unstable in this release.
-
-### --json
+### `--json`
 
 - Type: `boolean`
-
 Log all messages to the console/stdout in JSON format.
 
-### --log-file <path>
+### `--log-file`
 
-- Type: `string`
-
+- Type: `path`
 Enables file logging to specified file.
 
-### --reverse-port
+### `--log-requests`
 
 - Type: `boolean`
+Enables logging of all requests to the server.
 
-ADB reverse port on starting devServers only for Android.
-
-### --silent
-
-- Type: `boolean`
-
-Silences all logs to the console/stdout.
-
-### --verbose
-
-- Type: `boolean`
-
-Enables verbose logging.
-
-### --webpackConfig <path>
+### `--platform`
 
 - Type: `string`
+Run the dev server for the specified platform only. By default, the dev server will bundle for all platforms.
 
-Path to a Webpack config file.
+### `--no-reverse-port`
 
-### -h, --help
+- Type: `boolean`
+Disables running ADB reverse automatically when bundling for Android.
 
-Display help for the command.
+### `--verbose`
+
+- Type: `boolean`
+Enables verbose logging.
+
+### `--config`, `--webpackConfig`
+
+- Type: `path`
+Path to a bundler config file, e.g webpack.config.js.
+
+### `-h`, `--help`
+
+Display help for command.
