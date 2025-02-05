@@ -5,6 +5,7 @@ import { VERBOSE_ENV_KEY } from '../../env.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import { normalizeStatsOptions, writeStats } from '../common/index.js';
 import type { BundleArguments } from '../types.js';
+import { exitWithError } from '../common/exit.js';
 
 /**
  * Bundle command for React Native Community CLI.
@@ -42,8 +43,7 @@ export async function bundle(
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {
     if (error) {
-      console.error(error);
-      process.exit(2);
+      exitWithError(String(error))
     }
 
     if (stats?.hasErrors()) {
@@ -67,8 +67,7 @@ export async function bundle(
           rootDir: compiler.context,
         });
       } catch (e) {
-        console.error(String(e));
-        process.exit(2);
+        exitWithError(String(e));
       }
     }
   };
