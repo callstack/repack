@@ -43,7 +43,7 @@ export async function bundle(
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {
     if (error) {
-      exitWithError(String(error))
+      exitWithError(String(error));
     }
 
     if (stats?.hasErrors()) {
