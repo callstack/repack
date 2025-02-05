@@ -1,0 +1,65 @@
+# Init
+
+`@callstack/repack-init` is a command-line tool that initializes Re.Pack setup in React Native projects or creates a new React Native app with Re.Pack pre-configured.
+
+The tool detects whether it's being run in an existing React Native project or outside of it and decies what to do based on that.
+
+## Usage
+
+import { PackageManagerTabs } from "@theme";
+
+<PackageManagerTabs command={{
+  npm: "npx @callstack/repack-init",
+  yarn: "yarn dlx @callstack/repack-init",
+  pnpm: "pnpm dlx @callstack/repack-init",
+  bun: "bunx @callstack/repack-init",
+}} />
+
+<div align="center">
+  <img src="/img/init.png" width="700" alt="repack-init" />
+</div>
+
+## Options
+
+### `--bundler`, `-b`
+
+- Type: `rspack` | `webpack`
+- Required: `true`
+
+Specify the bundler to use.
+
+### `--custom-version`, `-c`
+
+- Type: `string`
+- Default: `latest`
+
+Specify the version of `@callstack/repack` to install.
+
+### `--entry`, `-e`
+
+- Type: `string`
+- Default: `index.js`
+
+Path to the main entry point of the React-Native project.
+
+### `--format`, `-f`
+
+- Type: `mjs` | `cjs`
+- Default: `mjs`
+
+Format of the config file.
+
+### `--verbose`, `-v`
+
+- Type: `boolean`
+- Default: `false`
+
+Enable verbose logging.
+
+### `--version`
+
+Show version number.
+
+### `--help`
+
+Show help information.
