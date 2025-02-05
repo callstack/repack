@@ -1,4 +1,4 @@
-# start
+# `start` command
 
 `start` or `webpack-start` is a command-line tool that starts the React Native development server with Webpack integration.
 
