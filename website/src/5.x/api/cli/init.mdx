@@ -6,9 +6,38 @@ The tool detects whether it's being run in an existing React Native project or o
 
 ## Usage
 
+import { Tab, Tabs } from 'rspress/theme';
+
+<Tabs groupId="package-manager">
+  <Tab value="npm" label="npm">
+
 ```bash
 npx @callstack/repack-init
 ```
+
+  </Tab>
+  <Tab value="yarn" label="yarn">
+
+```bash
+yarn dlx @callstack/repack-init
+```
+
+  </Tab>
+  <Tab value="pnpm" label="pnpm">
+
+```bash
+pnpm dlx @callstack/repack-init
+```
+
+  </Tab>
+  <Tab value="bun" label="bun">
+
+```bash
+bunx @callstack/repack-init
+```
+
+  </Tab>
+</Tabs>
 
 ![repack-init](/img/init.png)
 
