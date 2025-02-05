@@ -16,10 +16,12 @@ export function getEnvOptions(cliOptions: CliOptions): EnvOptions {
       cliOptions.arguments.bundle.minify ?? env.mode === 'production';
 
     const { entryFile } = cliOptions.arguments.bundle;
-    env.entry =
-      path.isAbsolute(entryFile) || entryFile.startsWith('./')
-        ? entryFile
-        : `./${entryFile}`;
+    if (entryFile) {
+      env.entry =
+        path.isAbsolute(entryFile) || entryFile.startsWith('./')
+          ? entryFile
+          : `./${entryFile}`;
+    }
 
     env.bundleFilename = cliOptions.arguments.bundle.bundleOutput;
     env.sourceMapFilename = cliOptions.arguments.bundle.sourcemapOutput;
