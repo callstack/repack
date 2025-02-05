@@ -2,12 +2,8 @@ import path from 'node:path';
 import { parentPort, workerData } from 'node:worker_threads';
 import memfs from 'memfs';
 import webpack, { type Configuration } from 'webpack';
-import {
-  adaptFilenameToPlatform,
-  getEnvOptions,
-  loadConfig,
-  normalizeConfig,
-} from '../common/index.js';
+import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
+import { adaptFilenameToPlatform } from '../common/index.js';
 import type {
   CompilerAsset,
   WebpackWorkerOptions,
@@ -18,12 +14,15 @@ function postMessage(message: WorkerMessages.WorkerMessage): void {
   parentPort?.postMessage(message);
 }
 
-async function main({ cliOptions, platform }: WebpackWorkerOptions) {
-  const env = getEnvOptions(cliOptions);
-  const rawConfig = await loadConfig<Configuration>(
-    cliOptions.config.bundlerConfigPath
-  );
-  const config = await normalizeConfig(rawConfig, { ...env, platform });
+async function main(opts: WebpackWorkerOptions) {
+  const [config] = await makeCompilerConfig<Configuration>({
+    args: opts.args,
+    bundler: 'webpack',
+    command: 'start',
+    rootDir: opts.rootDir,
+    platforms: [opts.platform],
+    reactNativePath: opts.reactNativePath,
+  });
 
   config.plugins = (config.plugins ?? []).concat(
     new webpack.ProgressPlugin({

@@ -23,7 +23,7 @@ export async function bundle(
   cliConfig: Config,
   args: BundleArguments
 ) {
-  const configs = await makeCompilerConfig<Configuration>({
+  const [config] = await makeCompilerConfig<Configuration>({
     args: args,
     bundler: 'rspack',
     command: 'bundle',
@@ -73,12 +73,12 @@ export async function bundle(
     }
   };
 
-  const compiler = rspack(configs[0]);
+  const compiler = rspack(config);
 
   return new Promise<void>((resolve) => {
     if (args.watch) {
       compiler.hooks.watchClose.tap('bundle', resolve);
-      compiler.watch(configs[0].watchOptions ?? {}, errorHandler);
+      compiler.watch(config.watchOptions ?? {}, errorHandler);
     } else {
       compiler.run((error, stats) => {
         // make cache work: https://webpack.js.org/api/node/#run

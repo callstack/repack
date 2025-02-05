@@ -1,15 +1,9 @@
 import type { Config } from '@react-native-community/cli-types';
 import webpack, { type Configuration } from 'webpack';
 import { VERBOSE_ENV_KEY } from '../../env.js';
-import {
-  getEnvOptions,
-  getWebpackConfigFilePath,
-  loadConfig,
-  normalizeConfig,
-  normalizeStatsOptions,
-  writeStats,
-} from '../common/index.js';
-import type { BundleArguments, BundleCliOptions } from '../types.js';
+import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
+import { normalizeStatsOptions, writeStats } from '../common/index.js';
+import type { BundleArguments } from '../types.js';
 
 /**
  * Bundle command for React Native Community CLI.
@@ -28,21 +22,14 @@ export async function bundle(
   cliConfig: Config,
   args: BundleArguments
 ) {
-  const webpackConfigPath = getWebpackConfigFilePath(
-    cliConfig.root,
-    args.config ?? args.webpackConfig
-  );
-
-  const cliOptions: BundleCliOptions = {
-    config: {
-      root: cliConfig.root,
-      platforms: Object.keys(cliConfig.platforms),
-      bundlerConfigPath: webpackConfigPath,
-      reactNativePath: cliConfig.reactNativePath,
-    },
+  const [config] = await makeCompilerConfig<Configuration>({
+    args: args,
+    bundler: 'webpack',
     command: 'bundle',
-    arguments: { bundle: args },
-  };
+    rootDir: cliConfig.root,
+    platforms: [args.platform],
+    reactNativePath: cliConfig.reactNativePath,
+  });
 
   if (!args.entryFile) {
     throw new Error("Option '--entry-file <path>' argument is missing");
@@ -51,10 +38,6 @@ export async function bundle(
   if (args.verbose) {
     process.env[VERBOSE_ENV_KEY] = '1';
   }
-
-  const env = getEnvOptions(cliOptions);
-  const rawConfig = await loadConfig<Configuration>(webpackConfigPath);
-  const config = await normalizeConfig(rawConfig, env);
 
   const errorHandler = async (error: Error | null, stats?: webpack.Stats) => {
     if (error) {

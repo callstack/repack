@@ -2,7 +2,7 @@
 import type { Server } from '@callstack/repack-dev-server';
 import type { Config } from '@react-native-community/cli-types';
 import * as colorette from 'colorette';
-import type webpack from 'webpack';
+import type { Configuration, StatsCompilation } from 'webpack';
 import packageJson from '../../../package.json';
 import { VERBOSE_ENV_KEY } from '../../env.js';
 import {
@@ -12,17 +12,14 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
+import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
-  getEnvOptions,
   getMimeType,
-  getWebpackConfigFilePath,
-  loadConfig,
-  normalizeConfig,
   parseFileUrl,
   runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
-import type { StartArguments, StartCliOptions } from '../types.js';
+import type { StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
 import type { HMRMessageBody } from './types.js';
 
@@ -43,33 +40,20 @@ export async function start(
   cliConfig: Config,
   args: StartArguments
 ) {
-  const webpackConfigPath = getWebpackConfigFilePath(
-    cliConfig.root,
-    args.config ?? args.webpackConfig
-  );
+  const detectedPlatforms = Object.keys(cliConfig.platforms);
 
-  const cliOptions: StartCliOptions = {
-    config: {
-      root: cliConfig.root,
-      platforms: Object.keys(cliConfig.platforms),
-      bundlerConfigPath: webpackConfigPath,
-      reactNativePath: cliConfig.reactNativePath,
-    },
+  if (args.platform && !detectedPlatforms.includes(args.platform)) {
+    throw new Error('Unrecognized platform: ' + args.platform);
+  }
+
+  const configs = await makeCompilerConfig<Configuration>({
+    args: args,
+    bundler: 'rspack',
     command: 'start',
-    arguments: { start: args },
-  };
-
-  // we have to evaluate config here to gain access to devServer options
-  // it can't be reused in the workers because it is not serializable
-  const env = getEnvOptions(cliOptions);
-  const rawConfig = await loadConfig<webpack.Configuration>(
-    cliOptions.config.bundlerConfigPath
-  );
-  const configs = await Promise.all(
-    cliOptions.config.platforms.map((platform) => {
-      return normalizeConfig(rawConfig, { ...env, platform });
-    })
-  );
+    rootDir: cliConfig.root,
+    platforms: args.platform ? [args.platform] : detectedPlatforms,
+    reactNativePath: cliConfig.reactNativePath,
+  });
 
   const devServerOptions = configs[0].devServer ?? {};
 
@@ -81,10 +65,6 @@ export async function start(
   const serverPort = devServerOptions.port!;
   const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
   const showHttpRequests = args.verbose || args.logRequests;
-
-  if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
-    throw new Error('Unrecognized platform: ' + args.platform);
-  }
 
   if (args.verbose) {
     process.env[VERBOSE_ENV_KEY] = '1';
@@ -102,13 +82,18 @@ export async function start(
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
   );
 
-  const compiler = new Compiler(cliOptions, reporter);
+  const compiler = new Compiler(
+    args,
+    reporter,
+    cliConfig.root,
+    cliConfig.reactNativePath
+  );
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
     options: {
       ...devServerOptions,
-      rootDir: cliOptions.config.root,
+      rootDir: cliConfig.root,
       logRequests: showHttpRequests,
     },
     delegate: (ctx): Server.Delegate => {
@@ -142,7 +127,7 @@ export async function start(
         void runAdbReverse({ logger: ctx.log, port: serverPort, wait: true });
       }
 
-      const lastStats: Record<string, webpack.StatsCompilation> = {};
+      const lastStats: Record<string, StatsCompilation> = {};
 
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
@@ -163,7 +148,7 @@ export async function start(
           stats,
         }: {
           platform: string;
-          stats: webpack.StatsCompilation;
+          stats: StatsCompilation;
         }) => {
           ctx.notifyBuildEnd(platform);
           lastStats[platform] = stats;
@@ -250,9 +235,7 @@ export async function start(
   };
 }
 
-function createHmrBody(
-  stats?: webpack.StatsCompilation
-): HMRMessageBody | null {
+function createHmrBody(stats?: StatsCompilation): HMRMessageBody | null {
   if (!stats) {
     return null;
   }
