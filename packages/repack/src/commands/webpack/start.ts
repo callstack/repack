@@ -109,13 +109,11 @@ export async function start(_: string[], config: Config, args: StartArguments) {
               ctx.broadcastToMessageClients({ method: 'devMenu' });
             },
             onOpenDevTools() {
-              try {
-                void fetch(`${serverURL}/open-debugger`, {
-                  method: 'POST',
-                });
-              } catch {
+              void fetch(`${serverURL}/open-debugger`, {
+                method: 'POST',
+              }).catch(() => {
                 ctx.log.warn('Failed to open React Native DevTools');
-              }
+              });
             },
             onAdbReverse() {
               void runAdbReverse({
