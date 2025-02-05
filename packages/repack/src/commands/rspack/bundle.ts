@@ -44,16 +44,16 @@ export async function bundle(
     arguments: { bundle: args },
   };
 
-  if (!args.entryFile) {
-    throw new Error("Option '--entry-file <path>' argument is missing");
-  }
-
   if (args.verbose) {
     process.env[VERBOSE_ENV_KEY] = '1';
   }
 
   const envOptions = getEnvOptions(cliOptions);
   const config = await loadConfig<Configuration>(rspackConfigPath, envOptions);
+
+  if (!args.entryFile && !config.entry) {
+    throw new Error("Option '--entry-file <path>' argument is missing");
+  }
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {
     if (error) {
