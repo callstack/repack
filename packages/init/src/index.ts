@@ -71,7 +71,7 @@ export default async function run(options: Options) {
 
     spinner.stop('Setup complete.');
 
-    completeSetup(projectName, packageManager);
+    completeSetup(projectName, packageManager, projectExists);
   } catch (error) {
     logger.fatal('Re.Pack setup failed\n\nWhat went wrong:');
 
