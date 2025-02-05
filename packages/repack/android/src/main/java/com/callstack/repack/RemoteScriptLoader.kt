@@ -29,7 +29,7 @@ class RemoteScriptLoader(val reactContext: ReactContext, private val nativeLoade
         return clientPerRequestBuilder.build()
     }
 
-    private fun downloadAndCache(config: ScriptConfig, onSuccess: () -> Unit, onError: (code: String, message: String) -> Unit) {
+    private fun downloadAndCache(config: ScriptConfig, onSuccess: (bundle: ByteArray) -> Unit, onError: (code: String, message: String) -> Unit) {
         val path = getScriptFilePath(config.uniqueId)
         val file = File(reactContext.filesDir, path)
 
@@ -59,13 +59,20 @@ class RemoteScriptLoader(val reactContext: ReactContext, private val nativeLoade
                             CodeSigningUtils.verifyBundle(reactContext, token, bundle)
                         }
 
+                        if (bundle == null) {
+                            throw Exception("Request should have returned with a valid bundle")
+                        } else if (bundle.isEmpty()) {
+                            throw Exception("Request returned an empty bundle")
+                        }
+                        
+
                         file.createNewFile()
 
                         val outputStream = file.outputStream()
                         val writer = BufferedOutputStream(outputStream)
                         writer.write(bundle)
                         writer.close()
-                        onSuccess()
+                        onSuccess(bundle)
                     } catch (error: Exception) {
                         onError(
                                 ScriptLoadingError.ScriptCachingFailure.code,
@@ -122,8 +129,8 @@ class RemoteScriptLoader(val reactContext: ReactContext, private val nativeLoade
     }
 
     fun load(config: ScriptConfig, promise: Promise) {
-        downloadAndCache(config, {
-            execute(config, promise)
+        downloadAndCache(config, { bundle: ByteArray ->
+            nativeLoader.evaluate(bundle, config.sourceUrl, promise)
         }, { code, message -> promise.reject(code, message) })
     }
 
