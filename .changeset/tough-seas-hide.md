@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-fix: download,write then run instead of download, write, read, run
+fix: download, write, run instead of download, write, read, run
