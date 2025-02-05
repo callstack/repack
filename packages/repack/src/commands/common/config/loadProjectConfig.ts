@@ -1,6 +1,6 @@
-import type { Configuration, ConfigurationObject } from '../types.js';
+import type { Configuration, ConfigurationObject } from '../../types.js';
 
-export async function loadConfig<C extends ConfigurationObject>(
+export async function loadProjectConfig<C extends ConfigurationObject>(
   configFilePath: string
 ): Promise<Configuration<C>> {
   let config: Configuration<C>;

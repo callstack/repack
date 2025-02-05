@@ -1,5 +1,4 @@
 import type { Config } from '@react-native-community/cli-types';
-import type { Configuration } from '@rspack/core';
 import * as colorette from 'colorette';
 import packageJson from '../../../package.json';
 import { VERBOSE_ENV_KEY } from '../../env.js';
@@ -10,18 +9,14 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
+import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
-  getEnvOptions,
   getMimeType,
-  getRspackConfigFilePath,
-  loadConfig,
-  normalizeConfig,
   parseFileUrl,
   runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
-import type { StartArguments, StartCliOptions } from '../types.js';
-import { Compiler } from './Compiler.js';
+import type { StartArguments } from '../types.js';
 
 /**
  * Start command for React Native Community CLI.
@@ -40,31 +35,13 @@ export async function start(
   cliConfig: Config,
   args: StartArguments
 ) {
-  const rspackConfigPath = getRspackConfigFilePath(
-    cliConfig.root,
-    args.config ?? args.webpackConfig
-  );
-
-  const cliOptions: StartCliOptions = {
-    config: {
-      root: cliConfig.root,
-      platforms: Object.keys(cliConfig.platforms),
-      bundlerConfigPath: rspackConfigPath,
-      reactNativePath: cliConfig.reactNativePath,
-    },
+  const configs = await makeCompilerConfig(args, {
+    bundler: 'rspack',
     command: 'start',
-    arguments: { start: args },
-  };
-
-  const env = getEnvOptions(cliOptions);
-  const rawConfig = await loadConfig<Configuration>(
-    cliOptions.config.bundlerConfigPath
-  );
-  const configs = await Promise.all(
-    cliOptions.config.platforms.map((platform) => {
-      return normalizeConfig(rawConfig, { ...env, platform });
-    })
-  );
+    rootDir: cliConfig.root,
+    platforms: Object.keys(cliConfig.platforms),
+    reactNativePath: cliConfig.reactNativePath,
+  });
 
   const devServerOptions = configs[0].devServer ?? {};
   const watchOptions = configs[0].watchOptions ?? {};
@@ -72,7 +49,7 @@ export async function start(
   const serverProtocol =
     typeof devServerOptions.server === 'string'
       ? devServerOptions.server
-      : devServerOptions.server!.type;
+      : devServerOptions.server?.type;
   const serverHost = devServerOptions.host!;
   const serverPort = devServerOptions.port!;
   const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
@@ -105,7 +82,7 @@ export async function start(
   const { start, stop } = await createServer({
     options: {
       ...devServerOptions,
-      rootDir: cliOptions.config.root,
+      rootDir: cliConfig.root,
       logRequests: showHttpRequests,
     },
     delegate: (ctx) => {
