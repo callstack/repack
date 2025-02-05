@@ -80,18 +80,24 @@ Stores stats in a file.
 
 - Type: `string`
 
-Instructs Webpack on how to treat the stats:
+Instructs Rspack on how to treat the stats. Use with `--json` to store stats in a file.
 
-- 'errors-only' - only output when errors happen
-- 'errors-warnings' - only output errors and warnings happen
-- 'minimal' - only output when errors or new compilation happen
-- 'none' - output nothing
-- 'normal' - standard output
-- 'verbose' - output everything
-- 'detailed' - output everything except chunkModules and chunkRootModules
-- 'summary' - output webpack version, warnings count and errors count
+- `'errors-only'` - only output when errors happen
+- `'errors-warnings'` - only output errors and warnings happen
+- `'minimal'` - only output when errors or new compilation happen
+- `'none'` - output nothing
+- `'normal'` - standard output
+- `'verbose'` - output everything
+- `'detailed'` - output everything except chunkModules and chunkRootModules
+- `'summary'` - output webpack version, warnings count and errors count
 
-More details: [Webpack documentation](https://webpack.js.org/configuration/stats/)
+Example:
+
+```bash
+react-native bundle --stats summary --json ./stats.json
+```
+
+More details: [Rspack documentation](https://rspack.dev/config/stats)
 
 ### `--verbose`
 
