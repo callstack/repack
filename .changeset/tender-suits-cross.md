@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-reuse scriptsDir
+refactor Android's `RemoteScriptLoader.kt` to reuse `scriptsDir`
