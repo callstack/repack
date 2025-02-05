@@ -1,39 +1,47 @@
 import path from 'node:path';
 import type { EnvOptions } from '../../../types.js';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../../consts.js';
-import type { CliOptions } from '../../types.js';
+import type { BundleArguments, StartArguments } from '../../types.js';
 
-export function getEnvOptions(cliOptions: CliOptions): EnvOptions {
+interface GetEnvOptionsOptions {
+  args: StartArguments | BundleArguments;
+  command: 'start' | 'bundle';
+  rootDir: string;
+  reactNativePath: string;
+}
+
+export function getEnvOptions(opts: GetEnvOptionsOptions): EnvOptions {
   const env: EnvOptions = {
     bundleFilename: '',
-    context: cliOptions.config.root,
-    reactNativePath: cliOptions.config.reactNativePath,
+    context: opts.rootDir,
+    reactNativePath: opts.reactNativePath,
   };
 
-  if ('bundle' in cliOptions.arguments) {
-    env.mode = cliOptions.arguments.bundle.dev ? 'development' : 'production';
-    env.platform = cliOptions.arguments.bundle.platform;
-    env.minimize =
-      cliOptions.arguments.bundle.minify ?? env.mode === 'production';
+  if (opts.command === 'bundle') {
+    const bundleArgs = opts.args as BundleArguments;
+    env.mode = bundleArgs.dev ? 'development' : 'production';
+    env.platform = bundleArgs.platform;
+    env.minimize = bundleArgs.minify ?? env.mode === 'production';
 
-    const { entryFile } = cliOptions.arguments.bundle;
+    const { entryFile } = bundleArgs;
     env.entry =
       path.isAbsolute(entryFile) || entryFile.startsWith('./')
         ? entryFile
         : `./${entryFile}`;
 
-    env.bundleFilename = cliOptions.arguments.bundle.bundleOutput;
-    env.sourceMapFilename = cliOptions.arguments.bundle.sourcemapOutput;
-    env.assetsPath = cliOptions.arguments.bundle.assetsDest;
+    env.bundleFilename = bundleArgs.bundleOutput;
+    env.sourceMapFilename = bundleArgs.sourcemapOutput;
+    env.assetsPath = bundleArgs.assetsDest;
   } else {
+    const startArgs = opts.args as StartArguments;
     env.mode = 'development';
     env.devServer = {
-      port: cliOptions.arguments.start.port ?? DEFAULT_PORT,
-      host: cliOptions.arguments.start.host || DEFAULT_HOSTNAME,
-      https: cliOptions.arguments.start.https
+      port: startArgs.port ?? DEFAULT_PORT,
+      host: startArgs.host || DEFAULT_HOSTNAME,
+      https: startArgs.https
         ? {
-            cert: cliOptions.arguments.start.cert,
-            key: cliOptions.arguments.start.key,
+            cert: startArgs.cert,
+            key: startArgs.key,
           }
         : undefined,
       hmr: true,

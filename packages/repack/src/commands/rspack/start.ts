@@ -1,4 +1,5 @@
 import type { Config } from '@react-native-community/cli-types';
+import type { Configuration } from '@rspack/core';
 import * as colorette from 'colorette';
 import packageJson from '../../../package.json';
 import { VERBOSE_ENV_KEY } from '../../env.js';
@@ -17,6 +18,7 @@ import {
   setupInteractions,
 } from '../common/index.js';
 import type { StartArguments } from '../types.js';
+import { Compiler } from './Compiler.js';
 
 /**
  * Start command for React Native Community CLI.
@@ -35,16 +37,22 @@ export async function start(
   cliConfig: Config,
   args: StartArguments
 ) {
-  const configs = await makeCompilerConfig(args, {
+  const detectedPlatforms = Object.keys(cliConfig.platforms);
+
+  if (args.platform && !detectedPlatforms.includes(args.platform)) {
+    throw new Error('Unrecognized platform: ' + args.platform);
+  }
+
+  const configs = await makeCompilerConfig<Configuration>({
+    args: args,
     bundler: 'rspack',
     command: 'start',
     rootDir: cliConfig.root,
-    platforms: Object.keys(cliConfig.platforms),
+    platforms: args.platform ? [args.platform] : detectedPlatforms,
     reactNativePath: cliConfig.reactNativePath,
   });
 
   const devServerOptions = configs[0].devServer ?? {};
-  const watchOptions = configs[0].watchOptions ?? {};
 
   const serverProtocol =
     typeof devServerOptions.server === 'string'
@@ -54,10 +62,6 @@ export async function start(
   const serverPort = devServerOptions.port!;
   const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
   const showHttpRequests = args.verbose || args.logRequests;
-
-  if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
-    throw new Error('Unrecognized platform: ' + args.platform);
-  }
 
   if (args.verbose) {
     process.env[VERBOSE_ENV_KEY] = '1';
@@ -75,8 +79,7 @@ export async function start(
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
   );
 
-  const compiler = new Compiler(cliOptions, reporter);
-  compiler.init(configs, watchOptions);
+  const compiler = new Compiler(configs, reporter, cliConfig.root);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({

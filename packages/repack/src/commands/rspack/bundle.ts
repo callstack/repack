@@ -2,15 +2,9 @@ import type { Config } from '@react-native-community/cli-types';
 import { type Configuration, rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../../env.js';
-import {
-  getEnvOptions,
-  getRspackConfigFilePath,
-  loadConfig,
-  normalizeConfig,
-  normalizeStatsOptions,
-  writeStats,
-} from '../common/index.js';
-import type { BundleArguments, BundleCliOptions } from '../types.js';
+import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
+import { normalizeStatsOptions, writeStats } from '../common/index.js';
+import type { BundleArguments } from '../types.js';
 
 /**
  * Bundle command for React Native Community CLI.
@@ -29,21 +23,14 @@ export async function bundle(
   cliConfig: Config,
   args: BundleArguments
 ) {
-  const rspackConfigPath = getRspackConfigFilePath(
-    cliConfig.root,
-    args.config ?? args.webpackConfig
-  );
-
-  const cliOptions: BundleCliOptions = {
-    config: {
-      root: cliConfig.root,
-      platforms: Object.keys(cliConfig.platforms),
-      bundlerConfigPath: rspackConfigPath,
-      reactNativePath: cliConfig.reactNativePath,
-    },
+  const configs = await makeCompilerConfig<Configuration>({
+    args: args,
+    bundler: 'rspack',
     command: 'bundle',
-    arguments: { bundle: args },
-  };
+    rootDir: cliConfig.root,
+    platforms: [args.platform],
+    reactNativePath: cliConfig.reactNativePath,
+  });
 
   if (!args.entryFile) {
     throw new Error("Option '--entry-file <path>' argument is missing");
@@ -52,10 +39,6 @@ export async function bundle(
   if (args.verbose) {
     process.env[VERBOSE_ENV_KEY] = '1';
   }
-
-  const env = getEnvOptions(cliOptions);
-  const rawConfig = await loadConfig<Configuration>(rspackConfigPath);
-  const config = await normalizeConfig(rawConfig, env);
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {
     if (error) {
@@ -90,12 +73,12 @@ export async function bundle(
     }
   };
 
-  const compiler = rspack(config);
+  const compiler = rspack(configs[0]);
 
   return new Promise<void>((resolve) => {
     if (args.watch) {
       compiler.hooks.watchClose.tap('bundle', resolve);
-      compiler.watch(config.watchOptions ?? {}, errorHandler);
+      compiler.watch(configs[0].watchOptions ?? {}, errorHandler);
     } else {
       compiler.run((error, stats) => {
         // make cache work: https://webpack.js.org/api/node/#run

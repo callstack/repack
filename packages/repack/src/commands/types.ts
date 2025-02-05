@@ -58,12 +58,15 @@ export type RemoveRecord<T> = T extends infer U & Record<string, any>
   ? U
   : never;
 
-export type ConfigurationObject = {
-  name?: string;
-  context?: string;
-  mode?: string;
-  devServer?: any;
-} & Record<string, any>;
+type ConfigKeys =
+  | 'name'
+  | 'context'
+  | 'mode'
+  | 'devServer'
+  | 'entry'
+  | 'optimization';
+
+export type ConfigurationObject = Partial<Record<ConfigKeys, any>>;
 
 export type Configuration<T> =
   | T
