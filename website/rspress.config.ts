@@ -21,7 +21,7 @@ export default defineConfig({
     codeHighlighter: 'prism',
   },
   multiVersion: {
-    default: '4.x',
+    default: process.env.NODE_ENV === 'development' ? '5.x' : '4.x', // for dev we use 5.x while working on it
     versions: ['2.x', '3.x', '4.x', '5.x'],
   },
   route: {
