@@ -43,10 +43,6 @@ export async function bundle(
     arguments: { bundle: args },
   };
 
-  if (!args.entryFile) {
-    throw new Error("Option '--entry-file <path>' argument is missing");
-  }
-
   if (args.verbose) {
     process.env[VERBOSE_ENV_KEY] = '1';
   }
@@ -56,6 +52,10 @@ export async function bundle(
     webpackConfigPath,
     envOptions
   );
+
+  if (!args.entryFile && !webpackConfig.entry) {
+    throw new Error("Option '--entry-file <path>' argument is missing");
+  }
 
   const errorHandler = async (error: Error | null, stats?: webpack.Stats) => {
     if (error) {
