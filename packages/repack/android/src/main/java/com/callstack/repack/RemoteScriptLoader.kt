@@ -130,7 +130,14 @@ class RemoteScriptLoader(val reactContext: ReactContext, private val nativeLoade
 
     fun load(config: ScriptConfig, promise: Promise) {
         downloadAndCache(config, { bundle: ByteArray ->
-            nativeLoader.evaluate(bundle, config.sourceUrl, promise)
+            try {
+                nativeLoader.evaluate(bundle, config.sourceUrl, promise)
+            } catch (error: Exception) {
+                promise.reject(
+                        ScriptLoadingError.ScriptEvalFailure.code,
+                        error.message ?: error.toString()
+                )
+            }
         }, { code, message -> promise.reject(code, message) })
     }
 
