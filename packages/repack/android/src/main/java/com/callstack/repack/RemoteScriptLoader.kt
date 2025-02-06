@@ -46,7 +46,7 @@ class RemoteScriptLoader(val reactContext: ReactContext, private val nativeLoade
                     try {
                         val scriptsDir = File(reactContext.filesDir, scriptsDirName)
                         if (!scriptsDir.exists()) {
-                            File(reactContext.filesDir, scriptsDirName).mkdir()
+                            scriptsDir.mkdir()
                         }
 
                         val rawBundle = response.body?.bytes()

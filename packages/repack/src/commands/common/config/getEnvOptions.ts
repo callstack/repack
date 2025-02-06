@@ -23,10 +23,12 @@ export function getEnvOptions(opts: GetEnvOptionsOptions): EnvOptions {
     env.minimize = bundleArgs.minify ?? env.mode === 'production';
 
     const { entryFile } = bundleArgs;
-    env.entry =
-      path.isAbsolute(entryFile) || entryFile.startsWith('./')
-        ? entryFile
-        : `./${entryFile}`;
+    if (entryFile) {
+      env.entry =
+        path.isAbsolute(entryFile) || entryFile.startsWith('./')
+          ? entryFile
+          : `./${entryFile}`;
+    }
 
     env.bundleFilename = bundleArgs.bundleOutput;
     env.sourceMapFilename = bundleArgs.sourcemapOutput;

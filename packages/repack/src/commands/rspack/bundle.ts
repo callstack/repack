@@ -32,12 +32,12 @@ export async function bundle(
     reactNativePath: cliConfig.reactNativePath,
   });
 
-  if (!args.entryFile) {
-    throw new Error("Option '--entry-file <path>' argument is missing");
-  }
-
   if (args.verbose) {
     process.env[VERBOSE_ENV_KEY] = '1';
+  }
+
+  if (!args.entryFile && !config.entry) {
+    throw new Error("Option '--entry-file <path>' argument is missing");
   }
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {

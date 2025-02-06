@@ -3,3 +3,6 @@ packages:
   - "apps/*"
   - "tests/*"
   - "website"
+
+catalog:
+  "@rspack/core": 1.2.2
