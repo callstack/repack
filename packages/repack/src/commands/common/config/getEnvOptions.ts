@@ -12,7 +12,6 @@ interface GetEnvOptionsOptions {
 
 export function getEnvOptions(opts: GetEnvOptionsOptions): EnvOptions {
   const env: EnvOptions = {
-    bundleFilename: '',
     context: opts.rootDir,
     reactNativePath: opts.reactNativePath,
   };

@@ -17,7 +17,7 @@ describe('getEnvOptions', () => {
     ).toEqual({
       context: '/x/y/z',
       entry: './main.js',
-      minimize: undefined,
+      minimize: true,
       mode: 'production',
       platform: 'android',
       reactNativePath: '/x/y/z/node_modules/react-native',
@@ -43,7 +43,7 @@ describe('getEnvOptions', () => {
     ).toEqual({
       context: '/x/y/z',
       entry: '/x/y/z/src/main.js',
-      minimize: undefined,
+      minimize: false,
       mode: 'development',
       platform: 'android',
       reactNativePath: '/x/y/z/node_modules/react-native',
@@ -63,10 +63,11 @@ describe('getEnvOptions', () => {
       })
     ).toEqual({
       context: '/x/y/z',
+      mode: 'development',
       reactNativePath: '/x/y/z/node_modules/react-native',
       devServer: {
         host: 'localhost',
-        port: undefined,
+        port: 8081,
         hmr: true,
         https: undefined,
       },
@@ -81,6 +82,7 @@ describe('getEnvOptions', () => {
       })
     ).toEqual({
       context: '/x/y/z',
+      mode: 'development',
       reactNativePath: '/x/y/z/node_modules/react-native',
       devServer: {
         host: 'local',
