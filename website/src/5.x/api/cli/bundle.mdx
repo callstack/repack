@@ -93,9 +93,12 @@ Instructs Rspack on how to treat the stats. Use with `--json` to store stats in 
 
 Example:
 
-```bash
-react-native bundle --stats summary --json ./stats.json
-```
+<PackageManagerTabs command={{
+  npm: "npm run react-native bundle --stats summary --json ./stats.json",
+  yarn: "yarn react-native bundle --stats summary --json ./stats.json",
+  pnpm: "pnpm react-native bundle --stats summary --json ./stats.json",
+  bun: "bun react-native bundle --stats summary --json ./stats.json",
+}} />
 
 More details: [Rspack documentation](https://rspack.dev/config/stats)
 
@@ -123,7 +126,7 @@ Path to a bundler config file, e.g rspack.config.js.
 - Type: `string`
 - Deprecated: Use [`--config`](#--config) instead
 
-[DEPRECATED] Path to a bundler config file, e.g webpack.config.js.
+Path to a bundler config file, e.g webpack.config.js.
 
 ### `-h`, `--help`
 
