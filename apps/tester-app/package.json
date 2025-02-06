@@ -42,7 +42,7 @@
     "@react-native/babel-preset": "0.76.3",
     "@react-native/typescript-config": "0.76.3",
     "@rsdoctor/rspack-plugin": "^0.4.11",
-    "@rspack/core": "1.0.8",
+    "@rspack/core": "catalog:",
     "@svgr/webpack": "^8.1.0",
     "@swc/helpers": "^0.5.13",
     "@types/jest": "^29.5.12",

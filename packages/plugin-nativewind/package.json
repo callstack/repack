@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",
-    "@rspack/core": "1.0.8",
+    "@rspack/core": "catalog:",
     "@types/dedent": "0.7.2",
     "@types/node": "^18",
     "nativewind": "^4.1.23",
