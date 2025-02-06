@@ -8,7 +8,12 @@ In the root of an existing React Native project with Re.Pack, run this command i
 
 import { PackageManagerTabs } from 'rspress/theme';
 
-<PackageManagerTabs command="react-native start" />
+<PackageManagerTabs command={{
+  npm: "npm run react-native start",
+  yarn: "yarn react-native start",
+  pnpm: "pnpm react-native start",
+  bun: "bun react-native start",
+}} />
 
 ![start](/img/start.png)
 
@@ -60,12 +65,6 @@ Path to custom SSL certificate.
 
 Disables interactive mode.
 
-### `--reset-cache`, `--resetCache`
-
-- Type: `boolean`
-
-(unsupported) Resets the transformation cache.
-
 ### `--json`
 
 - Type: `boolean`
@@ -102,11 +101,17 @@ Disables running ADB reverse automatically when bundling for Android.
 
 Enables verbose logging.
 
-### `--config`, `--webpackConfig`
+### `--config`
 
 - Type: `path`
 
 Path to a bundler config file, e.g webpack.config.js.
+
+### `--webpackConfig`
+
+- Type: `path`
+
+Alias for [`--config`](#--config) option.
 
 ### `-h`, `--help`
 
