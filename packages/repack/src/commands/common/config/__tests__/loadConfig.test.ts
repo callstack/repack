@@ -1,7 +1,7 @@
-import type { EnvOptions } from '../../../types.js';
-import { loadConfig } from '../loadConfig.js';
+import type { EnvOptions } from '../../../../types.js';
+import { loadProjectConfig } from '../loadProjectConfig.js';
 
-describe('loadConfig', () => {
+describe('loadProjectConfig', () => {
   beforeEach(() => {
     jest.resetModules();
   });
@@ -14,7 +14,7 @@ describe('loadConfig', () => {
 
     jest.doMock('/test/config.js', () => mockConfig, { virtual: true });
 
-    const result = await loadConfig('/test/config.js');
+    const result = await loadProjectConfig('/test/config.js');
     expect(result).toEqual(mockConfig);
   });
 
@@ -28,7 +28,7 @@ describe('loadConfig', () => {
       virtual: true,
     });
 
-    const result = await loadConfig('/test/config.mjs');
+    const result = await loadProjectConfig('/test/config.mjs');
     expect(result).toEqual(mockConfig);
   });
 
@@ -40,11 +40,13 @@ describe('loadConfig', () => {
 
     jest.doMock('/test/config.js', () => mockConfigFn, { virtual: true });
 
-    const result = await loadConfig('/test/config.js');
+    const result = await loadProjectConfig('/test/config.js');
     expect(result).toEqual(mockConfigFn);
   });
 
   it('should throw when config file cannot be loaded', async () => {
-    await expect(loadConfig('/non/existent/config.js')).rejects.toThrow();
+    await expect(
+      loadProjectConfig('/non/existent/config.js')
+    ).rejects.toThrow();
   });
 });
