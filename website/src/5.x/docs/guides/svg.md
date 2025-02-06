@@ -10,9 +10,9 @@ Please follow this installation instructions [here](https://github.com/react-nat
 
 ## Exclude SVG from Re.Pack's Assets loader
 
-Now that you have [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) installed and linked into the application, you need to tell Rspack/Webpack **not to use** Re.Pack's [Assets loader](../loaders/assets-loader) from processing SVGs, since you will process them manually later.
+Now that you have [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) installed and linked into the application, you need to tell Rspack (or webpack) **not to use** Re.Pack's [Assets loader](../loaders/assets-loader) from processing SVGs, since you will process them manually later.
 
-Go to your Rspack/Webpack configuration and apply the following diff:
+Go to your Rspack/webpack configuration file and apply the following diff:
 
 ```diff
       {
@@ -26,11 +26,11 @@ Go to your Rspack/Webpack configuration and apply the following diff:
 
 :::tip
 
-If you don't have Re.Pack's Assets loader rule in your Rspack/Webpack config, read [this guide](../loaders/assets-loader#migrating-from-assetsplugin) first.
+If you don't have Re.Pack's Assets loader rule in your Rspack/webpack config, read [this guide](../loaders/assets-loader#migrating-from-assetsplugin) first.
 
 :::
 
-Now you need to tell Rspack/Webpack how to handle `.svg` files.
+Now you need to tell Rspack/webpack how to handle `.svg` files.
 
 ## Using `@svgr/webpack`
 
@@ -50,7 +50,7 @@ export function MyComponent() {
 
 To use SVGR, you need to add an additional rule to process SVGs with `@svgr/webpack` loader.
 
-Go to your Rspack/Webpack configuration and apply the following diff:
+Go to your Rspack/webpack configuration and apply the following diff:
 
 ```diff title="rspack.config.js"
 module.exports = {
@@ -86,13 +86,13 @@ import the component and render it as a React component.
 
 ## Using asset modules
 
-Using Rspack/Webpack's asset modules is a simpler and faster way to render SVGs in your application.
+Using Rspack/webpack's asset modules is a simpler and faster way to render SVGs in your application.
 It's a good option, if you don't need or care about using the imported SVG as React component,
 and you're fine with using `SvgXml` or `SvgUri` component from [`react-native-svg`](https://github.com/react-native-svg/react-native-svg).
 
 :::info
 
-You can read more about Rspack/Webpack's asset modules [here](https://rspack.dev/guide/features/asset-module).
+You can read more about Rspack/webpack's asset modules [here](https://rspack.dev/guide/features/asset-module).
 
 :::
 
@@ -128,7 +128,7 @@ export function MyComponent() {
 
 To use asset modules, you need to add additional rule to process SVGs as an asset module.
 
-Go to your Rspack/Webpack configuration and apply the following diff:
+Go to your Rspack/webpack configuration and apply the following diff:
 
 ```diff title="rspack.config.js"
 module.exports = {
@@ -194,7 +194,7 @@ module.exports = {
 :::tip
 
 When using both `assets/source` and `assets/inline`, you can specify different `test`, `include` and `exclude` values,
-so that Rspack/Webpack can figure out which mechanism to use for which SVG. You can read more about rule conditions here:
+so that Rspack/webpack can figure out which mechanism to use for which SVG. You can read more about rule conditions here:
 
 - [Condition](https://rspack.dev/config/module#condition)
 - [Rule.include](https://rspack.dev/config/module#ruleinclude)
