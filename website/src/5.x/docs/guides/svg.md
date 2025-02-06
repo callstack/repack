@@ -167,7 +167,7 @@ Remember to use `SvgUri` for inlined SVGs instead of `SvgXml`.
 
 You can also use both, `asset/source` and `asset/inline` in your application:
 
-```diff title="rspack.config.js"
+```diff title="rspack.config.cjs"
 module.exports = {
   // ...
   module: {
