@@ -37,10 +37,15 @@ import type { HMRMessageBody } from './types.js';
  * @category CLI command
  */
 export async function start(_: string[], config: Config, args: StartArguments) {
-  const webpackConfigPath = getWebpackConfigFilePath(
-    config.root,
-    args.config ?? args.webpackConfig
-  );
+  if (args.webpackConfig) {
+    console.warn(
+      'Warning: `--webpackConfig` option is deprecated and will be removed in the next major version. ' +
+        'Please use `--config` instead.'
+    );
+    args.config = args.webpackConfig;
+  }
+
+  const webpackConfigPath = getWebpackConfigFilePath(config.root, args.config);
   const { reversePort, ...restArgs } = args;
 
   const serverProtocol = args.https ? 'https' : 'http';

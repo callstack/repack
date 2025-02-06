@@ -27,9 +27,17 @@ export async function bundle(
   cliConfig: Config,
   args: BundleArguments
 ) {
+  if (args.webpackConfig) {
+    console.warn(
+      'Warning: `--webpackConfig` option is deprecated and will be removed in the next major version. ' +
+        'Please use `--config` instead.'
+    );
+    args.config = args.webpackConfig;
+  }
+
   const webpackConfigPath = getWebpackConfigFilePath(
     cliConfig.root,
-    args.config ?? args.webpackConfig
+    args.config
   );
 
   const cliOptions: BundleCliOptions = {
