@@ -46,8 +46,7 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
   // normalize config to ensure it's a static config object
   const normalizedConfigs = await Promise.all(
     options.platforms.map((platform) => {
-      const config = structuredClone(rawConfig);
-      return normalizeConfig(config, { ...env, platform });
+      return normalizeConfig(rawConfig, { ...env, platform });
     })
   );
 

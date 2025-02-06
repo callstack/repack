@@ -10,7 +10,8 @@ export async function normalizeConfig<C extends ConfigurationObject>(
   if (typeof config === 'function') {
     configObject = await config(env, {});
   } else {
-    configObject = config;
+    /* shallow copy to avoid mutating the original config */
+    configObject = { ...config };
   }
 
   /* normalize compiler name to be equal to platform */
