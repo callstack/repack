@@ -84,7 +84,7 @@ Thanks to the rule above, your SVGs will be processed by `@svgr/webpack` and con
 from [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) allowing you to simply
 import the component and render it as a React component.
 
-## Using Rspack's asset modules
+## Using asset modules
 
 Using Rspack/Webpack's asset modules is a simpler and faster way to render SVGs in your application.
 It's a good option, if you don't need or care about using the imported SVG as React component,
