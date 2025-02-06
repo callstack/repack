@@ -10,13 +10,14 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
+import { getEnvOptions } from '../common/config/getEnvOptions.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getMimeType,
   parseFileUrl,
-  runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
+import { runAdbReverse } from '../common/index.js';
 import type { StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
 
@@ -52,15 +53,19 @@ export async function start(
     reactNativePath: cliConfig.reactNativePath,
   });
 
-  const devServerOptions = configs[0].devServer ?? {};
+  // TODO (jbroma) duplicated env for compat, remove after implementing dev server options
+  const env = getEnvOptions({
+    args,
+    command: 'start',
+    rootDir: cliConfig.root,
+    reactNativePath: cliConfig.reactNativePath,
+  });
 
-  const serverProtocol =
-    typeof devServerOptions.server === 'string'
-      ? devServerOptions.server
-      : devServerOptions.server?.type;
+  const devServerOptions = env.devServer!;
+
   const serverHost = devServerOptions.host!;
   const serverPort = devServerOptions.port!;
-  const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
+  const serverURL = `${devServerOptions.https ? 'https' : 'http'}://${serverHost}:${serverPort}`;
   const showHttpRequests = args.verbose || args.logRequests;
 
   if (args.verbose) {
@@ -79,7 +84,12 @@ export async function start(
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
   );
 
-  const compiler = new Compiler(configs, reporter, cliConfig.root);
+  const compiler = new Compiler(
+    configs,
+    reporter,
+    cliConfig.root,
+    devServerOptions.port!
+  );
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({

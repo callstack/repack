@@ -2,7 +2,7 @@
 import type { Server } from '@callstack/repack-dev-server';
 import type { Config } from '@react-native-community/cli-types';
 import * as colorette from 'colorette';
-import type { Configuration, StatsCompilation } from 'webpack';
+import type { StatsCompilation } from 'webpack';
 import packageJson from '../../../package.json';
 import { VERBOSE_ENV_KEY } from '../../env.js';
 import {
@@ -12,7 +12,7 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
-import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
+import { getEnvOptions } from '../common/config/getEnvOptions.js';
 import {
   getMimeType,
   parseFileUrl,
@@ -46,24 +46,18 @@ export async function start(
     throw new Error('Unrecognized platform: ' + args.platform);
   }
 
-  const configs = await makeCompilerConfig<Configuration>({
-    args: args,
-    bundler: 'rspack',
+  const env = getEnvOptions({
+    args,
     command: 'start',
     rootDir: cliConfig.root,
-    platforms: args.platform ? [args.platform] : detectedPlatforms,
     reactNativePath: cliConfig.reactNativePath,
   });
 
-  const devServerOptions = configs[0].devServer ?? {};
+  const devServerOptions = env.devServer!;
 
-  const serverProtocol =
-    typeof devServerOptions.server === 'string'
-      ? devServerOptions.server
-      : devServerOptions.server!.type;
   const serverHost = devServerOptions.host!;
   const serverPort = devServerOptions.port!;
-  const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
+  const serverURL = `${devServerOptions.https ? 'https' : 'http'}://${serverHost}:${serverPort}`;
   const showHttpRequests = args.verbose || args.logRequests;
 
   if (args.verbose) {
