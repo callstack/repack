@@ -28,7 +28,7 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    entry: {},
+    entry: './src/mini/index.js',
     resolve: {
       ...Repack.getResolveOptions(platform),
     },

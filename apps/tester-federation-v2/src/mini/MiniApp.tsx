@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import MainNavigator from './navigation/MainNavigator';
 
-const App = () => {
+const MiniApp = () => {
   return (
     <NavigationContainer>
       <MainNavigator />
@@ -9,4 +9,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default MiniApp;
