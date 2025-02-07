@@ -386,3 +386,6 @@ packages/**/docs
 
 # mf-types
 **/@mf-types/
+
+# watchman
+.watchman-cookie*

@@ -14,9 +14,9 @@ import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getMimeType,
   parseFileUrl,
-  runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
+import { runAdbReverse } from '../common/index.js';
 import type { StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
 

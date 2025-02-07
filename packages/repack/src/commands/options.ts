@@ -67,7 +67,8 @@ export const startCommandOptions = [
   },
   {
     name: '--webpackConfig <path>',
-    description: 'Path to a bundler config file, e.g webpack.config.js',
+    description:
+      '[DEPRECATED] Path to a bundler config file, e.g webpack.config.js. Please use --config instead.',
     parse: (val: string) => path.resolve(val),
   },
 ];
