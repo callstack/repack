@@ -157,6 +157,13 @@ export class OutputPlugin implements RspackPluginInstance {
             entryNormalized[entryName].runtime || entryName;
           entryChunkNames.add(entryChunkName);
         });
+
+        if (entryChunkNames.size > 1) {
+          throw new Error(
+            '[RepackOutputPlugin] Multiple entry chunks found. ' +
+              'Only one entry chunk is allowed as a native entrypoint.'
+          );
+        }
       }
     );
 
