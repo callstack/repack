@@ -43,9 +43,6 @@ export interface RepackPluginConfig {
    */
   output: OutputPluginConfig['output'];
 
-  /** The entry chunk name, `main` by default. */
-  entryName?: string;
-
   /**
    * Absolute location to JS file with initialization logic for React Native.
    * Useful if you want to built for out-of-tree platforms.

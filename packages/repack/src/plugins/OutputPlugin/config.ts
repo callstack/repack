@@ -22,7 +22,6 @@ const configSchema: Schema = {
     context: { type: 'string' },
     platform: { type: 'string' },
     enabled: { type: 'boolean' },
-    entryName: { type: 'string' },
     output: {
       type: 'object',
       properties: {
