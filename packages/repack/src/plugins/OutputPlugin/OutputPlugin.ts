@@ -26,7 +26,6 @@ export class OutputPlugin implements RspackPluginInstance {
     validateConfig(config);
 
     this.config.enabled = this.config.enabled ?? true;
-    this.config.entryName = this.config.entryName ?? 'main';
     this.config.extraChunks = this.config.extraChunks ?? [
       {
         include: /.*/,
@@ -128,7 +127,9 @@ export class OutputPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    if (!this.config.enabled) return;
+    if (!this.config.enabled) {
+      return;
+    }
 
     assert(compiler.options.output.path, "Can't infer output path from config");
 
@@ -140,6 +141,23 @@ export class OutputPlugin implements RspackPluginInstance {
     const matchChunkToSpecs = this.createChunkMatcher(matchObject);
 
     const auxiliaryAssets = new Set<string>();
+    const entryChunkNames = new Set<string>();
+
+    compiler.hooks.entryOption.tap(
+      'RepackOutputPlugin',
+      (_, entryNormalized) => {
+        if (typeof entryNormalized === 'function') {
+          // skip support for dynamic entries for now
+          return;
+        }
+
+        Object.keys(entryNormalized).forEach((entryName) => {
+          const entryChunkName =
+            entryNormalized[entryName].runtime || entryName;
+          entryChunkNames.add(entryChunkName);
+        });
+      }
+    );
 
     compiler.hooks.done.tapPromise('RepackOutputPlugin', async (stats) => {
       const compilationStats = stats.toJson({
@@ -205,7 +223,7 @@ export class OutputPlugin implements RspackPluginInstance {
       for (const chunk of localChunks) {
         // Process entry chunk - only one entry chunk is allowed here
         localAssetsCopyProcessor?.enqueueChunk(chunk, {
-          isEntry: chunk.id! === this.config.entryName,
+          isEntry: entryChunkNames.has(chunk.id!.toString()),
           sourceMapFile: this.getRelatedSourceMap(chunk),
         });
       }

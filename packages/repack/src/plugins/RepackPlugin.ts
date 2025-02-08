@@ -126,29 +126,12 @@ export class RepackPlugin implements RspackPluginInstance {
     this.config.logger = this.config.logger ?? true;
   }
 
-  private getEntryName(compiler: Compiler) {
-    if (this.config.entryName) {
-      return this.config.entryName;
-    }
-
-    if (
-      typeof compiler.options.entry === 'object' &&
-      'main' in compiler.options.entry
-    ) {
-      return 'main';
-    }
-
-    return undefined;
-  }
-
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    const entryName = this.getEntryName(compiler);
-
     new compiler.webpack.DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
     }).apply(compiler);
@@ -159,10 +142,9 @@ export class RepackPlugin implements RspackPluginInstance {
 
     new OutputPlugin({
       platform: this.config.platform,
-      enabled: !this.config.devServer && !!entryName,
+      enabled: !this.config.devServer,
       context: this.config.context,
       output: this.config.output,
-      entryName: this.config.entryName,
       extraChunks: this.config.extraChunks,
     }).apply(compiler);
 
