@@ -172,12 +172,13 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       compiler.hooks.entryOption.tap(
         { name: 'DevelopmentPlugin' },
         (_, entryNormalized) => {
-          // add development entries to all declared and MF entrypoints
+          // combine entries for all declared and MF entrypoints
           const entrypoints = [
             ...this.getEntryNormalizedEntryChunks(entryNormalized),
             ...this.getModuleFederationEntryChunks(compiler.options.plugins),
           ];
 
+          // add development entries to all combined entrypoints
           entrypoints.forEach((entryName) => {
             for (const devEntry of devEntries) {
               new compiler.webpack.EntryPlugin(compiler.context, devEntry, {

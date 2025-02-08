@@ -67,11 +67,11 @@ export class NativeEntryPlugin implements RspackPluginInstance {
           return;
         }
 
-        // add native entries to all declared entry points
         Object.keys(entry).forEach((entryName) => {
           // runtime property defines the chunk name, otherwise it defaults to the entry key
           const entryChunkName = entry[entryName].runtime || entryName;
 
+          // add native entries to all declared entry points
           for (const nativeEntry of nativeEntries) {
             new compiler.webpack.EntryPlugin(compiler.context, nativeEntry, {
               name: entryChunkName, // prepends the entry to the chunk of specified name
