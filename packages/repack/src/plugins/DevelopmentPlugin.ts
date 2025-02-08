@@ -161,7 +161,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       compiler.options.module.rules.unshift({
         include: /\.([cm]js|[jt]sx?|flow)$/i,
         exclude: /node_modules/i,
-        use: require.resolve('../loaders/reactRefreshLoader'),
+        use: 'builtin:react-refresh-loader',
       });
 
       const devEntries = [
