@@ -147,8 +147,9 @@ export class OutputPlugin implements RspackPluginInstance {
       'RepackOutputPlugin',
       (_, entryNormalized) => {
         if (typeof entryNormalized === 'function') {
-          // skip support for dynamic entries for now
-          return;
+          throw new Error(
+            '[RepackOutputPlugin] Dynamic entry (function) is not supported.'
+          );
         }
 
         Object.keys(entryNormalized).forEach((entryName) => {

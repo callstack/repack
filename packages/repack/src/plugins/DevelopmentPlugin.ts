@@ -38,8 +38,9 @@ export class DevelopmentPlugin implements RspackPluginInstance {
 
   private getEntryNormalizedEntryChunks(entryNormalized: EntryNormalized) {
     if (typeof entryNormalized === 'function') {
-      // skip support for dynamic entries for now
-      return [];
+      throw new Error(
+        '[RepackDevelopmentPlugin] Dynamic entry (function) is not supported.'
+      );
     }
 
     return Object.keys(entryNormalized).map(

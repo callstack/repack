@@ -63,8 +63,9 @@ export class NativeEntryPlugin implements RspackPluginInstance {
       { name: 'NativeEntryPlugin', before: 'DevelopmentPlugin' },
       (_, entry) => {
         if (typeof entry === 'function') {
-          // skip support for dynamic entries for now
-          return;
+          throw new Error(
+            '[RepackNativeEntryPlugin] Dynamic entry (function) is not supported.'
+          );
         }
 
         Object.keys(entry).forEach((entryName) => {
