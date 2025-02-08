@@ -1,10 +1,13 @@
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler, RspackPluginInstance, container } from '@rspack/core';
 // biome-ignore lint/correctness/noUnusedImports: needed for jsdoc
 import type { Federated } from '../utils/federated.js';
 import {
   ModuleFederationPluginV1,
   type ModuleFederationPluginV1Config,
 } from './ModuleFederationPluginV1.js';
+
+type MFPluginV1 = typeof container.ModuleFederationPluginV1;
+type MFPluginV1Options = ConstructorParameters<MFPluginV1>[0];
 
 /**
  * {@link ModuleFederationPluginV1Config} configuration options.
@@ -81,23 +84,32 @@ export type ModuleFederationPluginConfig = ModuleFederationPluginV1Config;
  * @category Webpack Plugin
  */
 export class ModuleFederationPlugin implements RspackPluginInstance {
+  private config: MFPluginV1Options;
+  private deepImports: boolean;
   private plugin: ModuleFederationPluginV1;
 
-  constructor(config: ModuleFederationPluginV1Config) {
-    this.plugin = new ModuleFederationPluginV1(config);
+  constructor(pluginConfig: ModuleFederationPluginV1Config) {
+    const { reactNativeDeepImports, ...config } = pluginConfig;
+    // exposed for compat with V1 plugin
+    this.config = config;
+    // exposed for compat with V1 plugin
+    this.deepImports = reactNativeDeepImports ?? true;
+    this.plugin = new ModuleFederationPluginV1(pluginConfig);
   }
 
   apply(compiler: Compiler) {
     const logger = compiler.getInfrastructureLogger('ModuleFederationPlugin');
 
-    logger.warn(
-      'Notice: ModuleFederationPlugin currently points to ModuleFederationPluginV1. ' +
-        'Re.Pack 5 introduced ModuleFederationPluginV2, which addresses many previous limitations. ' +
-        'In the next major version of Re.Pack, ModuleFederationPlugin will point to ModuleFederationPluginV2. ' +
-        'We recommend switching to the new ModuleFederationPluginV2 by importing it directly. ' +
-        'If you want to keep using ModuleFederationPluginV1, which is no longer being iterated on, ' +
-        'you can import ModuleFederationPluginV1 directly to prevent this warning from being shown every time.'
-    );
+    compiler.hooks.beforeCompile.tap('ModuleFederationPlugin', () => {
+      logger.warn(
+        'Notice: ModuleFederationPlugin currently points to ModuleFederationPluginV1. ' +
+          'Re.Pack 5 introduced ModuleFederationPluginV2, which addresses many previous limitations. ' +
+          'In the next major version of Re.Pack, ModuleFederationPlugin will point to ModuleFederationPluginV2. ' +
+          'We recommend switching to the new ModuleFederationPluginV2 by importing it directly. ' +
+          'If you want to keep using ModuleFederationPluginV1, which is no longer being iterated on, ' +
+          'you can import ModuleFederationPluginV1 directly to prevent this warning from being shown every time.'
+      );
+    });
 
     this.plugin.apply(compiler);
   }
