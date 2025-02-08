@@ -18,7 +18,6 @@ type PackageJSON = { version: string };
  * {@link DevelopmentPlugin} configuration options.
  */
 export interface DevelopmentPluginConfig {
-  entryName?: string;
   platform: string;
   devServer?: DevServerOptions;
 }

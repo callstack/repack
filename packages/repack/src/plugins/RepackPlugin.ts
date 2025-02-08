@@ -166,12 +166,9 @@ export class RepackPlugin implements RspackPluginInstance {
       extraChunks: this.config.extraChunks,
     }).apply(compiler);
 
-    if (entryName) {
-      new NativeEntryPlugin({
-        entryName,
-        initializeCoreLocation: this.config.initializeCore,
-      }).apply(compiler);
-    }
+    new NativeEntryPlugin({
+      initializeCoreLocation: this.config.initializeCore,
+    }).apply(compiler);
 
     new RepackTargetPlugin({
       hmr: this.config.devServer?.hmr,
@@ -179,7 +176,6 @@ export class RepackPlugin implements RspackPluginInstance {
 
     new DevelopmentPlugin({
       devServer: this.config.devServer,
-      entryName,
       platform: this.config.platform,
     }).apply(compiler);
 
