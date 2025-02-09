@@ -12,7 +12,6 @@ type PackageJSON = { version: string };
  * {@link DevelopmentPlugin} configuration options.
  */
 export interface DevelopmentPluginConfig {
-  entryName?: string;
   platform: string;
   devServer?: DevServerOptions;
 }
@@ -143,7 +142,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
           }
         );
       } else {
-        if (!this.config.entryName) {
+        if (!('main' in compiler.options.entry)) {
           // Add dev entries as global entries
           for (const entry of devEntries) {
             new compiler.webpack.EntryPlugin(compiler.context, entry, {
@@ -158,25 +157,21 @@ export class DevelopmentPlugin implements RspackPluginInstance {
             );
           }
 
-          const entries =
-            compiler.options.entry[this.config.entryName].import ?? [];
+          const entries = compiler.options.entry.main.import ?? [];
           const scriptManagerEntryIndex = entries.findIndex((entry) =>
             entry.includes('InitializeScriptManager')
           );
 
           if (scriptManagerEntryIndex !== -1) {
             // Insert devEntries after 'InitializeScriptManager'
-            compiler.options.entry[this.config.entryName].import = [
+            compiler.options.entry.main.import = [
               ...entries.slice(0, scriptManagerEntryIndex + 1),
               ...devEntries,
               ...entries.slice(scriptManagerEntryIndex + 1),
             ];
           } else {
             // 'InitializeScriptManager' entry not found, insert devEntries before the normal entries
-            compiler.options.entry[this.config.entryName].import = [
-              ...devEntries,
-              ...entries,
-            ];
+            compiler.options.entry.main.import = [...devEntries, ...entries];
           }
         }
       }
