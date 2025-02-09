@@ -49,25 +49,8 @@ export default (env) => {
       rules: [
         {
           test: /\.[cm]?[jt]sx?$/,
-          include: [
-            /node_modules(.*[/\\])+react-native/,
-            /node_modules(.*[/\\])+@react-native/,
-            /node_modules(.*[/\\])+@react-navigation/,
-            /node_modules(.*[/\\])+@react-native-community/,
-            /node_modules(.*[/\\])+react-freeze/,
-            /node_modules(.*[/\\])+expo/,
-            /node_modules(.*[/\\])+pretty-format/,
-            /node_modules(.*[/\\])+metro/,
-            /node_modules(.*[/\\])+abort-controller/,
-            /packages[/\\]repack/,
-            /node_modules(.*[/\\])+@module-federation/,
-          ],
           use: 'babel-loader',
-        },
-        {
-          test: /\.[jt]sx?$/,
-          exclude: /node_modules/,
-          use: 'babel-loader',
+          type: 'javascript/auto',
         },
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
