@@ -5,7 +5,7 @@ import type {
   RspackPluginInstance,
 } from '@rspack/core';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
-import { moveEntryDependencyBefore } from './utils/moveEntryDependencyBefore.js';
+import { moveElementBefore } from './utils/moveElementBefore.js';
 
 export interface NativeEntryPluginConfig {
   /**
@@ -90,9 +90,10 @@ export class NativeEntryPlugin implements RspackPluginInstance {
         { name: 'NativeEntryPlugin', stage: 1000 },
         (compilation) => {
           for (const entry of compilation.entries.values()) {
-            moveEntryDependencyBefore(entry.dependencies, {
-              dependencyToMove: '.federation/entry',
-              beforeDependency: nativeEntries[0],
+            moveElementBefore(entry.dependencies, {
+              elementToMove: /\.federation\/entry/,
+              beforeElement: nativeEntries[0],
+              getElement: (dependency) => dependency.request ?? '',
             });
           }
         }
