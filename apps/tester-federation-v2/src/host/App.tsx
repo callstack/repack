@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import MainNavigator from './navigation/MainNavigator';
 
-const HostApp = () => {
+const App = () => {
   return (
     <NavigationContainer>
       <MainNavigator />
@@ -9,4 +9,4 @@ const HostApp = () => {
   );
 };
 
-export default HostApp;
+export default App;
