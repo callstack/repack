@@ -127,9 +127,7 @@ export class OutputPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    if (!this.config.enabled) {
-      return;
-    }
+    if (!this.config.enabled) return;
 
     assert(compiler.options.output.path, "Can't infer output path from config");
 
