@@ -43,9 +43,6 @@ export interface RepackPluginConfig {
    */
   output: OutputPluginConfig['output'];
 
-  /** The entry chunk name, `main` by default. */
-  entryName?: string;
-
   /**
    * Absolute location to JS file with initialization logic for React Native.
    * Useful if you want to built for out-of-tree platforms.
@@ -126,29 +123,12 @@ export class RepackPlugin implements RspackPluginInstance {
     this.config.logger = this.config.logger ?? true;
   }
 
-  private getEntryName(compiler: Compiler) {
-    if (this.config.entryName) {
-      return this.config.entryName;
-    }
-
-    if (
-      typeof compiler.options.entry === 'object' &&
-      'main' in compiler.options.entry
-    ) {
-      return 'main';
-    }
-
-    return undefined;
-  }
-
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    const entryName = this.getEntryName(compiler);
-
     new compiler.webpack.DefinePlugin({
       __DEV__: JSON.stringify(this.config.mode === 'development'),
     }).apply(compiler);
@@ -159,19 +139,15 @@ export class RepackPlugin implements RspackPluginInstance {
 
     new OutputPlugin({
       platform: this.config.platform,
-      enabled: !this.config.devServer && !!entryName,
+      enabled: !this.config.devServer,
       context: this.config.context,
       output: this.config.output,
-      entryName: this.config.entryName,
       extraChunks: this.config.extraChunks,
     }).apply(compiler);
 
-    if (entryName) {
-      new NativeEntryPlugin({
-        entryName,
-        initializeCoreLocation: this.config.initializeCore,
-      }).apply(compiler);
-    }
+    new NativeEntryPlugin({
+      initializeCoreLocation: this.config.initializeCore,
+    }).apply(compiler);
 
     new RepackTargetPlugin({
       hmr: this.config.devServer?.hmr,
@@ -179,7 +155,6 @@ export class RepackPlugin implements RspackPluginInstance {
 
     new DevelopmentPlugin({
       devServer: this.config.devServer,
-      entryName,
       platform: this.config.platform,
     }).apply(compiler);
 
