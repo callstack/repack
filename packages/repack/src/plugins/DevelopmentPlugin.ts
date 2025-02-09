@@ -8,7 +8,7 @@ import type {
 import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
 import type { DevServerOptions } from '../types.js';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
-import { reorderDependencies } from './utils/reorderEntries.js';
+import { moveEntryDependencyBefore } from './utils/moveEntryDependencyBefore.js';
 
 const [reactRefreshEntryPath, reactRefreshPath, refreshUtilsPath] =
   ReactRefreshPlugin.deprecated_runtimePaths;
@@ -208,9 +208,9 @@ export class DevelopmentPlugin implements RspackPluginInstance {
           { name: 'DevelopmentPlugin', stage: 1000 },
           (compilation) => {
             for (const entry of compilation.entries.values()) {
-              reorderDependencies(entry.dependencies, {
-                targetEntryPattern: '.federation/entry',
-                beforeEntryRequest: devEntries[0],
+              moveEntryDependencyBefore(entry.dependencies, {
+                dependencyToMove: '.federation/entry',
+                beforeDependency: devEntries[0],
               });
             }
           }

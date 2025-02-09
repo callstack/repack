@@ -5,7 +5,7 @@ import type {
   RspackPluginInstance,
 } from '@rspack/core';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
-import { reorderDependencies } from './utils/reorderEntries.js';
+import { moveEntryDependencyBefore } from './utils/moveEntryDependencyBefore.js';
 
 export interface NativeEntryPluginConfig {
   /**
@@ -90,9 +90,9 @@ export class NativeEntryPlugin implements RspackPluginInstance {
         { name: 'NativeEntryPlugin', stage: 1000 },
         (compilation) => {
           for (const entry of compilation.entries.values()) {
-            reorderDependencies(entry.dependencies, {
-              targetEntryPattern: '.federation/entry',
-              beforeEntryRequest: nativeEntries[0],
+            moveEntryDependencyBefore(entry.dependencies, {
+              dependencyToMove: '.federation/entry',
+              beforeDependency: nativeEntries[0],
             });
           }
         }
