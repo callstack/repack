@@ -1625,7 +1625,7 @@ PODS:
   - ReactTestApp-DevSupport (4.0.7):
     - React-Core
     - React-jsi
-  - RNCAsyncStorage (1.24.0):
+  - RNCAsyncStorage (2.1.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1985,7 +1985,7 @@ SPEC CHECKSUMS:
   ReactCommon: 89c87b343deacc8610b099ac764848f0ce937e3e
   ReactNativeHost: 40da1d9878e16dd3b647d4c31e5afeb0ed84683d
   ReactTestApp-DevSupport: 4aa6f6bc658a2577bcf896c63c411cb375b89d7d
-  RNCAsyncStorage: 3ad840f7b17b45ca7ebbbb0e80948564a9513315
+  RNCAsyncStorage: 0ad93525a3a72652e88e14ad109c6dac856cb693
   RNScreens: e389d6a6a66a4f0d3662924ecae803073ccce8ec
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6

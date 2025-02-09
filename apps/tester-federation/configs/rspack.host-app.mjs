@@ -1,6 +1,7 @@
 // @ts-check
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
+import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 import rspack from '@rspack/core';
 
 const dirname = Repack.getDirname(import.meta.url);
@@ -22,7 +23,8 @@ export default (env) => {
     throw new Error('Missing platform');
   }
 
-  return {
+  /** @type {import('@rspack/core').Configuration} */
+  const config = {
     mode,
     devtool: false,
     context,
@@ -37,7 +39,7 @@ export default (env) => {
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MF2Tester-HostApp',
+      uniqueName: 'MFTester-HostApp',
     },
     optimization: {
       minimize,
@@ -96,14 +98,16 @@ export default (env) => {
           sourceMapFilename,
           assetsPath,
         },
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/host-app/${platform}/output-remote`,
+          },
+        ],
       }),
-      new Repack.plugins.ModuleFederationPluginV2({
+      new Repack.plugins.ModuleFederationPluginV1({
         name: 'HostApp',
-        filename: 'HostApp.container.js.bundle',
-        remotes: {
-          MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
-        },
-        dts: false,
         shared: {
           react: {
             singleton: true,
@@ -135,12 +139,25 @@ export default (env) => {
             eager: true,
             requiredVersion: '^3.35.0',
           },
+          '@react-native-async-storage/async-storage': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '2.1.1',
+          },
         },
       }),
-      // silence missing @react-native-masked-view optionally required by @react-navigation/elements
       new rspack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,
       }),
+      new rspack.EnvironmentPlugin({
+        MF_CACHE: null,
+      }),
     ],
   };
+
+  if (process.env.RSDOCTOR) {
+    config.plugins?.push(new RsdoctorRspackPlugin());
+  }
+
+  return config;
 };

@@ -19,8 +19,6 @@ export default (env) => {
     throw new Error('Missing platform');
   }
 
-  process.env.BABEL_ENV = mode;
-
   return {
     mode,
     devtool: false,
