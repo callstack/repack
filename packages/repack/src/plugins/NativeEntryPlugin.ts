@@ -9,10 +9,6 @@ import { isRspackCompiler } from './utils/isRspackCompiler.js';
 
 export interface NativeEntryPluginConfig {
   /**
-   * Name of the chunk that is the first to load on the device.
-   */
-  entryName: string;
-  /**
    * Absolute location to JS file with initialization logic for React Native.
    * Useful if you want to built for out-of-tree platforms.
    */
@@ -40,6 +36,10 @@ export class NativeEntryPlugin implements RspackPluginInstance {
   }
 
   apply(compiler: Compiler) {
+    if ('main' in compiler.options.entry) {
+      return;
+    }
+
     const reactNativePath = this.getReactNativePath(
       compiler.options.resolve.alias?.['react-native']
     );
@@ -89,14 +89,16 @@ export class NativeEntryPlugin implements RspackPluginInstance {
       );
     } else {
       const prependEntries = (entryConfig: EntryStaticNormalized) => {
-        if (!(this.config.entryName in entryConfig)) {
+        // temporary placeholder for entry name
+        // removed in PR that removes workaround for reordering entries
+        if (!('main' in entryConfig)) {
           throw new Error(
-            `Entry '${this.config.entryName}' does not exist in the entry configuration`
+            `Entry 'main' does not exist in the entry configuration`
           );
         }
-        entryConfig[this.config.entryName].import = [
+        entryConfig.main.import = [
           ...entries,
-          ...(entryConfig[this.config.entryName].import ?? []),
+          ...(entryConfig.main.import ?? []),
         ];
         return entryConfig;
       };
