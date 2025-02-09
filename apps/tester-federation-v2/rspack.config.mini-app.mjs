@@ -13,9 +13,6 @@ export default (env) => {
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
-    bundleFilename = undefined,
-    sourceMapFilename = undefined,
-    assetsPath = undefined,
   } = env;
 
   if (!platform) {
@@ -94,11 +91,7 @@ export default (env) => {
         mode,
         platform,
         devServer,
-        output: {
-          bundleFilename,
-          sourceMapFilename,
-          assetsPath,
-        },
+        output: {},
       }),
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'MiniApp',

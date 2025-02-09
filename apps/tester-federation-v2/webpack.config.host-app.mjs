@@ -76,7 +76,6 @@ export default (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
-              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
             },
           },
         },
@@ -102,6 +101,7 @@ export default (env) => {
         remotes: {
           MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
         },
+        dts: false,
         shared: {
           react: {
             singleton: true,

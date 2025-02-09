@@ -73,7 +73,6 @@ export default (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
-              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
               inline: true,
             },
           },
@@ -96,6 +95,7 @@ export default (env) => {
         exposes: {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
+        dts: false,
         getPublicPath: `return "http://localhost:8082/${platform}/"`,
         shared: {
           react: {
