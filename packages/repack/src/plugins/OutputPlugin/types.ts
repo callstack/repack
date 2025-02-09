@@ -70,9 +70,6 @@ export interface OutputPluginConfig {
    */
   enabled?: boolean;
 
-  /** The entry chunk name, `main` by default. */
-  entryName?: string;
-
   /**
    * Output options specifying where to save generated bundle, source map and assets.
    */
