@@ -1,16 +1,16 @@
 // @ts-check
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
-import webpack from 'webpack';
+import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+import rspack from '@rspack/core';
 
 const dirname = Repack.getDirname(import.meta.url);
 
-/** @type {(env: import('@callstack/repack').EnvOptions) => import('webpack').Configuration} */
+/** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
 export default (env) => {
   const {
     mode = 'development',
     context = dirname,
-    entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
@@ -23,13 +23,12 @@ export default (env) => {
     throw new Error('Missing platform');
   }
 
-  process.env.BABEL_ENV = mode;
-
-  return {
+  /** @type {import('@rspack/core').Configuration} */
+  const config = {
     mode,
     devtool: false,
     context,
-    entry,
+    entry: './src/host/index.js',
     resolve: {
       ...Repack.getResolveOptions(platform),
     },
@@ -40,7 +39,7 @@ export default (env) => {
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MF2Tester-HostApp',
+      uniqueName: 'MFTester-HostApp',
     },
     optimization: {
       minimize,
@@ -48,27 +47,33 @@ export default (env) => {
     },
     module: {
       rules: [
-        {
-          test: /\.[cm]?[jt]sx?$/,
-          include: [
-            /node_modules(.*[/\\])+react-native/,
-            /node_modules(.*[/\\])+@react-native/,
-            /node_modules(.*[/\\])+@react-navigation/,
-            /node_modules(.*[/\\])+@react-native-community/,
-            /node_modules(.*[/\\])+react-freeze/,
-            /node_modules(.*[/\\])+expo/,
-            /node_modules(.*[/\\])+pretty-format/,
-            /node_modules(.*[/\\])+metro/,
-            /node_modules(.*[/\\])+abort-controller/,
-            /packages[/\\]repack/,
-            /node_modules(.*[/\\])+@module-federation/,
-          ],
-          use: 'babel-loader',
-        },
+        Repack.REACT_NATIVE_LOADING_RULES,
+        Repack.NODE_MODULES_LOADING_RULES,
+        Repack.FLOW_TYPED_MODULES_LOADING_RULES,
         {
           test: /\.[jt]sx?$/,
-          exclude: /node_modules/,
-          use: 'babel-loader',
+          type: 'javascript/auto',
+          exclude: [/node_modules/],
+          use: {
+            loader: 'builtin:swc-loader',
+            options: {
+              env: {
+                targets: { 'react-native': '0.74' },
+              },
+              jsc: {
+                assumptions: {
+                  setPublicClassFields: true,
+                  privateFieldsAsProperties: true,
+                },
+                externalHelpers: true,
+                transform: {
+                  react: {
+                    runtime: 'automatic',
+                  },
+                },
+              },
+            },
+          },
         },
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
@@ -77,14 +82,12 @@ export default (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
-              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
             },
           },
         },
       ],
     },
     plugins: [
-      // @ts-ignore
       new Repack.RepackPlugin({
         context,
         mode,
@@ -95,14 +98,16 @@ export default (env) => {
           sourceMapFilename,
           assetsPath,
         },
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/host-app/${platform}/output-remote`,
+          },
+        ],
       }),
-      // @ts-ignore
-      new Repack.plugins.ModuleFederationPluginV2({
+      new Repack.plugins.ModuleFederationPluginV1({
         name: 'HostApp',
-        filename: 'HostApp.container.js.bundle',
-        remotes: {
-          MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
-        },
         shared: {
           react: {
             singleton: true,
@@ -134,12 +139,25 @@ export default (env) => {
             eager: true,
             requiredVersion: '^3.35.0',
           },
+          '@react-native-async-storage/async-storage': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '2.1.1',
+          },
         },
       }),
-      // silence missing @react-native-masked-view optionally required by @react-navigation/elements
-      new webpack.IgnorePlugin({
+      new rspack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,
+      }),
+      new rspack.EnvironmentPlugin({
+        MF_CACHE: null,
       }),
     ],
   };
+
+  if (process.env.RSDOCTOR) {
+    config.plugins?.push(new RsdoctorRspackPlugin());
+  }
+
+  return config;
 };

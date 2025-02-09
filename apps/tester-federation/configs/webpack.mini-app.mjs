@@ -25,7 +25,7 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    entry: {},
+    entry: './src/mini/index.js',
     resolve: {
       ...Repack.getResolveOptions(platform),
     },
@@ -36,7 +36,7 @@ export default (env) => {
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MF2Tester-MiniApp',
+      uniqueName: 'MFTester-MiniApp',
     },
     optimization: {
       minimize,
@@ -46,25 +46,8 @@ export default (env) => {
       rules: [
         {
           test: /\.[cm]?[jt]sx?$/,
-          include: [
-            /node_modules(.*[/\\])+react-native/,
-            /node_modules(.*[/\\])+@react-native/,
-            /node_modules(.*[/\\])+@react-navigation/,
-            /node_modules(.*[/\\])+@react-native-community/,
-            /node_modules(.*[/\\])+react-freeze/,
-            /node_modules(.*[/\\])+expo/,
-            /node_modules(.*[/\\])+pretty-format/,
-            /node_modules(.*[/\\])+metro/,
-            /node_modules(.*[/\\])+abort-controller/,
-            /node_modules(.*[/\\])+@callstack[/\\]repack/,
-            /node_modules(.*[/\\])+@module-federation/,
-          ],
           use: 'babel-loader',
-        },
-        {
-          test: /\.[jt]sx?$/,
-          exclude: /node_modules/,
-          use: 'babel-loader',
+          type: 'javascript/auto',
         },
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
@@ -73,7 +56,6 @@ export default (env) => {
             options: {
               platform,
               devServerEnabled: Boolean(devServer),
-              scalableAssetExtensions: Repack.SCALABLE_ASSETS,
               inline: true,
             },
           },
@@ -90,47 +72,50 @@ export default (env) => {
         output: {},
       }),
       // @ts-ignore
-      new Repack.plugins.ModuleFederationPluginV2({
+      new Repack.plugins.ModuleFederationPluginV1({
         name: 'MiniApp',
         filename: 'MiniApp.container.js.bundle',
         exposes: {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
-        getPublicPath: `return "http://localhost:8082/${platform}/"`,
         shared: {
           react: {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '18.3.1',
           },
           'react-native': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '0.76.3',
           },
           '@react-navigation/native': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^6.1.18',
           },
           '@react-navigation/native-stack': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^6.10.1',
           },
           'react-native-safe-area-context': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^4.14.0',
           },
           'react-native-screens': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^3.35.0',
+          },
+          '@react-native-async-storage/async-storage': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '2.1.1',
           },
         },
       }),
-      // silence missing @react-native-masked-view optionally required by @react-navigation/elements
       new webpack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,
       }),
