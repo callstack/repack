@@ -14,7 +14,6 @@ export default (env) => {
   const {
     mode = 'development',
     context = dirname,
-    entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
@@ -31,7 +30,7 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    entry,
+    entry: './index.js',
     resolve: {
       ...Repack.getResolveOptions(platform),
       alias: {
