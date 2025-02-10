@@ -1,12 +1,9 @@
 // @ts-check
-import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
-import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 import rspack from '@rspack/core';
 
 const dirname = Repack.getDirname(import.meta.url);
-const { resolve } = createRequire(import.meta.url);
 
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
 export default (env) => {
@@ -19,7 +16,6 @@ export default (env) => {
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
-    reactNativePath = resolve('react-native'),
   } = env;
 
   if (!platform) {
@@ -30,21 +26,18 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    entry: {},
+    entry: './src/host/index.js',
     resolve: {
       ...Repack.getResolveOptions(platform),
-      alias: {
-        'react-native': reactNativePath,
-      },
     },
     output: {
       clean: true,
       hashFunction: 'xxhash64',
-      path: path.join(dirname, 'build', 'mini-app', platform),
+      path: path.join(dirname, 'build', 'host-app', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MFTester-MiniApp',
+      uniqueName: 'MF2Tester-HostApp',
     },
     optimization: {
       minimize,
@@ -84,13 +77,12 @@ export default (env) => {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
             loader: '@callstack/repack/assets-loader',
-            options: { platform, inline: true },
+            options: { platform },
           },
         },
       ],
     },
     plugins: [
-      new rspack.IgnorePlugin({ resourceRegExp: /@react-native-masked-view/ }),
       new Repack.RepackPlugin({
         context,
         mode,
@@ -100,58 +92,51 @@ export default (env) => {
           sourceMapFilename,
           assetsPath,
         },
-        extraChunks: [
-          {
-            include: /.*/,
-            type: 'remote',
-            outputPath: `build/mini-app/${platform}/output-remote`,
-          },
-        ],
       }),
-      new Repack.plugins.ModuleFederationPluginV1({
-        name: 'MiniApp',
-        exposes: {
-          './MiniAppNavigator': './src/mini/navigation/MainNavigator',
+      new Repack.plugins.ModuleFederationPluginV2({
+        name: 'HostApp',
+        filename: 'HostApp.container.js.bundle',
+        remotes: {
+          MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
         },
+        dts: false,
         shared: {
           react: {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '18.3.1',
           },
           'react-native': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '0.76.3',
           },
           '@react-navigation/native': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^6.1.18',
           },
           '@react-navigation/native-stack': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^6.10.1',
           },
           'react-native-safe-area-context': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^4.14.0',
           },
           'react-native-screens': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^3.35.0',
-          },
-          '@react-native-async-storage/async-storage': {
-            singleton: true,
-            eager: false,
-            requiredVersion: '^1.23.1',
           },
         },
       }),
-      process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
-    ].filter(Boolean),
+      // silence missing @react-native-masked-view optionally required by @react-navigation/elements
+      new rspack.IgnorePlugin({
+        resourceRegExp: /^@react-native-masked-view/,
+      }),
+    ],
   };
 };

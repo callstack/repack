@@ -1,6 +1,7 @@
 // @ts-check
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
+import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 import rspack from '@rspack/core';
 
 const dirname = Repack.getDirname(import.meta.url);
@@ -22,24 +23,23 @@ export default (env) => {
     throw new Error('Missing platform');
   }
 
-  process.env.BABEL_ENV = mode;
-
-  return {
+  /** @type {import('@rspack/core').Configuration} */
+  const config = {
     mode,
     devtool: false,
     context,
-    entry: {},
+    entry: './src/host/index.js',
     resolve: {
       ...Repack.getResolveOptions(platform),
     },
     output: {
       clean: true,
       hashFunction: 'xxhash64',
-      path: path.join(dirname, 'build', 'mini-app', platform),
+      path: path.join(dirname, 'build', 'host-app', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MF2Tester-MiniApp',
+      uniqueName: 'MFTester-HostApp',
     },
     optimization: {
       minimize,
@@ -79,7 +79,7 @@ export default (env) => {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
             loader: '@callstack/repack/assets-loader',
-            options: { platform, inline: true },
+            options: { platform },
           },
         },
       ],
@@ -94,52 +94,66 @@ export default (env) => {
           sourceMapFilename,
           assetsPath,
         },
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/host-app/${platform}/output-remote`,
+          },
+        ],
       }),
-      new Repack.plugins.ModuleFederationPluginV2({
-        name: 'MiniApp',
-        filename: 'MiniApp.container.js.bundle',
-        exposes: {
-          './MiniAppNavigator': './src/mini/navigation/MainNavigator',
-        },
-        dts: false,
-        getPublicPath: `return "http://localhost:8082/${platform}/"`,
+      new Repack.plugins.ModuleFederationPluginV1({
+        name: 'HostApp',
         shared: {
           react: {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '18.3.1',
           },
           'react-native': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '0.76.3',
           },
           '@react-navigation/native': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^6.1.18',
           },
           '@react-navigation/native-stack': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^6.10.1',
           },
           'react-native-safe-area-context': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^4.14.0',
           },
           'react-native-screens': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^3.35.0',
+          },
+          '@react-native-async-storage/async-storage': {
+            singleton: true,
+            eager: true,
+            requiredVersion: '2.1.1',
           },
         },
       }),
-      // silence missing @react-native-masked-view optionally required by @react-navigation/elements
       new rspack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,
       }),
+      new rspack.EnvironmentPlugin({
+        MF_CACHE: null,
+      }),
     ],
   };
+
+  if (process.env.RSDOCTOR) {
+    config.plugins?.push(new RsdoctorRspackPlugin());
+  }
+
+  return config;
 };

@@ -10,13 +10,9 @@ export default (env) => {
   const {
     mode = 'development',
     context = dirname,
-    entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
     devServer = undefined,
-    bundleFilename = undefined,
-    sourceMapFilename = undefined,
-    assetsPath = undefined,
   } = env;
 
   if (!platform) {
@@ -29,18 +25,18 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    entry,
+    entry: './src/mini/index.js',
     resolve: {
       ...Repack.getResolveOptions(platform),
     },
     output: {
       clean: true,
       hashFunction: 'xxhash64',
-      path: path.join(dirname, 'build', 'host-app', platform),
+      path: path.join(dirname, 'build', 'mini-app', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       publicPath: Repack.getPublicPath({ platform, devServer }),
-      uniqueName: 'MF2Tester-HostApp',
+      uniqueName: 'MF2Tester-MiniApp',
     },
     optimization: {
       minimize,
@@ -50,31 +46,14 @@ export default (env) => {
       rules: [
         {
           test: /\.[cm]?[jt]sx?$/,
-          include: [
-            /node_modules(.*[/\\])+react-native/,
-            /node_modules(.*[/\\])+@react-native/,
-            /node_modules(.*[/\\])+@react-navigation/,
-            /node_modules(.*[/\\])+@react-native-community/,
-            /node_modules(.*[/\\])+react-freeze/,
-            /node_modules(.*[/\\])+expo/,
-            /node_modules(.*[/\\])+pretty-format/,
-            /node_modules(.*[/\\])+metro/,
-            /node_modules(.*[/\\])+abort-controller/,
-            /packages[/\\]repack/,
-            /node_modules(.*[/\\])+@module-federation/,
-          ],
           use: 'babel-loader',
-        },
-        {
-          test: /\.[jt]sx?$/,
-          exclude: /node_modules/,
-          use: 'babel-loader',
+          type: 'javascript/auto',
         },
         {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
             loader: '@callstack/repack/assets-loader',
-            options: { platform },
+            options: { platform, inline: true },
           },
         },
       ],
@@ -85,48 +64,46 @@ export default (env) => {
         context,
         mode,
         platform,
-        output: {
-          bundleFilename,
-          sourceMapFilename,
-          assetsPath,
-        },
+        output: {},
       }),
       // @ts-ignore
       new Repack.plugins.ModuleFederationPluginV2({
-        name: 'HostApp',
-        filename: 'HostApp.container.js.bundle',
-        remotes: {
-          MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
+        name: 'MiniApp',
+        filename: 'MiniApp.container.js.bundle',
+        exposes: {
+          './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
+        dts: false,
+        getPublicPath: `return "http://localhost:8082/${platform}/"`,
         shared: {
           react: {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '18.3.1',
           },
           'react-native': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '0.76.3',
           },
           '@react-navigation/native': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^6.1.18',
           },
           '@react-navigation/native-stack': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^6.10.1',
           },
           'react-native-safe-area-context': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^4.14.0',
           },
           'react-native-screens': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^3.35.0',
           },
         },

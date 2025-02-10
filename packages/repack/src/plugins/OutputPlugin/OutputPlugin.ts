@@ -26,7 +26,6 @@ export class OutputPlugin implements RspackPluginInstance {
     validateConfig(config);
 
     this.config.enabled = this.config.enabled ?? true;
-    this.config.entryName = this.config.entryName ?? 'main';
     this.config.extraChunks = this.config.extraChunks ?? [
       {
         include: /.*/,
@@ -140,6 +139,31 @@ export class OutputPlugin implements RspackPluginInstance {
     const matchChunkToSpecs = this.createChunkMatcher(matchObject);
 
     const auxiliaryAssets = new Set<string>();
+    const entryChunkNames = new Set<string>();
+
+    compiler.hooks.entryOption.tap(
+      'RepackOutputPlugin',
+      (_, entryNormalized) => {
+        if (typeof entryNormalized === 'function') {
+          throw new Error(
+            '[RepackOutputPlugin] Dynamic entry (function) is not supported.'
+          );
+        }
+
+        Object.keys(entryNormalized).forEach((entryName) => {
+          const entryChunkName =
+            entryNormalized[entryName].runtime || entryName;
+          entryChunkNames.add(entryChunkName);
+        });
+
+        if (entryChunkNames.size > 1) {
+          throw new Error(
+            '[RepackOutputPlugin] Multiple entry chunks found. ' +
+              'Only one entry chunk is allowed as a native entrypoint.'
+          );
+        }
+      }
+    );
 
     compiler.hooks.done.tapPromise('RepackOutputPlugin', async (stats) => {
       const compilationStats = stats.toJson({
@@ -205,7 +229,7 @@ export class OutputPlugin implements RspackPluginInstance {
       for (const chunk of localChunks) {
         // Process entry chunk - only one entry chunk is allowed here
         localAssetsCopyProcessor?.enqueueChunk(chunk, {
-          isEntry: chunk.id! === this.config.entryName,
+          isEntry: entryChunkNames.has(chunk.id!.toString()),
           sourceMapFile: this.getRelatedSourceMap(chunk),
         });
       }

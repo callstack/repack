@@ -11,6 +11,7 @@
     "./commands/*": "./commands/*.js",
     "./assets-loader": "./dist/loaders/assetsLoader/index.js",
     "./flow-loader": "./dist/loaders/flowLoader/index.js",
+    "./react-refresh-loader": "./dist/loaders/reactRefreshLoader/index.js",
     "./mf/*": "./mf/*.js",
     "./package.json": "./package.json"
   },
