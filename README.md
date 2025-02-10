@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="./logo.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./website/src/public/img/logo_dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="./website/src/public/img/logo_light.svg">
+    <img alt="Re.Pack" src="./website/src/public/img/logo_light.svg">
+  </picture>
 </p>
 <p align="center">
 A toolkit to build your React Native application with Rspack or Webpack.
