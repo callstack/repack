@@ -1,4 +1,4 @@
-import type { ServerOptions } from 'node:https';
+import type { ServerOptions as HttpsServerOptions } from 'node:https';
 import type { FastifyBaseLogger } from 'fastify';
 import type { CompilerDelegate } from './plugins/compiler/types.js';
 import type {
@@ -10,6 +10,7 @@ import type {
   SymbolicatorResults,
 } from './plugins/symbolicate/types.js';
 import type { HmrDelegate } from './plugins/wss/types.js';
+import type { NormalizedOptions } from './utils/normalizeOptions.js';
 
 export type { CompilerDelegate };
 export type {
@@ -41,7 +42,7 @@ export interface DevServerOptions {
     | 'http'
     | 'https'
     | { type: 'http' }
-    | { type: 'https'; options?: ServerOptions };
+    | { type: 'https'; options?: HttpsServerOptions };
 }
 
 export namespace Server {
@@ -92,6 +93,9 @@ export namespace Server {
    * Allows to emit logs, notify about compilation events and broadcast events to connected clients.
    */
   export interface DelegateContext {
+    /** Normalized development server options. */
+    options: NormalizedOptions;
+
     /** A logger instance, useful for emitting logs from the delegate. */
     log: FastifyBaseLogger;
 

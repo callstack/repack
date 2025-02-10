@@ -1,3 +1,4 @@
+import type { ServerOptions as HttpsServerOptions } from 'node:https';
 import type { DevServerOptions, Server } from '../types.js';
 
 function normalizeHost(host?: string): string {
@@ -28,7 +29,17 @@ function normalizeHttpsOptions(serverOptions: DevServerOptions['server']) {
   return undefined;
 }
 
-export function normalizeOptions(options: Server.Options) {
+export interface NormalizedOptions {
+  host: string;
+  port: number;
+  https: HttpsServerOptions | undefined;
+  hot: boolean;
+  url: string;
+  disableRequestLogging: boolean;
+  rootDir: string;
+}
+
+export function normalizeOptions(options: Server.Options): NormalizedOptions {
   // port should be defined at this point and this should never happen
   if (typeof options.port !== 'number' || Number.isNaN(options.port)) {
     throw new Error(

@@ -42,7 +42,8 @@ export async function createServer(config: Server.Config) {
     ...(options.https ? { https: options.https } : {}),
   });
 
-  delegate = await config.delegate({
+  delegate = config.delegate({
+    options,
     log: instance.log,
     notifyBuildStart: (platform) => {
       instance.wss.apiServer.send({
