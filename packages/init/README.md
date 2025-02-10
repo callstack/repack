@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.svg" width="800" alt="Re.Pack logo" />
 </p>
 <p align="center">
-A toolkit to build your React Native application with Rspack or Webpack.
+<strong>A toolkit to build your React Native application with Rspack or Webpack.</strong>
 </p>
 
 ---
