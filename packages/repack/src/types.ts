@@ -72,7 +72,7 @@ export interface EnvOptions {
   minimize?: boolean;
 
   /** Path to React Native dependency. Usually points to `node_modules/react-native`. */
-  reactNativePath: string;
+  reactNativePath?: string;
 
   /**
    * Development server configuration options.
