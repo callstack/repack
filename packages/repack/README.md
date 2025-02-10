@@ -6,14 +6,14 @@ A toolkit to build your React Native application with Rspack or Webpack.
 </p>
 
 ---
-<p align="center">
+<div align="center">
 
 [![mit licence][license-badge]][license]
 [![npm downloads][npm-downloads-badge]][npm-downloads]
 [![Chat][chat-badge]][chat]
 [![PRs Welcome][prs-welcome-badge]][prs-welcome]
 
-</p>
+</div>
 
 ---
 
