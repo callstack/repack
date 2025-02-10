@@ -179,16 +179,6 @@ export class DevelopmentPlugin implements RspackPluginInstance {
         }
       );
 
-      // React Refresh requires setImmediate to be defined
-      // but in React Native it happens during InitializeCore so we need
-      // to shim it here to prevent ReferenceError
-      // TODO (jbroma): add this check to reactRefreshLoader
-      new compiler.webpack.EntryPlugin(
-        compiler.context,
-        'data:text/javascript,globalThis.setImmediate = globalThis.setImmediate || function(){ /* noop */ };',
-        { name: undefined }
-      ).apply(compiler);
-
       if (!isRspackCompiler(compiler)) {
         // In Webpack, Module Federation Container entry gets injected during the compilation's make phase,
         // similar to how dynamic entries work. This means the federation entry is added after our development entries.
