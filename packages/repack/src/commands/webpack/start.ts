@@ -56,14 +56,6 @@ export async function start(
   });
 
   const devServerOptions = configs[0].devServer ?? {};
-
-  const serverProtocol =
-    typeof devServerOptions.server === 'string'
-      ? devServerOptions.server
-      : devServerOptions.server!.type;
-  const serverHost = devServerOptions.host!;
-  const serverPort = devServerOptions.port!;
-  const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
   const showHttpRequests = args.verbose || args.logRequests;
 
   if (args.verbose) {
@@ -107,7 +99,7 @@ export async function start(
               ctx.broadcastToMessageClients({ method: 'devMenu' });
             },
             onOpenDevTools() {
-              fetch(`${serverURL}/open-debugger`, {
+              fetch(`${ctx.options.url}/open-debugger`, {
                 method: 'POST',
               }).catch(() => {
                 ctx.log.warn('Failed to open React Native DevTools');
@@ -115,7 +107,7 @@ export async function start(
             },
             onAdbReverse() {
               void runAdbReverse({
-                port: serverPort,
+                port: ctx.options.port,
                 logger: ctx.log,
                 verbose: true,
               });
@@ -126,7 +118,11 @@ export async function start(
       }
 
       if (args.reversePort) {
-        void runAdbReverse({ logger: ctx.log, port: serverPort, wait: true });
+        void runAdbReverse({
+          logger: ctx.log,
+          port: ctx.options.port,
+          wait: true,
+        });
       }
 
       const lastStats: Record<string, StatsCompilation> = {};
@@ -134,7 +130,10 @@ export async function start(
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
         if (platform === 'android') {
-          void runAdbReverse({ port: serverPort, logger: ctx.log });
+          void runAdbReverse({
+            port: ctx.options.port,
+            logger: ctx.log,
+          });
         }
       });
 

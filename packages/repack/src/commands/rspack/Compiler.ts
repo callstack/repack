@@ -63,7 +63,7 @@ export class Compiler {
       this.platforms.forEach((platform) => {
         if (platform === 'android') {
           void runAdbReverse({
-            port: this.devServerOptions.port as number,
+            port: this.devServerContext.options.port,
             logger: this.devServerContext.log,
           });
         }
