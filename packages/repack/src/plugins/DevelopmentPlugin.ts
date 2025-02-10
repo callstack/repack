@@ -160,7 +160,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       ];
 
       compiler.hooks.entryOption.tap(
-        { name: 'DevelopmentPlugin' },
+        { name: 'RepackDevelopmentPlugin' },
         (_, entryNormalized) => {
           // combine entries for all declared and MF entrypoints
           const entrypoints = [
@@ -184,7 +184,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
         // similar to how dynamic entries work. This means the federation entry is added after our development entries.
         // We need to reorder dependencies to ensure federation entry is placed before development entries.
         compiler.hooks.make.tap(
-          { name: 'DevelopmentPlugin', stage: 1000 },
+          { name: 'RepackDevelopmentPlugin', stage: 1000 },
           (compilation) => {
             for (const entry of compilation.entries.values()) {
               moveElementBefore(entry.dependencies, {

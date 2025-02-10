@@ -60,7 +60,7 @@ export class NativeEntryPlugin implements RspackPluginInstance {
     ];
 
     compiler.hooks.entryOption.tap(
-      { name: 'NativeEntryPlugin', before: 'DevelopmentPlugin' },
+      { name: 'RepackNativeEntryPlugin', before: 'RepackDevelopmentPlugin' },
       (_, entry) => {
         if (typeof entry === 'function') {
           throw new Error(
@@ -87,7 +87,7 @@ export class NativeEntryPlugin implements RspackPluginInstance {
       // similar to how dynamic entries work. This means the federation entry is added after our native entries.
       // We need to reorder dependencies to ensure federation entry is placed before native entries.
       compiler.hooks.make.tap(
-        { name: 'NativeEntryPlugin', stage: 1000 },
+        { name: 'RepackNativeEntryPlugin', stage: 1000 },
         (compilation) => {
           for (const entry of compilation.entries.values()) {
             moveElementBefore(entry.dependencies, {

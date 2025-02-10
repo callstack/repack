@@ -98,9 +98,11 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
   }
 
   apply(compiler: Compiler) {
-    const logger = compiler.getInfrastructureLogger('ModuleFederationPlugin');
+    const logger = compiler.getInfrastructureLogger(
+      'RepackModuleFederationPlugin'
+    );
 
-    compiler.hooks.beforeCompile.tap('ModuleFederationPlugin', () => {
+    compiler.hooks.beforeCompile.tap('RepackModuleFederationPlugin', () => {
       logger.warn(
         'Notice: ModuleFederationPlugin currently points to ModuleFederationPluginV1. ' +
           'Re.Pack 5 introduced ModuleFederationPluginV2, which addresses many previous limitations. ' +

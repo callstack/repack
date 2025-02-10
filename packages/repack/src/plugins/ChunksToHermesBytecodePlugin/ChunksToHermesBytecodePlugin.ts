@@ -70,7 +70,7 @@ interface ChunksToHermesBytecodePluginConfig {
  * @category Webpack Plugin
  */
 export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
-  private readonly name = 'ChunksToHermesBytecodePlugin';
+  private readonly name = 'RepackChunksToHermesBytecodePlugin';
 
   constructor(private config: ChunksToHermesBytecodePluginConfig) {}
 
