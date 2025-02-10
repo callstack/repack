@@ -107,17 +107,6 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       // setup HMR
       new compiler.webpack.HotModuleReplacementPlugin().apply(compiler);
 
-      // add react-refresh-loader fallback for compatibility with Webpack
-      compiler.options.resolveLoader = {
-        ...compiler.options.resolveLoader,
-        fallback: {
-          ...compiler.options.resolveLoader?.fallback,
-          'builtin:react-refresh-loader': require.resolve(
-            '../loaders/reactRefreshLoader'
-          ),
-        },
-      };
-
       // setup HMR source maps
       new compiler.webpack.SourceMapDevToolPlugin({
         test: /\.hot-update\.js$/,
@@ -161,7 +150,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       compiler.options.module.rules.unshift({
         include: /\.([cm]js|[jt]sx?|flow)$/i,
         exclude: /node_modules/i,
-        use: 'builtin:react-refresh-loader',
+        use: '@callstack/repack/react-refresh-loader',
       });
 
       const devEntries = [
@@ -189,16 +178,6 @@ export class DevelopmentPlugin implements RspackPluginInstance {
           });
         }
       );
-
-      // React Refresh requires setImmediate to be defined
-      // but in React Native it happens during InitializeCore so we need
-      // to shim it here to prevent ReferenceError
-      // TODO (jbroma): add this check to reactRefreshLoader
-      new compiler.webpack.EntryPlugin(
-        compiler.context,
-        'data:text/javascript,globalThis.setImmediate = globalThis.setImmediate || function(){ /* noop */ };',
-        { name: undefined }
-      ).apply(compiler);
 
       if (!isRspackCompiler(compiler)) {
         // In Webpack, Module Federation Container entry gets injected during the compilation's make phase,

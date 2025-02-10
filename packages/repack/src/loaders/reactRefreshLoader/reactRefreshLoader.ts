@@ -10,17 +10,21 @@ const reactRefreshFooter = dedent(`
     $ReactRefreshRuntime$.register(type, __webpack_module__.id + "_" + id);
   }
 
-  Promise.resolve().then(function() {
-    $ReactRefreshRuntime$.refresh(__webpack_module__.id, __webpack_module__.hot);
-  });
+  if (typeof setImmediate !== "undefined") {
+    Promise.resolve().then(function() {
+      $ReactRefreshRuntime$.refresh(__webpack_module__.id, __webpack_module__.hot);
+    });
+  }
 `);
 
 export const raw = false;
 
 /**
- * This loader is used in Webpack configuration as a fallback loader for 'builtin:react-refresh-loader' from Rspack.
- * Thanks to this loader, which mimics the one written in Rust, we can utilize "@rspack/plugin-react-refresh" in Webpack as well,
- * instead of relying on "@pmmmwh/react-refresh-webpack-plugin".
+ * This loader adds React Refresh signatures to the source files, which enables Hot Module Replacement (HMR)
+ * for React components. It appends necessary runtime code to register and refresh React components.
+ *
+ * Works the same as 'builtin:react-refresh-loader' from '@rspack/plugin-react-refresh'
+ * but accounts for React Native runtime specifics.
  *
  * Reference implementation: https://github.com/web-infra-dev/rspack/blob/main/crates/rspack_loader_react_refresh/src/lib.rs
  */
