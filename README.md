@@ -1,9 +1,7 @@
-<p align="center">
+<div align="center">
   <img src="./logo.svg" width="800" alt="Re.Pack logo" />
-</p>
-<p align="center">
-<h2>A toolkit to build your React Native application with Rspack or Webpack.</h2>
-</p>
+  <h2>A toolkit to build your React Native application with Rspack or Webpack.</h2>
+</div>
 
 ---
 <div align="center">
