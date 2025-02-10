@@ -43,7 +43,7 @@ Like the project? ⚛️ [Join the team](https://callstack.com/careers/?utm_camp
 [callstack-readme-with-love]: https://callstack.com/?utm_source=github.com&utm_medium=referral&utm_campaign=repack&utm_term=readme-with-love
 [license-badge]: https://img.shields.io/npm/l/@callstack/repack?style=for-the-badge
 [license]: https://github.com/callstack/repack/blob/main/LICENSE
-[npm-downloads-badge]: https://img.shields.io/npm/dt/@callstack/repack?style=for-the-badge
+[npm-downloads-badge]: https://img.shields.io/npm/dm/@callstack/repack?style=for-the-badge
 [npm-downloads]: https://www.npmjs.com/package/@callstack/repack
 [prs-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge
 [prs-welcome]: ./CONTRIBUTING.md
