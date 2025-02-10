@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.svg" width="800" alt="Re.Pack logo" />
+  <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.svg" width="600" alt="Re.Pack logo" />
 <h2>A toolkit to build your React Native application with Rspack or Webpack.</h2>
 </div>
 
