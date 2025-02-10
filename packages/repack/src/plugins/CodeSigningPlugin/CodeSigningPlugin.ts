@@ -44,8 +44,7 @@ export class CodeSigningPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    const pluginName = CodeSigningPlugin.name;
-    const logger = compiler.getInfrastructureLogger(pluginName);
+    const logger = compiler.getInfrastructureLogger('RepackCodeSigningPlugin');
 
     if (this.config.enabled === false) {
       return;
@@ -53,7 +52,7 @@ export class CodeSigningPlugin implements RspackPluginInstance {
 
     if (typeof compiler.options.output.filename === 'function') {
       throw new Error(
-        'CodeSigningPlugin does not support dynamic output filename. Please use static filename instead.'
+        '[RepackCodeSigningPlugin] Dynamic output filename is not supported. Please use static filename instead.'
       );
     }
     /**
@@ -76,14 +75,14 @@ export class CodeSigningPlugin implements RspackPluginInstance {
       ? this.config.excludeChunks
       : [this.config.excludeChunks as RegExp];
 
-    compiler.hooks.emit.tap(pluginName, (compilation) => {
+    compiler.hooks.emit.tap('RepackCodeSigningPlugin', (compilation) => {
       compilation.chunks.forEach((chunk) => {
         chunk.files.forEach((file) => this.chunkFilenames.add(file));
       });
     });
 
     compiler.hooks.assetEmitted.tapPromise(
-      { name: pluginName, stage: 20 },
+      { name: 'RepackCodeSigningPlugin', stage: 20 },
       async (file, { outputPath, content, compilation }) => {
         const mainBundleName = compilation.outputOptions.filename as string;
         if (!this.shouldSignFile(file, mainBundleName, excludedChunks)) {
