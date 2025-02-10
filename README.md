@@ -6,13 +6,14 @@ A toolkit to build your React Native application with Rspack or Webpack.
 </p>
 
 ---
+<div align="center">
 
-[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/callstack/repack/blob/main/LICENSE)
-[![npm version](https://img.shields.io/npm/v/repack?style=for-the-badge)](https://www.npmjs.org/package/repack)
-[![npm downloads](https://img.shields.io/npm/dt/repack.svg?style=for-the-badge)](https://www.npmjs.org/package/repack)
+[![mit licence][license-badge]][license]
+[![npm downloads][npm-downloads-badge]][npm-downloads]
 [![Chat][chat-badge]][chat]
 [![PRs Welcome][prs-welcome-badge]][prs-welcome]
-[![Sponsored by Callstack][callstack-badge]][callstack]
+
+</div>
 
 Re.Pack is a next generation of [Haul](https://github.com/callstack/haul) — a Webpack-based bundler for React Native applications.
 
@@ -40,15 +41,11 @@ Like the project? ⚛️ [Join the team](https://callstack.com/careers/?utm_camp
 <!-- badges -->
 
 [callstack-readme-with-love]: https://callstack.com/?utm_source=github.com&utm_medium=referral&utm_campaign=repack&utm_term=readme-with-love
-[build-badge]: https://img.shields.io/github/actions/workflow/status/callstack/repack/test.yml?style=for-the-badge
-[build]: https://github.com/callstack/repack/actions/workflows/test.yml
-[version-badge]: https://img.shields.io/npm/v/@callstack/repack?style=for-the-badge
-[version]: https://www.npmjs.com/package/@callstack/repack
 [license-badge]: https://img.shields.io/npm/l/@callstack/repack?style=for-the-badge
-[license]: https://github.com/callstack/repack/blob/master/LICENSE
+[license]: https://github.com/callstack/repack/blob/main/LICENSE
+[npm-downloads-badge]: https://img.shields.io/npm/dt/@callstack/repack?style=for-the-badge
+[npm-downloads]: https://www.npmjs.com/package/@callstack/repack
 [prs-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge
 [prs-welcome]: ./CONTRIBUTING.md
 [chat-badge]: https://img.shields.io/discord/426714625279524876.svg?style=for-the-badge
 [chat]: https://discord.gg/Q4yr2rTWYF
-[callstack-badge]: https://callstack.com/images/callstack-badge.svg
-[callstack]: https://callstack.com/open-source/?utm_source=github.com&utm_medium=referral&utm_campaign=repack&utm_term=readme-badge
