@@ -15,7 +15,7 @@ function getStartCommandDefaults() {
 function getBundleCommandDefaults() {
   return {
     mode: 'production',
-    devServer: null,
+    devServer: false,
     optimization: {
       minimize: true,
     },
