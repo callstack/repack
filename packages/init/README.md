@@ -3,7 +3,6 @@
 <h2>A toolkit to build your React Native application with Rspack or Webpack.</h2>
 </div>
 
----
 <div align="center">
 
 [![mit licence][license-badge]][license]
