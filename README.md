@@ -1,7 +1,7 @@
 <div align="center">
   <img src="./logo.svg" width="600" alt="Re.Pack logo" />
   <h2>A toolkit to build your React Native application with Rspack or Webpack.</h2>
-</div>---
+</div>
 <div align="center">
 
 [![mit licence][license-badge]][license]

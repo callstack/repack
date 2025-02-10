@@ -11,8 +11,6 @@
 
 </div>
 
----
-
 `@callstack/repack-init` is a tool that automates the integration of the `@callstack/repack` into React-Native projects`.
 
 ## Usage
