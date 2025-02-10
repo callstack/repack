@@ -14,7 +14,7 @@ import type { HMRMessageBody } from '../../types.js';
 import { adaptFilenameToPlatform, runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
 import type { CompilerAsset } from './types.js';
-import { exitWithError } from '../common/exit.js';
+import { NoStackError } from '../common/exit.js';
 
 export class Compiler {
   compiler: MultiCompiler;
@@ -232,7 +232,7 @@ export class Compiler {
   ): Promise<string | Buffer> {
     if (DEV_SERVER_ASSET_TYPES.test(filename)) {
       if (!platform) {
-        exitWithError(`Cannot detect platform for ${filename}`);
+        throw new NoStackError(`Cannot detect platform for ${filename}`);
       }
       const asset = await this.getAsset(filename, platform);
       return asset.data;
@@ -243,7 +243,7 @@ export class Compiler {
       const source = await fs.promises.readFile(filePath, 'utf8');
       return source;
     } catch {
-      exitWithError(`File ${filename} not found`);
+      throw new NoStackError(`File ${filename} not found`);
     }
   }
 
@@ -252,7 +252,7 @@ export class Compiler {
     platform: string | undefined
   ): Promise<string | Buffer> {
     if (!platform) {
-      exitWithError(`Cannot determine platform for source map of ${filename}`);
+      throw new NoStackError(`Cannot determine platform for source map of ${filename}`);
     }
 
     try {
@@ -260,7 +260,7 @@ export class Compiler {
       let sourceMapFilename = info.related?.sourceMap;
 
       if (!sourceMapFilename) {
-        exitWithError(
+        throw new NoStackError(
           `Cannot determine source map filename for ${filename} for ${platform}`
         );
       }
@@ -272,7 +272,7 @@ export class Compiler {
       const sourceMap = await this.getAsset(sourceMapFilename, platform);
       return sourceMap.data;
     } catch {
-      exitWithError(`Source map for ${filename} for ${platform} is missing`);
+      throw new NoStackError(`Source map for ${filename} for ${platform} is missing`);
     }
   }
 

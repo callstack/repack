@@ -5,7 +5,7 @@ import { VERBOSE_ENV_KEY } from '../../env.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import { normalizeStatsOptions, writeStats } from '../common/index.js';
 import type { BundleArguments } from '../types.js';
-import { exitWithError } from '../common/exit.js';
+import { NoStackError } from '../common/exit.js';
 
 /**
  * Bundle command for React Native Community CLI.
@@ -38,12 +38,12 @@ export async function bundle(
   }
 
   if (!args.entryFile && !config.entry) {
-    throw new Error("Option '--entry-file <path>' argument is missing");
+    throw new NoStackError("Option '--entry-file <path>' argument is missing");
   }
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {
     if (error) {
-      exitWithError(String(error));
+      throw new NoStackError(error.message);
     }
 
     if (stats?.hasErrors()) {
@@ -67,7 +67,7 @@ export async function bundle(
           rootDir: compiler.context,
         });
       } catch (e) {
-        exitWithError(String(e));
+        throw new NoStackError(String(e));
       }
     }
   };

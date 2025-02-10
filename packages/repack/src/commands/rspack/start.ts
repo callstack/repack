@@ -20,7 +20,7 @@ import {
 import { runAdbReverse } from '../common/index.js';
 import type { StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
-import { exitWithError } from '../common/exit.js';
+import { NoStackError } from '../common/exit.js';
 
 /**
  * Start command for React Native Community CLI.
@@ -42,7 +42,7 @@ export async function start(
   const detectedPlatforms = Object.keys(cliConfig.platforms);
 
   if (args.platform && !detectedPlatforms.includes(args.platform)) {
-    exitWithError(`Unrecognized platform: ${args.platform}`);
+    throw new NoStackError(`Unrecognized platform: ${args.platform}`);
   }
 
   const configs = await makeCompilerConfig<Configuration>({

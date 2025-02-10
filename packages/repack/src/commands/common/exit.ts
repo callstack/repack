@@ -1,4 +1,8 @@
-export function exitWithError(error: unknown): never {
-  console.error(String(error));
-  process.exit(1);
+export class NoStackError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = `${message}`;
+
+    this.stack = undefined;
+  }
 }
