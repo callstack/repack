@@ -14,7 +14,7 @@ import type { HMRMessageBody } from '../../types.js';
 import { adaptFilenameToPlatform, runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
 import type { CompilerAsset } from './types.js';
-import { NoStackError } from '../common/exit.js';
+import { CLIError } from '../common/error.js';
 
 export class Compiler {
   compiler: MultiCompiler;
@@ -232,7 +232,7 @@ export class Compiler {
   ): Promise<string | Buffer> {
     if (DEV_SERVER_ASSET_TYPES.test(filename)) {
       if (!platform) {
-        throw new NoStackError(`Cannot detect platform for ${filename}`);
+        throw new CLIError(`Cannot detect platform for ${filename}`);
       }
       const asset = await this.getAsset(filename, platform);
       return asset.data;
@@ -243,7 +243,7 @@ export class Compiler {
       const source = await fs.promises.readFile(filePath, 'utf8');
       return source;
     } catch {
-      throw new NoStackError(`File ${filename} not found`);
+      throw new CLIError(`File ${filename} not found`);
     }
   }
 
@@ -252,7 +252,7 @@ export class Compiler {
     platform: string | undefined
   ): Promise<string | Buffer> {
     if (!platform) {
-      throw new NoStackError(`Cannot determine platform for source map of ${filename}`);
+      throw new CLIError(`Cannot determine platform for source map of ${filename}`);
     }
 
     try {
@@ -260,7 +260,7 @@ export class Compiler {
       let sourceMapFilename = info.related?.sourceMap;
 
       if (!sourceMapFilename) {
-        throw new NoStackError(
+        throw new CLIError(
           `Cannot determine source map filename for ${filename} for ${platform}`
         );
       }
@@ -272,7 +272,7 @@ export class Compiler {
       const sourceMap = await this.getAsset(sourceMapFilename, platform);
       return sourceMap.data;
     } catch {
-      throw new NoStackError(`Source map for ${filename} for ${platform} is missing`);
+      throw new CLIError(`Source map for ${filename} for ${platform} is missing`);
     }
   }
 

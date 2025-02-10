@@ -1,6 +1,6 @@
 import { logger } from '@react-native-community/cli-tools';
 
-export class NoStackError extends Error {
+export class CLIError extends Error {
   constructor(message: string) {
     super(message);
     this.name = `${message}`;
