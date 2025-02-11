@@ -1,7 +1,6 @@
 <div align="center">
   <img src="./logo.png" width="600" alt="Re.Pack logo" />
-  <br />
-  <strong>A toolkit to build your React Native application with Rspack or Webpack.</strong>
+  <h3>A toolkit to build your React Native application with Rspack or Webpack.</h3>
 </div>
 <div align="center">
 
