@@ -64,7 +64,7 @@ export class CodegenPlugin implements RspackPluginInstance {
       });
     } catch {
       throw new Error(
-        "CodegenPlugin requires '@react-native/babel-preset' to be present in your project. " +
+        "[RepackCodegenPlugin] Codegen requires '@react-native/babel-preset' to be present in your project. " +
           'Did you forget to install it?'
       );
     }
@@ -77,7 +77,7 @@ export class CodegenPlugin implements RspackPluginInstance {
       });
     } catch {
       throw new Error(
-        "CodegenPlugin requires 'babel-plugin-syntax-hermes-parser' to be present in your project. " +
+        "[RepackCodegenPlugin] Codegen requires 'babel-plugin-syntax-hermes-parser' to be present in your project. " +
           'Did you forget to install it?'
       );
     }

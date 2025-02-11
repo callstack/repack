@@ -257,7 +257,7 @@ describe('ModuleFederationPlugin', () => {
       expect(() => {
         new ModuleFederationPluginV2({ name }).apply(mockCompiler);
       }).toThrow(
-        `[ModuleFederationPlugin] The container's name: '${name}' must be a valid JavaScript identifier. ` +
+        `[RepackModuleFederationPlugin] The container's name: '${name}' must be a valid JavaScript identifier. ` +
           'Please correct it to proceed.'
       );
     });

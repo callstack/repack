@@ -116,7 +116,7 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     if (!name) return;
     if (!isIdentifier(name)) {
       const error = new Error(
-        `[ModuleFederationPlugin] The container's name: '${name}' must be a valid JavaScript identifier. ` +
+        `[RepackModuleFederationPlugin] The container's name: '${name}' must be a valid JavaScript identifier. ` +
           'Please correct it to proceed. For more information, see: https://developer.mozilla.org/en-US/docs/Glossary/Identifier'
       );
       // remove the stack trace to make the error more readable
@@ -130,7 +130,7 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
       require.resolve('@module-federation/enhanced', { paths: [context] });
     } catch {
       throw new Error(
-        "[ModuleFederationPlugin] Dependency '@module-federation/enhanced' is required, but not found in your project. " +
+        "[RepackModuleFederationPlugin] Dependency '@module-federation/enhanced' is required, but not found in your project. " +
           'Did you forget to install it?'
       );
     }

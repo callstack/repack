@@ -70,12 +70,12 @@ interface ChunksToHermesBytecodePluginConfig {
  * @category Webpack Plugin
  */
 export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
-  private readonly name = 'ChunksToHermesBytecodePlugin';
-
   constructor(private config: ChunksToHermesBytecodePluginConfig) {}
 
   apply(compiler: Compiler) {
-    const logger = compiler.getInfrastructureLogger(this.name);
+    const logger = compiler.getInfrastructureLogger(
+      'RepackChunksToHermesBytecodePlugin'
+    );
 
     if (!this.config.enabled) {
       logger.debug('Skipping hermes compilation');
@@ -101,7 +101,7 @@ export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
       this.config.hermesCLIPath || getHermesCLIPath(reactNativePath);
 
     compiler.hooks.assetEmitted.tapPromise(
-      { name: this.name, stage: 10 },
+      { name: 'RepackChunksToHermesBytecodePlugin', stage: 10 },
       async (file, { outputPath }) => {
         const shouldTransformAsset =
           compiler.webpack.ModuleFilenameHelpers.matchObject(

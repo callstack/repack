@@ -137,7 +137,7 @@ export class LoggerPlugin implements RspackPluginInstance {
     }
 
     compiler.hooks.infrastructureLog.tap(
-      'LoggerPlugin',
+      'RepackLoggerPlugin',
       (issuer, type, args) => {
         const entry = this.createEntry(issuer, type, args);
         if (entry) {
@@ -147,7 +147,7 @@ export class LoggerPlugin implements RspackPluginInstance {
       }
     );
 
-    compiler.hooks.thisCompilation.tap('LoggerPlugin', (compilation) => {
+    compiler.hooks.thisCompilation.tap('RepackLoggerPlugin', (compilation) => {
       compilation.hooks.log.intercept({
         call: (issuer, { time, type, args }) => {
           const entry = this.createEntry(issuer, type, args, time);
@@ -158,7 +158,7 @@ export class LoggerPlugin implements RspackPluginInstance {
       });
     });
 
-    compiler.hooks.done.tap('LoggerPlugin', (stats) => {
+    compiler.hooks.done.tap('RepackLoggerPlugin', (stats) => {
       if (compiler.options.devServer) {
         const { time, errors, warnings } = stats.toJson({
           all: false,

@@ -11,6 +11,7 @@ import {
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
+import { CLIError } from '../common/error.js';
 import {
   getMimeType,
   parseFileUrl,
@@ -40,7 +41,7 @@ export async function start(
   const detectedPlatforms = Object.keys(cliConfig.platforms);
 
   if (args.platform && !detectedPlatforms.includes(args.platform)) {
-    throw new Error('Unrecognized platform: ' + args.platform);
+    throw new CLIError(`Unrecognized platform: ${args.platform}`);
   }
 
   const configs = await makeCompilerConfig<Configuration>({

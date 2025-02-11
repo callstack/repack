@@ -27,7 +27,8 @@ export const getHermesCLIPath = (reactNativePath: string): string => {
 
   if (!osBin) {
     throw new Error(
-      'ChunksToHermesBytecodePlugin: OS not recognized. Please set hermesCLIPath to the path of a working Hermes compiler.'
+      '[RepackChunksToHermesBytecodePlugin] OS not recognized. ' +
+        'Please set hermesCLIPath to the path of a working Hermes compiler.'
     );
   }
 
