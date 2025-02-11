@@ -11,6 +11,7 @@ import type {
 import memfs from 'memfs';
 import type { Reporter } from '../../logging/types.js';
 import type { HMRMessageBody } from '../../types.js';
+import { CLIError } from '../common/error.js';
 import { adaptFilenameToPlatform, runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
 import type { CompilerAsset } from './types.js';
@@ -231,7 +232,7 @@ export class Compiler {
   ): Promise<string | Buffer> {
     if (DEV_SERVER_ASSET_TYPES.test(filename)) {
       if (!platform) {
-        throw new Error(`Cannot detect platform for ${filename}`);
+        throw new CLIError(`Cannot detect platform for ${filename}`);
       }
       const asset = await this.getAsset(filename, platform);
       return asset.data;
@@ -242,7 +243,7 @@ export class Compiler {
       const source = await fs.promises.readFile(filePath, 'utf8');
       return source;
     } catch {
-      throw new Error(`File ${filename} not found`);
+      throw new CLIError(`File ${filename} not found`);
     }
   }
 
@@ -251,7 +252,7 @@ export class Compiler {
     platform: string | undefined
   ): Promise<string | Buffer> {
     if (!platform) {
-      throw new Error(
+      throw new CLIError(
         `Cannot determine platform for source map of ${filename}`
       );
     }
@@ -261,7 +262,7 @@ export class Compiler {
       let sourceMapFilename = info.related?.sourceMap;
 
       if (!sourceMapFilename) {
-        throw new Error(
+        throw new CLIError(
           `Cannot determine source map filename for ${filename} for ${platform}`
         );
       }
@@ -273,7 +274,9 @@ export class Compiler {
       const sourceMap = await this.getAsset(sourceMapFilename, platform);
       return sourceMap.data;
     } catch {
-      throw new Error(`Source map for ${filename} for ${platform} is missing`);
+      throw new CLIError(
+        `Source map for ${filename} for ${platform} is missing`
+      );
     }
   }
 

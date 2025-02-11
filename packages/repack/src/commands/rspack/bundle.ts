@@ -3,6 +3,7 @@ import { type Configuration, rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../../env.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
+import { CLIError } from '../common/error.js';
 import { normalizeStatsOptions, writeStats } from '../common/index.js';
 import type { BundleArguments } from '../types.js';
 
@@ -37,13 +38,12 @@ export async function bundle(
   }
 
   if (!args.entryFile && !config.entry) {
-    throw new Error("Option '--entry-file <path>' argument is missing");
+    throw new CLIError("Option '--entry-file <path>' argument is missing");
   }
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {
     if (error) {
-      console.error(error);
-      process.exit(2);
+      throw new CLIError(error.message);
     }
 
     if (stats?.hasErrors()) {
@@ -67,8 +67,7 @@ export async function bundle(
           rootDir: compiler.context,
         });
       } catch (e) {
-        console.error(String(e));
-        process.exit(2);
+        throw new CLIError(String(e));
       }
     }
   };
