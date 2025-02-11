@@ -25,7 +25,7 @@ The command is started through the React Native Community CLI's `start` command,
 
 ## Features
 
-Re.Pack's dev server provides essential development features:
+Re.Pack's dev server supports both Rspack and webpack and provides essential development features:
 
 - **Fast Bundling**: Uses Rspack/webpack for efficient JavaScript bundling
 - **Hot Reloading**: Instantly reflects code changes in the app
@@ -34,24 +34,14 @@ Re.Pack's dev server provides essential development features:
 - **Module Federation**: Enables dynamic loading of remote modules
 - **Development Tools**: Integrated with React Native DevTools
 - **Asset Management**: Handles images, fonts and other assets
-- **Custom Configuration**: Supports Rspack/webpack configuration files
 
 ## Keyboard shortcuts
 
 You can use various keyboard shortcuts inside a terminal to interact with the dev server.
 
-### `r`
-
-Reloads the app on connected device/simulator.
-
-### `d`
-
-Opens the developer menu (same as shaking device).
-
-### `j`
-
-Opens the [React Native DevTools](./devtools.md) for debugging and profiling.
-
-### `a`
-
-Runs `adb reverse` to enable communication between Android device and dev server.
+| Key | Description |
+| -------- | ----------- |
+| `r` | Reloads the app on connected device/simulator |
+| `d` | Opens the developer menu (same as shaking device) |
+| `j` | Opens the [React Native DevTools](./devtools.md) for debugging and profiling |
+| `a` | Runs `adb reverse` to enable communication between Android device and dev server |
