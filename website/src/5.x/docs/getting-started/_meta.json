@@ -1,7 +1,7 @@
 [
   "introduction",
   "quick-start",
+  "manual-installation",
   "microfrontends",
-  "bundlers",
-  "manual-installation"
+  "bundlers"
 ]
