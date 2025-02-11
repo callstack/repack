@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.png" width="600" alt="Re.Pack logo" />
-<h2>A toolkit to build your React Native application with Rspack or Webpack.</h2>
+  <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.png" width="650" alt="Re.Pack logo" />
+  <h3>A toolkit to build your React Native application with Rspack or Webpack.</h3>
 </div>
 <div align="center">
 
