@@ -1,5 +1,3 @@
-/// <reference path="types/dev-server-options.d.ts" />
-
 import type { StatsCompilation } from '@rspack/core';
 
 export type Rule = string | RegExp;
