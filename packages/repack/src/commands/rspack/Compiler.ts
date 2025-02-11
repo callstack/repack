@@ -11,10 +11,10 @@ import type {
 import memfs from 'memfs';
 import type { Reporter } from '../../logging/types.js';
 import type { HMRMessageBody } from '../../types.js';
+import { CLIError } from '../common/error.js';
 import { adaptFilenameToPlatform, runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
 import type { CompilerAsset } from './types.js';
-import { CLIError } from '../common/error.js';
 
 export class Compiler {
   compiler: MultiCompiler;
@@ -252,7 +252,9 @@ export class Compiler {
     platform: string | undefined
   ): Promise<string | Buffer> {
     if (!platform) {
-      throw new CLIError(`Cannot determine platform for source map of ${filename}`);
+      throw new CLIError(
+        `Cannot determine platform for source map of ${filename}`
+      );
     }
 
     try {
@@ -272,7 +274,9 @@ export class Compiler {
       const sourceMap = await this.getAsset(sourceMapFilename, platform);
       return sourceMap.data;
     } catch {
-      throw new CLIError(`Source map for ${filename} for ${platform} is missing`);
+      throw new CLIError(
+        `Source map for ${filename} for ${platform} is missing`
+      );
     }
   }
 

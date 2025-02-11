@@ -13,6 +13,7 @@ import {
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
 import { getEnvOptions } from '../common/config/getEnvOptions.js';
+import { CLIError } from '../common/error.js';
 import {
   getMimeType,
   parseFileUrl,
@@ -22,7 +23,6 @@ import {
 import type { StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
 import type { HMRMessageBody } from './types.js';
-import { CLIError } from '../common/error.js';
 
 /**
  * Start command for React Native Community CLI.

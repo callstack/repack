@@ -237,7 +237,9 @@ export class Compiler extends EventEmitter {
     platform: string | undefined
   ): Promise<string | Buffer> {
     if (!platform) {
-      throw new CLIError(`Cannot determine platform for source map of ${filename}`);
+      throw new CLIError(
+        `Cannot determine platform for source map of ${filename}`
+      );
     }
 
     try {
@@ -257,7 +259,9 @@ export class Compiler extends EventEmitter {
       const sourceMap = await this.getAsset(sourceMapFilename, platform);
       return sourceMap.data;
     } catch {
-      throw new CLIError(`Source map for ${filename} for ${platform} is missing`);
+      throw new CLIError(
+        `Source map for ${filename} for ${platform} is missing`
+      );
     }
   }
 }

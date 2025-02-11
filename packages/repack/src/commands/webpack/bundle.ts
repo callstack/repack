@@ -2,9 +2,9 @@ import type { Config } from '@react-native-community/cli-types';
 import webpack, { type Configuration } from 'webpack';
 import { VERBOSE_ENV_KEY } from '../../env.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
+import { CLIError } from '../common/error.js';
 import { normalizeStatsOptions, writeStats } from '../common/index.js';
 import type { BundleArguments } from '../types.js';
-import { CLIError } from '../common/error.js';
 /**
  * Bundle command for React Native Community CLI.
  * It runs Webpack, builds bundle and saves it alongside any other assets and Source Map

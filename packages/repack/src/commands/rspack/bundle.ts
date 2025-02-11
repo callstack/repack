@@ -3,9 +3,9 @@ import { type Configuration, rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
 import { VERBOSE_ENV_KEY } from '../../env.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
+import { CLIError } from '../common/error.js';
 import { normalizeStatsOptions, writeStats } from '../common/index.js';
 import type { BundleArguments } from '../types.js';
-import { CLIError } from '../common/error.js';
 
 /**
  * Bundle command for React Native Community CLI.
