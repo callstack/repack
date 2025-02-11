@@ -92,7 +92,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     } else if (compiler.options.devServer.server) {
       protocol = compiler.options.devServer.server.type;
     } else {
-      throw new Error('devServer.server is not defined');
+      protocol = 'http';
     }
 
     new compiler.webpack.DefinePlugin({

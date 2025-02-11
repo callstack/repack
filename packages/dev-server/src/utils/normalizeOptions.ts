@@ -1,23 +1,6 @@
 import type { ServerOptions as HttpsServerOptions } from 'node:https';
 import type { DevServerOptions, Server } from '../types.js';
 
-function normalizeHost(host?: string): string {
-  if (!host) {
-    return 'localhost';
-  }
-
-  switch (host) {
-    case 'local-ip':
-      return 'localhost';
-    case 'local-ipv4':
-      return '127.0.0.1';
-    case 'local-ipv6':
-      return '::1';
-    default:
-      return host;
-  }
-}
-
 function normalizeHttpsOptions(serverOptions: DevServerOptions['server']) {
   if (
     serverOptions &&
@@ -40,15 +23,10 @@ export interface NormalizedOptions {
 }
 
 export function normalizeOptions(options: Server.Options): NormalizedOptions {
-  // port should be defined at this point and this should never happen
-  if (typeof options.port !== 'number' || Number.isNaN(options.port)) {
-    throw new Error(
-      '[DevServer] The port for the dev server must be a valid port number'
-    );
-  }
-
-  const host = normalizeHost(options.host);
+  const host = options.host ?? 'localhost';
+  const port = options.port ?? 8081;
   const https = normalizeHttpsOptions(options.server);
+  const hot = options.hot ?? false;
 
   const protocol = https ? 'https' : 'http';
   const url = `${protocol}://${host}:${options.port}`;
@@ -56,9 +34,9 @@ export function normalizeOptions(options: Server.Options): NormalizedOptions {
   return {
     // webpack dev server compatible options
     host,
-    port: options.port,
+    port,
     https,
-    hot: options.hot ?? false,
+    hot,
     url,
     // fastify options
     disableRequestLogging: !options.logRequests,
