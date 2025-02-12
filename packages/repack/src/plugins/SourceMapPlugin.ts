@@ -62,7 +62,6 @@ export class SourceMapPlugin implements RspackPluginInstance {
     const cheap = format.includes('cheap');
     const moduleMaps = format.includes('module');
     const noSources = format.includes('nosources');
-    const debugIds = format.includes('debugids');
 
     // TODO Fix sourcemap directory structure
     // Right now its very messy and not every node module is inside of the node module
@@ -80,7 +79,6 @@ export class SourceMapPlugin implements RspackPluginInstance {
       columns: !cheap,
       noSources,
       namespace: devtoolNamespace,
-      debugIds,
     }).apply(compiler);
   }
 }
