@@ -69,6 +69,7 @@ export class SourceMapPlugin implements RspackPluginInstance {
     // like React Devtools backend etc or some symilinked module appear with relative path
     // We should normalize this through a custom handler and provide an output similar to Metro
     new compiler.webpack.SourceMapDevToolPlugin({
+      test: /\.([cm]?jsx?|bundle)$/,
       filename: '[file].map',
       moduleFilenameTemplate: devtoolModuleFilenameTemplate,
       fallbackModuleFilenameTemplate: devtoolFallbackModuleFilenameTemplate,
