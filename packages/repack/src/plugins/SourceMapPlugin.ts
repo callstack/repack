@@ -6,8 +6,11 @@ export class SourceMapPlugin implements RspackPluginInstance {
       return;
     }
 
-    const platform = compiler.name as string;
     const format = compiler.options.devtool;
+    // disable builtin sourcemap generation
+    compiler.options.devtool = false;
+
+    const platform = compiler.name as string;
     const devtoolModuleFilenameTemplate =
       compiler.options.output.devtoolModuleFilenameTemplate;
     const devtoolFallbackModuleFilenameTemplate =
