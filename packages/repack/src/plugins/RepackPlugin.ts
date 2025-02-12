@@ -26,7 +26,7 @@ export interface RepackPluginConfig {
    *
    * Refer to {@link OutputPluginConfig.output} for more details.
    */
-  output: OutputPluginConfig['output'];
+  output?: OutputPluginConfig['output'];
 
   /**
    * Absolute location to JS file with initialization logic for React Native.
@@ -126,7 +126,7 @@ export class RepackPlugin implements RspackPluginInstance {
       platform,
       enabled: !compiler.options.devServer,
       context: compiler.options.context!,
-      output: this.config.output,
+      output: this.config.output ?? {},
       extraChunks: this.config.extraChunks,
     }).apply(compiler);
 
