@@ -1,4 +1,6 @@
 import path from 'node:path';
+// @ts-expect-error type only import
+import type { DevServerOptions } from '@callstack/repack-dev-server';
 import type {
   Compiler,
   EntryNormalized,
@@ -72,6 +74,18 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     return entrypoints.filter(Boolean);
   }
 
+  private getProtocolType(devServer: DevServerOptions) {
+    if (typeof devServer.server === 'string') {
+      return devServer.server;
+    }
+
+    if (typeof devServer.server?.type === 'string') {
+      return devServer.server.type;
+    }
+
+    return 'http';
+  }
+
   /**
    * Apply the plugin.
    *
@@ -86,16 +100,9 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     const [majorVersion, minorVersion, patchVersion] =
       reactNativePackageJson.version.split('-')[0].split('.');
 
-    let protocol: 'http' | 'https';
-    if (typeof compiler.options.devServer.server === 'string') {
-      protocol = compiler.options.devServer.server;
-    } else if (compiler.options.devServer.server) {
-      protocol = compiler.options.devServer.server.type;
-    } else {
-      protocol = 'http';
-    }
     const host = compiler.options.devServer.host;
     const port = compiler.options.devServer.port;
+    const protocol = this.getProtocolType(compiler.options.devServer);
     const platform = this.config.platform;
 
     new compiler.webpack.DefinePlugin({
