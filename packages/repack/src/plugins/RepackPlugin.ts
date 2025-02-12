@@ -22,6 +22,13 @@ export interface RepackPluginConfig {
   platform: string;
 
   /**
+   * Whether source maps should be generated. Defaults to `true`.
+   *
+   * Setting this to `false`, disables any source map generation.
+   */
+  sourceMaps?: boolean;
+
+  /**
    * Output options specifying where to save generated bundle, source map and assets.
    *
    * Refer to {@link OutputPluginConfig.output} for more details.
@@ -102,6 +109,7 @@ export class RepackPlugin implements RspackPluginInstance {
    * @param config Plugin configuration options.
    */
   constructor(private config: RepackPluginConfig) {
+    this.config.sourceMaps = this.config.sourceMaps ?? true;
     this.config.logger = this.config.logger ?? true;
   }
 
@@ -137,9 +145,11 @@ export class RepackPlugin implements RspackPluginInstance {
       platform: this.config.platform,
     }).apply(compiler);
 
-    new SourceMapPlugin({
-      platform: this.config.platform,
-    }).apply(compiler);
+    if (this.config.sourceMaps) {
+      new SourceMapPlugin({
+        platform: this.config.platform,
+      }).apply(compiler);
+    }
 
     if (this.config.logger) {
       new LoggerPlugin({
