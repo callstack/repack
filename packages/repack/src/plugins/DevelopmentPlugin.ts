@@ -94,18 +94,24 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     } else {
       protocol = 'http';
     }
+    const host = compiler.options.devServer.host;
+    const port = compiler.options.devServer.port;
+    const platform = this.config.platform;
 
     new compiler.webpack.DefinePlugin({
-      __PLATFORM__: JSON.stringify(this.config.platform),
-      __PUBLIC_PROTOCOL__: protocol,
-      __PUBLIC_HOST__: JSON.stringify(compiler.options.devServer.host),
-      __PUBLIC_PORT__: Number(compiler.options.devServer.port),
+      __PLATFORM__: JSON.stringify(platform),
+      __PUBLIC_PROTOCOL__: JSON.stringify(protocol),
+      __PUBLIC_HOST__: JSON.stringify(host),
+      __PUBLIC_PORT__: Number(port),
       __REACT_NATIVE_MAJOR_VERSION__: Number(majorVersion),
       __REACT_NATIVE_MINOR_VERSION__: Number(minorVersion),
       __REACT_NATIVE_PATCH_VERSION__: Number(patchVersion),
     }).apply(compiler);
 
-    // Enforce output filenames in development mode
+    // set public path for development with dev server
+    compiler.options.output.publicPath = `${protocol}://${host}:${port}/${platform}/`;
+
+    // enforce output filenames in development mode
     compiler.options.output.filename = (pathData) =>
       pathData.chunk?.name === 'main' ? 'index.bundle' : '[name].bundle';
     compiler.options.output.chunkFilename = '[name].chunk.bundle';

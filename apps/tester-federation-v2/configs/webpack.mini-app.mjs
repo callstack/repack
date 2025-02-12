@@ -35,7 +35,6 @@ export default (env) => {
       path: path.join(dirname, 'build', 'mini-app', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
-      publicPath: Repack.getPublicPath({ platform, devServer }),
       uniqueName: 'MF2Tester-MiniApp',
     },
     optimization: {
@@ -74,7 +73,6 @@ export default (env) => {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
         dts: false,
-        getPublicPath: `return "http://localhost:8082/${platform}/"`,
         shared: {
           react: {
             singleton: true,
