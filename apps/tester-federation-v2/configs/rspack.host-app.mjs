@@ -36,7 +36,6 @@ export default (env) => {
       path: path.join(dirname, 'build', 'host-app', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
-      publicPath: Repack.getPublicPath({ platform, devServer }),
       uniqueName: 'MF2Tester-HostApp',
     },
     optimization: {

@@ -8,6 +8,7 @@ import { getCliOverrides } from './getCliOverrides.js';
 import { getCommandConfig } from './getCommandConfig.js';
 import { getConfigFilePath } from './getConfigFilePath.js';
 import { getEnvOptions } from './getEnvOptions.js';
+import { getRepackConfig } from './getRepackConfig.js';
 import { loadProjectConfig } from './loadProjectConfig.js';
 import { normalizeConfig } from './normalizeConfig.js';
 
@@ -40,6 +41,9 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
   // get defaults for use with specific commands
   const commandConfig = getCommandConfig(command);
 
+  // get defaults that will be applied on top of built-in ones (Rspack/webpack)
+  const repackConfig = getRepackConfig();
+
   // load the project config
   const rawConfig = await loadProjectConfig<C>(configPath);
 
@@ -52,7 +56,7 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
 
   // merge in reverse order to create final configs
   const configs = normalizedConfigs.map((config) =>
-    merge([commandConfig, config, cliConfigOverrides])
+    merge([repackConfig, commandConfig, config, cliConfigOverrides])
   );
 
   return configs as C[];
