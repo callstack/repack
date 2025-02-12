@@ -62,9 +62,6 @@ export default (env) => {
     plugins: [
       // @ts-ignore
       new Repack.RepackPlugin({
-        context,
-        mode,
-        platform,
         output: {
           bundleFilename,
           sourceMapFilename,

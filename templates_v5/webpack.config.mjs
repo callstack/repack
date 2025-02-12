@@ -180,9 +180,6 @@ export default (env) => {
        * from `Repack.plugins`.
        */
       new Repack.RepackPlugin({
-        context,
-        mode,
-        platform,
         output: {
           bundleFilename,
           sourceMapFilename,

@@ -79,9 +79,6 @@ export default (env) => {
     },
     plugins: [
       new Repack.RepackPlugin({
-        context,
-        mode,
-        platform,
         output: {},
       }),
       new Repack.plugins.ModuleFederationPluginV2({
