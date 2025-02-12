@@ -20,7 +20,6 @@ export default (env) => {
 
   return {
     mode,
-    devtool: false,
     context,
     entry: './src/mini/index.js',
     resolve: {

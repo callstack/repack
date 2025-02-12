@@ -46,11 +46,6 @@ module.exports = (env) => {
 
   return {
     mode,
-    /**
-     * This should be always `false`, since the Source Map configuration is done
-     * by `SourceMapDevToolPlugin`.
-     */
-    devtool: false,
     context,
     /**
      * `getInitializationEntries` will return necessary entries with setup and initialization code.
