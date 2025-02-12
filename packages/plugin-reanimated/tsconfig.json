@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDirs": ["src", "../repack/src", "../dev-server/src"],
+    "types": ["../repack/src/types/dev-server-options.d.ts"],
     "paths": {
       "@callstack/repack": ["../repack/src/index.ts"],
       "@callstack/repack/*": ["../repack/src/*"],
