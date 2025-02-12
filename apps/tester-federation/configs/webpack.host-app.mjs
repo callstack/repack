@@ -12,7 +12,6 @@ export default (env) => {
     context = dirname,
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
-    devServer = undefined,
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
@@ -66,7 +65,6 @@ export default (env) => {
         context,
         mode,
         platform,
-        devServer,
         output: {
           bundleFilename,
           sourceMapFilename,

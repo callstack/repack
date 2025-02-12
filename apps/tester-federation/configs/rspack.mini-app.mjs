@@ -13,7 +13,6 @@ export default (env) => {
     context = dirname,
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
-    devServer = undefined,
   } = env;
 
   if (!platform) {
