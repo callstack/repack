@@ -58,9 +58,7 @@ export default (env) => {
     },
     plugins: [
       // @ts-ignore
-      new Repack.RepackPlugin({
-        output: {},
-      }),
+      new Repack.RepackPlugin(),
       // @ts-ignore
       new Repack.plugins.ModuleFederationPluginV1({
         name: 'MiniApp',

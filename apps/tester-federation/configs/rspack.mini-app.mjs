@@ -81,7 +81,6 @@ export default (env) => {
     },
     plugins: [
       new Repack.RepackPlugin({
-        output: {},
         extraChunks: [
           {
             include: /.*/,
