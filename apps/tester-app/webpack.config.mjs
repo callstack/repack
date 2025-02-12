@@ -162,7 +162,7 @@ export default (env) => {
       new ReanimatedPlugin(),
       new NativeWindPlugin(),
       // new Repack.plugins.ChunksToHermesBytecodePlugin({
-      //   enabled: mode === 'production' && !devServer,
+      //   enabled: mode === 'production',
       //   test: /\.(js)?bundle$/,
       //   exclude: /index.bundle$/,
       // }),

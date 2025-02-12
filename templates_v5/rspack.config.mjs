@@ -27,7 +27,6 @@ export default (env) => {
     entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
-    devServer = undefined,
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
@@ -115,7 +114,6 @@ export default (env) => {
                   react: {
                     runtime: 'automatic',
                     development: mode === 'development',
-                    refresh: mode === 'development' && Boolean(devServer),
                   },
                 },
               },
