@@ -9,6 +9,7 @@ export class SourceMapPlugin implements RspackPluginInstance {
   constructor(private config: SourceMapPluginConfig = {}) {}
 
   apply(compiler: Compiler) {
+    // if devtool is explicitly set to false, skip generating source maps
     if (!compiler.options.devtool) {
       return;
     }
