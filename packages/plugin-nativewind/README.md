@@ -1,19 +1,17 @@
-<p align="center">
-    <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.png">
-</p>
-<p align="center">
-A toolkit to build your React Native application with Rspack or Webpack.
-</p>
+<div align="center">
+  <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.png" width="650" alt="Re.Pack logo" />
+  <h3>A toolkit to build your React Native application with Rspack or Webpack.</h3>
+</div>
+<div align="center">
 
----
-
-[![Build Status][build-badge]][build]
-[![Version][version-badge]][version]
-[![MIT License][license-badge]][license]
+[![mit licence][license-badge]][license]
+[![npm downloads][npm-downloads-badge]][npm-downloads]
+[![Chat][chat-badge]][chat]
 [![PRs Welcome][prs-welcome-badge]][prs-welcome]
-[![Code of Conduct][coc-badge]][coc]
 
-`@callstack/repack-plugin-nativewind` is a plugin for `@callstack/repack` that enables integrating [NativeWind](https://github.com/nativewind/nativewind) into your React Native projects.
+</div>
+
+`@callstack/repack-plugin-nativewind` is a plugin for [`@callstack/repack`](https://github.com/callstack/repack) that enables integrating [NativeWind](https://github.com/nativewind/nativewind) into your React Native projects.
 
 ## About
 
@@ -81,14 +79,11 @@ Check out our website at https://re-pack.dev for more info and documentation or 
 
 <!-- badges -->
 
-[callstack-readme-with-love]: https://callstack.com/?utm_source=github.com&utm_medium=referral&utm_campaign=react-native-paper&utm_term=readme-with-love
-[build-badge]: https://img.shields.io/github/workflow/status/callstack/repack/CI/main?style=flat-square
-[build]: https://github.com/callstack/repack/actions/workflows/main.yml
-[version-badge]: https://img.shields.io/npm/v/@callstack/repack-plugin-nativewind?style=flat-square
-[version]: https://www.npmjs.com/package/@callstack/repack-plugin-nativewind
-[license-badge]: https://img.shields.io/npm/l/@callstack/repack-plugin-nativewind?style=flat-square
-[license]: https://github.com/callstack/repack/blob/master/LICENSE
-[prs-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
+[license-badge]: https://img.shields.io/npm/l/@callstack/repack?style=for-the-badge
+[license]: https://github.com/callstack/repack/blob/main/LICENSE
+[npm-downloads-badge]: https://img.shields.io/npm/dm/@callstack/repack?style=for-the-badge
+[npm-downloads]: https://www.npmjs.com/package/@callstack/repack
+[prs-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge
 [prs-welcome]: ./CONTRIBUTING.md
-[coc-badge]: https://img.shields.io/badge/code%20of-conduct-ff69b4.svg?style=flat-square
-[coc]: https://github.com/callstack/repack/blob/master/CODE_OF_CONDUCT.md
+[chat-badge]: https://img.shields.io/discord/426714625279524876.svg?style=for-the-badge
+[chat]: https://discord.gg/Q4yr2rTWYF
