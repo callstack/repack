@@ -11,9 +11,9 @@
 
 </div>
 
-Re.Pack is a next generation of [Haul](https://github.com/callstack/haul) — a Webpack-based bundler for React Native applications.
+Re.Pack is a modern bundler for React Native applications, powered by Rspack and Webpack.
 
-Re.Pack uses Rspack (or Webpack 5) and React Native Community CLI's plugin system to allow you to bundle your application using Webpack and easily switch from Metro.
+It serves as a drop-in replacement for Metro, offering enhanced functionality and access to a broad Webpack ecosystem, making it especially useful for implementing microfrontends architecture with Module Federation in your mobile app.
 
 ## Documentation
 
