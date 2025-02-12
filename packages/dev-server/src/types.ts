@@ -1,5 +1,5 @@
+import type { ServerOptions as HttpsServerOptions } from 'node:https';
 import type { FastifyBaseLogger } from 'fastify';
-import type { WebSocketServer } from 'ws';
 import type { CompilerDelegate } from './plugins/compiler/types.js';
 import type {
   CodeFrame,
@@ -10,6 +10,7 @@ import type {
   SymbolicatorResults,
 } from './plugins/symbolicate/types.js';
 import type { HmrDelegate } from './plugins/wss/types.js';
+import type { NormalizedOptions } from './utils/normalizeOptions.js';
 
 export type { CompilerDelegate };
 export type {
@@ -22,6 +23,28 @@ export type {
 };
 export type { HmrDelegate };
 
+export interface DevServerOptions {
+  /**
+   * Hostname or IP address under which to run the development server.
+   * Can be 'local-ip', 'local-ipv4', 'local-ipv6' or a custom string.
+   * When left unspecified, it will listen on all available network interfaces.
+   */
+  host?: 'local-ip' | 'local-ipv4' | 'local-ipv6' | string;
+
+  /** Port under which to run the development server. */
+  port?: number;
+
+  /** Whether to enable Hot Module Replacement. */
+  hot?: boolean;
+
+  /** Options for running the server as HTTPS. If `undefined`, the server will run as HTTP. */
+  server?:
+    | 'http'
+    | 'https'
+    | { type: 'http' }
+    | { type: 'https'; options?: HttpsServerOptions };
+}
+
 export namespace Server {
   /** Development server configuration. */
   export interface Config {
@@ -33,30 +56,9 @@ export namespace Server {
   }
 
   /** Development server options. */
-  export interface Options {
+  export interface Options extends DevServerOptions {
     /** Root directory of the project. */
     rootDir: string;
-
-    /** Port under which to run the development server. */
-    port: number;
-
-    /**
-     * Hostname or IP address under which to run the development server.
-     * When left unspecified, it will listen on all available network interfaces, similarly to listening on '0.0.0.0'.
-     */
-    host?: string;
-
-    /** Options for running the server as HTTPS. If `undefined`, the server will run as HTTP. */
-    https?: {
-      /** Path to certificate when running server as HTTPS. */
-      cert?: string;
-
-      /** Path to certificate key when running server as HTTPS. */
-      key?: string;
-    };
-
-    /** Additional endpoints with pre-configured servers */
-    endpoints?: Record<string, WebSocketServer>;
 
     /** Whether to enable logging requests. */
     logRequests?: boolean;
@@ -91,6 +93,9 @@ export namespace Server {
    * Allows to emit logs, notify about compilation events and broadcast events to connected clients.
    */
   export interface DelegateContext {
+    /** Normalized development server options. */
+    options: NormalizedOptions;
+
     /** A logger instance, useful for emitting logs from the delegate. */
     log: FastifyBaseLogger;
 

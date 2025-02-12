@@ -12,7 +12,6 @@ export default (env) => {
     context = dirname,
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
-    devServer = undefined,
   } = env;
 
   if (!platform) {
@@ -52,11 +51,7 @@ export default (env) => {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
             loader: '@callstack/repack/assets-loader',
-            options: {
-              platform,
-              devServerEnabled: Boolean(devServer),
-              inline: true,
-            },
+            options: { platform, inline: true },
           },
         },
       ],
@@ -67,7 +62,6 @@ export default (env) => {
         context,
         mode,
         platform,
-        devServer,
         output: {},
       }),
       // @ts-ignore

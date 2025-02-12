@@ -1,5 +1,4 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import type { DevServerOptions } from '../types.js';
 import { BabelPlugin } from './BabelPlugin.js';
 import { CodegenPlugin } from './CodegenPlugin.js';
 import { DevelopmentPlugin } from './DevelopmentPlugin.js';
@@ -20,14 +19,6 @@ export interface RepackPluginConfig {
 
   /** Target application platform. */
   platform: string;
-
-  /**
-   * Development server configuration options.
-   * Used to configure `@callstack/repack-dev-server`.
-   *
-   * If `undefined`, then development server will not be used.
-   */
-  devServer?: DevServerOptions;
 
   /**
    * Whether source maps should be generated. Defaults to `true`.
@@ -77,7 +68,6 @@ export interface RepackPluginConfig {
  *   const {
  *     mode = 'development',
  *     platform,
- *     devServer = undefined,
  *   } = env;
  *
  *   return {
@@ -85,7 +75,6 @@ export interface RepackPluginConfig {
  *       new Repack.RepackPlugin({
  *         mode,
  *         platform,
- *         devServer,
  *       }),
  *     ],
  *   };
@@ -139,7 +128,7 @@ export class RepackPlugin implements RspackPluginInstance {
 
     new OutputPlugin({
       platform: this.config.platform,
-      enabled: !this.config.devServer,
+      enabled: !compiler.options.devServer,
       context: this.config.context,
       output: this.config.output,
       extraChunks: this.config.extraChunks,
@@ -149,12 +138,9 @@ export class RepackPlugin implements RspackPluginInstance {
       initializeCoreLocation: this.config.initializeCore,
     }).apply(compiler);
 
-    new RepackTargetPlugin({
-      hmr: this.config.devServer?.hmr,
-    }).apply(compiler);
+    new RepackTargetPlugin().apply(compiler);
 
     new DevelopmentPlugin({
-      devServer: this.config.devServer,
       platform: this.config.platform,
     }).apply(compiler);
 
@@ -179,7 +165,6 @@ export class RepackPlugin implements RspackPluginInstance {
     if (this.config.logger) {
       new LoggerPlugin({
         platform: this.config.platform,
-        devServerEnabled: Boolean(this.config.devServer),
         output: {
           console: true,
           ...(typeof this.config.logger === 'object' ? this.config.logger : {}),

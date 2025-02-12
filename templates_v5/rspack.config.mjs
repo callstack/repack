@@ -27,7 +27,6 @@ export default (env) => {
     entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
-    devServer = undefined,
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
@@ -115,7 +114,6 @@ export default (env) => {
                   react: {
                     runtime: 'automatic',
                     development: mode === 'development',
-                    refresh: mode === 'development' && Boolean(devServer),
                   },
                 },
               },
@@ -136,10 +134,7 @@ export default (env) => {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
             loader: '@callstack/repack/assets-loader',
-            options: {
-              platform,
-              devServerEnabled: Boolean(devServer),
-            },
+            options: { platform },
           },
         },
       ],
@@ -158,7 +153,6 @@ export default (env) => {
         context,
         mode,
         platform,
-        devServer,
         output: {
           bundleFilename,
           sourceMapFilename,

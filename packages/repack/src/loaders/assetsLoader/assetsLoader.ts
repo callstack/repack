@@ -25,6 +25,7 @@ export default async function repackAssetsLoader(
   this.cacheable();
   const callback = this.async();
   const logger = this.getLogger('repackAssetsLoader');
+  const isDev = !!this._compiler.options.devServer;
 
   const readDirAsync: AsyncFS['readdir'] = util.promisify(this.fs.readdir);
   const readFileAsync: AsyncFS['readFile'] = util.promisify(this.fs.readFile);
@@ -125,7 +126,7 @@ export default async function repackAssetsLoader(
         let destination: string;
 
         if (
-          !options.devServerEnabled &&
+          !isDev &&
           !options.remote?.enabled &&
           options.platform === 'android'
         ) {
@@ -261,7 +262,7 @@ export default async function repackAssetsLoader(
             assetsDirname,
             pathSeparatorRegexp,
             publicPath: options.publicPath,
-            devServerEnabled: options.devServerEnabled,
+            isDev,
           },
           logger
         );

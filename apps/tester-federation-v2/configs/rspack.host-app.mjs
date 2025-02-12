@@ -12,7 +12,6 @@ export default (env) => {
     context = dirname,
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
-    devServer = undefined,
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
@@ -76,10 +75,7 @@ export default (env) => {
           test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
           use: {
             loader: '@callstack/repack/assets-loader',
-            options: {
-              platform,
-              devServerEnabled: Boolean(devServer),
-            },
+            options: { platform },
           },
         },
       ],
@@ -89,7 +85,6 @@ export default (env) => {
         context,
         mode,
         platform,
-        devServer,
         output: {
           bundleFilename,
           sourceMapFilename,

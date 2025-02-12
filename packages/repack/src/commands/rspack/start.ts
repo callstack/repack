@@ -10,7 +10,6 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
-import { getEnvOptions } from '../common/config/getEnvOptions.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import { CLIError } from '../common/error.js';
 import {
@@ -54,19 +53,7 @@ export async function start(
     reactNativePath: cliConfig.reactNativePath,
   });
 
-  // TODO (jbroma) duplicated env for compat, remove after implementing dev server options
-  const env = getEnvOptions({
-    args,
-    command: 'start',
-    rootDir: cliConfig.root,
-    reactNativePath: cliConfig.reactNativePath,
-  });
-
-  const devServerOptions = env.devServer!;
-
-  const serverHost = devServerOptions.host!;
-  const serverPort = devServerOptions.port!;
-  const serverURL = `${devServerOptions.https ? 'https' : 'http'}://${serverHost}:${serverPort}`;
+  const devServerOptions = configs[0].devServer ?? {};
   const showHttpRequests = args.verbose || args.logRequests;
 
   if (args.verbose) {
@@ -85,12 +72,7 @@ export async function start(
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
   );
 
-  const compiler = new Compiler(
-    configs,
-    reporter,
-    cliConfig.root,
-    devServerOptions.port!
-  );
+  const compiler = new Compiler(configs, reporter, cliConfig.root);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
@@ -110,7 +92,7 @@ export async function start(
               ctx.broadcastToMessageClients({ method: 'devMenu' });
             },
             onOpenDevTools() {
-              fetch(`${serverURL}/open-debugger`, {
+              fetch(`${ctx.options.url}/open-debugger`, {
                 method: 'POST',
               }).catch(() => {
                 ctx.log.warn('Failed to open React Native DevTools');
@@ -118,7 +100,7 @@ export async function start(
             },
             onAdbReverse() {
               void runAdbReverse({
-                port: serverPort,
+                port: ctx.options.port,
                 logger: ctx.log,
                 verbose: true,
               });
@@ -129,7 +111,11 @@ export async function start(
       }
 
       if (args.reversePort) {
-        void runAdbReverse({ logger: ctx.log, port: serverPort, wait: true });
+        void runAdbReverse({
+          logger: ctx.log,
+          port: ctx.options.port,
+          wait: true,
+        });
       }
 
       compiler.setDevServerContext(ctx);

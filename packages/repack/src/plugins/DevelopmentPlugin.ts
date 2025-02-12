@@ -1,4 +1,6 @@
 import path from 'node:path';
+// @ts-expect-error type only import
+import type { DevServerOptions } from '@callstack/repack-dev-server';
 import type {
   Compiler,
   EntryNormalized,
@@ -6,7 +8,6 @@ import type {
   RspackPluginInstance,
 } from '@rspack/core';
 import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
-import type { DevServerOptions } from '../types.js';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
 import { moveElementBefore } from './utils/moveElementBefore.js';
 
@@ -19,7 +20,6 @@ type PackageJSON = { version: string };
  */
 export interface DevelopmentPluginConfig {
   platform: string;
-  devServer?: DevServerOptions;
 }
 
 /**
@@ -34,7 +34,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config?: DevelopmentPluginConfig) {}
+  constructor(private config: DevelopmentPluginConfig) {}
 
   private getEntryNormalizedEntryChunks(entryNormalized: EntryNormalized) {
     if (typeof entryNormalized === 'function') {
@@ -74,13 +74,25 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     return entrypoints.filter(Boolean);
   }
 
+  private getProtocolType(devServer: DevServerOptions) {
+    if (typeof devServer.server === 'string') {
+      return devServer.server;
+    }
+
+    if (typeof devServer.server?.type === 'string') {
+      return devServer.server.type;
+    }
+
+    return 'http';
+  }
+
   /**
    * Apply the plugin.
    *
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    if (!this.config?.devServer) {
+    if (!compiler.options.devServer) {
       return;
     }
 
@@ -88,13 +100,13 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     const [majorVersion, minorVersion, patchVersion] =
       reactNativePackageJson.version.split('-')[0].split('.');
 
-    const host = this.config.devServer.host || 'localhost';
-    const port = this.config.devServer.port;
-    const protocol = this.config.devServer.https ? 'https' : 'http';
+    const host = compiler.options.devServer.host;
+    const port = compiler.options.devServer.port;
+    const protocol = this.getProtocolType(compiler.options.devServer);
     const platform = this.config.platform;
 
     new compiler.webpack.DefinePlugin({
-      __PLATFORM__: JSON.stringify(this.config.platform),
+      __PLATFORM__: JSON.stringify(platform),
       __PUBLIC_PROTOCOL__: JSON.stringify(protocol),
       __PUBLIC_HOST__: JSON.stringify(host),
       __PUBLIC_PORT__: Number(port),
@@ -111,7 +123,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       pathData.chunk?.name === 'main' ? 'index.bundle' : '[name].bundle';
     compiler.options.output.chunkFilename = '[name].chunk.bundle';
 
-    if (this.config?.devServer.hmr) {
+    if (compiler.options.devServer.hot) {
       // setup HMR
       new compiler.webpack.HotModuleReplacementPlugin().apply(compiler);
 

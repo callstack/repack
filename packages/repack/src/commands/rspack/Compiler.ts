@@ -30,8 +30,7 @@ export class Compiler {
   constructor(
     configs: MultiRspackOptions,
     private reporter: Reporter,
-    private rootDir: string,
-    private port: number
+    private rootDir: string
   ) {
     this.compiler = rspack.rspack(configs);
     this.platforms = configs.map((config) => config.name as string);
@@ -65,7 +64,7 @@ export class Compiler {
       this.platforms.forEach((platform) => {
         if (platform === 'android') {
           void runAdbReverse({
-            port: this.port,
+            port: this.devServerContext.options.port,
             logger: this.devServerContext.log,
           });
         }

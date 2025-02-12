@@ -17,8 +17,6 @@ export type GenericFilter = Array<string | RegExp>;
 export interface LoggerPluginConfig {
   /** Target application platform. */
   platform: string;
-  /** Whether development server is running/enabled. */
-  devServerEnabled?: boolean;
   /** Logging output config. */
   output?: {
     /** Whether to log to console. */
@@ -161,7 +159,7 @@ export class LoggerPlugin implements RspackPluginInstance {
     });
 
     compiler.hooks.done.tap('RepackLoggerPlugin', (stats) => {
-      if (this.config.devServerEnabled) {
+      if (compiler.options.devServer) {
         const { time, errors, warnings } = stats.toJson({
           all: false,
           timings: true,

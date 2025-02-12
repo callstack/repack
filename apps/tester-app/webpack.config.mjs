@@ -15,7 +15,6 @@ export default (env) => {
     entry = './index.js',
     platform = process.env.PLATFORM,
     minimize = mode === 'production',
-    devServer = undefined,
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
@@ -84,10 +83,7 @@ export default (env) => {
           ],
           use: {
             loader: '@callstack/repack/assets-loader',
-            options: {
-              platform,
-              devServerEnabled: Boolean(devServer),
-            },
+            options: { platform },
           },
         },
         {
@@ -109,10 +105,7 @@ export default (env) => {
           include: [path.join(context, 'src/assetsTest/localAssets')],
           use: {
             loader: '@callstack/repack/assets-loader',
-            options: {
-              platform,
-              devServerEnabled: Boolean(devServer),
-            },
+            options: { platform },
           },
         },
         {
@@ -122,11 +115,7 @@ export default (env) => {
           include: [path.join(context, 'src/assetsTest/inlineAssets')],
           use: {
             loader: '@callstack/repack/assets-loader',
-            options: {
-              platform,
-              devServerEnabled: Boolean(devServer),
-              inline: true,
-            },
+            options: { platform, inline: true },
           },
         },
         {
@@ -138,7 +127,6 @@ export default (env) => {
             loader: '@callstack/repack/assets-loader',
             options: {
               platform,
-              devServerEnabled: Boolean(devServer),
               remote: {
                 enabled: true,
                 publicPath: 'http://localhost:9999/remote-assets',
@@ -153,7 +141,6 @@ export default (env) => {
         context,
         mode,
         platform,
-        devServer,
         output: {
           bundleFilename,
           sourceMapFilename,
@@ -175,7 +162,7 @@ export default (env) => {
       new ReanimatedPlugin(),
       new NativeWindPlugin(),
       // new Repack.plugins.ChunksToHermesBytecodePlugin({
-      //   enabled: mode === 'production' && !devServer,
+      //   enabled: mode === 'production',
       //   test: /\.(js)?bundle$/,
       //   exclude: /index.bundle$/,
       // }),
