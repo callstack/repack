@@ -28,7 +28,6 @@ export default (env) => {
   return {
     mode,
     context,
-    devtool: 'source-map',
     entry: './index.js',
     resolve: {
       ...Repack.getResolveOptions(platform),
