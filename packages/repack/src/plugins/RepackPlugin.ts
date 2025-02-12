@@ -145,7 +145,7 @@ export class RepackPlugin implements RspackPluginInstance {
       platform: this.config.platform,
     }).apply(compiler);
 
-    new SourceMapPlugin().apply(compiler);
+    new SourceMapPlugin({ platform: this.config.platform }).apply(compiler);
 
     if (this.config.logger) {
       new LoggerPlugin({

@@ -1,6 +1,13 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import { ConfigurationError } from './utils/ConfigurationError.js';
+
+interface SourceMapPluginConfig {
+  platform?: string;
+}
 
 export class SourceMapPlugin implements RspackPluginInstance {
+  constructor(private config: SourceMapPluginConfig = {}) {}
+
   apply(compiler: Compiler) {
     if (!compiler.options.devtool) {
       return;
@@ -10,7 +17,12 @@ export class SourceMapPlugin implements RspackPluginInstance {
     // disable builtin sourcemap generation
     compiler.options.devtool = false;
 
-    const platform = compiler.name as string;
+    const platform = this.config.platform ?? (compiler.name as string);
+
+    // explicitly fallback to uniqueName if devtoolNamespace is not set
+    const devtoolNamespace =
+      compiler.options.output.devtoolNamespace ??
+      compiler.options.output.uniqueName;
     const devtoolModuleFilenameTemplate =
       compiler.options.output.devtoolModuleFilenameTemplate;
     const devtoolFallbackModuleFilenameTemplate =
@@ -25,8 +37,9 @@ export class SourceMapPlugin implements RspackPluginInstance {
       format === 'eval-nosources-cheap-source-map' ||
       format === 'eval-nosources-cheap-module-source-map'
     ) {
-      throw new Error(
-        '[RepackSourceMapPlugin] Eval source maps are not supported'
+      throw new ConfigurationError(
+        '[RepackSourceMapPlugin] Eval source maps are not supported. ' +
+          'Please use a different setting for `config.devtool`.'
       );
     }
 
@@ -38,8 +51,9 @@ export class SourceMapPlugin implements RspackPluginInstance {
       format === 'inline-nosources-cheap-module-source-map' ||
       format === 'inline-nosources-source-map'
     ) {
-      throw new Error(
-        '[RepackSourceMapPlugin] Inline source maps are not supported'
+      throw new ConfigurationError(
+        '[RepackSourceMapPlugin] Inline source maps are not supported. ' +
+          'Please use a different setting for `config.devtool`.'
       );
     }
 
@@ -63,10 +77,7 @@ export class SourceMapPlugin implements RspackPluginInstance {
       module: moduleMaps ? true : !cheap,
       columns: !cheap,
       noSources,
-      // TODO verify this
-      namespace:
-        compiler.options.output.devtoolNamespace ??
-        compiler.options.output.uniqueName,
+      namespace: devtoolNamespace,
       debugIds,
     }).apply(compiler);
   }
