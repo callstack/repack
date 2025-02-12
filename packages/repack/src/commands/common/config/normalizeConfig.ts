@@ -18,7 +18,7 @@ export async function normalizeConfig<C extends ConfigurationObject>(
   configObject.name = env.platform;
 
   /* unset public path if it's using the deprecated `getPublicPath` function */
-  if (configObject.output.publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
+  if (configObject.output?.publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
     configObject.output.publicPath = undefined;
   }
 
