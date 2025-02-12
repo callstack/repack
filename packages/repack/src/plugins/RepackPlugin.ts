@@ -67,7 +67,6 @@ export interface RepackPluginConfig {
  *   return {
  *     plugins: [
  *       new Repack.RepackPlugin({
- *         mode,
  *         platform,
  *       }),
  *     ],
@@ -101,7 +100,7 @@ export class RepackPlugin implements RspackPluginInstance {
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config: RepackPluginConfig) {
+  constructor(private config: RepackPluginConfig = {}) {
     this.config.sourceMaps = this.config.sourceMaps ?? true;
     this.config.logger = this.config.logger ?? true;
   }
