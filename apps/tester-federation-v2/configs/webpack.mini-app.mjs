@@ -78,7 +78,6 @@ export default (env) => {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
         dts: false,
-        getPublicPath: `return "http://localhost:8082/${platform}/"`,
         shared: {
           react: {
             singleton: true,
