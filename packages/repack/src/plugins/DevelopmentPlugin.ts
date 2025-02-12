@@ -88,17 +88,25 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     const [majorVersion, minorVersion, patchVersion] =
       reactNativePackageJson.version.split('-')[0].split('.');
 
+    const host = this.config.devServer.host || 'localhost';
+    const port = this.config.devServer.port;
+    const protocol = this.config.devServer.https ? 'https' : 'http';
+    const platform = this.config.platform;
+
     new compiler.webpack.DefinePlugin({
       __PLATFORM__: JSON.stringify(this.config.platform),
-      __PUBLIC_PROTOCOL__: this.config.devServer.https ? '"https"' : '"http"',
-      __PUBLIC_HOST__: JSON.stringify(this.config.devServer.host),
-      __PUBLIC_PORT__: Number(this.config.devServer.port),
+      __PUBLIC_PROTOCOL__: JSON.stringify(protocol),
+      __PUBLIC_HOST__: JSON.stringify(host),
+      __PUBLIC_PORT__: Number(port),
       __REACT_NATIVE_MAJOR_VERSION__: Number(majorVersion),
       __REACT_NATIVE_MINOR_VERSION__: Number(minorVersion),
       __REACT_NATIVE_PATCH_VERSION__: Number(patchVersion),
     }).apply(compiler);
 
-    // Enforce output filenames in development mode
+    // set public path for development with dev server
+    compiler.options.output.publicPath = `${protocol}://${host}:${port}/${platform}/`;
+
+    // enforce output filenames in development mode
     compiler.options.output.filename = (pathData) =>
       pathData.chunk?.name === 'main' ? 'index.bundle' : '[name].bundle';
     compiler.options.output.chunkFilename = '[name].chunk.bundle';
