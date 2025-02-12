@@ -43,7 +43,6 @@ export default (env) => {
       path: path.join(context, 'build/generated', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
-      publicPath: Repack.getPublicPath({ platform, devServer }),
       uniqueName: 'tester-app',
     },
     optimization: {
