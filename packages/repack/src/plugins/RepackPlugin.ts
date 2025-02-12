@@ -11,14 +11,8 @@ import { RepackTargetPlugin } from './RepackTargetPlugin/index.js';
  * {@link RepackPlugin} configuration options.
  */
 export interface RepackPluginConfig {
-  /** Context in which all resolution happens. Usually it's project root directory. */
-  context: string;
-
-  /** Compilation mode. */
-  mode: 'development' | 'production';
-
   /** Target application platform. */
-  platform: string;
+  platform?: string;
 
   /**
    * Whether source maps should be generated. Defaults to `true`.
@@ -118,8 +112,10 @@ export class RepackPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
+    const platform = this.config.platform ?? (compiler.name as string);
+
     new compiler.webpack.DefinePlugin({
-      __DEV__: JSON.stringify(this.config.mode === 'development'),
+      __DEV__: JSON.stringify(compiler.options.mode === 'development'),
     }).apply(compiler);
 
     new BabelPlugin().apply(compiler);
@@ -127,9 +123,9 @@ export class RepackPlugin implements RspackPluginInstance {
     new CodegenPlugin().apply(compiler);
 
     new OutputPlugin({
-      platform: this.config.platform,
+      platform,
       enabled: !compiler.options.devServer,
-      context: this.config.context,
+      context: compiler.options.context!,
       output: this.config.output,
       extraChunks: this.config.extraChunks,
     }).apply(compiler);
@@ -140,9 +136,7 @@ export class RepackPlugin implements RspackPluginInstance {
 
     new RepackTargetPlugin().apply(compiler);
 
-    new DevelopmentPlugin({
-      platform: this.config.platform,
-    }).apply(compiler);
+    new DevelopmentPlugin({ platform }).apply(compiler);
 
     if (this.config.sourceMaps) {
       // TODO Fix sourcemap directory structure
@@ -152,7 +146,7 @@ export class RepackPlugin implements RspackPluginInstance {
       new compiler.webpack.SourceMapDevToolPlugin({
         test: /\.(js)?bundle$/,
         filename: '[file].map',
-        append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
+        append: `//# sourceMappingURL=[url]?platform=${platform}`,
         module: true,
         columns: true,
         noSources: false,
@@ -164,7 +158,7 @@ export class RepackPlugin implements RspackPluginInstance {
 
     if (this.config.logger) {
       new LoggerPlugin({
-        platform: this.config.platform,
+        platform,
         output: {
           console: true,
           ...(typeof this.config.logger === 'object' ? this.config.logger : {}),
