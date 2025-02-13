@@ -18,7 +18,7 @@ export class SourceMapPlugin implements RspackPluginInstance {
     // disable builtin sourcemap generation
     compiler.options.devtool = false;
 
-    const platform = this.config.platform ?? (compiler.name as string);
+    const platform = this.config.platform ?? (compiler.options.name as string);
 
     // explicitly fallback to uniqueName if devtoolNamespace is not set
     const devtoolNamespace =

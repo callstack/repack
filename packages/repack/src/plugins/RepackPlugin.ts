@@ -104,7 +104,7 @@ export class RepackPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    const platform = this.config.platform ?? (compiler.name as string);
+    const platform = this.config.platform ?? (compiler.options.name as string);
 
     new compiler.webpack.DefinePlugin({
       __DEV__: JSON.stringify(compiler.options.mode === 'development'),
