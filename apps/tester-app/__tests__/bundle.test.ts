@@ -3,7 +3,15 @@ import path from 'node:path';
 import rspackCommands from '@callstack/repack/commands/rspack';
 import webpackCommands from '@callstack/repack/commands/webpack';
 import { globby } from 'globby';
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 
 const REACT_NATIVE_PATH = require.resolve('react-native', {
   paths: [path.dirname(__dirname)],
@@ -115,8 +123,12 @@ describe('bundle command', () => {
         });
       });
 
+      beforeEach(() => {
+        vi.stubEnv('TEST_WEBPACK_OUTPUT_DIR', TMP_DIR);
+      });
+
       afterEach(() => {
-        process.env.TEST_WEBPACK_OUTPUT_DIR = undefined;
+        vi.unstubAllEnvs();
       });
 
       it(
@@ -131,18 +143,22 @@ describe('bundle command', () => {
             ),
           };
 
+          const bundleOutputPath = path.join(
+            TMP_DIR,
+            'react-native-bundle-output',
+            platform === 'ios' ? 'main.jsbundle' : `index.${platform}.bundle`
+          );
+
+          // vitest blocks modifying process.env, we need to stub it manually here
+          vi.stubEnv('REPACK_BUNDLE_FILENAME', bundleOutputPath);
+
           const args = {
             platform,
             entryFile: 'index.js',
-            bundleOutput: path.join(
-              TMP_DIR,
-              'react-native-bundle-output',
-              platform === 'ios' ? 'main.jsbundle' : `index.${platform}.bundle`
-            ),
+            bundleOutput: bundleOutputPath,
             dev: false,
             webpackConfig: path.join(__dirname, 'configs', configFile),
           };
-          process.env.TEST_WEBPACK_OUTPUT_DIR = TMP_DIR;
 
           // @ts-ignore
           await bundleCommand.func([''], config, args);

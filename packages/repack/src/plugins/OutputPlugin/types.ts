@@ -74,17 +74,6 @@ export interface OutputPluginConfig {
    * Output options specifying where to save generated bundle, source map and assets.
    */
   output: {
-    /** Bundle output filename - name under which generated bundle will be saved. */
-    bundleFilename?: string;
-
-    /**
-     * Source map filename - name under which generated source map (for the main bundle) will be saved.
-     */
-    sourceMapFilename?: string;
-
-    /** Assets output path - directory where generated static assets will be saved. */
-    assetsPath?: string;
-
     /**
      * Auxiliary assets output path - directory where generated auxiliary assets will be saved
      *

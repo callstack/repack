@@ -13,9 +13,6 @@ export default (env) => {
     mode = 'development',
     context = dirname,
     platform = process.env.PLATFORM,
-    bundleFilename = undefined,
-    sourceMapFilename = undefined,
-    assetsPath = undefined,
   } = env;
   if (!platform) {
     throw new Error('Missing platform');
@@ -133,9 +130,6 @@ export default (env) => {
        */
       new Repack.RepackPlugin({
         output: {
-          bundleFilename,
-          sourceMapFilename,
-          assetsPath,
           auxiliaryAssetsPath: path.join('build/output', platform, 'remote'),
         },
         extraChunks: [

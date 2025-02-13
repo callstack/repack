@@ -7,9 +7,14 @@ import type {
   RspackPluginInstance,
   StatsChunk,
 } from '@rspack/core';
+import {
+  ASSETS_DEST_ENV_KEY,
+  BUNDLE_FILENAME_ENV_KEY,
+  SOURCEMAP_FILENAME_ENV_KEY,
+} from '../../env.js';
 import { AssetsCopyProcessor } from '../utils/AssetsCopyProcessor.js';
 import { AuxiliaryAssetsCopyProcessor } from '../utils/AuxiliaryAssetsCopyProcessor.js';
-import { validateConfig } from './config.js';
+import { getDeprecationMessages, validateConfig } from './config.js';
 import type { DestinationSpec, OutputPluginConfig } from './types.js';
 
 /**
@@ -21,6 +26,10 @@ import type { DestinationSpec, OutputPluginConfig } from './types.js';
 export class OutputPlugin implements RspackPluginInstance {
   localSpecs: DestinationSpec[] = [];
   remoteSpecs: DestinationSpec[] = [];
+
+  private bundleFilename: string | undefined;
+  private assetsPath: string | undefined;
+  private sourceMapFilename: string | undefined;
 
   constructor(private config: OutputPluginConfig) {
     validateConfig(config);
@@ -38,6 +47,10 @@ export class OutputPlugin implements RspackPluginInstance {
         ),
       },
     ];
+
+    this.bundleFilename = process.env[BUNDLE_FILENAME_ENV_KEY];
+    this.assetsPath = process.env[ASSETS_DEST_ENV_KEY];
+    this.sourceMapFilename = process.env[SOURCEMAP_FILENAME_ENV_KEY];
 
     this.config.extraChunks?.forEach((spec) => {
       if (spec.type === 'local') this.localSpecs.push(spec);
@@ -131,6 +144,11 @@ export class OutputPlugin implements RspackPluginInstance {
 
     assert(compiler.options.output.path, "Can't infer output path from config");
 
+    compiler.hooks.beforeCompile.tap('RepackOutputPlugin', () => {
+      const deprecationMessages = getDeprecationMessages(this.config);
+      deprecationMessages.forEach((message) => logger.warn(message));
+    });
+
     const logger = compiler.getInfrastructureLogger('RepackOutputPlugin');
     const outputPath = compiler.options.output.path as string;
 
@@ -188,37 +206,35 @@ export class OutputPlugin implements RspackPluginInstance {
         .forEach((asset) => auxiliaryAssets.add(asset.name));
 
       let localAssetsCopyProcessor: AssetsCopyProcessor | undefined;
-      let { bundleFilename, sourceMapFilename, assetsPath } =
-        this.config.output;
 
-      if (bundleFilename) {
-        bundleFilename = this.ensureAbsolutePath(bundleFilename);
+      if (this.bundleFilename) {
+        this.bundleFilename = this.ensureAbsolutePath(this.bundleFilename);
 
-        const bundlePath = path.dirname(bundleFilename);
+        const bundlePath = path.dirname(this.bundleFilename);
 
-        sourceMapFilename = this.ensureAbsolutePath(
-          sourceMapFilename || `${bundleFilename}.map`
+        this.sourceMapFilename = this.ensureAbsolutePath(
+          this.sourceMapFilename || `${this.bundleFilename}.map`
         );
 
-        assetsPath = assetsPath || bundlePath;
+        this.assetsPath = this.assetsPath || bundlePath;
 
         logger.debug(
           'Detected output paths:',
           JSON.stringify({
-            bundleFilename,
+            bundleFilename: this.bundleFilename,
             bundlePath,
-            sourceMapFilename,
-            assetsPath,
+            sourceMapFilename: this.sourceMapFilename,
+            assetsPath: this.assetsPath,
           })
         );
 
         localAssetsCopyProcessor = new AssetsCopyProcessor({
           platform: this.config.platform,
           outputPath,
-          bundleOutput: bundleFilename,
+          bundleOutput: this.bundleFilename,
           bundleOutputDir: bundlePath,
-          sourcemapOutput: sourceMapFilename,
-          assetsDest: assetsPath,
+          sourcemapOutput: this.sourceMapFilename,
+          assetsDest: this.assetsPath,
           logger,
         });
       }
