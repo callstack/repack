@@ -24,7 +24,7 @@ export default (env) => {
     context,
     entry: './src/mini/index.js',
     resolve: {
-      ...Repack.getResolveOptions(platform),
+      ...Repack.getResolveOptions(),
     },
     output: {
       path: path.join(dirname, 'build/mini-app/[platform]'),

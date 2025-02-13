@@ -1,4 +1,3 @@
-import { createRequire } from 'node:module';
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
@@ -6,7 +5,6 @@ import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import TerserPlugin from 'terser-webpack-plugin';
 
 const dirname = Repack.getDirname(import.meta.url);
-const { resolve } = createRequire(import.meta.url);
 
 export default (env) => {
   const {
@@ -17,7 +15,6 @@ export default (env) => {
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
-    reactNativePath = resolve('react-native'),
   } = env;
 
   if (!platform) {
@@ -35,10 +32,7 @@ export default (env) => {
       : undefined,
     entry,
     resolve: {
-      ...Repack.getResolveOptions(platform),
-      alias: {
-        'react-native': reactNativePath,
-      },
+      ...Repack.getResolveOptions(),
     },
     output: {
       uniqueName: 'tester-app',
