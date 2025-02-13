@@ -39,11 +39,6 @@ export default (env) => {
 
   return {
     mode,
-    /**
-     * This should be always `false`, since the Source Map configuration is done
-     * by `SourceMapDevToolPlugin`.
-     */
-    devtool: false,
     context,
     entry,
     resolve: {

@@ -6,6 +6,7 @@ import { LoggerPlugin, type LoggerPluginConfig } from './LoggerPlugin.js';
 import { NativeEntryPlugin } from './NativeEntryPlugin.js';
 import { OutputPlugin, type OutputPluginConfig } from './OutputPlugin/index.js';
 import { RepackTargetPlugin } from './RepackTargetPlugin/index.js';
+import { SourceMapPlugin } from './SourceMapPlugin.js';
 
 /**
  * {@link RepackPlugin} configuration options.
@@ -138,20 +139,8 @@ export class RepackPlugin implements RspackPluginInstance {
     new DevelopmentPlugin({ platform }).apply(compiler);
 
     if (this.config.sourceMaps) {
-      // TODO Fix sourcemap directory structure
-      // Right now its very messy and not every node module is inside of the node module
-      // like React Devtools backend etc or some symilinked module appear with relative path
-      // We should normalize this through a custom handler and provide an output similar to Metro
-      new compiler.webpack.SourceMapDevToolPlugin({
-        test: /\.(js)?bundle$/,
-        filename: '[file].map',
-        append: `//# sourceMappingURL=[url]?platform=${platform}`,
-        module: true,
-        columns: true,
-        noSources: false,
-        namespace:
-          compiler.options.output.devtoolNamespace ??
-          compiler.options.output.uniqueName,
+      new SourceMapPlugin({
+        platform: this.config.platform,
       }).apply(compiler);
     }
 
