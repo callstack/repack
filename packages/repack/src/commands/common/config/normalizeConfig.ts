@@ -23,6 +23,13 @@ function normalizeOutputPath(
     .replaceAll('[platform]', platform);
 }
 
+function normalizeResolveExtensions(
+  extensions: string[],
+  platform: string
+): string[] {
+  return extensions.map((ext) => ext.replaceAll('[platform]', platform));
+}
+
 export function normalizeConfig<C extends ConfigurationObject>(
   config: C,
   platform: string
@@ -47,6 +54,14 @@ export function normalizeConfig<C extends ConfigurationObject>(
   /* unset public path if it's using the deprecated `getPublicPath` function */
   if (config.output?.publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
     config.output.publicPath = undefined;
+  }
+
+  /* normalize resolve extensions by resolving [platform] placeholder */
+  if (config.resolve?.extensions) {
+    config.resolve.extensions = normalizeResolveExtensions(
+      config.resolve.extensions,
+      config.name
+    );
   }
 
   /* return the normalized config object */

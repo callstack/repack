@@ -52,22 +52,7 @@ export default (env) => {
     context,
     entry,
     resolve: {
-      /**
-       * `getResolveOptions` returns additional resolution configuration for React Native.
-       * If it's removed, you won't be able to use `<file>.<platform>.<ext>` (eg: `file.ios.js`)
-       * convention and some 3rd-party libraries that specify `react-native` field
-       * in their `package.json` might not work correctly.
-       */
-      ...Repack.getResolveOptions(platform),
-
-      /**
-       * Uncomment this to ensure all `react-native*` imports will resolve to the same React Native
-       * dependency. You might need it when using workspaces/monorepos or unconventional project
-       * structure. For simple/typical project you won't need it.
-       */
-      // alias: {
-      //   'react-native': reactNativePath,
-      // },
+      ...Repack.getResolveOptions(),
     },
     optimization: {
       /** Configure minimizer to process the bundle. */
