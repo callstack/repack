@@ -22,7 +22,6 @@ export default (env) => {
   /** @type {import('@rspack/core').Configuration} */
   const config = {
     mode,
-    devtool: false,
     context,
     entry: './src/mini/index.js',
     resolve: {

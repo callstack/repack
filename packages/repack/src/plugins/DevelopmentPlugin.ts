@@ -127,19 +127,6 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       // setup HMR
       new compiler.webpack.HotModuleReplacementPlugin().apply(compiler);
 
-      // setup HMR source maps
-      new compiler.webpack.SourceMapDevToolPlugin({
-        test: /\.hot-update\.js$/,
-        filename: '[file].map',
-        append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
-        module: true,
-        columns: true,
-        noSources: false,
-        namespace:
-          compiler.options.output.devtoolNamespace ??
-          compiler.options.output.uniqueName,
-      }).apply(compiler);
-
       // setup React Refresh manually instead of using the official plugin
       // to avoid issues with placement of reactRefreshEntry
       new compiler.webpack.ProvidePlugin({

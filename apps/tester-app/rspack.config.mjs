@@ -27,7 +27,6 @@ export default (env) => {
 
   return {
     mode,
-    devtool: false,
     context,
     entry: './index.js',
     resolve: {
