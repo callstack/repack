@@ -61,10 +61,10 @@ export default (env) => {
           },
         },
         {
-          test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
+          test: Repack.getAssetExtensionsRegExp(),
           use: {
             loader: '@callstack/repack/assets-loader',
-            options: { platform, inline: true },
+            options: { inline: true },
           },
         },
       ],

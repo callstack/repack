@@ -73,10 +73,7 @@ export default (env) => {
             path.join(context, 'src/assetsTest/inlineAssets'),
             path.join(context, 'src/assetsTest/remoteAssets'),
           ],
-          use: {
-            loader: '@callstack/repack/assets-loader',
-            options: { platform },
-          },
+          use: '@callstack/repack/assets-loader',
         },
         {
           test: /\.svg$/,
@@ -95,10 +92,7 @@ export default (env) => {
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
           ),
           include: [path.join(context, 'src/assetsTest/localAssets')],
-          use: {
-            loader: '@callstack/repack/assets-loader',
-            options: { platform },
-          },
+          use: '@callstack/repack/assets-loader',
         },
         {
           test: Repack.getAssetExtensionsRegExp(
@@ -107,7 +101,7 @@ export default (env) => {
           include: [path.join(context, 'src/assetsTest/inlineAssets')],
           use: {
             loader: '@callstack/repack/assets-loader',
-            options: { platform, inline: true },
+            options: { inline: true },
           },
         },
         {
@@ -118,7 +112,6 @@ export default (env) => {
           use: {
             loader: '@callstack/repack/assets-loader',
             options: {
-              platform,
               remote: {
                 enabled: true,
                 publicPath: 'http://localhost:9999/remote-assets',
