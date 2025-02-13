@@ -15,8 +15,6 @@ export type GenericFilter = Array<string | RegExp>;
  * {@link LoggerPlugin} configuration options.
  */
 export interface LoggerPluginConfig {
-  /** Target application platform. */
-  platform: string;
   /** Logging output config. */
   output?: {
     /** Whether to log to console. */
@@ -52,9 +50,7 @@ export class LoggerPlugin implements RspackPluginInstance {
    * @param config Plugin configuration options.
    */
   constructor(private config: LoggerPluginConfig) {
-    if (this.config.output === undefined) {
-      this.config.output = { console: true };
-    }
+    this.config.output = this.config.output ?? { console: true };
 
     const isTruthyEnv = (env: string | undefined) => {
       return !!env && env !== 'false' && env !== '0';
