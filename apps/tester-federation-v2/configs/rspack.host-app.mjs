@@ -11,9 +11,6 @@ export default (env) => {
     mode = 'development',
     context = dirname,
     platform = process.env.PLATFORM,
-    bundleFilename = undefined,
-    sourceMapFilename = undefined,
-    assetsPath = undefined,
   } = env;
 
   if (!platform) {
@@ -68,13 +65,7 @@ export default (env) => {
       ],
     },
     plugins: [
-      new Repack.RepackPlugin({
-        output: {
-          bundleFilename,
-          sourceMapFilename,
-          assetsPath,
-        },
-      }),
+      new Repack.RepackPlugin(),
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'HostApp',
         filename: 'HostApp.container.js.bundle',
