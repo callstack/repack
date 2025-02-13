@@ -47,17 +47,27 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
   // load the project config
   const rawConfig = await loadProjectConfig<C>(configPath);
 
-  // normalize config to ensure it's a static config object
-  const normalizedConfigs = await Promise.all(
+  // inject env and create platform-specific configs
+  const projectConfigs: C[] = await Promise.all(
     options.platforms.map((platform) => {
-      return normalizeConfig(rawConfig, { ...env, platform });
+      // eval the config and inject the platform
+      if (typeof rawConfig === 'function') {
+        return rawConfig({ ...env, platform }, {});
+      }
+      // shallow copy to avoid mutating the original config
+      return { ...rawConfig };
     })
   );
 
   // merge in reverse order to create final configs
-  const configs = normalizedConfigs.map((config) =>
+  const configs = projectConfigs.map((config) =>
     merge([repackConfig, commandConfig, config, cliConfigOverrides])
   );
 
-  return configs as C[];
+  // normalize the configs
+  const normalizedConfigs = configs.map((config, index) =>
+    normalizeConfig(config, options.platforms[index])
+  );
+
+  return normalizedConfigs as C[];
 }
