@@ -11,7 +11,6 @@ export default (env) => {
     mode = 'development',
     context = dirname,
     platform = process.env.PLATFORM,
-    minimize = mode === 'production',
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
@@ -29,16 +28,8 @@ export default (env) => {
       ...Repack.getResolveOptions(platform),
     },
     output: {
-      clean: true,
-      hashFunction: 'xxhash64',
-      path: path.join(dirname, 'build', 'host-app', platform),
-      filename: 'index.bundle',
-      chunkFilename: '[name].chunk.bundle',
+      path: path.join(dirname, 'build/host-app/[platform]'),
       uniqueName: 'MF2Tester-HostApp',
-    },
-    optimization: {
-      minimize,
-      chunkIds: 'named',
     },
     module: {
       rules: [

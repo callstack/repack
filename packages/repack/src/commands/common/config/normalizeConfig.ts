@@ -13,6 +13,16 @@ function normalizeDevServerHost(host?: string): string | undefined {
   }
 }
 
+function normalizeOutputPath(
+  outputPath: string,
+  context: string,
+  platform: string
+): string {
+  return outputPath
+    .replaceAll('[context]', context)
+    .replaceAll('[platform]', platform);
+}
+
 export function normalizeConfig<C extends ConfigurationObject>(
   config: C,
   platform: string
@@ -23,6 +33,15 @@ export function normalizeConfig<C extends ConfigurationObject>(
   /* normalize dev server host by resolving special values */
   if (config.devServer) {
     config.devServer.host = normalizeDevServerHost(config.devServer.host);
+  }
+
+  /* normalize output path by resolving [platform] & [context] placeholders */
+  if (config.output?.path) {
+    config.output.path = normalizeOutputPath(
+      config.output.path,
+      config.context ?? process.cwd(),
+      config.name
+    );
   }
 
   /* unset public path if it's using the deprecated `getPublicPath` function */

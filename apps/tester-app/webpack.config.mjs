@@ -14,7 +14,6 @@ export default (env) => {
     context = dirname,
     entry = './index.js',
     platform = process.env.PLATFORM,
-    minimize = mode === 'production',
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
@@ -42,15 +41,9 @@ export default (env) => {
       },
     },
     output: {
-      clean: true,
-      hashFunction: 'xxhash64',
-      path: path.join(dirname, 'build/generated', platform),
-      filename: 'index.bundle',
-      chunkFilename: '[name].chunk.bundle',
       uniqueName: 'tester-app',
     },
     optimization: {
-      minimize,
       minimizer: [
         new TerserPlugin({
           test: /\.(js)?bundle(\?.*)?$/i,
@@ -62,7 +55,6 @@ export default (env) => {
           },
         }),
       ],
-      chunkIds: 'named',
     },
     module: {
       rules: [

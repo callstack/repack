@@ -11,7 +11,6 @@ export default (env) => {
     mode = 'development',
     context = dirname,
     platform = process.env.PLATFORM,
-    minimize = mode === 'production',
   } = env;
 
   if (!platform) {
@@ -28,16 +27,8 @@ export default (env) => {
       ...Repack.getResolveOptions(platform),
     },
     output: {
-      clean: true,
-      hashFunction: 'xxhash64',
-      path: path.join(dirname, 'build', 'mini-app', platform),
-      filename: 'index.bundle',
-      chunkFilename: '[name].chunk.bundle',
+      path: path.join(dirname, 'build/mini-app/[platform]'),
       uniqueName: 'MF2Tester-MiniApp',
-    },
-    optimization: {
-      minimize,
-      chunkIds: 'named',
     },
     module: {
       rules: [
