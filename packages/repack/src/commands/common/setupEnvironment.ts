@@ -5,6 +5,12 @@ import {
   VERBOSE_ENV_KEY,
 } from '../../env.js';
 
+function setEnvVar(key: string, value: string | undefined): void {
+  if (process.env[key] === undefined && value !== undefined) {
+    process.env[key] = value;
+  }
+}
+
 interface EnvironmentArgs {
   assetsDest?: string;
   bundleFilename?: string;
@@ -12,20 +18,9 @@ interface EnvironmentArgs {
   verbose?: boolean;
 }
 
-export function setupEnvironment(args: EnvironmentArgs) {
-  if (args.verbose) {
-    process.env[VERBOSE_ENV_KEY] = 'true';
-  }
-
-  if (args.bundleFilename) {
-    process.env[BUNDLE_FILENAME_ENV_KEY] = args.bundleFilename;
-  }
-
-  if (args.sourcemapFilename) {
-    process.env[SOURCEMAP_FILENAME_ENV_KEY] = args.sourcemapFilename;
-  }
-
-  if (args.assetsDest) {
-    process.env[ASSETS_DEST_ENV_KEY] = args.assetsDest;
-  }
+export function setupEnvironment(args: EnvironmentArgs): void {
+  setEnvVar(VERBOSE_ENV_KEY, args.verbose ? 'true' : undefined);
+  setEnvVar(BUNDLE_FILENAME_ENV_KEY, args.bundleFilename);
+  setEnvVar(SOURCEMAP_FILENAME_ENV_KEY, args.sourcemapFilename);
+  setEnvVar(ASSETS_DEST_ENV_KEY, args.assetsDest);
 }
