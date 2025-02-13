@@ -54,20 +54,6 @@ module.exports = (env) => {
       //   'react-native': reactNativePath,
       // },
     },
-    /**
-     * Configures output.
-     * It's recommended to leave it as it is unless you know what you're doing.
-     * By default Webpack will emit files into the directory specified under `path`. In order for the
-     * React Native app use them when bundling the `.ipa`/`.apk`, they need to be copied over with
-     * `Repack.OutputPlugin`, which is configured by default inside `Repack.RepackPlugin`.
-     */
-    output: {
-      clean: true,
-      hashFunction: 'xxhash64',
-      path: path.join(__dirname, 'build/generated', platform),
-      filename: 'index.bundle',
-      chunkFilename: '[name].chunk.bundle',
-    },
     module: {
       /**
        * This rule will process all React Native related dependencies with Babel.

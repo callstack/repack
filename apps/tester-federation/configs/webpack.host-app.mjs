@@ -30,11 +30,7 @@ export default (env) => {
       ...Repack.getResolveOptions(platform),
     },
     output: {
-      clean: true,
-      hashFunction: 'xxhash64',
-      path: path.join(dirname, 'build', 'host-app', platform),
-      filename: 'index.bundle',
-      chunkFilename: '[name].chunk.bundle',
+      path: path.join(dirname, 'build/host-app/[platform]'),
       uniqueName: 'MFTester-HostApp',
     },
     module: {
