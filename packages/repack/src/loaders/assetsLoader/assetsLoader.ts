@@ -207,7 +207,7 @@ export default async function repackAssetsLoader(
     logger.debug(
       `Resolved request ${this.resourcePath}`,
       JSON.stringify({
-        platform: platform,
+        platform,
         rootContext: this.rootContext,
         resourceNormalizedFilename,
         resourceFilename,
