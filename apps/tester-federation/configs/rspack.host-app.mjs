@@ -27,7 +27,7 @@ export default (env) => {
     context,
     entry: './src/host/index.js',
     resolve: {
-      ...Repack.getResolveOptions(platform),
+      ...Repack.getResolveOptions(),
     },
     output: {
       path: path.join(dirname, 'build/host-app/[platform]'),
