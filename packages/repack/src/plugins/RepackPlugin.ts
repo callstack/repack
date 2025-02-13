@@ -12,28 +12,15 @@ import { SourceMapPlugin } from './SourceMapPlugin.js';
  * {@link RepackPlugin} configuration options.
  */
 export interface RepackPluginConfig {
-  /** Context in which all resolution happens. Usually it's project root directory. */
-  context: string;
-
-  /** Compilation mode. */
-  mode: 'development' | 'production';
-
   /** Target application platform. */
-  platform: string;
-
-  /**
-   * Whether source maps should be generated. Defaults to `true`.
-   *
-   * Setting this to `false`, disables any source map generation.
-   */
-  sourceMaps?: boolean;
+  platform?: string;
 
   /**
    * Output options specifying where to save generated bundle, source map and assets.
    *
    * Refer to {@link OutputPluginConfig.output} for more details.
    */
-  output: OutputPluginConfig['output'];
+  output?: OutputPluginConfig['output'];
 
   /**
    * Absolute location to JS file with initialization logic for React Native.
@@ -74,7 +61,6 @@ export interface RepackPluginConfig {
  *   return {
  *     plugins: [
  *       new Repack.RepackPlugin({
- *         mode,
  *         platform,
  *       }),
  *     ],
@@ -108,8 +94,7 @@ export class RepackPlugin implements RspackPluginInstance {
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config: RepackPluginConfig) {
-    this.config.sourceMaps = this.config.sourceMaps ?? true;
+  constructor(private config: RepackPluginConfig = {}) {
     this.config.logger = this.config.logger ?? true;
   }
 
@@ -119,8 +104,10 @@ export class RepackPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
+    const platform = this.config.platform ?? (compiler.options.name as string);
+
     new compiler.webpack.DefinePlugin({
-      __DEV__: JSON.stringify(this.config.mode === 'development'),
+      __DEV__: JSON.stringify(compiler.options.mode === 'development'),
     }).apply(compiler);
 
     new BabelPlugin().apply(compiler);
@@ -128,10 +115,10 @@ export class RepackPlugin implements RspackPluginInstance {
     new CodegenPlugin().apply(compiler);
 
     new OutputPlugin({
-      platform: this.config.platform,
+      platform,
       enabled: !compiler.options.devServer,
-      context: this.config.context,
-      output: this.config.output,
+      context: compiler.options.context!,
+      output: this.config.output ?? {},
       extraChunks: this.config.extraChunks,
     }).apply(compiler);
 
@@ -141,19 +128,13 @@ export class RepackPlugin implements RspackPluginInstance {
 
     new RepackTargetPlugin().apply(compiler);
 
-    new DevelopmentPlugin({
-      platform: this.config.platform,
-    }).apply(compiler);
+    new DevelopmentPlugin({ platform }).apply(compiler);
 
-    if (this.config.sourceMaps) {
-      new SourceMapPlugin({
-        platform: this.config.platform,
-      }).apply(compiler);
-    }
+    new SourceMapPlugin({ platform }).apply(compiler);
 
     if (this.config.logger) {
       new LoggerPlugin({
-        platform: this.config.platform,
+        platform,
         output: {
           console: true,
           ...(typeof this.config.logger === 'object' ? this.config.logger : {}),
