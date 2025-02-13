@@ -16,6 +16,13 @@ export interface RepackPluginConfig {
   platform?: string;
 
   /**
+   * Options to configure {@link LoggerPlugin}'s `output`.
+   *
+   * Setting this to `false` disables {@link LoggerPlugin}.
+   */
+  logger?: LoggerPluginConfig['output'] | boolean;
+
+  /**
    * Output options specifying where to save generated bundle, source map and assets.
    *
    * Refer to {@link OutputPluginConfig.output} for more details.
@@ -35,13 +42,6 @@ export interface RepackPluginConfig {
    * Refer to {@link OutputPluginConfig.extraChunks} for more details.
    */
   extraChunks?: OutputPluginConfig['extraChunks'];
-
-  /**
-   * Options to configure {@link LoggerPlugin}'s `output`.
-   *
-   * Setting this to `false` disables {@link LoggerPlugin}.
-   */
-  logger?: LoggerPluginConfig['output'] | boolean;
 }
 
 /**
