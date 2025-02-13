@@ -38,7 +38,7 @@ export default (env) => {
           type: 'javascript/auto',
         },
         {
-          test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
+          test: Repack.getAssetExtensionsRegExp(),
           use: {
             loader: '@callstack/repack/assets-loader',
             options: { inline: true },
