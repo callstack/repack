@@ -1,5 +1,4 @@
-import type { EnvOptions } from '../../../types.js';
-import type { Configuration, ConfigurationObject } from '../../types.js';
+import type { ConfigurationObject } from '../../types.js';
 
 function normalizeDevServerHost(host?: string): string | undefined {
   switch (host) {
@@ -14,33 +13,23 @@ function normalizeDevServerHost(host?: string): string | undefined {
   }
 }
 
-export async function normalizeConfig<C extends ConfigurationObject>(
-  config: Configuration<C>,
-  env: EnvOptions
-): Promise<C> {
-  /* normalize the config into object */
-  let configObject: C;
-  if (typeof config === 'function') {
-    configObject = await config(env, {});
-  } else {
-    /* shallow copy to avoid mutating the original config */
-    configObject = { ...config };
-  }
-
+export function normalizeConfig<C extends ConfigurationObject>(
+  config: C,
+  platform: string
+): C {
   /* normalize compiler name to be equal to platform */
-  configObject.name = env.platform;
+  config.name = platform;
 
   /* normalize dev server host by resolving special values */
-  if (configObject.devServer) {
-    configObject.devServer.host = normalizeDevServerHost(
-      configObject.devServer.host
-    );
+  if (config.devServer) {
+    config.devServer.host = normalizeDevServerHost(config.devServer.host);
   }
+
   /* unset public path if it's using the deprecated `getPublicPath` function */
-  if (configObject.output?.publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
-    configObject.output.publicPath = undefined;
+  if (config.output?.publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
+    config.output.publicPath = undefined;
   }
 
   /* return the normalized config object */
-  return configObject;
+  return config;
 }
