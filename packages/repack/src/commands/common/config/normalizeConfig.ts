@@ -19,8 +19,8 @@ function normalizeOutputPath(
   platform: string
 ): string {
   return outputPath
-    .replace('[context]', context)
-    .replace('[platform]', platform);
+    .replaceAll('[context]', context)
+    .replaceAll('[platform]', platform);
 }
 
 export function normalizeConfig<C extends ConfigurationObject>(
