@@ -3,7 +3,7 @@ import { validate } from 'schema-utils';
 
 // Note: publicPath could be obtained from webpack config in the future
 export interface AssetLoaderOptions {
-  platform: string;
+  platform?: string;
   scalableAssetExtensions?: string[];
   scalableAssetResolutions?: string[];
   inline?: boolean;
@@ -26,7 +26,6 @@ type Schema = Parameters<typeof validate>[0];
 
 export const optionsSchema: Schema = {
   type: 'object',
-  required: ['platform'],
   properties: {
     platform: {
       type: 'string',
