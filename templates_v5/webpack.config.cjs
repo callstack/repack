@@ -23,10 +23,6 @@ module.exports = (env) => {
     context = __dirname,
     entry = './index.js',
     platform = process.env.PLATFORM,
-    bundleFilename = undefined,
-    sourceMapFilename = undefined,
-    assetsPath = undefined,
-    reactNativePath = require.resolve('react-native'),
   } = env;
 
   if (!platform) {
@@ -111,23 +107,6 @@ module.exports = (env) => {
         },
       ],
     },
-    plugins: [
-      /**
-       * Configure other required and additional plugins to make the bundle
-       * work in React Native and provide good development experience with
-       * sensible defaults.
-       *
-       * `Repack.RepackPlugin` provides some degree of customization, but if you
-       * need more control, you can replace `Repack.RepackPlugin` with plugins
-       * from `Repack.plugins`.
-       */
-      new Repack.RepackPlugin({
-        output: {
-          bundleFilename,
-          sourceMapFilename,
-          assetsPath,
-        },
-      }),
-    ],
+    plugins: [new Repack.RepackPlugin()],
   };
 };
