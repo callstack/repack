@@ -19,7 +19,10 @@ type PackageJSON = { version: string };
  * {@link DevelopmentPlugin} configuration options.
  */
 export interface DevelopmentPluginConfig {
-  platform: string;
+  /**
+   * Target application platform.
+   */
+  platform?: string;
 }
 
 /**
@@ -103,7 +106,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     const host = compiler.options.devServer.host;
     const port = compiler.options.devServer.port;
     const protocol = this.getProtocolType(compiler.options.devServer);
-    const platform = this.config.platform;
+    const platform = this.config.platform ?? (compiler.options.name as string);
 
     new compiler.webpack.DefinePlugin({
       __PLATFORM__: JSON.stringify(platform),
