@@ -27,6 +27,10 @@ export class OutputPlugin implements RspackPluginInstance {
   localSpecs: DestinationSpec[] = [];
   remoteSpecs: DestinationSpec[] = [];
 
+  private bundleFilename: string | undefined;
+  private assetsPath: string | undefined;
+  private sourceMapFilename: string | undefined;
+
   constructor(private config: OutputPluginConfig) {
     validateConfig(config);
 
@@ -44,20 +48,14 @@ export class OutputPlugin implements RspackPluginInstance {
       },
     ];
 
+    this.bundleFilename = process.env[BUNDLE_FILENAME_ENV_KEY];
+    this.assetsPath = process.env[ASSETS_DEST_ENV_KEY];
+    this.sourceMapFilename = process.env[SOURCEMAP_FILENAME_ENV_KEY];
+
     this.config.extraChunks?.forEach((spec) => {
       if (spec.type === 'local') this.localSpecs.push(spec);
       if (spec.type === 'remote') this.remoteSpecs.push(spec);
     });
-
-    this.config.output.bundleFilename =
-      this.config.output.bundleFilename ?? process.env[BUNDLE_FILENAME_ENV_KEY];
-
-    this.config.output.assetsPath =
-      this.config.output.assetsPath ?? process.env[ASSETS_DEST_ENV_KEY];
-
-    this.config.output.sourceMapFilename =
-      this.config.output.sourceMapFilename ??
-      process.env[SOURCEMAP_FILENAME_ENV_KEY];
   }
 
   createChunkMatcher(matchObject: typeof ModuleFilenameHelpers.matchObject) {
@@ -203,37 +201,35 @@ export class OutputPlugin implements RspackPluginInstance {
         .forEach((asset) => auxiliaryAssets.add(asset.name));
 
       let localAssetsCopyProcessor: AssetsCopyProcessor | undefined;
-      let { bundleFilename, sourceMapFilename, assetsPath } =
-        this.config.output;
 
-      if (bundleFilename) {
-        bundleFilename = this.ensureAbsolutePath(bundleFilename);
+      if (this.bundleFilename) {
+        this.bundleFilename = this.ensureAbsolutePath(this.bundleFilename);
 
-        const bundlePath = path.dirname(bundleFilename);
+        const bundlePath = path.dirname(this.bundleFilename);
 
-        sourceMapFilename = this.ensureAbsolutePath(
-          sourceMapFilename || `${bundleFilename}.map`
+        this.sourceMapFilename = this.ensureAbsolutePath(
+          this.sourceMapFilename || `${this.bundleFilename}.map`
         );
 
-        assetsPath = assetsPath || bundlePath;
+        this.assetsPath = this.assetsPath || bundlePath;
 
         logger.debug(
           'Detected output paths:',
           JSON.stringify({
-            bundleFilename,
+            bundleFilename: this.bundleFilename,
             bundlePath,
-            sourceMapFilename,
-            assetsPath,
+            sourceMapFilename: this.sourceMapFilename,
+            assetsPath: this.assetsPath,
           })
         );
 
         localAssetsCopyProcessor = new AssetsCopyProcessor({
           platform: this.config.platform,
           outputPath,
-          bundleOutput: bundleFilename,
+          bundleOutput: this.bundleFilename,
           bundleOutputDir: bundlePath,
-          sourcemapOutput: sourceMapFilename,
-          assetsDest: assetsPath,
+          sourcemapOutput: this.sourceMapFilename,
+          assetsDest: this.assetsPath,
           logger,
         });
       }
