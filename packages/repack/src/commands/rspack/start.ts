@@ -2,7 +2,6 @@ import type { Config } from '@react-native-community/cli-types';
 import type { Configuration } from '@rspack/core';
 import * as colorette from 'colorette';
 import packageJson from '../../../package.json';
-import { VERBOSE_ENV_KEY } from '../../env.js';
 import {
   ConsoleReporter,
   FileReporter,
@@ -18,6 +17,7 @@ import {
   setupInteractions,
 } from '../common/index.js';
 import { runAdbReverse } from '../common/index.js';
+import { setupEnvironment } from '../common/setupEnvironment.js';
 import type { StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
 
@@ -53,12 +53,11 @@ export async function start(
     reactNativePath: cliConfig.reactNativePath,
   });
 
+  // expose selected args as environment variables
+  setupEnvironment(args);
+
   const devServerOptions = configs[0].devServer ?? {};
   const showHttpRequests = args.verbose || args.logRequests;
-
-  if (args.verbose) {
-    process.env[VERBOSE_ENV_KEY] = '1';
-  }
 
   const reporter = composeReporters(
     [
