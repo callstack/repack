@@ -7,6 +7,11 @@ import type {
   RspackPluginInstance,
   StatsChunk,
 } from '@rspack/core';
+import {
+  ASSETS_DEST_ENV_KEY,
+  BUNDLE_FILENAME_ENV_KEY,
+  SOURCEMAP_FILENAME_ENV_KEY,
+} from '../../env.js';
 import { AssetsCopyProcessor } from '../utils/AssetsCopyProcessor.js';
 import { AuxiliaryAssetsCopyProcessor } from '../utils/AuxiliaryAssetsCopyProcessor.js';
 import { validateConfig } from './config.js';
@@ -43,6 +48,16 @@ export class OutputPlugin implements RspackPluginInstance {
       if (spec.type === 'local') this.localSpecs.push(spec);
       if (spec.type === 'remote') this.remoteSpecs.push(spec);
     });
+
+    this.config.output.bundleFilename =
+      this.config.output.bundleFilename ?? process.env[BUNDLE_FILENAME_ENV_KEY];
+
+    this.config.output.assetsPath =
+      this.config.output.assetsPath ?? process.env[ASSETS_DEST_ENV_KEY];
+
+    this.config.output.sourceMapFilename =
+      this.config.output.sourceMapFilename ??
+      process.env[SOURCEMAP_FILENAME_ENV_KEY];
   }
 
   createChunkMatcher(matchObject: typeof ModuleFilenameHelpers.matchObject) {
