@@ -6,6 +6,7 @@ export function getRepackConfig() {
       hashFunction: 'xxhash64',
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
+      path: '[context]/build/generated/[platform]',
       publicPath: 'noop:///',
     },
     optimization: {
