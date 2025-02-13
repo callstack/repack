@@ -96,22 +96,9 @@ module.exports = (env) => {
             },
           },
         },
-        /**
-         * This loader handles all static assets (images, video, audio and others), so that you can
-         * use (reference) them inside your application.
-         *
-         * If you want to handle specific asset type manually, filter out the extension
-         * from `ASSET_EXTENSIONS`, for example:
-         * ```
-         * Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
-         * ```
-         */
         {
-          test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
-          use: {
-            loader: '@callstack/repack/assets-loader',
-            options: { platform },
-          },
+          test: Repack.getAssetExtensionsRegExp(),
+          use: '@callstack/repack/assets-loader',
         },
       ],
     },
