@@ -15,7 +15,6 @@ export default (env) => {
     mode = 'development',
     context = dirname,
     platform = process.env.PLATFORM,
-    minimize = mode === 'production',
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
@@ -42,10 +41,6 @@ export default (env) => {
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       uniqueName: 'tester-app',
-    },
-    optimization: {
-      minimize,
-      chunkIds: 'named',
     },
     module: {
       rules: [

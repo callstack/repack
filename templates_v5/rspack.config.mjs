@@ -26,7 +26,6 @@ export default (env) => {
     context = dirname,
     entry = './index.js',
     platform = process.env.PLATFORM,
-    minimize = mode === 'production',
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
@@ -72,13 +71,6 @@ export default (env) => {
       path: path.join(dirname, 'build/generated', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
-    },
-    /** Configures optimization of the built bundle. */
-    optimization: {
-      /** Enables minification based on values passed from React Native Community CLI or from fallback. */
-      minimize,
-      /** Configure minimizer to process the bundle. */
-      chunkIds: 'named',
     },
     module: {
       rules: [

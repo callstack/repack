@@ -23,7 +23,6 @@ module.exports = (env) => {
     context = __dirname,
     entry = './index.js',
     platform = process.env.PLATFORM,
-    minimize = mode === 'production',
     bundleFilename = undefined,
     sourceMapFilename = undefined,
     assetsPath = undefined,
@@ -89,8 +88,6 @@ module.exports = (env) => {
      * Configures optimization of the built bundle.
      */
     optimization: {
-      /** Enables minification based on values passed from React Native Community CLI or from fallback. */
-      minimize,
       /** Configure minimizer to process the bundle. */
       minimizer: [
         new TerserPlugin({
@@ -108,7 +105,6 @@ module.exports = (env) => {
           },
         }),
       ],
-      chunkIds: 'named',
     },
     module: {
       /**

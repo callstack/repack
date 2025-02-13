@@ -12,7 +12,6 @@ export default (env) => {
     mode = 'development',
     context = dirname,
     platform = process.env.PLATFORM,
-    minimize = mode === 'production',
   } = env;
 
   if (!platform) {
@@ -34,10 +33,6 @@ export default (env) => {
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
       uniqueName: 'MFTester-MiniApp',
-    },
-    optimization: {
-      minimize,
-      chunkIds: 'named',
     },
     module: {
       rules: [
