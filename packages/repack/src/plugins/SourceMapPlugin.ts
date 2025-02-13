@@ -29,29 +29,14 @@ export class SourceMapPlugin implements RspackPluginInstance {
     const devtoolFallbackModuleFilenameTemplate =
       compiler.options.output.devtoolFallbackModuleFilenameTemplate;
 
-    if (
-      format === 'eval' ||
-      format === 'eval-source-map' ||
-      format === 'eval-cheap-source-map' ||
-      format === 'eval-cheap-module-source-map' ||
-      format === 'eval-nosources-source-map' ||
-      format === 'eval-nosources-cheap-source-map' ||
-      format === 'eval-nosources-cheap-module-source-map'
-    ) {
+    if (format.startsWith('eval')) {
       throw new ConfigurationError(
         '[RepackSourceMapPlugin] Eval source maps are not supported. ' +
           'Please use a different setting for `config.devtool`.'
       );
     }
 
-    if (
-      format === 'inline-cheap-source-map' ||
-      format === 'inline-cheap-module-source-map' ||
-      format === 'inline-source-map' ||
-      format === 'inline-nosources-cheap-source-map' ||
-      format === 'inline-nosources-cheap-module-source-map' ||
-      format === 'inline-nosources-source-map'
-    ) {
+    if (format.startsWith('inline')) {
       throw new ConfigurationError(
         '[RepackSourceMapPlugin] Inline source maps are not supported. ' +
           'Please use a different setting for `config.devtool`.'
