@@ -89,20 +89,12 @@ export interface RepackPluginConfig {
  * @category Webpack Plugin
  */
 export class RepackPlugin implements RspackPluginInstance {
-  /**
-   * Constructs new `RepackPlugin`.
-   *
-   * @param config Plugin configuration options.
-   */
   constructor(private config: RepackPluginConfig = {}) {
-    this.config.logger = this.config.logger ?? true;
+    if (this.config.logger === undefined || this.config.logger === true) {
+      this.config.logger = {};
+    }
   }
 
-  /**
-   * Apply the plugin.
-   *
-   * @param compiler Webpack compiler instance.
-   */
   apply(compiler: Compiler) {
     const platform = this.config.platform ?? (compiler.options.name as string);
 
@@ -132,13 +124,9 @@ export class RepackPlugin implements RspackPluginInstance {
 
     new SourceMapPlugin({ platform }).apply(compiler);
 
-    if (this.config.logger) {
+    if (typeof this.config.logger === 'object') {
       new LoggerPlugin({
-        platform,
-        output: {
-          console: true,
-          ...(typeof this.config.logger === 'object' ? this.config.logger : {}),
-        },
+        output: { console: true, ...this.config.logger },
       }).apply(compiler);
     }
   }
