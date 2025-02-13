@@ -4,5 +4,8 @@ export function getRepackConfig() {
     output: {
       publicPath: 'noop:///',
     },
+    optimization: {
+      chunkIds: 'named',
+    },
   };
 }
