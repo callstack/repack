@@ -25,12 +25,9 @@ const configSchema: Schema = {
     output: {
       type: 'object',
       properties: {
-        bundleFilename: { type: 'string' },
-        sourceMapFilename: { type: 'string' },
-        assetsPath: { type: 'string' },
         auxiliaryAssetsPath: { type: 'string' },
       },
-      additionalProperties: false,
+      additionalProperties: true,
     },
     extraChunks: {
       type: 'array',
@@ -68,5 +65,35 @@ const configSchema: Schema = {
 };
 
 export function validateConfig(config: OutputPluginConfig) {
-  validate(configSchema, config, { name: 'OutputPlugin' });
+  validate(configSchema, config, { name: 'RepackOutputPlugin' });
+}
+
+export function getDeprecationMessages(config: OutputPluginConfig) {
+  const deprecationMessages: string[] = [];
+
+  if ('bundleFilename' in config.output) {
+    deprecationMessages.push(
+      '[NOTICE] `output.bundleFilename` is deprecated since Re.Pack v5.0.0. ' +
+        'This option has no effect and will be removed in the next major version. ' +
+        'Value passed through CLI flag `--bundle-output` always takes precedence.'
+    );
+  }
+
+  if ('sourceMapFilename' in config.output) {
+    deprecationMessages.push(
+      '[NOTICE] `output.sourceMapFilename` is deprecated since Re.Pack v5.0.0. ' +
+        'This option has no effect and will be removed in the next major version. ' +
+        'Value passed through CLI flag `--sourcemap-output` always takes precedence.'
+    );
+  }
+
+  if ('assetsPath' in config.output) {
+    deprecationMessages.push(
+      '[NOTICE] `output.assetsPath` is deprecated since Re.Pack v5.0.0. ' +
+        'This option has no effect and will be removed in the next major version. ' +
+        'Value passed through CLI flag `--assets-dest` always takes precedence.'
+    );
+  }
+
+  return deprecationMessages;
 }

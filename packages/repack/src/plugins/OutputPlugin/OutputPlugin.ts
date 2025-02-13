@@ -14,7 +14,7 @@ import {
 } from '../../env.js';
 import { AssetsCopyProcessor } from '../utils/AssetsCopyProcessor.js';
 import { AuxiliaryAssetsCopyProcessor } from '../utils/AuxiliaryAssetsCopyProcessor.js';
-import { validateConfig } from './config.js';
+import { getDeprecationMessages, validateConfig } from './config.js';
 import type { DestinationSpec, OutputPluginConfig } from './types.js';
 
 /**
@@ -143,6 +143,11 @@ export class OutputPlugin implements RspackPluginInstance {
     if (!this.config.enabled) return;
 
     assert(compiler.options.output.path, "Can't infer output path from config");
+
+    compiler.hooks.beforeCompile.tap('RepackOutputPlugin', () => {
+      const deprecationMessages = getDeprecationMessages(this.config);
+      deprecationMessages.forEach((message) => logger.warn(message));
+    });
 
     const logger = compiler.getInfrastructureLogger('RepackOutputPlugin');
     const outputPath = compiler.options.output.path as string;
