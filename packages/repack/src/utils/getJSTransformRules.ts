@@ -81,6 +81,10 @@ const makeSwcLoaderConfig = ({
       targets: {
         'react-native': '0.74',
       },
+      exclude: [
+        // breaks react & react-native
+        'transform-typeof-symbol',
+      ],
     },
     jsc: {
       assumptions: getCompilerAssumptions(),
@@ -96,7 +100,7 @@ export function getJSTransformRules() {
   return [
     {
       type: 'javascript/auto',
-      test: /\.[cm]?[jt]sx?$/,
+      test: /\.([cm]?[jt]sx?|flow)$/,
       oneOf: [
         {
           test: /jsx?$/,
@@ -105,7 +109,6 @@ export function getJSTransformRules() {
               syntax: 'js',
               jsx: true,
               importSource: 'nativewind',
-              externalHelpers: true,
             }),
           ],
         },
