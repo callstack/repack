@@ -78,12 +78,25 @@ const makeSwcLoaderConfig = ({
   loader: 'builtin:swc-loader',
   options: {
     env: {
-      targets: {
-        'react-native': '0.74',
-      },
-      exclude: [
-        // breaks react & react-native
-        'transform-typeof-symbol',
+      // disable all transforms
+      targets: { node: 24 },
+      // add transforms manually that match the RN preset
+      include: [
+        'transform-block-scoping',
+        'transform-class-properties',
+        'transform-private-methods',
+        'transform-private-property-in-object',
+        'transform-classes',
+        'transform-destructuring',
+        'transform-async-to-generator',
+        'transform-async-generator-functions',
+        'transform-unicode-regex',
+        'transform-named-capturing-groups-regex',
+        'transform-optional-chaining',
+        // dependencies of some of the transforms above
+        'transform-spread',
+        'transform-object-rest-spread',
+        'transform-class-static-block',
       ],
     },
     jsc: {
