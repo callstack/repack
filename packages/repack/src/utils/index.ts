@@ -4,3 +4,4 @@ export * from './getDirname.js';
 export * from './getPublicPath.js';
 export * from './getResolveOptions.js';
 export * from './getModulePaths.js';
+export * from './getJSTransformRules.js';
