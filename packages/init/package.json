@@ -40,7 +40,7 @@
     "execa": "^9.5.2",
     "gradient-string": "^3.0.0",
     "semver": "^7.6.3",
-    "typescript": "^5.7.2",
+    "typescript": "catalog:",
     "which-pm-runs": "^1.1.0",
     "yargs": "^17.7.2"
   }

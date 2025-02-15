@@ -6,3 +6,4 @@ packages:
 
 catalog:
   "@rspack/core": 1.2.2
+  "typescript": 5.7.2

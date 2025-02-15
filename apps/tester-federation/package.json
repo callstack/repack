@@ -44,7 +44,7 @@
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
     "react-native-test-app": "^4.0.7",
-    "typescript": "^5.7.2",
+    "typescript": "catalog:",
     "webpack": "^5.97.1"
   }
 }

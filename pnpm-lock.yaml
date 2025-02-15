@@ -9,6 +9,9 @@ catalogs:
     '@rspack/core':
       specifier: 1.2.2
       version: 1.2.2
+    typescript:
+      specifier: 5.7.2
+      version: 5.7.2
 
 importers:
 
@@ -175,7 +178,7 @@ importers:
         specifier: ^5.3.10
         version: 5.3.10(webpack@5.94.0)
       typescript:
-        specifier: ^5.7.2
+        specifier: 'catalog:'
         version: 5.7.2
       vitest:
         specifier: ^2.0.5
@@ -260,7 +263,7 @@ importers:
         specifier: ^4.0.7
         version: 4.0.7(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
       typescript:
-        specifier: ^5.7.2
+        specifier: 'catalog:'
         version: 5.7.2
       webpack:
         specifier: ^5.97.1
@@ -345,7 +348,7 @@ importers:
         specifier: ^5.3.3
         version: 5.3.10(webpack@5.94.0)
       typescript:
-        specifier: ^5.7.2
+        specifier: 'catalog:'
         version: 5.7.2
       webpack:
         specifier: ^5.91.0
@@ -406,7 +409,7 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@babel/core@7.25.2)
       typescript:
-        specifier: ^5.7.2
+        specifier: 'catalog:'
         version: 5.7.2
 
   packages/init:
@@ -455,7 +458,7 @@ importers:
         specifier: ^7.6.3
         version: 7.6.3
       typescript:
-        specifier: ^5.7.2
+        specifier: 'catalog:'
         version: 5.7.2
       which-pm-runs:
         specifier: ^1.1.0
@@ -652,7 +655,7 @@ importers:
         specifier: ^0.1.13
         version: 0.1.13
       typescript:
-        specifier: ^5.7.2
+        specifier: 'catalog:'
         version: 5.7.2
       webpack:
         specifier: ^5.94.0
@@ -716,7 +719,7 @@ importers:
         specifier: ^18.2.64
         version: 18.3.3
       typescript:
-        specifier: ^5.7.2
+        specifier: 'catalog:'
         version: 5.7.2
 
 packages:
