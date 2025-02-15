@@ -6,3 +6,5 @@ export * from './getResolveOptions.js';
 export * from './getModulePaths.js';
 export * from './getJsTransformRules.js';
 export * from './getSwcLoaderOptions.js';
+export * from './getFlowTransformRules.js';
+export * from './getCodegenTransformRules.js';
