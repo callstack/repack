@@ -2,7 +2,6 @@ export * from './DevelopmentPlugin.js';
 export * from './LoggerPlugin.js';
 export * from './ManifestPlugin.js';
 export * from './BabelPlugin.js';
-export * from './CodegenPlugin.js';
 export * from './OutputPlugin/index.js';
 export * from './RepackTargetPlugin/index.js';
 export * from './ModuleFederationPlugin.js';
