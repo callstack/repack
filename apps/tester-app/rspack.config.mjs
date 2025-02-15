@@ -30,7 +30,7 @@ export default (env) => {
     },
     module: {
       rules: [
-        ...Repack.getJSTransformRules(),
+        ...Repack.getJsTransformRules(),
         {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
