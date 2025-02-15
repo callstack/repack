@@ -56,9 +56,9 @@
     "postcss-loader": "^8.1.1",
     "react-native-test-app": "catalog:testers",
     "tailwindcss": "^3.4.17",
-    "terser-webpack-plugin": "^5.3.10",
+    "terser-webpack-plugin": "catalog:",
     "typescript": "catalog:",
     "vitest": "^2.0.5",
-    "webpack": "^5.94.0"
+    "webpack": "catalog:"
   }
 }

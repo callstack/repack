@@ -37,8 +37,8 @@
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
     "react-native-test-app": "catalog:testers",
-    "terser-webpack-plugin": "^5.3.3",
+    "terser-webpack-plugin": "catalog:",
     "typescript": "catalog:",
-    "webpack": "^5.91.0"
+    "webpack": "catalog:"
   }
 }

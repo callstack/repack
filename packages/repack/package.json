@@ -125,7 +125,7 @@
     "react-native": "0.76.3",
     "rspack-plugin-virtual-module": "^0.1.13",
     "typescript": "catalog:",
-    "webpack": "^5.94.0"
+    "webpack": "catalog:"
   },
   "codegenConfig": {
     "name": "RNScriptManagerSpec",
