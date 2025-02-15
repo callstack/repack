@@ -23,7 +23,17 @@ const FLOW_TYPED_MODULES = [
 ];
 
 /**
- * Creates webpack/rspack rules configuration for handling Flow type annotations in JavaScript files.
+ * Interface for {@link getFlowTransformRules} options.
+ */
+interface GetFlowTransformRulesOptions {
+  include?: string[];
+  exclude?: string[];
+  all?: boolean;
+  ignoreUninitializedFields?: boolean;
+}
+
+/**
+ * Creates rules configuration for handling Flow type annotations in JavaScript files.
  * The rules will use flow-loader to remove Flow types from the code before other processing.
  *
  * @param options Configuration options
@@ -48,13 +58,6 @@ const FLOW_TYPED_MODULES = [
  *   }
  * };
  */
-interface GetFlowTransformRulesOptions {
-  include?: string[];
-  exclude?: string[];
-  all?: boolean;
-  ignoreUninitializedFields?: boolean;
-}
-
 export function getFlowTransformRules({
   include = FLOW_TYPED_MODULES,
   exclude = [],
