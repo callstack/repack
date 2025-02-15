@@ -5,5 +5,6 @@ packages:
   - "website"
 
 catalog:
-  "@rspack/core": 1.2.2
-  "typescript": 5.7.2
+  "@rspack/core": ^1.2.2
+  "react-native-test-app": ~4.0.7
+  "typescript": ^5.7.2

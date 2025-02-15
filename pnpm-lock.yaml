@@ -7,10 +7,13 @@ settings:
 catalogs:
   default:
     '@rspack/core':
-      specifier: 1.2.2
+      specifier: ^1.2.2
       version: 1.2.2
+    react-native-test-app:
+      specifier: ~4.0.7
+      version: 4.0.7
     typescript:
-      specifier: 5.7.2
+      specifier: ^5.7.2
       version: 5.7.2
 
 importers:
@@ -169,7 +172,7 @@ importers:
         specifier: ^8.1.1
         version: 8.1.1(@rspack/core@1.2.2(@swc/helpers@0.5.13))(postcss@8.5.1)(typescript@5.7.2)(webpack@5.94.0)
       react-native-test-app:
-        specifier: ^4.0.7
+        specifier: 'catalog:'
         version: 4.0.7(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
       tailwindcss:
         specifier: ^3.4.17
@@ -260,7 +263,7 @@ importers:
         specifier: ^14.1.1
         version: 14.1.1
       react-native-test-app:
-        specifier: ^4.0.7
+        specifier: 'catalog:'
         version: 4.0.7(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
       typescript:
         specifier: 'catalog:'
@@ -342,7 +345,7 @@ importers:
         specifier: ^14.1.1
         version: 14.1.1
       react-native-test-app:
-        specifier: ^4.0.7
+        specifier: 'catalog:'
         version: 4.0.7(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
       terser-webpack-plugin:
         specifier: ^5.3.3
@@ -10655,7 +10658,7 @@ snapshots:
       '@module-federation/runtime-tools': 0.8.4
       '@rspack/binding': 1.2.0
       '@rspack/lite-tapable': 1.0.1
-      caniuse-lite: 1.0.30001660
+      caniuse-lite: 1.0.30001699
     optionalDependencies:
       '@swc/helpers': 0.5.15
 
@@ -10664,7 +10667,7 @@ snapshots:
       '@module-federation/runtime-tools': 0.8.4
       '@rspack/binding': 1.2.0-beta.0
       '@rspack/lite-tapable': 1.0.1
-      caniuse-lite: 1.0.30001660
+      caniuse-lite: 1.0.30001699
     optionalDependencies:
       '@swc/helpers': 0.5.15
 
@@ -10673,7 +10676,7 @@ snapshots:
       '@module-federation/runtime-tools': 0.8.4
       '@rspack/binding': 1.2.2
       '@rspack/lite-tapable': 1.0.1
-      caniuse-lite: 1.0.30001660
+      caniuse-lite: 1.0.30001699
     optionalDependencies:
       '@swc/helpers': 0.5.13
 
@@ -10682,7 +10685,7 @@ snapshots:
       '@module-federation/runtime-tools': 0.8.4
       '@rspack/binding': 1.2.2
       '@rspack/lite-tapable': 1.0.1
-      caniuse-lite: 1.0.30001660
+      caniuse-lite: 1.0.30001699
     optionalDependencies:
       '@swc/helpers': 0.5.15
 
