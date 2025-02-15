@@ -44,7 +44,7 @@
     "@rsdoctor/rspack-plugin": "^0.4.11",
     "@rspack/core": "catalog:",
     "@svgr/webpack": "^8.1.0",
-    "@swc/helpers": "^0.5.13",
+    "@swc/helpers": "catalog:",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.2.51",
     "autoprefixer": "^10.4.20",
@@ -54,11 +54,11 @@
     "http-server": "^14.1.1",
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",
-    "react-native-test-app": "^4.0.7",
+    "react-native-test-app": "catalog:testers",
     "tailwindcss": "^3.4.17",
-    "terser-webpack-plugin": "^5.3.10",
-    "typescript": "^5.7.2",
+    "terser-webpack-plugin": "catalog:",
+    "typescript": "catalog:",
     "vitest": "^2.0.5",
-    "webpack": "^5.94.0"
+    "webpack": "catalog:"
   }
 }

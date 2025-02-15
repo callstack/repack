@@ -36,15 +36,16 @@
     "@react-native/typescript-config": "0.76.3",
     "@rsdoctor/rspack-plugin": "^0.4.5",
     "@rspack/core": "catalog:",
-    "@swc/helpers": "^0.5.13",
+    "@swc/helpers": "catalog:",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.2.51",
     "execa": "^6.1.0",
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
-    "react-native-test-app": "^4.0.7",
-    "typescript": "^5.7.2",
-    "webpack": "^5.97.1"
+    "react-native-test-app": "catalog:testers",
+    "terser-webpack-plugin": "catalog:",
+    "typescript": "catalog:",
+    "webpack": "catalog:"
   }
 }
