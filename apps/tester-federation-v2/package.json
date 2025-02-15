@@ -36,7 +36,7 @@
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
-    "react-native-test-app": "catalog:",
+    "react-native-test-app": "catalog:testers",
     "terser-webpack-plugin": "^5.3.3",
     "typescript": "catalog:",
     "webpack": "^5.91.0"

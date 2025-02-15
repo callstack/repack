@@ -54,7 +54,7 @@
     "http-server": "^14.1.1",
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",
-    "react-native-test-app": "catalog:",
+    "react-native-test-app": "catalog:testers",
     "tailwindcss": "^3.4.17",
     "terser-webpack-plugin": "^5.3.10",
     "typescript": "catalog:",
