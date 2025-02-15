@@ -19,6 +19,6 @@
   "devDependencies": {
     "@types/node": "^18",
     "@types/react": "^18.2.64",
-    "typescript": "^5.7.2"
+    "typescript": "catalog:"
   }
 }
