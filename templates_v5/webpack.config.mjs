@@ -1,116 +1,49 @@
-import { createRequire } from 'node:module';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import * as Repack from '@callstack/repack';
 import TerserPlugin from 'terser-webpack-plugin';
 
-const dirname = Repack.getDirname(import.meta.url);
-const { resolve } = createRequire(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
- * More documentation, installation, usage, motivation and differences with Metro is available at:
- * https://github.com/callstack/repack/blob/main/README.md
+ * Webpack configuration enhanced with Re.Pack defaults for React Native.
  *
- * The API documentation for the functions and plugins used in this file is available at:
- * https://re-pack.dev
+ * Learn about webpack configuration: https://webpack.js.org/configuration/
+ * Learn about Re.Pack configuration: https://re-pack.dev/docs/guides/configuration
  */
 
-/**
- * Webpack configuration.
- * You can also export a static object or a function returning a Promise.
- *
- * @param env Environment options passed from either Webpack CLI or React Native Community CLI
- *            when running with `react-native start/bundle`.
- */
-export default (env) => {
-  const {
-    mode = 'development',
-    context = dirname,
-    entry = './index.js',
-    platform = process.env.PLATFORM,
-  } = env;
-
-  if (!platform) {
-    throw new Error('Missing platform');
-  }
-
-  /**
-   * Depending on your Babel configuration you might want to keep it.
-   * If you don't use `env` in your Babel config, you can remove it.
-   *
-   * Keep in mind that if you remove it you should set `BABEL_ENV` or `NODE_ENV`
-   * to `development` or `production`. Otherwise your production code might be compiled with
-   * in development mode by Babel.
-   */
-  process.env.BABEL_ENV = mode;
-
-  return {
-    mode,
-    context,
-    entry,
-    resolve: {
-      ...Repack.getResolveOptions(),
-    },
-    optimization: {
-      /** Configure minimizer to process the bundle. */
-      minimizer: [
-        new TerserPlugin({
-          test: /\.(js)?bundle(\?.*)?$/i,
-          /**
-           * Prevents emitting text file with comments, licenses etc.
-           * If you want to gather in-file licenses, feel free to remove this line or configure it
-           * differently.
-           */
-          extractComments: false,
-          terserOptions: {
-            format: {
-              comments: false,
-            },
+export default {
+  context: __dirname,
+  entry: './index.js',
+  resolve: {
+    ...Repack.getResolveOptions(),
+  },
+  module: {
+    rules: [
+      {
+        test: /\.[cm]?[jt]sx?$/,
+        use: 'babel-loader',
+        type: 'javascript/auto',
+      },
+      {
+        test: Repack.getAssetExtensionsRegExp(),
+        use: '@callstack/repack/assets-loader',
+      },
+    ],
+  },
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        test: /\.(js)?bundle(\?.*)?$/i,
+        extractComments: false,
+        terserOptions: {
+          format: {
+            comments: false,
           },
-        }),
-      ],
-    },
-    module: {
-      /**
-       * This rule will process all React Native related dependencies with Babel.
-       * If you have a 3rd-party dependency that you need to transpile, you can add it to the
-       * `include` list.
-       *
-       * You can also enable persistent caching with `cacheDirectory` - please refer to:
-       * https://github.com/babel/babel-loader#options
-       */
-      rules: [
-        {
-          test: /\.[cm]?[jt]sx?$/,
-          include: [
-            /node_modules(.*[/\\])+react-native/,
-            /node_modules(.*[/\\])+@react-native/,
-            /node_modules(.*[/\\])+@react-navigation/,
-            /node_modules(.*[/\\])+@react-native-community/,
-            /node_modules(.*[/\\])+expo/,
-            /node_modules(.*[/\\])+pretty-format/,
-            /node_modules(.*[/\\])+metro/,
-            /node_modules(.*[/\\])+abort-controller/,
-            /node_modules(.*[/\\])+@callstack[/\\]repack/,
-          ],
-          use: 'babel-loader',
         },
-        /**
-         * Here you can adjust loader that will process your files.
-         *
-         * You can also enable persistent caching with `cacheDirectory` - please refer to:
-         * https://github.com/babel/babel-loader#options
-         */
-        {
-          test: /\.[jt]sx?$/,
-          exclude: /node_modules/,
-          use: 'babel-loader',
-        },
-        {
-          test: Repack.getAssetExtensionsRegExp(),
-          use: '@callstack/repack/assets-loader',
-        },
-      ],
-    },
-    plugins: [new Repack.RepackPlugin()],
-  };
+      }),
+    ],
+  },
+  plugins: [new Repack.RepackPlugin()],
 };
