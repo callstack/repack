@@ -30,7 +30,9 @@ export default (env) => {
     },
     module: {
       rules: [
-        ...Repack.getJsTransformRules(),
+        ...Repack.getJsTransformRules({
+          swc: { importSource: 'nativewind' },
+        }),
         {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
