@@ -1,6 +1,6 @@
 function getEnvironmentPreset() {
   return {
-    // disable all transforms
+    // disable all transforms (node supports everything)
     targets: { node: 24 },
     // add transforms manually that match the RN preset
     include: [
