@@ -6,11 +6,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /**
- * More documentation, installation, usage, motivation and differences with Metro is available at:
- * https://github.com/callstack/repack/blob/main/README.md
+ * Rspack configuration enhanced with Re.Pack defaults for React Native.
  *
- * The API documentation for the functions and plugins used in this file is available at:
- * https://re-pack.dev
+ * Learn about Rspack configuration: https://rspack.dev/config/
+ * Learn about Re.Pack configuration: https://re-pack.dev/docs/guides/configuration
  */
 
 export default {
