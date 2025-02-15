@@ -44,7 +44,7 @@
     "@rsdoctor/rspack-plugin": "^0.4.11",
     "@rspack/core": "catalog:",
     "@svgr/webpack": "^8.1.0",
-    "@swc/helpers": "^0.5.13",
+    "@swc/helpers": "catalog:",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.2.51",
     "autoprefixer": "^10.4.20",

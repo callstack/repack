@@ -110,7 +110,7 @@
     "@react-native-community/cli-tools": "15.0.1",
     "@react-native-community/cli-types": "15.0.1",
     "@rspack/core": "catalog:",
-    "@swc/helpers": "0.5.13",
+    "@swc/helpers": "catalog:",
     "@types/dedent": "^0.7.0",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.0",

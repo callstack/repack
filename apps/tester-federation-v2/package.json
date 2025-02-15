@@ -29,7 +29,7 @@
     "@react-native-community/cli-platform-android": "15.0.1",
     "@rsdoctor/rspack-plugin": "^0.4.5",
     "@rspack/core": "catalog:",
-    "@swc/helpers": "^0.5.13",
+    "@swc/helpers": "catalog:",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.2.51",
     "execa": "^6.1.0",
