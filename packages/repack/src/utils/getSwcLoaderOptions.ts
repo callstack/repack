@@ -71,6 +71,7 @@ function getModuleOptions(
         noInterop: false,
         lazy: lazyImports,
         allowTopLevelThis: true,
+        ignoreDynamic: true,
       };
 }
 
