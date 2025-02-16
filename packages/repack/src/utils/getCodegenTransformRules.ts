@@ -1,3 +1,9 @@
+/**
+ * Returns `module.rules` configuration for handling React Native codegen transformation.
+ * This is required for projects using React Native New Architecture.
+ *
+ * @returns Array of module rules
+ */
 export function getCodegenTransformRules() {
   return [
     {
