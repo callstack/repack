@@ -79,12 +79,44 @@ function getModuleOptions(
  * Interface for {@link getSwcLoaderOptions} options.
  */
 interface MakeSwcLoaderConfigOptions {
+  /**
+   * The source code syntax type.
+   * Use 'js' for JavaScript or 'ts' for TypeScript source files.
+   */
   syntax: 'js' | 'ts';
+
+  /**
+   * Whether to enable JSX/TSX parsing and transformation.
+   */
   jsx: boolean;
+
+  /**
+   * Whether to use external helpers for transformations.
+   * See SWC `jsc.externalHelpers` documentation: https://swc.rs/docs/configuration/compilation#jscexternalhelpers
+   */
   externalHelpers?: boolean;
+
+  /**
+   * The JSX runtime to use - 'automatic' for React 17+ new JSX transform or 'classic' for traditional JSX transform.
+   * See SWC `jsc.transform.react.runtime`: https://swc.rs/docs/configuration/compilation#jsctransformreactruntime
+   */
   jsxRuntime?: 'automatic' | 'classic';
+
+  /**
+   * Whether to disable transformation of import/export statements.
+   */
   disableImportExportTransform?: boolean;
+
+  /**
+   * The source module for JSX runtime imports.
+   * See SWC `jsc.transform.react.importSource`: https://swc.rs/docs/configuration/compilation#jsctransformreactimportsource
+   */
   importSource?: string;
+
+  /**
+   * Enable lazy loading for all imports or specific modules.
+   * See SWC `module.lazy`: https://swc.rs/docs/configuration/modules#lazy
+   */
   lazyImports?: boolean | string[];
 }
 
