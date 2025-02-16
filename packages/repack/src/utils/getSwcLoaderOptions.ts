@@ -75,6 +75,9 @@ function getModuleOptions(
       };
 }
 
+/**
+ * Interface for {@link getSwcLoaderOptions} options.
+ */
 interface MakeSwcLoaderConfigOptions {
   syntax: 'js' | 'ts';
   jsx: boolean;
