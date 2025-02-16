@@ -1,7 +1,11 @@
 [
   "constants",
   "get-asset-extension-regexp",
+  "get-codegen-transform-rules",
   "get-dirname",
+  "get-flow-transform-rules",
+  "get-js-transform-rules",
   "get-module-paths",
-  "get-resolve-options"
+  "get-resolve-options",
+  "get-swc-loader-options"
 ]
