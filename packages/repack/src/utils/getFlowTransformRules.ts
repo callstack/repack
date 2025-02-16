@@ -26,9 +26,26 @@ const FLOW_TYPED_MODULES = [
  * Interface for {@link getFlowTransformRules} options.
  */
 interface GetFlowTransformRulesOptions {
+  /**
+   * Array of module names to include for Flow transformation.
+   * Pass module names as they appear in package.json. You can use full package names or scopes.
+   */
   include?: string[];
+
+  /**
+   * Array of module names to exclude from Flow transformation.
+   * Pass module names as they appear in package.json. You can use full package names or scopes.
+   */
   exclude?: string[];
+
+  /**
+   * Whether to bypass looking for @flow pragma comment before parsing.
+   */
   all?: boolean;
+
+  /**
+   * Whether to remove uninitialized class fields completely rather than only removing the type.
+   */
   ignoreUninitializedFields?: boolean;
 }
 
