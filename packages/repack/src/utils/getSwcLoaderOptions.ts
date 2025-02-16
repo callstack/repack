@@ -92,13 +92,15 @@ interface MakeSwcLoaderConfigOptions {
 
   /**
    * Whether to use external helpers for transformations.
-   * See SWC `jsc.externalHelpers` documentation: https://swc.rs/docs/configuration/compilation#jscexternalhelpers
+   * See SWC `jsc.externalHelpers` documentation:
+   * https://swc.rs/docs/configuration/compilation#jscexternalhelpers
    */
   externalHelpers?: boolean;
 
   /**
    * The JSX runtime to use - 'automatic' for React 17+ new JSX transform or 'classic' for traditional JSX transform.
-   * See SWC `jsc.transform.react.runtime`: https://swc.rs/docs/configuration/compilation#jsctransformreactruntime
+   * See SWC `jsc.transform.react.runtime`:
+   * https://swc.rs/docs/configuration/compilation#jsctransformreactruntime
    */
   jsxRuntime?: 'automatic' | 'classic';
 
@@ -109,13 +111,15 @@ interface MakeSwcLoaderConfigOptions {
 
   /**
    * The source module for JSX runtime imports.
-   * See SWC `jsc.transform.react.importSource`: https://swc.rs/docs/configuration/compilation#jsctransformreactimportsource
+   * See SWC `jsc.transform.react.importSource`:
+   * https://swc.rs/docs/configuration/compilation#jsctransformreactimportsource
    */
   importSource?: string;
 
   /**
    * Enable lazy loading for all imports or specific modules.
-   * See SWC `module.lazy`: https://swc.rs/docs/configuration/modules#lazy
+   * See SWC `module.lazy`:
+   * https://swc.rs/docs/configuration/modules#lazy
    */
   lazyImports?: boolean | string[];
 }
