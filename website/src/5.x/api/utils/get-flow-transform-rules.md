@@ -3,7 +3,7 @@
 A helper function that generates `module.rules` configuration for handling Flow type annotations in JavaScript files. The rules use `@callstack/repack/flow-loader` to remove Flow types from the code before other processing.
 
 :::info
-This helper function is only relevant when using Rspack as your bundler. If you are using Webpack with `babel`, you don't need to use this helper function, since it's already included as part of `@react-native/babel-preset`.
+This helper function is only relevant when using Rspack as your bundler. If you are using webpack with `babel`, you don't need to use this helper function, since it's already included as part of `@react-native/babel-preset`.
 :::
 
 ## Parameters
