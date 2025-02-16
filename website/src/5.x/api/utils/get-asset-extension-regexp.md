@@ -11,7 +11,6 @@ type GetAssetExtensionsRegExp = (extensions?: string[]) => RegExp;
 ### extensions
 
 - Type: `string[]`
-- Required: `false`
 - Default: `ASSET_EXTENSIONS`
 
 Array of extensions to include in the RegExp pattern.
