@@ -42,21 +42,7 @@ interface GetFlowTransformRulesOptions {
  * @param options.all If true, bypasses looking for @flow pragma comment before parsing (defaults to true)
  * @param options.ignoreUninitializedFields If true, removes uninitialized class fields completely rather than only removing the type (defaults to false)
  *
- * @example
- * // In your rspack/webpack config:
- * const { getFlowTransformRules } = require('@callstack/repack');
- *
- * module.exports = {
- *   module: {
- *     rules: [
- *       ...getFlowTransformRules({
- *         include: ['react-native', '@react-native'],
- *         all: true,
- *         ignoreUninitializedFields: false
- *       })
- *     ]
- *   }
- * };
+ * @returns Array of rules for transforming Flow typed modules
  */
 export function getFlowTransformRules({
   include = FLOW_TYPED_MODULES,
