@@ -2,7 +2,7 @@
 
 A helper function that generates Rspack `module.rules` configuration for transforming JavaScript, TypeScript, and Flow files. It combines SWC loader configuration for JS/TS files with Flow and codegen transformations. You can consider it an equivalent of `@react-native/babel-preset`, but for SWC.
 
-:::info
+:::warn
 This helper function is only relevant when using Rspack as your bundler. If you are using webpack with `babel`, you don't need to use this helper function, since it's already included as part of `@react-native/babel-preset`.
 
 You can consider it an equivalent of `@react-native/babel-preset`, but for SWC.
