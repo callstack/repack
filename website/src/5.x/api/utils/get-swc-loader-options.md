@@ -2,6 +2,10 @@
 
 A helper function that creates SWC loader configuration options optimized for React Native bundling.
 
+:::info
+This helper function is a part of [`getJsTransformRules`](/api/utils/get-js-transform-rules).
+:::
+
 ## Parameters
 
 ```ts
