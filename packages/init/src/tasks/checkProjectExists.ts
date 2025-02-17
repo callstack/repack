@@ -1,22 +1,29 @@
-import { findRoot } from '@manypkg/find-root';
+import fs from 'node:fs';
+import path from 'node:path';
 import logger from '../utils/logger.js';
 
 /**
- * Checks if the project exists
+ * Checks whether React Native project exists at a given directory
  *
- * @param cwd current working directory
- * @returns projectRootDir if it exists, undefined otherwise
+ * @param projectRootDir root directory of the project
+ * @returns true if React Native project is found, false otherwise
  */
-export default async function checkProjectExists(cwd: string): Promise<{
-  projectRootDir: string | undefined;
-}> {
+export default function checkProjectExists(projectRootDir: string): boolean {
   try {
-    const { rootDir } = await findRoot(cwd);
-    logger.info(`Found root of the project at ${rootDir}`);
-    return { projectRootDir: rootDir };
+    const packageJsonPath = path.join(projectRootDir, 'package.json');
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+
+    if (!packageJson?.dependencies['react-native']) {
+      logger.info(
+        `React Native is not installed in the project at ${projectRootDir}`
+      );
+      return false;
+    }
   } catch {
-    logger.info('No existing React Native project found');
+    logger.info(`No React Native project found at ${projectRootDir}`);
+    return false;
   }
 
-  return { projectRootDir: undefined };
+  logger.info(`React Native project found at ${projectRootDir}`);
+  return true;
 }
