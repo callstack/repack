@@ -16,10 +16,7 @@ module.exports = {
   module: {
     rules: [
       ...Repack.getJsTransformRules(),
-      {
-        test: Repack.getAssetExtensionsRegExp(),
-        use: '@callstack/repack/assets-loader',
-      },
+      ...Repack.getAssetTransformRules(),
     ],
   },
   plugins: [new Repack.RepackPlugin()],

@@ -1,6 +1,17 @@
 import type { LoaderContext } from '@rspack/core';
 import { validate } from 'schema-utils';
 
+export interface AssetLoaderRemoteOptions {
+  enabled: boolean;
+  assetPath?: (args: {
+    resourcePath: string;
+    resourceFilename: string;
+    resourceDirname: string;
+    resourceExtensionType: string;
+  }) => string;
+  publicPath: string;
+}
+
 // Note: publicPath could be obtained from webpack config in the future
 export interface AssetLoaderOptions {
   platform?: string;
@@ -8,16 +19,7 @@ export interface AssetLoaderOptions {
   scalableAssetResolutions?: string[];
   inline?: boolean;
   publicPath?: string;
-  remote?: {
-    enabled: boolean;
-    assetPath?: (args: {
-      resourcePath: string;
-      resourceFilename: string;
-      resourceDirname: string;
-      resourceExtensionType: string;
-    }) => string;
-    publicPath: string;
-  };
+  remote?: AssetLoaderRemoteOptions;
 }
 
 export interface AssetLoaderContext extends LoaderContext<AssetLoaderOptions> {}

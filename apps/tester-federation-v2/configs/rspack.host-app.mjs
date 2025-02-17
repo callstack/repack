@@ -31,10 +31,7 @@ export default (env) => {
     module: {
       rules: [
         ...Repack.getJsTransformRules(),
-        {
-          test: Repack.getAssetExtensionsRegExp(),
-          use: '@callstack/repack/assets-loader',
-        },
+        ...Repack.getAssetTransformRules(),
       ],
     },
     plugins: [

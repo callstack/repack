@@ -21,10 +21,7 @@ module.exports = {
         use: 'babel-loader',
         type: 'javascript/auto',
       },
-      {
-        test: Repack.getAssetExtensionsRegExp(),
-        use: '@callstack/repack/assets-loader',
-      },
+      ...Repack.getAssetTransformRules(),
     ],
   },
   optimization: {

@@ -1,6 +1,7 @@
 [
   "constants",
   "get-asset-extension-regexp",
+  "get-asset-transform-rules",
   "get-codegen-transform-rules",
   "get-dirname",
   "get-flow-transform-rules",
