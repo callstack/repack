@@ -26,14 +26,11 @@ interface GetAssetTransformRulesOptions {
 
 ### options
 
-- Required: `false`
-
 Configuration options for asset transformations.
 
 ### options.inline
 
 - Type: `boolean`
-- Default: `false`
 
 Whether to inline assets as base64 URIs.
 
@@ -44,7 +41,6 @@ Learn more about the inlining assets in the [Inlining Assets guide](/docs/guides
 ### options.remote
 
 - Type: `object`
-- Required: `false`
 
 Configuration for remote asset loading.
 
@@ -64,7 +60,6 @@ See [`assetsLoader` documentation](/api/loaders/assets-loader#remotepublicpath) 
 ### options.remote.assetPath
 
 - Type: `(args: { resourcePath: string; resourceFilename: string; resourceDirname: string; resourceExtensionType: string; }) => string`
-- Required: `false`
 
 A function to customize how the asset path is generated for remote assets.
 
@@ -73,7 +68,6 @@ See [`assetsLoader` documentation](/api/loaders/assets-loader#remoteassetpath) f
 ### options.svg
 
 - Type: `'svgr' | 'xml' | 'uri'`
-- Required: `false`
 
 Determines how SVG files should be processed:
 
