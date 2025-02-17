@@ -11,15 +11,13 @@ Install required dependencies in your project:
 <Tabs groupId="bundler">
   <Tab label="Rspack" value="rspack">
     <PackageManagerTabs command="install -D @rspack/core @swc/helpers @callstack/repack" />
-
-    This will install latest versions of Rspack, Re.Pack and dependencies used in Rspack config: `@swc/helpers` for minification.
   </Tab>
   <Tab label="Webpack" value="webpack">
     <PackageManagerTabs command="install -D webpack terser-webpack-plugin @callstack/repack" />
-
-    This will install latest versions of Webpack, Re.Pack and dependencies used in Webpack config: `terser-webpack-plugin` for minification.
   </Tab>
 </Tabs>
+
+This will install the latest versions of your chosen bundler and necessary dependencies for code optimization and minification.
 
 Once the dependencies are installed, you need to tell React Native Community CLI to add Re.Pack's commands.
 
