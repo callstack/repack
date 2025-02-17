@@ -8,3 +8,4 @@ export * from './getJsTransformRules.js';
 export * from './getSwcLoaderOptions.js';
 export * from './getFlowTransformRules.js';
 export * from './getCodegenTransformRules.js';
+export * from './getAssetTransformRules.js';
