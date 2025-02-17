@@ -2,7 +2,6 @@ import path from 'node:path';
 
 import checkPackageManager from './tasks/checkPackageManager.js';
 import checkProjectExists from './tasks/checkProjectExists.js';
-import checkReactNative from './tasks/checkReactNative.js';
 import collectProjectOptions from './tasks/collectProjectOptions.js';
 import completeSetup from './tasks/completeSetup.js';
 import createBundlerConfig from './tasks/createBundlerConfig.js';
@@ -35,7 +34,6 @@ export default async function run(options: Options) {
 
     const { projectRootDir } = await checkProjectExists(cwd);
     const packageManager = await checkPackageManager(projectRootDir);
-    checkReactNative(projectRootDir);
 
     const projectExists = projectRootDir !== undefined;
 
