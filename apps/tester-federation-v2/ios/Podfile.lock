@@ -1,6 +1,6 @@
 PODS:
   - boost (1.84.0)
-  - callstack-repack (5.0.0-rc.6):
+  - callstack-repack (5.0.0-rc.10):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1625,6 +1625,27 @@ PODS:
   - ReactTestApp-DevSupport (4.0.7):
     - React-Core
     - React-jsi
+  - RNCAsyncStorage (2.1.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNScreens (3.35.0):
     - DoubleConversion
     - glog
@@ -1745,6 +1766,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@4.0.7_react-native@0.76.3_@babel+core@7.25.2_@babel+preset-env@7.25.4_@_kcvmkmgigxx2fblhu2xcq3h4qu/node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -1888,6 +1910,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-test-app@4.0.7_react-native@0.76.3_@babel+core@7.25.2_@babel+preset-env@7.25.4_@_kcvmkmgigxx2fblhu2xcq3h4qu/node_modules/@rnx-kit/react-native-host"
   ReactTestApp-DevSupport:
     :path: "../node_modules/react-native-test-app"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   Yoga:
@@ -1895,7 +1919,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 1dca942403ed9342f98334bf4c3621f011aa7946
-  callstack-repack: 99484a3f899fab09d6dc72bddb20c72f2ba4f948
+  callstack-repack: 3ffe9c49dd09333ddb3cd0ac85ff6724dd6fa560
   DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
   FBLazyVector: be7314029d6ec6b90f0f75ce1195b8130ed9ac4f
   fmt: 10c6e61f4be25dc963c36bd73fc7b1705fe975be
@@ -1961,10 +1985,11 @@ SPEC CHECKSUMS:
   ReactCommon: 89c87b343deacc8610b099ac764848f0ce937e3e
   ReactNativeHost: 40da1d9878e16dd3b647d4c31e5afeb0ed84683d
   ReactTestApp-DevSupport: 4aa6f6bc658a2577bcf896c63c411cb375b89d7d
+  RNCAsyncStorage: 0ad93525a3a72652e88e14ad109c6dac856cb693
   RNScreens: e389d6a6a66a4f0d3662924ecae803073ccce8ec
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
-  Yoga: f6dc1b6029519815d5516a1241821c6a9074af6d
+  Yoga: 3deb2471faa9916c8a82dda2a22d3fba2620ad37
 
 PODFILE CHECKSUM: 3d5c18eefbf70d38fbbfe81a262195cadac1f5dd
 
