@@ -37,13 +37,7 @@ export default (env) => {
           use: 'babel-loader',
           type: 'javascript/auto',
         },
-        {
-          test: Repack.getAssetExtensionsRegExp(),
-          use: {
-            loader: '@callstack/repack/assets-loader',
-            options: { inline: true },
-          },
-        },
+        ...Repack.getAssetTransformRules({ inline: true }),
       ],
     },
     plugins: [
