@@ -30,37 +30,9 @@ export default (env) => {
     },
     module: {
       rules: [
-        Repack.REACT_NATIVE_LOADING_RULES,
-        Repack.NODE_MODULES_LOADING_RULES,
-        Repack.FLOW_TYPED_MODULES_LOADING_RULES,
-        {
-          test: /\.[jt]sx?$/,
-          exclude: [/node_modules/],
-          type: 'javascript/auto',
-          use: {
-            loader: 'builtin:swc-loader',
-            options: {
-              env: {
-                targets: {
-                  'react-native': '0.74',
-                },
-              },
-              jsc: {
-                assumptions: {
-                  setPublicClassFields: true,
-                  privateFieldsAsProperties: true,
-                },
-                externalHelpers: true,
-                transform: {
-                  react: {
-                    runtime: 'automatic',
-                    importSource: 'nativewind',
-                  },
-                },
-              },
-            },
-          },
-        },
+        ...Repack.getJsTransformRules({
+          swc: { importSource: 'nativewind' },
+        }),
         {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')

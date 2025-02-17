@@ -32,34 +32,7 @@ export default (env) => {
     },
     module: {
       rules: [
-        Repack.REACT_NATIVE_LOADING_RULES,
-        Repack.NODE_MODULES_LOADING_RULES,
-        Repack.FLOW_TYPED_MODULES_LOADING_RULES,
-        {
-          test: /\.[jt]sx?$/,
-          type: 'javascript/auto',
-          exclude: [/node_modules/],
-          use: {
-            loader: 'builtin:swc-loader',
-            options: {
-              env: {
-                targets: { 'react-native': '0.74' },
-              },
-              jsc: {
-                assumptions: {
-                  setPublicClassFields: true,
-                  privateFieldsAsProperties: true,
-                },
-                externalHelpers: true,
-                transform: {
-                  react: {
-                    runtime: 'automatic',
-                  },
-                },
-              },
-            },
-          },
-        },
+        ...Repack.getJsTransformRules(),
         {
           test: Repack.getAssetExtensionsRegExp(),
           use: '@callstack/repack/assets-loader',
