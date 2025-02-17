@@ -64,3 +64,7 @@ module.exports = {
   },
 };
 ```
+
+:::note TypeScript vs Flow
+Flow is not a commonly used solution in the React Native ecosystem, with TypeScript being the default and recommended choice for type checking. We maintain Flow support primarily for legacy codebases, libraries, and specific use cases where Flow is still required.
+:::
