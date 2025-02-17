@@ -30,7 +30,7 @@ export function getAssetTransformRules({
   svg,
 }: GetAssetTransformRulesOptions = {}) {
   const extensions = svg
-    ? ASSET_EXTENSIONS.filter((ext) => ext !== '.svg')
+    ? ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
     : ASSET_EXTENSIONS;
 
   const remoteOptions = remote
