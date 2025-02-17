@@ -1,9 +1,11 @@
+import path from 'node:path';
 import { execa } from 'execa';
 import type { PackageManager } from '../types/pm.js';
 import { RepackInitError } from '../utils/error.js';
 import spinner from '../utils/spinner.js';
 
 export default async function createNewProject(
+  cwd: string,
   projectName: string,
   packageManager: PackageManager,
   override: boolean
@@ -13,6 +15,8 @@ export default async function createNewProject(
       '@react-native-community/cli@latest',
       'init',
       projectName,
+      '--directory',
+      path.join(cwd, projectName),
       '--skip-install',
     ];
 

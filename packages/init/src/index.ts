@@ -2,6 +2,7 @@ import path from 'node:path';
 
 import checkPackageManager from './tasks/checkPackageManager.js';
 import checkProjectExists from './tasks/checkProjectExists.js';
+import checkRepositoryExists from './tasks/checkRepositoryExists.js';
 import collectProjectOptions from './tasks/collectProjectOptions.js';
 import completeSetup from './tasks/completeSetup.js';
 import createBundlerConfig from './tasks/createBundlerConfig.js';
@@ -23,7 +24,7 @@ interface Options {
 }
 
 export default async function run(options: Options) {
-  const cwd = process.cwd();
+  const cwd = process.env.PWD ?? process.cwd();
 
   if (options.verbose) {
     enableVerboseLogging();
@@ -32,10 +33,9 @@ export default async function run(options: Options) {
   try {
     welcomeMessage();
 
-    const { projectRootDir } = await checkProjectExists(cwd);
-    const packageManager = await checkPackageManager(projectRootDir);
-
-    const projectExists = projectRootDir !== undefined;
+    const repoRootDir = await checkRepositoryExists(cwd);
+    const projectExists = checkProjectExists(cwd);
+    const packageManager = await checkPackageManager(repoRootDir);
 
     const { bundler, projectName, shouldOverrideProject } =
       await collectProjectOptions(cwd, projectExists, {
@@ -46,13 +46,14 @@ export default async function run(options: Options) {
 
     if (!projectExists) {
       await createNewProject(
+        cwd,
         projectName,
         packageManager,
         shouldOverrideProject
       );
     }
 
-    const rootDir = projectRootDir ?? path.join(cwd, projectName!);
+    const rootDir = path.join(cwd, projectName!);
 
     await modifyDependencies(bundler, rootDir, options.repackVersion);
 
