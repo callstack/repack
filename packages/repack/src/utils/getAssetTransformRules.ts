@@ -30,6 +30,10 @@ export function getAssetTransformRules({
   remote,
   svg,
 }: GetAssetTransformRulesOptions = {}) {
+  const extensions = svg
+    ? ASSET_EXTENSIONS.filter((ext) => ext !== '.svg')
+    : ASSET_EXTENSIONS;
+
   const remoteOptions = remote
     ? {
         enabled: true,
@@ -37,19 +41,12 @@ export function getAssetTransformRules({
       }
     : undefined;
 
-  const extensions = svg
-    ? ASSET_EXTENSIONS.filter((ext) => ext !== '.svg')
-    : ASSET_EXTENSIONS;
-
   const rules: RuleSetRule[] = [
     {
       test: getAssetExtensionsRegExp(extensions),
       use: {
         loader: '@callstack/repack/assets-loader',
-        options: {
-          inline,
-          remote: remoteOptions,
-        },
+        options: { inline, remote: remoteOptions },
       },
     },
   ];
