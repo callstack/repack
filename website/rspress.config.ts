@@ -20,10 +20,6 @@ export default defineConfig({
     checkDeadLinks: false,
     codeHighlighter: 'prism',
   },
-  multiVersion: {
-    default: process.env.NODE_ENV === 'development' ? '5.x' : '4.x', // Use 5.x in development for preview, while 4.x remains the stable public version
-    versions: ['2.x', '3.x', '4.x', '5.x'],
-  },
   route: {
     cleanUrls: true,
   },
