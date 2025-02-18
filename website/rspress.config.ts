@@ -5,6 +5,8 @@ import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
 import vercelAnalytics from 'rspress-plugin-vercel-analytics';
 import { defineConfig } from 'rspress/config';
 
+console.log('siema', process.env.SRC_DIR);
+
 export default defineConfig({
   root: path.join(__dirname, process.env.SRC_DIR ?? 'src'),
   title: 'Re.Pack',
