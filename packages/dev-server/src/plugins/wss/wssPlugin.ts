@@ -25,6 +25,12 @@ declare module 'fastify' {
   }
 }
 
+declare module 'ws' {
+  interface WebSocket {
+    isAlive?: boolean;
+  }
+}
+
 /**
  * Defined in @react-native/dev-middleware
  * Reference: https://github.com/facebook/react-native/blob/main/packages/dev-middleware/src/inspector-proxy/InspectorProxy.js
