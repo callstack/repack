@@ -1,0 +1,20 @@
+[
+  {
+    "type": "file",
+    "name": "repack-init",
+    "label": "repack-init"
+  },
+  {
+    "type": "divider"
+  },
+  {
+    "type": "file",
+    "name": "start",
+    "label": "start"
+  },
+  {
+    "type": "file",
+    "name": "bundle",
+    "label": "bundle"
+  }
+]
