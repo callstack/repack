@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack",
-  "version": "5.0.0-rc.5",
+  "version": "5.0.0-rc.11",
   "description": "A toolkit to build your React Native application with Rspack or Webpack.",
   "type": "commonjs",
   "main": "./dist/index.js",
@@ -11,6 +11,7 @@
     "./commands/*": "./commands/*.js",
     "./assets-loader": "./dist/loaders/assetsLoader/index.js",
     "./flow-loader": "./dist/loaders/flowLoader/index.js",
+    "./react-refresh-loader": "./dist/loaders/reactRefreshLoader/index.js",
     "./mf/*": "./mf/*.js",
     "./package.json": "./package.json"
   },
@@ -59,6 +60,7 @@
   "peerDependencies": {
     "@module-federation/enhanced": ">=0.6.10",
     "@react-native-community/cli": "*",
+    "@react-native-community/cli-tools": "*",
     "@react-native-community/cli-types": "*",
     "@rspack/core": ">=1",
     "react-native": ">=0.74",
@@ -79,8 +81,10 @@
     "@callstack/repack-dev-server": "workspace:*",
     "@discoveryjs/json-ext": "^0.5.7",
     "@rspack/plugin-react-refresh": "1.0.0",
+    "babel-loader": "^9.2.1",
     "colorette": "^2.0.20",
     "dedent": "^0.7.0",
+    "estree-util-is-identifier-name": "^1.1.0",
     "events": "^3.3.0",
     "execa": "^5.0.0",
     "flow-remove-types": "^2.250.0",
@@ -92,19 +96,21 @@
     "react-refresh": "^0.14.0",
     "schema-utils": "^4.2.0",
     "shallowequal": "^1.1.0",
-    "throttleit": "^2.1.0"
+    "throttleit": "^2.1.0",
+    "webpack-merge": "^6.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.25.2",
     "@babel/core": "^7.25.2",
     "@babel/plugin-transform-export-namespace-from": "^7.24.6",
     "@babel/plugin-transform-modules-commonjs": "^7.23.2",
-    "@module-federation/enhanced": "0.6.10",
+    "@module-federation/enhanced": "0.8.9",
     "@module-federation/sdk": "0.6.10",
     "@react-native-community/cli": "15.0.1",
+    "@react-native-community/cli-tools": "15.0.1",
     "@react-native-community/cli-types": "15.0.1",
-    "@rspack/core": "1.0.8",
-    "@swc/helpers": "0.5.13",
+    "@rspack/core": "catalog:",
+    "@swc/helpers": "catalog:",
     "@types/dedent": "^0.7.0",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.0",
@@ -118,8 +124,8 @@
     "react": "18.3.1",
     "react-native": "0.76.3",
     "rspack-plugin-virtual-module": "^0.1.13",
-    "typescript": "^5.7.2",
-    "webpack": "^5.94.0"
+    "typescript": "catalog:",
+    "webpack": "catalog:"
   },
   "codegenConfig": {
     "name": "RNScriptManagerSpec",

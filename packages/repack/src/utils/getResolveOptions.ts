@@ -1,5 +1,15 @@
 import { SCALABLE_ASSETS, SCALABLE_RESOLUTIONS } from './assetExtensions.js';
 
+interface GetResolveOptionsResult {
+  mainFields: string[];
+  aliasFields: string[];
+  conditionNames: string[];
+  exportsFields: string[];
+  extensions: string[];
+  extensionAlias: Record<string, string[]>;
+  importsFields: string[];
+}
+
 /**
  * {@link getResolveOptions} additional options.
  */
@@ -47,9 +57,28 @@ export interface ResolveOptions {
  * ```
  */
 
-export function getResolveOptions(platform: string, options?: ResolveOptions) {
-  const preferNativePlatform = options?.preferNativePlatform ?? true;
-  const enablePackageExports = options?.enablePackageExports ?? false;
+export function getResolveOptions(
+  options?: ResolveOptions
+): GetResolveOptionsResult;
+
+export function getResolveOptions(
+  platform: string,
+  options?: ResolveOptions
+): GetResolveOptionsResult;
+
+export function getResolveOptions(
+  platformOrOptions: unknown,
+  options?: ResolveOptions
+): GetResolveOptionsResult {
+  // if platform is undefined, use '[platform]' as placeholder
+  const _platform =
+    typeof platformOrOptions === 'string' ? platformOrOptions : '[platform]';
+  const _options = (
+    typeof platformOrOptions === 'object' ? platformOrOptions : options
+  ) as ResolveOptions | undefined;
+
+  const preferNativePlatform = _options?.preferNativePlatform ?? true;
+  const enablePackageExports = _options?.enablePackageExports ?? false;
 
   let extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
 
@@ -68,7 +97,7 @@ export function getResolveOptions(platform: string, options?: ResolveOptions) {
     conditionNames = [];
     exportsFields = [];
     extensions = extensions.flatMap((ext) => {
-      const platformExt = `.${platform}${ext}`;
+      const platformExt = `.${_platform}${ext}`;
       const nativeExt = `.native${ext}`;
 
       if (preferNativePlatform) {

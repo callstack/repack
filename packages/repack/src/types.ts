@@ -18,7 +18,7 @@ export interface DevServerOptions {
    *
    * See: {@link DEFAULT_PORT}.
    */
-  port: number;
+  port?: number;
 
   /**
    * HTTPS options.

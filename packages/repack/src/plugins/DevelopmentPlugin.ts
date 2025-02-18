@@ -1,8 +1,15 @@
 import path from 'node:path';
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+// @ts-expect-error type only import
+import type { DevServerOptions } from '@callstack/repack-dev-server';
+import type {
+  Compiler,
+  EntryNormalized,
+  Plugins,
+  RspackPluginInstance,
+} from '@rspack/core';
 import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
-import type { DevServerOptions } from '../types.js';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
+import { moveElementBefore } from './utils/moveElementBefore.js';
 
 const [reactRefreshEntryPath, reactRefreshPath, refreshUtilsPath] =
   ReactRefreshPlugin.deprecated_runtimePaths;
@@ -12,9 +19,10 @@ type PackageJSON = { version: string };
  * {@link DevelopmentPlugin} configuration options.
  */
 export interface DevelopmentPluginConfig {
-  entryName?: string;
-  platform: string;
-  devServer?: DevServerOptions;
+  /**
+   * Target application platform.
+   */
+  platform?: string;
 }
 
 /**
@@ -29,7 +37,57 @@ export class DevelopmentPlugin implements RspackPluginInstance {
    *
    * @param config Plugin configuration options.
    */
-  constructor(private config?: DevelopmentPluginConfig) {}
+  constructor(private config: DevelopmentPluginConfig) {}
+
+  private getEntryNormalizedEntryChunks(entryNormalized: EntryNormalized) {
+    if (typeof entryNormalized === 'function') {
+      throw new Error(
+        '[RepackDevelopmentPlugin] Dynamic entry (function) is not supported.'
+      );
+    }
+
+    return Object.keys(entryNormalized).map(
+      (name) => entryNormalized[name].runtime || name
+    );
+  }
+
+  private getModuleFederationEntryChunks(plugins: Plugins) {
+    const entrypoints = plugins.map((plugin) => {
+      if (typeof plugin !== 'object' || !plugin) {
+        return;
+      }
+
+      if (!plugin.constructor?.name.startsWith('ModuleFederationPlugin')) {
+        return;
+      }
+
+      // repack MF plugins expose config property
+      if ('config' in plugin) {
+        return plugin.config.name;
+      }
+
+      // official MF plugins expose _options property
+      if ('_options' in plugin) {
+        return plugin._options.name;
+      }
+
+      return null;
+    });
+
+    return entrypoints.filter(Boolean);
+  }
+
+  private getProtocolType(devServer: DevServerOptions) {
+    if (typeof devServer.server === 'string') {
+      return devServer.server;
+    }
+
+    if (typeof devServer.server?.type === 'string') {
+      return devServer.server.type;
+    }
+
+    return 'http';
+  }
 
   /**
    * Apply the plugin.
@@ -37,7 +95,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
    * @param compiler Webpack compiler instance.
    */
   apply(compiler: Compiler) {
-    if (!this.config?.devServer) {
+    if (!compiler.options.devServer) {
       return;
     }
 
@@ -45,48 +103,32 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     const [majorVersion, minorVersion, patchVersion] =
       reactNativePackageJson.version.split('-')[0].split('.');
 
+    const host = compiler.options.devServer.host;
+    const port = compiler.options.devServer.port;
+    const protocol = this.getProtocolType(compiler.options.devServer);
+    const platform = this.config.platform ?? (compiler.options.name as string);
+
     new compiler.webpack.DefinePlugin({
-      __PLATFORM__: JSON.stringify(this.config.platform),
-      __PUBLIC_PROTOCOL__: this.config.devServer.https ? '"https"' : '"http"',
-      __PUBLIC_HOST__: JSON.stringify(this.config.devServer.host),
-      __PUBLIC_PORT__: Number(this.config.devServer.port),
+      __PLATFORM__: JSON.stringify(platform),
+      __PUBLIC_PROTOCOL__: JSON.stringify(protocol),
+      __PUBLIC_HOST__: JSON.stringify(host),
+      __PUBLIC_PORT__: Number(port),
       __REACT_NATIVE_MAJOR_VERSION__: Number(majorVersion),
       __REACT_NATIVE_MINOR_VERSION__: Number(minorVersion),
       __REACT_NATIVE_PATCH_VERSION__: Number(patchVersion),
     }).apply(compiler);
 
-    // Enforce output filenames in development mode
+    // set public path for development with dev server
+    compiler.options.output.publicPath = `${protocol}://${host}:${port}/${platform}/`;
+
+    // enforce output filenames in development mode
     compiler.options.output.filename = (pathData) =>
       pathData.chunk?.name === 'main' ? 'index.bundle' : '[name].bundle';
     compiler.options.output.chunkFilename = '[name].chunk.bundle';
 
-    if (this.config?.devServer.hmr) {
+    if (compiler.options.devServer.hot) {
       // setup HMR
       new compiler.webpack.HotModuleReplacementPlugin().apply(compiler);
-
-      // add react-refresh-loader fallback for compatibility with Webpack
-      compiler.options.resolveLoader = {
-        ...compiler.options.resolveLoader,
-        fallback: {
-          ...compiler.options.resolveLoader?.fallback,
-          'builtin:react-refresh-loader': require.resolve(
-            '../loaders/reactRefreshCompatLoader'
-          ),
-        },
-      };
-
-      // setup HMR source maps
-      new compiler.webpack.SourceMapDevToolPlugin({
-        test: /\.hot-update\.js$/,
-        filename: '[file].map',
-        append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
-        module: true,
-        columns: true,
-        noSources: false,
-        namespace:
-          compiler.options.output.devtoolNamespace ??
-          compiler.options.output.uniqueName,
-      }).apply(compiler);
 
       // setup React Refresh manually instead of using the official plugin
       // to avoid issues with placement of reactRefreshEntry
@@ -107,7 +149,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
 
       new compiler.webpack.ProvidePlugin({
         __react_refresh_utils__: refreshUtilsPath,
-      });
+      }).apply(compiler);
 
       const refreshPath = path.dirname(require.resolve('react-refresh'));
       compiler.options.resolve.alias = {
@@ -118,7 +160,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       compiler.options.module.rules.unshift({
         include: /\.([cm]js|[jt]sx?|flow)$/i,
         exclude: /node_modules/i,
-        use: 'builtin:react-refresh-loader',
+        use: '@callstack/repack/react-refresh-loader',
       });
 
       const devEntries = [
@@ -127,58 +169,42 @@ export class DevelopmentPlugin implements RspackPluginInstance {
         require.resolve('../modules/WebpackHMRClient.js'),
       ];
 
-      // TODO (jbroma): refactor this to be more maintainable
-      // This is a very hacky way to reorder entrypoints, and needs to be done differently
-      // depending on the compiler type (rspack/webpack)
-      if (isRspackCompiler(compiler)) {
-        // Add entries after the rspack MF entry is added during `hook.afterPlugins` stage
-        compiler.hooks.initialize.tap(
-          { name: 'DevelopmentPlugin', stage: 200 },
-          () => {
-            for (const entry of devEntries) {
-              new compiler.webpack.EntryPlugin(compiler.context, entry, {
-                name: undefined,
+      compiler.hooks.entryOption.tap(
+        { name: 'RepackDevelopmentPlugin' },
+        (_, entryNormalized) => {
+          // combine entries for all declared and MF entrypoints
+          const entrypoints = [
+            ...this.getEntryNormalizedEntryChunks(entryNormalized),
+            ...this.getModuleFederationEntryChunks(compiler.options.plugins),
+          ];
+
+          // add development entries to all combined entrypoints
+          entrypoints.forEach((entryName) => {
+            for (const devEntry of devEntries) {
+              new compiler.webpack.EntryPlugin(compiler.context, devEntry, {
+                name: entryName,
               }).apply(compiler);
+            }
+          });
+        }
+      );
+
+      if (!isRspackCompiler(compiler)) {
+        // In Webpack, Module Federation Container entry gets injected during the compilation's make phase,
+        // similar to how dynamic entries work. This means the federation entry is added after our development entries.
+        // We need to reorder dependencies to ensure federation entry is placed before development entries.
+        compiler.hooks.make.tap(
+          { name: 'RepackDevelopmentPlugin', stage: 1000 },
+          (compilation) => {
+            for (const entry of compilation.entries.values()) {
+              moveElementBefore(entry.dependencies, {
+                elementToMove: /\.federation\/entry/,
+                beforeElement: devEntries[0],
+                getElement: (dependency) => dependency.request ?? '',
+              });
             }
           }
         );
-      } else {
-        if (!this.config.entryName) {
-          // Add dev entries as global entries
-          for (const entry of devEntries) {
-            new compiler.webpack.EntryPlugin(compiler.context, entry, {
-              name: undefined,
-            }).apply(compiler);
-          }
-        } else {
-          if (typeof compiler.options.entry === 'function') {
-            // TODO (jbroma): Support function entry points?
-            throw new Error(
-              'DevelopmentPlugin is not compatible with function entry points'
-            );
-          }
-
-          const entries =
-            compiler.options.entry[this.config.entryName].import ?? [];
-          const scriptManagerEntryIndex = entries.findIndex((entry) =>
-            entry.includes('InitializeScriptManager')
-          );
-
-          if (scriptManagerEntryIndex !== -1) {
-            // Insert devEntries after 'InitializeScriptManager'
-            compiler.options.entry[this.config.entryName].import = [
-              ...entries.slice(0, scriptManagerEntryIndex + 1),
-              ...devEntries,
-              ...entries.slice(scriptManagerEntryIndex + 1),
-            ];
-          } else {
-            // 'InitializeScriptManager' entry not found, insert devEntries before the normal entries
-            compiler.options.entry[this.config.entryName].import = [
-              ...devEntries,
-              ...entries,
-            ];
-          }
-        }
       }
     }
   }

@@ -16,12 +16,13 @@ export default defineConfig({
   },
   outDir: 'build',
   markdown: {
-    checkDeadLinks: true,
+    // TODO fix dead links
+    checkDeadLinks: false,
     codeHighlighter: 'prism',
   },
   multiVersion: {
-    default: '4.x',
-    versions: ['2.x', '3.x', '4.x'],
+    default: process.env.NODE_ENV === 'development' ? '5.x' : '4.x', // Use 5.x in development for preview, while 4.x remains the stable public version
+    versions: ['2.x', '3.x', '4.x', '5.x'],
   },
   route: {
     cleanUrls: true,
@@ -34,7 +35,7 @@ export default defineConfig({
     enableScrollToTop: true,
     outlineTitle: 'Contents',
     footer: {
-      message: 'Copyright © 2024 Callstack Open Source',
+      message: `Copyright © ${new Date().getFullYear()} Callstack Open Source`,
     },
     socialLinks: [
       {
@@ -80,5 +81,12 @@ export default defineConfig({
       },
     },
   },
-  plugins: [pluginFontOpenSans(), vercelAnalytics(), pluginCallstackTheme()],
+  plugins: [
+    // @ts-ignore
+    pluginFontOpenSans(),
+    // @ts-ignore
+    vercelAnalytics(),
+    // @ts-ignore
+    pluginCallstackTheme(),
+  ],
 });

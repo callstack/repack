@@ -2,7 +2,7 @@
   "name": "@callstack/repack-dev-server",
   "description": "A bundler-agnostic development server for React Native applications as part of @callstack/repack.",
   "license": "MIT",
-  "version": "5.0.0-rc.5",
+  "version": "5.0.0-rc.11",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -47,7 +47,7 @@
     "@types/node": "18",
     "@types/ws": "^8.5.3",
     "babel-plugin-add-import-extension": "^1.6.0",
-    "typescript": "^5.7.2"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "@react-native-community/cli-server-api": ">=13.6.4"

@@ -1,7 +1,7 @@
 import type { Config } from '@react-native-community/cli-types';
+import type { Configuration } from '@rspack/core';
 import * as colorette from 'colorette';
 import packageJson from '../../../package.json';
-import { VERBOSE_ENV_KEY } from '../../env.js';
 import {
   ConsoleReporter,
   FileReporter,
@@ -9,15 +9,16 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
+import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
+import { CLIError } from '../common/error.js';
 import {
   getMimeType,
-  getRspackConfigFilePath,
   parseFileUrl,
-  runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../consts.js';
-import type { StartArguments, StartCliOptions } from '../types.js';
+import { runAdbReverse } from '../common/index.js';
+import { setupEnvironment } from '../common/setupEnvironment.js';
+import type { StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
 
 /**
@@ -37,38 +38,26 @@ export async function start(
   cliConfig: Config,
   args: StartArguments
 ) {
-  const rspackConfigPath = getRspackConfigFilePath(
-    cliConfig.root,
-    args.config ?? args.webpackConfig
-  );
-  const { reversePort, ...restArgs } = args;
+  const detectedPlatforms = Object.keys(cliConfig.platforms);
 
-  const serverProtocol = args.https ? 'https' : 'http';
-  const serverHost = args.host || DEFAULT_HOSTNAME;
-  const serverPort = args.port ?? DEFAULT_PORT;
-  const serverURL = `${serverProtocol}://${serverHost}:${serverPort}`;
-  const showHttpRequests = args.verbose || args.logRequests;
+  if (args.platform && !detectedPlatforms.includes(args.platform)) {
+    throw new CLIError(`Unrecognized platform: ${args.platform}`);
+  }
 
-  const cliOptions: StartCliOptions = {
-    config: {
-      root: cliConfig.root,
-      platforms: Object.keys(cliConfig.platforms),
-      bundlerConfigPath: rspackConfigPath,
-      reactNativePath: cliConfig.reactNativePath,
-    },
+  const configs = await makeCompilerConfig<Configuration>({
+    args: args,
+    bundler: 'rspack',
     command: 'start',
-    arguments: {
-      start: { ...restArgs, host: serverHost, port: serverPort },
-    },
-  };
+    rootDir: cliConfig.root,
+    platforms: args.platform ? [args.platform] : detectedPlatforms,
+    reactNativePath: cliConfig.reactNativePath,
+  });
 
-  if (args.platform && !cliOptions.config.platforms.includes(args.platform)) {
-    throw new Error('Unrecognized platform: ' + args.platform);
-  }
+  // expose selected args as environment variables
+  setupEnvironment(args);
 
-  if (args.verbose) {
-    process.env[VERBOSE_ENV_KEY] = '1';
-  }
+  const devServerOptions = configs[0].devServer ?? {};
+  const showHttpRequests = args.verbose || args.logRequests;
 
   const reporter = composeReporters(
     [
@@ -82,21 +71,13 @@ export async function start(
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
   );
 
-  // @ts-ignore
-  const compiler = new Compiler(cliOptions, reporter);
+  const compiler = new Compiler(configs, reporter, cliConfig.root);
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
     options: {
-      rootDir: cliOptions.config.root,
-      host: serverHost,
-      port: serverPort,
-      https: args.https
-        ? {
-            cert: args.cert,
-            key: args.key,
-          }
-        : undefined,
+      ...devServerOptions,
+      rootDir: cliConfig.root,
       logRequests: showHttpRequests,
     },
     delegate: (ctx) => {
@@ -110,13 +91,15 @@ export async function start(
               ctx.broadcastToMessageClients({ method: 'devMenu' });
             },
             onOpenDevTools() {
-              void fetch(`${serverURL}/open-debugger`, {
+              fetch(`${ctx.options.url}/open-debugger`, {
                 method: 'POST',
+              }).catch(() => {
+                ctx.log.warn('Failed to open React Native DevTools');
               });
             },
             onAdbReverse() {
               void runAdbReverse({
-                port: serverPort,
+                port: ctx.options.port,
                 logger: ctx.log,
                 verbose: true,
               });
@@ -126,8 +109,12 @@ export async function start(
         );
       }
 
-      if (reversePort) {
-        void runAdbReverse({ logger: ctx.log, port: serverPort, wait: true });
+      if (args.reversePort) {
+        void runAdbReverse({
+          logger: ctx.log,
+          port: ctx.options.port,
+          wait: true,
+        });
       }
 
       compiler.setDevServerContext(ctx);
@@ -193,9 +180,7 @@ export async function start(
     },
   });
 
-  await compiler.init();
   await start();
-
   compiler.start();
 
   return {

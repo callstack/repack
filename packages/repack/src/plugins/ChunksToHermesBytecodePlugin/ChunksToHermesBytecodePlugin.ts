@@ -60,7 +60,7 @@ interface ChunksToHermesBytecodePluginConfig {
  * // ...
  * plugins: [
  *   new Repack.ChunksToHermesBytecodePlugin({
- *    enabled: mode === 'production' && !devServer,
+ *    enabled: mode === 'production',
  *    test: /\.(js)?bundle$/,
  *    exclude: /index.bundle$/,
  *   }),
@@ -70,12 +70,12 @@ interface ChunksToHermesBytecodePluginConfig {
  * @category Webpack Plugin
  */
 export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
-  private readonly name = 'ChunksToHermesBytecodePlugin';
-
   constructor(private config: ChunksToHermesBytecodePluginConfig) {}
 
   apply(compiler: Compiler) {
-    const logger = compiler.getInfrastructureLogger(this.name);
+    const logger = compiler.getInfrastructureLogger(
+      'RepackChunksToHermesBytecodePlugin'
+    );
 
     if (!this.config.enabled) {
       logger.debug('Skipping hermes compilation');
@@ -91,8 +91,6 @@ export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
      * ones present in build directory, which might result in transformation being
      * skipped when there is a untransformed bundle present in the build directory.
      */
-    // TODO Verify if this is still needed, maybe we can skip this
-    // @ts-expect-error compareBeforeEmit does not exist in rspack
     compiler.options.output.compareBeforeEmit = !!this.config.compareBeforeEmit;
 
     const reactNativePath =
@@ -103,7 +101,7 @@ export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
       this.config.hermesCLIPath || getHermesCLIPath(reactNativePath);
 
     compiler.hooks.assetEmitted.tapPromise(
-      { name: this.name, stage: 10 },
+      { name: 'RepackChunksToHermesBytecodePlugin', stage: 10 },
       async (file, { outputPath }) => {
         const shouldTransformAsset =
           compiler.webpack.ModuleFilenameHelpers.matchObject(

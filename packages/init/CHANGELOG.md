@@ -1,5 +1,35 @@
 # @callstack/repack-init
 
+## 5.0.0-rc.11
+
+### Minor Changes
+
+- [#990](https://github.com/callstack/repack/pull/990) [`36f14c1`](https://github.com/callstack/repack/commit/36f14c13849985e57fae32189348d1f321ba3a5e) Thanks [@jbroma](https://github.com/jbroma)! - Make template configs slimmer & Use static config by default
+
+### Patch Changes
+
+- [#943](https://github.com/callstack/repack/pull/943) [`a4a9801`](https://github.com/callstack/repack/commit/a4a9801c0ee473ad7e87095d9a829ecc47fd4056) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Hide `cd` log when project exsists
+
+- [#1001](https://github.com/callstack/repack/pull/1001) [`078bc4c`](https://github.com/callstack/repack/commit/078bc4c551811d114619b7632bb8da1ccd683b53) Thanks [@jbroma](https://github.com/jbroma)! - Fix init failing when ran from within the monorepo
+
+- [#998](https://github.com/callstack/repack/pull/998) [`2107f2c`](https://github.com/callstack/repack/commit/2107f2c9eef4de0aad047cdad207d0bc3460ae57) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Remove `checkReactNative` util function.
+
+## 5.0.0-rc.10
+
+## 5.0.0-rc.9
+
+## 5.0.0-rc.8
+
+## 5.0.0-rc.7
+
+### Minor Changes
+
+- [#869](https://github.com/callstack/repack/pull/869) [`30fa495`](https://github.com/callstack/repack/commit/30fa4955008460fc94926a8d2cefb2efbd198cb5) Thanks [@jbroma](https://github.com/jbroma)! - Use `@react-native-community/cli` explictly iOS project settings (through `CLI_PATH`).
+
+  Drop (unofficial) support for modyfing Android config for RN versions < 0.71.
+
+## 5.0.0-rc.6
+
 ## 5.0.0-rc.5
 
 ## 5.0.0-rc.4

@@ -1,15 +1,10 @@
 import type { Config } from '@react-native-community/cli-types';
 import webpack, { type Configuration } from 'webpack';
-import { VERBOSE_ENV_KEY } from '../../env.js';
-import {
-  getEnvOptions,
-  getWebpackConfigFilePath,
-  loadConfig,
-  normalizeStatsOptions,
-  writeStats,
-} from '../common/index.js';
-import type { BundleArguments, BundleCliOptions } from '../types.js';
-
+import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
+import { CLIError } from '../common/error.js';
+import { normalizeStatsOptions, writeStats } from '../common/index.js';
+import { setupEnvironment } from '../common/setupEnvironment.js';
+import type { BundleArguments } from '../types.js';
 /**
  * Bundle command for React Native Community CLI.
  * It runs Webpack, builds bundle and saves it alongside any other assets and Source Map
@@ -27,40 +22,25 @@ export async function bundle(
   cliConfig: Config,
   args: BundleArguments
 ) {
-  const webpackConfigPath = getWebpackConfigFilePath(
-    cliConfig.root,
-    args.config ?? args.webpackConfig
-  );
-
-  const cliOptions: BundleCliOptions = {
-    config: {
-      root: cliConfig.root,
-      platforms: Object.keys(cliConfig.platforms),
-      bundlerConfigPath: webpackConfigPath,
-      reactNativePath: cliConfig.reactNativePath,
-    },
+  const [config] = await makeCompilerConfig<Configuration>({
+    args: args,
+    bundler: 'webpack',
     command: 'bundle',
-    arguments: { bundle: args },
-  };
+    rootDir: cliConfig.root,
+    platforms: [args.platform],
+    reactNativePath: cliConfig.reactNativePath,
+  });
 
-  if (!args.entryFile) {
-    throw new Error("Option '--entry-file <path>' argument is missing");
+  // expose selected args as environment variables
+  setupEnvironment(args);
+
+  if (!args.entryFile && !config.entry) {
+    throw new CLIError("Option '--entry-file <path>' argument is missing");
   }
-
-  if (args.verbose) {
-    process.env[VERBOSE_ENV_KEY] = '1';
-  }
-
-  const envOptions = getEnvOptions(cliOptions);
-  const webpackConfig = await loadConfig<Configuration>(
-    webpackConfigPath,
-    envOptions
-  );
 
   const errorHandler = async (error: Error | null, stats?: webpack.Stats) => {
     if (error) {
-      console.error(error);
-      process.exit(2);
+      throw new CLIError(error.message);
     }
 
     if (stats?.hasErrors()) {
@@ -83,18 +63,17 @@ export async function bundle(
           rootDir: compiler.context,
         });
       } catch (e) {
-        console.error(String(e));
-        process.exit(2);
+        throw new CLIError(String(e));
       }
     }
   };
 
-  const compiler = webpack(webpackConfig);
+  const compiler = webpack(config);
 
   return new Promise<void>((resolve) => {
     if (args.watch) {
       compiler.hooks.watchClose.tap('bundle', resolve);
-      compiler.watch(webpackConfig.watchOptions ?? {}, errorHandler);
+      compiler.watch(config.watchOptions ?? {}, errorHandler);
     } else {
       compiler.run((error, stats) => {
         // make cache work: https://webpack.js.org/api/node/#run

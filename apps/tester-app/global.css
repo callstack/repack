@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom-style-test {
+  color: mediumpurple;
+}
+
+.calc-element {
+  width: calc(var(--my-variable) - (20px + 2rem));
+}
+
+:root {
+  --H: 200;
+  --S: 50%;
+  --L: 40%;
+  --color-values: purple;
+}
+
+.color-element {
+  background-color: hsl(
+    calc(var(--H) + 20),
+    calc(var(--S) - 10%),
+    calc(var(--L) + 30%)
+  );
+}

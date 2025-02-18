@@ -1,48 +1,32 @@
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
-import type { DevServerOptions } from '../types.js';
+import { BabelPlugin } from './BabelPlugin.js';
 import { DevelopmentPlugin } from './DevelopmentPlugin.js';
 import { LoggerPlugin, type LoggerPluginConfig } from './LoggerPlugin.js';
 import { NativeEntryPlugin } from './NativeEntryPlugin.js';
 import { OutputPlugin, type OutputPluginConfig } from './OutputPlugin/index.js';
 import { RepackTargetPlugin } from './RepackTargetPlugin/index.js';
+import { SourceMapPlugin } from './SourceMapPlugin.js';
 
 /**
  * {@link RepackPlugin} configuration options.
  */
 export interface RepackPluginConfig {
-  /** Context in which all resolution happens. Usually it's project root directory. */
-  context: string;
-
-  /** Compilation mode. */
-  mode: 'development' | 'production';
-
   /** Target application platform. */
-  platform: string;
+  platform?: string;
 
   /**
-   * Development server configuration options.
-   * Used to configure `@callstack/repack-dev-server`.
+   * Options to configure {@link LoggerPlugin}'s `output`.
    *
-   * If `undefined`, then development server will not be used.
+   * Setting this to `false` disables {@link LoggerPlugin}.
    */
-  devServer?: DevServerOptions;
-
-  /**
-   * Whether source maps should be generated. Defaults to `true`.
-   *
-   * Setting this to `false`, disables any source map generation.
-   */
-  sourceMaps?: boolean;
+  logger?: LoggerPluginConfig['output'] | boolean;
 
   /**
    * Output options specifying where to save generated bundle, source map and assets.
    *
    * Refer to {@link OutputPluginConfig.output} for more details.
    */
-  output: OutputPluginConfig['output'];
-
-  /** The entry chunk name, `main` by default. */
-  entryName?: string;
+  output?: OutputPluginConfig['output'];
 
   /**
    * Absolute location to JS file with initialization logic for React Native.
@@ -57,13 +41,6 @@ export interface RepackPluginConfig {
    * Refer to {@link OutputPluginConfig.extraChunks} for more details.
    */
   extraChunks?: OutputPluginConfig['extraChunks'];
-
-  /**
-   * Options to configure {@link LoggerPlugin}'s `output`.
-   *
-   * Setting this to `false` disables {@link LoggerPlugin}.
-   */
-  logger?: LoggerPluginConfig['output'] | boolean;
 }
 
 /**
@@ -78,15 +55,12 @@ export interface RepackPluginConfig {
  *   const {
  *     mode = 'development',
  *     platform,
- *     devServer = undefined,
  *   } = env;
  *
  *   return {
  *     plugins: [
  *       new Repack.RepackPlugin({
- *         mode,
  *         platform,
- *         devServer,
  *       }),
  *     ],
  *   };
@@ -114,95 +88,42 @@ export interface RepackPluginConfig {
  * @category Webpack Plugin
  */
 export class RepackPlugin implements RspackPluginInstance {
-  /**
-   * Constructs new `RepackPlugin`.
-   *
-   * @param config Plugin configuration options.
-   */
-  constructor(private config: RepackPluginConfig) {
-    this.config.sourceMaps = this.config.sourceMaps ?? true;
-    this.config.logger = this.config.logger ?? true;
+  constructor(private config: RepackPluginConfig = {}) {
+    if (this.config.logger === undefined || this.config.logger === true) {
+      this.config.logger = {};
+    }
   }
 
-  private getEntryName(compiler: Compiler) {
-    if (this.config.entryName) {
-      return this.config.entryName;
-    }
-
-    if (
-      typeof compiler.options.entry === 'object' &&
-      'main' in compiler.options.entry
-    ) {
-      return 'main';
-    }
-
-    return undefined;
-  }
-
-  /**
-   * Apply the plugin.
-   *
-   * @param compiler Webpack compiler instance.
-   */
   apply(compiler: Compiler) {
-    const entryName = this.getEntryName(compiler);
+    const platform = this.config.platform ?? (compiler.options.name as string);
 
     new compiler.webpack.DefinePlugin({
-      __DEV__: JSON.stringify(this.config.mode === 'development'),
+      __DEV__: JSON.stringify(compiler.options.mode === 'development'),
     }).apply(compiler);
 
+    new BabelPlugin().apply(compiler);
+
     new OutputPlugin({
-      platform: this.config.platform,
-      enabled: !this.config.devServer && !!entryName,
-      context: this.config.context,
-      output: this.config.output,
-      entryName: this.config.entryName,
+      platform,
+      enabled: !compiler.options.devServer,
+      context: compiler.options.context!,
+      output: this.config.output ?? {},
       extraChunks: this.config.extraChunks,
     }).apply(compiler);
 
-    if (entryName) {
-      new NativeEntryPlugin({
-        entryName,
-        initializeCoreLocation: this.config.initializeCore,
-      }).apply(compiler);
-    }
-
-    new RepackTargetPlugin({
-      hmr: this.config.devServer?.hmr,
+    new NativeEntryPlugin({
+      initializeCoreLocation: this.config.initializeCore,
     }).apply(compiler);
 
-    new DevelopmentPlugin({
-      devServer: this.config.devServer,
-      entryName,
-      platform: this.config.platform,
-    }).apply(compiler);
+    new RepackTargetPlugin().apply(compiler);
 
-    if (this.config.sourceMaps) {
-      // TODO Fix sourcemap directory structure
-      // Right now its very messy and not every node module is inside of the node module
-      // like React Devtools backend etc or some symilinked module appear with relative path
-      // We should normalize this through a custom handler and provide an output similar to Metro
-      new compiler.webpack.SourceMapDevToolPlugin({
-        test: /\.(js)?bundle$/,
-        filename: '[file].map',
-        append: `//# sourceMappingURL=[url]?platform=${this.config.platform}`,
-        module: true,
-        columns: true,
-        noSources: false,
-        namespace:
-          compiler.options.output.devtoolNamespace ??
-          compiler.options.output.uniqueName,
-      }).apply(compiler);
-    }
+    new DevelopmentPlugin({ platform }).apply(compiler);
 
-    if (this.config.logger) {
+    new SourceMapPlugin({ platform }).apply(compiler);
+
+    if (typeof this.config.logger === 'object') {
       new LoggerPlugin({
-        platform: this.config.platform,
-        devServerEnabled: Boolean(this.config.devServer),
-        output: {
-          console: true,
-          ...(typeof this.config.logger === 'object' ? this.config.logger : {}),
-        },
+        output: { console: true, ...this.config.logger },
       }).apply(compiler);
     }
   }

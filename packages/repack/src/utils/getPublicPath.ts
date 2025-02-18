@@ -1,46 +1,13 @@
-import type { DevServerOptions } from '../types.js';
-
-/** {@link getPublicPath} options. */
-export interface GetPublicPathOptions {
-  /** Target application platform. */
-  platform: string;
-
-  /** Development server configuration options. */
-  devServer?: DevServerOptions;
-}
-
 /**
- * Get Webpack's public path.
+ * @deprecated Since Re.Pack v5.0.0.
  *
- * @param options Options object.
- * @returns Value for Webpack's `output.publicPath` option.
- *
- * @category Webpack util
- *
- * @example Usage in Webpack config:
- * ```ts
- * import * as Repack from '@callstack/repack';
- *
- * export default (env) => {
- *   const {
- *     platform,
- *     devServer = undefined,
- *   } = env;
- *
- *   return {
- *     output: {
- *       publicPath: Repack.getPublicPath({ platform, devServer }),
- *     },
- *   };
- * };
- * ```
+ * You can safely remove this function call -
+ * the public path configuration is now automatically handled by Re.Pack with the same behavior.
  */
-export function getPublicPath(options?: GetPublicPathOptions) {
-  if (options?.devServer) {
-    const { port, host, https } = options.devServer;
-    return `${https ? 'https' : 'http'}://${host || 'localhost'}:${port}/${
-      options.platform
-    }/`;
-  }
-  return 'noop:///';
+export function getPublicPath() {
+  console.warn(
+    '[NOTICE] `getPublicPath` is deprecated since Re.Pack v5.0.0.\n' +
+      'You can safely remove this function call - the public path configuration is now automatically handled by Re.Pack with the same behavior.'
+  );
+  return 'DEPRECATED_GET_PUBLIC_PATH';
 }

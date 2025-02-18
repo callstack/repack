@@ -25,6 +25,10 @@ export default async function repackAssetsLoader(
   this.cacheable();
   const callback = this.async();
   const logger = this.getLogger('repackAssetsLoader');
+  const options = getOptions(this);
+
+  const isDev = !!this._compiler.options.devServer;
+  const platform = options.platform ?? (this._compiler.options.name as string);
 
   const readDirAsync: AsyncFS['readdir'] = util.promisify(this.fs.readdir);
   const readFileAsync: AsyncFS['readFile'] = util.promisify(this.fs.readFile);
@@ -32,8 +36,6 @@ export default async function repackAssetsLoader(
   logger.debug(`Processing asset ${this.resourcePath}`);
 
   try {
-    const options = getOptions(this);
-
     // defaults
     const scalableAssetExtensions =
       options.scalableAssetExtensions ?? SCALABLE_ASSETS;
@@ -57,7 +59,7 @@ export default async function repackAssetsLoader(
       .relative(this.rootContext, resourceAbsoluteDirname)
       .replace(new RegExp(`^[\\.\\${path.sep}]+`), '');
     const resourceExtensionType = path.extname(resourcePath).replace(/^\./, '');
-    const suffixPattern = `(@\\d+(\\.\\d+)?x)?(\\.(${options.platform}|native))?\\.${resourceExtensionType}$`;
+    const suffixPattern = `(@\\d+(\\.\\d+)?x)?(\\.(${platform}|native))?\\.${resourceExtensionType}$`;
     const resourceFilename = path
       .basename(resourcePath)
       .replace(new RegExp(suffixPattern), '');
@@ -81,7 +83,7 @@ export default async function repackAssetsLoader(
       resourceExtensionType,
       scalableAssetExtensions,
       scalableAssetResolutions,
-      options.platform,
+      platform,
       readDirAsync
     );
 
@@ -124,11 +126,7 @@ export default async function repackAssetsLoader(
 
         let destination: string;
 
-        if (
-          !options.devServerEnabled &&
-          !options.remote?.enabled &&
-          options.platform === 'android'
-        ) {
+        if (!isDev && !options.remote?.enabled && platform === 'android') {
           // found font family
           if (
             testXml.test(resourceNormalizedFilename) &&
@@ -209,7 +207,7 @@ export default async function repackAssetsLoader(
     logger.debug(
       `Resolved request ${this.resourcePath}`,
       JSON.stringify({
-        platform: options.platform,
+        platform,
         rootContext: this.rootContext,
         resourceNormalizedFilename,
         resourceFilename,
@@ -261,7 +259,7 @@ export default async function repackAssetsLoader(
             assetsDirname,
             pathSeparatorRegexp,
             publicPath: options.publicPath,
-            devServerEnabled: options.devServerEnabled,
+            isDev,
           },
           logger
         );

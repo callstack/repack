@@ -1,0 +1,65 @@
+{
+  "name": "@callstack/repack-plugin-nativewind",
+  "version": "5.0.0-rc.11",
+  "description": "A plugin for @callstack/repack that integrates NativeWind",
+  "author": "Boris Yankov <boris.yankov@callstack.com>",
+  "contributors": ["Jakub Romańczyk <jakub.romanczyk@callstack.com>"],
+  "license": "MIT",
+  "homepage": "https://github.com/callstack/repack",
+  "repository": "github:callstack/repack",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist", "loader"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./loader": {
+      "types": "./loader/index.d.ts",
+      "default": "./loader/index.js"
+    }
+  },
+  "keywords": [
+    "repack",
+    "re.pack",
+    "plugin",
+    "repack-plugin",
+    "nativewind",
+    "tailwind",
+    "tailwindcss"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "dedent": "^0.7.0"
+  },
+  "peerDependencies": {
+    "@callstack/repack": ">=5.0.0-rc.11",
+    "nativewind": ">=4.1.23",
+    "react-native-css-interop": ">=0.1.22",
+    "postcss": ">=8.4.31",
+    "postcss-loader": ">=8.1.1",
+    "autoprefixer": ">=10.4.16",
+    "tailwindcss": ">=3.4.11"
+  },
+  "devDependencies": {
+    "@callstack/repack": "workspace:*",
+    "@rspack/core": "catalog:",
+    "@types/dedent": "0.7.2",
+    "@types/node": "^18",
+    "nativewind": "^4.1.23",
+    "react-native-css-interop": "^0.1.22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit"
+  }
+}

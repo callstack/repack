@@ -1,5 +1,7 @@
 const { configureProjects } = require('react-native-test-app');
 
+const useWebpack = Boolean(process.env.USE_WEBPACK);
+
 module.exports = {
   project: configureProjects({
     android: {
@@ -9,5 +11,7 @@ module.exports = {
       sourceDir: 'ios',
     },
   }),
-  commands: require('@callstack/repack/commands/rspack'),
+  commands: useWebpack
+    ? require('@callstack/repack/commands/webpack')
+    : require('@callstack/repack/commands/rspack'),
 };

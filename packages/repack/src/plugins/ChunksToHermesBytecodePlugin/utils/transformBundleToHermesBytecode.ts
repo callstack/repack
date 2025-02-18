@@ -49,7 +49,7 @@ export const transformBundleToHermesBytecode = async ({
   } catch (error) {
     const message = (error as Error).toString();
     throw new Error(
-      `ChunksToHermesBytecodePlugin: Failed to transform bundle ${bundlePath}. Reason:\n${message})`
+      `[RepackChunksToHermesBytecodePlugin] Failed to transform bundle ${bundlePath}. Reason:\n${message})`
     );
   }
 };

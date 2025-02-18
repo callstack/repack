@@ -1,14 +1,17 @@
 import { Appearance } from 'react-native';
 
-import { AppContainer } from './ui/AppContainer';
-import { Section } from './ui/Section';
-import { SectionContainer } from './ui/SectionContainer';
+// nativewind styles
+import '../global.css';
 
 import { AssetsTestContainer } from './assetsTest/AssetsTestContainer';
 import { AsyncContainer } from './asyncChunks/AsyncContainer';
 import { MiniAppsContainer } from './miniapp/MiniAppsContainer';
+import { NativeWindView } from './nativewind/NativeWindView';
 import { ReanimatedBox } from './reanimated/ReanimatedBox';
 import { RemoteContainer } from './remoteChunks/RemoteContainer';
+import { AppContainer } from './ui/AppContainer';
+import { Section } from './ui/Section';
+import { SectionContainer } from './ui/SectionContainer';
 
 Appearance.setColorScheme('light');
 
@@ -30,6 +33,9 @@ const App = () => {
         </Section>
         <Section title="Reanimated test">
           <ReanimatedBox />
+        </Section>
+        <Section title="NativeWind test">
+          <NativeWindView />
         </Section>
       </SectionContainer>
     </AppContainer>

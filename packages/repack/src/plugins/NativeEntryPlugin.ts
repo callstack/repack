@@ -1,17 +1,13 @@
 import path from 'node:path';
 import type {
   Compiler,
-  EntryStaticNormalized,
   ResolveAlias,
   RspackPluginInstance,
 } from '@rspack/core';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
+import { moveElementBefore } from './utils/moveElementBefore.js';
 
 export interface NativeEntryPluginConfig {
-  /**
-   * Name of the chunk that is the first to load on the device.
-   */
-  entryName: string;
   /**
    * Absolute location to JS file with initialization logic for React Native.
    * Useful if you want to built for out-of-tree platforms.
@@ -21,6 +17,7 @@ export interface NativeEntryPluginConfig {
 
 export class NativeEntryPlugin implements RspackPluginInstance {
   constructor(private config: NativeEntryPluginConfig) {}
+
   private getReactNativePath(candidate: ResolveAlias[string] | undefined) {
     let reactNativePath: string | undefined;
     if (typeof candidate === 'string') {
@@ -56,57 +53,51 @@ export class NativeEntryPlugin implements RspackPluginInstance {
       '../modules/InitializeScriptManager.js'
     );
 
-    const entries = [
+    const nativeEntries = [
       ...getReactNativePolyfills(),
       initializeCorePath,
       initializeScriptManagerPath,
     ];
 
-    // Initialization of MF entry requires setImmediate to be defined
-    // but in React Native it happens during InitializeCore so we need
-    // to shim it here to prevent ReferenceError
-    // TBD if this has any sort of impact
-    new compiler.webpack.EntryPlugin(
-      compiler.context,
-      'data:text/javascript,globalThis.setImmediate = globalThis.setImmediate || function(){ /* noop */ };',
-      { name: undefined }
-    ).apply(compiler);
+    compiler.hooks.entryOption.tap(
+      { name: 'RepackNativeEntryPlugin', before: 'RepackDevelopmentPlugin' },
+      (_, entry) => {
+        if (typeof entry === 'function') {
+          throw new Error(
+            '[RepackNativeEntryPlugin] Dynamic entry (function) is not supported.'
+          );
+        }
 
-    // TODO (jbroma): refactor this to be more maintainable
-    // This is a very hacky way to reorder entrypoints, and needs to be done differently
-    // depending on the compiler type (rspack/webpack)
-    if (isRspackCompiler(compiler)) {
-      // Add entries after the rspack MF entry is added during `hook.afterPlugins` stage
-      compiler.hooks.initialize.tap(
-        { name: 'NativeEntryPlugin', stage: 100 },
-        () => {
-          for (const entry of entries) {
-            new compiler.webpack.EntryPlugin(compiler.context, entry, {
-              name: undefined,
+        Object.keys(entry).forEach((entryName) => {
+          // runtime property defines the chunk name, otherwise it defaults to the entry key
+          const entryChunkName = entry[entryName].runtime || entryName;
+
+          // add native entries to all declared entry points
+          for (const nativeEntry of nativeEntries) {
+            new compiler.webpack.EntryPlugin(compiler.context, nativeEntry, {
+              name: entryChunkName, // prepends the entry to the chunk of specified name
             }).apply(compiler);
+          }
+        });
+      }
+    );
+
+    if (!isRspackCompiler(compiler)) {
+      // In Webpack, Module Federation Container entry gets injected during the compilation's make phase,
+      // similar to how dynamic entries work. This means the federation entry is added after our native entries.
+      // We need to reorder dependencies to ensure federation entry is placed before native entries.
+      compiler.hooks.make.tap(
+        { name: 'RepackNativeEntryPlugin', stage: 1000 },
+        (compilation) => {
+          for (const entry of compilation.entries.values()) {
+            moveElementBefore(entry.dependencies, {
+              elementToMove: /\.federation\/entry/,
+              beforeElement: nativeEntries[0],
+              getElement: (dependency) => dependency.request ?? '',
+            });
           }
         }
       );
-    } else {
-      const prependEntries = (entryConfig: EntryStaticNormalized) => {
-        if (!(this.config.entryName in entryConfig)) {
-          throw new Error(
-            `Entry '${this.config.entryName}' does not exist in the entry configuration`
-          );
-        }
-        entryConfig[this.config.entryName].import = [
-          ...entries,
-          ...(entryConfig[this.config.entryName].import ?? []),
-        ];
-        return entryConfig;
-      };
-
-      if (typeof compiler.options.entry === 'function') {
-        const dynamicEntry = compiler.options.entry;
-        compiler.options.entry = () => dynamicEntry().then(prependEntries);
-      } else {
-        compiler.options.entry = prependEntries(compiler.options.entry);
-      }
     }
   }
 }

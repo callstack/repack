@@ -12,13 +12,13 @@
   "dependencies": {
     "@callstack/rspress-theme": "^0.0.2",
     "rsbuild-plugin-open-graph": "^1.0.2",
-    "rspress": "1.33.1",
+    "rspress": "1.41.2",
     "rspress-plugin-font-open-sans": "^1.0.0",
     "rspress-plugin-vercel-analytics": "^0.3.0"
   },
   "devDependencies": {
     "@types/node": "^18",
     "@types/react": "^18.2.64",
-    "typescript": "^5.7.2"
+    "typescript": "catalog:"
   }
 }

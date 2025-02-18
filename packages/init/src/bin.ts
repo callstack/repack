@@ -1,13 +1,9 @@
 #!/usr/bin/env node
 
-import { createRequire } from 'node:module';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-
+import info from '../package.json' assert { type: 'json' };
 import run from './index.js';
-
-const require = createRequire(import.meta.url);
-const info = require('../package.json');
 
 const argv = yargs(hideBin(process.argv))
   .usage(`Usage: ${info.name} [options]`)
@@ -16,7 +12,6 @@ const argv = yargs(hideBin(process.argv))
     type: 'string',
     choices: ['rspack', 'webpack'],
     description: 'Specify the bundler to use',
-    default: 'rspack',
   })
   .option('custom-version', {
     alias: 'c',

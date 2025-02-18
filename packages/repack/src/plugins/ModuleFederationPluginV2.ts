@@ -1,6 +1,13 @@
 import type { moduleFederationPlugin as MF } from '@module-federation/sdk';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import { name as isIdentifier } from 'estree-util-is-identifier-name';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
+
+type JsModuleDescriptor = {
+  identifier: string;
+  name: string;
+  id?: string;
+};
 
 /**
  * {@link ModuleFederationPlugin} configuration options.
@@ -47,7 +54,7 @@ export interface ModuleFederationPluginV2Config
  * import * as Repack from '@callstack/repack';
  *
  * new Repack.plugins.ModuleFederationPlugin({
- *   name: 'host,
+ *   name: 'host',
  * });
  * ```
  *
@@ -56,7 +63,7 @@ export interface ModuleFederationPluginV2Config
  * import * as Repack from '@callstack/repack';
  *
  * new Repack.plugins.ModuleFederationPlugin({
- *   name: 'host,
+ *   name: 'host',
  *   shared: {
  *     react: Repack.Federated.SHARED_REACT,
  *     'react-native': Repack.Federated.SHARED_REACT,
@@ -105,12 +112,25 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     ];
   }
 
+  private validateModuleFederationContainerName(name: string | undefined) {
+    if (!name) return;
+    if (!isIdentifier(name)) {
+      const error = new Error(
+        `[RepackModuleFederationPlugin] The container's name: '${name}' must be a valid JavaScript identifier. ` +
+          'Please correct it to proceed. For more information, see: https://developer.mozilla.org/en-US/docs/Glossary/Identifier'
+      );
+      // remove the stack trace to make the error more readable
+      error.stack = undefined;
+      throw error;
+    }
+  }
+
   private ensureModuleFederationPackageInstalled(context: string) {
     try {
       require.resolve('@module-federation/enhanced', { paths: [context] });
     } catch {
       throw new Error(
-        "ModuleFederationPlugin requires '@module-federation/enhanced' to be present in your project. " +
+        "[RepackModuleFederationPlugin] Dependency '@module-federation/enhanced' is required, but not found in your project. " +
           'Did you forget to install it?'
       );
     }
@@ -244,15 +264,22 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     // in RN env since we override the loadEntry logic through a hook
     // https://github.com/module-federation/core/blob/fa7a0bd20eb64eccd6648fea340c6078a2268e39/packages/runtime/src/utils/load.ts#L28-L37
     compiler.options.ignoreWarnings.push((warning) => {
-      // @ts-expect-error moduleDescriptor is present in the warning object
-      const modulePath = warning.moduleDescriptor.name;
-      const moduleName = '@module-federation/runtime/dist/index.cjs.js';
-      const isMF2Runtime = modulePath.endsWith(moduleName);
-      const requestExpressionWarning =
-        /Critical dependency: the request of a dependency is an expression/;
+      if ('moduleDescriptor' in warning) {
+        const moduleDescriptor = warning.moduleDescriptor as JsModuleDescriptor;
 
-      if (isMF2Runtime && requestExpressionWarning.test(warning.message)) {
-        return true;
+        // warning can come from either runtime or runtime-core (in newer versions of MF2)
+        const isMF2Runtime = moduleDescriptor.name.endsWith(
+          '@module-federation/runtime/dist/index.cjs.js'
+        );
+        const isMF2RuntimeCore = moduleDescriptor.name.endsWith(
+          '@module-federation/runtime-core/dist/index.cjs.js'
+        );
+
+        if (isMF2Runtime || isMF2RuntimeCore) {
+          const requestExpressionWarning =
+            /Critical dependency: the request of a dependency is an expression/;
+          return requestExpressionWarning.test(warning.message);
+        }
       }
 
       return false;
@@ -260,18 +287,11 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
   }
 
   apply(compiler: Compiler) {
+    this.validateModuleFederationContainerName(this.config.name);
     this.ensureModuleFederationPackageInstalled(compiler.context);
     this.setupIgnoredWarnings(compiler);
 
     const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
-
-    const libraryConfig = this.config.exposes
-      ? {
-          name: this.config.name,
-          type: 'self',
-          ...this.config.library,
-        }
-      : undefined;
 
     const sharedConfig = this.adaptSharedDependencies(
       this.config.shared ?? this.getDefaultSharedDependencies()
@@ -284,9 +304,12 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
       this.config.runtimePlugins
     );
 
+    // NOTE: we keep the default library config since it's the most compatible
+    // Default library config uses 'externalType': 'script' and 'type': 'var'
+    // var works identical to 'self' since declaring var in a global scope is
+    // equal to assigning to the globalObject (normalized by Re.Pack to 'self')
     const config: MF.ModuleFederationPluginOptions = {
       ...this.config,
-      library: libraryConfig,
       shared: sharedConfig,
       shareStrategy: shareStrategyConfig,
       runtimePlugins: runtimePluginsConfig,

@@ -3,7 +3,11 @@ name: Test
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'website/**'
   pull_request:
+    paths-ignore:
+      - 'website/**'
   workflow_dispatch:
 
 jobs:

@@ -2,47 +2,51 @@ import fs from 'node:fs';
 import path from 'node:path';
 // @ts-expect-error type-only import
 import type { Server } from '@callstack/repack-dev-server';
-import { type Configuration, rspack } from '@rspack/core';
+import { rspack } from '@rspack/core';
 import type {
   MultiCompiler,
+  MultiRspackOptions,
   StatsCompilation,
-  WatchOptions,
 } from '@rspack/core';
 import memfs from 'memfs';
 import type { Reporter } from '../../logging/types.js';
 import type { HMRMessageBody } from '../../types.js';
-import {
-  adaptFilenameToPlatform,
-  getEnvOptions,
-  loadConfig,
-  runAdbReverse,
-} from '../common/index.js';
+import { CLIError } from '../common/error.js';
+import { adaptFilenameToPlatform, runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
-import type { StartCliOptions } from '../types.js';
-import type { CompilerAsset, MultiWatching } from './types.js';
+import type { CompilerAsset } from './types.js';
 
 export class Compiler {
+  compiler: MultiCompiler;
+  filesystem: memfs.IFs;
   platforms: string[];
   assetsCache: Record<string, Record<string, CompilerAsset> | undefined> = {};
   statsCache: Record<string, StatsCompilation | undefined> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
   isCompilationInProgress = false;
-  watchOptions: WatchOptions = {};
-  watching: MultiWatching | null = null;
   // late-init
-  compiler!: MultiCompiler;
-  filesystem!: memfs.IFs;
   devServerContext!: Server.DelegateContext;
 
   constructor(
-    private cliOptions: StartCliOptions,
-    private reporter: Reporter
+    configs: MultiRspackOptions,
+    private reporter: Reporter,
+    private rootDir: string
   ) {
-    if (cliOptions.arguments.start.platform) {
-      this.platforms = [cliOptions.arguments.start.platform];
-    } else {
-      this.platforms = cliOptions.config.platforms;
-    }
+    this.compiler = rspack.rspack(configs);
+    this.platforms = configs.map((config) => config.name as string);
+    this.filesystem = memfs.createFsFromVolume(new memfs.Volume());
+    // @ts-expect-error memfs is compatible enough
+    this.compiler.outputFileSystem = this.filesystem;
+
+    this.setupCompiler();
+  }
+
+  get devServerOptions() {
+    return this.compiler.compilers[0].options.devServer ?? {};
+  }
+
+  get watchOptions() {
+    return this.compiler.compilers[0].options.watchOptions ?? {};
   }
 
   private callPendingResolvers(platform: string, error?: Error) {
@@ -54,34 +58,13 @@ export class Compiler {
     this.devServerContext = ctx;
   }
 
-  async init() {
-    const webpackEnvOptions = getEnvOptions(this.cliOptions);
-    const configs = await Promise.all(
-      this.platforms.map(async (platform) => {
-        const env = { ...webpackEnvOptions, platform };
-        const config = await loadConfig<Configuration>(
-          this.cliOptions.config.bundlerConfigPath,
-          env
-        );
-
-        config.name = platform;
-        return config;
-      })
-    );
-
-    this.compiler = rspack.rspack(configs);
-    this.filesystem = memfs.createFsFromVolume(new memfs.Volume());
-    // @ts-expect-error memfs is compatible enough
-    this.compiler.outputFileSystem = this.filesystem;
-
-    this.watchOptions = configs[0].watchOptions ?? {};
-
+  private setupCompiler() {
     this.compiler.hooks.watchRun.tap('repack:watch', () => {
       this.isCompilationInProgress = true;
       this.platforms.forEach((platform) => {
         if (platform === 'android') {
           void runAdbReverse({
-            port: this.cliOptions.arguments.start.port!,
+            port: this.devServerContext.options.port,
             logger: this.devServerContext.log,
           });
         }
@@ -206,7 +189,7 @@ export class Compiler {
       message: ['Starting build for platforms:', this.platforms.join(', ')],
     });
 
-    this.watching = this.compiler.watch(this.watchOptions, (error) => {
+    this.compiler.watch(this.watchOptions, (error) => {
       if (!error) return;
       this.platforms.forEach((platform) => {
         this.callPendingResolvers(platform, error);
@@ -258,18 +241,18 @@ export class Compiler {
   ): Promise<string | Buffer> {
     if (DEV_SERVER_ASSET_TYPES.test(filename)) {
       if (!platform) {
-        throw new Error(`Cannot detect platform for ${filename}`);
+        throw new CLIError(`Cannot detect platform for ${filename}`);
       }
       const asset = await this.getAsset(filename, platform);
       return asset.data;
     }
 
     try {
-      const filePath = path.join(this.cliOptions.config.root, filename);
+      const filePath = path.join(this.rootDir, filename);
       const source = await fs.promises.readFile(filePath, 'utf8');
       return source;
     } catch {
-      throw new Error(`File ${filename} not found`);
+      throw new CLIError(`File ${filename} not found`);
     }
   }
 
@@ -278,7 +261,7 @@ export class Compiler {
     platform: string | undefined
   ): Promise<string | Buffer> {
     if (!platform) {
-      throw new Error(
+      throw new CLIError(
         `Cannot determine platform for source map of ${filename}`
       );
     }
@@ -288,7 +271,7 @@ export class Compiler {
       let sourceMapFilename = info.related?.sourceMap;
 
       if (!sourceMapFilename) {
-        throw new Error(
+        throw new CLIError(
           `Cannot determine source map filename for ${filename} for ${platform}`
         );
       }
@@ -300,7 +283,9 @@ export class Compiler {
       const sourceMap = await this.getAsset(sourceMapFilename, platform);
       return sourceMap.data;
     } catch {
-      throw new Error(`Source map for ${filename} for ${platform} is missing`);
+      throw new CLIError(
+        `Source map for ${filename} for ${platform} is missing`
+      );
     }
   }
 

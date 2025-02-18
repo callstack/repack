@@ -1,15 +1,20 @@
-import chalk from 'chalk';
+import { log } from '@clack/prompts';
 
 let verbose = false;
 
+type LogFn = (message: string) => void;
+
+const verboseWrapper = (logFn: LogFn) => {
+  return (message: string) => (verbose ? logFn(message) : undefined);
+};
+
 const logger = {
-  success: (message: string) => console.log(`${chalk.green('✔')} ${message}`),
-  warn: (message: string) => console.log(`${chalk.yellow('⚑')} ${message}`),
-  error: (message: string) => console.log(`${chalk.red('✖')} ${message}`),
-  fatal: (message: string) => console.log(`\n💥 ${chalk.redBright(message)}`),
-  done: (message: string) => console.log(`\n🎉 ${chalk.greenBright(message)}`),
-  info: (message: string) =>
-    verbose && console.log(`${chalk.blue('ℹ')} ${message}`),
+  error: verboseWrapper(log.error),
+  info: verboseWrapper(log.info),
+  success: verboseWrapper(log.success),
+  warn: verboseWrapper(log.warn),
+  // always log fatal errors
+  fatal: log.error,
 };
 
 export default logger;

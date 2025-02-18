@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import dedent from 'dedent';
 import xcode from 'xcode';
-
+import { RepackInitError } from '../utils/error.js';
 import logger from '../utils/logger.js';
 
 interface ShellScriptBuildPhase {
@@ -16,7 +17,7 @@ function findProjectPbxProjPath(cwd: string) {
   const xcodeProjDir = iosDir.find((dir) => dir.endsWith('.xcodeproj'));
 
   if (!xcodeProjDir) {
-    throw new Error('No directory with "project.pbxproj" found');
+    throw new RepackInitError('No directory with "project.pbxproj" found');
   }
 
   const pbxprojPath = path.join(iosPath, xcodeProjDir, 'project.pbxproj');
@@ -33,7 +34,7 @@ function getBundleReactNativePhase(
   );
 
   if (!bundleReactNative) {
-    throw new Error(
+    throw new RepackInitError(
       `Couldn't find a build phase "Bundle React Native code and images"`
     );
   }
@@ -41,24 +42,29 @@ function getBundleReactNativePhase(
   return bundleReactNative;
 }
 
-function modifyBundleReactNativeShellScript(
+function replaceBundleReactNativeShellScript(
   phase: ShellScriptBuildPhase
 ): ShellScriptBuildPhase {
-  const shellScriptContent = phase.shellScript;
-  const shellScriptContentLines = shellScriptContent.split('\\n');
+  const script = dedent`
+    set -e
 
-  const bundleCommand = 'export BUNDLE_COMMAND=webpack-bundle';
+    if [[ -f "$PODS_ROOT/../.xcode.env" ]]; then
+    source "$PODS_ROOT/../.xcode.env"
+    fi
+    if [[ -f "$PODS_ROOT/../.xcode.env.local" ]]; then
+    source "$PODS_ROOT/../.xcode.env.local"
+    fi
 
-  if (shellScriptContentLines.includes(bundleCommand)) {
-    logger.info(
-      `${phase.name} phase in project.pbxproj already contains ${bundleCommand}`
-    );
-    return phase;
-  }
+    export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('@react-native-community/cli/package.json')) + '/build/bin.js'")"
 
-  shellScriptContentLines.splice(1, 0, '', bundleCommand);
+    WITH_ENVIRONMENT="$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
+    REACT_NATIVE_XCODE="$REACT_NATIVE_PATH/scripts/react-native-xcode.sh"
 
-  phase.shellScript = shellScriptContentLines.join('\\n');
+    /bin/sh -c "$WITH_ENVIRONMENT $REACT_NATIVE_XCODE"
+  `;
+
+  phase.shellScript = `"${script.replace(/"/g, '\\"').split('\n').join('\\n')}\\n"`;
+
   return phase;
 }
 
@@ -67,7 +73,7 @@ function modifyPbxprojConfig(pbxprojPath: string) {
   project.parseSync();
 
   const bundleReactNativePhase = getBundleReactNativePhase(project);
-  modifyBundleReactNativeShellScript(bundleReactNativePhase);
+  replaceBundleReactNativeShellScript(bundleReactNativePhase);
 
   return project.writeSync();
 }
@@ -83,7 +89,7 @@ export default function modifyIOS(cwd: string) {
   const relativeProjectPbxProjPath = path.relative(cwd, projectPbxProjPath);
 
   if (!fs.existsSync(projectPbxProjPath)) {
-    throw Error(
+    throw new RepackInitError(
       `${relativeProjectPbxProjPath} not found. Make sure you are running this command from the root of your project`
     );
   }
@@ -93,7 +99,8 @@ export default function modifyIOS(cwd: string) {
   const updatedConfig = modifyPbxprojConfig(projectPbxProjPath);
 
   fs.writeFileSync(projectPbxProjPath, updatedConfig);
-  logger.success(
-    `Added "webpack-bundle" as BUNDLE_COMMAND to build phase shellScript in ${relativeProjectPbxProjPath}`
+
+  logger.info(
+    `Added "@react-native-community/cli" as CLI_PATH to build phase shellScript in ${relativeProjectPbxProjPath}`
   );
 }

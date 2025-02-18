@@ -15,10 +15,6 @@ export type GenericFilter = Array<string | RegExp>;
  * {@link LoggerPlugin} configuration options.
  */
 export interface LoggerPluginConfig {
-  /** Target application platform. */
-  platform: string;
-  /** Whether development server is running/enabled. */
-  devServerEnabled?: boolean;
   /** Logging output config. */
   output?: {
     /** Whether to log to console. */
@@ -54,9 +50,7 @@ export class LoggerPlugin implements RspackPluginInstance {
    * @param config Plugin configuration options.
    */
   constructor(private config: LoggerPluginConfig) {
-    if (this.config.output === undefined) {
-      this.config.output = { console: true };
-    }
+    this.config.output = this.config.output ?? { console: true };
 
     const isTruthyEnv = (env: string | undefined) => {
       return !!env && env !== 'false' && env !== '0';
@@ -139,7 +133,7 @@ export class LoggerPlugin implements RspackPluginInstance {
     }
 
     compiler.hooks.infrastructureLog.tap(
-      'LoggerPlugin',
+      'RepackLoggerPlugin',
       (issuer, type, args) => {
         const entry = this.createEntry(issuer, type, args);
         if (entry) {
@@ -149,7 +143,7 @@ export class LoggerPlugin implements RspackPluginInstance {
       }
     );
 
-    compiler.hooks.thisCompilation.tap('LoggerPlugin', (compilation) => {
+    compiler.hooks.thisCompilation.tap('RepackLoggerPlugin', (compilation) => {
       compilation.hooks.log.intercept({
         call: (issuer, { time, type, args }) => {
           const entry = this.createEntry(issuer, type, args, time);
@@ -160,8 +154,8 @@ export class LoggerPlugin implements RspackPluginInstance {
       });
     });
 
-    compiler.hooks.done.tap('LoggerPlugin', (stats) => {
-      if (this.config.devServerEnabled) {
+    compiler.hooks.done.tap('RepackLoggerPlugin', (stats) => {
+      if (compiler.options.devServer) {
         const { time, errors, warnings } = stats.toJson({
           all: false,
           timings: true,

@@ -1,58 +1,80 @@
-import addDependencies from './tasks/addDependencies.js';
-import checkPackageManager from './tasks/checkPackageManager.js';
-import checkReactNative from './tasks/checkReactNative.js';
-import createBundlerConfig from './tasks/createBundlerConfig.js';
-import ensureProjectExists from './tasks/ensureProjectExists.js';
-import handleReactNativeConfig from './tasks/handleReactNativeConfig.js';
-import modifyAndroid from './tasks/modifyAndroid.js';
-import modifyIOS from './tasks/modifyIOS.js';
+import path from 'node:path';
 
+import checkPackageManager from './tasks/checkPackageManager.js';
+import checkProjectExists from './tasks/checkProjectExists.js';
+import checkRepositoryExists from './tasks/checkRepositoryExists.js';
+import collectProjectOptions from './tasks/collectProjectOptions.js';
+import completeSetup from './tasks/completeSetup.js';
+import createBundlerConfig from './tasks/createBundlerConfig.js';
+import createNewProject from './tasks/createNewProject.js';
+import modifyDependencies from './tasks/modifyDependencies.js';
+import modifyIOS from './tasks/modifyIOS.js';
+import modifyReactNativeConfig from './tasks/modifyReactNativeConfig.js';
+import welcomeMessage from './tasks/welcomeMessage.js';
 import logger, { enableVerboseLogging } from './utils/logger.js';
+import { cancelPromptAndExit } from './utils/prompts.js';
+import spinner from './utils/spinner.js';
 
 interface Options {
-  bundler: 'rspack' | 'webpack';
+  bundler: 'rspack' | 'webpack' | undefined;
   entry: string;
-  repackVersion?: string;
+  repackVersion: string | undefined;
   templateType: 'mjs' | 'cjs';
   verbose: boolean;
 }
 
-export default async function run({
-  bundler,
-  entry,
-  repackVersion,
-  templateType,
-  verbose,
-}: Options) {
-  if (verbose) {
+export default async function run(options: Options) {
+  const cwd = process.env.PWD ?? process.cwd();
+
+  if (options.verbose) {
     enableVerboseLogging();
   }
 
   try {
-    const { cwd, rootDir } = await ensureProjectExists();
-    const packageManager = await checkPackageManager(rootDir);
-    const reactNativeVersion = checkReactNative(cwd);
+    welcomeMessage();
 
-    await addDependencies(bundler, cwd, packageManager, repackVersion);
+    const repoRootDir = await checkRepositoryExists(cwd);
+    const projectExists = checkProjectExists(cwd);
+    const packageManager = await checkPackageManager(repoRootDir);
 
-    await createBundlerConfig(bundler, cwd, templateType, entry);
+    const { bundler, projectName, shouldOverrideProject } =
+      await collectProjectOptions(cwd, projectExists, {
+        bundler: options.bundler,
+      });
 
-    handleReactNativeConfig(bundler, cwd);
+    spinner.start();
 
-    modifyAndroid(cwd, reactNativeVersion);
+    if (!projectExists) {
+      await createNewProject(
+        cwd,
+        projectName,
+        packageManager,
+        shouldOverrideProject
+      );
+    }
 
-    modifyIOS(cwd);
+    const rootDir = path.join(cwd, projectName!);
 
-    logger.done('Setup complete. Thanks for using Re.Pack!');
+    await modifyDependencies(bundler, rootDir, options.repackVersion);
+
+    await createBundlerConfig(
+      bundler,
+      rootDir,
+      options.templateType,
+      options.entry
+    );
+
+    modifyReactNativeConfig(bundler, rootDir);
+
+    modifyIOS(rootDir);
+
+    spinner.stop('Setup complete.');
+
+    completeSetup(projectName, packageManager, projectExists);
   } catch (error) {
     logger.fatal('Re.Pack setup failed\n\nWhat went wrong:');
 
-    if (error instanceof Error) {
-      logger.error(error.message);
-    } else {
-      logger.error(error as any);
-    }
-
-    process.exit(1);
+    const message = error instanceof Error ? error.message : String(error);
+    cancelPromptAndExit(message);
   }
 }
