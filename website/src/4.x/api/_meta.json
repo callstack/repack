@@ -11,19 +11,16 @@
   {
     "type": "dir",
     "name": "repack",
-    "label": "@callstack/repack",
-    "collapsed": true
+    "label": "@callstack/repack"
   },
   {
     "type": "dir",
     "name": "repack/client",
-    "label": "@callstack/repack/client",
-    "collapsed": true
+    "label": "@callstack/repack/client"
   },
   {
     "type": "dir",
     "name": "dev-server",
-    "label": "@callstack/repack-dev-server",
-    "collapsed": true
+    "label": "@callstack/repack-dev-server"
   }
 ]
