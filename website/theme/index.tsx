@@ -4,7 +4,7 @@ import Theme, {
   Badge,
   Link,
   PrevNextPage,
-  getCustomMDXComponent,
+  getCustomMDXComponent
 } from 'rspress/theme';
 
 const VersionBadge = () => {
