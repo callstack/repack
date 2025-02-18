@@ -12,7 +12,6 @@ class HMRClient {
   // state
   isFirstCompilation = true;
   lastCompilationHash: string | null = null;
-  hasCompileErrors = false;
 
   constructor(
     private app: {
@@ -22,7 +21,7 @@ class HMRClient {
       hideLoadingView: () => void;
     }
   ) {
-    this.url = `ws://${getDevServerLocation().host}/__hmr?platform=${__PLATFORM__}`;
+    this.url = `ws://${getDevServerLocation().host}/__hmr`;
     this.socket = new WebSocket(this.url);
 
     console.debug('[HMRClient] Connecting...', {
@@ -51,6 +50,11 @@ class HMRClient {
   }
 
   processMessage(message: HMRMessage) {
+    // Only process messages for the target platform
+    if (message.body.name !== __PLATFORM__) {
+      return;
+    }
+
     switch (message.action) {
       case 'compiling':
         this.handleCompilationInProgress();
@@ -58,15 +62,8 @@ class HMRClient {
       case 'hash':
         this.handleHashUpdate(message.body.hash);
         break;
-      case 'still-ok':
       case 'ok':
-        this.handleSuccess();
-        break;
-      case 'warnings':
-        this.handleWarnings(message.body.warnings);
-        break;
-      case 'errors':
-        this.handleErrors(message.body.errors);
+        this.handleBundleUpdate();
         break;
     }
   }
@@ -90,64 +87,14 @@ class HMRClient {
     }
   }
 
-  handleSuccess() {
+  handleBundleUpdate() {
     console.debug('[HMRClient] Processing bundle update');
 
     this.app.dismissErrors();
-
-    const isHotUpdate = !this.isFirstCompilation;
     this.isFirstCompilation = false;
-    this.hasCompileErrors = false;
 
     // Attempt to apply hot updates or reload.
-    if (isHotUpdate) {
-      this.tryApplyUpdates();
-    }
-
-    this.app.hideLoadingView();
-  }
-
-  // Compilation with warnings (e.g. ESLint).
-  handleWarnings(warnings: any[] = []) {
-    console.debug('[HMRClient] Processing bundle warnings');
-
-    this.app.dismissErrors();
-
-    const isHotUpdate = !this.isFirstCompilation;
-    this.isFirstCompilation = false;
-    this.hasCompileErrors = false;
-
-    for (let i = 0; i < warnings.length; i++) {
-      if (i === 5) {
-        console.warn(
-          'There were more warnings in other files, you can find a complete log in the terminal.'
-        );
-        break;
-      }
-      console.warn(warnings[i]);
-    }
-
-    // Attempt to apply hot updates or reload.
-    if (isHotUpdate) {
-      this.tryApplyUpdates();
-    }
-
-    this.app.hideLoadingView();
-  }
-
-  // Compilation with errors (e.g. syntax error or missing modules).
-  handleErrors(errors: any[] = []) {
-    console.debug('[HMRClient] Processing bundle errors');
-
-    this.app.dismissErrors();
-
-    this.isFirstCompilation = false;
-    this.hasCompileErrors = true;
-
-    // Also log them to the console.
-    for (const error of errors) {
-      console.error(error);
-    }
+    this.tryApplyUpdates();
 
     this.app.hideLoadingView();
   }
@@ -181,7 +128,8 @@ class HMRClient {
       const forcedReload = err || !updatedModules;
       if (forcedReload) {
         if (err) {
-          console.error('[HMR] Forced reload caused by: ', err);
+          console.warn('[HMRClient] Forced reload');
+          console.debug('[HMRClient] Forced reload caused by: ', err);
         }
         this.app.reload();
         return;

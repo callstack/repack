@@ -90,7 +90,7 @@ export interface HMRMessageBody {
 }
 
 export interface HMRMessage {
-  action: 'compiling' | 'hash' | 'still-ok' | 'ok' | 'warnings' | 'errors';
+  action: 'compiling' | 'hash' | 'ok';
   body: HMRMessageBody;
 }
 

@@ -10,7 +10,6 @@ import type {
 } from '@rspack/core';
 import memfs from 'memfs';
 import type { Reporter } from '../../logging/types.js';
-import type { HMRMessageBody } from '../../types.js';
 import { CLIError } from '../common/error.js';
 import { adaptFilenameToPlatform, runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
@@ -72,6 +71,7 @@ export class Compiler {
         // @ts-ignore
         this.devServerContext.broadcastToHmrClients({
           action: 'compiling',
+          body: { name: platform },
         });
       });
     });
@@ -80,10 +80,11 @@ export class Compiler {
       this.isCompilationInProgress = true;
       this.platforms.forEach((platform) => {
         this.devServerContext.notifyBuildStart(platform);
-        this.devServerContext.broadcastToHmrClients(
-          { action: 'building' },
-          platform
-        );
+        // @ts-ignore
+        this.devServerContext.broadcastToHmrClients({
+          action: 'compiling',
+          body: { name: platform },
+        });
       });
     });
 
@@ -99,15 +100,8 @@ export class Compiler {
         warnings: true,
       });
 
-      // @ts-ignore
-      this.devServerContext.broadcastToHmrClients({
-        action: 'hash',
-        // @ts-ignore
-        body: { hash: stats.children[0].hash },
-      });
-
       try {
-        stats.children?.map((childStats) => {
+        stats.children!.map((childStats) => {
           const platform = childStats.name!;
           this.statsCache[platform] = childStats;
 
@@ -168,13 +162,19 @@ export class Compiler {
       this.isCompilationInProgress = false;
 
       stats.children?.forEach((childStats) => {
+        // @ts-ignore
+        this.devServerContext.broadcastToHmrClients({
+          action: 'hash',
+          body: { name: childStats.name, hash: childStats.hash },
+        });
+
         const platform = childStats.name!;
         this.callPendingResolvers(platform);
         this.devServerContext.notifyBuildEnd(platform);
         // @ts-ignore
         this.devServerContext.broadcastToHmrClients({
           action: 'ok',
-          body: this.getHmrBody(platform),
+          body: { name: platform },
         });
       });
     });
@@ -286,20 +286,5 @@ export class Compiler {
         `Source map for ${filename} for ${platform} is missing`
       );
     }
-  }
-
-  getHmrBody(platform: string): HMRMessageBody | null {
-    const stats = this.statsCache[platform];
-    if (!stats) {
-      return null;
-    }
-
-    return {
-      name: stats.name ?? '',
-      time: stats.time ?? 0,
-      hash: stats.hash ?? '',
-      warnings: stats.warnings || [],
-      errors: stats.errors || [],
-    };
   }
 }
