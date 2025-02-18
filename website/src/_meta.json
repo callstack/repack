@@ -14,11 +14,11 @@
     "items": [
       {
         "text": "5.x",
-        "link": "https://v5.re-pack.dev/"
+        "link": "https://re-pack.dev/"
       },
       {
         "text": "4.x (stable)",
-        "link": "https://re-pack.dev/"
+        "link": "https://v4.re-pack.dev/"
       }, 
       {
         "text": "3.x",
