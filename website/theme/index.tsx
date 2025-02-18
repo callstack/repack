@@ -1,4 +1,3 @@
-import { Announcement } from '@callstack/rspress-theme';
 import { usePageData } from 'rspress/runtime';
 import Theme, {
   Badge,
@@ -26,10 +25,12 @@ const LATEST_VERSION = '5.x';
 
 const OldVersionAnnouncement = ({ href, version }) => (
   <div className="py-2 px-4 flex items-center justify-center bg-amber-50 text-amber-900 border-b border-amber-200">
-    You're viewing the documentation for<span className="font-semibold mx-2">{version}.</span>
-    Current latest version is <span className="font-semibold mx-2">{LATEST_VERSION}</span>
-    <Link 
-      href={href} 
+    You're viewing the documentation for
+    <span className="font-semibold mx-2">{version}.</span>
+    Current latest version is{' '}
+    <span className="font-semibold mx-2">{LATEST_VERSION}</span>
+    <Link
+      href={href}
       className="ml-3 text-amber-700 hover:text-amber-900 font-medium"
     >
       View the latest version <b>here</b>.
@@ -40,10 +41,7 @@ const OldVersionAnnouncement = ({ href, version }) => (
 const Layout = () => (
   <Theme.Layout
     beforeNav={
-      <OldVersionAnnouncement
-        href="https://re-pack.dev"
-        version="2.x"
-      />
+      <OldVersionAnnouncement href="https://re-pack.dev" version="2.x" />
     }
     beforeDocContent={<VersionBadge />}
   />
