@@ -1,11 +1,11 @@
-import { Announcement } from '@callstack/rspress-theme';
-import { usePageData } from 'rspress/runtime';
+import { Announcement } from "@callstack/rspress-theme";
+import { usePageData } from "rspress/runtime";
 import Theme, {
   Badge,
   Link,
   PrevNextPage,
   getCustomMDXComponent,
-} from 'rspress/theme';
+} from "rspress/theme";
 
 const VersionBadge = () => {
   const pageData = usePageData();
@@ -22,14 +22,40 @@ const VersionBadge = () => {
   );
 };
 
+const LATEST_VERSION = "5.x";
+const CURRENT_VERSION = 'FIXME'; // FIXME read it dynamically
+
+const OldVersionAnnouncement = ({  version }) => (
+  <div className="py-2 px-4 flex flex-col sm:flex-row items-center justify-center bg-amber-50 text-amber-900 border-b border-amber-200 text-center sm:text-left">
+    <div>
+      You're viewing the documentation for
+      <span className="font-semibold mx-2">{version}.</span>
+      Current latest version is
+      <span className="font-semibold mx-2">{LATEST_VERSION}</span>
+    </div>
+    <Link
+      href="https://re-pack.dev"
+      className="mt-1 sm:mt-0 sm:ml-3 text-amber-700 hover:text-amber-900 font-medium"
+    >
+      View the latest version <b>here</b>.
+    </Link>
+  </div>
+);
+
 const Layout = () => (
   <Theme.Layout
     beforeNav={
-      <Announcement
-        href="/5.x/docs/getting-started/quick-start"
-        message="Preview Re.Pack 5 RC documentation"
-        localStorageKey="repack-announcement"
-      />
+      CURRENT_VERSION ? (
+        <OldVersionAnnouncement
+          version={CURRENT_VERSION}
+        />
+      ) : (
+        <Announcement
+          href="/docs/getting-started/quick-start"
+          message="Preview Re.Pack 5 RC documentation"
+          localStorageKey="repack-announcement"
+        />
+      )
     }
     beforeDocContent={<VersionBadge />}
   />
@@ -57,7 +83,7 @@ export const CodeBlock = ({ children, language, title }) => {
 };
 
 const CustomLink = (props) => (
-  <Link {...props} className={props.className + ' rspress-link'} />
+  <Link {...props} className={props.className + " rspress-link"} />
 );
 
 /* omit rendering for edge cases */
@@ -69,4 +95,4 @@ const CustomPrevNextPage = (props) => {
 export { CustomLink as Link };
 export { CustomPrevNextPage as PrevNextPage };
 
-export * from 'rspress/theme';
+export * from "rspress/theme";

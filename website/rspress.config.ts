@@ -7,7 +7,7 @@ import { defineConfig } from 'rspress/config';
 
 export default defineConfig({
   root: path.join(__dirname, process.env.SRC_DIR ?? 'src'),
-  title: 'Re.Pack',
+  title: process.env.LEGACY_VERSION ? `[${process.env.LEGACY_VERSION}] Re.Pack` : 'Re.Pack',
   description: 'A toolkit to build your React Native application with Webpack.',
   icon: '/img/favicon.ico',
   logo: {

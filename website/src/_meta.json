@@ -13,11 +13,11 @@
     "text": "Version",
     "items": [
       {
-        "text": "5.x",
+        "text": "5.x (latest)",
         "link": "https://re-pack.dev/"
       },
       {
-        "text": "4.x (stable)",
+        "text": "4.x",
         "link": "https://v4.re-pack.dev/"
       }, 
       {
