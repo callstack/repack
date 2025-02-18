@@ -24,14 +24,16 @@ const VersionBadge = () => {
 const LATEST_VERSION = '5.x';
 
 const OldVersionAnnouncement = ({ href, version }) => (
-  <div className="py-2 px-4 flex items-center justify-center bg-amber-50 text-amber-900 border-b border-amber-200">
-    You're viewing the documentation for
-    <span className="font-semibold mx-2">{version}.</span>
-    Current latest version is{' '}
-    <span className="font-semibold mx-2">{LATEST_VERSION}</span>
+  <div className="py-2 px-4 flex flex-col sm:flex-row items-center justify-center bg-amber-50 text-amber-900 border-b border-amber-200 text-center sm:text-left">
+    <div>
+      You're viewing the documentation for
+      <span className="font-semibold mx-2">{version}.</span>
+      Current latest version is
+      <span className="font-semibold mx-2">{LATEST_VERSION}</span>
+    </div>
     <Link
       href={href}
-      className="ml-3 text-amber-700 hover:text-amber-900 font-medium"
+      className="mt-1 sm:mt-0 sm:ml-3 text-amber-700 hover:text-amber-900 font-medium"
     >
       View the latest version <b>here</b>.
     </Link>
@@ -41,7 +43,7 @@ const OldVersionAnnouncement = ({ href, version }) => (
 const Layout = () => (
   <Theme.Layout
     beforeNav={
-      <OldVersionAnnouncement href="https://re-pack.dev" version="3.x" />
+      <OldVersionAnnouncement href="https://re-pack.dev" version="4.x" />
     }
     beforeDocContent={<VersionBadge />}
   />
