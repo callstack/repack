@@ -1,0 +1,37 @@
+[
+  {
+    "text": "Docs",
+    "link": "/docs/getting-started/quick-start",
+    "activeMatch": "^/docs/"
+  },
+  {
+    "text": "API",
+    "link": "/api/index",
+    "activeMatch": "^/api/"
+  },
+  {
+    "text": "Version",
+    "items": [
+      {
+        "text": "5.x",
+        "link": "https://re-pack.dev/"
+      },
+      {
+        "text": "4.x (stable)",
+        "link": "https://v4.re-pack.dev/"
+      }, 
+      {
+        "text": "3.x",
+        "link": "https://v3.re-pack.dev/"
+      },
+      {
+        "text": "2.x",
+        "link": "https://v2.re-pack.dev/"
+      }
+    ]
+  },
+  {
+    "text": "Examples",
+    "link": "https://github.com/callstack/repack-examples"
+  }
+]
