@@ -1,9 +1,0 @@
-[
-  "code-splitting",
-  "module-federation",
-  "module-resolution",
-  "dev-server",
-  "flow-support",
-  "devtools",
-  "reanimated"
-]

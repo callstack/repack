@@ -7,7 +7,7 @@ import { defineConfig } from 'rspress/config';
 
 export default defineConfig({
   root: path.join(__dirname, 'src'),
-  title: '[v2] Re.Pack :)',
+  title: '[v2] Re.Pack',
   description: 'A toolkit to build your React Native application with Webpack.',
   icon: '/img/favicon.ico',
   logo: {
@@ -19,10 +19,6 @@ export default defineConfig({
     // TODO fix dead links
     checkDeadLinks: false,
     codeHighlighter: 'prism',
-  },
-  multiVersion: {
-    default: process.env.NODE_ENV === 'development' ? '5.x' : '4.x', // Use 5.x in development for preview, while 4.x remains the stable public version
-    versions: ['2.x', '3.x', '4.x', '5.x'],
   },
   route: {
     cleanUrls: true,
