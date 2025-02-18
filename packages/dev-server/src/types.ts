@@ -9,7 +9,6 @@ import type {
   SymbolicatorDelegate,
   SymbolicatorResults,
 } from './plugins/symbolicate/types.js';
-import type { HmrDelegate } from './plugins/wss/types.js';
 import type { NormalizedOptions } from './utils/normalizeOptions.js';
 
 export type { CompilerDelegate };
@@ -21,7 +20,6 @@ export type {
   SymbolicatorDelegate,
   SymbolicatorResults,
 };
-export type { HmrDelegate };
 
 export interface DevServerOptions {
   /**
@@ -76,9 +74,6 @@ export namespace Server {
 
     /** A logger delegate. */
     logger: LoggerDelegate;
-
-    /** An HMR delegate. */
-    hmr: HmrDelegate;
 
     /** An messages delegate. */
     messages: MessagesDelegate;

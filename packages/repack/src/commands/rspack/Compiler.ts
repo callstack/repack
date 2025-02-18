@@ -148,7 +148,6 @@ export class Compiler {
 
                 return acc;
               },
-              // keep old assets, discard HMR-related ones
               Object.fromEntries(
                 Object.entries(this.assetsCache[platform] ?? {})
               )
