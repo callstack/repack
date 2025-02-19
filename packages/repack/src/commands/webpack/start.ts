@@ -11,6 +11,7 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
+import type { HMRMessage } from '../../types.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import { CLIError } from '../common/error.js';
 import {
@@ -126,7 +127,7 @@ export async function start(
 
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
-        ctx.broadcastToHmrClients({
+        ctx.broadcastToHmrClients<HMRMessage>({
           action: 'compiling',
           body: { name: platform },
         });
@@ -140,7 +141,7 @@ export async function start(
 
       compiler.on('invalid', ({ platform }) => {
         ctx.notifyBuildStart(platform);
-        ctx.broadcastToHmrClients({
+        ctx.broadcastToHmrClients<HMRMessage>({
           action: 'compiling',
           body: { name: platform },
         });
@@ -156,11 +157,11 @@ export async function start(
           stats: StatsCompilation;
         }) => {
           ctx.notifyBuildEnd(platform);
-          ctx.broadcastToHmrClients({
+          ctx.broadcastToHmrClients<HMRMessage>({
             action: 'hash',
             body: { name: platform, hash: stats.hash },
           });
-          ctx.broadcastToHmrClients({
+          ctx.broadcastToHmrClients<HMRMessage>({
             action: 'ok',
             body: { name: platform },
           });

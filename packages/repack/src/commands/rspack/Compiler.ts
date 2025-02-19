@@ -10,6 +10,7 @@ import type {
 } from '@rspack/core';
 import memfs from 'memfs';
 import type { Reporter } from '../../logging/types.js';
+import type { HMRMessage } from '../../types.js';
 import { CLIError } from '../common/error.js';
 import { adaptFilenameToPlatform, runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
@@ -68,7 +69,7 @@ export class Compiler {
           });
         }
         this.devServerContext.notifyBuildStart(platform);
-        this.devServerContext.broadcastToHmrClients({
+        this.devServerContext.broadcastToHmrClients<HMRMessage>({
           action: 'compiling',
           body: { name: platform },
         });
@@ -79,7 +80,7 @@ export class Compiler {
       this.isCompilationInProgress = true;
       this.platforms.forEach((platform) => {
         this.devServerContext.notifyBuildStart(platform);
-        this.devServerContext.broadcastToHmrClients({
+        this.devServerContext.broadcastToHmrClients<HMRMessage>({
           action: 'compiling',
           body: { name: platform },
         });
@@ -100,15 +101,14 @@ export class Compiler {
 
       try {
         stats.children!.map((childStats) => {
-          this.devServerContext.broadcastToHmrClients({
+          const platform = childStats.name!;
+          this.devServerContext.broadcastToHmrClients<HMRMessage>({
             action: 'hash',
-            body: { name: childStats.name, hash: childStats.hash },
+            body: { name: platform, hash: childStats.hash },
           });
 
-          const platform = childStats.name!;
           this.statsCache[platform] = childStats;
-
-          const assets = this.statsCache[platform]!.assets!;
+          const assets = childStats.assets!;
 
           this.assetsCache[platform] = assets
             .filter((asset) => asset.type === 'asset')
@@ -167,7 +167,7 @@ export class Compiler {
         const platform = childStats.name!;
         this.callPendingResolvers(platform);
         this.devServerContext.notifyBuildEnd(platform);
-        this.devServerContext.broadcastToHmrClients({
+        this.devServerContext.broadcastToHmrClients<HMRMessage>({
           action: 'ok',
           body: { name: platform },
         });
