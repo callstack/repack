@@ -71,20 +71,12 @@ class HMRClient {
   handleCompilationInProgress() {
     console.debug('[HMRClient] Processing progress update');
 
-    this.app.showLoadingView(
-      'Compiling...',
-      this.isFirstCompilation ? 'load' : 'refresh'
-    );
+    this.app.showLoadingView('Compiling...', 'refresh');
   }
 
   handleHashUpdate(hash: string) {
     console.debug('[HMRClient] Processing hash update');
-
     this.lastCompilationHash = hash;
-
-    if (this.isUpdateAvailable()) {
-      this.app.dismissErrors();
-    }
   }
 
   handleBundleUpdate() {
