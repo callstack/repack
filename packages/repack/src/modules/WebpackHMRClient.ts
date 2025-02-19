@@ -10,7 +10,6 @@ class HMRClient {
   url: string;
   socket: WebSocket;
   // state
-  isFirstCompilation = true;
   lastCompilationHash: string | null = null;
 
   constructor(
@@ -60,34 +59,32 @@ class HMRClient {
         this.handleCompilationInProgress();
         break;
       case 'hash':
-        this.handleHashUpdate(message.body.hash!);
+        this.handleHashUpdate(message.body.hash);
         break;
       case 'ok':
-        this.handleBundleUpdate();
+        this.handleBundleUpdate(message.body.hasErrors);
         break;
     }
   }
 
   handleCompilationInProgress() {
     console.debug('[HMRClient] Processing progress update');
-
     this.app.showLoadingView('Compiling...', 'refresh');
   }
 
-  handleHashUpdate(hash: string) {
+  handleHashUpdate(hash?: string) {
     console.debug('[HMRClient] Processing hash update');
-    this.lastCompilationHash = hash;
+    this.lastCompilationHash = hash ?? null;
   }
 
-  handleBundleUpdate() {
+  handleBundleUpdate(hasErrors?: boolean) {
     console.debug('[HMRClient] Processing bundle update');
+    // only dismiss errors when there are no compilation errors
+    if (hasErrors) {
+      this.app.dismissErrors();
+    }
 
-    this.app.dismissErrors();
-    this.isFirstCompilation = false;
-
-    // Attempt to apply hot updates or reload.
     this.tryApplyUpdates();
-
     this.app.hideLoadingView();
   }
 

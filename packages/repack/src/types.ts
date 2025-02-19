@@ -81,7 +81,11 @@ export interface EnvOptions {
 
 export interface HMRMessage {
   action: 'compiling' | 'hash' | 'ok';
-  body: { name: string; hash?: string };
+  body: {
+    name: string;
+    hash?: string;
+    hasErrors?: boolean;
+  };
 }
 
 export interface Logger {
