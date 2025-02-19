@@ -108,11 +108,7 @@ export namespace Server {
      * @param clientIds Ids of the client to which broadcast should be sent.
      * If `undefined` the broadcast will be sent to all connected clients for the given `platform`.
      */
-    broadcastToHmrClients: <E = any>(
-      event: E,
-      platform: string,
-      clientIds?: string[]
-    ) => void;
+    broadcastToHmrClients: <E = any>(event: E) => void;
 
     /**
      * Broadcast arbitrary method-like event to all connected message clients.

@@ -68,7 +68,6 @@ export class Compiler {
           });
         }
         this.devServerContext.notifyBuildStart(platform);
-        // @ts-ignore
         this.devServerContext.broadcastToHmrClients({
           action: 'compiling',
           body: { name: platform },
@@ -80,7 +79,6 @@ export class Compiler {
       this.isCompilationInProgress = true;
       this.platforms.forEach((platform) => {
         this.devServerContext.notifyBuildStart(platform);
-        // @ts-ignore
         this.devServerContext.broadcastToHmrClients({
           action: 'compiling',
           body: { name: platform },
@@ -102,7 +100,6 @@ export class Compiler {
 
       try {
         stats.children!.map((childStats) => {
-          // @ts-ignore
           this.devServerContext.broadcastToHmrClients({
             action: 'hash',
             body: { name: childStats.name, hash: childStats.hash },
@@ -171,7 +168,6 @@ export class Compiler {
         const platform = childStats.name!;
         this.callPendingResolvers(platform);
         this.devServerContext.notifyBuildEnd(platform);
-        // @ts-ignore
         this.devServerContext.broadcastToHmrClients({
           action: 'ok',
           body: { name: platform },

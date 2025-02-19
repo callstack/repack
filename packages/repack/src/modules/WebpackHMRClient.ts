@@ -60,7 +60,7 @@ class HMRClient {
         this.handleCompilationInProgress();
         break;
       case 'hash':
-        this.handleHashUpdate(message.body.hash);
+        this.handleHashUpdate(message.body.hash!);
         break;
       case 'ok':
         this.handleBundleUpdate();
@@ -178,7 +178,6 @@ if (__DEV__ && module.hot) {
       LoadingView = require('react-native/Libraries/Utilities/LoadingView');
     }
 
-    // @ts-ignore
     LoadingView.showMessage(text, type);
   };
 
@@ -190,7 +189,6 @@ if (__DEV__ && module.hot) {
       LoadingView = require('react-native/Libraries/Utilities/LoadingView');
     }
 
-    // @ts-ignore
     LoadingView.hide();
   };
 
