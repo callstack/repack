@@ -148,8 +148,7 @@ if (__DEV__ && module.hot) {
   };
 
   const dismissErrors = () => {
-    const Platform = require('react-native/Libraries/Utilities/Platform');
-    if (Platform.OS === 'ios') {
+    if (__PLATFORM__ === 'ios') {
       const NativeRedBox =
         require('react-native/Libraries/NativeModules/specs/NativeRedBox').default;
       NativeRedBox?.dismiss?.();
