@@ -11,7 +11,6 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
-import type { HMRMessageBody } from '../../types.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import { CLIError } from '../common/error.js';
 import {
@@ -125,10 +124,12 @@ export async function start(
         });
       }
 
-      const lastStats: Record<string, StatsCompilation> = {};
-
       compiler.on('watchRun', ({ platform }) => {
         ctx.notifyBuildStart(platform);
+        ctx.broadcastToHmrClients({
+          action: 'compiling',
+          body: { name: platform },
+        });
         if (platform === 'android') {
           void runAdbReverse({
             port: ctx.options.port,
@@ -139,7 +140,10 @@ export async function start(
 
       compiler.on('invalid', ({ platform }) => {
         ctx.notifyBuildStart(platform);
-        ctx.broadcastToHmrClients({ action: 'building' }, platform);
+        ctx.broadcastToHmrClients({
+          action: 'compiling',
+          body: { name: platform },
+        });
       });
 
       compiler.on(
@@ -152,11 +156,14 @@ export async function start(
           stats: StatsCompilation;
         }) => {
           ctx.notifyBuildEnd(platform);
-          lastStats[platform] = stats;
-          ctx.broadcastToHmrClients(
-            { action: 'built', body: createHmrBody(stats) },
-            platform
-          );
+          ctx.broadcastToHmrClients({
+            action: 'hash',
+            body: { name: platform, hash: stats.hash },
+          });
+          ctx.broadcastToHmrClients({
+            action: 'ok',
+            body: { name: platform },
+          });
         }
       );
 
@@ -223,21 +230,5 @@ export async function start(
       reporter.stop();
       await stop();
     },
-  };
-}
-
-function createHmrBody(stats?: StatsCompilation): HMRMessageBody | null {
-  if (!stats) {
-    return null;
-  }
-
-  return {
-    name: stats.name ?? '',
-    time: stats.time ?? 0,
-    hash: stats.hash ?? '',
-    // @ts-expect-error rspack warnings are identical in shape to webpack warnings
-    warnings: stats.warnings || [],
-    // @ts-expect-error rspack errors are identical in shape to webpack errors
-    errors: stats.errors || [],
   };
 }

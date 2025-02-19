@@ -145,9 +145,8 @@ export class Compiler {
 
                 return acc;
               },
-              Object.fromEntries(
-                Object.entries(this.assetsCache[platform] ?? {})
-              )
+              // keep old assets
+              this.assetsCache[platform] ?? {}
             );
         });
       } catch (error) {
