@@ -102,6 +102,12 @@ export class Compiler {
 
       try {
         stats.children!.map((childStats) => {
+          // @ts-ignore
+          this.devServerContext.broadcastToHmrClients({
+            action: 'hash',
+            body: { name: childStats.name, hash: childStats.hash },
+          });
+
           const platform = childStats.name!;
           this.statsCache[platform] = childStats;
 
@@ -162,12 +168,6 @@ export class Compiler {
       this.isCompilationInProgress = false;
 
       stats.children?.forEach((childStats) => {
-        // @ts-ignore
-        this.devServerContext.broadcastToHmrClients({
-          action: 'hash',
-          body: { name: childStats.name, hash: childStats.hash },
-        });
-
         const platform = childStats.name!;
         this.callPendingResolvers(platform);
         this.devServerContext.notifyBuildEnd(platform);

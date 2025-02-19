@@ -127,8 +127,8 @@ class HMRClient {
     ) => {
       const forcedReload = err || !updatedModules;
       if (forcedReload) {
+        console.warn('[HMRClient] Forced reload');
         if (err) {
-          console.warn('[HMRClient] Forced reload');
           console.debug('[HMRClient] Forced reload caused by: ', err);
         }
         this.app.reload();
