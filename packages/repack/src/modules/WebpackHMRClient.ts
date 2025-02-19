@@ -80,7 +80,7 @@ class HMRClient {
   handleBundleUpdate(hasErrors?: boolean) {
     console.debug('[HMRClient] Processing bundle update');
     // only dismiss errors when there are no compilation errors
-    if (hasErrors) {
+    if (!hasErrors) {
       this.app.dismissErrors();
     }
 
