@@ -6,27 +6,31 @@ declare namespace RepackRuntimeGlobals {
     moduleId: string | number;
   }
 
+  declare type HMRStatus =
+    | 'idle'
+    | 'check'
+    | 'prepare'
+    | 'ready'
+    | 'dispose'
+    | 'apply'
+    | 'abort'
+    | 'fail';
+
+  declare interface HMRApplyOptions {
+    ignoreUnaccepted?: boolean;
+    ignoreDeclined?: boolean;
+    ignoreErrored?: boolean;
+    onDeclined?: (info: HMRInfo) => void;
+    onUnaccepted?: (info: HMRInfo) => void;
+    onAccepted?: (info: HMRInfo) => void;
+    onDisposed?: (info: HMRInfo) => void;
+    onErrored?: (info: HMRInfo) => void;
+  }
+
   declare interface HotApi {
-    status():
-      | 'idle'
-      | 'check'
-      | 'prepare'
-      | 'ready'
-      | 'dispose'
-      | 'apply'
-      | 'abort'
-      | 'fail';
-    check(autoPlay: boolean): Promise<Array<string | number>>;
-    apply(options: {
-      ignoreUnaccepted?: boolean;
-      ignoreDeclined?: boolean;
-      ignoreErrored?: boolean;
-      onDeclined?: (info: HMRInfo) => void;
-      onUnaccepted?: (info: HMRInfo) => void;
-      onAccepted?: (info: HMRInfo) => void;
-      onDisposed?: (info: HMRInfo) => void;
-      onErrored?: (info: HMRInfo) => void;
-    }): Promise<Array<string | number>>;
+    status(): HMRStatus;
+    check(autoPlay: boolean | HMRApplyOptions): Promise<Array<string | number>>;
+    apply(options: HMRApplyOptions): Promise<Array<string | number>>;
   }
 
   declare interface LoadScriptEvent {

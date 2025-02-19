@@ -62,7 +62,7 @@ class HMRClient {
         this.handleHashUpdate(message.body.hash);
         break;
       case 'ok':
-        this.handleBundleUpdate(message.body.hasErrors);
+        this.handleBundleUpdate();
         break;
     }
   }
@@ -77,13 +77,8 @@ class HMRClient {
     this.lastCompilationHash = hash ?? null;
   }
 
-  handleBundleUpdate(hasErrors?: boolean) {
+  handleBundleUpdate() {
     console.debug('[HMRClient] Processing bundle update');
-    // only dismiss errors when there are no compilation errors
-    if (!hasErrors) {
-      this.app.dismissErrors();
-    }
-
     this.tryApplyUpdates();
     this.app.hideLoadingView();
   }
@@ -131,10 +126,18 @@ class HMRClient {
     };
 
     console.debug('[HMRClient] Checking for updates on the server...');
-    module.hot.check(true).then(
-      (outdatedModules) => handleApplyUpdates(null, outdatedModules),
-      (err) => handleApplyUpdates(err, null)
-    );
+    module.hot
+      .check({
+        onAccepted: this.app.dismissErrors,
+        onDeclined: this.app.dismissErrors,
+        onErrored: this.app.dismissErrors,
+        onUnaccepted: this.app.dismissErrors,
+        onDisposed: this.app.dismissErrors,
+      })
+      .then(
+        (outdatedModules) => handleApplyUpdates(null, outdatedModules),
+        (err) => handleApplyUpdates(err, null)
+      );
   }
 }
 

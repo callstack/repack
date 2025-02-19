@@ -163,7 +163,7 @@ export async function start(
           });
           ctx.broadcastToHmrClients<HMRMessage>({
             action: 'ok',
-            body: { name: platform, hasErrors: !!stats.errors?.length },
+            body: { name: platform },
           });
         }
       );

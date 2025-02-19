@@ -169,7 +169,7 @@ export class Compiler {
         this.devServerContext.notifyBuildEnd(platform);
         this.devServerContext.broadcastToHmrClients<HMRMessage>({
           action: 'ok',
-          body: { name: platform, hasErrors: !!childStats.errors?.length },
+          body: { name: platform },
         });
       });
     });
