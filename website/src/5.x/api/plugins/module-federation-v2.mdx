@@ -1,0 +1,144 @@
+
+# ModuleFederationV2Plugin
+
+This plugin is designed to configure Module Federation 2.0. It's an enhanced version of the standard Module Federation plugin that's specifically tailored for React Native environments.
+
+:::info title="About configuration options"
+This documentation describes only Re.Pack-specific configuration options. For the complete configuration reference, please see the [official Module Federation 2.0 documentation](https://module-federation.io/configure/index.html#configuration-overview).
+
+All standard Module Federation 2.0 options are supported in addition to the options described below.
+:::
+
+
+## Differences
+
+The plugin extends the standard Module Federation 2.0 plugin with React Native specific features:
+
+1. **Default Shared Dependencies** - Adds `react` and `react-native` as shared dependencies with `singleton: true` and `eager: true` by default.
+2. **Default Share Strategy** - Uses `loaded-first` share strategy by default.
+3. **Default Runtime Plugins** - Comes with pre-configured runtime plugins for React Native:
+   - `@callstack/repack/mf/core-plugin` - Core functionality
+   - `@callstack/repack/mf/resolver-plugin` - React Native-specific module resolution
+4. **React Native Deep Imports Support** - Automatically handles sharing of deep imports from React Native core and official packages.
+5. **Container Name Validation** - Enforces valid JavaScript identifiers for container names (`name` option) to prevent runtime issues
+
+## Installation
+
+First, install the official `@module-federation/enhanced` package which is required by the Re.Pack:
+
+import { PackageManagerTabs } from 'rspress/theme';
+
+<PackageManagerTabs command="install @module-federation/enhanced" />
+
+If you would like to use the runtime capabilites of MF2 (like adding remotes on the fly), 
+you should install the `@module-federation/runtime` package as well:
+
+<PackageManagerTabs command="install @module-federation/runtime" />
+
+:::tip title="Having trouble?"
+Check out the [official Module Federation 2.0 quick start guide](https://module-federation.io/guide/start/quick-start.html) for more information.
+:::
+
+## Usage
+
+```js title="rspack.config.cjs"
+const Repack = require("@callstack/repack");
+
+module.exports = {
+  output: {
+    // set uniqueName explicitly to make HMR works
+    uniqueName: 'host',
+  },
+  plugins: [
+    new Repack.plugins.ModuleFederationPluginV2({
+      // options
+    }),
+  ],
+};
+```
+
+## Configuration
+
+### reactNativeDeepImports
+
+- Type: `boolean`
+- Default: `true`
+
+Enable or disable adding React Native deep imports to shared dependencies. When enabled, the plugin will automatically add:
+
+- `react-native/` for deep imports from React Native core
+- `@react-native/` for deep imports from official React Native packages
+
+This ensures proper sharing of deep imports and single instances of things like `assetsRegistry`.
+
+:::info What are deep imports?
+Deep imports are when you import from a specific subdirectory or file within a package rather than the package's main entry point. For example:
+
+```js
+// Deep import from React Native core
+import { PixelRatio } from "react-native/Libraries/Utilities/PixelRatio";
+
+// Deep import from React Native package
+import { something } from "@react-native/assets-registry";
+```
+
+React Native uses deep imports extensively in its internal implementation. The `reactNativeDeepImports` option ensures these imports are properly shared between federated modules.
+
+This feature solves a common Module Federation issue where deep imports create separate instances in host and remote apps - see this [Stack Overflow discussion](https://stackoverflow.com/questions/65636979/wp5-module-federation-sharing-deep-imports) for the original problem.
+:::
+
+### defaultRuntimePlugins
+
+- Type: `string[]`
+- Default: `["@callstack/repack/mf/core-plugin", "@callstack/repack/mf/resolver-plugin"]`
+
+List of default runtime plugins for Federation Runtime. These plugins provide core functionality and React Native-specific resolution for Module Federation.
+
+You can modify this list to:
+
+- Disable default plugins by providing an empty array
+- Replace default plugins with your own implementation
+
+```js
+new Repack.plugins.ModuleFederationPluginV2({
+  name: "host",
+  // Disable default plugins completely
+  defaultRuntimePlugins: [],
+
+  // Or use only the core plugin
+  defaultRuntimePlugins: ["@callstack/repack/mf/core-plugin"],
+});
+```
+
+## Examples
+
+### Host Configuration
+
+```js
+new Repack.plugins.ModuleFederationPluginV2({
+  name: "host",
+  remotes: {
+    module1: "module1@http://example.com/module1.container.bundle",
+  },
+  shared: {
+    react: { singleton: true, eager: true },
+    "react-native": { singleton: true, eager: true },
+  },
+});
+```
+
+### Remote Configuration
+
+```js
+new Repack.plugins.ModuleFederationPluginV2({
+  name: "module1",
+  filename: "module1.container.bundle",
+  exposes: {
+    "./entry": "./src/entry.js",
+  },
+  shared: {
+    react: { singleton: true, eager: false },
+    "react-native": { singleton: true, eager: false },
+  },
+});
+```
