@@ -1,5 +1,12 @@
 # @callstack/repack-plugin-nativewind
 
+## 5.0.0-rc.12
+
+### Patch Changes
+
+- Updated dependencies [[`4e10aa6`](https://github.com/callstack/repack/commit/4e10aa6a0c198823bf1b682d9d2e87c39657ac65)]:
+  - @callstack/repack@5.0.0-rc.12
+
 ## 5.0.0-rc.11
 
 ### Patch Changes

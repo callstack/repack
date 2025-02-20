@@ -1,5 +1,7 @@
 # @callstack/repack-init
 
+## 5.0.0-rc.12
+
 ## 5.0.0-rc.11
 
 ### Minor Changes
