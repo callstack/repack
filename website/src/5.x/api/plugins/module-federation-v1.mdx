@@ -1,0 +1,98 @@
+# ModuleFederationPluginV1
+
+:::caution Deprecated
+This plugin is deprecated and maintained only for compatibility reasons. 
+
+You should be using [Module Federation Plugin V2](/api/plugins/module-federation-v2) 
+which provides enhanced features like dynamic type hinting, manifest support and Federation Runtime - learn more in the [Module Federation 2.0 documentation](https://module-federation.io/guide/start/index.html#-what-is-module-federation-20).
+:::
+
+This plugin is designed to configure Module Federation. It's an enhanced version of the standard Module Federation plugin that's specifically tailored for React Native environments.
+
+:::info title="About configuration options"
+
+This documentation describes only Re.Pack-specific configuration options. 
+
+For the complete configuration reference, please use the official bundler specific documentation:
+- [Rspack's ModuleFederationPlugin](https://rspack.dev/plugins/webpack/module-federation-plugin-v1)
+- [Webpack's ModuleFederationPlugin](https://webpack.js.org/plugins/module-federation-plugin/)
+
+:::
+
+## Usage
+
+```js title="rspack.config.cjs"
+const Repack = require("@callstack/repack");
+
+module.exports = {
+  output: {
+    // set uniqueName explicitly to make HMR works
+    uniqueName: 'host',
+  },
+  plugins: [
+    new Repack.plugins.ModuleFederationPluginV1({
+      // options
+    }),
+  ],
+};
+```
+
+## Configuration
+
+### reactNativeDeepImports
+
+- Type: `boolean`
+- Default: `true`
+
+Enable or disable adding React Native deep imports to shared dependencies. When enabled, the plugin will automatically add:
+
+- `react-native/` for deep imports from React Native core
+- `@react-native/` for deep imports from official React Native packages
+
+This ensures proper sharing of deep imports and single instances of things like `assetsRegistry`.
+
+:::info What are deep imports?
+Deep imports are when you import from a specific subdirectory or file within a package rather than the package's main entry point. For example:
+
+```js
+// Deep import from React Native core
+import { PixelRatio } from "react-native/Libraries/Utilities/PixelRatio";
+
+// Deep import from React Native package
+import { something } from "@react-native/assets-registry";
+```
+
+React Native uses deep imports extensively in its internal implementation. The `reactNativeDeepImports` option ensures these imports are properly shared between federated modules.
+
+This feature solves a common Module Federation issue where deep imports create separate instances in host and remote apps - see this [Stack Overflow discussion](https://stackoverflow.com/questions/65636979/wp5-module-federation-sharing-deep-imports) for the original problem.
+:::
+
+## Examples
+
+### Host Configuration
+
+```js
+new Repack.plugins.ModuleFederationPluginV1({
+  name: "host",
+  shared: {
+    react: { singleton: true, eager: true },
+    "react-native": { singleton: true, eager: true },
+  },
+});
+```
+
+### Remote Configuration
+
+```js
+new Repack.plugins.ModuleFederationPluginV1({
+  name: "module1",
+  exposes: {
+    "./entry": "./src/entry.js",
+  },
+  shared: {
+    react: { singleton: true, eager: false },
+    "react-native": { singleton: true, eager: false },
+  },
+});
+```
+
