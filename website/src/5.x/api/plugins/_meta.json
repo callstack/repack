@@ -21,7 +21,7 @@
   },
   {
     "type": "file",
-    "name": "chunks-to-hermes",
+    "name": "hermes-bytecode",
     "label": "ChunksToHermesBytecodePlugin"
   },
   {
