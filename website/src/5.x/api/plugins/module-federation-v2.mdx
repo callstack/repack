@@ -10,9 +10,9 @@ All standard Module Federation 2.0 options are supported in addition to the opti
 :::
 
 
-## Differences
+## Mobile MF Quirks
 
-The plugin extends the standard Module Federation 2.0 plugin with React Native specific features:
+The plugin extends the standard Module Federation 2.0 plugin with functionality specific to mobile React Native apps:
 
 1. **Default Shared Dependencies** - Adds `react` and `react-native` as shared dependencies with `singleton: true` and `eager: true` by default.
 2. **Default Share Strategy** - Uses `loaded-first` share strategy by default.
@@ -24,7 +24,7 @@ The plugin extends the standard Module Federation 2.0 plugin with React Native s
 
 ## Installation
 
-First, install the official `@module-federation/enhanced` package which is required by the Re.Pack:
+First, install the official `@module-federation/enhanced` package which is required by Re.Pack:
 
 import { PackageManagerTabs } from 'rspress/theme';
 
