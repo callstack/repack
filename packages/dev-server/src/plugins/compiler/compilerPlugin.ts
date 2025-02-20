@@ -42,6 +42,7 @@ async function compilerPlugin(
           JSON.stringify({
             done: completed,
             total,
+            status: 'Bundling with Re.Pack',
           })
         );
       };

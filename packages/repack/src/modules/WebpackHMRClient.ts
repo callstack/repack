@@ -29,6 +29,8 @@ class HMRClient {
 
     this.socket.onopen = () => {
       console.debug('[HMRClient] Connected');
+      // hide the `Downloading 100%` message
+      this.app.hideLoadingView();
     };
 
     this.socket.onclose = () => {
