@@ -1,14 +1,14 @@
+
 # ModuleFederationV2Plugin
 
 This plugin is designed to configure Module Federation 2.0. It's an enhanced version of the standard Module Federation plugin that's specifically tailored for React Native environments.
-
-It requires `@module-federation/enhanced` package to be installed in your project. Make sure to install it before using the plugin. It can be used with both Rspack and webpack as the bundler.
 
 :::info
 This documentation describes only Re.Pack-specific configuration options. For the complete configuration reference, please see the [official Module Federation 2.0 documentation](https://module-federation.io/configure/index.html#configuration-overview).
 
 All standard Module Federation 2.0 options are supported in addition to the options described below.
 :::
+
 
 ## Differences
 
@@ -21,6 +21,23 @@ The plugin extends the standard Module Federation 2.0 plugin with React Native s
    - `@callstack/repack/mf/resolver-plugin` - React Native-specific module resolution
 4. **React Native Deep Imports Support** - Automatically handles sharing of deep imports from React Native core and official packages.
 5. **Container Name Validation** - Enforces valid JavaScript identifiers for container names (`name` option) to prevent runtime issues
+
+## Installation
+
+First, install the official `@module-federation/enhanced` package which is required by the Re.Pack:
+
+import { PackageManagerTabs } from 'rspress/theme';
+
+<PackageManagerTabs command="install @module-federation/enhanced" />
+
+If you would like to use the runtime capabilites of MF2 (like adding remotes on the fly), 
+you should install the `@module-federation/runtime` package as well:
+
+<PackageManagerTabs command="install @module-federation/runtime" />
+
+:::tip title="Having trouble?"
+Check out the [official Module Federation 2.0 quick start guide](https://module-federation.io/guide/start/quick-start.html) for more information.
+:::
 
 ## Usage
 
