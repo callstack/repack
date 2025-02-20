@@ -11,22 +11,24 @@ ones present in build directory, which might result in transformation being
 skipped when there is a untransformed bundle present in the build directory.
 :::
 
-## Usage
-
-```js title="webpack.config.js"
-import * as Repack from '@callstack/repack';
-
-new Repack.plugins.ChunksToHermesBytecodePlugin({
-    enabled: mode === 'production' && !devServer,
-    test: /\.(js)?bundle$/,
-    exclude: /index.bundle$/,
-}),
-```
-
 :::warning
 If you enable Hermes in your project, your `index.bundle` file and it's source-map will be transformed by `react-native`.
 You should exclude it from the plugin to avoid processing it twice.
 :::
+
+## Usage
+
+```js title="rspack.config.cjs"
+const Repack = require("@callstack/repack");
+
+module.exports = {
+  plugins: [
+    new Repack.plugins.ChunksToHermesBytecodePlugin({
+      // options
+    }),
+  ],
+};
+```
 
 ## Options
 
@@ -77,4 +79,24 @@ Use this to specify the path to the React Native package. If not specified, the 
 - Type: `boolean`
 - Default: `undefined`
 
-Use this to force enable `compareBeforeEmit` Webpack's output option.
+Use this to force enable `compareBeforeEmit` Rspack/webpack's output option.
+
+## Example
+
+```js title="rspack.config.cjs"
+const Repack = require("@callstack/repack");
+
+module.exports = (env) => {
+  const { mode } = env;
+
+  return {
+    plugins: [
+      new Repack.plugins.ChunksToHermesBytecodePlugin({
+        enabled: mode === "production",
+        test: /\.bundle$/,
+        exclude: /index.bundle$/,
+      }),
+    ],
+  };
+};
+```
