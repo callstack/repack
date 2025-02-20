@@ -113,24 +113,44 @@ The final step is to upload your remote assets to your CDN, which is located at 
 The `assetPath` option offers finer control over how remote asset paths are constructed. This feature allows you to define a custom function for modifying paths, which can be helpful if you need to apply custom naming conventions or add extra directory layers.
 Specified pattern will be applied to both the generated folder path and URL. If `assetPath` is not provided, the [default behaviour](#default-behaviour) will be used.
 
-```js
-{
-  remote: {
-    enabled: true,
-    publicPath: "http://localhost:9999",
-    assetPath: ({
-      resourceFilename,
-      resourceDirname,
-      resourceExtensionType,
-    }) => {
-      const customHash = getCustomHash();
-      return `my-remote-assets/${resourceFilename}-${customHash}.${resourceExtensionType}`;
-    },
-  },
+Consider the following example:
+
+```js title="rspack.config.cjs"
+const Repack = require("@callstack/repack");
+
+function getCustomAssetPath({
+  resourceFilename,
+  resourceDirname,
+  resourceExtensionType,
+}) {
+  const customHash = getCustomHash();
+  return `my-remote-assets/${resourceFilename}-${customHash}.${resourceExtensionType}`;
 }
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: Repack.getAssetExtensionsRegExp(),
+        use: {
+          loader: "@callstack/repack/assets-loader",
+          options: {
+            remote: {
+              enabled: true,
+              publicPath: "http://localhost:9999",
+              assetPath: getCustomAssetPath,
+            },
+          },
+        },
+      },
+    ],
+  },
+};
 ```
 
-The configuration above would result in the following:
+The configuration above would generate the following paths:
 
-- generated asset path: `<buildFolder>/remote-assets/assets/my-remote-assets/logo-customhash.png`
-- generated URL: `http://localhost:9999/my-remote-assets/logo-customhash.png`
+| Property   | Value                                                                     |
+| ---------- | ------------------------------------------------------------------------- |
+| asset path | `<buildFolder>/remote-assets/assets/my-remote-assets/logo-customhash.png` |
+| asset URL  | `http://localhost:9999/my-remote-assets/logo-customhash.png`              |
