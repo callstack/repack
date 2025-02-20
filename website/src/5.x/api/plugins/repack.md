@@ -1,18 +1,14 @@
 # RepackPlugin
 
-This plugin abstracts the configuration of other Re.Pack plugins to make the Rspack/webpack config more readable and maintainable. It provides sensible defaults while allowing customization of key features.
+This is the main plugin that enables React Native app development & bundlingwith Re.Pack. It abstracts the configuration of other Re.Pack plugins to make the Rspack/webpack config more readable and maintainable. It provides sensible defaults while allowing customization of key features.
 
-## Internal Plugins
+:::warning title="About internal plugins"
 
-The RepackPlugin internally configures and applies several plugins to provide a complete build setup:
+Plugins configured by the `RepackPlugin` are considered internal and there is no need to use or configure them directly. Their use is heavily discouraged and they are only included for the sake of completeness of the API.
 
-1. **BabelPlugin** - Exposes `babel-loader` to be used in the project
-2. **OutputPlugin** - Handles final transformation of the artifacts from the compilation to match the format expected by the target platform like `ios` or `android`
-3. **NativeEntryPlugin** - Injects polyfills and initializes the core of React Native before the main entry point (typically `index.js`) is executed in runtime.
-4. **RepackTargetPlugin** - Instructs the compiler (Rspack or webpack) how to bundle the project for the React Native runtime.
-5. **DevelopmentPlugin** - Configures the HMR & React Fast Refresh for the project, used when running the DevServer
-6. **SourceMapPlugin** - Configures source map generation for the project
-7. **LoggerPlugin** - Setups logging for the project
+You can learn more about internal plugins [here](/api/plugins/internal).
+
+:::
 
 ## Usage
 
