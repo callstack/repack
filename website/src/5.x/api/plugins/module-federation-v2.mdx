@@ -51,21 +51,7 @@ module.exports = {
   },
   plugins: [
     new Repack.plugins.ModuleFederationPluginV2({
-      name: "host",
-      filename: "host.container.bundle",
-      remotes: {
-        module1: "module1@http://example.com/module1.container.bundle",
-      }
-      shared: {
-        react: {
-          singleton: true,
-          eager: true,
-        },
-        "react-native": {
-          singleton: true,
-          eager: true,
-        },
-      },
+      // options
     }),
   ],
 };
