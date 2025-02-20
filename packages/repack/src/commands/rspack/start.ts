@@ -145,16 +145,6 @@ export async function start(
             return !/webpack[/\\]runtime[/\\].+\s/.test(frame.file);
           },
         },
-        hmr: {
-          getUriPath: () => '/__hmr',
-          onClientConnected: (platform, clientId) => {
-            ctx.broadcastToHmrClients(
-              { action: 'sync', body: compiler.getHmrBody(platform) },
-              platform,
-              [clientId]
-            );
-          },
-        },
         messages: {
           getHello: () => 'React Native packager is running',
           getStatus: () => 'packager-status:running',

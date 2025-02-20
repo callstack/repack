@@ -9,7 +9,6 @@ import type {
   SymbolicatorDelegate,
   SymbolicatorResults,
 } from './plugins/symbolicate/types.js';
-import type { HmrDelegate } from './plugins/wss/types.js';
 import type { NormalizedOptions } from './utils/normalizeOptions.js';
 
 export type { CompilerDelegate };
@@ -21,7 +20,6 @@ export type {
   SymbolicatorDelegate,
   SymbolicatorResults,
 };
-export type { HmrDelegate };
 
 export interface DevServerOptions {
   /**
@@ -77,9 +75,6 @@ export namespace Server {
     /** A logger delegate. */
     logger: LoggerDelegate;
 
-    /** An HMR delegate. */
-    hmr: HmrDelegate;
-
     /** An messages delegate. */
     messages: MessagesDelegate;
 
@@ -109,15 +104,8 @@ export namespace Server {
      * Broadcast arbitrary event to all connected HMR clients for given `platform`.
      *
      * @param event Arbitrary event to broadcast.
-     * @param platform Platform of the clients to which broadcast should be sent.
-     * @param clientIds Ids of the client to which broadcast should be sent.
-     * If `undefined` the broadcast will be sent to all connected clients for the given `platform`.
      */
-    broadcastToHmrClients: <E = any>(
-      event: E,
-      platform: string,
-      clientIds?: string[]
-    ) => void;
+    broadcastToHmrClients: <E = any>(event: E) => void;
 
     /**
      * Broadcast arbitrary method-like event to all connected message clients.

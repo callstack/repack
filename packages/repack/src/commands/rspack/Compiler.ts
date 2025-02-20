@@ -10,7 +10,7 @@ import type {
 } from '@rspack/core';
 import memfs from 'memfs';
 import type { Reporter } from '../../logging/types.js';
-import type { HMRMessageBody } from '../../types.js';
+import type { HMRMessage } from '../../types.js';
 import { CLIError } from '../common/error.js';
 import { adaptFilenameToPlatform, runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
@@ -69,6 +69,10 @@ export class Compiler {
           });
         }
         this.devServerContext.notifyBuildStart(platform);
+        this.devServerContext.broadcastToHmrClients<HMRMessage>({
+          action: 'compiling',
+          body: { name: platform },
+        });
       });
     });
 
@@ -76,10 +80,10 @@ export class Compiler {
       this.isCompilationInProgress = true;
       this.platforms.forEach((platform) => {
         this.devServerContext.notifyBuildStart(platform);
-        this.devServerContext.broadcastToHmrClients(
-          { action: 'building' },
-          platform
-        );
+        this.devServerContext.broadcastToHmrClients<HMRMessage>({
+          action: 'compiling',
+          body: { name: platform },
+        });
       });
     });
 
@@ -96,11 +100,15 @@ export class Compiler {
       });
 
       try {
-        stats.children?.map((childStats) => {
+        stats.children!.map((childStats) => {
           const platform = childStats.name!;
-          this.statsCache[platform] = childStats;
+          this.devServerContext.broadcastToHmrClients<HMRMessage>({
+            action: 'hash',
+            body: { name: platform, hash: childStats.hash },
+          });
 
-          const assets = this.statsCache[platform]!.assets!;
+          this.statsCache[platform] = childStats;
+          const assets = childStats.assets!;
 
           this.assetsCache[platform] = assets
             .filter((asset) => asset.type === 'asset')
@@ -137,12 +145,8 @@ export class Compiler {
 
                 return acc;
               },
-              // keep old assets, discard HMR-related ones
-              Object.fromEntries(
-                Object.entries(this.assetsCache[platform] ?? {}).filter(
-                  ([_, asset]) => !asset.info.hotModuleReplacement
-                )
-              )
+              // keep old assets
+              this.assetsCache[platform] ?? {}
             );
         });
       } catch (error) {
@@ -163,10 +167,10 @@ export class Compiler {
         const platform = childStats.name!;
         this.callPendingResolvers(platform);
         this.devServerContext.notifyBuildEnd(platform);
-        this.devServerContext.broadcastToHmrClients(
-          { action: 'built', body: this.getHmrBody(platform) },
-          platform
-        );
+        this.devServerContext.broadcastToHmrClients<HMRMessage>({
+          action: 'ok',
+          body: { name: platform },
+        });
       });
     });
   }
@@ -277,20 +281,5 @@ export class Compiler {
         `Source map for ${filename} for ${platform} is missing`
       );
     }
-  }
-
-  getHmrBody(platform: string): HMRMessageBody | null {
-    const stats = this.statsCache[platform];
-    if (!stats) {
-      return null;
-    }
-
-    return {
-      name: stats.name ?? '',
-      time: stats.time ?? 0,
-      hash: stats.hash ?? '',
-      warnings: stats.warnings || [],
-      errors: stats.errors || [],
-    };
   }
 }

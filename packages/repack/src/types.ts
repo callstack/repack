@@ -1,5 +1,3 @@
-import type { StatsCompilation } from '@rspack/core';
-
 export type Rule = string | RegExp;
 
 /**
@@ -81,17 +79,9 @@ export interface EnvOptions {
   devServer?: DevServerOptions;
 }
 
-export interface HMRMessageBody {
-  name: string;
-  time: number;
-  hash: string;
-  warnings: StatsCompilation['warnings'];
-  errors: StatsCompilation['errors'];
-}
-
 export interface HMRMessage {
-  action: 'building' | 'built' | 'sync';
-  body: HMRMessageBody | null;
+  action: 'compiling' | 'hash' | 'ok';
+  body: { name: string; hash?: string };
 }
 
 export interface Logger {

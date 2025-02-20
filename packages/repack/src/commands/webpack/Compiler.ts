@@ -91,12 +91,8 @@ export class Compiler extends EventEmitter {
         this.statsCache[platform] = value.stats;
 
         this.assetsCache[platform] = {
-          // keep old assets, discard HMR-related ones
-          ...Object.fromEntries(
-            Object.entries(this.assetsCache[platform] ?? {}).filter(
-              ([_, asset]) => !asset.info.hotModuleReplacement
-            )
-          ),
+          // keep old assets
+          ...(this.assetsCache[platform] ?? {}),
           // convert asset data Uint8Array to Buffer
           ...Object.fromEntries(
             Object.entries(value.assets).map(([name, { data, info, size }]) => {

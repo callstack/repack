@@ -25,8 +25,6 @@ export interface ReactNativeMessage {
   params?: Record<string, any>;
 }
 
-type WebSocketWithUpgradeReq = WebSocket & { upgradeReq?: IncomingMessage };
-
 /**
  * Class for creating a WebSocket server and sending messages between development server
  * and the React Native applications.
@@ -80,8 +78,7 @@ export class WebSocketMessageServer extends WebSocketServer {
     );
   }
 
-  private clients = new Map<string, WebSocketWithUpgradeReq>();
-  private nextClientId = 0;
+  private upgradeRequests: Record<string, IncomingMessage> = {};
 
   /**
    * Create new instance of WebSocketMessageServer and attach it to the given Fastify instance.
@@ -90,7 +87,7 @@ export class WebSocketMessageServer extends WebSocketServer {
    * @param fastify Fastify instance to attach the WebSocket server to.
    */
   constructor(fastify: FastifyInstance) {
-    super(fastify, '/message');
+    super(fastify, { name: 'Message', path: '/message' });
   }
 
   /**
@@ -264,9 +261,11 @@ export class WebSocketMessageServer extends WebSocketServer {
         break;
       case 'getpeers': {
         const output: Record<string, Record<string, string>> = {};
-        this.clients.forEach((peerSocket, peerId) => {
+        this.clients.forEach((_, peerId) => {
           if (clientId !== peerId) {
-            const { searchParams } = new URL(peerSocket.upgradeReq?.url || '');
+            const { searchParams } = new URL(
+              this.upgradeRequests[peerId]?.url || ''
+            );
             output[peerId] = [...searchParams.entries()].reduce(
               (acc, [key, value]) => {
                 acc[key] = value;
@@ -349,27 +348,11 @@ export class WebSocketMessageServer extends WebSocketServer {
     this.sendBroadcast(undefined, { method, params });
   }
 
-  /**
-   * Process new client's WebSocket connection.
-   *
-   * @param socket Incoming WebSocket connection.
-   * @param request Upgrade request for the connection.
-   */
-  onConnection(socket: WebSocket, request: IncomingMessage) {
-    const clientId = `client#${this.nextClientId++}`;
-    const client: WebSocketWithUpgradeReq = socket;
-    client.upgradeReq = request;
-    this.clients.set(clientId, client);
-    this.fastify.log.debug({ msg: 'Message client connected', clientId });
+  override onConnection(socket: WebSocket, request: IncomingMessage): string {
+    const clientId = super.onConnection(socket, request);
 
-    const onClose = () => {
-      this.fastify.log.debug({ msg: 'Message client disconnected', clientId });
-      socket.removeAllListeners();
-      this.clients.delete(clientId);
-    };
+    this.upgradeRequests[clientId] = request;
 
-    socket.addEventListener('error', onClose);
-    socket.addEventListener('close', onClose);
     socket.addEventListener('message', (event) => {
       const message = this.parseMessage(
         event.data.toString(),
@@ -409,5 +392,7 @@ export class WebSocketMessageServer extends WebSocketServer {
         this.handleError(clientId, message, error as Error);
       }
     });
+
+    return clientId;
   }
 }

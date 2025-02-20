@@ -1,5 +1,4 @@
 import type { FastifyInstance } from 'fastify';
-import type WebSocket from 'ws';
 import { WebSocketServer } from '../WebSocketServer.js';
 
 /**
@@ -9,9 +8,6 @@ import { WebSocketServer } from '../WebSocketServer.js';
  * @category Development server
  */
 export class WebSocketApiServer extends WebSocketServer {
-  private clients = new Map<string, WebSocket>();
-  private nextClientId = 0;
-
   /**
    * Create new instance of WebSocketApiServer and attach it to the given Fastify instance.
    * Any logging information, will be passed through standard `fastify.log` API.
@@ -19,7 +15,7 @@ export class WebSocketApiServer extends WebSocketServer {
    * @param fastify Fastify instance to attach the WebSocket server to.
    */
   constructor(fastify: FastifyInstance) {
-    super(fastify, '/api');
+    super(fastify, { name: 'API', path: '/api' });
   }
 
   /**
@@ -37,29 +33,5 @@ export class WebSocketApiServer extends WebSocketServer {
         // NOOP
       }
     }
-  }
-
-  /**
-   * Process new WebSocket connection from client application.
-   *
-   * @param socket Incoming client's WebSocket connection.
-   */
-  onConnection(socket: WebSocket) {
-    const clientId = `client#${this.nextClientId++}`;
-    this.clients.set(clientId, socket);
-
-    this.fastify.log.debug({ msg: 'API client connected', clientId });
-    this.clients.set(clientId, socket);
-
-    const onClose = () => {
-      this.fastify.log.debug({
-        msg: 'API client disconnected',
-        clientId,
-      });
-      this.clients.delete(clientId);
-    };
-
-    socket.addEventListener('error', onClose);
-    socket.addEventListener('close', onClose);
   }
 }
