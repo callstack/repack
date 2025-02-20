@@ -9,18 +9,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@property (readonly) NSString *scriptId;
-@property (readonly) NSURL *url;
-@property (readonly) NSString *method;
-@property (readonly, nullable) NSString *query;
-@property (readonly) BOOL fetch;
-@property (readonly) BOOL absolute;
-@property (readonly, nullable) NSData *body;
-@property (readonly, nullable) NSDictionary *headers;
-@property (readonly) NSNumber *timeout;
-@property (readonly) NSString *verifyScriptSignature;
-@property (readonly) NSString *uniqueId;
-@property (readonly) NSString *sourceUrl;
+@property (nonatomic, readonly) NSString *scriptId;
+@property (nonatomic, readonly) NSURL *url;
+@property (nonatomic, readonly) NSString *method;
+@property (nonatomic, readonly, nullable) NSString *query;
+@property (nonatomic, readonly) BOOL fetch;
+@property (nonatomic, readonly) BOOL absolute;
+@property (nonatomic, readonly, nullable) NSData *body;
+@property (nonatomic, readonly, nullable) NSDictionary *headers;
+@property (nonatomic, readonly) NSNumber *timeout;
+@property (nonatomic, readonly) NSString *verifyScriptSignature;
+@property (nonatomic, readonly) NSString *uniqueId;
+@property (nonatomic, readonly) NSString *sourceUrl;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 + (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator &)config
