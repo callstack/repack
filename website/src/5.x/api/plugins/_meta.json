@@ -6,6 +6,11 @@
   },
   {
     "type": "file",
+    "name": "module-federation-v2",
+    "label": "ModuleFederationV2Plugin"
+  },
+  {
+    "type": "file",
     "name": "code-signing",
     "label": "CodeSigningPlugin"
   },
