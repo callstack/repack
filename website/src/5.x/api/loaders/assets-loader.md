@@ -18,6 +18,15 @@ Looking to do more with your assets? Check out the guides on:
 ## Options
 
 ```ts
+type AssetPathArgs = {
+  resourcePath: string;
+  resourceFilename: string;
+  resourceDirname: string;
+  resourceExtensionType: string;
+};
+
+type AssetPathFn = (args: AssetPathArgs) => string;
+
 interface AssetsLoaderOptions {
   platform?: string;
   scalableAssetExtensions?: string[];
@@ -28,12 +37,7 @@ interface AssetsLoaderOptions {
   remote?: {
     enabled: boolean;
     publicPath: string;
-    assetPath?: (args: {
-      resourcePath: string;
-      resourceFilename: string;
-      resourceDirname: string;
-      resourceExtensionType: string;
-    }) => string;
+    assetPath?: AssetPathFn;
   };
 }
 ```
@@ -106,17 +110,29 @@ Base URL where remote assets will be hosted. Must start with `http://` or `https
 
 #### remote.assetPath
 
-- Type: `Function`
+- Type: `(args: AssetPathArgs) => string`
 - Default: `undefined`
 
 Custom function to control how remote asset paths are constructed. Applied to both generated folder paths and URLs.
 
-Function parameters:
+```ts
+type AssetPathArgs = {
+  resourcePath: string;
+  resourceFilename: string;
+  resourceDirname: string;
+  resourceExtensionType: string;
+};
+```
 
-- `resourcePath`: string - Full path to the resource
-- `resourceFilename`: string - Filename of the resource
-- `resourceDirname`: string - Directory name of the resource
-- `resourceExtensionType`: string - Extension type of the resource
+```js
+{
+  remote: {
+    enabled: true,
+    publicPath: 'https://cdn.example.com',
+    assetPath: ({ resourceFilename }) => `assets/${resourceFilename}`
+  }
+}
+```
 
 ## Example
 
