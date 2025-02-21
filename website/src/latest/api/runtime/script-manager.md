@@ -1,26 +1,12 @@
 # ScriptManager
 
-The `ScriptManager` is a powerful utility for managing script resolution, downloading, and execution in React Native applications. It's particularly useful when working with code splitting, dynamic imports, and Module Federation.
-
-## Features
-
-- Script resolution with customizable resolvers
-- Script downloading and execution
-- Script prefetching
-- Caching support
-- Retry mechanism for failed downloads
-- Event-based progress tracking
-
-## Installation
-
-The `ScriptManager` is part of the Re.Pack runtime and is automatically available in your application's main bundle, chunks, and containers through the global `ScriptManager.shared` instance.
+The `ScriptManager` is a low-level utility for managing script resolution, downloading, and execution in React Native applications. It's particularly useful when working with code splitting, dynamic imports, and Module Federation.
 
 ## Usage
 
 ```js
 import { ScriptManager } from "@callstack/repack/client";
 
-// Add a resolver for script resolution
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
   if (__DEV__) {
     return {
