@@ -45,11 +45,8 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
-        use: {
-          loader: "@callstack/repack/flow-loader",
-          options: { all: true },
-        },
-        type: "javascript/auto",
+        use: '@callstack/repack/flow-loader',
+        type: 'javascript/auto',
       },
     ],
   },
