@@ -1,11 +1,11 @@
-import { Announcement } from "@callstack/rspress-theme";
-import { usePageData } from "rspress/runtime";
+import { Announcement } from '@callstack/rspress-theme';
+import { usePageData } from 'rspress/runtime';
 import Theme, {
   Badge,
   Link,
   PrevNextPage,
   getCustomMDXComponent,
-} from "rspress/theme";
+} from 'rspress/theme';
 
 const VersionBadge = () => {
   const pageData = usePageData();
@@ -14,13 +14,13 @@ const VersionBadge = () => {
   if (pageData.page.frontmatter.overview) {
     return null;
   }
- 
+
   return (
     <div className="py-2">
-      <Badge 
-        type="info" 
-        outline 
-        text={`Version: ${global.__REPACK_DOC_VERSION__ ?? global.__REPACK_DOC_LATEST_VERSION__}`} 
+      <Badge
+        type="info"
+        outline
+        text={`Version: ${global.__REPACK_DOC_VERSION__ ?? global.__REPACK_DOC_LATEST_VERSION__}`}
       />
     </div>
   );
@@ -46,7 +46,8 @@ const OldVersionAnnouncement = ({ version, latestVersion }) => (
 const Layout = () => (
   <Theme.Layout
     beforeNav={
-      global.__REPACK_DOC_VERSION__ && global.__REPACK_DOC_VERSION__ !== global.__REPACK_DOC_LATEST_VERSION__ ? (
+      global.__REPACK_DOC_VERSION__ &&
+      global.__REPACK_DOC_VERSION__ !== global.__REPACK_DOC_LATEST_VERSION__ ? (
         <OldVersionAnnouncement
           version={global.__REPACK_DOC_VERSION__}
           latestVersion={global.__REPACK_DOC_LATEST_VERSION__}
@@ -85,7 +86,7 @@ export const CodeBlock = ({ children, language, title }) => {
 };
 
 const CustomLink = (props) => (
-  <Link {...props} className={props.className + " rspress-link"} />
+  <Link {...props} className={props.className + ' rspress-link'} />
 );
 
 /* omit rendering for edge cases */
@@ -97,4 +98,4 @@ const CustomPrevNextPage = (props) => {
 export { CustomLink as Link };
 export { CustomPrevNextPage as PrevNextPage };
 
-export * from "rspress/theme";
+export * from 'rspress/theme';
