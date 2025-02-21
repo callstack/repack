@@ -6,7 +6,11 @@ import vercelAnalytics from 'rspress-plugin-vercel-analytics';
 import { defineConfig } from 'rspress/config';
 
 const LATEST_VERSION = 'v5';
-const ROOT = path.join(__dirname, 'src', process.env.REPACK_DOC_VERSION ?? 'latest');
+const ROOT = path.join(
+  __dirname,
+  'src',
+  process.env.REPACK_DOC_VERSION ?? 'latest'
+);
 
 export default defineConfig({
   root: ROOT,
