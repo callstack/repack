@@ -39,6 +39,10 @@ If true, removes types completely rather than replacing with spaces. This may re
 
 ## Example
 
+:::info
+`flow-loader` is automatically applied thanks to [`getJsTransformRules`](/api/utils/get-js-transform-rules) helper that is included by default in Re.Pack v5 configuration.
+:::
+
 ```js title=rspack.config.cjs
 module.exports = {
   module: {
