@@ -5,6 +5,8 @@ import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
 import vercelAnalytics from 'rspress-plugin-vercel-analytics';
 import { defineConfig } from 'rspress/config';
 
+const LATEST_VERSION = "v5";
+
 export default defineConfig({
   root: path.join(__dirname, 'src', process.env.VERSION ?? 'latest'),
   title: process.env.LEGACY_VERSION ? `[${process.env.LEGACY_VERSION}] Re.Pack` : 'Re.Pack',
@@ -52,6 +54,12 @@ export default defineConfig({
     ],
   },
   builderConfig: {
+    source: {
+      define: {
+        'global.__REPACK_DOC_VERSION__': JSON.stringify(process.env.VERSION),
+        'global.__REPACK_DOC_LATEST_VERSION__': JSON.stringify(LATEST_VERSION),
+      },
+    },
     plugins: [
       pluginOpenGraph({
         title: 'Re.Pack',
