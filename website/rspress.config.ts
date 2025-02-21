@@ -9,8 +9,8 @@ const LATEST_VERSION = 'v5';
 
 export default defineConfig({
   root: path.join(__dirname, 'src', process.env.VERSION ?? 'latest'),
-  title: process.env.LEGACY_VERSION
-    ? `[${process.env.LEGACY_VERSION}] Re.Pack`
+  title: process.env.VERSION
+    ? `[${process.env.VERSION}] Re.Pack`
     : 'Re.Pack',
   description: 'A toolkit to build your React Native application with Webpack.',
   icon: '/img/favicon.ico',
