@@ -39,17 +39,18 @@ If true, removes types completely rather than replacing with spaces. This may re
 
 ## Example
 
+:::info
+`flow-loader` is automatically applied thanks to [`getJsTransformRules`](/api/utils/get-js-transform-rules) helper that is included by default in Re.Pack v5 configuration.
+:::
+
 ```js title=rspack.config.cjs
 module.exports = {
   module: {
     rules: [
       {
         test: /\.jsx?$/,
-        use: {
-          loader: "@callstack/repack/flow-loader",
-          options: { all: true },
-        },
-        type: "javascript/auto",
+        use: '@callstack/repack/flow-loader',
+        type: 'javascript/auto',
       },
     ],
   },
