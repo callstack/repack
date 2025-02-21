@@ -8,10 +8,8 @@ import { defineConfig } from 'rspress/config';
 const LATEST_VERSION = 'v5';
 
 export default defineConfig({
-  root: path.join(__dirname, 'src', process.env.VERSION ?? 'latest'),
-  title: process.env.VERSION
-    ? `[${process.env.VERSION}] Re.Pack`
-    : 'Re.Pack',
+  root: path.join(__dirname, 'src', process.env.REPACK_DOC_VERSION ?? 'latest'),
+  title: process.env.REPACK_DOC_VERSION ? `[${process.env.REPACK_DOC_VERSION}] Re.Pack` : 'Re.Pack',
   description: 'A toolkit to build your React Native application with Webpack.',
   icon: '/img/favicon.ico',
   logo: {
@@ -58,7 +56,7 @@ export default defineConfig({
   builderConfig: {
     source: {
       define: {
-        'global.__REPACK_DOC_VERSION__': JSON.stringify(process.env.VERSION),
+        'global.__REPACK_DOC_VERSION__': JSON.stringify(process.env.REPACK_DOC_VERSION),
         'global.__REPACK_DOC_LATEST_VERSION__': JSON.stringify(LATEST_VERSION),
       },
     },
