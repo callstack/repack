@@ -17,19 +17,48 @@ const VersionBadge = () => {
 
   return (
     <div className="py-2">
-      <Badge type="info" outline text={`Version ${pageData.page.version}`} />
+      <Badge
+        type="info"
+        outline
+        text={`Version: ${global.__REPACK_DOC_VERSION__ ?? global.__REPACK_DOC_LATEST_VERSION__}`}
+      />
     </div>
   );
 };
 
+const OldVersionAnnouncement = ({ version, latestVersion }) => (
+  <div className="py-2 px-4 flex flex-col sm:flex-row items-center justify-center bg-amber-50 text-amber-900 border-b border-amber-200 text-sm">
+    <div className="flex flex-wrap justify-center">
+      <span>You're viewing the documentation for</span>
+      <span className="font-semibold mx-2">{`${version}.`}</span>
+      <span>Current latest version is</span>
+      <span className="font-semibold mx-2">{`${latestVersion}.`}</span>
+    </div>
+    <Link
+      href="https://re-pack.dev"
+      className="mt-1 sm:mt-0 sm:ml-2 text-amber-700 hover:text-amber-900 font-medium whitespace-nowrap"
+    >
+      View latest version <b>here</b>.
+    </Link>
+  </div>
+);
+
 const Layout = () => (
   <Theme.Layout
     beforeNav={
-      <Announcement
-        href="/5.x/docs/getting-started/quick-start"
-        message="Preview Re.Pack 5 RC documentation"
-        localStorageKey="repack-announcement"
-      />
+      global.__REPACK_DOC_VERSION__ &&
+      global.__REPACK_DOC_VERSION__ !== global.__REPACK_DOC_LATEST_VERSION__ ? (
+        <OldVersionAnnouncement
+          version={global.__REPACK_DOC_VERSION__}
+          latestVersion={global.__REPACK_DOC_LATEST_VERSION__}
+        />
+      ) : (
+        <Announcement
+          href="/docs/getting-started/quick-start"
+          message="Preview Re.Pack 5 RC documentation"
+          localStorageKey="repack-announcement"
+        />
+      )
     }
     beforeDocContent={<VersionBadge />}
   />

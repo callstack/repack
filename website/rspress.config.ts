@@ -5,9 +5,18 @@ import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
 import vercelAnalytics from 'rspress-plugin-vercel-analytics';
 import { defineConfig } from 'rspress/config';
 
+const LATEST_VERSION = 'v5';
+const ROOT = path.join(
+  __dirname,
+  'src',
+  process.env.REPACK_DOC_VERSION ?? 'latest'
+);
+
 export default defineConfig({
-  root: path.join(__dirname, 'src'),
-  title: 'Re.Pack',
+  root: ROOT,
+  title: process.env.REPACK_DOC_VERSION
+    ? `[${process.env.REPACK_DOC_VERSION}] Re.Pack`
+    : 'Re.Pack',
   description: 'A toolkit to build your React Native application with Webpack.',
   icon: '/img/favicon.ico',
   logo: {
@@ -19,10 +28,6 @@ export default defineConfig({
     // TODO fix dead links
     checkDeadLinks: false,
     codeHighlighter: 'prism',
-  },
-  multiVersion: {
-    default: process.env.NODE_ENV === 'development' ? '5.x' : '4.x', // Use 5.x in development for preview, while 4.x remains the stable public version
-    versions: ['2.x', '3.x', '4.x', '5.x'],
   },
   route: {
     cleanUrls: true,
@@ -56,6 +61,14 @@ export default defineConfig({
     ],
   },
   builderConfig: {
+    source: {
+      define: {
+        'global.__REPACK_DOC_VERSION__': JSON.stringify(
+          process.env.REPACK_DOC_VERSION
+        ),
+        'global.__REPACK_DOC_LATEST_VERSION__': JSON.stringify(LATEST_VERSION),
+      },
+    },
     plugins: [
       pluginOpenGraph({
         title: 'Re.Pack',
