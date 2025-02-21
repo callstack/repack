@@ -1,20 +1,22 @@
 # CodeSigningPlugin
 
-This plugin can be used to sign chunks so that their integrity can be verified before execution. You should consider code-signing your chunks when you are using CodeSplitting or ModuleFederation and want to deliver parts of your code remotely to the end-user. Compatible with both JS and Hermes-bytecode bundles.
+This plugin can be used to sign chunks so that their integrity can be verified before execution. You should consider code-signing your chunks when you are using [code splitting](/docs/features/code-splitting) or [ModuleFederation](/docs/features/module-federation) and want to deliver parts of your code remotely to the end-user.
 
 ## Usage
 
-```js title="webpack.config.js"
-import * as Repack from '@callstack/repack';
+```js title="rspack.config.cjs"
+const Repack = require("@callstack/repack");
 
-new Repack.plugins.CodeSigningPlugin({
-  enabled: mode === 'production',
-  privateKeyPath: './code-signing.pem',
-  excludeChunks: /local/,
-});
+module.exports = {
+  plugins: [
+    new Repack.plugins.CodeSigningPlugin({
+      // options
+    }),
+  ],
+};
 ```
 
-## Configuration
+## Options
 
 ### privateKeyPath
 
@@ -45,7 +47,7 @@ To add code-signing to your app, you first need to generate a pair of cryptograp
 
 In terminal, navigate to your project directory and enter the following commands:
 
-```sh
+```bash
 ssh-keygen -t rsa -b 4096 -m PEM -f code-signing.pem
 openssl rsa -in code-signing.pem -pubout -outform PEM -out code-signing.pem.pub
 ```
@@ -54,25 +56,21 @@ openssl rsa -in code-signing.pem -pubout -outform PEM -out code-signing.pem.pub
 
 After that, you need to add `CodeSigningPlugin` to your configuration. Make sure the `privateKeyPath` points to the location of your `code-signing.pem`.
 
-```js title="webpack.config.js" {14-17}
-// ...
-plugins: [
-  new Repack.RepackPlugin({
-    context,
-    mode,
-    platform,
-    devServer,
-    output: {
-      bundleFilename,
-      sourceMapFilename,
-      assetsPath,
-    },
-  }),
-  new Repack.plugins.CodeSigningPlugin({
-    enabled: mode === 'production',
-    privateKeyPath: './code-signing.pem',
-  }),
-];
+```js title="rspack.config.cjs" {8-11}
+const Repack = require("@callstack/repack");
+
+module.exports = (env) => {
+  const { mode } = env;
+  return {
+    plugins: [
+      new Repack.RepackPlugin(),
+      new Repack.plugins.CodeSigningPlugin({
+        enabled: mode === "production",
+        privateKeyPath: "./code-signing.pem",
+      }),
+    ],
+  };
+};
 ```
 
 ### Add the public key
@@ -110,13 +108,20 @@ You need to add the public key to `android/app/src/main/res/values/strings.xml` 
 
 By default, the bundles are not verified since code-signing is entirely optional. You can enable bundle verification by modyifing the return value of `resolver` added through `ScriptManager.shared.addResolver`.
 
+Integrity verification can be set (through `verifyScriptSignature`) to one of the 3 levels:
+| Value | Description |
+|---------------|-------------|
+| `strict` | Always verify the integrity of the bundle |
+| `lax` | Verify the integrity only if the signtarure is present |
+| `off` | Never verify the integrity of the bundle |
+
 Go to `index.js` and modify your `ScriptManager` setup like this:
 
 ```js title="index.js" {17}
-import { ScriptManager, Federated } from '@callstack/repack/client';
+import { ScriptManager, Federated } from "@callstack/repack/client";
 
 const containers = {
-  MiniApp: 'http://localhost:9000/[name][ext]',
+  MiniApp: "http://localhost:9000/[name][ext]",
 };
 
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
@@ -126,18 +131,9 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
   if (url) {
     return {
       url,
-      query: {
-        platform: Platform.OS,
-      },
-      verifyScriptSignature: __DEV__ ? 'off' : 'strict',
+      query: { platform: Platform.OS },
+      verifyScriptSignature: __DEV__ ? "off" : "strict",
     };
   }
 });
 ```
-
-Integrity verification can be set (through `verifyScriptSignature`) to one of the 3 levels:
-| Value | Description |
-|---------------|-------------|
-| `strict` | Always verify the integrity of the bundle |
-| `lax` | Verify the integrity only if the signtarure is present |
-| `off` | Never verify the integrity of the bundle |

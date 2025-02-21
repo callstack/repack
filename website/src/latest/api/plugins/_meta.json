@@ -6,12 +6,22 @@
   },
   {
     "type": "file",
+    "name": "module-federation-v1",
+    "label": "ModuleFederationV1Plugin"
+  },
+  {
+    "type": "file",
+    "name": "module-federation-v2",
+    "label": "ModuleFederationV2Plugin"
+  },
+  {
+    "type": "file",
     "name": "code-signing",
     "label": "CodeSigningPlugin"
   },
   {
     "type": "file",
-    "name": "chunks-to-hermes",
+    "name": "hermes-bytecode",
     "label": "ChunksToHermesBytecodePlugin"
   },
   {
