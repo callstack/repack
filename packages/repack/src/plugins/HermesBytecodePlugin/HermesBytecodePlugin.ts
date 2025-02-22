@@ -12,7 +12,7 @@ import {
 /**
  * {@link HermesBytecodePlugin} configuration options.
  */
-interface HermesBytecodePluginConfig {
+export interface HermesBytecodePluginConfig {
   /**
    * Whether the plugin is enabled.
    *
