@@ -46,7 +46,7 @@ export const composeSourceMaps = async ({
   } catch (error) {
     const message = (error as Error).toString();
     throw new Error(
-      `[RepackChunksToHermesBytecodePlugin] Failed to compose source maps. Reason:\n${message})`
+      `[RepackHermesBytecodePlugin] Failed to compose source maps. Reason:\n${message})`
     );
   }
 };

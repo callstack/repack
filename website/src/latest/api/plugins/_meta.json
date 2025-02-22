@@ -22,7 +22,7 @@
   {
     "type": "file",
     "name": "hermes-bytecode",
-    "label": "ChunksToHermesBytecodePlugin"
+    "label": "HermesBytecodePlugin"
   },
   {
     "type": "file",
