@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { type Compiler, ModuleFilenameHelpers } from '@rspack/core';
 import execa from 'execa';
-import { ChunksToHermesBytecodePlugin } from '../ChunksToHermesBytecodePlugin/index.js';
+import { ChunksToHermesBytecodePlugin } from '../HermesBytecodePlugin/index.js';
 
 jest.mock('node:fs', () => ({
   __esModule: true,
