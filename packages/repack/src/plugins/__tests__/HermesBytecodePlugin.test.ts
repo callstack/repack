@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { type Compiler, ModuleFilenameHelpers } from '@rspack/core';
 import execa from 'execa';
-import { ChunksToHermesBytecodePlugin } from '../HermesBytecodePlugin/index.js';
+import { HermesBytecodePlugin } from '../HermesBytecodePlugin/index.js';
 
 jest.mock('node:fs', () => ({
   __esModule: true,
@@ -37,7 +37,7 @@ const compilerMock = {
   },
 };
 
-describe('ChunksToHermesBytecodePlugin', () => {
+describe('HermesBytecodePlugin', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -48,7 +48,7 @@ describe('ChunksToHermesBytecodePlugin', () => {
       test: /\.(js)?bundle$/,
       exclude: /index.bundle$/,
     };
-    const pluginInstance = new ChunksToHermesBytecodePlugin(config);
+    const pluginInstance = new HermesBytecodePlugin(config);
 
     pluginInstance.apply(compilerMock as unknown as Compiler);
 
@@ -61,7 +61,7 @@ describe('ChunksToHermesBytecodePlugin', () => {
       test: /\.(js)?bundle$/,
       exclude: /index.bundle$/,
     };
-    const pluginInstance = new ChunksToHermesBytecodePlugin(config);
+    const pluginInstance = new HermesBytecodePlugin(config);
 
     pluginInstance.apply(compilerMock as unknown as Compiler);
 
@@ -77,7 +77,7 @@ describe('ChunksToHermesBytecodePlugin', () => {
         reactNativePath: 'path/to/react-native',
         hermesCLIPath: 'path/to/hermesc',
       };
-      const pluginInstance = new ChunksToHermesBytecodePlugin(config);
+      const pluginInstance = new HermesBytecodePlugin(config);
 
       const fsMock = fs.promises as jest.Mocked<typeof fs.promises>;
       fsMock.access.mockResolvedValueOnce();
@@ -117,7 +117,7 @@ describe('ChunksToHermesBytecodePlugin', () => {
         reactNativePath: 'path/to/react-native',
         hermesCLIPath: 'path/to/hermesc',
       };
-      const pluginInstance = new ChunksToHermesBytecodePlugin(config);
+      const pluginInstance = new HermesBytecodePlugin(config);
 
       const fsMock = fs.promises as jest.Mocked<typeof fs.promises>;
       fsMock.access.mockRejectedValueOnce(new Error('File not found'));
