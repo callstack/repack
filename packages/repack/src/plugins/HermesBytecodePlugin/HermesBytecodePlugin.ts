@@ -10,9 +10,9 @@ import {
 } from './utils/index.js';
 
 /**
- * {@link ChunksToHermesBytecodePlugin} configuration options.
+ * {@link HermesBytecodePlugin} configuration options.
  */
-interface ChunksToHermesBytecodePluginConfig {
+interface HermesBytecodePluginConfig {
   /**
    * Whether the plugin is enabled.
    *
@@ -59,7 +59,7 @@ interface ChunksToHermesBytecodePluginConfig {
  *
  * // ...
  * plugins: [
- *   new Repack.ChunksToHermesBytecodePlugin({
+ *   new Repack.HermesBytecodePlugin({
  *    enabled: mode === 'production',
  *    test: /\.(js)?bundle$/,
  *    exclude: /index.bundle$/,
@@ -69,12 +69,12 @@ interface ChunksToHermesBytecodePluginConfig {
  *
  * @category Webpack Plugin
  */
-export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
-  constructor(private config: ChunksToHermesBytecodePluginConfig) {}
+export class HermesBytecodePlugin implements RspackPluginInstance {
+  constructor(private config: HermesBytecodePluginConfig) {}
 
   apply(compiler: Compiler) {
     const logger = compiler.getInfrastructureLogger(
-      'RepackChunksToHermesBytecodePlugin'
+      'RepackHermesBytecodePlugin'
     );
 
     if (!this.config.enabled) {
@@ -101,7 +101,7 @@ export class ChunksToHermesBytecodePlugin implements RspackPluginInstance {
       this.config.hermesCLIPath || getHermesCLIPath(reactNativePath);
 
     compiler.hooks.assetEmitted.tapPromise(
-      { name: 'RepackChunksToHermesBytecodePlugin', stage: 10 },
+      { name: 'RepackHermesBytecodePlugin', stage: 10 },
       async (file, { outputPath }) => {
         const shouldTransformAsset =
           compiler.webpack.ModuleFilenameHelpers.matchObject(
