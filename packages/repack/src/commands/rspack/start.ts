@@ -1,6 +1,5 @@
 import type { Config } from '@react-native-community/cli-types';
 import type { Configuration } from '@rspack/core';
-import * as colorette from 'colorette';
 import packageJson from '../../../package.json';
 import {
   ConsoleReporter,
@@ -17,6 +16,7 @@ import {
   setupInteractions,
 } from '../common/index.js';
 import { runAdbReverse } from '../common/index.js';
+import logo from '../common/logo.js';
 import { setupEnvironment } from '../common/setupEnvironment.js';
 import type { StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
@@ -66,10 +66,7 @@ export async function start(
     ].filter(Boolean) as Reporter[]
   );
 
-  const version = packageJson.version;
-  process.stdout.write(
-    colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
-  );
+  process.stdout.write(logo(packageJson.version, 'Rspack'));
 
   const compiler = new Compiler(configs, reporter, cliConfig.root);
 

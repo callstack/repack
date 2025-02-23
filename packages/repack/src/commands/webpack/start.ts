@@ -1,7 +1,6 @@
 // @ts-expect-error type-only import
 import type { Server } from '@callstack/repack-dev-server';
 import type { Config } from '@react-native-community/cli-types';
-import * as colorette from 'colorette';
 import type { Configuration, StatsCompilation } from 'webpack';
 import packageJson from '../../../package.json';
 import {
@@ -20,6 +19,7 @@ import {
   runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
+import logo from '../common/logo.js';
 import { setupEnvironment } from '../common/setupEnvironment.js';
 import type { StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
@@ -69,10 +69,7 @@ export async function start(
     ].filter(Boolean) as Reporter[]
   );
 
-  const version = packageJson.version;
-  process.stdout.write(
-    colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
-  );
+  process.stdout.write(logo(packageJson.version, 'webpack'));
 
   const compiler = new Compiler(
     args,
