@@ -67,6 +67,15 @@ export async function start(
   );
 
   const version = packageJson.version;
+  process.stdout.write(`
+   ██████   █████████         ██████████   ██████████      ██████   ███    ▗█▖
+███                           ███    ███   ███    ███   ███         ███    ▜█▛
+███         █████████    ▄    ██████████   ██████████   ███         ███████ ▀
+███                     ▟█▙   ███          ███    ███   ███         ███    ███
+███         █████████   ▝█▘   ███          ███    ███      ██████   ███    ███
+
+`
+  );
   process.stdout.write(
     colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
   );
