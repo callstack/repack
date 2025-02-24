@@ -160,3 +160,61 @@ These are the base defaults that Re.Pack provides regardless of the command bein
   },
 }
 ```
+
+## Configuration enhancements
+
+Re.Pack extends the configuration system with few features to make things easier. These values will be resolved before passing the configuration to the bundler and starting the compilation.
+
+### Output path
+
+The `output.path` option supports the `[platform]` placeholder which gets replaced with the current platform value:
+
+```js
+// Your configuration
+output: {
+  path: "build/generated/[platform]";
+}
+
+// When building for iOS, will be resolved to
+output: {
+  path: "build/generated/ios";
+}
+```
+
+### Development server host
+
+The `devServer.host` option supports special values:
+
+| Value          | Resolves to   |
+| -------------- | ------------- |
+| `"local-ip"`   | `"localhost"` |
+| `"local-ipv4"` | `"127.0.0.1"` |
+| `"local-ipv6"` | `"::1"`       |
+
+```js
+// Your configuration
+devServer: {
+  host: "local-ip",
+}
+
+// Will be resolved to
+devServer: {
+  host: "localhost",
+}
+```
+
+### Platform-specific file resolution
+
+The `resolve.extensions` option supports the `[platform]` placeholder to enable platform-specific file resolution. This allows you to use platform-specific files like `MyComponent.ios.js` or `MyComponent.android.js`:
+
+```js
+// Your configuration
+resolve: {
+  extensions: [".[platform].ts", ".[platform].js", ".ts", ".js"];
+}
+
+// When building for iOS, will be resolved to
+resolve: {
+  extensions: [".ios.ts", ".ios.js", ".ts", ".js"];
+}
+```
