@@ -54,4 +54,17 @@ After updating the project dependencies, run the install command of your package
 
 <PackageManagerTabs command="install" />
 
+## Update `react-native.config.js`
+
+Since Re.Pack 5 now supports multiple bundlers (webpack and Rspack), 
+you need to specify that you want to use webpack commands explicitly. 
+Update your `react-native.config.js` in a following way:
+
+```diff
+module.exports = {
+-  commands: require('@callstack/repack/commands'),
++  commands: require('@callstack/repack/commands/webpack'),
+};
+```
+
 
