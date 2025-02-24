@@ -1,23 +1,10 @@
 // @ts-check
-import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import webpack from 'webpack';
 
-const dirname = Repack.getDirname(import.meta.url);
-
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('webpack').Configuration} */
 export default (env) => {
-  const {
-    mode = 'development',
-    context = dirname,
-    platform = process.env.PLATFORM,
-  } = env;
-
-  if (!platform) {
-    throw new Error('Missing platform');
-  }
-
-  process.env.BABEL_ENV = mode;
+  const { mode, context, platform } = env;
 
   return {
     mode,
@@ -27,7 +14,7 @@ export default (env) => {
       ...Repack.getResolveOptions(),
     },
     output: {
-      path: path.join(dirname, 'build/mini-app/[platform]'),
+      path: '[context]/build/mini-app/[platform]',
       uniqueName: 'MFTester-MiniApp',
     },
     module: {
@@ -42,7 +29,15 @@ export default (env) => {
     },
     plugins: [
       // @ts-ignore
-      new Repack.RepackPlugin(),
+      new Repack.RepackPlugin({
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/mini-app/${platform}/output-remote`,
+          },
+        ],
+      }),
       // @ts-ignore
       new Repack.plugins.ModuleFederationPluginV1({
         name: 'MiniApp',
