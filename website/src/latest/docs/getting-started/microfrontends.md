@@ -1,12 +1,10 @@
 # Microfrontends
 
-Microfrontends (MFEs) are an architectural approach that breaks down a web application’s frontend into smaller, independently deployable pieces. Think of them as the frontend equivalent of microservices: instead of one massive, tangled codebase, you get modular chunks that different teams can own, develop, and ship on their own timelines.
+Microfrontends (MFEs) are an architectural approach that breaks down a web application’s frontend into smaller, independently deployable pieces that can be downloaded on demand. Think of them as the frontend equivalent of microservices: instead of one massive, tangled codebase, you get modular chunks that different teams can own, develop, and ship on their own timelines. It's important to note that we're not talking about producing a single JS bundle from multiple independent teams. It's about producing many JS bundles that can be later downloaded on demand by a mobile app.
 
 While web MFEs and microservices are often about using independent tech stacks, it's different on mobile iOS and Android ecosystems due to platform constraints and app store rules that typically prevent loading any compiled code.
 
-:::info
-Re.Pack enables microfrontend architecture on mobile thanks to [Module Federation](https://module-federation.io).
-:::
+Re.Pack is largely designed to enable microfrontends on mobile. It's one of the key differences between other React Native bundlers, such as Metro, which don't support this architecture out of the box.
 
 ## Use Cases
 
@@ -27,6 +25,14 @@ We found that, while mobile MFEs can work in small monorepos, this architecture 
 Re.Pack makes it possible to use Rspack, leveraging whole webpack ecosystem. Thanks to that you can use one of the key features built around this ecosystem, which was designed to solve common pains working with microfrontends: Module Federation. Module Federation is an architectural pattern for the decentralization of JavaScript applications. It allows you to share code and resources among multiple JavaScript applications (or microfrontends).
 
 Re.Pack supports Module Federation since v3 in its own flavor, that was different from using it on the web. However, since then, the Module Federation 2 was released, which adds dynamic type hinting, Manifest, Federation Runtime, and Runtime Plugin System. These new features allowed us to better integrate this architecture into React Native runtime—which differs from the web—while retaining the same API that web developers are used to.
+
+## Limitations
+
+While Module Federation 2 enables Re.Pack to use the same conventions and APIs as on the web, mobile microfrontends are more limited due to native platform and app stores constraints:
+
+- You must use the same React, React Native and native dependencies versions across all MFEs
+- All native modules need to be available in the host application (the one that is released to app stores)
+- You can only dynamically load JavaScript code from a microfrontend – this code can reference and use native modules that are bundled within the host app
 
 ## Challenges
 

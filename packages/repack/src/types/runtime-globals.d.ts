@@ -40,9 +40,7 @@ declare namespace RepackRuntimeGlobals {
 
   declare interface RepackRuntimeObject {
     shared: {
-      scriptManager?: import(
-        '../modules/ScriptManager/ScriptManager.js'
-      ).ScriptManager;
+      scriptManager?: import('../modules/ScriptManager/ScriptManager.js').ScriptManager;
     };
   }
 
