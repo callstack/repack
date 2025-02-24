@@ -111,9 +111,7 @@ The CLI flag (`production`) will take precedence over the configuration file val
 Below you can find the defaults for each command.
 
 :::tip
-
 Remember that if you define the same options in your configuration file (e.g. `rspack.config.cjs` or `webpack.config.cjs`), they will take effect over the defaults listed below.
-
 :::
 
 #### `start` command
@@ -138,6 +136,27 @@ Remember that if you define the same options in your configuration file (e.g. `r
   devServer: false,
   optimization: {
     minimize: true,
+  },
+}
+```
+
+### Re.Pack defaults
+
+These are the base defaults that Re.Pack provides regardless of the command being run:
+
+```js
+{
+  devtool: "source-map",
+  output: {
+    clean: true,
+    hashFunction: "xxhash64",
+    filename: "index.bundle",
+    chunkFilename: "[name].chunk.bundle",
+    path: "[context]/build/generated/[platform]",
+    publicPath: "noop:///",
+  },
+  optimization: {
+    chunkIds: "named",
   },
 }
 ```
