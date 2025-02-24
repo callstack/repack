@@ -181,7 +181,7 @@ output: {
 }
 ```
 
-### Development server host
+### DevServer host
 
 The `devServer.host` option supports special values:
 
@@ -203,7 +203,7 @@ devServer: {
 }
 ```
 
-### Platform-specific file resolution
+### Resolve extensions
 
 The `resolve.extensions` option supports the `[platform]` placeholder to enable platform-specific file resolution. This allows you to use platform-specific files like `MyComponent.ios.js` or `MyComponent.android.js`:
 
