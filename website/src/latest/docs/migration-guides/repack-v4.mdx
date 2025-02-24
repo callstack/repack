@@ -79,6 +79,22 @@ options, defaults, and configuration variants, please refer to our
 [Configuration guide](/docs/guides/configuration).
 :::
 
+### Breaking: New configuration cascade system
+
+A strict configuration cascade system was introduced to provide clear and predictable configuration resolution:
+
+1. CLI flags (highest precedence)
+2. Config values
+3. Command defaults
+4. Re.Pack defaults
+5. Webpack/Rspack defaults (lowest precedence)
+
+:::warning title="CLI arguments now bypass config files!"
+CLI arguments now always take the highest precedence and cannot be overridden by config files. This change aligns Re.Pack behavior with other similar CLI tools. Make sure to update your configuration with this in mind. 
+:::
+
+For more details about the configuration system and available options and their defaults, see our [Configuration guide](/docs/guides/configuration#configuration-precedence).
+
 ### Breaking: `devtool` option is now used to configure sourcemaps
 
 We've changed how sourcemaps are configured to align better with webpack's native configuration. The `devtool` option is now used to control the behavior of generated sourcemaps, replacing the previous `RepackPlugin` configuration. Please make sure to remove any `devtool: false` from your configuration to keep sourcemaps enabled.
@@ -115,7 +131,6 @@ You can now simplify your entry configuration:
 -  ],
 +  entry: './index.js', // or just entry if you're using env.entry
 ```
-
 ### Breaking: react-refresh transformation is now handled by `reactRefreshLoader`
 
 We've changed how the React Refresh transformation is handled to make it compatible with both Rspack and webpack. The transformation now relies on `@rspack/plugin-react-refresh` which is shipped with Re.Pack and is configured automatically in the `RepackPlugin`.
@@ -185,4 +200,7 @@ For available options and their defaults, see the [RepackPlugin API documentatio
 ### Breaking: Output configuration moved to CLI flags
 
 Since output-related configuration options have been removed from `RepackPlugin`, the following properties: `bundleFilename`, `sourceMapFilename`, `assetsPath` are now controlled exclusively through their respective CLI flags - [see bundle command documentation](/docs/commands/bundle). 
+
+
+
 
