@@ -4,7 +4,7 @@ import rspack from '@rspack/core';
 
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
 export default (env) => {
-  const { mode, context } = env;
+  const { mode, context, platform } = env;
 
   return {
     mode,
@@ -24,7 +24,15 @@ export default (env) => {
       ],
     },
     plugins: [
-      new Repack.RepackPlugin(),
+      new Repack.RepackPlugin({
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/mini-app/${platform}/output-remote`,
+          },
+        ],
+      }),
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'MiniApp',
         filename: 'MiniApp.container.js.bundle',

@@ -24,7 +24,15 @@ export default (env) => {
       ],
     },
     plugins: [
-      new Repack.RepackPlugin(),
+      new Repack.RepackPlugin({
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/host-app/${platform}/output-remote`,
+          },
+        ],
+      }),
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'HostApp',
         filename: 'HostApp.container.js.bundle',

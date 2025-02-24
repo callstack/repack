@@ -29,7 +29,15 @@ export default (env) => {
     },
     plugins: [
       // @ts-ignore
-      new Repack.RepackPlugin(),
+      new Repack.RepackPlugin({
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/host-app/${platform}/output-remote`,
+          },
+        ],
+      }),
       // @ts-ignore
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'HostApp',

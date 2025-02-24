@@ -4,7 +4,7 @@ import webpack from 'webpack';
 
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('webpack').Configuration} */
 export default (env) => {
-  const { mode, context } = env;
+  const { mode, context, platform } = env;
 
   return {
     mode,
@@ -29,7 +29,15 @@ export default (env) => {
     },
     plugins: [
       // @ts-ignore
-      new Repack.RepackPlugin(),
+      new Repack.RepackPlugin({
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/mini-app/${platform}/output-remote`,
+          },
+        ],
+      }),
       // @ts-ignore
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'MiniApp',
