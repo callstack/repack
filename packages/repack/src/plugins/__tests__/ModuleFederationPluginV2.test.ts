@@ -15,6 +15,9 @@ const mockCompiler = {
   context: __dirname,
   options: {},
   webpack: {
+    DefinePlugin: jest.fn(() => ({
+      apply: jest.fn(),
+    })),
     rspackVersion: '1.0.0',
   },
 } as unknown as Compiler;
