@@ -1,3 +1,10 @@
+import { Tab, Tabs } from 'rspress/theme';
+import { CodeBlock } from '@theme';
+import RspackCJSTemplate from '../../../../../templates_v5/rspack.config.cjs?raw';
+import RspackESMTemplate from '../../../../../templates_v5/rspack.config.mjs?raw';
+import WebpackCJSTemplate from '../../../../../templates_v5/webpack.config.cjs?raw';
+import WebpackESMTemplate from '../../../../../templates_v5/webpack.config.mjs?raw';
+
 # Configuration
 
 Re.Pack uses the same configuration system as Rspack and webpack. This means you can leverage the extensive configuration options from either of the bundlers while working with React Native projects. Re.Pack comes with minimal, development & production-ready defaults that work out of the box, but as your project grows, you may need to customize various aspects of the bundling process.
@@ -21,6 +28,35 @@ module.exports = {
 ```
 
 You can find all available options in the respective bundler's documentation. Most configuration options work the same way as they do in Rspack/webpack, with some React Native specific extensions that we'll cover later in this guide.
+
+## Template configurations
+
+Re.Pack ships with template configurations to help you get started. 
+These templates provide sensible defaults and common configurations for both Rspack and webpack.
+
+<Tabs>
+  <Tab label="Rspack ESM">
+    <CodeBlock language="js" title="rspack.config.mjs">
+      {RspackESMTemplate}
+    </CodeBlock>
+  </Tab>
+  <Tab label="Rspack CJS">
+    <CodeBlock language="js" title="rspack.config.cjs">
+      {RspackCJSTemplate}
+    </CodeBlock>
+  </Tab>
+  <Tab label="Webpack ESM">
+    <CodeBlock language="js" title="webpack.config.mjs">
+      {WebpackESMTemplate}
+    </CodeBlock>
+  </Tab>
+  <Tab label="Webpack CJS">
+    <CodeBlock language="js" title="webpack.config.cjs">
+      {WebpackCJSTemplate}
+    </CodeBlock>
+  </Tab>
+</Tabs>
+
 
 ## Configuration variants
 
