@@ -1,21 +1,10 @@
 // @ts-check
-import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import rspack from '@rspack/core';
 
-const dirname = Repack.getDirname(import.meta.url);
-
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
 export default (env) => {
-  const {
-    mode = 'development',
-    context = dirname,
-    platform = process.env.PLATFORM,
-  } = env;
-
-  if (!platform) {
-    throw new Error('Missing platform');
-  }
+  const { mode, context } = env;
 
   return {
     mode,
@@ -25,7 +14,7 @@ export default (env) => {
       ...Repack.getResolveOptions(),
     },
     output: {
-      path: path.join(dirname, 'build/mini-app/[platform]'),
+      path: '[context]/build/mini-app/[platform]',
       uniqueName: 'MF2Tester-MiniApp',
     },
     module: {
