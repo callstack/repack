@@ -1,0 +1,256 @@
+import { Tab, Tabs } from 'rspress/theme';
+import { CodeBlock } from '@theme';
+import RspackCJSTemplate from '../../../../../templates_v5/rspack.config.cjs?raw';
+import RspackESMTemplate from '../../../../../templates_v5/rspack.config.mjs?raw';
+import WebpackCJSTemplate from '../../../../../templates_v5/webpack.config.cjs?raw';
+import WebpackESMTemplate from '../../../../../templates_v5/webpack.config.mjs?raw';
+
+# Configuration
+
+Re.Pack uses the same configuration system as Rspack and webpack. This means you can leverage the extensive configuration options from either of the bundlers while working with React Native projects. Re.Pack comes with minimal, development & production-ready defaults that work out of the box, but as your project grows, you may need to customize various aspects of the bundling process.
+
+## How to configure
+
+Since Re.Pack is built on top of Rspack and webpack, you can refer to their respective documentation for available configuration options:
+
+- [Rspack documentation](https://rspack.dev/config.html)
+- [webpack documentation](https://webpack.js.org/configuration/)
+
+For example, if you want to configure output options for your bundles, you would look up these options in the [Rspack output documentation](https://rspack.dev/config/output.html) or [webpack output documentation](https://webpack.js.org/configuration/output/) and use them in the project config:
+
+```js title="rspack.config.cjs"
+module.exports = {
+  output: {
+    filename: "index.bundle",
+    chunkFilename: "[name].chunk.bundle",
+  },
+};
+```
+
+You can find all available options in the respective bundler's documentation. Most configuration options work the same way as they do in Rspack/webpack, with some React Native specific extensions that we'll cover later in this guide.
+
+## Template configurations
+
+Re.Pack ships with template configurations to help you get started. 
+These templates provide sensible defaults and common configurations for both Rspack and webpack.
+
+<Tabs>
+  <Tab label="Rspack ESM">
+    <CodeBlock language="js" title="rspack.config.mjs">
+      {RspackESMTemplate}
+    </CodeBlock>
+  </Tab>
+  <Tab label="Rspack CJS">
+    <CodeBlock language="js" title="rspack.config.cjs">
+      {RspackCJSTemplate}
+    </CodeBlock>
+  </Tab>
+  <Tab label="Webpack ESM">
+    <CodeBlock language="js" title="webpack.config.mjs">
+      {WebpackESMTemplate}
+    </CodeBlock>
+  </Tab>
+  <Tab label="Webpack CJS">
+    <CodeBlock language="js" title="webpack.config.cjs">
+      {WebpackCJSTemplate}
+    </CodeBlock>
+  </Tab>
+</Tabs>
+
+
+## Configuration variants
+
+Configuration can be defined in two ways: as a static object or as a function that returns a configuration object.
+
+### Static configuration
+
+The simplest form is a static object that defines your configuration:
+
+```js title="rspack.config.cjs"
+const Repack = require("repack");
+
+module.exports = {
+  entry: "./index.js",
+  output: {
+    filename: "index.bundle",
+  },
+  plugins: [new Repack.RepackPlugin()],
+};
+```
+
+### Dynamic configuration
+
+For more flexibility, you can export a function that returns the configuration object. This is useful when you need to:
+
+- Configure an option based on the platform (e.g. `ios` or `android`)
+- Enable or disable configuration based on the `mode`
+
+```js title="rspack.config.cjs"
+const Repack = require("repack");
+
+module.exports = function (env) {
+  const { mode, platform } = env;
+
+  return {
+    mode,
+    output: {
+      path: path.resolve(__dirname, "build/generated", platform),
+    },
+    plugins: [new Repack.RepackPlugin()],
+  };
+};
+```
+
+The `env` argument is an object with the following properties:
+
+| Property            | Type                    | Description                                                                     |
+| ------------------- | ----------------------- | ------------------------------------------------------------------------------- |
+| `mode`              | `string`                | Compilation mode (`'production'` or `'development'`)                            |
+| `platform`          | `string`                | Target application platform                                                     |
+| `context`           | `string`                | Context in which all resolution happens (usually project root directory)        |
+| `entry`             | `string`                | Input filename - entry point of the bundle                                      |
+| `bundleFilename`    | `string`                | Bundle output filename - name under which generated bundle will be saved        |
+| `sourceMapFilename` | `string`                | Source map filename for the main bundle                                         |
+| `assetsPath`        | `string`                | Directory where generated static assets will be saved                           |
+| `minimize`          | `boolean`               | Whether to minimize the final bundle                                            |
+| `reactNativePath`   | `string`                | Path to React Native dependency (usually points to `node_modules/react-native`) |
+| `devServer`         | `object` \| `undefined` | Development server configuration options                                        |
+
+## Configuration precedence
+
+Re.Pack follows a specific order when resolving configuration values. When the same option is defined in multiple places, the value with higher precedence takes priority. Here's the precedence order from highest to lowest:
+
+1. CLI flags (e.g. `--mode production`)
+2. Project configuration (your `rspack.config.js` or `webpack.config.js`)
+3. Command-specific configuration
+4. Re.Pack defaults
+5. Rspack/webpack defaults
+
+For example, if you set the `mode` in your configuration file:
+
+```js title="rspack.config.cjs"
+module.exports = {
+  mode: "development",
+};
+```
+
+But run the CLI with a different mode:
+
+```bash
+npx react-native bundle --mode production
+```
+
+The CLI flag (`production`) will take precedence over the configuration file value (`development`).
+
+### Command-specific defaults
+
+Below you can find the defaults for each command.
+
+:::tip
+Remember that if you define the same options in your configuration file (e.g. `rspack.config.cjs` or `webpack.config.cjs`), they will take effect over the defaults listed below.
+:::
+
+#### `start` command
+
+```js
+{
+  mode: "development",
+  devServer: {
+    host: "localhost",
+    port: 8081,
+    hot: true,
+    server: "http",
+  },
+}
+```
+
+#### `bundle` command
+
+```js
+{
+  mode: "production",
+  devServer: false,
+  optimization: {
+    minimize: true,
+  },
+}
+```
+
+### Re.Pack defaults
+
+These are the base defaults that Re.Pack provides regardless of the command being run:
+
+```js
+{
+  devtool: "source-map",
+  output: {
+    clean: true,
+    hashFunction: "xxhash64",
+    filename: "index.bundle",
+    chunkFilename: "[name].chunk.bundle",
+    path: "[context]/build/generated/[platform]",
+    publicPath: "noop:///",
+  },
+  optimization: {
+    chunkIds: "named",
+  },
+}
+```
+
+## Configuration enhancements
+
+Re.Pack extends the configuration system with few features to make things easier. These values will be resolved before passing the configuration to the bundler and starting the compilation.
+
+### Output path
+
+The `output.path` option supports the `[platform]` placeholder which gets replaced with the current platform value:
+
+```js
+// Your configuration
+output: {
+  path: "build/generated/[platform]";
+}
+
+// When building for iOS, will be resolved to
+output: {
+  path: "build/generated/ios";
+}
+```
+
+### DevServer host
+
+The `devServer.host` option supports special values:
+
+| Value          | Resolves to   |
+| -------------- | ------------- |
+| `"local-ip"`   | `"localhost"` |
+| `"local-ipv4"` | `"127.0.0.1"` |
+| `"local-ipv6"` | `"::1"`       |
+
+```js
+// Your configuration
+devServer: {
+  host: "local-ip",
+}
+
+// Will be resolved to
+devServer: {
+  host: "localhost",
+}
+```
+
+### Resolve extensions
+
+The `resolve.extensions` option supports the `[platform]` placeholder to enable platform-specific file resolution. This allows you to use platform-specific files like `MyComponent.ios.js` or `MyComponent.android.js`:
+
+```js
+// Your configuration
+resolve: {
+  extensions: [".[platform].ts", ".[platform].js", ".ts", ".js"];
+}
+
+// When building for iOS, will be resolved to
+resolve: {
+  extensions: [".ios.ts", ".ios.js", ".ts", ".js"];
+}
+```
