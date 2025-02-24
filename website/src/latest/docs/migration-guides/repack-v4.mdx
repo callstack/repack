@@ -136,26 +136,53 @@ You can simplify your `babel-loader` rule by removing the `react-refresh/babel` 
 -    },
 -  },
 +  use: 'babel-loader'
-},
+}
 ```
 
-### Breaking: Output configuration moved to CLI flags
+### Breaking: Simplified RepackPlugin configuration
 
-The output-related configuration options have been removed from `RepackPlugin`. The following properties: `bundleFilename`, `sourceMapFilename`, `assetsPath` are now controlled exclusively through their respective CLI flags - [see bundle command documentation](/docs/commands/bundle). 
+We've significantly reduced the required `RepackPlugin` configuration. Several options have been removed as they were redundant, and others have become optional as they can be inferred from your webpack configuration.
 
-Remove these options from your plugin configurations since they are not needed anymore:
+The following options have been **removed**:
 
 ```diff
 plugins: [
   new RepackPlugin({
-    output: {
+-    context,      
+-    mode,         
+-    sourceMaps,   
+-    entryName,    
+-    devServer,   
+     output: {
 -      bundleFilename,
 -      sourceMapFilename,
--      assetsPath,
-    },
+-      assetsPath, 
+     } 
   }),
-],
+]
 ```
 
+The following options are now **optional**:
 
+```diff
+plugins: [
+  new RepackPlugin({
+-    platform,
+-    output: {},
+  }),
+]
+```
+
+:::tip Minimal configuration
+The plugin configuration object is now entirely optional. In most cases, you can use the minimal setup:
+```js
+plugins: [new Repack.RepackPlugin()]
+```
+
+For available options and their defaults, see the [RepackPlugin API documentation](/api/plugins/repack).
+:::
+
+### Breaking: Output configuration moved to CLI flags
+
+Since output-related configuration options have been removed from `RepackPlugin`, the following properties: `bundleFilename`, `sourceMapFilename`, `assetsPath` are now controlled exclusively through their respective CLI flags - [see bundle command documentation](/docs/commands/bundle). 
 
