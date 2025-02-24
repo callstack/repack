@@ -139,4 +139,23 @@ You can simplify your `babel-loader` rule by removing the `react-refresh/babel` 
 },
 ```
 
+### Breaking: Output configuration moved to CLI flags
+
+The output-related configuration options have been removed from `RepackPlugin`. The following properties: `bundleFilename`, `sourceMapFilename`, `assetsPath` are now controlled exclusively through their respective CLI flags - [see bundle command documentation](/docs/commands/bundle). 
+
+Remove these options from your plugin configurations since they are not needed anymore:
+
+```diff
+plugins: [
+  new RepackPlugin({
+    output: {
+-      bundleFilename,
+-      sourceMapFilename,
+-      assetsPath,
+    },
+  }),
+],
+```
+
+
 
