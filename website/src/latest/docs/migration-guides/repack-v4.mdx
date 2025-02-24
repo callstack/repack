@@ -201,6 +201,32 @@ For available options and their defaults, see the [RepackPlugin API documentatio
 
 Since output-related configuration options have been removed from `RepackPlugin`, the following properties: `bundleFilename`, `sourceMapFilename`, `assetsPath` are now controlled exclusively through their respective CLI flags - [see bundle command documentation](/docs/commands/bundle). 
 
+### `getPublicPath` utility function is now deprecated
 
+The `getPublicPath` utility function has been deprecated and now acts as a functional no-op. The default values are now configured out of the box, removing need for this utility. You can safely remove any usage of this utility:
+
+```diff
+output: {
+-    publicPath: Repack.getPublicPath({platform, devServer}),
+},
+```
+
+## Other notable changes
+
+### Removed `--silent` flag from start command
+
+The `--silent` CLI flag has been removed from the start command. To silence the output, you can use shell redirection instead:
+
+```bash
+# Unix/macOS
+npx react-native start > /dev/null 2>&1
+
+# Windows
+npx react-native start > nul 2>&1
+```
+
+### Changed `--reverse-port` to `--no-reverse-port` in start command
+
+The `--reverse-port` CLI option has been replaced with `--no-reverse-port`. This change makes it clearer that port reversing is enabled by default and the flag is used to disable it.
 
 
