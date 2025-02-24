@@ -304,6 +304,17 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
       this.config.runtimePlugins
     );
 
+    // By setting FEDERATION_ALLOW_NEW_FUNCTION to true, we prevent injecting
+    // dynamic import (marked with webpackIgnore magic comment) into the bundle.
+    // This is problematic when we run the Hermes compiler inside of `HermesBytecodePlugin`
+    // because Hermes doesn't understand dynamic import syntax and throws an error.
+    // Note that `loadEsmEntry` which this workaround affects is not even used in RN
+    // since we provide our own `loadEntry` implementation through a CorePlugin.
+    // https://github.com/module-federation/core/blob/cbd5b7eed1fd13d7256f19664bbe6394d6ad5233/packages/runtime-core/src/utils/load.ts#L29-L38
+    new compiler.webpack.DefinePlugin({
+      FEDERATION_ALLOW_NEW_FUNCTION: true,
+    }).apply(compiler);
+
     // NOTE: we keep the default library config since it's the most compatible
     // Default library config uses 'externalType': 'script' and 'type': 'var'
     // var works identical to 'self' since declaring var in a global scope is
