@@ -79,3 +79,29 @@ The `env` argument is an object with the following properties:
 | `minimize`          | `boolean`               | Whether to minimize the final bundle                                            |
 | `reactNativePath`   | `string`                | Path to React Native dependency (usually points to `node_modules/react-native`) |
 | `devServer`         | `object` \| `undefined` | Development server configuration options                                        |
+
+## Configuration precedence
+
+Re.Pack follows a specific order when resolving configuration values. When the same option is defined in multiple places, the value with higher precedence takes priority. Here's the precedence order from highest to lowest:
+
+1. CLI flags (e.g. `--mode production`)
+2. Project configuration (your `rspack.config.js` or `webpack.config.js`)
+3. Command-specific configuration
+4. Re.Pack defaults
+5. Rspack/webpack defaults
+
+For example, if you set the `mode` in your configuration file:
+
+```js title="rspack.config.cjs"
+module.exports = {
+  mode: "development",
+};
+```
+
+But run the CLI with a different mode:
+
+```bash
+react-native bundle --mode production
+```
+
+The CLI flag (`production`) will take precedence over the configuration file value (`development`).
