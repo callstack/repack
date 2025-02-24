@@ -101,7 +101,43 @@ module.exports = {
 But run the CLI with a different mode:
 
 ```bash
-react-native bundle --mode production
+npx react-native bundle --mode production
 ```
 
 The CLI flag (`production`) will take precedence over the configuration file value (`development`).
+
+### Command-specific defaults
+
+Below you can find the defaults for each command.
+
+:::tip
+
+Remember that if you define the same options in your configuration file (e.g. `rspack.config.cjs` or `webpack.config.cjs`), they will take effect over the defaults listed below.
+
+:::
+
+#### `start` command
+
+```js
+{
+  mode: "development",
+  devServer: {
+    host: "localhost",
+    port: 8081,
+    hot: true,
+    server: "http",
+  },
+}
+```
+
+#### `bundle` command
+
+```js
+{
+  mode: "production",
+  devServer: false,
+  optimization: {
+    minimize: true,
+  },
+}
+```
