@@ -84,7 +84,6 @@ options, defaults, and configuration variants, please refer to our
 We've changed how sourcemaps are configured to align better with webpack's native configuration. The `devtool` option is now used to control the behavior of generated sourcemaps, replacing the previous `RepackPlugin` configuration. Please make sure to remove any `devtool: false` from your configuration to keep sourcemaps enabled.
 
 ```diff
-module.exports = {
 -  devtool: false,
 -  plugins: [
 -    new RepackPlugin({
@@ -93,7 +92,6 @@ module.exports = {
 -  ],
 +  // Use webpack's native devtool option to configure sourcemaps
 +  devtool: 'source-map',
-};
 ```
 
 :::tip title="You can remove the devtool option altogether"
@@ -101,3 +99,20 @@ module.exports = {
 :::
 
 The sourcemap handling is now managed by a dedicated internal `SourceMapPlugin` that's included in the `RepackPlugin` by default - you don't need to add it separately.
+
+### Breaking: `getInitializationEntries` was removed
+
+The `getInitializationEntries` helper function was removed as initialization entries are now configured automatically. 
+
+You can now simplify your entry configuration:
+
+```diff
+-  entry: [
+-    ...Repack.getInitializationEntries(reactNativePath, {
+-      hmr: devServer && devServer.hmr,
+-    }),
+-    entry,
+-  ],
++  entry: './index.js', // or just entry if you're using env.entry
+```
+
