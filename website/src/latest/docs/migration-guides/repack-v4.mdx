@@ -116,3 +116,27 @@ You can now simplify your entry configuration:
 +  entry: './index.js', // or just entry if you're using env.entry
 ```
 
+### Breaking: react-refresh transformation is now handled by `reactRefreshLoader`
+
+We've changed how the React Refresh transformation is handled to make it compatible with both Rspack and webpack. The transformation now relies on `@rspack/plugin-react-refresh` which is shipped with Re.Pack and is configured automatically in the `RepackPlugin`.
+
+You can simplify your `babel-loader` rule by removing the `react-refresh/babel` plugin from options:
+
+```diff
+{
+  test: /\.[jt]sx?$/,
+  exclude: /node_modules/,
+-  use: {
+-    loader: 'babel-loader',
+-    options: {
+-      plugins:
+-        devServer && devServer.hmr
+-          ? ['module:react-refresh/babel']
+-          : undefined,
+-    },
+-  },
++  use: 'babel-loader'
+},
+```
+
+
