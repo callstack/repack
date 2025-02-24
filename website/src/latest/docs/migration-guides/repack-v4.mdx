@@ -1,6 +1,8 @@
+import { PackageManagerTabs } from "@theme";
+
 # Migrating from Re.Pack 4
 
-:::info
+:::info title="Re.Pack 5 now supports Rspack!"
 Re.Pack 5 introduces support for [Rspack](https://rspack.dev/), 
 a high-performance webpack alternative with a highly compatible API. 
 This migration guide focuses solely on migrating from **V4** to **V5** while continuing to use webpack. 
@@ -8,5 +10,48 @@ This migration guide focuses solely on migrating from **V4** to **V5** while con
 If you're interested in using Rspack (which is encouraged), we recommend first completing the migration 
 to **V5** with webpack and then following our separate webpack to Rspack migration guide.
 :::
+
+## Update dependencies in `package.json`
+
+The first step is to update the Re.Pack in the `devDependencies` section of your `package.json`:
+
+```diff
+{
+  "devDependencies": {
+-    "@callstack/repack": "4.x.x"
++    "@callstack/repack": "~5.0.0"
+  }
+}
+```
+
+You can also remove `babel-loader` from your `devDependencies` as Re.Pack 5 now includes it by default:
+
+```diff
+{
+  "devDependencies": {
+-    "babel-loader": "^9.1.3"
+  }
+}
+```
+
+:::tip title="Good time to update webpack and terser-webpack-plugin"
+
+While not necessary, for the best experience with Re.Pack 5, 
+we recommend updating your `webpack` and `terser-webpack-plugin` dependencies to their latest versions:
+
+```json
+{
+  "devDependencies": {
+    "webpack": "^5.98.0",
+    "terser-webpack-plugin": "^5.3.11"
+  }
+}
+```
+
+:::
+
+After updating the project dependencies, run the install command of your package manager:
+
+<PackageManagerTabs command="install" />
 
 
