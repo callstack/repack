@@ -11,6 +11,10 @@ If you're interested in using Rspack (which is encouraged), we recommend first c
 to **V5** with webpack and then following our separate webpack to Rspack migration guide.
 :::
 
+:::danger title="Changes to internal plugins are not covered"
+Plugins that are part of `RepackPlugin` are considered internal and are not covered by this migration guide.
+:::
+
 ## Update dependencies in `package.json`
 
 The first step is to update the Re.Pack in the `devDependencies` section of your `package.json`:
@@ -68,6 +72,8 @@ module.exports = {
 ```
 
 ## Update webpack configuration
+
+Below are the changes that you need to be aware of when migrating to Re.Pack 5. Most of the changes revolve around reducing the amount of configuration needed.
 
 :::info title="Re.Pack 5 makes webpack configuration much smaller"
 In **V5** we've significantly simplified webpack configuration templates.
@@ -240,6 +246,10 @@ output: {
 
 ## Other notable changes
 
+### React Native DevTools is now the only supported debugger
+
+Legacy remote debugging support has been removed in favor of the new React Native DevTools, which is now enabled by default. The new debugger provides a better debugging experience specifically tailored for React Native applications and will be the only supported debugger going forward.
+
 ### Removed `--silent` flag from start command
 
 The `--silent` CLI flag has been removed from the start command. To silence the output, you can use shell redirection instead:
@@ -256,6 +266,15 @@ npx react-native start > nul 2>&1
 
 The `--reverse-port` CLI option has been replaced with `--no-reverse-port`. This change makes it clearer that port reversing is enabled by default and the flag is used to disable it.
 
-### React Native DevTools is now the only supported debugger
+### Deprecated `--webpackConfig` in favor of `--config`
 
-Legacy remote debugging support has been removed in favor of the new React Native DevTools, which is now enabled by default. The new debugger provides a better debugging experience specifically tailored for React Native applications and will be the only supported debugger going forward.
+The `--webpackConfig` CLI option has been deprecated in favor of the new `--config` option. This change aligns the option name with other bundler configurations. While `--webpackConfig` will continue to work for now, we recommend updating your scripts to use `--config` instead:
+
+```diff
+- react-native webpack-bundle --webpackConfig webpack.config.js
++ react-native webpack-bundle --config webpack.config.js
+```
+
+
+
+
