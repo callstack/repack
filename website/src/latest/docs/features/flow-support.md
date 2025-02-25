@@ -16,14 +16,12 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
+        exclude: /node_modules/
         use: {
           loader: "@callstack/repack/flow-loader",
           options: { all: true },
         },
         type: "javascript/auto",
-        include: [
-          // Paths to include
-        ],
       },
     ],
   },
