@@ -1,7 +1,1 @@
-[
-  "introduction",
-  "quick-start",
-  "manual-installation",
-  "microfrontends",
-  "bundlers"
-]
+["introduction", "quick-start", "microfrontends", "bundlers"]

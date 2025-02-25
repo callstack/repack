@@ -20,10 +20,10 @@ To create a new React Native project with Re.Pack or adapt an existing one:
   bun: "bunx @callstack/repack-init",
 }} />
 
-In case the command above didn't work for any reason, you can follow the manual installation steps [here](/docs/getting-started/manual-installation).
+In case the command above didn't work for any reason, you can follow the manual migration guide [here](/docs/migration-guides/metro).
 
-:::tip
-The default configuration works for most projects, but if you need custom settings (like additional loaders or plugins), check out our [configuration guide](/docs/guides/configuration).
+:::tip title="The defaults work well for most projects"
+If you need custom settings (like additional loaders or plugins), check out our [configuration guide](/docs/guides/configuration).
 :::
 
 ## Usage
@@ -43,15 +43,11 @@ To start the development server, you can use React Native Community CLI and run:
   bun: "bun react-native start",
 }} />
 
-To learn about `start` command, check out the [`start`](/api/cli/start.mdx)'s command documentation.
+To learn about `start` command, check out the [start command documentation](/api/cli/start.mdx).
 
 ### Bundling the app
 
-When building the release version of your application Re.Pack will bundle your application automatically if you either:
-- Used the automatic installation, or
-- Followed the manual installation steps for [Configure XCode](./manual-installation.mdx#4-configure-xcode) and [Configure Android](./manual-installation.mdx#5-configure-android)
-
-If you want to create bundle manually (development or production), **the recommended way is to use React Native Community CLI and run**:
+When you are building the release version of your application, Re.Pack will be picked up automatically as the bundler. In case you want to create bundle manually, **the recommended way is to use React Native Community CLI** and run:
 
 <PackageManagerTabs command={{
   npm: "npm run react-native bundle",
@@ -60,11 +56,13 @@ If you want to create bundle manually (development or production), **the recomme
   bun: "bun react-native bundle",
 }} />
 
-To learn about `bundle` command, check out the [`bundle`](/api/cli/bundle.mdx)'s command documentation.
-<br />
-<b>🎉 Congratulations! You've successfully set up Re.Pack in your project. You can now:</b>
+To learn about `bundle` command, check out the [bundle command documentation](/api/cli/bundle.mdx).
 
-- Learn more about [Micro Frontends](/docs/getting-started/microfrontends)
-- Explore [Module Federation](/docs/features/module-federation)
-- Check out [Configuration Guide](/docs/guides/configuration)
-- Browse [API Reference](/api)
+:::tip title="🎉 Congratulations!"
+
+You've successfully set up Re.Pack in your project. We highly recommend to check out the following:
+
+- [Configuration Guide](/docs/guides/configuration) to learn how to configure Re.Pack to your project needs.
+- [API Reference](/api) to learn more about Re.Pack's API.
+
+:::

@@ -12,7 +12,7 @@ export const reanimatedModuleRules = {
   ]),
   oneOf: [
     {
-      test: /\.ts$/,
+      test: /\.[cm]?ts$/,
       use: {
         loader: '@callstack/repack-plugin-reanimated/loader',
         options: {
@@ -26,7 +26,7 @@ export const reanimatedModuleRules = {
       },
     },
     {
-      test: /\.tsx$/,
+      test: /\.[cm]?tsx$/,
       use: {
         loader: '@callstack/repack-plugin-reanimated/loader',
         options: {
@@ -40,7 +40,7 @@ export const reanimatedModuleRules = {
       },
     },
     {
-      test: /\.jsx?$/,
+      test: /\.[cm]?jsx?$/,
       use: {
         loader: '@callstack/repack-plugin-reanimated/loader',
         options: {

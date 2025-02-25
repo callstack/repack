@@ -49,7 +49,7 @@ export async function start(
 
   const configs = await makeCompilerConfig<Configuration>({
     args: args,
-    bundler: 'rspack',
+    bundler: 'webpack',
     command: 'start',
     rootDir: cliConfig.root,
     platforms: args.platform ? [args.platform] : detectedPlatforms,

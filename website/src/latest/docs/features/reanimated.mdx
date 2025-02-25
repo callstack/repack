@@ -1,0 +1,70 @@
+import { PackageManagerTabs } from 'rspress/theme';
+
+# React Native Reanimated
+
+Re.Pack provides first-class support for [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) through a dedicated plugin that simplifies integration and optimizes build performance.
+
+:::warning title="This plugin is primarily intended for Rspack users."
+
+The main purpose of this plugin is to limit the **build performance impact** of the `react-native-reanimated` babel plugin.
+
+If you're using webpack with `babel-loader`, you probably don't need this plugin. Instead, you should follow the [official Reanimated documentation](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/#step-2-add-reanimateds-babel-plugin) and add the Reanimated Babel plugin directly to your `babel.config.js`:
+
+```js
+module.exports = {
+  presets: ["module:@react-native/babel-preset"],
+  plugins: ["react-native-reanimated/plugin"],
+};
+```
+
+:::
+
+## How It Works
+
+### The Problem
+
+React Native Reanimated requires a special Babel plugin to transform your code, particularly functions marked with `'worklet'`. 
+This transformation is necessary but comes with a cost - the babel transformation can slow down your build process significantly 
+when applied to all files. With Rspack under the hood, we want to make sure that we use `babel-loader` only as a last resort.
+
+### The Solution
+
+Our plugin takes a smarter approach by only applying the Reanimated transformation to files that actually need it:
+
+- **Smart Detection**: Before running babel, we scan files for Reanimated keywords like `worklet`
+- **Targeted Processing**: Only files containing these keywords go through the transformation
+- **Performance Boost**: Everything else skips this heavy processing step
+
+In simple terms: we make your builds faster by only doing the heavy Reanimated processing where it's actually needed.
+
+:::note title="Credits"
+Shoutout to [Nate Wienert](https://x.com/natebirdman) who came up with a similar approach in [one.dev](https://one.dev) - his work was the inspiration for this plugin.
+:::
+
+## Installation
+
+If you haven't already, install the `react-native-reanimated` package:
+
+<PackageManagerTabs command="install react-native-reanimated" />
+
+To add Reanimated support to your Re.Pack project with Rspack, install the plugin:
+
+<PackageManagerTabs command="install -D @callstack/repack-plugin-reanimated" />
+
+## Usage
+
+### Plugin Configuration
+
+Add the plugin to your Rspack configuration file (`rspack.config.js`):
+
+```js title="rspack.config.cjs"
+const Repack = require("@callstack/repack");
+const { ReanimatedPlugin } = require("@callstack/repack-plugin-reanimated");
+
+module.exports = {
+  plugins: [
+      new Repack.RepackPlugin(),
+      new ReanimatedPlugin(),
+    ],
+};
+```
