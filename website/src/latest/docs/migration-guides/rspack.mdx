@@ -35,7 +35,7 @@ module.exports = {
 };
 ```
 
-## Configuration
+## Updating configuration
 
 ### 1. Rename your configuration file
 
@@ -103,6 +103,32 @@ module: {
 :::info title="About getJsTransformRules"
 The `getJsTransformRules()` function returns the default rules for transforming JavaScript and TypeScript files using SWC. It handles both your application code and `node_modules`, and is functionally equivalent to the official `@react-native/babel-preset`. For more details, see the [API documentation for getJsTransformRules](/api/javascript-api/get-js-transform-rules).
 :::
+
+#### Use `@callstack/repack-plugin-reanimated`
+
+If your project uses `react-native-reanimated`, we provide an official plugin to ensure optimal performance when bundling with Rspack.
+
+To add the Re.Pack Reanimated plugin to your project:
+
+<PackageManagerTabs command="install -D @callstack/repack-plugin-reanimated" />
+
+Then update your Rspack configuration file to include the plugin:
+
+```js title="rspack.config.js"
+const Repack = require('@callstack/repack');
+const ReanimatedPlugin = require('@callstack/repack-plugin-reanimated');
+
+module.exports = (env) => {
+  return {
+    plugins: [
+      new Repack.RepackPlugin(),
+      new ReanimatedPlugin(),
+    ],
+  };
+};
+```
+
+For more details on using Reanimated with Re.Pack & Rspack, see our [Reanimated support](/docs/features/reanimated) page.
 
 ## Running your app
 
