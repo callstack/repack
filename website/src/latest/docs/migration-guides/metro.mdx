@@ -1,8 +1,9 @@
 import { PackageManagerTabs, Steps, Tabs, Tab } from 'rspress/theme';
 
-# Manual installation
+# Migrating from Metro
 
-If the [automatic installation](/docs/getting-started/quick-start) didn't work for any reason, or if you have custom project structure, you can follow these manual installation steps:
+If the automatic migration using `@callstack/repack-init` didn't work for any reason, 
+or if you have custom project structure, you can follow these manual migration steps:
 
 ### 1. Dependencies
 
@@ -113,9 +114,11 @@ npx pod-install
 
 This will install all the necessary iOS dependencies for your project, including the Re.Pack native module.
 
-<b>🎉 Congratulations! You've successfully set up Re.Pack in your project. You can now:</b>
+:::tip title="🎉 Congratulations!"
 
-- Learn more about [Micro Frontends](/docs/getting-started/microfrontends)
-- Explore [Module Federation](/docs/features/module-federation)
-- Check out [Configuration Guide](/docs/guides/configuration)
-- Browse [API Reference](/api)
+You've successfully set up Re.Pack in your project. We highly recommend to check out the following:
+
+- [Configuration Guide](/docs/guides/configuration) to learn how to configure Re.Pack to your project needs.
+- [API Reference](/api) to learn more about Re.Pack's API.
+
+:::
