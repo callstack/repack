@@ -13,14 +13,14 @@ function setEnvVar(key: string, value: string | undefined): void {
 
 interface EnvironmentArgs {
   assetsDest?: string;
-  bundleFilename?: string;
-  sourcemapFilename?: string;
+  bundleOutput?: string;
+  sourcemapOutput?: string;
   verbose?: boolean;
 }
 
 export function setupEnvironment(args: EnvironmentArgs): void {
   setEnvVar(VERBOSE_ENV_KEY, args.verbose ? 'true' : undefined);
-  setEnvVar(BUNDLE_FILENAME_ENV_KEY, args.bundleFilename);
-  setEnvVar(SOURCEMAP_FILENAME_ENV_KEY, args.sourcemapFilename);
+  setEnvVar(BUNDLE_FILENAME_ENV_KEY, args.bundleOutput);
+  setEnvVar(SOURCEMAP_FILENAME_ENV_KEY, args.sourcemapOutput);
   setEnvVar(ASSETS_DEST_ENV_KEY, args.assetsDest);
 }
