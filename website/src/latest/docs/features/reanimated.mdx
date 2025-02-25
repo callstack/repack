@@ -29,10 +29,6 @@ when applied to all files. With Rspack under the hood, we want to make sure that
 
 ### The Solution
 
-:::details
-This solution was inspired by the similar implementation in [one.dev](https://one.dev) 🙌
-:::
-
 Our plugin takes a smarter approach by only applying the Reanimated transformation to files that actually need it:
 
 - **Smart Detection**: Before running babel, we scan files for Reanimated keywords like `worklet`
@@ -40,6 +36,10 @@ Our plugin takes a smarter approach by only applying the Reanimated transformati
 - **Performance Boost**: Everything else skips this heavy processing step
 
 In simple terms: we make your builds faster by only doing the heavy Reanimated processing where it's actually needed.
+
+:::note title="Credits"
+Shoutout to [Nate Wienert](https://x.com/natebirdman) who came up with a similar approach in [one.dev](https://one.dev) - his work was the inspiration for this plugin.
+:::
 
 ## Installation
 
