@@ -104,6 +104,37 @@ module: {
 The `getJsTransformRules()` function returns the default rules for transforming JavaScript and TypeScript files using SWC. It handles both your application code and `node_modules`, and is functionally equivalent to the official `@react-native/babel-preset`. For more details, see the [API documentation for getJsTransformRules](/api/javascript-api/get-js-transform-rules).
 :::
 
+#### Configure Flow support (if needed)
+
+If your project uses [Flow](https://flow.org/) for type checking, you'll need to add a dedicated loader since SWC (used by Rspack) doesn't support Flow natively. Re.Pack provides a `@callstack/repack/flow-loader` to strip Flow type annotations from your code. Add the following rule to your module configuration:
+
+```diff title="rspack.config.cjs"
+module.exports = {
+  module: {
+    rules: [
+      ...Repack.getJsTransformRules(),
+      ...Repack.getAssetTransformRules(),
++     {
++       test: /\.jsx?$/,
++       type: 'javascript/auto',
++       exclude: /node_modules/,
++       use: {
++         loader: '@callstack/repack/flow-loader',
++         options: { all: true },
++       },
++     },
+    ],
+  },
+};
+```
+
+:::tip title="Flow-typed libraries"
+
+There is no need to configure Flow support for libraries since `getJsTransformRules` handles them out of the box. In rare cases, you may need to configure Flow support for unhandled libraries. 
+
+For more details, see our [Flow support documentation](/docs/features/flow-support).
+:::
+
 #### Use `@callstack/repack-plugin-reanimated`
 
 If your project uses `react-native-reanimated`, we provide an official plugin to ensure optimal performance when bundling with Rspack.
