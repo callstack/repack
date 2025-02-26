@@ -6,14 +6,12 @@ import vercelAnalytics from 'rspress-plugin-vercel-analytics';
 import { defineConfig } from 'rspress/config';
 
 const LATEST_VERSION = 'v5';
-const ROOT = path.join(
-  __dirname,
-  'src',
-  process.env.REPACK_DOC_VERSION ?? 'latest'
-);
+
+const DOCS_ROOT = path.join('src', process.env.REPACK_DOC_VERSION ?? 'latest');
+const EDIT_ROOT_URL = `https://github.com/callstack/repack/tree/main/website/${DOCS_ROOT}`;
 
 export default defineConfig({
-  root: ROOT,
+  root: path.join(__dirname, DOCS_ROOT),
   title: process.env.REPACK_DOC_VERSION
     ? `[${process.env.REPACK_DOC_VERSION}] Re.Pack`
     : 'Re.Pack',
@@ -25,8 +23,7 @@ export default defineConfig({
   },
   outDir: 'build',
   markdown: {
-    // TODO fix dead links
-    checkDeadLinks: false,
+    checkDeadLinks: true,
     codeHighlighter: 'prism',
   },
   route: {
@@ -34,6 +31,7 @@ export default defineConfig({
   },
   search: {
     versioned: true,
+    codeBlocks: true,
   },
   themeConfig: {
     enableContentAnimation: true,
@@ -41,6 +39,10 @@ export default defineConfig({
     outlineTitle: 'Contents',
     footer: {
       message: `Copyright © ${new Date().getFullYear()} Callstack Open Source`,
+    },
+    editLink: {
+      docRepoBaseUrl: EDIT_ROOT_URL,
+      text: '📝 Edit this page on GitHub',
     },
     socialLinks: [
       {

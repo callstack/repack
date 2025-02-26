@@ -1,8 +1,14 @@
 import { PackageManagerTabs, Steps, Tabs, Tab } from 'rspress/theme';
+import { CodeBlock } from '@theme';
+import RspackCJSTemplate from '../../../../../templates_v5/rspack.config.cjs?raw';
+import RspackESMTemplate from '../../../../../templates_v5/rspack.config.mjs?raw';
+import WebpackCJSTemplate from '../../../../../templates_v5/webpack.config.cjs?raw';
+import WebpackESMTemplate from '../../../../../templates_v5/webpack.config.mjs?raw';
 
-# Manual installation
+# Migrating from Metro
 
-If the [automatic installation](/docs/getting-started/quick-start) didn't work for any reason, or if you have custom project structure, you can follow these manual installation steps:
+If the automatic migration using `@callstack/repack-init` didn't work for any reason, 
+or if you have custom project structure, you can follow these manual migration steps:
 
 ### 1. Dependencies
 
@@ -12,7 +18,7 @@ Install required dependencies in your project:
   <Tab label="Rspack" value="rspack">
     <PackageManagerTabs command="install -D @rspack/core @swc/helpers @callstack/repack" />
   </Tab>
-  <Tab label="Webpack" value="webpack">
+  <Tab label="webpack" value="webpack">
     <PackageManagerTabs command="install -D webpack terser-webpack-plugin @callstack/repack" />
   </Tab>
 </Tabs>
@@ -33,7 +39,7 @@ Add the following content to `react-native.config.js` (or create it if it doesn'
     };
     ```
   </Tab>
-  <Tab label="Webpack" value="webpack">
+  <Tab label="webpack" value="webpack">
     ```js title="react-native.config.js"
     module.exports = {
       commands: require('@callstack/repack/commands/webpack'),
@@ -46,18 +52,36 @@ This will allow you to use Re.Pack when running `react-native start` and `react-
 
 ### 3. Configuration
 
-<Tabs groupId="bundler">
-  <Tab label="Rspack" value="rspack">
-    Create file `rspack.config.mjs` in the root directory of your project and paste the content from our [Rspack config template](https://github.com/callstack/repack/blob/main/templates_v5/rspack.config.mjs).
+Pick one of the templates below and create configuration file in the root directory of your project. The name of the file should be identical to the one on top of the template e.g. `rspack.config.mjs`.
+
+<Tabs>
+  <Tab label="Rspack ESM">
+    <CodeBlock language="js" title="rspack.config.mjs">
+      {RspackESMTemplate}
+    </CodeBlock>
   </Tab>
-  <Tab label="Webpack" value="webpack">
-    Create file `webpack.config.mjs` in the root directory of your project and paste the content from our [Webpack config template](https://github.com/callstack/repack/blob/main/templates_v5/webpack.config.mjs).
+  <Tab label="Rspack CJS">
+    <CodeBlock language="js" title="rspack.config.cjs">
+      {RspackCJSTemplate}
+    </CodeBlock>
+  </Tab>
+  <Tab label="webpack ESM">
+    <CodeBlock language="js" title="webpack.config.mjs">
+      {WebpackESMTemplate}
+    </CodeBlock>
+  </Tab>
+  <Tab label="webpack CJS">
+    <CodeBlock language="js" title="webpack.config.cjs">
+      {WebpackCJSTemplate}
+    </CodeBlock>
   </Tab>
 </Tabs>
 
-:::info
 
-We recommend to use ESM version of Webpack config with the `.mjs` extension. However, Re.Pack also supports ESM under `.js` and CJS variant under `.js` and `.cjs` extensions. Check our [templates](https://github.com/callstack/repack/blob/main/templates_v5/) for CJS and ESM variants as well as the documentation on [Configuration](/docs/guides/configuration) to see the list of all available Webpack config location and extensions.
+
+:::info title="Go with ESM config by default"
+
+We recommend to use ESM version of Rspack/webpack config with the `.mjs` extension. However, Re.Pack also supports ESM under `.js` and CJS variant under `.js` and `.cjs` extensions. Check our [templates](https://github.com/callstack/repack/blob/main/templates_v5/) for CJS and ESM variants as well as the documentation on [Configuration](/docs/guides/configuration) to see the list of all available Rspack/webpack config location and extensions.
 
 :::
 
@@ -113,9 +137,11 @@ npx pod-install
 
 This will install all the necessary iOS dependencies for your project, including the Re.Pack native module.
 
-<b>🎉 Congratulations! You've successfully set up Re.Pack in your project. You can now:</b>
+:::tip title="🎉 Congratulations!"
 
-- Learn more about [Micro Frontends](/docs/getting-started/microfrontends)
-- Explore [Module Federation](/docs/features/module-federation)
-- Check out [Configuration Guide](/docs/guides/configuration)
-- Browse [API Reference](/api)
+You've successfully set up Re.Pack in your project. We highly recommend to check out the following:
+
+- [Configuration Guide](/docs/guides/configuration) to learn how to configure Re.Pack to your project needs.
+- [API Reference](/api/) to learn more about Re.Pack's API.
+
+:::

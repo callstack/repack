@@ -1,0 +1,201 @@
+import { PackageManagerTabs, Steps, Tabs, Tab } from 'rspress/theme';
+
+# Migrating to Rspack
+
+This guide will help you migrate your React Native project from using webpack to Rspack with Re.Pack.
+
+:::warning title="Migrate to Re.Pack 5 first!"
+
+If your project is using version 4 of Re.Pack, you need to migrate it to use Re.Pack 5 first.
+
+See the [Migration from Re.Pack 4 guide](/docs/migration-guides/repack-v4) for more details.
+:::
+
+:::tip title="Why migrate to Rspack?"
+
+[Rspack](https://rspack.dev/) is a fast Rust-based bundler that's compatible with the webpack ecosystem, offering significantly faster build times for both development and production while maintaining webpack compatibility with minimal migration effort.
+For more details on why Rspack was created and its advantages, see the [official rationale](https://rspack.dev/guide/start/introduction#why-rspack).
+:::
+
+## Update dependencies in `package.json`
+
+To use Rspack, you'll need to update your dependencies by adding the following:
+
+<PackageManagerTabs command="install -D @rspack/core @swc/helpers" />
+
+## Update `react-native.config.js`
+
+Since Re.Pack now supports multiple bundlers, you need to specify that you want to use Rspack commands explicitly.
+Update your `react-native.config.js` file to use Rspack commands:
+
+```diff title="react-native.config.js"
+module.exports = {
+-  commands: require('@callstack/repack/commands/webpack'),
++  commands: require('@callstack/repack/commands/rspack'),
+};
+```
+
+## Updating configuration
+
+### 1. Rename your configuration file
+
+Rename your configuration file to match the Rspack convention:
+
+- 📄 `webpack.config.js` → `rspack.config.js`
+- 📄 `webpack.config.mjs` → `rspack.config.mjs`
+- 📄 `webpack.config.cjs` → `rspack.config.cjs`
+
+### 2. Update your configuration
+
+When migrating from webpack to Rspack, you'll need to make several changes to your configuration file.
+
+:::warning title="Additional steps may be required for complex configurations"
+The modifications outlined below cover the basic changes needed for most React Native projects. However, if you have a more complex webpack setup with custom loaders, plugins, or configurations, these changes might not be sufficient.
+
+For more advanced migration scenarios, refer to the [official Rspack migration guide](https://rspack.dev/guide/migration/webpack), which provides detailed instructions for migrating various webpack features, plugins, and loaders to their Rspack equivalents.
+:::
+
+#### Remove `TerserPlugin` import and configuration
+
+Rspack uses [SwcJsMinimizerRspackPlugin](https://rspack.dev/plugins/rspack/swc-js-minimizer-rspack-plugin) for minification, which is much faster than `TerserPlugin` and comes configured by default. You can remove both the `TerserPlugin` import and its configuration.
+
+```diff
+- const TerserPlugin = require('terser-webpack-plugin');
+  const Repack = require('@callstack/repack');
+
+  module.exports = (env) => {
+    return {
+-     optimization: {
+-       minimizer: [
+-         new TerserPlugin({
+-           test: /\.(js)?bundle(\?.*)?$/i,
+-           extractComments: false,
+-           terserOptions: {
+-             format: {
+-               comments: false,
+-             },
+-           },
+-         }),
+-       ],
+-     },
+    };
+  };
+```
+
+#### Replace `babel-loader` with `getJsTransformRules`
+
+Rspack uses SWC for transpilation instead of Babel. The `getJsTransformRules()` helper function configures all necessary JavaScript/TypeScript transformation rules.
+
+```diff
+module: {
+  rules: [
+-   {
+-     test: /\.[cm]?[jt]sx?$/,
+-     use: 'babel-loader',
+-     type: 'javascript/auto',
+-   },
++   ...Repack.getJsTransformRules(),
+    ...Repack.getAssetTransformRules(),
+  ],
+},
+```
+
+:::info title="About getJsTransformRules"
+The `getJsTransformRules()` function returns the default rules for transforming JavaScript and TypeScript files using SWC. It handles both your application code and `node_modules`, and is functionally equivalent to the official `@react-native/babel-preset`. For more details, see the [API documentation for getJsTransformRules](/api/utils/get-js-transform-rules).
+:::
+
+#### Configure Flow support (if needed)
+
+If your project uses [Flow](https://flow.org/) for type checking, you'll need to add a dedicated loader since SWC (used by Rspack) doesn't support Flow natively. Re.Pack provides a `@callstack/repack/flow-loader` to strip Flow type annotations from your code. Add the following rule to your module configuration:
+
+```diff title="rspack.config.cjs"
+module.exports = {
+  module: {
+    rules: [
+      ...Repack.getJsTransformRules(),
+      ...Repack.getAssetTransformRules(),
++     {
++       test: /\.jsx?$/,
++       type: 'javascript/auto',
++       exclude: /node_modules/,
++       use: {
++         loader: '@callstack/repack/flow-loader',
++         options: { all: true },
++       },
++     },
+    ],
+  },
+};
+```
+
+:::tip title="Flow-typed libraries"
+
+There is no need to configure Flow support for libraries since `getJsTransformRules` handles them out of the box. In rare cases, you may need to configure Flow support for unhandled libraries. 
+
+For more details, see our [Flow support documentation](/docs/features/flow-support).
+:::
+
+#### Use `@callstack/repack-plugin-reanimated`
+
+If your project uses `react-native-reanimated`, we provide an official plugin to ensure optimal performance when bundling with Rspack.
+
+To add the Re.Pack Reanimated plugin to your project:
+
+<PackageManagerTabs command="install -D @callstack/repack-plugin-reanimated" />
+
+Then update your Rspack configuration file to include the plugin:
+
+```js title="rspack.config.js"
+const Repack = require('@callstack/repack');
+const ReanimatedPlugin = require('@callstack/repack-plugin-reanimated');
+
+module.exports = (env) => {
+  return {
+    plugins: [
+      new Repack.RepackPlugin(),
+      new ReanimatedPlugin(),
+    ],
+  };
+};
+```
+
+For more details on using Reanimated with Re.Pack & Rspack, see our [Reanimated support](/docs/features/reanimated) page.
+
+## Running your app
+
+After migration, you can run the development server using the same command as before:
+
+<PackageManagerTabs command={{
+  npm: "npx react-native start",
+  yarn: "yarn react-native start",
+  pnpm: "pnpm react-native start",
+  bun: "bun react-native start",
+}} />
+
+Same goes for creating a production bundle:
+
+<PackageManagerTabs command={{
+  npm: "npx react-native bundle",
+  yarn: "yarn react-native bundle",
+  pnpm: "pnpm react-native bundle",
+  bun: "bun react-native bundle",
+}} />
+
+:::tip title="Having trouble?"
+
+If you are having trouble migrating to Rspack reach out and open an issue on [GitHub](https://github.com/callstack/repack/issues/new/choose).
+:::
+
+## Cleanup
+
+After successfully migrating to Rspack and confirming that your app runs correctly, you can remove webpack-related dependencies that are no longer needed:
+
+<PackageManagerTabs command={{
+  npm: "npm uninstall webpack terser-webpack-plugin",
+  yarn: "yarn remove webpack terser-webpack-plugin",
+  pnpm: "pnpm remove webpack terser-webpack-plugin",
+  bun: "bun remove webpack terser-webpack-plugin"
+}} />
+
+
+
