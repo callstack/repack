@@ -3,7 +3,7 @@
 ## Bundle
 
 A collection of processed (compiled, transformed) code, packed together into self-contained format
-by a _Bundler_ (e.g: Webpack, Rollup, etc). It includes not only the processed source code, but all
+by a _Bundler_ (e.g: webpack, Rollup, etc). It includes not only the processed source code, but all
 the necessary dependencies and usually static assets.
 
 ## Main bundle
@@ -43,7 +43,7 @@ You can learn more about remote chunks in the dedicated [Local vs remote chunks 
 ## Script
 
 Arbitrary file with executable code. Can be a [Bundle](#bundle) created by a _Bundler_ (e.g:
-Webpack, Rollup, etc) or manually by hand.
+webpack, Rollup, etc) or manually by hand.
 
 ## Container
 

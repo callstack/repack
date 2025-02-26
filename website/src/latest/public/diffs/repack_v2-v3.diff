@@ -15,26 +15,26 @@ index 6ff525d..af917c4 100644
   */
 
  /**
-- * This is the Webpack configuration file for your React Native project.
+- * This is the webpack configuration file for your React Native project.
 - * It can be used in 2 ways:
 - * - by running React Native CLI eg: `npx react-native start` or `npx react-native bundle`
-- * - by running Webpack CLI eg: `PLATFORM=(ios|android) npx webpack-cli -c webpack.config.js`
+- * - by running webpack CLI eg: `PLATFORM=(ios|android) npx webpack-cli -c webpack.config.js`
 - *
 - * Depending on which option you chose the output might be different, since when running with
 - * React Native CLI most of the values from `getMode`, `getPlatform`, etc. will be filled in by React Native CLI.
-- * However, when running with Webpack CLI, you might want to tweak `fallback` values to your liking.
+- * However, when running with webpack CLI, you might want to tweak `fallback` values to your liking.
 - *
 - * Please refer to the API documentation for list of options, plugins and their descriptions.
 - */
 -
 -/**
-- * Get options from React Native CLI when Webpack is run from `react-native start` or `react-native bundle`.
-+ * Webpack configuration.
+- * Get options from React Native CLI when webpack is run from `react-native start` or `react-native bundle`.
++ * webpack configuration.
 + * You can also export a static object or a function returning a Promise.
   *
-- * If you run Webpack using Webpack CLI, the values from `fallback` will be used - use it
+- * If you run webpack using webpack CLI, the values from `fallback` will be used - use it
 - * to specify your values, if the defaults don't suit your project.
-+ * @param env Environment options passed from either Webpack CLI or React Native CLI
++ * @param env Environment options passed from either webpack CLI or React Native CLI
 + *            when running with `react-native start/bundle`.
   */
 +module.exports = (env) => {
@@ -74,7 +74,7 @@ index 6ff525d..af917c4 100644
 +  }
 
 -/**
-- * Webpack configuration.
+- * webpack configuration.
 - */
 -module.exports = {
 -  mode,
@@ -144,7 +144,7 @@ index 6ff525d..af917c4 100644
 -  /**
 -   * Configures output.
 -   * It's recommended to leave it as it is unless you know what you're doing.
--   * By default Webpack will emit files into the directory specified under `path`. In order for the
+-   * By default webpack will emit files into the directory specified under `path`. In order for the
 -   * React Native app use them when bundling the `.ipa`/`.apk`, they need to be copied over with
 -   * `ReactNative.OutputPlugin`, which is configured by default.
 -   */
@@ -205,7 +205,7 @@ index 6ff525d..af917c4 100644
 +    /**
 +     * Configures output.
 +     * It's recommended to leave it as it is unless you know what you're doing.
-+     * By default Webpack will emit files into the directory specified under `path`. In order for the
++     * By default webpack will emit files into the directory specified under `path`. In order for the
 +     * React Native app use them when bundling the `.ipa`/`.apk`, they need to be copied over with
 +     * `Repack.OutputPlugin`, which is configured by default inside `Repack.RepackPlugin`.
 +     */
@@ -420,7 +420,7 @@ index 6ff525d..af917c4 100644
 -    new ReactNative.TargetPlugin(),
 -
 -    /**
--     * By default Webpack will emit files into `output.path` directory (eg: `<root>/build/ios`),
+-     * By default webpack will emit files into `output.path` directory (eg: `<root>/build/ios`),
 -     * but in order to for the React Native application to include those files (or a subset of those)
 -     * they need to be copied over to correct output directories supplied from React Native CLI
 -     * when bundling the code (with `webpack-bundle` command).

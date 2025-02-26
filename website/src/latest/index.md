@@ -3,8 +3,8 @@ pageType: home
 
 hero:
   name: <img alt="Re.Pack" className="home-hero-name-img" src="/img/banner.svg" />
-  text: 'React Native 🤝 Webpack'
-  tagline: A toolkit to build your React Native application with Webpack
+  text: 'React Native 🤝 webpack'
+  tagline: A toolkit to build your React Native application with webpack
   actions:
     - theme: brand
       text: <span className="home-hero-primary-action">Get started</span>
@@ -13,8 +13,8 @@ hero:
       text: Learn more
       link: /docs/getting-started/introduction
 features:
-  - title: Webpack-powered solution
-    details: Leverage full Webpack ecosystem of plugins and loaders. Use plethora of configuration options to adjust the bundling to your needs.
+  - title: webpack-powered solution
+    details: Leverage full webpack ecosystem of plugins and loaders. Use plethora of configuration options to adjust the bundling to your needs.
     icon: 🚀
   - title: Code Splitting
     details: Leverage Code Splitting and Module Federation to efficiently split your bundle into smaller chunks and share modules dynamically across builds, improving load times and resource management.
@@ -35,6 +35,6 @@ features:
       platform. Everything is configurable, nothing is hardcoded.
     icon: 🌐
   - title: Configure it your way
-    details: Take full control over the Webpack configuration. Use our APIs - plugins and utilities - to make Webpack-produced bundle compatible with React Native.
+    details: Take full control over the webpack configuration. Use our APIs - plugins and utilities - to make webpack-produced bundle compatible with React Native.
     icon: 🎛️
 ---

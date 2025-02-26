@@ -98,6 +98,6 @@ module.exports = {
 You can read more about loader rules and how to configure them in:
 
 - [Rspack Module Rules documentation](https://rspack.dev/config/module.html#modulerules)
-- [Webpack Module Rules documentation](https://webpack.js.org/configuration/module/#modulerules)
+- [webpack Module Rules documentation](https://webpack.js.org/configuration/module/#modulerules)
 
 :::
