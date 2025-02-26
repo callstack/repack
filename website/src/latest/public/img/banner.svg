@@ -1,7 +1,11 @@
 <svg id="Layer_1" data-name="Layer 1"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200.88 205.64">
     <defs>
-        <style>.cls-1{fill:#8232ff;}</style>
+        <style>.cls-1{fill:url(#gradient);}</style>
+        <linearGradient id="gradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1200.88" y2="205.64">
+            <stop offset="0.45" stop-color="#9b6dff" />
+            <stop offset="0.9" stop-color="#3ce4cb" />
+        </linearGradient>
     </defs>
     <path class="cls-1" d="M44.58,44.63H0V205.3H44.58Z"/>
     <path class="cls-1" d="M146.37.05H44.58V44.63H146.37Z"/>
