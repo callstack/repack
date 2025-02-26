@@ -1,6 +1,6 @@
 # getDirname
 
-Convert a `file:///` URL to an absolute directory path. This utility is particularly useful in ESM Rspack/Webpack configs where `__dirname` is not available.
+Convert a `file:///` URL to an absolute directory path. This utility is particularly useful in ESM Rspack/webpack configs where `__dirname` is not available.
 
 ## Parameters
 

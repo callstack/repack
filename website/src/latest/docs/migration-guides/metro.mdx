@@ -18,7 +18,7 @@ Install required dependencies in your project:
   <Tab label="Rspack" value="rspack">
     <PackageManagerTabs command="install -D @rspack/core @swc/helpers @callstack/repack" />
   </Tab>
-  <Tab label="Webpack" value="webpack">
+  <Tab label="webpack" value="webpack">
     <PackageManagerTabs command="install -D webpack terser-webpack-plugin @callstack/repack" />
   </Tab>
 </Tabs>
@@ -39,7 +39,7 @@ Add the following content to `react-native.config.js` (or create it if it doesn'
     };
     ```
   </Tab>
-  <Tab label="Webpack" value="webpack">
+  <Tab label="webpack" value="webpack">
     ```js title="react-native.config.js"
     module.exports = {
       commands: require('@callstack/repack/commands/webpack'),
@@ -65,12 +65,12 @@ Pick one of the templates below and create configuration file in the root direct
       {RspackCJSTemplate}
     </CodeBlock>
   </Tab>
-  <Tab label="Webpack ESM">
+  <Tab label="webpack ESM">
     <CodeBlock language="js" title="webpack.config.mjs">
       {WebpackESMTemplate}
     </CodeBlock>
   </Tab>
-  <Tab label="Webpack CJS">
+  <Tab label="webpack CJS">
     <CodeBlock language="js" title="webpack.config.cjs">
       {WebpackCJSTemplate}
     </CodeBlock>
