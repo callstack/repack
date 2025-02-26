@@ -35,7 +35,7 @@ module.exports = {
 };
 ```
 
-You can also use the `inline: true` option in the [getAssetsTransformRules](/api/utils/get-assets-transform-rules) helper function:
+You can also use the `inline: true` option in the [getAssetsTransformRules](/api/utils/get-asset-transform-rules) helper function:
 
 ```js title="rspack.config.cjs"
 const Repack = require("@callstack/repack");

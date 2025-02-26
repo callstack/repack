@@ -9,9 +9,9 @@ By default, extracted asset files are copied to `assets/` directory for iOS and 
 :::tip Guides related to AssetsLoader
 Looking to do more with your assets? Check out the guides on:
 
-- [Inlining assets as base64 strings](../guides/inline-assets)
-- [Converting to remote assets](../guides/remote-assets)
-- [Adding SVG support](../guides/svg)
+- [Inlining assets as base64 strings](/docs/guides/inline-assets)
+- [Converting to remote assets](/docs/guides/remote-assets)
+- [Adding SVG support](/docs/guides/svg)
 
 :::
 

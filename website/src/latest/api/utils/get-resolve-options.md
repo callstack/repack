@@ -35,7 +35,7 @@ Whether to enable Package Exports support. When enabled, uses the `exports` fiel
 :::warning
 Package Exports support differs significantly between Metro and Re.Pack. Since this option is still marked as experimental in Metro, it's recommended to avoid using in Re.Pack for best compatbility.
 
-For more details, please refer to the [Module Resolution guide](../guides/module-resolution).
+For more details, please refer to the [Module Resolution guide](/docs/features/module-resolution).
 :::
 
 ### options.preferNativePlatform

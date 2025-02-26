@@ -48,7 +48,7 @@ Re.Pack is a direct successor to [Haul](https://github.com/callstack/haul). Ther
 
 - Re.Pack has smaller footprint and allows for greater level of customization, since you have direct access to the Webpack config.
 - Re.Pack supports Hot Module Replacement + React Refresh, whereas Haul does not.
-- Haul supports legacy implementation of multi-bundling (though it requires to alter React Native source code, so we don't recommend that), whereas Re.Pack supports [Code Splitting](./code-splitting/concept), including [Module Federation](./module-federation).
+- Haul supports legacy implementation of multi-bundling (though it requires to alter React Native source code, so we don't recommend that), whereas Re.Pack supports [Code Splitting](/docs/features/code-splitting), including [Module Federation](/docs/features/module-federation).
 - Re.Pack delivers better Developer Experience by providing you with more meaningful logs, easier usage and more customizability.
 
 ## Re.Pack vs `@callstack/nativepack`

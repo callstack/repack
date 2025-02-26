@@ -23,8 +23,7 @@ export default defineConfig({
   },
   outDir: 'build',
   markdown: {
-    // TODO fix dead links
-    checkDeadLinks: false,
+    checkDeadLinks: true,
     codeHighlighter: 'prism',
   },
   route: {

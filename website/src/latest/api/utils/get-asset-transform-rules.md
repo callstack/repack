@@ -35,7 +35,7 @@ Configuration options for asset transformations.
 Whether to inline assets as base64 URIs.
 
 :::tip
-Learn more about the inlining assets in the [Inlining Assets guide](/docs/guides/inlining-assets).
+Learn more about the inlining assets in the [Inlining Assets guide](/docs/guides/inline-assets).
 :::
 
 ### options.remote
