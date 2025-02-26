@@ -96,6 +96,12 @@ export default defineConfig({
       },
     },
   },
+  globalStyles:
+    process.env.REPACK_DOC_VERSION !== 'v2' &&
+    process.env.REPACK_DOC_VERSION !== 'v3' &&
+    process.env.REPACK_DOC_VERSION !== 'v4'
+      ? path.join(__dirname, DOCS_ROOT, 'styles', 'index.css')
+      : undefined,
   plugins: [
     // @ts-ignore
     pluginFontOpenSans(),
