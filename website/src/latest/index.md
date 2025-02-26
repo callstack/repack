@@ -16,10 +16,10 @@ features:
   - title: Mobile Microfrontends
     details: Leverage Module Federation v2 to split JS or Hermes bytecode bundle into smaller chunks and download on-demand from a server.
     icon: <div className="custom__rspress-home-feature-icon-img-container"><img src="/img/mf_icon.svg" /></div>
-  - title: Powered by webpack
+  - title: Powered by webpack / Rspack
     details: Use the full webpack ecosystem of plugins and loaders. Enhance with Rspack for build and fast refresh speed.
     icon: <div className="custom__rspress-home-feature-icon-img-container"><img src="/img/webpack_icon.svg" /><img src="/img/rspack_icon.svg" /></div>
-  - title: Drop-in Metro replacement
+  - title: Drop-in Metro Replacement
     details: Use instead of Metro—a default React Native bundler. Migrate with a single command. All platforms supported.
     icon: 🚇
   - title: Smaller App Size
