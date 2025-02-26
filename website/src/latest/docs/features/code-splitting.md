@@ -1,18 +1,16 @@
 # Code splitting
 
-## Concept
-
 Code Splitting is a technique that splits the code into multiple files, which can be loaded on
 demand and in parallel.
 
 It can be used to:
 
 - Optimize the initial size of the application and to improve the startup performance by deferring
-the parsing (only with JSC) and execution (JSC and Hermes) of the non-critical code.
+  the parsing (only with JSC) and execution (JSC and Hermes) of the non-critical code.
 - Dynamically deliver content and features to the users based on runtime factors: user's role,
-subscription plan, preferences etc.
-- __For developers and companies__: split and isolate pieces of the product to improve scalability
-and reduce coupling.
+  subscription plan, preferences etc.
+- **For developers and companies**: split and isolate pieces of the product to improve scalability
+  and reduce coupling.
 
 Code Splitting is one of the most important features in Re.Pack, and it's based on Webpack's
 infrastructure as well as the native module
@@ -39,7 +37,7 @@ going to violate Apple's App Store Terms and your application might be rejected 
 
 :::tip
 
-You should provide access to all the features for the App Store review process. 
+You should provide access to all the features for the App Store review process.
 
 Also, it might be beneficial to highlight that all split features are closely integrated with
 application and cannot work in isolation - you don't want to introduce confusion that your
@@ -58,7 +56,7 @@ In general, we can identify 3 main categories of implementation. All of those ap
 
 :::tip
 
-Use [Glossary of terms](./glossary) to better understand the content of this documentation.
+Use [Glossary of terms](/docs/resources/glossary) to better understand the content of this documentation.
 
 :::
 
@@ -77,7 +75,7 @@ The [`ScriptManager`](/api/runtime/script-manager) has methods which allows to:
 In order to provide this functionalities, a resolver has to be added using [`ScriptManager.shared.addResolver`](/api/runtime/script-manager#addresolver):
 
 ```ts
-import { ScriptManager, Script } from '@callstack/repack/client';
+import { ScriptManager, Script } from "@callstack/repack/client";
 
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
   // In dev mode, resolve script location to dev server.
@@ -153,7 +151,7 @@ developed in-house.
 The usage of async chunks essentially boils down to calling `import(...)` in your code, for example:
 
 ```js
-const myChunk = await import('./myChunk.js');
+const myChunk = await import("./myChunk.js");
 ```
 
 Async chunks created by dynamic `import(...)` function can be nicely integrated using `React.lazy`
@@ -166,7 +164,7 @@ export default function MyChunk(props) {
 }
 
 // App.js
-const MyChunk = React.lazy(() => import('./MyChunk.js'));
+const MyChunk = React.lazy(() => import("./MyChunk.js"));
 
 function App() {
   return (
@@ -182,13 +180,13 @@ be remote chunks by default.
 
 :::tip
 
-You can learn more about local and remote chunks in the dedicated [Local vs Remote chunks guide](./local-vs-remote-chunks).
+You can learn more about local and remote chunks in the dedicated [Local vs Remote chunks guide](#local-vs-remote-chunks).
 
 :::
 
 :::tip
 
-To learn more or use async chunks in your project, check out our [dedicated Async chunks guide](./guide-async-chunks).
+To learn more or use async chunks in your project, check out our [dedicated Async chunks guide](#guide-async-chunks).
 
 :::
 
@@ -237,20 +235,20 @@ A good starting point would be:
 Loading a script is as simple as running a single function:
 
 ```js
-await ScriptManager.shared.loadScript('my-script');
-console.log('Script loaded');
+await ScriptManager.shared.loadScript("my-script");
+console.log("Script loaded");
 ```
 
 And adding a resolver to the [`ScriptManager`](/api/runtime/script-manager#addResolver) to resolve your
 scripts:
 
 ```js
-import { ScriptManager, Script } from '@callstack/repack/client';
+import { ScriptManager, Script } from "@callstack/repack/client";
 
 ScriptManager.shared.addResolver(async (scriptId) => {
-  if (scriptId === 'my-script') {
+  if (scriptId === "my-script") {
     return {
-      url: Script.getRemoteURL('https://my-domain.dev/my-script.js', {
+      url: Script.getRemoteURL("https://my-domain.dev/my-script.js", {
         excludeExtension: true,
       }),
     };
@@ -264,13 +262,13 @@ Use [Module Federation](./module-federation) document for information on adoptio
 
 ## Guide: Async chunks
 
-Let's assume, we are building an E-Learning application with specific functionalities for a student 
+Let's assume, we are building an E-Learning application with specific functionalities for a student
 and for a teacher. Both student and a teacher will get different UIs and different features, so it
 would make sense to isolate the student's specific code from the teacher's. That's were Code
 Splitting comes into play - we can use dynamic `import(...)` function together with `React.lazy` and
 `React.Suspense` to conditionally render the student and the teacher sides based on the user's role.
 The code for the student and the teacher will be put into a remote async chunk, so that the initial
-download size will be smaller. 
+download size will be smaller.
 
 :::tip
 
@@ -299,8 +297,8 @@ Let's use the following code for the student's side:
 
 ```jsx
 // StudentSide.js
-import * as React from 'react';
-import { View, Text } from 'react-native';
+import * as React from "react";
+import { View, Text } from "react-native";
 
 export default function StudentSide({ user }) {
   return (
@@ -309,7 +307,7 @@ export default function StudentSide({ user }) {
       <Text>You are a student.</Text>
       {/* ...more student related code */}
     </View>
-  )
+  );
 }
 ```
 
@@ -317,8 +315,8 @@ And a code for the teacher's side:
 
 ```jsx
 // TeacherSide.js
-import * as React from 'react';
-import { View, Text } from 'react-native';
+import * as React from "react";
+import { View, Text } from "react-native";
 
 export default function TeacherSide({ user }) {
   return (
@@ -327,7 +325,7 @@ export default function TeacherSide({ user }) {
       <Text>You are a teacher.</Text>
       {/* ...more teacher related code */}
     </View>
-  )
+  );
 }
 ```
 
@@ -335,22 +333,25 @@ Now in our parent component, which will be common for both the student and the t
 
 ```jsx
 // Home.js
-import * as React from 'react';
-import { Text } from 'react-native';
+import * as React from "react";
+import { Text } from "react-native";
 
-const StudentSide = React.lazy(
-  () => import(/* webpackChunkName: "student" */ './StudentSide.js')
+const StudentSide = React.lazy(() =>
+  import(/* webpackChunkName: "student" */ "./StudentSide.js")
 );
 
-const TeacherSide = React.lazy(
-  () => import(/* webpackChunkName: "teacher" */ './TeacherSide.js')
+const TeacherSide = React.lazy(() =>
+  import(/* webpackChunkName: "teacher" */ "./TeacherSide.js")
 );
 
 export function Home({ user }) {
   const Side = React.useMemo(
-    () => user.role === 'student'
-      ? <StudentSide user={user} />
-      : <TeacherSize user={user} />,
+    () =>
+      user.role === "student" ? (
+        <StudentSide user={user} />
+      ) : (
+        <TeacherSize user={user} />
+      ),
     [user]
   );
 
@@ -358,7 +359,7 @@ export function Home({ user }) {
     <React.Suspense fallback={<Text>Loading...</Text>}>
       <Side />
     </React.Suspense>
-  )
+  );
 }
 ```
 
@@ -367,7 +368,7 @@ Add `comments: true` to your Babel config, for example:
 
 ```js
 module.exports = {
-  presets: ['module:metro-react-native-babel-preset'],
+  presets: ["module:metro-react-native-babel-preset"],
   comments: true,
 };
 ```
@@ -380,11 +381,11 @@ so it can resolve the chunks:
 
 ```js
 // index.js
-import { AppRegistry } from 'react-native';
-import { ScriptManager, Script } from '@callstack/repack/client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import App from './src/App'; // Your application's root component
-import { name as appName } from './app.json';
+import { AppRegistry } from "react-native";
+import { ScriptManager, Script } from "@callstack/repack/client";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import App from "./src/App"; // Your application's root component
+import { name as appName } from "./app.json";
 
 ScriptManager.shared.setStorage(AsyncStorage);
 ScriptManager.shared.addResolver(async (scriptId) => {
@@ -399,7 +400,9 @@ ScriptManager.shared.addResolver(async (scriptId) => {
   }
 
   return {
-    url: Script.getRemoteURL(`http://somewhere-on-the-internet.com/${scriptId}`)
+    url: Script.getRemoteURL(
+      `http://somewhere-on-the-internet.com/${scriptId}`
+    ),
   };
 });
 
@@ -427,7 +430,7 @@ for more information.
 
 Each chunk created by using dynamic `import(...)` function can be either remote or a local chunk.
 
-__By default all chunks are remote.__
+**By default all chunks are remote.**
 
 ### Chunk naming
 
@@ -461,10 +464,9 @@ You can use both `optimization.chunkIds` and `webpackChunkName` comment at the s
 :::tip
 
 Chunk extension can be configured in [`output.chunkFilename`](https://webpack.js.org/configuration/output/#outputchunkfilename), which is set to `.chunk.bundle` by default.
-It's usually __not__ necessary to modify it.
+It's usually **not** necessary to modify it.
 
 :::
-
 
 #### Named `chunkIds` config option
 
@@ -489,12 +491,12 @@ export default (env) => {
     optimization: {
       /* ... */
 
-      chunkIds: 'named',
+      chunkIds: "named",
     },
 
     /* ... */
   };
-}
+};
 ```
 
 :::tip
@@ -509,7 +511,7 @@ comment for that chunk instead of the inferred one.
 `webpackChunkName` magic comment allows you to provide your own custom name that should be used for the chunk when calling `import(...)` function:
 
 ```js
-import(/* webpackChunkName: "button" */ './Button');
+import(/* webpackChunkName: "button" */ "./Button");
 ```
 
 This example will result in chunk being named `button`, so the filename with extension will be `button.chunk.bundle`.
@@ -530,7 +532,7 @@ to always have to download the code (together with the application) they won't n
 All remote chunks are stored under `<projectRoot>/build/output/<platform>/remotes` by default. For example if `button.chunk.bundle` is a remote chunk, it will be stored under:
 `<projectRoot>/build/output/ios/remotes/button.chunk.bundle` for iOS.
 
-You can customize this by providing [`extraChunks`](/api/plugins/repack#extrachunks) to [`RepackPlugin`](/api/plugins/repack) or [`OutputPlugin`](/api/plugins/output) (if you're not using `RepackPlugin`):
+You can customize this by providing [`extraChunks`](/api/plugins/repack#extrachunks) to [`RepackPlugin`](/api/plugins/repack):
 
 ```js
 /* ... */
@@ -548,8 +550,8 @@ export default (env) => {
         extraChunks: [
           {
             test: /.*/,
-            type: 'remote',
-            outputPath: path.join('my/custom/path'),
+            type: "remote",
+            outputPath: path.join("my/custom/path"),
           },
         ],
       }),
@@ -579,13 +581,13 @@ local chunks until they are actually needed.
 
 :::tip
 
-If you're using Hermes and you compile your code into bytecode bundles, it's better __not__ to use local chunks and instead make the code a part of the main bundle.
+If you're using Hermes and you compile your code into bytecode bundles, it's better **not** to use local chunks and instead make the code a part of the main bundle.
 
-Using __local__ chunks with Hermes and bytecode bundles, will likely result __in worse performance__.
+Using **local** chunks with Hermes and bytecode bundles, will likely result **in worse performance**.
 
 :::
 
-You can customize which chunk should be local by providing [`extraChunks`](/api/plugins/output#extrachunks) option in [`RepackPlugin`](/api/plugins/repack) or [`OutputPlugin`](/api/plugins/output) (if you're not using `RepackPlugin`) configuration:
+You can customize which chunk should be local by providing [`extraChunks`](/api/plugins/repack#extrachunks) option in [`RepackPlugin`](/api/plugins/repack) configuration:
 
 ```js
 /* ... */
@@ -603,13 +605,13 @@ export default (env) => {
         extraChunks: [
           {
             include: /^.+\.local$/,
-            type: 'local',
+            type: "local",
           },
           {
             // IMPORTANT!
             exclude: /^.+\.local$/,
-            type: 'remote',
-            outputPath: path.join('build/output', platform, 'remote'), // Default path
+            type: "remote",
+            outputPath: path.join("build/output", platform, "remote"), // Default path
           },
         ],
       }),
@@ -629,7 +631,7 @@ Specifying `extraChunks` will override any defaults - you must configure `remote
 Once you have some chunks as local, you need to alter the resolver in [`ScriptManager.shared.addResolver`](/api/runtime/script-manager#addresolver):
 
 ```js
-import { ScriptManager, Script } from '@callstack/repack/client';
+import { ScriptManager, Script } from "@callstack/repack/client";
 
 ScriptManager.shared.addResolver(async (scriptId) => {
   // In development, get all the chunks from dev server.
@@ -681,22 +683,22 @@ export default (env) => {
         extraChunks: [
           {
             // Make all student related chunks local.
-            include: ['student', /^student-.+$/],
-            type: 'local',
+            include: ["student", /^student-.+$/],
+            type: "local",
           },
           {
             // Anything not student related should be remote and stored under
             // `<projectRoot>/build/output/<platform>/remotes/core`.
             exclude: /^student-.+$/,
-            type: 'remote',
-            outputPath: path.join('build/output', platform, 'remotes/core'),
+            type: "remote",
+            outputPath: path.join("build/output", platform, "remotes/core"),
           },
           {
             // All teacher related chunks should be remote and stored under
             // `<projectRoot>/build/output/<platform>/remotes/teacher`.
             test: /^teacher.*$/,
-            type: 'remote',
-            outputPath: path.join('build/output', platform, 'remotes/teacher'),
+            type: "remote",
+            outputPath: path.join("build/output", platform, "remotes/teacher"),
           },
         ],
       }),
@@ -708,7 +710,7 @@ export default (env) => {
 Use the table below for examples, how the config above would treat different chunks:
 
 | Name                   | `type`   | `outputPath`                                            |
-|------------------------|----------|---------------------------------------------------------|
+| ---------------------- | -------- | ------------------------------------------------------- |
 | `student`              | `local`  | -                                                       |
 | `student-extensions`   | `local`  | -                                                       |
 | `components`           | `remote` | `<projectRoot>/build/output/<platform>/remotes/core`    |
@@ -722,7 +724,7 @@ Use the table below for examples, how the config above would treat different chu
 
 - `test: string | RegExp | Array<string | RegExp>` must match if specified
 - `include: string | RegExp | Array<string | RegExp>` must match if specified
-- `exclude: string | RegExp | Array<string | RegExp>` must __not__ match if specified
+- `exclude: string | RegExp | Array<string | RegExp>` must **not** match if specified
 
 :::
 
@@ -742,7 +744,7 @@ necessary. Skipping the download will only happen, if the values are equal, mean
 versioning by changing the `url`, for example:
 
 ```js
-import { ScriptManager, Script } from '@callstack/repack/client';
+import { ScriptManager, Script } from "@callstack/repack/client";
 
 ScriptManager.shared.setStorage(AsyncStorage);
 ScriptManager.shared.addResolver(async (scriptId) => {
@@ -757,7 +759,7 @@ ScriptManager.shared.addResolver(async (scriptId) => {
 Or by keeping the base URL inside remote config:
 
 ```js
-import { ScriptManager, Script } from '@callstack/repack/client';
+import { ScriptManager, Script } from "@callstack/repack/client";
 
 ScriptManager.shared.setStorage(AsyncStorage);
 ScriptManager.shared.addResolver(async (scriptId) => {
@@ -768,6 +770,7 @@ ScriptManager.shared.addResolver(async (scriptId) => {
   };
 });
 ```
+
 :::caution
 
 Versioning should be use with caution. If you upload a new version of a script and it happens that old main bundle is not compatible with new files, you
