@@ -34,9 +34,5 @@
         "link": "https://v2.re-pack.dev/"
       }
     ]
-  },
-  {
-    "text": "Examples",
-    "link": "https://github.com/callstack/repack-examples"
   }
 ]
