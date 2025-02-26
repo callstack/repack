@@ -15,6 +15,10 @@ const VersionBadge = () => {
     return null;
   }
 
+  if (pageData.page.routePath.startsWith('/blog')) {
+    return null;
+  }
+
   return (
     <div className="py-2">
       <Badge
