@@ -40,7 +40,7 @@ Both Metro and Re.Pack have different approaches for the similar problem — bun
 The main distinction is that, Metro is custom-built solution and Re.Pack uses webpack. As a result there few differences that you should consider when deciding the solution to use:
 
 - Metro is slightly faster - it has less overhead compared to webpack. Metro trades configurability for performance, whereas with webpack it's the other way around.
-- webpack configuration options and ecosystem allows for much greater control and support for advanced use-cases.
+- Webpack configuration options and ecosystem allows for much greater control and support for advanced use-cases.
 
 ## Re.Pack vs Haul
 
