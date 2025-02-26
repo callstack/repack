@@ -1,3 +1,5 @@
+import { PackageManagerTabs } from 'rspress/theme';
+
 # Deployment 
 
 Re.Pack supports deploying your React Native Applications with MiniApps to [Zephyr Cloud](https://zephyr-cloud.io) by `zephyr-repack-plugin` by adding one line of code in your build configuration file - whether you're using [Rspack](https://rspack.dev) or [webpack](https://webpack.js.org) - you can seemlessly integrate deployment into your workflow. 
@@ -26,6 +28,30 @@ You can also read more about deployment, concepts and best practices about how t
 
 :::
 
+
+## Configuration 
+
+Install plugin by running: 
+
+<PackageManagerTabs command={{
+  npm: 'npm install zephyr-repack-plugin@latest',
+  yarn: 'yarn add zephyr-repack-plugin@latest',
+  pnpm: 'pnpm add zephyr-repack-plugin@latest',
+  bun: 'bun add zephyr-repack-plugin@latest',
+}} />
+
+And wrapping your build configuration with the plugin: 
+
+```js
+const { withZephyr } = require('zephyr-repack-plugin');
+
+module.exports = withZephyr({
+  // your build configuration
+});
+```
+
+For more details about configuration, please refer to [configuration guide](https://docs.zephyr-cloud.io/recipes/repack-mf#modify-thehostapp) on Zephyr Cloud's documentation.
+
 ## Deploy to Zephyr Cloud
 
 When enabled, your MiniApps are deployed to Zephyr Cloud automatically whenever you build, or devevelopment server is running on your project. A deploy URL would be generated in your terminal as shown below: 
@@ -51,12 +77,15 @@ The deploy URL is instantly sharable, available and able to be used, or auto-res
 
 
 
-## Learn more about Zephyr Cloud
+
+:::tip title="Learn more about Zephyr Cloud"
 
 - [Website](https://zephyr-cloud.io)
 - [Documentation](https://docs.zephyr-cloud.io)
 - [Discord](https://zephyr-cloud.io/discord)
 - [Twitter](https://zephyr-cloud.io/twitter)
 - [YouTube](https://zephyr-cloud.io/youtube)
+
+:::
 
 
