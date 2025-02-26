@@ -10,6 +10,11 @@
     "activeMatch": "^/api/"
   },
   {
+    "text": "Blog",
+    "link": "/blog/index",
+    "activeMatch": "^/blog/"
+  },
+  {
     "text": "Version",
     "items": [
       {
