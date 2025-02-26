@@ -1,0 +1,16 @@
+.custom__rspress-home-feature-icon-img-container {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.custom__rspress-home-feature-icon-img-container > img {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.custom__home-hero-name-img {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}

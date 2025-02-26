@@ -96,6 +96,7 @@ export default defineConfig({
       },
     },
   },
+  globalStyles: path.join(__dirname, DOCS_ROOT, 'styles', 'index.css'),
   plugins: [
     // @ts-ignore
     pluginFontOpenSans(),
