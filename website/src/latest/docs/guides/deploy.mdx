@@ -2,7 +2,6 @@
 
 Re.Pack supports deploying your React Native Applications with MiniApps to [Zephyr Cloud](https://zephyr-cloud.io) by `zephyr-repack-plugin` by adding one line of code in your build configuration file - whether you're using [Rspack](https://rspack.dev) or [webpack](https://webpack.js.org) - you can seemlessly integrate deployment into your workflow. 
 
-
 Zephyr Cloud is an orchestration platform for instant deployment of Web and Cross-platform applications. You can bring your own cloud provider, or use Zephyr Cloud's hosted service. Read more about [supported cloud providers](https://docs.zephyr-cloud.io/cloud).
 
 When you are using `zephyr-repack-plugin` with a React Native project with MiniApps, Zephyr automatically handles deploying and resolving to the correct remote application without modifying build configuration files (as in you can keep the `remoteEntry` as `MobileCart@https://localhost:8080/mf-manifest.json`).
@@ -29,13 +28,13 @@ For more details related to `create-zephyr-apps` CLI, please refer to the [Zephy
 
 When enabled, your MiniApps are deployed to Zephyr Cloud automatically whenever you build, or devevelopment server is running on your project. A deploy URL would be generated in your terminal as shown below: 
 
-![Zephyr Cloud React Native Deploy URL](../images/repack-deploy-url.png)
+![Zephyr Cloud React Native Deploy URL](/img/repack-deploy-url.png)
 
 ### Expected behavior 
 
 If you click on the deploy URL, you will see this image: 
 
-![Asset not found](../images/asset-not-found.png)
+![Asset not found](/img/asset-not-found.png)
 
 This is expected behavior as MiniApps on React Native doesn't have a default root `index.html` file. However, you can inspect whether any thing was deployed by adding the suffix `/mf-manifest.json` at the end of the URL to see if the manifest file exists (will be improved in the recent future). 
 
