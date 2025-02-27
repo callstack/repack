@@ -7,7 +7,9 @@
       "@callstack/repack",
       "@callstack/repack-dev-server",
       "@callstack/repack-init",
-      "@callstack/repack-plugin-reanimated"
+      "@callstack/repack-plugin-reanimated",
+      "@callstack/repack-plugin-nativewind",
+      "@callstack/repack-plugin-expo-modules"
     ]
   ],
   "linked": [],
