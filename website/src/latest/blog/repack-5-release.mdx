@@ -15,14 +15,14 @@ import { Helmet } from 'rspress/runtime';
 
 ![](/img/blog/start-preview.png)
 
-We are thrilled to announce the release of Re.Pack 5, our biggest update ever. This milestone release represents a complete transformation of our build tool for React Native applications, bringing unprecedented performance improvements through Rspack, proper microfrontends support through Module Federation 2, simplified configuration and more!
+We are thrilled to announce the release of [Re.Pack 5](https://github.com/callstack/repack/releases/tag/v5.0.0), our biggest update ever. This milestone release represents a complete transformation of our build tool for [React Native](https://reactnative.dev/) applications, bringing unprecedented performance improvements through [Rspack](https://rspack.dev/), proper microfrontends support through [Module Federation 2](https://module-federation.io/), simplified configuration and more!
 
 ## Rspack – 5x faster than webpack
 
-One of the most exciting features in Re.Pack 5 is the introduction of first-class support for [Rspack](https://rspack.dev/), a blazing-fast Rust-based bundler that's highly API-compatible with webpack. This integration brings dramatic performance improvements to your React Native development with Re.Pack:
+One of the most exciting features in Re.Pack 5 is the introduction of first-class support for [Rspack](https://rspack.dev/), a blazing-fast Rust-based bundler that's highly API-compatible with [webpack](https://webpack.js.org/). This integration brings dramatic performance improvements to your React Native development with Re.Pack:
 
 - **Faster cold builds**: Rspack can be up to 5x faster than webpack for both development and production builds;
-- **Faster refreshes**: Hot Module Replacement is up to 5x faster with Rspack than with webpack;
+- **Faster refreshes**: [Hot Module Replacement](https://webpack.js.org/concepts/hot-module-replacement/) is up to 5x faster with Rspack than with webpack;
 - **Webpack compatible**: Rspack maintains API compatibility with webpack, so migration is easy.
 
 
@@ -39,15 +39,15 @@ We highly recommend you give Rspack a try - we can't imagine going back ourselve
 
 ## True Mobile Microfrontends with Module Federation 2
 
-Module Federation 2 is literally a game-changer for Re.Pack, making it significantly easier to build and manage microfrontends in React Native, without the need to resort to special APIs like `Federated`. Previously, integrating Module Federation required complex workarounds, cumbersome configuration, and a subpar developer experience. With the latest improvements in Module Federation 2, Re.Pack can now tap directly into the loading process, aligning it well with React Native's runtime requirements.
+[Module Federation 2](https://module-federation.io/) is literally a game-changer for Re.Pack, making it significantly easier to build and manage microfrontends in React Native, without the need to resort to special APIs like `Federated`. Previously, integrating Module Federation required complex workarounds, cumbersome configuration, and a subpar developer experience. With the latest improvements in Module Federation 2, Re.Pack can now tap directly into the loading process, aligning it well with React Native's runtime requirements.
 
-The biggest win? Importing federated modules now works just like on the web. Re.Pack 5 uses dynamic imports so the Federation Runtime handles all the complexity behind the scenes. Your modules load at runtime with zero extra boilerplate.
+The biggest win? Importing federated modules now works just like on the web. Re.Pack 5 uses [dynamic imports](https://rspack.dev/api/runtime-api/module-methods#dynamic-import) so the Federation Runtime handles all the complexity behind the scenes. Your modules load at runtime with zero extra boilerplate.
 
 | Before | After |
 | --- | --- |
 | <img src="/img/blog/import-before.png" alt="Module Federation in Re.Pack 4" width="500" /> | <img src="/img/blog/import-after.png" alt="Module Federation in Re.Pack 5" width="500" /> |
 
-Additionally, we've overhauled the hot module replacement (HMR) logic, which was previously a major pain point, and now works not only across federated apps, but also in a more predictable and reliable manner.
+Additionally, we've overhauled the [hot module replacement](https://webpack.js.org/concepts/hot-module-replacement/) (HMR) logic, which was previously a major pain point, and now works not only across federated apps, but also in a more predictable and reliable manner.
 
 
 <center>
@@ -56,19 +56,19 @@ Additionally, we've overhauled the hot module replacement (HMR) logic, which was
 
 </center>
 
-While Module Federation 2 makes building mobile microfrontends easier, managing and deploying them at scale still presents challenges. That's why we're excited about our collaboration with **Zephyr Cloud**, which provides first-class support for Module Federation. Zephyr Cloud is helping to simplify the deployment and management of federated applications, ensuring that teams can scale their architectures without the operational headaches and run it on their own cloud. 
+While Module Federation 2 makes building mobile microfrontends easier, managing and deploying them at scale still presents challenges. That's why we're excited about our collaboration with **[Zephyr Cloud](https://zephyr-cloud.io/)**, which provides first-class support for Module Federation. Zephyr Cloud is helping to simplify the deployment and management of federated applications, ensuring that teams can scale their architectures without the operational headaches and run it on their own cloud. 
 
 Re.Pack 5 and Zephyr Cloud make building and maintaining modular React Native apps actually practical for real-world teams. Be sure to check out the official example of the [integration between the two](https://github.com/ZephyrCloudIO/zephyr-repack-example) as well as the [official documentation of the platform](https://docs.zephyr-cloud.io/).
 
 ## Smaller Configuration
 
-In previous versions of Re.Pack, just as you'd expect from a webpack-driven project, configuration files were very long and verbose even in the most basic apps. Our template included many options that would often remain unchanged no matter the specific project requirements. We noticed this in the issues too—most of them looked exactly the same and they were clouding the parts that mattered. This was a very different approach in contrast to Metro, which hides all the defaults from you and starts with a minimal configuration that's only 11 lines long (as of React Native 0.78). 
+In previous versions of Re.Pack, just as you'd expect from a webpack-driven project, configuration files were very long and verbose even in the most basic apps. Our template included many options that would often remain unchanged no matter the specific project requirements. We noticed this in the issues too—most of them looked exactly the same and they were clouding the parts that mattered. This was a very different approach in contrast to [Metro](https://metrobundler.dev/), which hides all the defaults from you and starts with a minimal configuration that's only 11 lines long (as of React Native 0.78). 
 
 In Re.Pack 5, we wanted to make configuration more friendly, especially to the new users. We've picked the right defaults, added some additional helper functions and voila! We've made the configs **140 lines shorter by default**, so it fits in **16 lines.**
 
 <img src="/img/blog/slim-configs.png" alt="New configuration is 140 lines smaller. So basically it's very smol." />
 
-There's one more thing that's new above—we've made it possible to use Re.Pack with **static configurations** (where configuration isn't a function with `env` as a first argument). This type of configuration is something you usually come across when dealing with Rspack or webpack, and we didn't want to enforce the dynamic configuration format on users anymore. 
+There's one more thing that's new above—we've made it possible to use Re.Pack with **[static configurations](/docs/guides/configuration#static-configuration)** (where configuration isn't a function with `env` as a first argument). This type of configuration is something you usually come across when dealing with Rspack or webpack, and we didn't want to enforce the dynamic configuration format on users anymore. 
 
 ## Refresh of `init` command
 
@@ -80,7 +80,7 @@ We've reworked the way you get started with Re.Pack. Previously, the `init` comm
 
 </center>
 
-The `init` command now comes with a **fresh new look** and is able to **initialize a new React Native project from scratch**. It uses `@react-native-community/cli` under the hood which creates a project from the official template and then modifies the project to use Re.Pack. 
+The [`init` command](/api/cli/init) now comes with a **fresh new look** and is able to **initialize a new React Native project from scratch**. It uses `@react-native-community/cli` under the hood which creates a project from the official template and then modifies the project to use Re.Pack. 
 
 You can use it the same way as before:
 
@@ -93,9 +93,9 @@ npx @callstack/repack-init@latest
 
 ## Drop-in replacement for Metro
 
-Re.Pack is aiming to replace Metro with minimal friction. We're constantly working to make switching between the two as smooth as possible.
+Re.Pack is aiming to replace [Metro](https://metrobundler.dev/) with minimal friction. We're constantly working to make switching between the two as smooth as possible.
 
-In version 4, we made module resolution fully compatible with the React Native ecosystem, making it easier to adopt Re.Pack in existing projects. For version 5, we focused on ensuring that the SWC transformation profile—now used instead of Babel when using Rspack—is fully compatible with the official `@react-native/babel-preset`. This means that in the vast majority of cases, you should not expect any sort of transpilation issues when using Re.Pack rather than Metro.
+In version 4, we made module resolution fully compatible with the React Native ecosystem, making it easier to adopt Re.Pack in existing projects. For version 5, we focused on ensuring that the [SWC](https://swc.rs/) transformation profile—now used instead of Babel when using Rspack—is fully compatible with the official `@react-native/babel-preset`. This means that in the vast majority of cases, you should not expect any sort of transpilation issues when using Re.Pack rather than Metro.
 
 To bridge the gap even further, Re.Pack 5 also introduces three dedicated plugins for popular libraries loved by the React Native community: 
 - [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
@@ -122,7 +122,7 @@ To help you with the process, we've prepared comprehensive migration guides. The
 
 ## Future of Re.Pack
 
-The future of Re.Pack looks brighter than ever. We're here to reassure you that this project will continue to be actively maintained by Callstack. 
+The future of Re.Pack looks brighter than ever. We're here to reassure you that this project will continue to be actively maintained by [Callstack](https://callstack.com/). 
 
 With a dedicated core team of two members - [Jakub Romańczyk](https://github.com/jbroma) and [Szymon Rybczak](https://github.com/szymonrybczak), who recently joined the team—we're committed to pushing the boundaries of what you can build with Re.Pack.
 
