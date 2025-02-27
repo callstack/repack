@@ -1,3 +1,4 @@
+import merge from 'webpack-merge';
 import type { ConfigurationObject } from '../../types.js';
 
 function normalizeDevServerHost(host?: string): string | undefined {
@@ -34,36 +35,50 @@ export function normalizeConfig<C extends ConfigurationObject>(
   config: C,
   platform: string
 ): C {
+  const normalizedConfig = {} as C;
+
   /* normalize compiler name to be equal to platform */
-  config.name = platform;
+  normalizedConfig.name = platform;
 
   /* normalize dev server host by resolving special values */
   if (config.devServer) {
-    config.devServer.host = normalizeDevServerHost(config.devServer.host);
+    normalizedConfig.devServer = {
+      ...normalizedConfig.devServer,
+      host: normalizeDevServerHost(config.devServer.host),
+    };
   }
 
   /* normalize output path by resolving [platform] & [context] placeholders */
   if (config.output?.path) {
-    config.output.path = normalizeOutputPath(
-      config.output.path,
-      config.context ?? process.cwd(),
-      config.name
-    );
+    normalizedConfig.output = {
+      ...normalizedConfig.output,
+      path: normalizeOutputPath(
+        config.output.path,
+        config.context ?? process.cwd(),
+        platform
+      ),
+    };
   }
 
   /* unset public path if it's using the deprecated `getPublicPath` function */
   if (config.output?.publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
-    config.output.publicPath = undefined;
+    normalizedConfig.output = {
+      ...normalizedConfig.output,
+      publicPath: undefined,
+    };
   }
 
   /* normalize resolve extensions by resolving [platform] placeholder */
   if (config.resolve?.extensions) {
-    config.resolve.extensions = normalizeResolveExtensions(
-      config.resolve.extensions,
-      config.name
-    );
+    normalizedConfig.resolve = {
+      ...normalizedConfig.resolve,
+      extensions: normalizeResolveExtensions(
+        config.resolve.extensions,
+        platform
+      ),
+    };
   }
 
   /* return the normalized config object */
-  return config;
+  return merge(config, normalizedConfig);
 }
