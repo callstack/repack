@@ -14,3 +14,7 @@
   margin-left: auto;
   margin-right: auto;
 }
+
+#app > div {
+  background-color: #000;
+}
