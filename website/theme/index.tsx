@@ -58,9 +58,9 @@ const Layout = () => (
         />
       ) : (
         <Announcement
-          href="/docs/getting-started/quick-start"
-          message="Preview Re.Pack 5 RC documentation"
-          localStorageKey="repack-announcement"
+          href="/blog/repack-5-release"
+          message="✨ Re.Pack 5 released ✨"
+          localStorageKey="repack-5-release-announcement"
         />
       )
     }
