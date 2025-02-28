@@ -4,15 +4,14 @@ import { RepackInitError } from '../utils/error.js';
 import logger from '../utils/logger.js';
 import spinner from '../utils/spinner.js';
 
-// TODO adjust before publishing a stable release (jbroma)
 const TEMPLATES = {
   rspack: {
-    mjs: 'https://raw.githubusercontent.com/callstack/repack/main/templates_v5/rspack.config.mjs',
-    cjs: 'https://raw.githubusercontent.com/callstack/repack/main/templates_v5/rspack.config.cjs',
+    mjs: 'https://raw.githubusercontent.com/callstack/repack/main/templates/rspack.config.mjs',
+    cjs: 'https://raw.githubusercontent.com/callstack/repack/main/templates/rspack.config.cjs',
   },
   webpack: {
-    mjs: 'https://raw.githubusercontent.com/callstack/repack/main/templates_v5/webpack.config.mjs',
-    cjs: 'https://raw.githubusercontent.com/callstack/repack/main/templates_v5/webpack.config.cjs',
+    mjs: 'https://raw.githubusercontent.com/callstack/repack/main/templates/webpack.config.mjs',
+    cjs: 'https://raw.githubusercontent.com/callstack/repack/main/templates/webpack.config.cjs',
   },
 } as const;
 
