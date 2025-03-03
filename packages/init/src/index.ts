@@ -10,11 +10,11 @@ import createNewProject from './tasks/createNewProject.js';
 import modifyDependencies from './tasks/modifyDependencies.js';
 import modifyIOS from './tasks/modifyIOS.js';
 import modifyReactNativeConfig from './tasks/modifyReactNativeConfig.js';
+import overrideCommit from './tasks/overrideCommit.js';
 import welcomeMessage from './tasks/welcomeMessage.js';
 import logger, { enableVerboseLogging } from './utils/logger.js';
 import { cancelPromptAndExit } from './utils/prompts.js';
 import spinner from './utils/spinner.js';
-import overrideCommit from './tasks/overrideCommit.js';
 
 interface Options {
   bundler: 'rspack' | 'webpack' | undefined;
