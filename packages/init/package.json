@@ -24,14 +24,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "preferred-pm": "^4.0.0",
+    "preferred-pm": "^4.1.1",
     "xcode": "3.0.1"
   },
   "devDependencies": {
     "@clack/prompts": "^0.9.1",
     "@manypkg/find-root": "^2.2.3",
-    "@rslib/core": "^0.3.2",
-    "@types/node": "18",
+    "@rslib/core": "catalog:",
+    "@types/node": "catalog:",
     "@types/semver": "^7.5.8",
     "@types/which-pm-runs": "^1.0.2",
     "@types/yargs": "^17.0.33",
