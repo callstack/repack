@@ -48,7 +48,6 @@
     "@types/jest": "^29.5.12",
     "@types/react": "^18.2.51",
     "autoprefixer": "^10.4.20",
-    "execa": "^6.1.0",
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
