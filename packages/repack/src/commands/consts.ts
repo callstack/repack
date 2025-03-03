@@ -41,3 +41,14 @@ export const DEV_SERVER_ASSET_TYPES = new RegExp(
     '^@mf-types.d.ts$',
   ].join('|')
 );
+
+export const DEPENDENCIES_WITH_SEPARATE_PLUGINS: Record<string, { plugin: string, path: string }> = {
+  'react-native-reanimated': {
+    plugin: 'ReanimatedPlugin',
+    path: "plugin-reanimated"
+  },
+  'nativewind': {
+    plugin: 'NativeWindPlugin',
+    path: "plugin-nativewind"
+  }
+} as const;
