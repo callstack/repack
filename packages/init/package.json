@@ -24,7 +24,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "preferred-pm": "^4.0.0",
+    "preferred-pm": "^4.1.1",
     "xcode": "3.0.1"
   },
   "devDependencies": {
