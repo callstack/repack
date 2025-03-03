@@ -147,7 +147,7 @@ Then update your Rspack configuration file to include the plugin:
 
 ```js title="rspack.config.js"
 const Repack = require('@callstack/repack');
-const ReanimatedPlugin = require('@callstack/repack-plugin-reanimated');
+const { ReanimatedPlugin } = require('@callstack/repack-plugin-reanimated');
 
 module.exports = (env) => {
   return {
