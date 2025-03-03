@@ -31,6 +31,7 @@ export async function bundle(
     rootDir: cliConfig.root,
     platforms: [args.platform],
     reactNativePath: cliConfig.reactNativePath,
+    noRecommendedPlugins: args.noRecommendedPlugins,
   });
 
   // expose selected args as environment variables
