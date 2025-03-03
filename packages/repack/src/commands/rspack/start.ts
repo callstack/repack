@@ -51,7 +51,6 @@ export async function start(
     rootDir: cliConfig.root,
     platforms: args.platform ? [args.platform] : detectedPlatforms,
     reactNativePath: cliConfig.reactNativePath,
-    noRecommendedPlugins: args.noRecommendedPlugins,
   });
 
   // expose selected args as environment variables

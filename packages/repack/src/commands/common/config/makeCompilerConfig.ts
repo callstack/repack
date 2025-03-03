@@ -11,7 +11,7 @@ import { getEnvOptions } from './getEnvOptions.js';
 import { getRepackConfig } from './getRepackConfig.js';
 import { loadProjectConfig } from './loadProjectConfig.js';
 import { normalizeConfig } from './normalizeConfig.js';
-import validateRequiredPlugins from './validateRequiredPlugins.js';
+import validatePluginConfiguration from './validatePluginConfiguration.js';
 
 interface MakeCompilerConfigOptions {
   args: StartArguments | BundleArguments;
@@ -70,15 +70,8 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
     normalizeConfig(config, options.platforms[index])
   );
 
-  if (!options.args.noRecommendedPlugins) {
-    const activePlugins = new Set(
-      normalizedConfigs
-        .flatMap((c) => ('plugins' in c ? c.plugins : []))
-        .map((p) => p?.constructor.name)
-        .filter((p): p is string => p !== undefined)
-    );
-
-    validateRequiredPlugins(rootDir, activePlugins, options.bundler);
+  if (options.args.recommendedPlugins) {
+    validatePluginConfiguration(rootDir, normalizedConfigs, options.bundler);
   }
 
   return normalizedConfigs as C[];
