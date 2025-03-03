@@ -1,6 +1,6 @@
 PODS:
   - boost (1.84.0)
-  - callstack-repack (5.0.0-rc.11):
+  - callstack-repack (5.0.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1599,7 +1599,7 @@ PODS:
     - React-logger (= 0.76.3)
     - React-perflogger (= 0.76.3)
     - React-utils (= 0.76.3)
-  - ReactNativeHost (0.5.2):
+  - ReactNativeHost (0.5.4):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1622,7 +1622,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - ReactTestApp-DevSupport (4.0.7):
+  - ReactTestApp-DevSupport (4.2.1):
     - React-Core
     - React-jsi
   - ReactTestApp-Resources (1.0.0-dev)
@@ -1850,7 +1850,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@4.0.7_react-native@0.76.3_@babel+core@7.25.2_@babel+preset-env@7.25.4_@_kcvmkmgigxx2fblhu2xcq3h4qu/node_modules/@rnx-kit/react-native-host`)"
+  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@4.2.1_react-native@0.76.3_@babel+core@7.25.2_@babel+preset-env@7.25.4_@_dt34ncq3ohupuqztwatgu2uemi/node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
   - ReactTestApp-Resources (from `..`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
@@ -1995,7 +1995,7 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeHost:
-    :path: "../../../node_modules/.pnpm/react-native-test-app@4.0.7_react-native@0.76.3_@babel+core@7.25.2_@babel+preset-env@7.25.4_@_kcvmkmgigxx2fblhu2xcq3h4qu/node_modules/@rnx-kit/react-native-host"
+    :path: "../../../node_modules/.pnpm/react-native-test-app@4.2.1_react-native@0.76.3_@babel+core@7.25.2_@babel+preset-env@7.25.4_@_dt34ncq3ohupuqztwatgu2uemi/node_modules/@rnx-kit/react-native-host"
   ReactTestApp-DevSupport:
     :path: "../node_modules/react-native-test-app"
   ReactTestApp-Resources:
@@ -2011,7 +2011,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 1dca942403ed9342f98334bf4c3621f011aa7946
-  callstack-repack: 028c13131834d77421120d3dc1de340f10899bcb
+  callstack-repack: b72d890302b7b8be273ff6123c02527e78bdc7cb
   DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
   FBLazyVector: be7314029d6ec6b90f0f75ce1195b8130ed9ac4f
   fmt: 10c6e61f4be25dc963c36bd73fc7b1705fe975be
@@ -2075,8 +2075,8 @@ SPEC CHECKSUMS:
   React-utils: 2bcaf4f4dfe361344bce2fae428603d518488630
   ReactCodegen: ae99a130606068ed40d1d9c0d5f25fda142a0647
   ReactCommon: 89c87b343deacc8610b099ac764848f0ce937e3e
-  ReactNativeHost: 40da1d9878e16dd3b647d4c31e5afeb0ed84683d
-  ReactTestApp-DevSupport: 4aa6f6bc658a2577bcf896c63c411cb375b89d7d
+  ReactNativeHost: c9191b22be2cb0bf5a623951e3eba7b013b20219
+  ReactTestApp-DevSupport: 0580b002f78d63804f1609dce622c4f54820f3c6
   ReactTestApp-Resources: 8d72c3deef156833760694a288ff334af4d427d7
   RNCAsyncStorage: 3ad840f7b17b45ca7ebbbb0e80948564a9513315
   RNReanimated: 1f9ef2dc2001866fe8da3f3ac78d683252e8872f
