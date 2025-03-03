@@ -68,9 +68,7 @@ describe('normalizeConfig', () => {
   describe('output.publicPath normalization', () => {
     it('should unset publicPath if it uses deprecated getPublicPath', () => {
       const config = {
-        output: {
-          publicPath: 'DEPRECATED_GET_PUBLIC_PATH',
-        },
+        output: { publicPath: 'DEPRECATED_GET_PUBLIC_PATH' },
       } as ConfigurationObject;
       const normalized = normalizeConfig(config, 'ios');
       expect(normalized.output?.publicPath).toBeUndefined();
@@ -78,9 +76,7 @@ describe('normalizeConfig', () => {
 
     it('should keep custom publicPath unchanged', () => {
       const config = {
-        output: {
-          publicPath: 'http://localhost:8081',
-        },
+        output: { publicPath: 'http://localhost:8081' },
       } as ConfigurationObject;
       const normalized = normalizeConfig(config, 'ios');
       expect(normalized.output?.publicPath).toBe('http://localhost:8081');
@@ -90,9 +86,7 @@ describe('normalizeConfig', () => {
   describe('resolve.extensions normalization', () => {
     it('should replace [platform] in extensions', () => {
       const config = {
-        resolve: {
-          extensions: ['.js', '.[platform].js', '.native.js'],
-        },
+        resolve: { extensions: ['.js', '.[platform].js', '.native.js'] },
       } as ConfigurationObject;
       const normalized = normalizeConfig(config, 'ios');
       expect(normalized.resolve?.extensions).toEqual([
@@ -104,9 +98,7 @@ describe('normalizeConfig', () => {
 
     it('should override instead of merge extensions arrays', () => {
       const config = {
-        resolve: {
-          extensions: ['.js', '.[platform].js'],
-        },
+        resolve: { extensions: ['.js', '.[platform].js'] },
       } as ConfigurationObject;
       const normalized = normalizeConfig(
         {
