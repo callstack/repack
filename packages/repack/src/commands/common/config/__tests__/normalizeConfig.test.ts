@@ -46,32 +46,28 @@ describe('normalizeConfig', () => {
     it('should replace [context] and [platform] placeholders', () => {
       const config = {
         context: '/project',
-        output: {
-          path: '/build/[context]/[platform]',
-        },
+        output: { path: '[context]/build/[platform]' },
       } as ConfigurationObject;
       const normalized = normalizeConfig(config, 'android');
-      expect(normalized.output?.path).toBe('/build/project/android');
+      expect(normalized.output?.path).toBe('/project/build/android');
     });
 
     it('should use process.cwd() when context is not provided', () => {
       const config = {
-        output: {
-          path: '/build/[context]/[platform]',
-        },
+        output: { path: '[context]/build/[platform]' },
       } as ConfigurationObject;
       const normalized = normalizeConfig(config, 'ios');
-      expect(normalized.output?.path).toBe(`/build/${process.cwd()}/ios`);
+      expect(normalized.output?.path).toBe(`${process.cwd()}/build/ios`);
     });
   });
 
   describe('output.publicPath normalization', () => {
-    it('should unset publicPath if it uses deprecated getPublicPath', () => {
+    it('should set publicPath to noop if it uses deprecated getPublicPath', () => {
       const config = {
         output: { publicPath: 'DEPRECATED_GET_PUBLIC_PATH' },
       } as ConfigurationObject;
       const normalized = normalizeConfig(config, 'ios');
-      expect(normalized.output?.publicPath).toBeUndefined();
+      expect(normalized.output?.publicPath).toBe('noop:///');
     });
 
     it('should keep custom publicPath unchanged', () => {
