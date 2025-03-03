@@ -1,11 +1,10 @@
-import { execa } from 'execa';
+import { execa } from "execa";
 
-const overrideCommit = async (rootDir: string) => {
+export default async function overrideCommit(rootDir: string) {
   try {
-    await execa('git', ['--version']);
-
-    // Amend the existing commit without changing the message, RNC CLI creates a new commit with a message "Initial commit" already.
-    await execa('git', ['commit', '--amend', '--no-edit'], {
+    // Amend the existing commit without changing the message, RNC CLI creates
+    // new commit with a message "Initial commit" already.
+    await execa("git", ["commit", "--amend", "--no-edit"], {
       cwd: rootDir,
     });
   } catch {
@@ -14,4 +13,3 @@ const overrideCommit = async (rootDir: string) => {
   }
 };
 
-export default overrideCommit;
