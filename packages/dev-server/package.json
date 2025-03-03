@@ -44,7 +44,7 @@
     "@babel/core": "^7.23.9",
     "@react-native-community/cli-server-api": "15.0.1",
     "@types/babel__code-frame": "^7.0.3",
-    "@types/node": "18",
+    "@types/node": "catalog:",
     "@types/ws": "^8.5.3",
     "babel-plugin-add-import-extension": "^1.6.0",
     "typescript": "catalog:"

@@ -15,6 +15,9 @@ catalogs:
     '@swc/helpers':
       specifier: ~0.5.15
       version: 0.5.15
+    '@types/node':
+      specifier: ^18
+      version: 18.19.41
     terser-webpack-plugin:
       specifier: ^5.3.11
       version: 5.3.11
@@ -392,7 +395,7 @@ importers:
         specifier: ^7.0.3
         version: 7.0.6
       '@types/node':
-        specifier: '18'
+        specifier: 'catalog:'
         version: 18.19.41
       '@types/ws':
         specifier: ^8.5.3
@@ -423,7 +426,7 @@ importers:
         specifier: 'catalog:'
         version: 0.5.3(typescript@5.7.2)
       '@types/node':
-        specifier: '18'
+        specifier: 'catalog:'
         version: 18.19.41
       '@types/semver':
         specifier: ^7.5.8
@@ -468,7 +471,7 @@ importers:
         specifier: 'catalog:'
         version: 1.2.7(@swc/helpers@0.5.15)
       '@types/node':
-        specifier: ^18
+        specifier: 'catalog:'
         version: 18.19.41
 
   packages/plugin-nativewind:
@@ -487,7 +490,7 @@ importers:
         specifier: 0.7.2
         version: 0.7.2
       '@types/node':
-        specifier: ^18
+        specifier: 'catalog:'
         version: 18.19.41
       nativewind:
         specifier: ^4.1.23
@@ -508,7 +511,7 @@ importers:
         specifier: 7.20.5
         version: 7.20.5
       '@types/node':
-        specifier: ^18
+        specifier: 'catalog:'
         version: 18.19.41
 
   packages/repack:
@@ -626,7 +629,7 @@ importers:
         specifier: ^2.1.1
         version: 2.1.4
       '@types/node':
-        specifier: ^18
+        specifier: 'catalog:'
         version: 18.19.41
       '@types/react-dom':
         specifier: ^17.0.7
