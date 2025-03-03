@@ -1,0 +1,63 @@
+# Bundle analysis
+
+Rsdoctor is a build analyzer that can visually display the build process. It provides insights into compilation time, compilation transformations, module dependencies, duplicate modules, and bundle size analysis.
+
+## Installation
+
+import { PackageManagerTabs } from 'rspress/theme';
+
+<PackageManagerTabs command={{
+  npm: 'npm install @rsdoctor/rspack-plugin -D',
+  yarn: 'yarn add @rsdoctor/rspack-plugin -D',
+  pnpm: 'pnpm add @rsdoctor/rspack-plugin -D',
+  bun: 'bun add @rsdoctor/rspack-plugin -D',
+}} />
+
+## Usage
+
+:::danger
+Please do not use Rsdoctor in production version.
+:::
+
+Initialize the `RsdoctorRspackPlugin` plugin in the `plugins` field of Rspack configuration, as shown below:
+
+```ts title=rspack.config.ts
+import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+
+export default {
+  // ...
+  plugins: [
+    process.env.RSDOCTOR &&
+      new RsdoctorRspackPlugin({
+        // plugin options
+      }),
+  ],
+};
+```
+
+:::info
+The `process.env.RSDOCTOR` is used to conditionally enable the plugin just for the development environment.
+:::
+
+Use the `RSDOCTOR` environment variable when running the build:
+
+```bash
+RSDOCTOR=true npx react-native bundle
+```
+
+:::info
+For better analysis results, it's recommended to run a single platform build using the `--platform` option:
+
+```bash
+RSDOCTOR=true npx react-native bundle --platform ios
+```
+
+This helps to get more focused and accurate bundle analysis for each platform.
+:::
+
+After running the above commands, when the build is completed, it will open the build analysis page. For complete features, please refer to [Rsdoctor documentation](https://rsdoctor.dev/).
+
+## Options
+
+The `RsdoctorRspackPlugin` plugin provides several options to customize the build analysis. Read more about it [here](https://rsdoctor.dev/config/options/options).
+
