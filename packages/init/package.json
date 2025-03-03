@@ -30,7 +30,7 @@
   "devDependencies": {
     "@clack/prompts": "^0.9.1",
     "@manypkg/find-root": "^2.2.3",
-    "@rslib/core": "^0.3.2",
+    "@rslib/core": "catalog:",
     "@types/node": "18",
     "@types/semver": "^7.5.8",
     "@types/which-pm-runs": "^1.0.2",
