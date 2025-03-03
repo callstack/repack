@@ -5,7 +5,7 @@ packages:
   - "website"
 
 catalog:
-  "@rspack/core": ^1.2.2
+  "@rspack/core": ^1.2.7
   "@swc/helpers": ~0.5.15
   "terser-webpack-plugin": ^5.3.11
   "typescript": ^5.7.2
@@ -13,4 +13,4 @@ catalog:
 
 catalogs:
   testers:
-    "react-native-test-app": 4.0.7
+    "react-native-test-app": 4.2.1
