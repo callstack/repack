@@ -42,13 +42,16 @@ export const DEV_SERVER_ASSET_TYPES = new RegExp(
   ].join('|')
 );
 
-export const DEPENDENCIES_WITH_SEPARATE_PLUGINS: Record<string, { plugin: string, path: string }> = {
+export const DEPENDENCIES_WITH_SEPARATE_PLUGINS: Record<
+  string,
+  { plugin: string; path: string }
+> = {
   'react-native-reanimated': {
     plugin: 'ReanimatedPlugin',
-    path: "plugin-reanimated"
+    path: 'plugin-reanimated',
   },
-  'nativewind': {
+  nativewind: {
     plugin: 'NativeWindPlugin',
-    path: "plugin-nativewind"
-  }
+    path: 'plugin-nativewind',
+  },
 } as const;

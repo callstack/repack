@@ -1,4 +1,8 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { bold } from 'colorette';
 import { merge } from 'webpack-merge';
+import { DEPENDENCIES_WITH_SEPARATE_PLUGINS } from '../../consts.js';
 import type {
   BundleArguments,
   ConfigurationObject,
@@ -11,10 +15,6 @@ import { getEnvOptions } from './getEnvOptions.js';
 import { getRepackConfig } from './getRepackConfig.js';
 import { loadProjectConfig } from './loadProjectConfig.js';
 import { normalizeConfig } from './normalizeConfig.js';
-import { join } from 'path';
-import { readFileSync } from 'fs';
-import { DEPENDENCIES_WITH_SEPARATE_PLUGINS } from '../../consts.js';
-import { bold } from 'colorette';
 
 interface MakeCompilerConfigOptions {
   args: StartArguments | BundleArguments;
@@ -78,7 +78,11 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
   );
 
   const dependencies = Object.keys(packageJson.dependencies);
-  const activePlugins = new Set(normalizedConfigs.map((c) => 'plugins' in c ? c.plugins : []).flat().map((p) => p?.constructor.name));
+  const activePlugins = new Set(
+    normalizedConfigs
+      .flatMap((c) => ('plugins' in c ? c.plugins : []))
+      .map((p) => p?.constructor.name)
+  );
 
   dependencies
     .filter((d) => DEPENDENCIES_WITH_SEPARATE_PLUGINS[d])
@@ -88,7 +92,7 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
       if (!activePlugins.has(requiredPlugin.plugin)) {
         console.warn(
           `${bold('WARNING:')} Detected ${bold(d)} package which requires ${bold(requiredPlugin.plugin)} plugin but it's not configured. ` +
-          `Please add the following to your configuration file. \nRead more https://github.com/callstack/repack/tree/main/packages/${requiredPlugin.path}/README.md.`
+            `Please add the following to your configuration file. \nRead more https://github.com/callstack/repack/tree/main/packages/${requiredPlugin.path}/README.md.`
         );
       }
     });
