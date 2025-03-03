@@ -14,6 +14,7 @@ import welcomeMessage from './tasks/welcomeMessage.js';
 import logger, { enableVerboseLogging } from './utils/logger.js';
 import { cancelPromptAndExit } from './utils/prompts.js';
 import spinner from './utils/spinner.js';
+import overrideCommit from './tasks/overrideCommit.js';
 
 interface Options {
   bundler: 'rspack' | 'webpack' | undefined;
@@ -67,6 +68,10 @@ export default async function run(options: Options) {
     modifyReactNativeConfig(bundler, rootDir);
 
     modifyIOS(rootDir);
+
+    if (!projectExists) {
+      await overrideCommit(rootDir);
+    }
 
     spinner.stop('Setup complete.');
 
