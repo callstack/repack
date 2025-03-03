@@ -1,8 +1,4 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { bold } from 'colorette';
 import { merge } from 'webpack-merge';
-import { DEPENDENCIES_WITH_SEPARATE_PLUGINS } from '../../consts.js';
 import type {
   BundleArguments,
   ConfigurationObject,
@@ -24,7 +20,6 @@ interface MakeCompilerConfigOptions {
   rootDir: string;
   platforms: string[];
   reactNativePath: string;
-  noRecommendedPlugins?: boolean;
 }
 
 export async function makeCompilerConfig<C extends ConfigurationObject>(
@@ -75,7 +70,7 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
     normalizeConfig(config, options.platforms[index])
   );
 
-  if (!options.noRecommendedPlugins) {
+  if (!options.args.noRecommendedPlugins) {
     const activePlugins = new Set(
       normalizedConfigs
         .flatMap((c) => ('plugins' in c ? c.plugins : []))

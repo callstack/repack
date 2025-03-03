@@ -57,6 +57,6 @@ export const DEPENDENCIES_WITH_SEPARATE_PLUGINS: Record<
   },
   expo: {
     plugin: 'ExpoModulesPlugin',
-    path: 'plugin-expo-modules'
-  }
+    path: 'plugin-expo-modules',
+  },
 } as const;
