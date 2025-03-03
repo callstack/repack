@@ -1,4 +1,4 @@
-import merge from 'webpack-merge';
+import { customizeArray, mergeWithCustomize } from 'webpack-merge';
 import type { ConfigurationObject } from '../../types.js';
 
 function normalizeDevServerHost(host?: string): string | undefined {
@@ -60,11 +60,11 @@ export function normalizeConfig<C extends ConfigurationObject>(
     };
   }
 
-  /* unset public path if it's using the deprecated `getPublicPath` function */
+  /* set public path to noop if it's using the deprecated `getPublicPath` function */
   if (config.output?.publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
     normalizedConfig.output = {
       ...normalizedConfig.output,
-      publicPath: undefined,
+      publicPath: 'noop:///',
     };
   }
 
@@ -80,5 +80,9 @@ export function normalizeConfig<C extends ConfigurationObject>(
   }
 
   /* return the normalized config object */
-  return merge(config, normalizedConfig);
+  return mergeWithCustomize({
+    customizeArray: customizeArray({
+      'resolve.extensions': 'replace',
+    }),
+  })(config, normalizedConfig) as C;
 }
