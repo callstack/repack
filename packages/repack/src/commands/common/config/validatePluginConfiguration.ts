@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { bold } from 'colorette';
 import { CLIError } from '@react-native-community/cli-tools';
-import { ConfigurationObject } from '../../types.js';
+import { bold } from 'colorette';
+import type { ConfigurationObject } from '../../types.js';
 
 const DEPENDENCIES_WITH_SEPARATE_PLUGINS: Record<
   string,
@@ -22,7 +22,6 @@ const DEPENDENCIES_WITH_SEPARATE_PLUGINS: Record<
     path: 'plugin-expo-modules',
   },
 } as const;
-
 
 const validatePluginConfiguration = <C extends ConfigurationObject>(
   rootDir: string,
@@ -47,12 +46,12 @@ const validatePluginConfiguration = <C extends ConfigurationObject>(
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       throw new CLIError(
         'Could not find package.json in your project root. ' +
-        'Make sure you are running this command from your React Native project root directory.'
+          'Make sure you are running this command from your React Native project root directory.'
       );
     }
     throw new CLIError(
-      'Failed to parse package.json: ' + 
-      (error instanceof Error ? error.message : 'Unknown error')
+      'Failed to parse package.json: ' +
+        (error instanceof Error ? error.message : 'Unknown error')
     );
   }
 
