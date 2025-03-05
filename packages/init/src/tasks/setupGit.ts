@@ -1,4 +1,5 @@
 import { execa } from 'execa';
+import logger from '../utils/logger.js';
 
 const isGitRepo = async (dir: string) => {
   try {
@@ -16,6 +17,7 @@ export default async function setupGit(rootDir: string) {
   try {
     const isRepo = await isGitRepo(rootDir);
     if (isRepo) {
+      logger.info('Already a git repo, skipping...');
       return;
     }
 
@@ -23,7 +25,9 @@ export default async function setupGit(rootDir: string) {
     await execa('git', ['init'], { cwd: rootDir });
     await execa('git', ['add', '.'], { cwd: rootDir });
     await execa('git', ['commit', '-m', 'Initial commit'], { cwd: rootDir });
-  } catch {
+  } catch (e) {
+    logger.info('Failed to setup git, skipping...');
+    logger.info(e instanceof Error ? e.message : String(e));
     // Silently return if any git command fails
     return;
   }
