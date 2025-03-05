@@ -1,7 +1,7 @@
 import { join } from 'node:path';
-import { CLIError } from '../error.js';
 import { bold } from 'colorette';
 import type { ConfigurationObject } from '../../types.js';
+import { CLIError } from '../error.js';
 
 const DEPENDENCIES_WITH_SEPARATE_PLUGINS: Record<
   string,
@@ -72,6 +72,6 @@ async function validatePluginConfiguration<C extends ConfigurationObject>(
         );
       }
     });
-};
+}
 
 export { validatePluginConfiguration };
