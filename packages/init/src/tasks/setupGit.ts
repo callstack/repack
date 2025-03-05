@@ -23,7 +23,7 @@ export default async function setupGit(rootDir: string) {
     await execa('git', ['init'], { cwd: rootDir });
     await execa('git', ['add', '.'], { cwd: rootDir });
     await execa('git', ['commit', '-m', 'Initial commit'], { cwd: rootDir });
-  } catch (e) {
+  } catch {
     // Silently return if any git command fails
     return;
   }
