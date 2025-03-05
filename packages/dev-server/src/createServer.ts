@@ -3,6 +3,7 @@ import middie from '@fastify/middie';
 import fastifySensible from '@fastify/sensible';
 import { createDevMiddleware } from '@react-native/dev-middleware';
 import Fastify from 'fastify';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import apiPlugin from './plugins/api/apiPlugin.js';
 import compilerPlugin from './plugins/compiler/compilerPlugin.js';
 import devtoolsPlugin from './plugins/devtools/devtoolsPlugin.js';
@@ -75,6 +76,10 @@ export async function createServer(config: Server.Config) {
     },
   });
 
+  const proxyMiddlewares = options.proxy?.map((proxyOptions) => {
+    return createProxyMiddleware(proxyOptions);
+  });
+
   // Register plugins
   await instance.register(fastifySensible);
   await instance.register(middie);
@@ -115,6 +120,11 @@ export async function createServer(config: Server.Config) {
 
   // Register dev middleware
   instance.use(devMiddleware.middleware);
+
+  // Register proxy middlewares
+  proxyMiddlewares?.forEach((proxyMiddleware) => {
+    instance.use(proxyMiddleware);
+  });
 
   // Register routes
   instance.get('/', async () => delegate.messages.getHello());

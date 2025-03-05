@@ -29,13 +29,13 @@
   },
   "dependencies": {
     "@babel/code-frame": "^7.16.7",
-    "@fastify/http-proxy": "^11.1.2",
     "@fastify/middie": "^8.3.0",
     "@fastify/sensible": "^5.5.0",
     "@react-native/dev-middleware": "^0.76.1",
     "fastify": "^4.24.3",
     "fastify-favicon": "^4.3.0",
     "fastify-plugin": "^4.5.1",
+    "http-proxy-middleware": "^3.0.3",
     "pretty-format": "^28.1.0",
     "source-map": "^0.7.4",
     "ws": "^8.7.0"
