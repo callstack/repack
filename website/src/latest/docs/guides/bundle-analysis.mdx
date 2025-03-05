@@ -1,6 +1,8 @@
 # Bundle analysis
 
-**Rsdoctor** is a recommended build analyzer that can visually display the build process. It provides insights into compilation time, compilation transformations, module dependencies, duplicate modules, and bundle size analysis. Bundle analysis helps you understand your app's performance bottlenecks and identify opportunities for optimization.
+Bundle analysis is a crucial process that helps you understand your app's performance bottlenecks and identify opportunities for optimization. By analyzing your bundle, you can gain insights into bundle size and composition, module dependencies, duplicate modules, and compilation time. We recommend using [Rsdoctor](https://rsdoctor.dev/) for bundle analysis, though you can also check our [alternative tools](#alternative-tools) section for other options.
+
+**Rsdoctor** provides comprehensive visualization of the build process, offering detailed insights into compilation time, compilation transformations, module dependencies, duplicate modules, and bundle size analysis.
 
 ## Installation
 
@@ -29,27 +31,43 @@ import { PackageManagerTabs, Tabs, Tab } from 'rspress/theme';
 
 :::danger title="Only for development"
 Please do not use Rsdoctor in production version.
-:::
-
-Initialize the `RsdoctorRspackPlugin` plugin in the `plugins` field of Rspack configuration, as shown below:
-
-```ts title=rspack.config.js
-import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
-
-export default {
-  // ...
-  plugins: [
-    process.env.RSDOCTOR &&
-      new RsdoctorRspackPlugin({
-        // plugin options
-      }),
-  ],
-};
-```
-
-:::info title="Only for development"
 The `process.env.RSDOCTOR` is used to conditionally enable the plugin just for the development environment.
 :::
+
+Initialize the plugin in your bundler configuration:
+
+<Tabs groupId="bundler">
+  <Tab label="Rspack" value="rspack">
+    ```ts title=rspack.config.mjs
+    import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+
+    export default {
+      // ...
+      plugins: [
+        process.env.RSDOCTOR &&
+          new RsdoctorRspackPlugin({
+            // plugin options
+          }),
+      ],
+    };
+    ```
+  </Tab>
+  <Tab label="webpack" value="webpack">
+    ```ts title=webpack.config.js
+    import { RsdoctorWebpackPlugin } from '@rsdoctor/webpack-plugin';
+
+    export default {
+      // ...
+      plugins: [
+        process.env.RSDOCTOR &&
+          new RsdoctorWebpackPlugin({
+            // plugin options
+          }),
+      ],
+    };
+    ```
+  </Tab>
+</Tabs>
 
 Use the `RSDOCTOR` environment variable when running the build:
 
