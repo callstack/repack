@@ -1,17 +1,29 @@
 # Bundle analysis
 
-Rsdoctor is a build analyzer that can visually display the build process. It provides insights into compilation time, compilation transformations, module dependencies, duplicate modules, and bundle size analysis.
+**Rsdoctor** is a recommended build analyzer that can visually display the build process. It provides insights into compilation time, compilation transformations, module dependencies, duplicate modules, and bundle size analysis. Bundle analysis helps you understand your app's performance bottlenecks and identify opportunities for optimization.
 
 ## Installation
 
-import { PackageManagerTabs } from 'rspress/theme';
+import { PackageManagerTabs, Tabs, Tab } from 'rspress/theme';
 
-<PackageManagerTabs command={{
-  npm: 'npm install @rsdoctor/rspack-plugin -D',
-  yarn: 'yarn add @rsdoctor/rspack-plugin -D',
-  pnpm: 'pnpm add @rsdoctor/rspack-plugin -D',
-  bun: 'bun add @rsdoctor/rspack-plugin -D',
-}} />
+<Tabs groupId="bundler">
+  <Tab label="Rspack" value="rspack">
+    <PackageManagerTabs command={{
+      npm: 'npm install @rsdoctor/rspack-plugin -D',
+      yarn: 'yarn add @rsdoctor/rspack-plugin -D',
+      pnpm: 'pnpm add @rsdoctor/rspack-plugin -D',
+      bun: 'bun add @rsdoctor/rspack-plugin -D',
+    }} />
+  </Tab>
+  <Tab label="webpack" value="webpack">
+    <PackageManagerTabs command={{
+      npm: 'npm install @rsdoctor/webpack-plugin -D',
+      yarn: 'yarn add @rsdoctor/webpack-plugin -D',
+      pnpm: 'pnpm add @rsdoctor/webpack-plugin -D',
+      bun: 'bun add @rsdoctor/webpack-plugin -D',
+    }} />
+  </Tab>
+</Tabs>
 
 ## Usage
 
@@ -45,11 +57,11 @@ Use the `RSDOCTOR` environment variable when running the build:
 RSDOCTOR=true npx react-native bundle
 ```
 
-:::info title="Specific platform analysis"
+:::tip title="Specific platform analysis"
 For better analysis results, it's recommended to run a single platform build using the `--platform` option:
 
 ```bash
-RSDOCTOR=true npx react-native bundle --platform PLATFORM
+RSDOCTOR=true npx react-native bundle --platform <platform>
 ```
 
 This helps to get more focused and accurate bundle analysis for each platform.
@@ -65,3 +77,5 @@ The `RsdoctorPlugin` plugin provides several options to customize the build anal
 ## Alternative tools
 
 - [Sonda](https://github.com/filipsobol/sonda) - Universal visualizer and analyzer for JavaScript and CSS. Compatible with Re.Pack.
+- [Webpack Bundle Analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer) - A tool for analyzing the bundle size of your React Native application.
+- [source-map-explorer](https://github.com/danvk/source-map-explorer) - A tool for analyzing the bundle size of your React Native application.
