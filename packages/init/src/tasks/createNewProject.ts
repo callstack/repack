@@ -18,6 +18,7 @@ export default async function createNewProject(
       '--directory',
       path.join(cwd, projectName),
       '--skip-install',
+      '--skip-git-init',
     ];
 
     if (override) {

@@ -10,7 +10,7 @@ import createNewProject from './tasks/createNewProject.js';
 import modifyDependencies from './tasks/modifyDependencies.js';
 import modifyIOS from './tasks/modifyIOS.js';
 import modifyReactNativeConfig from './tasks/modifyReactNativeConfig.js';
-import overrideCommit from './tasks/overrideCommit.js';
+import setupGit from './tasks/setupGit.js';
 import welcomeMessage from './tasks/welcomeMessage.js';
 import logger, { enableVerboseLogging } from './utils/logger.js';
 import { cancelPromptAndExit } from './utils/prompts.js';
@@ -70,7 +70,7 @@ export default async function run(options: Options) {
     modifyIOS(rootDir);
 
     if (!projectExists) {
-      await overrideCommit(rootDir);
+      await setupGit(rootDir);
     }
 
     spinner.stop('Setup complete.');
