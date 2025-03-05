@@ -1,6 +1,5 @@
-import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { CLIError } from '@react-native-community/cli-tools';
+import { CLIError } from '../error.js';
 import { bold } from 'colorette';
 import type { ConfigurationObject } from '../../types.js';
 
@@ -23,11 +22,11 @@ const DEPENDENCIES_WITH_SEPARATE_PLUGINS: Record<
   },
 } as const;
 
-const validatePluginConfiguration = <C extends ConfigurationObject>(
+async function validatePluginConfiguration<C extends ConfigurationObject>(
   rootDir: string,
   configs: C[],
   bundler: 'rspack' | 'webpack'
-) => {
+) {
   let dependencies: string[] = [];
 
   const activePlugins = new Set(
@@ -38,9 +37,7 @@ const validatePluginConfiguration = <C extends ConfigurationObject>(
   );
 
   try {
-    const packageJson = JSON.parse(
-      readFileSync(join(rootDir, 'package.json'), 'utf-8')
-    );
+    const packageJson = require(join(rootDir, 'package.json'));
     dependencies = Object.keys(packageJson.dependencies || {});
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
@@ -56,8 +53,8 @@ const validatePluginConfiguration = <C extends ConfigurationObject>(
   }
 
   dependencies
-    .filter((d) => {
-      const plugin = DEPENDENCIES_WITH_SEPARATE_PLUGINS[d];
+    .filter((dependency) => {
+      const plugin = DEPENDENCIES_WITH_SEPARATE_PLUGINS[dependency];
 
       if (!plugin) {
         return false;
@@ -65,16 +62,16 @@ const validatePluginConfiguration = <C extends ConfigurationObject>(
 
       return plugin.bundler ? plugin.bundler === bundler : true;
     })
-    .forEach((d) => {
-      const requiredPlugin = DEPENDENCIES_WITH_SEPARATE_PLUGINS[d];
+    .forEach((dependency) => {
+      const requiredPlugin = DEPENDENCIES_WITH_SEPARATE_PLUGINS[dependency];
 
       if (!activePlugins.has(requiredPlugin.plugin)) {
         console.warn(
-          `${bold('WARNING:')} Detected ${bold(d)} package which requires ${bold(requiredPlugin.plugin)} plugin but it's not configured. ` +
+          `${bold('WARNING:')} Detected ${bold(dependency)} package which requires ${bold(requiredPlugin.plugin)} plugin but it's not configured. ` +
             `Please add the following to your configuration file. \nRead more https://github.com/callstack/repack/tree/main/packages/${requiredPlugin.path}/README.md.`
         );
       }
     });
 };
 
-export default validatePluginConfiguration;
+export { validatePluginConfiguration };
