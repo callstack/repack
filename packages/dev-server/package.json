@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@babel/code-frame": "^7.16.7",
+    "@fastify/http-proxy": "^11.1.2",
     "@fastify/middie": "^8.3.0",
     "@fastify/sensible": "^5.5.0",
     "@react-native/dev-middleware": "^0.76.1",
