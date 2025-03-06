@@ -1,5 +1,11 @@
 # @callstack/repack-init
 
+## 5.0.1
+
+### Patch Changes
+
+- [#1067](https://github.com/callstack/repack/pull/1067) [`c9c01ee`](https://github.com/callstack/repack/commit/c9c01ee15291f08465345d5bdc614b0d37642a18) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Override commit for new projects created with `npx @callstack/repack-init`.
+
 ## 5.0.0
 
 ### Minor Changes
