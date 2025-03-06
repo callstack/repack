@@ -3,18 +3,6 @@ import type { DevServerOptions } from '@callstack/repack-dev-server';
 import { customizeArray, mergeWithCustomize } from 'webpack-merge';
 import type { ConfigurationObject } from '../../types.js';
 
-function getProtocolType(devServer: DevServerOptions) {
-  if (typeof devServer.server === 'string') {
-    return devServer.server;
-  }
-
-  if (typeof devServer.server?.type === 'string') {
-    return devServer.server.type;
-  }
-
-  return 'http';
-}
-
 function normalizeDevServerHost(host?: string): string | undefined {
   switch (host) {
     case 'local-ip':
@@ -38,23 +26,13 @@ function normalizeOutputPath(
     .replaceAll('[platform]', platform);
 }
 
-function normalizePublicPath(
-  publicPath: string,
-  protocol: string,
-  host: string,
-  port: number,
-  platform: string
-): string {
+function normalizePublicPath(publicPath: string, platform: string): string {
   /* set public path to noop if it's using the deprecated `getPublicPath` function */
   if (publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
     return 'noop:///';
   }
 
-  return publicPath
-    .replaceAll('[protocol]', protocol)
-    .replaceAll('[host]', host)
-    .replaceAll('[port]', port.toString())
-    .replaceAll('[platform]', platform);
+  return publicPath.replaceAll('[platform]', platform);
 }
 
 function normalizeResolveExtensions(
@@ -95,17 +73,9 @@ export function normalizeConfig<C extends ConfigurationObject>(
 
   /* normalize public path by resolving [protocol], [host], [port] & [platform] placeholders */
   if (config.output?.publicPath) {
-    const protocol = getProtocolType(config.devServer);
-
     normalizedConfig.output = {
       ...normalizedConfig.output,
-      publicPath: normalizePublicPath(
-        config.output.publicPath,
-        protocol,
-        config.devServer?.host,
-        config.devServer?.port,
-        platform
-      ),
+      publicPath: normalizePublicPath(config.output.publicPath, platform),
     };
   }
 
