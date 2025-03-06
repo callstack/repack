@@ -1,0 +1,103 @@
+# Bundle analysis
+
+Bundle analysis is a crucial process that helps you understand your app's performance bottlenecks and identify opportunities for optimization. By analyzing your bundle, you can gain insights into bundle size and composition, module dependencies, duplicate modules, and compilation time. We recommend using [Rsdoctor](https://rsdoctor.dev/) for bundle analysis, though you can also check our [alternative tools section](#alternative-tools) for other options.
+
+## Rsdoctor
+
+**Rsdoctor** provides comprehensive visualization of the build process, offering detailed insights into compilation time, compilation transformations, module dependencies, duplicate modules, and bundle size analysis.
+
+
+### Installation
+
+import { PackageManagerTabs, Tabs, Tab } from 'rspress/theme';
+
+<Tabs groupId="bundler">
+  <Tab label="Rspack" value="rspack">
+    <PackageManagerTabs command={{
+      npm: 'npm install @rsdoctor/rspack-plugin -D',
+      yarn: 'yarn add @rsdoctor/rspack-plugin -D',
+      pnpm: 'pnpm add @rsdoctor/rspack-plugin -D',
+      bun: 'bun add @rsdoctor/rspack-plugin -D',
+    }} />
+  </Tab>
+  <Tab label="webpack" value="webpack">
+    <PackageManagerTabs command={{
+      npm: 'npm install @rsdoctor/webpack-plugin -D',
+      yarn: 'yarn add @rsdoctor/webpack-plugin -D',
+      pnpm: 'pnpm add @rsdoctor/webpack-plugin -D',
+      bun: 'bun add @rsdoctor/webpack-plugin -D',
+    }} />
+  </Tab>
+</Tabs>
+
+### Usage
+
+:::danger title="Only for development"
+Please do not use Rsdoctor in production version.
+
+The `process.env.RSDOCTOR` is used to conditionally enable the plugin just for the development environment.
+:::
+
+Initialize the plugin in your bundler configuration:
+
+<Tabs groupId="bundler">
+  <Tab label="Rspack" value="rspack">
+    ```ts title=rspack.config.mjs
+    import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+
+    export default {
+      // ...
+      plugins: [
+        process.env.RSDOCTOR &&
+          new RsdoctorRspackPlugin({
+            // plugin options
+          }),
+      ],
+    };
+    ```
+  </Tab>
+  <Tab label="webpack" value="webpack">
+    ```ts title=webpack.config.js
+    import { RsdoctorWebpackPlugin } from '@rsdoctor/webpack-plugin';
+
+    export default {
+      // ...
+      plugins: [
+        process.env.RSDOCTOR &&
+          new RsdoctorWebpackPlugin({
+            // plugin options
+          }),
+      ],
+    };
+    ```
+  </Tab>
+</Tabs>
+
+Use the `RSDOCTOR` environment variable when running the build:
+
+```bash
+RSDOCTOR=true npx react-native bundle
+```
+
+:::tip title="Specific platform analysis"
+For better analysis results, it's recommended to run a single platform build using the `--platform` option:
+
+```bash
+RSDOCTOR=true npx react-native bundle --platform <platform>
+```
+
+This helps to get more focused and accurate bundle analysis for each platform.
+:::
+
+After running the above commands, when the build is completed, it will open the build analysis page. For complete features, please refer to [Rsdoctor documentation](https://rsdoctor.dev/).
+
+### Options
+
+The `RsdoctorPlugin` plugin provides several options to customize the build analysis. Read more about it [here](https://rsdoctor.dev/config/options/options).
+
+
+## Alternative tools
+
+- [Sonda](https://github.com/filipsobol/sonda) - Universal visualizer and analyzer for JavaScript and CSS. Compatible with Re.Pack.
+- [Webpack Bundle Analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer) - A tool for analyzing the bundle size of your React Native application.
+- [source-map-explorer](https://github.com/danvk/source-map-explorer) - A tool for analyzing the bundle size of your React Native application.
