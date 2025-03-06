@@ -26,7 +26,7 @@ export default (env) => {
       ...Repack.getResolveOptions(),
     },
     output: {
-      uniqueName: 'tester-app'
+      uniqueName: 'tester-app',
     },
     module: {
       rules: [
