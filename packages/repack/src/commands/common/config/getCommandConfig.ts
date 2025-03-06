@@ -9,6 +9,9 @@ function getStartCommandDefaults() {
       hot: true,
       server: 'http',
     },
+    output: {
+      publicPath: `http://${DEFAULT_HOSTNAME}:${DEFAULT_PORT}/[platform]/`,
+    },
   };
 }
 
