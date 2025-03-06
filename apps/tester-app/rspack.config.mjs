@@ -26,8 +26,7 @@ export default (env) => {
       ...Repack.getResolveOptions(),
     },
     output: {
-      uniqueName: 'tester-app',
-      publicPath: '[protocol]://[host]:[port]/[platform]/',
+      uniqueName: 'tester-app'
     },
     module: {
       rules: [

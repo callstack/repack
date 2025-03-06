@@ -31,6 +31,11 @@ function normalizePublicPath(
   port: number,
   platform: string
 ): string {
+  /* set public path to noop if it's using the deprecated `getPublicPath` function */
+  if (publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
+    return 'noop:///';
+  }
+
   return publicPath
     .replaceAll('[protocol]', protocol)
     .replaceAll('[host]', host)
@@ -74,22 +79,17 @@ export function normalizeConfig<C extends ConfigurationObject>(
     };
   }
 
-  normalizedConfig.output = {
-    ...normalizedConfig.output,
-    publicPath: normalizePublicPath(
-      config.output.publicPath ?? '[protocol]://[host]:[port]/[platform]/',
-      config.devServer?.protocol ?? 'http',
-      config.devServer?.host ?? 'localhost',
-      config.devServer?.port ?? 8081,
-      platform
-    ),
-  };
-
-  /* set public path to noop if it's using the deprecated `getPublicPath` function */
-  if (config.output?.publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
+  /* normalize public path by resolving [protocol], [host], [port] & [platform] placeholders */
+  if (config.output?.publicPath) {
     normalizedConfig.output = {
       ...normalizedConfig.output,
-      publicPath: 'noop:///',
+      publicPath: normalizePublicPath(
+        config.output.publicPath ?? '[protocol]://[host]:[port]/[platform]/',
+        config.devServer?.protocol ?? 'http',
+        config.devServer?.host ?? 'localhost',
+        config.devServer?.port ?? 8081,
+        platform
+      ),
     };
   }
 

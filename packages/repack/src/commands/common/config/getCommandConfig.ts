@@ -9,6 +9,9 @@ function getStartCommandDefaults() {
       hot: true,
       server: 'http',
     },
+    output: {
+      publicPath: '[protocol]://[host]:[port]/[platform]/',
+    },
   };
 }
 
@@ -18,6 +21,9 @@ function getBundleCommandDefaults() {
     devServer: false,
     optimization: {
       minimize: true,
+    },
+    output: {
+      publicPath: '[protocol]://[host]:[port]/[platform]/',
     },
   };
 }
