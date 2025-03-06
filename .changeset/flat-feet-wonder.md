@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-Normalize `config.output.publicPath` by replacing [protocol], [host], [port] & [platform] placeholders
+Use default publicPath in development instead of enforcing it in DevelopmentPlugin
