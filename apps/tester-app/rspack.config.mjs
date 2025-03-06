@@ -27,6 +27,7 @@ export default (env) => {
     },
     output: {
       uniqueName: 'tester-app',
+      publicPath: '[protocol]://[host]:[port]/[platform]/',
     },
     module: {
       rules: [

@@ -118,8 +118,10 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       __REACT_NATIVE_PATCH_VERSION__: Number(patchVersion),
     }).apply(compiler);
 
-    // set public path for development with dev server
-    compiler.options.output.publicPath = `${protocol}://${host}:${port}/${platform}/`;
+    // enforce output filenames in development mode
+    compiler.options.output.filename = (pathData) =>
+      pathData.chunk?.name === 'main' ? 'index.bundle' : '[name].bundle';
+    compiler.options.output.chunkFilename = '[name].chunk.bundle';
 
     if (compiler.options.devServer.hot) {
       // setup HMR
