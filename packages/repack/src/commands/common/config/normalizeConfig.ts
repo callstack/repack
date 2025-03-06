@@ -1,5 +1,19 @@
+// @ts-expect-error type only import
+import type { DevServerOptions } from '@callstack/repack-dev-server';
 import { customizeArray, mergeWithCustomize } from 'webpack-merge';
 import type { ConfigurationObject } from '../../types.js';
+
+function getProtocolType(devServer: DevServerOptions) {
+  if (typeof devServer.server === 'string') {
+    return devServer.server;
+  }
+
+  if (typeof devServer.server?.type === 'string') {
+    return devServer.server.type;
+  }
+
+  return 'http';
+}
 
 function normalizeDevServerHost(host?: string): string | undefined {
   switch (host) {
@@ -81,13 +95,15 @@ export function normalizeConfig<C extends ConfigurationObject>(
 
   /* normalize public path by resolving [protocol], [host], [port] & [platform] placeholders */
   if (config.output?.publicPath) {
+    const protocol = getProtocolType(config.devServer);
+
     normalizedConfig.output = {
       ...normalizedConfig.output,
       publicPath: normalizePublicPath(
-        config.output.publicPath ?? '[protocol]://[host]:[port]/[platform]/',
-        config.devServer?.protocol ?? 'http',
-        config.devServer?.host ?? 'localhost',
-        config.devServer?.port ?? 8081,
+        config.output.publicPath,
+        protocol,
+        config.devServer?.host,
+        config.devServer?.port,
         platform
       ),
     };

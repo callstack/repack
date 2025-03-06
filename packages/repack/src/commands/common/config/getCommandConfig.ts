@@ -22,9 +22,6 @@ function getBundleCommandDefaults() {
     optimization: {
       minimize: true,
     },
-    output: {
-      publicPath: '[protocol]://[host]:[port]/[platform]/',
-    },
   };
 }
 
