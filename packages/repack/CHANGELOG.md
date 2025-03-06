@@ -1,5 +1,18 @@
 # @callstack/repack
 
+## 5.0.1
+
+### Patch Changes
+
+- [#1075](https://github.com/callstack/repack/pull/1075) [`dac01e4`](https://github.com/callstack/repack/commit/dac01e41d539f19fe9ab8800288eadb361444ed0) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Use default publicPath in development instead of enforcing it in DevelopmentPlugin
+
+- [#1074](https://github.com/callstack/repack/pull/1074) [`54fa1cd`](https://github.com/callstack/repack/commit/54fa1cdb0a2e09c8de476290beacedbf3a5f7d85) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Remove enforcement of output filenames in dev mode
+
+- [#1065](https://github.com/callstack/repack/pull/1065) [`e08a805`](https://github.com/callstack/repack/commit/e08a805a2190d33fb605c5603759245ff9d965a2) Thanks [@jbroma](https://github.com/jbroma)! - Fix normalization of resolve.extensions with [platform] placeholder & set publicPath to noop explicitly when using deprecated getPublicPath helper function
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.1
+
 ## 5.0.0
 
 ### Major Changes
