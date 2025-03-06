@@ -1,5 +1,3 @@
-// @ts-expect-error type only import
-import type { DevServerOptions } from '@callstack/repack-dev-server';
 import { customizeArray, mergeWithCustomize } from 'webpack-merge';
 import type { ConfigurationObject } from '../../types.js';
 
@@ -71,7 +69,7 @@ export function normalizeConfig<C extends ConfigurationObject>(
     };
   }
 
-  /* normalize public path by resolving [protocol], [host], [port] & [platform] placeholders */
+  /* normalize public path by resolving [platform] placeholder */
   if (config.output?.publicPath) {
     normalizedConfig.output = {
       ...normalizedConfig.output,
