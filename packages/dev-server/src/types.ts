@@ -1,5 +1,6 @@
 import type { ServerOptions as HttpsServerOptions } from 'node:https';
 import type { FastifyBaseLogger } from 'fastify';
+import type { Options as ProxyOptions } from 'http-proxy-middleware';
 import type { CompilerDelegate } from './plugins/compiler/types.js';
 import type {
   CodeFrame,
@@ -21,6 +22,11 @@ export type {
   SymbolicatorResults,
 };
 
+interface ProxyConfig extends ProxyOptions {
+  path?: ProxyOptions['pathFilter'];
+  context?: ProxyOptions['pathFilter'];
+}
+
 export interface DevServerOptions {
   /**
    * Hostname or IP address under which to run the development server.
@@ -34,6 +40,8 @@ export interface DevServerOptions {
 
   /** Whether to enable Hot Module Replacement. */
   hot?: boolean;
+
+  proxy?: ProxyConfig[];
 
   /** Options for running the server as HTTPS. If `undefined`, the server will run as HTTP. */
   server?:
