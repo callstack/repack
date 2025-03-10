@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { bold } from 'colorette';
-import type { ConfigurationObject } from '../../types.js';
 import { CLIError } from '../error.js';
 
 const DEPENDENCIES_WITH_SEPARATE_PLUGINS: Record<
@@ -71,4 +70,3 @@ export async function validatePlugins(
       }
     });
 }
-
