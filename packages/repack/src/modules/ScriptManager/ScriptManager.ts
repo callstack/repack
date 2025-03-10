@@ -114,7 +114,7 @@ interface ScriptHookParams {
  * ```
  */
 export class ScriptManager extends EventEmitter {
-  hooks!: {
+  hooks: {
     beforeResolve: AsyncSeriesHook<[ScriptHookParams]>;
     resolve: AsyncSeriesHook<[ScriptHookParams]>;
     afterResolve: AsyncSeriesHook<[ScriptHookParams]>;
@@ -124,12 +124,6 @@ export class ScriptManager extends EventEmitter {
   static init() {
     if (!__webpack_require__.repack.shared.scriptManager) {
       __webpack_require__.repack.shared.scriptManager = new ScriptManager();
-      __webpack_require__.repack.shared.scriptManager.hooks = {
-        beforeResolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
-        resolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
-        afterResolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
-        errorResolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
-      };
     }
   }
 
@@ -165,6 +159,13 @@ export class ScriptManager extends EventEmitter {
         'ScriptManager was already instantiated. Use ScriptManager.shared instead.'
       );
     }
+
+    this.hooks = {
+      beforeResolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
+      resolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
+      afterResolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
+      errorResolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
+    };
 
     __webpack_require__.repack.shared.scriptManager = this;
   }
@@ -282,10 +283,7 @@ export class ScriptManager extends EventEmitter {
         );
       }
 
-      await ScriptManager.shared.hooks.beforeResolve.promise({
-        scriptId,
-        caller,
-      });
+      await this.hooks.beforeResolve.promise({ scriptId, caller });
       this.emit('resolving', { scriptId, caller });
 
       let locator: ScriptLocator | undefined;
@@ -300,7 +298,7 @@ export class ScriptManager extends EventEmitter {
         const error = new Error(
           `No resolver was able to resolve script ${scriptId}`
         );
-        await ScriptManager.shared.hooks.errorResolve.promise({
+        await this.hooks.errorResolve.promise({
           scriptId,
           caller,
           error,
@@ -329,7 +327,7 @@ export class ScriptManager extends EventEmitter {
           script.locator.fetch = true;
         }
 
-        await ScriptManager.shared.hooks.resolve.promise({ scriptId, caller });
+        await this.hooks.resolve.promise({ scriptId, caller });
         this.emit('resolved', script.toObject());
 
         // if it returns false, we don't need to fetch the script
@@ -343,16 +341,13 @@ export class ScriptManager extends EventEmitter {
         script.locator.fetch = true;
       }
 
-      await ScriptManager.shared.hooks.resolve.promise({ scriptId, caller });
-      await ScriptManager.shared.hooks.afterResolve.promise({
-        scriptId,
-        caller,
-      });
+      await this.hooks.resolve.promise({ scriptId, caller });
+      await this.hooks.afterResolve.promise({ scriptId, caller });
       this.emit('resolved', script.toObject());
 
       return script;
     } catch (error) {
-      await ScriptManager.shared.hooks.errorResolve.promise({
+      await this.hooks.errorResolve.promise({
         scriptId,
         caller,
         error: error as Error,

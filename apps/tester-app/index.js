@@ -7,42 +7,6 @@ if (!__DEV__) {
   ScriptManager.shared.setStorage(AsyncStorage);
 }
 
-ScriptManager.shared.hooks.beforeResolve.tap(
-  'test-before',
-  async ({ scriptId, caller, error }) => {
-    if (!error) {
-      console.log('Before resolving:', scriptId, caller);
-    }
-  }
-);
-
-ScriptManager.shared.hooks.resolve.tap(
-  'test-during',
-  async ({ scriptId, caller, error }) => {
-    if (!error) {
-      console.log('During resolving:', scriptId, caller);
-    }
-  }
-);
-
-ScriptManager.shared.hooks.afterResolve.tapAsync(
-  'test-after',
-  async ({ scriptId, caller, error }) => {
-    if (!error) {
-      console.log('After resolving:', scriptId, caller);
-    }
-  }
-);
-
-ScriptManager.shared.hooks.errorResolve.tapAsync(
-  'test-error',
-  async ({ scriptId, caller, error }) => {
-    if (error) {
-      console.error('Error resolving:', scriptId, caller, error);
-    }
-  }
-);
-
 ScriptManager.shared.addResolver((scriptId, _caller) => {
   if (__DEV__) {
     return {
@@ -86,5 +50,64 @@ ScriptManager.shared.addResolver((scriptId, _caller) => {
 // ScriptManager.shared.on('error', (...args) => {
 //   console.log('DEBUG/error', ...args);
 // });
+
+ScriptManager.shared.hooks.beforeResolve.tapAsync(
+  'test-before',
+  ({ scriptId, caller, error }, callback) => {
+    if (!error) {
+      console.log('Before resolving:', scriptId, caller);
+    }
+    console.log(
+      'ScriptManager.shared.hooks.beforeResolve',
+      scriptId,
+      caller,
+      error
+    );
+    callback();
+  }
+);
+
+ScriptManager.shared.hooks.resolve.tapAsync(
+  'test-during',
+  ({ scriptId, caller, error }, callback) => {
+    if (!error) {
+      console.log('During resolving:', scriptId, caller);
+    }
+    console.log('ScriptManager.shared.hooks.resolve', scriptId, caller, error);
+    callback();
+  }
+);
+
+ScriptManager.shared.hooks.afterResolve.tapAsync(
+  'test-after',
+  ({ scriptId, caller, error }, callback) => {
+    if (!error) {
+      console.log('After resolving:', scriptId, caller);
+    }
+    console.log(
+      'ScriptManager.shared.hooks.afterResolve',
+      scriptId,
+      caller,
+      error
+    );
+    callback();
+  }
+);
+
+ScriptManager.shared.hooks.errorResolve.tapAsync(
+  'test-error',
+  ({ scriptId, caller, error }, callback) => {
+    if (error) {
+      console.error('Error resolving:', scriptId, caller, error);
+    }
+    console.log(
+      'ScriptManager.shared.hooks.errorResolve',
+      scriptId,
+      caller,
+      error
+    );
+    callback();
+  }
+);
 
 AppRegistry.registerComponent(appName, () => App);
