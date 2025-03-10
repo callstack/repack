@@ -895,15 +895,15 @@ describe('ScriptManagerAPI', () => {
   it('should call hooks in correct lifecycle order', async () => {
     const hookOrder: string[] = [];
 
-    ScriptManager.hooks.beforeResolve.tap('test-before', () => {
+    ScriptManager.shared.hooks.beforeResolve.tap('test-before', () => {
       hookOrder.push('beforeResolve');
     });
 
-    ScriptManager.hooks.resolve.tap('test-resolve', () => {
+    ScriptManager.shared.hooks.resolve.tap('test-resolve', () => {
       hookOrder.push('resolve');
     });
 
-    ScriptManager.hooks.afterResolve.tap('test-after', () => {
+    ScriptManager.shared.hooks.afterResolve.tap('test-after', () => {
       hookOrder.push('afterResolve');
     });
 
@@ -919,7 +919,7 @@ describe('ScriptManagerAPI', () => {
   it('should call error hook when resolution fails', async () => {
     const errorHookCalled = jest.fn();
 
-    ScriptManager.hooks.errorResolve.tap(
+    ScriptManager.shared.hooks.errorResolve.tap(
       'test-error',
       ({ scriptId, caller, error }) => {
         expect(error).toBeDefined();
@@ -943,11 +943,11 @@ describe('ScriptManagerAPI', () => {
     const executionOrder: string[] = [];
 
     ['first', 'second'].forEach((prefix) => {
-      ScriptManager.hooks.beforeResolve.tap(`${prefix}-before`, () => {
+      ScriptManager.shared.hooks.beforeResolve.tap(`${prefix}-before`, () => {
         executionOrder.push(`${prefix}-beforeResolve`);
       });
 
-      ScriptManager.hooks.afterResolve.tap(`${prefix}-after`, () => {
+      ScriptManager.shared.hooks.afterResolve.tap(`${prefix}-after`, () => {
         executionOrder.push(`${prefix}-afterResolve`);
       });
     });
@@ -974,15 +974,15 @@ describe('ScriptManagerAPI', () => {
     it('should call hooks in correct order during successful resolution', async () => {
       const hookOrder: string[] = [];
 
-      ScriptManager.hooks.beforeResolve.tap('test-before', () => {
+      ScriptManager.shared.hooks.beforeResolve.tap('test-before', () => {
         hookOrder.push('beforeResolve');
       });
 
-      ScriptManager.hooks.resolve.tap('test-resolve', () => {
+      ScriptManager.shared.hooks.resolve.tap('test-resolve', () => {
         hookOrder.push('resolve');
       });
 
-      ScriptManager.hooks.afterResolve.tap('test-after', () => {
+      ScriptManager.shared.hooks.afterResolve.tap('test-after', () => {
         hookOrder.push('afterResolve');
       });
 
@@ -998,7 +998,7 @@ describe('ScriptManagerAPI', () => {
     it('should call error hook when resolution fails', async () => {
       const errorHookCalled = jest.fn();
 
-      ScriptManager.hooks.errorResolve.tap(
+      ScriptManager.shared.hooks.errorResolve.tap(
         'test-error',
         ({ scriptId, caller, error }) => {
           expect(error).toBeDefined();
@@ -1022,11 +1022,11 @@ describe('ScriptManagerAPI', () => {
       const executionOrder: string[] = [];
 
       ['first', 'second'].forEach((prefix) => {
-        ScriptManager.hooks.beforeResolve.tap(`${prefix}-before`, () => {
+        ScriptManager.shared.hooks.beforeResolve.tap(`${prefix}-before`, () => {
           executionOrder.push(`${prefix}-beforeResolve`);
         });
 
-        ScriptManager.hooks.afterResolve.tap(`${prefix}-after`, () => {
+        ScriptManager.shared.hooks.afterResolve.tap(`${prefix}-after`, () => {
           executionOrder.push(`${prefix}-afterResolve`);
         });
       });
