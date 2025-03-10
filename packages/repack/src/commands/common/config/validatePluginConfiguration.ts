@@ -42,8 +42,7 @@ async function validatePluginConfiguration<C extends ConfigurationObject>(
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       throw new CLIError(
-        'Could not find package.json in your project root. ' +
-          'Make sure you are running this command from your React Native project root directory.'
+        `Could not find package.json in your project root: ${rootDir}. `
       );
     }
     throw new CLIError(

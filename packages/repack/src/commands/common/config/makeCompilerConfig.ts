@@ -70,13 +70,11 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
     normalizeConfig(config, options.platforms[index])
   );
 
-  if (options.args.recommendedPlugins) {
-    await validatePluginConfiguration(
-      rootDir,
-      normalizedConfigs,
-      options.bundler
-    );
-  }
+  await validatePluginConfiguration(
+    rootDir,
+    normalizedConfigs,
+    options.bundler
+  );
 
   return normalizedConfigs as C[];
 }
