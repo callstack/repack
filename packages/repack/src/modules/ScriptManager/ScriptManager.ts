@@ -286,11 +286,20 @@ export class ScriptManager extends EventEmitter {
       await this.hooks.beforeResolve.promise({ scriptId, caller });
       this.emit('resolving', { scriptId, caller });
 
+      // Check if there are any taps in the resolve hook
+      const hasResolveHooks = this.hooks.resolve.taps.length > 0;
+
       let locator: ScriptLocator | undefined;
-      for (const [, , resolve] of this.resolvers) {
-        locator = await resolve(scriptId, caller, referenceUrl);
-        if (locator) {
-          break;
+
+      if (hasResolveHooks) {
+        await this.hooks.resolve.promise({ scriptId, caller });
+      } else {
+        for (const [, , resolve] of this.resolvers) {
+          const resolvedLocator = await resolve(scriptId, caller, referenceUrl);
+          if (resolvedLocator) {
+            locator = resolvedLocator;
+            break;
+          }
         }
       }
 
@@ -341,7 +350,10 @@ export class ScriptManager extends EventEmitter {
         script.locator.fetch = true;
       }
 
-      await this.hooks.resolve.promise({ scriptId, caller });
+      // Only call resolve hook if it wasn't called during resolution
+      if (!hasResolveHooks) {
+        await this.hooks.resolve.promise({ scriptId, caller });
+      }
       await this.hooks.afterResolve.promise({ scriptId, caller });
       this.emit('resolved', script.toObject());
 

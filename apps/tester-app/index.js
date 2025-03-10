@@ -67,16 +67,16 @@ ScriptManager.shared.hooks.beforeResolve.tapAsync(
   }
 );
 
-ScriptManager.shared.hooks.resolve.tapAsync(
-  'test-during',
-  ({ scriptId, caller, error }, callback) => {
-    if (!error) {
-      console.log('During resolving:', scriptId, caller);
-    }
-    console.log('ScriptManager.shared.hooks.resolve', scriptId, caller, error);
-    callback();
-  }
-);
+// ScriptManager.shared.hooks.resolve.tapAsync(
+//   'test-during',
+//   ({ scriptId, caller, error }, callback) => {
+//     if (!error) {
+//       console.log('During resolving:', scriptId, caller);
+//     }
+//     console.log('ScriptManager.shared.hooks.resolve', scriptId, caller, error);
+//     callback();
+//   }
+// );
 
 ScriptManager.shared.hooks.afterResolve.tapAsync(
   'test-after',
