@@ -22,16 +22,15 @@ const DEPENDENCIES_WITH_SEPARATE_PLUGINS: Record<
   },
 } as const;
 
-async function validatePluginConfiguration<C extends ConfigurationObject>(
+export async function validatePlugins(
   rootDir: string,
-  configs: C[],
+  plugins: unknown[],
   bundler: 'rspack' | 'webpack'
 ) {
   let dependencies: string[] = [];
 
   const activePlugins = new Set(
-    configs
-      .flatMap((config) => ('plugins' in config ? config.plugins : []))
+    plugins
       .map((plugin) => plugin?.constructor.name)
       .filter((pluginName): pluginName is string => pluginName !== undefined)
   );
@@ -73,4 +72,3 @@ async function validatePluginConfiguration<C extends ConfigurationObject>(
     });
 }
 
-export { validatePluginConfiguration };
