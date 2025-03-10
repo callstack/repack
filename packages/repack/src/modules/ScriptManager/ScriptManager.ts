@@ -1,5 +1,6 @@
 // biome-ignore lint/style/useNodejsImportProtocol: use 'events' module instead of node builtin
 import EventEmitter from 'events';
+import { AsyncSeriesHook } from 'tapable';
 import NativeScriptManager, {
   type NormalizedScriptLocator,
 } from './NativeScriptManager.js';
@@ -52,6 +53,12 @@ export interface ResolverOptions {
    * If provided, the new resolver will be replace the existing one configured with the same `uniqueKey`.
    */
   key?: string;
+}
+
+interface ScriptHookParams {
+  scriptId: string;
+  caller?: string;
+  error?: Error;
 }
 
 /**
@@ -107,6 +114,13 @@ export interface ResolverOptions {
  * ```
  */
 export class ScriptManager extends EventEmitter {
+  static hooks = {
+    beforeResolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
+    resolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
+    afterResolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
+    errorResolve: new AsyncSeriesHook<[ScriptHookParams]>(['params']),
+  };
+
   static init() {
     if (!__webpack_require__.repack.shared.scriptManager) {
       __webpack_require__.repack.shared.scriptManager = new ScriptManager();
@@ -262,6 +276,7 @@ export class ScriptManager extends EventEmitter {
         );
       }
 
+      await ScriptManager.hooks.beforeResolve.promise({ scriptId, caller });
       this.emit('resolving', { scriptId, caller });
 
       let locator: ScriptLocator | undefined;
@@ -273,7 +288,15 @@ export class ScriptManager extends EventEmitter {
       }
 
       if (!locator) {
-        throw new Error(`No resolver was able to resolve script ${scriptId}`);
+        const error = new Error(
+          `No resolver was able to resolve script ${scriptId}`
+        );
+        await ScriptManager.hooks.errorResolve.promise({
+          scriptId,
+          caller,
+          error,
+        });
+        throw error;
       }
 
       if (typeof locator.url === 'function') {
@@ -297,6 +320,7 @@ export class ScriptManager extends EventEmitter {
           script.locator.fetch = true;
         }
 
+        await ScriptManager.hooks.resolve.promise({ scriptId, caller });
         this.emit('resolved', script.toObject());
 
         // if it returns false, we don't need to fetch the script
@@ -310,10 +334,17 @@ export class ScriptManager extends EventEmitter {
         script.locator.fetch = true;
       }
 
+      await ScriptManager.hooks.resolve.promise({ scriptId, caller });
+      await ScriptManager.hooks.afterResolve.promise({ scriptId, caller });
       this.emit('resolved', script.toObject());
 
       return script;
     } catch (error) {
+      await ScriptManager.hooks.errorResolve.promise({
+        scriptId,
+        caller,
+        error: error as Error,
+      });
       this.handleError(
         error,
         '[ScriptManager] Failed while resolving script locator:',

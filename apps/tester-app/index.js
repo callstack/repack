@@ -7,6 +7,42 @@ if (!__DEV__) {
   ScriptManager.shared.setStorage(AsyncStorage);
 }
 
+ScriptManager.hooks.beforeResolve.tap(
+  'test-before',
+  async ({ scriptId, caller, error }) => {
+    if (!error) {
+      console.log('Before resolving:', scriptId, caller);
+    }
+  }
+);
+
+ScriptManager.hooks.resolve.tap(
+  'test-during',
+  async ({ scriptId, caller, error }) => {
+    if (!error) {
+      console.log('During resolving:', scriptId, caller);
+    }
+  }
+);
+
+ScriptManager.hooks.afterResolve.tapAsync(
+  'test-after',
+  async ({ scriptId, caller, error }) => {
+    if (!error) {
+      console.log('After resolving:', scriptId, caller);
+    }
+  }
+);
+
+ScriptManager.hooks.errorResolve.tapAsync(
+  'test-error',
+  async ({ scriptId, caller, error }) => {
+    if (error) {
+      console.error('Error resolving:', scriptId, caller, error);
+    }
+  }
+);
+
 ScriptManager.shared.addResolver((scriptId, _caller) => {
   if (__DEV__) {
     return {
