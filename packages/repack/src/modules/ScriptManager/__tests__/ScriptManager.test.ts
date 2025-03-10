@@ -64,6 +64,12 @@ afterEach(() => {
   globalThis.__webpack_require__.repack.shared.scriptManager = undefined;
 });
 
+interface ScriptHookParams {
+  scriptId: string;
+  caller?: string;
+  error?: Error;
+}
+
 describe('ScriptManagerAPI', () => {
   it('throw error if ScriptManager NativeModule was not found', async () => {
     // @ts-expect-error simulat missing native module
@@ -874,6 +880,164 @@ describe('ScriptManagerAPI', () => {
     expect(spy.mock.lastCall?.[1].fetch).toBe(true);
 
     spy.mockRestore();
+  });
+
+  it('should call hooks in correct lifecycle order', async () => {
+    const hookOrder: string[] = [];
+
+    ScriptManager.shared.hooks.beforeResolve.tap('test-before', () => {
+      hookOrder.push('beforeResolve');
+    });
+
+    ScriptManager.shared.hooks.resolve.tap('test-resolve', () => {
+      hookOrder.push('resolve');
+    });
+
+    ScriptManager.shared.hooks.afterResolve.tap('test-after', () => {
+      hookOrder.push('afterResolve');
+    });
+
+    ScriptManager.shared.addResolver(async (scriptId) => ({
+      url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+    }));
+
+    await ScriptManager.shared.resolveScript('test-script', 'main');
+
+    expect(hookOrder).toEqual(['beforeResolve', 'resolve', 'afterResolve']);
+  });
+
+  it('should call error hook when resolution fails', async () => {
+    const errorHookCalled = jest.fn();
+
+    ScriptManager.shared.hooks.errorResolve.tap(
+      'test-error',
+      ({ scriptId, caller, error }: ScriptHookParams) => {
+        expect(error).toBeDefined();
+        errorHookCalled(scriptId, caller, error);
+      }
+    );
+
+    // No resolver added to trigger error
+    await expect(
+      ScriptManager.shared.resolveScript('test-script', 'test-caller')
+    ).rejects.toThrow();
+
+    expect(errorHookCalled).toHaveBeenCalledWith(
+      'test-script',
+      'test-caller',
+      expect.any(Error)
+    );
+  });
+
+  it('should allow multiple hooks to be registered in series', async () => {
+    const executionOrder: string[] = [];
+
+    ['first', 'second'].forEach((prefix) => {
+      ScriptManager.shared.hooks.beforeResolve.tap(`${prefix}-before`, () => {
+        executionOrder.push(`${prefix}-beforeResolve`);
+      });
+
+      ScriptManager.shared.hooks.afterResolve.tap(`${prefix}-after`, () => {
+        executionOrder.push(`${prefix}-afterResolve`);
+      });
+    });
+
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      executionOrder.push('resolver');
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+      };
+    });
+
+    await ScriptManager.shared.resolveScript('test-script', 'test-caller');
+
+    expect(executionOrder).toEqual([
+      'first-beforeResolve',
+      'second-beforeResolve',
+      'resolver',
+      'first-afterResolve',
+      'second-afterResolve',
+    ]);
+  });
+
+  describe('hooks lifecycle', () => {
+    it('should call hooks in correct order during successful resolution', async () => {
+      const hookOrder: string[] = [];
+
+      ScriptManager.shared.hooks.beforeResolve.tap('test-before', () => {
+        hookOrder.push('beforeResolve');
+      });
+
+      ScriptManager.shared.hooks.resolve.tap('test-resolve', () => {
+        hookOrder.push('resolve');
+      });
+
+      ScriptManager.shared.hooks.afterResolve.tap('test-after', () => {
+        hookOrder.push('afterResolve');
+      });
+
+      ScriptManager.shared.addResolver(async (scriptId) => ({
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+      }));
+
+      await ScriptManager.shared.resolveScript('test-script', 'main');
+
+      expect(hookOrder).toEqual(['beforeResolve', 'resolve', 'afterResolve']);
+    });
+
+    it('should call error hook when resolution fails', async () => {
+      const errorHookCalled = jest.fn();
+
+      ScriptManager.shared.hooks.errorResolve.tap(
+        'test-error',
+        ({ scriptId, caller, error }: ScriptHookParams) => {
+          expect(error).toBeDefined();
+          errorHookCalled(scriptId, caller, error);
+        }
+      );
+
+      // No resolver added to trigger error
+      await expect(
+        ScriptManager.shared.resolveScript('test-script', 'test-caller')
+      ).rejects.toThrow();
+
+      expect(errorHookCalled).toHaveBeenCalledWith(
+        'test-script',
+        'test-caller',
+        expect.any(Error)
+      );
+    });
+
+    it('should allow multiple hooks to be registered in series', async () => {
+      const executionOrder: string[] = [];
+
+      ['first', 'second'].forEach((prefix) => {
+        ScriptManager.shared.hooks.beforeResolve.tap(`${prefix}-before`, () => {
+          executionOrder.push(`${prefix}-beforeResolve`);
+        });
+
+        ScriptManager.shared.hooks.afterResolve.tap(`${prefix}-after`, () => {
+          executionOrder.push(`${prefix}-afterResolve`);
+        });
+      });
+
+      ScriptManager.shared.addResolver(async (scriptId) => {
+        executionOrder.push('resolver');
+        return {
+          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        };
+      });
+
+      await ScriptManager.shared.resolveScript('test-script', 'test-caller');
+
+      expect(executionOrder).toEqual([
+        'first-beforeResolve',
+        'second-beforeResolve',
+        'resolver',
+        'first-afterResolve',
+        'second-afterResolve',
+      ]);
+    });
   });
 });
 
