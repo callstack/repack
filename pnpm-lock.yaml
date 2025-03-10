@@ -570,6 +570,9 @@ importers:
       shallowequal:
         specifier: ^1.1.0
         version: 1.1.0
+      tapable:
+        specifier: ^2.2.1
+        version: 2.2.1
       throttleit:
         specifier: ^2.1.0
         version: 2.1.0
