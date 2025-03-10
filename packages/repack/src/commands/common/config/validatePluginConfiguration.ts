@@ -1,4 +1,4 @@
-import { join } from 'node:path';
+import path from 'node:path';
 import { bold } from 'colorette';
 import type { ConfigurationObject } from '../../types.js';
 import { CLIError } from '../error.js';
@@ -31,13 +31,13 @@ async function validatePluginConfiguration<C extends ConfigurationObject>(
 
   const activePlugins = new Set(
     configs
-      .flatMap((c) => ('plugins' in c ? c.plugins : []))
-      .map((p) => p?.constructor.name)
-      .filter((p): p is string => p !== undefined)
+      .flatMap((config) => ('plugins' in config ? config.plugins : []))
+      .map((plugin) => plugin?.constructor.name)
+      .filter((pluginName): pluginName is string => pluginName !== undefined)
   );
 
   try {
-    const packageJson = require(join(rootDir, 'package.json'));
+    const packageJson = require(path.join(rootDir, 'package.json'));
     dependencies = Object.keys(packageJson.dependencies || {});
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {

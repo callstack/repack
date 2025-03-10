@@ -14,7 +14,6 @@ export interface BundleArguments {
   watch?: boolean;
   config?: string;
   webpackConfig?: string;
-  recommendedPlugins?: boolean;
 }
 
 export interface StartArguments {
@@ -32,7 +31,6 @@ export interface StartArguments {
   verbose?: boolean;
   config?: string;
   webpackConfig?: string;
-  recommendedPlugins?: boolean;
 }
 
 interface CommonCliOptions {
