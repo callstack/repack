@@ -70,7 +70,7 @@ export const startCommandOptions = [
     description:
       '[DEPRECATED] Path to a bundler config file, e.g webpack.config.js. Please use --config instead.',
     parse: (val: string) => path.resolve(val),
-  }
+  },
 ];
 
 export const bundleCommandOptions = [
@@ -161,5 +161,5 @@ export const bundleCommandOptions = [
     description:
       '[DEPRECATED] Path to a bundler config file, e.g webpack.config.js. Please use --config instead.',
     parse: (val: string) => path.resolve(val),
-  }
+  },
 ];
