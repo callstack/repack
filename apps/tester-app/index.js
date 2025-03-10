@@ -7,7 +7,7 @@ if (!__DEV__) {
   ScriptManager.shared.setStorage(AsyncStorage);
 }
 
-ScriptManager.hooks.beforeResolve.tap(
+ScriptManager.shared.hooks.beforeResolve.tap(
   'test-before',
   async ({ scriptId, caller, error }) => {
     if (!error) {
@@ -16,7 +16,7 @@ ScriptManager.hooks.beforeResolve.tap(
   }
 );
 
-ScriptManager.hooks.resolve.tap(
+ScriptManager.shared.hooks.resolve.tap(
   'test-during',
   async ({ scriptId, caller, error }) => {
     if (!error) {
@@ -25,7 +25,7 @@ ScriptManager.hooks.resolve.tap(
   }
 );
 
-ScriptManager.hooks.afterResolve.tapAsync(
+ScriptManager.shared.hooks.afterResolve.tapAsync(
   'test-after',
   async ({ scriptId, caller, error }) => {
     if (!error) {
@@ -34,7 +34,7 @@ ScriptManager.hooks.afterResolve.tapAsync(
   }
 );
 
-ScriptManager.hooks.errorResolve.tapAsync(
+ScriptManager.shared.hooks.errorResolve.tapAsync(
   'test-error',
   async ({ scriptId, caller, error }) => {
     if (error) {
