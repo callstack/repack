@@ -54,23 +54,23 @@ export default async function run(options: Options) {
       );
     }
 
-    const rootDir = path.join(cwd, projectName!);
+    const projectRootDir = projectExists ? cwd : path.join(cwd, projectName!);
 
-    await modifyDependencies(bundler, rootDir, options.repackVersion);
+    await modifyDependencies(bundler, projectRootDir, options.repackVersion);
 
     await createBundlerConfig(
       bundler,
-      rootDir,
+      projectRootDir,
       options.templateType,
       options.entry
     );
 
-    modifyReactNativeConfig(bundler, rootDir);
+    modifyReactNativeConfig(bundler, projectRootDir);
 
-    modifyIOS(rootDir);
+    modifyIOS(projectRootDir);
 
     if (!projectExists) {
-      await setupGit(rootDir);
+      await setupGit(projectRootDir);
     }
 
     spinner.stop('Setup complete.');
