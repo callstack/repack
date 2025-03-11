@@ -39,14 +39,11 @@ export async function validatePlugins(
     dependencies = Object.keys(packageJson.dependencies || {});
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      throw new CLIError(
-        `Could not find package.json in your project root: ${rootDir}. `
-      );
+      console.debug('Could not find package.json in your project root:', rootDir);
+      return
     }
-    throw new CLIError(
-      'Failed to parse package.json: ' +
-        (error instanceof Error ? error.message : 'Unknown error')
-    );
+    
+    console.debug('Failed to parse package.json:', error);
   }
 
   dependencies
