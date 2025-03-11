@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { bold } from 'colorette';
-import { CLIError } from '../error.js';
 
 const DEPENDENCIES_WITH_SEPARATE_PLUGINS: Record<
   string,
@@ -39,10 +38,13 @@ export async function validatePlugins(
     dependencies = Object.keys(packageJson.dependencies || {});
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      console.debug('Could not find package.json in your project root:', rootDir);
-      return
+      console.debug(
+        'Could not find package.json in your project root:',
+        rootDir
+      );
+      return;
     }
-    
+
     console.debug('Failed to parse package.json:', error);
   }
 
