@@ -1,5 +1,18 @@
 # @callstack/repack
 
+## 5.0.3
+
+### Patch Changes
+
+- [#1085](https://github.com/callstack/repack/pull/1085) [`c2852df`](https://github.com/callstack/repack/commit/c2852dfb261b0321e7fb6a12bdfc6f1ef7e479d2) Thanks [@jbroma](https://github.com/jbroma)! - Fix emitting to the same file when developing a host-type app with module-federation
+
+- [#1086](https://github.com/callstack/repack/pull/1086) [`8e8aad6`](https://github.com/callstack/repack/commit/8e8aad6cfe0669ef01d7071e86a680a498e1b811) Thanks [@jbroma](https://github.com/jbroma)! - Hide "JavaScriptLogs have moved..." message
+
+- [#1087](https://github.com/callstack/repack/pull/1087) [`2f0835a`](https://github.com/callstack/repack/commit/2f0835a64740a570e1fb82c23d0a08fb789a7489) Thanks [@jbroma](https://github.com/jbroma)! - Drop having `@react-native-community/cli` as peer dependency
+
+- Updated dependencies [[`8e8aad6`](https://github.com/callstack/repack/commit/8e8aad6cfe0669ef01d7071e86a680a498e1b811)]:
+  - @callstack/repack-dev-server@5.0.3
+
 ## 5.0.2
 
 ### Patch Changes
