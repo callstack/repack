@@ -1,5 +1,11 @@
 # @callstack/repack-init
 
+## 5.0.2
+
+### Patch Changes
+
+- [#1079](https://github.com/callstack/repack/pull/1079) [`2ac8f7b`](https://github.com/callstack/repack/commit/2ac8f7b26027686c1ed46ce8176c21c08f056337) Thanks [@jbroma](https://github.com/jbroma)! - Fix init picking up wrong root directory when migrating existing projects
+
 ## 5.0.1
 
 ### Patch Changes
