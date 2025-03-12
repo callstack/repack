@@ -71,7 +71,8 @@ export async function createServer(config: Server.Config) {
     projectRoot: options.rootDir,
     serverBaseUrl: options.url,
     logger: {
-      ...instance.log,
+      error: instance.log.error,
+      warn: instance.log.warn,
       info: (...message) => {
         if (!handledDevMiddlewareNotice) {
           if (message.join().includes('JavaScript logs have moved!')) {
