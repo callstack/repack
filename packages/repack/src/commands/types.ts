@@ -33,22 +33,21 @@ export interface StartArguments {
   webpackConfig?: string;
 }
 
-interface CommonCliOptions {
-  config: {
-    root: string;
-    platforms: string[];
-    bundlerConfigPath: string;
-    reactNativePath: string;
-  };
+export interface CliConfig {
+  root: string;
+  platforms: string[];
+  reactNativePath: string;
 }
 
-export interface StartCliOptions extends CommonCliOptions {
+export interface StartCliOptions {
   command: 'start';
+  config: CliConfig;
   arguments: { start: StartArguments };
 }
 
-export interface BundleCliOptions extends CommonCliOptions {
+export interface BundleCliOptions {
   command: 'bundle';
+  config: CliConfig;
   arguments: { bundle: BundleArguments };
 }
 

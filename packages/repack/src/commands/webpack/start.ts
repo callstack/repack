@@ -1,6 +1,5 @@
 // @ts-expect-error type-only import
 import type { Server } from '@callstack/repack-dev-server';
-import type { Config } from '@react-native-community/cli-types';
 import type { Configuration, StatsCompilation } from 'webpack';
 import packageJson from '../../../package.json';
 import {
@@ -21,7 +20,7 @@ import {
 } from '../common/index.js';
 import logo from '../common/logo.js';
 import { setupEnvironment } from '../common/setupEnvironment.js';
-import type { StartArguments } from '../types.js';
+import type { CliConfig, StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
 
 /**
@@ -38,7 +37,7 @@ import { Compiler } from './Compiler.js';
  */
 export async function start(
   _: string[],
-  cliConfig: Config,
+  cliConfig: CliConfig,
   args: StartArguments
 ) {
   const detectedPlatforms = Object.keys(cliConfig.platforms);

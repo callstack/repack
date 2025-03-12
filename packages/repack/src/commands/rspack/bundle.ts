@@ -1,11 +1,10 @@
-import type { Config } from '@react-native-community/cli-types';
 import { type Configuration, rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import { CLIError } from '../common/error.js';
 import { normalizeStatsOptions, writeStats } from '../common/index.js';
 import { setupEnvironment } from '../common/setupEnvironment.js';
-import type { BundleArguments } from '../types.js';
+import type { BundleArguments, CliConfig } from '../types.js';
 
 /**
  * Bundle command for React Native Community CLI.
@@ -21,7 +20,7 @@ import type { BundleArguments } from '../types.js';
  */
 export async function bundle(
   _: string[],
-  cliConfig: Config,
+  cliConfig: CliConfig,
   args: BundleArguments
 ) {
   const [config] = await makeCompilerConfig<Configuration>({

@@ -592,15 +592,6 @@ importers:
       '@module-federation/sdk':
         specifier: 0.6.10
         version: 0.6.10
-      '@react-native-community/cli':
-        specifier: 15.0.1
-        version: 15.0.1(typescript@5.7.2)
-      '@react-native-community/cli-tools':
-        specifier: 15.0.1
-        version: 15.0.1
-      '@react-native-community/cli-types':
-        specifier: 15.0.1
-        version: 15.0.1
       '@rspack/core':
         specifier: 'catalog:'
         version: 1.2.7(@swc/helpers@0.5.15)
