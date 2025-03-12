@@ -21,16 +21,13 @@ import type { CliConfig, StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
 
 /**
- * Start command for React Native Community CLI.
- * It runs `@callstack/repack-dev-server` to provide Development Server functionality to React Native apps
+ * Start command that runs a development server.
+ * It runs `@callstack/repack-dev-server` to provide Development Server functionality
  * in development mode.
  *
  * @param _ Original, non-parsed arguments that were provided when running this command.
- * @param config React Native Community CLI configuration object.
+ * @param cliConfig Configuration object containing platform and project settings.
  * @param args Parsed command line arguments.
- *
- * @internal
- * @category CLI command
  */
 export async function start(
   _: string[],
