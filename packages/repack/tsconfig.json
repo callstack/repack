@@ -4,10 +4,7 @@
     "rootDirs": ["src", "../dev-server/src"],
     "paths": {
       "@callstack/repack-dev-server": ["../dev-server/src/index.ts"],
-      "@callstack/repack-dev-server/*": ["../dev-server/src/*"],
-      "@react-native/dev-middleware": [
-        "../dev-server/node_modules/@react-native/dev-middleware/dist"
-      ]
+      "@callstack/repack-dev-server/*": ["../dev-server/src/*"]
     }
   },
   "include": ["src/**/*"]
