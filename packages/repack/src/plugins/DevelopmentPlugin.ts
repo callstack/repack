@@ -62,16 +62,16 @@ export class DevelopmentPlugin implements RspackPluginInstance {
       }
 
       // repack MF plugins expose config property
-      if ('config' in plugin) {
+      if ('config' in plugin && !!plugin.config.exposes) {
         return plugin.config.name;
       }
 
       // official MF plugins expose _options property
-      if ('_options' in plugin) {
+      if ('_options' in plugin && !!plugin.config.exposes) {
         return plugin._options.name;
       }
 
-      return null;
+      return;
     });
 
     return entrypoints.filter(Boolean);
