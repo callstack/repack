@@ -905,9 +905,13 @@ describe('ScriptManagerAPI', () => {
       hookOrder.push('beforeResolve');
     });
 
-    ScriptManager.shared.hooks.resolve.tap('test-resolve', () => {
-      hookOrder.push('resolve');
-    });
+    ScriptManager.shared.hooks.resolve.tapAsync(
+      'test-during',
+      (_, callback) => {
+        hookOrder.push('resolve');
+        callback();
+      }
+    );
 
     ScriptManager.shared.hooks.afterResolve.tap('test-after', () => {
       hookOrder.push('afterResolve');
@@ -984,17 +988,23 @@ describe('ScriptManagerAPI', () => {
         hookOrder.push('beforeResolve');
       });
 
-      ScriptManager.shared.hooks.resolve.tap('test-resolve', () => {
-        hookOrder.push('resolve');
-      });
+      ScriptManager.shared.hooks.resolve.tapAsync(
+        'test-during',
+        (_, callback) => {
+          hookOrder.push('resolve');
+          callback();
+        }
+      );
 
       ScriptManager.shared.hooks.afterResolve.tap('test-after', () => {
         hookOrder.push('afterResolve');
       });
 
-      ScriptManager.shared.addResolver(async (scriptId) => ({
-        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-      }));
+      ScriptManager.shared.addResolver(async (scriptId) => {
+        return {
+          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        };
+      });
 
       await ScriptManager.shared.resolveScript('test-script', 'main');
 
@@ -1055,11 +1065,117 @@ describe('ScriptManagerAPI', () => {
       ]);
     });
   });
+
+  describe('loading script hooks lifecycle', () => {
+    it('should call hooks in correct order during successful loading', async () => {
+      mockLoadScriptBasedOnFetch();
+
+      const executionOrder: string[] = [];
+
+      ScriptManager.shared.addResolver(async (scriptId) => {
+        return {
+          url: Script.getRemoteURL(`https://domain.ext/${scriptId}`),
+        };
+      });
+
+      ScriptManager.shared.hooks.beforeLoad.tap('test-before', async () => {
+        executionOrder.push('beforeLoad');
+      });
+
+      ScriptManager.shared.hooks.afterLoad.tap('test-after', async () => {
+        executionOrder.push('afterLoad');
+      });
+
+      await ScriptManager.shared.loadScript('test-script');
+
+      expect(executionOrder).toEqual(['beforeLoad', 'afterLoad']);
+
+      ScriptManager.shared.removeAllResolvers();
+    });
+
+    it('should call error hook when loading fails', async () => {
+      const loadScriptSpy = jest.spyOn(NativeScriptManager, 'loadScript');
+      mockLoadScriptBasedOnFetch(loadScriptSpy);
+
+      const executionOrder: string[] = [];
+      ScriptManager.shared.addResolver(async () => {
+        return {
+          url: Script.getRemoteURL('https://domain.ext/test-script'),
+        };
+      });
+
+      ScriptManager.shared.hooks.beforeLoad.tap('test-before', async () => {
+        executionOrder.push('beforeLoad');
+      });
+
+      ScriptManager.shared.hooks.afterLoad.tap('test-after', async () => {
+        executionOrder.push('afterLoad');
+      });
+
+      ScriptManager.shared.hooks.errorLoad.tap('test-error', async () => {
+        executionOrder.push('errorLoad');
+      });
+
+      loadScriptSpy.mockRejectedValueOnce(new Error('Load failed'));
+
+      await expect(
+        ScriptManager.shared.loadScript('test-script')
+      ).rejects.toThrow('Load failed');
+      expect(executionOrder).toEqual(['beforeLoad', 'errorLoad']);
+
+      loadScriptSpy.mockRestore();
+      ScriptManager.shared.removeAllResolvers();
+    });
+
+    it('should call multiple hooks in correct order', async () => {
+      mockLoadScriptBasedOnFetch();
+
+      const executionOrder: string[] = [];
+
+      ScriptManager.shared.addResolver(async () => {
+        return {
+          url: Script.getRemoteURL('https://domain.ext/test-script'),
+        };
+      });
+
+      ScriptManager.shared.hooks.beforeLoad.tap('first-before', async () => {
+        executionOrder.push('first-beforeLoad');
+      });
+
+      ScriptManager.shared.hooks.beforeLoad.tap('second-before', async () => {
+        executionOrder.push('second-beforeLoad');
+      });
+
+      ScriptManager.shared.hooks.afterLoad.tap('first-after', async () => {
+        executionOrder.push('first-afterLoad');
+      });
+
+      ScriptManager.shared.hooks.afterLoad.tap('second-after', async () => {
+        executionOrder.push('second-afterLoad');
+      });
+
+      await ScriptManager.shared.loadScript('test-script');
+
+      expect(executionOrder).toEqual([
+        'first-beforeLoad',
+        'second-beforeLoad',
+        'first-afterLoad',
+        'second-afterLoad',
+      ]);
+
+      ScriptManager.shared.removeAllResolvers();
+    });
+  });
 });
 
-function mockLoadScriptBasedOnFetch() {
+function mockLoadScriptBasedOnFetch(
+  providedSpy?: jest.SpyInstance<
+    Promise<null>,
+    [string, NormalizedScriptLocator]
+  >
+) {
   jest.useFakeTimers({ advanceTimers: true });
-  const spy = jest.spyOn(NativeScriptManager, 'loadScript');
+  const spy = providedSpy ?? jest.spyOn(NativeScriptManager, 'loadScript');
 
   spy.mockImplementation(
     (_scriptId: string, scriptConfig: NormalizedScriptLocator) =>

@@ -110,4 +110,30 @@ ScriptManager.shared.hooks.errorResolve.tapAsync(
   }
 );
 
+ScriptManager.shared.hooks.beforeLoad.tapAsync(
+  'test-before-load',
+  ({ scriptId, caller, error }, callback) => {
+    console.log(
+      'ScriptManager.shared.hooks.beforeLoad',
+      scriptId,
+      caller,
+      error
+    );
+    callback();
+  }
+);
+
+ScriptManager.shared.hooks.afterLoad.tapAsync(
+  'test-after-load',
+  ({ scriptId, caller, error }, callback) => {
+    console.log(
+      'ScriptManager.shared.hooks.afterLoad',
+      scriptId,
+      caller,
+      error
+    );
+    callback();
+  }
+);
+
 AppRegistry.registerComponent(appName, () => App);
