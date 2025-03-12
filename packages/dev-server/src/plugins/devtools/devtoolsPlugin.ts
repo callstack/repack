@@ -12,6 +12,12 @@ interface OpenStackFrameRequestBody {
   lineNumber: number;
 }
 
+function parseRequestBody<T>(body: unknown): T {
+  if (typeof body === 'object') return body as T;
+  if (typeof body === 'string') return JSON.parse(body) as T;
+  throw new Error(`Unsupported body type: ${typeof body}`);
+}
+
 async function devtoolsPlugin(instance: FastifyInstance) {
   // reference implementation in `@react-native-community/cli-server-api`:
   // https://github.com/react-native-community/cli/blob/46436a12478464752999d34ed86adf3212348007/packages/cli-server-api/src/openURLMiddleware.ts
@@ -19,7 +25,7 @@ async function devtoolsPlugin(instance: FastifyInstance) {
     method: ['POST'],
     url: '/open-url',
     handler: async (request, reply) => {
-      const { url } = JSON.parse(request.body as string) as OpenURLRequestBody;
+      const { url } = parseRequestBody<OpenURLRequestBody>(request.body);
       await open(url);
       reply.send('OK');
     },
@@ -30,10 +36,11 @@ async function devtoolsPlugin(instance: FastifyInstance) {
   instance.route({
     method: ['POST'],
     url: '/open-stack-frame',
-    handler: (request, reply) => {
-      const { file, lineNumber } = JSON.parse(
-        request.body as string
-      ) as OpenStackFrameRequestBody;
+    handler: async (request, reply) => {
+      const { file, lineNumber } = parseRequestBody<OpenStackFrameRequestBody>(
+        request.body
+      );
+      // TODO fix rewriting of `webpack://` to rootDir of the project
       launchEditor(`${file}:${lineNumber}`, process.env.REACT_EDITOR);
       reply.send('OK');
     },
