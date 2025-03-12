@@ -1,5 +1,11 @@
 # @callstack/repack-dev-server
 
+## 5.0.3
+
+### Patch Changes
+
+- [#1086](https://github.com/callstack/repack/pull/1086) [`8e8aad6`](https://github.com/callstack/repack/commit/8e8aad6cfe0669ef01d7071e86a680a498e1b811) Thanks [@jbroma](https://github.com/jbroma)! - Hide "JavaScriptLogs have moved..." message
+
 ## 5.0.2
 
 ### Patch Changes

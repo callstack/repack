@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack-plugin-nativewind",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "A plugin for @callstack/repack that integrates NativeWind",
   "author": "Boris Yankov <boris.yankov@callstack.com>",
   "contributors": ["Jakub Romańczyk <jakub.romanczyk@callstack.com>"],
@@ -42,7 +42,7 @@
     "dedent": "^0.7.0"
   },
   "peerDependencies": {
-    "@callstack/repack": ">=5.0.2",
+    "@callstack/repack": ">=5.0.3",
     "nativewind": ">=4.1.23",
     "react-native-css-interop": ">=0.1.22",
     "postcss": ">=8.4.31",
