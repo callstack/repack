@@ -901,9 +901,13 @@ describe('ScriptManagerAPI', () => {
   it('should call hooks in correct lifecycle order', async () => {
     const hookOrder: string[] = [];
 
-    ScriptManager.shared.hooks.beforeResolve.tap('test-before', () => {
-      hookOrder.push('beforeResolve');
-    });
+    ScriptManager.shared.hooks.beforeResolve.tap(
+      'test-before',
+      ({ scriptId, caller }) => {
+        hookOrder.push('beforeResolve');
+        return { scriptId, caller };
+      }
+    );
 
     ScriptManager.shared.hooks.resolve.tapAsync(
       'test-during',
@@ -953,9 +957,13 @@ describe('ScriptManagerAPI', () => {
     const executionOrder: string[] = [];
 
     ['first', 'second'].forEach((prefix) => {
-      ScriptManager.shared.hooks.beforeResolve.tap(`${prefix}-before`, () => {
-        executionOrder.push(`${prefix}-beforeResolve`);
-      });
+      ScriptManager.shared.hooks.beforeResolve.tap(
+        `${prefix}-before`,
+        ({ scriptId, caller }) => {
+          executionOrder.push(`${prefix}-beforeResolve`);
+          return { scriptId, caller };
+        }
+      );
 
       ScriptManager.shared.hooks.afterResolve.tap(`${prefix}-after`, () => {
         executionOrder.push(`${prefix}-afterResolve`);
@@ -984,9 +992,13 @@ describe('ScriptManagerAPI', () => {
     it('should call hooks in correct order during successful resolution', async () => {
       const hookOrder: string[] = [];
 
-      ScriptManager.shared.hooks.beforeResolve.tap('test-before', () => {
-        hookOrder.push('beforeResolve');
-      });
+      ScriptManager.shared.hooks.beforeResolve.tap(
+        'test-before',
+        ({ scriptId, caller }) => {
+          hookOrder.push('beforeResolve');
+          return { scriptId, caller };
+        }
+      );
 
       ScriptManager.shared.hooks.resolve.tapAsync(
         'test-during',
@@ -1040,6 +1052,7 @@ describe('ScriptManagerAPI', () => {
       ['first', 'second'].forEach((prefix) => {
         ScriptManager.shared.hooks.beforeResolve.tap(`${prefix}-before`, () => {
           executionOrder.push(`${prefix}-beforeResolve`);
+          return { scriptId: 'test-script', caller: 'test-caller' };
         });
 
         ScriptManager.shared.hooks.afterResolve.tap(`${prefix}-after`, () => {
@@ -1063,6 +1076,121 @@ describe('ScriptManagerAPI', () => {
         'first-afterResolve',
         'second-afterResolve',
       ]);
+    });
+
+    it('should allow beforeResolve hook to override parameters', async () => {
+      const hookOrder: string[] = [];
+      const originalScriptId = 'original-script';
+      const overriddenScriptId = 'overridden-script';
+      const originalCaller = 'original-caller';
+      const overriddenCaller = 'overridden-caller';
+
+      ScriptManager.shared.addResolver(async (scriptId, caller) => {
+        expect(scriptId).toBe(overriddenScriptId);
+        expect(caller).toBe(overriddenCaller);
+        return {
+          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        };
+      });
+
+      ScriptManager.shared.hooks.beforeResolve.tap(
+        'test-before',
+        ({ scriptId, caller }) => {
+          expect(scriptId).toBe(originalScriptId);
+          expect(caller).toBe(originalCaller);
+          hookOrder.push('beforeResolve');
+          return { scriptId: overriddenScriptId, caller: overriddenCaller };
+        }
+      );
+
+      ScriptManager.shared.hooks.resolve.tapAsync(
+        'test-during',
+        ({ scriptId, caller }, callback) => {
+          expect(scriptId).toBe(overriddenScriptId);
+          expect(caller).toBe(overriddenCaller);
+          hookOrder.push('resolve');
+          callback();
+        }
+      );
+
+      ScriptManager.shared.hooks.afterResolve.tap(
+        'test-after',
+        ({ scriptId, caller }) => {
+          expect(scriptId).toBe(overriddenScriptId);
+          expect(caller).toBe(overriddenCaller);
+          hookOrder.push('afterResolve');
+        }
+      );
+
+      const script = await ScriptManager.shared.resolveScript(
+        originalScriptId,
+        originalCaller
+      );
+      expect(script.locator.uniqueId).toBe(
+        `${overriddenCaller}_${overriddenScriptId}`
+      );
+      expect(hookOrder).toEqual(['beforeResolve', 'resolve', 'afterResolve']);
+
+      ScriptManager.shared.removeAllResolvers();
+    });
+
+    it('should call hooks in correct lifecycle order', async () => {
+      const hookOrder: string[] = [];
+
+      ScriptManager.shared.addResolver(async (scriptId) => {
+        return {
+          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        };
+      });
+
+      ScriptManager.shared.hooks.beforeResolve.tap(
+        'test-before',
+        ({ scriptId, caller }) => {
+          hookOrder.push('beforeResolve');
+          return { scriptId, caller };
+        }
+      );
+
+      ScriptManager.shared.hooks.resolve.tapAsync(
+        'test-during',
+        (_, callback) => {
+          hookOrder.push('resolve');
+          callback();
+        }
+      );
+
+      ScriptManager.shared.hooks.afterResolve.tap('test-after', () => {
+        hookOrder.push('afterResolve');
+      });
+
+      await ScriptManager.shared.resolveScript('test-script', 'main');
+
+      expect(hookOrder).toEqual(['beforeResolve', 'resolve', 'afterResolve']);
+
+      ScriptManager.shared.removeAllResolvers();
+    });
+
+    it('should call error hook when resolution fails', async () => {
+      const errorHookCalled = jest.fn();
+
+      ScriptManager.shared.hooks.errorResolve.tap(
+        'test-error',
+        ({ scriptId, caller, error }) => {
+          expect(error).toBeDefined();
+          errorHookCalled(scriptId, caller, error);
+        }
+      );
+
+      // No resolver added to trigger error
+      await expect(
+        ScriptManager.shared.resolveScript('test-script', 'test-caller')
+      ).rejects.toThrow();
+
+      expect(errorHookCalled).toHaveBeenCalledWith(
+        'test-script',
+        'test-caller',
+        expect.any(Error)
+      );
     });
   });
 
