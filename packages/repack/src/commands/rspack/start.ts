@@ -7,8 +7,8 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
+import { CLIError } from '../common/cliError.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
-import { CLIError } from '../common/error.js';
 import {
   getMimeType,
   parseFileUrl,

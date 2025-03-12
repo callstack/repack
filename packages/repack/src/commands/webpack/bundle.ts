@@ -1,6 +1,6 @@
 import webpack, { type Configuration } from 'webpack';
+import { CLIError } from '../common/cliError.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
-import { CLIError } from '../common/error.js';
 import { normalizeStatsOptions, writeStats } from '../common/index.js';
 import { setupEnvironment } from '../common/setupEnvironment.js';
 import type { BundleArguments, CliConfig } from '../types.js';
