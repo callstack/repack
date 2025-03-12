@@ -1,5 +1,6 @@
 // biome-ignore lint/style/useNodejsImportProtocol: use 'events' module instead of node builtin
 import EventEmitter from 'events';
+import { AsyncSeriesHook, AsyncSeriesWaterfallHook } from 'tapable';
 import NativeScriptManager, {
   type NormalizedScriptLocator,
 } from './NativeScriptManager.js';
@@ -107,6 +108,51 @@ export interface ResolverOptions {
  * ```
  */
 export class ScriptManager extends EventEmitter {
+  private resolvers: Array<[string, string | number, ScriptLocatorResolver]> =
+    [];
+  protected cache: Cache = {};
+  private storage?: StorageApi;
+
+  public hooks = {
+    beforeResolve: new AsyncSeriesWaterfallHook<{
+      scriptId: string;
+      caller?: string;
+    }>(['params']),
+    resolve: new AsyncSeriesHook<{ scriptId: string; caller?: string }, void>([
+      'params',
+    ]),
+    afterResolve: new AsyncSeriesHook<
+      { scriptId: string; caller?: string },
+      void
+    >(['params']),
+    errorResolve: new AsyncSeriesHook<
+      {
+        scriptId: string;
+        caller?: string;
+        error: Error;
+      },
+      void
+    >(['params']),
+    beforeLoad: new AsyncSeriesHook<
+      { scriptId: string; caller?: string },
+      void
+    >(['params']),
+    load: new AsyncSeriesHook<{ scriptId: string; caller?: string }, void>([
+      'params',
+    ]),
+    afterLoad: new AsyncSeriesHook<{ scriptId: string; caller?: string }, void>(
+      ['params']
+    ),
+    errorLoad: new AsyncSeriesHook<
+      {
+        scriptId: string;
+        caller?: string;
+        error: Error;
+      },
+      void
+    >(['params']),
+  };
+
   static init() {
     if (!__webpack_require__.repack.shared.scriptManager) {
       __webpack_require__.repack.shared.scriptManager = new ScriptManager();
@@ -117,11 +163,8 @@ export class ScriptManager extends EventEmitter {
     return __webpack_require__.repack.shared.scriptManager!;
   }
 
-  protected cache: Cache = {};
   protected scriptsPromises: ScriptsPromises = {};
   protected cacheInitialized = false;
-  protected resolvers: [string, number, ScriptLocatorResolver][] = [];
-  protected storage?: StorageApi;
 
   /**
    * Constructs instance of `ScriptManager`.
@@ -184,7 +227,7 @@ export class ScriptManager extends EventEmitter {
     this.resolvers = this.resolvers
       .filter(([key]) => key !== uniqueKey)
       .concat([[uniqueKey ?? DEFAULT_RESOLVER_KEY, priority, resolver]])
-      .sort(([, a], [, b]) => b - a);
+      .sort(([, a], [, b]) => Number(b) - Number(a));
   }
 
   /**
@@ -254,41 +297,89 @@ export class ScriptManager extends EventEmitter {
     webpackContext = getWebpackContext(),
     referenceUrl?: string
   ): Promise<Script> {
-    await this.initCache();
+    let finalScriptId = scriptId;
+    let finalCaller = caller;
+
     try {
+      await this.initCache();
+
       if (!this.resolvers.length) {
-        throw new Error(
+        const error = new Error(
           'No script resolvers were added. Did you forget to call `ScriptManager.shared.addResolver(...)`?'
         );
+        await this.hooks.errorResolve.promise({
+          scriptId: finalScriptId,
+          caller: finalCaller,
+          error,
+        });
+        throw error;
       }
 
-      this.emit('resolving', { scriptId, caller });
+      const hookResult = await this.hooks.beforeResolve.promise({
+        scriptId,
+        caller,
+      });
+
+      if (hookResult) {
+        finalScriptId = hookResult.scriptId;
+        finalCaller = hookResult.caller;
+      }
+
+      this.emit('resolving', { scriptId: finalScriptId, caller: finalCaller });
+
+      // Check if there are any taps in the resolve hook
+      const _hasResolveHooks = this.hooks.resolve.taps.length > 0;
 
       let locator: ScriptLocator | undefined;
+
+      // if (hasResolveHooks) {
+      await this.hooks.resolve.promise({
+        scriptId: finalScriptId,
+        caller: finalCaller,
+      });
+      // } else {
       for (const [, , resolve] of this.resolvers) {
-        locator = await resolve(scriptId, caller, referenceUrl);
-        if (locator) {
+        const resolvedLocator = await resolve(
+          finalScriptId,
+          finalCaller,
+          referenceUrl
+        );
+        if (resolvedLocator) {
+          locator = resolvedLocator;
           break;
         }
+        // }
       }
 
       if (!locator) {
-        throw new Error(`No resolver was able to resolve script ${scriptId}`);
+        const error = new Error(
+          `No resolver was able to resolve script ${finalScriptId}`
+        );
+        await this.hooks.errorResolve.promise({
+          scriptId: finalScriptId,
+          caller: finalCaller,
+          error,
+        });
+        throw error;
       }
 
       if (typeof locator.url === 'function') {
         locator.url = locator.url(webpackContext);
       }
 
-      const script = Script.from({ scriptId, caller }, locator, false);
+      const script = Script.from(
+        { scriptId: finalScriptId, caller: finalCaller },
+        locator,
+        false
+      );
       const cacheKey = script.locator.uniqueId;
 
       // Check if user provided a custom shouldUpdateScript function
       if (locator.shouldUpdateScript) {
         // If so, we need to wait for it to resolve
         const fetch = await locator.shouldUpdateScript(
-          scriptId,
-          caller,
+          finalScriptId,
+          finalCaller,
           script.shouldUpdateCache(this.cache[cacheKey])
         );
 
@@ -297,6 +388,7 @@ export class ScriptManager extends EventEmitter {
           script.locator.fetch = true;
         }
 
+        // await this.hooks.resolve.promise({ scriptId: finalScriptId, caller: finalCaller });
         this.emit('resolved', script.toObject());
 
         // if it returns false, we don't need to fetch the script
@@ -310,14 +402,23 @@ export class ScriptManager extends EventEmitter {
         script.locator.fetch = true;
       }
 
+      await this.hooks.afterResolve.promise({
+        scriptId: finalScriptId,
+        caller: finalCaller,
+      });
       this.emit('resolved', script.toObject());
 
       return script;
     } catch (error) {
+      await this.hooks.errorResolve.promise({
+        scriptId: finalScriptId,
+        caller: finalCaller,
+        error: error as Error,
+      });
       this.handleError(
         error,
         '[ScriptManager] Failed while resolving script locator:',
-        { scriptId, caller }
+        { scriptId: finalScriptId, caller: finalCaller }
       );
     }
   }
@@ -369,12 +470,32 @@ export class ScriptManager extends EventEmitter {
       );
 
       try {
+        await this.hooks.beforeLoad.promise({
+          scriptId: scriptId,
+          caller: caller,
+        });
         this.emit('loading', script.toObject());
+
+        const _hasLoadHooks = this.hooks.load.taps.length > 0;
+        // if (hasLoadHooks) {
+        await this.hooks.load.promise({ scriptId: scriptId, caller: caller });
+        // } else {
         await this.loadScriptWithRetry(scriptId, script.locator);
+        // }
+
+        await this.hooks.afterLoad.promise({
+          scriptId: scriptId,
+          caller: caller,
+        });
         this.emit('loaded', script.toObject());
         await this.updateCache(script);
       } catch (error) {
         const { code } = error as Error & { code: string };
+        await this.hooks.errorLoad.promise({
+          scriptId: scriptId,
+          caller: caller,
+          error: error as Error,
+        });
         this.handleError(
           error,
           '[ScriptManager] Failed to load script:',

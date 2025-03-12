@@ -51,4 +51,97 @@ ScriptManager.shared.addResolver((scriptId, _caller) => {
 //   console.log('DEBUG/error', ...args);
 // });
 
+ScriptManager.shared.hooks.beforeResolve.tapAsync(
+  'test-before',
+  ({ scriptId, caller, error }, callback) => {
+    if (!error) {
+      console.log('Before resolving:', scriptId, caller);
+    }
+    console.log(
+      'ScriptManager.shared.hooks.beforeResolve',
+      scriptId,
+      caller,
+      error
+    );
+    callback();
+  }
+);
+
+ScriptManager.shared.hooks.resolve.tapAsync(
+  'test-during',
+  ({ scriptId, caller, error }, callback) => {
+    if (!error) {
+      console.log('During resolving:', scriptId, caller);
+    }
+    console.log('ScriptManager.shared.hooks.resolve', scriptId, caller, error);
+    callback();
+  }
+);
+
+ScriptManager.shared.hooks.afterResolve.tapAsync(
+  'test-after',
+  ({ scriptId, caller, error }, callback) => {
+    if (!error) {
+      console.log('After resolving:', scriptId, caller);
+    }
+    console.log(
+      'ScriptManager.shared.hooks.afterResolve',
+      scriptId,
+      caller,
+      error
+    );
+    callback();
+  }
+);
+
+ScriptManager.shared.hooks.errorResolve.tapAsync(
+  'test-error',
+  ({ scriptId, caller, error }, callback) => {
+    if (error) {
+      console.error('Error resolving:', scriptId, caller, error);
+    }
+    console.log(
+      'ScriptManager.shared.hooks.errorResolve',
+      scriptId,
+      caller,
+      error
+    );
+    callback();
+  }
+);
+
+ScriptManager.shared.hooks.beforeLoad.tapAsync(
+  'test-before-load',
+  ({ scriptId, caller, error }, callback) => {
+    console.log(
+      'ScriptManager.shared.hooks.beforeLoad',
+      scriptId,
+      caller,
+      error
+    );
+    callback();
+  }
+);
+
+ScriptManager.shared.hooks.load.tapAsync(
+  'test-load',
+  ({ scriptId, caller, error }, callback) => {
+    console.log('ScriptManager.shared.hooks.load', scriptId, caller, error);
+    callback();
+  }
+);
+
+ScriptManager.shared.hooks.afterLoad.tapAsync(
+  'test-after-load',
+  ({ scriptId, caller, error }, callback) => {
+    console.log(
+      'ScriptManager.shared.hooks.afterLoad',
+      scriptId,
+      caller,
+      error
+    );
+    callback();
+  }
+);
+
 AppRegistry.registerComponent(appName, () => App);
