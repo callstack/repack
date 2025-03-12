@@ -35,6 +35,8 @@
     "fastify": "^4.24.3",
     "fastify-favicon": "^4.3.0",
     "fastify-plugin": "^4.5.1",
+    "launch-editor": "^2.10.0",
+    "open": "^10.1.0",
     "pretty-format": "^28.1.0",
     "source-map": "^0.7.4",
     "ws": "^8.7.0"
@@ -42,19 +44,10 @@
   "devDependencies": {
     "@babel/cli": "^7.23.9",
     "@babel/core": "^7.23.9",
-    "@react-native-community/cli-server-api": "15.0.1",
     "@types/babel__code-frame": "^7.0.3",
     "@types/node": "catalog:",
     "@types/ws": "^8.5.3",
     "babel-plugin-add-import-extension": "^1.6.0",
     "typescript": "catalog:"
-  },
-  "peerDependencies": {
-    "@react-native-community/cli-server-api": ">=13.6.4"
-  },
-  "peerDependenciesMeta": {
-    "@react-native-community/cli-server-api": {
-      "optional": true
-    }
   }
 }
