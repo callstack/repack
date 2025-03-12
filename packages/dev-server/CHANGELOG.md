@@ -1,5 +1,11 @@
 # @callstack/repack-dev-server
 
+## 5.0.2
+
+### Patch Changes
+
+- [#1081](https://github.com/callstack/repack/pull/1081) [`30d7330`](https://github.com/callstack/repack/commit/30d73301971ee27efabd7e8c8d9549dd94b38b69) Thanks [@jbroma](https://github.com/jbroma)! - Drop dependency on `@react-native-community/cli-server-api` in the DevServer
+
 ## 5.0.1
 
 ## 5.0.0
