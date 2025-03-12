@@ -295,7 +295,7 @@ export class ScriptManager extends EventEmitter {
       this.emit('resolving', { scriptId, caller });
 
       // Check if there are any taps in the resolve hook
-      const hasResolveHooks = this.hooks.resolve.taps.length > 0;
+      const _hasResolveHooks = this.hooks.resolve.taps.length > 0;
 
       let locator: ScriptLocator | undefined;
 
@@ -359,9 +359,9 @@ export class ScriptManager extends EventEmitter {
       }
 
       // Only call resolve hook if it wasn't called during resolution
-      if (!hasResolveHooks) {
-        await this.hooks.resolve.promise({ scriptId, caller });
-      }
+      // if (!hasResolveHooks) {
+      await this.hooks.resolve.promise({ scriptId, caller });
+      // }
       await this.hooks.afterResolve.promise({ scriptId, caller });
       this.emit('resolved', script.toObject());
 
@@ -430,12 +430,12 @@ export class ScriptManager extends EventEmitter {
         await this.hooks.beforeLoad.promise({ scriptId, caller });
         this.emit('loading', script.toObject());
 
-        const hasLoadHooks = this.hooks.load.taps.length > 0;
-        if (hasLoadHooks) {
-          await this.hooks.load.promise({ scriptId, caller });
-        } else {
-          await this.loadScriptWithRetry(scriptId, script.locator);
-        }
+        const _hasLoadHooks = this.hooks.load.taps.length > 0;
+        // if (hasLoadHooks) {
+        await this.hooks.load.promise({ scriptId, caller });
+        // } else {
+        await this.loadScriptWithRetry(scriptId, script.locator);
+        // }
 
         await this.hooks.afterLoad.promise({ scriptId, caller });
         this.emit('loaded', script.toObject());
