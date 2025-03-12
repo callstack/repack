@@ -65,10 +65,26 @@ export async function createServer(config: Server.Config) {
     },
   });
 
+  let handledDevMiddlewareNotice = false;
+
   const devMiddleware = createDevMiddleware({
     projectRoot: options.rootDir,
     serverBaseUrl: options.url,
-    logger: instance.log,
+    logger: {
+      error: instance.log.error,
+      warn: instance.log.warn,
+      info: (...message) => {
+        if (!handledDevMiddlewareNotice) {
+          if (message.join().includes('JavaScript logs have moved!')) {
+            handledDevMiddlewareNotice = true;
+            return;
+          }
+        } else {
+          instance.log.info(message);
+          return;
+        }
+      },
+    },
     unstable_experiments: {
       // @ts-expect-error removed in 0.76, keep this for backkwards compatibility
       enableNewDebugger: true,
