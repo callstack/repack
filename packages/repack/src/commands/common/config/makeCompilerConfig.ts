@@ -66,15 +66,15 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
   );
 
   // normalize the configs
-  const normalizedConfig = configs.map((config, index) =>
+  const normalizedConfigs = configs.map((config, index) =>
     normalizeConfig(config, options.platforms[index])
   );
 
-  const plugins = normalizedConfig.flatMap((config) =>
+  const plugins = normalizedConfigs.flatMap((config) =>
     'plugins' in config ? config.plugins : []
   );
 
   await validatePlugins(rootDir, plugins, options.bundler);
 
-  return normalizedConfig as C[];
+  return normalizedConfigs as C[];
 }
