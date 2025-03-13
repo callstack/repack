@@ -19,34 +19,57 @@ const createScriptLocator = async (
   return { url: entryUrl };
 };
 
+const getPublicPath = (url: string) => {
+  return url.split('/').slice(0, -1).join('/');
+};
+
+const getAssetPath = (url: string, path = '') => {
+  const separator = path ? path : getPublicPath(url);
+  const assetPath = path + url.split(separator)[1];
+  // normalize by removing leading slash
+  return assetPath.startsWith('/') ? assetPath.slice(1) : assetPath;
+};
+
+const rebaseRemoteUrl = (from: string, to: string, path?: string) => {
+  const assetPath = getAssetPath(from, path);
+  const publicPath = getPublicPath(to);
+  return [publicPath, assetPath].join('/');
+};
+
 const RepackResolverPlugin: (
   config?: RepackResolverPluginConfiguration
 ) => FederationRuntimePlugin = (config) => ({
   name: 'repack-resolver-plugin',
-  afterResolve(args) {
+  beforeRequest(args) {
     const { ScriptManager } =
       require('../ScriptManager/index.js') as typeof RepackClient;
-    const { remoteInfo } = args;
 
-    ScriptManager.shared.addResolver(
-      async (scriptId, caller, referenceUrl) => {
-        // entry container
-        if (scriptId === remoteInfo.entryGlobalName) {
-          const locator = await createScriptLocator(remoteInfo.entry, config);
-          return locator;
-        }
-        // entry chunks
-        if (referenceUrl && caller === remoteInfo.entryGlobalName) {
-          const publicPath = remoteInfo.entry.split('/').slice(0, -1).join('/');
-          const bundlePath = scriptId + referenceUrl.split(scriptId)[1];
-          const url = publicPath + '/' + bundlePath;
+    const remotes = args.options.remotes;
+    remotes.forEach((remoteInfo) => {
+      ScriptManager.shared.addResolver(
+        async (scriptId, caller, referenceUrl) => {
+          const entryName = remoteInfo.name;
+          const entryUrl =
+            'version' in remoteInfo ? remoteInfo.version : remoteInfo.entry;
+          if (scriptId === entryName || caller === entryName) {
+            // when manifest is used, the valid entry URL comes from the version field
+            // otherwise, the entry URL comes from the entry field which has the correct publicPath for the remote set
 
-          const locator = await createScriptLocator(url, config);
-          return locator;
-        }
-      },
-      { key: remoteInfo.entryGlobalName }
-    );
+            // referenceUrl should always be present and this should never happen
+            if (!referenceUrl) {
+              throw new Error(
+                '[RepackResolverPlugin] Reference URL is missing'
+              );
+            }
+
+            const url = rebaseRemoteUrl(referenceUrl, entryUrl, scriptId);
+            const locator = await createScriptLocator(url, config);
+            return locator;
+          }
+        },
+        { key: remoteInfo.name }
+      );
+    });
 
     return args;
   },
