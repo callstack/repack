@@ -20,18 +20,18 @@ const createScriptLocator = async (
 };
 
 const getPublicPath = (url: string) => {
-  return url.split('/').slice(0, -1).join('/');
+  const [protocol, rest] = url.split('://');
+  return protocol + '://' + rest.split('/')[0];
 };
 
-const getAssetPath = (url: string, path = '') => {
-  const separator = path ? path : getPublicPath(url);
-  const assetPath = path + url.split(separator)[1];
+const getAssetPath = (url: string) => {
+  const assetPath = url.split(getPublicPath(url))[1];
   // normalize by removing leading slash
   return assetPath.startsWith('/') ? assetPath.slice(1) : assetPath;
 };
 
-const rebaseRemoteUrl = (from: string, to: string, path?: string) => {
-  const assetPath = getAssetPath(from, path);
+const rebaseRemoteUrl = (from: string, to: string) => {
+  const assetPath = getAssetPath(from);
   const publicPath = getPublicPath(to);
   return [publicPath, assetPath].join('/');
 };
@@ -57,7 +57,7 @@ const RepackResolverPlugin: (
             throw new Error('[RepackResolverPlugin] Reference URL is missing');
           }
 
-          const url = rebaseRemoteUrl(referenceUrl, entryUrl, scriptId);
+          const url = rebaseRemoteUrl(referenceUrl, entryUrl);
           const locator = await createScriptLocator(url, config);
           return locator;
         }
