@@ -4,7 +4,7 @@ import NativeScriptManager, {
 import { Script } from '../Script.js';
 import { ScriptManager } from '../ScriptManager.js';
 
-jest.mock('../NativeScriptManager', () => ({
+jest.mock('../NativeScriptManager.js', () => ({
   loadScript: jest.fn(),
   prefetchScript: jest.fn(),
   invalidateScripts: jest.fn(),
