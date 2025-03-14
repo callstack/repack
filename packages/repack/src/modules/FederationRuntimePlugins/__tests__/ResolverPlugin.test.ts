@@ -39,17 +39,18 @@ const mockRemoteInfo = {
 
 describe('RepackResolverPlugin', () => {
   beforeEach(() => {
-    // Reset ScriptManager before each test
     ScriptManager.init();
-
-    // Clear all resolvers
-    ScriptManager.shared.removeAllResolvers();
 
     // mock the error handler to disable polluting the console
     // @ts-expect-error private method
     ScriptManager.shared.handleError = () => {
       throw new Error('mocked error');
     };
+  });
+
+  afterEach(() => {
+    // reset ScriptManager instance
+    webpackRequireMock.repack.shared.scriptManager = undefined;
   });
 
   it('should resolve a script through a manifest', async () => {
