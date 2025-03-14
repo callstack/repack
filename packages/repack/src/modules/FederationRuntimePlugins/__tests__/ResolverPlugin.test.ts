@@ -44,9 +44,15 @@ describe('RepackResolverPlugin', () => {
 
     // Clear all resolvers
     ScriptManager.shared.removeAllResolvers();
+
+    // mock the error handler to disable polluting the console
+    // @ts-expect-error private method
+    ScriptManager.shared.handleError = () => {
+      throw new Error('mocked error');
+    };
   });
 
-  it('should resolve a script using version URL when available', async () => {
+  it('should resolve a script through a manifest', async () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
     plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
@@ -64,7 +70,7 @@ describe('RepackResolverPlugin', () => {
     );
   });
 
-  it('should resolve a script using entry URL when version is not available', async () => {
+  it('should resolve a script through remote entry', async () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
     plugin.afterResolve!({
@@ -82,7 +88,7 @@ describe('RepackResolverPlugin', () => {
     expect(script.locator.url).toBe('https://example-entry.com/remoteEntry.js');
   });
 
-  it('should apply object configuration to script locator', async () => {
+  it('should allow custom configuration when used in runtime with a config object', async () => {
     const config = { headers: { Authorization: 'Bearer token' } };
     const plugin = RepackResolverPlugin(config);
     // trigger the plugin to register the resolver
@@ -99,7 +105,7 @@ describe('RepackResolverPlugin', () => {
     expect(script.locator.headers).toEqual({ authorization: 'Bearer token' });
   });
 
-  it('should apply function configuration to script locator', async () => {
+  it('should allow custom configuration when used in runtime with a config function', async () => {
     const config = async (url: string): Promise<ScriptLocator> => ({
       url,
       headers: { Authorization: 'Bearer token' },
@@ -134,7 +140,7 @@ describe('RepackResolverPlugin', () => {
     ).rejects.toThrow();
   });
 
-  it('should properly rebase URLs with custom configuration', async () => {
+  it('should rebase URLs with custom configuration', async () => {
     const config = { headers: { Authorization: 'Bearer token' } };
     const plugin = RepackResolverPlugin(config);
     // trigger the plugin to register the resolver
@@ -174,7 +180,7 @@ describe('RepackResolverPlugin', () => {
     expect(script.locator.url).toBe('http://default.com/script.js');
   });
 
-  it('should rebase the URL correctly', async () => {
+  it('should rebase the URL from reference URL to entry URL', async () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
     plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
