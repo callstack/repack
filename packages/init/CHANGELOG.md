@@ -1,5 +1,11 @@
 # @callstack/repack-init
 
+## 5.0.4
+
+### Patch Changes
+
+- [#1093](https://github.com/callstack/repack/pull/1093) [`89de28f`](https://github.com/callstack/repack/commit/89de28f60638f365cfaff196cc0e68053228326a) Thanks [@jbroma](https://github.com/jbroma)! - Use newest minor version of Re.Pack when creating a project with `repack-init`
+
 ## 5.0.3
 
 ## 5.0.2

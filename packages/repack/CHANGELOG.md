@@ -1,5 +1,16 @@
 # @callstack/repack
 
+## 5.0.4
+
+### Patch Changes
+
+- [#1093](https://github.com/callstack/repack/pull/1093) [`89de28f`](https://github.com/callstack/repack/commit/89de28f60638f365cfaff196cc0e68053228326a) Thanks [@jbroma](https://github.com/jbroma)! - Use newest minor version of Re.Pack when creating a project with `repack-init`
+
+- [#1090](https://github.com/callstack/repack/pull/1090) [`71f33b8`](https://github.com/callstack/repack/commit/71f33b86dd086daef4cd086510832b0313cf28d2) Thanks [@jbroma](https://github.com/jbroma)! - Fix resolving MF2 remote entries when using manifest as entrypoint through a default RepackResolverPlugin
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.4
+
 ## 5.0.3
 
 ### Patch Changes
