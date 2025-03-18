@@ -24,6 +24,15 @@ function normalizeOutputPath(
     .replaceAll('[platform]', platform);
 }
 
+function normalizePublicPath(publicPath: string, platform: string): string {
+  /* set public path to noop if it's using the deprecated `getPublicPath` function */
+  if (publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
+    return 'noop:///';
+  }
+
+  return publicPath.replaceAll('[platform]', platform);
+}
+
 function normalizeResolveExtensions(
   extensions: string[],
   platform: string
@@ -60,11 +69,11 @@ export function normalizeConfig<C extends ConfigurationObject>(
     };
   }
 
-  /* set public path to noop if it's using the deprecated `getPublicPath` function */
-  if (config.output?.publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
+  /* normalize public path by resolving [platform] placeholder */
+  if (config.output?.publicPath) {
     normalizedConfig.output = {
       ...normalizedConfig.output,
-      publicPath: 'noop:///',
+      publicPath: normalizePublicPath(config.output.publicPath, platform),
     };
   }
 

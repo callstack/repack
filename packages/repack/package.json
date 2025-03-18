@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack",
-  "version": "5.0.0",
+  "version": "5.0.4",
   "description": "A toolkit to build your React Native application with Rspack or Webpack.",
   "type": "commonjs",
   "main": "./dist/index.js",
@@ -59,9 +59,6 @@
   },
   "peerDependencies": {
     "@module-federation/enhanced": ">=0.6.10",
-    "@react-native-community/cli": "*",
-    "@react-native-community/cli-tools": "*",
-    "@react-native-community/cli-types": "*",
     "@rspack/core": ">=1",
     "react-native": ">=0.74",
     "webpack": ">=5.90"
@@ -107,9 +104,6 @@
     "@babel/plugin-transform-modules-commonjs": "^7.23.2",
     "@module-federation/enhanced": "0.8.9",
     "@module-federation/sdk": "0.6.10",
-    "@react-native-community/cli": "15.0.1",
-    "@react-native-community/cli-tools": "15.0.1",
-    "@react-native-community/cli-types": "15.0.1",
     "@rspack/core": "catalog:",
     "@swc/helpers": "catalog:",
     "@types/dedent": "^0.7.0",
@@ -123,8 +117,8 @@
     "babel-jest": "^29.7.0",
     "clang-format": "^1.8.0",
     "jest": "^29.7.0",
-    "react": "18.3.1",
-    "react-native": "0.76.3",
+    "react": "19.0.0",
+    "react-native": "0.78.0",
     "rspack-plugin-virtual-module": "^0.1.13",
     "typescript": "catalog:",
     "webpack": "catalog:"

@@ -1,5 +1,25 @@
 # @callstack/repack-init
 
+## 5.0.4
+
+### Patch Changes
+
+- [#1093](https://github.com/callstack/repack/pull/1093) [`89de28f`](https://github.com/callstack/repack/commit/89de28f60638f365cfaff196cc0e68053228326a) Thanks [@jbroma](https://github.com/jbroma)! - Use newest minor version of Re.Pack when creating a project with `repack-init`
+
+## 5.0.3
+
+## 5.0.2
+
+### Patch Changes
+
+- [#1079](https://github.com/callstack/repack/pull/1079) [`2ac8f7b`](https://github.com/callstack/repack/commit/2ac8f7b26027686c1ed46ce8176c21c08f056337) Thanks [@jbroma](https://github.com/jbroma)! - Fix init picking up wrong root directory when migrating existing projects
+
+## 5.0.1
+
+### Patch Changes
+
+- [#1067](https://github.com/callstack/repack/pull/1067) [`c9c01ee`](https://github.com/callstack/repack/commit/c9c01ee15291f08465345d5bdc614b0d37642a18) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Override commit for new projects created with `npx @callstack/repack-init`.
+
 ## 5.0.0
 
 ### Minor Changes

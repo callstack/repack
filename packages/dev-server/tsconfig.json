@@ -2,12 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist",
-    "paths": {
-      "@react-native/dev-middleware": [
-        "./node_modules/@react-native/dev-middleware/dist"
-      ]
-    }
+    "outDir": "dist"
   },
   "include": ["src/**/*"]
 }

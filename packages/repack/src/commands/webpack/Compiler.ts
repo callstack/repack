@@ -7,7 +7,7 @@ import type { SendProgress } from '@callstack/repack-dev-server';
 import type webpack from 'webpack';
 import { WORKER_ENV_KEY } from '../../env.js';
 import type { LogType, Reporter } from '../../logging/types.js';
-import { CLIError } from '../common/error.js';
+import { CLIError } from '../common/cliError.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
 import type { StartArguments } from '../types.js';
 import type {

@@ -6,7 +6,7 @@ import { RepackInitError } from '../utils/error.js';
 import logger from '../utils/logger.js';
 
 function getOwnCurrentVersion() {
-  return '~' + packageJson.version;
+  return '^' + packageJson.version;
 }
 
 function getBundlerSpecificDependencies(bundler: 'rspack' | 'webpack') {

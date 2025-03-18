@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack-plugin-reanimated",
-  "version": "5.0.0",
+  "version": "5.0.4",
   "description": "A plugin for @callstack/repack that integrates react-native-reanimated",
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
@@ -39,7 +39,7 @@
   "dependencies": {},
   "peerDependencies": {
     "@babel/core": "^7.20",
-    "@callstack/repack": "^5.0.0"
+    "@callstack/repack": "^5.0.4"
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",

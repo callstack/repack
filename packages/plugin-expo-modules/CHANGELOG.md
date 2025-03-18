@@ -1,5 +1,33 @@
 # @callstack/repack-plugin-expo-modules
 
+## 5.0.4
+
+### Patch Changes
+
+- Updated dependencies [[`89de28f`](https://github.com/callstack/repack/commit/89de28f60638f365cfaff196cc0e68053228326a), [`71f33b8`](https://github.com/callstack/repack/commit/71f33b86dd086daef4cd086510832b0313cf28d2)]:
+  - @callstack/repack@5.0.4
+
+## 5.0.3
+
+### Patch Changes
+
+- Updated dependencies [[`c2852df`](https://github.com/callstack/repack/commit/c2852dfb261b0321e7fb6a12bdfc6f1ef7e479d2), [`8e8aad6`](https://github.com/callstack/repack/commit/8e8aad6cfe0669ef01d7071e86a680a498e1b811), [`2f0835a`](https://github.com/callstack/repack/commit/2f0835a64740a570e1fb82c23d0a08fb789a7489)]:
+  - @callstack/repack@5.0.3
+
+## 5.0.2
+
+### Patch Changes
+
+- Updated dependencies [[`30d7330`](https://github.com/callstack/repack/commit/30d73301971ee27efabd7e8c8d9549dd94b38b69)]:
+  - @callstack/repack@5.0.2
+
+## 5.0.1
+
+### Patch Changes
+
+- Updated dependencies [[`dac01e4`](https://github.com/callstack/repack/commit/dac01e41d539f19fe9ab8800288eadb361444ed0), [`54fa1cd`](https://github.com/callstack/repack/commit/54fa1cdb0a2e09c8de476290beacedbf3a5f7d85), [`e08a805`](https://github.com/callstack/repack/commit/e08a805a2190d33fb605c5603759245ff9d965a2)]:
+  - @callstack/repack@5.0.1
+
 ## 5.0.0
 
 ### Patch Changes
