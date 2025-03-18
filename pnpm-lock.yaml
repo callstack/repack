@@ -18,6 +18,12 @@ catalogs:
     '@types/node':
       specifier: ^18
       version: 18.19.41
+    react:
+      specifier: 19.0.0
+      version: 19.0.0
+    react-native:
+      specifier: 0.78.0
+      version: 0.78.0
     terser-webpack-plugin:
       specifier: ^5.3.11
       version: 5.3.11
@@ -100,10 +106,10 @@ importers:
         specifier: ^4.1.23
         version: 4.1.23(react-native-reanimated@3.17.1(@babel/core@7.25.2)(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-safe-area-context@5.3.0(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-svg@15.8.0(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0)(tailwindcss@3.4.17)
       react:
-        specifier: 19.0.0
+        specifier: 'catalog:'
         version: 19.0.0
       react-native:
-        specifier: 0.78.0
+        specifier: 'catalog:'
         version: 0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0)
       react-native-css-interop:
         specifier: 0.1.22
@@ -218,10 +224,10 @@ importers:
         specifier: ^6.10.1
         version: 6.11.0(@react-navigation/native@6.1.18(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-safe-area-context@5.3.0(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-screens@4.9.2(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0)
       react:
-        specifier: 19.0.0
+        specifier: 'catalog:'
         version: 19.0.0
       react-native:
-        specifier: 0.78.0
+        specifier: 'catalog:'
         version: 0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0)
       react-native-safe-area-context:
         specifier: 5.3.0
@@ -291,10 +297,10 @@ importers:
         specifier: ^6.10.1
         version: 6.11.0(@react-navigation/native@6.1.18(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-safe-area-context@5.3.0(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-screens@4.9.2(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0)
       react:
-        specifier: 19.0.0
+        specifier: 'catalog:'
         version: 19.0.0
       react-native:
-        specifier: 0.78.0
+        specifier: 'catalog:'
         version: 0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0)
       react-native-safe-area-context:
         specifier: 5.3.0
@@ -632,10 +638,10 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@18.19.41)
       react:
-        specifier: 19.0.0
+        specifier: 'catalog:'
         version: 19.0.0
       react-native:
-        specifier: 0.78.0
+        specifier: 'catalog:'
         version: 0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0)
       rspack-plugin-virtual-module:
         specifier: ^0.1.13
