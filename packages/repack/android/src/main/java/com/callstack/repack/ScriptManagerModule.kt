@@ -1,6 +1,7 @@
 package com.callstack.repack
 
 import android.os.Handler
+import android.os.Looper
 import com.facebook.react.bridge.*
 
 class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManagerSpec(reactContext) {
@@ -13,12 +14,11 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
     }
 
     private fun runInBackground(fn: () -> Unit) {
-        val handler = Handler()
+        val handler = Handler(Looper.getMainLooper())
         val runnable = Runnable {
             fn()
         }
         handler.postDelayed(runnable, 0)
-
     }
 
     @ReactMethod
@@ -73,7 +73,6 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
                 }
             }
         }
-
     }
 
     @ReactMethod

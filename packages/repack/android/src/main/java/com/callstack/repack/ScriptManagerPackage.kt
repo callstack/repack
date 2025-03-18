@@ -19,15 +19,13 @@ class ScriptManagerPackage : TurboReactPackage() {
         return ReactModuleInfoProvider {
             val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
             val isTurboModule: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-            // Use deprecated constructor for backwards compatibility
             moduleInfos[ScriptManagerModule.NAME] = ReactModuleInfo(
                     ScriptManagerModule.NAME,
                     ScriptManagerModule.NAME,
                     false,
                     true,
                     false,
-                    false,
-                    isTurboModule
+                    false
             )
             moduleInfos
         }

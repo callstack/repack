@@ -24,7 +24,7 @@ class NativeScriptLoader(private val reactContext: ReactContext) {
     fun evaluate(script: ByteArray, url: String, promise: Promise? = null) {
         // RN 0.74: CatalystInstance or BridgelessCatalystInstance
         val catalystInstance = reactContext.catalystInstance
-        val callInvoker = catalystInstance?.jsCallInvokerHolder as? CallInvokerHolderImpl
+        val callInvoker = reactContext.getJSCallInvokerHolder() as? CallInvokerHolderImpl
             ?: throw Exception("Missing CallInvoker")
         val jsRuntime = reactContext.javaScriptContextHolder?.get()
             ?: throw Exception("Missing RN Runtime")
