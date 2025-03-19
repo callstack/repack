@@ -55,6 +55,22 @@ export interface ResolverOptions {
   key?: string;
 }
 
+interface ResolveHookParams {
+  scriptId: string;
+  caller?: string;
+  referenceUrl?: string;
+  resolvers: Array<[string, string | number, ScriptLocatorResolver]>;
+  result?: ScriptLocator;
+}
+
+interface LoadHookParams {
+  scriptId: string;
+  caller?: string;
+  locator: NormalizedScriptLocator;
+  loadScript: () => Promise<void>;
+  handled?: boolean;
+}
+
 /**
  * A manager to ease resolution, downloading and executing additional code from:
  * - arbitrary JavaScript scripts
@@ -118,9 +134,7 @@ export class ScriptManager extends EventEmitter {
       scriptId: string;
       caller?: string;
     }>(['params']),
-    resolve: new AsyncSeriesHook<{ scriptId: string; caller?: string }, void>([
-      'params',
-    ]),
+    resolve: new AsyncSeriesWaterfallHook<ResolveHookParams>(['params']),
     afterResolve: new AsyncSeriesHook<
       { scriptId: string; caller?: string },
       void
@@ -137,9 +151,7 @@ export class ScriptManager extends EventEmitter {
       { scriptId: string; caller?: string },
       void
     >(['params']),
-    load: new AsyncSeriesHook<{ scriptId: string; caller?: string }, void>([
-      'params',
-    ]),
+    load: new AsyncSeriesWaterfallHook<LoadHookParams>(['params']),
     afterLoad: new AsyncSeriesHook<{ scriptId: string; caller?: string }, void>(
       ['params']
     ),
@@ -326,29 +338,32 @@ export class ScriptManager extends EventEmitter {
       }
 
       this.emit('resolving', { scriptId: finalScriptId, caller: finalCaller });
-
-      // Check if there are any taps in the resolve hook
-      const _hasResolveHooks = this.hooks.resolve.taps.length > 0;
+      const hasResolveHooks =
+        this.hooks.resolve.taps && this.hooks.resolve.taps.length > 0;
 
       let locator: ScriptLocator | undefined;
 
-      // if (hasResolveHooks) {
-      await this.hooks.resolve.promise({
-        scriptId: finalScriptId,
-        caller: finalCaller,
-      });
-      // } else {
-      for (const [, , resolve] of this.resolvers) {
-        const resolvedLocator = await resolve(
-          finalScriptId,
-          finalCaller,
-          referenceUrl
-        );
-        if (resolvedLocator) {
-          locator = resolvedLocator;
-          break;
+      if (hasResolveHooks) {
+        const params = await this.hooks.resolve.promise({
+          scriptId: finalScriptId,
+          caller: finalCaller,
+          referenceUrl,
+          resolvers: this.resolvers,
+        });
+
+        locator = params.result;
+      } else {
+        for (const [, , resolve] of this.resolvers) {
+          const resolvedLocator = await resolve(
+            finalScriptId,
+            finalCaller,
+            referenceUrl
+          );
+          if (resolvedLocator) {
+            locator = resolvedLocator;
+            break;
+          }
         }
-        // }
       }
 
       if (!locator) {
@@ -476,12 +491,27 @@ export class ScriptManager extends EventEmitter {
         });
         this.emit('loading', script.toObject());
 
-        const _hasLoadHooks = this.hooks.load.taps.length > 0;
-        // if (hasLoadHooks) {
-        await this.hooks.load.promise({ scriptId: scriptId, caller: caller });
-        // } else {
-        await this.loadScriptWithRetry(scriptId, script.locator);
-        // }
+        const hasLoadHooks =
+          this.hooks.load.taps && this.hooks.load.taps.length > 0;
+
+        if (hasLoadHooks) {
+          await this.hooks.load.promise({
+            scriptId,
+            caller,
+            locator: script.locator,
+            loadScript: async () => {
+              await this.loadScriptWithRetry(scriptId, script.locator);
+            },
+          });
+
+          // If the hook didn't handle loading, use default loading
+          // FIXME: Not sure if that's needed.
+          // if (!params.handled) {
+          //   await this.loadScriptWithRetry(scriptId, script.locator);
+          // }
+        } else {
+          await this.loadScriptWithRetry(scriptId, script.locator);
+        }
 
         await this.hooks.afterLoad.promise({
           scriptId: scriptId,

@@ -3,6 +3,7 @@ import NativeScriptManager, {
 } from '../NativeScriptManager.js';
 import { Script } from '../Script.js';
 import { ScriptManager } from '../ScriptManager.js';
+import { getWebpackContext } from '../getWebpackContext.js';
 
 jest.mock('../NativeScriptManager.js', () => ({
   loadScript: jest.fn(),
@@ -96,10 +97,13 @@ describe('ScriptManagerAPI', () => {
     ).rejects.toThrow();
 
     expect(spy).toHaveBeenCalled();
-    expect(spy.mock.calls[0][1]).toEqual(
-      expect.stringMatching(
-        /^\[ScriptManager\] Failed while resolving script locator/
-      )
+    const lastCall = spy.mock.calls[spy.mock.calls.length - 1] as unknown as [
+      any,
+      string,
+      ...any[],
+    ];
+    expect(lastCall[1]).toMatch(
+      /^\[ScriptManager\] Failed while resolving script locator/
     );
   });
 
@@ -117,11 +121,16 @@ describe('ScriptManagerAPI', () => {
     ).rejects.toThrow();
 
     expect(spy).toHaveBeenCalled();
-    expect(spy.mock.calls[0][1]).toEqual(
-      expect.stringMatching(
-        /^\[ScriptManager\] Failed while resolving script locator/
-      )
+    const lastCall = spy.mock.calls[spy.mock.calls.length - 1] as unknown as [
+      any,
+      string,
+      ...any[],
+    ];
+    expect(lastCall[1]).toMatch(
+      /^\[ScriptManager\] Failed while resolving script locator/
     );
+
+    ScriptManager.shared.removeAllResolvers();
   });
 
   it('remove all resolvers', async () => {
@@ -139,10 +148,13 @@ describe('ScriptManagerAPI', () => {
     ).rejects.toThrow();
 
     expect(spy).toHaveBeenCalled();
-    expect(spy.mock.calls[0][1]).toEqual(
-      expect.stringMatching(
-        /^\[ScriptManager\] Failed while resolving script locator/
-      )
+    const lastCall = spy.mock.calls[spy.mock.calls.length - 1] as unknown as [
+      any,
+      string,
+      ...any[],
+    ];
+    expect(lastCall[1]).toMatch(
+      /^\[ScriptManager\] Failed while resolving script locator/
     );
   });
 
@@ -913,7 +925,14 @@ describe('ScriptManagerAPI', () => {
       'test-during',
       (_, callback) => {
         hookOrder.push('resolve');
-        callback();
+        callback(null, {
+          scriptId: 'test-script',
+          caller: 'main',
+          result: {
+            url: 'http://domain.ext/test-script',
+          },
+          resolvers: [],
+        });
       }
     );
 
@@ -1004,7 +1023,14 @@ describe('ScriptManagerAPI', () => {
         'test-during',
         (_, callback) => {
           hookOrder.push('resolve');
-          callback();
+          callback(null, {
+            scriptId: 'test-script',
+            caller: 'main',
+            result: {
+              url: 'http://domain.ext/test-script',
+            },
+            resolvers: [],
+          });
         }
       );
 
@@ -1109,7 +1135,14 @@ describe('ScriptManagerAPI', () => {
           expect(scriptId).toBe(overriddenScriptId);
           expect(caller).toBe(overriddenCaller);
           hookOrder.push('resolve');
-          callback();
+          callback(null, {
+            scriptId: 'test-script',
+            caller: 'main',
+            result: {
+              url: 'http://domain.ext/test-script',
+            },
+            resolvers: [],
+          });
         }
       );
 
@@ -1155,7 +1188,14 @@ describe('ScriptManagerAPI', () => {
         'test-during',
         (_, callback) => {
           hookOrder.push('resolve');
-          callback();
+          callback(null, {
+            scriptId: 'test-script',
+            caller: 'main',
+            result: {
+              url: 'http://domain.ext/test-script',
+            },
+            resolvers: [],
+          });
         }
       );
 
@@ -1191,6 +1231,95 @@ describe('ScriptManagerAPI', () => {
         'test-caller',
         expect.any(Error)
       );
+    });
+
+    it('should allow resolve hook to handle resolution with custom logic', async () => {
+      const hookOrder: string[] = [];
+      const customScriptId = 'custom-script';
+      const customCaller = 'custom-caller';
+      const customReferenceUrl = 'http://reference.url';
+
+      ScriptManager.shared.hooks.beforeResolve.tap(
+        'test-before',
+        ({ scriptId, caller }) => {
+          hookOrder.push('beforeResolve');
+          return { scriptId, caller };
+        }
+      );
+
+      ScriptManager.shared.hooks.resolve.tapAsync(
+        'test-resolve',
+        async (params, callback) => {
+          expect(params.scriptId).toBe(customScriptId);
+          expect(params.caller).toBe(customCaller);
+          expect(params.referenceUrl).toBe(customReferenceUrl);
+          expect(params.resolvers).toBeDefined();
+          expect(Array.isArray(params.resolvers)).toBe(true);
+
+          hookOrder.push('resolve');
+          for (const [, , resolve] of params.resolvers) {
+            try {
+              const resolvedLocator = await resolve(
+                params.scriptId,
+                params.caller,
+                params.referenceUrl
+              );
+
+              if (resolvedLocator) {
+                callback(null, {
+                  ...params,
+                  result: resolvedLocator,
+                });
+                return;
+              }
+            } catch (error) {
+              if (error instanceof Error) {
+                callback(error);
+              } else {
+                callback(new Error('Unknown error occurred'));
+              }
+              return;
+            }
+          }
+          callback(new Error('No locator found'));
+        }
+      );
+
+      ScriptManager.shared.hooks.afterResolve.tap(
+        'test-after',
+        ({ scriptId, caller }) => {
+          expect(scriptId).toBe(customScriptId);
+          expect(caller).toBe(customCaller);
+          hookOrder.push('afterResolve');
+        }
+      );
+
+      // Add a resolver that should be called by the hook
+      ScriptManager.shared.addResolver(async () => {
+        hookOrder.push('resolver');
+        return {
+          url: Script.getRemoteURL('http://domain.ext/script.js'),
+          cache: true,
+        };
+      });
+
+      const script = await ScriptManager.shared.resolveScript(
+        customScriptId,
+        customCaller,
+        getWebpackContext(),
+        customReferenceUrl
+      );
+      expect(script.locator.url).toBe(
+        'http://domain.ext/script.js.chunk.bundle'
+      );
+      expect(hookOrder).toEqual([
+        'beforeResolve',
+        'resolve',
+        'resolver',
+        'afterResolve',
+      ]);
+
+      ScriptManager.shared.removeAllResolvers();
     });
   });
 
@@ -1287,6 +1416,167 @@ describe('ScriptManagerAPI', () => {
       expect(executionOrder).toEqual([
         'first-beforeLoad',
         'second-beforeLoad',
+        'first-afterLoad',
+        'second-afterLoad',
+      ]);
+
+      ScriptManager.shared.removeAllResolvers();
+    });
+
+    it('should allow load hook to handle loading with custom logic', async () => {
+      const hookOrder: string[] = [];
+      const customScriptId = 'custom-script';
+      const customCaller = 'custom-caller';
+
+      ScriptManager.shared.addResolver(async () => {
+        return {
+          url: Script.getRemoteURL('https://domain.ext/test-script'),
+        };
+      });
+
+      ScriptManager.shared.hooks.beforeLoad.tap(
+        'test-before',
+        async ({ scriptId, caller }) => {
+          expect(scriptId).toBe(customScriptId);
+          expect(caller).toBe(customCaller);
+          hookOrder.push('beforeLoad');
+        }
+      );
+
+      ScriptManager.shared.hooks.load.tapAsync(
+        'test-load',
+        async (params, callback) => {
+          expect(params.scriptId).toBe(customScriptId);
+          expect(params.caller).toBe(customCaller);
+          expect(params.locator).toBeDefined();
+          hookOrder.push('load');
+
+          try {
+            await NativeScriptManager.loadScript(
+              params.scriptId,
+              params.locator
+            );
+            callback(null);
+          } catch (error) {
+            if (error instanceof Error) {
+              callback(error);
+            } else {
+              callback(new Error('Unknown error occurred'));
+            }
+          }
+        }
+      );
+
+      ScriptManager.shared.hooks.afterLoad.tap(
+        'test-after',
+        async ({ scriptId, caller }) => {
+          expect(scriptId).toBe(customScriptId);
+          expect(caller).toBe(customCaller);
+          hookOrder.push('afterLoad');
+        }
+      );
+
+      await ScriptManager.shared.loadScript(customScriptId, customCaller);
+      expect(hookOrder).toEqual(['beforeLoad', 'load', 'afterLoad']);
+
+      ScriptManager.shared.removeAllResolvers();
+    });
+
+    it('should handle load hook errors correctly', async () => {
+      const hookOrder: string[] = [];
+      const customScriptId = 'custom-script';
+      const customCaller = 'custom-caller';
+      const expectedError = new Error('Custom load error');
+
+      ScriptManager.shared.addResolver(async () => {
+        return {
+          url: Script.getRemoteURL('https://domain.ext/test-script'),
+        };
+      });
+
+      ScriptManager.shared.hooks.beforeLoad.tap('test-before', async () => {
+        hookOrder.push('beforeLoad');
+      });
+
+      ScriptManager.shared.hooks.load.tapAsync(
+        'test-load',
+        async (_, callback) => {
+          hookOrder.push('load');
+          callback(expectedError);
+        }
+      );
+
+      ScriptManager.shared.hooks.errorLoad.tap(
+        'test-error',
+        async ({ error }) => {
+          expect(error).toBeDefined();
+          expect(error).toBe(expectedError);
+          hookOrder.push('errorLoad');
+        }
+      );
+
+      const error = await ScriptManager.shared
+        .loadScript(customScriptId, customCaller)
+        .catch((e) => e);
+      expect(error).toMatchObject({
+        code: 'ERR_UNHANDLED_ERROR',
+        context: {
+          message: '[ScriptManager] Failed to load script:',
+          originalError: expectedError,
+        },
+      });
+
+      expect(hookOrder).toEqual(['beforeLoad', 'load', 'errorLoad']);
+
+      ScriptManager.shared.removeAllResolvers();
+    });
+
+    it('should handle multiple load hooks in sequence', async () => {
+      const hookOrder: string[] = [];
+      const customScriptId = 'custom-script';
+
+      ScriptManager.shared.addResolver(async () => {
+        return {
+          url: Script.getRemoteURL('https://domain.ext/test-script'),
+        };
+      });
+
+      ['first', 'second'].forEach((prefix) => {
+        ScriptManager.shared.hooks.beforeLoad.tap(
+          `${prefix}-before`,
+          async () => {
+            hookOrder.push(`${prefix}-beforeLoad`);
+          }
+        );
+
+        ScriptManager.shared.hooks.load.tapAsync(
+          `${prefix}-load`,
+          async (params, callback) => {
+            hookOrder.push(`${prefix}-load`);
+            if (prefix === 'second') {
+              await NativeScriptManager.loadScript(
+                params.scriptId,
+                params.locator
+              );
+            }
+            callback(null);
+          }
+        );
+
+        ScriptManager.shared.hooks.afterLoad.tap(
+          `${prefix}-after`,
+          async () => {
+            hookOrder.push(`${prefix}-afterLoad`);
+          }
+        );
+      });
+
+      await ScriptManager.shared.loadScript(customScriptId);
+      expect(hookOrder).toEqual([
+        'first-beforeLoad',
+        'second-beforeLoad',
+        'first-load',
+        'second-load',
         'first-afterLoad',
         'second-afterLoad',
       ]);

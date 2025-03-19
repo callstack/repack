@@ -69,12 +69,27 @@ ScriptManager.shared.hooks.beforeResolve.tapAsync(
 
 ScriptManager.shared.hooks.resolve.tapAsync(
   'test-during',
-  ({ scriptId, caller, error }, callback) => {
-    if (!error) {
-      console.log('During resolving:', scriptId, caller);
+  async (params, callback) => {
+    try {
+      for (const [, , resolve] of params.resolvers) {
+        const resolvedLocator = await resolve(
+          params.scriptId,
+          params.caller,
+          params.referenceUrl
+        );
+        if (resolvedLocator) {
+          callback(null, {
+            ...params,
+            result: resolvedLocator,
+          });
+        }
+      }
+      // If no resolver found a result, pass through the params unchanged
+      callback(null, params);
+    } catch (error) {
+      console.error('Error resolving:', error);
+      callback(error);
     }
-    console.log('ScriptManager.shared.hooks.resolve', scriptId, caller, error);
-    callback();
   }
 );
 
@@ -125,9 +140,18 @@ ScriptManager.shared.hooks.beforeLoad.tapAsync(
 
 ScriptManager.shared.hooks.load.tapAsync(
   'test-load',
-  ({ scriptId, caller, error }, callback) => {
-    console.log('ScriptManager.shared.hooks.load', scriptId, caller, error);
-    callback();
+  async (params, callback) => {
+    try {
+      console.log(
+        'ScriptManager.shared.hooks.load',
+        params.scriptId,
+        params.caller
+      );
+      await params.loadScript();
+      callback(null);
+    } catch (error) {
+      callback(error);
+    }
   }
 );
 
