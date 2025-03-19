@@ -6,13 +6,16 @@ export async function loadProjectConfig<C extends ConfigurationObject>(
   let config: Configuration<C>;
 
   try {
-    config = require(configFilePath);
-  } catch {
-    config = await import(configFilePath);
-  }
-
-  if ('default' in config) {
-    config = config.default as Configuration<C>;
+    // Always use dynamic import to support both TypeScript and JavaScript files
+    const imported = await import(configFilePath);
+    config = imported.default || imported;
+  } catch (error) {
+    // Fallback to require only for CommonJS files
+    if (configFilePath.endsWith('.js') || configFilePath.endsWith('.cjs') || configFilePath.endsWith('.cts')) {
+      config = require(configFilePath);
+    } else {
+      throw error;
+    }
   }
 
   return config;
