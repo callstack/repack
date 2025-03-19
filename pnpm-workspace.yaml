@@ -12,6 +12,8 @@ catalog:
   "terser-webpack-plugin": ^5.3.11
   "typescript": ^5.7.2
   "webpack": ^5.98.0
+  "react": "19.0.0"
+  "react-native": "0.78.0"
 
 catalogs:
   testers:

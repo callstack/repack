@@ -44,12 +44,12 @@ export default (env) => {
           react: {
             singleton: true,
             eager: true,
-            requiredVersion: '18.3.1',
+            requiredVersion: '19.0.0',
           },
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.76.3',
+            requiredVersion: '0.78.0',
           },
           '@react-navigation/native': {
             singleton: true,
@@ -64,12 +64,12 @@ export default (env) => {
           'react-native-safe-area-context': {
             singleton: true,
             eager: true,
-            requiredVersion: '^4.14.0',
+            requiredVersion: '5.3.0',
           },
           'react-native-screens': {
             singleton: true,
             eager: true,
-            requiredVersion: '^3.35.0',
+            requiredVersion: '4.9.2',
           },
         },
       }),
