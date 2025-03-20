@@ -14,7 +14,6 @@ const testsToSkip = {
     // Assets are handled differently in webpack
     'should resolve assets using "exports" field and calling `resolveAsset`',
     // Resolving fails as expected but error messages are different
-    'should use most specific pattern base',
     'should use most specific pattern base - custom condition',
     'should throw FailedToResolvePathError when no conditions are matched',
   ]),
@@ -68,5 +67,6 @@ jest.doMock('./resolver/__tests__/utils', () => {
         __options: args[1],
       };
     },
+    posixToSystemPath: originalModule.posixToSystemPath,
   };
 });
