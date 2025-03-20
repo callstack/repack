@@ -87,8 +87,7 @@ export function getResolveOptions(
     const platformExt = `.${_platform}${ext}`;
     const nativeExt = `.native${ext}`;
 
-    /* Skip adding native extension if package exports are enabled. */
-    if (!enablePackageExports && preferNativePlatform) {
+    if (preferNativePlatform) {
       return [platformExt, nativeExt, ext];
     }
     return [platformExt, ext];
