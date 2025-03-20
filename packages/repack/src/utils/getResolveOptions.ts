@@ -78,7 +78,7 @@ export function getResolveOptions(
   ) as ResolveOptions | undefined;
 
   const preferNativePlatform = _options?.preferNativePlatform ?? true;
-  const enablePackageExports = _options?.enablePackageExports ?? true;
+  const enablePackageExports = _options?.enablePackageExports ?? false;
 
   let extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
 
