@@ -82,7 +82,7 @@ export function getResolveOptions(
 
   let extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
 
-  /* Add platform (.ios, .android, etc.) and native (.native) extensions */
+  /* Add platform (e.g. `.ios`, `.android`) and native (`.native`) extensions */
   extensions = extensions.flatMap((ext) => {
     const platformExt = `.${_platform}${ext}`;
     const nativeExt = `.native${ext}`;

@@ -150,11 +150,11 @@ export function resolve(
   // enhanced-resolve does not use "byDependency" configuration
   if (metroContext.isESMImport) {
     resolveOptions.conditionNames?.push(
-      ...(resolutionPreset.byDependency.esm?.conditionNames ?? [])
+      ...resolutionPreset.byDependency.esm.conditionNames
     );
   } else {
     resolveOptions.conditionNames?.push(
-      ...(resolutionPreset.byDependency.commonjs?.conditionNames ?? [])
+      ...resolutionPreset.byDependency.commonjs.conditionNames
     );
   }
 
