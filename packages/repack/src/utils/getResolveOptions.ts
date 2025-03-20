@@ -7,7 +7,6 @@ interface GetResolveOptionsResult {
   exportsFields: string[];
   extensions: string[];
   extensionAlias: Record<string, string[]>;
-  importsFields: string[];
 }
 
 /**
@@ -108,11 +107,6 @@ export function getResolveOptions(
   }
 
   /**
-   * Disable importsFields completely since it's not supported by metro at all.
-   */
-  const importsFields: string[] = [];
-
-  /**
    * Match what React Native uses from metro-config.
    * Usage of 'extensionAlias' removes the need for
    * AssetResolverPlugin altogether.
@@ -161,6 +155,5 @@ export function getResolveOptions(
     /**
      * Reference: Webpack's [configuration.resolve.importsFields](https://webpack.js.org/configuration/resolve/#resolveimportsfields)
      */
-    importsFields: importsFields,
   };
 }

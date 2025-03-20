@@ -143,6 +143,12 @@ export function resolve(
     ...options,
   };
 
+  if (metroContext.isESMImport) {
+    resolveOptions.conditionNames?.push('import');
+  } else {
+    resolveOptions.conditionNames?.push('require');
+  }
+
   const resolve = enhancedResolve.create.sync(resolveOptions);
   const resolvedPath = resolve(context, request);
 
