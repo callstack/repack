@@ -11,6 +11,8 @@ const testsToSkip = {
     '[nonstrict] should fall back to "main" field resolution when "exports" is an invalid subpath',
     '[nonstrict] should fall back to "browser" spec resolution and log inaccessible import warning',
     '[nonstrict] should fall back and log warning for an invalid "exports" target value',
+    // Implictly non-strict
+    'patternBase and patternTrailer must match non-overlapping ends of matchKey',
     // Assets are handled differently in webpack
     'should resolve assets using "exports" field and calling `resolveAsset`',
     // Resolving fails as expected but error messages are different

@@ -29,6 +29,7 @@ interface ResolutionContext {
   unstable_enableSymlinks: boolean;
   // unsupported or ignored
   allowHaste: boolean;
+  isESMImport: boolean;
   assetExts: Set<string>;
   customResolverOptions: Record<string, any>;
   dev: boolean;
@@ -131,22 +132,30 @@ export function resolve(
   const { fileMap, symlinksMap } = processInputFileMap(inputFileMap);
   const filesystem = createFilesystem(fileMap, symlinksMap);
 
+  const resolutionPreset = getResolveOptions(String(platform), {
+    enablePackageExports: metroContext.unstable_enablePackageExports,
+    preferNativePlatform: metroContext.preferNativePlatform,
+  });
+
   const resolveOptions: EnhancedResolveOptions = {
     // @ts-expect-error memfs is compatible enough
     fileSystem: filesystem,
     // apply Re.Pack defaults
-    ...getResolveOptions(String(platform), {
-      enablePackageExports: metroContext.unstable_enablePackageExports,
-      preferNativePlatform: metroContext.preferNativePlatform,
-    }),
+    ...resolutionPreset,
     // customize options for test purposes
     ...options,
   };
 
+  // this is equivalent to "byDependency" configuration in rspack/webpack
+  // enhanced-resolve does not use "byDependency" configuration
   if (metroContext.isESMImport) {
-    resolveOptions.conditionNames?.push('import');
+    resolveOptions.conditionNames?.push(
+      ...resolutionPreset.byDependency.esm.conditionNames
+    );
   } else {
-    resolveOptions.conditionNames?.push('require');
+    resolveOptions.conditionNames?.push(
+      ...resolutionPreset.byDependency.commonjs.conditionNames
+    );
   }
 
   const resolve = enhancedResolve.create.sync(resolveOptions);
