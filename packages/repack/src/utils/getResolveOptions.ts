@@ -95,12 +95,8 @@ export function getResolveOptions(
     exportsFields = ['exports'];
     conditionNames = ['react-native'];
     byDependency = {
-      esm: {
-        conditionNames: ['import'],
-      },
-      commonjs: {
-        conditionNames: ['require'],
-      },
+      esm: { conditionNames: ['import'] },
+      commonjs: { conditionNames: ['require'] },
     };
   } else {
     conditionNames = [];
