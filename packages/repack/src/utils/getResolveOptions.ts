@@ -78,13 +78,12 @@ export function getResolveOptions(
   ) as ResolveOptions | undefined;
 
   const preferNativePlatform = _options?.preferNativePlatform ?? true;
-  const enablePackageExports = _options?.enablePackageExports ?? false;
+  const enablePackageExports = _options?.enablePackageExports ?? true;
 
   let extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
 
   let exportsFields: string[];
   let conditionNames: string[];
-  let byDependency: Record<string, { conditionNames: string[] }>;
 
   if (enablePackageExports) {
     /**
@@ -94,14 +93,9 @@ export function getResolveOptions(
      */
     exportsFields = ['exports'];
     conditionNames = ['react-native'];
-    byDependency = {
-      esm: { conditionNames: ['import'] },
-      commonjs: { conditionNames: ['require'] },
-    };
   } else {
     conditionNames = [];
     exportsFields = [];
-    byDependency = {};
     extensions = extensions.flatMap((ext) => {
       const platformExt = `.${_platform}${ext}`;
       const nativeExt = `.native${ext}`;
@@ -112,6 +106,16 @@ export function getResolveOptions(
       return [platformExt, ext];
     });
   }
+
+  /**
+   * We add `import` and `require` to conditionNames everytime
+   * because package imports are enabled at all times in metro
+   * and they need condition names to be defined.
+   */
+  const byDependency = {
+    esm: { conditionNames: ['import'] },
+    commonjs: { conditionNames: ['require'] },
+  };
 
   /**
    * Match what React Native uses from metro-config.
