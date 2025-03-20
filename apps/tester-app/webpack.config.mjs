@@ -29,7 +29,7 @@ export default (env) => {
       : undefined,
     entry,
     resolve: {
-      ...Repack.getResolveOptions(),
+      ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
     output: {
       uniqueName: 'tester-app',
