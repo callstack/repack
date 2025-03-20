@@ -70,7 +70,7 @@ export function getResolveOptions(
   platformOrOptions: unknown,
   options?: ResolveOptions
 ): GetResolveOptionsResult {
-  // if platform is undefined, use '[platform]' as placeholder
+  /* If platform is undefined, use '[platform]' as placeholder */
   const _platform =
     typeof platformOrOptions === 'string' ? platformOrOptions : '[platform]';
   const _options = (
@@ -81,6 +81,18 @@ export function getResolveOptions(
   const enablePackageExports = _options?.enablePackageExports ?? true;
 
   let extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
+
+  /* Add platform (.ios, .android, etc.) and native (.native) extensions */
+  extensions = extensions.flatMap((ext) => {
+    const platformExt = `.${_platform}${ext}`;
+    const nativeExt = `.native${ext}`;
+
+    /* Skip adding native extension if package exports are enabled. */
+    if (!enablePackageExports && preferNativePlatform) {
+      return [platformExt, nativeExt, ext];
+    }
+    return [platformExt, ext];
+  });
 
   let exportsFields: string[];
   let conditionNames: string[];
@@ -96,15 +108,6 @@ export function getResolveOptions(
   } else {
     conditionNames = [];
     exportsFields = [];
-    extensions = extensions.flatMap((ext) => {
-      const platformExt = `.${_platform}${ext}`;
-      const nativeExt = `.native${ext}`;
-
-      if (preferNativePlatform) {
-        return [platformExt, nativeExt, ext];
-      }
-      return [platformExt, ext];
-    });
   }
 
   /**
