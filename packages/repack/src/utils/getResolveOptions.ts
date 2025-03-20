@@ -7,6 +7,7 @@ interface GetResolveOptionsResult {
   exportsFields: string[];
   extensions: string[];
   extensionAlias: Record<string, string[]>;
+  byDependency: Record<string, { conditionNames: string[] }>;
 }
 
 /**
@@ -81,8 +82,9 @@ export function getResolveOptions(
 
   let extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
 
-  let conditionNames: string[];
   let exportsFields: string[];
+  let conditionNames: string[];
+  let byDependency: Record<string, { conditionNames: string[] }>;
 
   if (enablePackageExports) {
     /**
@@ -90,11 +92,20 @@ export function getResolveOptions(
      * Order of conditionNames doesn't matter.
      * Order inside of target package.json's `exports` field matters.
      */
-    conditionNames = ['require', 'import', 'react-native'];
     exportsFields = ['exports'];
+    conditionNames = ['react-native'];
+    byDependency = {
+      esm: {
+        conditionNames: ['import'],
+      },
+      commonjs: {
+        conditionNames: ['require'],
+      },
+    };
   } else {
     conditionNames = [];
     exportsFields = [];
+    byDependency = {};
     extensions = extensions.flatMap((ext) => {
       const platformExt = `.${_platform}${ext}`;
       const nativeExt = `.native${ext}`;
@@ -153,7 +164,8 @@ export function getResolveOptions(
      */
     extensionAlias: extensionAlias,
     /**
-     * Reference: Webpack's [configuration.resolve.importsFields](https://webpack.js.org/configuration/resolve/#resolveimportsfields)
+     * Reference: Webpack's [configuration.resolve.byDependency](https://webpack.js.org/configuration/resolve/#resolvebydependency)
      */
+    byDependency: byDependency,
   };
 }
