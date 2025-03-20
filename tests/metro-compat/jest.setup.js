@@ -22,7 +22,7 @@ const testsToSkip = {
 const testsToSkipOnce = {
   describe: new Set(),
   test: new Set([
-    // sourceExts are expanded, platform-specific extensions are not
+    // first occurence of these tests is marked as [nonstrict]
     'without expanding `sourceExts`',
     'without expanding platform-specific extensions',
   ]),
