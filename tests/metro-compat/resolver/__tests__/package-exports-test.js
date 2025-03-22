@@ -34,7 +34,6 @@ describe('with package exports resolution disabled', () => {
       }),
       originModulePath: '/root/src/main.js',
       unstable_enablePackageExports: false,
-      unstable_fileSystemLookup: null,
     };
 
     expect(Resolver.resolve(context, 'test-pkg', null)).toEqual({
@@ -511,9 +510,17 @@ describe('with package exports resolution enabled', () => {
             './features/bar/*.js': {
               'react-native': null,
             },
+            './node/*': './lib/node/*.js',
+            './*': './misc/*.js',
+            './node/*/types': './types/*/types.d.ts',
             './assets/*': './assets/*',
+            './repeated*/repeated': './repeated*/repeated.js',
+            './*/private': './src/forbidden.js',
+            './data.*': './data/*/data.*',
           },
         }),
+        '/root/node_modules/test-pkg/lib/node/test.js': '',
+        '/root/node_modules/test-pkg/lib/node/foo/public.js': '',
         '/root/node_modules/test-pkg/src/index.js': '',
         '/root/node_modules/test-pkg/src/features/foo.js': '',
         '/root/node_modules/test-pkg/src/features/foo.js.js': '',
@@ -521,7 +528,14 @@ describe('with package exports resolution enabled', () => {
         '/root/node_modules/test-pkg/src/features/baz.native.js': '',
         '/root/node_modules/test-pkg/src/features/node_modules/foo/index.js':
           '',
+        '/root/node_modules/test-pkg/src/forbidden.js': '',
+        '/root/node_modules/test-pkg/misc/repeated.js': '',
+        '/root/node_modules/test-pkg/repeated/repeated.js': '',
+        '/root/node_modules/test-pkg/repeated/repeated/repeated.js': '',
+        '/root/node_modules/test-pkg/types/foo/types.d.ts': '',
         '/root/node_modules/test-pkg/assets/Logo.js': '',
+        '/root/node_modules/test-pkg/data/json/data.json': '',
+        '/root/node_modules/test-pkg/data/csv/data.csv': '',
       }),
       originModulePath: '/root/src/main.js',
       unstable_enablePackageExports: true,
@@ -578,6 +592,69 @@ describe('with package exports resolution enabled', () => {
       `);
     });
 
+    test('should resolve prefixed wildcard export, using the most specific export path', () => {
+      const context = baseContext;
+
+      expect(Resolver.resolve(context, 'test-pkg/node/test', null)).toEqual({
+        type: 'sourceFile',
+        filePath: '/root/node_modules/test-pkg/lib/node/test.js',
+      });
+    });
+
+    test('longer patterns have higher specificity if bases are equal', () => {
+      const context = baseContext;
+      expect(
+        Resolver.resolve(context, 'test-pkg/node/foo/public', null),
+      ).toEqual({
+        type: 'sourceFile',
+        filePath: '/root/node_modules/test-pkg/lib/node/foo/public.js',
+      });
+
+      expect(
+        Resolver.resolve(context, 'test-pkg/node/foo/types', null),
+      ).toEqual({
+        type: 'sourceFile',
+        filePath: '/root/node_modules/test-pkg/types/foo/types.d.ts',
+      });
+    });
+
+    test('patternBase and patternTrailer must match non-overlapping ends of matchKey', () => {
+      // ./repeated/repeated *should* match ./repeated*/repeated
+      expect(
+        Resolver.resolve(baseContext, 'test-pkg/repeated/repeated', null),
+      ).toEqual({
+        type: 'sourceFile',
+        filePath: '/root/node_modules/test-pkg/repeated/repeated.js',
+      });
+
+      // ./repeated should *not* match ./repeated*/repeated
+      expect(Resolver.resolve(baseContext, 'test-pkg/repeated', null)).toEqual({
+        type: 'sourceFile',
+        filePath: '/root/node_modules/test-pkg/misc/repeated.js',
+      });
+    });
+
+    test('patterns can resolve to static targets', () => {
+      const context = baseContext;
+      expect(Resolver.resolve(context, 'test-pkg/foo/private', null)).toEqual({
+        type: 'sourceFile',
+        filePath: '/root/node_modules/test-pkg/src/forbidden.js',
+      });
+    });
+
+    test('patterns can resolve to targets with multiple *', () => {
+      const context = baseContext;
+      expect(Resolver.resolve(context, 'test-pkg/data.json', null)).toEqual({
+        type: 'sourceFile',
+        filePath: '/root/node_modules/test-pkg/data/json/data.json',
+      });
+
+      expect(Resolver.resolve(context, 'test-pkg/data.csv', null)).toEqual({
+        type: 'sourceFile',
+        filePath: '/root/node_modules/test-pkg/data/csv/data.csv',
+      });
+    });
+
     describe('package encapsulation', () => {
       test('[nonstrict] should fall back to "browser" spec resolution and log inaccessible import warning', () => {
         const logWarning = jest.fn();
@@ -606,7 +683,6 @@ describe('with package exports resolution enabled', () => {
           main: 'index.js',
           exports: {
             './foo.js': {
-              import: './lib/foo-module.mjs',
               development: './lib/foo-dev.js',
               'react-native': {
                 import: './lib/foo-react-native.mjs',
@@ -614,6 +690,7 @@ describe('with package exports resolution enabled', () => {
                 default: './lib/foo-react-native.js',
               },
               browser: './lib/foo-browser.js',
+              import: './lib/foo-module.mjs',
               require: './lib/foo-require.cjs',
               default: './lib/foo.js',
             },
@@ -659,20 +736,64 @@ describe('with package exports resolution enabled', () => {
     });
 
     test('should resolve asserted conditions in order specified by package', () => {
-      const context = {
-        ...baseContext,
-        unstable_conditionNames: ['react-native', 'import'],
-      };
-
-      expect(Resolver.resolve(context, 'test-pkg/foo.js', null)).toEqual({
+      expect(
+        Resolver.resolve(
+          {
+            ...baseContext,
+            unstable_conditionNames: ['react-native', 'browser'],
+          },
+          'test-pkg/foo.js',
+          null,
+        ),
+      ).toEqual({
         type: 'sourceFile',
-        filePath: '/root/node_modules/test-pkg/lib/foo-module.mjs',
+        filePath: '/root/node_modules/test-pkg/lib/foo-react-native.cjs',
+      });
+
+      expect(
+        Resolver.resolve(
+          {
+            ...baseContext,
+            unstable_conditionNames: ['browser'],
+          },
+          'test-pkg/foo.js',
+          null,
+        ),
+      ).toEqual({
+        type: 'sourceFile',
+        filePath: '/root/node_modules/test-pkg/lib/foo-browser.js',
+      });
+
+      expect(
+        Resolver.resolve(
+          {
+            ...baseContext,
+            unstable_conditionNames: [],
+          },
+          'test-pkg/foo.js',
+          null,
+        ),
+      ).toEqual({
+        type: 'sourceFile',
+        filePath: '/root/node_modules/test-pkg/lib/foo-require.cjs',
       });
     });
 
     test('should fall back to "default" condition if present', () => {
       const context = {
         ...baseContext,
+        ...createPackageAccessors({
+          '/root/node_modules/test-pkg/package.json': {
+            main: 'index.js',
+            exports: {
+              './foo.js': {
+                import: './lib/foo-module.mjs',
+                default: './lib/foo.js',
+              },
+            },
+          },
+        }),
+        isESMImport: false,
         unstable_conditionNames: [],
       };
 
@@ -690,13 +811,14 @@ describe('with package exports resolution enabled', () => {
             main: 'index.js',
             exports: {
               './foo.js': {
+                // ESM-only package, but we'll require() it
                 import: './lib/foo-module.mjs',
-                require: './lib/foo-require.cjs',
                 // 'default' entry can be omitted
               },
             },
           },
         }),
+        isESMImport: false,
         unstable_conditionNames: [],
       };
 
@@ -721,10 +843,13 @@ describe('with package exports resolution enabled', () => {
           },
         };
 
+        // Null platform => no per-platform conditions asserted.
         expect(Resolver.resolve(context, 'test-pkg/foo.js', null)).toEqual({
           type: 'sourceFile',
-          filePath: '/root/node_modules/test-pkg/lib/foo.js',
+          filePath: '/root/node_modules/test-pkg/lib/foo-require.cjs',
         });
+
+        // 'web' platform => 'browser' condition is asserted.
         expect(Resolver.resolve(context, 'test-pkg/foo.js', 'web')).toEqual({
           type: 'sourceFile',
           filePath: '/root/node_modules/test-pkg/lib/foo-browser.js',
@@ -740,10 +865,13 @@ describe('with package exports resolution enabled', () => {
           },
         };
 
+        // Asserting 'development' condition prefers foo-dev.
         expect(Resolver.resolve(context, 'test-pkg/foo.js', 'web')).toEqual({
           type: 'sourceFile',
           filePath: '/root/node_modules/test-pkg/lib/foo-dev.js',
         });
+
+        // Without 'development' or 'browser', 'require' is the first match.
         expect(
           Resolver.resolve(
             {...context, unstable_conditionsByPlatform: {}},
@@ -752,7 +880,7 @@ describe('with package exports resolution enabled', () => {
           ),
         ).toEqual({
           type: 'sourceFile',
-          filePath: '/root/node_modules/test-pkg/lib/foo.js',
+          filePath: '/root/node_modules/test-pkg/lib/foo-require.cjs',
         });
       });
     });
@@ -783,7 +911,7 @@ describe('with package exports resolution enabled', () => {
               },
             },
           }),
-          unstable_conditionNames: ['browser', 'import', 'require'],
+          unstable_conditionNames: ['browser'],
         };
 
         expect(Resolver.resolve(context, 'test-pkg', null)).toEqual({
@@ -804,7 +932,7 @@ describe('with package exports resolution enabled', () => {
               },
             },
           }),
-          unstable_conditionNames: ['browser', 'import', 'require'],
+          unstable_conditionNames: ['browser'],
         };
 
         expect(Resolver.resolve(context, 'test-pkg', null)).toEqual({
@@ -824,13 +952,14 @@ describe('with package exports resolution enabled', () => {
               main: 'index.js',
               exports: {
                 './lib/foo.js': {
+                  // ESM-only package, but we'll require() it
                   import: './lib/foo-module.mjs',
-                  require: './lib/foo-require.cjs',
                   // 'default' entry can be omitted
                 },
               },
             },
           }),
+          isESMImport: false,
           unstable_conditionNames: [],
           unstable_logWarning: logWarning,
         };
@@ -1064,7 +1193,7 @@ describe('with package exports resolution enabled', () => {
             '',
         }),
         originModulePath: '/root/src/main.js',
-        unstable_conditionNames: ['require', 'import'],
+        unstable_conditionNames: [],
         unstable_enablePackageExports: true,
       };
 

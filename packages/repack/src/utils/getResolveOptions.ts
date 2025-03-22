@@ -7,7 +7,7 @@ interface GetResolveOptionsResult {
   exportsFields: string[];
   extensions: string[];
   extensionAlias: Record<string, string[]>;
-  importsFields: string[];
+  byDependency: Record<string, { conditionNames: string[] }>;
 }
 
 /**
@@ -70,7 +70,7 @@ export function getResolveOptions(
   platformOrOptions: unknown,
   options?: ResolveOptions
 ): GetResolveOptionsResult {
-  // if platform is undefined, use '[platform]' as placeholder
+  /* If platform is undefined, use '[platform]' as placeholder */
   const _platform =
     typeof platformOrOptions === 'string' ? platformOrOptions : '[platform]';
   const _options = (
@@ -82,8 +82,19 @@ export function getResolveOptions(
 
   let extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
 
-  let conditionNames: string[];
+  /* Add platform (e.g. `.ios`, `.android`) and native (`.native`) extensions */
+  extensions = extensions.flatMap((ext) => {
+    const platformExt = `.${_platform}${ext}`;
+    const nativeExt = `.native${ext}`;
+
+    if (preferNativePlatform) {
+      return [platformExt, nativeExt, ext];
+    }
+    return [platformExt, ext];
+  });
+
   let exportsFields: string[];
+  let conditionNames: string[];
 
   if (enablePackageExports) {
     /**
@@ -91,26 +102,22 @@ export function getResolveOptions(
      * Order of conditionNames doesn't matter.
      * Order inside of target package.json's `exports` field matters.
      */
-    conditionNames = ['require', 'import', 'react-native'];
     exportsFields = ['exports'];
+    conditionNames = ['react-native'];
   } else {
     conditionNames = [];
     exportsFields = [];
-    extensions = extensions.flatMap((ext) => {
-      const platformExt = `.${_platform}${ext}`;
-      const nativeExt = `.native${ext}`;
-
-      if (preferNativePlatform) {
-        return [platformExt, nativeExt, ext];
-      }
-      return [platformExt, ext];
-    });
   }
 
   /**
-   * Disable importsFields completely since it's not supported by metro at all.
+   * We add `import` and `require` to conditionNames everytime
+   * because package imports are enabled at all times in metro
+   * and they need condition names to be defined.
    */
-  const importsFields: string[] = [];
+  const byDependency = {
+    esm: { conditionNames: ['import'] },
+    commonjs: { conditionNames: ['require'] },
+  };
 
   /**
    * Match what React Native uses from metro-config.
@@ -159,8 +166,8 @@ export function getResolveOptions(
      */
     extensionAlias: extensionAlias,
     /**
-     * Reference: Webpack's [configuration.resolve.importsFields](https://webpack.js.org/configuration/resolve/#resolveimportsfields)
+     * Reference: Webpack's [configuration.resolve.byDependency](https://webpack.js.org/configuration/resolve/#resolvebydependency)
      */
-    importsFields: importsFields,
+    byDependency: byDependency,
   };
 }
