@@ -24,10 +24,19 @@ function normalizeOutputPath(
     .replaceAll('[platform]', platform);
 }
 
-function normalizePublicPath(publicPath: string, platform: string): string {
+function normalizePublicPath(
+  publicPath: string,
+  platform: string,
+  host?: string,
+  port?: number
+): string {
   /* set public path to noop if it's using the deprecated `getPublicPath` function */
   if (publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
     return 'noop:///';
+  }
+
+  if (publicPath === 'DEV_SERVER_PUBLIC_PATH') {
+    return `http://${host}:${port}/${platform}/`;
   }
 
   return publicPath.replaceAll('[platform]', platform);
@@ -73,7 +82,12 @@ export function normalizeConfig<C extends ConfigurationObject>(
   if (config.output?.publicPath) {
     normalizedConfig.output = {
       ...normalizedConfig.output,
-      publicPath: normalizePublicPath(config.output.publicPath, platform),
+      publicPath: normalizePublicPath(
+        config.output.publicPath,
+        platform,
+        normalizedConfig.devServer?.host ?? config.devServer?.host,
+        normalizedConfig.devServer?.port ?? config.devServer?.port
+      ),
     };
   }
 

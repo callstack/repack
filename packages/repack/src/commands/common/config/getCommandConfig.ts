@@ -10,7 +10,7 @@ function getStartCommandDefaults() {
       server: 'http',
     },
     output: {
-      publicPath: `http://${DEFAULT_HOSTNAME}:${DEFAULT_PORT}/[platform]/`,
+      publicPath: 'DEV_SERVER_PUBLIC_PATH',
     },
   };
 }
