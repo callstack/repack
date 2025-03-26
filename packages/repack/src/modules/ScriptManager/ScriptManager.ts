@@ -338,12 +338,10 @@ export class ScriptManager extends EventEmitter {
       }
 
       this.emit('resolving', { scriptId: finalScriptId, caller: finalCaller });
-      const hasResolveHooks =
-        this.hooks.resolve.taps && this.hooks.resolve.taps.length > 0;
 
       let locator: ScriptLocator | undefined;
 
-      if (hasResolveHooks) {
+      if (this.hooks.resolve.isUsed()) {
         const params = await this.hooks.resolve.promise({
           scriptId: finalScriptId,
           caller: finalCaller,
@@ -491,10 +489,7 @@ export class ScriptManager extends EventEmitter {
         });
         this.emit('loading', script.toObject());
 
-        const hasLoadHooks =
-          this.hooks.load.taps && this.hooks.load.taps.length > 0;
-
-        if (hasLoadHooks) {
+        if (this.hooks.load.isUsed()) {
           await this.hooks.load.promise({
             scriptId,
             caller,
