@@ -164,7 +164,7 @@ export class ScriptManager extends EventEmitter {
     resolve: new AsyncSeriesWaterfallHook<ResolveHookParams, void>(['params']),
     afterResolve: new AsyncSeriesHook<AfterResolveHookParams, void>(['params']),
     errorResolve: new AsyncSeriesHook<ErrorResolveHookParams, void>(['params']),
-    beforeLoad: new AsyncSeriesHook<BeforeLoadHookParams, void>(['params']),
+    beforeLoad: new AsyncSeriesWaterfallHook<BeforeLoadHookParams, void>(['params']),
     load: new AsyncSeriesWaterfallHook<LoadHookParams>(['params']),
     afterLoad: new AsyncSeriesHook<AfterLoadHookParams, void>(['params']),
     errorLoad: new AsyncSeriesHook<ErrorLoadHookParams, void>(['params']),
@@ -201,7 +201,7 @@ export class ScriptManager extends EventEmitter {
     beforeLoad: (
       fn: (
         params: BeforeLoadHookParams,
-        callback: (error?: Error | null) => void
+        callback: (error?: Error | null, params?: BeforeLoadHookParams) => void
       ) => void
     ) => this.hookImpl.beforeLoad.tapAsync('beforeLoad', fn),
     load: (
@@ -548,23 +548,31 @@ export class ScriptManager extends EventEmitter {
         webpackContext,
         referenceUrl
       );
-      const finalScriptId = scriptId;
-      const finalCaller = caller;
-      const finalReferenceUrl = referenceUrl;
-      const finalWebpackContext = webpackContext;
+      let finalScriptId = scriptId;
+      let finalCaller = caller;
+      let finalReferenceUrl = referenceUrl;
+      let finalWebpackContext = webpackContext;
 
       try {
-        await this.hookImpl.beforeLoad.promise({
+        const hookResult = await this.hookImpl.beforeLoad.promise({
           scriptId: finalScriptId,
           caller: finalCaller,
           referenceUrl: finalReferenceUrl,
           webpackContext: finalWebpackContext,
         });
+
+        if (hookResult) {
+          finalScriptId = hookResult.scriptId;
+          finalCaller = hookResult.caller;
+          finalReferenceUrl = hookResult.referenceUrl;
+          finalWebpackContext = hookResult.webpackContext;
+        }
+
         this.emit('loading', script.toObject());
 
         if (this.hookImpl.load.isUsed()) {
           await this.hookImpl.load.promise({
-            scriptId,
+            scriptId: finalScriptId,
             caller: finalCaller,
             referenceUrl: finalReferenceUrl,
             webpackContext: finalWebpackContext,
