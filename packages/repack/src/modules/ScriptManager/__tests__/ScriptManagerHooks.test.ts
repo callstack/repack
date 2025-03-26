@@ -47,42 +47,32 @@ afterEach(() => {
   globalThis.__webpack_require__.repack.shared.scriptManager = undefined;
 });
 
-interface ScriptHookParams {
-  scriptId: string;
-  caller?: string;
-  error?: Error;
-}
-
 describe('ScriptManager hooks', () => {
   it('should call hooks in correct lifecycle order', async () => {
     const hookOrder: string[] = [];
 
-    ScriptManager.shared.hooks.beforeResolve.tap(
-      'test-before',
-      ({ scriptId, caller, webpackContext }) => {
-        hookOrder.push('beforeResolve');
-        return { scriptId, caller, webpackContext };
-      }
-    );
+    ScriptManager.shared.hooks.beforeResolve((_, callback) => {
+      console.log('beforeResolve', hookOrder);
+      hookOrder.push('beforeResolve');
+      callback(null);
+    });
 
-    ScriptManager.shared.hooks.resolve.tapAsync(
-      'test-during',
-      ({ webpackContext }, callback) => {
-        hookOrder.push('resolve');
-        callback(null, {
-          scriptId: 'test-script',
-          caller: 'main',
-          result: {
-            url: 'http://domain.ext/test-script',
-          },
-          resolvers: [],
-          webpackContext,
-        });
-      }
-    );
+    ScriptManager.shared.hooks.resolve(({ webpackContext }, callback) => {
+      hookOrder.push('resolve');
+      callback(null, {
+        scriptId: 'test-script',
+        caller: 'main',
+        result: {
+          url: 'http://domain.ext/test-script',
+        },
+        resolvers: [],
+        webpackContext,
+      });
+    });
 
-    ScriptManager.shared.hooks.afterResolve.tap('test-after', () => {
+    ScriptManager.shared.hooks.afterResolve((_, callback) => {
       hookOrder.push('afterResolve');
+      callback(null);
     });
 
     ScriptManager.shared.addResolver(async (scriptId) => ({
@@ -97,11 +87,11 @@ describe('ScriptManager hooks', () => {
   it('should call error hook when resolution fails', async () => {
     const errorHookCalled = jest.fn();
 
-    ScriptManager.shared.hooks.errorResolve.tap(
-      'test-error',
-      ({ scriptId, caller, error }: ScriptHookParams) => {
+    ScriptManager.shared.hooks.errorResolve(
+      ({ scriptId, caller, error }, callback) => {
         expect(error).toBeDefined();
         errorHookCalled(scriptId, caller, error);
+        callback();
       }
     );
 
@@ -121,16 +111,14 @@ describe('ScriptManager hooks', () => {
     const executionOrder: string[] = [];
 
     ['first', 'second'].forEach((prefix) => {
-      ScriptManager.shared.hooks.beforeResolve.tap(
-        `${prefix}-before`,
-        ({ scriptId, caller, webpackContext }) => {
-          executionOrder.push(`${prefix}-beforeResolve`);
-          return { scriptId, caller, webpackContext };
-        }
-      );
+      ScriptManager.shared.hooks.beforeResolve((_, callback) => {
+        executionOrder.push(`${prefix}-beforeResolve`);
+        callback(null);
+      });
 
-      ScriptManager.shared.hooks.afterResolve.tap(`${prefix}-after`, () => {
+      ScriptManager.shared.hooks.afterResolve((_, callback) => {
         executionOrder.push(`${prefix}-afterResolve`);
+        callback(null);
       });
     });
 
@@ -156,32 +144,27 @@ describe('ScriptManager hooks', () => {
     it('should call hooks in correct order during successful resolution', async () => {
       const hookOrder: string[] = [];
 
-      ScriptManager.shared.hooks.beforeResolve.tap(
-        'test-before',
-        ({ scriptId, caller, webpackContext }) => {
-          hookOrder.push('beforeResolve');
-          return { scriptId, caller, webpackContext };
-        }
-      );
+      ScriptManager.shared.hooks.beforeResolve((_, callback) => {
+        hookOrder.push('beforeResolve');
+        callback(null);
+      });
 
-      ScriptManager.shared.hooks.resolve.tapAsync(
-        'test-during',
-        ({ webpackContext }, callback) => {
-          hookOrder.push('resolve');
-          callback(null, {
-            scriptId: 'test-script',
-            caller: 'main',
-            result: {
-              url: 'http://domain.ext/test-script',
-            },
-            resolvers: [],
-            webpackContext,
-          });
-        }
-      );
+      ScriptManager.shared.hooks.resolve(({ webpackContext }, callback) => {
+        hookOrder.push('resolve');
+        callback(null, {
+          scriptId: 'test-script',
+          caller: 'main',
+          result: {
+            url: 'http://domain.ext/test-script',
+          },
+          resolvers: [],
+          webpackContext,
+        });
+      });
 
-      ScriptManager.shared.hooks.afterResolve.tap('test-after', () => {
+      ScriptManager.shared.hooks.afterResolve((_, callback) => {
         hookOrder.push('afterResolve');
+        callback(null);
       });
 
       ScriptManager.shared.addResolver(async (scriptId) => {
@@ -198,11 +181,11 @@ describe('ScriptManager hooks', () => {
     it('should call error hook when resolution fails', async () => {
       const errorHookCalled = jest.fn();
 
-      ScriptManager.shared.hooks.errorResolve.tap(
-        'test-error',
-        ({ scriptId, caller, error }: ScriptHookParams) => {
+      ScriptManager.shared.hooks.errorResolve(
+        ({ scriptId, caller, error }, callback) => {
           expect(error).toBeDefined();
           errorHookCalled(scriptId, caller, error);
+          callback();
         }
       );
 
@@ -222,24 +205,20 @@ describe('ScriptManager hooks', () => {
       const executionOrder: string[] = [];
 
       ['first', 'second'].forEach((prefix) => {
-        ScriptManager.shared.hooks.beforeResolve.tap(
-          `${prefix}-before`,
-          ({ webpackContext }) => {
+        ScriptManager.shared.hooks.beforeResolve(
+          ({ webpackContext }, callback) => {
             executionOrder.push(`${prefix}-beforeResolve`);
-            return {
+            callback(null, {
               scriptId: 'test-script',
               caller: 'test-caller',
               webpackContext,
-            };
+            });
           }
         );
 
-        ScriptManager.shared.hooks.afterResolve.tap(`${prefix}-after`, () => {
+        ScriptManager.shared.hooks.afterResolve((_, callback) => {
           executionOrder.push(`${prefix}-afterResolve`);
-          return {
-            scriptId: 'test-script',
-            caller: 'test-caller',
-          };
+          callback(null);
         });
       });
 
@@ -276,22 +255,20 @@ describe('ScriptManager hooks', () => {
         };
       });
 
-      ScriptManager.shared.hooks.beforeResolve.tap(
-        'test-before',
-        ({ scriptId, caller, webpackContext }) => {
+      ScriptManager.shared.hooks.beforeResolve(
+        ({ scriptId, caller, webpackContext }, callback) => {
           expect(scriptId).toBe(originalScriptId);
           expect(caller).toBe(originalCaller);
           hookOrder.push('beforeResolve');
-          return {
+          callback(null, {
             scriptId: overriddenScriptId,
             caller: overriddenCaller,
             webpackContext,
-          };
+          });
         }
       );
 
-      ScriptManager.shared.hooks.resolve.tapAsync(
-        'test-during',
+      ScriptManager.shared.hooks.resolve(
         ({ scriptId, caller, webpackContext }, callback) => {
           expect(scriptId).toBe(overriddenScriptId);
           expect(caller).toBe(overriddenCaller);
@@ -308,12 +285,12 @@ describe('ScriptManager hooks', () => {
         }
       );
 
-      ScriptManager.shared.hooks.afterResolve.tap(
-        'test-after',
-        ({ scriptId, caller }) => {
+      ScriptManager.shared.hooks.afterResolve(
+        ({ scriptId, caller }, callback) => {
           expect(scriptId).toBe(overriddenScriptId);
           expect(caller).toBe(overriddenCaller);
           hookOrder.push('afterResolve');
+          callback(null);
         }
       );
 
@@ -338,32 +315,29 @@ describe('ScriptManager hooks', () => {
         };
       });
 
-      ScriptManager.shared.hooks.beforeResolve.tap(
-        'test-before',
-        ({ scriptId, caller, webpackContext }) => {
+      ScriptManager.shared.hooks.beforeResolve(
+        ({ scriptId, caller, webpackContext }, callback) => {
           hookOrder.push('beforeResolve');
-          return { scriptId, caller, webpackContext };
+          callback(null, { scriptId, caller, webpackContext });
         }
       );
 
-      ScriptManager.shared.hooks.resolve.tapAsync(
-        'test-during',
-        ({ webpackContext }, callback) => {
-          hookOrder.push('resolve');
-          callback(null, {
-            scriptId: 'test-script',
-            caller: 'main',
-            result: {
-              url: 'http://domain.ext/test-script',
-            },
-            resolvers: [],
-            webpackContext,
-          });
-        }
-      );
+      ScriptManager.shared.hooks.resolve(({ webpackContext }, callback) => {
+        hookOrder.push('resolve');
+        callback(null, {
+          scriptId: 'test-script',
+          caller: 'main',
+          result: {
+            url: 'http://domain.ext/test-script',
+          },
+          resolvers: [],
+          webpackContext,
+        });
+      });
 
-      ScriptManager.shared.hooks.afterResolve.tap('test-after', () => {
+      ScriptManager.shared.hooks.afterResolve((_, callback) => {
         hookOrder.push('afterResolve');
+        callback(null);
       });
 
       await ScriptManager.shared.resolveScript('test-script', 'main');
@@ -376,11 +350,11 @@ describe('ScriptManager hooks', () => {
     it('should call error hook when resolution fails', async () => {
       const errorHookCalled = jest.fn();
 
-      ScriptManager.shared.hooks.errorResolve.tap(
-        'test-error',
-        ({ scriptId, caller, error }) => {
+      ScriptManager.shared.hooks.errorResolve(
+        ({ scriptId, caller, error }, callback) => {
           expect(error).toBeDefined();
           errorHookCalled(scriptId, caller, error);
+          callback();
         }
       );
 
@@ -402,63 +376,61 @@ describe('ScriptManager hooks', () => {
       const customCaller = 'custom-caller';
       const customReferenceUrl = 'http://reference.url';
 
-      ScriptManager.shared.hooks.beforeResolve.tap(
-        'test-before',
-        ({ scriptId, caller, webpackContext }) => {
+      ScriptManager.shared.hooks.beforeResolve(
+        ({ scriptId, caller, webpackContext }, callback) => {
           hookOrder.push('beforeResolve');
-          return {
+          callback(null, {
             scriptId,
             caller,
             webpackContext,
             referenceUrl: customReferenceUrl,
-          };
+          });
         }
       );
 
-      ScriptManager.shared.hooks.resolve.tapAsync(
-        'test-resolve',
-        async (params, callback) => {
-          expect(params.scriptId).toBe(customScriptId);
-          expect(params.caller).toBe(customCaller);
-          expect(params.referenceUrl).toBe(customReferenceUrl);
-          expect(params.resolvers).toBeDefined();
-          expect(Array.isArray(params.resolvers)).toBe(true);
+      ScriptManager.shared.hooks.resolve(async (params, callback) => {
+        const { scriptId, caller, referenceUrl, resolvers } = params;
 
-          hookOrder.push('resolve');
-          for (const [, , resolve] of params.resolvers) {
-            try {
-              const resolvedLocator = await resolve(
-                params.scriptId,
-                params.caller,
-                params.referenceUrl
-              );
+        expect(scriptId).toBe(customScriptId);
+        expect(caller).toBe(customCaller);
+        expect(referenceUrl).toBe(customReferenceUrl);
+        expect(resolvers).toBeDefined();
+        expect(Array.isArray(resolvers)).toBe(true);
 
-              if (resolvedLocator) {
-                callback(null, {
-                  ...params,
-                  result: resolvedLocator,
-                });
-                return;
-              }
-            } catch (error) {
-              if (error instanceof Error) {
-                callback(error);
-              } else {
-                callback(new Error('Unknown error occurred'));
-              }
+        hookOrder.push('resolve');
+        for (const [, , resolve] of params.resolvers) {
+          try {
+            const resolvedLocator = await resolve(
+              params.scriptId,
+              params.caller,
+              params.referenceUrl
+            );
+
+            if (resolvedLocator) {
+              callback(null, {
+                ...params,
+                result: resolvedLocator,
+              });
               return;
             }
+          } catch (error) {
+            if (error instanceof Error) {
+              callback(error);
+            } else {
+              callback(new Error('Unknown error occurred'));
+            }
+            return;
           }
-          callback(new Error('No locator found'));
         }
-      );
+        callback(new Error('No locator found'));
+      });
 
-      ScriptManager.shared.hooks.afterResolve.tap(
-        'test-after',
-        ({ scriptId, caller }) => {
+      ScriptManager.shared.hooks.afterResolve(
+        ({ scriptId, caller }, callback) => {
           expect(scriptId).toBe(customScriptId);
           expect(caller).toBe(customCaller);
           hookOrder.push('afterResolve');
+          callback(null);
         }
       );
 
@@ -503,12 +475,14 @@ describe('ScriptManager hooks', () => {
         };
       });
 
-      ScriptManager.shared.hooks.beforeLoad.tap('test-before', async () => {
+      ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
         executionOrder.push('beforeLoad');
+        callback(null);
       });
 
-      ScriptManager.shared.hooks.afterLoad.tap('test-after', async () => {
+      ScriptManager.shared.hooks.afterLoad(async (_, callback) => {
         executionOrder.push('afterLoad');
+        callback(null);
       });
 
       await ScriptManager.shared.loadScript('test-script');
@@ -529,16 +503,19 @@ describe('ScriptManager hooks', () => {
         };
       });
 
-      ScriptManager.shared.hooks.beforeLoad.tap('test-before', async () => {
+      ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
         executionOrder.push('beforeLoad');
+        callback(null);
       });
 
-      ScriptManager.shared.hooks.afterLoad.tap('test-after', async () => {
+      ScriptManager.shared.hooks.afterLoad(async (_, callback) => {
         executionOrder.push('afterLoad');
+        callback(null);
       });
 
-      ScriptManager.shared.hooks.errorLoad.tap('test-error', async () => {
+      ScriptManager.shared.hooks.errorLoad(async ({ error }, callback) => {
         executionOrder.push('errorLoad');
+        callback(error);
       });
 
       loadScriptSpy.mockRejectedValueOnce(new Error('Load failed'));
@@ -563,20 +540,24 @@ describe('ScriptManager hooks', () => {
         };
       });
 
-      ScriptManager.shared.hooks.beforeLoad.tap('first-before', async () => {
+      ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
         executionOrder.push('first-beforeLoad');
+        callback(null);
       });
 
-      ScriptManager.shared.hooks.beforeLoad.tap('second-before', async () => {
+      ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
         executionOrder.push('second-beforeLoad');
+        callback(null);
       });
 
-      ScriptManager.shared.hooks.afterLoad.tap('first-after', async () => {
+      ScriptManager.shared.hooks.afterLoad(async (_, callback) => {
         executionOrder.push('first-afterLoad');
+        callback(null);
       });
 
-      ScriptManager.shared.hooks.afterLoad.tap('second-after', async () => {
+      ScriptManager.shared.hooks.afterLoad(async (_, callback) => {
         executionOrder.push('second-afterLoad');
+        callback(null);
       });
 
       await ScriptManager.shared.loadScript('test-script');
@@ -602,47 +583,39 @@ describe('ScriptManager hooks', () => {
         };
       });
 
-      ScriptManager.shared.hooks.beforeLoad.tap(
-        'test-before',
-        async ({ scriptId, caller }) => {
+      ScriptManager.shared.hooks.beforeLoad(
+        async ({ scriptId, caller }, callback) => {
           expect(scriptId).toBe(customScriptId);
           expect(caller).toBe(customCaller);
           hookOrder.push('beforeLoad');
+          callback(null);
         }
       );
 
-      ScriptManager.shared.hooks.load.tapAsync(
-        'test-load',
-        async (params, callback) => {
-          expect(params.scriptId).toBe(customScriptId);
-          expect(params.caller).toBe(customCaller);
-          expect(params.locator).toBeDefined();
-          hookOrder.push('load');
+      ScriptManager.shared.hooks.load(async (params, callback) => {
+        expect(params.scriptId).toBe(customScriptId);
+        expect(params.caller).toBe(customCaller);
+        expect(params.locator).toBeDefined();
+        hookOrder.push('load');
 
-          try {
-            await NativeScriptManager.loadScript(
-              params.scriptId,
-              params.locator
-            );
-            callback(null);
-          } catch (error) {
-            if (error instanceof Error) {
-              callback(error);
-            } else {
-              callback(new Error('Unknown error occurred'));
-            }
+        try {
+          await NativeScriptManager.loadScript(params.scriptId, params.locator);
+          callback(null);
+        } catch (error) {
+          if (error instanceof Error) {
+            callback(error);
+          } else {
+            callback(new Error('Unknown error occurred'));
           }
         }
-      );
+      });
 
-      ScriptManager.shared.hooks.afterLoad.tap(
-        'test-after',
-        async ({ scriptId, caller }) => {
-          expect(scriptId).toBe(customScriptId);
-          expect(caller).toBe(customCaller);
-          hookOrder.push('afterLoad');
-        }
-      );
+      ScriptManager.shared.hooks.afterLoad(({ scriptId, caller }, callback) => {
+        expect(scriptId).toBe(customScriptId);
+        expect(caller).toBe(customCaller);
+        hookOrder.push('afterLoad');
+        callback(null);
+      });
 
       await ScriptManager.shared.loadScript(customScriptId, customCaller);
       expect(hookOrder).toEqual(['beforeLoad', 'load', 'afterLoad']);
@@ -662,26 +635,22 @@ describe('ScriptManager hooks', () => {
         };
       });
 
-      ScriptManager.shared.hooks.beforeLoad.tap('test-before', async () => {
+      ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
         hookOrder.push('beforeLoad');
+        callback(null);
       });
 
-      ScriptManager.shared.hooks.load.tapAsync(
-        'test-load',
-        async (_, callback) => {
-          hookOrder.push('load');
-          callback(expectedError);
-        }
-      );
+      ScriptManager.shared.hooks.load(async (_, callback) => {
+        hookOrder.push('load');
+        callback(expectedError);
+      });
 
-      ScriptManager.shared.hooks.errorLoad.tap(
-        'test-error',
-        async ({ error }) => {
-          expect(error).toBeDefined();
-          expect(error).toBe(expectedError);
-          hookOrder.push('errorLoad');
-        }
-      );
+      ScriptManager.shared.hooks.errorLoad(async ({ error }, callback) => {
+        expect(error).toBeDefined();
+        expect(error).toBe(expectedError);
+        hookOrder.push('errorLoad');
+        callback();
+      });
 
       const error = await ScriptManager.shared
         .loadScript(customScriptId, customCaller)
@@ -710,33 +679,26 @@ describe('ScriptManager hooks', () => {
       });
 
       ['first', 'second'].forEach((prefix) => {
-        ScriptManager.shared.hooks.beforeLoad.tap(
-          `${prefix}-before`,
-          async () => {
-            hookOrder.push(`${prefix}-beforeLoad`);
-          }
-        );
+        ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
+          hookOrder.push(`${prefix}-beforeLoad`);
+          callback(null);
+        });
 
-        ScriptManager.shared.hooks.load.tapAsync(
-          `${prefix}-load`,
-          async (params, callback) => {
-            hookOrder.push(`${prefix}-load`);
-            if (prefix === 'second') {
-              await NativeScriptManager.loadScript(
-                params.scriptId,
-                params.locator
-              );
-            }
-            callback(null);
+        ScriptManager.shared.hooks.load(async (params, callback) => {
+          hookOrder.push(`${prefix}-load`);
+          if (prefix === 'second') {
+            await NativeScriptManager.loadScript(
+              params.scriptId,
+              params.locator
+            );
           }
-        );
+          callback(null);
+        });
 
-        ScriptManager.shared.hooks.afterLoad.tap(
-          `${prefix}-after`,
-          async () => {
-            hookOrder.push(`${prefix}-afterLoad`);
-          }
-        );
+        ScriptManager.shared.hooks.afterLoad(async (_, callback) => {
+          hookOrder.push(`${prefix}-afterLoad`);
+          callback(null);
+        });
       });
 
       await ScriptManager.shared.loadScript(customScriptId);

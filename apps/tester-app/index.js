@@ -51,8 +51,7 @@ ScriptManager.shared.addResolver((scriptId, _caller) => {
 //   console.log('DEBUG/error', ...args);
 // });
 
-ScriptManager.shared.hooks.beforeResolve.tapAsync(
-  'test-before',
+ScriptManager.shared.hooks.beforeResolve(
   ({ scriptId, caller, error }, callback) => {
     if (!error) {
       console.log('Before resolving:', scriptId, caller);
@@ -67,34 +66,26 @@ ScriptManager.shared.hooks.beforeResolve.tapAsync(
   }
 );
 
-ScriptManager.shared.hooks.resolve.tapAsync(
-  'test-during',
-  async (params, callback) => {
-    try {
-      for (const [, , resolve] of params.resolvers) {
-        const resolvedLocator = await resolve(
-          params.scriptId,
-          params.caller,
-          params.referenceUrl
-        );
-        if (resolvedLocator) {
-          callback(null, {
-            ...params,
-            result: resolvedLocator,
-          });
-        }
+ScriptManager.shared.hooks.resolve(async (params, callback) => {
+  try {
+    for (const [, , resolve] of params.resolvers) {
+      const resolvedLocator = await resolve(
+        params.scriptId,
+        params.caller,
+        params.referenceUrl
+      );
+      if (resolvedLocator) {
+        params.result = resolvedLocator;
       }
-      // If no resolver found a result, pass through the params unchanged
-      callback(null, params);
-    } catch (error) {
-      console.error('Error resolving:', error);
-      callback(error);
     }
+    callback(null);
+  } catch (error) {
+    console.error('Error resolving:', error);
+    callback(error);
   }
-);
+});
 
-ScriptManager.shared.hooks.afterResolve.tapAsync(
-  'test-after',
+ScriptManager.shared.hooks.afterResolve(
   ({ scriptId, caller, error }, callback) => {
     if (!error) {
       console.log('After resolving:', scriptId, caller);
@@ -109,8 +100,7 @@ ScriptManager.shared.hooks.afterResolve.tapAsync(
   }
 );
 
-ScriptManager.shared.hooks.errorResolve.tapAsync(
-  'test-error',
+ScriptManager.shared.hooks.errorResolve(
   ({ scriptId, caller, error }, callback) => {
     if (error) {
       console.error('Error resolving:', scriptId, caller, error);
@@ -125,8 +115,7 @@ ScriptManager.shared.hooks.errorResolve.tapAsync(
   }
 );
 
-ScriptManager.shared.hooks.beforeLoad.tapAsync(
-  'test-before-load',
+ScriptManager.shared.hooks.beforeLoad(
   ({ scriptId, caller, error }, callback) => {
     console.log(
       'ScriptManager.shared.hooks.beforeLoad',
@@ -138,25 +127,21 @@ ScriptManager.shared.hooks.beforeLoad.tapAsync(
   }
 );
 
-ScriptManager.shared.hooks.load.tapAsync(
-  'test-load',
-  async (params, callback) => {
-    try {
-      console.log(
-        'ScriptManager.shared.hooks.load',
-        params.scriptId,
-        params.caller
-      );
-      await params.loadScript();
-      callback(null);
-    } catch (error) {
-      callback(error);
-    }
+ScriptManager.shared.hooks.load(async (params, callback) => {
+  try {
+    console.log(
+      'ScriptManager.shared.hooks.load',
+      params.scriptId,
+      params.caller
+    );
+    await params.loadScript();
+    callback(null);
+  } catch (error) {
+    callback(error);
   }
-);
+});
 
-ScriptManager.shared.hooks.afterLoad.tapAsync(
-  'test-after-load',
+ScriptManager.shared.hooks.afterLoad(
   ({ scriptId, caller, error }, callback) => {
     console.log(
       'ScriptManager.shared.hooks.afterLoad',
