@@ -857,6 +857,143 @@ describe('ScriptManager hooks', () => {
       },
     ]);
   });
+
+  it('should chain afterResolve hooks in waterfall pattern', async () => {
+    const hookOrder: string[] = [];
+    const hookParams: Array<{
+      scriptId: string;
+      caller?: string;
+    }> = [];
+
+    ScriptManager.shared.addResolver(async (scriptId) => ({
+      url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+    }));
+
+    ScriptManager.shared.hooks.afterResolve(
+      ({ scriptId, caller }, callback) => {
+        hookOrder.push('afterResolve1');
+        hookParams.push({ scriptId, caller });
+        callback(null, {
+          scriptId: 'modified',
+          caller: 'modified',
+        });
+      }
+    );
+
+    ScriptManager.shared.hooks.afterResolve(
+      ({ scriptId, caller }, callback) => {
+        hookOrder.push('afterResolve2');
+        hookParams.push({ scriptId, caller });
+        callback(null, {
+          scriptId: scriptId + '2',
+          caller: caller + '2',
+        });
+      }
+    );
+
+    ScriptManager.shared.hooks.afterResolve(
+      ({ scriptId, caller }, callback) => {
+        hookOrder.push('afterResolve3');
+        hookParams.push({ scriptId, caller });
+        callback(null, {
+          scriptId: scriptId + '3',
+          caller: caller + '3',
+        });
+      }
+    );
+
+    await ScriptManager.shared.resolveScript('test-script', 'main');
+
+    expect(hookOrder).toEqual([
+      'afterResolve1',
+      'afterResolve2',
+      'afterResolve3',
+    ]);
+    expect(hookParams).toEqual([
+      {
+        scriptId: 'test-script',
+        caller: 'main',
+      },
+      {
+        scriptId: 'modified',
+        caller: 'modified',
+      },
+      {
+        scriptId: 'modified2',
+        caller: 'modified2',
+      },
+    ]);
+  });
+
+  it('should chain afterLoad hooks in waterfall pattern', async () => {
+    const hookOrder: string[] = [];
+    const hookParams: Array<{
+      scriptId: string;
+      caller?: string;
+      webpackContext: any;
+    }> = [];
+
+    ScriptManager.shared.addResolver(async (scriptId) => ({
+      url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+    }));
+
+    ScriptManager.shared.hooks.afterLoad(
+      ({ scriptId, caller, webpackContext }, callback) => {
+        hookOrder.push('afterLoad1');
+        hookParams.push({ scriptId, caller, webpackContext });
+        callback(null, {
+          scriptId: 'modified',
+          caller: 'modified',
+          webpackContext,
+        });
+      }
+    );
+
+    ScriptManager.shared.hooks.afterLoad(
+      ({ scriptId, caller, webpackContext }, callback) => {
+        hookOrder.push('afterLoad2');
+        hookParams.push({ scriptId, caller, webpackContext });
+        callback(null, {
+          scriptId: scriptId + '2',
+          caller: caller + '2',
+          webpackContext,
+        });
+      }
+    );
+
+    ScriptManager.shared.hooks.afterLoad(
+      ({ scriptId, caller, webpackContext }, callback) => {
+        hookOrder.push('afterLoad3');
+        hookParams.push({ scriptId, caller, webpackContext });
+        callback(null, {
+          scriptId: scriptId + '3',
+          caller: caller + '3',
+          webpackContext,
+        });
+      }
+    );
+
+    await ScriptManager.shared.loadScript('test-script', 'main');
+
+    expect(hookOrder).toEqual(['afterLoad1', 'afterLoad2', 'afterLoad3']);
+    expect(hookParams).toEqual([
+      {
+        scriptId: 'test-script',
+        caller: 'main',
+        webpackContext: expect.any(Function),
+      },
+      {
+        scriptId: 'modified',
+        caller: 'modified',
+        webpackContext: expect.any(Function),
+      },
+      {
+        scriptId: 'modified2',
+        caller: 'modified2',
+        webpackContext: expect.any(Function),
+      },
+    ]);
+  });
 });
 
 function mockLoadScriptBasedOnFetch(
