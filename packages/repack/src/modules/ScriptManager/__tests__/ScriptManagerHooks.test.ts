@@ -160,7 +160,7 @@ describe('ScriptManager hooks', () => {
         'test-before',
         ({ scriptId, caller, webpackContext }) => {
           hookOrder.push('beforeResolve');
-          return { scriptId, caller, webpackContext  };
+          return { scriptId, caller, webpackContext };
         }
       );
 
@@ -234,16 +234,13 @@ describe('ScriptManager hooks', () => {
           }
         );
 
-        ScriptManager.shared.hooks.afterResolve.tap(
-          `${prefix}-after`,
-          () => {
-            executionOrder.push(`${prefix}-afterResolve`);
-            return {
-              scriptId: 'test-script',
-              caller: 'test-caller',
-            };
-          }
-        );
+        ScriptManager.shared.hooks.afterResolve.tap(`${prefix}-after`, () => {
+          executionOrder.push(`${prefix}-afterResolve`);
+          return {
+            scriptId: 'test-script',
+            caller: 'test-caller',
+          };
+        });
       });
 
       ScriptManager.shared.addResolver(async (scriptId) => {

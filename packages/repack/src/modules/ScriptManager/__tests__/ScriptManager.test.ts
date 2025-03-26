@@ -71,12 +71,6 @@ afterEach(() => {
   globalThis.__webpack_require__.repack.shared.scriptManager = undefined;
 });
 
-interface ScriptHookParams {
-  scriptId: string;
-  caller?: string;
-  error?: Error;
-}
-
 describe('ScriptManagerAPI', () => {
   it('throw error if ScriptManager NativeModule was not found', async () => {
     // @ts-expect-error simulat missing native module
