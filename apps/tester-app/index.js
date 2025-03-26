@@ -70,23 +70,23 @@ ScriptManager.shared.hooks.beforeResolve.tapAsync(
 ScriptManager.shared.hooks.resolve.tapAsync(
   'test-during',
   async (params, callback) => {
-    try {
-      for (const [, , resolve] of params.resolvers) {
-        const resolvedLocator = await resolve(
-          params.scriptId,
-          params.caller,
-          params.referenceUrl
-        );
-        if (resolvedLocator) {
-          callback(null, {
-            ...params,
-            result: resolvedLocator,
-          });
+      try {
+        for (const [, , resolve] of params.resolvers) {
+          const resolvedLocator = await resolve(
+            params.scriptId,
+            params.caller,
+            params.referenceUrl,
+          );
+          if (resolvedLocator) {
+            callback(null, {
+              ...params,
+              result: resolvedLocator,
+            });
+          }
         }
-      }
-      // If no resolver found a result, pass through the params unchanged
-      callback(null, params);
-    } catch (error) {
+        // If no resolver found a result, pass through the params unchanged
+        callback(null, params);
+      } catch (error) {
       console.error('Error resolving:', error);
       callback(error);
     }

@@ -132,7 +132,9 @@ export class ScriptManager extends EventEmitter {
   public hooks = {
     beforeResolve: new AsyncSeriesWaterfallHook<{
       scriptId: string;
+      webpackContext: RepackRuntimeGlobals.WebpackRequire;
       caller?: string;
+      referenceUrl?: string;
     }>(['params']),
     resolve: new AsyncSeriesWaterfallHook<ResolveHookParams>(['params']),
     afterResolve: new AsyncSeriesHook<
@@ -311,7 +313,9 @@ export class ScriptManager extends EventEmitter {
   ): Promise<Script> {
     let finalScriptId = scriptId;
     let finalCaller = caller;
-
+    let finalReferenceUrl = referenceUrl;
+    let finalWebpackContext = webpackContext;
+    
     try {
       await this.initCache();
 
@@ -330,11 +334,15 @@ export class ScriptManager extends EventEmitter {
       const hookResult = await this.hooks.beforeResolve.promise({
         scriptId,
         caller,
+        referenceUrl,
+        webpackContext,
       });
 
       if (hookResult) {
         finalScriptId = hookResult.scriptId;
         finalCaller = hookResult.caller;
+        finalReferenceUrl = hookResult.referenceUrl;
+        finalWebpackContext = hookResult.webpackContext;
       }
 
       this.emit('resolving', { scriptId: finalScriptId, caller: finalCaller });
@@ -345,7 +353,7 @@ export class ScriptManager extends EventEmitter {
         const params = await this.hooks.resolve.promise({
           scriptId: finalScriptId,
           caller: finalCaller,
-          referenceUrl,
+          referenceUrl: finalReferenceUrl,
           resolvers: this.resolvers,
         });
 
@@ -377,7 +385,7 @@ export class ScriptManager extends EventEmitter {
       }
 
       if (typeof locator.url === 'function') {
-        locator.url = locator.url(webpackContext);
+        locator.url = locator.url(finalWebpackContext);
       }
 
       const script = Script.from(
