@@ -82,6 +82,7 @@ describe('ScriptManagerAPI', () => {
   it('throw error if there are no resolvers', async () => {
     const spy = jest.spyOn(
       ScriptManager.shared,
+      // @ts-expect-error private method
       'handleError' as keyof ScriptManager
     );
 
@@ -90,16 +91,20 @@ describe('ScriptManagerAPI', () => {
     ).rejects.toThrow();
 
     expect(spy).toHaveBeenCalled();
-    expect(spy.mock.calls[0][1]).toEqual(
-      expect.stringMatching(
-        /^\[ScriptManager\] Failed while resolving script locator/
-      )
+    const lastCall = spy.mock.calls[spy.mock.calls.length - 1] as unknown as [
+      any,
+      string,
+      ...any[],
+    ];
+    expect(lastCall[1]).toMatch(
+      /^\[ScriptManager\] Failed while resolving script locator/
     );
   });
 
   it('throw error if no resolvers handled request', async () => {
     const spy = jest.spyOn(
       ScriptManager.shared,
+      // @ts-expect-error private method
       'handleError' as keyof ScriptManager
     );
 
@@ -111,16 +116,22 @@ describe('ScriptManagerAPI', () => {
     ).rejects.toThrow();
 
     expect(spy).toHaveBeenCalled();
-    expect(spy.mock.calls[0][1]).toEqual(
-      expect.stringMatching(
-        /^\[ScriptManager\] Failed while resolving script locator/
-      )
+    const lastCall = spy.mock.calls[spy.mock.calls.length - 1] as unknown as [
+      any,
+      string,
+      ...any[],
+    ];
+    expect(lastCall[1]).toMatch(
+      /^\[ScriptManager\] Failed while resolving script locator/
     );
+
+    ScriptManager.shared.removeAllResolvers();
   });
 
   it('remove all resolvers', async () => {
     const spy = jest.spyOn(
       ScriptManager.shared,
+      // @ts-expect-error private method
       'handleError' as keyof ScriptManager
     );
 
@@ -133,10 +144,13 @@ describe('ScriptManagerAPI', () => {
     ).rejects.toThrow();
 
     expect(spy).toHaveBeenCalled();
-    expect(spy.mock.calls[0][1]).toEqual(
-      expect.stringMatching(
-        /^\[ScriptManager\] Failed while resolving script locator/
-      )
+    const lastCall = spy.mock.calls[spy.mock.calls.length - 1] as unknown as [
+      any,
+      string,
+      ...any[],
+    ];
+    expect(lastCall[1]).toMatch(
+      /^\[ScriptManager\] Failed while resolving script locator/
     );
   });
 
@@ -893,9 +907,14 @@ describe('ScriptManagerAPI', () => {
   });
 });
 
-function mockLoadScriptBasedOnFetch() {
+function mockLoadScriptBasedOnFetch(
+  providedSpy?: jest.SpyInstance<
+    Promise<null>,
+    [string, NormalizedScriptLocator]
+  >
+) {
   jest.useFakeTimers({ advanceTimers: true });
-  const spy = jest.spyOn(NativeScriptManager, 'loadScript');
+  const spy = providedSpy ?? jest.spyOn(NativeScriptManager, 'loadScript');
 
   spy.mockImplementation(
     (_scriptId: string, scriptConfig: NormalizedScriptLocator) =>
