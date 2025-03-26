@@ -59,6 +59,7 @@ interface ResolveHookParams {
   scriptId: string;
   caller?: string;
   referenceUrl?: string;
+  webpackContext: RepackRuntimeGlobals.WebpackRequire;
   resolvers: Array<[string, string | number, ScriptLocatorResolver]>;
   result?: ScriptLocator;
 }
@@ -369,6 +370,7 @@ export class ScriptManager extends EventEmitter {
           scriptId: finalScriptId,
           caller: finalCaller,
           referenceUrl: finalReferenceUrl,
+          webpackContext: finalWebpackContext,
           resolvers: this.resolvers,
         });
 
