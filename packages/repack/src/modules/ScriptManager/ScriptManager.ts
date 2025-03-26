@@ -162,11 +162,17 @@ export class ScriptManager extends EventEmitter {
       'params',
     ]),
     resolve: new AsyncSeriesWaterfallHook<ResolveHookParams, void>(['params']),
-    afterResolve: new AsyncSeriesHook<AfterResolveHookParams, void>(['params']),
+    afterResolve: new AsyncSeriesWaterfallHook<AfterResolveHookParams, void>([
+      'params',
+    ]),
     errorResolve: new AsyncSeriesHook<ErrorResolveHookParams, void>(['params']),
-    beforeLoad: new AsyncSeriesWaterfallHook<BeforeLoadHookParams, void>(['params']),
+    beforeLoad: new AsyncSeriesWaterfallHook<BeforeLoadHookParams, void>([
+      'params',
+    ]),
     load: new AsyncSeriesWaterfallHook<LoadHookParams>(['params']),
-    afterLoad: new AsyncSeriesHook<AfterLoadHookParams, void>(['params']),
+    afterLoad: new AsyncSeriesWaterfallHook<AfterLoadHookParams, void>([
+      'params',
+    ]),
     errorLoad: new AsyncSeriesHook<ErrorLoadHookParams, void>(['params']),
   };
 
@@ -189,7 +195,10 @@ export class ScriptManager extends EventEmitter {
     afterResolve: (
       fn: (
         params: AfterResolveHookParams,
-        callback: (error?: Error | null) => void
+        callback: (
+          error?: Error | null,
+          params?: AfterResolveHookParams
+        ) => void
       ) => void
     ) => this.hookImpl.afterResolve.tapAsync('afterResolve', fn),
     errorResolve: (
@@ -213,7 +222,7 @@ export class ScriptManager extends EventEmitter {
     afterLoad: (
       fn: (
         params: AfterLoadHookParams,
-        callback: (error?: Error | null) => void
+        callback: (error?: Error | null, params?: AfterLoadHookParams) => void
       ) => void
     ) => this.hookImpl.afterLoad.tapAsync('afterLoad', fn),
     errorLoad: (
