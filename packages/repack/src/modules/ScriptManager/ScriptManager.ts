@@ -66,6 +66,8 @@ interface ResolveHookParams {
 interface LoadHookParams {
   scriptId: string;
   caller?: string;
+  referenceUrl?: string;
+  webpackContext: RepackRuntimeGlobals.WebpackRequire;
   locator: NormalizedScriptLocator;
   loadScript: () => Promise<void>;
   handled?: boolean;
@@ -138,29 +140,42 @@ export class ScriptManager extends EventEmitter {
     }>(['params']),
     resolve: new AsyncSeriesWaterfallHook<ResolveHookParams>(['params']),
     afterResolve: new AsyncSeriesHook<
-      { scriptId: string; caller?: string },
+      { scriptId: string; caller?: string; referenceUrl?: string },
       void
     >(['params']),
     errorResolve: new AsyncSeriesHook<
       {
         scriptId: string;
         caller?: string;
+        referenceUrl?: string;
         error: Error;
       },
       void
     >(['params']),
     beforeLoad: new AsyncSeriesHook<
-      { scriptId: string; caller?: string },
+      {
+        scriptId: string;
+        caller?: string;
+        referenceUrl?: string;
+        webpackContext: RepackRuntimeGlobals.WebpackRequire;
+      },
       void
     >(['params']),
     load: new AsyncSeriesWaterfallHook<LoadHookParams>(['params']),
-    afterLoad: new AsyncSeriesHook<{ scriptId: string; caller?: string }, void>(
-      ['params']
-    ),
+    afterLoad: new AsyncSeriesHook<
+      {
+        scriptId: string;
+        caller?: string;
+        referenceUrl?: string;
+        webpackContext: RepackRuntimeGlobals.WebpackRequire;
+      },
+      void
+    >(['params']),
     errorLoad: new AsyncSeriesHook<
       {
         scriptId: string;
         caller?: string;
+        referenceUrl?: string;
         error: Error;
       },
       void
@@ -315,7 +330,7 @@ export class ScriptManager extends EventEmitter {
     let finalCaller = caller;
     let finalReferenceUrl = referenceUrl;
     let finalWebpackContext = webpackContext;
-    
+
     try {
       await this.initCache();
 
@@ -379,6 +394,7 @@ export class ScriptManager extends EventEmitter {
         await this.hooks.errorResolve.promise({
           scriptId: finalScriptId,
           caller: finalCaller,
+          referenceUrl: finalReferenceUrl,
           error,
         });
         throw error;
@@ -426,6 +442,7 @@ export class ScriptManager extends EventEmitter {
       await this.hooks.afterResolve.promise({
         scriptId: finalScriptId,
         caller: finalCaller,
+        referenceUrl: finalReferenceUrl,
       });
       this.emit('resolved', script.toObject());
 
@@ -434,6 +451,7 @@ export class ScriptManager extends EventEmitter {
       await this.hooks.errorResolve.promise({
         scriptId: finalScriptId,
         caller: finalCaller,
+        referenceUrl: finalReferenceUrl,
         error: error as Error,
       });
       this.handleError(
@@ -489,18 +507,26 @@ export class ScriptManager extends EventEmitter {
         webpackContext,
         referenceUrl
       );
+      const finalScriptId = scriptId;
+      const finalCaller = caller;
+      const finalReferenceUrl = referenceUrl;
+      const finalWebpackContext = webpackContext;
 
       try {
         await this.hooks.beforeLoad.promise({
-          scriptId: scriptId,
-          caller: caller,
+          scriptId: finalScriptId,
+          caller: finalCaller,
+          referenceUrl: finalReferenceUrl,
+          webpackContext: finalWebpackContext,
         });
         this.emit('loading', script.toObject());
 
         if (this.hooks.load.isUsed()) {
           await this.hooks.load.promise({
             scriptId,
-            caller,
+            caller: finalCaller,
+            referenceUrl: finalReferenceUrl,
+            webpackContext: finalWebpackContext,
             locator: script.locator,
             loadScript: async () => {
               await this.loadScriptWithRetry(scriptId, script.locator);
@@ -517,16 +543,19 @@ export class ScriptManager extends EventEmitter {
         }
 
         await this.hooks.afterLoad.promise({
-          scriptId: scriptId,
-          caller: caller,
+          scriptId: finalScriptId,
+          caller: finalCaller,
+          referenceUrl: finalReferenceUrl,
+          webpackContext: finalWebpackContext,
         });
         this.emit('loaded', script.toObject());
         await this.updateCache(script);
       } catch (error) {
         const { code } = error as Error & { code: string };
         await this.hooks.errorLoad.promise({
-          scriptId: scriptId,
-          caller: caller,
+          scriptId: finalScriptId,
+          caller: finalCaller,
+          referenceUrl: finalReferenceUrl,
           error: error as Error,
         });
         this.handleError(
