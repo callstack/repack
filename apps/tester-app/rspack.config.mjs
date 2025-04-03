@@ -23,7 +23,7 @@ export default (env) => {
     context,
     entry: './index.js',
     resolve: {
-      ...Repack.getResolveOptions(),
+      ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
     output: {
       uniqueName: 'tester-app',

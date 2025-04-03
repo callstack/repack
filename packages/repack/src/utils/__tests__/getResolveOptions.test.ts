@@ -5,8 +5,8 @@ const resolveOptionsObject = {
   aliasFields: expect.any(Array),
   conditionNames: expect.any(Array),
   exportsFields: expect.any(Array),
-  importsFields: expect.any(Array),
   extensionAlias: expect.any(Object),
+  byDependency: expect.any(Object),
 };
 
 describe('getResolveOptions', () => {
