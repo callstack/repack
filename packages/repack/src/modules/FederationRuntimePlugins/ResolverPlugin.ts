@@ -20,8 +20,7 @@ const createScriptLocator = async (
 };
 
 const getPublicPath = (url: string) => {
-  const [protocol, rest] = url.split('://');
-  return protocol + '://' + rest.split('/')[0];
+  return url.split('/').slice(0, -1).join('/');
 };
 
 const getAssetPath = (url: string) => {
