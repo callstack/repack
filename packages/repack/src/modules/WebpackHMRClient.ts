@@ -1,9 +1,17 @@
 import type { HMRMessage } from '../types.js';
 import { getDevServerLocation } from './getDevServerLocation.js';
 
-interface LoadingViewModule {
+interface RNLoadingView {
   hide(): void;
   showMessage(text: string, type: string): void;
+}
+
+interface RNDevSettings {
+  reload(): void;
+}
+
+interface RNLogBoxData {
+  clear(): void;
 }
 
 class HMRClient {
@@ -145,7 +153,13 @@ class HMRClient {
 
 if (__DEV__ && module.hot) {
   const reload = () => {
-    const DevSettings = require('react-native/Libraries/Utilities/DevSettings');
+    let DevSettings: RNDevSettings;
+    if (__REACT_NATIVE_MINOR_VERSION__ >= 79) {
+      DevSettings =
+        require('react-native/Libraries/Utilities/DevSettings').default;
+    } else {
+      DevSettings = require('react-native/Libraries/Utilities/DevSettings');
+    }
     DevSettings.reload();
   };
 
@@ -159,13 +173,22 @@ if (__DEV__ && module.hot) {
         require('react-native/Libraries/Core/NativeExceptionsManager').default;
       NativeExceptionsManager?.dismissRedbox();
     }
-    const LogBoxData = require('react-native/Libraries/LogBox/Data/LogBoxData');
+    let LogBoxData: RNLogBoxData;
+    if (__REACT_NATIVE_MINOR_VERSION__ >= 79) {
+      LogBoxData =
+        require('react-native/Libraries/LogBox/Data/LogBoxData').default;
+    } else {
+      LogBoxData = require('react-native/Libraries/LogBox/Data/LogBoxData');
+    }
     LogBoxData.clear();
   };
 
   const showLoadingView = (text: string, type: 'load' | 'refresh') => {
-    let LoadingView: LoadingViewModule;
-    if (__REACT_NATIVE_MINOR_VERSION__ >= 75) {
+    let LoadingView: RNLoadingView;
+    if (__REACT_NATIVE_MINOR_VERSION__ >= 79) {
+      LoadingView =
+        require('react-native/Libraries/Utilities/DevLoadingView').default;
+    } else if (__REACT_NATIVE_MINOR_VERSION__ >= 75) {
       LoadingView = require('react-native/Libraries/Utilities/DevLoadingView');
     } else {
       LoadingView = require('react-native/Libraries/Utilities/LoadingView');
@@ -175,8 +198,11 @@ if (__DEV__ && module.hot) {
   };
 
   const hideLoadingView = () => {
-    let LoadingView: LoadingViewModule;
-    if (__REACT_NATIVE_MINOR_VERSION__ >= 75) {
+    let LoadingView: RNLoadingView;
+    if (__REACT_NATIVE_MINOR_VERSION__ >= 79) {
+      LoadingView =
+        require('react-native/Libraries/Utilities/DevLoadingView').default;
+    } else if (__REACT_NATIVE_MINOR_VERSION__ >= 75) {
       LoadingView = require('react-native/Libraries/Utilities/DevLoadingView');
     } else {
       LoadingView = require('react-native/Libraries/Utilities/LoadingView');
