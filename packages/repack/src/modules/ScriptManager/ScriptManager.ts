@@ -59,7 +59,7 @@ export interface ResolverOptions {
   key?: string;
 }
 
-interface ResolveHookParams {
+interface ResolveHookOptions {
   scriptId: string;
   caller?: string;
   referenceUrl?: string;
@@ -68,26 +68,26 @@ interface ResolveHookParams {
   result?: ScriptLocator;
 }
 
-interface BeforeResolveHookParams {
+interface BeforeResolveHookOptions {
   scriptId: string;
   webpackContext: RepackRuntimeGlobals.WebpackRequire;
   caller?: string;
   referenceUrl?: string;
 }
 
-interface AfterResolveHookParams {
+interface AfterResolveHookOptions {
   scriptId: string;
   caller?: string;
   referenceUrl?: string;
 }
 
-interface ErrorResolveHookParams extends AfterResolveHookParams {
+interface ErrorResolveHookOptions extends AfterResolveHookOptions {
   error: Error;
 }
 
-interface BeforeLoadHookParams extends BeforeResolveHookParams {}
+interface BeforeLoadHookOptions extends BeforeResolveHookOptions {}
 
-interface LoadHookParams {
+interface LoadHookOptions {
   scriptId: string;
   caller?: string;
   referenceUrl?: string;
@@ -97,9 +97,9 @@ interface LoadHookParams {
   handled?: boolean;
 }
 
-interface AfterLoadHookParams extends BeforeResolveHookParams {}
+interface AfterLoadHookOptions extends BeforeResolveHookOptions {}
 
-interface ErrorLoadHookParams extends AfterResolveHookParams {
+interface ErrorLoadHookOptions extends AfterResolveHookOptions {
   error: Error;
 }
 
@@ -200,44 +200,44 @@ export class ScriptManager extends EventEmitter {
   }
 
   private hookMap = {
-    beforeResolve: new AsyncSeriesWaterfallHook<BeforeResolveHookParams>([
-      'params',
+    beforeResolve: new AsyncSeriesWaterfallHook<BeforeResolveHookOptions>([
+      'args',
     ]),
-    resolve: new AsyncSeriesWaterfallHook<ResolveHookParams, void>(['params']),
-    afterResolve: new AsyncSeriesWaterfallHook<AfterResolveHookParams, void>([
-      'params',
+    resolve: new AsyncSeriesWaterfallHook<ResolveHookOptions, void>(['args']),
+    afterResolve: new AsyncSeriesWaterfallHook<AfterResolveHookOptions, void>([
+      'args',
     ]),
-    errorResolve: new AsyncSeriesHook<ErrorResolveHookParams, void>(['params']),
-    beforeLoad: new AsyncSeriesWaterfallHook<BeforeLoadHookParams, void>([
-      'params',
+    errorResolve: new AsyncSeriesHook<ErrorResolveHookOptions, void>(['args']),
+    beforeLoad: new AsyncSeriesWaterfallHook<BeforeLoadHookOptions, void>([
+      'args',
     ]),
-    load: new AsyncSeriesWaterfallHook<LoadHookParams>(['params']),
-    afterLoad: new AsyncSeriesWaterfallHook<AfterLoadHookParams, void>([
-      'params',
+    load: new AsyncSeriesWaterfallHook<LoadHookOptions, void>(['args']),
+    afterLoad: new AsyncSeriesWaterfallHook<AfterLoadHookOptions, void>([
+      'args',
     ]),
-    errorLoad: new AsyncSeriesHook<ErrorLoadHookParams, void>(['params']),
+    errorLoad: new AsyncSeriesHook<ErrorLoadHookOptions, void>(['args']),
   };
 
   public hooks = {
     beforeResolve: (
-      fn: (params: BeforeResolveHookParams) => Promise<BeforeResolveHookParams>
+      fn: (args: BeforeResolveHookOptions) => Promise<BeforeResolveHookOptions>
     ) => this.hookMap.beforeResolve.tapPromise('beforeResolve', promisify(fn)),
-    resolve: (fn: (params: ResolveHookParams) => Promise<ResolveHookParams>) =>
+    resolve: (fn: (args: ResolveHookOptions) => Promise<ResolveHookOptions>) =>
       this.hookMap.resolve.tapPromise('resolve', promisify(fn)),
     afterResolve: (
-      fn: (params: AfterResolveHookParams) => Promise<AfterResolveHookParams>
+      fn: (args: AfterResolveHookOptions) => Promise<AfterResolveHookOptions>
     ) => this.hookMap.afterResolve.tapPromise('afterResolve', promisify(fn)),
-    errorResolve: (fn: (params: ErrorResolveHookParams) => Promise<void>) =>
+    errorResolve: (fn: (args: ErrorResolveHookOptions) => Promise<void>) =>
       this.hookMap.errorResolve.tapPromise('errorResolve', promisify(fn)),
     beforeLoad: (
-      fn: (params: BeforeLoadHookParams) => Promise<BeforeLoadHookParams>
+      fn: (args: BeforeLoadHookOptions) => Promise<BeforeLoadHookOptions>
     ) => this.hookMap.beforeLoad.tapPromise('beforeLoad', promisify(fn)),
-    load: (fn: (params: LoadHookParams) => Promise<LoadHookParams>) =>
+    load: (fn: (args: LoadHookOptions) => Promise<LoadHookOptions>) =>
       this.hookMap.load.tapPromise('load', promisify(fn)),
     afterLoad: (
-      fn: (params: AfterLoadHookParams) => Promise<AfterLoadHookParams>
+      fn: (args: AfterLoadHookOptions) => Promise<AfterLoadHookOptions>
     ) => this.hookMap.afterLoad.tapPromise('afterLoad', promisify(fn)),
-    errorLoad: (fn: (params: ErrorLoadHookParams) => Promise<void>) =>
+    errorLoad: (fn: (args: ErrorLoadHookOptions) => Promise<void>) =>
       this.hookMap.errorLoad.tapPromise('errorLoad', promisify(fn)),
   };
 
