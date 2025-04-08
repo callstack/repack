@@ -18,6 +18,12 @@ catalogs:
     '@types/node':
       specifier: ^18
       version: 18.19.41
+    react:
+      specifier: 19.0.0
+      version: 19.0.0
+    react-native:
+      specifier: 0.78.0
+      version: 0.78.0
     terser-webpack-plugin:
       specifier: ^5.3.11
       version: 5.3.11
@@ -100,10 +106,10 @@ importers:
         specifier: ^4.1.23
         version: 4.1.23(react-native-reanimated@3.17.1(@babel/core@7.25.2)(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-safe-area-context@5.3.0(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-svg@15.8.0(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0)(tailwindcss@3.4.17)
       react:
-        specifier: 19.0.0
+        specifier: 'catalog:'
         version: 19.0.0
       react-native:
-        specifier: 0.78.0
+        specifier: 'catalog:'
         version: 0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0)
       react-native-css-interop:
         specifier: 0.1.22
@@ -218,10 +224,10 @@ importers:
         specifier: ^6.10.1
         version: 6.11.0(@react-navigation/native@6.1.18(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-safe-area-context@5.3.0(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-screens@4.9.2(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0)
       react:
-        specifier: 19.0.0
+        specifier: 'catalog:'
         version: 19.0.0
       react-native:
-        specifier: 0.78.0
+        specifier: 'catalog:'
         version: 0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0)
       react-native-safe-area-context:
         specifier: 5.3.0
@@ -291,10 +297,10 @@ importers:
         specifier: ^6.10.1
         version: 6.11.0(@react-navigation/native@6.1.18(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-safe-area-context@5.3.0(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native-screens@4.9.2(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0))(react-native@0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0)
       react:
-        specifier: 19.0.0
+        specifier: 'catalog:'
         version: 19.0.0
       react-native:
-        specifier: 0.78.0
+        specifier: 'catalog:'
         version: 0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0)
       react-native-safe-area-context:
         specifier: 5.3.0
@@ -638,10 +644,10 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@18.19.41)
       react:
-        specifier: 19.0.0
+        specifier: 'catalog:'
         version: 19.0.0
       react-native:
-        specifier: 0.78.0
+        specifier: 'catalog:'
         version: 0.78.0(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.0.1)(@types/react@19.0.10)(react@19.0.0)
       rspack-plugin-virtual-module:
         specifier: ^0.1.13
@@ -3157,7 +3163,6 @@ packages:
 
   acorn-import-assertions@1.9.0:
     resolution: {integrity: sha512-cmMwop9x+8KFhxvKrKfPYmN6/pKTYYHBqLa0DfvVZcKMJWNyWLnaqND7dx/qn66R7ewM1UX5XMaDVP5wlVTaVA==}
-    deprecated: package has been renamed to acorn-import-attributes
     peerDependencies:
       acorn: ^8
 
@@ -6792,7 +6797,6 @@ packages:
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
-    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rollup@4.21.2:
@@ -7318,7 +7322,6 @@ packages:
 
   sudo-prompt@9.2.1:
     resolution: {integrity: sha512-Mu7R0g4ig9TUuGSxJavny5Rv0egCEtpZRNMrZaYS1vxkiIxGiGUwoezU3LazIQ+KE04hTrTfNPgxU5gzi7F5Pw==}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
