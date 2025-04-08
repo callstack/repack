@@ -39,6 +39,10 @@ const LOADING_ERROR_CODES = [
   'ScriptDownloadFailure',
 ];
 
+function promisify<T extends (...args: any[]) => any>(fn: T) {
+  return async (...args: Parameters<T>) => fn(...args);
+}
+
 /* Options for resolver when adding it to a `ScriptManager`. */
 export interface ResolverOptions {
   /**
@@ -157,82 +161,6 @@ export class ScriptManager extends EventEmitter {
   protected cache: Cache = {};
   private storage?: StorageApi;
 
-  private hookImpl = {
-    beforeResolve: new AsyncSeriesWaterfallHook<BeforeResolveHookParams>([
-      'params',
-    ]),
-    resolve: new AsyncSeriesWaterfallHook<ResolveHookParams, void>(['params']),
-    afterResolve: new AsyncSeriesWaterfallHook<AfterResolveHookParams, void>([
-      'params',
-    ]),
-    errorResolve: new AsyncSeriesHook<ErrorResolveHookParams, void>(['params']),
-    beforeLoad: new AsyncSeriesWaterfallHook<BeforeLoadHookParams, void>([
-      'params',
-    ]),
-    load: new AsyncSeriesWaterfallHook<LoadHookParams>(['params']),
-    afterLoad: new AsyncSeriesWaterfallHook<AfterLoadHookParams, void>([
-      'params',
-    ]),
-    errorLoad: new AsyncSeriesHook<ErrorLoadHookParams, void>(['params']),
-  };
-
-  public hooks = {
-    beforeResolve: (
-      fn: (
-        params: BeforeResolveHookParams,
-        callback: (
-          error?: Error | null,
-          params?: BeforeResolveHookParams
-        ) => void
-      ) => void
-    ) => this.hookImpl.beforeResolve.tapAsync('beforeResolve', fn),
-    resolve: (
-      fn: (
-        params: ResolveHookParams,
-        callback: (error?: Error | null, params?: ResolveHookParams) => void
-      ) => void
-    ) => this.hookImpl.resolve.tapAsync('resolve', fn),
-    afterResolve: (
-      fn: (
-        params: AfterResolveHookParams,
-        callback: (
-          error?: Error | null,
-          params?: AfterResolveHookParams
-        ) => void
-      ) => void
-    ) => this.hookImpl.afterResolve.tapAsync('afterResolve', fn),
-    errorResolve: (
-      fn: (
-        params: ErrorResolveHookParams,
-        callback: (error?: Error | null) => void
-      ) => void
-    ) => this.hookImpl.errorResolve.tapAsync('errorResolve', fn),
-    beforeLoad: (
-      fn: (
-        params: BeforeLoadHookParams,
-        callback: (error?: Error | null, params?: BeforeLoadHookParams) => void
-      ) => void
-    ) => this.hookImpl.beforeLoad.tapAsync('beforeLoad', fn),
-    load: (
-      fn: (
-        params: LoadHookParams,
-        callback: (error?: Error | null, params?: LoadHookParams) => void
-      ) => void
-    ) => this.hookImpl.load.tapAsync('load', fn),
-    afterLoad: (
-      fn: (
-        params: AfterLoadHookParams,
-        callback: (error?: Error | null, params?: AfterLoadHookParams) => void
-      ) => void
-    ) => this.hookImpl.afterLoad.tapAsync('afterLoad', fn),
-    errorLoad: (
-      fn: (
-        params: ErrorLoadHookParams,
-        callback: (error?: Error | null) => void
-      ) => void
-    ) => this.hookImpl.errorLoad.tapAsync('errorLoad', fn),
-  };
-
   static init() {
     if (!__webpack_require__.repack.shared.scriptManager) {
       __webpack_require__.repack.shared.scriptManager = new ScriptManager();
@@ -271,6 +199,48 @@ export class ScriptManager extends EventEmitter {
 
     __webpack_require__.repack.shared.scriptManager = this;
   }
+
+  private hookMap = {
+    beforeResolve: new AsyncSeriesWaterfallHook<BeforeResolveHookParams>([
+      'params',
+    ]),
+    resolve: new AsyncSeriesWaterfallHook<ResolveHookParams, void>(['params']),
+    afterResolve: new AsyncSeriesWaterfallHook<AfterResolveHookParams, void>([
+      'params',
+    ]),
+    errorResolve: new AsyncSeriesHook<ErrorResolveHookParams, void>(['params']),
+    beforeLoad: new AsyncSeriesWaterfallHook<BeforeLoadHookParams, void>([
+      'params',
+    ]),
+    load: new AsyncSeriesWaterfallHook<LoadHookParams>(['params']),
+    afterLoad: new AsyncSeriesWaterfallHook<AfterLoadHookParams, void>([
+      'params',
+    ]),
+    errorLoad: new AsyncSeriesHook<ErrorLoadHookParams, void>(['params']),
+  };
+
+  public hooks = {
+    beforeResolve: (
+      fn: (params: BeforeResolveHookParams) => Promise<BeforeResolveHookParams>
+    ) => this.hookMap.beforeResolve.tapPromise('beforeResolve', promisify(fn)),
+    resolve: (fn: (params: ResolveHookParams) => Promise<ResolveHookParams>) =>
+      this.hookMap.resolve.tapPromise('resolve', promisify(fn)),
+    afterResolve: (
+      fn: (params: AfterResolveHookParams) => Promise<AfterResolveHookParams>
+    ) => this.hookMap.afterResolve.tapPromise('afterResolve', promisify(fn)),
+    errorResolve: (fn: (params: ErrorResolveHookParams) => Promise<void>) =>
+      this.hookMap.errorResolve.tapPromise('errorResolve', promisify(fn)),
+    beforeLoad: (
+      fn: (params: BeforeLoadHookParams) => Promise<BeforeLoadHookParams>
+    ) => this.hookMap.beforeLoad.tapAsync('beforeLoad', promisify(fn)),
+    load: (fn: (params: LoadHookParams) => Promise<LoadHookParams>) =>
+      this.hookMap.load.tapAsync('load', promisify(fn)),
+    afterLoad: (
+      fn: (params: AfterLoadHookParams) => Promise<AfterLoadHookParams>
+    ) => this.hookMap.afterLoad.tapAsync('afterLoad', promisify(fn)),
+    errorLoad: (fn: (params: ErrorLoadHookParams) => Promise<void>) =>
+      this.hookMap.errorLoad.tapAsync('errorLoad', promisify(fn)),
+  };
 
   /**
    * Sets a storage backend to cache resolved scripts locator data.
@@ -389,7 +359,7 @@ export class ScriptManager extends EventEmitter {
         const error = new Error(
           'No script resolvers were added. Did you forget to call `ScriptManager.shared.addResolver(...)`?'
         );
-        await this.hookImpl.errorResolve.promise({
+        await this.hookMap.errorResolve.promise({
           scriptId: finalScriptId,
           caller: finalCaller,
           error,
@@ -397,12 +367,14 @@ export class ScriptManager extends EventEmitter {
         throw error;
       }
 
-      const hookResult = await this.hookImpl.beforeResolve.promise({
+      const hookResult = await this.hookMap.beforeResolve.promise({
         scriptId,
         caller,
         referenceUrl,
         webpackContext,
       });
+
+      console.log('>>>> hookResult', hookResult);
 
       if (hookResult) {
         finalScriptId = hookResult.scriptId;
@@ -415,8 +387,8 @@ export class ScriptManager extends EventEmitter {
 
       let locator: ScriptLocator | undefined;
 
-      if (this.hookImpl.resolve.isUsed()) {
-        const result = await this.hookImpl.resolve.promise({
+      if (this.hookMap.resolve.isUsed()) {
+        const result = await this.hookMap.resolve.promise({
           scriptId: finalScriptId,
           caller: finalCaller,
           referenceUrl,
@@ -442,7 +414,7 @@ export class ScriptManager extends EventEmitter {
         const error = new Error(
           `No resolver was able to resolve script ${finalScriptId}`
         );
-        await this.hookImpl.errorResolve.promise({
+        await this.hookMap.errorResolve.promise({
           scriptId: finalScriptId,
           caller: finalCaller,
           referenceUrl: finalReferenceUrl,
@@ -489,7 +461,7 @@ export class ScriptManager extends EventEmitter {
         script.locator.fetch = true;
       }
 
-      await this.hookImpl.afterResolve.promise({
+      await this.hookMap.afterResolve.promise({
         scriptId: finalScriptId,
         caller: finalCaller,
         referenceUrl: finalReferenceUrl,
@@ -498,7 +470,7 @@ export class ScriptManager extends EventEmitter {
 
       return script;
     } catch (error) {
-      await this.hookImpl.errorResolve.promise({
+      await this.hookMap.errorResolve.promise({
         scriptId: finalScriptId,
         caller: finalCaller,
         referenceUrl: finalReferenceUrl,
@@ -563,7 +535,7 @@ export class ScriptManager extends EventEmitter {
       let finalWebpackContext = webpackContext;
 
       try {
-        const hookResult = await this.hookImpl.beforeLoad.promise({
+        const hookResult = await this.hookMap.beforeLoad.promise({
           scriptId: finalScriptId,
           caller: finalCaller,
           referenceUrl: finalReferenceUrl,
@@ -579,8 +551,8 @@ export class ScriptManager extends EventEmitter {
 
         this.emit('loading', script.toObject());
 
-        if (this.hookImpl.load.isUsed()) {
-          await this.hookImpl.load.promise({
+        if (this.hookMap.load.isUsed()) {
+          await this.hookMap.load.promise({
             scriptId: finalScriptId,
             caller: finalCaller,
             referenceUrl: finalReferenceUrl,
@@ -594,7 +566,7 @@ export class ScriptManager extends EventEmitter {
           await this.loadScriptWithRetry(scriptId, script.locator);
         }
 
-        await this.hookImpl.afterLoad.promise({
+        await this.hookMap.afterLoad.promise({
           scriptId: finalScriptId,
           caller: finalCaller,
           referenceUrl: finalReferenceUrl,
@@ -604,7 +576,7 @@ export class ScriptManager extends EventEmitter {
         await this.updateCache(script);
       } catch (error) {
         const { code } = error as Error & { code: string };
-        await this.hookImpl.errorLoad.promise({
+        await this.hookMap.errorLoad.promise({
           scriptId: finalScriptId,
           caller: finalCaller,
           referenceUrl: finalReferenceUrl,
