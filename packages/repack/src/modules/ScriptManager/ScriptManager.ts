@@ -169,9 +169,9 @@ export class ScriptManager extends EventEmitter {
   protected cache: Cache = {};
   protected scriptsPromises: ScriptsPromises = {};
   protected cacheInitialized = false;
-  private resolvers: Array<[string, string | number, ScriptLocatorResolver]> =
+  protected resolvers: Array<[string, string | number, ScriptLocatorResolver]> =
     [];
-  private storage?: StorageApi;
+  protected storage?: StorageApi;
 
   /**
    * Constructs instance of `ScriptManager`.
