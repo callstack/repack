@@ -1,9 +1,6 @@
-import NativeScriptManager, {
-  type NormalizedScriptLocator,
-} from '../NativeScriptManager.js';
+import NativeScriptManager from '../NativeScriptManager.js';
 import { Script } from '../Script.js';
 import { ScriptManager } from '../ScriptManager.js';
-import { getWebpackContext } from '../getWebpackContext.js';
 
 jest.mock('../NativeScriptManager.js', () => ({
   loadScript: jest.fn(),
@@ -48,84 +45,22 @@ afterEach(() => {
 });
 
 describe('ScriptManager hooks', () => {
-  it('should call hooks in correct lifecycle order', async () => {
-    const hookOrder: string[] = [];
-
-    ScriptManager.shared.hooks.beforeResolve((_, callback) => {
-      hookOrder.push('beforeResolve');
-      callback(null);
-    });
-
-    ScriptManager.shared.hooks.resolve(({ webpackContext }, callback) => {
-      hookOrder.push('resolve');
-      callback(null, {
-        scriptId: 'test-script',
-        caller: 'main',
-        result: {
-          url: 'http://domain.ext/test-script',
-        },
-        resolvers: [],
-        webpackContext,
-      });
-    });
-
-    ScriptManager.shared.hooks.afterResolve((_, callback) => {
-      hookOrder.push('afterResolve');
-      callback(null);
-    });
-
-    ScriptManager.shared.addResolver(async (scriptId) => ({
-      url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-    }));
-
-    await ScriptManager.shared.resolveScript('test-script', 'main');
-
-    expect(hookOrder).toEqual(['beforeResolve', 'resolve', 'afterResolve']);
-  });
-
-  it('should call error hook when resolution fails', async () => {
-    const errorHookCalled = jest.fn();
-
-    ScriptManager.shared.hooks.errorResolve(
-      ({ scriptId, caller, error }, callback) => {
-        expect(error).toBeDefined();
-        errorHookCalled(scriptId, caller, error);
-        callback();
-      }
-    );
-
-    // No resolver added to trigger error
-    await expect(
-      ScriptManager.shared.resolveScript('test-script', 'test-caller')
-    ).rejects.toThrow();
-
-    expect(errorHookCalled).toHaveBeenCalledWith(
-      'test-script',
-      'test-caller',
-      expect.any(Error)
-    );
-  });
-
-  it('should allow multiple hooks to be registered in series', async () => {
+  it('should sequentially call hooks in series', async () => {
     const executionOrder: string[] = [];
-
-    ['first', 'second'].forEach((prefix) => {
-      ScriptManager.shared.hooks.beforeResolve((_, callback) => {
+    ['first', 'second', 'third'].forEach((prefix) => {
+      ScriptManager.shared.hooks.beforeResolve(async (args) => {
         executionOrder.push(`${prefix}-beforeResolve`);
-        callback(null);
-      });
-
-      ScriptManager.shared.hooks.afterResolve((_, callback) => {
-        executionOrder.push(`${prefix}-afterResolve`);
-        callback(null);
+        return {
+          options: {
+            ...args.options,
+            scriptId: `${prefix}-${args.options.scriptId}`,
+          },
+        };
       });
     });
 
     ScriptManager.shared.addResolver(async (scriptId) => {
-      executionOrder.push('resolver');
-      return {
-        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-      };
+      return { url: Script.getRemoteURL(`http://domain.ext/${scriptId}`) };
     });
 
     await ScriptManager.shared.resolveScript('test-script', 'test-caller');
@@ -133,886 +68,288 @@ describe('ScriptManager hooks', () => {
     expect(executionOrder).toEqual([
       'first-beforeResolve',
       'second-beforeResolve',
-      'resolver',
-      'first-afterResolve',
-      'second-afterResolve',
+      'third-beforeResolve',
     ]);
   });
 
-  describe('hooks lifecycle', () => {
-    it('should call hooks in correct order during successful resolution', async () => {
-      const hookOrder: string[] = [];
-
-      ScriptManager.shared.hooks.beforeResolve((_, callback) => {
-        hookOrder.push('beforeResolve');
-        callback(null);
-      });
-
-      ScriptManager.shared.hooks.resolve(({ webpackContext }, callback) => {
-        hookOrder.push('resolve');
-        callback(null, {
-          scriptId: 'test-script',
-          caller: 'main',
-          result: {
-            url: 'http://domain.ext/test-script',
-          },
-          resolvers: [],
-          webpackContext,
-        });
-      });
-
-      ScriptManager.shared.hooks.afterResolve((_, callback) => {
-        hookOrder.push('afterResolve');
-        callback(null);
-      });
-
-      ScriptManager.shared.addResolver(async (scriptId) => {
+  it('should pass args between hooks using waterfall pattern', async () => {
+    ['first', 'second', 'third'].forEach((prefix) => {
+      ScriptManager.shared.hooks.beforeResolve(async (args) => {
         return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+          options: {
+            ...args.options,
+            scriptId: `${prefix}-${args.options.scriptId}`,
+          },
         };
       });
+    });
+
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return { url: Script.getRemoteURL(`http://domain.ext/${scriptId}`) };
+    });
+
+    const script = await ScriptManager.shared.resolveScript(
+      'test-script',
+      'test-caller'
+    );
+
+    expect(script.scriptId).toBe('third-second-first-test-script');
+    expect(script.locator.url).toBe(
+      'http://domain.ext/third-second-first-test-script.chunk.bundle'
+    );
+  });
+
+  describe('resolve hooks', () => {
+    it('should call resolve hooks in correct lifecycle order', async () => {
+      const hookOrder: string[] = [];
+
+      ScriptManager.shared.hooks.beforeResolve(async (args) => {
+        hookOrder.push('beforeResolve');
+        return args;
+      });
+
+      ScriptManager.shared.hooks.resolve(async () => {
+        hookOrder.push('resolve');
+        return { url: 'http://domain.ext/test-script' };
+      });
+
+      ScriptManager.shared.hooks.afterResolve(async (args) => {
+        hookOrder.push('afterResolve');
+        return args;
+      });
+
+      ScriptManager.shared.addResolver(async (scriptId) => ({
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+      }));
 
       await ScriptManager.shared.resolveScript('test-script', 'main');
-
       expect(hookOrder).toEqual(['beforeResolve', 'resolve', 'afterResolve']);
     });
 
     it('should call error hook when resolution fails', async () => {
-      const errorHookCalled = jest.fn();
+      const errorHookCallback = jest.fn();
 
-      ScriptManager.shared.hooks.errorResolve(
-        ({ scriptId, caller, error }, callback) => {
-          expect(error).toBeDefined();
-          errorHookCalled(scriptId, caller, error);
-          callback();
-        }
-      );
+      ScriptManager.shared.hooks.errorResolve(async ({ error, options }) => {
+        errorHookCallback(options.scriptId, options.caller, error);
+      });
 
       // No resolver added to trigger error
       await expect(
         ScriptManager.shared.resolveScript('test-script', 'test-caller')
       ).rejects.toThrow();
 
-      expect(errorHookCalled).toHaveBeenCalledWith(
+      expect(errorHookCallback).toHaveBeenCalledWith(
         'test-script',
         'test-caller',
         expect.any(Error)
       );
     });
 
-    it('should allow multiple hooks to be registered in series', async () => {
-      const executionOrder: string[] = [];
-
-      ['first', 'second'].forEach((prefix) => {
-        ScriptManager.shared.hooks.beforeResolve(
-          ({ webpackContext }, callback) => {
-            executionOrder.push(`${prefix}-beforeResolve`);
-            callback(null, {
-              scriptId: 'test-script',
-              caller: 'test-caller',
-              webpackContext,
-            });
-          }
-        );
-
-        ScriptManager.shared.hooks.afterResolve((_, callback) => {
-          executionOrder.push(`${prefix}-afterResolve`);
-          callback(null);
-        });
-      });
-
-      ScriptManager.shared.addResolver(async (scriptId) => {
-        executionOrder.push('resolver');
+    it('should allow beforeResolve hook to override resolution args', async () => {
+      ScriptManager.shared.hooks.beforeResolve(async ({ options }) => {
         return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+          options: {
+            ...options,
+            scriptId: 'custom-script',
+            caller: 'custom-caller',
+          },
         };
       });
 
-      await ScriptManager.shared.resolveScript('test-script', 'test-caller');
-
-      expect(executionOrder).toEqual([
-        'first-beforeResolve',
-        'second-beforeResolve',
-        'resolver',
-        'first-afterResolve',
-        'second-afterResolve',
-      ]);
-    });
-
-    it('should allow beforeResolve hook to override parameters', async () => {
-      const hookOrder: string[] = [];
-      const originalScriptId = 'original-script';
-      const overriddenScriptId = 'overridden-script';
-      const originalCaller = 'original-caller';
-      const overriddenCaller = 'overridden-caller';
-
-      ScriptManager.shared.addResolver(async (scriptId, caller) => {
-        expect(scriptId).toBe(overriddenScriptId);
-        expect(caller).toBe(overriddenCaller);
-        return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-        };
+      ScriptManager.shared.addResolver(async () => {
+        return { url: Script.getRemoteURL('http://domain.ext/script') };
       });
-
-      ScriptManager.shared.hooks.beforeResolve(
-        ({ scriptId, caller, webpackContext }, callback) => {
-          expect(scriptId).toBe(originalScriptId);
-          expect(caller).toBe(originalCaller);
-          hookOrder.push('beforeResolve');
-          callback(null, {
-            scriptId: overriddenScriptId,
-            caller: overriddenCaller,
-            webpackContext,
-          });
-        }
-      );
-
-      ScriptManager.shared.hooks.resolve(
-        ({ scriptId, caller, webpackContext }, callback) => {
-          expect(scriptId).toBe(overriddenScriptId);
-          expect(caller).toBe(overriddenCaller);
-          hookOrder.push('resolve');
-          callback(null, {
-            scriptId: 'test-script',
-            caller: 'main',
-            result: {
-              url: 'http://domain.ext/test-script',
-            },
-            resolvers: [],
-            webpackContext,
-          });
-        }
-      );
-
-      ScriptManager.shared.hooks.afterResolve(
-        ({ scriptId, caller }, callback) => {
-          expect(scriptId).toBe(overriddenScriptId);
-          expect(caller).toBe(overriddenCaller);
-          hookOrder.push('afterResolve');
-          callback(null);
-        }
-      );
 
       const script = await ScriptManager.shared.resolveScript(
-        originalScriptId,
-        originalCaller
+        'original-script',
+        'original-caller'
       );
-      expect(script.locator.uniqueId).toBe(
-        `${overriddenCaller}_${overriddenScriptId}`
-      );
-      expect(hookOrder).toEqual(['beforeResolve', 'resolve', 'afterResolve']);
 
-      ScriptManager.shared.removeAllResolvers();
+      expect(script.scriptId).toBe('custom-script');
+      expect(script.caller).toBe('custom-caller');
+      expect(script.locator.url).toBe('http://domain.ext/script.chunk.bundle');
     });
 
-    it('should call hooks in correct lifecycle order', async () => {
-      const hookOrder: string[] = [];
-
-      ScriptManager.shared.addResolver(async (scriptId) => {
+    it('should allow afterResolve hook to override locator', async () => {
+      ScriptManager.shared.hooks.afterResolve(async ({ options, locator }) => {
         return {
-          url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+          options,
+          locator: {
+            ...locator,
+            url: 'https://overriden-locator-url.com/script.js',
+          },
         };
       });
 
-      ScriptManager.shared.hooks.beforeResolve(
-        ({ scriptId, caller, webpackContext }, callback) => {
-          hookOrder.push('beforeResolve');
-          callback(null, { scriptId, caller, webpackContext });
-        }
-      );
-
-      ScriptManager.shared.hooks.resolve(({ webpackContext }, callback) => {
-        hookOrder.push('resolve');
-        callback(null, {
-          scriptId: 'test-script',
-          caller: 'main',
-          result: {
-            url: 'http://domain.ext/test-script',
-          },
-          resolvers: [],
-          webpackContext,
-        });
+      ScriptManager.shared.addResolver(async () => {
+        return {
+          cache: true,
+          url: Script.getRemoteURL('http://domain.ext/script'),
+        };
       });
 
-      ScriptManager.shared.hooks.afterResolve((_, callback) => {
-        hookOrder.push('afterResolve');
-        callback(null);
-      });
-
-      await ScriptManager.shared.resolveScript('test-script', 'main');
-
-      expect(hookOrder).toEqual(['beforeResolve', 'resolve', 'afterResolve']);
-
-      ScriptManager.shared.removeAllResolvers();
-    });
-
-    it('should call error hook when resolution fails', async () => {
-      const errorHookCalled = jest.fn();
-
-      ScriptManager.shared.hooks.errorResolve(
-        ({ scriptId, caller, error }, callback) => {
-          expect(error).toBeDefined();
-          errorHookCalled(scriptId, caller, error);
-          callback();
-        }
+      const script = await ScriptManager.shared.resolveScript(
+        'original-script',
+        'original-caller'
       );
 
-      // No resolver added to trigger error
-      await expect(
-        ScriptManager.shared.resolveScript('test-script', 'test-caller')
-      ).rejects.toThrow();
-
-      expect(errorHookCalled).toHaveBeenCalledWith(
-        'test-script',
-        'test-caller',
-        expect.any(Error)
+      expect(script.scriptId).toBe('original-script');
+      expect(script.caller).toBe('original-caller');
+      expect(script.cache).toBe(true);
+      expect(script.locator.url).toBe(
+        'https://overriden-locator-url.com/script.js'
       );
     });
 
     it('should allow resolve hook to handle resolution with custom logic', async () => {
-      const hookOrder: string[] = [];
-      const customScriptId = 'custom-script';
-      const customCaller = 'custom-caller';
-      const customReferenceUrl = 'http://reference.url';
-
-      ScriptManager.shared.hooks.beforeResolve(
-        ({ scriptId, caller, webpackContext }, callback) => {
-          hookOrder.push('beforeResolve');
-          callback(null, {
-            scriptId,
-            caller,
-            webpackContext,
-            referenceUrl: customReferenceUrl,
-          });
-        }
-      );
-
-      ScriptManager.shared.hooks.resolve(async (params, callback) => {
-        const { scriptId, caller, referenceUrl, resolvers } = params;
-
-        expect(scriptId).toBe(customScriptId);
-        expect(caller).toBe(customCaller);
-        expect(referenceUrl).toBe(customReferenceUrl);
-        expect(resolvers).toBeDefined();
-        expect(Array.isArray(resolvers)).toBe(true);
-
-        hookOrder.push('resolve');
-        for (const [, , resolve] of params.resolvers) {
-          try {
-            const resolvedLocator = await resolve(
-              params.scriptId,
-              params.caller,
-              params.referenceUrl
-            );
-
-            if (resolvedLocator) {
-              callback(null, {
-                ...params,
-                result: resolvedLocator,
-              });
-              return;
-            }
-          } catch (error) {
-            if (error instanceof Error) {
-              callback(error);
-            } else {
-              callback(new Error('Unknown error occurred'));
-            }
-            return;
-          }
-        }
-        callback(new Error('No locator found'));
-      });
-
-      ScriptManager.shared.hooks.afterResolve(
-        ({ scriptId, caller }, callback) => {
-          expect(scriptId).toBe(customScriptId);
-          expect(caller).toBe(customCaller);
-          hookOrder.push('afterResolve');
-          callback(null);
-        }
-      );
-
-      // Add a resolver that should be called by the hook
+      // Add a resolver that should be ignored
       ScriptManager.shared.addResolver(async () => {
-        hookOrder.push('resolver');
         return {
           url: Script.getRemoteURL('http://domain.ext/script.js'),
           cache: true,
         };
       });
 
-      const script = await ScriptManager.shared.resolveScript(
-        customScriptId,
-        customCaller,
-        getWebpackContext(),
-        customReferenceUrl
-      );
-      expect(script.locator.url).toBe(
-        'http://domain.ext/script.js.chunk.bundle'
-      );
-      expect(hookOrder).toEqual([
-        'beforeResolve',
-        'resolve',
-        'resolver',
-        'afterResolve',
-      ]);
+      // Add custom resolution logic through the resolve hook
+      ScriptManager.shared.hooks.resolve(async (args) => {
+        return { url: `https://custom-url.com/${args.options.scriptId}` };
+      });
 
-      ScriptManager.shared.removeAllResolvers();
+      const script = await ScriptManager.shared.resolveScript(
+        'custom-script',
+        'custom-caller'
+      );
+
+      expect(script.scriptId).toBe('custom-script');
+      expect(script.caller).toBe('custom-caller');
+      expect(script.cache).toBe(true);
+      expect(script.locator.url).toBe('https://custom-url.com/custom-script');
+    });
+
+    it('should use the first valid locator from multiple resolve hooks', async () => {
+      // Add a noop resolver that will be ignored anyways
+      ScriptManager.shared.addResolver(async () => {
+        return undefined;
+      });
+
+      // Noop resolve hook - will be ignored
+      ScriptManager.shared.hooks.resolve(async () => {
+        return undefined;
+      });
+
+      // Valid resolve hook - should be used
+      ScriptManager.shared.hooks.resolve(async (args) => {
+        return { url: `https://valid-url.com/${args.options.scriptId}` };
+      });
+
+      // Valid resolve hook - will be ignored because previous hook is valid
+      ScriptManager.shared.hooks.resolve(async (args) => {
+        return { url: `https://invalid-url.com/${args.options.scriptId}` };
+      });
+
+      const script = await ScriptManager.shared.resolveScript(
+        'custom-script',
+        'custom-caller'
+      );
+
+      expect(script.locator.url).toBe('https://valid-url.com/custom-script');
     });
   });
 
-  describe('loading script hooks lifecycle', () => {
-    it('should call hooks in correct order during successful loading', async () => {
-      mockLoadScriptBasedOnFetch();
-
+  describe('load hooks', () => {
+    it('should call load hooks in correct lifecycle order', async () => {
       const executionOrder: string[] = [];
 
       ScriptManager.shared.addResolver(async (scriptId) => {
-        return {
-          url: Script.getRemoteURL(`https://domain.ext/${scriptId}`),
-        };
+        return { url: Script.getRemoteURL(`https://domain.ext/${scriptId}`) };
       });
 
-      ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
+      ScriptManager.shared.hooks.beforeLoad(async (args) => {
         executionOrder.push('beforeLoad');
-        callback(null);
+        return args;
       });
 
-      ScriptManager.shared.hooks.afterLoad(async (_, callback) => {
+      ScriptManager.shared.hooks.load(async ({ loadScript }) => {
+        executionOrder.push('load');
+        await loadScript();
+      });
+
+      ScriptManager.shared.hooks.afterLoad(async (args) => {
         executionOrder.push('afterLoad');
-        callback(null);
+        return args;
       });
 
       await ScriptManager.shared.loadScript('test-script');
-
-      expect(executionOrder).toEqual(['beforeLoad', 'afterLoad']);
-
-      ScriptManager.shared.removeAllResolvers();
+      expect(executionOrder).toEqual(['beforeLoad', 'load', 'afterLoad']);
     });
 
     it('should call error hook when loading fails', async () => {
-      const loadScriptSpy = jest.spyOn(NativeScriptManager, 'loadScript');
-      mockLoadScriptBasedOnFetch(loadScriptSpy);
+      const errorHookCallback = jest.fn();
 
-      const executionOrder: string[] = [];
+      // prevent no resolvers error
       ScriptManager.shared.addResolver(async () => {
-        return {
-          url: Script.getRemoteURL('https://domain.ext/test-script'),
-        };
+        return { url: 'https://domain.ext/test-script' };
       });
 
-      ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
-        executionOrder.push('beforeLoad');
-        callback(null);
+      // emulate loading error through custom load logic
+      ScriptManager.shared.hooks.load(async () => {
+        throw new Error('Load failed');
       });
 
-      ScriptManager.shared.hooks.afterLoad(async (_, callback) => {
-        executionOrder.push('afterLoad');
-        callback(null);
+      ScriptManager.shared.hooks.errorLoad(async ({ error, options }) => {
+        errorHookCallback(options.scriptId, options.caller, error);
       });
-
-      ScriptManager.shared.hooks.errorLoad(async ({ error }, callback) => {
-        executionOrder.push('errorLoad');
-        callback(error);
-      });
-
-      loadScriptSpy.mockRejectedValueOnce(new Error('Load failed'));
 
       await expect(
         ScriptManager.shared.loadScript('test-script')
-      ).rejects.toThrow('Load failed');
-      expect(executionOrder).toEqual(['beforeLoad', 'errorLoad']);
+      ).rejects.toThrow();
 
-      loadScriptSpy.mockRestore();
-      ScriptManager.shared.removeAllResolvers();
-    });
-
-    it('should call multiple hooks in correct order', async () => {
-      mockLoadScriptBasedOnFetch();
-
-      const executionOrder: string[] = [];
-
-      ScriptManager.shared.addResolver(async () => {
-        return {
-          url: Script.getRemoteURL('https://domain.ext/test-script'),
-        };
-      });
-
-      ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
-        executionOrder.push('first-beforeLoad');
-        callback(null);
-      });
-
-      ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
-        executionOrder.push('second-beforeLoad');
-        callback(null);
-      });
-
-      ScriptManager.shared.hooks.afterLoad(async (_, callback) => {
-        executionOrder.push('first-afterLoad');
-        callback(null);
-      });
-
-      ScriptManager.shared.hooks.afterLoad(async (_, callback) => {
-        executionOrder.push('second-afterLoad');
-        callback(null);
-      });
-
-      await ScriptManager.shared.loadScript('test-script');
-
-      expect(executionOrder).toEqual([
-        'first-beforeLoad',
-        'second-beforeLoad',
-        'first-afterLoad',
-        'second-afterLoad',
-      ]);
-
-      ScriptManager.shared.removeAllResolvers();
+      expect(errorHookCallback).toHaveBeenCalledWith(
+        'test-script',
+        undefined,
+        expect.any(Error)
+      );
     });
 
     it('should allow load hook to handle loading with custom logic', async () => {
-      const hookOrder: string[] = [];
-      const customScriptId = 'custom-script';
-      const customCaller = 'custom-caller';
+      const spy = jest.spyOn(NativeScriptManager, 'loadScript');
 
       ScriptManager.shared.addResolver(async () => {
         return {
-          url: Script.getRemoteURL('https://domain.ext/test-script'),
+          url: Script.getRemoteURL('http://domain.ext/script.js'),
+          retry: 3,
+          retryDelay: 100,
         };
       });
 
-      ScriptManager.shared.hooks.beforeLoad(
-        async ({ scriptId, caller }, callback) => {
-          expect(scriptId).toBe(customScriptId);
-          expect(caller).toBe(customCaller);
-          hookOrder.push('beforeLoad');
-          callback(null);
-        }
-      );
-
-      ScriptManager.shared.hooks.load(async (params, callback) => {
-        expect(params.scriptId).toBe(customScriptId);
-        expect(params.caller).toBe(customCaller);
-        expect(params.locator).toBeDefined();
-        hookOrder.push('load');
-
-        try {
-          await NativeScriptManager.loadScript(params.scriptId, params.locator);
-          callback(null);
-        } catch (error) {
-          if (error instanceof Error) {
-            callback(error);
-          } else {
-            callback(new Error('Unknown error occurred'));
-          }
-        }
+      spy.mockRejectedValue({
+        code: 'NetworkFailure',
+        message: 'mocked network failure',
       });
 
-      ScriptManager.shared.hooks.afterLoad(({ scriptId, caller }, callback) => {
-        expect(scriptId).toBe(customScriptId);
-        expect(caller).toBe(customCaller);
-        hookOrder.push('afterLoad');
-        callback(null);
+      await expect(
+        ScriptManager.shared.loadScript('custom-script')
+      ).rejects.toThrow();
+
+      // 1 + 3 retries
+      expect(spy).toHaveBeenCalledTimes(4);
+
+      spy.mockClear();
+
+      ScriptManager.shared.hooks.load(async ({ script, loadScript }) => {
+        await loadScript(script.scriptId, {
+          ...script.locator,
+          retry: 0,
+          retryDelay: 0,
+        });
       });
 
-      await ScriptManager.shared.loadScript(customScriptId, customCaller);
-      expect(hookOrder).toEqual(['beforeLoad', 'load', 'afterLoad']);
+      await expect(
+        ScriptManager.shared.loadScript('custom-script')
+      ).rejects.toThrow();
 
-      ScriptManager.shared.removeAllResolvers();
+      // no retries
+      expect(spy).toHaveBeenCalledTimes(1);
     });
-
-    it('should handle load hook errors correctly', async () => {
-      const hookOrder: string[] = [];
-      const customScriptId = 'custom-script';
-      const customCaller = 'custom-caller';
-      const expectedError = new Error('Custom load error');
-
-      ScriptManager.shared.addResolver(async () => {
-        return {
-          url: Script.getRemoteURL('https://domain.ext/test-script'),
-        };
-      });
-
-      ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
-        hookOrder.push('beforeLoad');
-        callback(null);
-      });
-
-      ScriptManager.shared.hooks.load(async (_, callback) => {
-        hookOrder.push('load');
-        callback(expectedError);
-      });
-
-      ScriptManager.shared.hooks.errorLoad(async ({ error }, callback) => {
-        expect(error).toBeDefined();
-        expect(error).toBe(expectedError);
-        hookOrder.push('errorLoad');
-        callback();
-      });
-
-      const error = await ScriptManager.shared
-        .loadScript(customScriptId, customCaller)
-        .catch((e) => e);
-      expect(error).toMatchObject({
-        code: 'ERR_UNHANDLED_ERROR',
-        context: {
-          message: '[ScriptManager] Failed to load script:',
-          originalError: expectedError,
-        },
-      });
-
-      expect(hookOrder).toEqual(['beforeLoad', 'load', 'errorLoad']);
-
-      ScriptManager.shared.removeAllResolvers();
-    });
-
-    it('should handle multiple load hooks in sequence', async () => {
-      const hookOrder: string[] = [];
-      const customScriptId = 'custom-script';
-
-      ScriptManager.shared.addResolver(async () => {
-        return {
-          url: Script.getRemoteURL('https://domain.ext/test-script'),
-        };
-      });
-
-      ['first', 'second'].forEach((prefix) => {
-        ScriptManager.shared.hooks.beforeLoad(async (_, callback) => {
-          hookOrder.push(`${prefix}-beforeLoad`);
-          callback(null);
-        });
-
-        ScriptManager.shared.hooks.load(async (params, callback) => {
-          hookOrder.push(`${prefix}-load`);
-          if (prefix === 'second') {
-            await NativeScriptManager.loadScript(
-              params.scriptId,
-              params.locator
-            );
-          }
-          callback(null);
-        });
-
-        ScriptManager.shared.hooks.afterLoad(async (_, callback) => {
-          hookOrder.push(`${prefix}-afterLoad`);
-          callback(null);
-        });
-      });
-
-      await ScriptManager.shared.loadScript(customScriptId);
-      expect(hookOrder).toEqual([
-        'first-beforeLoad',
-        'second-beforeLoad',
-        'first-load',
-        'second-load',
-        'first-afterLoad',
-        'second-afterLoad',
-      ]);
-
-      ScriptManager.shared.removeAllResolvers();
-    });
-  });
-
-  it('should chain beforeResolve hooks in waterfall pattern', async () => {
-    const hookOrder: string[] = [];
-    const hookParams: Array<{
-      scriptId: string;
-      caller?: string;
-      webpackContext: any;
-    }> = [];
-
-    ScriptManager.shared.addResolver(async (scriptId) => ({
-      url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-    }));
-
-    ScriptManager.shared.hooks.beforeResolve(
-      ({ scriptId, caller, webpackContext }, callback) => {
-        hookOrder.push('beforeResolve1');
-        hookParams.push({ scriptId, caller, webpackContext });
-        callback(null, {
-          scriptId: 'modified',
-          caller: 'modified',
-          webpackContext,
-        });
-      }
-    );
-
-    ScriptManager.shared.hooks.beforeResolve(
-      ({ scriptId, caller, webpackContext }, callback) => {
-        hookOrder.push('beforeResolve2');
-        hookParams.push({ scriptId, caller, webpackContext });
-        callback(null, {
-          scriptId: scriptId + '2',
-          caller: caller + '2',
-          webpackContext,
-        });
-      }
-    );
-
-    ScriptManager.shared.hooks.beforeResolve(
-      ({ scriptId, caller, webpackContext }, callback) => {
-        hookOrder.push('beforeResolve3');
-        hookParams.push({ scriptId, caller, webpackContext });
-        callback(null, {
-          scriptId: scriptId + '3',
-          caller: caller + '3',
-          webpackContext,
-        });
-      }
-    );
-
-    await ScriptManager.shared.resolveScript('test-script', 'main');
-
-    expect(hookOrder).toEqual([
-      'beforeResolve1',
-      'beforeResolve2',
-      'beforeResolve3',
-    ]);
-    expect(hookParams).toEqual([
-      {
-        scriptId: 'test-script',
-        caller: 'main',
-        webpackContext: expect.any(Function),
-      },
-      {
-        scriptId: 'modified',
-        caller: 'modified',
-        webpackContext: expect.any(Function),
-      },
-      {
-        scriptId: 'modified2',
-        caller: 'modified2',
-        webpackContext: expect.any(Function),
-      },
-    ]);
-  });
-
-  it('should chain beforeLoad hooks in waterfall pattern', async () => {
-    const hookOrder: string[] = [];
-    const hookParams: Array<{
-      scriptId: string;
-      caller?: string;
-      webpackContext: any;
-    }> = [];
-
-    ScriptManager.shared.addResolver(async (scriptId) => ({
-      url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-    }));
-
-    ScriptManager.shared.hooks.beforeLoad(
-      ({ scriptId, caller, webpackContext }, callback) => {
-        hookOrder.push('beforeLoad1');
-        hookParams.push({ scriptId, caller, webpackContext });
-        callback(null, {
-          scriptId: 'modified',
-          caller: 'modified',
-          webpackContext,
-        });
-      }
-    );
-
-    ScriptManager.shared.hooks.beforeLoad(
-      ({ scriptId, caller, webpackContext }, callback) => {
-        hookOrder.push('beforeLoad2');
-        hookParams.push({ scriptId, caller, webpackContext });
-        callback(null, {
-          scriptId: scriptId + '2',
-          caller: caller + '2',
-          webpackContext,
-        });
-      }
-    );
-
-    ScriptManager.shared.hooks.beforeLoad(
-      ({ scriptId, caller, webpackContext }, callback) => {
-        hookOrder.push('beforeLoad3');
-        hookParams.push({ scriptId, caller, webpackContext });
-        callback(null, {
-          scriptId: scriptId + '3',
-          caller: caller + '3',
-          webpackContext,
-        });
-      }
-    );
-
-    await ScriptManager.shared.loadScript('test-script', 'main');
-
-    expect(hookOrder).toEqual(['beforeLoad1', 'beforeLoad2', 'beforeLoad3']);
-    expect(hookParams).toEqual([
-      {
-        scriptId: 'test-script',
-        caller: 'main',
-        webpackContext: expect.any(Function),
-      },
-      {
-        scriptId: 'modified',
-        caller: 'modified',
-        webpackContext: expect.any(Function),
-      },
-      {
-        scriptId: 'modified2',
-        caller: 'modified2',
-        webpackContext: expect.any(Function),
-      },
-    ]);
-  });
-
-  it('should chain afterResolve hooks in waterfall pattern', async () => {
-    const hookOrder: string[] = [];
-    const hookParams: Array<{
-      scriptId: string;
-      caller?: string;
-    }> = [];
-
-    ScriptManager.shared.addResolver(async (scriptId) => ({
-      url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-    }));
-
-    ScriptManager.shared.hooks.afterResolve(
-      ({ scriptId, caller }, callback) => {
-        hookOrder.push('afterResolve1');
-        hookParams.push({ scriptId, caller });
-        callback(null, {
-          scriptId: 'modified',
-          caller: 'modified',
-        });
-      }
-    );
-
-    ScriptManager.shared.hooks.afterResolve(
-      ({ scriptId, caller }, callback) => {
-        hookOrder.push('afterResolve2');
-        hookParams.push({ scriptId, caller });
-        callback(null, {
-          scriptId: scriptId + '2',
-          caller: caller + '2',
-        });
-      }
-    );
-
-    ScriptManager.shared.hooks.afterResolve(
-      ({ scriptId, caller }, callback) => {
-        hookOrder.push('afterResolve3');
-        hookParams.push({ scriptId, caller });
-        callback(null, {
-          scriptId: scriptId + '3',
-          caller: caller + '3',
-        });
-      }
-    );
-
-    await ScriptManager.shared.resolveScript('test-script', 'main');
-
-    expect(hookOrder).toEqual([
-      'afterResolve1',
-      'afterResolve2',
-      'afterResolve3',
-    ]);
-    expect(hookParams).toEqual([
-      {
-        scriptId: 'test-script',
-        caller: 'main',
-      },
-      {
-        scriptId: 'modified',
-        caller: 'modified',
-      },
-      {
-        scriptId: 'modified2',
-        caller: 'modified2',
-      },
-    ]);
-  });
-
-  it('should chain afterLoad hooks in waterfall pattern', async () => {
-    const hookOrder: string[] = [];
-    const hookParams: Array<{
-      scriptId: string;
-      caller?: string;
-      webpackContext: any;
-    }> = [];
-
-    ScriptManager.shared.addResolver(async (scriptId) => ({
-      url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
-    }));
-
-    ScriptManager.shared.hooks.afterLoad(
-      ({ scriptId, caller, webpackContext }, callback) => {
-        hookOrder.push('afterLoad1');
-        hookParams.push({ scriptId, caller, webpackContext });
-        callback(null, {
-          scriptId: 'modified',
-          caller: 'modified',
-          webpackContext,
-        });
-      }
-    );
-
-    ScriptManager.shared.hooks.afterLoad(
-      ({ scriptId, caller, webpackContext }, callback) => {
-        hookOrder.push('afterLoad2');
-        hookParams.push({ scriptId, caller, webpackContext });
-        callback(null, {
-          scriptId: scriptId + '2',
-          caller: caller + '2',
-          webpackContext,
-        });
-      }
-    );
-
-    ScriptManager.shared.hooks.afterLoad(
-      ({ scriptId, caller, webpackContext }, callback) => {
-        hookOrder.push('afterLoad3');
-        hookParams.push({ scriptId, caller, webpackContext });
-        callback(null, {
-          scriptId: scriptId + '3',
-          caller: caller + '3',
-          webpackContext,
-        });
-      }
-    );
-
-    await ScriptManager.shared.loadScript('test-script', 'main');
-
-    expect(hookOrder).toEqual(['afterLoad1', 'afterLoad2', 'afterLoad3']);
-    expect(hookParams).toEqual([
-      {
-        scriptId: 'test-script',
-        caller: 'main',
-        webpackContext: expect.any(Function),
-      },
-      {
-        scriptId: 'modified',
-        caller: 'modified',
-        webpackContext: expect.any(Function),
-      },
-      {
-        scriptId: 'modified2',
-        caller: 'modified2',
-        webpackContext: expect.any(Function),
-      },
-    ]);
   });
 });
-
-function mockLoadScriptBasedOnFetch(
-  providedSpy?: jest.SpyInstance<
-    Promise<null>,
-    [string, NormalizedScriptLocator]
-  >
-) {
-  jest.useFakeTimers({ advanceTimers: true });
-  const spy = providedSpy ?? jest.spyOn(NativeScriptManager, 'loadScript');
-
-  spy.mockImplementation(
-    (_scriptId: string, scriptConfig: NormalizedScriptLocator) =>
-      scriptConfig.fetch
-        ? new Promise<null>((resolve) => {
-            setTimeout(() => resolve(null), 10);
-          })
-        : Promise.resolve(null)
-  );
-
-  return spy;
-}

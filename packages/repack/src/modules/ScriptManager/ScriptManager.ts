@@ -93,16 +93,21 @@ interface ErrorResolveHookOptions {
 
 interface BeforeLoadHookOptions {
   options: LoadScriptOptions;
+  script: Script;
 }
 
 interface LoadHookOptions {
   options: LoadScriptOptions;
   script: Script;
-  loadScript: () => Promise<void>;
+  loadScript: (
+    scriptId?: string,
+    locator?: NormalizedScriptLocator & { retryDelay?: number; retry?: number }
+  ) => Promise<void>;
 }
 
 interface AfterLoadHookOptions {
   options: LoadScriptOptions;
+  script: Script;
 }
 
 interface ErrorLoadHookOptions {
@@ -422,11 +427,16 @@ export class ScriptManager extends EventEmitter {
         );
       }
 
+      if (this.hookMap.afterResolve.isUsed()) {
+        ({ options, locator } = await this.hookMap.afterResolve.promise({
+          options,
+          locator,
+        }));
+      }
+
       if (typeof locator.url === 'function') {
         locator.url = locator.url(options.webpackContext);
       }
-
-      await this.hookMap.afterResolve.promise({ options, locator });
 
       const script = await this.createScript(
         options.scriptId,
@@ -536,7 +546,7 @@ export class ScriptManager extends EventEmitter {
     }
 
     const loadProcess = async () => {
-      const script = await this.resolveScript(
+      let script = await this.resolveScript(
         options.scriptId,
         options.caller,
         options.webpackContext,
@@ -544,7 +554,12 @@ export class ScriptManager extends EventEmitter {
       );
 
       try {
-        ({ options } = await this.hookMap.beforeLoad.promise({ options }));
+        if (this.hookMap.beforeLoad.isUsed()) {
+          ({ options, script } = await this.hookMap.beforeLoad.promise({
+            options,
+            script,
+          }));
+        }
 
         this.emit('loading', script.toObject());
 
@@ -552,15 +567,24 @@ export class ScriptManager extends EventEmitter {
           await this.hookMap.load.promise({
             options,
             script,
-            loadScript: async () => {
-              await this.loadScriptWithRetry(options.scriptId, script.locator);
+            loadScript: async (
+              scriptId = options.scriptId,
+              locator = script.locator
+            ) => {
+              await this.loadScriptWithRetry(scriptId, locator);
             },
           });
         } else {
           await this.loadScriptWithRetry(options.scriptId, script.locator);
         }
 
-        await this.hookMap.afterLoad.promise({ options });
+        if (this.hookMap.afterLoad.isUsed()) {
+          ({ options, script } = await this.hookMap.afterLoad.promise({
+            options,
+            script,
+          }));
+        }
+
         this.emit('loaded', script.toObject());
         await this.updateCache(script);
       } catch (error) {
