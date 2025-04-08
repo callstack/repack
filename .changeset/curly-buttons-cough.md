@@ -1,5 +1,5 @@
 ---
-"@callstack/repack": patch
+"@callstack/repack": minor
 ---
 
-Add tapable hooks for resolving and loading scripts in ScriptManager
+Add hook system to `ScriptManager` for runtime manipulation of script loading process.
