@@ -232,14 +232,14 @@ export class ScriptManager extends EventEmitter {
       this.hookMap.errorResolve.tapPromise('errorResolve', promisify(fn)),
     beforeLoad: (
       fn: (params: BeforeLoadHookParams) => Promise<BeforeLoadHookParams>
-    ) => this.hookMap.beforeLoad.tapAsync('beforeLoad', promisify(fn)),
+    ) => this.hookMap.beforeLoad.tapPromise('beforeLoad', promisify(fn)),
     load: (fn: (params: LoadHookParams) => Promise<LoadHookParams>) =>
-      this.hookMap.load.tapAsync('load', promisify(fn)),
+      this.hookMap.load.tapPromise('load', promisify(fn)),
     afterLoad: (
       fn: (params: AfterLoadHookParams) => Promise<AfterLoadHookParams>
-    ) => this.hookMap.afterLoad.tapAsync('afterLoad', promisify(fn)),
+    ) => this.hookMap.afterLoad.tapPromise('afterLoad', promisify(fn)),
     errorLoad: (fn: (params: ErrorLoadHookParams) => Promise<void>) =>
-      this.hookMap.errorLoad.tapAsync('errorLoad', promisify(fn)),
+      this.hookMap.errorLoad.tapPromise('errorLoad', promisify(fn)),
   };
 
   /**
