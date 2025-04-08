@@ -57,15 +57,10 @@ ScriptManager.shared.hooks.beforeResolve((args) => {
 });
 
 ScriptManager.shared.hooks.resolve(async (args) => {
+  const { scriptId, caller, referenceUrl } = args.options;
   for (const [, , resolve] of args.resolvers) {
-    const resolvedLocator = await resolve(
-      args.scriptId,
-      args.caller,
-      args.referenceUrl
-    );
-    if (resolvedLocator) {
-      args.result = resolvedLocator;
-    }
+    const locator = await resolve(scriptId, caller, referenceUrl);
+    if (locator) return locator;
   }
 });
 
