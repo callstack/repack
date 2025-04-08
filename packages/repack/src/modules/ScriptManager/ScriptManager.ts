@@ -156,11 +156,6 @@ interface ErrorLoadHookParams extends AfterResolveHookParams {
  * ```
  */
 export class ScriptManager extends EventEmitter {
-  private resolvers: Array<[string, string | number, ScriptLocatorResolver]> =
-    [];
-  protected cache: Cache = {};
-  private storage?: StorageApi;
-
   static init() {
     if (!__webpack_require__.repack.shared.scriptManager) {
       __webpack_require__.repack.shared.scriptManager = new ScriptManager();
@@ -171,8 +166,12 @@ export class ScriptManager extends EventEmitter {
     return __webpack_require__.repack.shared.scriptManager!;
   }
 
+  protected cache: Cache = {};
   protected scriptsPromises: ScriptsPromises = {};
   protected cacheInitialized = false;
+  private resolvers: Array<[string, string | number, ScriptLocatorResolver]> =
+    [];
+  private storage?: StorageApi;
 
   /**
    * Constructs instance of `ScriptManager`.
