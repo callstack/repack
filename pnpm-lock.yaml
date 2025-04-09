@@ -677,8 +677,8 @@ importers:
         specifier: ^0.20.1
         version: 0.20.1
       enhanced-resolve:
-        specifier: ^5.16.0
-        version: 5.18.0
+        specifier: ^5.18.1
+        version: 5.18.1
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@18.19.41)
@@ -4102,6 +4102,10 @@ packages:
 
   enhanced-resolve@5.18.0:
     resolution: {integrity: sha512-0/r0MySGYG8YqlayBZ6MuCfECmHFdJ5qyPh8s8wa5Hnm6SaFLSK1VYCbj+NKp090Nm1caZhD+QTnmxO7esYGyQ==}
+    engines: {node: '>=10.13.0'}
+
+  enhanced-resolve@5.18.1:
+    resolution: {integrity: sha512-ZSW3ma5GkcQBIpwZTSRAI8N71Uuwgs93IezB7mf7R60tC8ZbJideoDNKjHn2O9KIlx6rkGTTEk1xUCK2E1Y2Yg==}
     engines: {node: '>=10.13.0'}
 
   enquirer@2.3.6:
@@ -12130,6 +12134,11 @@ snapshots:
       tapable: 2.2.1
 
   enhanced-resolve@5.18.0:
+    dependencies:
+      graceful-fs: 4.2.11
+      tapable: 2.2.1
+
+  enhanced-resolve@5.18.1:
     dependencies:
       graceful-fs: 4.2.11
       tapable: 2.2.1

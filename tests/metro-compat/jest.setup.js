@@ -11,10 +11,11 @@ const testsToSkip = {
     '[nonstrict] should fall back to "main" field resolution when "exports" is an invalid subpath',
     '[nonstrict] should fall back to "browser" spec resolution and log inaccessible import warning',
     '[nonstrict] should fall back and log warning for an invalid "exports" target value',
+    // Implictly non-strict
+    'patternBase and patternTrailer must match non-overlapping ends of matchKey',
     // Assets are handled differently in webpack
     'should resolve assets using "exports" field and calling `resolveAsset`',
     // Resolving fails as expected but error messages are different
-    'should use most specific pattern base',
     'should use most specific pattern base - custom condition',
     'should throw FailedToResolvePathError when no conditions are matched',
   ]),
@@ -23,7 +24,7 @@ const testsToSkip = {
 const testsToSkipOnce = {
   describe: new Set(),
   test: new Set([
-    // sourceExts are expanded, platform-specific extensions are not
+    // first occurence of these tests is marked as [nonstrict]
     'without expanding `sourceExts`',
     'without expanding platform-specific extensions',
   ]),
@@ -68,5 +69,6 @@ jest.doMock('./resolver/__tests__/utils', () => {
         __options: args[1],
       };
     },
+    posixToSystemPath: originalModule.posixToSystemPath,
   };
 });

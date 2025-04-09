@@ -30,6 +30,17 @@ type MockFileMap = $ReadOnly<{
 export function createResolutionContext(
   fileMap: MockFileMap = {},
 ): $Diff<ResolutionContext, {originModulePath: string}> {
+  const directorySet = new Set<string>();
+  for (const filePath of Object.keys(fileMap)) {
+    let currentDir = filePath;
+    let prevDir;
+    do {
+      prevDir = currentDir;
+      currentDir = path.dirname(currentDir);
+      directorySet.add(currentDir);
+    } while (currentDir !== prevDir);
+  }
+
   return {
     dev: true,
     allowHaste: true,
@@ -43,6 +54,29 @@ export function createResolutionContext(
       (typeof fileMap[filePath] === 'string' ||
         typeof fileMap[filePath].realPath === 'string'),
     extraNodeModules: null,
+    fileSystemLookup: inputPath => {
+      // Normalise and remove any trailing slash.
+      const filePath = path.resolve(inputPath);
+      const candidate = fileMap[filePath];
+      if (typeof candidate === 'string') {
+        return {exists: true, type: 'f', realPath: filePath};
+      }
+      if (candidate == null) {
+        if (directorySet.has(filePath)) {
+          return {exists: true, type: 'd', realPath: filePath};
+        }
+        return {exists: false};
+      }
+      if (candidate.realPath == null) {
+        return {exists: false};
+      }
+      return {
+        exists: true,
+        type: 'f',
+        realPath: candidate.realPath,
+      };
+    },
+    isESMImport: false,
     mainFields: ['browser', 'main'],
     nodeModulesPaths: [],
     preferNativePlatform: false,
@@ -56,20 +90,6 @@ export function createResolutionContext(
       web: ['browser'],
     },
     unstable_enablePackageExports: false,
-    unstable_fileSystemLookup: filePath => {
-      const candidate = fileMap[filePath];
-      if (typeof candidate === 'string') {
-        return {exists: true, type: 'f', realPath: filePath};
-      }
-      if (candidate == null || candidate.realPath == null) {
-        return {exists: false};
-      }
-      return {
-        exists: true,
-        type: 'f',
-        realPath: candidate.realPath,
-      };
-    },
     unstable_logWarning: () => {},
     ...createPackageAccessors(fileMap),
   };
@@ -129,3 +149,8 @@ export function createPackageAccessors(
     getPackageForModule,
   };
 }
+
+export const posixToSystemPath: string => string =
+  process.platform === 'win32'
+    ? filePath => filePath.replaceAll('/', '\\').replace(/^\\/, 'C:\\')
+    : filePath => filePath;

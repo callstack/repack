@@ -13,7 +13,7 @@ export default (env) => {
     context,
     entry: './src/mini/index.js',
     resolve: {
-      ...Repack.getResolveOptions(),
+      ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
     output: {
       path: '[context]/build/mini-app/[platform]',
