@@ -10,8 +10,8 @@ interface RNDevSettings {
   reload(): void;
 }
 
-interface RNLogBoxData {
-  clear(): void;
+interface RNLogBox {
+  clearAllLogs(): void;
 }
 
 class HMRClient {
@@ -153,17 +153,13 @@ class HMRClient {
 
 if (__DEV__ && module.hot) {
   const reload = () => {
-    let DevSettings: RNDevSettings;
-    if (__REACT_NATIVE_MINOR_VERSION__ >= 79) {
-      DevSettings =
-        require('react-native/Libraries/Utilities/DevSettings').default;
-    } else {
-      DevSettings = require('react-native/Libraries/Utilities/DevSettings');
-    }
+    const DevSettings: RNDevSettings = require('react-native').DevSettings;
     DevSettings.reload();
   };
 
   const dismissErrors = () => {
+    const LogBox: RNLogBox = require('react-native').LogBox;
+
     if (__PLATFORM__ === 'ios') {
       const NativeRedBox =
         require('react-native/Libraries/NativeModules/specs/NativeRedBox').default;
@@ -173,14 +169,8 @@ if (__DEV__ && module.hot) {
         require('react-native/Libraries/Core/NativeExceptionsManager').default;
       NativeExceptionsManager?.dismissRedbox();
     }
-    let LogBoxData: RNLogBoxData;
-    if (__REACT_NATIVE_MINOR_VERSION__ >= 79) {
-      LogBoxData =
-        require('react-native/Libraries/LogBox/Data/LogBoxData').default;
-    } else {
-      LogBoxData = require('react-native/Libraries/LogBox/Data/LogBoxData');
-    }
-    LogBoxData.clear();
+
+    LogBox.clearAllLogs();
   };
 
   const showLoadingView = (text: string, type: 'load' | 'refresh') => {
