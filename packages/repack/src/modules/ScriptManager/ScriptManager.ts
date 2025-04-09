@@ -39,6 +39,8 @@ const LOADING_ERROR_CODES = [
   'ScriptDownloadFailure',
 ];
 
+type MaybePromise<T> = T | Promise<T>;
+
 function promisify<T extends (...args: any[]) => any>(fn: T) {
   return async (...args: Parameters<T>) => fn(...args);
 }
@@ -238,29 +240,35 @@ export class ScriptManager extends EventEmitter {
 
   public hooks = {
     beforeResolve: (
-      fn: (args: BeforeResolveHookOptions) => Promise<BeforeResolveHookOptions>
+      fn: (
+        args: BeforeResolveHookOptions
+      ) => MaybePromise<BeforeResolveHookOptions>
     ) => this.hookMap.beforeResolve.tapPromise('beforeResolve', promisify(fn)),
     resolve: (
-      fn: (args: ResolveHookOptions) => Promise<ScriptLocator | undefined>
+      fn: (args: ResolveHookOptions) => MaybePromise<ScriptLocator | undefined>
     ) => this.hookMap.resolve.tapPromise('resolve', promisify(fn)),
     afterResolve: (
-      fn: (args: AfterResolveHookOptions) => Promise<AfterResolveHookOptions>
+      fn: (
+        args: AfterResolveHookOptions
+      ) => MaybePromise<AfterResolveHookOptions>
     ) => this.hookMap.afterResolve.tapPromise('afterResolve', promisify(fn)),
     errorResolve: (
       fn: (
         args: ErrorResolveHookOptions
-      ) => Promise<ScriptLocator | undefined | void>
+      ) => MaybePromise<ScriptLocator | undefined | void>
     ) => this.hookMap.errorResolve.tapPromise('errorResolve', promisify(fn)),
     beforeLoad: (
-      fn: (args: BeforeLoadHookOptions) => Promise<BeforeLoadHookOptions>
+      fn: (args: BeforeLoadHookOptions) => MaybePromise<BeforeLoadHookOptions>
     ) => this.hookMap.beforeLoad.tapPromise('beforeLoad', promisify(fn)),
-    load: (fn: (args: LoadHookOptions) => Promise<boolean>) =>
+    load: (fn: (args: LoadHookOptions) => MaybePromise<boolean>) =>
       this.hookMap.load.tapPromise('load', promisify(fn)),
     afterLoad: (
-      fn: (args: AfterLoadHookOptions) => Promise<AfterLoadHookOptions>
+      fn: (args: AfterLoadHookOptions) => MaybePromise<AfterLoadHookOptions>
     ) => this.hookMap.afterLoad.tapPromise('afterLoad', promisify(fn)),
     errorLoad: (
-      fn: (args: ErrorLoadHookOptions) => Promise<boolean | undefined | void>
+      fn: (
+        args: ErrorLoadHookOptions
+      ) => MaybePromise<boolean | undefined | void>
     ) => this.hookMap.errorLoad.tapPromise('errorLoad', promisify(fn)),
   };
 
