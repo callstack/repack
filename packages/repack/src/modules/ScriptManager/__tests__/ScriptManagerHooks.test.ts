@@ -164,7 +164,7 @@ describe('ScriptManager hooks', () => {
       );
     });
 
-    it('should allow beforeResolve hook to override resolution args', async () => {
+    it('should allow beforeResolve hook to override options', async () => {
       ScriptManager.shared.hooks.beforeResolve(async ({ options }) => {
         return {
           options: {
@@ -351,6 +351,37 @@ describe('ScriptManager hooks', () => {
       await expect(
         ScriptManager.shared.loadScript('test-script')
       ).resolves.not.toThrow();
+    });
+
+    it('should allow beforeLoad hook to override script', async () => {
+      const spy = jest.spyOn(NativeScriptManager, 'loadScript');
+
+      ScriptManager.shared.hooks.beforeLoad(async ({ script, options }) => {
+        script.locator.url = 'http://domain.ext/custom-script.js';
+
+        return {
+          script,
+          options: {
+            ...options,
+            scriptId: 'custom-script',
+            caller: 'custom-caller',
+          },
+        };
+      });
+
+      ScriptManager.shared.addResolver(async () => {
+        return { url: Script.getRemoteURL('http://domain.ext/script') };
+      });
+
+      await ScriptManager.shared.loadScript(
+        'original-script',
+        'original-caller'
+      );
+
+      expect(spy).toHaveBeenCalledWith(
+        'custom-script',
+        expect.objectContaining({ url: 'http://domain.ext/custom-script.js' })
+      );
     });
 
     it('should allow load hook to handle loading with custom logic', async () => {
