@@ -85,6 +85,7 @@ class DevServerClient {
 
 const client = new DevServerClient();
 
+// React Native < 0.79
 export function setup() {}
 export function enable() {}
 export function disable() {}
@@ -93,3 +94,13 @@ export function log(level: string, data: any[]) {
   client.log(level, data);
 }
 export function unstable_notifyFuseboxConsoleEnabled() {}
+
+// React Native >= 0.79
+export default {
+  setup,
+  enable,
+  disable,
+  registerBundle,
+  log,
+  unstable_notifyFuseboxConsoleEnabled,
+};
