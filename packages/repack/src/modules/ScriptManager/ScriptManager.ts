@@ -1,10 +1,6 @@
 // biome-ignore lint/style/useNodejsImportProtocol: use 'events' module instead of node builtin
 import EventEmitter from 'events';
-import {
-  AsyncSeriesBailHook,
-  AsyncSeriesHook,
-  AsyncSeriesWaterfallHook,
-} from 'tapable';
+import { AsyncSeriesBailHook, AsyncSeriesWaterfallHook } from 'tapable';
 import NativeScriptManager, {
   type NormalizedScriptLocator,
 } from './NativeScriptManager.js';
@@ -224,17 +220,20 @@ export class ScriptManager extends EventEmitter {
       AfterResolveHookOptions,
       AfterResolveHookOptions
     >(['args']),
-    errorResolve: new AsyncSeriesHook<ErrorResolveHookOptions, void>(['args']),
+    errorResolve: new AsyncSeriesBailHook<
+      ErrorResolveHookOptions,
+      ScriptLocator | undefined
+    >(['args']),
     beforeLoad: new AsyncSeriesWaterfallHook<
       BeforeLoadHookOptions,
       BeforeLoadHookOptions
     >(['args']),
-    load: new AsyncSeriesBailHook<LoadHookOptions, void>(['args']),
+    load: new AsyncSeriesBailHook<LoadHookOptions, boolean>(['args']),
     afterLoad: new AsyncSeriesWaterfallHook<
       AfterLoadHookOptions,
       AfterLoadHookOptions
     >(['args']),
-    errorLoad: new AsyncSeriesHook<ErrorLoadHookOptions, void>(['args']),
+    errorLoad: new AsyncSeriesBailHook<ErrorLoadHookOptions, boolean>(['args']),
   };
 
   public hooks = {
@@ -380,6 +379,8 @@ export class ScriptManager extends EventEmitter {
       webpackContext: _webpackContext,
     };
 
+    let locator: ScriptLocator | undefined;
+
     try {
       await this.initCache();
 
@@ -397,8 +398,6 @@ export class ScriptManager extends EventEmitter {
         scriptId: options.scriptId,
         caller: options.caller,
       });
-
-      let locator: ScriptLocator | undefined;
 
       if (this.hookMap.resolve.isUsed()) {
         // obtain the result from custom implementation through the resolve hook
@@ -437,7 +436,22 @@ export class ScriptManager extends EventEmitter {
       if (typeof locator.url === 'function') {
         locator.url = locator.url(options.webpackContext);
       }
+    } catch (error) {
+      locator = await this.hookMap.errorResolve.promise({
+        options,
+        error: error as Error,
+      });
 
+      if (!locator) {
+        this.handleError(
+          error,
+          '[ScriptManager] Failed while resolving script locator:',
+          { scriptId: options.scriptId, caller: options.caller }
+        );
+      }
+    }
+
+    try {
       const script = await this.createScript(
         options.scriptId,
         options.caller,
@@ -446,15 +460,10 @@ export class ScriptManager extends EventEmitter {
       this.emit('resolved', script.toObject());
       return script;
     } catch (error) {
-      await this.hookMap.errorResolve.promise({
-        options,
-        error: error as Error,
+      this.handleError(error, '[ScriptManager] Failed while creating script:', {
+        scriptId: options.scriptId,
+        caller: options.caller,
       });
-      this.handleError(
-        error,
-        '[ScriptManager] Failed while resolving script locator:',
-        { scriptId: options.scriptId, caller: options.caller }
-      );
     }
   }
 
@@ -532,6 +541,8 @@ export class ScriptManager extends EventEmitter {
       webpackContext: _webpackContext,
     };
 
+    let loaded = false;
+
     const uniqueId = Script.getScriptUniqueId(options.scriptId, options.caller);
 
     if (this.scriptsPromises[uniqueId]) {
@@ -564,7 +575,7 @@ export class ScriptManager extends EventEmitter {
         this.emit('loading', script.toObject());
 
         if (this.hookMap.load.isUsed()) {
-          await this.hookMap.load.promise({
+          loaded = await this.hookMap.load.promise({
             options,
             script,
             loadScript: async (
@@ -576,6 +587,7 @@ export class ScriptManager extends EventEmitter {
           });
         } else {
           await this.loadScriptWithRetry(options.scriptId, script.locator);
+          loaded = true;
         }
 
         if (this.hookMap.afterLoad.isUsed()) {
@@ -589,16 +601,18 @@ export class ScriptManager extends EventEmitter {
         await this.updateCache(script);
       } catch (error) {
         const { code } = error as Error & { code: string };
-        await this.hookMap.errorLoad.promise({
+        loaded = await this.hookMap.errorLoad.promise({
           options,
           error: error as Error,
         });
-        this.handleError(
-          error,
-          '[ScriptManager] Failed to load script:',
-          code ? `[${code}]` : '',
-          script.toObject()
-        );
+        if (!loaded) {
+          this.handleError(
+            error,
+            '[ScriptManager] Failed to load script:',
+            code ? `[${code}]` : '',
+            script.toObject()
+          );
+        }
       } finally {
         // should delete script promise even script failed
         delete this.scriptsPromises[uniqueId];
