@@ -145,6 +145,25 @@ describe('ScriptManager hooks', () => {
       );
     });
 
+    it('should allow obtaining locator from error hook as fallback', async () => {
+      const errorHookCallback = jest.fn();
+      ScriptManager.shared.hooks.errorResolve(async ({ error, options }) => {
+        errorHookCallback(options.scriptId, options.caller, error);
+        return { url: `http://domain.ext/${options.scriptId}.js` };
+      });
+
+      // No resolver added to trigger error
+      await expect(
+        ScriptManager.shared.resolveScript('test-script', 'test-caller')
+      ).resolves.not.toThrow();
+
+      expect(errorHookCallback).toHaveBeenCalledWith(
+        'test-script',
+        'test-caller',
+        expect.any(Error)
+      );
+    });
+
     it('should allow beforeResolve hook to override resolution args', async () => {
       ScriptManager.shared.hooks.beforeResolve(async ({ options }) => {
         return {
@@ -272,6 +291,7 @@ describe('ScriptManager hooks', () => {
       ScriptManager.shared.hooks.load(async ({ loadScript }) => {
         executionOrder.push('load');
         await loadScript();
+        return true;
       });
 
       ScriptManager.shared.hooks.afterLoad(async (args) => {
@@ -298,6 +318,7 @@ describe('ScriptManager hooks', () => {
 
       ScriptManager.shared.hooks.errorLoad(async ({ error, options }) => {
         errorHookCallback(options.scriptId, options.caller, error);
+        return false;
       });
 
       await expect(
@@ -309,6 +330,27 @@ describe('ScriptManager hooks', () => {
         undefined,
         expect.any(Error)
       );
+    });
+
+    it('should allow flagging script as loaded from error hook', async () => {
+      // prevent no resolvers error
+      ScriptManager.shared.addResolver(async () => {
+        return { url: 'https://domain.ext/test-script' };
+      });
+
+      // emulate loading error through custom load logic
+      ScriptManager.shared.hooks.load(async () => {
+        throw new Error('Load failed');
+      });
+
+      // mark the script as loaded despite the error
+      ScriptManager.shared.hooks.errorLoad(async () => {
+        return true;
+      });
+
+      await expect(
+        ScriptManager.shared.loadScript('test-script')
+      ).resolves.not.toThrow();
     });
 
     it('should allow load hook to handle loading with custom logic', async () => {
@@ -342,6 +384,7 @@ describe('ScriptManager hooks', () => {
           retry: 0,
           retryDelay: 0,
         });
+        return true;
       });
 
       await expect(
