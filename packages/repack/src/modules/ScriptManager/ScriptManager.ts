@@ -370,17 +370,20 @@ export class ScriptManager extends EventEmitter {
     referenceUrl?: string
   ): Promise<Script>;
 
+  // NOTE: Keep declaration and implementation separate
+  // to allow for better naming in JSDocs while preventing
+  // using the arguments directly in the implementation
   async resolveScript(
-    _scriptId: string,
-    _caller?: string,
-    _webpackContext = getWebpackContext(),
-    _referenceUrl?: string
+    __scriptId: string,
+    __caller?: string,
+    __webpackContext = getWebpackContext(),
+    __referenceUrl?: string
   ): Promise<Script> {
     let options: ResolveScriptOptions = {
-      scriptId: _scriptId,
-      caller: _caller,
-      referenceUrl: _referenceUrl,
-      webpackContext: _webpackContext,
+      scriptId: __scriptId,
+      caller: __caller,
+      referenceUrl: __referenceUrl,
+      webpackContext: __webpackContext,
     };
 
     let locator: ScriptLocator | undefined;
@@ -532,17 +535,20 @@ export class ScriptManager extends EventEmitter {
     referenceUrl?: string
   ): Promise<void>;
 
+  // NOTE: Keep declaration and implementation separate
+  // to allow for better naming in JSDocs while preventing
+  // using the arguments directly in the implementation
   async loadScript(
-    _scriptId: string,
-    _caller?: string,
-    _webpackContext = getWebpackContext(),
-    _referenceUrl?: string
+    __scriptId: string,
+    __caller?: string,
+    __webpackContext = getWebpackContext(),
+    __referenceUrl?: string
   ) {
     let options: LoadScriptOptions = {
-      scriptId: _scriptId,
-      caller: _caller,
-      referenceUrl: _referenceUrl,
-      webpackContext: _webpackContext,
+      scriptId: __scriptId,
+      caller: __caller,
+      referenceUrl: __referenceUrl,
+      webpackContext: __webpackContext,
     };
 
     let loaded = false;
