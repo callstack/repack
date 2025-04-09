@@ -246,18 +246,22 @@ export class ScriptManager extends EventEmitter {
     afterResolve: (
       fn: (args: AfterResolveHookOptions) => Promise<AfterResolveHookOptions>
     ) => this.hookMap.afterResolve.tapPromise('afterResolve', promisify(fn)),
-    errorResolve: (fn: (args: ErrorResolveHookOptions) => Promise<void>) =>
-      this.hookMap.errorResolve.tapPromise('errorResolve', promisify(fn)),
+    errorResolve: (
+      fn: (
+        args: ErrorResolveHookOptions
+      ) => Promise<ScriptLocator | undefined | void>
+    ) => this.hookMap.errorResolve.tapPromise('errorResolve', promisify(fn)),
     beforeLoad: (
       fn: (args: BeforeLoadHookOptions) => Promise<BeforeLoadHookOptions>
     ) => this.hookMap.beforeLoad.tapPromise('beforeLoad', promisify(fn)),
-    load: (fn: (args: LoadHookOptions) => Promise<void>) =>
+    load: (fn: (args: LoadHookOptions) => Promise<boolean>) =>
       this.hookMap.load.tapPromise('load', promisify(fn)),
     afterLoad: (
       fn: (args: AfterLoadHookOptions) => Promise<AfterLoadHookOptions>
     ) => this.hookMap.afterLoad.tapPromise('afterLoad', promisify(fn)),
-    errorLoad: (fn: (args: ErrorLoadHookOptions) => Promise<void>) =>
-      this.hookMap.errorLoad.tapPromise('errorLoad', promisify(fn)),
+    errorLoad: (
+      fn: (args: ErrorLoadHookOptions) => Promise<boolean | undefined | void>
+    ) => this.hookMap.errorLoad.tapPromise('errorLoad', promisify(fn)),
   };
 
   /**
