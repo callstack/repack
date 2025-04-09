@@ -43,8 +43,8 @@ export function inlineAssets({
     var PixelRatio = require('react-native/Libraries/Utilities/PixelRatio');
     var AssetSourceResolver = require('react-native/Libraries/Image/AssetSourceResolver');
 
-    if (PixelRatio.__esModule) PixelRatio = PixelRatio.default;
-    if (AssetSourceResolver.__esModule) AssetSourceResolver = AssetSourceResolver.default;
+    if ('default' in PixelRatio) PixelRatio = PixelRatio.default;
+    if ('default' in AssetSourceResolver) AssetSourceResolver = AssetSourceResolver.default;
     var prefferedScale = AssetSourceResolver.pickScale(${scales}, PixelRatio.get());
 
     module.exports = ${JSON.stringify(sourceSet)}[prefferedScale];
