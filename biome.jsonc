@@ -48,7 +48,8 @@
       "suspicious": {
         "noControlCharactersInRegex": "off",
         "noExplicitAny": "off",
-        "noFallthroughSwitchClause": "off"
+        "noFallthroughSwitchClause": "off",
+        "noConfusingVoidType": "off"
       }
     },
     "ignore": ["templates/*", "tests/metro-compat/**/__tests__/**"]
