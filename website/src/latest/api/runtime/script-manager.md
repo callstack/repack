@@ -149,6 +149,8 @@ ScriptManager.shared.on("error", (error) => {
 ### Custom Resolver with Retry Logic
 
 ```js
+import { ScriptManager } from "@callstack/repack/client";
+
 ScriptManager.shared.addResolver(async (scriptId) => {
   return {
     url: `https://mycdn.example/assets/${scriptId}`,
@@ -161,32 +163,14 @@ ScriptManager.shared.addResolver(async (scriptId) => {
 });
 ```
 
-### Storage Implementation
+### Enabling caching through AsyncStorage
 
 ```js
+import { ScriptManager } from "@callstack/repack/client";
 import AsyncStorage from "@react-native/async-storage";
 
 ScriptManager.shared.setStorage({
   getItem: (key) => AsyncStorage.getItem(key),
   setItem: (key, value) => AsyncStorage.setItem(key, value),
 });
-```
-
-### Module Federation Integration
-
-```js
-ScriptManager.shared.addResolver(
-  async (scriptId) => {
-    if (scriptId.startsWith("remote_")) {
-      return {
-        url: `https://mycdn.example/remotes/${scriptId}`,
-        headers: {
-          "X-Container-Name": scriptId,
-        },
-      };
-    }
-    return undefined;
-  },
-  { priority: 3 }
-);
 ```
