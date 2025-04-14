@@ -78,6 +78,10 @@ Removes a previously added resolver.
 - `resolver`: The resolver function or its unique key to remove
 - Returns: `boolean` - `true` if resolver was found and removed, `false` otherwise
 
+#### `removeAllResolvers()`
+
+Removes all previously added resolvers.
+
 #### `setStorage(storage)`
 
 Sets a storage backend for caching resolved script locator data.
@@ -98,13 +102,14 @@ Resolves, downloads, and executes a script.
 - `webpackContext`: Webpack context (optional)
 - `referenceUrl`: Reference URL for resolution (optional)
 
-#### `prefetchScript(scriptId, caller?, webpackContext?)`
+#### `prefetchScript(scriptId, caller?, webpackContext?, referenceUrl?)`
 
 Downloads a script without executing it.
 
 - `scriptId`: Id of the script to prefetch
 - `caller`: Name of the calling script (optional)
 - `webpackContext`: Webpack context (optional)
+- `referenceUrl`: Reference URL for resolution (optional)
 
 #### `invalidateScripts(scriptIds?)`
 
