@@ -41,82 +41,76 @@ export function App({ role }) {
 
 ## API Reference
 
-### Methods
-
-#### `ScriptManager.shared`
-
-- Type: `ScriptManager`
+### ScriptManager.shared
 
 The globally shared instance of `ScriptManager`. You should always use this instead of creating new instances.
 
-#### `addResolver(resolver, options?)`
+- **Type:** `ScriptManager`
 
-Adds a new script locator resolver.
+### addResolver
 
-```ts
-type ScriptLocatorResolver = (
-  scriptId: string,
-  caller?: string,
-  referenceUrl?: string
-) => Promise<ScriptLocator | undefined>;
+Adds a new script locator resolver to handle script resolution.
 
-type ResolverOptions = {
-  priority?: number;
-  key?: string;
-};
-```
+- **Type:** `addResolver(resolver: ScriptLocatorResolver, options?: ResolverOptions): void`
+- **Parameters:**
+  - `resolver`: Async function that resolves script location data
+  - `options`: Configuration options for the resolver
+    - `priority`: Priority of the resolver (default: 2)
+    - `key`: Unique key to identify the resolver
 
-- `resolver`: An async function that resolves script location data
-- `options`: Configuration options for the resolver
-  - `priority`: Priority of the resolver (default: 2)
-  - `key`: Unique key to identify the resolver
-
-#### `removeResolver(resolver)`
+### removeResolver
 
 Removes a previously added resolver.
 
-- `resolver`: The resolver function or its unique key to remove
-- Returns: `boolean` - `true` if resolver was found and removed, `false` otherwise
+- **Type:** `removeResolver(resolver: ScriptLocatorResolver | string): boolean`
+- **Parameters:**
+  - `resolver`: The resolver function or its unique key to remove
+- **Returns:** `true` if resolver was found and removed, `false` otherwise
 
-#### `removeAllResolvers()`
+### removeAllResolvers
 
 Removes all previously added resolvers.
 
-#### `setStorage(storage)`
+- **Type:** `removeAllResolvers(): void`
+
+### setStorage
 
 Sets a storage backend for caching resolved script locator data.
 
-```ts
-type StorageApi = {
-  getItem: (key: string) => Promise<string | null>;
-  setItem: (key: string, value: string) => Promise<void>;
-};
-```
+- **Type:** `setStorage(storage: StorageApi): void`
+- **Parameters:**
+  - `storage`: Storage API implementation with `getItem` and `setItem` methods
 
-#### `loadScript(scriptId, caller?, webpackContext?, referenceUrl?)`
+### loadScript
 
 Resolves, downloads, and executes a script.
 
-- `scriptId`: Id of the script to load
-- `caller`: Name of the calling script (optional)
-- `webpackContext`: Webpack context (optional)
-- `referenceUrl`: Reference URL for resolution (optional)
+- **Type:** `loadScript(scriptId: string, caller?: string, webpackContext?: any, referenceUrl?: string): Promise<void>`
+- **Parameters:**
+  - `scriptId`: Id of the script to load
+  - `caller`: Name of the calling script (optional)
+  - `webpackContext`: Webpack context (optional)
+  - `referenceUrl`: Reference URL for resolution (optional)
 
-#### `prefetchScript(scriptId, caller?, webpackContext?, referenceUrl?)`
+### prefetchScript
 
 Downloads a script without executing it.
 
-- `scriptId`: Id of the script to prefetch
-- `caller`: Name of the calling script (optional)
-- `webpackContext`: Webpack context (optional)
-- `referenceUrl`: Reference URL for resolution (optional)
+- **Type:** `prefetchScript(scriptId: string, caller?: string, webpackContext?: any, referenceUrl?: string): Promise<void>`
+- **Parameters:**
+  - `scriptId`: Id of the script to prefetch
+  - `caller`: Name of the calling script (optional)
+  - `webpackContext`: Webpack context (optional)
+  - `referenceUrl`: Reference URL for resolution (optional)
 
-#### `invalidateScripts(scriptIds?)`
+### invalidateScripts
 
 Clears cache and removes downloaded files for given scripts.
 
-- `scriptIds`: Array of script ids to invalidate (optional)
-- Returns: Promise resolving to array of invalidated script ids
+- **Type:** `invalidateScripts(scriptIds?: string[]): Promise<string[]>`
+- **Parameters:**
+  - `scriptIds`: Array of script ids to invalidate (optional)
+- **Returns:** Promise resolving to array of invalidated script ids
 
 ## Events
 
