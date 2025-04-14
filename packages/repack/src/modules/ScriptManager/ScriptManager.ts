@@ -692,14 +692,20 @@ export class ScriptManager extends EventEmitter {
   async prefetchScript(
     scriptId: string,
     caller?: string,
-    webpackContext = getWebpackContext()
+    webpackContext = getWebpackContext(),
+    referenceUrl?: string
   ) {
     const uniqueId = Script.getScriptUniqueId(scriptId, caller);
     if (this.scriptsPromises[uniqueId]) {
       return this.scriptsPromises[uniqueId];
     }
     const loadProcess = async () => {
-      const script = await this.resolveScript(scriptId, caller, webpackContext);
+      const script = await this.resolveScript(
+        scriptId,
+        caller,
+        webpackContext,
+        referenceUrl
+      );
 
       try {
         this.emit('prefetching', script.toObject());
