@@ -2,9 +2,9 @@
 pageType: home
 
 hero:
-  name: <img alt="Re.Pack" className="home-hero-name-img" src="/img/banner.svg" />
-  text: 'React Native 🤝 Webpack'
-  tagline: A toolkit to build your React Native application with Webpack
+  name: <img alt="Re.Pack" className="home-hero-name-img custom__home-hero-name-img" src="/img/banner.svg" width="300" />
+  text: 'A modern build tool for React Native'
+  tagline: Re.Pack brings Rspack and webpack ecosystem to mobile React Native apps
   actions:
     - theme: brand
       text: <span className="home-hero-primary-action">Get started</span>
@@ -13,28 +13,22 @@ hero:
       text: Learn more
       link: /docs/getting-started/introduction
 features:
-  - title: Webpack-powered solution
-    details: Leverage full Webpack ecosystem of plugins and loaders. Use plethora of configuration options to adjust the bundling to your needs.
-    icon: 🚀
-  - title: Code Splitting
-    details: Leverage Code Splitting and Module Federation to efficiently split your bundle into smaller chunks and share modules dynamically across builds, improving load times and resource management.
-    icon: 🧩
-  - title: Built-in Flipper support
-    details: Use Flipper platform to inspect Application logs, Development
-      server logs, React component tree with React DevTools, Layout,
-      Network, Crashes and more.
-    icon: 🐬
-  - title: Fully-featured development server
-    details: Build your application with ease. Take advantage of built-in
-      support for Hot Module Replacement and React Refresh,
-      symnbolication and Remote JavaScript debugging support.
+  - title: Mobile Microfrontends
+    details: Leverage Module Federation v2 to split JS or Hermes bytecode bundle into smaller chunks and download on-demand from a server.
+    icon: <div className="custom__rspress-home-feature-icon-img-container"><img src="/img/mf_icon.svg" /></div>
+  - title: Powered by webpack / Rspack
+    details: Use the full webpack ecosystem of plugins and loaders. Enhance with Rspack for build and fast refresh speed.
+    icon: <div className="custom__rspress-home-feature-icon-img-container"><img src="/img/webpack_icon.svg" /><img src="/img/rspack_icon.svg" /></div>
+  - title: Drop-in Metro Replacement
+    details: Use instead of Metro—a default React Native bundler. Migrate with a single command. All platforms supported.
+    icon: 🚇
+  - title: Smaller App Size
+    details: Use advanced optimizations like Tree Shaking to produce smaller Hermes bytecode size, improving app startup.
+    icon: 📉
+  - title: React Native DevTools
+    details: Integrated modern debugging experience for React Native with console, breakpoints, CPU, Memory and React profiling.
+    icon: ⚙️
+  - title: Fully-featured Dev Server
+    details: Take advantage of built-in support for Hot Module Replacement, Fast Refresh, error symbolication, and source maps support.
     icon: 🧑‍💻
-  - title: Develop and bundle for any platform
-    details: Develop your application for any platform. Use built-in support
-      for Android and iOS or bring support for your out-of-tree
-      platform. Everything is configurable, nothing is hardcoded.
-    icon: 🌐
-  - title: Configure it your way
-    details: Take full control over the Webpack configuration. Use our APIs - plugins and utilities - to make Webpack-produced bundle compatible with React Native.
-    icon: 🎛️
 ---

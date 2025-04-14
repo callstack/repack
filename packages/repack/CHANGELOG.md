@@ -1,5 +1,286 @@
 # @callstack/repack
 
+## 5.0.6
+
+### Patch Changes
+
+- [#1113](https://github.com/callstack/repack/pull/1113) [`4fe3b04`](https://github.com/callstack/repack/commit/4fe3b049c5bd473aa97469a36b74d9479721eae6) Thanks [@jbroma](https://github.com/jbroma)! - Fix failure to read `.mjs` config on Windows
+
+- [#1114](https://github.com/callstack/repack/pull/1114) [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584) Thanks [@jbroma](https://github.com/jbroma)! - Fix handling of MF2 remote assets paths in ResolverPlugin
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.6
+
+## 5.0.5
+
+### Patch Changes
+
+- [`eac08f2`](https://github.com/callstack/repack/commit/eac08f256744774466a945876e9af2ab03221b37) Thanks [@jbroma](https://github.com/jbroma)! - Fix failure to load project configuration in Node versions with require(esm)
+
+- [`c6a4325`](https://github.com/callstack/repack/commit/c6a432507cb728dcf5c5345f7a1f9ca3879a6ee8) Thanks [@jbroma](https://github.com/jbroma)! - Fix publicPath not using port overriden through CLI in development
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.5
+
+## 5.0.4
+
+### Patch Changes
+
+- [#1093](https://github.com/callstack/repack/pull/1093) [`89de28f`](https://github.com/callstack/repack/commit/89de28f60638f365cfaff196cc0e68053228326a) Thanks [@jbroma](https://github.com/jbroma)! - Use newest minor version of Re.Pack when creating a project with `repack-init`
+
+- [#1090](https://github.com/callstack/repack/pull/1090) [`71f33b8`](https://github.com/callstack/repack/commit/71f33b86dd086daef4cd086510832b0313cf28d2) Thanks [@jbroma](https://github.com/jbroma)! - Fix resolving MF2 remote entries when using manifest as entrypoint through a default RepackResolverPlugin
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.4
+
+## 5.0.3
+
+### Patch Changes
+
+- [#1085](https://github.com/callstack/repack/pull/1085) [`c2852df`](https://github.com/callstack/repack/commit/c2852dfb261b0321e7fb6a12bdfc6f1ef7e479d2) Thanks [@jbroma](https://github.com/jbroma)! - Fix emitting to the same file when developing a host-type app with module-federation
+
+- [#1086](https://github.com/callstack/repack/pull/1086) [`8e8aad6`](https://github.com/callstack/repack/commit/8e8aad6cfe0669ef01d7071e86a680a498e1b811) Thanks [@jbroma](https://github.com/jbroma)! - Hide "JavaScriptLogs have moved..." message
+
+- [#1087](https://github.com/callstack/repack/pull/1087) [`2f0835a`](https://github.com/callstack/repack/commit/2f0835a64740a570e1fb82c23d0a08fb789a7489) Thanks [@jbroma](https://github.com/jbroma)! - Drop having `@react-native-community/cli` as peer dependency
+
+- Updated dependencies [[`8e8aad6`](https://github.com/callstack/repack/commit/8e8aad6cfe0669ef01d7071e86a680a498e1b811)]:
+  - @callstack/repack-dev-server@5.0.3
+
+## 5.0.2
+
+### Patch Changes
+
+- [#1081](https://github.com/callstack/repack/pull/1081) [`30d7330`](https://github.com/callstack/repack/commit/30d73301971ee27efabd7e8c8d9549dd94b38b69) Thanks [@jbroma](https://github.com/jbroma)! - Drop dependency on `@react-native-community/cli-server-api` in the DevServer
+
+- Updated dependencies [[`30d7330`](https://github.com/callstack/repack/commit/30d73301971ee27efabd7e8c8d9549dd94b38b69)]:
+  - @callstack/repack-dev-server@5.0.2
+
+## 5.0.1
+
+### Patch Changes
+
+- [#1075](https://github.com/callstack/repack/pull/1075) [`dac01e4`](https://github.com/callstack/repack/commit/dac01e41d539f19fe9ab8800288eadb361444ed0) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Use default publicPath in development instead of enforcing it in DevelopmentPlugin
+
+- [#1074](https://github.com/callstack/repack/pull/1074) [`54fa1cd`](https://github.com/callstack/repack/commit/54fa1cdb0a2e09c8de476290beacedbf3a5f7d85) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Remove enforcement of output filenames in dev mode
+
+- [#1065](https://github.com/callstack/repack/pull/1065) [`e08a805`](https://github.com/callstack/repack/commit/e08a805a2190d33fb605c5603759245ff9d965a2) Thanks [@jbroma](https://github.com/jbroma)! - Fix normalization of resolve.extensions with [platform] placeholder & set publicPath to noop explicitly when using deprecated getPublicPath helper function
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.1
+
+## 5.0.0
+
+### Major Changes
+
+- [#977](https://github.com/callstack/repack/pull/977) [`e12f63d`](https://github.com/callstack/repack/commit/e12f63d1ca1cc54f28015b390ea4cef92af429b1) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING: `config.devtool` is now used to control the behaviour of generated sourcemaps. To enable sourcemaps again, please remove `devtool: false` from your config or set it explicitly to one of valid values (e.g. `source-map`).
+
+  Introduced a dedicated `SourceMapPlugin` that consolidates sourcemap configuration and improves sourcemap handling by relying on the `devtool` option. The plugin is part of the Repack plugin and does not need to be added separately.
+
+- [#780](https://github.com/callstack/repack/pull/780) [`e937211`](https://github.com/callstack/repack/commit/e93721194e3d8eae64fa5da6f5e296378ad407e9) Thanks [@jbroma](https://github.com/jbroma)! - Removed `--silent` CLI flag for start command.
+
+  For silencing output, you can use shell redirection instead:
+
+  - Unix/macOS: `npx react-native start > /dev/null 2>&1`
+  - Windows: `npx react-native start > nul 2>&1`
+
+- [#825](https://github.com/callstack/repack/pull/825) [`18f2eef`](https://github.com/callstack/repack/commit/18f2eef7dbb2a79e709c1810c69a34b0a0fe9004) Thanks [@jbroma](https://github.com/jbroma)! - Removed `--reverse-port` CLI option and replaced it with `--no-reverse-port` CLI option.
+
+- [#912](https://github.com/callstack/repack/pull/912) [`07d0566`](https://github.com/callstack/repack/commit/07d05663b9b758001e390635f75097b85a8b2436) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING CHANGES: Removed `devServerEnabled` option from assets-loader and `devServer` from Repack plugin configuration - they are now obtained automatically from configuration.
+
+  Added new `config.devServer` field to configure development server properties with type-safe http/https configuration, special host values (local-ip, local-ipv4, local-ipv6), and enhanced HTTPS configuration with full HttpsServerOptions support.
+
+- [#987](https://github.com/callstack/repack/pull/987) [`97cd8e8`](https://github.com/callstack/repack/commit/97cd8e85146ad2dbc8110952c1447884a84194fc) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING CHANGES: `bundleFilename`, `sourceMapFilename`, and `assetsPath` have been removed from both `OutputPlugin` and `RepackPlugin` configurations. These properties are now controlled only through their respective CLI flags.
+
+- [#975](https://github.com/callstack/repack/pull/975) [`7c9232c`](https://github.com/callstack/repack/commit/7c9232c0dfbd5ab35277262037bb8a356db448d8) Thanks [@jbroma](https://github.com/jbroma)! - Deprecate `getPublicPath` utility. The `getPublicPath` function is now a no-op marked as deprecated, while public path configuration is handled automatically under the hood.
+
+- [#976](https://github.com/callstack/repack/pull/976) [`c29ba2f`](https://github.com/callstack/repack/commit/c29ba2f616328d34670f661336d3c43b4ca2ef3e) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING: Simplified RepackPlugin configuration by removing `context`, `mode`, and `sourceMaps` options in favor of using values from Rspack/webpack configuration.
+
+  Made `platform` and `output` options optional (they are now inferred automatically). The plugin configuration object is now entirely optional, allowing for minimal setup with `new Repack.RepackPlugin()`.
+
+- [#720](https://github.com/callstack/repack/pull/720) [`a7b557e`](https://github.com/callstack/repack/commit/a7b557ed162166d9bc152b06d8be3169a0a2a176) Thanks [@jbroma](https://github.com/jbroma)! - Support for Rspack & Webpack simultaneously
+
+- [#958](https://github.com/callstack/repack/pull/958) [`1bf1b1c`](https://github.com/callstack/repack/commit/1bf1b1cb830008167bce913745dade8186281608) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING CHANGE: Added a strict configuration cascade system (CLI Flags -> Config Values -> Command Defaults -> Webpack/Rspack Defaults) to provide clear and predictable configuration resolution.
+
+  CLI arguments now always take highest precedence and cannot be overridden by config files, ensuring consistent behavior across all commands.
+
+- [#786](https://github.com/callstack/repack/pull/786) [`cf42d14`](https://github.com/callstack/repack/commit/cf42d149ca1ccb8caae9085ab7710ff7b603a9d0) Thanks [@jbroma](https://github.com/jbroma)! - Enable new debugger (React Native DevTools) by default, remove support for legacy remote debugging
+
+- [#962](https://github.com/callstack/repack/pull/962) [`22d0e8f`](https://github.com/callstack/repack/commit/22d0e8faaeae221ace87f01a5fca639b4524fcbf) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING CHANGES: Removed `entryName` config option from `DevelopmentPlugin`, `OutputPlugin` and `RepackPlugin` - it is now obtained automatically from configuration
+
+### Minor Changes
+
+- [#817](https://github.com/callstack/repack/pull/817) [`c97da24`](https://github.com/callstack/repack/commit/c97da241876ec8dbe6c2d206590d697f429e86b4) Thanks [@jbroma](https://github.com/jbroma)! - Add Repack Reanimated Plugin which integrates react-native-reanimated into the project
+
+- [#674](https://github.com/callstack/repack/pull/674) [`9f4ad85`](https://github.com/callstack/repack/commit/9f4ad85648f02a127113e7c56d726a923cc0dc12) Thanks [@jbroma](https://github.com/jbroma)! - Add support for Module Federation V2
+
+- [#1021](https://github.com/callstack/repack/pull/1021) [`a87576b`](https://github.com/callstack/repack/commit/a87576b90e3dcad62d5f126ec22f7a867aab35ef) Thanks [@jbroma](https://github.com/jbroma)! - Make iOS ScriptConfig properties non-atomic for better performance
+
+- [#784](https://github.com/callstack/repack/pull/784) [`f8af03c`](https://github.com/callstack/repack/commit/f8af03cd231c3d95a92099719d827e368f707b5c) Thanks [@zmzlois](https://github.com/zmzlois)! - add `react-native-linear-gradient` to flow type module loading rule support
+
+- [#778](https://github.com/callstack/repack/pull/778) [`2344162`](https://github.com/callstack/repack/commit/23441620335e91382dda01d0cc06278efede45cf) Thanks [@jbroma](https://github.com/jbroma)! - Add `--config` option to commands, deprecate `--webpackConfig` option
+
+- [#810](https://github.com/callstack/repack/pull/810) [`46330d7`](https://github.com/callstack/repack/commit/46330d70db99a372046baf8ee4565e4a21e5b4f3) Thanks [@jbroma](https://github.com/jbroma)! - Include `@rspack/plugin-react-refresh` with Re.Pack instead of requiring user to install it
+
+- [#981](https://github.com/callstack/repack/pull/981) [`05183a8`](https://github.com/callstack/repack/commit/05183a8644e4f1c0d7f8b9261192dcb72231c267) Thanks [@jbroma](https://github.com/jbroma)! - Resolve `[platform]` & `[context]` placeholders in `config.output.path`
+
+- [#997](https://github.com/callstack/repack/pull/997) [`bff2947`](https://github.com/callstack/repack/commit/bff2947dfad5dcd23d39dbdcfcb455529934d967) Thanks [@jbroma](https://github.com/jbroma)! - Added `getAssetTransformRules` utility function to simplify setting up asset transformation rules in both Webpack and Rspack projects.
+
+- [#981](https://github.com/callstack/repack/pull/981) [`05183a8`](https://github.com/callstack/repack/commit/05183a8644e4f1c0d7f8b9261192dcb72231c267) Thanks [@jbroma](https://github.com/jbroma)! - Add config defaults for `config.output` and `config.optimization`
+
+- [#765](https://github.com/callstack/repack/pull/765) [`efff0c2`](https://github.com/callstack/repack/commit/efff0c29801db04eddbbc8f3776cb3e56457f585) Thanks [@jbroma](https://github.com/jbroma)! - Add default rules for transpiling popular flow typed packages
+
+- [#985](https://github.com/callstack/repack/pull/985) [`2cfd84f`](https://github.com/callstack/repack/commit/2cfd84f8bcf6e7c241aab3e24cde97e7e85afbc5) Thanks [@jbroma](https://github.com/jbroma)! - Assets loader can now be called without specyifing platform explicitly - the platform is now inferred automatically from configuration
+
+- [#872](https://github.com/callstack/repack/pull/872) [`0e600d4`](https://github.com/callstack/repack/commit/0e600d4d8df577622ba8cbc49ff1ef80f257620d) Thanks [@jbroma](https://github.com/jbroma)! - Enable inlining entry modules by making runtime initialization from React renderers a no-op
+
+- [#702](https://github.com/callstack/repack/pull/702) [`495203d`](https://github.com/callstack/repack/commit/495203dc3a1d219aea623afe99912957d8f0e0a1) Thanks [@jbroma](https://github.com/jbroma)! - Enable dev-server to serve source assets alongside build artifacts
+
+- [#763](https://github.com/callstack/repack/pull/763) [`e433584`](https://github.com/callstack/repack/commit/e4335840a4b1ed59affc89375988ba6a9db57891) Thanks [@thiagobrez](https://github.com/thiagobrez)! - Add getModulePaths utility to generate include and exclude paths for modules in the bundler config
+
+- [#828](https://github.com/callstack/repack/pull/828) [`b1a010a`](https://github.com/callstack/repack/commit/b1a010a7dd8af5612759e134249ae0587e42aef7) Thanks [@jbroma](https://github.com/jbroma)! - Run adb reverse for all available devices by default
+
+- [#1024](https://github.com/callstack/repack/pull/1024) [`5e68814`](https://github.com/callstack/repack/commit/5e688146c2da861d5fcf0e647e0a1e386f38a4cf) Thanks [@borisyankov](https://github.com/borisyankov)! - Show a gradient logo of Re.Pack, version number, and the bundler being used
+
+- [#1005](https://github.com/callstack/repack/pull/1005) [`4e10aa6`](https://github.com/callstack/repack/commit/4e10aa6a0c198823bf1b682d9d2e87c39657ac65) Thanks [@jbroma](https://github.com/jbroma)! - Reworked DevServer HMR pipeline - improved performance & recovery from errors
+
+- [#841](https://github.com/callstack/repack/pull/841) [`d9d64ef`](https://github.com/callstack/repack/commit/d9d64ef6438e75086bd970cd600e936e46e7962f) Thanks [@borisyankov](https://github.com/borisyankov)! - Add support for NativeWind through a dedicated optional plugin called `@callstack/repack-plugin-nativewind`
+
+- [#757](https://github.com/callstack/repack/pull/757) [`8a90731`](https://github.com/callstack/repack/commit/8a9073146c6541ed374541b9bcf9ebe3c4f70e9a) Thanks [@artus9033](https://github.com/artus9033)! - Display list of available interactions on dev server startup & add support for 'j' to debug
+
+- [#828](https://github.com/callstack/repack/pull/828) [`b1a010a`](https://github.com/callstack/repack/commit/b1a010a7dd8af5612759e134249ae0587e42aef7) Thanks [@jbroma](https://github.com/jbroma)! - Wait for android device before running adb reverse when starting dev-server
+
+- [#984](https://github.com/callstack/repack/pull/984) [`1f470a1`](https://github.com/callstack/repack/commit/1f470a11e93f8af22badbafc47256db3a32ecac8) Thanks [@jbroma](https://github.com/jbroma)! - `getResolveOptions` can be now called without any params and the `platform` extensions will be resolved automatically. This makes `getResolveOptions` useful when used in static configs where `platform` variable isn't exposed.
+
+- [#967](https://github.com/callstack/repack/pull/967) [`3f22966`](https://github.com/callstack/repack/commit/3f22966db4ce43f89d7e544d1a24234ed117480d) Thanks [@jbroma](https://github.com/jbroma)! - Use own custom ReactRefreshLoader in all configurations (Rspack & webpack)
+
+- [#1023](https://github.com/callstack/repack/pull/1023) [`f690120`](https://github.com/callstack/repack/commit/f69012062335824521a332233f0de6fae5d14ca2) Thanks [@jbroma](https://github.com/jbroma)! - Rename ChunksToHermesBytecodePlugin to HermesBytecodePlugin
+
+- [#753](https://github.com/callstack/repack/pull/753) [`176324a`](https://github.com/callstack/repack/commit/176324a8d09d34dd1fbc68e0e227640834138f5a) Thanks [@artus9033](https://github.com/artus9033)! - Add support for React Native 0.76
+
+- [#869](https://github.com/callstack/repack/pull/869) [`30fa495`](https://github.com/callstack/repack/commit/30fa4955008460fc94926a8d2cefb2efbd198cb5) Thanks [@jbroma](https://github.com/jbroma)! - Use `@react-native-community/cli` explictly iOS project settings (through `CLI_PATH`).
+
+  Drop (unofficial) support for modyfing Android config for RN versions < 0.71.
+
+- [#877](https://github.com/callstack/repack/pull/877) [`919ffb8`](https://github.com/callstack/repack/commit/919ffb869588cef0eb120e5195d16952e0e45808) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Add prompt for choosing the bundler in `repack-init`
+
+- [#750](https://github.com/callstack/repack/pull/750) [`c4a3235`](https://github.com/callstack/repack/commit/c4a32354feaccdfda8570b6a065dc6f7a6b9f6d0) Thanks [@jbroma](https://github.com/jbroma)! - Normalize filepath & ensure path exists when writing stats to a file
+
+- [#865](https://github.com/callstack/repack/pull/865) [`3bfb690`](https://github.com/callstack/repack/commit/3bfb6909d7363787bbfd1584e1749b4ff516aa92) Thanks [@jbroma](https://github.com/jbroma)! - Add CodegenPlugin as part of RepackPlugin to handle React Native Codegen babel transforms
+
+- [#991](https://github.com/callstack/repack/pull/991) [`c36f778`](https://github.com/callstack/repack/commit/c36f77838d59f0692171f7114ac68fa11e4a3100) Thanks [@jbroma](https://github.com/jbroma)! - Added `getJsTransformRules` utility function to simplify setting up JavaScript transformation rules in Rspack for React Native projects.
+
+- [#816](https://github.com/callstack/repack/pull/816) [`6ed9a6f`](https://github.com/callstack/repack/commit/6ed9a6fcb40ba946b39dfe1d302ad2ebf9dffacf) Thanks [@jbroma](https://github.com/jbroma)! - Support platform specific assets
+
+- [#824](https://github.com/callstack/repack/pull/824) [`8cf7cc3`](https://github.com/callstack/repack/commit/8cf7cc3622ad85cf093005c5c55c8dd63940a57b) Thanks [@jbroma](https://github.com/jbroma)! - Added `adb reverse` interaction & `adb reverse` command is now run by default when bundling for Android
+
+- [#893](https://github.com/callstack/repack/pull/893) [`aa3802f`](https://github.com/callstack/repack/commit/aa3802f8a9a06c3cbcaa932ea45cf27f2a523927) Thanks [@jbroma](https://github.com/jbroma)! - Prettify `repack-init` and make it behave similarly to other tools in the ecosystem
+
+- [#734](https://github.com/callstack/repack/pull/734) [`b455503`](https://github.com/callstack/repack/commit/b4555030b7827e14084db282accd138945d532c5) Thanks [@hexboy](https://github.com/hexboy)! - Add a mechanism for retrying downloads of scripts through `retry` and `retryDelay` properties
+
+- [#855](https://github.com/callstack/repack/pull/855) [`6421e0b`](https://github.com/callstack/repack/commit/6421e0b9b5a91116bad280bae9462f6974f66caa) Thanks [@borisyankov](https://github.com/borisyankov)! - Optimize 'checkIfCacheDataOutdated' to do as few comparisons as possible
+
+- [#864](https://github.com/callstack/repack/pull/864) [`5aa009c`](https://github.com/callstack/repack/commit/5aa009c9ea1fada2572813effc0d88499a509c0f) Thanks [@jbroma](https://github.com/jbroma)! - Make babel-loader a dependecy
+
+- [#901](https://github.com/callstack/repack/pull/901) [`3515dd6`](https://github.com/callstack/repack/commit/3515dd689f78f26215d4a4ee9b46a432fad1e8cc) Thanks [@jbroma](https://github.com/jbroma)! - Normalize compiler.name to always be equal to the target platform across all commands
+
+- [#896](https://github.com/callstack/repack/pull/896) [`44273d2`](https://github.com/callstack/repack/commit/44273d2d064ed91f6e6a4ce7dc8c56d8c7de1b88) Thanks [@jbroma](https://github.com/jbroma)! - Add support for Expo Modules through a dedicated optional plugin called @callstack/repack-plugin-expo-modules
+
+- [#803](https://github.com/callstack/repack/pull/803) [`daffbf7`](https://github.com/callstack/repack/commit/daffbf72088ba666d956e35a265546a89ee84f42) Thanks [@jbroma](https://github.com/jbroma)! - Refactor FederationRuntimePlugin into two separate plugins for more granular control over the MF2 runtime behaviour (CorePlugin & ResolverPlugin)
+
+### Patch Changes
+
+- [#776](https://github.com/callstack/repack/pull/776) [`31d0e32`](https://github.com/callstack/repack/commit/31d0e32e6a4b9aa9d9d0fbd3f1ddd18e95a16757) Thanks [@jbroma](https://github.com/jbroma)! - Fix peer dependency config for @rspack/core in repack package
+
+- [#1028](https://github.com/callstack/repack/pull/1028) [`2abcc60`](https://github.com/callstack/repack/commit/2abcc6060764501f6076bfb196e0b1e84f7af326) Thanks [@jbroma](https://github.com/jbroma)! - Fix HermesBytecodePlugin failing when used with ModuleFederationV2Plugin
+
+- [#775](https://github.com/callstack/repack/pull/775) [`76738de`](https://github.com/callstack/repack/commit/76738de12fdf29f5af78aaa23f03337c33c7926a) Thanks [@jbroma](https://github.com/jbroma)! - Fix customization of MF1 federated entry filename
+
+- [#870](https://github.com/callstack/repack/pull/870) [`abf190e`](https://github.com/callstack/repack/commit/abf190e7e2571b3ef66cba9d26dd65d1548e4ab7) Thanks [@jbroma](https://github.com/jbroma)! - Install latest version of `@rspack/core` with repack-init
+
+- [#787](https://github.com/callstack/repack/pull/787) [`acdd0c8`](https://github.com/callstack/repack/commit/acdd0c801ab611a25164fce5302e20e61ae25292) Thanks [@jbroma](https://github.com/jbroma)! - Fix sourceURL of bundles so source maps can be matched in dev tools
+
+- [#1055](https://github.com/callstack/repack/pull/1055) [`8f8928e`](https://github.com/callstack/repack/commit/8f8928ea9cd5b0713bfddb1e4c3e0df670e21000) Thanks [@jbroma](https://github.com/jbroma)! - Fix an issue where normalizing config would override a field on object from other config
+
+- [#869](https://github.com/callstack/repack/pull/869) [`30fa495`](https://github.com/callstack/repack/commit/30fa4955008460fc94926a8d2cefb2efbd198cb5) Thanks [@jbroma](https://github.com/jbroma)! - Add `--config-cmd` to options for bundle command for compatibility with RN >= 0.76
+
+- [#856](https://github.com/callstack/repack/pull/856) [`9570c83`](https://github.com/callstack/repack/commit/9570c83918348a38f2fd01385755e9da0ef6fc08) Thanks [@jbroma](https://github.com/jbroma)! - Fix loading of 2nd level Module Federation 2 remotes
+
+- [#956](https://github.com/callstack/repack/pull/956) [`1945e75`](https://github.com/callstack/repack/commit/1945e75eeb126f8d5bef318cf9571c420f7b3406) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Deprecate `--webpackConfig` in `start` command and make deprecation warning more informative
+
+- [#908](https://github.com/callstack/repack/pull/908) [`1953287`](https://github.com/callstack/repack/commit/19532876fb8bfbf271db552d983f12e5c26fc58a) Thanks [@jbroma](https://github.com/jbroma)! - Add `react-native-camera` and `react-native-view-shot` to flow libs
+
+- [#883](https://github.com/callstack/repack/pull/883) [`2e953c5`](https://github.com/callstack/repack/commit/2e953c56157dad3e131be25e2eeb93ddf60919ed) Thanks [@jbroma](https://github.com/jbroma)! - Fix crash when warning without moduleDescriptor was being thrown
+
+- [#842](https://github.com/callstack/repack/pull/842) [`d8eb77e`](https://github.com/callstack/repack/commit/d8eb77e1ebade637d96e44a8b8f3bf0eaf00846b) Thanks [@jbroma](https://github.com/jbroma)! - Fix missing apply on ProvidePlugin for React Refresh Utils in DevelopmentPlugin
+
+- [#960](https://github.com/callstack/repack/pull/960) [`07b2e20`](https://github.com/callstack/repack/commit/07b2e2059487f0b6962b05016e7f1453ba35c379) Thanks [@jbroma](https://github.com/jbroma)! - Remove the workaround for reordering entry dependencies when using ModuleFederation
+
+- [#821](https://github.com/callstack/repack/pull/821) [`287991e`](https://github.com/callstack/repack/commit/287991eb002725f78c23aafe89131fcadb8edaf1) Thanks [@jbroma](https://github.com/jbroma)! - Ignore irrelevant MF2 runtime warning about request of a dependency being an expression
+
+- [#711](https://github.com/callstack/repack/pull/711) [`7af6d5b`](https://github.com/callstack/repack/commit/7af6d5bad8288ea58dd246243fe96439709cbe97) Thanks [@jbroma](https://github.com/jbroma)! - fix: always use URL from Script config as `sourceUrl` when evaluating bundles on Android
+
+- [#766](https://github.com/callstack/repack/pull/766) [`206d76f`](https://github.com/callstack/repack/commit/206d76f30a4858680839fa53b9f8a3a2070ed9f8) Thanks [@jbroma](https://github.com/jbroma)! - Fix handling of cjs,mjs,cts,mts files when transpiling node modules with swc
+
+- [#799](https://github.com/callstack/repack/pull/799) [`f801083`](https://github.com/callstack/repack/commit/f801083f7ba616e77fa77c1c6321875de6886388) Thanks [@jbroma](https://github.com/jbroma)! - Expose MF2 config property to external tooling
+
+- [#880](https://github.com/callstack/repack/pull/880) [`cdfdca4`](https://github.com/callstack/repack/commit/cdfdca4aa481020d4b2cbd260297e39984384d1c) Thanks [@jbroma](https://github.com/jbroma)! - Fix swc loader module rules loose mode configuration
+
+- [#950](https://github.com/callstack/repack/pull/950) [`580bf30`](https://github.com/callstack/repack/commit/580bf306ba9f9cd1d3dfed0227aad64abd1c3752) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Don't error on missing `--entry-file` when entry is defined in `rspack.config.js` or `webpack.config.js`.
+
+- [#980](https://github.com/callstack/repack/pull/980) [`01d9583`](https://github.com/callstack/repack/commit/01d9583cada929a16b6d40c6476f0508847b0fff) Thanks [@jbroma](https://github.com/jbroma)! - Normalize the configs after merging them with the defaults and CLI overrides
+
+- [#829](https://github.com/callstack/repack/pull/829) [`617c501`](https://github.com/callstack/repack/commit/617c5018e1f2b0520f6f978b2c1440239196f662) Thanks [@jbroma](https://github.com/jbroma)! - Fix early JS errors not being displayed in LogBox
+
+- [#835](https://github.com/callstack/repack/pull/835) [`ae89e38`](https://github.com/callstack/repack/commit/ae89e38fd13fab7c133f8e1c68bc7f02f5cdf04d) Thanks [@mrsasuu](https://github.com/mrsasuu)! - Fix ScriptManager import path in MF runtime plugins (CorePlugin & ResolverPlugin)
+
+- [#988](https://github.com/callstack/repack/pull/988) [`de82bbf`](https://github.com/callstack/repack/commit/de82bbf232331666e7739adc8a5e69133dde2e3e) Thanks [@jbroma](https://github.com/jbroma)! - Remove unused `platform` param from LoggerPlugin
+
+- [#871](https://github.com/callstack/repack/pull/871) [`93f2c74`](https://github.com/callstack/repack/commit/93f2c745092ae83e31bc1ac9fe5c89a5b64c495f) Thanks [@jbroma](https://github.com/jbroma)! - Add error boundary around webpack's require function to match Metro's error handling behavior more closely
+
+- [#755](https://github.com/callstack/repack/pull/755) [`90faeeb`](https://github.com/callstack/repack/commit/90faeeb7d6be9ddf5aa74c9552df01ec58d5372c) Thanks [@jbroma](https://github.com/jbroma)! - Disable package imports by default
+
+- [#989](https://github.com/callstack/repack/pull/989) [`88474ea`](https://github.com/callstack/repack/commit/88474ea1d52267df6a7187c280b793f516ffdfb0) Thanks [@jbroma](https://github.com/jbroma)! - Make `platform` option of DevelopmentPlugin optional
+
+- [#944](https://github.com/callstack/repack/pull/944) [`928a493`](https://github.com/callstack/repack/commit/928a493ead0f77cab7f1031e2df0b63f8ed65137) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Add missing `try`/`catch` condition when opening React Native DevTools.
+
+- [#843](https://github.com/callstack/repack/pull/843) [`3029ab6`](https://github.com/callstack/repack/commit/3029ab6d48312a51c19a257c11fcd02016a44af3) Thanks [@jbroma](https://github.com/jbroma)! - Fix missing config for swc loader rules
+
+- [#779](https://github.com/callstack/repack/pull/779) [`679bcd8`](https://github.com/callstack/repack/commit/679bcd8917aca587c36d550101e9dd9578e1e172) Thanks [@jbroma](https://github.com/jbroma)! - More intuitive behaviour of `--verbose` flag in start command
+
+- [#756](https://github.com/callstack/repack/pull/756) [`f119ab3`](https://github.com/callstack/repack/commit/f119ab3eb94eff9d2cc1aec8fcf9f835c3025abc) Thanks [@hosseinmd](https://github.com/hosseinmd)! - Prevent to loadScript which is already is loading
+  issue: https://github.com/callstack/repack/issues/749
+
+- [#868](https://github.com/callstack/repack/pull/868) [`96915f8`](https://github.com/callstack/repack/commit/96915f80b08e474127271475d132644efeab4bee) Thanks [@jbroma](https://github.com/jbroma)! - Decouple init & module error handling from load script runtime module inside RepackTargetPlugin
+
+- [#892](https://github.com/callstack/repack/pull/892) [`3a68e15`](https://github.com/callstack/repack/commit/3a68e157a6a5e07dc2e0003ead02b8f965fd3d49) Thanks [@lukewalczak](https://github.com/lukewalczak)! - Require MF2 container name to be a valid JS identifier
+
+- [#867](https://github.com/callstack/repack/pull/867) [`153d1d4`](https://github.com/callstack/repack/commit/153d1d4513498a85ccc7303222455c3372108406) Thanks [@ra1nj](https://github.com/ra1nj)! - Add 'react-native-inappbrowser-reborn' in flowTypedModulesLoadingRules.
+
+- [#814](https://github.com/callstack/repack/pull/814) [`592fbe3`](https://github.com/callstack/repack/commit/592fbe3fe8eeeeb856d260c3106f5f6cd6eeaef8) Thanks [@jbroma](https://github.com/jbroma)! - Fix how size of a scaled assets is obtained (aligned with metro)
+
+- [#1031](https://github.com/callstack/repack/pull/1031) [`5a6ebdc`](https://github.com/callstack/repack/commit/5a6ebdcaf0687bd6da9d2907638cd219daabcf39) Thanks [@jbroma](https://github.com/jbroma)! - Fix webpack start command looking for rspack configs
+
+- [#808](https://github.com/callstack/repack/pull/808) [`f600e07`](https://github.com/callstack/repack/commit/f600e075645c5f310abe67591cbdf11221944cba) Thanks [@jbroma](https://github.com/jbroma)! - Fix type JSX runtime transform when transpiling node modules
+
+- [#819](https://github.com/callstack/repack/pull/819) [`9890400`](https://github.com/callstack/repack/commit/9890400fe5ac750698ceb3eaf72e0b3a86ae4a73) Thanks [@jbroma](https://github.com/jbroma)! - Fix missing sourcemap generation for codegen related files and configure separate rules for ts & tsx files
+
+- [#968](https://github.com/callstack/repack/pull/968) [`59d9d02`](https://github.com/callstack/repack/commit/59d9d02ecabf5caffa87c748aa0b92191d0f4e84) Thanks [@jbroma](https://github.com/jbroma)! - Add consitent plugin naming and error message formatting
+
+- [#1033](https://github.com/callstack/repack/pull/1033) [`0be4198`](https://github.com/callstack/repack/commit/0be41980f2431d2a534e501062b10a08d3901f78) Thanks [@jbroma](https://github.com/jbroma)! - Fix OutputPlugin not picking up bundleOutput & sourcemapOutput args
+
+- [#952](https://github.com/callstack/repack/pull/952) [`8301f5c`](https://github.com/callstack/repack/commit/8301f5c77d7e75c155cbb427b4ac380565e946f7) Thanks [@hosseinmd](https://github.com/hosseinmd)! - refactor Android's `RemoteScriptLoader.kt` to reuse `scriptsDir`
+
+- [#820](https://github.com/callstack/repack/pull/820) [`39f80b3`](https://github.com/callstack/repack/commit/39f80b3661a348b9d778f76af2848ed615582d23) Thanks [@jbroma](https://github.com/jbroma)! - Ignore setUpTests warning from Reanimated by default
+
+- [#949](https://github.com/callstack/repack/pull/949) [`a8560b9`](https://github.com/callstack/repack/commit/a8560b988cb2adfd8e23fcfdcdc783b860b07c8a) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Improve error handling by hiding useless stack traces.
+
+- [#955](https://github.com/callstack/repack/pull/955) [`49b8ddf`](https://github.com/callstack/repack/commit/49b8ddf1e58f0e59e8801692249e2a24df37cdf4) Thanks [@hosseinmd](https://github.com/hosseinmd)! - fix: download, write, run instead of download, write, read, run
+
+- [#771](https://github.com/callstack/repack/pull/771) [`df1d587`](https://github.com/callstack/repack/commit/df1d587115abb61a7168d02d04e451ee3f8066de) Thanks [@hosseinmd](https://github.com/hosseinmd)! - script should be cached after successfully loaded
+
+- Updated dependencies [[`07d0566`](https://github.com/callstack/repack/commit/07d05663b9b758001e390635f75097b85a8b2436), [`4e10aa6`](https://github.com/callstack/repack/commit/4e10aa6a0c198823bf1b682d9d2e87c39657ac65)]:
+  - @callstack/repack-dev-server@5.0.0
+
 ## 5.0.0-rc.12
 
 ### Minor Changes

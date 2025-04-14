@@ -23,7 +23,7 @@ export default (env) => {
     context,
     entry: './index.js',
     resolve: {
-      ...Repack.getResolveOptions(),
+      ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
     output: {
       uniqueName: 'tester-app',
@@ -116,7 +116,7 @@ export default (env) => {
           },
         ],
       }),
-      // new Repack.plugins.ChunksToHermesBytecodePlugin({
+      // new Repack.plugins.HermesBytecodePlugin({
       //   enabled: mode === 'production',
       //   test: /\.(js)?bundle$/,
       //   exclude: /index.bundle$/,

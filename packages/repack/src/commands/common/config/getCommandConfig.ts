@@ -9,6 +9,9 @@ function getStartCommandDefaults() {
       hot: true,
       server: 'http',
     },
+    output: {
+      publicPath: 'DEV_SERVER_PUBLIC_PATH',
+    },
   };
 }
 

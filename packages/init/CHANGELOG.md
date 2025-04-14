@@ -1,5 +1,51 @@
 # @callstack/repack-init
 
+## 5.0.6
+
+## 5.0.5
+
+## 5.0.4
+
+### Patch Changes
+
+- [#1093](https://github.com/callstack/repack/pull/1093) [`89de28f`](https://github.com/callstack/repack/commit/89de28f60638f365cfaff196cc0e68053228326a) Thanks [@jbroma](https://github.com/jbroma)! - Use newest minor version of Re.Pack when creating a project with `repack-init`
+
+## 5.0.3
+
+## 5.0.2
+
+### Patch Changes
+
+- [#1079](https://github.com/callstack/repack/pull/1079) [`2ac8f7b`](https://github.com/callstack/repack/commit/2ac8f7b26027686c1ed46ce8176c21c08f056337) Thanks [@jbroma](https://github.com/jbroma)! - Fix init picking up wrong root directory when migrating existing projects
+
+## 5.0.1
+
+### Patch Changes
+
+- [#1067](https://github.com/callstack/repack/pull/1067) [`c9c01ee`](https://github.com/callstack/repack/commit/c9c01ee15291f08465345d5bdc614b0d37642a18) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Override commit for new projects created with `npx @callstack/repack-init`.
+
+## 5.0.0
+
+### Minor Changes
+
+- [#990](https://github.com/callstack/repack/pull/990) [`36f14c1`](https://github.com/callstack/repack/commit/36f14c13849985e57fae32189348d1f321ba3a5e) Thanks [@jbroma](https://github.com/jbroma)! - Make template configs slimmer & Use static config by default
+
+- [#810](https://github.com/callstack/repack/pull/810) [`46330d7`](https://github.com/callstack/repack/commit/46330d70db99a372046baf8ee4565e4a21e5b4f3) Thanks [@jbroma](https://github.com/jbroma)! - Include `@rspack/plugin-react-refresh` with Re.Pack instead of requiring user to install it
+
+- [#869](https://github.com/callstack/repack/pull/869) [`30fa495`](https://github.com/callstack/repack/commit/30fa4955008460fc94926a8d2cefb2efbd198cb5) Thanks [@jbroma](https://github.com/jbroma)! - Use `@react-native-community/cli` explictly iOS project settings (through `CLI_PATH`).
+
+  Drop (unofficial) support for modyfing Android config for RN versions < 0.71.
+
+### Patch Changes
+
+- [#943](https://github.com/callstack/repack/pull/943) [`a4a9801`](https://github.com/callstack/repack/commit/a4a9801c0ee473ad7e87095d9a829ecc47fd4056) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Hide `cd` log when project exsists
+
+- [#1001](https://github.com/callstack/repack/pull/1001) [`078bc4c`](https://github.com/callstack/repack/commit/078bc4c551811d114619b7632bb8da1ccd683b53) Thanks [@jbroma](https://github.com/jbroma)! - Fix init failing when ran from within the monorepo
+
+- [#1051](https://github.com/callstack/repack/pull/1051) [`f60b583`](https://github.com/callstack/repack/commit/f60b5838f8594309ec5cb52404e384be4b025235) Thanks [@jbroma](https://github.com/jbroma)! - Use gradient in welcome message
+
+- [#998](https://github.com/callstack/repack/pull/998) [`2107f2c`](https://github.com/callstack/repack/commit/2107f2c9eef4de0aad047cdad207d0bc3460ae57) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Remove `checkReactNative` util function.
+
 ## 5.0.0-rc.12
 
 ## 5.0.0-rc.11

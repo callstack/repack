@@ -1,5 +1,6 @@
 // biome-ignore lint/style/useNodejsImportProtocol: use 'events' module instead of node builtin
 import EventEmitter from 'events';
+import { AsyncSeriesBailHook, AsyncSeriesWaterfallHook } from 'tapable';
 import NativeScriptManager, {
   type NormalizedScriptLocator,
 } from './NativeScriptManager.js';
@@ -38,6 +39,12 @@ const LOADING_ERROR_CODES = [
   'ScriptDownloadFailure',
 ];
 
+type MaybePromise<T> = T | Promise<T>;
+
+function promisify<T extends (...args: any[]) => any>(fn: T) {
+  return async (...args: Parameters<T>) => fn(...args);
+}
+
 /* Options for resolver when adding it to a `ScriptManager`. */
 export interface ResolverOptions {
   /**
@@ -52,6 +59,58 @@ export interface ResolverOptions {
    * If provided, the new resolver will be replace the existing one configured with the same `uniqueKey`.
    */
   key?: string;
+}
+
+interface ResolveScriptOptions {
+  scriptId: string;
+  caller?: string;
+  webpackContext: RepackRuntimeGlobals.WebpackRequire;
+  referenceUrl?: string;
+}
+
+interface LoadScriptOptions extends ResolveScriptOptions {}
+
+interface ResolveHookOptions {
+  options: ResolveScriptOptions;
+  resolvers: Array<[string, string | number, ScriptLocatorResolver]>;
+}
+
+interface BeforeResolveHookOptions {
+  options: ResolveScriptOptions;
+}
+
+interface AfterResolveHookOptions {
+  options: ResolveScriptOptions;
+  locator: ScriptLocator;
+}
+
+interface ErrorResolveHookOptions {
+  options: ResolveScriptOptions;
+  error: Error;
+}
+
+interface BeforeLoadHookOptions {
+  options: LoadScriptOptions;
+  script: Script;
+}
+
+interface LoadHookOptions {
+  options: LoadScriptOptions;
+  script: Script;
+  loadScript: (
+    scriptId?: string,
+    locator?: NormalizedScriptLocator & { retryDelay?: number; retry?: number }
+  ) => Promise<void>;
+}
+
+interface AfterLoadHookOptions {
+  options: LoadScriptOptions;
+  script: Script;
+}
+
+interface ErrorLoadHookOptions {
+  options: LoadScriptOptions;
+  error: Error;
 }
 
 /**
@@ -120,7 +179,8 @@ export class ScriptManager extends EventEmitter {
   protected cache: Cache = {};
   protected scriptsPromises: ScriptsPromises = {};
   protected cacheInitialized = false;
-  protected resolvers: [string, number, ScriptLocatorResolver][] = [];
+  protected resolvers: Array<[string, string | number, ScriptLocatorResolver]> =
+    [];
   protected storage?: StorageApi;
 
   /**
@@ -148,6 +208,69 @@ export class ScriptManager extends EventEmitter {
 
     __webpack_require__.repack.shared.scriptManager = this;
   }
+
+  private hookMap = {
+    beforeResolve: new AsyncSeriesWaterfallHook<
+      BeforeResolveHookOptions,
+      BeforeResolveHookOptions
+    >(['args']),
+    resolve: new AsyncSeriesBailHook<
+      ResolveHookOptions,
+      ScriptLocator | undefined
+    >(['args']),
+    afterResolve: new AsyncSeriesWaterfallHook<
+      AfterResolveHookOptions,
+      AfterResolveHookOptions
+    >(['args']),
+    errorResolve: new AsyncSeriesBailHook<
+      ErrorResolveHookOptions,
+      ScriptLocator | undefined
+    >(['args']),
+    beforeLoad: new AsyncSeriesWaterfallHook<
+      BeforeLoadHookOptions,
+      BeforeLoadHookOptions
+    >(['args']),
+    load: new AsyncSeriesBailHook<LoadHookOptions, boolean>(['args']),
+    afterLoad: new AsyncSeriesWaterfallHook<
+      AfterLoadHookOptions,
+      AfterLoadHookOptions
+    >(['args']),
+    errorLoad: new AsyncSeriesBailHook<ErrorLoadHookOptions, boolean>(['args']),
+  };
+
+  public hooks = {
+    beforeResolve: (
+      fn: (
+        args: BeforeResolveHookOptions
+      ) => MaybePromise<BeforeResolveHookOptions>
+    ) => this.hookMap.beforeResolve.tapPromise('beforeResolve', promisify(fn)),
+    resolve: (
+      fn: (args: ResolveHookOptions) => MaybePromise<ScriptLocator | undefined>
+    ) => this.hookMap.resolve.tapPromise('resolve', promisify(fn)),
+    afterResolve: (
+      fn: (
+        args: AfterResolveHookOptions
+      ) => MaybePromise<AfterResolveHookOptions>
+    ) => this.hookMap.afterResolve.tapPromise('afterResolve', promisify(fn)),
+    errorResolve: (
+      fn: (
+        args: ErrorResolveHookOptions
+      ) => MaybePromise<ScriptLocator | undefined | void>
+    ) => this.hookMap.errorResolve.tapPromise('errorResolve', promisify(fn)),
+    beforeLoad: (
+      fn: (args: BeforeLoadHookOptions) => MaybePromise<BeforeLoadHookOptions>
+    ) => this.hookMap.beforeLoad.tapPromise('beforeLoad', promisify(fn)),
+    load: (fn: (args: LoadHookOptions) => MaybePromise<boolean>) =>
+      this.hookMap.load.tapPromise('load', promisify(fn)),
+    afterLoad: (
+      fn: (args: AfterLoadHookOptions) => MaybePromise<AfterLoadHookOptions>
+    ) => this.hookMap.afterLoad.tapPromise('afterLoad', promisify(fn)),
+    errorLoad: (
+      fn: (
+        args: ErrorLoadHookOptions
+      ) => MaybePromise<boolean | undefined | void>
+    ) => this.hookMap.errorLoad.tapPromise('errorLoad', promisify(fn)),
+  };
 
   /**
    * Sets a storage backend to cache resolved scripts locator data.
@@ -184,7 +307,7 @@ export class ScriptManager extends EventEmitter {
     this.resolvers = this.resolvers
       .filter(([key]) => key !== uniqueKey)
       .concat([[uniqueKey ?? DEFAULT_RESOLVER_KEY, priority, resolver]])
-      .sort(([, a], [, b]) => b - a);
+      .sort(([, a], [, b]) => Number(b) - Number(a));
   }
 
   /**
@@ -251,75 +374,145 @@ export class ScriptManager extends EventEmitter {
   async resolveScript(
     scriptId: string,
     caller?: string,
-    webpackContext = getWebpackContext(),
+    webpackContext?: RepackRuntimeGlobals.WebpackRequire,
     referenceUrl?: string
+  ): Promise<Script>;
+
+  // NOTE: Keep declaration and implementation separate
+  // to allow for better naming in JSDocs while preventing
+  // using the arguments directly in the implementation
+  async resolveScript(
+    __scriptId: string,
+    __caller?: string,
+    __webpackContext = getWebpackContext(),
+    __referenceUrl?: string
   ): Promise<Script> {
-    await this.initCache();
+    let options: ResolveScriptOptions = {
+      scriptId: __scriptId,
+      caller: __caller,
+      referenceUrl: __referenceUrl,
+      webpackContext: __webpackContext,
+    };
+
+    let locator: ScriptLocator | undefined;
+
     try {
+      await this.initCache();
+
       if (!this.resolvers.length) {
         throw new Error(
           'No script resolvers were added. Did you forget to call `ScriptManager.shared.addResolver(...)`?'
         );
       }
 
-      this.emit('resolving', { scriptId, caller });
+      if (this.hookMap.beforeResolve.isUsed()) {
+        ({ options } = await this.hookMap.beforeResolve.promise({ options }));
+      }
 
-      let locator: ScriptLocator | undefined;
-      for (const [, , resolve] of this.resolvers) {
-        locator = await resolve(scriptId, caller, referenceUrl);
-        if (locator) {
-          break;
+      this.emit('resolving', {
+        scriptId: options.scriptId,
+        caller: options.caller,
+      });
+
+      if (this.hookMap.resolve.isUsed()) {
+        // obtain the result from custom implementation through the resolve hook
+        locator = await this.hookMap.resolve.promise({
+          options,
+          resolvers: this.resolvers,
+        });
+      } else {
+        // obtain the result from default implementation
+        for (const [, , resolve] of this.resolvers) {
+          const resolvedLocator = await resolve(
+            options.scriptId,
+            options.caller,
+            options.referenceUrl
+          );
+          if (resolvedLocator) {
+            locator = resolvedLocator;
+            break;
+          }
         }
       }
 
       if (!locator) {
-        throw new Error(`No resolver was able to resolve script ${scriptId}`);
+        throw new Error(
+          `No resolver was able to resolve script ${options.scriptId}`
+        );
+      }
+
+      if (this.hookMap.afterResolve.isUsed()) {
+        ({ options, locator } = await this.hookMap.afterResolve.promise({
+          options,
+          locator,
+        }));
       }
 
       if (typeof locator.url === 'function') {
-        locator.url = locator.url(webpackContext);
+        locator.url = locator.url(options.webpackContext);
       }
+    } catch (error) {
+      locator = await this.hookMap.errorResolve.promise({
+        options,
+        error: error as Error,
+      });
 
-      const script = Script.from({ scriptId, caller }, locator, false);
-      const cacheKey = script.locator.uniqueId;
-
-      // Check if user provided a custom shouldUpdateScript function
-      if (locator.shouldUpdateScript) {
-        // If so, we need to wait for it to resolve
-        const fetch = await locator.shouldUpdateScript(
-          scriptId,
-          caller,
-          script.shouldUpdateCache(this.cache[cacheKey])
+      if (!locator) {
+        this.handleError(
+          error,
+          '[ScriptManager] Failed while resolving script locator:',
+          { scriptId: options.scriptId, caller: options.caller }
         );
-
-        // If it returns true, we need to fetch the script
-        if (fetch) {
-          script.locator.fetch = true;
-        }
-
-        this.emit('resolved', script.toObject());
-
-        // if it returns false, we don't need to fetch the script
-        return script;
       }
+    }
 
+    try {
+      const script = await this.createScript(
+        options.scriptId,
+        options.caller,
+        locator
+      );
+      this.emit('resolved', script.toObject());
+      return script;
+    } catch (error) {
+      this.handleError(error, '[ScriptManager] Failed while creating script:', {
+        scriptId: options.scriptId,
+        caller: options.caller,
+      });
+    }
+  }
+
+  private async createScript(
+    scriptId: string,
+    caller: string | undefined,
+    locator: ScriptLocator
+  ) {
+    const script = Script.from({ scriptId, caller }, locator, false);
+    const cacheKey = script.locator.uniqueId;
+
+    // Check if user provided a custom shouldUpdateScript function
+    if (locator.shouldUpdateScript) {
+      // If so, we need to wait for it to resolve
+      const fetch = await locator.shouldUpdateScript(
+        scriptId,
+        caller,
+        script.shouldUpdateCache(this.cache[cacheKey])
+      );
+
+      // If it returns true, we need to fetch the script
+      if (fetch) {
+        script.locator.fetch = true;
+      }
+    } else {
       // If no custom shouldUpdateScript function was provided, we use the default behaviour
       if (!this.cache[cacheKey]) {
         script.locator.fetch = true;
       } else if (script.shouldRefetch(this.cache[cacheKey])) {
         script.locator.fetch = true;
       }
-
-      this.emit('resolved', script.toObject());
-
-      return script;
-    } catch (error) {
-      this.handleError(
-        error,
-        '[ScriptManager] Failed while resolving script locator:',
-        { scriptId, caller }
-      );
     }
+
+    return script;
   }
 
   private async updateCache(script: Script) {
@@ -346,10 +539,30 @@ export class ScriptManager extends EventEmitter {
   async loadScript(
     scriptId: string,
     caller?: string,
-    webpackContext = getWebpackContext(),
+    webpackContext?: RepackRuntimeGlobals.WebpackRequire,
     referenceUrl?: string
+  ): Promise<void>;
+
+  // NOTE: Keep declaration and implementation separate
+  // to allow for better naming in JSDocs while preventing
+  // using the arguments directly in the implementation
+  async loadScript(
+    __scriptId: string,
+    __caller?: string,
+    __webpackContext = getWebpackContext(),
+    __referenceUrl?: string
   ) {
-    const uniqueId = Script.getScriptUniqueId(scriptId, caller);
+    let options: LoadScriptOptions = {
+      scriptId: __scriptId,
+      caller: __caller,
+      referenceUrl: __referenceUrl,
+      webpackContext: __webpackContext,
+    };
+
+    let loaded = false;
+
+    const uniqueId = Script.getScriptUniqueId(options.scriptId, options.caller);
+
     if (this.scriptsPromises[uniqueId]) {
       const { isPrefetch } = this.scriptsPromises[uniqueId];
 
@@ -360,27 +573,64 @@ export class ScriptManager extends EventEmitter {
         return this.scriptsPromises[uniqueId];
       }
     }
+
     const loadProcess = async () => {
-      const script = await this.resolveScript(
-        scriptId,
-        caller,
-        webpackContext,
-        referenceUrl
+      let script = await this.resolveScript(
+        options.scriptId,
+        options.caller,
+        options.webpackContext,
+        options.referenceUrl
       );
 
       try {
+        if (this.hookMap.beforeLoad.isUsed()) {
+          ({ options, script } = await this.hookMap.beforeLoad.promise({
+            options,
+            script,
+          }));
+        }
+
         this.emit('loading', script.toObject());
-        await this.loadScriptWithRetry(scriptId, script.locator);
+
+        if (this.hookMap.load.isUsed()) {
+          loaded = await this.hookMap.load.promise({
+            options,
+            script,
+            loadScript: async (
+              scriptId = options.scriptId,
+              locator = script.locator
+            ) => {
+              await this.loadScriptWithRetry(scriptId, locator);
+            },
+          });
+        } else {
+          await this.loadScriptWithRetry(options.scriptId, script.locator);
+          loaded = true;
+        }
+
+        if (this.hookMap.afterLoad.isUsed()) {
+          ({ options, script } = await this.hookMap.afterLoad.promise({
+            options,
+            script,
+          }));
+        }
+
         this.emit('loaded', script.toObject());
         await this.updateCache(script);
       } catch (error) {
         const { code } = error as Error & { code: string };
-        this.handleError(
-          error,
-          '[ScriptManager] Failed to load script:',
-          code ? `[${code}]` : '',
-          script.toObject()
-        );
+        loaded = await this.hookMap.errorLoad.promise({
+          options,
+          error: error as Error,
+        });
+        if (!loaded) {
+          this.handleError(
+            error,
+            '[ScriptManager] Failed to load script:',
+            code ? `[${code}]` : '',
+            script.toObject()
+          );
+        }
       } finally {
         // should delete script promise even script failed
         delete this.scriptsPromises[uniqueId];
@@ -442,14 +692,20 @@ export class ScriptManager extends EventEmitter {
   async prefetchScript(
     scriptId: string,
     caller?: string,
-    webpackContext = getWebpackContext()
+    webpackContext = getWebpackContext(),
+    referenceUrl?: string
   ) {
     const uniqueId = Script.getScriptUniqueId(scriptId, caller);
     if (this.scriptsPromises[uniqueId]) {
       return this.scriptsPromises[uniqueId];
     }
     const loadProcess = async () => {
-      const script = await this.resolveScript(scriptId, caller, webpackContext);
+      const script = await this.resolveScript(
+        scriptId,
+        caller,
+        webpackContext,
+        referenceUrl
+      );
 
       try {
         this.emit('prefetching', script.toObject());

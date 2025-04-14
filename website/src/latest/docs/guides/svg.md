@@ -10,7 +10,7 @@ Please follow this installation instructions [here](https://github.com/react-nat
 
 ## Exclude SVG from Re.Pack's Assets loader
 
-Now that you have [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) installed and linked into the application, you need to tell Rspack (or webpack) **not to use** Re.Pack's [Assets loader](../loaders/assets-loader) from processing SVGs, since you will process them manually later.
+Now that you have [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) installed and linked into the application, you need to tell Rspack (or webpack) **not to use** Re.Pack's [Assets loader](/api/loaders/assets-loader) from processing SVGs, since you will process them manually later.
 
 Go to your Rspack/webpack configuration file and apply the following diff:
 
@@ -26,7 +26,7 @@ Go to your Rspack/webpack configuration file and apply the following diff:
 
 :::tip
 
-If you don't have Re.Pack's Assets loader rule in your Rspack/webpack config, read [this guide](../loaders/assets-loader#migrating-from-assetsplugin) first.
+If you don't have Re.Pack's Assets loader rule in your Rspack/webpack config, read [this guide](/api/loaders/assets-loader#migrating-from-assetsplugin) first.
 
 :::
 
@@ -38,8 +38,8 @@ Using [SVGR](https://react-svgr.com/) is a good option, if you want to render im
 same way as you would render any other React component:
 
 ```js
-import * as React from 'react';
-import DeveloperActivitySvg from './undraw_Developer_activity_re_39tg.svg';
+import * as React from "react";
+import DeveloperActivitySvg from "./undraw_Developer_activity_re_39tg.svg";
 
 export function MyComponent() {
   return <DeveloperActivitySvg width="100%" height="400" />;
@@ -101,9 +101,9 @@ You can read more about Rspack/webpack's asset modules [here](https://rspack.dev
 The SVG file will be included in a bundle as a raw source in a separate module.
 
 ```js
-import * as React from 'react';
-import { SvgXml } from 'react-native-svg';
-import developerActivitySvgXml from './undraw_Developer_activity_re_39tg.svg';
+import * as React from "react";
+import { SvgXml } from "react-native-svg";
+import developerActivitySvgXml from "./undraw_Developer_activity_re_39tg.svg";
 
 export function MyComponent() {
   return <SvgXml xml={developerActivitySvgXml} width="100%" height="400" />;
@@ -115,9 +115,9 @@ export function MyComponent() {
 The SVG file will be included in a bundle as a data URI in a separate module.
 
 ```js
-import * as React from 'react';
-import { SvgUri } from 'react-native-svg';
-import developerActivitySvgUri from './undraw_Developer_activity_re_39tg.svg';
+import * as React from "react";
+import { SvgUri } from "react-native-svg";
+import developerActivitySvgUri from "./undraw_Developer_activity_re_39tg.svg";
 
 export function MyComponent() {
   return <SvgUri uri={developerActivitySvgUri} width="100%" height="400" />;

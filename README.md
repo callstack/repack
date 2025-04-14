@@ -21,12 +21,10 @@ The documentation is available at [re-pack.dev](https://re-pack.dev).
 
 You can also use the following links to jump to specific topics:
 
-- [About Re.Pack](https://re-pack.dev/docs/about)
-- [Getting Started](https://re-pack.dev/docs/getting-started)
-- [Configuration](https://re-pack.dev/docs/configuration/webpack-config)
-- [API documentation](https://re-pack.dev/api/about)
-- [Known issues & limitations](https://re-pack.dev/docs/known-issues)
-- [Code splitting](https://re-pack.dev/docs/code-splitting/concept)
+- [Quick Start](https://re-pack.dev/docs/getting-started/quick-start)
+- [About Re.Pack](https://re-pack.dev/docs/getting-started/introduction)
+- [Configuration](https://re-pack.dev/docs/guides/configuration)
+- [API documentation](https://re-pack.dev/api/)
 
 ## Made with ❤️ at Callstack
 

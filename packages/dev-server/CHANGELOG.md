@@ -1,5 +1,37 @@
 # @callstack/repack-dev-server
 
+## 5.0.6
+
+## 5.0.5
+
+## 5.0.4
+
+## 5.0.3
+
+### Patch Changes
+
+- [#1086](https://github.com/callstack/repack/pull/1086) [`8e8aad6`](https://github.com/callstack/repack/commit/8e8aad6cfe0669ef01d7071e86a680a498e1b811) Thanks [@jbroma](https://github.com/jbroma)! - Hide "JavaScriptLogs have moved..." message
+
+## 5.0.2
+
+### Patch Changes
+
+- [#1081](https://github.com/callstack/repack/pull/1081) [`30d7330`](https://github.com/callstack/repack/commit/30d73301971ee27efabd7e8c8d9549dd94b38b69) Thanks [@jbroma](https://github.com/jbroma)! - Drop dependency on `@react-native-community/cli-server-api` in the DevServer
+
+## 5.0.1
+
+## 5.0.0
+
+### Major Changes
+
+- [#912](https://github.com/callstack/repack/pull/912) [`07d0566`](https://github.com/callstack/repack/commit/07d05663b9b758001e390635f75097b85a8b2436) Thanks [@jbroma](https://github.com/jbroma)! - BREAKING CHANGES: Removed `devServerEnabled` option from assets-loader and `devServer` from Repack plugin configuration - they are now obtained automatically from configuration.
+
+  Added new `config.devServer` field to configure development server properties with type-safe http/https configuration, special host values (local-ip, local-ipv4, local-ipv6), and enhanced HTTPS configuration with full HttpsServerOptions support.
+
+### Minor Changes
+
+- [#1005](https://github.com/callstack/repack/pull/1005) [`4e10aa6`](https://github.com/callstack/repack/commit/4e10aa6a0c198823bf1b682d9d2e87c39657ac65) Thanks [@jbroma](https://github.com/jbroma)! - Reworked DevServer HMR pipeline - improved performance & recovery from errors
+
 ## 5.0.0-rc.12
 
 ### Minor Changes

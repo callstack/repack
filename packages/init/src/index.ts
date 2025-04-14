@@ -10,6 +10,7 @@ import createNewProject from './tasks/createNewProject.js';
 import modifyDependencies from './tasks/modifyDependencies.js';
 import modifyIOS from './tasks/modifyIOS.js';
 import modifyReactNativeConfig from './tasks/modifyReactNativeConfig.js';
+import setupGit from './tasks/setupGit.js';
 import welcomeMessage from './tasks/welcomeMessage.js';
 import logger, { enableVerboseLogging } from './utils/logger.js';
 import { cancelPromptAndExit } from './utils/prompts.js';
@@ -53,20 +54,24 @@ export default async function run(options: Options) {
       );
     }
 
-    const rootDir = path.join(cwd, projectName!);
+    const projectRootDir = projectExists ? cwd : path.join(cwd, projectName!);
 
-    await modifyDependencies(bundler, rootDir, options.repackVersion);
+    await modifyDependencies(bundler, projectRootDir, options.repackVersion);
 
     await createBundlerConfig(
       bundler,
-      rootDir,
+      projectRootDir,
       options.templateType,
       options.entry
     );
 
-    modifyReactNativeConfig(bundler, rootDir);
+    modifyReactNativeConfig(bundler, projectRootDir);
 
-    modifyIOS(rootDir);
+    modifyIOS(projectRootDir);
+
+    if (!projectExists) {
+      await setupGit(projectRootDir);
+    }
 
     spinner.stop('Setup complete.');
 

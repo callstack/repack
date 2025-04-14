@@ -1,4 +1,4 @@
-# ChunksToHermesBytecode Plugin
+# HermesBytecode Plugin
 
 This plugin is converts JavaScript chunks into [Hermes](https://hermesengine.dev/) bytecode for production-level performance optimization.
 It also converts related source maps to be compatible with bytecode bundles.
@@ -25,7 +25,7 @@ const Repack = require("@callstack/repack");
 
 module.exports = {
   plugins: [
-    new Repack.plugins.ChunksToHermesBytecodePlugin({
+    new Repack.plugins.HermesBytecodePlugin({
       // options
     }),
   ],
@@ -93,7 +93,7 @@ module.exports = (env) => {
 
   return {
     plugins: [
-      new Repack.plugins.ChunksToHermesBytecodePlugin({
+      new Repack.plugins.HermesBytecodePlugin({
         enabled: mode === "production",
         test: /\.bundle$/,
         exclude: /index.bundle$/,

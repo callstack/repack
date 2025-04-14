@@ -1,33 +1,20 @@
 // @ts-check
-import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import webpack from 'webpack';
 
-const dirname = Repack.getDirname(import.meta.url);
-
 /** @type {(env: import('@callstack/repack').EnvOptions) => import('webpack').Configuration} */
 export default (env) => {
-  const {
-    mode = 'development',
-    context = dirname,
-    platform = process.env.PLATFORM,
-  } = env;
-
-  if (!platform) {
-    throw new Error('Missing platform');
-  }
-
-  process.env.BABEL_ENV = mode;
+  const { mode, context, platform } = env;
 
   return {
     mode,
     context,
     entry: './src/mini/index.js',
     resolve: {
-      ...Repack.getResolveOptions(),
+      ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
     output: {
-      path: path.join(dirname, 'build/mini-app/[platform]'),
+      path: '[context]/build/mini-app/[platform]',
       uniqueName: 'MFTester-MiniApp',
     },
     module: {
@@ -42,7 +29,15 @@ export default (env) => {
     },
     plugins: [
       // @ts-ignore
-      new Repack.RepackPlugin(),
+      new Repack.RepackPlugin({
+        extraChunks: [
+          {
+            include: /.*/,
+            type: 'remote',
+            outputPath: `build/mini-app/${platform}/output-remote`,
+          },
+        ],
+      }),
       // @ts-ignore
       new Repack.plugins.ModuleFederationPluginV1({
         name: 'MiniApp',
@@ -54,12 +49,12 @@ export default (env) => {
           react: {
             singleton: true,
             eager: true,
-            requiredVersion: '18.3.1',
+            requiredVersion: '19.0.0',
           },
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.76.3',
+            requiredVersion: '0.78.0',
           },
           '@react-navigation/native': {
             singleton: true,
@@ -74,12 +69,12 @@ export default (env) => {
           'react-native-safe-area-context': {
             singleton: true,
             eager: true,
-            requiredVersion: '^4.14.0',
+            requiredVersion: '5.3.0',
           },
           'react-native-screens': {
             singleton: true,
             eager: true,
-            requiredVersion: '^3.35.0',
+            requiredVersion: '4.9.2',
           },
           '@react-native-async-storage/async-storage': {
             singleton: true,

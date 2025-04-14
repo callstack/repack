@@ -27,11 +27,7 @@
   },
   "organizeImports": {
     "enabled": true,
-    "ignore": [
-      "templates/*",
-      "templates_v5/*",
-      "tests/metro-compat/**/__tests__/**"
-    ]
+    "ignore": ["templates/*", "tests/metro-compat/**/__tests__/**"]
   },
   "linter": {
     "enabled": true,
@@ -52,14 +48,11 @@
       "suspicious": {
         "noControlCharactersInRegex": "off",
         "noExplicitAny": "off",
-        "noFallthroughSwitchClause": "off"
+        "noFallthroughSwitchClause": "off",
+        "noConfusingVoidType": "off"
       }
     },
-    "ignore": [
-      "templates/*",
-      "templates_v5/*",
-      "tests/metro-compat/**/__tests__/**"
-    ]
+    "ignore": ["templates/*", "tests/metro-compat/**/__tests__/**"]
   },
   "javascript": {
     "formatter": {

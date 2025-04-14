@@ -1,7 +1,5 @@
 // @ts-expect-error type-only import
 import type { Server } from '@callstack/repack-dev-server';
-import type { Config } from '@react-native-community/cli-types';
-import * as colorette from 'colorette';
 import type { Configuration, StatsCompilation } from 'webpack';
 import packageJson from '../../../package.json';
 import {
@@ -12,33 +10,31 @@ import {
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
 import type { HMRMessage } from '../../types.js';
+import { CLIError } from '../common/cliError.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
-import { CLIError } from '../common/error.js';
 import {
   getMimeType,
   parseFileUrl,
   runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
+import logo from '../common/logo.js';
 import { setupEnvironment } from '../common/setupEnvironment.js';
-import type { StartArguments } from '../types.js';
+import type { CliConfig, StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
 
 /**
- * Start command for React Native Community CLI.
- * It runs `@callstack/repack-dev-server` to provide Development Server functionality to React Native apps
+ * Start command that runs a development server.
+ * It runs `@callstack/repack-dev-server` to provide Development Server functionality
  * in development mode.
  *
  * @param _ Original, non-parsed arguments that were provided when running this command.
- * @param config React Native Community CLI configuration object.
+ * @param cliConfig Configuration object containing platform and project settings.
  * @param args Parsed command line arguments.
- *
- * @internal
- * @category CLI command
  */
 export async function start(
   _: string[],
-  cliConfig: Config,
+  cliConfig: CliConfig,
   args: StartArguments
 ) {
   const detectedPlatforms = Object.keys(cliConfig.platforms);
@@ -49,7 +45,7 @@ export async function start(
 
   const configs = await makeCompilerConfig<Configuration>({
     args: args,
-    bundler: 'rspack',
+    bundler: 'webpack',
     command: 'start',
     rootDir: cliConfig.root,
     platforms: args.platform ? [args.platform] : detectedPlatforms,
@@ -69,10 +65,7 @@ export async function start(
     ].filter(Boolean) as Reporter[]
   );
 
-  const version = packageJson.version;
-  process.stdout.write(
-    colorette.bold(colorette.cyan('📦 Re.Pack ' + version + '\n\n'))
-  );
+  process.stdout.write(logo(packageJson.version, 'webpack'));
 
   const compiler = new Compiler(
     args,

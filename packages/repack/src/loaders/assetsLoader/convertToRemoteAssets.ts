@@ -42,6 +42,7 @@ export function convertToRemoteAssets({
 
   return dedent`
     var AssetSourceResolver = require('react-native/Libraries/Image/AssetSourceResolver');
+    if ('default' in AssetSourceResolver) AssetSourceResolver = AssetSourceResolver.default;
     var resolver = new AssetSourceResolver(undefined, undefined, ${asset});
 
     module.exports = resolver.scaledAssetPath();

@@ -1,25 +1,20 @@
-import type { Config } from '@react-native-community/cli-types';
 import webpack, { type Configuration } from 'webpack';
+import { CLIError } from '../common/cliError.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
-import { CLIError } from '../common/error.js';
 import { normalizeStatsOptions, writeStats } from '../common/index.js';
 import { setupEnvironment } from '../common/setupEnvironment.js';
-import type { BundleArguments } from '../types.js';
+import type { BundleArguments, CliConfig } from '../types.js';
 /**
- * Bundle command for React Native Community CLI.
- * It runs Webpack, builds bundle and saves it alongside any other assets and Source Map
- * to filesystem.
+ * Bundle command that builds and saves the bundle
+ * alongside any other assets to filesystem using Webpack.
  *
  * @param _ Original, non-parsed arguments that were provided when running this command.
- * @param config React Native Community CLI configuration object.
+ * @param cliConfig Configuration object containing platform and project settings.
  * @param args Parsed command line arguments.
- *
- * @internal
- * @category CLI command
  */
 export async function bundle(
   _: string[],
-  cliConfig: Config,
+  cliConfig: CliConfig,
   args: BundleArguments
 ) {
   const [config] = await makeCompilerConfig<Configuration>({

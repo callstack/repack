@@ -29,7 +29,7 @@ export default (env) => {
       : undefined,
     entry,
     resolve: {
-      ...Repack.getResolveOptions(),
+      ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
     output: {
       uniqueName: 'tester-app',
@@ -130,7 +130,7 @@ export default (env) => {
       }),
       new ReanimatedPlugin(),
       new NativeWindPlugin(),
-      // new Repack.plugins.ChunksToHermesBytecodePlugin({
+      // new Repack.plugins.HermesBytecodePlugin({
       //   enabled: mode === 'production',
       //   test: /\.(js)?bundle$/,
       //   exclude: /index.bundle$/,

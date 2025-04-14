@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack-plugin-expo-modules",
-  "version": "5.0.0-rc.12",
+  "version": "5.0.6",
   "description": "A plugin for @callstack/repack that integrates Expo Modules",
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
@@ -33,12 +33,12 @@
     "node": ">=18"
   },
   "peerDependencies": {
-    "@callstack/repack": "^5.0.0-rc.12"
+    "@callstack/repack": "^5.0.6"
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",
     "@rspack/core": "catalog:",
-    "@types/node": "^18"
+    "@types/node": "catalog:"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

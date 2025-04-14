@@ -1,3 +1,4 @@
+import url from 'node:url';
 import type { Configuration, ConfigurationObject } from '../../types.js';
 
 export async function loadProjectConfig<C extends ConfigurationObject>(
@@ -6,9 +7,10 @@ export async function loadProjectConfig<C extends ConfigurationObject>(
   let config: Configuration<C>;
 
   try {
-    config = require(configFilePath);
+    const { href: fileUrl } = url.pathToFileURL(configFilePath);
+    config = await import(fileUrl);
   } catch {
-    config = await import(configFilePath);
+    config = require(configFilePath);
   }
 
   if ('default' in config) {
