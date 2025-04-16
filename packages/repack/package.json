@@ -84,7 +84,7 @@
     "estree-util-is-identifier-name": "^1.1.0",
     "events": "^3.3.0",
     "execa": "^5.0.0",
-    "flow-remove-types": "^2.250.0",
+    "flow-remove-types": "^2.268.0",
     "gradient-string": "^2.0.2",
     "image-size": "^1.1.1",
     "jsonwebtoken": "^9.0.2",
