@@ -1,5 +1,4 @@
 import path from 'node:path';
-// @ts-expect-error type only import
 import type { DevServerOptions } from '@callstack/repack-dev-server';
 import type {
   Compiler,
