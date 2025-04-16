@@ -230,10 +230,10 @@ importers:
         specifier: 'catalog:'
         version: 0.79.1(@babel/core@7.25.2)(@react-native-community/cli@18.0.0(typescript@5.8.3))(@types/react@19.0.10)(react@19.0.0)
       react-native-safe-area-context:
-        specifier: 5.4.0
+        specifier: ^5.4.0
         version: 5.4.0(react-native@0.79.1(@babel/core@7.25.2)(@react-native-community/cli@18.0.0(typescript@5.8.3))(@types/react@19.0.10)(react@19.0.0))(react@19.0.0)
       react-native-screens:
-        specifier: 4.10.0
+        specifier: ^4.10.0
         version: 4.10.0(react-native@0.79.1(@babel/core@7.25.2)(@react-native-community/cli@18.0.0(typescript@5.8.3))(@types/react@19.0.10)(react@19.0.0))(react@19.0.0)
     devDependencies:
       '@babel/core':
@@ -303,10 +303,10 @@ importers:
         specifier: 'catalog:'
         version: 0.79.1(@babel/core@7.25.2)(@react-native-community/cli@18.0.0(typescript@5.8.3))(@types/react@19.0.10)(react@19.0.0)
       react-native-safe-area-context:
-        specifier: 5.4.0
+        specifier: ^5.4.0
         version: 5.4.0(react-native@0.79.1(@babel/core@7.25.2)(@react-native-community/cli@18.0.0(typescript@5.8.3))(@types/react@19.0.10)(react@19.0.0))(react@19.0.0)
       react-native-screens:
-        specifier: 4.10.0
+        specifier: ^4.10.0
         version: 4.10.0(react-native@0.79.1(@babel/core@7.25.2)(@react-native-community/cli@18.0.0(typescript@5.8.3))(@types/react@19.0.10)(react@19.0.0))(react@19.0.0)
     devDependencies:
       '@babel/core':
