@@ -2,7 +2,6 @@ import EventEmitter from 'node:events';
 import fs from 'node:fs';
 import path from 'node:path';
 import { Worker } from 'node:worker_threads';
-// @ts-expect-error type-only import
 import type { SendProgress } from '@callstack/repack-dev-server';
 import type webpack from 'webpack';
 import { WORKER_ENV_KEY } from '../../env.js';

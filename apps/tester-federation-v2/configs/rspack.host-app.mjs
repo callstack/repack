@@ -64,12 +64,12 @@ export default (env) => {
           'react-native-safe-area-context': {
             singleton: true,
             eager: true,
-            requiredVersion: '5.3.0',
+            requiredVersion: '^5.4.0',
           },
           'react-native-screens': {
             singleton: true,
             eager: true,
-            requiredVersion: '4.9.2',
+            requiredVersion: '^4.10.0',
           },
         },
       }),

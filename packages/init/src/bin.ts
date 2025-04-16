@@ -2,7 +2,7 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import info from '../package.json' assert { type: 'json' };
+import info from '../package.json' with { type: 'json' };
 import run from './index.js';
 
 const argv = yargs(hideBin(process.argv))
