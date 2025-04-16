@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-// @ts-expect-error type-only import
 import type { Server } from '@callstack/repack-dev-server';
 import { rspack } from '@rspack/core';
 import type {

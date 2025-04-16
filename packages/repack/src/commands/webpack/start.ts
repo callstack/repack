@@ -1,4 +1,3 @@
-// @ts-expect-error type-only import
 import type { Server } from '@callstack/repack-dev-server';
 import type { Configuration, StatsCompilation } from 'webpack';
 import packageJson from '../../../package.json';

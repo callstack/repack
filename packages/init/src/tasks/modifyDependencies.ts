@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import packageJson from '../../package.json' assert { type: 'json' };
-import versionsJson from '../../versions.json' assert { type: 'json' };
+import packageJson from '../../package.json' with { type: 'json' };
+import versionsJson from '../../versions.json' with { type: 'json' };
 import { RepackInitError } from '../utils/error.js';
 import logger from '../utils/logger.js';
 
