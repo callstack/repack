@@ -18,6 +18,7 @@ interface GetFlowTransformRulesOptions {
   exclude?: string[];
   all?: boolean;
   ignoreUninitializedFields?: boolean;
+  removeEmptyImports?: boolean;
 }
 ```
 
@@ -85,6 +86,13 @@ Whether to bypass looking for `@flow` pragma comment before parsing
 
 Whether to remove uninitialized class fields completely rather than only removing the type (defaults to false)
 
+### options.removeEmptyImports
+
+- Type: `boolean`
+- Default: `true`
+
+Whether to remove empty import statements which were only used for importing flow types (defaults to true)
+
 ## Example
 
 ```js title=rspack.config.cjs
@@ -97,6 +105,7 @@ module.exports = {
         include: ["react-native", "@react-native"],
         all: true,
         ignoreUninitializedFields: false,
+        removeEmptyImports: true,
       }),
     ],
   },
