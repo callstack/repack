@@ -46,7 +46,7 @@ export default (env) => {
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.78.0',
+            requiredVersion: '0.79.1',
           },
           '@react-navigation/native': {
             singleton: true,
@@ -61,17 +61,17 @@ export default (env) => {
           'react-native-safe-area-context': {
             singleton: true,
             eager: true,
-            requiredVersion: '5.3.0',
+            requiredVersion: '^5.4.0',
           },
           'react-native-screens': {
             singleton: true,
             eager: true,
-            requiredVersion: '4.9.2',
+            requiredVersion: '^4.10.0',
           },
           '@react-native-async-storage/async-storage': {
             singleton: true,
             eager: true,
-            requiredVersion: '2.1.1',
+            requiredVersion: '^2.1.2',
           },
         },
       }),

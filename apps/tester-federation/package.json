@@ -24,8 +24,8 @@
     "@react-navigation/native-stack": "^6.10.1",
     "react": "catalog:",
     "react-native": "catalog:",
-    "react-native-safe-area-context": "5.4.0",
-    "react-native-screens": "4.10.0"
+    "react-native-safe-area-context": "^5.4.0",
+    "react-native-screens": "^4.10.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
