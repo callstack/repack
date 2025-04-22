@@ -56,7 +56,7 @@ describe('RepackResolverPlugin', () => {
   it('should resolve a script through a manifest', async () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
@@ -74,8 +74,8 @@ describe('RepackResolverPlugin', () => {
   it('should resolve a script through remote entry', async () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({
-      remoteInfo: { ...mockRemoteInfo, version: undefined },
+    plugin.registerRemote!({
+      remote: { ...mockRemoteInfo, version: undefined },
     } as any);
 
     // manually resolve the script to verify the result
@@ -95,7 +95,7 @@ describe('RepackResolverPlugin', () => {
     const config = { headers: { Authorization: 'Bearer token' } };
     const plugin = RepackResolverPlugin(config);
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
@@ -115,7 +115,7 @@ describe('RepackResolverPlugin', () => {
     });
     const plugin = RepackResolverPlugin(config);
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
@@ -131,7 +131,7 @@ describe('RepackResolverPlugin', () => {
   it('should throw error when reference URL is missing', async () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result (should throw)
     await expect(
@@ -147,7 +147,7 @@ describe('RepackResolverPlugin', () => {
     const config = { headers: { Authorization: 'Bearer token' } };
     const plugin = RepackResolverPlugin(config);
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
@@ -174,7 +174,7 @@ describe('RepackResolverPlugin', () => {
 
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript('other-remote');
@@ -186,8 +186,8 @@ describe('RepackResolverPlugin', () => {
   it('should rebase the URL from reference URL to entry URL', async () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({
-      remoteInfo: {
+    plugin.registerRemote!({
+      remote: {
         name: 'remote1',
         entry: 'https://example.com/ios/remote1/entry.container.js.bundle',
         version: 'https://example-manifest.com/remote1/mf-manifest.json',
