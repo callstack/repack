@@ -44,12 +44,12 @@ const registerResolver = async (
   remoteInfo: MFRemote,
   config?: RepackResolverPluginConfiguration
 ) => {
-  // the body of registerResolver is fully synchronous so when
-  // ScriptManager.shared.resolveScript is called, registerResolver
+  // when ScriptManager.shared.resolveScript is called, registerResolver
   // should evaluate before it and and the resolver will be registered
   // before any remote script is resolved
-  const { ScriptManager } =
-    require('../ScriptManager/index.js') as typeof RepackClient;
+  const { ScriptManager } = (await import(
+    '../ScriptManager/index.js'
+  )) as typeof RepackClient;
 
   // when manifest is used, the valid entry URL comes from the version field
   // otherwise, the entry URL comes from the entry field which has the correct publicPath for the remote set
