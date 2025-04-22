@@ -109,6 +109,7 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     this.defaultRuntimePlugins = defaultRuntimePlugins ?? [
       '@callstack/repack/mf/core-plugin',
       '@callstack/repack/mf/resolver-plugin',
+      '@callstack/repack/mf/prefetch-plugin',
     ];
   }
 
