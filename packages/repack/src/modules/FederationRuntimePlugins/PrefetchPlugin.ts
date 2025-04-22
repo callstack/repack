@@ -39,6 +39,14 @@ const RepackPrefetchPlugin: () => FederationRuntimePlugin = () => ({
     const remoteName = preloadConfig.nameOrAlias;
     const remoteSnapshot = args.remoteSnapshot;
 
+    if (preloadConfig.depsRemote) {
+      console.warn(
+        '[RepackPrefetchPlugin]' +
+          'The depsRemote configuration option is not currently implemented.' +
+          'This setting will be ignored.'
+      );
+    }
+
     function handleAssets(assets: string[]): PrefetchAsset[] {
       return assets.map((asset) => ({
         name: getAssetName(asset),
