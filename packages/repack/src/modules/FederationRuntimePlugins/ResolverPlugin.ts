@@ -4,7 +4,7 @@ import type {
 } from '@module-federation/enhanced/runtime';
 import type * as RepackClient from '../ScriptManager/index.js';
 
-type FederatedRemote = Parameters<FederationHost['registerRemotes']>[0][0];
+type MFRemote = Parameters<FederationHost['registerRemotes']>[0][0];
 
 export type RepackResolverPluginConfiguration =
   | Omit<RepackClient.ScriptLocator, 'url'>
@@ -41,17 +41,31 @@ const rebaseRemoteUrl = (from: string, to: string) => {
 };
 
 const registerResolver = async (
-  remoteInfo: FederatedRemote,
+  remoteInfo: MFRemote,
   config?: RepackResolverPluginConfiguration
 ) => {
+  // when ScriptManager.shared.resolveScript is called, registerResolver
+  // should evaluate before it and and the resolver will be registered
+  // before any remote script is resolved
   const { ScriptManager } = (await import(
     '../ScriptManager/index.js'
   )) as typeof RepackClient;
 
   // when manifest is used, the valid entry URL comes from the version field
   // otherwise, the entry URL comes from the entry field which has the correct publicPath for the remote set
-  const entryUrl =
-    'version' in remoteInfo ? remoteInfo.version : remoteInfo.entry;
+  let entryUrl: string | undefined;
+  if ('version' in remoteInfo && remoteInfo.version) {
+    entryUrl = remoteInfo.version;
+  } else if ('entry' in remoteInfo) {
+    entryUrl = remoteInfo.entry;
+  }
+
+  if (!entryUrl) {
+    throw new Error(
+      '[RepackResolverPlugin] Cannot determine entry URL for remote: ' +
+        remoteInfo.name
+    );
+  }
 
   ScriptManager.shared.addResolver(
     async (scriptId, caller, referenceUrl) => {
