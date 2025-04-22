@@ -17,15 +17,21 @@ ScriptManager.shared
   .invalidateScripts()
   // preload the MiniApp remote entry and all its assets
   .then(() => {
-    return preloadRemote([{ nameOrAlias: 'MiniApp', resourceCategory: 'all' }]);
+    return preloadRemote([
+      { nameOrAlias: 'MiniApp', resourceCategory: 'sync' },
+    ]);
   })
   .then(() => {
-    console.log('preloaded all MiniApp assets');
+    console.log('preloaded MiniApp assets');
   })
   .catch((e) => {
     // preloadRemote will fail if the remote entry is not a manifest
     console.error('error preloading MiniApp assets');
     console.error(e);
   });
+
+ScriptManager.shared.on('prefetching', (script) => {
+  console.debug('prefetching', script.locator.uniqueId);
+});
 
 AppRegistry.registerComponent(components[0].appKey, () => App);

@@ -1,46 +1,86 @@
 import type { FederationRuntimePlugin } from '@module-federation/enhanced/runtime';
 import type * as RepackClient from '../ScriptManager/index.js';
 
+interface PrefetchAsset {
+  name: string;
+  remoteName: string;
+  url: string;
+}
+
+function getAssetName(asset: string): string {
+  // remove the extension from the asset name
+  return asset.split('.')[0];
+}
+
+function getAssetUrl(asset: string) {
+  // create placeholder reference url for the asset
+  return 'prefetch:///' + asset;
+}
+
+function prefetchAsset(asset: PrefetchAsset) {
+  const client = require('../ScriptManager/index.js') as typeof RepackClient;
+  const { ScriptManager, getWebpackContext } = client;
+
+  // caller should be undefined when fetching/loading the remote entry container
+  const caller = asset.name === asset.remoteName ? undefined : asset.remoteName;
+
+  return ScriptManager.shared.prefetchScript(
+    asset.name,
+    caller,
+    getWebpackContext(),
+    asset.url
+  );
+}
+
 const RepackPrefetchPlugin: () => FederationRuntimePlugin = () => ({
   name: 'repack-prefetch-plugin',
   generatePreloadAssets: async (args) => {
-    // const preloadConfig = args.preloadOptions.preloadConfig;
+    const preloadConfig = args.preloadOptions.preloadConfig;
+    const remoteName = preloadConfig.nameOrAlias;
     const remoteSnapshot = args.remoteSnapshot;
 
-    const client = require('../ScriptManager/index.js') as typeof RepackClient;
-    const { ScriptManager, getWebpackContext } = client;
+    function handleAssets(assets: string[]): PrefetchAsset[] {
+      return assets.map((asset) => ({
+        name: getAssetName(asset),
+        remoteName,
+        url: getAssetUrl(asset),
+      }));
+    }
+
+    let assets: PrefetchAsset[] = [];
 
     if ('modules' in remoteSnapshot) {
-      // TODO handle options from preloadConfig
-      const assets = remoteSnapshot.modules
-        .flatMap((module) => [
-          ...module.assets.js.sync,
-          ...module.assets.js.async,
-        ])
-        .map(
-          (asset) => () =>
-            ScriptManager.shared.prefetchScript(
-              asset.split('.')[0],
-              remoteSnapshot.globalName,
-              getWebpackContext(),
-              // @ts-ignore
-              remoteSnapshot.publicPath + '/' + asset
-            )
-        );
+      for (const exposedModule of remoteSnapshot.modules) {
+        if (preloadConfig.exposes) {
+          if (!preloadConfig.exposes.includes(exposedModule.moduleName)) {
+            continue;
+          }
+        }
 
-      // fetch remote entry container too
-      assets.unshift(() =>
-        ScriptManager.shared.prefetchScript(
-          remoteSnapshot.globalName,
-          undefined,
-          getWebpackContext(),
-          // @ts-ignore
-          remoteSnapshot.publicPath + '/' + remoteSnapshot.remoteEntry
-        )
-      );
+        if (preloadConfig.resourceCategory === 'all') {
+          assets.push(...handleAssets(exposedModule.assets.js.async));
+          assets.push(...handleAssets(exposedModule.assets.js.sync));
+        } else if (preloadConfig.resourceCategory === 'sync') {
+          assets.push(...handleAssets(exposedModule.assets.js.sync));
+        }
+      }
 
-      await Promise.all(assets.map((asset) => asset()));
+      if (preloadConfig.filter) {
+        assets = assets.filter((asset) => preloadConfig.filter!(asset.name));
+      }
+
+      assets.unshift({
+        name: remoteSnapshot.globalName,
+        remoteName: remoteSnapshot.globalName,
+        url: getAssetUrl(remoteSnapshot.remoteEntry),
+      });
     }
+
+    // if (remoteSnapshot.shared) {
+    //   // console.log('shared', remoteSnapshot.shared);
+    // }
+
+    await Promise.all(assets.map(prefetchAsset));
 
     // noop for compatibility
     return Promise.resolve({
