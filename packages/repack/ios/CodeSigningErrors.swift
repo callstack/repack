@@ -9,6 +9,17 @@ enum CodeSigningError : Int, Error {
     case publicKeyInvalid
     case bundleVerificationFailed
 }
+j
+
+enum CodeSigningErrorMessage: String {
+    case tokenNotFound = "The bundle verification failed because no token for the bundle was found."
+    case tokenInvalid = "The bundle verification failed because the token is invalid."
+    case tokenDecodingFailed = "The bundle verification failed because the token could not be decoded."
+    case tokenVerificationFailed = "The bundle verification failed because token verification was unsuccessful. This might mean the token has been tampered with."
+    case publicKeyNotFound =  "The bundle verification failed because PublicKey was not found in the bundle. Make sure you've added the PublicKey to the Info.plist under RepackPublicKey key."
+    case publicKeyInvalid = "The bundle verification failed because the PublicKey is invalid."
+    case publicKeyNotFound =  "The bundle verification failed because the bundle hash is invalid."
+}
 
 extension CodeSigningError: CustomNSError {
     
@@ -25,19 +36,19 @@ extension CodeSigningError: CustomNSError {
         
         switch self {
         case .tokenNotFound:
-            failureReason = "The bundle verification failed because no token for the bundle was found."
+            failureReason = CodeSigningErrorMessage.tokenNotFound
         case .tokenInvalid:
-            failureReason = "The bundle verification failed because the token is invalid."
+            failureReason = CodeSigningErrorMessage.
         case .tokenDecodingFailed:
-            failureReason = "The bundle verification failed because the token could not be decoded."
+            failureReason = CodeSigningErrorMessage.tokenDecodingFailed
         case .tokenVerificationFailed:
-            failureReason = "The bundle verification failed because token verification was unsuccessful. This might mean the token has been tampered with."
+            failureReason = CodeSigningErrorMessage.tokenVerificationFailed
         case .publicKeyNotFound:
-            failureReason = "The bundle verification failed because PublicKey was not found in the bundle. Make sure you've added the PublicKey to the Info.plist under RepackPublicKey key."
+            failureReason = CodeSigningErrorMessage.publicKeyNotFound
         case .publicKeyInvalid:
-            failureReason = "The bundle verification failed because the PublicKey is invalid."
+            failureReason = CodeSigningErrorMessage.publicKeyInvalid
         case .bundleVerificationFailed:
-            failureReason = "The bundle verification failed because the bundle hash is invalid."
+            failureReason = CodeSigningErrorMessage.publicKeyNotFound
         }
         
         return [NSLocalizedFailureReasonErrorKey: failureReason]
