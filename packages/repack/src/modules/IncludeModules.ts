@@ -5,5 +5,4 @@
  * These modules are required by assetsLoader and should be shared as deep imports when using ModuleFederation.
  */
 
-require.resolve('react-native/Libraries/Image/AssetRegistry');
 require.resolve('react-native/Libraries/Image/AssetSourceResolver');
