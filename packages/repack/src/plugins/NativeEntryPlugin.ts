@@ -57,10 +57,13 @@ export class NativeEntryPlugin implements RspackPluginInstance {
       '../modules/InitializeScriptManager.js'
     );
 
+    const includeModulesPath = require.resolve('../modules/IncludeModules.js');
+
     const nativeEntries = [
       ...getReactNativePolyfills(),
       initializeCorePath,
       initializeScriptManagerPath,
+      includeModulesPath,
     ];
 
     compiler.hooks.entryOption.tap(
