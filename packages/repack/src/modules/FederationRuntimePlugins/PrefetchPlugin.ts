@@ -39,11 +39,12 @@ const RepackPrefetchPlugin: () => FederationRuntimePlugin = () => ({
     const remoteName = preloadConfig.nameOrAlias;
     const remoteSnapshot = args.remoteSnapshot;
 
-    if (preloadConfig.depsRemote) {
+    if (preloadConfig.depsRemote !== false) {
       console.warn(
-        '[RepackPrefetchPlugin]' +
-          'The depsRemote configuration option is not currently implemented.' +
-          'This setting will be ignored.'
+        '[RepackPrefetchPlugin] ' +
+          'The depsRemote configuration option is not implemented yet. ' +
+          'This setting will be ignored and will have no effect. ' +
+          'You can hide this warning by setting depsRemote explicitly to false.'
       );
     }
 
@@ -83,10 +84,6 @@ const RepackPrefetchPlugin: () => FederationRuntimePlugin = () => ({
         url: getAssetUrl(remoteSnapshot.remoteEntry),
       });
     }
-
-    // if (remoteSnapshot.shared) {
-    //   // console.log('shared', remoteSnapshot.shared);
-    // }
 
     await Promise.all(assets.map(prefetchAsset));
 
