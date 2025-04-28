@@ -93,7 +93,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
 
     // Ensure single instance of asset registry is used at all times
     new compiler.webpack.NormalModuleReplacementPlugin(
-      /@react-native.*?([/\\]+)assets-registry[/\\]registry\.js$/,
+      /@react-native.*?([/\\]+)assets-registry([/\\]+)registry\.js$/,
       (resource) => {
         // prevent including the proxy module itself
         if (resource.contextInfo.issuer !== assetsRegistryProxyPath) {
