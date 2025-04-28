@@ -87,7 +87,7 @@ export class RepackTargetPlugin implements RspackPluginInstance {
       require.resolve('../../modules/EmptyModule.js')
     ).apply(compiler);
 
-    const assetsRegistryPath = require.resolve(
+    const assetsRegistryProxyPath = require.resolve(
       '../../modules/AssetsRegistry.js'
     );
 
@@ -96,9 +96,9 @@ export class RepackTargetPlugin implements RspackPluginInstance {
       /@react-native.*?([/\\]+)assets-registry[/\\]registry\.js$/,
       (resource) => {
         // prevent including the proxy module itself
-        if (resource.contextInfo.issuer !== assetsRegistryPath) {
-          resource.request = assetsRegistryPath;
-          resource.createData!.resource = assetsRegistryPath;
+        if (resource.contextInfo.issuer !== assetsRegistryProxyPath) {
+          resource.request = assetsRegistryProxyPath;
+          resource.createData!.resource = assetsRegistryProxyPath;
         }
       }
     ).apply(compiler);
