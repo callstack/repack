@@ -87,6 +87,22 @@ export class RepackTargetPlugin implements RspackPluginInstance {
       require.resolve('../../modules/EmptyModule.js')
     ).apply(compiler);
 
+    const assetsRegistryPath = require.resolve(
+      '../../modules/AssetsRegistry.js'
+    );
+
+    // Ensure single instance of asset registry is used at all times
+    new compiler.webpack.NormalModuleReplacementPlugin(
+      /@react-native.*?([/\\]+)assets-registry[/\\]registry\.js$/,
+      (resource) => {
+        // prevent including the proxy module itself
+        if (resource.contextInfo.issuer !== assetsRegistryPath) {
+          resource.request = assetsRegistryPath;
+          resource.createData!.resource = assetsRegistryPath;
+        }
+      }
+    ).apply(compiler);
+
     compiler.hooks.compilation.tap('RepackTargetPlugin', (compilation) => {
       compilation.hooks.additionalTreeRuntimeRequirements.tap(
         'RepackTargetPlugin',
