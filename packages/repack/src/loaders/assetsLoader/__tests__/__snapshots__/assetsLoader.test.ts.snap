@@ -5,7 +5,7 @@ exports[`assetLoader on android should load and extract asset with scales 1`] = 
   "__packager_asset": true,
   "hash": "86abef08a42e972a96c958d6fa9d43da,02ad731a8881911e488b51c48a4cc6c1,d9f7c31eebb3a41cc180431867b04f38",
   "height": 272,
-  "httpServerLocation": "assets/node_modules/rspack-virtual-module-2f60a7fc/__fixtures__",
+  "httpServerLocation": "assets/node_modules/rspack-virtual-module-0bfdf553/__fixtures__",
   "name": "star",
   "scales": [
     1,
@@ -21,11 +21,11 @@ exports[`assetLoader on android should load and extract asset with scales 2`] = 
 "/
 └─ out/
    ├─ drawable-mdpi/
-   │  └─ node_modules_rspackvirtualmodule2f60a7fc___fixtures___star.png
+   │  └─ node_modules_rspackvirtualmodule0bfdf553___fixtures___star.png
    ├─ drawable-xhdpi/
-   │  └─ node_modules_rspackvirtualmodule2f60a7fc___fixtures___star.png
+   │  └─ node_modules_rspackvirtualmodule0bfdf553___fixtures___star.png
    ├─ drawable-xxhdpi/
-   │  └─ node_modules_rspackvirtualmodule2f60a7fc___fixtures___star.png
+   │  └─ node_modules_rspackvirtualmodule0bfdf553___fixtures___star.png
    └─ main.js"
 `;
 
@@ -34,7 +34,7 @@ exports[`assetLoader on android should load and extract asset without scales 1`]
   "__packager_asset": true,
   "hash": "30be0ddcd5932e77845666e7b6f6a863",
   "height": 51,
-  "httpServerLocation": "assets/node_modules/rspack-virtual-module-dede2d21/__fixtures__",
+  "httpServerLocation": "assets/node_modules/rspack-virtual-module-cc4162dd/__fixtures__",
   "name": "logo",
   "scales": [
     1,
@@ -48,7 +48,7 @@ exports[`assetLoader on android should load and extract asset without scales 2`]
 "/
 └─ out/
    ├─ drawable-mdpi/
-   │  └─ node_modules_rspackvirtualmoduledede2d21___fixtures___logo.png
+   │  └─ node_modules_rspackvirtualmodulecc4162dd___fixtures___logo.png
    └─ main.js"
 `;
 
@@ -57,7 +57,7 @@ exports[`assetLoader on android should prefer platform specific asset 1`] = `
   "__packager_asset": true,
   "hash": "373411381c08b2c5034c814c24c26b19",
   "height": 51,
-  "httpServerLocation": "assets/node_modules/rspack-virtual-module-acc39058/__fixtures__",
+  "httpServerLocation": "assets/node_modules/rspack-virtual-module-5963b11e/__fixtures__",
   "name": "logo",
   "scales": [
     1,
@@ -71,7 +71,7 @@ exports[`assetLoader on android should prefer platform specific asset 2`] = `
 "/
 └─ out/
    ├─ drawable-mdpi/
-   │  └─ node_modules_rspackvirtualmoduleacc39058___fixtures___logo.png
+   │  └─ node_modules_rspackvirtualmodule5963b11e___fixtures___logo.png
    └─ main.js"
 `;
 
@@ -80,7 +80,7 @@ exports[`assetLoader on ios should load and extract asset with scales 1`] = `
   "__packager_asset": true,
   "hash": "86abef08a42e972a96c958d6fa9d43da,02ad731a8881911e488b51c48a4cc6c1,d9f7c31eebb3a41cc180431867b04f38",
   "height": 272,
-  "httpServerLocation": "assets/node_modules/rspack-virtual-module-2f60a7fc/__fixtures__",
+  "httpServerLocation": "assets/node_modules/rspack-virtual-module-0bfdf553/__fixtures__",
   "name": "star",
   "scales": [
     1,
@@ -97,7 +97,7 @@ exports[`assetLoader on ios should load and extract asset with scales 2`] = `
 └─ out/
    ├─ assets/
    │  └─ node_modules/
-   │     └─ rspack-virtual-module-2f60a7fc/
+   │     └─ rspack-virtual-module-0bfdf553/
    │        └─ __fixtures__/
    │           ├─ star.png
    │           ├─ star@2x.png
@@ -110,7 +110,7 @@ exports[`assetLoader on ios should load and extract asset without scales 1`] = `
   "__packager_asset": true,
   "hash": "30be0ddcd5932e77845666e7b6f6a863",
   "height": 51,
-  "httpServerLocation": "assets/node_modules/rspack-virtual-module-dede2d21/__fixtures__",
+  "httpServerLocation": "assets/node_modules/rspack-virtual-module-cc4162dd/__fixtures__",
   "name": "logo",
   "scales": [
     1,
@@ -125,7 +125,7 @@ exports[`assetLoader on ios should load and extract asset without scales 2`] = `
 └─ out/
    ├─ assets/
    │  └─ node_modules/
-   │     └─ rspack-virtual-module-dede2d21/
+   │     └─ rspack-virtual-module-cc4162dd/
    │        └─ __fixtures__/
    │           └─ logo.png
    └─ main.js"
@@ -136,7 +136,7 @@ exports[`assetLoader on ios should prefer platform specific asset 1`] = `
   "__packager_asset": true,
   "hash": "6839dbc2a8dafd50c1d82b7db5fe274a",
   "height": 51,
-  "httpServerLocation": "assets/node_modules/rspack-virtual-module-1d9593d4/__fixtures__",
+  "httpServerLocation": "assets/node_modules/rspack-virtual-module-e7a866d7/__fixtures__",
   "name": "logo",
   "scales": [
     1,
@@ -151,7 +151,7 @@ exports[`assetLoader on ios should prefer platform specific asset 2`] = `
 └─ out/
    ├─ assets/
    │  └─ node_modules/
-   │     └─ rspack-virtual-module-1d9593d4/
+   │     └─ rspack-virtual-module-e7a866d7/
    │        └─ __fixtures__/
    │           └─ logo.png
    └─ main.js"
@@ -162,7 +162,7 @@ exports[`assetLoader should convert to remote-asset with URL containing a path a
   "__packager_asset": true,
   "height": 51,
   "scale": 1,
-  "uri": "http://localhost:9999/remote-assets/assets/node_modules/rspack-virtual-module-dede2d21/__fixtures__/logo.png",
+  "uri": "http://localhost:9999/remote-assets/assets/node_modules/rspack-virtual-module-cc4162dd/__fixtures__/logo.png",
   "width": 297,
 }
 `;
@@ -174,7 +174,7 @@ exports[`assetLoader should convert to remote-asset with URL containing a path a
    └─ remote-assets/
       └─ assets/
          └─ node_modules/
-            └─ rspack-virtual-module-dede2d21/
+            └─ rspack-virtual-module-cc4162dd/
                └─ __fixtures__/
                   └─ logo.png"
 `;
@@ -184,7 +184,7 @@ exports[`assetLoader should convert to remote-asset with scales 1 1`] = `
   "__packager_asset": true,
   "height": 272,
   "scale": 1,
-  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-2f60a7fc/__fixtures__/star.png",
+  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-0bfdf553/__fixtures__/star.png",
   "width": 286,
 }
 `;
@@ -196,7 +196,7 @@ exports[`assetLoader should convert to remote-asset with scales 1 2`] = `
    └─ remote-assets/
       └─ assets/
          └─ node_modules/
-            └─ rspack-virtual-module-2f60a7fc/
+            └─ rspack-virtual-module-0bfdf553/
                └─ __fixtures__/
                   ├─ star.png
                   ├─ star@2x.png
@@ -208,7 +208,7 @@ exports[`assetLoader should convert to remote-asset with scales 2 1`] = `
   "__packager_asset": true,
   "height": 272,
   "scale": 2,
-  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-4e63ce4e/__fixtures__/star@x2.png",
+  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-4fe7a6d4/__fixtures__/star@x2.png",
   "width": 286,
 }
 `;
@@ -220,7 +220,7 @@ exports[`assetLoader should convert to remote-asset with scales 2 2`] = `
    └─ remote-assets/
       └─ assets/
          └─ node_modules/
-            └─ rspack-virtual-module-4e63ce4e/
+            └─ rspack-virtual-module-4fe7a6d4/
                └─ __fixtures__/
                   ├─ star.png
                   ├─ star@2x.png
@@ -232,7 +232,7 @@ exports[`assetLoader should convert to remote-asset with scales 3 1`] = `
   "__packager_asset": true,
   "height": 272,
   "scale": 3,
-  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-1f80d675/__fixtures__/star@x3.png",
+  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-7abb7f99/__fixtures__/star@x3.png",
   "width": 286,
 }
 `;
@@ -244,7 +244,7 @@ exports[`assetLoader should convert to remote-asset with scales 3 2`] = `
    └─ remote-assets/
       └─ assets/
          └─ node_modules/
-            └─ rspack-virtual-module-1f80d675/
+            └─ rspack-virtual-module-7abb7f99/
                └─ __fixtures__/
                   ├─ star.png
                   ├─ star@2x.png
@@ -256,7 +256,7 @@ exports[`assetLoader should convert to remote-asset with specified assetPath wit
   "__packager_asset": true,
   "height": 272,
   "scale": 1,
-  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-2f60a7fc/__fixtures__/nested-folder/star-fake-hash.png",
+  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-0bfdf553/__fixtures__/nested-folder/star-fake-hash.png",
   "width": 286,
 }
 `;
@@ -268,7 +268,7 @@ exports[`assetLoader should convert to remote-asset with specified assetPath wit
    └─ remote-assets/
       └─ assets/
          └─ node_modules/
-            └─ rspack-virtual-module-2f60a7fc/
+            └─ rspack-virtual-module-0bfdf553/
                └─ __fixtures__/
                   └─ nested-folder/
                      ├─ star-fake-hash.png
@@ -281,7 +281,7 @@ exports[`assetLoader should convert to remote-asset with specified assetPath wit
   "__packager_asset": true,
   "height": 272,
   "scale": 2,
-  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-4e63ce4e/__fixtures__/nested-folder/star-fake-hash@x2.png",
+  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-4fe7a6d4/__fixtures__/nested-folder/star-fake-hash@x2.png",
   "width": 286,
 }
 `;
@@ -293,7 +293,7 @@ exports[`assetLoader should convert to remote-asset with specified assetPath wit
    └─ remote-assets/
       └─ assets/
          └─ node_modules/
-            └─ rspack-virtual-module-4e63ce4e/
+            └─ rspack-virtual-module-4fe7a6d4/
                └─ __fixtures__/
                   └─ nested-folder/
                      ├─ star-fake-hash.png
@@ -306,7 +306,7 @@ exports[`assetLoader should convert to remote-asset with specified assetPath wit
   "__packager_asset": true,
   "height": 272,
   "scale": 3,
-  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-1f80d675/__fixtures__/nested-folder/star-fake-hash@x3.png",
+  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-7abb7f99/__fixtures__/nested-folder/star-fake-hash@x3.png",
   "width": 286,
 }
 `;
@@ -318,7 +318,7 @@ exports[`assetLoader should convert to remote-asset with specified assetPath wit
    └─ remote-assets/
       └─ assets/
          └─ node_modules/
-            └─ rspack-virtual-module-1f80d675/
+            └─ rspack-virtual-module-7abb7f99/
                └─ __fixtures__/
                   └─ nested-folder/
                      ├─ star-fake-hash.png
@@ -331,7 +331,7 @@ exports[`assetLoader should convert to remote-asset with specified assetPath wit
   "__packager_asset": true,
   "height": 51,
   "scale": 1,
-  "uri": "http://localhost:9999/remote-assets/assets/node_modules/rspack-virtual-module-dede2d21/__fixtures__/nested-folder/logo-fake-hash.png",
+  "uri": "http://localhost:9999/remote-assets/assets/node_modules/rspack-virtual-module-cc4162dd/__fixtures__/nested-folder/logo-fake-hash.png",
   "width": 297,
 }
 `;
@@ -343,7 +343,7 @@ exports[`assetLoader should convert to remote-asset with specified assetPath wit
    └─ remote-assets/
       └─ assets/
          └─ node_modules/
-            └─ rspack-virtual-module-dede2d21/
+            └─ rspack-virtual-module-cc4162dd/
                └─ __fixtures__/
                   └─ nested-folder/
                      └─ logo-fake-hash.png"
@@ -354,7 +354,7 @@ exports[`assetLoader should convert to remote-asset without scales 1`] = `
   "__packager_asset": true,
   "height": 51,
   "scale": 1,
-  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-dede2d21/__fixtures__/logo.png",
+  "uri": "http://localhost:9999/assets/node_modules/rspack-virtual-module-cc4162dd/__fixtures__/logo.png",
   "width": 297,
 }
 `;
@@ -366,7 +366,7 @@ exports[`assetLoader should convert to remote-asset without scales 2`] = `
    └─ remote-assets/
       └─ assets/
          └─ node_modules/
-            └─ rspack-virtual-module-dede2d21/
+            └─ rspack-virtual-module-cc4162dd/
                └─ __fixtures__/
                   └─ logo.png"
 `;

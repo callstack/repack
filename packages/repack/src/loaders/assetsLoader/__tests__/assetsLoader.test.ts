@@ -69,12 +69,14 @@ async function compileBundle(
     plugins: [
       new RspackVirtualModulePlugin({
         'package.json': '{ "type": "module" }',
+        'node_modules/@react-native/assets-registry/package.json':
+          '{ "name": "@react-native/assets-registry" }',
+        'node_modules/@react-native/assets-registry/registry.js':
+          'module.exports = { registerAsset: (spec) => spec };',
         'node_modules/react-native/package.json':
           '{ "name": "react-native", "main": "./index.js" }',
         'node_modules/react-native/index.js':
           'module.exports = { PixelRatio: { get: () => 1 } };',
-        'node_modules/react-native/Libraries/Image/AssetRegistry.js':
-          'module.exports = { registerAsset: (spec) => spec };',
         'node_modules/react-native/Libraries/Image/AssetSourceResolver.js': `
           module.exports = class AssetSourceResolver { 
             constructor(a, b, c) { 
