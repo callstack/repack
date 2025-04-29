@@ -37,7 +37,7 @@ extension CodeSigningError: CustomNSError {
         case .tokenNotFound:
             failureReason = CodeSigningErrorMessage.tokenNotFound
         case .tokenInvalid:
-            failureReason = CodeSigningErrorMessage.
+            failureReason = CodeSigningErrorMessage.tokenInvalid
         case .tokenDecodingFailed:
             failureReason = CodeSigningErrorMessage.tokenDecodingFailed
         case .tokenVerificationFailed:
