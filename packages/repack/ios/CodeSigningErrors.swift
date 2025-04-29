@@ -9,7 +9,6 @@ enum CodeSigningError : Int, Error {
     case publicKeyInvalid
     case bundleVerificationFailed
 }
-j
 
 enum CodeSigningErrorMessage: String {
     case tokenNotFound = "The bundle verification failed because no token for the bundle was found."
