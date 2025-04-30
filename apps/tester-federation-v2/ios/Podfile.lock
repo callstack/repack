@@ -1785,6 +1785,30 @@ PODS:
   - ReactTestApp-DevSupport (4.3.3):
     - React-Core
     - React-jsi
+  - RNCAsyncStorage (1.24.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNScreens (4.10.0):
     - DoubleConversion
     - glog
@@ -1918,6 +1942,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@4.3.3_react-native@0.79.1_@babel+core@7.25.2_@react-native-community+cl_kcnkti3wkp73kvg3lvpmdgswpy/node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -2075,6 +2100,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-test-app@4.3.3_react-native@0.79.1_@babel+core@7.25.2_@react-native-community+cl_kcnkti3wkp73kvg3lvpmdgswpy/node_modules/@rnx-kit/react-native-host"
   ReactTestApp-DevSupport:
     :path: "../node_modules/react-native-test-app"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   Yoga:
@@ -2155,6 +2182,7 @@ SPEC CHECKSUMS:
   ReactCommon: 9f975582dc535de1de110bdb46d4553140a77541
   ReactNativeHost: e66210ecf04fd35d3d47970b7b33363d4933d0e4
   ReactTestApp-DevSupport: ba564d9c3503d107cd6508a22681a19f8af34e81
+  RNCAsyncStorage: aa2fec76310ebe0c7fe159a26755e099170116bb
   RNScreens: c5c07a86e4088ce92f0d3854082250dfa9c61f75
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
