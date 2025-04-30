@@ -2,6 +2,12 @@ import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../../consts.js';
 
 function getStartCommandDefaults() {
   return {
+    cache: true,
+    experiments: {
+      cache: {
+        type: 'persistent',
+      },
+    },
     mode: 'development',
     devServer: {
       host: DEFAULT_HOSTNAME,
