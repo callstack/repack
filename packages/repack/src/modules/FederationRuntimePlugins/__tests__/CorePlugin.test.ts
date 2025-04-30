@@ -129,4 +129,14 @@ describe('RepackCorePlugin', () => {
       `Failed to load remote entry: ${mockRemoteInfo.entryGlobalName}`
     );
   });
+
+  it('should provide a noop generatePreloadAssets implementation', async () => {
+    const plugin = RepackCorePlugin();
+
+    const result = await plugin.generatePreloadAssets!({} as any);
+
+    expect(result).toHaveProperty('cssAssets');
+    expect(result).toHaveProperty('jsAssetsWithoutEntry');
+    expect(result).toHaveProperty('entryAssets');
+  });
 });
