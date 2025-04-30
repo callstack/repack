@@ -101,9 +101,18 @@ export function resetPersistentCache({
 
   const warn = (msg: string) => console.warn(colorette.yellow(msg));
 
-  cachePaths.forEach((cachePath) => {
-    if (!fs.existsSync(cachePath)) return;
+  for (const cachePath of cachePaths) {
+    if (!fs.existsSync(cachePath)) continue;
     const relativeCachePath = path.relative(rootDir, cachePath);
+
+    if (relativeCachePath.startsWith('..')) {
+      warn(
+        `Cache path "${relativeCachePath}" is outside of the project directory. ` +
+          'Resetting cache outside of the project directory is not supported. ' +
+          'Please delete the cache directory manually.\n'
+      );
+      continue;
+    }
 
     try {
       fs.rmSync(cachePath, { recursive: true });
@@ -111,5 +120,5 @@ export function resetPersistentCache({
     } catch {
       warn(`Failed to delete cache at ${relativeCachePath}\n`);
     }
-  });
+  }
 }
