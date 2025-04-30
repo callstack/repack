@@ -12,6 +12,7 @@ import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getMimeType,
   parseFileUrl,
+  resetPersistentCache,
   setupInteractions,
 } from '../common/index.js';
 import { runAdbReverse } from '../common/index.js';
@@ -63,6 +64,14 @@ export async function start(
   );
 
   process.stdout.write(logo(packageJson.version, 'Rspack'));
+
+  if (args.resetCache) {
+    resetPersistentCache({
+      bundler: 'rspack',
+      rootDir: cliConfig.root,
+      cacheConfigs: configs.map((config) => config.experiments?.cache),
+    });
+  }
 
   const compiler = new Compiler(configs, reporter, cliConfig.root);
 

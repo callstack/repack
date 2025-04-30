@@ -40,7 +40,7 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
   // get cli overrides which take precedence over values from config files
   const cliConfigOverrides = getCliOverrides<C>({ args, command });
   // get defaults for use with specific commands
-  const commandConfig = getCommandConfig(command);
+  const commandConfig = getCommandConfig(command, bundler);
 
   // get defaults that will be applied on top of built-in ones (Rspack/webpack)
   const repackConfig = getRepackConfig();

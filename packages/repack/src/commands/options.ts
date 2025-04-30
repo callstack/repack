@@ -27,10 +27,9 @@ export const startCommandOptions = [
     name: '--no-interactive',
     description: 'Disables interactive mode',
   },
-  // noop, but kept for compatibility
   {
     name: '--reset-cache, --resetCache',
-    description: '(unsupported) Resets the transformation cache',
+    description: 'Resets the transformation cache',
   },
   // options specific to Re.Pack
   {
@@ -114,10 +113,9 @@ export const bundleCommandOptions = [
     description:
       'Directory name where to store assets referenced in the bundle',
   },
-  // noop, needed for compatibility
   {
     name: '--reset-cache',
-    description: '(unsupported) Resets the transformation cache',
+    description: 'Resets the transformation cache',
   },
   // noop, needed for compatibility
   {
