@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Configuration as RspackConfiguration } from '@rspack/core';
+import * as colorette from 'colorette';
 import type { Configuration as WebpackConfiguration } from 'webpack';
 
 type RspackCacheOptions = NonNullable<
@@ -8,8 +9,12 @@ type RspackCacheOptions = NonNullable<
 >['cache'];
 type WebpackCacheOptions = WebpackConfiguration['cache'];
 
-function getDefaultCacheDirectory(bundler: 'rspack' | 'webpack') {
-  return path.join('node_modules', '.cache', bundler);
+function getDefaultCacheDirectory(
+  bundler: 'rspack' | 'webpack',
+  rootDir: string
+) {
+  const defaultCacheDir = path.join('node_modules', '.cache', bundler);
+  return path.join(rootDir, defaultCacheDir);
 }
 
 function getCustomCacheDirectory(candidate: string, rootDir: string): string {
@@ -32,7 +37,7 @@ function getRspackCachePaths(
       const candidateDir = cacheConfig.storage.directory;
       cachePaths.add(getCustomCacheDirectory(candidateDir, rootDir));
     } else {
-      cachePaths.add(getDefaultCacheDirectory('rspack'));
+      cachePaths.add(getDefaultCacheDirectory('rspack', rootDir));
     }
   }
 
@@ -61,21 +66,11 @@ function getWebpackCachePaths(
       const candidateDir = cacheConfig.cacheDirectory;
       cachePaths.add(getCustomCacheDirectory(candidateDir, rootDir));
     } else {
-      cachePaths.add(getDefaultCacheDirectory('rspack'));
+      cachePaths.add(getDefaultCacheDirectory('webpack', rootDir));
     }
   }
 
   return cachePaths;
-}
-
-function deleteCacheDirectory(cachePath: string): void {
-  if (!fs.existsSync(cachePath)) return;
-
-  try {
-    fs.rmSync(cachePath, { recursive: true });
-  } catch (error) {
-    console.warn(`Failed to delete cache at ${cachePath}:`, error);
-  }
 }
 
 export function resetPersistentCache(config: {
@@ -104,5 +99,17 @@ export function resetPersistentCache({
       ? getRspackCachePaths(rootDir, cacheConfigs as RspackCacheOptions[])
       : getWebpackCachePaths(rootDir, cacheConfigs as WebpackCacheOptions[]);
 
-  cachePaths.forEach(deleteCacheDirectory);
+  const warn = (msg: string) => console.warn(colorette.yellow(msg));
+
+  cachePaths.forEach((cachePath) => {
+    if (!fs.existsSync(cachePath)) return;
+    const relativeCachePath = path.relative(rootDir, cachePath);
+
+    try {
+      fs.rmSync(cachePath, { recursive: true });
+      warn(`Deleted transformation cache at ${relativeCachePath}\n`);
+    } catch {
+      warn(`Failed to delete cache at ${relativeCachePath}\n`);
+    }
+  });
 }
