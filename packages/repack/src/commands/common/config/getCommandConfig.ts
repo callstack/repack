@@ -1,13 +1,19 @@
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../../consts.js';
 
-function getStartCommandDefaults() {
+function getCacheConfig(bundler: 'rspack' | 'webpack') {
+  if (bundler === 'rspack') {
+    return {
+      cache: true,
+      experiments: { cache: { type: 'persistent' } },
+    };
+  }
+
+  return { cache: { type: 'filesystem' } };
+}
+
+function getStartCommandDefaults(bundler: 'rspack' | 'webpack') {
   return {
-    cache: true,
-    experiments: {
-      cache: {
-        type: 'persistent',
-      },
-    },
+    ...getCacheConfig(bundler),
     mode: 'development',
     devServer: {
       host: DEFAULT_HOSTNAME,
@@ -31,9 +37,12 @@ function getBundleCommandDefaults() {
   };
 }
 
-export function getCommandConfig(command: 'start' | 'bundle') {
+export function getCommandConfig(
+  command: 'start' | 'bundle',
+  bundler: 'rspack' | 'webpack'
+) {
   if (command === 'start') {
-    return getStartCommandDefaults();
+    return getStartCommandDefaults(bundler);
   }
 
   if (command === 'bundle') {
