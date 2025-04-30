@@ -10,6 +10,7 @@ export interface BundleArguments {
   assetsDest?: string;
   json?: string;
   stats?: string;
+  resetCache?: boolean;
   verbose?: boolean;
   watch?: boolean;
   config?: string;
@@ -27,6 +28,7 @@ export interface StartArguments {
   logFile?: string;
   logRequests?: boolean;
   platform?: string;
+  resetCache?: boolean;
   reversePort?: boolean;
   verbose?: boolean;
   config?: string;
