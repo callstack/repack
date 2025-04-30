@@ -14,6 +14,7 @@ import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getMimeType,
   parseFileUrl,
+  resetPersistentCache,
   runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
@@ -65,6 +66,14 @@ export async function start(
   );
 
   process.stdout.write(logo(packageJson.version, 'webpack'));
+
+  if (args.resetCache) {
+    resetPersistentCache({
+      bundler: 'webpack',
+      rootDir: cliConfig.root,
+      cacheConfigs: configs.map((config) => config.cache),
+    });
+  }
 
   const compiler = new Compiler(
     args,
