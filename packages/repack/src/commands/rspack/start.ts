@@ -16,6 +16,7 @@ import {
 } from '../common/index.js';
 import { runAdbReverse } from '../common/index.js';
 import logo from '../common/logo.js';
+import { resetPersistentCache } from '../common/resetPersistentCache.js';
 import { setupEnvironment } from '../common/setupEnvironment.js';
 import type { CliConfig, StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
@@ -63,6 +64,14 @@ export async function start(
   );
 
   process.stdout.write(logo(packageJson.version, 'Rspack'));
+
+  if (args.resetCache) {
+    resetPersistentCache({
+      bundler: 'rspack',
+      rootDir: cliConfig.root,
+      cacheConfigs: configs.map((config) => config.experiments?.cache),
+    });
+  }
 
   const compiler = new Compiler(configs, reporter, cliConfig.root);
 
