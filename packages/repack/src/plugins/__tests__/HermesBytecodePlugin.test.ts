@@ -1,20 +1,21 @@
 import fs from 'node:fs';
 import { type Compiler, ModuleFilenameHelpers } from '@rspack/core';
 import execa from 'execa';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { HermesBytecodePlugin } from '../HermesBytecodePlugin/index.js';
 
-jest.mock('node:fs', () => ({
+vi.mock('node:fs', () => ({
   __esModule: true,
   default: {
     promises: {
-      access: jest.fn(),
-      rename: jest.fn(),
-      unlink: jest.fn(),
+      access: vi.fn(),
+      rename: vi.fn(),
+      unlink: vi.fn(),
     },
   },
 }));
 
-jest.mock('execa');
+vi.mock('execa');
 
 const compilerMock = {
   context: __dirname,
@@ -25,12 +26,12 @@ const compilerMock = {
   },
   hooks: {
     assetEmitted: {
-      tapPromise: jest.fn(),
+      tapPromise: vi.fn(),
     },
   },
   getInfrastructureLogger: () => ({
-    debug: jest.fn(),
-    info: jest.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
   }),
   webpack: {
     ModuleFilenameHelpers: ModuleFilenameHelpers,
@@ -39,7 +40,7 @@ const compilerMock = {
 
 describe('HermesBytecodePlugin', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it('skips compilation if plugin is not enabled', () => {
@@ -79,7 +80,7 @@ describe('HermesBytecodePlugin', () => {
       };
       const pluginInstance = new HermesBytecodePlugin(config);
 
-      const fsMock = fs.promises as jest.Mocked<typeof fs.promises>;
+      const fsMock = vi.mocked(fs.promises);
       fsMock.access.mockResolvedValueOnce();
 
       await new Promise<void>((resolve, reject) => {
@@ -92,10 +93,8 @@ describe('HermesBytecodePlugin', () => {
         );
         pluginInstance.apply(compilerMock as unknown as Compiler);
       });
-      const execaMock = execa as jest.MockedFunction<typeof execa>;
-      const execaNodeMock = execa.node as jest.MockedFunction<
-        typeof execa.node
-      >;
+      const execaMock = vi.mocked(execa);
+      const execaNodeMock = vi.mocked(execa.node);
 
       expect(compilerMock.hooks.assetEmitted.tapPromise).toHaveBeenCalledTimes(
         1
@@ -119,7 +118,7 @@ describe('HermesBytecodePlugin', () => {
       };
       const pluginInstance = new HermesBytecodePlugin(config);
 
-      const fsMock = fs.promises as jest.Mocked<typeof fs.promises>;
+      const fsMock = vi.mocked(fs.promises);
       fsMock.access.mockRejectedValueOnce(new Error('File not found'));
 
       await new Promise<void>((resolve, reject) => {
@@ -133,7 +132,7 @@ describe('HermesBytecodePlugin', () => {
         pluginInstance.apply(compilerMock as unknown as Compiler);
       });
 
-      const execaMock = execa as jest.MockedFunction<typeof execa>;
+      const execaMock = vi.mocked(execa);
 
       expect(compilerMock.hooks.assetEmitted.tapPromise).toHaveBeenCalledTimes(
         1

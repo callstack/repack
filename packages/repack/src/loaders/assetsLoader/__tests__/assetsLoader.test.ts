@@ -4,6 +4,7 @@ import vm from 'node:vm';
 import { rspack } from '@rspack/core';
 import memfs from 'memfs';
 import { RspackVirtualModulePlugin } from 'rspack-plugin-virtual-module';
+import { describe, expect, it } from 'vitest';
 import {
   getAssetExtensionsRegExp,
   getResolveOptions,
@@ -56,7 +57,8 @@ async function compileBundle(
         {
           test: getAssetExtensionsRegExp(),
           use: {
-            loader: require.resolve('../assetsLoader'),
+            // @ts-ignore
+            loader: require.resolve('../assetsLoader.ts'),
             options: {
               platform,
               inline,
@@ -97,6 +99,10 @@ async function compileBundle(
           };`,
         ...virtualModules,
       }),
+      // {
+      //   apply: (compiler) =>
+      //     console.log(compiler.options.context, compiler.options.resolve),
+      // },
     ],
   });
 

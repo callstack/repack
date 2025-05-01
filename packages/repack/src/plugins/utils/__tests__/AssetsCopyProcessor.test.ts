@@ -1,8 +1,11 @@
 import fs from 'node:fs';
 import type { StatsChunk } from '@rspack/core';
+import { describe, expect, it, vi } from 'vitest';
 import { AssetsCopyProcessor } from '../AssetsCopyProcessor.js';
 
-jest.mock('node:fs', () => jest.requireActual('memfs').fs);
+vi.mock('node:fs', async () => ({
+  default: (await vi.importActual('memfs')).fs,
+}));
 
 const mkdirp = (path: string) => {
   return fs.mkdirSync(path, { recursive: true });
@@ -24,7 +27,7 @@ describe('AssetsCopyProcessor', () => {
       sourcemapOutput:
         '/target/ios/build/Release-iphonesimulator/main.jsbundle.map',
       assetsDest: '/target/ios/build/Release-iphonesimulator/App.app',
-      logger: { debug: jest.fn() },
+      logger: { debug: vi.fn() },
     };
 
     it("should copy entry chunk's files into correct directories", async () => {
@@ -122,7 +125,7 @@ describe('AssetsCopyProcessor', () => {
       sourcemapOutput:
         '/target/generated/sourcemaps/react/release/index.android.bundle.map',
       assetsDest: '/target/generated/res/react/release',
-      logger: { debug: jest.fn() },
+      logger: { debug: vi.fn() },
     };
 
     it("should copy entry chunk's files into correct directories", async () => {

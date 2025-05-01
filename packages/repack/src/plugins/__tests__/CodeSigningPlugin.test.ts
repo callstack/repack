@@ -4,6 +4,7 @@ import { rspack } from '@rspack/core';
 import jwt from 'jsonwebtoken';
 import memfs from 'memfs';
 import RspackVirtualModulePlugin from 'rspack-plugin-virtual-module';
+import { describe, expect, it } from 'vitest';
 import {
   CodeSigningPlugin,
   type CodeSigningPluginConfig,

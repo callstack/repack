@@ -1,7 +1,10 @@
 import fs from 'node:fs';
+import { describe, expect, it, vi } from 'vitest';
 import { AuxiliaryAssetsCopyProcessor } from '../AuxiliaryAssetsCopyProcessor.js';
 
-jest.mock('node:fs', () => jest.requireActual('memfs').fs);
+vi.mock('node:fs', async () => ({
+  default: (await vi.importActual('memfs')).fs,
+}));
 
 describe('AuxiliaryAssetsCopyProcessor', () => {
   it('should copy enqueued asset to the target directory', async () => {
@@ -20,7 +23,7 @@ describe('AuxiliaryAssetsCopyProcessor', () => {
     const aacp = new AuxiliaryAssetsCopyProcessor(
       {
         platform: 'ios',
-        logger: { debug: jest.fn() },
+        logger: { debug: vi.fn() },
         outputPath: '/dist',
         assetsDest: '/target/ios/remote',
       },

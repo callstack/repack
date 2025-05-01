@@ -3,6 +3,7 @@ import {
   ModuleFilenameHelpers,
   type StatsChunk,
 } from '@rspack/core';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
   OutputPlugin,
   type OutputPluginConfig,

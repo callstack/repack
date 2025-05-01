@@ -1,13 +1,16 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import NativeScriptManager, {
   type NormalizedScriptLocator,
 } from '../NativeScriptManager.js';
 import { Script } from '../Script.js';
 import { ScriptManager } from '../ScriptManager.js';
 
-jest.mock('../NativeScriptManager.js', () => ({
-  loadScript: jest.fn(),
-  prefetchScript: jest.fn(),
-  invalidateScripts: jest.fn(),
+vi.mock('../NativeScriptManager.js', () => ({
+  default: {
+    loadScript: vi.fn(),
+    prefetchScript: vi.fn(),
+    invalidateScripts: vi.fn(),
+  },
   NormalizedScriptLocatorHTTPMethod: {
     GET: 'GET',
     POST: 'POST',
@@ -80,7 +83,7 @@ describe('ScriptManagerAPI', () => {
   });
 
   it('throw error if there are no resolvers', async () => {
-    const spy = jest.spyOn(
+    const spy = vi.spyOn(
       ScriptManager.shared,
       'handleError' as keyof ScriptManager['handleError']
     );
@@ -98,7 +101,7 @@ describe('ScriptManagerAPI', () => {
   });
 
   it('throw error if no resolvers handled request', async () => {
-    const spy = jest.spyOn(
+    const spy = vi.spyOn(
       ScriptManager.shared,
       'handleError' as keyof ScriptManager['handleError']
     );
@@ -119,7 +122,7 @@ describe('ScriptManagerAPI', () => {
   });
 
   it('remove all resolvers', async () => {
-    const spy = jest.spyOn(
+    const spy = vi.spyOn(
       ScriptManager.shared,
       'handleError' as keyof ScriptManager['handleError']
     );

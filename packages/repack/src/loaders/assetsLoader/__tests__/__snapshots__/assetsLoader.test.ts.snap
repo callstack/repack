@@ -1,4 +1,30 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`assetLoader > on ios > should load and extract asset without scales 1`] = `
+{
+  "__packager_asset": true,
+  "hash": "135ad75248cc10394e4f958c93838798",
+  "height": 393,
+  "httpServerLocation": "assets/node_modules/rspack-virtual-module-6ee81501/__fixtures__",
+  "name": "logo",
+  "scales": [
+    1,
+  ],
+  "type": "png",
+  "width": 2292,
+}
+`;
+
+exports[`assetLoader > on ios > should load and extract asset without scales 2`] = `
+"/
+└─ out/
+   ├─ assets/
+   │  └─ node_modules/
+   │     └─ rspack-virtual-module-6ee81501/
+   │        └─ __fixtures__/
+   │           └─ logo.png
+   └─ main.js"
+`;
 
 exports[`assetLoader on android should load and extract asset with scales 1`] = `
 {

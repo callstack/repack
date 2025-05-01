@@ -50,7 +50,7 @@
     "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start",
     "build:ts": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build": "pnpm run \"/^build:.*/\"",
-    "test": "jest",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "archive": "pnpm build && pnpm pack",
     "clang-format": "pnpm clang-format:ios && pnpm clang-format:android",
@@ -122,6 +122,7 @@
     "react-native": "catalog:",
     "rspack-plugin-virtual-module": "^0.1.13",
     "typescript": "catalog:",
+    "vitest": "^2.0.5",
     "webpack": "catalog:"
   },
   "codegenConfig": {
