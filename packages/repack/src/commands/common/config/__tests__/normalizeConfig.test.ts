@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import type { ConfigurationObject } from '../../../types.js';
 import { normalizeConfig } from '../normalizeConfig.js';
 

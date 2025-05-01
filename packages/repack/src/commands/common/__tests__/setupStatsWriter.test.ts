@@ -1,12 +1,16 @@
 import path from 'node:path';
 import { fs } from 'memfs';
+import { describe, expect, it, vi } from 'vitest';
 import type { Logger } from '../../../types.js';
 import { normalizeStatsOptions, writeStats } from '../setupStatsWriter.js';
 
-jest.mock('node:fs', () => jest.requireActual('memfs').fs);
+vi.mock('node:fs', async () => {
+  const memfs = await vi.importActual('memfs');
+  return { default: memfs.fs };
+});
 
 describe('setupStatsWriter', () => {
-  const logger = { info: jest.fn() } as unknown as Logger;
+  const logger = { info: vi.fn() } as unknown as Logger;
 
   describe('normalizeStatsOptions', () => {
     it('should return options with preset if preset is provided', () => {

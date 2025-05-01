@@ -1,11 +1,14 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import NativeScriptManager from '../NativeScriptManager.js';
 import { Script } from '../Script.js';
 import { ScriptManager } from '../ScriptManager.js';
 
-jest.mock('../NativeScriptManager.js', () => ({
-  loadScript: jest.fn(),
-  prefetchScript: jest.fn(),
-  invalidateScripts: jest.fn(),
+vi.mock('../NativeScriptManager.js', () => ({
+  default: {
+    loadScript: vi.fn(),
+    prefetchScript: vi.fn(),
+    invalidateScripts: vi.fn(),
+  },
   NormalizedScriptLocatorHTTPMethod: {
     GET: 'GET',
     POST: 'POST',
@@ -135,7 +138,7 @@ describe('ScriptManager hooks', () => {
     });
 
     it('should call error hook when resolution fails', async () => {
-      const errorHookCallback = jest.fn();
+      const errorHookCallback = vi.fn();
 
       ScriptManager.shared.hooks.errorResolve(async ({ error, options }) => {
         errorHookCallback(options.scriptId, options.caller, error);
@@ -154,7 +157,7 @@ describe('ScriptManager hooks', () => {
     });
 
     it('should allow obtaining locator from error hook as fallback', async () => {
-      const errorHookCallback = jest.fn();
+      const errorHookCallback = vi.fn();
       ScriptManager.shared.hooks.errorResolve(async ({ error, options }) => {
         errorHookCallback(options.scriptId, options.caller, error);
         return { url: `http://domain.ext/${options.scriptId}.js` };
@@ -312,7 +315,7 @@ describe('ScriptManager hooks', () => {
     });
 
     it('should call error hook when loading fails', async () => {
-      const errorHookCallback = jest.fn();
+      const errorHookCallback = vi.fn();
 
       // prevent no resolvers error
       ScriptManager.shared.addResolver(async () => {
@@ -362,7 +365,7 @@ describe('ScriptManager hooks', () => {
     });
 
     it('should allow beforeLoad hook to override script', async () => {
-      const spy = jest.spyOn(NativeScriptManager, 'loadScript');
+      const spy = vi.spyOn(NativeScriptManager, 'loadScript');
 
       ScriptManager.shared.hooks.beforeLoad(async ({ script, options }) => {
         script.locator.url = 'http://domain.ext/custom-script.js';
@@ -393,7 +396,7 @@ describe('ScriptManager hooks', () => {
     });
 
     it('should allow load hook to handle loading with custom logic', async () => {
-      const spy = jest.spyOn(NativeScriptManager, 'loadScript');
+      const spy = vi.spyOn(NativeScriptManager, 'loadScript');
 
       ScriptManager.shared.addResolver(async () => {
         return {

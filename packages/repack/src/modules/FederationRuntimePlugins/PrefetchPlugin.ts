@@ -17,8 +17,10 @@ function getAssetUrl(asset: string) {
   return 'prefetch:///' + asset;
 }
 
-function prefetchAsset(asset: PrefetchAsset) {
-  const client = require('../ScriptManager/index.js') as typeof RepackClient;
+async function prefetchAsset(asset: PrefetchAsset) {
+  const client = (await import(
+    '../ScriptManager/index.js'
+  )) as typeof RepackClient;
   const { ScriptManager, getWebpackContext } = client;
 
   // caller should be undefined when fetching/loading the remote entry container

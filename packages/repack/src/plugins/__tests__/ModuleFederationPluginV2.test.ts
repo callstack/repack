@@ -1,3 +1,5 @@
+import {  afterEach, describe, expect, it, vi } from 'vitest';
+import type { MockedClass } from 'vitest';
 import { ModuleFederationPlugin as MFPluginRspack } from '@module-federation/enhanced/rspack';
 import type { Compiler } from '@rspack/core';
 import { ModuleFederationPluginV2 } from '../ModuleFederationPluginV2.js';
@@ -9,20 +11,20 @@ type CompilerWarning = Error & {
   };
 };
 
-jest.mock('@module-federation/enhanced/rspack');
+vi.mock('@module-federation/enhanced/rspack');
 
 const mockCompiler = {
   context: __dirname,
   options: {},
   webpack: {
-    DefinePlugin: jest.fn(() => ({
-      apply: jest.fn(),
+    DefinePlugin: vi.fn(() => ({
+      apply: vi.fn(),
     })),
     rspackVersion: '1.0.0',
   },
 } as unknown as Compiler;
 
-const mockPlugin = MFPluginRspack as unknown as jest.Mock<
+const mockPlugin = MFPluginRspack as unknown as MockedClass<
   typeof MFPluginRspack
 >;
 
@@ -111,8 +113,9 @@ describe('ModuleFederationPlugin', () => {
     }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
-    expect(config.shared[2]).toHaveProperty('react-native/');
-    expect(config.shared[3]).toHaveProperty('@react-native/');
+    const shared = config.shared as string[];
+    expect(shared[2]).toHaveProperty('react-native/');
+    expect(shared[3]).toHaveProperty('@react-native/');
   });
 
   it('should not duplicate or override existing deep imports', () => {
@@ -126,9 +129,10 @@ describe('ModuleFederationPlugin', () => {
     }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
-    expect(config.shared).toHaveProperty('react-native/');
-    expect(config.shared).toHaveProperty('@react-native/');
-    expect(config.shared['react-native/']).toMatchObject({
+    const shared = config.shared as Record<string, { singleton: boolean; eager: boolean }>;
+    expect(shared).toHaveProperty('react-native/');
+    expect(shared).toHaveProperty('@react-native/');
+    expect(shared['react-native/']).toMatchObject({
       singleton: true,
       eager: true,
     });
@@ -144,10 +148,11 @@ describe('ModuleFederationPlugin', () => {
     }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
-    expect(config.shared).toHaveProperty('react-native/');
-    expect(config.shared).toHaveProperty('@react-native/');
-    expect(config.shared['react-native/'].eager).toBe(false);
-    expect(config.shared['@react-native/'].eager).toBe(false);
+    const shared = config.shared as Record<string, { singleton: boolean; eager: boolean }>;
+    expect(shared).toHaveProperty('react-native/');
+    expect(shared).toHaveProperty('@react-native/');
+    expect(shared['react-native/'].eager).toBe(false);
+    expect(shared['@react-native/'].eager).toBe(false);
   });
 
   it('should add CorePlugin & ResolverPlugin to runtime plugins by default', () => {

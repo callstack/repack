@@ -1,49 +1,46 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { EnvOptions } from '../../../../types.js';
 import { loadProjectConfig } from '../loadProjectConfig.js';
 
 describe('loadProjectConfig', () => {
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
   });
 
-  it('should load static CJS config object', async () => {
+  // vitest doesnt support importing via require
+  it.fails('should load static CJS config object', async () => {
     const mockConfig = {
       entry: './index.js',
       output: { path: './dist' },
     };
 
-    jest.doMock('/test/config.js', () => mockConfig, { virtual: true });
+    vi.doMock('/test/config.js', () => mockConfig);
 
     const result = await loadProjectConfig('/test/config.js');
     expect(result).toEqual(mockConfig);
   });
 
-  // jest & node don't play nicely with dynamic ESM files
-  // suggested solution is to enable `--experimental-vm-modules`
-  // but this causes other tests to fail because of it
-  it.failing('should load static ESM config object', async () => {
+  it('should load static ESM config object', async () => {
     const mockConfig = {
       entry: './index.js',
       output: { path: './dist' },
     };
 
-    jest.doMock('/test/config.mjs', () => ({ default: mockConfig }), {
-      virtual: true,
-    });
+    vi.doMock('/test/config.mjs', () => ({ default: mockConfig }));
 
     const result = await loadProjectConfig('/test/config.mjs');
     expect(result).toEqual(mockConfig);
   });
 
   it('should load dynamic (function) config ', async () => {
-    const mockConfigFn = jest.fn().mockImplementation((env: EnvOptions) => ({
+    const mockConfigFn = vi.fn().mockImplementation((env: EnvOptions) => ({
       entry: './index.js',
       mode: env.mode,
     }));
 
-    jest.doMock('/test/config.js', () => mockConfigFn, { virtual: true });
+    vi.doMock('/test/config.mjs', () => ({ default: mockConfigFn }));
 
-    const result = await loadProjectConfig('/test/config.js');
+    const result = await loadProjectConfig('/test/config.mjs');
     expect(result).toEqual(mockConfigFn);
   });
 

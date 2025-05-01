@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { getModulePaths } from '../getModulePaths.js';
 
 describe('getModulePaths', () => {

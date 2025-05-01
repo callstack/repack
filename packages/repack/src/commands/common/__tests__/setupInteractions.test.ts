@@ -1,14 +1,15 @@
 import type readline from 'node:readline';
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Mock } from 'vitest';
 import type { Logger } from '../../../types.js';
 import { setupInteractions } from '../setupInteractions.js';
 
+type Colorette = typeof import('colorette');
 // eliminate ANSI colors formatting for proper assertions
-jest.mock('colorette', () =>
-  jest.requireActual('colorette').createColors({
-    useColor: false,
-  })
-);
+vi.mock('colorette', async () => {
+  const colorette = await vi.importActual<Colorette>('colorette');
+  return colorette.createColors({ useColor: false });
+});
 
 describe('setupInteractions', () => {
   let mockLogger: Logger;
@@ -17,30 +18,30 @@ describe('setupInteractions', () => {
 
   beforeEach(() => {
     mockLogger = {
-      info: jest.fn(),
-      warn: jest.fn(),
-      error: jest.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
     } as unknown as Logger;
 
     mockProcess = {
       stdin: {
-        setRawMode: jest.fn(),
-        on: jest.fn(),
+        setRawMode: vi.fn(),
+        on: vi.fn(),
       },
       stdout: {
-        write: jest.fn(),
+        write: vi.fn(),
       },
-      exit: jest.fn(),
-      emit: jest.fn(),
+      exit: vi.fn(),
+      emit: vi.fn(),
     } as unknown as NodeJS.Process;
 
     mockReadline = {
-      emitKeypressEvents: jest.fn(),
+      emitKeypressEvents: vi.fn(),
     } as unknown as typeof readline;
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should log a warning if setRawMode is not available', () => {
@@ -90,8 +91,7 @@ describe('setupInteractions', () => {
       }
     );
 
-    const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
-      .calls[0][1];
+    const keypressHandler = (mockProcess.stdin.on as Mock).mock.calls[0][1];
 
     keypressHandler(null, { ctrl: true, name: 'c' });
     expect(mockProcess.exit).toHaveBeenCalled();
@@ -102,9 +102,9 @@ describe('setupInteractions', () => {
 
   it('should handle supported interactions', () => {
     const handlers: Parameters<typeof setupInteractions>[0] = {
-      onReload: jest.fn(),
-      onOpenDevMenu: jest.fn(),
-      onOpenDevTools: jest.fn(),
+      onReload: vi.fn(),
+      onOpenDevMenu: vi.fn(),
+      onOpenDevTools: vi.fn(),
     };
 
     setupInteractions(handlers, {
@@ -113,8 +113,7 @@ describe('setupInteractions', () => {
       readline: mockReadline,
     });
 
-    const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
-      .calls[0][1];
+    const keypressHandler = (mockProcess.stdin.on as Mock).mock.calls[0][1];
 
     keypressHandler(null, { ctrl: false, name: 'r' });
     expect(mockLogger.info).toHaveBeenCalledWith('Reloading app');
@@ -131,7 +130,7 @@ describe('setupInteractions', () => {
 
   it('should handle unsupported interactions', () => {
     const handlers: Parameters<typeof setupInteractions>[0] = {
-      onReload: jest.fn(),
+      onReload: vi.fn(),
     };
 
     setupInteractions(handlers, {
@@ -145,8 +144,7 @@ describe('setupInteractions', () => {
       ' d: Open developer menu (unsupported by the current bundler)\n'
     );
 
-    const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
-      .calls[0][1];
+    const keypressHandler = (mockProcess.stdin.on as Mock).mock.calls[0][1];
 
     keypressHandler(null, { ctrl: false, name: 'd' });
     expect(mockLogger.warn).toHaveBeenCalledWith(
@@ -156,8 +154,8 @@ describe('setupInteractions', () => {
 
   it('should properly invoke interaction action callbacks in partial action support scenarios', () => {
     const handlers: Parameters<typeof setupInteractions>[0] = {
-      onReload: jest.fn(),
-      onOpenDevTools: jest.fn(),
+      onReload: vi.fn(),
+      onOpenDevTools: vi.fn(),
       // onOpenDevMenu - unsupported
     };
 
@@ -167,8 +165,7 @@ describe('setupInteractions', () => {
       readline: mockReadline,
     });
 
-    const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
-      .calls[0][1];
+    const keypressHandler = (mockProcess.stdin.on as Mock).mock.calls[0][1];
 
     keypressHandler(null, { ctrl: false, name: 'd' });
     expect(handlers.onReload).toHaveBeenCalledTimes(0);
@@ -193,8 +190,8 @@ describe('setupInteractions', () => {
 
   it('should quit on ctrl+c', () => {
     const handlers: Parameters<typeof setupInteractions>[0] = {
-      onReload: jest.fn(),
-      onOpenDevTools: jest.fn(),
+      onReload: vi.fn(),
+      onOpenDevTools: vi.fn(),
     };
 
     setupInteractions(handlers, {
@@ -203,8 +200,7 @@ describe('setupInteractions', () => {
       readline: mockReadline,
     });
 
-    const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
-      .calls[0][1];
+    const keypressHandler = (mockProcess.stdin.on as Mock).mock.calls[0][1];
 
     keypressHandler(null, { ctrl: true, name: 'c' });
     expect(mockProcess.exit).toHaveBeenCalledTimes(1);
@@ -212,8 +208,8 @@ describe('setupInteractions', () => {
 
   it('should quit on ctrl+z', () => {
     const handlers: Parameters<typeof setupInteractions>[0] = {
-      onReload: jest.fn(),
-      onOpenDevTools: jest.fn(),
+      onReload: vi.fn(),
+      onOpenDevTools: vi.fn(),
     };
 
     setupInteractions(handlers, {
@@ -222,8 +218,7 @@ describe('setupInteractions', () => {
       readline: mockReadline,
     });
 
-    const keypressHandler = (mockProcess.stdin.on as jest.Mock).mock
-      .calls[0][1];
+    const keypressHandler = (mockProcess.stdin.on as Mock).mock.calls[0][1];
 
     keypressHandler(null, { ctrl: true, name: 'z' });
     expect(mockProcess.emit).toHaveBeenCalledTimes(1);
@@ -236,7 +231,7 @@ describe('setupInteractions', () => {
       it('should display interaction messages', () => {
         setupInteractions(
           {
-            onOpenDevTools: debuggerSupport ? jest.fn() : undefined,
+            onOpenDevTools: debuggerSupport ? vi.fn() : undefined,
             onOpenDevMenu() {},
             onReload() {},
             onAdbReverse() {},

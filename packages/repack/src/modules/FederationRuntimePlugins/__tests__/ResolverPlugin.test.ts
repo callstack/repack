@@ -1,13 +1,16 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   type ScriptLocator,
   ScriptManager,
 } from '../../ScriptManager/index.js';
 import RepackResolverPlugin from '../ResolverPlugin.js';
 
-jest.mock('../../ScriptManager/NativeScriptManager.js', () => ({
-  loadScript: jest.fn(),
-  prefetchScript: jest.fn(),
-  invalidateScripts: jest.fn(),
+vi.mock('../../ScriptManager/NativeScriptManager.js', () => ({
+  default: {
+    loadScript: vi.fn(),
+    prefetchScript: vi.fn(),
+    invalidateScripts: vi.fn(),
+  },
   NormalizedScriptLocatorHTTPMethod: {
     GET: 'GET',
     POST: 'POST',
@@ -39,6 +42,7 @@ const mockRemoteInfo = {
 
 describe('RepackResolverPlugin', () => {
   beforeEach(() => {
+    vi.useFakeTimers();
     ScriptManager.init();
 
     // mock the error handler to disable polluting the console
@@ -49,6 +53,7 @@ describe('RepackResolverPlugin', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     // reset ScriptManager instance
     webpackRequireMock.repack.shared.scriptManager = undefined;
   });
@@ -57,7 +62,7 @@ describe('RepackResolverPlugin', () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
     plugin.registerRemote!({ remote: mockRemoteInfo } as any);
-
+    await vi.runOnlyPendingTimersAsync();
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
       'remote1',
@@ -77,6 +82,7 @@ describe('RepackResolverPlugin', () => {
     plugin.registerRemote!({
       remote: { ...mockRemoteInfo, version: undefined },
     } as any);
+    await vi.runOnlyPendingTimersAsync();
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
@@ -96,6 +102,7 @@ describe('RepackResolverPlugin', () => {
     const plugin = RepackResolverPlugin(config);
     // trigger the plugin to register the resolver
     plugin.registerRemote!({ remote: mockRemoteInfo } as any);
+    await vi.runOnlyPendingTimersAsync();
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
@@ -116,6 +123,7 @@ describe('RepackResolverPlugin', () => {
     const plugin = RepackResolverPlugin(config);
     // trigger the plugin to register the resolver
     plugin.registerRemote!({ remote: mockRemoteInfo } as any);
+    await vi.runOnlyPendingTimersAsync();
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
@@ -148,6 +156,7 @@ describe('RepackResolverPlugin', () => {
     const plugin = RepackResolverPlugin(config);
     // trigger the plugin to register the resolver
     plugin.registerRemote!({ remote: mockRemoteInfo } as any);
+    await vi.runOnlyPendingTimersAsync();
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
@@ -166,7 +175,7 @@ describe('RepackResolverPlugin', () => {
 
   it('should not resolve scripts for other remotes', async () => {
     // Add a default resolver to handle other remotes
-    const defaultResolverMock = jest.fn().mockResolvedValue({
+    const defaultResolverMock = vi.fn().mockResolvedValue({
       url: 'http://default.com/script.js',
     });
 
@@ -175,7 +184,7 @@ describe('RepackResolverPlugin', () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
     plugin.registerRemote!({ remote: mockRemoteInfo } as any);
-
+    await vi.runOnlyPendingTimersAsync();
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript('other-remote');
 
@@ -193,6 +202,7 @@ describe('RepackResolverPlugin', () => {
         version: 'https://example-manifest.com/remote1/mf-manifest.json',
       },
     } as any);
+    await vi.runOnlyPendingTimersAsync();
 
     // manually resolve the script to verify the result
     const script1 = await ScriptManager.shared.resolveScript(

@@ -1,11 +1,16 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ScriptManager } from '../../ScriptManager/index.js';
 import RepackCorePlugin from '../CorePlugin.js';
 
+const mockedNativeLoadScript = vi.hoisted(() => vi.fn());
+
 // Mock NativeScriptManager methods but keep the actual ScriptManager implementation
-jest.mock('../../ScriptManager/NativeScriptManager.js', () => ({
-  loadScript: jest.fn(),
-  prefetchScript: jest.fn(),
-  invalidateScripts: jest.fn(),
+vi.mock('../../ScriptManager/NativeScriptManager.js', () => ({
+  default: {
+    loadScript: mockedNativeLoadScript,
+    prefetchScript: vi.fn(),
+    invalidateScripts: vi.fn(),
+  },
   NormalizedScriptLocatorHTTPMethod: {
     GET: 'GET',
     POST: 'POST',
@@ -18,10 +23,6 @@ jest.mock('../../ScriptManager/NativeScriptManager.js', () => ({
 }));
 
 // Get a reference to the mocked loadScript function
-const mockedNativeLoadScript = jest.requireMock(
-  '../../ScriptManager/NativeScriptManager.js'
-).loadScript;
-
 const webpackRequireMock = () => [];
 
 webpackRequireMock.i = [] as any[];
@@ -52,14 +53,14 @@ describe('RepackCorePlugin', () => {
 
     mockedNativeLoadScript.mockImplementationOnce((scriptId: string) => {
       // @ts-expect-error remotes are loaded into the global scope
-      globalThis[scriptId] = { get: jest.fn(), init: jest.fn() };
+      globalThis[scriptId] = { get: vi.fn(), init: vi.fn() };
       return Promise.resolve();
     });
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
-    jest.restoreAllMocks();
+    vi.resetAllMocks();
+    vi.restoreAllMocks();
 
     // reset ScriptManager instance
     webpackRequireMock.repack.shared.scriptManager = undefined;
@@ -77,7 +78,7 @@ describe('RepackCorePlugin', () => {
       }
     });
 
-    jest.spyOn(ScriptManager.shared, 'loadScript');
+    vi.spyOn(ScriptManager.shared, 'loadScript');
     const result = await plugin.loadEntry!({
       remoteInfo: mockRemoteInfo,
     } as any);
@@ -103,7 +104,7 @@ describe('RepackCorePlugin', () => {
       new Error('Failed to load script')
     );
 
-    jest.spyOn(console, 'error').mockImplementationOnce(() => {});
+    vi.spyOn(console, 'error').mockImplementationOnce(() => {});
     const result = await plugin.loadEntry!({
       remoteInfo: mockRemoteInfo,
     } as any);
@@ -117,9 +118,9 @@ describe('RepackCorePlugin', () => {
   it('should handle failure to expose the remote entry in the global scope', async () => {
     const plugin = RepackCorePlugin();
 
-    mockedNativeLoadScript.mockResolvedValueOnce();
+    mockedNativeLoadScript.mockResolvedValueOnce(undefined);
 
-    jest.spyOn(console, 'error').mockImplementationOnce(() => {});
+    vi.spyOn(console, 'error').mockImplementationOnce(() => {});
     const result = await plugin.loadEntry!({
       remoteInfo: mockRemoteInfo,
     } as any);

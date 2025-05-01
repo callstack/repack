@@ -1,17 +1,18 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ConfigurationObject, StartArguments } from '../../../types.js';
 import type { BundleArguments } from '../../../types.js';
 import * as getConfigFilePathModule from '../getConfigFilePath.js';
 import * as loadProjectConfigModule from '../loadProjectConfig.js';
 import { makeCompilerConfig } from '../makeCompilerConfig.js';
 
-jest.mock('../getConfigFilePath.js');
-jest.mock('../loadProjectConfig.js');
-jest.mock('../validatePlugins.js');
+vi.mock('../getConfigFilePath.js');
+vi.mock('../loadProjectConfig.js');
+vi.mock('../validatePlugins.js');
 
 const setupMocks = () => {
   const mocks = {
-    getConfigFilePath: jest.mocked(getConfigFilePathModule.getConfigFilePath),
-    loadProjectConfig: jest.mocked(loadProjectConfigModule.loadProjectConfig),
+    getConfigFilePath: vi.mocked(getConfigFilePathModule.getConfigFilePath),
+    loadProjectConfig: vi.mocked(loadProjectConfigModule.loadProjectConfig),
   };
 
   beforeEach(() => {

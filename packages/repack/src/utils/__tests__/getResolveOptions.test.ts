@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { getResolveOptions } from '../getResolveOptions.js';
 
 const resolveOptionsObject = {

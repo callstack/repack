@@ -1,5 +1,5 @@
 import type { Compiler } from '@rspack/core';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Federated } from '../../utils/federated.js';
 import { ModuleFederationPluginV1 } from '../ModuleFederationPluginV1.js';
 
