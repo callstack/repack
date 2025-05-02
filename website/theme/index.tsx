@@ -1,9 +1,10 @@
 import { Announcement } from '@callstack/rspress-theme';
 import { usePageData } from 'rspress/runtime';
-import Theme, {
+import {
   Badge,
   Link,
   PrevNextPage,
+  Layout as RspressLayout,
   getCustomMDXComponent,
 } from 'rspress/theme';
 
@@ -48,7 +49,7 @@ const OldVersionAnnouncement = ({ version, latestVersion }) => (
 );
 
 const Layout = () => (
-  <Theme.Layout
+  <RspressLayout
     beforeNav={
       global.__REPACK_DOC_VERSION__ &&
       global.__REPACK_DOC_VERSION__ !== global.__REPACK_DOC_LATEST_VERSION__ ? (
@@ -68,10 +69,7 @@ const Layout = () => (
   />
 );
 
-export default {
-  ...Theme,
-  Layout,
-};
+export { Layout };
 
 const { code: Code, pre: Pre } = getCustomMDXComponent();
 
