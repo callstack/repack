@@ -1,7 +1,6 @@
-import {  afterEach, describe, expect, it, vi } from 'vitest';
-import type { MockedClass } from 'vitest';
-import { ModuleFederationPlugin as MFPluginRspack } from '@module-federation/enhanced/rspack';
+import type { moduleFederationPlugin as MF } from '@module-federation/sdk';
 import type { Compiler } from '@rspack/core';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ModuleFederationPluginV2 } from '../ModuleFederationPluginV2.js';
 
 type CompilerWarning = Error & {
@@ -11,7 +10,15 @@ type CompilerWarning = Error & {
   };
 };
 
-vi.mock('@module-federation/enhanced/rspack');
+const mockPlugin = vi.hoisted(() => {
+  return vi.fn((_: MF.ModuleFederationPluginOptions) => ({
+    apply: vi.fn(),
+  }));
+});
+
+vi.mock('@module-federation/enhanced/rspack', () => ({
+  ModuleFederationPlugin: mockPlugin,
+}));
 
 const mockCompiler = {
   context: __dirname,
@@ -23,10 +30,6 @@ const mockCompiler = {
     rspackVersion: '1.0.0',
   },
 } as unknown as Compiler;
-
-const mockPlugin = MFPluginRspack as unknown as MockedClass<
-  typeof MFPluginRspack
->;
 
 const corePluginPath = require.resolve('@callstack/repack/mf/core-plugin');
 const resolverPluginPath = require.resolve(
@@ -129,7 +132,7 @@ describe('ModuleFederationPlugin', () => {
     }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
-    const shared = config.shared as Record<string, { singleton: boolean; eager: boolean }>;
+    const shared = config.shared as MF.SharedObject;
     expect(shared).toHaveProperty('react-native/');
     expect(shared).toHaveProperty('@react-native/');
     expect(shared['react-native/']).toMatchObject({
@@ -148,7 +151,7 @@ describe('ModuleFederationPlugin', () => {
     }).apply(mockCompiler);
 
     const config = mockPlugin.mock.calls[0][0];
-    const shared = config.shared as Record<string, { singleton: boolean; eager: boolean }>;
+    const shared = config.shared as Record<string, MF.SharedConfig>;
     expect(shared).toHaveProperty('react-native/');
     expect(shared).toHaveProperty('@react-native/');
     expect(shared['react-native/'].eager).toBe(false);

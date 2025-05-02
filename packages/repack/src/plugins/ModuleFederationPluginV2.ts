@@ -1,3 +1,5 @@
+import { ModuleFederationPlugin as MFPluginRspack } from '@module-federation/enhanced/rspack';
+import { ModuleFederationPlugin as MFPluginWebpack } from '@module-federation/enhanced/webpack';
 import type { moduleFederationPlugin as MF } from '@module-federation/sdk';
 import type { Compiler, RspackPluginInstance } from '@rspack/core';
 import { name as isIdentifier } from 'estree-util-is-identifier-name';
@@ -165,11 +167,9 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
 
   private getModuleFederationPlugin(compiler: Compiler) {
     if (isRspackCompiler(compiler)) {
-      return require('@module-federation/enhanced/rspack')
-        .ModuleFederationPlugin;
+      return MFPluginRspack;
     }
-    return require('@module-federation/enhanced/webpack')
-      .ModuleFederationPlugin;
+    return MFPluginWebpack;
   }
 
   private getDefaultSharedDependencies() {
@@ -327,6 +327,7 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
       runtimePlugins: runtimePluginsConfig,
     };
 
+    // @ts-expect-error can be either Rspack or Webpack plugin
     new ModuleFederationPlugin(config).apply(compiler);
   }
 }
