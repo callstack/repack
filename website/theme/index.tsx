@@ -1,5 +1,5 @@
 import { Announcement } from '@callstack/rspress-theme';
-import { usePageData } from 'rspress/runtime';
+import { NoSSR, usePageData } from 'rspress/runtime';
 import {
   Badge,
   Link,
@@ -53,16 +53,20 @@ const Layout = () => (
     beforeNav={
       global.__REPACK_DOC_VERSION__ &&
       global.__REPACK_DOC_VERSION__ !== global.__REPACK_DOC_LATEST_VERSION__ ? (
-        <OldVersionAnnouncement
-          version={global.__REPACK_DOC_VERSION__}
-          latestVersion={global.__REPACK_DOC_LATEST_VERSION__}
-        />
+        <NoSSR>
+          <OldVersionAnnouncement
+            version={global.__REPACK_DOC_VERSION__}
+            latestVersion={global.__REPACK_DOC_LATEST_VERSION__}
+          />
+        </NoSSR>
       ) : (
-        <Announcement
-          href="/blog/repack-5-release"
-          message="✨ Re.Pack 5 released ✨"
-          localStorageKey="repack-5-release-announcement"
-        />
+        <NoSSR>
+          <Announcement
+            href="/blog/repack-5-release"
+            message="✨ Re.Pack 5 released ✨"
+            localStorageKey="repack-5-release-announcement"
+          />
+        </NoSSR>
       )
     }
     beforeDocContent={<VersionBadge />}
