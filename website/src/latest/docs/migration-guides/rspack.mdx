@@ -4,14 +4,14 @@ import { PackageManagerTabs, Steps, Tabs, Tab } from 'rspress/theme';
 
 This guide will help you migrate your React Native project from using webpack to Rspack with Re.Pack.
 
-:::warning title="⚠️ Migrate to Re.Pack 5 first!"
+:::warning ⚠️ Migrate to Re.Pack 5 first!
 
 If your project is using version 4 of Re.Pack, you need to migrate it to use Re.Pack 5 first.
 
 See the [Migration from Re.Pack 4 guide](/docs/migration-guides/repack-v4) for more details.
 :::
 
-:::tip title="Why migrate to Rspack?"
+:::tip Why migrate to Rspack?
 
 [Rspack](https://rspack.dev/) is a fast Rust-based bundler that's compatible with the webpack ecosystem, offering significantly faster build times for both development and production while maintaining webpack compatibility with minimal migration effort.
 For more details on why Rspack was created and its advantages, see the [official rationale](https://rspack.dev/guide/start/introduction#why-rspack).
@@ -49,7 +49,7 @@ Rename your configuration file to match the Rspack convention:
 
 When migrating from webpack to Rspack, you'll need to make several changes to your configuration file.
 
-:::warning title="Additional steps may be required for complex configurations"
+:::warning Additional steps may be required for complex configurations
 The modifications outlined below cover the basic changes needed for most React Native projects. However, if you have a more complex webpack setup with custom loaders, plugins, or configurations, these changes might not be sufficient.
 
 For more advanced migration scenarios, refer to the [official Rspack migration guide](https://rspack.dev/guide/migration/webpack), which provides detailed instructions for migrating various webpack features, plugins, and loaders to their Rspack equivalents.
@@ -100,7 +100,7 @@ module: {
 },
 ```
 
-:::info title="About getJsTransformRules"
+:::info About getJsTransformRules
 The `getJsTransformRules()` function returns the default rules for transforming JavaScript and TypeScript files using SWC. It handles both your application code and `node_modules`, and is functionally equivalent to the official `@react-native/babel-preset`. For more details, see the [API documentation for getJsTransformRules](/api/utils/get-js-transform-rules).
 :::
 
@@ -128,7 +128,7 @@ module.exports = {
 };
 ```
 
-:::tip title="Flow-typed libraries"
+:::tip Flow-typed libraries
 
 There is no need to configure Flow support for libraries since `getJsTransformRules` handles them out of the box. In rare cases, you may need to configure Flow support for unhandled libraries. 
 
@@ -181,7 +181,7 @@ Same goes for creating a production bundle:
   bun: "bun react-native bundle",
 }} />
 
-:::tip title="Having trouble?"
+:::tip Having trouble?
 
 If you are having trouble migrating to Rspack reach out and open an issue on [GitHub](https://github.com/callstack/repack/issues/new/choose).
 :::
