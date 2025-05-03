@@ -109,6 +109,10 @@ export default defineConfig({
     vercelAnalytics(),
     // @ts-ignore
     pluginCallstackTheme(),
-    pluginLlms(),
+    pluginLlms({
+      exclude: ({ page }) => {
+        return page.routePath.includes('404');
+      },
+    }),
   ],
 });
