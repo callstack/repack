@@ -12,7 +12,7 @@ Therefore, we need to make changes to webpack configuration and change how and w
 
 So to answer the question:
 
-:::info{title="Re.Pack is what makes webpack and webpack-produced bundle usable in React Native application."}
+:::info Re.Pack is what makes webpack and webpack-produced bundle usable in React Native application.
 :::
 
 ## Why & when

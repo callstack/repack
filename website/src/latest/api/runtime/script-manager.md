@@ -2,7 +2,7 @@
 
 The `ScriptManager` is a low-level utility for managing script resolution, downloading, and execution in React Native applications. It's particularly useful when working with code splitting, dynamic imports, and Module Federation.
 
-:::info title="Why is it called ScriptManager?"
+:::info Why is it called ScriptManager?
 
 It can be used to download, manage and execute external (either local or remote) JavaScript code.
 

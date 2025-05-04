@@ -2,7 +2,7 @@
 
 This is the main plugin that enables React Native app development & bundling with Re.Pack and should be included in all of your configurations. It abstracts the configuration of other core internal plugins into one plugin.
 
-:::warning title="About internal plugins"
+:::warning About internal plugins
 
 Plugins configured by the `RepackPlugin` are considered internal and there is no need to use or configure them directly. Their use is heavily discouraged and they are only included for the sake of completeness of the API.
 
@@ -47,7 +47,7 @@ Options to configure the logger's output. Setting this to `false` disables the L
 
 Enable or disable logging to the console. When enabled, build progress, warnings, errors, and other messages will be displayed in the terminal.
 
-:::tip title="Verbose logging"
+:::tip Verbose logging
 
 You can enable verbose logging by passing `--verbose` flag to either of CLI commands or by setting the `REPACK_VERBOSE` environment variable to `1` or `true`.
 

@@ -3,12 +3,12 @@
 This plugin is converts JavaScript chunks into [Hermes](https://hermesengine.dev/) bytecode for production-level performance optimization.
 It also converts related source maps to be compatible with bytecode bundles.
 
-:::warning title="Remember to exclude the main bundle!"
+:::warning Remember to exclude the main bundle!
 If you enable Hermes in your project, your `index.bundle` file and it's source-map will be transformed by `react-native`.
 You should exclude it from the plugin to avoid processing it twice.
 :::
 
-:::details title="Implementation details"
+:::details Implementation details
 This plugin will only transform assets that are emitted after the compilation. To ensure that asset is always emitted we disable the `compareBeforeEmit` option which is enabled by default in Rspack/webpack.
 
 `compareBeforeEmit` option is used to skip emitting assets that are identical to the
