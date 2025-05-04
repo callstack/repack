@@ -1,0 +1,39 @@
+diff --git a/dist/index.js b/dist/index.js
+index aef8541261e1efef20f5e3ab4042efebfd20a2d7..72d3b24f6d1c1174db13bab555d10ca9018b0f28 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -377,19 +377,26 @@ function pluginLlms(options = {}) {
+             if (isProd) routes.push(..._routes);
+         },
+         beforeBuild (config) {
+-            const configSidebar = config?.themeConfig?.locales?.map((i)=>i.sidebar).reduce((prev, curr)=>{
+-                Object.assign(prev, curr);
+-                return prev;
++            const locales = config.themeConfig?.locales;
++            const isMultiLang = locales && locales.length > 0;
++            const sidebars = isMultiLang
++              ? locales.map((i) => i.sidebar)
++              : [config.themeConfig?.sidebar];
++
++            const configSidebar = sidebars.reduce((prev, curr) => {
++              Object.assign(prev, curr);
++              return prev;
+             }, {});
+             Object.assign(sidebar, configSidebar);
+-            const configNav = config.themeConfig?.locales?.filter((i)=>Boolean(i.nav))?.map((i)=>({
+-                    nav: i.nav,
+-                    lang: i.lang
+-                }));
++            const configNav = isMultiLang
++              ? locales
++                  .filter((i) => Boolean(i.nav))
++                  .map((i) => ({ nav: i.nav, lang: i.lang }))
++              : [{ nav: config.themeConfig?.nav, lang: config.lang ?? '' }];
+             nav.push(...configNav);
+             titleRef.current = config.title;
+             descriptionRef.current = config.description;
+-            langRef.current = config.lang;
++            langRef.current = config.lang ?? '';
+             baseRef.current = config.base ?? '/';
+             docDirectoryRef.current = config.root ?? 'docs';
+         },
