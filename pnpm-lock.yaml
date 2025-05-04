@@ -706,8 +706,8 @@ importers:
   website:
     dependencies:
       '@callstack/rspress-theme':
-        specifier: ^0.0.2
-        version: 0.0.2(react@19.1.0)
+        specifier: ^0.0.3
+        version: 0.0.3(react@19.1.0)
       '@rspress/plugin-llms':
         specifier: 2.0.0-beta.3
         version: 2.0.0-beta.3(patch_hash=y76d3h7tmx5mdnkw7odsqesguu)(@rspress/core@2.0.0-beta.3(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))
@@ -1548,8 +1548,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@callstack/rspress-theme@0.0.2':
-    resolution: {integrity: sha512-gMg00zFUB6dqqYIbv8HcJAhN7fBKPwaMqKlzawY5v35Lb17LUiSzBOwayha8OtEw8+reAYVEpb1jImdlx4SDXQ==}
+  '@callstack/rspress-theme@0.0.3':
+    resolution: {integrity: sha512-gkZTqaGY0kh4+/2GNq3W0mzjQoB6mllrjcfoV0b2M9IRwHu550mftWnUKB9IPRsLRpXra3VxV/FqTSowUpatZw==}
     peerDependencies:
       react: ^18.3.1
 
@@ -9160,7 +9160,7 @@ snapshots:
   '@biomejs/cli-win32-x64@1.9.4':
     optional: true
 
-  '@callstack/rspress-theme@0.0.2(react@19.1.0)':
+  '@callstack/rspress-theme@0.0.3(react@19.1.0)':
     dependencies:
       react: 19.1.0
 
