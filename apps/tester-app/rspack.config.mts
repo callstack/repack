@@ -4,11 +4,11 @@ import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+import type { Configuration } from '@rspack/core';
 
 const dirname = Repack.getDirname(import.meta.url);
 
-/** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
-export default (env) => {
+export default (env: Repack.EnvOptions): Configuration => {
   const {
     mode = 'development',
     context = dirname,

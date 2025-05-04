@@ -3,10 +3,11 @@ import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import TerserPlugin from 'terser-webpack-plugin';
+import type webpack from 'webpack';
 
 const dirname = Repack.getDirname(import.meta.url);
 
-export default (env) => {
+export default (env: Repack.EnvOptions): webpack.Configuration => {
   const {
     mode = 'development',
     context = dirname,
