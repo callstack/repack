@@ -16,7 +16,8 @@ export default defineConfig({
   title: process.env.REPACK_DOC_VERSION
     ? `[${process.env.REPACK_DOC_VERSION}] Re.Pack`
     : 'Re.Pack',
-  description: 'A toolkit to build your React Native application with Webpack.',
+  description:
+    'A modern build tool for React Native that brings the Rspack and webpack ecosystem to mobile React Native apps',
   icon: '/img/favicon.ico',
   logo: {
     light: '/img/logo_light.svg',
