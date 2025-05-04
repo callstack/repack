@@ -38,7 +38,8 @@
   "devDependencies": {
     "@callstack/repack": "workspace:*",
     "@rspack/core": "catalog:",
-    "@types/node": "catalog:"
+    "@types/node": "catalog:",
+    "webpack": "catalog:"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
