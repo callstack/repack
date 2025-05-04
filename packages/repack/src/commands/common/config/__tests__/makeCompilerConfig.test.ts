@@ -6,6 +6,7 @@ import { makeCompilerConfig } from '../makeCompilerConfig.js';
 
 jest.mock('../getConfigFilePath.js');
 jest.mock('../loadProjectConfig.js');
+jest.mock('../validatePlugins.js');
 
 const setupMocks = () => {
   const mocks = {

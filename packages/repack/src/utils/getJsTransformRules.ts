@@ -31,6 +31,8 @@ interface GetJsTransformRulesOptions {
     all?: boolean;
     /** If true, removes uninitialized class fields completely rather than only removing the type */
     ignoreUninitializedFields?: boolean;
+    /** If true, removes empty import statements which were only used for importing flow types */
+    removeEmptyImports?: boolean;
   };
   /** Configuration for enabling/disabling codegen transformations */
   codegen?: {

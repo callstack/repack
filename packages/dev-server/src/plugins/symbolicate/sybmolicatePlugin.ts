@@ -1,8 +1,26 @@
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyRequest } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import type { Server } from '../../types.js';
 import { Symbolicator } from './Symbolicator.js';
 import type { ReactNativeStackFrame } from './types.js';
+
+interface SymbolicateRequestBody {
+  stack: ReactNativeStackFrame[];
+}
+
+function getStackFromRequestBody(request: FastifyRequest) {
+  let body: SymbolicateRequestBody;
+
+  if (request.headers['content-type'] === 'application/json') {
+    // RN >= 0.79 uses application/json
+    body = request.body as SymbolicateRequestBody;
+  } else {
+    // RN < 0.79 uses text/plain
+    body = JSON.parse(request.body as string) as SymbolicateRequestBody;
+  }
+
+  return body.stack;
+}
 
 async function symbolicatePlugin(
   instance: FastifyInstance,
@@ -15,13 +33,8 @@ async function symbolicatePlugin(
   const symbolicator = new Symbolicator(delegate.symbolicator);
 
   instance.post('/symbolicate', async (request, reply) => {
-    // React Native sends stack as JSON but tests content-type to text/plain, so
-    // we cannot use JSON schema to validate the body.
-
     try {
-      const { stack } = JSON.parse(request.body as string) as {
-        stack: ReactNativeStackFrame[];
-      };
+      const stack = getStackFromRequestBody(request);
       const platform = Symbolicator.inferPlatformFromStack(stack);
       if (!platform) {
         request.log.debug({ msg: 'Received stack', stack });

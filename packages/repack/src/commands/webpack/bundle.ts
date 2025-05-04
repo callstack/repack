@@ -1,7 +1,11 @@
 import webpack, { type Configuration } from 'webpack';
 import { CLIError } from '../common/cliError.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
-import { normalizeStatsOptions, writeStats } from '../common/index.js';
+import {
+  normalizeStatsOptions,
+  resetPersistentCache,
+  writeStats,
+} from '../common/index.js';
 import { setupEnvironment } from '../common/setupEnvironment.js';
 import type { BundleArguments, CliConfig } from '../types.js';
 /**
@@ -31,6 +35,14 @@ export async function bundle(
 
   if (!args.entryFile && !config.entry) {
     throw new CLIError("Option '--entry-file <path>' argument is missing");
+  }
+
+  if (args.resetCache) {
+    resetPersistentCache({
+      bundler: 'webpack',
+      rootDir: cliConfig.root,
+      cacheConfigs: [config.cache],
+    });
   }
 
   const errorHandler = async (error: Error | null, stats?: webpack.Stats) => {

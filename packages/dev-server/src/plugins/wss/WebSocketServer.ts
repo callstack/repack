@@ -28,7 +28,7 @@ export abstract class WebSocketServer<T extends WebSocket = WebSocket>
   protected clients: Map<string, T>;
   protected nextClientId = 0;
 
-  private timer: NodeJS.Timer | null = null;
+  private timer: NodeJS.Timer | number | null = null;
 
   /**
    * Create a new instance of the WebSocketServer.

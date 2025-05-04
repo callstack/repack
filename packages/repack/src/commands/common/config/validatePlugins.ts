@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { bold } from 'colorette';
 
@@ -34,8 +35,9 @@ export async function validatePlugins(
   );
 
   try {
-    const packageJson = require(path.join(rootDir, 'package.json'));
-    dependencies = Object.keys(packageJson.dependencies || {});
+    const packageJsonPath = path.join(rootDir, 'package.json');
+    const packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
+    dependencies = Object.keys(JSON.parse(packageJson).dependencies || {});
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       console.debug(

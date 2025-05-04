@@ -2,7 +2,11 @@ import { type Configuration, rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
 import { CLIError } from '../common/cliError.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
-import { normalizeStatsOptions, writeStats } from '../common/index.js';
+import {
+  normalizeStatsOptions,
+  resetPersistentCache,
+  writeStats,
+} from '../common/index.js';
 import { setupEnvironment } from '../common/setupEnvironment.js';
 import type { BundleArguments, CliConfig } from '../types.js';
 
@@ -33,6 +37,14 @@ export async function bundle(
 
   if (!args.entryFile && !config.entry) {
     throw new CLIError("Option '--entry-file <path>' argument is missing");
+  }
+
+  if (args.resetCache) {
+    resetPersistentCache({
+      bundler: 'rspack',
+      rootDir: cliConfig.root,
+      cacheConfigs: [config.experiments?.cache],
+    });
   }
 
   const errorHandler = async (error: Error | null, stats?: Stats) => {

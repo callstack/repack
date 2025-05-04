@@ -3,8 +3,9 @@ declare module 'flow-remove-types' {
     code: string,
     options: {
       all?: boolean;
-      pretty?: boolean;
       ignoreUninitializedFields?: boolean;
+      pretty?: boolean;
+      removeEmptyImports?: boolean;
     }
   ) => {
     toString(): string;

@@ -34,6 +34,7 @@ interface GetJsTransformRulesOptions {
     exclude?: string[];
     all?: boolean;
     ignoreUninitializedFields?: boolean;
+    removeEmptyImports?: boolean;
   };
   codegen?: {
     enabled?: boolean;
@@ -81,6 +82,7 @@ Configuration for enabling/disabling Flow transformations. When enabled, the tra
     exclude: [],
     all: true,
     ignoreUninitializedFields: false,
+    removeEmptyImports: true,
   }
 }
 ```

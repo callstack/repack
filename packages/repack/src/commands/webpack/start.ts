@@ -1,4 +1,3 @@
-// @ts-expect-error type-only import
 import type { Server } from '@callstack/repack-dev-server';
 import type { Configuration, StatsCompilation } from 'webpack';
 import packageJson from '../../../package.json';
@@ -15,6 +14,7 @@ import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getMimeType,
   parseFileUrl,
+  resetPersistentCache,
   runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
@@ -66,6 +66,14 @@ export async function start(
   );
 
   process.stdout.write(logo(packageJson.version, 'webpack'));
+
+  if (args.resetCache) {
+    resetPersistentCache({
+      bundler: 'webpack',
+      rootDir: cliConfig.root,
+      cacheConfigs: configs.map((config) => config.cache),
+    });
+  }
 
   const compiler = new Compiler(
     args,

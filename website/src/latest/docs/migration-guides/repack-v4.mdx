@@ -2,7 +2,7 @@ import { PackageManagerTabs } from "@theme";
 
 # Migrating from Re.Pack 4
 
-:::info title="Re.Pack 5 now supports Rspack!"
+:::info Re.Pack 5 now supports Rspack!
 Re.Pack 5 introduces support for [Rspack](https://rspack.dev/),
 a high-performance webpack alternative with a highly compatible API.
 This migration guide focuses solely on migrating from **V4** to **V5** while continuing to use webpack.
@@ -11,7 +11,7 @@ If you're interested in using Rspack (which is encouraged), we recommend first c
 to **V5** with webpack and then following our separate [webpack to Rspack migration guide](/docs/migration-guides/rspack).
 :::
 
-:::danger title="Changes to internal plugins are not covered"
+:::danger Changes to internal plugins are not covered
 Plugins that are part of `RepackPlugin` are considered internal and are not covered by this migration guide.
 :::
 
@@ -38,7 +38,7 @@ You can also remove `babel-loader` from your `devDependencies` as Re.Pack 5 now 
 }
 ```
 
-:::tip title="Good time to update webpack and terser-webpack-plugin"
+:::tip Good time to update webpack and terser-webpack-plugin
 
 While not necessary, for the best experience with Re.Pack 5,
 we recommend updating your `webpack` and `terser-webpack-plugin` dependencies to their latest versions:
@@ -75,7 +75,7 @@ module.exports = {
 
 Below are the changes that you need to be aware of when migrating to Re.Pack 5. Most of the changes revolve around reducing the amount of configuration needed.
 
-:::info title="Re.Pack 5 makes webpack configuration much smaller"
+:::info Re.Pack 5 makes webpack configuration much smaller
 In **V5** we've significantly simplified webpack configuration templates.
 Many defaults are now configured out of the box, reducing the need for explicit
 configuration and making your configuration files much cleaner and easier to maintain.
@@ -95,7 +95,7 @@ A strict configuration cascade system was introduced to provide clear and predic
 4. Re.Pack defaults
 5. Webpack/Rspack defaults (lowest precedence)
 
-:::warning title="CLI arguments now bypass config files!"
+:::warning CLI arguments now bypass config files!
 CLI arguments now always take the highest precedence and cannot be overridden by config files. This change aligns Re.Pack behavior with other similar CLI tools. Make sure to update your configuration with this in mind. 
 :::
 
@@ -116,7 +116,7 @@ We've changed how sourcemaps are configured to align better with webpack's nativ
 +  devtool: 'source-map',
 ```
 
-:::tip title="You can remove the devtool option altogether"
+:::tip You can remove the devtool option altogether
 `devtool: 'source-map'` is now the default value in **V5**.
 :::
 

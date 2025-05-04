@@ -4,7 +4,8 @@ import { validate } from 'schema-utils';
 export interface FlowLoaderOptions {
   all?: boolean;
   ignoreUninitializedFields?: boolean;
-  pretty?: true;
+  pretty?: boolean;
+  removeEmptyImports?: boolean;
 }
 
 type Schema = Parameters<typeof validate>[0];
@@ -16,6 +17,7 @@ export const optionsSchema: Schema = {
     all: { type: 'boolean' },
     ignoreUninitializedFields: { type: 'boolean' },
     pretty: { type: 'boolean' },
+    removeEmptyImports: { type: 'boolean' },
   },
 };
 

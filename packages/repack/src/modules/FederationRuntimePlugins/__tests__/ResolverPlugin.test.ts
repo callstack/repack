@@ -56,7 +56,7 @@ describe('RepackResolverPlugin', () => {
   it('should resolve a script through a manifest', async () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
@@ -67,15 +67,15 @@ describe('RepackResolverPlugin', () => {
     );
 
     expect(script.locator.url).toBe(
-      'https://example-manifest.com/remoteEntry.js'
+      'https://example-manifest.com/remote1/remoteEntry.js'
     );
   });
 
   it('should resolve a script through remote entry', async () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({
-      remoteInfo: { ...mockRemoteInfo, version: undefined },
+    plugin.registerRemote!({
+      remote: { ...mockRemoteInfo, version: undefined },
     } as any);
 
     // manually resolve the script to verify the result
@@ -86,14 +86,16 @@ describe('RepackResolverPlugin', () => {
       'https://example-entry.com/remoteEntry.js'
     );
 
-    expect(script.locator.url).toBe('https://example-entry.com/remoteEntry.js');
+    expect(script.locator.url).toBe(
+      'https://example-entry.com/remote1/remoteEntry.js'
+    );
   });
 
   it('should allow custom configuration when used in runtime with a config object', async () => {
     const config = { headers: { Authorization: 'Bearer token' } };
     const plugin = RepackResolverPlugin(config);
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
@@ -113,7 +115,7 @@ describe('RepackResolverPlugin', () => {
     });
     const plugin = RepackResolverPlugin(config);
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
@@ -129,7 +131,7 @@ describe('RepackResolverPlugin', () => {
   it('should throw error when reference URL is missing', async () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result (should throw)
     await expect(
@@ -145,18 +147,18 @@ describe('RepackResolverPlugin', () => {
     const config = { headers: { Authorization: 'Bearer token' } };
     const plugin = RepackResolverPlugin(config);
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript(
       'chunk1',
       'remote1',
       webpackRequireMock,
-      'https://example-entry.com/remote1/assets/nested/chunk1.js'
+      'https://example-entry.com/remote1/assets/chunk1.js'
     );
 
     expect(script.locator.url).toBe(
-      'https://example-manifest.com/remote1/assets/nested/chunk1.js'
+      'https://example-manifest.com/remote1/chunk1.js'
     );
     expect(script.locator.headers).toEqual({ authorization: 'Bearer token' });
     expect(script.locator.fetch).toBe(true);
@@ -172,7 +174,7 @@ describe('RepackResolverPlugin', () => {
 
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({ remote: mockRemoteInfo } as any);
 
     // manually resolve the script to verify the result
     const script = await ScriptManager.shared.resolveScript('other-remote');
@@ -184,18 +186,37 @@ describe('RepackResolverPlugin', () => {
   it('should rebase the URL from reference URL to entry URL', async () => {
     const plugin = RepackResolverPlugin();
     // trigger the plugin to register the resolver
-    plugin.afterResolve!({ remoteInfo: mockRemoteInfo } as any);
+    plugin.registerRemote!({
+      remote: {
+        name: 'remote1',
+        entry: 'https://example.com/ios/remote1/entry.container.js.bundle',
+        version: 'https://example-manifest.com/remote1/mf-manifest.json',
+      },
+    } as any);
 
     // manually resolve the script to verify the result
-    const script = await ScriptManager.shared.resolveScript(
+    const script1 = await ScriptManager.shared.resolveScript(
+      'remote1',
+      undefined,
+      webpackRequireMock,
+      'https://example.com/ios/remote1/entry.container.js.bundle'
+    );
+
+    // container entry is expected to be at the same level as manifest
+    expect(script1.locator.url).toBe(
+      'https://example-manifest.com/remote1/entry.container.js.bundle'
+    );
+
+    const script2 = await ScriptManager.shared.resolveScript(
       'asset',
       'remote1',
       webpackRequireMock,
-      'https://example-entry.com/remote1/subdir/asset.js'
+      'http://localhost:8081/ios/remote1/asset.js'
     );
 
-    expect(script.locator.url).toBe(
-      'https://example-manifest.com/remote1/subdir/asset.js'
+    // all other assets are expected to be at the same level as manifest
+    expect(script2.locator.url).toBe(
+      'https://example-manifest.com/remote1/asset.js'
     );
   });
 });

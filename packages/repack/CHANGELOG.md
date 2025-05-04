@@ -1,5 +1,27 @@
 # @callstack/repack
 
+## 5.0.6
+
+### Patch Changes
+
+- [#1113](https://github.com/callstack/repack/pull/1113) [`4fe3b04`](https://github.com/callstack/repack/commit/4fe3b049c5bd473aa97469a36b74d9479721eae6) Thanks [@jbroma](https://github.com/jbroma)! - Fix failure to read `.mjs` config on Windows
+
+- [#1114](https://github.com/callstack/repack/pull/1114) [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584) Thanks [@jbroma](https://github.com/jbroma)! - Fix handling of MF2 remote assets paths in ResolverPlugin
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.6
+
+## 5.0.5
+
+### Patch Changes
+
+- [`eac08f2`](https://github.com/callstack/repack/commit/eac08f256744774466a945876e9af2ab03221b37) Thanks [@jbroma](https://github.com/jbroma)! - Fix failure to load project configuration in Node versions with require(esm)
+
+- [`c6a4325`](https://github.com/callstack/repack/commit/c6a432507cb728dcf5c5345f7a1f9ca3879a6ee8) Thanks [@jbroma](https://github.com/jbroma)! - Fix publicPath not using port overriden through CLI in development
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.0.5
+
 ## 5.0.4
 
 ### Patch Changes

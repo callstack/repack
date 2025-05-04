@@ -13,6 +13,7 @@ type FlowLoaderOptions = {
   all?: boolean;
   ignoreUninitializedFields?: boolean;
   pretty?: boolean;
+  removeEmptyImports?: boolean;
 };
 ```
 
@@ -36,6 +37,13 @@ If true, removes uninitialized class fields (`foo;`, `foo: string;`) completely 
 - Default: `false`
 
 If true, removes types completely rather than replacing with spaces. This may require using source maps.
+
+### removeEmptyImports
+
+- Type: `boolean`
+- Default: `true`
+
+If true, removes empty import statements (`import {} from 'flow-typed-module';`) which were only used for importing flow types.
 
 ## Example
 

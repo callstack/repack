@@ -5,7 +5,7 @@ instead of bundling them directly into your application. When working with Modul
 this is the recommended approach to handling the assets in federated modules, as inlining
 the assets causes your bundle size to increase dramatically.
 
-:::tip title="Use remote assets only in production"
+:::tip Use remote assets only in production
 During development, it's best to disable remote assets and load them locally. When you're ready to move to production, you can use `enabled: true` and then upload the assets to the CDN of your choosing.
 :::
 
@@ -79,7 +79,7 @@ type Source = {
 
 The `uri` prop will have a value of an URL that's constructed by joining `publicPath`, 'assets' and local path to the asset together. If `publicPath` is set to https://example.com and the local path to the asset is logo.png, then the resulting `uri` value would be: `https://example.com/assets/images/logo.png`.
 
-:::info title="Scaled assets are fully supported"
+:::info Scaled assets are fully supported
 
 The asset will resolve to proper scale in runtime by constructing a relevant URL with scale suffix at the end of it.
 

@@ -70,12 +70,33 @@ describe('normalizeConfig', () => {
       expect(normalized.output?.publicPath).toBe('noop:///');
     });
 
+    it('should set publicPath to devServer public path if it uses DEV_SERVER_PUBLIC_PATH', () => {
+      const config = {
+        devServer: { host: 'example.com', port: 3000 },
+        output: { publicPath: 'DEV_SERVER_PUBLIC_PATH' },
+      } as ConfigurationObject;
+      const normalized = normalizeConfig(config, 'ios');
+      expect(normalized.output?.publicPath).toBe(
+        'http://example.com:3000/ios/'
+      );
+    });
+
     it('should keep custom publicPath unchanged', () => {
       const config = {
         output: { publicPath: 'http://localhost:8081' },
       } as ConfigurationObject;
       const normalized = normalizeConfig(config, 'ios');
       expect(normalized.output?.publicPath).toBe('http://localhost:8081');
+    });
+
+    it('should replace [platform] placeholders', () => {
+      const config = {
+        output: { publicPath: 'http://example.com:3000/[platform]/' },
+      } as ConfigurationObject;
+      const normalized = normalizeConfig(config, 'ios');
+      expect(normalized.output?.publicPath).toBe(
+        'http://example.com:3000/ios/'
+      );
     });
   });
 

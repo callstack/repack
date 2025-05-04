@@ -82,7 +82,7 @@ describe('ScriptManagerAPI', () => {
   it('throw error if there are no resolvers', async () => {
     const spy = jest.spyOn(
       ScriptManager.shared,
-      'handleError' as keyof ScriptManager
+      'handleError' as keyof ScriptManager['handleError']
     );
 
     await expect(
@@ -100,7 +100,7 @@ describe('ScriptManagerAPI', () => {
   it('throw error if no resolvers handled request', async () => {
     const spy = jest.spyOn(
       ScriptManager.shared,
-      'handleError' as keyof ScriptManager
+      'handleError' as keyof ScriptManager['handleError']
     );
 
     ScriptManager.shared.addResolver(async () => undefined);
@@ -121,7 +121,7 @@ describe('ScriptManagerAPI', () => {
   it('remove all resolvers', async () => {
     const spy = jest.spyOn(
       ScriptManager.shared,
-      'handleError' as keyof ScriptManager
+      'handleError' as keyof ScriptManager['handleError']
     );
 
     ScriptManager.shared.addResolver(async () => undefined);

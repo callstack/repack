@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack",
-  "version": "5.0.4",
+  "version": "5.0.6",
   "description": "A toolkit to build your React Native application with Rspack or Webpack.",
   "type": "commonjs",
   "main": "./dist/index.js",
@@ -84,7 +84,7 @@
     "estree-util-is-identifier-name": "^1.1.0",
     "events": "^3.3.0",
     "execa": "^5.0.0",
-    "flow-remove-types": "^2.250.0",
+    "flow-remove-types": "^2.268.0",
     "gradient-string": "^2.0.2",
     "image-size": "^1.1.1",
     "jsonwebtoken": "^9.0.2",
@@ -94,6 +94,7 @@
     "react-refresh": "^0.14.0",
     "schema-utils": "^4.2.0",
     "shallowequal": "^1.1.0",
+    "tapable": "^2.2.1",
     "throttleit": "^2.1.0",
     "webpack-merge": "^6.0.1"
   },
@@ -117,8 +118,8 @@
     "babel-jest": "^29.7.0",
     "clang-format": "^1.8.0",
     "jest": "^29.7.0",
-    "react": "19.0.0",
-    "react-native": "0.78.0",
+    "react": "catalog:",
+    "react-native": "catalog:",
     "rspack-plugin-virtual-module": "^0.1.13",
     "typescript": "catalog:",
     "webpack": "catalog:"

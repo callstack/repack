@@ -11,7 +11,7 @@ export default (env) => {
     context,
     entry: './src/host/index.js',
     resolve: {
-      ...Repack.getResolveOptions(),
+      ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
     output: {
       path: '[context]/build/host-app/[platform]',
@@ -50,12 +50,12 @@ export default (env) => {
           react: {
             singleton: true,
             eager: true,
-            requiredVersion: '18.3.1',
+            requiredVersion: '19.0.0',
           },
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.76.3',
+            requiredVersion: '0.79.1',
           },
           '@react-navigation/native': {
             singleton: true,
@@ -70,12 +70,12 @@ export default (env) => {
           'react-native-safe-area-context': {
             singleton: true,
             eager: true,
-            requiredVersion: '^4.14.0',
+            requiredVersion: '^5.4.0',
           },
           'react-native-screens': {
             singleton: true,
             eager: true,
-            requiredVersion: '^3.35.0',
+            requiredVersion: '^4.10.0',
           },
         },
       }),

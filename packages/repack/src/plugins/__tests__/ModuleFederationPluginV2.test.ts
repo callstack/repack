@@ -30,6 +30,9 @@ const corePluginPath = require.resolve('@callstack/repack/mf/core-plugin');
 const resolverPluginPath = require.resolve(
   '@callstack/repack/mf/resolver-plugin'
 );
+const prefetchPluginPath = require.resolve(
+  '@callstack/repack/mf/prefetch-plugin'
+);
 
 describe('ModuleFederationPlugin', () => {
   afterEach(() => {
@@ -164,7 +167,8 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.runtimePlugins).toContain(corePluginPath);
     expect(config.runtimePlugins).toContain(resolverPluginPath);
-    expect(config.runtimePlugins).toHaveLength(2);
+    expect(config.runtimePlugins).toContain(prefetchPluginPath);
+    expect(config.runtimePlugins).toHaveLength(3);
   });
 
   it('should use loaded-first as default shareStrategy', () => {

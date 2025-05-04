@@ -7,7 +7,7 @@ Common examples of such use cases are:
 - Using assets inside of [Module Federation remotes](/docs/features/module-federation) where you can't have assets extracted and shipped with the host app bundle.
 - Out-of-tree platforms that don't support static assets in a similar way as React Native on iOS/Android does or don't support static assets at all.
 
-:::tip title="Use sparingly and only when necessary"
+:::tip Use sparingly and only when necessary
 
 Inlining assets into the bundle makes the **bundle size larger** and increases the **initial startup time** of an app. It's most noticable when you inline an asset which has 3 scales (e.g. `@1x`, `@2x` and `@3x`). In that scenario, all of the scales will be inlined into the bundle since it's not possible to determine which scale is needed at runtime.
 
@@ -93,7 +93,7 @@ module.exports = {
 };
 ```
 
-:::tip title="Learn more about loader rules"
+:::tip Learn more about loader rules
 
 You can read more about loader rules and how to configure them in:
 

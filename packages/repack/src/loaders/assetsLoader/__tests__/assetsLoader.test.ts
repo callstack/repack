@@ -69,18 +69,19 @@ async function compileBundle(
     plugins: [
       new RspackVirtualModulePlugin({
         'package.json': '{ "type": "module" }',
-        'node_modules/react-native/package.json': '{ "name": "react-native" }',
+        'node_modules/react-native/package.json':
+          '{ "name": "react-native", "main": "./index.js" }',
+        'node_modules/react-native/index.js':
+          'module.exports = { PixelRatio: { get: () => 1 } };',
         'node_modules/react-native/Libraries/Image/AssetRegistry.js':
           'module.exports = { registerAsset: (spec) => spec };',
-        'node_modules/react-native/Libraries/Utilities/PixelRatio.js':
-          'module.exports = { get: () => 1 };',
         'node_modules/react-native/Libraries/Image/AssetSourceResolver.js': `
           module.exports = class AssetSourceResolver { 
             constructor(a, b, c) { 
               this.asset = c; 
             } 
             scaledAssetPath() { 
-              var scale = require('react-native/Libraries/Utilities/PixelRatio').get();
+              var scale = require('react-native').PixelRatio.get();
               var scaleSuffix = scale === 1 ? '' : '@x' + scale;
               return { 
                 __packager_asset: true, 
@@ -174,81 +175,50 @@ describe('assetLoader', () => {
   });
 
   describe('should inline asset', () => {
-    it.each([
-      { reactNativeVersion: '<0.72', moduleExportSyntax: 'module.exports =' },
-      { reactNativeVersion: '>=0.72', moduleExportSyntax: 'export default ' },
-    ])(
-      'without scales - React Native $reactNativeVersion',
-      async ({ moduleExportSyntax }) => {
-        const { code, volume } = await compileBundle(
-          'android',
-          {
-            ...fixtures,
-            'node_modules/react-native/Libraries/Utilities/PixelRatio.js': `${moduleExportSyntax} { get: () => 1 };`,
-            './index.js': "export { default } from './__fixtures__/logo.png';",
-          },
-          true
-        );
+    it('without scales', async () => {
+      const { code, volume } = await compileBundle(
+        'android',
+        {
+          ...fixtures,
+          './index.js': "export { default } from './__fixtures__/logo.png';",
+        },
+        true
+      );
 
-        const context: { Export?: { default: Record<string, any> } } = {};
-        vm.runInNewContext(code, context);
+      const context: { Export?: { default: Record<string, any> } } = {};
+      vm.runInNewContext(code, context);
 
-        expect(context.Export?.default).toMatchSnapshot();
-        expect(volume.toTree()).toMatchSnapshot();
-      }
-    );
+      expect(context.Export?.default).toMatchSnapshot();
+      expect(volume.toTree()).toMatchSnapshot();
+    });
 
     it.each([
       {
         prefferedScale: 1,
-        reactNativeVersion: '<0.72',
-        moduleExportSyntax: 'module.exports =',
       },
       {
         prefferedScale: 2,
-        reactNativeVersion: '<0.72',
-        moduleExportSyntax: 'module.exports =',
       },
       {
         prefferedScale: 3,
-        reactNativeVersion: '<0.72',
-        moduleExportSyntax: 'module.exports =',
       },
-      {
-        prefferedScale: 1,
-        reactNativeVersion: '>=0.72',
-        moduleExportSyntax: 'export default ',
-      },
-      {
-        prefferedScale: 2,
-        reactNativeVersion: '>=0.72',
-        moduleExportSyntax: 'export default ',
-      },
-      {
-        prefferedScale: 3,
-        reactNativeVersion: '>=0.72',
-        moduleExportSyntax: 'export default ',
-      },
-    ])(
-      'with scales ($prefferedScale) - React Native $reactNativeVersion',
-      async ({ prefferedScale, moduleExportSyntax }) => {
-        const { code, volume } = await compileBundle(
-          'android',
-          {
-            ...fixtures,
-            'node_modules/react-native/Libraries/Utilities/PixelRatio.js': `${moduleExportSyntax} { get: () => ${prefferedScale} };`,
-            './index.js': "export { default } from './__fixtures__/star.png';",
-          },
-          true
-        );
+    ])('with scales ($prefferedScale)', async ({ prefferedScale }) => {
+      const { code, volume } = await compileBundle(
+        'android',
+        {
+          ...fixtures,
+          'node_modules/react-native/index.js': `module.exports = { PixelRatio: { get: () => ${prefferedScale} } };`,
+          './index.js': "export { default } from './__fixtures__/star.png';",
+        },
+        true
+      );
 
-        const context: { Export?: { default: Record<string, any> } } = {};
-        vm.runInNewContext(code, context);
+      const context: { Export?: { default: Record<string, any> } } = {};
+      vm.runInNewContext(code, context);
 
-        expect(context.Export?.default).toMatchSnapshot();
-        expect(volume.toTree()).toMatchSnapshot();
-      }
-    );
+      expect(context.Export?.default).toMatchSnapshot();
+      expect(volume.toTree()).toMatchSnapshot();
+    });
   });
 
   describe('should convert to remote-asset', () => {
@@ -282,7 +252,7 @@ describe('assetLoader', () => {
         'ios', // platform doesn't matter for remote-assets
         {
           ...fixtures,
-          'node_modules/react-native/Libraries/Utilities/PixelRatio.js': `module.exports = { get: () => ${prefferedScale} };`,
+          'node_modules/react-native/index.js': `module.exports = { PixelRatio: { get: () => ${prefferedScale} } };`,
           './index.js': "export { default } from './__fixtures__/star.png';",
         },
         false,
@@ -358,7 +328,7 @@ describe('assetLoader', () => {
           'ios', // platform doesn't matter for remote-assets
           {
             ...fixtures,
-            'node_modules/react-native/Libraries/Utilities/PixelRatio.js': `module.exports = { get: () => ${prefferedScale} };`,
+            'node_modules/react-native/index.js': `module.exports = { PixelRatio: { get: () => ${prefferedScale} } };`,
             './index.js': "export { default } from './__fixtures__/star.png';",
           },
           false,
