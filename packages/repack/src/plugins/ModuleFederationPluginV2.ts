@@ -1,6 +1,7 @@
 import type { moduleFederationPlugin as MF } from '@module-federation/sdk';
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler as RspackCompiler } from '@rspack/core';
 import { name as isIdentifier } from 'estree-util-is-identifier-name';
+import type { Compiler as WebpackCompiler } from 'webpack';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
 
 type JsModuleDescriptor = {
@@ -96,7 +97,7 @@ export interface ModuleFederationPluginV2Config
  *
  * @category Webpack Plugin
  */
-export class ModuleFederationPluginV2 implements RspackPluginInstance {
+export class ModuleFederationPluginV2 {
   public config: MF.ModuleFederationPluginOptions;
   private deepImports: boolean;
   private defaultRuntimePlugins: string[];
@@ -163,7 +164,7 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     return plugins;
   }
 
-  private getModuleFederationPlugin(compiler: Compiler) {
+  private getModuleFederationPlugin(compiler: RspackCompiler) {
     if (isRspackCompiler(compiler)) {
       return require('@module-federation/enhanced/rspack')
         .ModuleFederationPlugin;
@@ -254,7 +255,7 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     return adjustedSharedDependencies;
   }
 
-  private setupIgnoredWarnings(compiler: Compiler) {
+  private setupIgnoredWarnings(compiler: RspackCompiler) {
     // MF2 produces warning about not supporting async await
     // we can silence this warning since it works just fine
     compiler.options.ignoreWarnings = compiler.options.ignoreWarnings ?? [];
@@ -287,7 +288,12 @@ export class ModuleFederationPluginV2 implements RspackPluginInstance {
     });
   }
 
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     this.validateModuleFederationContainerName(this.config.name);
     this.ensureModuleFederationPackageInstalled(compiler.context);
     this.setupIgnoredWarnings(compiler);

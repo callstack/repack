@@ -1,4 +1,5 @@
-import type { Compiler, RspackPluginInstance, container } from '@rspack/core';
+import type { Compiler as RspackCompiler, container } from '@rspack/core';
+import type { Compiler as WebpackCompiler } from 'webpack';
 import { Federated } from '../utils/federated.js';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
 
@@ -98,7 +99,7 @@ export interface ModuleFederationPluginV1Config extends MFPluginV1Options {
  *
  * @category Webpack Plugin
  */
-export class ModuleFederationPluginV1 implements RspackPluginInstance {
+export class ModuleFederationPluginV1 {
   private config: MFPluginV1Options;
   private deepImports: boolean;
 
@@ -116,7 +117,7 @@ export class ModuleFederationPluginV1 implements RspackPluginInstance {
    * @param compiler - The compiler instance (either webpack or Rspack)
    * @returns The appropriate ModuleFederationPlugin class
    */
-  private getModuleFederationPlugin(compiler: Compiler): MFPluginV1 {
+  private getModuleFederationPlugin(compiler: RspackCompiler): MFPluginV1 {
     if (isRspackCompiler(compiler)) {
       return compiler.webpack.container.ModuleFederationPluginV1;
     }
@@ -251,12 +252,12 @@ export class ModuleFederationPluginV1 implements RspackPluginInstance {
     return adjustedSharedDependencies;
   }
 
-  /**
-   * Apply the plugin.
-   *
-   * @param compiler Webpack compiler instance.
-   */
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
 
     const filenameConfig =
