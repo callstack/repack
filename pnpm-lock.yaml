@@ -720,6 +720,9 @@ importers:
       rspress-plugin-font-open-sans:
         specifier: ^1.0.0
         version: 1.0.0
+      rspress-plugin-sitemap:
+        specifier: ^1.1.1
+        version: 1.1.1
       rspress-plugin-vercel-analytics:
         specifier: ^0.3.0
         version: 0.3.0(react@19.1.0)(rspress@2.0.0-beta.3(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))
@@ -7147,6 +7150,9 @@ packages:
 
   rspress-plugin-font-open-sans@1.0.0:
     resolution: {integrity: sha512-4GP0pd7h3W8EWdqE0VkA62nzUJZNy4ZnYK7be8+lOKHQKsQ5nZ+22A/VurNssi1eZFx3kjwbmIuoAkgb5W8S9Q==}
+
+  rspress-plugin-sitemap@1.1.1:
+    resolution: {integrity: sha512-usb6zWoi5wFFmBeA9HKR6BhsnnsItudMBarc54GYpuRL55SWkLxyWyMijv14mUI04FI7J7lEmea08uZE0bVKxg==}
 
   rspress-plugin-vercel-analytics@0.3.0:
     resolution: {integrity: sha512-e3tt7pJeihgCRVT/8qft5hK6cuU9gYrl60ihAtchz1jMgcLmpyIyEMhP4dcux2MGboRMoknQEUacjFcwi5ZzZg==}
@@ -16398,6 +16404,8 @@ snapshots:
       - supports-color
 
   rspress-plugin-font-open-sans@1.0.0: {}
+
+  rspress-plugin-sitemap@1.1.1: {}
 
   rspress-plugin-vercel-analytics@0.3.0(react@19.1.0)(rspress@2.0.0-beta.3(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)):
     dependencies:
