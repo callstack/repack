@@ -42,7 +42,7 @@
     "dedent": "^0.7.0"
   },
   "peerDependencies": {
-    "@callstack/repack": ">=5.0.6",
+    "@callstack/repack": "workspace:*",
     "nativewind": ">=4.1.23",
     "react-native-css-interop": ">=0.1.22",
     "postcss": ">=8.4.31",

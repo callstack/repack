@@ -39,7 +39,7 @@
   "dependencies": {},
   "peerDependencies": {
     "@babel/core": "^7.20",
-    "@callstack/repack": "^5.0.6"
+    "@callstack/repack": "workspace:*"
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",

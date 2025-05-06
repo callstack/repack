@@ -33,7 +33,7 @@
     "node": ">=18"
   },
   "peerDependencies": {
-    "@callstack/repack": "^5.0.6"
+    "@callstack/repack": "workspace:*"
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",
