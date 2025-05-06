@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- [#1114](https://github.com/callstack/repack/pull/1114) [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584) Thanks [@jbroma](https://github.com/jbroma)! - Bump versions of dependencies for `repack-init`
+- [#1125](https://github.com/callstack/repack/pull/1125) [`1bb5e77`](https://github.com/callstack/repack/commit/1bb5e77f12a51094b0901945857210f6781ce9b6) Thanks [@jbroma](https://github.com/jbroma)! - Bump versions of dependencies for `repack-init`
 
 ## 5.0.6
 
