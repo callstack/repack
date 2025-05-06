@@ -1,4 +1,5 @@
-import type { Compiler, RspackPluginInstance, container } from '@rspack/core';
+import type { Compiler as RspackCompiler, container } from '@rspack/core';
+import type { Compiler as WebpackCompiler } from 'webpack';
 // biome-ignore lint/correctness/noUnusedImports: needed for jsdoc
 import type { Federated } from '../utils/federated.js';
 import {
@@ -83,7 +84,7 @@ export type ModuleFederationPluginConfig = ModuleFederationPluginV1Config;
  *
  * @category Webpack Plugin
  */
-export class ModuleFederationPlugin implements RspackPluginInstance {
+export class ModuleFederationPlugin {
   private config: MFPluginV1Options;
   private deepImports: boolean;
   private plugin: ModuleFederationPluginV1;
@@ -97,7 +98,11 @@ export class ModuleFederationPlugin implements RspackPluginInstance {
     this.plugin = new ModuleFederationPluginV1(pluginConfig);
   }
 
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
     const logger = compiler.getInfrastructureLogger(
       'RepackModuleFederationPlugin'
     );

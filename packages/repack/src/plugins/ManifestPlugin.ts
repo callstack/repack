@@ -1,15 +1,16 @@
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler as RspackCompiler } from '@rspack/core';
+import type { Compiler as WebpackCompiler } from 'webpack';
 
 /**
  * @category Webpack Plugin
  */
-export class ManifestPlugin implements RspackPluginInstance {
-  /**
-   * Apply the plugin.
-   *
-   * @param compiler Webpack compiler instance.
-   */
-  apply(compiler: Compiler) {
+export class ManifestPlugin {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     compiler.hooks.compilation.tap('RepackManifestPlugin', (compilation) => {
       compilation.hooks.afterProcessAssets.tap('RepackManifestPlugin', () => {
         for (const chunk of compilation.chunks) {
