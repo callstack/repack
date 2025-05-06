@@ -1,5 +1,12 @@
 # @callstack/repack-plugin-reanimated
 
+## 5.1.0-rc.0
+
+### Patch Changes
+
+- Updated dependencies [[`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584), [`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584)]:
+  - @callstack/repack@5.1.0-rc.0
+
 ## 5.0.6
 
 ### Patch Changes
