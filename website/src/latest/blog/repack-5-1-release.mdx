@@ -1,5 +1,5 @@
 ---
-date: 2025-02-27 20:00:00
+date: 2025-05-13 12:00:00
 sidebar: false
 ---
 
@@ -9,5 +9,157 @@ import { Head } from 'rspress/runtime';
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </Head>
 
-# Re.Pack 5.1: Hooks for ScriptManager and more
+# Re.Pack 5.1: OTA tools, runtime hooks & faster hot startups.
 
+Re.Pack 5.1 is a significant release that revolves around Over-the-Air (OTA) updates while bringing several other improvements. This release introduces a runtime hooks system for the `ScriptManager` for better control over script loading, enhances Package Exports/Imports support for improved module resolution, enables persistent cache by default for faster hot startups, and adds full compatibility with React Native 0.79. 
+
+Alongside these major features, we've also included various bug fixes to improve stability and performance. This release is also accompanied by several ecosystem announcements.
+
+## Support for Module Federation 2 `prefetchRemote` in runtime
+
+One of the most requested features in Re.Pack recently, was the support for preloading of remote modules defined with the `ModuleFederationPluginV2`. Re.Pack had similar functionality in it's own `ScriptManager` called `prefetchScript` but it was up to the user to connect the two together. To fill this gap, we've expanded the MF2 support with another runtime plugin that utilizes `ScriptManager.prefetchScript` under the hood.
+
+This functionality is now available out of the box starting from Re.Pack 5.1 and is enabled by default. To use it, you need to have `@module-federation/runtime` installed, and then in your code you can use it like this:
+
+```ts
+import { prefetchRemote } from '@module-federation/runtime';
+
+preloadRemote([
+  {
+    nameOrAlias: 'MiniApp',
+    resourceCategory: 'sync',
+  },
+]);
+```
+
+For the full API reference, please refer to the official [Module Federation 2 documentation](https://module-federation.io/guide/basic/runtime.html#preloadremote).
+
+To get the most out of this feature, you should pair it with `ScriptManager.invalidateScripts` to ensure that the old assets in cache are removed, and then you can prefetch the new assets that can be loaded on the next startup:
+
+```ts
+
+import { ScriptManager } from '@callstack/repack/client';
+import { preloadRemote } from '@module-federation/runtime';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// enable caching of scripts in the AsyncStorage
+ScriptManager.shared.setStorage(AsyncStorage);
+
+// optionally setup a listener for prefetching events
+ScriptManager.shared.on('prefetching', (script) => {
+  console.debug('prefetching', script.locator.uniqueId);
+});
+
+if (updateIsAvailable()) {
+  // invalidate the cache and then preload new assets
+  ScriptManager.shared.invalidateScripts().then(() => {
+    preloadRemote([
+      { nameOrAlias: 'MiniApp', resourceCategory: 'sync', depsRemote: false },
+    ]).then(() => {
+      console.log('preloaded MiniApp assets');
+    });
+  });
+}
+
+```
+
+With new assets cached to the device filesystem, all that's left to do is to load the them on the next startup.
+
+## Hooks for ScriptManager
+
+Using Module Federation with Re.Pack 5 is now easier than ever. Most of the confusing parts is now configured automatically under the hood.We want users to use the official Module Federation 2 API as much as possible, and as little Re.Pack `ScriptManager` API as possible. But sometimes, for mobile-specific funcionality, there is no other way than to use the `ScriptManager` API.
+
+To make it easier to use the `ScriptManager` API with Module Federation, we've introduced a new runtime hook system. This allows you to hook into the script loading process and modify it to your needs. It's best to show an example what use cases are best handled by this system.
+
+If you want to add code-signing to your bundles, you would have to add `CodeSigningPlugin` to the `rspack.config`, add then enable verification of the bundles through the `ScriptManager.addResolver` API. But with Module Federation 2 in Re.Pack, this was rather cumbersome to do - you would have to drop the runtime `ResolutionPlugin` that is responsible for the automatic resolution of the remote modules and essentially copy that logic into your own code.
+
+Now, we can tap directly into the resolution process from the outside, and modify the arguments before the loading process begins:
+
+```ts
+import { ScriptManager } from '@callstack/repack/client';
+
+ScriptManager.shared.hooks.afterResolve(args => {
+  args.locator.verifyScriptSignature = 'strict';
+  return args;
+});
+```
+
+The hooks are a very versatile tool - some of them, like `hooks.afterResolve` above, can be called multiple times after each other, and you can even modify the arguments in a waterfall manner (meaning that the output of one hook is the input of the next one). Consider this example of a chain of hooks:
+
+```ts
+ScriptManager.shared.hooks.afterResolve(args => {
+  args.locator.verifyScriptSignature = 'strict';
+  return args;
+});
+
+ScriptManager.shared.hooks.afterResolve(args => {
+  if (args.scriptId === 'authMiniApp') {
+    args.locator.retry = 3;
+    args.locator.retryDelay = 2500;
+  }
+  return args;
+});
+
+ScriptManager.shared.hooks.afterResolve(args => {
+  args.locator.cache = false;
+  return args;
+});
+```
+
+Hooks are an advanced feature, and are an escape hatch for the cases where it's hard to achieve the desired behavior with the Module Federation 2 API. You can learn more about the available hooks and their usage in the [ScriptManager API documentation](https://re-pack.dev/api/runtime/script-manager#hooks).
+
+## Persistent Cache enabled by default
+
+Rspack 1.2.0 introduced a new feature called Persistent Caching. 
+It was and still is marked as experimental, but with recent improvements
+we finally feel like it's ready to be turned on by default in Re.Pack.
+Whether you use Rspack or Webpack - we've got you covered either way. 
+
+With persitent caching enabled, you can expect your hot startups to be up to 
+
+Persistent cache comes accompanied by `--reset-cache` flag, which let's you reset the cache on demand.
+It behaves just like the equivalent when running `start` command in Metro from `@react-native/community-cli-plugin`.
+
+```bash
+npx react-native start --reset-cache
+```
+
+## Full support for Package Exports & Imports
+
+In Re.Pack 4, we aligned our module resolution strictly with Metro's implementation, which became the de-facto standard for React Native. This alignment helped eliminate most module resolution issues. Now, with React Native 0.79's adoption of [Packge Exports](https://webpack.js.org/guides/package-exports/) by default, we've further improved our implementation to ensure full compatibility with this new standard.
+
+While Metro has enabled Package Exports/Imports by default, we're taking a more gradual approach in Re.Pack. Since we support the current and previous two versions of React Native, we plan to enable Package Exports/Imports by default when React Native 0.81 is released. This gives users time to adapt to the new module resolution system while maintaining backward compatibility.
+
+To use Package Exports/Imports in your setup, you need to enable them through `getResolveOptions` helper function in your configuration:
+
+```ts
+import * as Repack from '@callstack/repack';
+
+export default {
+  context: __dirname,
+  entry: './index.js',
+  resolve: {
+    ...Repack.getResolveOptions({ enablePackageExports: true }),
+  }
+};
+```
+
+## The growing ecosystem
+
+While not exactly tied to this release, we also have few announcements to make:
+
+### React Native Enterprise Framework
+
+Re.Pack is now supported by the newly released `React Native Enterprise Framework`. If you are a user of `@react-native-community/cli` you should definitely give it a try - the startups are faster than ever, and the the easy to setup build caching is a game changer where you can get everything running in a matter of seconds. 
+
+[Learn more](https://www.rnef.dev/docs/getting-started/introduction)
+
+### Hot Updater
+
+If you are looking for Codepush replacement, there are a few options out there. If you are looking for something self-hostable, we recommend checking out `Hot Updater` by (gronxb)[https://github.com/gronxb]. It recently added support for Re.Pack and is making some waves in the community. 
+
+[Learn more](https://gronxb.github.io/hot-updater/guide/getting-started/introduction.html)
+
+## What's next for Re.Pack?
+
+The next release of Re.Pack is already in the works! Rspack keeps on improving and we're experimenting with enabling `parallel-loaders` in the next release within Re.Pack custom loaders. This will allow to speed up the processing by JS-based loaders like `babel-loader` which are the biggest bottleneck of bundling React Native apps with Re.Pack. On top of that, we are also planning to add support for TypeScript based configurations. Stay tuned!
