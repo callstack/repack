@@ -115,7 +115,16 @@ It was and still is marked as experimental, but with recent improvements
 we finally feel like it's ready to be turned on by default in Re.Pack.
 Whether you use Rspack or Webpack - we've got you covered either way. 
 
-With persitent caching enabled, you can expect your hot startups to be up to 
+With persitent caching enabled, you can expect your hot startups to be more than 6x faster:
+
+| App | Without Cache - Cold Startup | With Cache - Hot Startup | Delta |
+|-----|--------------|------------|-------------|
+| Super App Showcase Host (Single Platform) | 2s | 0.3s | -85% |
+| Super App Showcase Host(Both Platforms) | 3.4s | 0.45s | -87% |
+| New Expensify App (Single Platform) | 10.5s | 1.4s | -87% |
+| New Expensify App (Both Platforms) | 18.1s | 2.3s | -87% |
+
+> Note: Single platform builds mean that bulds were run  `npx react-native start --platform ios` or `npx react-native start --platform android`, while both platforms builds are done with just `npx react-native start`.
 
 Persistent cache comes accompanied by `--reset-cache` flag, which let's you reset the cache on demand.
 It behaves just like the equivalent when running `start` command in Metro from `@react-native/community-cli-plugin`.
@@ -123,6 +132,8 @@ It behaves just like the equivalent when running `start` command in Metro from `
 ```bash
 npx react-native start --reset-cache
 ```
+
+You can always opt out of persistent cache by settings `cache: false` in your `rspack.config.js` or `webpack.config.js`.
 
 ## Full support for Package Exports & Imports
 
