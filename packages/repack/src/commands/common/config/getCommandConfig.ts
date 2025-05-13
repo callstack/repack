@@ -1,14 +1,23 @@
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../../consts.js';
 
-function getCacheConfig(bundler: 'rspack' | 'webpack') {
-  if (bundler === 'rspack') {
-    return {
-      cache: true,
-      experiments: { cache: { type: 'persistent' } },
-    };
-  }
+function isExperimentalCacheEnabled() {
+  return (
+    process.env.REPACK_EXPERIMENTAL_CACHE === 'true' ||
+    process.env.REPACK_EXPERIMENTAL_CACHE === '1'
+  );
+}
 
-  return { cache: { type: 'filesystem' } };
+function getCacheConfig(bundler: 'rspack' | 'webpack') {
+  if (isExperimentalCacheEnabled()) {
+    if (bundler === 'rspack') {
+      return {
+        cache: true,
+        experiments: { cache: { type: 'persistent' } },
+      };
+    }
+    return { cache: { type: 'filesystem' } };
+  }
+  return {};
 }
 
 function getStartCommandDefaults(bundler: 'rspack' | 'webpack') {
