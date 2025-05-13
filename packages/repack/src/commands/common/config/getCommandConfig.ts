@@ -1,9 +1,10 @@
+import { EXPERIMENTAL_CACHE_ENV_KEY } from '../../../env.js';
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from '../../consts.js';
 
 function isExperimentalCacheEnabled() {
   return (
-    process.env.REPACK_EXPERIMENTAL_CACHE === 'true' ||
-    process.env.REPACK_EXPERIMENTAL_CACHE === '1'
+    process.env[EXPERIMENTAL_CACHE_ENV_KEY] === 'true' ||
+    process.env[EXPERIMENTAL_CACHE_ENV_KEY] === '1'
   );
 }
 
