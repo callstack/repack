@@ -41,12 +41,17 @@ export function setupInteractions(
   readline.emitKeypressEvents(process.stdin);
   process.stdin.setRawMode(true);
 
+  // graceful shutdown
+  process.on('SIGINT', () => {
+    process.exit();
+  });
+
   process.stdin.on('keypress', (_key, data) => {
     const { ctrl, name } = data;
     if (ctrl === true) {
       switch (name) {
         case 'c':
-          process.exit();
+          process.emit('SIGINT', 'SIGINT');
           break;
 
         case 'z':

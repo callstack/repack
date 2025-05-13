@@ -557,6 +557,9 @@ importers:
       execa:
         specifier: ^5.0.0
         version: 5.1.1
+      exit-hook:
+        specifier: ^4.0.0
+        version: 4.0.0
       flow-remove-types:
         specifier: ^2.268.0
         version: 2.268.0
@@ -4605,6 +4608,10 @@ packages:
   execa@9.5.2:
     resolution: {integrity: sha512-EHlpxMCpHWSAh1dgS6bVeoLAXGnJNdR93aabr4QCGbzOM73o5XmRfM/e5FUqsw3aagP8S8XEWUWFAxnRBnAF0Q==}
     engines: {node: ^18.19.0 || >=20.5.0}
+
+  exit-hook@4.0.0:
+    resolution: {integrity: sha512-Fqs7ChZm72y40wKjOFXBKg7nJZvQJmewP5/7LtePDdnah/+FH9Hp5sgMujSCMPXlxOAW2//1jrW9pnsY7o20vQ==}
+    engines: {node: '>=18'}
 
   exit@0.1.2:
     resolution: {integrity: sha512-Zk/eNKV2zbjpKzrsQ+n1G6poVbErQxJ0LBOJXaKZ1EViLzH+hrLu9cdXI4zw9dBQJslwBEpbQ2P1oS7nDxs6jQ==}
@@ -12823,6 +12830,8 @@ snapshots:
       signal-exit: 4.1.0
       strip-final-newline: 4.0.0
       yoctocolors: 2.1.1
+
+  exit-hook@4.0.0: {}
 
   exit@0.1.2: {}
 
