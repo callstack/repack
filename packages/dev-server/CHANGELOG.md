@@ -1,5 +1,15 @@
 # @callstack/repack-dev-server
 
+## 5.1.0
+
+### Minor Changes
+
+- [#1073](https://github.com/callstack/repack/pull/1073) [`84952ac`](https://github.com/callstack/repack/commit/84952acfd2ac0f03c5512e13c66395c7b8526df6) Thanks [@jbroma](https://github.com/jbroma)! - Add support for setting up proxy in DevServer for redirecting requests
+
+### Patch Changes
+
+- [#1137](https://github.com/callstack/repack/pull/1137) [`996942f`](https://github.com/callstack/repack/commit/996942f8776a0777b99406918f673193b66cde19) Thanks [@jbroma](https://github.com/jbroma)! - Support `application/json` type of payload for `/symbolicate` requests
+
 ## 5.1.0-rc.0
 
 ### Minor Changes
