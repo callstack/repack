@@ -43,7 +43,9 @@ export default (env) => {
           use: {
             loader: '@callstack/repack/babel-loader',
             parallel: true,
-            options: {},
+            options: {
+              projectRoot: context,
+            },
           },
           type: 'javascript/auto',
         },

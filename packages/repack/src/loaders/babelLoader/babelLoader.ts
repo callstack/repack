@@ -10,6 +10,8 @@ import {
 import * as hermesParser from 'hermes-parser';
 
 import type { LoaderContext } from '@rspack/core';
+import { type BabelLoaderOptions, getOptions } from './options.js';
+import { repackBabelPreset } from './preset.js';
 
 export const raw = false;
 
@@ -71,7 +73,6 @@ const getBabelRC = (() => {
       }
 
       // If we found a babel config file, extend our config off of it
-      // otherwise the default config will be used
       if (fs.existsSync(projectBabelRCPath)) {
         babelRC.extends = projectBabelRCPath;
       }
@@ -92,8 +93,11 @@ function buildBabelConfig(
     code: true,
     cwd: options.projectRoot,
     filename,
-    highlightCode: false,
+    highlightCode: true,
     compact: false,
+    comments: true,
+    minified: false,
+    presets: [repackBabelPreset],
   };
 
   return { ...babelRC, ...extraConfig };
@@ -108,9 +112,10 @@ const transform = ({
   options: CustomOptions;
   src: string;
 }) => {
+  const builtConfig = buildBabelConfig(filename, options);
   const babelConfig: TransformOptions = {
     sourceType: 'unambiguous',
-    ...buildBabelConfig(filename, options),
+    ...builtConfig,
     caller: { name: 'repack' },
     ast: false,
     cloneInputAst: false,
@@ -129,9 +134,13 @@ const transform = ({
   return transformFromAstSync(sourceAst, src, babelConfig);
 };
 
-export default function babelLoader(this: LoaderContext, source: string) {
+export default function babelLoader(
+  this: LoaderContext<BabelLoaderOptions>,
+  source: string
+) {
   this.cacheable();
   const callback = this.async();
+  const options = getOptions(this);
 
   try {
     const result = transform({
@@ -140,7 +149,8 @@ export default function babelLoader(this: LoaderContext, source: string) {
       options: {
         enableBabelRCLookup: true,
         // this is currently broken in Rspack and needs to be fixed upstream
-        projectRoot: this.rootContext,
+        // for now we can pass this as an option to loader
+        projectRoot: options.projectRoot,
       },
     });
     // @ts-ignore
