@@ -1,4 +1,5 @@
-import type { Compiler } from '@rspack/core';
+import type { Compiler as RspackCompiler } from '@rspack/core';
+import type { Compiler as WebpackCompiler } from 'webpack';
 import {
   HermesBytecodePlugin,
   type HermesBytecodePluginConfig,
@@ -16,7 +17,12 @@ export class ChunksToHermesBytecodePlugin extends HermesBytecodePlugin {
     super(config);
   }
 
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     const logger = compiler.getInfrastructureLogger(
       'RepackChunksToHermesBytecodePlugin'
     );

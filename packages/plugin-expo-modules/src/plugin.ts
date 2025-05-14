@@ -1,4 +1,5 @@
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler as RspackCompiler } from '@rspack/core';
+import type { Compiler as WebpackCompiler } from 'webpack';
 
 interface ExpoModulesPluginOptions {
   /**
@@ -9,10 +10,15 @@ interface ExpoModulesPluginOptions {
   platform?: string;
 }
 
-export class ExpoModulesPlugin implements RspackPluginInstance {
+export class ExpoModulesPlugin {
   constructor(private options: ExpoModulesPluginOptions = {}) {}
 
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     const platform = this.options.platform ?? (compiler.options.name as string);
 
     // expo modules expect this to be defined in runtime
