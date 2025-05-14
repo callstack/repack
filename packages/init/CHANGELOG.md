@@ -1,5 +1,11 @@
 # @callstack/repack-init
 
+## 5.1.0
+
+### Patch Changes
+
+- [#1125](https://github.com/callstack/repack/pull/1125) [`1bb5e77`](https://github.com/callstack/repack/commit/1bb5e77f12a51094b0901945857210f6781ce9b6) Thanks [@jbroma](https://github.com/jbroma)! - Bump versions of dependencies for `repack-init`
+
 ## 5.1.0-rc.0
 
 ### Patch Changes
