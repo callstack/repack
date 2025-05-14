@@ -1,4 +1,5 @@
 import path from 'node:path';
+// @ts-ignore
 import type { DevServerOptions } from '@callstack/repack-dev-server';
 import type {
   Compiler,
@@ -104,6 +105,7 @@ export class DevelopmentPlugin implements RspackPluginInstance {
 
     const host = compiler.options.devServer.host;
     const port = compiler.options.devServer.port;
+    // @ts-ignore
     const protocol = this.getProtocolType(compiler.options.devServer);
     const platform = this.config.platform ?? (compiler.options.name as string);
 
