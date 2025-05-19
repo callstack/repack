@@ -87,14 +87,12 @@ const registerResolver = async (
 
 const RepackResolverPlugin: (
   config?: RepackResolverPluginConfiguration
-) => FederationRuntimePlugin = (config) => {
-  return {
-    name: 'repack-resolver-plugin',
-    registerRemote: (args) => {
-      registerResolver(args.remote, config);
-      return args;
-    },
-  };
-};
+) => FederationRuntimePlugin = (config) => ({
+  name: 'repack-resolver-plugin',
+  registerRemote: (args) => {
+    registerResolver(args.remote, config);
+    return args;
+  },
+});
 
 export default RepackResolverPlugin;
