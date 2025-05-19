@@ -26,7 +26,7 @@ webpackRequireMock.l = () => {};
 webpackRequireMock.u = (id: string) => `${id}.chunk.bundle`;
 webpackRequireMock.p = () => '';
 webpackRequireMock.repack = {
-  shared: { scriptManager: undefined },
+  shared: { scriptManager: undefined, enqueuedResolvers: [] },
 };
 
 globalThis.__webpack_require__ = webpackRequireMock;
