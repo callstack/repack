@@ -2,13 +2,13 @@ import type {
   FederationHost,
   FederationRuntimePlugin,
 } from '@module-federation/enhanced/runtime';
-import type * as RepackClient from '../ScriptManager/index.js';
+import type { ScriptLocator } from '../ScriptManager/index.js';
 
 type MFRemote = Parameters<FederationHost['registerRemotes']>[0][0];
 
 export type RepackResolverPluginConfiguration =
-  | Omit<RepackClient.ScriptLocator, 'url'>
-  | ((url: string) => Promise<RepackClient.ScriptLocator>);
+  | Omit<ScriptLocator, 'url'>
+  | ((url: string) => Promise<ScriptLocator>);
 
 const createScriptLocator = async (
   entryUrl: string,
@@ -44,13 +44,6 @@ const registerResolver = async (
   remoteInfo: MFRemote,
   config?: RepackResolverPluginConfiguration
 ) => {
-  // when ScriptManager.shared.resolveScript is called, registerResolver
-  // should evaluate before it and and the resolver will be registered
-  // before any remote script is resolved
-  const { ScriptManager } = (await import(
-    '../ScriptManager/index.js'
-  )) as typeof RepackClient;
-
   // when manifest is used, the valid entry URL comes from the version field
   // otherwise, the entry URL comes from the entry field which has the correct publicPath for the remote set
   let entryUrl: string | undefined;
@@ -67,32 +60,41 @@ const registerResolver = async (
     );
   }
 
-  ScriptManager.shared.addResolver(
-    async (scriptId, caller, referenceUrl) => {
-      if (scriptId === remoteInfo.name || caller === remoteInfo.name) {
-        // referenceUrl should always be present and this should never happen
-        if (!referenceUrl) {
-          throw new Error('[RepackResolverPlugin] Reference URL is missing');
-        }
-
-        const url = rebaseRemoteUrl(referenceUrl, entryUrl);
-        const locator = await createScriptLocator(url, config);
-        return locator;
+  const resolver = async (
+    scriptId: string,
+    caller?: string,
+    referenceUrl?: string
+  ) => {
+    if (scriptId === remoteInfo.name || caller === remoteInfo.name) {
+      // referenceUrl should always be present and this should never happen
+      if (!referenceUrl) {
+        throw new Error('[RepackResolverPlugin] Reference URL is missing');
       }
-    },
-    { key: remoteInfo.name }
-  );
+
+      const url = rebaseRemoteUrl(referenceUrl, entryUrl);
+      const locator = await createScriptLocator(url, config);
+      return locator;
+    }
+  };
+
+  const runtime = __webpack_require__.repack.shared;
+  if (runtime.scriptManager) {
+    runtime.scriptManager.addResolver(resolver, { key: remoteInfo.name });
+  } else {
+    runtime.enqueuedResolvers.push([resolver, { key: remoteInfo.name }]);
+  }
 };
 
 const RepackResolverPlugin: (
   config?: RepackResolverPluginConfiguration
-) => FederationRuntimePlugin = (config) => ({
-  name: 'repack-resolver-plugin',
-  registerRemote: (args) => {
-    // asynchronously add a resolver for the remote
-    registerResolver(args.remote, config);
-    return args;
-  },
-});
+) => FederationRuntimePlugin = (config) => {
+  return {
+    name: 'repack-resolver-plugin',
+    registerRemote: (args) => {
+      registerResolver(args.remote, config);
+      return args;
+    },
+  };
+};
 
 export default RepackResolverPlugin;

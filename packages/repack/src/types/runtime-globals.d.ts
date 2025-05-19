@@ -43,6 +43,10 @@ declare namespace RepackRuntimeGlobals {
       scriptManager?: import(
         '../modules/ScriptManager/ScriptManager.js'
       ).ScriptManager;
+      enqueuedResolvers: [
+        import('../modules/ScriptManager/types.js').ScriptLocatorResolver,
+        { key?: string },
+      ][];
     };
   }
 
