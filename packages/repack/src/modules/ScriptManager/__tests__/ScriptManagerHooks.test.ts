@@ -24,7 +24,7 @@ webpackRequire.l = () => {};
 webpackRequire.u = (id: string) => `${id}.chunk.bundle`;
 webpackRequire.p = () => '';
 webpackRequire.repack = {
-  shared: { scriptManager: undefined },
+  shared: { scriptManager: undefined, enqueuedResolvers: [] },
 };
 
 globalThis.__webpack_require__ = webpackRequire;
