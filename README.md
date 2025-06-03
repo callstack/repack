@@ -1,6 +1,6 @@
 <a href="https://www.callstack.com/open-source" align="center">
   <img src="https://github.com/user-attachments/assets/de25944e-d91e-4a2c-bec9-8b0595bd1bbb" alt="Re.Pack" />
-  <h3>A toolkit to build your React Native application with Rspack or Webpack.</h3>
+  <h3 align="center">A toolkit to build your React Native application with Rspack or Webpack.</h3>
 </a>
 <div align="center">
 
