@@ -15,11 +15,6 @@
       "source": "/blog",
       "destination": "https://www.callstack.com/insights/super-apps-with-react-native",
       "statusCode": 301
-    },
-    {
-      "source": "/blog/:path*",
-      "destination": "https://www.callstack.com/insights/super-apps-with-react-native",
-      "statusCode": 301
     }
   ],
   "outputDirectory": "build",
