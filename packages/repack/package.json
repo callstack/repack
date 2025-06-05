@@ -75,6 +75,7 @@
     }
   },
   "dependencies": {
+    "@clack/prompts": "^0.9.1",
     "@callstack/repack-dev-server": "workspace:*",
     "@discoveryjs/json-ext": "^0.5.7",
     "@rspack/plugin-react-refresh": "1.0.0",
