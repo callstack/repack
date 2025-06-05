@@ -5,6 +5,18 @@
   "framework": null,
   "installCommand": "pnpm install",
   "rewrites": [{ "source": "/(.*)", "destination": "/404.html" }],
+  "redirects": [
+    {
+      "source": "/blog/repack-5-release",
+      "destination": "https://www.callstack.com/blog/announcing-re-pack-5-with-rspack-module-federation",
+      "statusCode": 301
+    },
+    {
+      "source": "/blog",
+      "destination": "https://www.callstack.com/insights/super-apps-with-react-native",
+      "statusCode": 301
+    }
+  ],
   "outputDirectory": "build",
   "trailingSlash": false
 }
