@@ -277,7 +277,7 @@ describe('setupInteractions', () => {
         );
         expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
           6,
-          ' s: Open iOS Simulator\n'
+          ' s: Open iOS Simulator (unsupported, on non-macOS platforms)\n'
         );
         expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
           7,

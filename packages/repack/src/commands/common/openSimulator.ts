@@ -1,4 +1,5 @@
 import { execSync } from 'node:child_process';
+import { isCancel, log, select } from '@clack/prompts';
 
 interface Simulator {
   name: string;
@@ -40,8 +41,6 @@ export async function openSimulator() {
         }
       });
     }
-
-    const { select, isCancel, log } = await import('@clack/prompts');
 
     // Log running simulators
     if (runningSimulators.length > 0) {

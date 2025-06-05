@@ -1,4 +1,5 @@
 import { execSync, spawn } from 'node:child_process';
+import { isCancel, log, select } from '@clack/prompts';
 
 function getRunningEmulators(): string[] {
   try {
@@ -35,8 +36,6 @@ export async function openEmulator() {
   if (!avd) {
     throw new Error('No Android Virtual Device found');
   }
-
-  const { select, isCancel, log } = await import('@clack/prompts');
 
   const runningEmulators = getRunningEmulators();
 

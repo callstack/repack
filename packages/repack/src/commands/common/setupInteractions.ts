@@ -111,9 +111,12 @@ export function setupInteractions(
       helpName: 'Open Android Emulator',
     },
     s: {
-      action: handlers.onOpenSimulator,
+      action:
+        process.platform === 'darwin' ? handlers.onOpenSimulator : undefined,
       postPerformMessage: 'Opening iOS Simulator',
       helpName: 'Open iOS Simulator',
+      actionUnsupportedExplanation:
+        process.platform !== 'darwin' ? 'on non-macOS platforms' : undefined,
     },
   };
 
