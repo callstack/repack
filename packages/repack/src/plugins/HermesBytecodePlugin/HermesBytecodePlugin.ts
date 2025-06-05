@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler as RspackCompiler } from '@rspack/core';
+import type { Compiler as WebpackCompiler } from 'webpack';
 import type { Rule } from '../../types.js';
 import {
   composeSourceMaps,
@@ -69,10 +69,15 @@ export interface HermesBytecodePluginConfig {
  *
  * @category Webpack Plugin
  */
-export class HermesBytecodePlugin implements RspackPluginInstance {
+export class HermesBytecodePlugin {
   constructor(private config: HermesBytecodePluginConfig) {}
 
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     const logger = compiler.getInfrastructureLogger(
       'RepackHermesBytecodePlugin'
     );
