@@ -22,6 +22,8 @@ export function setupInteractions(
     onOpenDevMenu?: () => void;
     onOpenDevTools?: () => void;
     onAdbReverse?: () => void;
+    onOpenEmulator?: () => void;
+    onOpenSimulator?: () => void;
   },
   options?: {
     logger?: Logger;
@@ -102,6 +104,16 @@ export function setupInteractions(
       action: handlers.onAdbReverse,
       postPerformMessage: 'Running adb reverse',
       helpName: 'Run adb reverse',
+    },
+    e: {
+      action: handlers.onOpenEmulator,
+      postPerformMessage: 'Opening Android Emulator',
+      helpName: 'Open Android Emulator',
+    },
+    s: {
+      action: handlers.onOpenSimulator,
+      postPerformMessage: 'Opening iOS Simulator',
+      helpName: 'Open iOS Simulator',
     },
   };
 

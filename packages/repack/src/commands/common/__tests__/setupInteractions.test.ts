@@ -245,6 +245,8 @@ describe('setupInteractions', () => {
             onOpenDevMenu() {},
             onReload() {},
             onAdbReverse() {},
+            onOpenEmulator() {},
+            onOpenSimulator() {},
           },
           {
             logger: mockLogger,
@@ -271,6 +273,14 @@ describe('setupInteractions', () => {
         );
         expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
           5,
+          ' e: Open Android Emulator\n'
+        );
+        expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
+          6,
+          ' s: Open iOS Simulator\n'
+        );
+        expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
+          7,
           '\nPress Ctrl+c or Ctrl+z to quit the dev server\n\n'
         );
       });

@@ -533,6 +533,9 @@ importers:
       '@callstack/repack-dev-server':
         specifier: workspace:*
         version: link:../dev-server
+      '@clack/prompts':
+        specifier: ^0.9.1
+        version: 0.9.1
       '@discoveryjs/json-ext':
         specifier: ^0.5.7
         version: 0.5.7

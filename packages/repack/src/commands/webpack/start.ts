@@ -19,6 +19,8 @@ import {
   setupInteractions,
 } from '../common/index.js';
 import logo from '../common/logo.js';
+import { openEmulator } from '../common/openEmulator.js';
+import { openSimulator } from '../common/openSimulator.js';
 import { setupEnvironment } from '../common/setupEnvironment.js';
 import type { CliConfig, StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
@@ -112,6 +114,12 @@ export async function start(
                 logger: ctx.log,
                 verbose: true,
               });
+            },
+            onOpenEmulator() {
+              void openEmulator();
+            },
+            onOpenSimulator() {
+              void openSimulator();
             },
           },
           { logger: ctx.log }
