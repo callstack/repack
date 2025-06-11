@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import launchEditor from 'launch-editor';
 import open from 'open';
+import { parseSourceFilename } from '../../utils/parseSourceFilename.js';
 
 interface OpenURLRequestBody {
   url: string;
@@ -18,7 +19,10 @@ function parseRequestBody<T>(body: unknown): T {
   throw new Error(`Unsupported body type: ${typeof body}`);
 }
 
-async function devtoolsPlugin(instance: FastifyInstance) {
+async function devtoolsPlugin(
+  instance: FastifyInstance,
+  { rootDir }: { rootDir: string }
+) {
   // reference implementation in `@react-native-community/cli-server-api`:
   // https://github.com/react-native-community/cli/blob/46436a12478464752999d34ed86adf3212348007/packages/cli-server-api/src/openURLMiddleware.ts
   instance.route({
@@ -37,11 +41,9 @@ async function devtoolsPlugin(instance: FastifyInstance) {
     method: ['POST'],
     url: '/open-stack-frame',
     handler: async (request, reply) => {
-      const { file, lineNumber } = parseRequestBody<OpenStackFrameRequestBody>(
-        request.body
-      );
-      // TODO fix rewriting of `webpack://` to rootDir of the project
-      launchEditor(`${file}:${lineNumber}`, process.env.REACT_EDITOR);
+      const body = parseRequestBody<OpenStackFrameRequestBody>(request.body);
+      const filepath = parseSourceFilename(body.file, rootDir);
+      launchEditor(`${filepath}:${body.lineNumber}`, process.env.REACT_EDITOR);
       reply.send('OK');
     },
   });
