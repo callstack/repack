@@ -1,6 +1,8 @@
 module.exports = {
   presets: ['@babel/preset-typescript'],
   plugins: ['@babel/plugin-transform-export-namespace-from'],
+  sourceMaps: false,
+  inputSourceMap: false,
   overrides: [
     {
       include: ['./src/**/implementation'],
