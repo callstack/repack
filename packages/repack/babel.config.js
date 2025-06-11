@@ -1,12 +1,14 @@
 module.exports = {
   presets: ['@babel/preset-typescript'],
   plugins: ['@babel/plugin-transform-export-namespace-from'],
-  sourceMaps: false,
-  inputSourceMap: false,
   overrides: [
     {
       include: ['./src/**/implementation'],
       comments: false,
+    },
+    {
+      include: ['./src/**/implementation', './src/modules'],
+      sourceMaps: false,
     },
     {
       exclude: ['./src/**/implementation', './src/modules'],
