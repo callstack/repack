@@ -1,19 +1,20 @@
-// @ts-check
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
-import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
+import type webpack from 'webpack';
 
 const dirname = Repack.getDirname(import.meta.url);
 
-/** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
-export default (env) => {
+export default (env: Repack.EnvOptions): webpack.Configuration => {
   const {
     mode = 'development',
     context = dirname,
+    entry = './index.js',
     platform = process.env.PLATFORM,
   } = env;
+
   if (!platform) {
     throw new Error('Missing platform');
   }
@@ -21,18 +22,39 @@ export default (env) => {
   return {
     mode,
     context,
-    entry: './index.js',
+    cache: process.env.USE_CACHE
+      ? {
+          type: 'filesystem',
+          name: `${platform}-${mode}`,
+        }
+      : undefined,
+    entry,
     resolve: {
       ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
     output: {
       uniqueName: 'tester-app',
     },
+    optimization: {
+      minimizer: [
+        new TerserPlugin({
+          test: /\.(js)?bundle(\?.*)?$/i,
+          extractComments: false,
+          terserOptions: {
+            format: {
+              comments: false,
+            },
+          },
+        }),
+      ],
+    },
     module: {
       rules: [
-        ...Repack.getJsTransformRules({
-          swc: { importSource: 'nativewind' },
-        }),
+        {
+          test: /\.[cm]?[jt]sx?$/,
+          use: 'babel-loader',
+          type: 'javascript/auto',
+        },
         {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
@@ -91,15 +113,6 @@ export default (env) => {
       ],
     },
     plugins: [
-      /**
-       * Configure other required and additional plugins to make the bundle
-       * work in React Native and provide good development experience with
-       * sensible defaults.
-       *
-       * `Repack.RepackPlugin` provides some degree of customization, but if you
-       * need more control, you can replace `Repack.RepackPlugin` with plugins
-       * from `Repack.plugins`.
-       */
       new Repack.RepackPlugin({
         output: {
           auxiliaryAssetsPath: path.join('build/output', platform, 'remote'),
@@ -116,14 +129,13 @@ export default (env) => {
           },
         ],
       }),
+      new ReanimatedPlugin(),
+      new NativeWindPlugin(),
       // new Repack.plugins.HermesBytecodePlugin({
       //   enabled: mode === 'production',
       //   test: /\.(js)?bundle$/,
       //   exclude: /index.bundle$/,
       // }),
-      process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
-      new ReanimatedPlugin(),
-      new NativeWindPlugin({ cssInteropOptions: { inlineRem: 16 } }),
-    ].filter(Boolean),
+    ],
   };
 };
