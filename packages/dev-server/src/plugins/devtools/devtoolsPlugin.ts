@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import launchEditor from 'launch-editor';
 import open from 'open';
-import { parseSourceFilename } from '../../utils/parseSourceFilename.js';
+import type { Server } from '../../types.js';
 
 interface OpenURLRequestBody {
   url: string;
@@ -21,7 +21,7 @@ function parseRequestBody<T>(body: unknown): T {
 
 async function devtoolsPlugin(
   instance: FastifyInstance,
-  { rootDir }: { rootDir: string }
+  { delegate }: { delegate: Server.Delegate }
 ) {
   // reference implementation in `@react-native-community/cli-server-api`:
   // https://github.com/react-native-community/cli/blob/46436a12478464752999d34ed86adf3212348007/packages/cli-server-api/src/openURLMiddleware.ts
@@ -42,7 +42,8 @@ async function devtoolsPlugin(
     url: '/open-stack-frame',
     handler: async (request, reply) => {
       const body = parseRequestBody<OpenStackFrameRequestBody>(request.body);
-      const filepath = parseSourceFilename(body.file, rootDir);
+      const filepath =
+        delegate.devTools?.resolveProjectPath(body.file) ?? body.file;
       launchEditor(`${filepath}:${body.lineNumber}`, process.env.REACT_EDITOR);
       reply.send('OK');
     },

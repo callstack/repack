@@ -126,7 +126,7 @@ export async function createServer(config: Server.Config) {
     delegate,
   });
   await instance.register(devtoolsPlugin, {
-    rootDir: options.rootDir,
+    delegate,
   });
   await instance.register(symbolicatePlugin, {
     delegate,
