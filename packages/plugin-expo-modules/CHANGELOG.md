@@ -1,5 +1,12 @@
 # @callstack/repack-plugin-expo-modules
 
+## 5.1.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @callstack/repack@5.1.2
+
 ## 5.1.1
 
 ### Patch Changes

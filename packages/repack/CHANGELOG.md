@@ -1,5 +1,12 @@
 # @callstack/repack
 
+## 5.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`71a989b82e97f5d5cdc12a8e6edfaad47636b13e`](https://github.com/callstack/repack/commit/71a989b82e97f5d5cdc12a8e6edfaad47636b13e)]:
+  - @callstack/repack-dev-server@5.1.2
+
 ## 5.1.1
 
 ### Patch Changes
