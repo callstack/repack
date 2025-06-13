@@ -1,5 +1,6 @@
 import type {
   Compiler,
+  DefinePlugin,
   RspackPluginInstance,
   RuleSetUse,
   RuleSetUseItem,
@@ -8,6 +9,10 @@ import type {
 import type { CssToReactNativeRuntimeOptions } from 'react-native-css-interop/css-to-rn';
 
 interface NativeWindPluginOptions {
+  /** Force the platform passed to nativewind/preset.
+  *  "native" (default) | "web" | undefined (use env as-is)
+  */
+  presetPlatform?: 'native' | 'web' | undefined;
   /**
    * Whether to check if the required dependencies are installed in the project.
    * If not, an error will be thrown. Defaults to `true`.
@@ -106,6 +111,19 @@ export class NativeWindPlugin implements RspackPluginInstance {
     if (this.options.checkDependencies) {
       this.ensureNativewindDependenciesInstalled(compiler.context);
     }
+    /** Pick the platform */
+    const platform = this.options.presetPlatform ?? 'native';
+    if (process.env.NATIVEWIND_OS === undefined) {
+        process.env.NATIVEWIND_OS = platform;
+    }
+
+    /** Expose it at compile-time so tailwind.config.js can read it*/
+    compiler.options.plugins ||= [];
+    compiler.options.plugins.push(
+        new DefinePlugin({
+            'process.env.NATIVEWIND_OS': JSON.stringify(process.env.NATIVEWIND_OS),
+        }),
+    );
 
     /**
      * First, we need to process the CSS files using PostCSS.
