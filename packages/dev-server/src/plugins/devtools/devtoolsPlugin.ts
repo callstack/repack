@@ -41,10 +41,11 @@ async function devtoolsPlugin(
     method: ['POST'],
     url: '/open-stack-frame',
     handler: async (request, reply) => {
-      const body = parseRequestBody<OpenStackFrameRequestBody>(request.body);
-      const filepath =
-        delegate.devTools?.resolveProjectPath(body.file) ?? body.file;
-      launchEditor(`${filepath}:${body.lineNumber}`, process.env.REACT_EDITOR);
+      const { file, lineNumber } = parseRequestBody<OpenStackFrameRequestBody>(
+        request.body
+      );
+      const filepath = delegate.devTools?.resolveProjectPath(file) ?? file;
+      launchEditor(`${filepath}:${lineNumber}`, process.env.REACT_EDITOR);
       reply.send('OK');
     },
   });
