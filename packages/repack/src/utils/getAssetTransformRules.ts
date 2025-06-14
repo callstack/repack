@@ -4,11 +4,17 @@ import {
   getAssetExtensionsRegExp,
 } from './assetExtensions.js';
 
-function getSvgRule(type: 'svgr' | 'xml' | 'uri') {
-  if (type === 'svgr') {
+function getSvgRule(type: SvgType) {
+  const isTypeObject = typeof type === 'object';
+
+  if (type === 'svgr' || (isTypeObject && type?.type === 'svgr')) {
+    const additionalOptions = isTypeObject && type?.options;
     return {
       test: /\.svg$/,
-      use: { loader: '@svgr/webpack', options: { native: true } },
+      use: {
+        loader: '@svgr/webpack',
+        options: { native: true, ...additionalOptions },
+      },
     };
   }
 
@@ -17,6 +23,12 @@ function getSvgRule(type: 'svgr' | 'xml' | 'uri') {
     type: type === 'xml' ? 'asset/source' : 'asset/inline',
   };
 }
+
+type SvgType =
+  | 'svgr'
+  | 'xml'
+  | 'uri'
+  | { type: 'svgr'; options: Record<string, any> };
 
 /**
  * Interface for {@link getAssetTransformRules} options.
@@ -38,7 +50,7 @@ interface GetAssetTransformRulesOptions {
    * - 'xml': Loads SVGs as raw XML source to be used with SvgXml from react-native-svg
    * - 'uri': Loads SVGs as inline URIs to be used with SvgUri from react-native-svg
    */
-  svg?: 'svgr' | 'xml' | 'uri';
+  svg?: SvgType;
 }
 
 /**
