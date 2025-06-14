@@ -18,7 +18,7 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
-        include: [/node_modules\/react-native/]
+        include: [/node_modules\/react-native/],
         use: {
           loader: "@callstack/repack/react-refresh-loader",
         },
