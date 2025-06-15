@@ -20,7 +20,7 @@ interface GetAssetTransformRulesOptions {
       resourceExtensionType: string;
     }) => string;
   };
-  svg?: "svgr" | "xml" | "uri";
+  svg?: "svgr" | "xml" | "uri" | { type: "svgr", options: Record<string, any> };
 }
 ```
 
