@@ -54,4 +54,14 @@ describe('getAssetTransformRules', () => {
     const ruleTest = rules[0]?.test;
     expect(ruleTest.test('test.svg')).toEqual(false);
   });
+
+  it('should include additional options for SVGR', () => {
+    const rules = getAssetTransformRules({
+      svg: { type: 'svgr', options: { dimensions: false } },
+    });
+
+    expect(rules).toHaveLength(2);
+    expect(rules[1]?.use?.options).toHaveProperty('dimensions', false);
+    expect(rules).toMatchSnapshot();
+  });
 });

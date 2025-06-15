@@ -62,6 +62,31 @@ exports[`getAssetTransformRules should add XML rule when svg="xml" 1`] = `
 ]
 `;
 
+exports[`getAssetTransformRules should include additional options for SVGR 1`] = `
+[
+  {
+    "test": /\\\\\\.\\(bmp\\|gif\\|jpg\\|jpeg\\|png\\|psd\\|webp\\|tiff\\|m4v\\|mov\\|mp4\\|mpeg\\|mpg\\|webm\\|aac\\|aiff\\|caf\\|m4a\\|mp3\\|wav\\|html\\|pdf\\|yaml\\|yml\\|otf\\|ttf\\|zip\\|obj\\)\\$/,
+    "use": {
+      "loader": "@callstack/repack/assets-loader",
+      "options": {
+        "inline": undefined,
+        "remote": undefined,
+      },
+    },
+  },
+  {
+    "test": /\\\\\\.svg\\$/,
+    "use": {
+      "loader": "@svgr/webpack",
+      "options": {
+        "dimensions": false,
+        "native": true,
+      },
+    },
+  },
+]
+`;
+
 exports[`getAssetTransformRules should return default asset transform rules when no options provided 1`] = `
 [
   {
