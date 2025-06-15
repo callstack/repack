@@ -67,13 +67,15 @@ See [`assetsLoader` documentation](/api/loaders/assets-loader#remoteassetpath) f
 
 ### options.svg
 
-- Type: `'svgr' | 'xml' | 'uri'`
+- Type: `'svgr' | 'xml' | 'uri' | { type: "svgr", options: Record<string, any>}`
 
 Determines how SVG files should be processed:
 
 - `'svgr'`: Uses `@svgr/webpack` to transform SVGs into React Native components
+  - `type: "svgr"`: Uses `@svgr/webpack` to transform SVGs into React Native components and allows to configure additional options to `@svgr/webpack`.
 - `'xml'`: Loads SVGs as raw XML source to be used with `SvgXml` from `react-native-svg`
 - `'uri'`: Loads SVGs as inline URIs to be used with `SvgUri` from `react-native-svg`
+- 
 
 :::tip
 Learn more about using SVG in the [SVG guide](/docs/guides/svg).
