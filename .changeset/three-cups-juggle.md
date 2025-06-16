@@ -2,4 +2,4 @@
 "@callstack/repack": minor
 ---
 
-feat: allow svgr options from getAssetTransformRules
+feat: allow passing additional SVGR options through `getAssetTransformRules`
