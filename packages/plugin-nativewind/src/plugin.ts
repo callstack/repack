@@ -1,6 +1,5 @@
 import type {
   Compiler,
-  DefinePlugin,
   RspackPluginInstance,
   RuleSetUse,
   RuleSetUseItem,
