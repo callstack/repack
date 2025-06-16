@@ -4,6 +4,12 @@ import {
   getAssetExtensionsRegExp,
 } from './assetExtensions.js';
 
+type SvgType =
+  | 'svgr'
+  | 'xml'
+  | 'uri'
+  | { type: 'svgr'; options: Record<string, any> };
+
 function getSvgRule(type: SvgType) {
   const isTypeObject = typeof type === 'object';
 
@@ -23,12 +29,6 @@ function getSvgRule(type: SvgType) {
     type: type === 'xml' ? 'asset/source' : 'asset/inline',
   };
 }
-
-type SvgType =
-  | 'svgr'
-  | 'xml'
-  | 'uri'
-  | { type: 'svgr'; options: Record<string, any> };
 
 /**
  * Interface for {@link getAssetTransformRules} options.
