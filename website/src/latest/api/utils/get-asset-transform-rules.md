@@ -75,7 +75,12 @@ Determines how SVG files should be processed:
   - `type: "svgr"`: Uses `@svgr/webpack` to transform SVGs into React Native components and allows to configure additional options to `@svgr/webpack`.
 - `'xml'`: Loads SVGs as raw XML source to be used with `SvgXml` from `react-native-svg`
 - `'uri'`: Loads SVGs as inline URIs to be used with `SvgUri` from `react-native-svg`
-- 
+
+#### options.svg.options
+
+- Type: `Record<string, any>`
+
+Allows to configure additional options to `@svgr/webpack`. The full list of available options can be found in the [svgr doc](https://react-svgr.com/docs/options/).
 
 :::tip
 Learn more about using SVG in the [SVG guide](/docs/guides/svg).
