@@ -109,7 +109,7 @@ export class NativeWindPlugin implements RspackPluginInstance {
     /** Set the platform if not present*/
     const platformName = compiler.options.name;
     if (process.env.NATIVEWIND_OS === undefined) {
-        process.env.NATIVEWIND_OS = platformName;
+      process.env.NATIVEWIND_OS = platformName;
     }
 
     /**
