@@ -106,6 +106,11 @@ export class NativeWindPlugin implements RspackPluginInstance {
     if (this.options.checkDependencies) {
       this.ensureNativewindDependenciesInstalled(compiler.context);
     }
+    /** Set the platform if not present*/
+    const platformName = compiler.options.name;
+    if (process.env.NATIVEWIND_OS === undefined) {
+      process.env.NATIVEWIND_OS = platformName;
+    }
 
     /**
      * First, we need to process the CSS files using PostCSS.
