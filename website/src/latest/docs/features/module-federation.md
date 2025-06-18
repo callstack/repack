@@ -1,7 +1,7 @@
 # Module Federation
 
 :::warning Notice:
-The documentation for Re.Pack 5 is currently under development and some of the pages aren't ready yet.
+The documentation for Re.Pack 5 is currently under development and is not ready yet.
 
-Please use [latest stable version of Re.Pack 4.x documentation](https://re-pack.dev/docs/getting-started) for now.
+Please refer to [Re.Pack 4.x Module Federation documentation](https://v4.re-pack.dev/docs/module-federation) for now, but please keep in mind that it's not up to date with the latest changes in Re.Pack 5.
 :::
