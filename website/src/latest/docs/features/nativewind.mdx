@@ -27,11 +27,18 @@ Then install the Re.Pack NativeWind plugin and its dependencies:
 
 <PackageManagerTabs command="install -D @callstack/repack-plugin-nativewind postcss postcss-loader autoprefixer" />
 
-> **Note:** These additional dependencies (`postcss`, `postcss-loader`, and `autoprefixer`) are required for processing Tailwind CSS with Webpack/Rspack, as specified in the [official Tailwind CSS Rspack guide](https://tailwindcss.com/docs/guides/rspack). They enable PostCSS processing and autoprefixing of CSS styles in your build pipeline.
+:::tip Version Alignment
+The NativeWind plugin is versioned together with Re.Pack. For best compatibility, align the version of `@callstack/repack-plugin-nativewind` with your `@callstack/repack` version in the project.
+:::
+
+:::info{title="A note on dependencies:"}
+These additional dependencies (`postcss`, `postcss-loader`, and `autoprefixer`) are required for processing Tailwind CSS with Webpack/Rspack, as specified in the [official Tailwind CSS Rspack guide](https://tailwindcss.com/docs/guides/rspack). They enable PostCSS processing and autoprefixing of CSS styles in your build pipeline.
+:::
 
 ## Usage
 
- **Note**: If you are using Webpack (not Rspack), you need to add the following configuration to your `babel.config.js`:
+:::info{title="Webpack specific configuration"}
+If you are using Webpack (not Rspack), you need to add the following configuration to your `babel.config.js`:
 
 ```js title="babel.config.js"
 plugins: [
@@ -44,6 +51,7 @@ plugins: [
   ],
 ],
 ```
+:::
 
 ### Plugin
 
@@ -66,9 +74,17 @@ export default (env) => {
 
 ## Troubleshooting
 
-- **Styles not applying?** Ensure your CSS import is present and the plugin is added to your config.
-- **PostCSS errors?** Double-check that all required dependencies are installed and your `postcss.config.js` is set up.
-- **TypeScript issues?** Follow the [NativeWind TypeScript setup guide](https://www.nativewind.dev/getting-started/typescript).
+- **Styles not applying?**
+
+  Ensure your CSS import is present and the plugin is added to your config.
+
+- **PostCSS errors?**
+
+  Double-check that all required dependencies are installed and your `postcss.config.js` is set up.
+
+- **TypeScript issues?**
+
+  Follow the [NativeWind TypeScript setup guide](https://www.nativewind.dev/getting-started/typescript).
 
 ## Further Resources
 
