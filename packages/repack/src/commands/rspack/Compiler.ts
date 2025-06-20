@@ -241,7 +241,9 @@ export class Compiler {
     }
 
     try {
-      const filePath = path.join(this.rootDir, filename);
+      const filePath = path.isAbsolute(filename)
+        ? filename
+        : path.join(this.rootDir, filename);
       const source = await fs.promises.readFile(filePath, 'utf8');
       return source;
     } catch {
