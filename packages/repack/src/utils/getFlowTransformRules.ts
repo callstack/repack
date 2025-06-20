@@ -20,6 +20,9 @@ const FLOW_TYPED_MODULES = [
   'react-native-inappbrowser-reborn',
   'react-native-camera',
   'react-native-view-shot',
+  '@react-native-community/push-notification-ios',
+  'react-native-inappbrowser-reborn',
+  'react-native-keyboard-aware-scroll-view',
 ];
 
 /**
