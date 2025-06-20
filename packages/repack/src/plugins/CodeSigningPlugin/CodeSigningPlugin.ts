@@ -2,11 +2,12 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import util from 'node:util';
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler as RspackCompiler } from '@rspack/core';
 import jwt from 'jsonwebtoken';
+import type { Compiler as WebpackCompiler } from 'webpack';
 import { type CodeSigningPluginConfig, validateConfig } from './config.js';
 
-export class CodeSigningPlugin implements RspackPluginInstance {
+export class CodeSigningPlugin {
   private chunkFilenames: Set<string>;
 
   /**
@@ -38,12 +39,12 @@ export class CodeSigningPlugin implements RspackPluginInstance {
     });
   }
 
-  /**
-   * Apply the plugin.
-   *
-   * @param compiler Webpack compiler instance.
-   */
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     const logger = compiler.getInfrastructureLogger('RepackCodeSigningPlugin');
 
     if (this.config.enabled === false) {

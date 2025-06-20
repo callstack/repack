@@ -1,12 +1,12 @@
 import path from 'node:path';
 import type { DevServerOptions } from '@callstack/repack-dev-server';
 import type {
-  Compiler,
   EntryNormalized,
   Plugins,
-  RspackPluginInstance,
+  Compiler as RspackCompiler,
 } from '@rspack/core';
 import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
+import type { Compiler as WebpackCompiler } from 'webpack';
 import { isRspackCompiler } from './utils/isRspackCompiler.js';
 import { moveElementBefore } from './utils/moveElementBefore.js';
 
@@ -30,7 +30,7 @@ export interface DevelopmentPluginConfig {
  *
  * @category Webpack Plugin
  */
-export class DevelopmentPlugin implements RspackPluginInstance {
+export class DevelopmentPlugin {
   /**
    * Constructs new `DevelopmentPlugin`.
    *
@@ -88,12 +88,12 @@ export class DevelopmentPlugin implements RspackPluginInstance {
     return 'http';
   }
 
-  /**
-   * Apply the plugin.
-   *
-   * @param compiler Webpack compiler instance.
-   */
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     if (!compiler.options.devServer) {
       return;
     }
