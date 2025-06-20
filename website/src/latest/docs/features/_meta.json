@@ -4,5 +4,6 @@
   "dev-server",
   "flow-support",
   "devtools",
-  "reanimated"
+  "reanimated",
+  "nativewind"
 ]
