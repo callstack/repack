@@ -1,11 +1,11 @@
 import type {
-  Compiler,
-  RspackPluginInstance,
+  Compiler as RspackCompiler,
   RuleSetUse,
   RuleSetUseItem,
   SwcLoaderOptions,
 } from '@rspack/core';
 import type { CssToReactNativeRuntimeOptions } from 'react-native-css-interop/css-to-rn';
+import type { Compiler as WebpackCompiler } from 'webpack';
 
 interface NativeWindPluginOptions {
   /**
@@ -20,7 +20,7 @@ interface NativeWindPluginOptions {
   cssInteropOptions?: Omit<CssToReactNativeRuntimeOptions, 'cache'>;
 }
 
-export class NativeWindPlugin implements RspackPluginInstance {
+export class NativeWindPlugin {
   constructor(private options: NativeWindPluginOptions = {}) {
     this.options.checkDependencies = this.options.checkDependencies ?? true;
   }
@@ -102,7 +102,12 @@ export class NativeWindPlugin implements RspackPluginInstance {
     });
   }
 
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     if (this.options.checkDependencies) {
       this.ensureNativewindDependenciesInstalled(compiler.context);
     }
