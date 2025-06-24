@@ -304,6 +304,21 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(unstable_evaluateScript
       filesystemScriptUrl = [[NSBundle mainBundle] URLForResource:scriptName withExtension:scriptExtension];
     }
     NSData *data = [[NSData alloc] initWithContentsOfFile:[filesystemScriptUrl path]];
+
+    NSDictionary<NSString *, id> *result = [CodeSigningUtils extractBundleAndTokenWithFileContent:data];
+    NSData *bundle = (result[@"bundle"] != [NSNull null]) ? result[@"bundle"] : nil;
+    NSString *token = (result[@"token"] != [NSNull null]) ? result[@"token"] : nil;
+
+    if ([config.verifyScriptSignature isEqualToString:@"strict"] ||
+        ([config.verifyScriptSignature isEqualToString:@"lax"] && token != nil)) {
+      NSError *codeSigningError = nil;
+      [CodeSigningUtils verifyBundleWithToken:token fileContent:bundle error:&codeSigningError];
+      if (codeSigningError != nil) {
+        reject(CodeExecutionFailure, codeSigningError.localizedDescription, nil);
+        return;
+      }
+    }
+
     [self evaluateJavascript:data url:config.sourceUrl resolve:resolve reject:reject];
   } @catch (NSError *error) {
     reject(CodeExecutionFailure, error.localizedDescription, nil);
