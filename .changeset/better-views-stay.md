@@ -2,4 +2,4 @@
 "@callstack/repack": patch
 ---
 
-add `react-native` to `byDependency`
+Resolve `react-native` package exports condition before `import` or `require`
