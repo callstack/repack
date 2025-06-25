@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { execa } from 'execa';
+import versionsJson from '../../versions.json' with { type: 'json' };
 import type { PackageManager } from '../types/pm.js';
 import { RepackInitError } from '../utils/error.js';
 import spinner from '../utils/spinner.js';
@@ -17,6 +18,8 @@ export default async function createNewProject(
       projectName,
       '--directory',
       path.join(cwd, projectName),
+      '--version',
+      versionsJson['react-native'],
       '--skip-install',
       '--skip-git-init',
     ];
