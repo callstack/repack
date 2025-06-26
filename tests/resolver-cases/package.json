@@ -1,5 +1,5 @@
 {
-  "name": "@repack/resolver-cases",
+  "name": "resolver-cases-test",
   "version": "0.0.1",
   "private": true,
   "type": "module",
