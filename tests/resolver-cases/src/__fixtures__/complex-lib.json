@@ -22,13 +22,13 @@
       }
     }
   },
-  "files": {
-    "esm/index.js": "export const lib = 'esm-web';",
-    "esm/index.native.js": "export const lib = 'esm-native';",
-    "esm/utils.js": "export const utils = 'esm-utils';",
-    "cjs/index.js": "module.exports = { lib: 'cjs-web' };",
-    "cjs/index.native.js": "module.exports = { lib: 'cjs-native' };",
-    "cjs/utils.js": "module.exports = { utils: 'cjs-utils' };",
-    "native-specific.js": "export const feature = 'native-only';"
-  }
+  "files": [
+    "esm/index.js",
+    "esm/index.native.js",
+    "esm/utils.js",
+    "cjs/index.js",
+    "cjs/index.native.js",
+    "cjs/utils.js",
+    "native-specific.js"
+  ]
 }

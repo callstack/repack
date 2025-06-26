@@ -4,12 +4,12 @@
     "version": "1.0.0",
     "main": "./index.js"
   },
-  "files": {
-    "index.js": "export const assets = require(\"./assets\");",
-    "assets/icon.png": "fake-png-content",
-    "assets/icon@2x.png": "fake-png-content-2x",
-    "assets/icon@3x.png": "fake-png-content-3x",
-    "assets/logo.jpg": "fake-jpg-content",
-    "assets/video.mp4": "fake-mp4-content"
-  }
+  "files": [
+    "index.js",
+    "assets/icon.png",
+    "assets/icon@2x.png",
+    "assets/icon@3x.png",
+    "assets/logo.jpg",
+    "assets/video.mp4"
+  ]
 }

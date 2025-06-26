@@ -18,10 +18,12 @@
       "./package.json": "./package.json"
     }
   },
-  "files": {
-    "dist/native/index.js": "export * from './native-components';",
-    "dist/dom/index.js": "export * from './dom-components';",
-    "dist/native/html.js": "export const View = 'RCTView';",
-    "dist/dom/html.js": "export const View = 'div';"
-  }
+  "files": [
+    "dist/native/index.js",
+    "dist/native/index.d.ts",
+    "dist/dom/index.js",
+    "dist/dom/index.d.ts",
+    "dist/dom/runtime.js",
+    "babel/preset.js"
+  ]
 }

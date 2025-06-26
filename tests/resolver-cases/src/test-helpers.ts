@@ -10,7 +10,7 @@ export interface TestOptions extends ResolveOptions {
 
 interface FixtureData {
   'package.json': Record<string, any>;
-  files: Record<string, string>;
+  files: string[];
 }
 
 // Load fixture data from JSON files
@@ -20,10 +20,16 @@ export function loadFixture(fixtureName: string): Record<string, string> {
     readFileSync(fixturePath, 'utf8')
   );
 
-  return {
+  const result: Record<string, string> = {
     'package.json': JSON.stringify(fixtureData['package.json']),
-    ...fixtureData.files,
   };
+
+  // Create empty files for each path in the files array
+  for (const filePath of fixtureData.files) {
+    result[filePath] = `// ${filePath}`;
+  }
+
+  return result;
 }
 
 // Load multiple fixtures

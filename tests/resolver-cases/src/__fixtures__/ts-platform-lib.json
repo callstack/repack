@@ -5,12 +5,12 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts"
   },
-  "files": {
-    "dist/index.js": "export const platform = \"web\";",
-    "dist/index.d.ts": "export declare const platform: \"web\";",
-    "src/utils.ts": "export const utils = \"web\";",
-    "src/utils.native.ts": "export const utils = \"native\";",
-    "src/utils.ios.ts": "export const utils = \"ios\";",
-    "src/utils.android.ts": "export const utils = \"android\";"
-  }
+  "files": [
+    "dist/index.js",
+    "dist/index.d.ts",
+    "src/utils.ts",
+    "src/utils.native.ts",
+    "src/utils.ios.ts",
+    "src/utils.android.ts"
+  ]
 }
