@@ -32,19 +32,6 @@ export function loadFixture(fixtureName: string): Record<string, string> {
   return result;
 }
 
-// Load multiple fixtures
-export function loadFixtures(
-  fixtures: Record<string, string>
-): Record<string, Record<string, string>> {
-  const result: Record<string, Record<string, string>> = {};
-
-  for (const [packageName, fixtureName] of Object.entries(fixtures)) {
-    result[packageName] = loadFixture(fixtureName);
-  }
-
-  return result;
-}
-
 // Simple function to create a package in the virtual filesystem
 async function createPackage(
   volume: InstanceType<typeof Volume>,

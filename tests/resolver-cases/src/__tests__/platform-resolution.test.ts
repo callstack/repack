@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest';
-import { loadFixtures, setupTestEnvironment } from '../test-helpers.js';
+import { loadFixture, setupTestEnvironment } from '../test-helpers.js';
 
 describe('Platform Resolution', () => {
   test('should resolve iOS platform files when platform is ios', async () => {
     const { resolve } = await setupTestEnvironment(
-      loadFixtures({ 'platform-lib': 'platform-lib' }),
+      { 'platform-lib': loadFixture('platform-lib') },
       { platform: 'ios', preferNativePlatform: true }
     );
 
@@ -14,7 +14,7 @@ describe('Platform Resolution', () => {
 
   test('should resolve Android platform files when platform is android', async () => {
     const { resolve } = await setupTestEnvironment(
-      loadFixtures({ 'platform-lib': 'platform-lib' }),
+      { 'platform-lib': loadFixture('platform-lib') },
       { platform: 'android', preferNativePlatform: true }
     );
 
@@ -24,7 +24,7 @@ describe('Platform Resolution', () => {
 
   test('should fallback to native when platform file not found', async () => {
     const { resolve } = await setupTestEnvironment(
-      loadFixtures({ 'platform-lib': 'platform-lib' }),
+      { 'platform-lib': loadFixture('platform-lib') },
       { platform: 'web', preferNativePlatform: true }
     );
 
@@ -34,7 +34,7 @@ describe('Platform Resolution', () => {
 
   test('should resolve platform-specific TypeScript files', async () => {
     const { resolve } = await setupTestEnvironment(
-      loadFixtures({ 'ts-platform-lib': 'ts-platform-lib' }),
+      { 'ts-platform-lib': loadFixture('ts-platform-lib') },
       { platform: 'ios', preferNativePlatform: true }
     );
 
@@ -44,7 +44,7 @@ describe('Platform Resolution', () => {
 
   test('should prefer platform over native when preferNativePlatform is false', async () => {
     const { resolve } = await setupTestEnvironment(
-      loadFixtures({ 'platform-lib': 'platform-lib' }),
+      { 'platform-lib': loadFixture('platform-lib') },
       { platform: 'ios', preferNativePlatform: false }
     );
 
@@ -54,7 +54,7 @@ describe('Platform Resolution', () => {
 
   test('should resolve nested platform-specific files', async () => {
     const { resolve } = await setupTestEnvironment(
-      loadFixtures({ 'platform-lib': 'platform-lib' }),
+      { 'platform-lib': loadFixture('platform-lib') },
       { platform: 'android', preferNativePlatform: true }
     );
 
