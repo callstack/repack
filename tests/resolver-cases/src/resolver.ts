@@ -15,9 +15,6 @@ export class RepackResolver {
     this.options = options;
   }
 
-  /**
-   * Creates a resolver for a specific dependency type (esm/commonjs)
-   */
   private createResolver(dependencyType: 'esm' | 'commonjs'): Resolver {
     const platform = this.options.platform || 'ios';
     const resolveOptions = getResolveOptions(platform, {
@@ -49,65 +46,33 @@ export class RepackResolver {
     return ResolverFactory.createResolver(enhancedResolveOptions);
   }
 
-  /**
-   * Get resolver for a specific dependency type
-   */
-  getResolver(dependencyType: 'esm' | 'commonjs' = 'esm'): Resolver {
+  setFileSystem(vfs: VirtualFileSystem): void {
+    this.options.fileSystem = vfs.getFileSystem();
+    this.resolvers.clear();
+  }
+
+  getOrCreateResolver(dependencyType: 'esm' | 'commonjs' = 'esm'): Resolver {
     if (!this.resolvers.has(dependencyType)) {
       this.resolvers.set(dependencyType, this.createResolver(dependencyType));
     }
     return this.resolvers.get(dependencyType)!;
   }
 
-  /**
-   * Resolve a module with ESM semantics
-   */
-  async resolveESM(context: string, request: string): Promise<string | null> {
-    const resolver = this.getResolver('esm');
+  async resolveESM(context: string, request: string): Promise<string> {
+    const resolver = this.getOrCreateResolver('esm');
     return new Promise((resolve, reject) => {
       resolver.resolve({}, context, request, {}, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result as string);
-        }
+        return err ? reject(err) : resolve(result as string);
       });
     });
   }
 
-  /**
-   * Resolve a module with CommonJS semantics
-   */
-  async resolveCommonJS(
-    context: string,
-    request: string
-  ): Promise<string | null> {
-    const resolver = this.getResolver('commonjs');
+  async resolveCommonJS(context: string, request: string): Promise<string> {
+    const resolver = this.getOrCreateResolver('commonjs');
     return new Promise((resolve, reject) => {
       resolver.resolve({}, context, request, {}, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result as string);
-        }
+        return err ? reject(err) : resolve(result as string);
       });
     });
-  }
-
-  /**
-   * Update the resolver options (useful for testing different configurations)
-   */
-  updateOptions(newOptions: Partial<RepackResolverOptions>): void {
-    this.options = { ...this.options, ...newOptions };
-    // Clear cached resolvers so they get recreated with new options
-    this.resolvers.clear();
-  }
-
-  /**
-   * Set a virtual file system for testing
-   */
-  setFileSystem(vfs: VirtualFileSystem): void {
-    this.options.fileSystem = vfs.getFileSystem();
-    this.resolvers.clear();
   }
 }

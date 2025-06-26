@@ -17,9 +17,6 @@ export class VirtualFileSystem {
     this.fs = this.volume.promises as any;
   }
 
-  /**
-   * Creates a virtual package in the filesystem
-   */
   async createPackage(packagePath: string, pkg: VirtualPackage): Promise<void> {
     const basePath = packagePath.endsWith('/')
       ? packagePath
@@ -46,27 +43,10 @@ export class VirtualFileSystem {
     }
   }
 
-  /**
-   * Creates multiple packages at once
-   */
-  async createPackages(
-    packages: Array<{ path: string; package: VirtualPackage }>
-  ): Promise<void> {
-    await Promise.all(
-      packages.map(({ path, package: pkg }) => this.createPackage(path, pkg))
-    );
-  }
-
-  /**
-   * Gets the underlying memfs instance for use with enhanced-resolve
-   */
   getFileSystem(): InstanceType<typeof Volume> {
     return this.volume;
   }
 
-  /**
-   * Lists all files in the virtual filesystem (useful for debugging)
-   */
   listFiles(): string[] {
     const files: string[] = [];
     const volume = this.volume;
