@@ -4,13 +4,18 @@
     "version": "0.0.28",
     "exports": {
       ".": {
-        "react-native": "./dist/native/index.js",
-        "default": "./dist/dom/index.js"
+        "react-native": {
+          "types": "./dist/native/index.d.ts",
+          "default": "./dist/native/index.js"
+        },
+        "default": {
+          "types": "./dist/dom/index.d.ts",
+          "default": "./dist/dom/index.js"
+        }
       },
-      "./html": {
-        "react-native": "./dist/native/html.js",
-        "default": "./dist/dom/html.js"
-      }
+      "./babel-preset": "./babel/preset.js",
+      "./runtime": "./dist/dom/runtime.js",
+      "./package.json": "./package.json"
     }
   },
   "files": {

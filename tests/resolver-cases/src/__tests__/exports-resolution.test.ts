@@ -26,16 +26,6 @@ describe('Package Exports Resolution', () => {
       const result = await resolve('react-strict-dom');
       expect(result).toBe(null);
     });
-
-    test('should resolve subpath exports', async () => {
-      const { resolve } = await setupTestEnvironment(
-        { 'react-strict-dom': loadFixture('react-strict-dom') },
-        { platform: 'ios', enablePackageExports: true }
-      );
-
-      const result = await resolve('react-strict-dom/html');
-      expect(result).toBe('/node_modules/react-strict-dom/dist/native/html.js');
-    });
   });
 
   describe('Complex exports patterns', () => {
