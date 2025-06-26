@@ -7,6 +7,10 @@ module.exports = {
       comments: false,
     },
     {
+      include: ['./src/**/implementation', './src/modules'],
+      sourceMaps: false,
+    },
+    {
       exclude: ['./src/**/implementation', './src/modules'],
       presets: [
         [
