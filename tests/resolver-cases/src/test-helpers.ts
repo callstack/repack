@@ -88,16 +88,13 @@ export async function setupTestEnvironment(
 
   // Create resolvers for both ESM and CommonJS
   const createResolver = (dependencyType: 'esm' | 'commonjs') => {
-    const dependencyOptions = resolveOptions.byDependency[dependencyType] || {};
-    const mergedConditionNames = [
-      ...resolveOptions.conditionNames,
-      ...dependencyOptions.conditionNames,
-    ];
+    const specificConditionNames =
+      resolveOptions.byDependency[dependencyType].conditionNames;
 
     return ResolverFactory.createResolver({
       mainFields: resolveOptions.mainFields,
       aliasFields: resolveOptions.aliasFields,
-      conditionNames: mergedConditionNames,
+      conditionNames: specificConditionNames ?? resolveOptions.conditionNames,
       exportsFields: resolveOptions.exportsFields,
       extensions: resolveOptions.extensions,
       extensionAlias: resolveOptions.extensionAlias,
