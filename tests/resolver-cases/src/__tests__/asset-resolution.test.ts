@@ -1,22 +1,10 @@
 import { describe, expect, test } from 'vitest';
-import { setupTestEnvironment } from '../test-helpers.js';
+import { loadFixture, setupTestEnvironment } from '../test-helpers.js';
 
 describe('Asset Resolution', () => {
   test('should resolve base asset when no scale specified and no scaled versions exist', async () => {
     const { resolve } = await setupTestEnvironment(
-      {
-        'asset-lib': {
-          'package.json': JSON.stringify({
-            name: 'asset-lib',
-            version: '1.0.0',
-            main: './index.js',
-          }),
-          'index.js': 'export const assets = require("./assets");',
-          'assets/icon.png': 'fake-png-content',
-          'assets/logo.jpg': 'fake-jpg-content',
-          'assets/video.mp4': 'fake-mp4-content',
-        },
-      },
+      { 'asset-lib': loadFixture('asset-lib-simple') },
       { platform: 'ios' }
     );
 
@@ -26,19 +14,7 @@ describe('Asset Resolution', () => {
 
   test('should resolve 2x scaled assets when available', async () => {
     const { resolve } = await setupTestEnvironment(
-      {
-        'asset-lib': {
-          'package.json': JSON.stringify({
-            name: 'asset-lib',
-            version: '1.0.0',
-            main: './index.js',
-          }),
-          'index.js': 'export const assets = require("./assets");',
-          'assets/icon.png': 'fake-png-content',
-          'assets/icon@2x.png': 'fake-png-content-2x',
-          'assets/icon@3x.png': 'fake-png-content-3x',
-        },
-      },
+      { 'asset-lib': loadFixture('asset-lib') },
       { platform: 'ios' }
     );
 
@@ -49,17 +25,7 @@ describe('Asset Resolution', () => {
 
   test('should resolve different asset formats', async () => {
     const { resolve } = await setupTestEnvironment(
-      {
-        'asset-lib': {
-          'package.json': JSON.stringify({
-            name: 'asset-lib',
-            version: '1.0.0',
-            main: './index.js',
-          }),
-          'assets/logo.jpg': 'fake-jpg-content',
-          'assets/video.mp4': 'fake-mp4-content',
-        },
-      },
+      { 'asset-lib': loadFixture('asset-lib-simple') },
       { platform: 'ios' }
     );
 

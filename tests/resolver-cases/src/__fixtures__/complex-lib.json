@@ -1,0 +1,34 @@
+{
+  "package.json": {
+    "name": "complex-lib",
+    "version": "2.1.0",
+    "exports": {
+      ".": {
+        "import": {
+          "react-native": "./esm/index.native.js",
+          "default": "./esm/index.js"
+        },
+        "require": {
+          "react-native": "./cjs/index.native.js",
+          "default": "./cjs/index.js"
+        }
+      },
+      "./utils": {
+        "import": "./esm/utils.js",
+        "require": "./cjs/utils.js"
+      },
+      "./native-only": {
+        "react-native": "./native-specific.js"
+      }
+    }
+  },
+  "files": {
+    "esm/index.js": "export const lib = 'esm-web';",
+    "esm/index.native.js": "export const lib = 'esm-native';",
+    "esm/utils.js": "export const utils = 'esm-utils';",
+    "cjs/index.js": "module.exports = { lib: 'cjs-web' };",
+    "cjs/index.native.js": "module.exports = { lib: 'cjs-native' };",
+    "cjs/utils.js": "module.exports = { utils: 'cjs-utils' };",
+    "native-specific.js": "export const feature = 'native-only';"
+  }
+}

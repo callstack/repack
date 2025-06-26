@@ -1,0 +1,17 @@
+{
+  "package.json": {
+    "name": "platform-specific-lib",
+    "version": "1.0.0",
+    "main": "./index"
+  },
+  "files": {
+    "index.js": "export const platform = \"web\";",
+    "index.native.js": "export const platform = \"native\";",
+    "index.ios.js": "export const platform = \"ios\";",
+    "index.android.js": "export const platform = \"android\";",
+    "lib/utils.js": "export const utils = \"web\";",
+    "lib/utils.native.js": "export const utils = \"native\";",
+    "lib/utils.ios.js": "export const utils = \"ios\";",
+    "lib/utils.android.js": "export const utils = \"android\";"
+  }
+}

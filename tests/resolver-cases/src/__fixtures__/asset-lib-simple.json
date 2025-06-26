@@ -1,0 +1,13 @@
+{
+  "package.json": {
+    "name": "asset-lib",
+    "version": "1.0.0",
+    "main": "./index.js"
+  },
+  "files": {
+    "index.js": "export const assets = require(\"./assets\");",
+    "assets/icon.png": "fake-png-content",
+    "assets/logo.jpg": "fake-jpg-content",
+    "assets/video.mp4": "fake-mp4-content"
+  }
+}

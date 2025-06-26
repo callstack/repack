@@ -1,0 +1,22 @@
+{
+  "package.json": {
+    "name": "react-strict-dom",
+    "version": "0.0.28",
+    "exports": {
+      ".": {
+        "react-native": "./dist/native/index.js",
+        "default": "./dist/dom/index.js"
+      },
+      "./html": {
+        "react-native": "./dist/native/html.js",
+        "default": "./dist/dom/html.js"
+      }
+    }
+  },
+  "files": {
+    "dist/native/index.js": "export * from './native-components';",
+    "dist/dom/index.js": "export * from './dom-components';",
+    "dist/native/html.js": "export const View = 'RCTView';",
+    "dist/dom/html.js": "export const View = 'div';"
+  }
+}

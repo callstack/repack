@@ -1,9 +1,42 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { type ResolveOptions, getResolveOptions } from '@callstack/repack';
 import { ResolverFactory } from 'enhanced-resolve';
 import { Volume } from 'memfs';
 
 export interface TestOptions extends ResolveOptions {
   platform?: string;
+}
+
+interface FixtureData {
+  'package.json': Record<string, any>;
+  files: Record<string, string>;
+}
+
+// Load fixture data from JSON files
+export function loadFixture(fixtureName: string): Record<string, string> {
+  const fixturePath = join(__dirname, '__fixtures__', `${fixtureName}.json`);
+  const fixtureData: FixtureData = JSON.parse(
+    readFileSync(fixturePath, 'utf8')
+  );
+
+  return {
+    'package.json': JSON.stringify(fixtureData['package.json']),
+    ...fixtureData.files,
+  };
+}
+
+// Load multiple fixtures
+export function loadFixtures(
+  fixtures: Record<string, string>
+): Record<string, Record<string, string>> {
+  const result: Record<string, Record<string, string>> = {};
+
+  for (const [packageName, fixtureName] of Object.entries(fixtures)) {
+    result[packageName] = loadFixture(fixtureName);
+  }
+
+  return result;
 }
 
 // Simple function to create a package in the virtual filesystem
