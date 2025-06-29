@@ -10,9 +10,9 @@
   "devDependencies": {
     "@callstack/repack": "workspace:*",
     "@types/node": "catalog:",
-    "enhanced-resolve": "^5.17.1",
-    "memfs": "^4.13.0",
+    "enhanced-resolve": "^5.18.1",
+    "memfs": "^4.11.1",
     "typescript": "catalog:",
-    "vitest": "^2.0.5"
+    "vitest": "catalog:"
   }
 }
