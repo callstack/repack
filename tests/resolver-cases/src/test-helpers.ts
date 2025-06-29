@@ -10,7 +10,10 @@ interface FixtureData {
 }
 
 // Load fixture data from JSON files
-export function loadFixture(fixtureName: string): Record<string, string> {
+export function loadFixture(fixtureName: string): {
+  name: string;
+  files: Record<string, string>;
+} {
   const fixtureDir = path.join(__dirname, '__fixtures__');
   const fixturePath = path.join(fixtureDir, `${fixtureName}.json`);
 
@@ -18,16 +21,19 @@ export function loadFixture(fixtureName: string): Record<string, string> {
     fs.readFileSync(fixturePath, 'utf8')
   );
 
-  const result: Record<string, string> = {
+  const files: Record<string, string> = {
     'package.json': JSON.stringify(fixtureData['package.json']),
   };
 
   // Create empty files for each path in the files array
   for (const filePath of fixtureData.files) {
-    result[filePath] = `// ${filePath}`;
+    files[filePath] = `// ${filePath}`;
   }
 
-  return result;
+  return {
+    name: fixtureData['package.json'].name,
+    files,
+  };
 }
 
 // Simple function to create a package in the virtual filesystem
@@ -141,7 +147,7 @@ function createResolvers(
 
 // Main setup function - creates filesystem and resolver
 export async function setupTestEnvironment(
-  packages: Record<string, Record<string, string>>,
+  fixtures: string[],
   options: {
     platform?: string;
     enablePackageExports?: boolean;
@@ -154,9 +160,10 @@ export async function setupTestEnvironment(
   // Ensure node_modules directory exists first
   await volume.promises.mkdir('/node_modules', { recursive: true });
 
-  // Create all packages in node_modules
-  for (const [packageName, files] of Object.entries(packages)) {
-    await createPackage(volume, `/node_modules/${packageName}`, files);
+  // Load fixtures and create packages in node_modules
+  for (const fixtureName of fixtures) {
+    const { name, files } = loadFixture(fixtureName);
+    await createPackage(volume, `/node_modules/${name}`, files);
   }
 
   // Create resolvers using the helper function
