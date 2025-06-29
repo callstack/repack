@@ -49,12 +49,12 @@ export default (env) => {
           react: {
             singleton: true,
             eager: true,
-            requiredVersion: '19.0.0',
+            requiredVersion: '19.1.0',
           },
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.79.1',
+            requiredVersion: '0.80.0',
           },
           '@react-navigation/native': {
             singleton: true,
