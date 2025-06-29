@@ -115,8 +115,8 @@ export function getResolveOptions(
    * and they need condition names to be defined.
    */
   const byDependency = {
-    esm: { conditionNames: ['import'] },
-    commonjs: { conditionNames: ['require'] },
+    esm: { conditionNames: ['react-native', 'import'] },
+    commonjs: { conditionNames: ['react-native', 'require'] },
   };
 
   /**
