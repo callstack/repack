@@ -1,0 +1,15 @@
+{
+  "package.json": {
+    "name": "asset-lib",
+    "version": "1.0.0",
+    "main": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "assets/icon.png",
+    "assets/icon@1x.png",
+    "assets/icon@2x.png",
+    "assets/logo.jpg",
+    "assets/video.mp4"
+  ]
+}
