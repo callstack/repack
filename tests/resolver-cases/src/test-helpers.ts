@@ -77,17 +77,11 @@ function createResolveFunction(resolvers: Resolvers) {
   ): Promise<string | null> {
     const resolver =
       resolvers[dependencyType as keyof Resolvers] ?? resolvers.default;
-
-    try {
-      const result = await new Promise<string>((resolve, reject) => {
-        resolver.resolve({}, context, request, {}, (err: any, result: any) => {
-          err ? reject(err) : resolve(result as string);
-        });
+    return new Promise<string | null>((resolve) => {
+      resolver.resolve({}, context, request, {}, (err, result) => {
+        err ? resolve(null) : resolve(result || null);
       });
-      return result;
-    } catch {
-      return null;
-    }
+    });
   };
 }
 
