@@ -64,17 +64,17 @@ export default (env) => {
           'react-native-safe-area-context': {
             singleton: true,
             eager: false,
-            requiredVersion: '^5.4.0',
+            requiredVersion: '^5.5.0',
           },
           'react-native-screens': {
             singleton: true,
             eager: false,
-            requiredVersion: '^4.10.0',
+            requiredVersion: '^4.11.1',
           },
           '@react-native-async-storage/async-storage': {
             singleton: true,
             eager: false,
-            requiredVersion: '^2.1.2',
+            requiredVersion: '^2.2.0',
           },
         },
       }),

@@ -14,13 +14,13 @@
     "@callstack/repack": "workspace:*",
     "@module-federation/enhanced": "0.12.0",
     "@module-federation/runtime": "0.12.0",
-    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.10.1",
     "react": "catalog:",
     "react-native": "catalog:",
-    "react-native-safe-area-context": "^5.4.0",
-    "react-native-screens": "^4.10.0"
+    "react-native-safe-area-context": "^5.5.0",
+    "react-native-screens": "^4.11.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
