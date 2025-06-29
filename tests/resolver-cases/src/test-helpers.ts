@@ -155,7 +155,7 @@ export async function setupTestEnvironment(
   } = {}
 ) {
   const volume = new Volume();
-  const platform = options.platform || 'ios';
+  const platform = options.platform ?? 'ios';
 
   // Ensure node_modules directory exists first
   await volume.promises.mkdir('/node_modules', { recursive: true });
