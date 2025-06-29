@@ -1,11 +1,15 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { getResolveOptions } from '@callstack/repack';
-import { ResolverFactory } from 'enhanced-resolve';
+import {
+  type FileSystem,
+  type Resolver,
+  ResolverFactory,
+} from 'enhanced-resolve';
 import { Volume } from 'memfs';
 
 interface FixtureData {
-  'package.json': Record<string, any>;
+  'package.json': Record<string, string>;
   files: string[];
 }
 
@@ -30,10 +34,7 @@ export function loadFixture(fixtureName: string): {
     files[filePath] = `// ${filePath}`;
   }
 
-  return {
-    name: fixtureData['package.json'].name,
-    files,
-  };
+  return { name: fixtureData['package.json'].name, files };
 }
 
 // Simple function to create a package in the virtual filesystem
@@ -61,14 +62,22 @@ async function createPackage(
   }
 }
 
+interface Resolvers {
+  esm: Resolver;
+  cjs: Resolver;
+  default: Resolver;
+}
+
 // Helper function to resolve modules using the configured resolvers
-function createResolveFunction(esmResolver: any, cjsResolver: any) {
+function createResolveFunction(resolvers: Resolvers) {
   return async function resolve(
     request: string,
     context = '/app',
-    dependencyType: 'esm' | 'commonjs' = 'esm'
+    dependencyType: 'esm' | 'commonjs' | 'default' = 'default'
   ): Promise<string | null> {
-    const resolver = dependencyType === 'esm' ? esmResolver : cjsResolver;
+    const resolver =
+      resolvers[dependencyType as keyof Resolvers] ?? resolvers.default;
+
     try {
       const result = await new Promise<string>((resolve, reject) => {
         resolver.resolve({}, context, request, {}, (err: any, result: any) => {
@@ -123,9 +132,9 @@ function createResolvers(
   });
 
   // Create resolvers for both ESM and CommonJS
-  const createResolver = (dependencyType: 'esm' | 'commonjs') => {
+  const createResolver = (dependencyType: string) => {
     const specificConditionNames =
-      resolveOptions.byDependency[dependencyType].conditionNames;
+      resolveOptions.byDependency[dependencyType]?.conditionNames;
 
     return ResolverFactory.createResolver({
       mainFields: resolveOptions.mainFields,
@@ -134,14 +143,15 @@ function createResolvers(
       exportsFields: resolveOptions.exportsFields,
       extensions: resolveOptions.extensions,
       extensionAlias: resolveOptions.extensionAlias,
-      fileSystem: volume as any, // Cast to any to work around enhanced-resolve types
-      symlinks: false,
+      fileSystem: volume as FileSystem,
+      symlinks: true,
     });
   };
 
   return {
     esm: createResolver('esm'),
     cjs: createResolver('commonjs'),
+    default: createResolver('unknown'),
   };
 }
 
@@ -170,7 +180,7 @@ export async function setupTestEnvironment(
   const resolvers = createResolvers(volume, platform, options);
 
   return {
-    resolve: createResolveFunction(resolvers.esm, resolvers.cjs),
+    resolve: createResolveFunction(resolvers),
     listFiles: createListFilesFunction(volume),
   };
 }
