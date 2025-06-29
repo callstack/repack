@@ -7,7 +7,7 @@
     "android:release": "node ./scripts/release.js android",
     "ios": "react-native run-ios",
     "ios:release": "node ./scripts/release.js ios",
-    "pods": "(cd ios && bundle install && bundle exec pod install)",
+    "pods": "(cd ios && bundle install && (bundle exec pod install || bundle exec pod update))",
     "pods:update": "(cd ios && bundle install && bundle exec pod update)",
     "start": "react-native webpack-start",
     "bundle:android": "react-native webpack-bundle --platform android --entry-file index.js --dev=false --bundle-output build/output/android/index.android.bundle --assets-dest build/output/android/res",
