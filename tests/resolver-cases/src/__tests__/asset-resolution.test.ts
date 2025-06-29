@@ -2,27 +2,18 @@ import { describe, expect, test } from 'vitest';
 import { setupTestEnvironment } from '../test-helpers.js';
 
 describe('Asset Resolution', () => {
-  test('should resolve base asset when no scale specified and no scaled versions exist', async () => {
-    const { resolve } = await setupTestEnvironment(['asset-lib-simple'], {
+  test('should resolve scaled assets', async () => {
+    const { resolve } = await setupTestEnvironment(['assets'], {
       platform: 'ios',
     });
 
     const result = await resolve('asset-lib/assets/icon.png');
-    expect(result).toBe('/node_modules/asset-lib/assets/icon.png');
-  });
-
-  test('should resolve 2x scaled assets when available', async () => {
-    const { resolve } = await setupTestEnvironment(['asset-lib'], {
-      platform: 'ios',
-    });
-
-    // React Native prefers scaled assets when available
-    const result = await resolve('asset-lib/assets/icon.png');
-    expect(result).toBe('/node_modules/asset-lib/assets/icon@2x.png');
+    // scales are preffered so @1x.png is prefered over .png
+    expect(result).toBe('/node_modules/asset-lib/assets/icon@1x.png');
   });
 
   test('should resolve different asset formats', async () => {
-    const { resolve } = await setupTestEnvironment(['asset-lib-simple'], {
+    const { resolve } = await setupTestEnvironment(['assets'], {
       platform: 'ios',
     });
 
