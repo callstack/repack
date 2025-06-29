@@ -1,5 +1,5 @@
 import { useColorScheme } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { Colors } from './colors';
 
 export const useIsDarkMode = () => useColorScheme() === 'dark';
 
