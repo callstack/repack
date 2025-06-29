@@ -72,11 +72,10 @@ interface Resolvers {
 function createResolveFunction(resolvers: Resolvers) {
   return async function resolve(
     request: string,
-    context = '/app',
-    dependencyType: 'esm' | 'commonjs' | 'default' = 'default'
+    dependencyType: 'esm' | 'cjs' | 'default' = 'default',
+    context = '/'
   ): Promise<string | null> {
-    const resolver =
-      resolvers[dependencyType as keyof Resolvers] ?? resolvers.default;
+    const resolver = resolvers[dependencyType] ?? resolvers.default;
     return new Promise<string | null>((resolve) => {
       resolver.resolve({}, context, request, {}, (err, result) => {
         err ? resolve(null) : resolve(result || null);
