@@ -319,7 +319,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(unstable_evaluateScript
       }
     }
 
-    [self evaluateJavascript:data url:config.sourceUrl resolve:resolve reject:reject];
+    [self evaluateJavascript:bundle url:config.sourceUrl resolve:resolve reject:reject];
   } @catch (NSError *error) {
     reject(CodeExecutionFailure, error.localizedDescription, nil);
   }
