@@ -6,7 +6,7 @@ import java.io.File
 import java.io.FileInputStream
 
 class FileSystemScriptLoader(private val reactContext: ReactContext, private val nativeLoader: NativeScriptLoader) {
-    fun evaluateBundle(code: ByteArray, config: ScriptConfig, promise: Promise) {
+    fun evaluateBundle(code: ByteArray, config: ScriptConfig): ByteArray {
         val (bundle, token) = code?.let {
             CodeSigningUtils.extractBundleAndToken(code)
         } ?: Pair(null, null)
@@ -15,7 +15,7 @@ class FileSystemScriptLoader(private val reactContext: ReactContext, private val
             CodeSigningUtils.verifyBundle(reactContext, token, bundle)
         }
 
-        nativeLoader.evaluate(code, config.sourceUrl, promise)
+        return bundle
     }
 
     fun load(config: ScriptConfig, promise: Promise) {
@@ -31,7 +31,8 @@ class FileSystemScriptLoader(private val reactContext: ReactContext, private val
                 val inputStream = reactContext.assets.open(assetName)
                 code = inputStream.use { it.readBytes() }
             }
-            evaluateBundle(code, config, promise)
+            val bundle: ByteArray = evaluateBundle(code, config)
+            nativeLoader.evaluate(bundle, config.sourceUrl, promise)
         } catch (error: Exception) {
             promise.reject(
                     ScriptLoadingError.ScriptEvalFailure.code,
