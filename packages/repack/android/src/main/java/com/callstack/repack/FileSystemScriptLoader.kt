@@ -6,19 +6,33 @@ import java.io.File
 import java.io.FileInputStream
 
 class FileSystemScriptLoader(private val reactContext: ReactContext, private val nativeLoader: NativeScriptLoader) {
+    fun verifyBundle(code: ByteArray, config: ScriptConfig): ByteArray {
+        val (bundle, token) = code?.let {
+            CodeSigningUtils.extractBundleAndToken(code)
+        } ?: Pair(null, null)
+
+        if (config.verifyScriptSignature == "strict" || (config.verifyScriptSignature == "lax" && token != null)) {
+            CodeSigningUtils.verifyBundle(reactContext, token, bundle)
+        }
+
+        return bundle
+    }
+
     fun load(config: ScriptConfig, promise: Promise) {
         try {
+            val code: ByteArray;
+
             if (config.absolute) {
                 val path = config.url.path
                 val file = File(path)
-                val code: ByteArray = FileInputStream(file).use { it.readBytes() }
-                nativeLoader.evaluate(code, config.sourceUrl, promise)
+                code = FileInputStream(file).use { it.readBytes() }
             } else {
                 val assetName = config.url.file.split("/").last()
                 val inputStream = reactContext.assets.open(assetName)
-                val code: ByteArray = inputStream.use { it.readBytes() }
-                nativeLoader.evaluate(code, config.sourceUrl, promise)
+                code = inputStream.use { it.readBytes() }
             }
+            val bundle: ByteArray = verifyBundle(code, config)
+            nativeLoader.evaluate(bundle, config.sourceUrl, promise)
         } catch (error: Exception) {
             promise.reject(
                     ScriptLoadingError.ScriptEvalFailure.code,
