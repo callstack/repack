@@ -1,5 +1,21 @@
 # @callstack/repack
 
+## 5.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`71a989b82e97f5d5cdc12a8e6edfaad47636b13e`](https://github.com/callstack/repack/commit/71a989b82e97f5d5cdc12a8e6edfaad47636b13e)]:
+  - @callstack/repack-dev-server@5.1.2
+
+## 5.1.1
+
+### Patch Changes
+
+- [#1156](https://github.com/callstack/repack/pull/1156) [`897dc5a9c3568dfdff22eacc43a918f060c8426f`](https://github.com/callstack/repack/commit/897dc5a9c3568dfdff22eacc43a918f060c8426f) Thanks [@jbroma](https://github.com/jbroma)! - Fix registering resolvers for remotes in ResolverPlugin when ScriptManager is not yet initialized
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.1.1
+
 ## 5.1.0
 
 ### Minor Changes

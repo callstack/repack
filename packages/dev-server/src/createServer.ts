@@ -81,10 +81,24 @@ export async function createServer(config: Server.Config) {
             return;
           }
         } else {
-          instance.log.info(message);
+          instance.log.debug(message);
           return;
         }
       },
+    },
+    // we need to let `Network.loadNetworkResource` event pass
+    // through the InspectorProxy interceptor, otherwise it will
+    // prevent fetching source maps over the network for MF2 remotes
+    unstable_customInspectorMessageHandler: (connection) => {
+      return {
+        handleDeviceMessage: () => {},
+        handleDebuggerMessage: (msg: { method?: string }) => {
+          if (msg.method === 'Network.loadNetworkResource') {
+            connection.device.sendMessage(msg);
+            return true;
+          }
+        },
+      };
     },
     unstable_experiments: {
       // @ts-expect-error removed in 0.76, keep this for backkwards compatibility

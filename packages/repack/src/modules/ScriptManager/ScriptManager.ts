@@ -207,6 +207,15 @@ export class ScriptManager extends EventEmitter {
     }
 
     __webpack_require__.repack.shared.scriptManager = this;
+
+    const enqueuedResolvers =
+      __webpack_require__.repack.shared.enqueuedResolvers;
+    while (enqueuedResolvers.length) {
+      // process deferred resolvers in First-In-First-Out (FIFO) order to maintain
+      // the sequence in which they were registered before ScriptManager initialization
+      const [resolver, options] = enqueuedResolvers.shift()!;
+      this.addResolver(resolver, options);
+    }
   }
 
   private hookMap = {
