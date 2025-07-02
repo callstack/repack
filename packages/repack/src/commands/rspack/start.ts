@@ -86,7 +86,6 @@ export async function start(
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({
-    // @ts-ignore
     options: {
       ...devServerOptions,
       rootDir: cliConfig.root,
