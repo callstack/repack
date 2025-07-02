@@ -630,6 +630,9 @@ importers:
       '@swc/helpers':
         specifier: 'catalog:'
         version: 0.5.17
+      '@types/babel__core':
+        specifier: ^7.20.5
+        version: 7.20.5
       '@types/dedent':
         specifier: ^0.7.0
         version: 0.7.2
