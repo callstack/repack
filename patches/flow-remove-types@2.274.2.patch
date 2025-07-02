@@ -1,0 +1,37 @@
+diff --git a/index.js b/index.js
+index 9f44faaa92a1ecaa570ce686be991d322a09fe18..674c8b518104721427567d11233125de92a93bda 100644
+--- a/index.js
++++ b/index.js
+@@ -158,9 +158,7 @@ var removeFlowVisitor = {
+   DeclareVariable: removeNode,
+   InterfaceDeclaration: removeNode,
+   TypeAlias: removeNode,
+-  TypeAnnotation: removeNodeIfNotCommentType,
+   TypePredicate: removeNodeIfNotCommentType,
+-  TypeParameterDeclaration: removeNode,
+   InferredPredicate: removeInferredPredicateNode,
+   OpaqueType: removeNode,
+   DeclareOpaqueType: removeNode,
+@@ -366,6 +364,22 @@ var removeFlowVisitor = {
+     }
+   },
+ 
++  TypeAnnotation: function (context, node, ast, parent) {
++    if (parent.default) {
++      return;
++    }
++    return removeNodeIfNotCommentType(context, node, ast, parent);
++  },
++
++  TypeParameterDeclaration: function (context, node, ast, parent) {
++    if (
++      parent.type !== 'ComponentTypeAnnotation' &&
++      parent.type !== 'FunctionTypeAnnotation'
++    ) {
++      return removeNode(context, node);
++    }
++  },
++
+   TypeParameterInstantiation: function (context, node, ast, parent) {
+     // prevent interference with asExpression removal
+     if (parent.type !== 'GenericTypeAnnotation') {

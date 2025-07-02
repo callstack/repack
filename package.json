@@ -34,7 +34,8 @@
   "packageManager": "pnpm@9.5.0",
   "pnpm": {
     "patchedDependencies": {
-      "@rspress/plugin-llms@2.0.0-beta.3": "patches/@rspress__plugin-llms@2.0.0-beta.3.patch"
+      "@rspress/plugin-llms@2.0.0-beta.3": "patches/@rspress__plugin-llms@2.0.0-beta.3.patch",
+      "flow-remove-types@2.274.2": "patches/flow-remove-types@2.274.2.patch"
     }
   }
 }
