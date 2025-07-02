@@ -47,7 +47,7 @@
     "access": "public"
   },
   "scripts": {
-    "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --source-maps --ignore \"**/__tests__/**\" --delete-dir-on-start",
+    "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --ignore \"**/__tests__/**\" --delete-dir-on-start",
     "build:ts": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build": "pnpm run \"/^build:.*/\"",
     "test": "jest",
