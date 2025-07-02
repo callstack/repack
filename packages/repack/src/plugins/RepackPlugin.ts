@@ -1,4 +1,5 @@
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler as RspackCompiler } from '@rspack/core';
+import type { Compiler as WebpackCompiler } from 'webpack';
 import { BabelPlugin } from './BabelPlugin.js';
 import { DevelopmentPlugin } from './DevelopmentPlugin.js';
 import { LoggerPlugin, type LoggerPluginConfig } from './LoggerPlugin.js';
@@ -87,14 +88,19 @@ export interface RepackPluginConfig {
  *
  * @category Webpack Plugin
  */
-export class RepackPlugin implements RspackPluginInstance {
+export class RepackPlugin {
   constructor(private config: RepackPluginConfig = {}) {
     if (this.config.logger === undefined || this.config.logger === true) {
       this.config.logger = {};
     }
   }
 
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     const platform = this.config.platform ?? (compiler.options.name as string);
 
     new compiler.webpack.DefinePlugin({
