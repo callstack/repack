@@ -13,6 +13,18 @@ import {
   vi,
 } from 'vitest';
 
+const REACT_NATIVE_PATH = require.resolve('react-native', {
+  paths: [path.dirname(__dirname)],
+});
+const RELATIVE_REACT_NATIVE_PATH = path.relative(
+  path.join(__dirname, '..', '..', '..'),
+  path.dirname(REACT_NATIVE_PATH)
+);
+const REACT_NATIVE_ANDROID_ASSET_PATH = RELATIVE_REACT_NATIVE_PATH.replaceAll(
+  path.sep,
+  '_'
+).replaceAll(/[-.@+=]/g, '');
+
 describe('bundle command', () => {
   describe.each([
     {
@@ -59,6 +71,7 @@ describe('bundle command', () => {
           'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle',
           'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
           'assets/src/miniapp/callstack-dark.png',
+          `assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png`,
           'assets/src/assetsTest/localAssets/webpack.png',
           'assets/src/assetsTest/localAssets/webpack@2x.png',
           'assets/src/assetsTest/localAssets/webpack@3x.png',
@@ -68,6 +81,7 @@ describe('bundle command', () => {
           'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack.png',
           'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack@2x.png',
           'react-native-bundle-output/assets/src/assetsTest/localAssets/webpack@3x.png',
+          `react-native-bundle-output/assets/${RELATIVE_REACT_NATIVE_PATH}/Libraries/NewAppScreen/components/logo.png`,
         ],
       },
       {
@@ -81,6 +95,7 @@ describe('bundle command', () => {
           'remote.chunk.bundle.map',
           'src_asyncChunks_Async_local_tsx.chunk.bundle',
           'src_asyncChunks_Async_local_tsx.chunk.bundle.map',
+          `drawable-mdpi/${REACT_NATIVE_ANDROID_ASSET_PATH}_libraries_newappscreen_components_logo.png`,
           'drawable-mdpi/src_assetstest_localassets_webpack.png',
           'drawable-xxhdpi/src_assetstest_localassets_webpack.png',
           'drawable-xhdpi/src_assetstest_localassets_webpack.png',
@@ -89,6 +104,7 @@ describe('bundle command', () => {
           'react-native-bundle-output/index.android.bundle.map',
           'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle',
           'react-native-bundle-output/src_asyncChunks_Async_local_tsx.chunk.bundle.map',
+          `react-native-bundle-output/drawable-mdpi/${REACT_NATIVE_ANDROID_ASSET_PATH}_libraries_newappscreen_components_logo.png`,
           'react-native-bundle-output/drawable-mdpi/src_assetstest_localassets_webpack.png',
           'react-native-bundle-output/drawable-xxhdpi/src_assetstest_localassets_webpack.png',
           'react-native-bundle-output/drawable-xhdpi/src_assetstest_localassets_webpack.png',
