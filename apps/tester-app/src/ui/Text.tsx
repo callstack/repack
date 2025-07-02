@@ -1,5 +1,6 @@
 import { Text as RNText, type StyleProp, type TextStyle } from 'react-native';
-import { Colors } from './colors';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+
 import type { WithChildren } from './types';
 import { useIsDarkMode } from './utils';
 
