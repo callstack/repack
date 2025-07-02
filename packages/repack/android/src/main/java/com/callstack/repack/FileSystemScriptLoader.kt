@@ -7,9 +7,9 @@ import java.io.FileInputStream
 
 class FileSystemScriptLoader(private val reactContext: ReactContext, private val nativeLoader: NativeScriptLoader) {
     fun verifyBundle(code: ByteArray, config: ScriptConfig): ByteArray {
-        val (bundle, token) = code?.let {
+        val (bundle, token) = code.let {
             CodeSigningUtils.extractBundleAndToken(code)
-        } ?: Pair(null, null)
+        }
 
         if (config.verifyScriptSignature == "strict" || (config.verifyScriptSignature == "lax" && token != null)) {
             CodeSigningUtils.verifyBundle(reactContext, token, bundle)
@@ -31,7 +31,7 @@ class FileSystemScriptLoader(private val reactContext: ReactContext, private val
                 val inputStream = reactContext.assets.open(assetName)
                 code = inputStream.use { it.readBytes() }
             }
-            val bundle: ByteArray = verifyBundle(code, config)
+            val bundle = verifyBundle(code, config)
             nativeLoader.evaluate(bundle, config.sourceUrl, promise)
         } catch (error: Exception) {
             promise.reject(
