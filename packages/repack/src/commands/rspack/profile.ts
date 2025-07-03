@@ -61,6 +61,7 @@ export async function applyProfile(
   await ensureFileDir(traceOutput);
   await rspack.experiments.globalTrace.register(
     filter,
+    // @ts-expect-error: chrome was dropped in favor of perfetto, needs fixing
     traceLayer,
     traceOutput
   );
