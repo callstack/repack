@@ -2,12 +2,16 @@ package com.callstack.repack
 
 import android.os.Handler
 import com.facebook.react.bridge.*
+import com.facebook.soloader.SoLoader
 
 class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManagerSpec(reactContext) {
     private val nativeLoader = NativeScriptLoader(reactApplicationContext)
     private val remoteLoader = RemoteScriptLoader(reactApplicationContext, nativeLoader)
     private val fileSystemLoader = FileSystemScriptLoader(reactApplicationContext, nativeLoader)
 
+    init {
+        ensureInspectorLoaded()
+    }
     override fun getName(): String {
         return NAME
     }
@@ -106,6 +110,17 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
     }
 
     companion object {
+        @Volatile
+        private var inspectorLoaded = false
+
+        @Synchronized
+        private fun ensureInspectorLoaded() {
+            if (BuildConfig.DEBUG && !inspectorLoaded) {
+                SoLoader.loadLibrary("reactnativejni")
+                inspectorLoaded = true
+            }
+        }
+
         init {
             System.loadLibrary("callstack-repack")
         }
