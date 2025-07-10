@@ -731,14 +731,14 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(react@19.1.0)
       '@rspress/plugin-llms':
-        specifier: 2.0.0-beta.20
-        version: 2.0.0-beta.20(@rspress/core@2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))
+        specifier: 2.0.0-beta.19
+        version: 2.0.0-beta.19(@rspress/core@2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))
       rsbuild-plugin-open-graph:
         specifier: ^1.0.2
         version: 1.0.2(@rsbuild/core@1.4.6)
       rspress:
-        specifier: 2.0.0-beta.20
-        version: 2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)
+        specifier: 2.0.0-beta.19
+        version: 2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)
       rspress-plugin-font-open-sans:
         specifier: ^1.0.0
         version: 1.0.0
@@ -747,7 +747,7 @@ importers:
         version: 1.1.1
       rspress-plugin-vercel-analytics:
         specifier: ^0.3.0
-        version: 0.3.0(react@19.1.0)(rspress@2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))
+        version: 0.3.0(react@19.1.0)(rspress@2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))
     devDependencies:
       '@types/node':
         specifier: ^18
@@ -3035,8 +3035,8 @@ packages:
       webpack-hot-middleware:
         optional: true
 
-  '@rspress/core@2.0.0-beta.20':
-    resolution: {integrity: sha512-Ks9KGAJP0tNe/Z0azBEBbwFGSvTXZDxzTUA+EHszvdfgP/fX7PbF53X0roCf21WAx/qIkz4/b+CWa3fbmV4MHg==}
+  '@rspress/core@2.0.0-beta.19':
+    resolution: {integrity: sha512-U0wHtpL2+I+pPEbEyS+m3HNGHXB+idvQwsy31ioSpsexrhq8UOrE9aQPIvHVq4S7Qt27sQ4huoNTmxbnQcn7gA==}
     engines: {node: '>=18.0.0'}
 
   '@rspress/mdx-rs-darwin-arm64@0.6.6':
@@ -3091,34 +3091,34 @@ packages:
     resolution: {integrity: sha512-NpNhTKBIlV3O6ADhoZkgHvBFvXMW2TYlIWmIT1ysJESUBqDpaN9H3Teve5fugjU2pQ2ORBZO6SQGKliMw/8m/Q==}
     engines: {node: '>= 10'}
 
-  '@rspress/plugin-last-updated@2.0.0-beta.20':
-    resolution: {integrity: sha512-sstZzPQAOFPARz7DtdcaDFrrA1HSKWCbhZaLWJ259zcrXEv1mZYCdKTeRcZxr3TNZw9KpFrl6tXM4njh0k5mLA==}
+  '@rspress/plugin-last-updated@2.0.0-beta.19':
+    resolution: {integrity: sha512-GSpNWm6s4E/FAFA2n9BDx6KFks6JXSwFG03sKEiD7lF9iLLi4NIz+NDqzVZqhXj6H3MhZJi5luYXxG7pjLQyXg==}
     engines: {node: '>=18.0.0'}
 
-  '@rspress/plugin-llms@2.0.0-beta.20':
-    resolution: {integrity: sha512-G2FqZcfU8wU191rQFRvaeKPbBDCmuD5R+mnSV1Uzexz5tuN0iBPQnhYhbMrnMG2SHhfw8HMRlqYiVTxsH2hOmQ==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      '@rspress/core': ^2.0.0-beta.20
-
-  '@rspress/plugin-medium-zoom@2.0.0-beta.20':
-    resolution: {integrity: sha512-2zNIryiRxdZBEhm7Zj9cx+SB2bhHzLtCf1VD76q9vDNexMijxXmRO5cv/yAuZjIzDBzhXBvCRydgefeD1CBF+A==}
+  '@rspress/plugin-llms@2.0.0-beta.19':
+    resolution: {integrity: sha512-1syxq8r2m1aIL0rQIC2uFyMs1JvCIdaaCNNZt9mfPWMJHnGLRbdEM4cNhrgcdRt5Z/sobxmkcsq8OJvlZgUEgw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
-      '@rspress/runtime': ^2.0.0-beta.20
+      '@rspress/core': ^2.0.0-beta.19
 
-  '@rspress/runtime@2.0.0-beta.20':
-    resolution: {integrity: sha512-Bnc1Z33Z2zoIZXbHrWUn21QeqS1rMoD8sX1wscrI0Z53j9SE+dXRGdk2NtKKSecH9wSTxwhYA6Ovem9ze0conQ==}
+  '@rspress/plugin-medium-zoom@2.0.0-beta.19':
+    resolution: {integrity: sha512-bZF1IB+Tch6iCEIA7S0JJKcYD6I9IygNWNncUo9bZ7ewfjILxLyGw3efXmcZEAYBgIuP9Sz5yZIKA/MCFbhpjA==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      '@rspress/runtime': ^2.0.0-beta.19
+
+  '@rspress/runtime@2.0.0-beta.19':
+    resolution: {integrity: sha512-lkSmFOikCkznTIDmFrmkrPsSlmQGTim0GqQiTRJgwSlbEA3nnXGKfxvGeKoWmysuVWvrmn99xVvAOVlnplWz8Q==}
     engines: {node: '>=18.0.0'}
 
   '@rspress/shared@1.42.0':
     resolution: {integrity: sha512-PMlBeNf9NvIRaFIXX7phnOo2fqwYMQ9fBpG+G6jSt0C5exPm6vOLpSjdHVAGVSY+3FP+YWDH0++jir2qi8qK8w==}
 
-  '@rspress/shared@2.0.0-beta.20':
-    resolution: {integrity: sha512-lGmw9AgsOsLOMJlAunwyTULroevqEzRxLVNWeyjl2ZEMZ82vWCFRKWak5mrc/cZsXi5riRodSyQe9OMdYYsgYw==}
+  '@rspress/shared@2.0.0-beta.19':
+    resolution: {integrity: sha512-egqSM69W9GP9Dc3ZyjG53pqR3IRXlGXxrnexpwfxG0PKBYvBQ4BOscvoWEDGe44uJPZClve3pphvKoEQO/n2SA==}
 
-  '@rspress/theme-default@2.0.0-beta.20':
-    resolution: {integrity: sha512-6FCLVrcKtIGkqMoN0YlR1ZwCAscGvrxfCPVxekXJkDkKEg2go+sIBsamo0z0h7NrI2gzIV8SlouZaQ+CjbdkUg==}
+  '@rspress/theme-default@2.0.0-beta.19':
+    resolution: {integrity: sha512-m6W2kbKcrPom9h7wLBFq7xYbqwbohX2n6QgfLWq/jjoXzY89fycmzkfpwdWBlH0wLkSwY+9hDf8zyrBwmjIdmg==}
     engines: {node: '>=18.0.0'}
 
   '@sec-ant/readable-stream@0.4.1':
@@ -3422,9 +3422,6 @@ packages:
 
   '@types/unist@2.0.10':
     resolution: {integrity: sha512-IfYcSBWE3hLpBg8+X2SEa8LVkJdJEkT2Ese2aaLs3ptGdVtABxndrMaxuFlQ1qdFf9Q5rDvDpxI3WwgvKFAsQA==}
-
-  '@types/unist@3.0.2':
-    resolution: {integrity: sha512-dqId9J8K/vGi5Zr7oo212BGii5m3q5Hxlkwy3WpYuKPklmBEvsbMYYyLxAQpSffdLl/gdW0XUpKWFvYmyoWCoQ==}
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
@@ -7160,8 +7157,8 @@ packages:
     peerDependencies:
       rspress: '*'
 
-  rspress@2.0.0-beta.20:
-    resolution: {integrity: sha512-Bron+ekmjgnFpWv8K8ZNdl8YG/ih33rcsGTIdKE8rQd2f+gfMWjgX5MYvanWgjvna+MlXBuJVYwUu4TV7BMbCA==}
+  rspress@2.0.0-beta.19:
+    resolution: {integrity: sha512-40UCu4AzmkBYFzDaEQ79C+CQIorZj8ZZKGUUiAk2eWhKNQM1aFckaLFMp/LRVjEal/MDoMpa2aJhanX6nj9ctw==}
     hasBin: true
 
   run-applescript@7.0.0:
@@ -11068,7 +11065,7 @@ snapshots:
       html-entities: 2.6.0
       react-refresh: 0.17.0
 
-  '@rspress/core@2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)':
+  '@rspress/core@2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)':
     dependencies:
       '@mdx-js/loader': 3.1.0(acorn@8.14.0)(webpack@5.99.5)
       '@mdx-js/mdx': 3.1.0(acorn@8.14.0)
@@ -11076,11 +11073,11 @@ snapshots:
       '@rsbuild/core': 1.4.6
       '@rsbuild/plugin-react': 1.3.4(@rsbuild/core@1.4.6)
       '@rspress/mdx-rs': 0.6.6
-      '@rspress/plugin-last-updated': 2.0.0-beta.20
-      '@rspress/plugin-medium-zoom': 2.0.0-beta.20(@rspress/runtime@2.0.0-beta.20)
-      '@rspress/runtime': 2.0.0-beta.20
-      '@rspress/shared': 2.0.0-beta.20
-      '@rspress/theme-default': 2.0.0-beta.20
+      '@rspress/plugin-last-updated': 2.0.0-beta.19
+      '@rspress/plugin-medium-zoom': 2.0.0-beta.19(@rspress/runtime@2.0.0-beta.19)
+      '@rspress/runtime': 2.0.0-beta.19
+      '@rspress/shared': 2.0.0-beta.19
+      '@rspress/theme-default': 2.0.0-beta.19
       '@shikijs/rehype': 3.7.0
       '@types/unist': 3.0.3
       '@unhead/react': 2.0.12(react@19.1.0)
@@ -11148,14 +11145,14 @@ snapshots:
       '@rspress/mdx-rs-win32-arm64-msvc': 0.6.6
       '@rspress/mdx-rs-win32-x64-msvc': 0.6.6
 
-  '@rspress/plugin-last-updated@2.0.0-beta.20':
+  '@rspress/plugin-last-updated@2.0.0-beta.19':
     dependencies:
-      '@rspress/shared': 2.0.0-beta.20
+      '@rspress/shared': 2.0.0-beta.19
 
-  '@rspress/plugin-llms@2.0.0-beta.20(@rspress/core@2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))':
+  '@rspress/plugin-llms@2.0.0-beta.19(@rspress/core@2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))':
     dependencies:
-      '@rspress/core': 2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)
-      '@rspress/shared': 2.0.0-beta.20
+      '@rspress/core': 2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)
+      '@rspress/shared': 2.0.0-beta.19
       remark-mdx: 3.1.0
       remark-parse: 11.0.0
       remark-stringify: 11.0.0
@@ -11165,14 +11162,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@rspress/plugin-medium-zoom@2.0.0-beta.20(@rspress/runtime@2.0.0-beta.20)':
+  '@rspress/plugin-medium-zoom@2.0.0-beta.19(@rspress/runtime@2.0.0-beta.19)':
     dependencies:
-      '@rspress/runtime': 2.0.0-beta.20
+      '@rspress/runtime': 2.0.0-beta.19
       medium-zoom: 1.1.0
 
-  '@rspress/runtime@2.0.0-beta.20':
+  '@rspress/runtime@2.0.0-beta.19':
     dependencies:
-      '@rspress/shared': 2.0.0-beta.20
+      '@rspress/shared': 2.0.0-beta.19
       '@unhead/react': 2.0.12(react@19.1.0)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
@@ -11187,7 +11184,7 @@ snapshots:
     transitivePeerDependencies:
       - '@rspack/tracing'
 
-  '@rspress/shared@2.0.0-beta.20':
+  '@rspress/shared@2.0.0-beta.19':
     dependencies:
       '@rsbuild/core': 1.4.6
       '@shikijs/rehype': 3.7.0
@@ -11195,11 +11192,11 @@ snapshots:
       lodash-es: 4.17.21
       unified: 11.0.5
 
-  '@rspress/theme-default@2.0.0-beta.20':
+  '@rspress/theme-default@2.0.0-beta.19':
     dependencies:
       '@mdx-js/react': 2.3.0(react@19.1.0)
-      '@rspress/runtime': 2.0.0-beta.20
-      '@rspress/shared': 2.0.0-beta.20
+      '@rspress/runtime': 2.0.0-beta.19
+      '@rspress/shared': 2.0.0-beta.19
       '@unhead/react': 2.0.12(react@19.1.0)
       body-scroll-lock: 4.0.0-beta.0
       copy-to-clipboard: 3.3.3
@@ -11477,7 +11474,7 @@ snapshots:
 
   '@types/hast@3.0.4':
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
 
   '@types/http-proxy@1.17.16':
     dependencies:
@@ -11514,7 +11511,7 @@ snapshots:
 
   '@types/mdast@4.0.4':
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
 
   '@types/mdx@2.0.13': {}
 
@@ -11574,8 +11571,6 @@ snapshots:
   '@types/tinycolor2@1.4.6': {}
 
   '@types/unist@2.0.10': {}
-
-  '@types/unist@3.0.2': {}
 
   '@types/unist@3.0.3': {}
 
@@ -12801,7 +12796,7 @@ snapshots:
   estree-util-visit@2.0.0:
     dependencies:
       '@types/estree-jsx': 1.0.5
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
 
   estree-walker@3.0.3:
     dependencies:
@@ -14421,7 +14416,7 @@ snapshots:
   mdast-util-from-markdown@2.0.1:
     dependencies:
       '@types/mdast': 4.0.4
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
       decode-named-character-reference: 1.0.2
       devlop: 1.1.0
       mdast-util-to-string: 4.0.0
@@ -14508,7 +14503,7 @@ snapshots:
       '@types/estree-jsx': 1.0.5
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
       ccount: 2.0.1
       devlop: 1.1.0
       mdast-util-from-markdown: 2.0.1
@@ -14578,7 +14573,7 @@ snapshots:
   mdast-util-to-markdown@2.1.0:
     dependencies:
       '@types/mdast': 4.0.4
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
       longest-streak: 3.1.0
       mdast-util-phrasing: 4.1.0
       mdast-util-to-string: 4.0.0
@@ -15085,7 +15080,7 @@ snapshots:
   micromark-util-events-to-acorn@2.0.3:
     dependencies:
       '@types/estree': 1.0.6
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
       devlop: 1.1.0
       estree-util-visit: 2.0.0
       micromark-util-symbol: 2.0.0
@@ -16211,7 +16206,7 @@ snapshots:
   remark-mdc@1.2.0:
     dependencies:
       '@types/mdast': 4.0.4
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
       flat: 5.0.2
       js-yaml: 4.1.0
       mdast-util-from-markdown: 2.0.1
@@ -16367,7 +16362,7 @@ snapshots:
     dependencies:
       fs-extra: 11.3.0
 
-  rspress-plugin-devkit@0.3.0(rspress@2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)):
+  rspress-plugin-devkit@0.3.0(rspress@2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)):
     dependencies:
       '@rspress/shared': 1.42.0
       '@types/estree-jsx': 1.0.5
@@ -16382,7 +16377,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
       mdast-util-to-string: 4.0.0
       remark-mdc: 1.2.0
-      rspress: 2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)
+      rspress: 2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)
       ts-morph: 22.0.0
       unified: 10.1.2
       unist-util-visit: 5.0.0
@@ -16398,23 +16393,23 @@ snapshots:
 
   rspress-plugin-sitemap@1.1.1: {}
 
-  rspress-plugin-vercel-analytics@0.3.0(react@19.1.0)(rspress@2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)):
+  rspress-plugin-vercel-analytics@0.3.0(react@19.1.0)(rspress@2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)):
     dependencies:
       '@rspress/shared': 1.42.0
       '@vercel/analytics': 1.3.1(react@19.1.0)
-      rspress: 2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)
-      rspress-plugin-devkit: 0.3.0(rspress@2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))
+      rspress: 2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)
+      rspress-plugin-devkit: 0.3.0(rspress@2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))
     transitivePeerDependencies:
       - '@rspack/tracing'
       - next
       - react
       - supports-color
 
-  rspress@2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5):
+  rspress@2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5):
     dependencies:
       '@rsbuild/core': 1.4.6
-      '@rspress/core': 2.0.0-beta.20(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)
-      '@rspress/shared': 2.0.0-beta.20
+      '@rspress/core': 2.0.0-beta.19(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)
+      '@rspress/shared': 2.0.0-beta.19
       cac: 6.7.14
       chokidar: 3.6.0
       picocolors: 1.1.1
@@ -17011,7 +17006,7 @@ snapshots:
 
   unified@11.0.5:
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
       bail: 2.0.2
       devlop: 1.1.0
       extend: 3.0.2
@@ -17029,11 +17024,11 @@ snapshots:
 
   unist-util-is@6.0.0:
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
 
   unist-util-position-from-estree@2.0.0:
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
 
   unist-util-position@5.0.0:
     dependencies:
@@ -17041,7 +17036,7 @@ snapshots:
 
   unist-util-remove-position@5.0.0:
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
       unist-util-visit: 5.0.0
 
   unist-util-stringify-position@3.0.3:
@@ -17050,11 +17045,11 @@ snapshots:
 
   unist-util-stringify-position@4.0.0:
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
 
   unist-util-visit-children@3.0.0:
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
 
   unist-util-visit-parents@5.1.3:
     dependencies:
@@ -17063,7 +17058,7 @@ snapshots:
 
   unist-util-visit-parents@6.0.1:
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
       unist-util-is: 6.0.0
 
   unist-util-visit@4.1.2:
@@ -17074,7 +17069,7 @@ snapshots:
 
   unist-util-visit@5.0.0:
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
       unist-util-is: 6.0.0
       unist-util-visit-parents: 6.0.1
 
@@ -17135,7 +17130,7 @@ snapshots:
 
   vfile-message@4.0.2:
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
       unist-util-stringify-position: 4.0.0
 
   vfile-reporter@7.0.5:
@@ -17168,7 +17163,7 @@ snapshots:
 
   vfile@6.0.2:
     dependencies:
-      '@types/unist': 3.0.2
+      '@types/unist': 3.0.3
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
 
