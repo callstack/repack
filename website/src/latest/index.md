@@ -31,7 +31,7 @@ features:
     icon: trending-down
   - title: React Native DevTools
     details: Integrated modern debugging experience for React Native with console, breakpoints, CPU, Memory and React profiling.
-    icon: sliders-2
+    icon: sliders
   - title: Fully-featured Dev Server
     details: Take advantage of built-in support for Hot Module Replacement, Fast Refresh, error symbolication, and source maps support.
     icon: server
