@@ -1,9 +1,17 @@
-import { Announcement } from '@callstack/rspress-theme';
+import {
+  Announcement,
+  HomeBanner,
+  HomeFeature,
+  HomeFooter,
+  HomeHero,
+  OutlineCTA,
+  PrevNextPage,
+} from '@callstack/rspress-theme';
 import { NoSSR, usePageData } from 'rspress/runtime';
 import {
   Badge,
   Link,
-  PrevNextPage,
+  HomeLayout as RspressHomeLayout,
   Layout as RspressLayout,
   getCustomMDXComponent,
 } from 'rspress/theme';
@@ -70,10 +78,22 @@ const Layout = () => (
       )
     }
     beforeDocContent={<VersionBadge />}
+    afterOutline={<OutlineCTA href="https://callstack.com" />}
   />
 );
 
-export { Layout };
+const HomeLayout = () => (
+  <RspressHomeLayout
+    afterFeatures={
+      <>
+        <HomeBanner href="https://callstack.com" />
+        <HomeFooter />
+      </>
+    }
+  />
+);
+
+export { HomeLayout, Layout };
 
 const { code: Code, pre: Pre } = getCustomMDXComponent();
 
@@ -103,5 +123,7 @@ const CustomPrevNextPage = (props) => {
 
 export { CustomLink as Link };
 export { CustomPrevNextPage as PrevNextPage };
+
+export { HomeFeature, HomeHero };
 
 export * from 'rspress/theme';

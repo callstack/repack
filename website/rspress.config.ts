@@ -22,12 +22,11 @@ export default defineConfig({
     'A modern build tool for React Native that brings the Rspack and webpack ecosystem to mobile React Native apps',
   icon: '/img/favicon.ico',
   logo: {
-    light: '/img/logo_light.svg',
-    dark: '/img/logo_dark.svg',
+    light: '/img/logo-light.png',
+    dark: '/img/logo-dark.png',
   },
   markdown: {
     checkDeadLinks: true,
-    codeHighlighter: 'prism',
   },
   route: {
     cleanUrls: true,
