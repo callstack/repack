@@ -44,7 +44,7 @@ export default defineConfig({
     },
     editLink: {
       docRepoBaseUrl: EDIT_ROOT_URL,
-      text: '📝 Edit this page on GitHub',
+      text: 'Edit this page on GitHub',
     },
     socialLinks: [
       {
