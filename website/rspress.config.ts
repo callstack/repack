@@ -107,7 +107,7 @@ export default defineConfig({
     process.env.REPACK_DOC_VERSION !== 'v2' &&
     process.env.REPACK_DOC_VERSION !== 'v3' &&
     process.env.REPACK_DOC_VERSION !== 'v4'
-      ? path.join(__dirname, DOCS_ROOT, 'styles', 'index.css')
+      ? path.join(__dirname, 'theme', 'styles.css')
       : undefined,
   plugins: [
     // @ts-ignore
