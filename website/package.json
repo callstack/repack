@@ -19,7 +19,7 @@
     "rspress-plugin-vercel-analytics": "^0.3.0"
   },
   "devDependencies": {
-    "@types/node": "^18",
+    "@types/node": "catalog:",
     "@types/react": "^18.2.64",
     "typescript": "catalog:"
   },

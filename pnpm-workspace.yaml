@@ -8,7 +8,7 @@ catalog:
   "@rspack/core": ^1.4.2
   "@rslib/core": ^0.6.3
   "@swc/helpers": ~0.5.17
-  "@types/node": ^18
+  "@types/node": ^20
   "terser-webpack-plugin": ^5.3.14
   "typescript": ^5.8.3
   "webpack": ^5.99.5
