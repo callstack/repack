@@ -12,10 +12,10 @@ import {
 import { NoSSR, usePageData } from 'rspress/runtime';
 import {
   Badge,
+  CodeBlockRuntime,
   Link,
   HomeLayout as RspressHomeLayout,
   Layout as RspressLayout,
-  getCustomMDXComponent,
 } from 'rspress/theme';
 
 const VersionBadge = () => {
@@ -97,20 +97,10 @@ const HomeLayout = () => (
 
 export { HomeLayout, Layout };
 
-const { code: Code, pre: Pre } = getCustomMDXComponent();
-
 /* expose internal CodeBlock component */
 export const CodeBlock = ({ children, language, title }) => {
-  return (
-    <Pre>
-      <Code
-        className={`language-${language}`}
-        meta={title ? `title="${title}"` : undefined}
-      >
-        {children}
-      </Code>
-    </Pre>
-  );
+  // @ts-ignore
+  return <CodeBlockRuntime lang={language} title={title} code={children} />;
 };
 
 const CustomLink = (props) => (
