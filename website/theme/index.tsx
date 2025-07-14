@@ -1,9 +1,11 @@
 import {
   Announcement,
+  Button,
   HomeBanner,
   HomeFeature,
   HomeFooter,
   HomeHero,
+  LinkCard,
   OutlineCTA,
   PrevNextPage,
 } from '@callstack/rspress-theme';
@@ -124,6 +126,6 @@ const CustomPrevNextPage = (props) => {
 export { CustomLink as Link };
 export { CustomPrevNextPage as PrevNextPage };
 
-export { HomeFeature, HomeHero };
+export { HomeFeature, HomeHero, LinkCard, Button };
 
 export * from 'rspress/theme';
