@@ -8,38 +8,15 @@ import {
   LinkCard,
   OutlineCTA,
   PrevNextPage,
+  VersionBadge,
 } from '@callstack/rspress-theme';
-import { NoSSR, usePageData } from 'rspress/runtime';
+import { NoSSR } from 'rspress/runtime';
 import {
-  Badge,
   CodeBlockRuntime,
   Link,
   HomeLayout as RspressHomeLayout,
   Layout as RspressLayout,
 } from 'rspress/theme';
-
-const VersionBadge = () => {
-  const pageData = usePageData();
-
-  // hide on overview pages since it's badly positioned
-  if (pageData.page.frontmatter.overview) {
-    return null;
-  }
-
-  if (pageData.page.routePath.startsWith('/blog')) {
-    return null;
-  }
-
-  return (
-    <div className="py-2">
-      <Badge
-        type="info"
-        outline
-        text={`Version: ${global.__REPACK_DOC_VERSION__ ?? global.__REPACK_DOC_LATEST_VERSION__}`}
-      />
-    </div>
-  );
-};
 
 const OldVersionAnnouncement = ({ version, latestVersion }) => (
   <div className="py-2 px-4 flex flex-col sm:flex-row items-center justify-center bg-amber-50 text-amber-900 border-b border-amber-200 text-sm">
@@ -79,7 +56,11 @@ const Layout = () => (
         </NoSSR>
       )
     }
-    beforeDocContent={<VersionBadge />}
+    beforeDocContent={
+      <VersionBadge
+        version={`${global.__REPACK_DOC_VERSION__ ?? global.__REPACK_DOC_LATEST_VERSION__}`}
+      />
+    }
     afterOutline={<OutlineCTA href="https://callstack.com" />}
   />
 );
@@ -103,17 +84,12 @@ export const CodeBlock = ({ children, language, title }) => {
   return <CodeBlockRuntime lang={language} title={title} code={children} />;
 };
 
-const CustomLink = (props) => (
-  <Link {...props} className={props.className + ' rspress-link'} />
-);
-
 /* omit rendering for edge cases */
 const CustomPrevNextPage = (props) => {
   if (!props.text) return null;
   return <PrevNextPage {...props} />;
 };
 
-export { CustomLink as Link };
 export { CustomPrevNextPage as PrevNextPage };
 
 export { HomeFeature, HomeHero, LinkCard, Button };
