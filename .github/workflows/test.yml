@@ -12,10 +12,11 @@ on:
 
 jobs:
   verify:
+    name: Verify [Node ${{ matrix.node_version }}]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node_version: ['18', '20', '22.6']
+        node_version: ['18', '20', '22', '24']
         os: [ubuntu-latest]
 
     steps:

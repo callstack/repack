@@ -1,6 +1,10 @@
 {
   "name": "repack",
   "private": true,
+  "packageManager": "pnpm@9.5.0",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "prepare": "is-in-ci || husky",
     "build": "nx run-many -t build",
@@ -31,7 +35,6 @@
     "nx": "19.7.3",
     "typescript": "catalog:"
   },
-  "packageManager": "pnpm@9.5.0",
   "pnpm": {
     "patchedDependencies": {
       "@rspress/plugin-llms@2.0.0-beta.3": "patches/@rspress__plugin-llms@2.0.0-beta.3.patch"
