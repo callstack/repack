@@ -6,7 +6,7 @@ We want this community to be friendly and respectful to each other. Please read 
 
 ## Requirements
 
-- Node 18+
+- Node 20+
 - pnpm 8 (use it via `corepack install`)
 
 ## Our Development Process
