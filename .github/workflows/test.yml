@@ -12,7 +12,7 @@ on:
 
 jobs:
   verify:
-    name: Test - Node ${{ matrix.node_version }}
+    name: Verify [Node ${{ matrix.node_version }}]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
