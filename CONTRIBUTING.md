@@ -6,7 +6,7 @@ We want this community to be friendly and respectful to each other. Please read 
 
 ## Requirements
 
-- Node 20+
+- Node 20+ (although Node 18 is still supported but has now reached EOL)
 - pnpm 8 (use it via `corepack install`)
 
 ## Our Development Process
