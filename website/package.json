@@ -2,6 +2,9 @@
   "name": "website",
   "version": "0.0.1",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "rspress dev",
     "export": "rspress build",
@@ -18,11 +21,8 @@
     "rspress-plugin-vercel-analytics": "^0.3.0"
   },
   "devDependencies": {
-    "@types/node": "^18",
+    "@types/node": "catalog:",
     "@types/react": "^18.2.64",
     "typescript": "catalog:"
-  },
-  "engines": {
-    "node": ">=22"
   }
 }

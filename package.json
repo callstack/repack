@@ -1,6 +1,10 @@
 {
   "name": "repack",
   "private": true,
+  "packageManager": "pnpm@9.5.0",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "prepare": "is-in-ci || husky",
     "build": "nx run-many -t build",
@@ -30,6 +34,5 @@
     "is-in-ci": "^1.0.0",
     "nx": "19.7.3",
     "typescript": "catalog:"
-  },
-  "packageManager": "pnpm@9.5.0"
+  }
 }
