@@ -83,7 +83,7 @@ export default defineConfig({
         title: 'Re.Pack',
         type: 'website',
         url: 'https://re-pack.dev',
-        image: 'https://re-pack.dev/img/og-image.png',
+        image: 'https://re-pack.dev/img/og-image.jpg',
         description: 'A modern build tool for React Native',
         twitter: {
           site: '@repack_rn',
