@@ -2,7 +2,6 @@ import * as path from 'node:path';
 import { pluginCallstackTheme } from '@callstack/rspress-theme/plugin';
 import { pluginLlms } from '@rspress/plugin-llms';
 import { pluginOpenGraph } from 'rsbuild-plugin-open-graph';
-import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
 import pluginSitemap from 'rspress-plugin-sitemap';
 import vercelAnalytics from 'rspress-plugin-vercel-analytics';
 import { defineConfig } from 'rspress/config';
@@ -114,8 +113,6 @@ export default defineConfig({
     pluginSitemap({
       domain: 'https://re-pack.dev',
     }),
-    // @ts-ignore
-    pluginFontOpenSans(),
     // @ts-ignore
     vercelAnalytics(),
     // @ts-ignore
