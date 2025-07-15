@@ -1,0 +1,15 @@
+@font-face {
+  font-family: "Alliance No. 2";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/alliance-no-2-regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Alliance No. 2";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/alliance-no-2-medium.ttf") format("truetype");
+}

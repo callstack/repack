@@ -34,10 +34,5 @@
     "is-in-ci": "^1.0.0",
     "nx": "19.7.3",
     "typescript": "catalog:"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "@rspress/plugin-llms@2.0.0-beta.3": "patches/@rspress__plugin-llms@2.0.0-beta.3.patch"
-    }
   }
 }
