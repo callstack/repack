@@ -1,5 +1,4 @@
 import {
-  Announcement,
   Button,
   HomeBanner,
   HomeFeature,
@@ -46,15 +45,7 @@ const Layout = () => (
             latestVersion={global.__REPACK_DOC_LATEST_VERSION__}
           />
         </NoSSR>
-      ) : (
-        <NoSSR>
-          <Announcement
-            href="/blog/repack-5-release"
-            message="✨ Re.Pack 5 released ✨"
-            localStorageKey="repack-5-release-announcement"
-          />
-        </NoSSR>
-      )
+      ) : null
     }
     beforeDocContent={
       <VersionBadge
