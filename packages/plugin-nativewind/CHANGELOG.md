@@ -1,5 +1,42 @@
 # @callstack/repack-plugin-nativewind
 
+## 5.1.3
+
+### Patch Changes
+
+- [#1173](https://github.com/callstack/repack/pull/1173) [`175a60a715a3fb863955fb95af1e0131b265966d`](https://github.com/callstack/repack/commit/175a60a715a3fb863955fb95af1e0131b265966d) Thanks [@raghav-reglobe](https://github.com/raghav-reglobe)! - Fix platform detection for NativeWind via `NATIVEWIND_OS` env var
+
+- Updated dependencies [[`768e36f152a3ff0cb0ddc69e3d37520f4b3bfeb0`](https://github.com/callstack/repack/commit/768e36f152a3ff0cb0ddc69e3d37520f4b3bfeb0), [`175a60a715a3fb863955fb95af1e0131b265966d`](https://github.com/callstack/repack/commit/175a60a715a3fb863955fb95af1e0131b265966d), [`50469664221bf9d7fe49fb27b3dd265ba18d463b`](https://github.com/callstack/repack/commit/50469664221bf9d7fe49fb27b3dd265ba18d463b)]:
+  - @callstack/repack@5.1.3
+
+## 5.1.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @callstack/repack@5.1.2
+
+## 5.1.1
+
+### Patch Changes
+
+- Updated dependencies [[`897dc5a9c3568dfdff22eacc43a918f060c8426f`](https://github.com/callstack/repack/commit/897dc5a9c3568dfdff22eacc43a918f060c8426f)]:
+  - @callstack/repack@5.1.1
+
+## 5.1.0
+
+### Patch Changes
+
+- Updated dependencies [[`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584)]
+  - @callstack/repack@5.1.0
+
+## 5.1.0-rc.0
+
+### Patch Changes
+
+- Updated dependencies [[`b98e72f`](https://github.com/callstack/repack/commit/b98e72fda05f3f4dcdab0430165a4cdf698dd584)]
+  - @callstack/repack@5.1.0-rc.0
+
 ## 5.0.6
 
 ### Patch Changes

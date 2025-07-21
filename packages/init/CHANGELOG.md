@@ -1,5 +1,27 @@
 # @callstack/repack-init
 
+## 5.1.3
+
+### Patch Changes
+
+- [#1188](https://github.com/callstack/repack/pull/1188) [`768e36f152a3ff0cb0ddc69e3d37520f4b3bfeb0`](https://github.com/callstack/repack/commit/768e36f152a3ff0cb0ddc69e3d37520f4b3bfeb0) Thanks [@jbroma](https://github.com/jbroma)! - Fix `@callstack/repack-init` installing unsupported versions of `react-native`
+
+## 5.1.2
+
+## 5.1.1
+
+## 5.1.0
+
+### Patch Changes
+
+- [#1125](https://github.com/callstack/repack/pull/1125) [`1bb5e77`](https://github.com/callstack/repack/commit/1bb5e77f12a51094b0901945857210f6781ce9b6) Thanks [@jbroma](https://github.com/jbroma)! - Bump versions of dependencies for `repack-init`
+
+## 5.1.0-rc.0
+
+### Patch Changes
+
+- [#1125](https://github.com/callstack/repack/pull/1125) [`1bb5e77`](https://github.com/callstack/repack/commit/1bb5e77f12a51094b0901945857210f6781ce9b6) Thanks [@jbroma](https://github.com/jbroma)! - Bump versions of dependencies for `repack-init`
+
 ## 5.0.6
 
 ## 5.0.5

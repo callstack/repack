@@ -1,5 +1,120 @@
 # @callstack/repack
 
+## 5.1.3
+
+### Patch Changes
+
+- [#1188](https://github.com/callstack/repack/pull/1188) [`768e36f152a3ff0cb0ddc69e3d37520f4b3bfeb0`](https://github.com/callstack/repack/commit/768e36f152a3ff0cb0ddc69e3d37520f4b3bfeb0) Thanks [@jbroma](https://github.com/jbroma)! - Fix `@callstack/repack-init` installing unsupported versions of `react-native`
+
+- [#1173](https://github.com/callstack/repack/pull/1173) [`175a60a715a3fb863955fb95af1e0131b265966d`](https://github.com/callstack/repack/commit/175a60a715a3fb863955fb95af1e0131b265966d) Thanks [@raghav-reglobe](https://github.com/raghav-reglobe)! - Fix platform detection for NativeWind via `NATIVEWIND_OS` env var
+
+- [#1184](https://github.com/callstack/repack/pull/1184) [`50469664221bf9d7fe49fb27b3dd265ba18d463b`](https://github.com/callstack/repack/commit/50469664221bf9d7fe49fb27b3dd265ba18d463b) Thanks [@swrobel](https://github.com/swrobel)! - Add `react-native-keyboard-aware-scroll-view` and `@react-native-community/push-notification-ios` to flow libs
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.1.3
+
+## 5.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`71a989b82e97f5d5cdc12a8e6edfaad47636b13e`](https://github.com/callstack/repack/commit/71a989b82e97f5d5cdc12a8e6edfaad47636b13e)]:
+  - @callstack/repack-dev-server@5.1.2
+
+## 5.1.1
+
+### Patch Changes
+
+- [#1156](https://github.com/callstack/repack/pull/1156) [`897dc5a9c3568dfdff22eacc43a918f060c8426f`](https://github.com/callstack/repack/commit/897dc5a9c3568dfdff22eacc43a918f060c8426f) Thanks [@jbroma](https://github.com/jbroma)! - Fix registering resolvers for remotes in ResolverPlugin when ScriptManager is not yet initialized
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.1.1
+
+## 5.1.0
+
+### Minor Changes
+
+- [#1078](https://github.com/callstack/repack/pull/1078) [`5ac48cd`](https://github.com/callstack/repack/commit/5ac48cd08) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Add hook system to `ScriptManager` for runtime manipulation of script loading process.
+
+- [#1099](https://github.com/callstack/repack/pull/1099) [`332f384`](https://github.com/callstack/repack/commit/332f384088ae7127af7e456076d711c7bfed2d5e) Thanks [@jbroma](https://github.com/jbroma)! - Enable support for package imports by default when resolving modules
+
+- [#1128](https://github.com/callstack/repack/pull/1128) [`859c1d7`](https://github.com/callstack/repack/commit/859c1d78a8f2d150eff062598d3b75aed1bfe5eb) Thanks [@jbroma](https://github.com/jbroma)! - Strip empty import statements that are a leftover from stripping flow type imports
+
+- [#1136](https://github.com/callstack/repack/pull/1136) [`55a56c3`](https://github.com/callstack/repack/commit/55a56c33fc55c6887356e5f1d022516f263a9419) Thanks [@jbroma](https://github.com/jbroma)! - Support Module Federation `preloadRemote` through `PrefetchPlugin`.
+
+- [#1140](https://github.com/callstack/repack/pull/1140) [`2cedf58`](https://github.com/callstack/repack/commit/2cedf58f17d6fece9c209379195b47ff3b439882) Thanks [@jbroma](https://github.com/jbroma)! - Enable persistent cache by default in `start` command
+
+- [#1130](https://github.com/callstack/repack/pull/1130) [`90be891`](https://github.com/callstack/repack/commit/90be8910308a5694bbc78c0d8688aea6787f6747) Thanks [@jbroma](https://github.com/jbroma)! - MF2 `ResolverPlugin` now adds a resolver only once when new remote is registered through `registerRemote` federation runtime hook
+
+- [#1073](https://github.com/callstack/repack/pull/1073) [`84952ac`](https://github.com/callstack/repack/commit/84952acfd2ac0f03c5512e13c66395c7b8526df6) Thanks [@jbroma](https://github.com/jbroma)! - Add support for setting up proxy in DevServer for redirecting requests
+
+- [#1099](https://github.com/callstack/repack/pull/1099) [`332f384`](https://github.com/callstack/repack/commit/332f384088ae7127af7e456076d711c7bfed2d5e) Thanks [@jbroma](https://github.com/jbroma)! - Resolve platform (`.ios`, `.android`) & native (`.native`) extensions when using package exports
+
+- [#1099](https://github.com/callstack/repack/pull/1099) [`332f384`](https://github.com/callstack/repack/commit/332f384088ae7127af7e456076d711c7bfed2d5e) Thanks [@jbroma](https://github.com/jbroma)! - Use `import` / `require` condition name depending on the source type (`esm` or `cjs`)
+
+- [#1140](https://github.com/callstack/repack/pull/1140) [`2cedf58`](https://github.com/callstack/repack/commit/2cedf58f17d6fece9c209379195b47ff3b439882) Thanks [@jbroma](https://github.com/jbroma)! - Support resetting transformation cache via `--reset-cache` flag
+
+- [#1150](https://github.com/callstack/repack/pull/1150) [`350bb44`](https://github.com/callstack/repack/commit/350bb44bd458178daf0f4929ba813129d37d20f9) Thanks [@jbroma](https://github.com/jbroma)! - Support `RSPACK_PROFILE` env var for obtaining traces from Rspack
+
+### Patch Changes
+
+- [#1139](https://github.com/callstack/repack/pull/1139) [`be32944`](https://github.com/callstack/repack/commit/be329442dc91e1f6b782be3b4e62dd66c8b8a459) Thanks [@jbroma](https://github.com/jbroma)! - Fix issue where errors originating in project config files were getting swallowed when the project config was loaded.
+
+- [#1119](https://github.com/callstack/repack/pull/1119) [`19c814f`](https://github.com/callstack/repack/commit/19c814f0f4dee219d66606f831a136732f6e2b24) Thanks [@jbroma](https://github.com/jbroma)! - Check for default import when using deep imports from `react-native` in WebpackHMRClient, DevServerClient and when using remote or inline assets
+
+- [#1066](https://github.com/callstack/repack/pull/1066) [`1bc0e4d`](https://github.com/callstack/repack/commit/1bc0e4dab6a4878ca88183a6c7ce5558a4be2350) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Add detecting dependency specific plugins
+
+- [#1134](https://github.com/callstack/repack/pull/1134) [`acd69db`](https://github.com/callstack/repack/commit/acd69db2ae480c255671b42ca7b659bab198f10e) Thanks [@jbroma](https://github.com/jbroma)! - Always include AssetRegistry and AssetSourceResolver in the bundle
+
+- [#1143](https://github.com/callstack/repack/pull/1143) [`81ee94c`](https://github.com/callstack/repack/commit/81ee94c1ae672ea316444decaf6f78c7f2fc0411) Thanks [@jbroma](https://github.com/jbroma)! - Fix failure to read project package json when validating plugins
+
+- [#1123](https://github.com/callstack/repack/pull/1123) [`bd58562`](https://github.com/callstack/repack/commit/bd58562fb6984e64be953ff6e2865233fa6eff6a) Thanks [@jbroma](https://github.com/jbroma)! - Allow passing `referenceUrl` to `ScriptManager.prefetchScript`
+
+- [#1151](https://github.com/callstack/repack/pull/1151) [`3748b41`](https://github.com/callstack/repack/commit/3748b41c414ed1da31ecd37ad22ff723dc11b79b) Thanks [@jbroma](https://github.com/jbroma)! - Hide persistent cache behind `REPACK_EXPERIMENTAL_CACHE` flag
+
+- Updated dependencies [[`c1a5786`](https://github.com/callstack/repack/commit/c1a5786f5), [`e5e5b12`](https://github.com/callstack/repack/commit/e5e5b120c)]:
+  - @callstack/repack-dev-server@5.1.0
+
+## 5.1.0-rc.0
+
+### Minor Changes
+
+- [#1078](https://github.com/callstack/repack/pull/1078) [`5ac48cd`](https://github.com/callstack/repack/commit/5ac48cd08) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Add hook system to `ScriptManager` for runtime manipulation of script loading process.
+
+- [#1099](https://github.com/callstack/repack/pull/1099) [`332f384`](https://github.com/callstack/repack/commit/332f384088ae7127af7e456076d711c7bfed2d5e) Thanks [@jbroma](https://github.com/jbroma)! - Enable support for package imports by default when resolving modules
+
+- [#1128](https://github.com/callstack/repack/pull/1128) [`859c1d7`](https://github.com/callstack/repack/commit/859c1d78a8f2d150eff062598d3b75aed1bfe5eb) Thanks [@jbroma](https://github.com/jbroma)! - Strip empty import statements that are a leftover from stripping flow type imports
+
+- [#1136](https://github.com/callstack/repack/pull/1136) [`55a56c3`](https://github.com/callstack/repack/commit/55a56c33fc55c6887356e5f1d022516f263a9419) Thanks [@jbroma](https://github.com/jbroma)! - Support Module Federation `preloadRemote` through `PrefetchPlugin`.
+
+- [#1140](https://github.com/callstack/repack/pull/1140) [`2cedf58`](https://github.com/callstack/repack/commit/2cedf58f17d6fece9c209379195b47ff3b439882) Thanks [@jbroma](https://github.com/jbroma)! - Enable persistent cache by default in `start` command
+
+- [#1130](https://github.com/callstack/repack/pull/1130) [`90be891`](https://github.com/callstack/repack/commit/90be8910308a5694bbc78c0d8688aea6787f6747) Thanks [@jbroma](https://github.com/jbroma)! - MF2 `ResolverPlugin` now adds a resolver only once when new remote is registered through `registerRemote` federation runtime hook
+
+- [#1073](https://github.com/callstack/repack/pull/1073) [`84952ac`](https://github.com/callstack/repack/commit/84952acfd2ac0f03c5512e13c66395c7b8526df6) Thanks [@jbroma](https://github.com/jbroma)! - Add support for setting up proxy in DevServer for redirecting requests
+
+- [#1099](https://github.com/callstack/repack/pull/1099) [`332f384`](https://github.com/callstack/repack/commit/332f384088ae7127af7e456076d711c7bfed2d5e) Thanks [@jbroma](https://github.com/jbroma)! - Resolve platform (`.ios`, `.android`) & native (`.native`) extensions when using package exports
+
+- [#1099](https://github.com/callstack/repack/pull/1099) [`332f384`](https://github.com/callstack/repack/commit/332f384088ae7127af7e456076d711c7bfed2d5e) Thanks [@jbroma](https://github.com/jbroma)! - Use `import` / `require` condition name depending on the source type (`esm` or `cjs`)
+
+- [#1140](https://github.com/callstack/repack/pull/1140) [`2cedf58`](https://github.com/callstack/repack/commit/2cedf58f17d6fece9c209379195b47ff3b439882) Thanks [@jbroma](https://github.com/jbroma)! - Support resetting transformation cache via `--reset-cache` flag
+
+### Patch Changes
+
+- [#1139](https://github.com/callstack/repack/pull/1139) [`be32944`](https://github.com/callstack/repack/commit/be329442dc91e1f6b782be3b4e62dd66c8b8a459) Thanks [@jbroma](https://github.com/jbroma)! - Fix issue where errors originating in project config files were getting swallowed when the project config was loaded.
+
+- [#1119](https://github.com/callstack/repack/pull/1119) [`19c814f`](https://github.com/callstack/repack/commit/19c814f0f4dee219d66606f831a136732f6e2b24) Thanks [@jbroma](https://github.com/jbroma)! - Check for default import when using deep imports from `react-native` in WebpackHMRClient, DevServerClient and when using remote or inline assets
+
+- [#1066](https://github.com/callstack/repack/pull/1066) [`1bc0e4d`](https://github.com/callstack/repack/commit/1bc0e4dab6a4878ca88183a6c7ce5558a4be2350) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Add detecting dependency specific plugins
+
+- [#1134](https://github.com/callstack/repack/pull/1134) [`acd69db`](https://github.com/callstack/repack/commit/acd69db2ae480c255671b42ca7b659bab198f10e) Thanks [@jbroma](https://github.com/jbroma)! - Always include AssetRegistry and AssetSourceResolver in the bundle
+
+- [#1143](https://github.com/callstack/repack/pull/1143) [`81ee94c`](https://github.com/callstack/repack/commit/81ee94c1ae672ea316444decaf6f78c7f2fc0411) Thanks [@jbroma](https://github.com/jbroma)! - Fix failure to read project package json when validating plugins
+
+- [#1123](https://github.com/callstack/repack/pull/1123) [`bd58562`](https://github.com/callstack/repack/commit/bd58562fb6984e64be953ff6e2865233fa6eff6a) Thanks [@jbroma](https://github.com/jbroma)! - Allow passing `referenceUrl` to `ScriptManager.prefetchScript`
+
+- Updated dependencies [[`c1a5786`](https://github.com/callstack/repack/commit/c1a5786f5), [`e5e5b12`](https://github.com/callstack/repack/commit/e5e5b120c)]:
+  - @callstack/repack-dev-server@5.1.0-rc.0
+
 ## 5.0.6
 
 ### Patch Changes

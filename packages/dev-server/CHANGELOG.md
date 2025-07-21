@@ -1,5 +1,35 @@
 # @callstack/repack-dev-server
 
+## 5.1.3
+
+## 5.1.2
+
+### Patch Changes
+
+- [#1168](https://github.com/callstack/repack/pull/1168) [`71a989b82e97f5d5cdc12a8e6edfaad47636b13e`](https://github.com/callstack/repack/commit/71a989b82e97f5d5cdc12a8e6edfaad47636b13e) Thanks [@jbroma](https://github.com/jbroma)! - Fix React Native DevTools not showing source maps for MF2 remotes
+
+## 5.1.1
+
+## 5.1.0
+
+### Minor Changes
+
+- [#1073](https://github.com/callstack/repack/pull/1073) [`84952ac`](https://github.com/callstack/repack/commit/84952acfd2ac0f03c5512e13c66395c7b8526df6) Thanks [@jbroma](https://github.com/jbroma)! - Add support for setting up proxy in DevServer for redirecting requests
+
+### Patch Changes
+
+- [#1137](https://github.com/callstack/repack/pull/1137) [`996942f`](https://github.com/callstack/repack/commit/996942f8776a0777b99406918f673193b66cde19) Thanks [@jbroma](https://github.com/jbroma)! - Support `application/json` type of payload for `/symbolicate` requests
+
+## 5.1.0-rc.0
+
+### Minor Changes
+
+- [#1073](https://github.com/callstack/repack/pull/1073) [`84952ac`](https://github.com/callstack/repack/commit/84952acfd2ac0f03c5512e13c66395c7b8526df6) Thanks [@jbroma](https://github.com/jbroma)! - Add support for setting up proxy in DevServer for redirecting requests
+
+### Patch Changes
+
+- [#1137](https://github.com/callstack/repack/pull/1137) [`996942f`](https://github.com/callstack/repack/commit/996942f8776a0777b99406918f673193b66cde19) Thanks [@jbroma](https://github.com/jbroma)! - Support `application/json` type of payload for `/symbolicate` requests
+
 ## 5.0.6
 
 ## 5.0.5

@@ -73,6 +73,15 @@ export async function start(
     });
   }
 
+  if (process.env.RSPACK_PROFILE) {
+    const { applyProfile } = await import('./profile/index.js');
+    await applyProfile(
+      process.env.RSPACK_PROFILE,
+      process.env.RSPACK_TRACE_LAYER,
+      process.env.RSPACK_TRACE_OUTPUT
+    );
+  }
+
   const compiler = new Compiler(configs, reporter, cliConfig.root);
 
   const { createServer } = await import('@callstack/repack-dev-server');

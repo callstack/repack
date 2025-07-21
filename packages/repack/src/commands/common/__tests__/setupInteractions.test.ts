@@ -23,6 +23,11 @@ describe('setupInteractions', () => {
     } as unknown as Logger;
 
     mockProcess = {
+      on: (event: string) => {
+        if (event === 'SIGINT') {
+          mockProcess.exit();
+        }
+      },
       stdin: {
         setRawMode: jest.fn(),
         on: jest.fn(),

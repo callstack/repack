@@ -104,6 +104,7 @@ export class DevelopmentPlugin {
 
     const host = compiler.options.devServer.host;
     const port = compiler.options.devServer.port;
+    // @ts-expect-error: devServertypes here are not being overridden properly
     const protocol = this.getProtocolType(compiler.options.devServer);
     const platform = this.config.platform ?? (compiler.options.name as string);
 

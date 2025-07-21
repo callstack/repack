@@ -32,7 +32,7 @@ Path to the private key. This can be either a relative path or an absolute one. 
 
 Whether to enable the plugin. You typically want to enable the plugin only for production builds and disable it for development.
 
-### exludeChunks
+### excludeChunks
 
 - Type: `string[] | RegExp | RegExp[]`
 - Default: `[]`
@@ -51,6 +51,12 @@ In terminal, navigate to your project directory and enter the following commands
 ssh-keygen -t rsa -b 4096 -m PEM -f code-signing.pem
 openssl rsa -in code-signing.pem -pubout -outform PEM -out code-signing.pem.pub
 ```
+
+:::info
+
+The passphrase must be left empty.
+
+:::
 
 ### Add the plugin
 
