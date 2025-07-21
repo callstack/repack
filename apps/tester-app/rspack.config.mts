@@ -3,11 +3,10 @@ import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
-import type { Configuration } from '@rspack/core';
 
 const dirname = Repack.getDirname(import.meta.url);
 
-export default (env: Repack.EnvOptions): Configuration => {
+export default Repack.defineRspackConfig((env) => {
   const {
     mode = 'development',
     context = dirname,
@@ -125,4 +124,4 @@ export default (env: Repack.EnvOptions): Configuration => {
       new NativeWindPlugin({ cssInteropOptions: { inlineRem: 16 } }),
     ].filter(Boolean),
   };
-};
+});

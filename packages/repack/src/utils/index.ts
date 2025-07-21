@@ -1,4 +1,5 @@
 export * from './assetExtensions.js';
+export * from './defineConfig.js';
 export * from './federated.js';
 export * from './getDirname.js';
 export * from './getPublicPath.js';
