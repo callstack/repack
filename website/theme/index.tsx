@@ -1,21 +1,6 @@
-import {
-  Button,
-  HomeBanner,
-  HomeFeature,
-  HomeFooter,
-  HomeHero,
-  LinkCard,
-  OutlineCTA,
-  PrevNextPage,
-  VersionBadge,
-} from '@callstack/rspress-theme';
+import { PrevNextPage, VersionBadge } from '@callstack/rspress-theme';
 import { NoSSR } from 'rspress/runtime';
-import {
-  CodeBlockRuntime,
-  Link,
-  HomeLayout as RspressHomeLayout,
-  Layout as RspressLayout,
-} from 'rspress/theme';
+import { CodeBlockRuntime, Link, Layout as RspressLayout } from 'rspress/theme';
 
 const OldVersionAnnouncement = ({ version, latestVersion }) => (
   <div className="py-2 px-4 flex flex-col sm:flex-row items-center justify-center bg-amber-50 text-amber-900 border-b border-amber-200 text-sm">
@@ -52,22 +37,10 @@ const Layout = () => (
         version={`${global.__REPACK_DOC_VERSION__ ?? global.__REPACK_DOC_LATEST_VERSION__}`}
       />
     }
-    afterOutline={<OutlineCTA href="https://callstack.com" />}
   />
 );
 
-const HomeLayout = () => (
-  <RspressHomeLayout
-    afterFeatures={
-      <>
-        <HomeBanner href="https://callstack.com" />
-        <HomeFooter />
-      </>
-    }
-  />
-);
-
-export { HomeLayout, Layout };
+export { Layout };
 
 /* expose internal CodeBlock component */
 export const CodeBlock = ({ children, language, title }) => {
@@ -82,7 +55,5 @@ const CustomPrevNextPage = (props) => {
 };
 
 export { CustomPrevNextPage as PrevNextPage };
-
-export { HomeFeature, HomeHero, LinkCard, Button };
 
 export * from 'rspress/theme';
