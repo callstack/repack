@@ -728,8 +728,8 @@ importers:
   website:
     dependencies:
       '@callstack/rspress-theme':
-        specifier: ^0.2.0
-        version: 0.2.0(react@19.1.0)(rspress@2.0.0-beta.21(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))
+        specifier: ^0.3.0
+        version: 0.3.0(react@19.1.0)(rspress@2.0.0-beta.21(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))
       '@rspress/plugin-llms':
         specifier: 2.0.0-beta.21
         version: 2.0.0-beta.21(rspress@2.0.0-beta.21(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))
@@ -1570,9 +1570,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@callstack/rspress-theme@0.2.0':
-    resolution: {integrity: sha512-HHFCKps8Fds1vsnjOmYT7gecPERqcxKtCdVJK2Fp2JFUTR4JNdqV6jNKZ30iYom+aXzy9hBBckdjYbDe9tlD3g==}
-    hasBin: true
+  '@callstack/rspress-theme@0.3.0':
+    resolution: {integrity: sha512-s49tbcA2rblHtCcypvST54t/JkjQ3iF7kfr7PUvNsSpIYtka9Pe0r0GY11IBB+2DeZfflcwxEQBpSV/amgivGQ==}
     peerDependencies:
       react: ^19.0.0
       rspress: ^2.0.0-beta.21
@@ -9130,7 +9129,7 @@ snapshots:
   '@biomejs/cli-win32-x64@1.9.4':
     optional: true
 
-  '@callstack/rspress-theme@0.2.0(react@19.1.0)(rspress@2.0.0-beta.21(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))':
+  '@callstack/rspress-theme@0.3.0(react@19.1.0)(rspress@2.0.0-beta.21(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5))':
     dependencies:
       react: 19.1.0
       rspress: 2.0.0-beta.21(@types/react@18.3.3)(acorn@8.14.0)(webpack@5.99.5)
