@@ -82,24 +82,38 @@ Re.Pack provides helper functions for type-safe configuration:
 - `defineRspackConfig` - for Rspack configurations
 - `defineWebpackConfig` - for webpack configurations
 
-Consider the following example for Rspack configuration:
-```ts title="rspack.config.ts"
-import { defineRspackConfig } from '@callstack/repack';
-import { RepackPlugin } from '@callstack/repack';
+Consider the following example for the default Rspack configuration:
 
-export default defineRspackConfig((env) => {
-  const { mode, platform } = env;
-  
-  return {
-    mode,
-    entry: './index.js',
-    output: {
-      filename: 'index.bundle',
-      path: `build/generated/${platform}`,
-    },
-    plugins: [new RepackPlugin()],
-  };
+```ts title="rspack.config.mts"
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import * as Repack from '@callstack/repack';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/**
+ * Rspack configuration enhanced with Re.Pack defaults for React Native.
+ *
+ * Learn about Rspack configuration: https://rspack.dev/config/
+ * Learn about Re.Pack configuration: https://re-pack.dev/docs/guides/configuration
+ */
+
+export default Repack.defineRspackConfig({
+  context: __dirname,
+  entry: './index.js',
+  resolve: {
+    ...Repack.getResolveOptions(),
+  },
+  module: {
+    rules: [
+      ...Repack.getJsTransformRules(),
+      ...Repack.getAssetTransformRules(),
+    ],
+  },
+  plugins: [new Repack.RepackPlugin()],
 });
+
 ```
 
 ## Configuration variants
