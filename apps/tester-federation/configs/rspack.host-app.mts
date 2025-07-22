@@ -1,28 +1,25 @@
-// @ts-check
 import * as Repack from '@callstack/repack';
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 import rspack from '@rspack/core';
 
-/** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
-export default (env) => {
+export default Repack.defineRspackConfig((env) => {
   const { mode, context, platform } = env;
 
-  /** @type {import('@rspack/core').Configuration} */
   const config = {
     mode,
     context,
-    entry: './src/mini/index.js',
+    entry: './src/host/index.js',
     resolve: {
       ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
     output: {
-      path: '[context]/build/mini-app/[platform]',
-      uniqueName: 'MFTester-MiniApp',
+      path: '[context]/build/host-app/[platform]',
+      uniqueName: 'MFTester-HostApp',
     },
     module: {
       rules: [
         ...Repack.getJsTransformRules(),
-        ...Repack.getAssetTransformRules({ inline: true }),
+        ...Repack.getAssetTransformRules(),
       ],
     },
     plugins: [
@@ -31,49 +28,46 @@ export default (env) => {
           {
             include: /.*/,
             type: 'remote',
-            outputPath: `build/mini-app/${platform}/output-remote`,
+            outputPath: `build/host-app/${platform}/output-remote`,
           },
         ],
       }),
       new Repack.plugins.ModuleFederationPluginV1({
-        name: 'MiniApp',
-        exposes: {
-          './MiniAppNavigator': './src/mini/navigation/MainNavigator',
-        },
+        name: 'HostApp',
         shared: {
           react: {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '19.0.0',
           },
           'react-native': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '0.79.1',
           },
           '@react-navigation/native': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^6.1.18',
           },
           '@react-navigation/native-stack': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^6.10.1',
           },
           'react-native-safe-area-context': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^5.4.0',
           },
           'react-native-screens': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^4.10.0',
           },
           '@react-native-async-storage/async-storage': {
             singleton: true,
-            eager: false,
+            eager: true,
             requiredVersion: '^2.1.2',
           },
         },
@@ -81,12 +75,16 @@ export default (env) => {
       new rspack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,
       }),
+      new rspack.EnvironmentPlugin({
+        MF_CACHE: null,
+      }),
     ],
   };
 
   if (process.env.RSDOCTOR) {
+    // @ts-ignore
     config.plugins?.push(new RsdoctorRspackPlugin());
   }
 
   return config;
-};
+});
