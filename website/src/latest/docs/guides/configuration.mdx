@@ -58,6 +58,50 @@ These templates provide sensible defaults and common configurations for both Rsp
 </Tabs>
 
 
+## TypeScript configuration
+
+Re.Pack supports TypeScript configuration files for both Rspack and webpack, allowing you to write your configuration in TypeScript with full type safety.
+
+:::tip About TypeScript support in Node
+Newest Node versions support stripping TypeScript types out of the box. 
+If you are stuck on older Node versions, refer to [Rspack TypeScript support documentation](https://rspack.rs/config/#typescript-configuration-file). 
+It details ways to use TypeScript configs outside of newest Node versions.
+:::
+
+### TypeScript configuration files
+
+You can use TypeScript configuration files with the following naming conventions:
+
+- `rspack.config.cts`, `rspack.config.mts` or `rspack.config.ts` for Rspack
+- `webpack.config.cts`, `webpack.config.mts` or `webpack.config.ts` for webpack
+
+### Using `defineRspackConfig` and `defineWebpackConfig`
+
+Re.Pack provides helper functions for type-safe configuration:
+
+- `defineRspackConfig` - for Rspack configurations
+- `defineWebpackConfig` - for webpack configurations
+
+Consider the following example for Rspack configuration:
+```ts title="rspack.config.ts"
+import { defineRspackConfig } from '@callstack/repack';
+import { RepackPlugin } from '@callstack/repack';
+
+export default defineRspackConfig((env) => {
+  const { mode, platform } = env;
+  
+  return {
+    mode,
+    entry: './index.js',
+    output: {
+      filename: 'index.bundle',
+      path: `build/generated/${platform}`,
+    },
+    plugins: [new RepackPlugin()],
+  };
+});
+```
+
 ## Configuration variants
 
 Configuration can be defined in two ways: as a static object or as a function that returns a configuration object.
