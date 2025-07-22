@@ -7,8 +7,8 @@
     "ios": "react-native run-ios",
     "pods": "(cd ios && bundle install && bundle exec pod install)",
     "pods:update": "(cd ios && bundle install && bundle exec pod update)",
-    "start:hostapp": "react-native webpack-start --config config.host-app.mjs",
-    "start:miniapp": "react-native webpack-start --config config.mini-app.mjs --port 8082"
+    "start:hostapp": "react-native webpack-start --config config.host-app.mts",
+    "start:miniapp": "react-native webpack-start --config config.mini-app.mts --port 8082"
   },
   "dependencies": {
     "@callstack/repack": "workspace:*",
