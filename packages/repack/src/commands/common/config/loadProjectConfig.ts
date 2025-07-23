@@ -26,8 +26,8 @@ const readPackageUp = (cwd: string) => {
 };
 
 const isEsmFile = (filePath: string) => {
-  if (filePath.endsWith('.mjs')) return true;
-  if (filePath.endsWith('.cjs')) return false;
+  if (filePath.endsWith('.mjs') || filePath.endsWith('.mts')) return true;
+  if (filePath.endsWith('.cjs') || filePath.endsWith('.cts')) return false;
   const packageJson = readPackageUp(path.dirname(filePath));
   return packageJson?.type === 'module';
 };

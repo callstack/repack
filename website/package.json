@@ -2,6 +2,9 @@
   "name": "website",
   "version": "0.0.1",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "rspress dev",
     "export": "rspress build",
@@ -10,20 +13,16 @@
     "diff:v3-v4:mjs": "git diff @callstack/repack@3.0.0:templates/webpack.config.mjs HEAD:templates/webpack.config.mjs > src/public/diffs/repack_v3-v4_mjs.diff"
   },
   "dependencies": {
-    "@callstack/rspress-theme": "^0.0.3",
-    "@rspress/plugin-llms": "2.0.0-beta.3",
+    "@callstack/rspress-theme": "^0.3.1",
+    "@rspress/plugin-llms": "2.0.0-beta.21",
     "rsbuild-plugin-open-graph": "^1.0.2",
-    "rspress": "2.0.0-beta.3",
-    "rspress-plugin-font-open-sans": "^1.0.0",
+    "rspress": "2.0.0-beta.21",
     "rspress-plugin-sitemap": "^1.1.1",
     "rspress-plugin-vercel-analytics": "^0.3.0"
   },
   "devDependencies": {
-    "@types/node": "^18",
+    "@types/node": "catalog:",
     "@types/react": "^18.2.64",
     "typescript": "catalog:"
-  },
-  "engines": {
-    "node": ">=22"
   }
 }

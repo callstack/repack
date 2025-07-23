@@ -1,0 +1,29 @@
+{
+  "package.json": {
+    "name": "react-strict-dom",
+    "version": "0.0.28",
+    "exports": {
+      ".": {
+        "react-native": {
+          "types": "./dist/native/index.d.ts",
+          "default": "./dist/native/index.js"
+        },
+        "default": {
+          "types": "./dist/dom/index.d.ts",
+          "default": "./dist/dom/index.js"
+        }
+      },
+      "./babel-preset": "./babel/preset.js",
+      "./runtime": "./dist/dom/runtime.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "files": [
+    "dist/native/index.js",
+    "dist/native/index.d.ts",
+    "dist/dom/index.js",
+    "dist/dom/index.d.ts",
+    "dist/dom/runtime.js",
+    "babel/preset.js"
+  ]
+}

@@ -57,7 +57,7 @@
     "tailwindcss": "^3.4.17",
     "terser-webpack-plugin": "catalog:",
     "typescript": "catalog:",
-    "vitest": "^2.0.5",
+    "vitest": "catalog:",
     "webpack": "catalog:"
   }
 }

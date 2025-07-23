@@ -2,7 +2,6 @@ import * as path from 'node:path';
 import { pluginCallstackTheme } from '@callstack/rspress-theme/plugin';
 import { pluginLlms } from '@rspress/plugin-llms';
 import { pluginOpenGraph } from 'rsbuild-plugin-open-graph';
-import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
 import pluginSitemap from 'rspress-plugin-sitemap';
 import vercelAnalytics from 'rspress-plugin-vercel-analytics';
 import { defineConfig } from 'rspress/config';
@@ -22,12 +21,11 @@ export default defineConfig({
     'A modern build tool for React Native that brings the Rspack and webpack ecosystem to mobile React Native apps',
   icon: '/img/favicon.ico',
   logo: {
-    light: '/img/logo_light.svg',
-    dark: '/img/logo_dark.svg',
+    light: '/img/logo-light.png',
+    dark: '/img/logo-dark.png',
   },
   markdown: {
     checkDeadLinks: true,
-    codeHighlighter: 'prism',
   },
   route: {
     cleanUrls: true,
@@ -45,7 +43,7 @@ export default defineConfig({
     },
     editLink: {
       docRepoBaseUrl: EDIT_ROOT_URL,
-      text: '📝 Edit this page on GitHub',
+      text: 'Edit this page on GitHub',
     },
     socialLinks: [
       {
@@ -85,7 +83,7 @@ export default defineConfig({
         title: 'Re.Pack',
         type: 'website',
         url: 'https://re-pack.dev',
-        image: 'https://re-pack.dev/img/og-image.png',
+        image: 'https://re-pack.dev/img/og-image.jpg',
         description: 'A modern build tool for React Native',
         twitter: {
           site: '@repack_rn',
@@ -108,15 +106,13 @@ export default defineConfig({
     process.env.REPACK_DOC_VERSION !== 'v2' &&
     process.env.REPACK_DOC_VERSION !== 'v3' &&
     process.env.REPACK_DOC_VERSION !== 'v4'
-      ? path.join(__dirname, DOCS_ROOT, 'styles', 'index.css')
+      ? path.join(__dirname, 'theme', 'styles.css')
       : undefined,
   plugins: [
     // @ts-ignore
     pluginSitemap({
       domain: 'https://re-pack.dev',
     }),
-    // @ts-ignore
-    pluginFontOpenSans(),
     // @ts-ignore
     vercelAnalytics(),
     // @ts-ignore
