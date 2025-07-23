@@ -1,14 +1,11 @@
 // @ts-check
 import * as Repack from '@callstack/repack';
-import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
-import rspack from '@rspack/core';
+import webpack from 'webpack';
 
-/** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
-export default (env) => {
+export default Repack.defineWebpackConfig((env) => {
   const { mode, context, platform } = env;
 
-  /** @type {import('@rspack/core').Configuration} */
-  const config = {
+  return {
     mode,
     context,
     entry: './src/host/index.js',
@@ -17,15 +14,20 @@ export default (env) => {
     },
     output: {
       path: '[context]/build/host-app/[platform]',
-      uniqueName: 'MFTester-HostApp',
+      uniqueName: 'MF2Tester-HostApp',
     },
     module: {
       rules: [
-        ...Repack.getJsTransformRules(),
+        {
+          test: /\.[cm]?[jt]sx?$/,
+          use: 'babel-loader',
+          type: 'javascript/auto',
+        },
         ...Repack.getAssetTransformRules(),
       ],
     },
     plugins: [
+      // @ts-ignore
       new Repack.RepackPlugin({
         extraChunks: [
           {
@@ -35,8 +37,14 @@ export default (env) => {
           },
         ],
       }),
-      new Repack.plugins.ModuleFederationPluginV1({
+      // @ts-ignore
+      new Repack.plugins.ModuleFederationPluginV2({
         name: 'HostApp',
+        filename: 'HostApp.container.js.bundle',
+        remotes: {
+          MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
+        },
+        dts: false,
         shared: {
           react: {
             singleton: true,
@@ -68,25 +76,12 @@ export default (env) => {
             eager: true,
             requiredVersion: '^4.10.0',
           },
-          '@react-native-async-storage/async-storage': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '^2.1.2',
-          },
         },
       }),
-      new rspack.IgnorePlugin({
+      // silence missing @react-native-masked-view optionally required by @react-navigation/elements
+      new webpack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,
-      }),
-      new rspack.EnvironmentPlugin({
-        MF_CACHE: null,
       }),
     ],
   };
-
-  if (process.env.RSDOCTOR) {
-    config.plugins?.push(new RsdoctorRspackPlugin());
-  }
-
-  return config;
-};
+});

@@ -1,4 +1,3 @@
-// @ts-check
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
@@ -7,8 +6,7 @@ import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 
 const dirname = Repack.getDirname(import.meta.url);
 
-/** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
-export default (env) => {
+export default Repack.defineRspackConfig((env) => {
   const {
     mode = 'development',
     context = dirname,
@@ -126,4 +124,4 @@ export default (env) => {
       new NativeWindPlugin({ cssInteropOptions: { inlineRem: 16 } }),
     ].filter(Boolean),
   };
-};
+});
