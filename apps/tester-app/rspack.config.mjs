@@ -1,7 +1,7 @@
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
-import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
+// import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 
 const dirname = Repack.getDirname(import.meta.url);
@@ -20,6 +20,9 @@ export default Repack.defineRspackConfig((env) => {
     mode,
     context,
     entry: './index.js',
+    experiments: {
+      parallelLoader: true,
+    },
     resolve: {
       ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
@@ -30,7 +33,20 @@ export default Repack.defineRspackConfig((env) => {
       rules: [
         ...Repack.getJsTransformRules({
           swc: { importSource: 'nativewind' },
+          flow: { enabled: false },
+          codegen: { enabled: false },
         }),
+        {
+          test: /\.[cm]?[jt]sx?$/,
+          use: {
+            loader: '@callstack/repack/babel-loader',
+            parallel: true,
+            options: {
+              projectRoot: context,
+            },
+          },
+          type: 'javascript/auto',
+        },
         {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
@@ -120,7 +136,7 @@ export default Repack.defineRspackConfig((env) => {
       //   exclude: /index.bundle$/,
       // }),
       process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
-      new ReanimatedPlugin(),
+      // new ReanimatedPlugin(),
       new NativeWindPlugin({ cssInteropOptions: { inlineRem: 16 } }),
     ].filter(Boolean),
   };
