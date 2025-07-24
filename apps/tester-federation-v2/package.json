@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native run-android --appId com.tester.federationV2",
     "ios": "react-native run-ios",
     "pods": "(cd ios && bundle install && (bundle exec pod install || bundle exec pod update))",
     "pods:update": "(cd ios && bundle install && bundle exec pod update)",
