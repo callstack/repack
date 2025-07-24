@@ -591,7 +591,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       flow-remove-types:
-        specifier: ^2.268.0
+        specifier: ^2.277.0
         version: 2.277.0
       gradient-string:
         specifier: ^2.0.2
