@@ -34,5 +34,10 @@
     "is-in-ci": "^1.0.0",
     "nx": "19.7.3",
     "typescript": "catalog:"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "react-native-test-app@4.4.4": "patches/react-native-test-app@4.4.4.patch"
+    }
   }
 }
