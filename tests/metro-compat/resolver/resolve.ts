@@ -149,13 +149,9 @@ export function resolve(
   // this is equivalent to "byDependency" configuration in rspack/webpack
   // enhanced-resolve does not use "byDependency" configuration
   if (metroContext.isESMImport) {
-    resolveOptions.conditionNames?.push(
-      ...resolutionPreset.byDependency.esm.conditionNames
-    );
+    resolveOptions.conditionNames?.push('import');
   } else {
-    resolveOptions.conditionNames?.push(
-      ...resolutionPreset.byDependency.commonjs.conditionNames
-    );
+    resolveOptions.conditionNames?.push('require');
   }
 
   const resolve = enhancedResolve.create.sync(resolveOptions);

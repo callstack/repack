@@ -1,35 +1,6 @@
-import { Announcement } from '@callstack/rspress-theme';
-import { NoSSR, usePageData } from 'rspress/runtime';
-import {
-  Badge,
-  Link,
-  PrevNextPage,
-  Layout as RspressLayout,
-  getCustomMDXComponent,
-} from 'rspress/theme';
-
-const VersionBadge = () => {
-  const pageData = usePageData();
-
-  // hide on overview pages since it's badly positioned
-  if (pageData.page.frontmatter.overview) {
-    return null;
-  }
-
-  if (pageData.page.routePath.startsWith('/blog')) {
-    return null;
-  }
-
-  return (
-    <div className="py-2">
-      <Badge
-        type="info"
-        outline
-        text={`Version: ${global.__REPACK_DOC_VERSION__ ?? global.__REPACK_DOC_LATEST_VERSION__}`}
-      />
-    </div>
-  );
-};
+import { PrevNextPage, VersionBadge } from '@callstack/rspress-theme';
+import { NoSSR } from 'rspress/runtime';
+import { CodeBlockRuntime, Link, Layout as RspressLayout } from 'rspress/theme';
 
 const OldVersionAnnouncement = ({ version, latestVersion }) => (
   <div className="py-2 px-4 flex flex-col sm:flex-row items-center justify-center bg-amber-50 text-amber-900 border-b border-amber-200 text-sm">
@@ -59,41 +30,23 @@ const Layout = () => (
             latestVersion={global.__REPACK_DOC_LATEST_VERSION__}
           />
         </NoSSR>
-      ) : (
-        <NoSSR>
-          <Announcement
-            href="/blog/repack-5-release"
-            message="✨ Re.Pack 5 released ✨"
-            localStorageKey="repack-5-release-announcement"
-          />
-        </NoSSR>
-      )
+      ) : null
     }
-    beforeDocContent={<VersionBadge />}
+    beforeDocContent={
+      <VersionBadge
+        version={`${global.__REPACK_DOC_VERSION__ ?? global.__REPACK_DOC_LATEST_VERSION__}`}
+      />
+    }
   />
 );
 
 export { Layout };
 
-const { code: Code, pre: Pre } = getCustomMDXComponent();
-
 /* expose internal CodeBlock component */
 export const CodeBlock = ({ children, language, title }) => {
-  return (
-    <Pre>
-      <Code
-        className={`language-${language}`}
-        meta={title ? `title="${title}"` : undefined}
-      >
-        {children}
-      </Code>
-    </Pre>
-  );
+  // @ts-ignore
+  return <CodeBlockRuntime lang={language} title={title} code={children} />;
 };
-
-const CustomLink = (props) => (
-  <Link {...props} className={props.className + ' rspress-link'} />
-);
 
 /* omit rendering for edge cases */
 const CustomPrevNextPage = (props) => {
@@ -101,7 +54,6 @@ const CustomPrevNextPage = (props) => {
   return <PrevNextPage {...props} />;
 };
 
-export { CustomLink as Link };
 export { CustomPrevNextPage as PrevNextPage };
 
 export * from 'rspress/theme';

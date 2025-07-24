@@ -1,5 +1,18 @@
 # @callstack/repack
 
+## 5.1.3
+
+### Patch Changes
+
+- [#1188](https://github.com/callstack/repack/pull/1188) [`768e36f152a3ff0cb0ddc69e3d37520f4b3bfeb0`](https://github.com/callstack/repack/commit/768e36f152a3ff0cb0ddc69e3d37520f4b3bfeb0) Thanks [@jbroma](https://github.com/jbroma)! - Fix `@callstack/repack-init` installing unsupported versions of `react-native`
+
+- [#1173](https://github.com/callstack/repack/pull/1173) [`175a60a715a3fb863955fb95af1e0131b265966d`](https://github.com/callstack/repack/commit/175a60a715a3fb863955fb95af1e0131b265966d) Thanks [@raghav-reglobe](https://github.com/raghav-reglobe)! - Fix platform detection for NativeWind via `NATIVEWIND_OS` env var
+
+- [#1184](https://github.com/callstack/repack/pull/1184) [`50469664221bf9d7fe49fb27b3dd265ba18d463b`](https://github.com/callstack/repack/commit/50469664221bf9d7fe49fb27b3dd265ba18d463b) Thanks [@swrobel](https://github.com/swrobel)! - Add `react-native-keyboard-aware-scroll-view` and `@react-native-community/push-notification-ios` to flow libs
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.1.3
+
 ## 5.1.2
 
 ### Patch Changes

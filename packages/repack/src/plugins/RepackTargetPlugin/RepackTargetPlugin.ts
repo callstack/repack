@@ -1,6 +1,9 @@
 import path from 'node:path';
-import type { Compilation, Compiler, RspackPluginInstance } from '@rspack/core';
-import type { RuntimeModule as WebpackRuntimeModule } from 'webpack';
+import type { Compilation, Compiler as RspackCompiler } from '@rspack/core';
+import type {
+  Compiler as WebpackCompiler,
+  RuntimeModule as WebpackRuntimeModule,
+} from 'webpack';
 import { makeGuardedRequireRuntimeModule } from './GuardedRequireRuntimeModule.js';
 import { makeInitRuntimeModule } from './InitRuntimeModule.js';
 import { makeLoadScriptRuntimeModule } from './LoadScriptRuntimeModule.js';
@@ -17,7 +20,7 @@ type RspackRuntimeModule = Parameters<
  *
  * @category Webpack Plugin
  */
-export class RepackTargetPlugin implements RspackPluginInstance {
+export class RepackTargetPlugin {
   replaceRuntimeModule(
     module: RspackRuntimeModule | WebpackRuntimeModule,
     content: string
@@ -36,12 +39,13 @@ export class RepackTargetPlugin implements RspackPluginInstance {
       throw new Error('Module source is not available');
     }
   }
-  /**
-   * Apply the plugin.
-   *
-   * @param compiler Webpack compiler instance.
-   */
-  apply(compiler: Compiler) {
+
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     const globalObject = 'self';
     compiler.options.target = false;
     compiler.options.output.chunkLoading = 'jsonp';

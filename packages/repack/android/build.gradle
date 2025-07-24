@@ -196,5 +196,5 @@ dependencies {
     implementation 'com.facebook.react:react-android:+'
     implementation "com.squareup.okhttp3:okhttp:4.9.2"
     implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.2"
-    implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.48'
 }

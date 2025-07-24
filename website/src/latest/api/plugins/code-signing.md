@@ -52,6 +52,12 @@ ssh-keygen -t rsa -b 4096 -m PEM -f code-signing.pem
 openssl rsa -in code-signing.pem -pubout -outform PEM -out code-signing.pem.pub
 ```
 
+:::info
+
+The passphrase must be left empty.
+
+:::
+
 ### Add the plugin
 
 After that, you need to add `CodeSigningPlugin` to your configuration. Make sure the `privateKeyPath` points to the location of your `code-signing.pem`.

@@ -1,26 +1,24 @@
-// @ts-check
 import * as Repack from '@callstack/repack';
 import rspack from '@rspack/core';
 
-/** @type {(env: import('@callstack/repack').EnvOptions) => import('@rspack/core').Configuration} */
-export default (env) => {
+export default Repack.defineRspackConfig((env) => {
   const { mode, context, platform } = env;
 
   return {
     mode,
     context,
-    entry: './src/host/index.js',
+    entry: './src/mini/index.js',
     resolve: {
       ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
     output: {
-      path: '[context]/build/host-app/[platform]',
-      uniqueName: 'MF2Tester-HostApp',
+      path: '[context]/build/mini-app/[platform]',
+      uniqueName: 'MF2Tester-MiniApp',
     },
     module: {
       rules: [
         ...Repack.getJsTransformRules(),
-        ...Repack.getAssetTransformRules(),
+        ...Repack.getAssetTransformRules({ inline: true }),
       ],
     },
     plugins: [
@@ -29,46 +27,46 @@ export default (env) => {
           {
             include: /.*/,
             type: 'remote',
-            outputPath: `build/host-app/${platform}/output-remote`,
+            outputPath: `build/mini-app/${platform}/output-remote`,
           },
         ],
       }),
       new Repack.plugins.ModuleFederationPluginV2({
-        name: 'HostApp',
-        filename: 'HostApp.container.js.bundle',
-        remotes: {
-          MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
+        name: 'MiniApp',
+        filename: 'MiniApp.container.js.bundle',
+        exposes: {
+          './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
         dts: false,
         shared: {
           react: {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '19.0.0',
           },
           'react-native': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '0.79.1',
           },
           '@react-navigation/native': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^6.1.18',
           },
           '@react-navigation/native-stack': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^6.10.1',
           },
           'react-native-safe-area-context': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^5.4.0',
           },
           'react-native-screens': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: '^4.10.0',
           },
         },
@@ -77,11 +75,6 @@ export default (env) => {
       new rspack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,
       }),
-      new rspack.DefinePlugin({
-        __WITH_PRELOAD__:
-          process.env.WITH_PRELOAD === 'true' ||
-          process.env.WITH_PRELOAD === '1',
-      }),
     ],
   };
-};
+});

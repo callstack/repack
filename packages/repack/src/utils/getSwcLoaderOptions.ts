@@ -19,6 +19,11 @@ function getEnvironmentPreset() {
       'transform-spread',
       'transform-object-rest-spread',
       'transform-class-static-block',
+      // class transform injects 'use strict' at all times, enabled to prevent parser errors with non-simple params like rest params
+      // reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Strict_non_simple_params
+      'transform-parameters',
+      // compat mostly for symbol-keyed methods
+      'transform-function-name',
     ],
   };
 }
