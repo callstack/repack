@@ -58,6 +58,64 @@ These templates provide sensible defaults and common configurations for both Rsp
 </Tabs>
 
 
+## TypeScript configuration
+
+Re.Pack supports TypeScript configuration files for both Rspack and webpack, allowing you to write your configuration in TypeScript with full type safety.
+
+:::tip About TypeScript support in Node
+Node.js `v23.6.0` or higher supports stripping TypeScript types out of the box. 
+If you are stuck on older Node versions, refer to [Rspack TypeScript support documentation](https://rspack.rs/config/#typescript-configuration-file). 
+It details ways to use TypeScript configs outside of newest Node versions.
+:::
+
+### TypeScript configuration files
+
+You can use TypeScript configuration files with the following naming conventions:
+
+- `rspack.config.cts`, `rspack.config.mts` or `rspack.config.ts` for Rspack
+- `webpack.config.cts`, `webpack.config.mts` or `webpack.config.ts` for webpack
+
+### Using `defineRspackConfig` and `defineWebpackConfig`
+
+Re.Pack provides helper functions for type-safe configuration:
+
+- `defineRspackConfig` - for Rspack configurations
+- `defineWebpackConfig` - for webpack configurations
+
+Consider the following example for the default Rspack configuration:
+
+```ts title="rspack.config.mts"
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import * as Repack from '@callstack/repack';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/**
+ * Rspack configuration enhanced with Re.Pack defaults for React Native.
+ *
+ * Learn about Rspack configuration: https://rspack.dev/config/
+ * Learn about Re.Pack configuration: https://re-pack.dev/docs/guides/configuration
+ */
+
+export default Repack.defineRspackConfig({
+  context: __dirname,
+  entry: './index.js',
+  resolve: {
+    ...Repack.getResolveOptions(),
+  },
+  module: {
+    rules: [
+      ...Repack.getJsTransformRules(),
+      ...Repack.getAssetTransformRules(),
+    ],
+  },
+  plugins: [new Repack.RepackPlugin()],
+});
+
+```
+
 ## Configuration variants
 
 Configuration can be defined in two ways: as a static object or as a function that returns a configuration object.

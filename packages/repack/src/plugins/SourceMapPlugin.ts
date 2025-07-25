@@ -1,15 +1,21 @@
 import path from 'node:path';
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler as RspackCompiler } from '@rspack/core';
+import type { Compiler as WebpackCompiler } from 'webpack';
 import { ConfigurationError } from './utils/ConfigurationError.js';
 
 interface SourceMapPluginConfig {
   platform?: string;
 }
 
-export class SourceMapPlugin implements RspackPluginInstance {
+export class SourceMapPlugin {
   constructor(private config: SourceMapPluginConfig = {}) {}
 
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     // if devtool is explicitly set to false, skip generating source maps
     if (!compiler.options.devtool) {
       return;

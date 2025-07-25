@@ -106,7 +106,8 @@ android {
             cmake {
                 cppFlags "-O2 -frtti -fexceptions -Wall -Wno-unused-variable -fstack-protector-all"
                 arguments "-DANDROID_STL=c++_shared",
-                        "-DREACT_NATIVE_DIR=${REACT_NATIVE_DIR}"
+                          "-DREACT_NATIVE_DIR=${REACT_NATIVE_DIR}",
+                          "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
                 abiFilters(*reactNativeArchitectures())
             }
         }
@@ -195,5 +196,5 @@ dependencies {
     implementation 'com.facebook.react:react-android:+'
     implementation "com.squareup.okhttp3:okhttp:4.9.2"
     implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.2"
-    implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.48'
 }

@@ -1,4 +1,5 @@
-import type { Compiler, RspackPluginInstance } from '@rspack/core';
+import type { Compiler as RspackCompiler } from '@rspack/core';
+import type { Compiler as WebpackCompiler } from 'webpack';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env.js';
 import {
   ConsoleReporter,
@@ -32,7 +33,7 @@ export interface LoggerPluginConfig {
  *
  * @category Webpack Plugin
  */
-export class LoggerPlugin implements RspackPluginInstance {
+export class LoggerPlugin {
   private static SUPPORTED_TYPES: string[] = [
     'debug',
     'info',
@@ -121,12 +122,12 @@ export class LoggerPlugin implements RspackPluginInstance {
     }
   }
 
-  /**
-   * Apply the plugin.
-   *
-   * @param compiler Webpack compiler instance.
-   */
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     // Make sure webpack-cli doesn't print stats by default.
     if (compiler.options.stats === undefined) {
       compiler.options.stats = 'none';

@@ -23,12 +23,12 @@ This plugin seamlessly integrates NativeWind with Re.Pack's build process by:
 
 ## Installation
 
-First, follow these steps from the official [NativeWind installation guide](https://www.nativewind.dev/getting-started/react-native):
+First, follow these steps from the official [NativeWind installation guide](https://www.nativewind.dev/docs/getting-started/installation):
 
-1. [Install NativeWind](https://www.nativewind.dev/getting-started/react-native#installation)
-2. [Setup Tailwind CSS](https://www.nativewind.dev/getting-started/react-native#2-setup-tailwind-css)
-3. [Import your CSS file](https://www.nativewind.dev/getting-started/react-native#5-import-your-css-file)
-4. (Optional) [Setup TypeScript support](https://www.nativewind.dev/getting-started/typescript)
+1. [Install NativeWind](https://www.nativewind.dev/docs/getting-started/installation#1-install-nativewind)
+2. [Setup Tailwind CSS](https://www.nativewind.dev/docs/getting-started/installation#2-setup-tailwind-css)
+3. [Import your CSS file](https://www.nativewind.dev/docs/getting-started/installation#5-import-your-css-file)
+4. (Optional) [Setup TypeScript support](https://www.nativewind.dev/docs/getting-started/installation#7-typescript-setup-optional)
 
 Then install the Re.Pack NativeWind plugin and it's dependencies:
 

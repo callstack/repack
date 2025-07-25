@@ -30,7 +30,7 @@ Path to the private key. This can be either a relative path or an absolute one. 
 
 Whether to enable the plugin. You typically want to enable the plugin only for production builds and disable it for development.
 
-### exludeChunks
+### excludeChunks
 
 - Type: `string[] | RegExp | RegExp[]`
 - Default: `[]`

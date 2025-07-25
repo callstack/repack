@@ -77,7 +77,7 @@ export async function start(
   }
 
   if (process.env.RSPACK_PROFILE) {
-    const { applyProfile } = await import('./profile.js');
+    const { applyProfile } = await import('./profile/index.js');
     await applyProfile(
       process.env.RSPACK_PROFILE,
       process.env.RSPACK_TRACE_LAYER,

@@ -1,0 +1,17 @@
+{
+  "package.json": {
+    "name": "platform-specific-lib",
+    "version": "1.0.0",
+    "main": "./index"
+  },
+  "files": [
+    "index.js",
+    "index.native.js",
+    "index.ios.js",
+    "index.android.js",
+    "lib/utils.js",
+    "lib/utils.native.js",
+    "lib/utils.ios.js",
+    "lib/utils.android.js"
+  ]
+}

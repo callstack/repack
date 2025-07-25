@@ -1,12 +1,12 @@
 import assert from 'node:assert';
 import path from 'node:path';
 import type {
-  Compiler,
   EntryNormalized,
   ModuleFilenameHelpers,
-  RspackPluginInstance,
+  Compiler as RspackCompiler,
   StatsChunk,
 } from '@rspack/core';
+import type { Compiler as WebpackCompiler } from 'webpack';
 import {
   ASSETS_DEST_ENV_KEY,
   BUNDLE_FILENAME_ENV_KEY,
@@ -23,7 +23,7 @@ import type { DestinationSpec, OutputPluginConfig } from './types.js';
  *
  * @category Webpack Plugin
  */
-export class OutputPlugin implements RspackPluginInstance {
+export class OutputPlugin {
   localSpecs: DestinationSpec[] = [];
   remoteSpecs: DestinationSpec[] = [];
 
@@ -134,12 +134,12 @@ export class OutputPlugin implements RspackPluginInstance {
     return { localChunks, remoteChunks };
   }
 
-  /**
-   * Apply the plugin.
-   *
-   * @param compiler Webpack compiler instance.
-   */
-  apply(compiler: Compiler) {
+  apply(compiler: RspackCompiler): void;
+  apply(compiler: WebpackCompiler): void;
+
+  apply(__compiler: unknown) {
+    const compiler = __compiler as RspackCompiler;
+
     if (!this.config.enabled) return;
 
     assert(compiler.options.output.path, "Can't infer output path from config");

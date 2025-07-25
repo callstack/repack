@@ -1,5 +1,13 @@
 # @callstack/repack-dev-server
 
+## 5.1.3
+
+## 5.1.2
+
+### Patch Changes
+
+- [#1168](https://github.com/callstack/repack/pull/1168) [`71a989b82e97f5d5cdc12a8e6edfaad47636b13e`](https://github.com/callstack/repack/commit/71a989b82e97f5d5cdc12a8e6edfaad47636b13e) Thanks [@jbroma](https://github.com/jbroma)! - Fix React Native DevTools not showing source maps for MF2 remotes
+
 ## 5.1.1
 
 ## 5.1.0
