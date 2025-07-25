@@ -1,4 +1,4 @@
-export function getDevMiddleware(reactNativePath: string) {
+export async function getDevMiddleware(reactNativePath: string) {
   const reactNativeCommunityCliPluginPath = require.resolve(
     '@react-native/community-cli-plugin',
     { paths: [reactNativePath] }
@@ -8,5 +8,5 @@ export function getDevMiddleware(reactNativePath: string) {
     paths: [reactNativeCommunityCliPluginPath],
   });
 
-  return require(devMiddlewarePath);
+  return import(devMiddlewarePath);
 }

@@ -58,7 +58,7 @@ export async function start(
   const showHttpRequests = args.verbose || args.logRequests;
 
   // dynamically import dev middleware to match version of react-native
-  const devMiddleware = getDevMiddleware(cliConfig.reactNativePath);
+  const devMiddleware = await getDevMiddleware(cliConfig.reactNativePath);
 
   const reporter = composeReporters(
     [
