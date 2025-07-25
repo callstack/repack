@@ -54,7 +54,7 @@ export default function reanimatedLoader(
       configFile: false,
       compact: false,
       comments: true,
-      plugins: [...babelPlugins, 'react-native-reanimated/plugin'],
+      plugins: babelPlugins,
     },
     (err, result) => {
       if (err) {

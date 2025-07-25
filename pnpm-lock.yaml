@@ -130,7 +130,7 @@ importers:
         version: 2.1.1
       nativewind:
         specifier: ^4.1.23
-        version: 4.1.23(react-native-reanimated@3.18.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)
+        version: 4.1.23(react-native-reanimated@4.0.0(@babel/core@7.25.2)(react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)
       react:
         specifier: 'catalog:'
         version: 19.1.0
@@ -139,16 +139,19 @@ importers:
         version: 0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0)
       react-native-css-interop:
         specifier: 0.1.22
-        version: 0.1.22(react-native-reanimated@3.18.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)
+        version: 0.1.22(react-native-reanimated@4.0.0(@babel/core@7.25.2)(react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)
       react-native-reanimated:
-        specifier: 3.18.0
-        version: 3.18.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+        specifier: 4.0.0
+        version: 4.0.0(@babel/core@7.25.2)(react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
       react-native-safe-area-context:
         specifier: 5.5.0
         version: 5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
       react-native-svg:
         specifier: 15.12.0
         version: 15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+      react-native-worklets:
+        specifier: 0.4.0
+        version: 0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.0
@@ -532,15 +535,19 @@ importers:
         version: 20.14.11
       nativewind:
         specifier: ^4.1.23
-        version: 4.1.23(react-native-reanimated@3.18.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)
+        version: 4.1.23(react-native-reanimated@4.0.0(@babel/core@7.25.2)(react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)
       react-native-css-interop:
         specifier: ^0.1.22
-        version: 0.1.22(react-native-reanimated@3.18.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)
+        version: 0.1.22(react-native-reanimated@4.0.0(@babel/core@7.25.2)(react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)
       webpack:
         specifier: 'catalog:'
         version: 5.100.2
 
   packages/plugin-reanimated:
+    dependencies:
+      semver:
+        specifier: ^7.7.2
+        version: 7.7.2
     devDependencies:
       '@callstack/repack':
         specifier: workspace:*
@@ -554,6 +561,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 20.14.11
+      '@types/semver':
+        specifier: ^7.7.0
+        version: 7.7.0
       webpack:
         specifier: 'catalog:'
         version: 5.100.2
@@ -3357,6 +3367,9 @@ packages:
 
   '@types/semver@7.5.8':
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
+
+  '@types/semver@7.7.0':
+    resolution: {integrity: sha512-k107IF4+Xr7UHjwDc7Cfd6PRQfbdkiRabXGRjo07b4WyPahFBZCZ1sE+BNxYIJPPg73UkfOsVOLwqVc/6ETrIA==}
 
   '@types/shallowequal@1.1.5':
     resolution: {integrity: sha512-8afr1hbNqvZ/FBMY2mcfkkbk7xhlTZN4lVCgQf55YdjUQpWLemmrcvcHg94vjw+ZVIfPa3UZz/sOE6CkaMlDnQ==}
@@ -6818,24 +6831,19 @@ packages:
       react-native-svg:
         optional: true
 
-  react-native-is-edge-to-edge@1.1.7:
-    resolution: {integrity: sha512-EH6i7E8epJGIcu7KpfXYXiV2JFIYITtq+rVS8uEb+92naMRBdxhTuS8Wn2Q7j9sqyO0B+Xbaaf9VdipIAmGW4w==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-
   react-native-is-edge-to-edge@1.2.1:
     resolution: {integrity: sha512-FLbPWl/MyYQWz+KwqOZsSyj2JmLKglHatd3xLZWskXOpRaio4LfEDEz8E/A6uD8QoTHW6Aobw1jbEwK7KMgR7Q==}
     peerDependencies:
       react: '*'
       react-native: '*'
 
-  react-native-reanimated@3.18.0:
-    resolution: {integrity: sha512-eVcNcqeOkMW+BUWAHdtvN3FKgC8J8wiEJkX6bNGGQaLS7m7e4amTfjIcqf/Ta+lerZLurmDaQ0lICI1CKPrb1Q==}
+  react-native-reanimated@4.0.0:
+    resolution: {integrity: sha512-gcLvbfJBQSmSHnPjlURWN/EJjWDhVpWqe+ilshcEmK/gS46AY42oVGYA0FFoLBiQj2BH+I24Tox/7GrBCBFbwg==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
       react: '*'
       react-native: '*'
+      react-native-worklets: '>=0.3.0'
 
   react-native-safe-area-context@5.5.0:
     resolution: {integrity: sha512-BQcSvVEJj3T4zBQH9YrnlfcLGHiVOsmeiE10PSBsmI/xyzULSZdJISFOH0HLcLU7/nePC+HsaaVzIsEa1CVBYw==}
@@ -6875,6 +6883,13 @@ packages:
         optional: true
       react-native-windows:
         optional: true
+
+  react-native-worklets@0.4.0:
+    resolution: {integrity: sha512-q4AKd9RH6JSX17dSbXw1ppr7WbGYleQT2GqlpE9LLKLRAi2UeSHD3Q3br4MBGobQfQDyfDyfkiO5DvhXSa/8Xg==}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+      react: '*'
+      react-native: '*'
 
   react-native@0.80.0:
     resolution: {integrity: sha512-b9K1ygb2MWCBtKAodKmE3UsbUuC29Pt4CrJMR0ocTA8k+8HJQTPleBPDNKL4/p0P01QO9aL/gZUddoxHempLow==}
@@ -7200,6 +7215,11 @@ packages:
 
   semver@7.6.3:
     resolution: {integrity: sha512-oVekP1cKtI+CTDvHWYFUcMtsK/00wmAEfyqKfNdARm8u1wNVhSgaX7A8d4UuIlUI5e84iEwOhs7ZPYRmzU9U6A==}
+    engines: {node: '>=10'}
+    hasBin: true
+
+  semver@7.7.2:
+    resolution: {integrity: sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -9135,7 +9155,7 @@ snapshots:
       outdent: 0.5.0
       prettier: 2.8.8
       resolve-from: 5.0.0
-      semver: 7.6.3
+      semver: 7.7.2
 
   '@changesets/assemble-release-plan@6.0.8':
     dependencies:
@@ -9144,7 +9164,7 @@ snapshots:
       '@changesets/should-skip-package': 0.1.2
       '@changesets/types': 6.1.0
       '@manypkg/get-packages': 1.1.3
-      semver: 7.6.3
+      semver: 7.7.2
 
   '@changesets/changelog-git@0.2.1':
     dependencies:
@@ -9185,7 +9205,7 @@ snapshots:
       package-manager-detector: 0.2.11
       picocolors: 1.1.1
       resolve-from: 5.0.0
-      semver: 7.6.3
+      semver: 7.7.2
       spawndamnit: 3.0.1
       term-size: 2.2.1
 
@@ -9208,7 +9228,7 @@ snapshots:
       '@changesets/types': 6.1.0
       '@manypkg/get-packages': 1.1.3
       picocolors: 1.1.1
-      semver: 7.6.3
+      semver: 7.7.2
 
   '@changesets/get-github-info@0.5.2':
     dependencies:
@@ -10304,7 +10324,7 @@ snapshots:
       execa: 5.1.1
       node-stream-zip: 1.15.0
       ora: 5.4.1
-      semver: 7.6.3
+      semver: 7.7.2
       wcwidth: 1.0.1
       yaml: 2.4.5
     transitivePeerDependencies:
@@ -10358,7 +10378,7 @@ snapshots:
       mime: 2.6.0
       ora: 5.4.1
       prompts: 2.4.2
-      semver: 7.6.3
+      semver: 7.7.2
 
   '@react-native-community/cli-types@19.0.0':
     dependencies:
@@ -10465,7 +10485,7 @@ snapshots:
       metro: 0.82.5
       metro-config: 0.82.5
       metro-core: 0.82.5
-      semver: 7.6.3
+      semver: 7.7.2
     optionalDependencies:
       '@react-native-community/cli': 19.0.0(typescript@5.8.3)
     transitivePeerDependencies:
@@ -10692,7 +10712,7 @@ snapshots:
       fs-extra: 11.3.0
       lodash: 4.17.21
       path-browserify: 1.0.1
-      semver: 7.6.3
+      semver: 7.7.2
       source-map: 0.7.4
       webpack-bundle-analyzer: 4.10.2
     transitivePeerDependencies:
@@ -11446,6 +11466,8 @@ snapshots:
   '@types/scheduler@0.16.8': {}
 
   '@types/semver@7.5.8': {}
+
+  '@types/semver@7.7.0': {}
 
   '@types/shallowequal@1.1.5': {}
 
@@ -13603,7 +13625,7 @@ snapshots:
       '@babel/parser': 7.25.6
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
-      semver: 7.6.3
+      semver: 7.7.2
     transitivePeerDependencies:
       - supports-color
 
@@ -13888,7 +13910,7 @@ snapshots:
       jest-util: 29.7.0
       natural-compare: 1.4.0
       pretty-format: 29.7.0
-      semver: 7.6.3
+      semver: 7.7.2
     transitivePeerDependencies:
       - supports-color
 
@@ -14016,7 +14038,7 @@ snapshots:
       lodash.isstring: 4.0.1
       lodash.once: 4.1.1
       ms: 2.1.3
-      semver: 7.6.3
+      semver: 7.7.2
 
   jwa@1.4.1:
     dependencies:
@@ -14285,7 +14307,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.6.3
+      semver: 7.7.2
 
   makeerror@1.0.12:
     dependencies:
@@ -15165,11 +15187,11 @@ snapshots:
 
   nanoid@3.3.8: {}
 
-  nativewind@4.1.23(react-native-reanimated@3.18.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17):
+  nativewind@4.1.23(react-native-reanimated@4.0.0(@babel/core@7.25.2)(react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17):
     dependencies:
       comment-json: 4.2.5
       debug: 4.4.0
-      react-native-css-interop: 0.1.22(react-native-reanimated@3.18.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)
+      react-native-css-interop: 0.1.22(react-native-reanimated@4.0.0(@babel/core@7.25.2)(react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)
       tailwindcss: 3.4.17
     transitivePeerDependencies:
       - react
@@ -15267,7 +15289,7 @@ snapshots:
       npm-run-path: 4.0.1
       open: 8.4.2
       ora: 5.3.0
-      semver: 7.6.3
+      semver: 7.7.2
       string-width: 4.2.3
       strong-log-transformer: 2.1.0
       tar-stream: 2.2.0
@@ -15731,7 +15753,7 @@ snapshots:
 
   react-lazy-with-preload@2.2.1: {}
 
-  react-native-css-interop@0.1.22(react-native-reanimated@3.18.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17):
+  react-native-css-interop@0.1.22(react-native-reanimated@4.0.0(@babel/core@7.25.2)(react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17):
     dependencies:
       '@babel/helper-module-imports': 7.24.7
       '@babel/traverse': 7.25.6
@@ -15740,7 +15762,7 @@ snapshots:
       lightningcss: 1.28.2
       react: 19.1.0
       react-native: 0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0)
-      react-native-reanimated: 3.18.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+      react-native-reanimated: 4.0.0(@babel/core@7.25.2)(react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
       semver: 7.6.3
       tailwindcss: 3.4.17
     optionalDependencies:
@@ -15749,35 +15771,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  react-native-is-edge-to-edge@1.1.7(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0):
-    dependencies:
-      react: 19.1.0
-      react-native: 0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0)
-
   react-native-is-edge-to-edge@1.2.1(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0):
     dependencies:
       react: 19.1.0
       react-native: 0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0)
 
-  react-native-reanimated@3.18.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0):
+  react-native-reanimated@4.0.0(@babel/core@7.25.2)(react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0):
     dependencies:
       '@babel/core': 7.25.2
-      '@babel/plugin-transform-arrow-functions': 7.24.7(@babel/core@7.25.2)
-      '@babel/plugin-transform-class-properties': 7.25.4(@babel/core@7.25.2)
-      '@babel/plugin-transform-classes': 7.25.4(@babel/core@7.25.2)
-      '@babel/plugin-transform-nullish-coalescing-operator': 7.24.7(@babel/core@7.25.2)
-      '@babel/plugin-transform-optional-chaining': 7.24.8(@babel/core@7.25.2)
-      '@babel/plugin-transform-shorthand-properties': 7.24.7(@babel/core@7.25.2)
-      '@babel/plugin-transform-template-literals': 7.24.7(@babel/core@7.25.2)
-      '@babel/plugin-transform-unicode-regex': 7.24.7(@babel/core@7.25.2)
-      '@babel/preset-typescript': 7.24.7(@babel/core@7.25.2)
-      convert-source-map: 2.0.0
-      invariant: 2.2.4
       react: 19.1.0
       react-native: 0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0)
-      react-native-is-edge-to-edge: 1.1.7(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
-    transitivePeerDependencies:
-      - supports-color
+      react-native-is-edge-to-edge: 1.2.1(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+      react-native-worklets: 0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+      semver: 7.7.2
 
   react-native-safe-area-context@5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0):
     dependencies:
@@ -15812,6 +15818,24 @@ snapshots:
       react-native: 0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0)
       semver: 7.6.3
       uuid: 11.1.0
+
+  react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0):
+    dependencies:
+      '@babel/core': 7.25.2
+      '@babel/plugin-transform-arrow-functions': 7.24.7(@babel/core@7.25.2)
+      '@babel/plugin-transform-class-properties': 7.25.4(@babel/core@7.25.2)
+      '@babel/plugin-transform-classes': 7.25.4(@babel/core@7.25.2)
+      '@babel/plugin-transform-nullish-coalescing-operator': 7.24.7(@babel/core@7.25.2)
+      '@babel/plugin-transform-optional-chaining': 7.24.8(@babel/core@7.25.2)
+      '@babel/plugin-transform-shorthand-properties': 7.24.7(@babel/core@7.25.2)
+      '@babel/plugin-transform-template-literals': 7.24.7(@babel/core@7.25.2)
+      '@babel/plugin-transform-unicode-regex': 7.24.7(@babel/core@7.25.2)
+      '@babel/preset-typescript': 7.24.7(@babel/core@7.25.2)
+      convert-source-map: 2.0.0
+      react: 19.1.0
+      react-native: 0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0)
+    transitivePeerDependencies:
+      - supports-color
 
   react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0):
     dependencies:
@@ -16288,6 +16312,8 @@ snapshots:
   semver@6.3.1: {}
 
   semver@7.6.3: {}
+
+  semver@7.7.2: {}
 
   send@0.19.0:
     dependencies:
