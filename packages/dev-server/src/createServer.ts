@@ -2,7 +2,6 @@ import { Writable } from 'node:stream';
 import util from 'node:util';
 import middie from '@fastify/middie';
 import fastifySensible from '@fastify/sensible';
-import { createDevMiddleware } from '@react-native/dev-middleware';
 import Fastify from 'fastify';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import apiPlugin from './plugins/api/apiPlugin.js';
@@ -69,7 +68,7 @@ export async function createServer(config: Server.Config) {
 
   let handledDevMiddlewareNotice = false;
 
-  const devMiddleware = createDevMiddleware({
+  const devMiddleware = options.devMiddleware.createDevMiddleware({
     projectRoot: options.rootDir,
     serverBaseUrl: options.url,
     logger: {
