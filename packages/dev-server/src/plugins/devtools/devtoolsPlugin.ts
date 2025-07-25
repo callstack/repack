@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import launchEditor from 'launch-editor';
 import open from 'open';
+import type { Server } from '../../types.js';
 
 interface OpenURLRequestBody {
   url: string;
@@ -18,7 +19,10 @@ function parseRequestBody<T>(body: unknown): T {
   throw new Error(`Unsupported body type: ${typeof body}`);
 }
 
-async function devtoolsPlugin(instance: FastifyInstance) {
+async function devtoolsPlugin(
+  instance: FastifyInstance,
+  { delegate }: { delegate: Server.Delegate }
+) {
   // reference implementation in `@react-native-community/cli-server-api`:
   // https://github.com/react-native-community/cli/blob/46436a12478464752999d34ed86adf3212348007/packages/cli-server-api/src/openURLMiddleware.ts
   instance.route({
@@ -40,8 +44,8 @@ async function devtoolsPlugin(instance: FastifyInstance) {
       const { file, lineNumber } = parseRequestBody<OpenStackFrameRequestBody>(
         request.body
       );
-      // TODO fix rewriting of `webpack://` to rootDir of the project
-      launchEditor(`${file}:${lineNumber}`, process.env.REACT_EDITOR);
+      const filepath = delegate.devTools?.resolveProjectPath(file) ?? file;
+      launchEditor(`${filepath}:${lineNumber}`, process.env.REACT_EDITOR);
       reply.send('OK');
     },
   });
