@@ -9,5 +9,6 @@ module.exports = {
         importSource: 'nativewind',
       },
     ],
+    'react-native-worklets/plugin',
   ],
 };
