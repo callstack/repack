@@ -1,7 +1,7 @@
 import path from 'node:path';
 import type { Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
-import { createReanimatedModuleRules } from './rules.js';
+import { reanimated3ModuleRules, reanimated4ModuleRules } from './rules.js';
 
 export class ReanimatedPlugin {
   apply(compiler: RspackCompiler): void;
@@ -19,7 +19,9 @@ export class ReanimatedPlugin {
 
     // add rules for transpiling wih reanimated loader
     compiler.options.module.rules.push(
-      createReanimatedModuleRules(reanimatedVersion.major)
+      reanimatedVersion.major < 4
+        ? reanimated3ModuleRules
+        : reanimated4ModuleRules
     );
 
     // ignore the 'setUpTests' warning from reanimated which is not relevant
@@ -33,8 +35,13 @@ export class ReanimatedPlugin {
 
   private ensureDependencyInstalled(context: string, dependency: string) {
     try {
-      const dependencyPath = require.resolve(dependency, { paths: [context] });
-      return dependencyPath;
+      // resolve the path to the dependency package.json
+      // since its always in the root dir of the dependency
+      const dependencyPackageJsonPath = path.join(dependency, 'package.json');
+      const dependencyPath = require.resolve(dependencyPackageJsonPath, {
+        paths: [context],
+      });
+      return path.dirname(dependencyPath);
     } catch {
       const error = new Error(
         `[RepackReanimatedPlugin] Dependency named '${dependency}' is required but not found in your project. ` +

@@ -1,2 +1,6 @@
 export { ReanimatedPlugin } from './plugin.js';
-export { reanimatedModuleRules } from './rules.js';
+export {
+  reanimated3ModuleRules,
+  reanimated4ModuleRules,
+  reanimatedModuleRules,
+} from './rules.js';

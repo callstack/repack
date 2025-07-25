@@ -1,6 +1,6 @@
 import { getModulePaths } from '@callstack/repack';
 
-export const createReanimatedModuleRules = (majorVersion: number) => {
+const createReanimatedModuleRules = (majorVersion: number) => {
   const workletsBabelPlugin =
     majorVersion < 4
       ? 'react-native-reanimated/plugin'
@@ -61,4 +61,16 @@ export const createReanimatedModuleRules = (majorVersion: number) => {
       },
     ],
   };
+};
+
+const reanimated3ModuleRules = createReanimatedModuleRules(3);
+const reanimated4ModuleRules = createReanimatedModuleRules(4);
+
+// backwards compatibility export
+const reanimatedModuleRules = reanimated3ModuleRules;
+
+export {
+  reanimatedModuleRules,
+  reanimated3ModuleRules,
+  reanimated4ModuleRules,
 };
