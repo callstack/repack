@@ -401,9 +401,6 @@ importers:
       '@fastify/sensible':
         specifier: ^5.5.0
         version: 5.6.0
-      '@react-native/dev-middleware':
-        specifier: ^0.80.0
-        version: 0.80.0
       fastify:
         specifier: ^4.24.3
         version: 4.28.1
@@ -432,6 +429,9 @@ importers:
         specifier: ^8.18.1
         version: 8.18.1
     devDependencies:
+      '@react-native/dev-middleware':
+        specifier: ^0.80.0
+        version: 0.80.0
       '@types/babel__code-frame':
         specifier: ^7.0.6
         version: 7.0.6

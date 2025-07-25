@@ -1,4 +1,5 @@
 import type { ServerOptions as HttpsServerOptions } from 'node:https';
+import type * as DevMiddleware from '@react-native/dev-middleware';
 import type { FastifyBaseLogger } from 'fastify';
 import type { Options as ProxyOptions } from 'http-proxy-middleware';
 import type { CompilerDelegate } from './plugins/compiler/types.js';
@@ -68,6 +69,9 @@ export namespace Server {
 
     /** Whether to enable logging requests. */
     logRequests?: boolean;
+
+    /** Function to create a dev middleware. */
+    devMiddleware: typeof DevMiddleware;
   }
 
   /**

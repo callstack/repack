@@ -12,6 +12,7 @@ import type { HMRMessage } from '../../types.js';
 import { CLIError } from '../common/cliError.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
+  getDevMiddleware,
   getMimeType,
   parseFileUrl,
   resetPersistentCache,
@@ -58,6 +59,9 @@ export async function start(
   const devServerOptions = configs[0].devServer ?? {};
   const showHttpRequests = args.verbose || args.logRequests;
 
+  // dynamically import dev middleware to match version of react-native
+  const devMiddleware = getDevMiddleware(cliConfig.reactNativePath);
+
   const reporter = composeReporters(
     [
       new ConsoleReporter({ asJson: args.json, isVerbose: args.verbose }),
@@ -88,6 +92,7 @@ export async function start(
       ...devServerOptions,
       rootDir: cliConfig.root,
       logRequests: showHttpRequests,
+      devMiddleware,
     },
     delegate: (ctx): Server.Delegate => {
       if (args.interactive) {
