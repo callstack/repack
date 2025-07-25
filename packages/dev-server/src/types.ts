@@ -70,7 +70,7 @@ export namespace Server {
     /** Whether to enable logging requests. */
     logRequests?: boolean;
 
-    /** Function to create a dev middleware. */
+    /** `@react-native/dev-middleware` module. */
     devMiddleware: typeof DevMiddleware;
   }
 
