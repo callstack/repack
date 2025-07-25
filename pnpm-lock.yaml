@@ -56,13 +56,8 @@ catalogs:
       specifier: ^19.1.0
       version: 19.1.8
     react-native-test-app:
-      specifier: 4.4.4
-      version: 4.4.4
-
-patchedDependencies:
-  react-native-test-app@4.4.4:
-    hash: wsdoulokkdggtxg73oqeyh4rwm
-    path: patches/react-native-test-app@4.4.4.patch
+      specifier: 4.4.5
+      version: 4.4.5
 
 importers:
 
@@ -221,7 +216,7 @@ importers:
         version: 8.1.1(@rspack/core@1.4.6(@swc/helpers@0.5.17))(postcss@8.5.1)(typescript@5.8.3)(webpack@5.100.2)
       react-native-test-app:
         specifier: catalog:testers
-        version: 4.4.4(patch_hash=wsdoulokkdggtxg73oqeyh4rwm)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+        version: 4.4.5(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.17
@@ -300,7 +295,7 @@ importers:
         version: 19.1.8
       react-native-test-app:
         specifier: catalog:testers
-        version: 4.4.4(patch_hash=wsdoulokkdggtxg73oqeyh4rwm)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+        version: 4.4.5(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
       terser-webpack-plugin:
         specifier: 'catalog:'
         version: 5.3.14(webpack@5.100.2)
@@ -379,7 +374,7 @@ importers:
         version: 19.1.8
       react-native-test-app:
         specifier: catalog:testers
-        version: 4.4.4(patch_hash=wsdoulokkdggtxg73oqeyh4rwm)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+        version: 4.4.5(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
       terser-webpack-plugin:
         specifier: 'catalog:'
         version: 5.3.14(webpack@5.100.2)
@@ -6848,8 +6843,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  react-native-test-app@4.4.4:
-    resolution: {integrity: sha512-4Bq3zODRa0JRioeTfIiUUU0W/e4L6P6kr4kdDUDD9KU6BeyJq3vfeKdiA1Y6IKdwDrZgR/yFpRCauNdeLx+XKQ==}
+  react-native-test-app@4.4.5:
+    resolution: {integrity: sha512-cwJyxfF0crTt5pxP+6jXwfvswJJPauWrFS6/+aP8xUS+V+MKwio1TTiDpcLHg4XaLofEMQyplolYwBGBgSN8iw==}
     engines: {node: '>=16.17'}
     hasBin: true
     peerDependencies:
@@ -15760,7 +15755,7 @@ snapshots:
       react-native: 0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0)
       warn-once: 0.1.1
 
-  react-native-test-app@4.4.4(patch_hash=wsdoulokkdggtxg73oqeyh4rwm)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0):
+  react-native-test-app@4.4.5(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0):
     dependencies:
       '@rnx-kit/react-native-host': 0.5.11(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))
       '@rnx-kit/tools-react-native': 2.1.0
@@ -15770,7 +15765,7 @@ snapshots:
       prompts: 2.4.2
       react: 19.1.0
       react-native: 0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0)
-      semver: 7.6.3
+      semver: 7.7.2
       uuid: 11.1.0
 
   react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0):
