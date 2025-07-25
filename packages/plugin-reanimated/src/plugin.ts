@@ -1,5 +1,6 @@
 import path from 'node:path';
 import type { Compiler as RspackCompiler } from '@rspack/core';
+import semver, { type SemVer } from 'semver';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { reanimated3ModuleRules, reanimated4ModuleRules } from './rules.js';
 
@@ -53,16 +54,17 @@ export class ReanimatedPlugin {
     }
   }
 
-  private getReanimatedVersion(reanimatedPath: string) {
+  private getReanimatedVersion(reanimatedPath: string): SemVer {
     const reanimatedPackageJsonPath = path.join(reanimatedPath, 'package.json');
     const reanimatedPackageJson = require(reanimatedPackageJsonPath);
-    const [major, minor, patch] = reanimatedPackageJson.version
-      .split('-')[0]
-      .split('.');
-    return {
-      major: Number.parseInt(major, 10),
-      minor: Number.parseInt(minor, 10),
-      patch: Number.parseInt(patch, 10),
-    };
+    const version = semver.parse(reanimatedPackageJson.version);
+
+    if (!version) {
+      throw new Error(
+        `[RepackReanimatedPlugin] Unable to parse version for react-native-reanimated: ${reanimatedPackageJson.version}`
+      );
+    }
+
+    return version;
   }
 }

@@ -36,7 +36,9 @@
   "engines": {
     "node": ">=18"
   },
-  "dependencies": {},
+  "dependencies": {
+    "semver": "^7.7.2"
+  },
   "peerDependencies": {
     "@babel/core": "^7.20",
     "@callstack/repack": "workspace:*"
@@ -46,6 +48,7 @@
     "@rspack/core": "catalog:",
     "@types/babel__core": "7.20.5",
     "@types/node": "catalog:",
+    "@types/semver": "^7.7.0",
     "webpack": "catalog:"
   },
   "scripts": {
