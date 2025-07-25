@@ -1,4 +1,5 @@
 import { Writable } from 'node:stream';
+import util from 'node:util';
 import middie from '@fastify/middie';
 import fastifySensible from '@fastify/sensible';
 import { createDevMiddleware } from '@react-native/dev-middleware';
@@ -72,17 +73,28 @@ export async function createServer(config: Server.Config) {
     projectRoot: options.rootDir,
     serverBaseUrl: options.url,
     logger: {
-      error: instance.log.error,
-      warn: instance.log.warn,
-      info: (...message) => {
-        if (!handledDevMiddlewareNotice) {
-          if (message.join().includes('JavaScript logs have moved!')) {
-            handledDevMiddlewareNotice = true;
+      error: (...msg) => {
+        const message = util.format(...msg);
+        instance.log.error(message);
+      },
+      warn: (...msg) => {
+        const message = util.format(...msg);
+        instance.log.warn(message);
+      },
+      info: (...msg) => {
+        const message = util.format(...msg);
+        try {
+          if (!handledDevMiddlewareNotice) {
+            if (message.includes('JavaScript logs have moved!')) {
+              handledDevMiddlewareNotice = true;
+              return;
+            }
+          } else {
+            instance.log.debug(message);
             return;
           }
-        } else {
-          instance.log.debug(message);
-          return;
+        } catch (e) {
+          console.log(e);
         }
       },
     },
