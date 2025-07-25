@@ -2275,7 +2275,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - ReactTestApp-DevSupport (4.4.4):
+  - ReactTestApp-DevSupport (4.4.5):
     - React-Core
     - React-jsi
   - RNCAsyncStorage (2.2.0):
@@ -2449,7 +2449,7 @@ DEPENDENCIES:
   - ReactAppDependencyProvider (from `build/generated/ios`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@4.4.4_react-native@0.80.0_@babel+core@7.25.2_@react-native-community+cl_2c2ikb6jukpexpxx5nck4v64iq/node_modules/@rnx-kit/react-native-host`)"
+  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@4.4.5_react-native@0.80.0_@babel+core@7.25.2_@react-native-community+cl_bboejz5jniweovc74fwgcpfm4a/node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -2611,7 +2611,7 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeHost:
-    :path: "../../../node_modules/.pnpm/react-native-test-app@4.4.4_react-native@0.80.0_@babel+core@7.25.2_@react-native-community+cl_2c2ikb6jukpexpxx5nck4v64iq/node_modules/@rnx-kit/react-native-host"
+    :path: "../../../node_modules/.pnpm/react-native-test-app@4.4.5_react-native@0.80.0_@babel+core@7.25.2_@react-native-community+cl_bboejz5jniweovc74fwgcpfm4a/node_modules/@rnx-kit/react-native-host"
   ReactTestApp-DevSupport:
     :path: "../node_modules/react-native-test-app"
   RNCAsyncStorage:
@@ -2697,7 +2697,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 09181fe0fd96047d0eef4d9b7650f5003f9eab3d
   ReactCommon: 658874decaf8c4fd76cfa3a878b94a869db85b1c
   ReactNativeHost: a0fc42e49a8b063d14878e6a9515e948ddbb8cb2
-  ReactTestApp-DevSupport: bc5bc7f645b7bc18d2c9b6d4203e78d8ab634250
+  ReactTestApp-DevSupport: 03bb953a455731f2e36c3271e8a0aa3c1c4f3a9d
   RNCAsyncStorage: 767abb068db6ad28b5f59a129fbc9fab18b377e2
   RNScreens: 75074e642b69b086813a943bdf63da7085fb2166
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
