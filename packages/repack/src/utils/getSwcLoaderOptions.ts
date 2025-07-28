@@ -80,11 +80,6 @@ function getModuleOptions(
       };
 }
 
-function getSourceMapOptions() {
-  // disable picking up sourcemaps from dependencies
-  return false;
-}
-
 /**
  * Interface for {@link getSwcLoaderOptions} options.
  */
@@ -166,6 +161,5 @@ export function getSwcLoaderOptions({
       transform: getJSCTransformOptions(jsxRuntime, importSource),
     },
     module: getModuleOptions(disableImportExportTransform, lazyImports),
-    sourceMaps: getSourceMapOptions(),
   };
 }

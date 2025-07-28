@@ -85,15 +85,51 @@ export function getJsTransformRules(options?: GetJsTransformRulesOptions) {
       oneOf: [
         {
           test: /jsx?$/,
-          use: { loader: 'builtin:swc-loader', options: jsRules },
+          include: /node_modules/,
+          use: {
+            loader: 'builtin:swc-loader',
+            options: { ...jsRules, sourceMaps: false },
+          },
+        },
+        {
+          test: /jsx?$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'builtin:swc-loader',
+            options: { ...jsRules, sourceMaps: true },
+          },
         },
         {
           test: /ts$/,
-          use: { loader: 'builtin:swc-loader', options: tsRules },
+          include: /node_modules/,
+          use: {
+            loader: 'builtin:swc-loader',
+            options: { ...tsRules, sourceMaps: false },
+          },
+        },
+        {
+          test: /ts$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'builtin:swc-loader',
+            options: { ...tsRules, sourceMaps: true },
+          },
         },
         {
           test: /tsx$/,
-          use: { loader: 'builtin:swc-loader', options: tsxRules },
+          include: /node_modules/,
+          use: {
+            loader: 'builtin:swc-loader',
+            options: { ...tsxRules, sourceMaps: false },
+          },
+        },
+        {
+          test: /tsx$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'builtin:swc-loader',
+            options: { ...tsxRules, sourceMaps: true },
+          },
         },
       ],
     },
