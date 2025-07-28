@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android --appId com.testerapp",
+    "android": "react-native run-android --appId com.testerapp --no-packager",
     "android:release": "node ./scripts/release.js android",
-    "ios": "react-native run-ios",
+    "ios": "react-native run-ios --no-packager",
     "ios:release": "node ./scripts/release.js ios",
     "pods": "(cd ios && bundle install && (bundle exec pod install || bundle exec pod update))",
     "pods:update": "(cd ios && bundle install && bundle exec pod update)",

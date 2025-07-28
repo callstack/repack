@@ -14,8 +14,9 @@ import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getDevMiddleware,
   getMimeType,
-  parseFileUrl,
+  parseUrl,
   resetPersistentCache,
+  resolveProjectPath,
   runAdbReverse,
   setupInteractions,
 } from '../common/index.js';
@@ -44,12 +45,14 @@ export async function start(
     throw new CLIError(`Unrecognized platform: ${args.platform}`);
   }
 
+  const platforms = args.platform ? [args.platform] : detectedPlatforms;
+
   const configs = await makeCompilerConfig<Configuration>({
     args: args,
     bundler: 'webpack',
     command: 'start',
     rootDir: cliConfig.root,
-    platforms: args.platform ? [args.platform] : detectedPlatforms,
+    platforms: platforms,
     reactNativePath: cliConfig.reactNativePath,
   });
 
@@ -176,28 +179,32 @@ export async function start(
 
       return {
         compiler: {
-          getAsset: (filename, platform, sendProgress) => {
-            const parsedUrl = parseFileUrl(filename, 'file:///');
-            return compiler.getSource(
-              parsedUrl.filename,
-              platform,
-              sendProgress
-            );
+          getAsset: (url, platform, sendProgress) => {
+            const { resourcePath } = parseUrl(url, platforms);
+            return compiler.getSource(resourcePath, platform, sendProgress);
           },
-          getMimeType: (filename) => getMimeType(filename),
-          inferPlatform: (uri) => {
-            const { platform } = parseFileUrl(uri, 'file:///');
+          getMimeType: (filename) => {
+            return getMimeType(filename);
+          },
+          inferPlatform: (url) => {
+            const { platform } = parseUrl(url, platforms);
             return platform;
           },
         },
-        symbolicator: {
-          getSource: (fileUrl) => {
-            const { filename, platform } = parseFileUrl(fileUrl);
-            return compiler.getSource(filename, platform);
+        devTools: {
+          resolveProjectPath: (filepath) => {
+            return resolveProjectPath(filepath, cliConfig.root);
           },
-          getSourceMap: (fileUrl) => {
-            const { filename, platform } = parseFileUrl(fileUrl);
-            return compiler.getSourceMap(filename, platform);
+        },
+        symbolicator: {
+          getSource: (url) => {
+            let { resourcePath, platform } = parseUrl(url, platforms);
+            resourcePath = resolveProjectPath(resourcePath, cliConfig.root);
+            return compiler.getSource(resourcePath, platform);
+          },
+          getSourceMap: (url) => {
+            const { resourcePath, platform } = parseUrl(url, platforms);
+            return compiler.getSourceMap(resourcePath, platform);
           },
           shouldIncludeFrame: (frame) => {
             // If the frame points to internal bootstrap/module system logic, skip the code frame.

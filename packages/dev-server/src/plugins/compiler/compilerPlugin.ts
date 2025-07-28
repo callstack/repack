@@ -21,10 +21,10 @@ async function compilerPlugin(
       },
     },
     handler: async (request, reply) => {
-      const filename = (request.params as { '*'?: string })['*'];
+      const filepath = (request.params as { '*'?: string })['*'];
       let { platform } = request.query as { platform?: string };
 
-      if (!filename) {
+      if (!filepath) {
         // This technically should never happen - this route should not be called if file is missing.
         request.log.debug('File was not provided');
         return reply.notFound('File was not provided');
@@ -49,12 +49,12 @@ async function compilerPlugin(
 
       try {
         const asset = await delegate.compiler.getAsset(
-          filename,
+          filepath,
           platform,
           sendProgress
         );
         const mimeType = delegate.compiler.getMimeType(
-          filename,
+          filepath,
           platform,
           asset
         );

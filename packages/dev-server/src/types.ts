@@ -81,6 +81,9 @@ export namespace Server {
     /** A compiler delegate. */
     compiler: CompilerDelegate;
 
+    /** A DevTools delegate. */
+    devTools?: DevToolsDelegate;
+
     /** A symbolicator delegate. */
     symbolicator: SymbolicatorDelegate;
 
@@ -141,6 +144,19 @@ export namespace Server {
      * @param log An object with log data.
      */
     onMessage: (log: any) => void;
+  }
+
+  /**
+   * Delegate with implementation for dev tools functions.
+   */
+  export interface DevToolsDelegate {
+    /**
+     * Resolve the project filepath with [projectRoot] prefix.
+     *
+     * @param filepath The filepath to resolve.
+     * @returns The resolved project path.
+     */
+    resolveProjectPath: (filepath: string) => string;
   }
 
   /**
