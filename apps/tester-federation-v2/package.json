@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android --appId com.tester.federationV2",
-    "ios": "react-native run-ios",
+    "android": "react-native run-android --appId com.tester.federationV2 --no-packager",
+    "ios": "react-native run-ios --no-packager",
     "pods": "(cd ios && bundle install && (bundle exec pod install || bundle exec pod update))",
     "pods:update": "(cd ios && bundle install && bundle exec pod update)",
     "start:hostapp": "react-native webpack-start --config config.host-app.mts",
