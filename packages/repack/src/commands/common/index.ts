@@ -1,4 +1,5 @@
 export * from './adaptFilenameToPlatform.js';
+export * from './getDevMiddleware.js';
 export * from './getMimeType.js';
 export * from './runAdbReverse.js';
 export * from './parseFileUrl.js';

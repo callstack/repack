@@ -31,7 +31,6 @@
     "@babel/code-frame": "^7.26.2",
     "@fastify/middie": "^8.3.0",
     "@fastify/sensible": "^5.5.0",
-    "@react-native/dev-middleware": "^0.80.0",
     "fastify": "^4.24.3",
     "fastify-favicon": "^4.3.0",
     "fastify-plugin": "^4.5.1",
@@ -43,6 +42,7 @@
     "ws": "^8.18.1"
   },
   "devDependencies": {
+    "@react-native/dev-middleware": "^0.80.0",
     "@types/babel__code-frame": "^7.0.6",
     "@types/node": "catalog:",
     "@types/ws": "^8.18.0",
