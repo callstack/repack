@@ -16,7 +16,7 @@ export function parseUrl(url: string, platforms: string[], base = 'file:///') {
 
   if (!platform) {
     const [, platformOrName, name] = path.split('.').reverse();
-    if (name !== undefined) {
+    if (name !== undefined && platforms.includes(platformOrName)) {
       platform = platformOrName;
     }
   }
