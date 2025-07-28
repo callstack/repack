@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "pnpm@9.5.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "prepare": "is-in-ci || husky",
