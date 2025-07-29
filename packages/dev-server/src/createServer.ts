@@ -177,10 +177,14 @@ export async function createServer(config: Server.Config) {
     instance
   );
 
-  // Register any additional custom middlewares returned by the function
+  // Register middlewares
   finalMiddlewares.forEach((middleware) => {
     if (typeof middleware === 'object') {
-      instance.use(middleware.middleware);
+      if (middleware.path !== undefined) {
+        instance.use(middleware.path, middleware.middleware);
+      } else {
+        instance.use(middleware.middleware);
+      }
     } else {
       instance.use(middleware);
     }
