@@ -159,49 +159,32 @@ export async function createServer(config: Server.Config) {
     return payload;
   });
 
-  // Register dev middleware
-  instance.use(devMiddleware.middleware);
+  // Setup middlewares
+  // Expose built-in middlewares to setupMiddlewares
+  const builtInMiddlewares: Middleware[] = [
+    {
+      name: 'dev-middleware',
+      middleware: devMiddleware.middleware,
+    },
+    ...(proxyMiddlewares?.map((proxyMiddleware, index) => ({
+      name: `proxy-middleware-${index}`,
+      middleware: proxyMiddleware,
+    })) ?? []),
+  ];
 
-  // Register proxy middlewares
-  proxyMiddlewares?.forEach((proxyMiddleware) => {
-    instance.use(proxyMiddleware);
-  });
+  const finalMiddlewares = options.setupMiddlewares(
+    builtInMiddlewares,
+    instance
+  );
 
-  // Setup custom middlewares if provided
-  if (options.setupMiddlewares) {
-    // Create built-in middleware configs to expose to setupMiddlewares
-    const builtInMiddlewares: Middleware[] = [
-      {
-        name: 'dev-middleware',
-        middleware: devMiddleware.middleware,
-      },
-      ...(proxyMiddlewares?.map((proxyMiddleware, index) => ({
-        name: `proxy-middleware-${index}`,
-        middleware: proxyMiddleware,
-      })) ?? []),
-    ];
-
-    // Call the user's setupMiddlewares function
-    const customMiddlewares = options.setupMiddlewares(
-      builtInMiddlewares as any,
-      instance as any
-    );
-
-    // Register any additional custom middlewares returned by the function
-    if (Array.isArray(customMiddlewares)) {
-      customMiddlewares.forEach((middlewareConfig: any) => {
-        if (middlewareConfig && typeof middlewareConfig === 'object') {
-          if (middlewareConfig.path) {
-            instance.register(async (fastify) => {
-              fastify.use(middlewareConfig.path!, middlewareConfig.middleware);
-            });
-          } else if (middlewareConfig.middleware) {
-            instance.use(middlewareConfig.middleware);
-          }
-        }
-      });
+  // Register any additional custom middlewares returned by the function
+  finalMiddlewares.forEach((middleware) => {
+    if (typeof middleware === 'object') {
+      instance.use(middleware.middleware);
+    } else {
+      instance.use(middleware);
     }
-  }
+  });
 
   // Register routes
   instance.get('/', async () => delegate.messages.getHello());
