@@ -38,6 +38,13 @@ function normalizeProxyOptions(
   return undefined;
 }
 
+function normalizeSetupMiddlewares(
+  setupMiddlewares?: DevServerOptions['setupMiddlewares']
+) {
+  // create a passthrough function if no setupMiddlewares is provided
+  return setupMiddlewares ?? ((middlewares: Middleware[]) => middlewares);
+}
+
 export interface NormalizedOptions {
   host: string;
   port: number;
@@ -61,10 +68,7 @@ export function normalizeOptions(options: Server.Options): NormalizedOptions {
   const url = `${protocol}://${host}:${options.port}`;
 
   const proxy = normalizeProxyOptions(options.proxy, url);
-
-  // passthrough
-  const setupMiddlewares =
-    options.setupMiddlewares ?? ((middlewares: Middleware[]) => middlewares);
+  const setupMiddlewares = normalizeSetupMiddlewares(options.setupMiddlewares);
 
   return {
     // webpack dev server compatible options
