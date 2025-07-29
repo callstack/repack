@@ -11,6 +11,11 @@
     "collapsed": false
   },
   {
+    "type": "file",
+    "name": "dev-server",
+    "label": "DevServer"
+  },
+  {
     "type": "dir",
     "name": "runtime",
     "label": "Runtime client",

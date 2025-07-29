@@ -2,6 +2,21 @@
 
 Re.Pack 5 has it's own dev server that contain all features as Metro packager does, or even more in some cases.
 
+## Features
+
+Re.Pack's dev server supports both Rspack and webpack and provides essential development features:
+
+- **Hot Module Reloading**: Instantly reflects code changes in the app
+- **Source Maps**: Enables proper debugging with source code mapping
+- **Multiple Platforms**: Supports both iOS and Android development
+- **Development Tools**: Integrated with React Native DevTools
+
+:::tip Looking for DevServer configuration?
+
+For complete DevServer configuration options and API reference, check out the [DevServer API documentation](/api/dev-server.md).
+
+:::
+
 ## Usage
 
 To start the dev server, you can use the following command:
@@ -23,23 +38,13 @@ The command is started through the React Native Community CLI's `start` command,
 
 :::
 
-## Features
 
-Re.Pack's dev server supports both Rspack and webpack and provides essential development features:
-
-- **Fast Bundling**: Uses Rspack/webpack for efficient JavaScript bundling
-- **Hot Reloading**: Instantly reflects code changes in the app
-- **Source Maps**: Enables proper debugging with source code mapping
-- **Multiple Platforms**: Supports both iOS and Android development
-- **Module Federation**: Enables dynamic loading of remote modules
-- **Development Tools**: Integrated with React Native DevTools
-- **Asset Management**: Handles images, fonts and other assets
 
 ### Automatic ADB reverse
 
 Re.Pack automatically handles ADB reverse port forwarding for Android development. When starting the dev server, it will wait for devices to be connected (`adb wait-for-device`) and then automatically run `adb reverse` on all connected Android devices.
 
-## Keyboard shortcuts
+### Keyboard shortcuts
 
 You can use various keyboard shortcuts inside a terminal to interact with the dev server.
 
