@@ -8,6 +8,9 @@ export default Repack.defineRspackConfig((env) => {
     mode,
     context,
     entry: './src/mini/index.js',
+    experiments: {
+      parallelLoader: true,
+    },
     resolve: {
       ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
@@ -17,7 +20,21 @@ export default Repack.defineRspackConfig((env) => {
     },
     module: {
       rules: [
-        ...Repack.getJsTransformRules(),
+        ...Repack.getJsTransformRules({
+          flow: { enabled: false },
+          codegen: { enabled: false },
+        }),
+        {
+          test: /\.[cm]?[jt]sx?$/,
+          use: {
+            loader: '@callstack/repack/babel-loader',
+            parallel: true,
+            options: {
+              projectRoot: context,
+            },
+          },
+          type: 'javascript/auto',
+        },
         ...Repack.getAssetTransformRules({ inline: true }),
       ],
     },
