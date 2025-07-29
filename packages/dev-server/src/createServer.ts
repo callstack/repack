@@ -11,7 +11,7 @@ import faviconPlugin from './plugins/favicon/faviconPlugin.js';
 import multipartPlugin from './plugins/multipart/multipartPlugin.js';
 import symbolicatePlugin from './plugins/symbolicate/sybmolicatePlugin.js';
 import wssPlugin from './plugins/wss/wssPlugin.js';
-import { Internal, type Server } from './types.js';
+import { Internal, type Middleware, type Server } from './types.js';
 import { normalizeOptions } from './utils/normalizeOptions.js';
 
 /**
@@ -166,6 +166,42 @@ export async function createServer(config: Server.Config) {
   proxyMiddlewares?.forEach((proxyMiddleware) => {
     instance.use(proxyMiddleware);
   });
+
+  // Setup custom middlewares if provided
+  if (options.setupMiddlewares) {
+    // Create built-in middleware configs to expose to setupMiddlewares
+    const builtInMiddlewares: Middleware[] = [
+      {
+        name: 'dev-middleware',
+        middleware: devMiddleware.middleware,
+      },
+      ...(proxyMiddlewares?.map((proxyMiddleware, index) => ({
+        name: `proxy-middleware-${index}`,
+        middleware: proxyMiddleware,
+      })) ?? []),
+    ];
+
+    // Call the user's setupMiddlewares function
+    const customMiddlewares = options.setupMiddlewares(
+      builtInMiddlewares as any,
+      instance as any
+    );
+
+    // Register any additional custom middlewares returned by the function
+    if (Array.isArray(customMiddlewares)) {
+      customMiddlewares.forEach((middlewareConfig: any) => {
+        if (middlewareConfig && typeof middlewareConfig === 'object') {
+          if (middlewareConfig.path) {
+            instance.register(async (fastify) => {
+              fastify.use(middlewareConfig.path!, middlewareConfig.middleware);
+            });
+          } else if (middlewareConfig.middleware) {
+            instance.use(middlewareConfig.middleware);
+          }
+        }
+      });
+    }
+  }
 
   // Register routes
   instance.get('/', async () => delegate.messages.getHello());
