@@ -30,10 +30,13 @@ Re.Pack is particularly valuable in these scenarios:
 ### 1. **Microfrontends with Module Federation**
 Re.Pack provides first-class support for Module Federation, enabling you to build microfrontend architectures where different teams can develop and deploy parts of your mobile app independently.
 
-### 2. **High Customizability**
+### 2. **Advanced Tree Shaking**
+Leverage state-of-the-art tree shaking capabilities that can significantly reduce bundle size by eliminating unused code more effectively than Metro, helping you save valuable bytes in your final application bundle.
+
+### 3. **High Customizability**
 Access to the full Rspack/webpack ecosystem means extensive customization options through loaders, plugins, and advanced configuration. You can implement complex build requirements that aren't possible with Metro.
 
-### 3. **Build Performance**
+### 4. **Build Performance**
 Rspack's Rust-based architecture provides significant performance improvements for large codebases, especially when combined with advanced caching strategies.
 
 Re.Pack is designed for teams that need these advanced capabilities and have developers willing to familiarize themselves with alternative bundling tools.
