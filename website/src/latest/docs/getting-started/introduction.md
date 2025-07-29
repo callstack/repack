@@ -31,7 +31,7 @@ Re.Pack is particularly valuable in these scenarios:
 Re.Pack provides first-class support for Module Federation, enabling you to build microfrontend architectures where different teams can develop and deploy parts of your mobile app independently.
 
 ### 2. **High Customizability**
-Access to the full Rspack/Webpack ecosystem means extensive customization options through loaders, plugins, and advanced configuration. You can implement complex build requirements that aren't possible with Metro.
+Access to the full Rspack/webpack ecosystem means extensive customization options through loaders, plugins, and advanced configuration. You can implement complex build requirements that aren't possible with Metro.
 
 ### 3. **Build Performance**
 Rspack's Rust-based architecture provides significant performance improvements for large codebases, especially when combined with advanced caching strategies.
