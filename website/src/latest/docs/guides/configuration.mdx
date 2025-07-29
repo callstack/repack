@@ -275,28 +275,6 @@ output: {
 }
 ```
 
-### DevServer host
-
-The `devServer.host` option supports special values:
-
-| Value          | Resolves to   |
-| -------------- | ------------- |
-| `"local-ip"`   | `"localhost"` |
-| `"local-ipv4"` | `"127.0.0.1"` |
-| `"local-ipv6"` | `"::1"`       |
-
-```js
-// Your configuration
-devServer: {
-  host: "local-ip",
-}
-
-// Will be resolved to
-devServer: {
-  host: "localhost",
-}
-```
-
 ### Resolve extensions
 
 The `resolve.extensions` option supports the `[platform]` placeholder to enable platform-specific file resolution. This allows you to use platform-specific files like `MyComponent.ios.js` or `MyComponent.android.js`:

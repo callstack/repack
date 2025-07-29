@@ -27,10 +27,12 @@ export default {
 
 ### host
 
-- Type: `'local-ip' | 'local-ipv4' | 'local-ipv6' | string`
+- Type: `string`
 - Default: `'localhost'`
 
-Hostname or IP address under which to run the development server. Special values:
+Hostname or IP address under which to run the development server. 
+
+Supported special values:
 
 - `'local-ip'` - Listen on all available network interfaces
 - `'local-ipv4'` - Listen on local IPv4 address
