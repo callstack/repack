@@ -11,7 +11,7 @@ import faviconPlugin from './plugins/favicon/faviconPlugin.js';
 import multipartPlugin from './plugins/multipart/multipartPlugin.js';
 import symbolicatePlugin from './plugins/symbolicate/sybmolicatePlugin.js';
 import wssPlugin from './plugins/wss/wssPlugin.js';
-import { Internal, type Server } from './types.js';
+import { Internal, type Middleware, type Server } from './types.js';
 import { normalizeOptions } from './utils/normalizeOptions.js';
 
 /**
@@ -159,12 +159,35 @@ export async function createServer(config: Server.Config) {
     return payload;
   });
 
-  // Register dev middleware
-  instance.use(devMiddleware.middleware);
+  // Setup middlewares
+  // Expose built-in middlewares to setupMiddlewares
+  const builtInMiddlewares: Middleware[] = [
+    {
+      name: 'dev-middleware',
+      middleware: devMiddleware.middleware,
+    },
+    ...(proxyMiddlewares?.map((proxyMiddleware, index) => ({
+      name: `proxy-middleware-${index}`,
+      middleware: proxyMiddleware,
+    })) ?? []),
+  ];
 
-  // Register proxy middlewares
-  proxyMiddlewares?.forEach((proxyMiddleware) => {
-    instance.use(proxyMiddleware);
+  const finalMiddlewares = options.setupMiddlewares(
+    builtInMiddlewares,
+    instance
+  );
+
+  // Register middlewares
+  finalMiddlewares.forEach((middleware) => {
+    if (typeof middleware === 'object') {
+      if (middleware.path !== undefined) {
+        instance.use(middleware.path, middleware.middleware);
+      } else {
+        instance.use(middleware.middleware);
+      }
+    } else {
+      instance.use(middleware);
+    }
   });
 
   // Register routes
