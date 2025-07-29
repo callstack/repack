@@ -1,7 +1,7 @@
 import { Writable } from 'node:stream';
+import util from 'node:util';
 import middie from '@fastify/middie';
 import fastifySensible from '@fastify/sensible';
-import { createDevMiddleware } from '@react-native/dev-middleware';
 import Fastify from 'fastify';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import apiPlugin from './plugins/api/apiPlugin.js';
@@ -68,21 +68,32 @@ export async function createServer(config: Server.Config) {
 
   let handledDevMiddlewareNotice = false;
 
-  const devMiddleware = createDevMiddleware({
+  const devMiddleware = options.devMiddleware.createDevMiddleware({
     projectRoot: options.rootDir,
     serverBaseUrl: options.url,
     logger: {
-      error: instance.log.error,
-      warn: instance.log.warn,
-      info: (...message) => {
-        if (!handledDevMiddlewareNotice) {
-          if (message.join().includes('JavaScript logs have moved!')) {
-            handledDevMiddlewareNotice = true;
+      error: (...msg) => {
+        const message = util.format(...msg);
+        instance.log.error(message);
+      },
+      warn: (...msg) => {
+        const message = util.format(...msg);
+        instance.log.warn(message);
+      },
+      info: (...msg) => {
+        const message = util.format(...msg);
+        try {
+          if (!handledDevMiddlewareNotice) {
+            if (message.includes('JavaScript logs have moved!')) {
+              handledDevMiddlewareNotice = true;
+              return;
+            }
+          } else {
+            instance.log.debug(message);
             return;
           }
-        } else {
-          instance.log.debug(message);
-          return;
+        } catch (e) {
+          console.log(e);
         }
       },
     },
@@ -126,7 +137,7 @@ export async function createServer(config: Server.Config) {
     delegate,
   });
   await instance.register(devtoolsPlugin, {
-    rootDir: options.rootDir,
+    delegate,
   });
   await instance.register(symbolicatePlugin, {
     delegate,

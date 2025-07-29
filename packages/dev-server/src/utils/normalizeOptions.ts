@@ -1,4 +1,5 @@
 import type { ServerOptions as HttpsServerOptions } from 'node:https';
+import type * as DevMiddleware from '@react-native/dev-middleware';
 import type { Options as ProxyOptions } from 'http-proxy-middleware';
 import type { DevServerOptions, Server } from '../types.js';
 
@@ -40,6 +41,7 @@ export interface NormalizedOptions {
   proxy: ProxyOptions[] | undefined;
   url: string;
   disableRequestLogging: boolean;
+  devMiddleware: typeof DevMiddleware;
   rootDir: string;
 }
 
@@ -62,6 +64,8 @@ export function normalizeOptions(options: Server.Options): NormalizedOptions {
     hot,
     proxy,
     url,
+    // dev middleware
+    devMiddleware: options.devMiddleware,
     // fastify options
     disableRequestLogging: !options.logRequests,
     // project options

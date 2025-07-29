@@ -162,17 +162,23 @@ export class Symbolicator {
       };
     }
 
-    const lookup = consumer.originalPositionFor({
+    let lookup = consumer.originalPositionFor({
       line: frame.lineNumber,
       column: frame.column,
       bias: SourceMapConsumer.LEAST_UPPER_BOUND,
     });
 
-    // If lookup fails, we get the same shape object, but with
-    // all values set to null
     if (!lookup.source) {
-      // It is better to gracefully return the original frame
-      // than to throw an exception
+      // fallback to GREATEST_LOWER_BOUND
+      lookup = consumer.originalPositionFor({
+        line: frame.lineNumber,
+        column: frame.column,
+        bias: SourceMapConsumer.GREATEST_LOWER_BOUND,
+      });
+    }
+
+    // return the original frame when both lookups fail
+    if (!lookup.source) {
       return {
         ...frame,
         collapse: false,

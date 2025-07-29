@@ -1,4 +1,5 @@
 import type { ServerOptions as HttpsServerOptions } from 'node:https';
+import type * as DevMiddleware from '@react-native/dev-middleware';
 import type { FastifyBaseLogger } from 'fastify';
 import type { Options as ProxyOptions } from 'http-proxy-middleware';
 import type { CompilerDelegate } from './plugins/compiler/types.js';
@@ -68,6 +69,9 @@ export namespace Server {
 
     /** Whether to enable logging requests. */
     logRequests?: boolean;
+
+    /** `@react-native/dev-middleware` module. */
+    devMiddleware: typeof DevMiddleware;
   }
 
   /**
@@ -76,6 +80,9 @@ export namespace Server {
   export interface Delegate {
     /** A compiler delegate. */
     compiler: CompilerDelegate;
+
+    /** A DevTools delegate. */
+    devTools?: DevToolsDelegate;
 
     /** A symbolicator delegate. */
     symbolicator: SymbolicatorDelegate;
@@ -137,6 +144,19 @@ export namespace Server {
      * @param log An object with log data.
      */
     onMessage: (log: any) => void;
+  }
+
+  /**
+   * Delegate with implementation for dev tools functions.
+   */
+  export interface DevToolsDelegate {
+    /**
+     * Resolve the project filepath with [projectRoot] prefix.
+     *
+     * @param filepath The filepath to resolve.
+     * @returns The resolved project path.
+     */
+    resolveProjectPath: (filepath: string) => string;
   }
 
   /**

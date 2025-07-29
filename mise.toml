@@ -1,0 +1,4 @@
+[tools]
+node = "24"
+ruby = "3.3"
+java = "zulu-17"

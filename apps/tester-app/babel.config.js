@@ -4,6 +4,6 @@ module.exports = {
       '@babel/plugin-transform-react-jsx',
       { runtime: 'automatic', importSource: 'nativewind' },
     ],
-    'react-native-reanimated/plugin',
+    'react-native-worklets/plugin',
   ],
 };
