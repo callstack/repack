@@ -7,6 +7,7 @@
 [![mit licence][license-badge]][license]
 [![npm downloads][npm-downloads-badge]][npm-downloads]
 [![Chat][chat-badge]][chat]
+[![Twitter][twitter-badge]][twitter-url]
 [![PRs Welcome][prs-welcome-badge]][prs-welcome]
 
 </div>
@@ -43,3 +44,5 @@ Like the project? ⚛️ [Join the team](https://callstack.com/careers/?utm_camp
 [prs-welcome]: ./CONTRIBUTING.md
 [chat-badge]: https://img.shields.io/discord/426714625279524876.svg?style=for-the-badge
 [chat]: https://discord.gg/Q4yr2rTWYF
+[twitter-badge]: https://img.shields.io/twitter/follow/callstackio?style=for-the-badge
+[twitter-url]: https://x.com/callstackio
