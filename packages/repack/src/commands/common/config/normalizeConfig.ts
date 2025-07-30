@@ -1,5 +1,6 @@
 import { customizeArray, mergeWithCustomize } from 'webpack-merge';
 import type { ConfigurationObject } from '../../types.js';
+import { normalizeModuleRules } from '../normalizeModuleRules.js';
 
 function normalizeDevServerHost(host?: string): string | undefined {
   switch (host) {
@@ -51,8 +52,14 @@ function normalizeResolveExtensions(
 
 export function normalizeConfig<C extends ConfigurationObject>(
   config: C,
-  platform: string
+  options: {
+    bundler: 'rspack' | 'webpack';
+    platform: string;
+    rootDir: string;
+  }
 ): C {
+  const { bundler, platform, rootDir } = options;
+
   const normalizedConfig = {} as C;
 
   /* normalize compiler name to be equal to platform */
@@ -101,6 +108,16 @@ export function normalizeConfig<C extends ConfigurationObject>(
       ),
     };
   }
+
+  /* normalize module rules by expanding repack-loader configuration */
+  normalizedConfig.module = {
+    ...normalizedConfig.module,
+    rules: normalizeModuleRules(config.module.rules, {
+      bundler,
+      projectRoot: rootDir,
+      platform,
+    }),
+  };
 
   /* return the normalized config object */
   return mergeWithCustomize({

@@ -27,6 +27,7 @@ interface CustomOptions {
   enableBabelRCLookup?: boolean;
   extendsBabelConfigPath?: string;
   projectRoot: string;
+  babelConfig?: TransformOptions;
 }
 /**
  * Return a memoized function that checks for the existence of a
@@ -86,6 +87,22 @@ function buildBabelConfig(
   filename: string,
   options: CustomOptions
 ): TransformOptions {
+  // If a pre-computed babel config is provided, use it directly
+  if (options.babelConfig) {
+    const extraConfig: TransformOptions = {
+      code: true,
+      cwd: options.projectRoot,
+      filename,
+      highlightCode: true,
+      compact: false,
+      comments: true,
+      minified: false,
+    };
+
+    return { ...options.babelConfig, ...extraConfig };
+  }
+
+  // Otherwise, use the existing logic to load from project
   const babelRC = getBabelRC(options);
 
   const extraConfig: TransformOptions = {
@@ -151,6 +168,7 @@ export default function babelLoader(
         // this is currently broken in Rspack and needs to be fixed upstream
         // for now we can pass this as an option to loader
         projectRoot: options.projectRoot,
+        babelConfig: options.babelConfig,
       },
     });
     // @ts-ignore
