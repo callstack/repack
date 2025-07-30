@@ -1,10 +1,12 @@
-import { loadOptions } from '@babel/core';
-import type { RuleSetRule } from '@rspack/core';
 import {
-  analyzeBabelConfig,
-  filterTransformPlugins,
+  // type PluginItem,
+  type TransformOptions,
+  loadOptions,
+} from '@babel/core';
+import type { RuleSetRules } from '@rspack/core';
+import {
   generateLoaderChain,
-  separateBabelPlugins,
+  partitionTransforms,
 } from '../../utils/internal/index.js';
 
 export interface NormalizeModuleRulesOptions {
@@ -13,172 +15,97 @@ export interface NormalizeModuleRulesOptions {
   platform: string;
 }
 
-/**
- * Checks if a rule contains the repack-loader placeholder
- */
-function hasRepackLoader(rule: RuleSetRule): boolean {
-  if (!rule.use) return false;
-
-  const uses = Array.isArray(rule.use) ? rule.use : [rule.use];
-
-  return uses.some((use) => {
-    if (typeof use === 'string') {
-      return use === 'repack-loader';
-    }
-    if (typeof use === 'object' && use && 'loader' in use) {
-      return use.loader === 'repack-loader';
-    }
-    return false;
-  });
-}
-
-/**
- * Extracts babel config from the project
- */
-function getProjectBabelConfig(projectRoot: string) {
-  // Try to load babel config using Babel's config resolution
+function getProjectBabelConfig(projectRoot: string): TransformOptions {
   const babelConfig = loadOptions({
     cwd: projectRoot,
-    filename: `${projectRoot}/dummy.js`, // Dummy filename for config resolution
+    root: projectRoot,
   });
-
-  return babelConfig || {};
+  return babelConfig ?? {};
 }
 
-/**
- * Determines the syntax and jsx settings based on the rule test pattern
- */
-function determineSyntaxFromRule(rule: RuleSetRule): {
-  syntax: 'js' | 'ts';
-  jsx: boolean;
-} {
-  const test = rule.test;
+// type PluginItemWithName = PluginItem & { name: string };
 
-  if (!test) {
-    return { syntax: 'js', jsx: false };
-  }
+// function filterTransformPlugins(plugins: PluginItem[]) {
+//   return plugins.filter((plugin): plugin is PluginItemWithName => {
+//     if (typeof plugin === 'object' && 'name' in plugin) {
+//       return Boolean(plugin.name?.startsWith('transform-'));
+//     }
+//     return false;
+//   });
+// }
 
-  const testStr = test.toString();
-
-  // Check for TypeScript
-  const isTypeScript = testStr.includes('.ts') || testStr.includes('\\.ts');
-
-  // Check for JSX/TSX
-  const hasJsx =
-    testStr.includes('.jsx') ||
-    testStr.includes('.tsx') ||
-    testStr.includes('\\.jsx') ||
-    testStr.includes('\\.tsx');
-
-  return {
-    syntax: isTypeScript ? 'ts' : 'js',
-    jsx: hasJsx,
-  };
-}
-
-/**
- * Normalizes a single rule by replacing repack-loader with SWC + Babel chain
- */
-function normalizeRule(
-  rule: RuleSetRule,
-  options: NormalizeModuleRulesOptions
-): RuleSetRule {
-  if (!hasRepackLoader(rule)) {
-    return rule;
-  }
-
+function configureLoadersForRule(options: NormalizeModuleRulesOptions) {
   try {
-    // Get project babel configuration
     const babelConfig = getProjectBabelConfig(options.projectRoot);
+    // const transformPlugins = filterTransformPlugins(babelConfig.plugins ?? []);
 
-    // Analyze babel config to extract plugins
-    const analyzed = analyzeBabelConfig(babelConfig);
+    const { swcRules, babelRules } = partitionTransforms(
+      // @ts-ignore
+      babelConfig.plugins?.map((p) => p.key) ?? []
+    );
 
-    // Filter to only transform plugins
-    const transformPlugins = filterTransformPlugins(analyzed.plugins);
+    // console.log(swcRules, babelRules);
 
-    // Separate into SWC-compatible and Babel-only plugins
-    const separated = separateBabelPlugins(transformPlugins);
-
-    // Determine syntax from rule
-    const { syntax, jsx } = determineSyntaxFromRule(rule);
-
-    // Generate loader chain
+    // Generate loader chain for the rule.use field
     const loaderChain = generateLoaderChain({
       projectRoot: options.projectRoot,
-      swcCompatiblePlugins: separated.swcCompatible,
-      babelOnlyPlugins: separated.babelOnly,
-      originalBabelConfig: analyzed.originalConfig,
-      syntax,
-      jsx,
+      swcRules,
+      babelRules,
+      originalBabelConfig: babelConfig,
     });
 
-    // Replace the rule's use array
-    return {
-      ...rule,
-      use: loaderChain,
-    };
+    return loaderChain;
   } catch (error) {
+    // TODO why would we fail?
     console.warn(
       'Failed to normalize repack-loader, falling back to babel-loader:',
       error
     );
 
     // Fallback to just babel-loader
-    return {
-      ...rule,
-      use: [
-        {
-          loader: '@callstack/repack/babel-loader',
-          options: {
-            projectRoot: options.projectRoot,
-          },
-        },
-      ],
-    };
+    return [
+      {
+        loader: '@callstack/repack/babel-loader',
+        options: { projectRoot: options.projectRoot },
+      },
+    ];
   }
 }
 
-/**
- * Normalizes module rules by replacing repack-loader placeholders with SWC + Babel chains
- */
 export function normalizeModuleRules(
-  rules: (RuleSetRule | false | null | undefined | 0 | '')[] | undefined,
+  rules: RuleSetRules | undefined,
   options: NormalizeModuleRulesOptions
-): (RuleSetRule | false | null | undefined | 0 | '')[] | undefined {
-  if (!rules) return undefined;
+): RuleSetRules {
+  if (!rules) {
+    return [];
+  }
 
-  const normalizedRules: (RuleSetRule | false | null | undefined | 0 | '')[] =
-    [];
+  // skip swc for webpack for now
+  if (options.bundler === 'webpack') {
+    return rules;
+  }
 
-  for (const rule of rules) {
-    // Skip falsy values
-    if (!rule) {
-      normalizedRules.push(rule);
+  const normalizedRules: RuleSetRules = [...rules];
+  for (const rule of normalizedRules) {
+    if (!rule || typeof rule !== 'object') {
       continue;
     }
 
-    if (rule.oneOf) {
-      // Handle oneOf rules
-      const normalizedOneOf = rule.oneOf.map((r) =>
-        r ? normalizeRule(r, options) : r
-      );
-      normalizedRules.push({
-        ...rule,
-        oneOf: normalizedOneOf,
-      });
-    } else if (rule.rules) {
-      // Handle nested rules
-      const normalizedNested = normalizeModuleRules(rule.rules, options);
-      normalizedRules.push({
-        ...rule,
-        rules: normalizedNested,
-      });
-    } else {
-      // Handle regular rules
-      const normalized = normalizeRule(rule, options);
-      normalizedRules.push(normalized);
+    if ('use' in rule && rule.use !== undefined) {
+      if (typeof rule.use === 'string' && rule.use === 'repack-loader') {
+        rule.use = configureLoadersForRule(options);
+      } else if (
+        typeof rule.use === 'object' &&
+        'loader' in rule.use &&
+        rule.use.loader === 'repack-loader'
+      ) {
+        rule.use = undefined;
+        rule.rules = configureLoadersForRule(options);
+      }
+      // other cases unhandled for now
     }
+
+    // if ('loader' in rule && rule.loader === 'repack-loader') {
   }
 
   return normalizedRules;

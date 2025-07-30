@@ -20,18 +20,10 @@ export default Repack.defineRspackConfig((env) => {
     },
     module: {
       rules: [
-        ...Repack.getJsTransformRules({
-          flow: { enabled: false },
-          codegen: { enabled: false },
-        }),
         {
           test: /\.[cm]?[jt]sx?$/,
           use: {
-            loader: '@callstack/repack/babel-loader',
-            parallel: true,
-            options: {
-              projectRoot: context,
-            },
+            loader: 'repack-loader',
           },
           type: 'javascript/auto',
         },

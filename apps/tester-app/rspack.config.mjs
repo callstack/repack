@@ -31,19 +31,11 @@ export default Repack.defineRspackConfig((env) => {
     },
     module: {
       rules: [
-        ...Repack.getJsTransformRules({
-          swc: { importSource: 'nativewind' },
-          flow: { enabled: false },
-          codegen: { enabled: false },
-        }),
         {
           test: /\.[cm]?[jt]sx?$/,
           use: {
-            loader: '@callstack/repack/babel-loader',
+            loader: 'repack-loader',
             parallel: true,
-            options: {
-              projectRoot: context,
-            },
           },
           type: 'javascript/auto',
         },

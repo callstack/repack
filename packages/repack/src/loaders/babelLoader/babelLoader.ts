@@ -102,6 +102,7 @@ function buildBabelConfig(
     return { ...options.babelConfig, ...extraConfig };
   }
 
+  console.log('reading config??');
   // Otherwise, use the existing logic to load from project
   const babelRC = getBabelRC(options);
 
