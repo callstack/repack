@@ -2,9 +2,9 @@ const SWC_SUPPORTED_RULES = new Set([
   'transform-block-scoping',
   'transform-classes',
   'transform-class-static-block',
-  'transform-class-properties', // TODO: currently bugged in swc
+  // 'transform-class-properties', // TODO: currently bugged in swc
   'transform-private-property-in-object',
-  'transform-private-methods', // TODO: currently bugged in swc
+  // 'transform-private-methods', // TODO: currently bugged in swc
   'transform-destructuring',
   'transform-async-to-generator',
   'transform-async-generator-functions',

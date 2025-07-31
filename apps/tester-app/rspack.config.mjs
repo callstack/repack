@@ -35,7 +35,6 @@ export default Repack.defineRspackConfig((env) => {
           test: /\.[cm]?[jt]sx?$/,
           use: {
             loader: 'repack-loader',
-            parallel: true,
           },
           type: 'javascript/auto',
         },

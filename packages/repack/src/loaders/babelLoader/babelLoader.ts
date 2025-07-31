@@ -123,9 +123,9 @@ function buildBabelConfig(
     );
   }
 
-  babelConfig.plugins.forEach((plugin: any) => {
-    console.log(plugin.key);
-  });
+  // babelConfig.plugins.forEach((plugin: any) => {
+  //   console.log(plugin.key);
+  // });
 
   return babelConfig;
 }
