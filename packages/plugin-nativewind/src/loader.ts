@@ -23,6 +23,17 @@ export default function nativeWindLoader(
     const jsCss = cssToReactNativeRuntime(source, options);
     const code = dedent`
       import { StyleSheet } from "nativewind";
+      
+      const originalRegisterCompiled = StyleSheet.registerCompiled;
+      let rules = {}
+      
+      // Monkey patch StyleSheet.registerCompiled to merge rules across multiple MFE
+      StyleSheet.registerCompiled = (compiledStyles) => {
+        rules = Object.assign(compiledStyles.rules, rules);
+        compiledStyles.rules = rules;
+        return originalRegisterCompiled(compiledStyles)
+      }
+      
       StyleSheet.registerCompiled((${stringify(jsCss)}));
     `;
     callback(null, code);
