@@ -6,7 +6,7 @@ import {
 import type { RuleSetRules } from '@rspack/core';
 import {
   generateLoaderChain,
-  partitionTransforms,
+  getSupportedSwcTransforms,
 } from '../../utils/internal/index.js';
 
 export interface NormalizeModuleRulesOptions {
@@ -15,7 +15,21 @@ export interface NormalizeModuleRulesOptions {
   platform: string;
 }
 
-function getProjectBabelConfig(projectRoot: string): TransformOptions {
+interface BabelProjectConfig extends TransformOptions {
+  plugins?: {
+    key: string;
+    manipulateOptions: (() => void) | undefined;
+    post: (() => void) | undefined;
+    pre: (() => void) | undefined;
+    visitor: unknown;
+    parserOverride: unknown;
+    generatorOverride: undefined;
+    options: Record<string, any>;
+    externalDependencies: unknown[];
+  }[];
+}
+
+function getProjectBabelConfig(projectRoot: string): BabelProjectConfig {
   const babelConfig = loadOptions({
     cwd: projectRoot,
     root: projectRoot,
@@ -23,34 +37,18 @@ function getProjectBabelConfig(projectRoot: string): TransformOptions {
   return babelConfig ?? {};
 }
 
-// type PluginItemWithName = PluginItem & { name: string };
-
-// function filterTransformPlugins(plugins: PluginItem[]) {
-//   return plugins.filter((plugin): plugin is PluginItemWithName => {
-//     if (typeof plugin === 'object' && 'name' in plugin) {
-//       return Boolean(plugin.name?.startsWith('transform-'));
-//     }
-//     return false;
-//   });
-// }
-
 function configureLoadersForRule(options: NormalizeModuleRulesOptions) {
   try {
     const babelConfig = getProjectBabelConfig(options.projectRoot);
-    // const transformPlugins = filterTransformPlugins(babelConfig.plugins ?? []);
 
-    const { swcRules, babelRules } = partitionTransforms(
-      // @ts-ignore
+    const supportedSwcTransforms = getSupportedSwcTransforms(
       babelConfig.plugins?.map((p) => p.key) ?? []
     );
-
-    // console.log(swcRules, babelRules);
 
     // Generate loader chain for the rule.use field
     const loaderChain = generateLoaderChain({
       projectRoot: options.projectRoot,
-      swcRules,
-      babelRules,
+      swcRules: supportedSwcTransforms,
       originalBabelConfig: babelConfig,
     });
 
@@ -66,6 +64,7 @@ function configureLoadersForRule(options: NormalizeModuleRulesOptions) {
     return [
       {
         loader: '@callstack/repack/babel-loader',
+        parallel: true,
         options: { projectRoot: options.projectRoot },
       },
     ];
@@ -93,7 +92,8 @@ export function normalizeModuleRules(
 
     if ('use' in rule && rule.use !== undefined) {
       if (typeof rule.use === 'string' && rule.use === 'repack-loader') {
-        rule.use = configureLoadersForRule(options);
+        rule.use = undefined;
+        rule.rules = configureLoadersForRule(options);
       } else if (
         typeof rule.use === 'object' &&
         'loader' in rule.use &&

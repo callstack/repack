@@ -1,21 +1,19 @@
 import type { TransformOptions } from '@babel/core';
 import { getJsTransformRules } from '../getJsTransformRules.js';
-import type { RulePartitionResult } from './partitionTransforms.js';
 
 export interface LoaderEntry {
   loader: string;
+  parallel?: boolean;
   options?: any;
 }
 
 export interface GenerateLoaderChainOptions {
   projectRoot: string;
-  swcRules: RulePartitionResult['swcRules'];
-  babelRules: RulePartitionResult['babelRules'];
+  swcRules: string[];
   originalBabelConfig: TransformOptions;
 }
 
 function getSwcEnvironmentPreset(transforms: string[]) {
-  console.log(transforms);
   return {
     // disable all transforms (node supports everything)
     targets: { node: 24 },
@@ -27,8 +25,6 @@ function getSwcEnvironmentPreset(transforms: string[]) {
 export function generateLoaderChain({
   projectRoot,
   swcRules,
-  babelRules,
-  originalBabelConfig,
 }: GenerateLoaderChainOptions): LoaderEntry[] {
   const loaders: LoaderEntry[] = [];
 
@@ -41,6 +37,8 @@ export function generateLoaderChain({
     }).map((rule) => {
       const newRule = { ...rule };
       if ('oneOf' in rule && 'oneOf' in newRule) {
+        // @ts-ignore
+        newRule.test = undefined;
         newRule.oneOf = rule.oneOf.map((oneOfRule) => {
           if (oneOfRule.use.loader !== 'builtin:swc-loader') {
             return oneOfRule;
@@ -48,11 +46,19 @@ export function generateLoaderChain({
           const options = oneOfRule.use.options;
           oneOfRule.use.options = {
             ...options,
-            env: swcEnvPreset,
+            // @ts-ignore
+            env: { ...swcEnvPreset, forceAllTransforms: false },
             jsc: {
               ...options.jsc,
               assumptions: {
-                ...options.jsc.assumptions,
+                // nullish-coalescing-operator && optional-chaining loose mode
+                noDocumentAll: true,
+                // transform-class-properties loose mode
+                setPublicClassFields: true,
+                // object-rest-spread loose mode
+                setSpreadProperties: true,
+                // transform-private-methods loose mode
+                privateFieldsAsProperties: true,
               },
             },
           };
@@ -65,45 +71,31 @@ export function generateLoaderChain({
     loaders.push(...swcLoaderRules);
   }
 
-  const newBabelPlugins = originalBabelConfig.plugins
-    ?.filter(
-      // @ts-ignore
-      (plugin) => !swcRules.includes(plugin.key)
-    )
-    .filter(
-      (p) =>
-        ![
-          'transform-runtime',
-          'transform-react-jsx-self',
-          'transform-react-jsx-source',
-          'transform-modules-commonjs',
-          'transform-nullish-coalescing-operator',
-          'transform-logical-assignment-operators',
-          'transform-sticky-regex',
-          'transform-literals',
-          'transform-optional-catch-binding',
-          'transform-arrow-functions',
-          'transform-numeric-separator',
-          'transform-shorthand-properties',
-          'transform-react-jsx',
-          'transform-class-properties',
-          'proposal-export-default-from',
-          'transform-computed-properties',
-          // @ts-ignore
-        ].includes(p.key)
-    );
-
-  console.log(newBabelPlugins);
-  // Always add Babel loader (either with remaining plugins or full config)
-  // Create a new babel config with only the remaining plugins
-  const babelConfig: TransformOptions = {
-    ...originalBabelConfig,
-    plugins: newBabelPlugins,
-  };
+  const excludePlugins = [
+    ...swcRules,
+    // handled by swc jsc.externalHelpers
+    'transform-runtime',
+    // handled by swc jsc.transform.react.development
+    'transform-react-jsx-self',
+    'transform-react-jsx-source',
+    // handled by swc module.type
+    'transform-modules-commonjs',
+    // handled by swc jsc.transform.react.runtime
+    'transform-react-jsx',
+    // handled by swc jsc.parser.exportDefaultFrom
+    'proposal-export-default-from',
+    // handled by swc
+    'transform-typescript',
+  ];
 
   loaders.push({
-    loader: '@callstack/repack/babel-loader',
-    options: { projectRoot, babelConfig },
+    // @ts-ignore
+    type: 'javascript/auto',
+    use: {
+      loader: '@callstack/repack/babel-loader',
+      parallel: true,
+      options: { excludePlugins, projectRoot },
+    },
   });
 
   return loaders;

@@ -1,10 +1,9 @@
-import type { TransformOptions } from '@babel/core';
 import type { LoaderContext } from '@rspack/core';
 import type { validate } from 'schema-utils';
 
 export interface BabelLoaderOptions {
+  excludePlugins?: string[];
   projectRoot: string;
-  babelConfig?: TransformOptions;
 }
 
 type Schema = Parameters<typeof validate>[0];
@@ -13,8 +12,13 @@ export const optionsSchema: Schema = {
   type: 'object',
   required: ['projectRoot'],
   properties: {
-    projectRoot: { type: 'string' },
-    babelConfig: { type: 'object' },
+    projectRoot: {
+      type: 'string',
+    },
+    excludePlugins: {
+      type: 'array',
+      items: { type: 'string' },
+    },
   },
 };
 

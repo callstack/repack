@@ -3,6 +3,7 @@ import path from 'node:path';
 import {
   type Node,
   type TransformOptions,
+  loadOptions,
   parseSync,
   transformFromAstSync,
 } from '@babel/core';
@@ -11,7 +12,6 @@ import * as hermesParser from 'hermes-parser';
 
 import type { LoaderContext } from '@rspack/core';
 import { type BabelLoaderOptions, getOptions } from './options.js';
-import { repackBabelPreset } from './preset.js';
 
 export const raw = false;
 
@@ -26,15 +26,15 @@ function isTSXSource(fileName: string) {
 interface CustomOptions {
   enableBabelRCLookup?: boolean;
   extendsBabelConfigPath?: string;
+  excludePlugins?: string[];
   projectRoot: string;
-  babelConfig?: TransformOptions;
 }
 /**
  * Return a memoized function that checks for the existence of a
  * project level .babelrc file, and if it doesn't exist, reads the
  * default RN babelrc file and uses that.
  */
-const getBabelRC = (() => {
+const _getBabelRC = (() => {
   let babelRC: TransformOptions | null = null;
 
   return function _getBabelRC({
@@ -87,25 +87,6 @@ function buildBabelConfig(
   filename: string,
   options: CustomOptions
 ): TransformOptions {
-  // If a pre-computed babel config is provided, use it directly
-  if (options.babelConfig) {
-    const extraConfig: TransformOptions = {
-      code: true,
-      cwd: options.projectRoot,
-      filename,
-      highlightCode: true,
-      compact: false,
-      comments: true,
-      minified: false,
-    };
-
-    return { ...options.babelConfig, ...extraConfig };
-  }
-
-  console.log('reading config??');
-  // Otherwise, use the existing logic to load from project
-  const babelRC = getBabelRC(options);
-
   const extraConfig: TransformOptions = {
     babelrc: options.enableBabelRCLookup ?? true,
     code: true,
@@ -115,10 +96,38 @@ function buildBabelConfig(
     compact: false,
     comments: true,
     minified: false,
-    presets: [repackBabelPreset],
+    plugins: [],
   };
 
-  return { ...babelRC, ...extraConfig };
+  if (isTypeScriptSource(filename)) {
+    extraConfig.plugins!.push([
+      '@babel/plugin-syntax-typescript',
+      { isTSX: false, allowNamespaces: true },
+    ]);
+  }
+
+  if (isTSXSource(filename)) {
+    extraConfig.plugins!.push([
+      '@babel/plugin-syntax-typescript',
+      { isTSX: true, allowNamespaces: true },
+    ]);
+  }
+
+  const babelConfig = loadOptions(extraConfig) as any;
+
+  if (options.excludePlugins) {
+    babelConfig.plugins = babelConfig.plugins.filter(
+      (plugin: { key: string }) => {
+        return !options.excludePlugins!.includes(plugin.key);
+      }
+    );
+  }
+
+  babelConfig.plugins.forEach((plugin: any) => {
+    console.log(plugin.key);
+  });
+
+  return babelConfig;
 }
 
 const transform = ({
@@ -166,10 +175,10 @@ export default function babelLoader(
       src: source,
       options: {
         enableBabelRCLookup: true,
+        excludePlugins: options.excludePlugins,
         // this is currently broken in Rspack and needs to be fixed upstream
         // for now we can pass this as an option to loader
         projectRoot: options.projectRoot,
-        babelConfig: options.babelConfig,
       },
     });
     // @ts-ignore

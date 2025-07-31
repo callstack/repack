@@ -28,7 +28,7 @@ function getEnvironmentPreset() {
   };
 }
 
-function getCompilerAssumptions() {
+function getCompilerAssumptions(): Record<string, boolean> {
   return {
     // Loose mode for: transform-class-properties
     setPublicClassFields: true,

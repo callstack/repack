@@ -1,2 +1,2 @@
-export * from './partitionTransforms.js';
+export * from './getSupportedSwcTransforms.js';
 export * from './loaderChainGenerator.js';
