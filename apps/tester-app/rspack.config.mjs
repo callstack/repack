@@ -33,9 +33,7 @@ export default Repack.defineRspackConfig((env) => {
       rules: [
         {
           test: /\.[cm]?[jt]sx?$/,
-          use: {
-            loader: 'repack-loader',
-          },
+          use: 'repack-loader',
           type: 'javascript/auto',
         },
         {
