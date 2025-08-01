@@ -26,6 +26,7 @@ function isTSXSource(fileName: string) {
 interface CustomOptions {
   enableBabelRCLookup?: boolean;
   extendsBabelConfigPath?: string;
+  includePlugins?: Array<string | [string, Record<string, any>]>;
   excludePlugins?: string[];
   projectRoot: string;
 }
@@ -99,23 +100,16 @@ function buildBabelConfig(
     plugins: [],
   };
 
-  if (isTypeScriptSource(filename)) {
-    extraConfig.plugins!.push([
-      '@babel/plugin-syntax-typescript',
-      { isTSX: false, allowNamespaces: true },
-    ]);
+  if (options.includePlugins) {
+    extraConfig.plugins!.push(...options.includePlugins);
   }
 
-  if (isTSXSource(filename)) {
-    extraConfig.plugins!.push([
-      '@babel/plugin-syntax-typescript',
-      { isTSX: true, allowNamespaces: true },
-    ]);
+  const babelConfig = loadOptions(extraConfig);
+  if (!babelConfig) {
+    throw new Error('Failed to load babel config');
   }
 
-  const babelConfig = loadOptions(extraConfig) as any;
-
-  if (options.excludePlugins) {
+  if (options.excludePlugins && babelConfig.plugins) {
     babelConfig.plugins = babelConfig.plugins.filter(
       (plugin: { key: string }) => {
         return !options.excludePlugins!.includes(plugin.key);
@@ -123,14 +117,10 @@ function buildBabelConfig(
     );
   }
 
-  // babelConfig.plugins.forEach((plugin: any) => {
-  //   console.log(plugin.key);
-  // });
-
   return babelConfig;
 }
 
-const transform = ({
+export const transform = ({
   filename,
   options,
   src,

@@ -68,9 +68,7 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
   // normalize the configs
   const normalizedConfigs = configs.map((config, index) =>
     normalizeConfig(config, {
-      bundler: options.bundler,
       platform: options.platforms[index],
-      rootDir,
     })
   );
 

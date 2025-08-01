@@ -1,2 +1,1 @@
-export * from './getSupportedSwcTransforms.js';
-export * from './loaderChainGenerator.js';
+export * from './swc.js';
