@@ -65,6 +65,10 @@ class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManager
                     remoteLoader.prefetch(config, promise)
                 }
 
+                config.url.protocol == "file" -> {
+                    fileSystemLoader.prefetch(config, promise)
+                }
+
                 else -> {
                     promise.reject(
                             ScriptLoadingError.UnsupportedScheme.code,
