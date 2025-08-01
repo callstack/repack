@@ -33,7 +33,11 @@ export default Repack.defineRspackConfig((env) => {
       rules: [
         {
           test: /\.[cm]?[jt]sx?$/,
-          use: 'repack-loader',
+          use: {
+            loader: '@callstack/repack/hybrid-js-loader',
+            parallel: true,
+            options: {},
+          },
           type: 'javascript/auto',
         },
         {

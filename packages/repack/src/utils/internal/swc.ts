@@ -1,9 +1,4 @@
-import type {
-  SwcLoaderEsParserConfig,
-  SwcLoaderOptions,
-  SwcLoaderParserConfig,
-  SwcLoaderTsParserConfig,
-} from '@rspack/core';
+import type { SwcLoaderOptions } from '@rspack/core';
 
 const SWC_SUPPORTED_NORMAL_RULES = new Set([
   'transform-block-scoping',
@@ -28,8 +23,8 @@ const SWC_SUPPORTED_NORMAL_RULES = new Set([
 ]);
 
 const SWC_SUPPORTED_CONFIGURABLE_RULES = new Set([
-  'transform-class-properties',
-  'transform-private-methods',
+  // 'transform-class-properties',
+  // 'transform-private-methods',
   'transform-private-property-in-object',
   'transform-object-rest-spread',
   'transform-optional-chaining',
@@ -44,7 +39,6 @@ const SWC_SUPPORTED_CUSTOM_RULES = new Set([
   'transform-react-jsx',
   'transform-modules-commonjs',
   'proposal-export-default-from',
-  'transform-typescript',
 ]);
 
 function getTransformRuntimeConfig(
@@ -122,32 +116,17 @@ function getTransformModulesCommonjsConfig(
 function getTransformExportDefaultFromConfig(
   swcConfig: SwcLoaderOptions
 ): SwcLoaderOptions {
-  const parserConfig = ensureValidESParserConfig(swcConfig.jsc?.parser);
+  if (swcConfig.jsc?.parser?.syntax === 'typescript') {
+    return swcConfig;
+  }
   return {
     ...swcConfig,
     jsc: {
       ...swcConfig.jsc,
       parser: {
-        ...parserConfig,
+        ...swcConfig.jsc?.parser,
+        syntax: 'ecmascript',
         exportDefaultFrom: true,
-      },
-    },
-  };
-}
-
-function getTransformTypescriptConfig(
-  swcConfig: SwcLoaderOptions,
-  ruleConfig: Record<string, any> = { isTSX: false }
-): SwcLoaderOptions {
-  const parserConfig = ensureValidTSParserConfig(swcConfig.jsc?.parser);
-  return {
-    ...swcConfig,
-    jsc: {
-      ...swcConfig.jsc,
-      parser: {
-        ...parserConfig,
-        syntax: 'typescript',
-        tsx: ruleConfig.isTSX,
       },
     },
   };
@@ -262,26 +241,7 @@ const SWC_SUPPORTED_CUSTOM_RULES_MAP = {
   'transform-react-jsx-source': getTransformReactDevelopmentConfig,
   'transform-modules-commonjs': getTransformModulesCommonjsConfig,
   'proposal-export-default-from': getTransformExportDefaultFromConfig,
-  'transform-typescript': getTransformTypescriptConfig,
 };
-
-function ensureValidTSParserConfig(
-  parserConfig?: SwcLoaderParserConfig
-): SwcLoaderTsParserConfig {
-  if (parserConfig?.syntax !== 'typescript') {
-    return { syntax: 'typescript' };
-  }
-  return parserConfig;
-}
-
-function ensureValidESParserConfig(
-  parserConfig?: SwcLoaderParserConfig
-): SwcLoaderEsParserConfig {
-  if (parserConfig?.syntax !== 'ecmascript') {
-    return { syntax: 'ecmascript' };
-  }
-  return parserConfig;
-}
 
 export function getSupportedSwcNormalTransforms(
   transforms: [string, Record<string, any> | undefined][]
@@ -295,7 +255,9 @@ export function getSupportedSwcConfigurableTransforms(
   transforms: [string, Record<string, any> | undefined][],
   swcConfig: SwcLoaderOptions
 ) {
-  const transformNames = transforms.map(([transform]) => transform);
+  const transformNames = transforms
+    .filter(([transform]) => SWC_SUPPORTED_CONFIGURABLE_RULES.has(transform))
+    .map(([transform]) => transform);
   const finalSwcConfig = transforms
     .filter(([transform]) => SWC_SUPPORTED_CONFIGURABLE_RULES.has(transform))
     .reduce((config, [transform, transformConfig]) => {
@@ -312,7 +274,9 @@ export function getSupportedSwcCustomTransforms(
   transforms: [string, Record<string, any> | undefined][],
   swcConfig: SwcLoaderOptions
 ) {
-  const transformNames = transforms.map(([transform]) => transform);
+  const transformNames = transforms
+    .filter(([transform]) => SWC_SUPPORTED_CUSTOM_RULES.has(transform))
+    .map(([transform]) => transform);
   const finalSwcConfig = transforms
     .filter(([transform]) => SWC_SUPPORTED_CUSTOM_RULES.has(transform))
     .reduce((config, [transform, transformConfig]) => {

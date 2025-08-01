@@ -29,6 +29,7 @@ interface CustomOptions {
   includePlugins?: Array<string | [string, Record<string, any>]>;
   excludePlugins?: string[];
   projectRoot: string;
+  sourceMaps?: boolean;
 }
 /**
  * Return a memoized function that checks for the existence of a
@@ -132,6 +133,7 @@ export const transform = ({
   const builtConfig = buildBabelConfig(filename, options);
   const babelConfig: TransformOptions = {
     sourceType: 'unambiguous',
+    sourceMaps: options.sourceMaps,
     ...builtConfig,
     caller: { name: 'repack' },
     ast: false,
@@ -169,6 +171,7 @@ export default function babelLoader(
         // this is currently broken in Rspack and needs to be fixed upstream
         // for now we can pass this as an option to loader
         projectRoot: options.projectRoot,
+        sourceMaps: this.sourceMap,
       },
     });
     // @ts-ignore
