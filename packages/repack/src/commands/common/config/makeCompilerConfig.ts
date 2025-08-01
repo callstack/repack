@@ -67,7 +67,9 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
 
   // normalize the configs
   const normalizedConfigs = configs.map((config, index) =>
-    normalizeConfig(config, options.platforms[index])
+    normalizeConfig(config, {
+      platform: options.platforms[index],
+    })
   );
 
   const plugins = normalizedConfigs.flatMap((config) =>

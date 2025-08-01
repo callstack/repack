@@ -601,6 +601,9 @@ importers:
       gradient-string:
         specifier: ^2.0.2
         version: 2.0.2
+      hermes-parser:
+        specifier: ^0.28.1
+        version: 0.28.1
       image-size:
         specifier: ^1.1.1
         version: 1.1.1
@@ -662,6 +665,9 @@ importers:
       '@swc/helpers':
         specifier: 'catalog:'
         version: 0.5.17
+      '@types/babel__core':
+        specifier: ^7.20.5
+        version: 7.20.5
       '@types/dedent':
         specifier: ^0.7.0
         version: 0.7.2
@@ -6767,8 +6773,8 @@ packages:
     resolution: {integrity: sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==}
     engines: {node: '>= 0.8'}
 
-  react-devtools-core@6.1.1:
-    resolution: {integrity: sha512-TFo1MEnkqE6hzAbaztnyR5uLTMoz6wnEWwWBsCUzNt+sVXJycuRJdDqvL078M4/h65BI/YO5XWTaxZDWVsW0fw==}
+  react-devtools-core@6.1.5:
+    resolution: {integrity: sha512-ePrwPfxAnB+7hgnEr8vpKxL9cmnp7F322t8oqcPshbIQQhDKgFDW4tjhF2wjVbdXF9O/nyuy3sQWd9JGpiLPvA==}
 
   react-dom@19.1.0:
     resolution: {integrity: sha512-Xs1hdnE+DyKgeHJeJznQmYMIBG3TKIHJJT95Q58nHLSrElKlGQqDTR2HQ9fx5CN/Gk6Vh/kupBTDLU11/nDk/g==}
@@ -10374,7 +10380,7 @@ snapshots:
       fs-extra: 8.1.0
       graceful-fs: 4.2.11
       prompts: 2.4.2
-      semver: 7.6.3
+      semver: 7.7.2
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -15669,7 +15675,7 @@ snapshots:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
 
-  react-devtools-core@6.1.1:
+  react-devtools-core@6.1.5:
     dependencies:
       shell-quote: 1.8.1
       ws: 7.5.10
@@ -15807,11 +15813,11 @@ snapshots:
       pretty-format: 29.7.0
       promise: 8.3.0
       react: 19.1.0
-      react-devtools-core: 6.1.1
+      react-devtools-core: 6.1.5
       react-refresh: 0.14.2
       regenerator-runtime: 0.13.11
       scheduler: 0.26.0
-      semver: 7.6.3
+      semver: 7.7.2
       stacktrace-parser: 0.1.10
       whatwg-fetch: 3.6.20
       ws: 6.2.3
