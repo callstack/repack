@@ -11,7 +11,7 @@ export type RepackRspackConfigFn = (env: EnvOptions) => RepackRspackConfig;
 
 export type RepackRspackConfigAsyncFn = (
   env: EnvOptions
-) => Promise<RspackConfiguration>;
+) => Promise<RepackRspackConfig>;
 
 export type RepackRspackConfigExport =
   | RepackRspackConfig
