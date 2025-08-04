@@ -1,98 +1,34 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import {
-  type Node,
+  type ParseResult,
   type TransformOptions,
   loadOptions,
   parseSync,
   transformFromAstSync,
 } from '@babel/core';
-// @ts-ignore
-import * as hermesParser from 'hermes-parser';
 
 import type { LoaderContext } from '@rspack/core';
 import { type BabelLoaderOptions, getOptions } from './options.js';
+import { isTSXSource, isTypeScriptSource, loadHermesParser } from './utils.js';
 
 export const raw = false;
 
-function isTypeScriptSource(fileName: string) {
-  return !!fileName && fileName.endsWith('.ts');
-}
-
-function isTSXSource(fileName: string) {
-  return !!fileName && fileName.endsWith('.tsx');
-}
-
-interface CustomOptions {
-  enableBabelRCLookup?: boolean;
-  extendsBabelConfigPath?: string;
-  includePlugins?: Array<string | [string, Record<string, any>]>;
-  excludePlugins?: string[];
+interface CustomTransformOptions {
+  caller: { name: string };
   projectRoot: string;
   sourceMaps?: boolean;
+  includePlugins?: Array<string | [string, Record<string, any>]>;
+  excludePlugins?: string[];
 }
-/**
- * Return a memoized function that checks for the existence of a
- * project level .babelrc file, and if it doesn't exist, reads the
- * default RN babelrc file and uses that.
- */
-const _getBabelRC = (() => {
-  let babelRC: TransformOptions | null = null;
-
-  return function _getBabelRC({
-    projectRoot,
-    extendsBabelConfigPath,
-  }: CustomOptions) {
-    if (babelRC != null) {
-      return babelRC;
-    }
-
-    babelRC = {
-      plugins: [],
-      extends: extendsBabelConfigPath,
-    };
-
-    if (extendsBabelConfigPath) {
-      return babelRC;
-    }
-
-    // Let's look for a babel config file in the project root.
-    let projectBabelRCPath: string | undefined;
-
-    // .babelrc
-    if (projectRoot) {
-      projectBabelRCPath = path.resolve(projectRoot, '.babelrc');
-    }
-
-    if (projectBabelRCPath) {
-      // .babelrc.js
-      if (!fs.existsSync(projectBabelRCPath)) {
-        projectBabelRCPath = path.resolve(projectRoot, '.babelrc.js');
-      }
-
-      // babel.config.js
-      if (!fs.existsSync(projectBabelRCPath)) {
-        projectBabelRCPath = path.resolve(projectRoot, 'babel.config.js');
-      }
-
-      // If we found a babel config file, extend our config off of it
-      if (fs.existsSync(projectBabelRCPath)) {
-        babelRC.extends = projectBabelRCPath;
-      }
-    }
-
-    return babelRC;
-  };
-})();
 
 function buildBabelConfig(
   filename: string,
-  options: CustomOptions
+  options: CustomTransformOptions
 ): TransformOptions {
   const extraConfig: TransformOptions = {
-    babelrc: options.enableBabelRCLookup ?? true,
+    babelrc: true,
     code: true,
     cwd: options.projectRoot,
+    root: options.projectRoot,
     filename,
     highlightCode: true,
     compact: false,
@@ -121,26 +57,29 @@ function buildBabelConfig(
   return babelConfig;
 }
 
-export const transform = ({
+export const transform = async ({
   filename,
   options,
   src,
 }: {
   filename: string;
-  options: CustomOptions;
+  options: CustomTransformOptions;
   src: string;
 }) => {
   const builtConfig = buildBabelConfig(filename, options);
   const babelConfig: TransformOptions = {
+    caller: options.caller,
     sourceType: 'unambiguous',
     sourceMaps: options.sourceMaps,
     ...builtConfig,
-    caller: { name: 'repack' },
     ast: false,
     cloneInputAst: false,
   };
 
-  const sourceAst: Node =
+  // load hermes parser dynamically to match the version from preset
+  const hermesParser = await loadHermesParser(options.projectRoot);
+
+  const sourceAst: ParseResult | null =
     isTypeScriptSource(filename) || isTSXSource(filename)
       ? parseSync(src, babelConfig)
       : hermesParser.parse(src, {
@@ -150,10 +89,10 @@ export const transform = ({
           sourceType: babelConfig.sourceType,
         });
 
-  return transformFromAstSync(sourceAst, src, babelConfig);
+  return transformFromAstSync(sourceAst!, src, babelConfig);
 };
 
-export default function babelLoader(
+export default async function babelLoader(
   this: LoaderContext<BabelLoaderOptions>,
   source: string
 ) {
@@ -166,7 +105,7 @@ export default function babelLoader(
       filename: this.resourcePath,
       src: source,
       options: {
-        enableBabelRCLookup: true,
+        caller: { name: '@callstack/repack/babel-loader' },
         excludePlugins: options.excludePlugins,
         // this is currently broken in Rspack and needs to be fixed upstream
         // for now we can pass this as an option to loader

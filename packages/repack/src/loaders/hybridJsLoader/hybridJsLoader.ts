@@ -23,7 +23,7 @@ const swc = rspack.experiments.swc;
 
 export const raw = false;
 
-export default function hybridJsLoader(
+export default async function hybridJsLoader(
   this: LoaderContext<HybridJsLoaderOptions>,
   source: string
 ) {
@@ -85,15 +85,15 @@ export default function hybridJsLoader(
     ...customTransforms,
   ];
 
-  const babelResult = transform({
+  const babelResult = await transform({
     filename: this.resourcePath,
     src: source,
     options: {
-      enableBabelRCLookup: true,
-      excludePlugins: excludeBabelPlugins,
-      includePlugins: includeBabelPlugins,
+      caller: { name: '@callstack/repack/hybrid-js-loader' },
       projectRoot: projectRoot,
       sourceMaps: this.sourceMap,
+      excludePlugins: excludeBabelPlugins,
+      includePlugins: includeBabelPlugins,
     },
   });
 
