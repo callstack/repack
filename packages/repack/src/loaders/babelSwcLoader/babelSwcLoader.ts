@@ -5,7 +5,6 @@ import {
   getSupportedSwcNormalTransforms,
 } from '../../utils/internal/index.js';
 import { transform } from '../babelLoader/index.js';
-import type { BabelSwcLoaderOptions } from './options.js';
 import {
   getProjectBabelConfig,
   getSwcParserConfig,
@@ -17,6 +16,12 @@ import {
 
 type BabelTransform = [string, Record<string, any> | undefined];
 type Swc = typeof import('@rspack/core').experiments.swc;
+
+export interface BabelSwcLoaderOptions {
+  hideParallelModeWarning?: boolean;
+  lazyImports?: boolean | string[];
+  projectRoot?: string;
+}
 
 export const raw = false;
 
@@ -138,7 +143,7 @@ export default async function babelSwcLoader(
   const babelResult = await transform(source, {
     caller: { name: loaderName },
     filename: this.resourcePath,
-    root: projectRoot,
+    root: projectRoot ?? babelConfig.root,
     sourceMaps: this.sourceMap,
     excludePlugins: supportedSwcTransforms,
     includePlugins: includeBabelPlugins,
@@ -165,7 +170,7 @@ export default async function babelSwcLoader(
     filename: this.resourcePath,
     configFile: false,
     swcrc: false,
-    root: projectRoot,
+    root: projectRoot ?? babelConfig.root ?? undefined,
     minify: false,
     sourceMaps: this.sourceMap,
     // TODO potentially optimize with fast-stringify

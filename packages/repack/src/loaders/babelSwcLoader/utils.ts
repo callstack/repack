@@ -18,11 +18,8 @@ export function isJSXSource(fileName: string) {
   return !!fileName && fileName.endsWith('.jsx');
 }
 
-export function getProjectBabelConfig(projectRoot: string) {
-  const babelConfig = loadOptions({
-    cwd: projectRoot,
-    root: projectRoot,
-  });
+export function getProjectBabelConfig(projectRoot?: string) {
+  const babelConfig = loadOptions({ cwd: projectRoot, root: projectRoot });
   return babelConfig ?? {};
 }
 
