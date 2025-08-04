@@ -67,8 +67,7 @@ type ConfigKeys =
   | 'entry'
   | 'optimization'
   | 'output'
-  | 'resolve'
-  | 'module';
+  | 'resolve';
 
 export type ConfigurationObject = Partial<Record<ConfigKeys, any>>;
 

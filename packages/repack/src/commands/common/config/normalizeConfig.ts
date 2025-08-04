@@ -51,10 +51,8 @@ function normalizeResolveExtensions(
 
 export function normalizeConfig<C extends ConfigurationObject>(
   config: C,
-  options: { platform: string }
+  platform: string
 ): C {
-  const { platform } = options;
-
   const normalizedConfig = {} as C;
 
   /* normalize compiler name to be equal to platform */
