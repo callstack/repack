@@ -85,16 +85,13 @@ export default async function hybridJsLoader(
     ...customTransforms,
   ];
 
-  const babelResult = await transform({
+  const babelResult = await transform(source, {
+    caller: { name: '@callstack/repack/hybrid-js-loader' },
     filename: this.resourcePath,
-    src: source,
-    options: {
-      caller: { name: '@callstack/repack/hybrid-js-loader' },
-      projectRoot: projectRoot,
-      sourceMaps: this.sourceMap,
-      excludePlugins: excludeBabelPlugins,
-      includePlugins: includeBabelPlugins,
-    },
+    root: projectRoot,
+    sourceMaps: this.sourceMap,
+    excludePlugins: excludeBabelPlugins,
+    includePlugins: includeBabelPlugins,
   });
 
   const finalSwcConfig: SwcLoaderOptions = {
