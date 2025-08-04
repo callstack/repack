@@ -5,6 +5,10 @@ interface ReanimatedLoaderOptions {
   babelPlugins?: string[];
 }
 
+interface ReanimatedLoaderData {
+  skip?: boolean;
+}
+
 // Reference: https://github.com/software-mansion/react-native-reanimated/blob/3.16.3/packages/react-native-reanimated/plugin/src/autoworkletization.ts#L19-L59
 const REANIMATED_AUTOWORKLETIZATION_KEYWORDS = [
   'worklet',
@@ -39,7 +43,8 @@ export default function reanimatedLoader(
   const callback = this.async();
   const options = this.getOptions();
 
-  if (!REANIMATED_REGEX.test(source)) {
+  const loaderData = this.data as ReanimatedLoaderData;
+  if (loaderData.skip || !REANIMATED_REGEX.test(source)) {
     callback(null, source);
     return;
   }
@@ -67,4 +72,25 @@ export default function reanimatedLoader(
       return;
     }
   );
+}
+
+// resolve the path to the hybrid-js-loader once
+const hybridJsLoaderPath = require.resolve(
+  '@callstack/repack/hybrid-js-loader'
+);
+
+export function pitch(
+  this: LoaderContext<ReanimatedLoaderOptions>,
+  _remainingRequest: string,
+  _previousRequest: string,
+  data: ReanimatedLoaderData
+) {
+  for (const loader of this.loaders) {
+    // if the hybrid-js-loader is found, we skip the reanimated loader
+    // since hybrid-js-loader is more performant and uses the official
+    // babel plugin directly
+    if (loader.path === hybridJsLoaderPath) {
+      data.skip = true;
+    }
+  }
 }
