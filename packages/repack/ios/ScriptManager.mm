@@ -114,7 +114,10 @@ RCT_EXPORT_METHOD(prefetchScript
                  resolve(nil);
                }
              }];
-      } else {
+      } else if ([[config.url scheme] isEqualToString:@"file"]) {
+        [self executeFromFilesystem:config resolve:resolve reject:reject];
+      }
+      else {
         reject(
             UnsupportedScheme,
             [NSString stringWithFormat:@"Scheme in URL '%@' is not supported", config.url.absoluteString],
