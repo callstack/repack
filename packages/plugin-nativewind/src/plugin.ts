@@ -151,6 +151,8 @@ export class NativeWindPlugin {
      * Second, we need to configure the `builtin:swc-loader` to properly handle NativeWind's JSX transformations.
      * We look for any instances of the `builtin:swc-loader` in the Rspack configuration and modify their options
      * to include the NativeWind react import source.
+     *
+     * TODO made obsolete by the new hybrid loader, remove in 6.0
      */
     compiler.options.module.rules.forEach((rule) => {
       if (!rule || typeof rule !== 'object') {
