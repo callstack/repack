@@ -1,4 +1,5 @@
 export interface BabelSwcLoaderOptions {
+  hideParallelModeWarning?: boolean;
   lazyImports?: boolean | string[];
   projectRoot: string;
 }

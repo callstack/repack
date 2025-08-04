@@ -77,7 +77,9 @@ const disabledParalleModeWarning = [
   'You have enabled `experiments.parallelLoader` but forgot to enable it for this loader.',
   'To enable parallel mode for this loader you need to add `parallel: true` to the loader rule.',
   'See how to do it in the official Rspack docs:',
-  'https://rspack.rs/config/experiments#experimentsparallelloader',
+  'https://rspack.rs/config/experiments#experimentsparallelloader.',
+  'If this is intentional, you can disable this warning',
+  'by setting `hideParallelModeWarning` in the loader options.',
 ].join(' ');
 
 let parallelModeWarningDisplayed = false;
@@ -92,11 +94,10 @@ export default async function babelSwcLoader(
   const logger = this.getLogger('BabelSwcLoader');
   const options = this.getOptions();
 
-  this._compiler;
-
   if (
     isParallelModeAvailable(this._compiler) &&
-    !parallelModeWarningDisplayed
+    !parallelModeWarningDisplayed &&
+    !options.hideParallelModeWarning
   ) {
     logger.warn(disabledParalleModeWarning);
     parallelModeWarningDisplayed = true;
