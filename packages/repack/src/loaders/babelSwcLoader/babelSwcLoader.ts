@@ -5,7 +5,7 @@ import {
   getSupportedSwcNormalTransforms,
 } from '../../utils/internal/index.js';
 import { transform } from '../babelLoader/index.js';
-import type { HybridJsLoaderOptions } from './options.js';
+import type { BabelSwcLoaderOptions } from './options.js';
 import {
   getProjectBabelConfig,
   getSwcParserConfig,
@@ -72,8 +72,8 @@ function partitionTransforms(
   return { includedSwcTransforms, supportedSwcTransforms, swcConfig };
 }
 
-export default async function hybridJsLoader(
-  this: LoaderContext<HybridJsLoaderOptions>,
+export default async function babelSwcLoader(
+  this: LoaderContext<BabelSwcLoaderOptions>,
   source: string
 ) {
   this.cacheable();
@@ -93,7 +93,7 @@ export default async function hybridJsLoader(
   // if swc is not available, use babel to transform everything
   if (!swc) {
     const { code, map } = await transform(source, {
-      caller: { name: '@callstack/repack/hybrid-js-loader' },
+      caller: { name: '@callstack/repack/babel-swc-loader' },
       filename: this.resourcePath,
       root: projectRoot,
       sourceMaps: this.sourceMap,
@@ -111,7 +111,7 @@ export default async function hybridJsLoader(
     partitionTransforms(filename, babelTransforms);
 
   const babelResult = await transform(source, {
-    caller: { name: '@callstack/repack/hybrid-js-loader' },
+    caller: { name: '@callstack/repack/babel-swc-loader' },
     filename: this.resourcePath,
     root: projectRoot,
     sourceMaps: this.sourceMap,
@@ -136,18 +136,17 @@ export default async function hybridJsLoader(
 
   const swcResult = swc.transformSync(babelResult?.code!, {
     ...finalSwcConfig,
+    caller: { name: '@callstack/repack/babel-swc-loader' },
     filename: this.resourcePath,
+    configFile: false,
+    swcrc: false,
     root: projectRoot,
+    minify: false,
     sourceMaps: this.sourceMap,
     // TODO potentially optimize with fast-stringify
     inputSourceMap: JSON.stringify(babelResult?.map),
-    // TODO is this needed?
     sourceRoot: babelResult?.map?.sourceRoot,
     sourceFileName: babelResult?.map?.file,
-    minify: false,
-    configFile: false,
-    swcrc: false,
-    caller: { name: 'repack-hybrid-js-loader' },
   });
 
   callback(null, swcResult?.code, swcResult?.map);

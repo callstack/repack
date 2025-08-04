@@ -23,7 +23,7 @@ export default Repack.defineRspackConfig((env) => {
         {
           test: /\.[cm]?[jt]sx?$/,
           use: {
-            loader: '@callstack/repack/hybrid-js-loader',
+            loader: '@callstack/repack/babel-swc-loader',
             parallel: true,
             options: { projectRoot: context },
           },

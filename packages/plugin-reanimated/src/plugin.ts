@@ -19,7 +19,7 @@ export class ReanimatedPlugin {
     const reanimatedVersion = this.getReanimatedVersion(reanimatedPath);
 
     // add rules for transpiling wih reanimated loader
-    // TODO made obsolete by the new hybrid loader, remove in 6.0
+    // TODO made obsolete by the new babel-swc-loader, remove in 6.0
     compiler.options.module.rules.push(
       reanimatedVersion.major < 4
         ? reanimated3ModuleRules

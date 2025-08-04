@@ -11,8 +11,8 @@
     "./commands/*": "./commands/*.js",
     "./assets-loader": "./dist/loaders/assetsLoader/index.js",
     "./babel-loader": "./dist/loaders/babelLoader/index.js",
+    "./babel-swc-loader": "./dist/loaders/babelSwcLoader/index.js",
     "./flow-loader": "./dist/loaders/flowLoader/index.js",
-    "./hybrid-js-loader": "./dist/loaders/hybridJsLoader/index.js",
     "./react-refresh-loader": "./dist/loaders/reactRefreshLoader/index.js",
     "./mf/*": "./mf/*.js",
     "./package.json": "./package.json"

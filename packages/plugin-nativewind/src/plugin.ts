@@ -152,7 +152,7 @@ export class NativeWindPlugin {
      * We look for any instances of the `builtin:swc-loader` in the Rspack configuration and modify their options
      * to include the NativeWind react import source.
      *
-     * TODO made obsolete by the new hybrid loader, remove in 6.0
+     * TODO made obsolete by the new babel-swc-loader, remove in 6.0
      */
     compiler.options.module.rules.forEach((rule) => {
       if (!rule || typeof rule !== 'object') {

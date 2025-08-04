@@ -74,10 +74,8 @@ export default function reanimatedLoader(
   );
 }
 
-// resolve the path to the hybrid-js-loader once
-const hybridJsLoaderPath = require.resolve(
-  '@callstack/repack/hybrid-js-loader'
-);
+// resolve the path to the babel-swc-loader once
+const babelSwcLoader = require.resolve('@callstack/repack/babel-swc-loader');
 
 export function pitch(
   this: LoaderContext<ReanimatedLoaderOptions>,
@@ -86,10 +84,10 @@ export function pitch(
   data: ReanimatedLoaderData
 ) {
   for (const loader of this.loaders) {
-    // if the hybrid-js-loader is found, we skip the reanimated loader
-    // since hybrid-js-loader is more performant and uses the official
+    // if the babel-swc-loader is found, we skip the reanimated-loader
+    // since babel-swc-loader is more performant and uses the official
     // babel plugin directly
-    if (loader.path === hybridJsLoaderPath) {
+    if (loader.path === babelSwcLoader) {
       data.skip = true;
     }
   }
