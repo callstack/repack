@@ -51,10 +51,7 @@ export default Repack.defineWebpackConfig((env) => {
       rules: [
         {
           test: /\.[cm]?[jt]sx?$/,
-          use: {
-            loader: '@callstack/repack/babel-swc-loader',
-            options: {},
-          },
+          use: '@callstack/repack/babel-swc-loader',
           type: 'javascript/auto',
         },
         {

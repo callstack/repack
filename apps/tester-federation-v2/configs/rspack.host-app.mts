@@ -25,7 +25,7 @@ export default Repack.defineRspackConfig((env) => {
           use: {
             loader: '@callstack/repack/babel-swc-loader',
             parallel: true,
-            options: { projectRoot: context },
+            options: {},
           },
           type: 'javascript/auto',
         },
