@@ -1,5 +1,4 @@
 import {
-  type ParseResult,
   type TransformOptions,
   loadOptions,
   parseSync,
@@ -7,41 +6,41 @@ import {
 } from '@babel/core';
 
 import type { LoaderContext } from '@rspack/core';
-import { type BabelLoaderOptions, getOptions } from './options.js';
 import { isTSXSource, isTypeScriptSource, loadHermesParser } from './utils.js';
 
 export const raw = false;
 
-interface CustomTransformOptions {
-  caller: { name: string };
-  projectRoot: string;
-  sourceMaps?: boolean;
+interface BabelLoaderOptions extends TransformOptions {}
+
+interface CustomTransformOptions extends TransformOptions {
   includePlugins?: Array<string | [string, Record<string, any>]>;
   excludePlugins?: string[];
 }
 
-function buildBabelConfig(
-  filename: string,
-  options: CustomTransformOptions
-): TransformOptions {
-  const extraConfig: TransformOptions = {
+function buildBabelConfig(options: CustomTransformOptions): TransformOptions {
+  const { includePlugins, excludePlugins, ...otherOptions } = options;
+
+  const config: TransformOptions = {
     babelrc: true,
-    code: true,
-    cwd: options.projectRoot,
-    root: options.projectRoot,
-    filename,
     highlightCode: true,
-    compact: false,
     comments: true,
-    minified: false,
     plugins: [],
+    sourceType: 'unambiguous',
+    ...otherOptions,
+    // output settings
+    ast: false,
+    code: true,
+    cloneInputAst: false,
+    // disable optimization through babel
+    compact: false,
+    minified: false,
   };
 
   if (options.includePlugins) {
-    extraConfig.plugins!.push(...options.includePlugins);
+    config.plugins!.push(...options.includePlugins);
   }
 
-  const babelConfig = loadOptions(extraConfig);
+  const babelConfig = loadOptions(config);
   if (!babelConfig) {
     throw new Error('Failed to load babel config');
   }
@@ -57,30 +56,18 @@ function buildBabelConfig(
   return babelConfig;
 }
 
-export const transform = async ({
-  filename,
-  options,
-  src,
-}: {
-  filename: string;
-  options: CustomTransformOptions;
-  src: string;
-}) => {
-  const builtConfig = buildBabelConfig(filename, options);
-  const babelConfig: TransformOptions = {
-    caller: options.caller,
-    sourceType: 'unambiguous',
-    sourceMaps: options.sourceMaps,
-    ...builtConfig,
-    ast: false,
-    cloneInputAst: false,
-  };
-
+export const transform = async (
+  src: string,
+  options: CustomTransformOptions
+) => {
+  const babelConfig = buildBabelConfig(options);
+  const projectRoot = options.root ?? options.cwd;
   // load hermes parser dynamically to match the version from preset
-  const hermesParser = await loadHermesParser(options.projectRoot);
+  const hermesParser = await loadHermesParser(projectRoot);
 
-  const sourceAst: ParseResult | null =
-    isTypeScriptSource(filename) || isTSXSource(filename)
+  // filename will be always defined at this point
+  const sourceAst =
+    isTypeScriptSource(options.filename!) || isTSXSource(options.filename!)
       ? parseSync(src, babelConfig)
       : hermesParser.parse(src, {
           babel: true,
@@ -89,7 +76,11 @@ export const transform = async ({
           sourceType: babelConfig.sourceType,
         });
 
-  return transformFromAstSync(sourceAst!, src, babelConfig);
+  if (!sourceAst) {
+    throw new Error(`Failed to parse source file: ${options.filename}`);
+  }
+
+  return transformFromAstSync(sourceAst, src, babelConfig);
 };
 
 export default async function babelLoader(
@@ -98,20 +89,14 @@ export default async function babelLoader(
 ) {
   this.cacheable();
   const callback = this.async();
-  const options = getOptions(this);
+  const options = this.getOptions();
 
   try {
-    const result = transform({
+    const result = transform(source, {
+      sourceMaps: this.sourceMap,
+      ...options,
+      caller: { name: '@callstack/repack/babel-loader' },
       filename: this.resourcePath,
-      src: source,
-      options: {
-        caller: { name: '@callstack/repack/babel-loader' },
-        excludePlugins: options.excludePlugins,
-        // this is currently broken in Rspack and needs to be fixed upstream
-        // for now we can pass this as an option to loader
-        projectRoot: options.projectRoot,
-        sourceMaps: this.sourceMap,
-      },
     });
     // @ts-ignore
     callback(null, result.code, result.map);

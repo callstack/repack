@@ -39,10 +39,10 @@ function resolveHermesParser(projectRoot: string) {
 }
 
 export async function loadHermesParser(
-  projectRoot: string
+  projectRoot?: string | null
 ): Promise<HermesParser> {
   try {
-    const hermesParserPath = resolveHermesParser(projectRoot);
+    const hermesParserPath = resolveHermesParser(projectRoot ?? process.cwd());
     const hermesParser = await import(hermesParserPath);
     return hermesParser;
   } catch (e) {
@@ -52,5 +52,3 @@ export async function loadHermesParser(
     );
   }
 }
-
-loadHermesParser(process.cwd());
