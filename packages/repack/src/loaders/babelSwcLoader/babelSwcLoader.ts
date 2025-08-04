@@ -84,6 +84,8 @@ export default async function babelSwcLoader(
   const projectRoot = options.projectRoot;
   const lazyImports = options.lazyImports ?? true;
 
+  // TODO this should come from `this._compiler`
+  // needs to be exposed in Rspack
   let swc: Swc | null = null;
   if (!isWebpackCompiler(this._compiler)) {
     const rspack = await import('@rspack/core');
