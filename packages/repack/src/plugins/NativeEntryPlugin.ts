@@ -1,7 +1,7 @@
 import path from 'node:path';
 import type { ResolveAlias, Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
-import { isRspackCompiler } from './utils/isRspackCompiler.js';
+import { isRspackCompiler } from '../utils/internal/index.js';
 import { moveElementBefore } from './utils/moveElementBefore.js';
 
 export interface NativeEntryPluginConfig {

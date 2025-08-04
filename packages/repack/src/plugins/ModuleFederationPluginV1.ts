@@ -1,7 +1,7 @@
 import type { Compiler as RspackCompiler, container } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { Federated } from '../utils/federated.js';
-import { isRspackCompiler } from './utils/isRspackCompiler.js';
+import { isRspackCompiler } from '../utils/internal/index.js';
 
 type MFPluginV1 = typeof container.ModuleFederationPluginV1;
 type MFPluginV1Options = ConstructorParameters<MFPluginV1>[0];

@@ -7,7 +7,7 @@ import type {
 } from '@rspack/core';
 import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
 import type { Compiler as WebpackCompiler } from 'webpack';
-import { isRspackCompiler } from './utils/isRspackCompiler.js';
+import { isRspackCompiler } from '../utils/internal/index.js';
 import { moveElementBefore } from './utils/moveElementBefore.js';
 
 const [reactRefreshEntryPath, reactRefreshPath, refreshUtilsPath] =

@@ -2,7 +2,7 @@ import type { moduleFederationPlugin as MF } from '@module-federation/sdk';
 import type { Compiler as RspackCompiler } from '@rspack/core';
 import { name as isIdentifier } from 'estree-util-is-identifier-name';
 import type { Compiler as WebpackCompiler } from 'webpack';
-import { isRspackCompiler } from './utils/isRspackCompiler.js';
+import { isRspackCompiler } from '../utils/internal/index.js';
 
 type JsModuleDescriptor = {
   identifier: string;
