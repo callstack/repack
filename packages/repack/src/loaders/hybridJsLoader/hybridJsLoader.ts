@@ -38,8 +38,9 @@ export default function hybridJsLoader(
   const includeBabelPlugins: Array<string | [string, Record<string, any>]> = [];
 
   let parserConfig: SwcLoaderParserConfig;
-  // add TS syntax plugins since RN preset only uses transform-typescript plugin
-  // which includes the syntax plugin under the hood
+  // add TS syntax plugins since RN preset
+  // only uses transform-typescript plugin
+  // which includes the syntax-typescript plugin
   if (isTypeScriptSource(this.resourcePath)) {
     parserConfig = { syntax: 'typescript', tsx: false };
     includeBabelPlugins.push([
@@ -53,6 +54,7 @@ export default function hybridJsLoader(
       { isTSX: true, allowNamespaces: true },
     ]);
   } else {
+    // include JSX in .js files
     parserConfig = { syntax: 'ecmascript', jsx: true };
   }
 
