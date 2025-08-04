@@ -109,6 +109,7 @@ function getTransformModulesCommonjsConfig(
       strict: Boolean(moduleConfig.strict),
       strictMode: Boolean(moduleConfig.strictMode),
       allowTopLevelThis: Boolean(moduleConfig.allowTopLevelThis),
+      ignoreDynamic: true,
     },
   };
 }
