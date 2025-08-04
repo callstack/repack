@@ -1,9 +1,4 @@
-import { rspack } from '@rspack/core';
-import type {
-  LoaderContext,
-  SwcLoaderOptions,
-  SwcLoaderParserConfig,
-} from '@rspack/core';
+import type { LoaderContext, SwcLoaderOptions } from '@rspack/core';
 import {
   getSupportedSwcConfigurableTransforms,
   getSupportedSwcCustomTransforms,
@@ -13,15 +8,69 @@ import { transform } from '../babelLoader/index.js';
 import type { HybridJsLoaderOptions } from './options.js';
 import {
   getProjectBabelConfig,
+  getSwcParserConfig,
   isTSXSource,
   isTypeScriptSource,
-} from './utilts.js';
+  isWebpackCompiler,
+} from './utils.js';
 
 type BabelTransform = [string, Record<string, any> | undefined];
-
-const swc = rspack.experiments.swc;
+type Swc = typeof import('@rspack/core').experiments.swc;
 
 export const raw = false;
+
+function getExtraBabelPlugins(filename: string) {
+  const extraBabelPlugins: Array<string | [string, Record<string, any>]> = [];
+  // add TS syntax plugins since RN preset
+  // only uses transform-typescript plugin
+  // which includes the syntax-typescript plugin
+  if (isTypeScriptSource(filename)) {
+    extraBabelPlugins.push([
+      '@babel/plugin-syntax-typescript',
+      { isTSX: false, allowNamespaces: true },
+    ]);
+  } else if (isTSXSource(filename)) {
+    extraBabelPlugins.push([
+      '@babel/plugin-syntax-typescript',
+      { isTSX: true, allowNamespaces: true },
+    ]);
+  }
+  return extraBabelPlugins;
+}
+
+function partitionTransforms(
+  filename: string,
+  babelTransforms: BabelTransform[]
+) {
+  let normalTransforms: string[] = [];
+  let configurableTransforms: string[] = [];
+  let customTransforms: string[] = [];
+
+  let swcConfig: SwcLoaderOptions = {
+    jsc: {
+      parser: getSwcParserConfig(filename),
+      transform: { react: { useBuiltins: true } },
+    },
+  };
+
+  normalTransforms = getSupportedSwcNormalTransforms(babelTransforms);
+  ({ swcConfig, transformNames: configurableTransforms } =
+    getSupportedSwcConfigurableTransforms(babelTransforms, swcConfig));
+  ({ swcConfig, transformNames: customTransforms } =
+    getSupportedSwcCustomTransforms(babelTransforms, swcConfig));
+
+  const includedSwcTransforms: string[] = [
+    ...normalTransforms,
+    ...configurableTransforms,
+  ];
+
+  const supportedSwcTransforms: string[] = [
+    ...includedSwcTransforms,
+    ...customTransforms,
+  ];
+
+  return { includedSwcTransforms, supportedSwcTransforms, swcConfig };
+}
 
 export default async function hybridJsLoader(
   this: LoaderContext<HybridJsLoaderOptions>,
@@ -35,62 +84,38 @@ export default async function hybridJsLoader(
   const projectRoot = options.projectRoot;
   const lazyImports = options.lazyImports ?? true;
 
-  const includeBabelPlugins: Array<string | [string, Record<string, any>]> = [];
+  let swc: Swc | null = null;
+  if (!isWebpackCompiler(this._compiler)) {
+    const rspack = await import('@rspack/core');
+    swc = rspack.default.experiments.swc;
+  }
 
-  let parserConfig: SwcLoaderParserConfig;
-  // add TS syntax plugins since RN preset
-  // only uses transform-typescript plugin
-  // which includes the syntax-typescript plugin
-  if (isTypeScriptSource(this.resourcePath)) {
-    parserConfig = { syntax: 'typescript', tsx: false };
-    includeBabelPlugins.push([
-      '@babel/plugin-syntax-typescript',
-      { isTSX: false, allowNamespaces: true },
-    ]);
-  } else if (isTSXSource(filename)) {
-    parserConfig = { syntax: 'typescript', tsx: true };
-    includeBabelPlugins.push([
-      '@babel/plugin-syntax-typescript',
-      { isTSX: true, allowNamespaces: true },
-    ]);
-  } else {
-    // include JSX in .js files
-    parserConfig = { syntax: 'ecmascript', jsx: true };
+  // if swc is not available, use babel to transform everything
+  if (!swc) {
+    const { code, map } = await transform(source, {
+      caller: { name: '@callstack/repack/hybrid-js-loader' },
+      filename: this.resourcePath,
+      root: projectRoot,
+      sourceMaps: this.sourceMap,
+    });
+    callback(null, code ?? undefined, map ?? undefined);
+    return;
   }
 
   const babelConfig = getProjectBabelConfig(projectRoot);
   const babelTransforms =
     babelConfig.plugins?.map((p) => [p.key, p.options] as BabelTransform) ?? [];
 
-  let normalTransforms: string[] = [];
-  let configurableTransforms: string[] = [];
-  let customTransforms: string[] = [];
-
-  let swcConfig: SwcLoaderOptions = {
-    jsc: {
-      parser: parserConfig,
-      transform: { react: { useBuiltins: true } },
-    },
-  };
-
-  normalTransforms = getSupportedSwcNormalTransforms(babelTransforms);
-  ({ swcConfig, transformNames: configurableTransforms } =
-    getSupportedSwcConfigurableTransforms(babelTransforms, swcConfig));
-  ({ swcConfig, transformNames: customTransforms } =
-    getSupportedSwcCustomTransforms(babelTransforms, swcConfig));
-
-  const excludeBabelPlugins: string[] = [
-    ...normalTransforms,
-    ...configurableTransforms,
-    ...customTransforms,
-  ];
+  const includeBabelPlugins = getExtraBabelPlugins(filename);
+  const { includedSwcTransforms, supportedSwcTransforms, swcConfig } =
+    partitionTransforms(filename, babelTransforms);
 
   const babelResult = await transform(source, {
     caller: { name: '@callstack/repack/hybrid-js-loader' },
     filename: this.resourcePath,
     root: projectRoot,
     sourceMaps: this.sourceMap,
-    excludePlugins: excludeBabelPlugins,
+    excludePlugins: supportedSwcTransforms,
     includePlugins: includeBabelPlugins,
   });
 
@@ -99,7 +124,7 @@ export default async function hybridJsLoader(
     // set env based on babel transforms
     env: {
       targets: { node: 24 },
-      include: [...normalTransforms, ...configurableTransforms],
+      include: includedSwcTransforms,
     },
     // set lazy imports based on loader options
     module: {

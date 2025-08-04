@@ -80,7 +80,12 @@ export const transform = async (
     throw new Error(`Failed to parse source file: ${options.filename}`);
   }
 
-  return transformFromAstSync(sourceAst, src, babelConfig);
+  const result = transformFromAstSync(sourceAst, src, babelConfig);
+  if (!result) {
+    throw new Error(`Failed to transform source file: ${options.filename}`);
+  }
+
+  return result;
 };
 
 export default async function babelLoader(
