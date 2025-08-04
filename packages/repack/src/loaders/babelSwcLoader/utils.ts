@@ -44,3 +44,14 @@ export function isWebpackCompiler(compiler: RspackCompiler | WebpackCompiler) {
   // and then proceed to check if it's a Rspack compiler
   return compiler.webpack.version && !isRspackCompiler(compiler);
 }
+
+export function isParallelModeAvailable(
+  compiler: RspackCompiler | WebpackCompiler
+) {
+  // only available with Rspack
+  if (!isRspackCompiler(compiler)) {
+    return false;
+  }
+
+  return !!(compiler as RspackCompiler).options.experiments?.parallelLoader;
+}

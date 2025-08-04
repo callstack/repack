@@ -90,9 +90,7 @@ export class LoggerPlugin {
     if (LoggerPlugin.SUPPORTED_TYPES.includes(type)) {
       return {
         timestamp: timestamp ?? Date.now(),
-        issuer: issuer.includes('reactNativeAssetsLoader')
-          ? 'reactNativeAssetsLoader'
-          : issuer,
+        issuer: issuer.includes('Loader|') ? issuer.split('|')[0] : issuer,
         type: type as LogType,
         message: args,
       };

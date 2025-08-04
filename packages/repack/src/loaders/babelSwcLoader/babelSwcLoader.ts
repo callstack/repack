@@ -9,6 +9,7 @@ import type { BabelSwcLoaderOptions } from './options.js';
 import {
   getProjectBabelConfig,
   getSwcParserConfig,
+  isParallelModeAvailable,
   isTSXSource,
   isTypeScriptSource,
   isWebpackCompiler,
@@ -72,13 +73,34 @@ function partitionTransforms(
   return { includedSwcTransforms, supportedSwcTransforms, swcConfig };
 }
 
+const disabledParalleModeWarning = [
+  'You have enabled `experiments.parallelLoader` but forgot to enable it for this loader.',
+  'To enable parallel mode for this loader you need to add `parallel: true` to the loader rule.',
+  'See how to do it in the official Rspack docs:',
+  'https://rspack.rs/config/experiments#experimentsparallelloader',
+].join(' ');
+
+let parallelModeWarningDisplayed = false;
+
 export default async function babelSwcLoader(
   this: LoaderContext<BabelSwcLoaderOptions>,
   source: string
 ) {
   this.cacheable();
   const callback = this.async();
+  const loaderName = '@callstack/repack/babel-swc-loader';
+  const logger = this.getLogger('BabelSwcLoader');
   const options = this.getOptions();
+
+  this._compiler;
+
+  if (
+    isParallelModeAvailable(this._compiler) &&
+    !parallelModeWarningDisplayed
+  ) {
+    logger.warn(disabledParalleModeWarning);
+    parallelModeWarningDisplayed = true;
+  }
 
   const filename = this.resourcePath;
   const projectRoot = options.projectRoot;
@@ -95,7 +117,7 @@ export default async function babelSwcLoader(
   // if swc is not available, use babel to transform everything
   if (!swc) {
     const { code, map } = await transform(source, {
-      caller: { name: '@callstack/repack/babel-swc-loader' },
+      caller: { name: loaderName },
       filename: this.resourcePath,
       root: projectRoot,
       sourceMaps: this.sourceMap,
@@ -113,7 +135,7 @@ export default async function babelSwcLoader(
     partitionTransforms(filename, babelTransforms);
 
   const babelResult = await transform(source, {
-    caller: { name: '@callstack/repack/babel-swc-loader' },
+    caller: { name: loaderName },
     filename: this.resourcePath,
     root: projectRoot,
     sourceMaps: this.sourceMap,
@@ -138,7 +160,7 @@ export default async function babelSwcLoader(
 
   const swcResult = swc.transformSync(babelResult?.code!, {
     ...finalSwcConfig,
-    caller: { name: '@callstack/repack/babel-swc-loader' },
+    caller: { name: loaderName },
     filename: this.resourcePath,
     configFile: false,
     swcrc: false,
