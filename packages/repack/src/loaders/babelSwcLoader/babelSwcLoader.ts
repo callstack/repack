@@ -1,3 +1,4 @@
+import type { TransformOptions } from '@babel/core';
 import type { LoaderContext, SwcLoaderOptions } from '@rspack/core';
 import {
   getSupportedSwcConfigurableTransforms,
@@ -15,6 +16,7 @@ import {
 } from './utils.js';
 
 type BabelTransform = [string, Record<string, any> | undefined];
+type InputSourceMap = TransformOptions['inputSourceMap'];
 type Swc = typeof import('@rspack/core').experiments.swc;
 
 export interface BabelSwcLoaderOptions {
@@ -91,7 +93,8 @@ let parallelModeWarningDisplayed = false;
 
 export default async function babelSwcLoader(
   this: LoaderContext<BabelSwcLoaderOptions>,
-  source: string
+  source: string,
+  sourceMap: string | undefined
 ) {
   this.cacheable();
   const callback = this.async();
@@ -108,9 +111,21 @@ export default async function babelSwcLoader(
     parallelModeWarningDisplayed = true;
   }
 
-  const filename = this.resourcePath;
+  const inputSourceMap: InputSourceMap = sourceMap
+    ? JSON.parse(sourceMap)
+    : undefined;
   const projectRoot = options.projectRoot;
   const lazyImports = options.lazyImports ?? true;
+
+  const baseBabelConfig = {
+    caller: { name: loaderName },
+    root: projectRoot,
+    filename: this.resourcePath,
+    sourceMaps: this.sourceMap,
+    sourceFileName: this.resourcePath,
+    sourceRoot: this.context,
+    inputSourceMap: inputSourceMap,
+  };
 
   // TODO this should come from `this._compiler`
   // needs to be exposed in Rspack
@@ -122,12 +137,7 @@ export default async function babelSwcLoader(
 
   // if swc is not available, use babel to transform everything
   if (!swc) {
-    const { code, map } = await transform(source, {
-      caller: { name: loaderName },
-      filename: this.resourcePath,
-      root: projectRoot,
-      sourceMaps: this.sourceMap,
-    });
+    const { code, map } = await transform(source, baseBabelConfig);
     callback(null, code ?? undefined, map ?? undefined);
     return;
   }
@@ -136,15 +146,12 @@ export default async function babelSwcLoader(
   const babelTransforms =
     babelConfig.plugins?.map((p) => [p.key, p.options] as BabelTransform) ?? [];
 
-  const includeBabelPlugins = getExtraBabelPlugins(filename);
+  const includeBabelPlugins = getExtraBabelPlugins(this.resourcePath);
   const { includedSwcTransforms, supportedSwcTransforms, swcConfig } =
-    partitionTransforms(filename, babelTransforms);
+    partitionTransforms(this.resourcePath, babelTransforms);
 
   const babelResult = await transform(source, {
-    caller: { name: loaderName },
-    filename: this.resourcePath,
-    root: projectRoot ?? babelConfig.root,
-    sourceMaps: this.sourceMap,
+    ...baseBabelConfig,
     excludePlugins: supportedSwcTransforms,
     includePlugins: includeBabelPlugins,
   });
@@ -173,10 +180,9 @@ export default async function babelSwcLoader(
     root: projectRoot ?? babelConfig.root ?? undefined,
     minify: false,
     sourceMaps: this.sourceMap,
-    // TODO potentially optimize with fast-stringify
     inputSourceMap: JSON.stringify(babelResult?.map),
-    sourceRoot: babelResult?.map?.sourceRoot,
-    sourceFileName: babelResult?.map?.file,
+    sourceFileName: this.resourcePath,
+    sourceRoot: this.context!,
   });
 
   callback(null, swcResult?.code, swcResult?.map);
