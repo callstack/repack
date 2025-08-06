@@ -2,8 +2,8 @@ import path from 'node:path';
 import { parentPort, workerData } from 'node:worker_threads';
 import memfs from 'memfs';
 import webpack, { type Configuration } from 'webpack';
+import { adaptFilenameToPlatform } from '../../helpers/index.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
-import { adaptFilenameToPlatform } from '../common/index.js';
 import type {
   CompilerAsset,
   WebpackWorkerOptions,

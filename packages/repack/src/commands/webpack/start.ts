@@ -1,6 +1,7 @@
 import type { Server } from '@callstack/repack-dev-server';
 import type { Configuration, StatsCompilation } from 'webpack';
 import packageJson from '../../../package.json';
+import { CLIError } from '../../helpers/index.js';
 import {
   ConsoleReporter,
   FileReporter,
@@ -9,7 +10,6 @@ import {
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
 import type { HMRMessage } from '../../types.js';
-import { CLIError } from '../common/cliError.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getDevMiddleware,

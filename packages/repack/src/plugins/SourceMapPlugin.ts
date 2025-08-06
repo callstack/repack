@@ -4,7 +4,7 @@ import type {
   SourceMapDevToolPluginOptions,
 } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
-import { ConfigurationError } from './utils/ConfigurationError.js';
+import { ConfigurationError } from '../helpers/index.js';
 
 type ModuleFilenameTemplate =
   SourceMapDevToolPluginOptions['moduleFilenameTemplate'];

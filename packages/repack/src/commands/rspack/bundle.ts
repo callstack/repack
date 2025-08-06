@@ -1,6 +1,6 @@
 import { type Configuration, rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
-import { CLIError } from '../common/cliError.js';
+import { CLIError } from '../../helpers/index.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   normalizeStatsOptions,

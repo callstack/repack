@@ -1,6 +1,7 @@
 import type { Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env.js';
+import { isTruthyEnv } from '../helpers/index.js';
 import {
   ConsoleReporter,
   FileReporter,
@@ -52,10 +53,6 @@ export class LoggerPlugin {
    */
   constructor(private config: LoggerPluginConfig) {
     this.config.output = this.config.output ?? { console: true };
-
-    const isTruthyEnv = (env: string | undefined) => {
-      return !!env && env !== 'false' && env !== '0';
-    };
 
     const reporters = [];
     if (this.config.output.console) {
