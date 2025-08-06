@@ -1,4 +1,4 @@
-import { moveElementBefore } from '../moveElementBefore.js';
+import { moveElementBefore } from '../helpers.js';
 
 describe('moveElementBefore', () => {
   it('should move element before target using string matcher', () => {

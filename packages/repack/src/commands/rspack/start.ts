@@ -1,5 +1,6 @@
 import type { Configuration } from '@rspack/core';
 import packageJson from '../../../package.json';
+import { CLIError } from '../../helpers/index.js';
 import {
   ConsoleReporter,
   FileReporter,
@@ -7,7 +8,6 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
-import { CLIError } from '../common/cliError.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getDevMiddleware,

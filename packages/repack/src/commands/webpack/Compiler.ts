@@ -5,8 +5,8 @@ import { Worker } from 'node:worker_threads';
 import type { SendProgress } from '@callstack/repack-dev-server';
 import type webpack from 'webpack';
 import { WORKER_ENV_KEY } from '../../env.js';
+import { CLIError } from '../../helpers/index.js';
 import type { LogType, Reporter } from '../../logging/types.js';
-import { CLIError } from '../common/cliError.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
 import type { StartArguments } from '../types.js';
 import type {

@@ -8,10 +8,10 @@ import type {
   StatsCompilation,
 } from '@rspack/core';
 import memfs from 'memfs';
+import { CLIError, adaptFilenameToPlatform } from '../../helpers/index.js';
 import type { Reporter } from '../../logging/types.js';
 import type { HMRMessage } from '../../types.js';
-import { CLIError } from '../common/cliError.js';
-import { adaptFilenameToPlatform, runAdbReverse } from '../common/index.js';
+import { runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
 import type { CompilerAsset } from './types.js';
 
