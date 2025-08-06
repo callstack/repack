@@ -8,10 +8,10 @@ import {
 import { transform } from '../babelLoader/index.js';
 import type { BabelSwcLoaderOptions } from './options.js';
 import {
+  checkParallelModeAvailable,
   getProjectBabelConfig,
   getProjectRootPath,
   getSwcParserConfig,
-  isParallelModeAvailable,
   isTSXSource,
   isTypeScriptSource,
   lazyGetSwc,
@@ -75,17 +75,6 @@ function partitionTransforms(
   return { includedSwcTransforms, supportedSwcTransforms, swcConfig };
 }
 
-const disabledParalleModeWarning = [
-  'You have enabled `experiments.parallelLoader` but forgot to enable it for this loader.',
-  'To enable parallel mode for this loader you need to add `parallel: true` to the loader rule.',
-  'See how to do it in the official Rspack docs:',
-  'https://rspack.rs/config/experiments#experimentsparallelloader.',
-  'If this is intentional, you can disable this warning',
-  'by setting `hideParallelModeWarning` in the loader options.',
-].join(' ');
-
-let parallelModeWarningDisplayed = false;
-
 export default async function babelSwcLoader(
   this: LoaderContext<BabelSwcLoaderOptions>,
   source: string,
@@ -97,13 +86,8 @@ export default async function babelSwcLoader(
   const logger = this.getLogger('BabelSwcLoader');
   const options = this.getOptions();
 
-  if (
-    isParallelModeAvailable(this) &&
-    !parallelModeWarningDisplayed &&
-    !options.hideParallelModeWarning
-  ) {
-    logger.warn(disabledParalleModeWarning);
-    parallelModeWarningDisplayed = true;
+  if (!options.hideParallelModeWarning) {
+    checkParallelModeAvailable(this, logger);
   }
 
   const inputSourceMap: InputSourceMap = sourceMap

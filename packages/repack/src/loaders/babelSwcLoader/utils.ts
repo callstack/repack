@@ -6,6 +6,7 @@ import type {
 } from '@rspack/core';
 
 type Swc = (typeof experiments)['swc'];
+type Logger = ReturnType<LoaderContext['getLogger']>;
 
 export function isTypeScriptSource(fileName: string) {
   return !!fileName && fileName.endsWith('.ts');
@@ -57,11 +58,31 @@ function isWebpackBackend(loaderContext: LoaderContext) {
   return false;
 }
 
-export function isParallelModeAvailable(loaderContext: LoaderContext) {
-  if (isWebpackBackend(loaderContext)) {
-    return false;
+const disabledParalleModeWarning = [
+  'You have enabled `experiments.parallelLoader` but forgot to enable it for this loader.',
+  'To enable parallel mode for this loader you need to add `parallel: true` to the loader rule.',
+  'See how to do it in the official Rspack docs:',
+  'https://rspack.rs/config/experiments#experimentsparallelloader.',
+  'If this is intentional, you can disable this warning',
+  'by setting `hideParallelModeWarning` in the loader options.',
+].join(' ');
+
+let parallelModeWarningDisplayed = false;
+
+export function checkParallelModeAvailable(
+  loaderContext: LoaderContext,
+  logger: Logger
+) {
+  // only Rspack supports parallel mode
+  if (parallelModeWarningDisplayed || isWebpackBackend(loaderContext)) {
+    return;
   }
-  return !!loaderContext._compiler.options.experiments?.parallelLoader;
+  // in parallel mode compiler.options.experiments are not available
+  // but since we're already running in parallel mode, we can ignore this check
+  if (loaderContext._compiler.options?.experiments?.parallelLoader) {
+    parallelModeWarningDisplayed = true;
+    logger.warn(disabledParalleModeWarning);
+  }
 }
 
 export function getProjectRootPath(
@@ -88,17 +109,23 @@ async function getSwcModule(loaderContext: LoaderContext): Promise<Swc | null> {
   const isWebpack = isWebpackBackend(loaderContext);
   if (!isWebpack) {
     // happy path - rspack & exposed swc
-    if (loaderContext._compiler.rspack.experiments.swc) {
+    // use optional chaining to avoid type errors when using parallel loader
+    if (loaderContext._compiler.rspack?.experiments?.swc) {
       console.log('using exposed swc from `@rspack/core`');
       return loaderContext._compiler.rspack.experiments.swc;
     }
     // fallback to checking for `@rspack/core` installed in the project
+    // use optional chaining to avoid type errors when there is no experiments.swc
     const rspackCorePath = safelyResolve('@rspack/core', projectRoot);
     if (rspackCorePath && !isWebpack) {
       const rspack = await import(rspackCorePath);
       if (rspack) console.log('using swc from `@rspack/core`');
-      if ('default' in rspack) return rspack.default.experiments.swc;
-      if (rspack) return rspack.experiments.swc;
+      if ('default' in rspack) {
+        return rspack.default?.experiments?.swc ?? null;
+      }
+      if (rspack) {
+        return rspack?.experiments?.swc ?? null;
+      }
     }
   }
   // fallback to checking for `@swc/core` installed in the project
@@ -107,8 +134,12 @@ async function getSwcModule(loaderContext: LoaderContext): Promise<Swc | null> {
   if (swcCorePath) {
     const swc = await import(swcCorePath);
     if (swc) console.log('using swc from`@swc/core`');
-    if ('default' in swc) return swc.default as Swc;
-    if (swc) return swc as Swc;
+    if ('default' in swc) {
+      return swc.default as Swc;
+    }
+    if (swc) {
+      return swc as Swc;
+    }
   }
   // at this point, we've tried all possible ways to get swc and failed
   return null;
@@ -118,6 +149,7 @@ function createLazyGetSwc(): (
   loaderContext: LoaderContext
 ) => Promise<Swc | null> {
   let swc: Swc | Promise<Swc | null> | null | undefined;
+
   const getSwc = async (loaderContext: LoaderContext) => {
     if (swc === undefined) {
       swc = getSwcModule(loaderContext);
