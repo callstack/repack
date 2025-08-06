@@ -6,24 +6,19 @@ import {
   getSupportedSwcNormalTransforms,
 } from '../../utils/internal/index.js';
 import { transform } from '../babelLoader/index.js';
+import type { BabelSwcLoaderOptions } from './options.js';
 import {
   getProjectBabelConfig,
+  getProjectRootPath,
   getSwcParserConfig,
   isParallelModeAvailable,
   isTSXSource,
   isTypeScriptSource,
-  isWebpackCompiler,
+  lazyGetSwc,
 } from './utils.js';
 
 type BabelTransform = [string, Record<string, any> | undefined];
 type InputSourceMap = TransformOptions['inputSourceMap'];
-type Swc = typeof import('@rspack/core').experiments.swc;
-
-export interface BabelSwcLoaderOptions {
-  hideParallelModeWarning?: boolean;
-  lazyImports?: boolean | string[];
-  projectRoot?: string;
-}
 
 export const raw = false;
 
@@ -103,7 +98,7 @@ export default async function babelSwcLoader(
   const options = this.getOptions();
 
   if (
-    isParallelModeAvailable(this._compiler) &&
+    isParallelModeAvailable(this) &&
     !parallelModeWarningDisplayed &&
     !options.hideParallelModeWarning
   ) {
@@ -114,27 +109,25 @@ export default async function babelSwcLoader(
   const inputSourceMap: InputSourceMap = sourceMap
     ? JSON.parse(sourceMap)
     : undefined;
-  const projectRoot = options.projectRoot;
   const lazyImports = options.lazyImports ?? true;
+  const projectRoot = getProjectRootPath(this);
 
-  const baseBabelConfig = {
+  const withSourceMaps = this.resourcePath.match(/node_modules/)
+    ? false
+    : this.sourceMap;
+
+  const baseBabelConfig: TransformOptions = {
     caller: { name: loaderName },
     root: projectRoot,
     filename: this.resourcePath,
-    sourceMaps: this.sourceMap,
+    sourceMaps: withSourceMaps,
     sourceFileName: this.resourcePath,
     sourceRoot: this.context,
-    inputSourceMap: inputSourceMap,
+    inputSourceMap: withSourceMaps ? inputSourceMap : undefined,
+    ...options.babelOverrides,
   };
 
-  // TODO this should come from `this._compiler`
-  // needs to be exposed in Rspack
-  let swc: Swc | null = null;
-  if (!isWebpackCompiler(this._compiler)) {
-    const rspack = await import('@rspack/core');
-    swc = rspack.default.experiments.swc;
-  }
-
+  const swc = await lazyGetSwc(this);
   // if swc is not available, use babel to transform everything
   if (!swc) {
     const { code, map } = await transform(source, baseBabelConfig);
@@ -160,6 +153,8 @@ export default async function babelSwcLoader(
     ...swcConfig,
     // set env based on babel transforms
     env: {
+      // node supports everything and does not include
+      // any transforms by default, so it can as a template
       targets: { node: 24 },
       include: includedSwcTransforms,
     },
@@ -179,10 +174,13 @@ export default async function babelSwcLoader(
     swcrc: false,
     root: projectRoot ?? babelConfig.root ?? undefined,
     minify: false,
-    sourceMaps: this.sourceMap,
-    inputSourceMap: JSON.stringify(babelResult?.map),
+    sourceMaps: withSourceMaps,
+    inputSourceMap: withSourceMaps
+      ? JSON.stringify(babelResult?.map)
+      : undefined,
     sourceFileName: this.resourcePath,
     sourceRoot: this.context!,
+    ...options.swcOverrides,
   });
 
   callback(null, swcResult?.code, swcResult?.map);
