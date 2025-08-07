@@ -16,10 +16,6 @@ export function isTSXSource(fileName: string) {
   return !!fileName && fileName.endsWith('.tsx');
 }
 
-export function isJSXSource(fileName: string) {
-  return !!fileName && fileName.endsWith('.jsx');
-}
-
 export function getProjectBabelConfig(filename: string, projectRoot?: string) {
   const babelConfig = loadOptions({ filename, root: projectRoot });
   return babelConfig ?? {};
