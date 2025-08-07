@@ -5,7 +5,7 @@ import {
   getSupportedSwcCustomTransforms,
   getSupportedSwcNormalTransforms,
 } from '../../utils/internal/index.js';
-import { transform } from '../babelLoader/index.js';
+import { transform } from '../babelLoader/babelLoader.js';
 import type { BabelSwcLoaderOptions } from './options.js';
 import {
   checkParallelModeAvailable,
@@ -115,24 +115,28 @@ export default async function babelSwcLoader(
     const swc = await lazyGetSwc(this);
     // if swc is not available, use babel to transform everything
     if (!swc) {
-      const { code, map } = await transform(source, baseBabelConfig);
+      const { code, map } = await transform(source, baseBabelConfig, {
+        hermesParserPath: options.hermesParserPath,
+        hermesParserOverrides: options.hermesParserOverrides,
+      });
       callback(null, code ?? undefined, map ?? undefined);
       return;
     }
 
-    const babelConfig = getProjectBabelConfig(projectRoot);
-    const babelTransforms =
+    const babelConfig = getProjectBabelConfig(this.resourcePath, projectRoot);
+    const detectedBabelTransforms =
       babelConfig.plugins?.map((p) => [p.key, p.options] as BabelTransform) ??
       [];
 
     const includeBabelPlugins = getExtraBabelPlugins(this.resourcePath);
     const { includedSwcTransforms, supportedSwcTransforms, swcConfig } =
-      partitionTransforms(this.resourcePath, babelTransforms);
+      partitionTransforms(this.resourcePath, detectedBabelTransforms);
 
-    const babelResult = await transform(source, {
-      ...baseBabelConfig,
+    const babelResult = await transform(source, baseBabelConfig, {
       excludePlugins: supportedSwcTransforms,
       includePlugins: includeBabelPlugins,
+      hermesParserPath: options.hermesParserPath,
+      hermesParserOverrides: options.hermesParserOverrides,
     });
 
     const finalSwcConfig: SwcLoaderOptions = {

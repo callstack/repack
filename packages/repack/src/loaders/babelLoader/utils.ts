@@ -1,6 +1,6 @@
 import type { ParseResult } from '@babel/core';
 
-export interface HermesParser {
+interface HermesParser {
   parse: (
     src: string,
     opts: {
@@ -39,10 +39,13 @@ function resolveHermesParser(projectRoot: string) {
 }
 
 export async function loadHermesParser(
-  projectRoot?: string | null
+  projectRoot?: string | null,
+  providedHermesParserPath?: string
 ): Promise<HermesParser> {
   try {
-    const hermesParserPath = resolveHermesParser(projectRoot ?? process.cwd());
+    const hermesParserPath =
+      providedHermesParserPath ??
+      resolveHermesParser(projectRoot ?? process.cwd());
     const hermesParser = await import(hermesParserPath);
     return hermesParser;
   } catch (e) {

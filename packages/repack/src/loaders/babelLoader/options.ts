@@ -7,12 +7,16 @@ export interface HermesParserOverrides {
   sourceType?: 'module' | 'script' | 'unambiguous';
 }
 
-export interface BabelLoaderOptions extends TransformOptions {
+export interface HermesParserOptions {
   hermesParserPath?: string;
   hermesParserOverrides?: HermesParserOverrides;
 }
 
-export interface CustomTransformOptions extends TransformOptions {
+export interface BabelPluginOverrides {
   includePlugins?: Array<string | [string, Record<string, any>]>;
   excludePlugins?: string[];
 }
+
+export type BabelLoaderOptions = TransformOptions & HermesParserOptions;
+
+export type CustomTransformOptions = HermesParserOptions & BabelPluginOverrides;

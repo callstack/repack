@@ -1,4 +1,4 @@
-import babelLoader, { transform, raw } from './babelLoader.js';
+import babelLoader, { raw } from './babelLoader.js';
 
-export { transform, raw };
+export { raw };
 export default babelLoader;
