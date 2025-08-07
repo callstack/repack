@@ -105,25 +105,14 @@ export class Compiler extends EventEmitter {
         this.emit(value.event, value.error);
       } else if (value.event === 'progress') {
         this.progressSenders[platform].forEach((sendProgress) => {
-          if (Number.isNaN(value.total)) return;
-          if (Number.isNaN(value.completed)) return;
           sendProgress({
-            total: value.total,
-            completed: value.completed,
+            completed: value.percentage,
+            total: 100,
           });
         });
         this.reporter.process({
           issuer: 'DevServer',
-          message: [
-            {
-              progress: {
-                value: value.percentage,
-                label: value.label,
-                message: value.message,
-                platform,
-              },
-            },
-          ],
+          message: [{ progress: { value: value.percentage, platform } }],
           timestamp: Date.now(),
           type: 'progress',
         });

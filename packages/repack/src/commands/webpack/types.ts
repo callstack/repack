@@ -44,11 +44,7 @@ export namespace WorkerMessages {
 
   export interface ProgressMessage extends BaseWorkerMessage {
     event: 'progress';
-    total: number;
-    completed: number;
     percentage: number;
-    label: string;
-    message: string;
   }
 
   export interface ErrorMessage extends BaseWorkerMessage {

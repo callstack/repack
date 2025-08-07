@@ -31,6 +31,23 @@ export class Compiler {
     private reporter: Reporter,
     private rootDir: string
   ) {
+    const handler = (platform: string, percentage: number) => {
+      reporter.process({
+        issuer: 'DevServer',
+        message: [{ progress: { value: percentage, platform } }],
+        timestamp: Date.now(),
+        type: 'progress',
+      });
+    };
+
+    configs.forEach((config) => {
+      config.plugins?.push(
+        new rspack.ProgressPlugin((percentage) =>
+          handler(config.name as string, percentage)
+        )
+      );
+    });
+
     this.compiler = rspack.rspack(configs);
     this.platforms = configs.map((config) => config.name as string);
     this.filesystem = memfs.createFsFromVolume(new memfs.Volume());
