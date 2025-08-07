@@ -47,6 +47,9 @@ async function compilerPlugin(
         );
       };
 
+      // immediately send 1% progress
+      setImmediate(() => sendProgress({ completed: 1, total: 100 }));
+
       try {
         const asset = await delegate.compiler.getAsset(
           filepath,

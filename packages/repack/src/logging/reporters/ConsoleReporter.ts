@@ -176,14 +176,9 @@ class InteractiveConsoleReporter implements Reporter {
 
   private processProgress = throttle((log: LogEntry) => {
     const {
-      progress: { value, label, message, platform },
+      progress: { value, platform },
     } = log.message[0] as {
-      progress: {
-        value: number;
-        label: string;
-        message: string;
-        platform: string;
-      };
+      progress: { value: number; platform: string };
     };
 
     const percentage = Math.floor(value * 100);
@@ -195,12 +190,11 @@ class InteractiveConsoleReporter implements Reporter {
         timestamp: log.timestamp,
         issuer: log.issuer,
         type: 'info',
-        message: [`Compiling ${platform}: ${percentage}% ${label}`].concat(
-          ...(message ? [`(${message})`] : [])
-        ),
+        message: [`Compiling ${platform}: ${percentage}%`],
       })}\n`
     );
-  }, 1000);
+    // match rspack progressplugin throttle for now
+  }, 200);
 
   private prettifyLog(log: LogEntry) {
     let body = '';

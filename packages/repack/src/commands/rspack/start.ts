@@ -142,9 +142,9 @@ export async function start(
 
       return {
         compiler: {
-          getAsset: (url, platform) => {
+          getAsset: (url, platform, sendProgress) => {
             const { resourcePath } = parseUrl(url, platforms);
-            return compiler.getSource(resourcePath, platform);
+            return compiler.getSource(resourcePath, platform, sendProgress);
           },
           getMimeType: (filename) => {
             return getMimeType(filename);

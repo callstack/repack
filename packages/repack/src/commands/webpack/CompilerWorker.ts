@@ -25,21 +25,8 @@ async function main(opts: WebpackWorkerOptions) {
   });
 
   config.plugins = (config.plugins ?? []).concat(
-    new webpack.ProgressPlugin({
-      entries: false,
-      dependencies: false,
-      modules: true,
-      handler: (percentage, message, text) => {
-        const [, completed, total] = /(\d+)\/(\d+) modules/.exec(text) ?? [];
-        postMessage({
-          event: 'progress',
-          completed: Number.parseInt(completed, 10),
-          total: Number.parseInt(total, 10),
-          percentage: percentage,
-          label: message,
-          message: text,
-        });
-      },
+    new webpack.ProgressPlugin((percentage) => {
+      postMessage({ event: 'progress', percentage: percentage });
     })
   );
 
