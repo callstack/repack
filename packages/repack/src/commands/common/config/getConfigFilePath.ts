@@ -1,10 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { CLIError } from '../../../helpers/index.js';
 import {
   DEFAULT_RSPACK_CONFIG_LOCATIONS,
   DEFAULT_WEBPACK_CONFIG_LOCATIONS,
 } from '../../consts.js';
-import { CLIError } from '../cliError.js';
 
 function discoverConfigFilePath(root: string, candidates: string[]) {
   for (const candidate of candidates) {

@@ -1,5 +1,7 @@
 import type { Configuration } from '@rspack/core';
 import packageJson from '../../../package.json';
+import { VERBOSE_ENV_KEY } from '../../env.js';
+import { CLIError, isTruthyEnv } from '../../helpers/index.js';
 import {
   ConsoleReporter,
   FileReporter,
@@ -7,7 +9,6 @@ import {
   composeReporters,
   makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
-import { CLIError } from '../common/cliError.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getDevMiddleware,
@@ -57,15 +58,16 @@ export async function start(
   // expose selected args as environment variables
   setupEnvironment(args);
 
+  const isVerbose = isTruthyEnv(process.env[VERBOSE_ENV_KEY]);
   const devServerOptions = configs[0].devServer ?? {};
-  const showHttpRequests = args.verbose || args.logRequests;
+  const showHttpRequests = isVerbose || args.logRequests;
 
   // dynamically import dev middleware to match version of react-native
   const devMiddleware = await getDevMiddleware(cliConfig.reactNativePath);
 
   const reporter = composeReporters(
     [
-      new ConsoleReporter({ asJson: args.json, isVerbose: args.verbose }),
+      new ConsoleReporter({ asJson: args.json, isVerbose: isVerbose }),
       args.logFile ? new FileReporter({ filename: args.logFile }) : undefined,
     ].filter(Boolean) as Reporter[]
   );
@@ -140,9 +142,9 @@ export async function start(
 
       return {
         compiler: {
-          getAsset: (url, platform) => {
+          getAsset: (url, platform, sendProgress) => {
             const { resourcePath } = parseUrl(url, platforms);
-            return compiler.getSource(resourcePath, platform);
+            return compiler.getSource(resourcePath, platform, sendProgress);
           },
           getMimeType: (filename) => {
             return getMimeType(filename);
