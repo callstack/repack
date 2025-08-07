@@ -1,12 +1,12 @@
 import type { TransformOptions } from '@babel/core';
 import type { LoaderContext, SwcLoaderOptions } from '@rspack/core';
+import { transform } from '../babelLoader/babelLoader.js';
+import type { BabelSwcLoaderOptions } from './options.js';
 import {
   getSupportedSwcConfigurableTransforms,
   getSupportedSwcCustomTransforms,
   getSupportedSwcNormalTransforms,
-} from '../../utils/internal/index.js';
-import { transform } from '../babelLoader/babelLoader.js';
-import type { BabelSwcLoaderOptions } from './options.js';
+} from './swc.js';
 import {
   checkParallelModeAvailable,
   getProjectBabelConfig,
