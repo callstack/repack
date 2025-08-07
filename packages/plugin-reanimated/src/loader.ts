@@ -83,12 +83,17 @@ export function pitch(
   _previousRequest: string,
   data: ReanimatedLoaderData
 ) {
+  const logger = this.getLogger('RepackReanimatedLoader');
   for (const loader of this.loaders) {
     // if the babel-swc-loader is found, we skip the reanimated-loader
     // since babel-swc-loader is more performant and uses the official
     // babel plugin directly
     if (loader.path === babelSwcLoader) {
       data.skip = true;
+      logger.warn(
+        'This plugin should not be used with `@callstack/repack/babel-swc-loader`. ' +
+          'Instead, add the `react-native-reanimated/plugin` (or `react-native-worklets/plugin`) directly to your `babel.config.js` file in the project root.'
+      );
     }
   }
 }
