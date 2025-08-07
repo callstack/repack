@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { Server } from '@callstack/repack-dev-server';
+import type { SendProgress, Server } from '@callstack/repack-dev-server';
 import { rspack } from '@rspack/core';
 import type {
   MultiCompiler,
@@ -22,6 +22,7 @@ export class Compiler {
   assetsCache: Record<string, Record<string, CompilerAsset> | undefined> = {};
   statsCache: Record<string, StatsCompilation | undefined> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
+  progressSenders: Record<string, SendProgress[]> = {};
   isCompilationInProgress = false;
   // late-init
   devServerContext!: Server.DelegateContext;
@@ -31,10 +32,15 @@ export class Compiler {
     private reporter: Reporter,
     private rootDir: string
   ) {
-    const handler = (platform: string, percentage: number) => {
+    const handler = (platform: string, value: number) => {
+      const percentage = Math.floor(value * 100);
+      this.progressSenders[platform]?.forEach((sendProgress) => {
+        sendProgress({ completed: percentage, total: 100 });
+      });
+
       reporter.process({
         issuer: 'DevServer',
-        message: [{ progress: { value: percentage, platform } }],
+        message: [{ progress: { value, platform } }],
         timestamp: Date.now(),
         type: 'progress',
       });
@@ -68,6 +74,19 @@ export class Compiler {
   private callPendingResolvers(platform: string, error?: Error) {
     this.resolvers[platform]?.forEach((resolver) => resolver(error));
     this.resolvers[platform] = [];
+  }
+
+  private addProgressSender(platform: string, callback?: SendProgress) {
+    if (!callback) return;
+    this.progressSenders[platform] = this.progressSenders[platform] ?? [];
+    this.progressSenders[platform].push(callback);
+  }
+
+  private removeProgressSender(platform: string, callback?: SendProgress) {
+    if (!callback) return;
+    this.progressSenders[platform] = this.progressSenders[platform].filter(
+      (item) => item !== callback
+    );
   }
 
   setDevServerContext(ctx: Server.DelegateContext) {
@@ -207,14 +226,21 @@ export class Compiler {
     });
   }
 
-  async getAsset(filename: string, platform: string): Promise<CompilerAsset> {
+  async getAsset(
+    filename: string,
+    platform: string,
+    sendProgress?: SendProgress
+  ): Promise<CompilerAsset> {
     // Return file from assetsCache if exists
     const fileFromCache = this.assetsCache[platform]?.[filename];
     if (fileFromCache) {
       return fileFromCache;
     }
 
+    this.addProgressSender(platform, sendProgress);
+
     if (!this.isCompilationInProgress) {
+      this.removeProgressSender(platform, sendProgress);
       return Promise.reject(
         new Error(
           `File ${filename} for ${platform} not found in compilation assets (no compilation in progress)`
@@ -226,6 +252,7 @@ export class Compiler {
       // Add new resolver to be executed when compilation is finished
       this.resolvers[platform] = (this.resolvers[platform] ?? []).concat(
         (error?: Error) => {
+          this.removeProgressSender(platform, sendProgress);
           if (error) {
             reject(error);
           } else {
@@ -247,13 +274,14 @@ export class Compiler {
 
   async getSource(
     filename: string,
-    platform: string | undefined
+    platform: string | undefined,
+    sendProgress?: SendProgress
   ): Promise<string | Buffer> {
     if (DEV_SERVER_ASSET_TYPES.test(filename)) {
       if (!platform) {
         throw new CLIError(`Cannot detect platform for ${filename}`);
       }
-      const asset = await this.getAsset(filename, platform);
+      const asset = await this.getAsset(filename, platform, sendProgress);
       return asset.data;
     }
 

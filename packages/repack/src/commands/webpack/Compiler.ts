@@ -105,10 +105,8 @@ export class Compiler extends EventEmitter {
         this.emit(value.event, value.error);
       } else if (value.event === 'progress') {
         this.progressSenders[platform].forEach((sendProgress) => {
-          sendProgress({
-            completed: value.percentage,
-            total: 100,
-          });
+          const percentage = Math.floor(value.percentage * 100);
+          sendProgress({ completed: percentage, total: 100 });
         });
         this.reporter.process({
           issuer: 'DevServer',
