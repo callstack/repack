@@ -76,6 +76,7 @@ export default function reanimatedLoader(
 
 // resolve the path to the babel-swc-loader once
 const babelSwcLoader = require.resolve('@callstack/repack/babel-swc-loader');
+let warningDisplayed = false;
 
 export function pitch(
   this: LoaderContext<ReanimatedLoaderOptions>,
@@ -90,10 +91,13 @@ export function pitch(
     // babel plugin directly
     if (loader.path === babelSwcLoader) {
       data.skip = true;
-      logger.warn(
-        'This plugin should not be used with `@callstack/repack/babel-swc-loader`. ' +
-          'Instead, add the `react-native-reanimated/plugin` (or `react-native-worklets/plugin`) directly to your `babel.config.js` file in the project root.'
-      );
+      if (!warningDisplayed) {
+        warningDisplayed = true;
+        logger.warn(
+          '`@callstack/repack-plugin-reanimated` should not be used with `@callstack/repack/babel-swc-loader`. ' +
+            'Instead, add the `react-native-reanimated/plugin` (or `react-native-worklets/plugin`) directly to your list of babel plugins in the `babel.config.js` file in the project root.'
+        );
+      }
     }
   }
 }
