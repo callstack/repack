@@ -111,7 +111,6 @@ async function getSwcModule(loaderContext: LoaderContext): Promise<Swc | null> {
     // happy path - rspack & exposed swc
     // use optional chaining to avoid type errors when using parallel loader
     if (loaderContext._compiler.rspack?.experiments?.swc) {
-      console.log('using exposed swc from `@rspack/core`');
       return loaderContext._compiler.rspack.experiments.swc;
     }
     // fallback to checking for `@rspack/core` installed in the project
@@ -119,7 +118,6 @@ async function getSwcModule(loaderContext: LoaderContext): Promise<Swc | null> {
     const rspackCorePath = safelyResolve('@rspack/core', projectRoot);
     if (rspackCorePath && !isWebpack) {
       const rspack = await import(rspackCorePath);
-      if (rspack) console.log('using swc from `@rspack/core`');
       if ('default' in rspack) {
         return rspack.default?.experiments?.swc ?? null;
       }
@@ -133,7 +131,6 @@ async function getSwcModule(loaderContext: LoaderContext): Promise<Swc | null> {
   const swcCorePath = safelyResolve('@swc/core', projectRoot);
   if (swcCorePath) {
     const swc = await import(swcCorePath);
-    if (swc) console.log('using swc from`@swc/core`');
     if ('default' in swc) {
       return swc.default as Swc;
     }
