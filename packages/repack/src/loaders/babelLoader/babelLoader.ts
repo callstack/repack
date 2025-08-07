@@ -6,7 +6,12 @@ import {
 } from '@babel/core';
 import type { LoaderContext } from '@rspack/core';
 import type { BabelLoaderOptions, CustomTransformOptions } from './options.js';
-import { isTSXSource, isTypeScriptSource, loadHermesParser } from './utils.js';
+import {
+  isIgnoredRepackDeepImport,
+  isTSXSource,
+  isTypeScriptSource,
+  loadHermesParser,
+} from './utils.js';
 
 export const raw = false;
 
@@ -29,8 +34,8 @@ function buildBabelConfig(options: CustomTransformOptions): TransformOptions {
     minified: false,
   };
 
-  if (options.includePlugins) {
-    config.plugins!.push(...options.includePlugins);
+  if (includePlugins) {
+    config.plugins!.push(...includePlugins);
   }
 
   const babelConfig = loadOptions(config);
@@ -38,11 +43,15 @@ function buildBabelConfig(options: CustomTransformOptions): TransformOptions {
     throw new Error('Failed to load babel config');
   }
 
-  if (options.excludePlugins && babelConfig.plugins) {
+  if (excludePlugins && babelConfig.plugins) {
+    const excludedPlugins = new Set(excludePlugins);
     babelConfig.plugins = babelConfig.plugins.filter(
-      (plugin: { key: string }) => {
-        return !options.excludePlugins!.includes(plugin.key);
-      }
+      (plugin: { key: string }) =>
+        !(
+          excludedPlugins.has(plugin.key) ||
+          (plugin.key === 'warn-on-deep-imports' &&
+            isIgnoredRepackDeepImport(options.filename!))
+        )
     );
   }
 
@@ -64,7 +73,6 @@ export const transform = async (
       ? parseSync(src, babelConfig)
       : hermesParser.parse(src, {
           babel: true,
-          flow: 'all',
           reactRuntimeTarget: '19',
           sourceType: babelConfig.sourceType,
         });

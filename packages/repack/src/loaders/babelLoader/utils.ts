@@ -52,3 +52,16 @@ export async function loadHermesParser(
     );
   }
 }
+
+const IGNORED_REPACK_FILENAMES = [
+  'IncludeModules.js',
+  'WebpackHMRClient.js',
+].map((name) => name.replace(/\./g, '\\.'));
+
+const IGNORED_REPACK_PATHS_REGEX = new RegExp(
+  `repack/dist/modules/(${IGNORED_REPACK_FILENAMES.join('|')})$`
+);
+
+export function isIgnoredRepackDeepImport(filename: string): boolean {
+  return IGNORED_REPACK_PATHS_REGEX.test(filename);
+}
