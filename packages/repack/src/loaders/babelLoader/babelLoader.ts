@@ -4,18 +4,11 @@ import {
   parseSync,
   transformFromAstSync,
 } from '@babel/core';
-
 import type { LoaderContext } from '@rspack/core';
+import type { BabelLoaderOptions, CustomTransformOptions } from './options.js';
 import { isTSXSource, isTypeScriptSource, loadHermesParser } from './utils.js';
 
 export const raw = false;
-
-interface BabelLoaderOptions extends TransformOptions {}
-
-interface CustomTransformOptions extends TransformOptions {
-  includePlugins?: Array<string | [string, Record<string, any>]>;
-  excludePlugins?: string[];
-}
 
 function buildBabelConfig(options: CustomTransformOptions): TransformOptions {
   const { includePlugins, excludePlugins, ...otherOptions } = options;
@@ -97,14 +90,13 @@ export default async function babelLoader(
   const options = this.getOptions();
 
   try {
-    const result = transform(source, {
+    const result = await transform(source, {
       sourceMaps: this.sourceMap,
       ...options,
       caller: { name: '@callstack/repack/babel-loader' },
       filename: this.resourcePath,
     });
-    // @ts-ignore
-    callback(null, result.code, result.map);
+    callback(null, result.code ?? undefined, result.map ?? undefined);
   } catch (e) {
     callback(e as Error);
   }

@@ -21,7 +21,7 @@ export function isJSXSource(fileName: string) {
 }
 
 export function getProjectBabelConfig(projectRoot?: string) {
-  const babelConfig = loadOptions({ cwd: projectRoot, root: projectRoot });
+  const babelConfig = loadOptions({ root: projectRoot });
   return babelConfig ?? {};
 }
 

@@ -111,61 +111,66 @@ export default async function babelSwcLoader(
     ...options.babelOverrides,
   };
 
-  const swc = await lazyGetSwc(this);
-  // if swc is not available, use babel to transform everything
-  if (!swc) {
-    const { code, map } = await transform(source, baseBabelConfig);
-    callback(null, code ?? undefined, map ?? undefined);
-    return;
+  try {
+    const swc = await lazyGetSwc(this);
+    // if swc is not available, use babel to transform everything
+    if (!swc) {
+      const { code, map } = await transform(source, baseBabelConfig);
+      callback(null, code ?? undefined, map ?? undefined);
+      return;
+    }
+
+    const babelConfig = getProjectBabelConfig(projectRoot);
+    const babelTransforms =
+      babelConfig.plugins?.map((p) => [p.key, p.options] as BabelTransform) ??
+      [];
+
+    const includeBabelPlugins = getExtraBabelPlugins(this.resourcePath);
+    const { includedSwcTransforms, supportedSwcTransforms, swcConfig } =
+      partitionTransforms(this.resourcePath, babelTransforms);
+
+    const babelResult = await transform(source, {
+      ...baseBabelConfig,
+      excludePlugins: supportedSwcTransforms,
+      includePlugins: includeBabelPlugins,
+    });
+
+    const finalSwcConfig: SwcLoaderOptions = {
+      ...swcConfig,
+      // set env based on babel transforms
+      env: {
+        // node supports everything and does not include
+        // any transforms by default, so it can as a template
+        targets: { node: 24 },
+        include: includedSwcTransforms,
+      },
+      // set lazy imports based on loader options
+      module: {
+        ...swcConfig.module,
+        lazy: lazyImports,
+        type: swcConfig.module!.type,
+      },
+    };
+
+    const swcResult = swc.transformSync(babelResult?.code!, {
+      ...finalSwcConfig,
+      caller: { name: loaderName },
+      filename: this.resourcePath,
+      configFile: false,
+      swcrc: false,
+      root: projectRoot ?? babelConfig.root ?? undefined,
+      minify: false,
+      sourceMaps: withSourceMaps,
+      inputSourceMap: withSourceMaps
+        ? JSON.stringify(babelResult?.map)
+        : undefined,
+      sourceFileName: this.resourcePath,
+      sourceRoot: this.context!,
+      ...options.swcOverrides,
+    });
+
+    callback(null, swcResult?.code, swcResult?.map);
+  } catch (error) {
+    callback(error as Error);
   }
-
-  const babelConfig = getProjectBabelConfig(projectRoot);
-  const babelTransforms =
-    babelConfig.plugins?.map((p) => [p.key, p.options] as BabelTransform) ?? [];
-
-  const includeBabelPlugins = getExtraBabelPlugins(this.resourcePath);
-  const { includedSwcTransforms, supportedSwcTransforms, swcConfig } =
-    partitionTransforms(this.resourcePath, babelTransforms);
-
-  const babelResult = await transform(source, {
-    ...baseBabelConfig,
-    excludePlugins: supportedSwcTransforms,
-    includePlugins: includeBabelPlugins,
-  });
-
-  const finalSwcConfig: SwcLoaderOptions = {
-    ...swcConfig,
-    // set env based on babel transforms
-    env: {
-      // node supports everything and does not include
-      // any transforms by default, so it can as a template
-      targets: { node: 24 },
-      include: includedSwcTransforms,
-    },
-    // set lazy imports based on loader options
-    module: {
-      ...swcConfig.module,
-      lazy: lazyImports,
-      type: swcConfig.module!.type,
-    },
-  };
-
-  const swcResult = swc.transformSync(babelResult?.code!, {
-    ...finalSwcConfig,
-    caller: { name: loaderName },
-    filename: this.resourcePath,
-    configFile: false,
-    swcrc: false,
-    root: projectRoot ?? babelConfig.root ?? undefined,
-    minify: false,
-    sourceMaps: withSourceMaps,
-    inputSourceMap: withSourceMaps
-      ? JSON.stringify(babelResult?.map)
-      : undefined,
-    sourceFileName: this.resourcePath,
-    sourceRoot: this.context!,
-    ...options.swcOverrides,
-  });
-
-  callback(null, swcResult?.code, swcResult?.map);
 }
