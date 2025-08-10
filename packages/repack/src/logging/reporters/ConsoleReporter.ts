@@ -194,10 +194,24 @@ class InteractiveConsoleReporter implements Reporter {
         timestamp: log.timestamp,
         issuer: log.issuer,
         type: 'info',
-        message: [`Compiling ${platform}: ${percentage}%`],
+        message: [
+          `Compiling ${platform}: ${percentage}%`,
+          this.renderProgressBar(percentage),
+        ],
       })}`
     );
   };
+
+  private renderProgressBar(percentage: number, width = 24) {
+    const filled = Math.max(
+      0,
+      Math.min(width, Math.round((percentage / 100) * width))
+    );
+    const empty = width - filled;
+    const bar =
+      colorette.green('#'.repeat(filled)) + colorette.gray('.'.repeat(empty));
+    return `[${bar}]`;
+  }
 
   private prettifyLog(log: LogEntry) {
     let body = '';
