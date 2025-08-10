@@ -1,6 +1,6 @@
 import util from 'node:util';
 import * as colorette from 'colorette';
-import MultiPlatformTerminal from '../MultiPlatformTerminal.js';
+import MultiPlatformTerminal from '../terminal/MultiPlatformTerminal.js';
 import type { LogEntry, LogType, Reporter } from '../types.js';
 
 export interface ConsoleReporterConfig {
