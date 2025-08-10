@@ -1,6 +1,6 @@
 import util from 'node:util';
 import * as colorette from 'colorette';
-import throttle from 'throttleit';
+import Terminal from '../Terminal.js';
 import type { LogEntry, LogType, Reporter } from '../types.js';
 
 export interface ConsoleReporterConfig {
@@ -73,8 +73,11 @@ const FALLBACK_SYMBOLS: Record<LogType, string> = {
 
 class InteractiveConsoleReporter implements Reporter {
   private requestBuffer: Record<string, Object> = {};
+  private terminal: Terminal;
 
-  constructor(private config: ConsoleReporterConfig) {}
+  constructor(private config: ConsoleReporterConfig) {
+    this.terminal = new Terminal(process.stdout);
+  }
 
   process(log: LogEntry) {
     // Do not log debug messages in non-verbose mode
@@ -90,10 +93,10 @@ class InteractiveConsoleReporter implements Reporter {
 
     const normalizedLog = this.normalizeLog(log);
     if (normalizedLog) {
-      process.stdout.write(
+      this.terminal.log(
         `${
           IS_SYMBOL_SUPPORTED ? SYMBOLS[log.type] : FALLBACK_SYMBOLS[log.type]
-        } ${this.prettifyLog(normalizedLog)}\n`
+        } ${this.prettifyLog(normalizedLog)}`
       );
     }
   }
@@ -174,7 +177,7 @@ class InteractiveConsoleReporter implements Reporter {
     };
   }
 
-  private processProgress = throttle((log: LogEntry) => {
+  private processProgress = (log: LogEntry) => {
     const {
       progress: { value, platform },
     } = log.message[0] as {
@@ -183,7 +186,7 @@ class InteractiveConsoleReporter implements Reporter {
 
     const percentage = Math.floor(value * 100);
 
-    process.stdout.write(
+    this.terminal.status(
       `${
         IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
       } ${this.prettifyLog({
@@ -191,10 +194,10 @@ class InteractiveConsoleReporter implements Reporter {
         issuer: log.issuer,
         type: 'info',
         message: [`Compiling ${platform}: ${percentage}%`],
-      })}\n`
+      })}`
     );
     // match rspack progressplugin throttle for now
-  }, 200);
+  };
 
   private prettifyLog(log: LogEntry) {
     let body = '';
