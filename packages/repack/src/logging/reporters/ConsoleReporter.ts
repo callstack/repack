@@ -179,12 +179,17 @@ class InteractiveConsoleReporter implements Reporter {
 
   private processProgress = (log: LogEntry) => {
     const {
-      progress: { value, platform },
+      progress: { value, platform, time },
     } = log.message[0] as {
-      progress: { value: number; platform: string };
+      progress: { value: number; platform: string; time?: number };
     };
 
     const percentage = Math.floor(value * 100);
+
+    const label =
+      typeof time === 'number' && percentage >= 100
+        ? `Built ${platform} in ${time} ms`
+        : `Compiling ${platform}: ${percentage}%`;
 
     this.terminal.status(
       platform,
@@ -194,10 +199,7 @@ class InteractiveConsoleReporter implements Reporter {
         timestamp: log.timestamp,
         issuer: log.issuer,
         type: 'info',
-        message: [
-          `Compiling ${platform}: ${percentage}%`,
-          this.renderProgressBar(percentage),
-        ],
+        message: [label, this.renderProgressBar(percentage)],
       })}`
     );
   };

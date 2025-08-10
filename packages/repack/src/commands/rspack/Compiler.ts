@@ -198,6 +198,18 @@ export class Compiler {
 
       this.isCompilationInProgress = false;
 
+      // Emit final progress with timing per platform as a status update
+      stats.children?.forEach((childStats) => {
+        const platform = childStats.name!;
+        const time = childStats.time as number | undefined;
+        this.reporter.process({
+          issuer: 'DevServer',
+          message: [{ progress: { value: 1, platform, time } }],
+          timestamp: Date.now(),
+          type: 'progress',
+        });
+      });
+
       stats.children?.forEach((childStats) => {
         const platform = childStats.name!;
         this.callPendingResolvers(platform);
@@ -211,13 +223,6 @@ export class Compiler {
   }
 
   start() {
-    this.reporter.process({
-      type: 'info',
-      issuer: 'DevServer',
-      timestamp: Date.now(),
-      message: ['Starting build for platforms:', this.platforms.join(', ')],
-    });
-
     this.compiler.watch(this.watchOptions, (error) => {
       if (!error) return;
       this.platforms.forEach((platform) => {

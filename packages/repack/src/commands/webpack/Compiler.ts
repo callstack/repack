@@ -100,6 +100,21 @@ export class Compiler extends EventEmitter {
           ),
         };
         this.emit(value.event, { platform, stats: value.stats });
+        // Emit final progress with timing for this platform
+        this.reporter.process({
+          issuer: 'DevServer',
+          message: [
+            {
+              progress: {
+                value: 1,
+                platform,
+                time: value.stats.time as number | undefined,
+              },
+            },
+          ],
+          timestamp: Date.now(),
+          type: 'progress',
+        });
         callPendingResolvers();
       } else if (value.event === 'error') {
         this.emit(value.event, value.error);
