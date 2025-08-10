@@ -40,7 +40,7 @@ export class Compiler {
 
       reporter.process({
         issuer: 'DevServer',
-        message: [{ progress: { value, platform } }],
+        message: [{ progress: { platform, value } }],
         timestamp: Date.now(),
         type: 'progress',
       });
@@ -198,25 +198,20 @@ export class Compiler {
 
       this.isCompilationInProgress = false;
 
-      // Emit final progress with timing per platform as a status update
       stats.children?.forEach((childStats) => {
         const platform = childStats.name!;
-        const time = childStats.time as number | undefined;
-        this.reporter.process({
-          issuer: 'DevServer',
-          message: [{ progress: { value: 1, platform, time } }],
-          timestamp: Date.now(),
-          type: 'progress',
-        });
-      });
-
-      stats.children?.forEach((childStats) => {
-        const platform = childStats.name!;
+        const time = childStats.time!;
         this.callPendingResolvers(platform);
         this.devServerContext.notifyBuildEnd(platform);
         this.devServerContext.broadcastToHmrClients<HMRMessage>({
           action: 'ok',
           body: { name: platform },
+        });
+        this.reporter.process({
+          issuer: 'DevServer',
+          message: [{ progress: { platform, time } }],
+          timestamp: Date.now(),
+          type: 'progress',
         });
       });
     });

@@ -103,17 +103,9 @@ export class Compiler extends EventEmitter {
         // Emit final progress with timing for this platform
         this.reporter.process({
           issuer: 'DevServer',
-          message: [
-            {
-              progress: {
-                value: 1,
-                platform,
-                time: value.stats.time as number | undefined,
-              },
-            },
-          ],
           timestamp: Date.now(),
           type: 'progress',
+          message: [{ progress: { platform, time: value.stats.time } }],
         });
         callPendingResolvers();
       } else if (value.event === 'error') {
@@ -125,7 +117,7 @@ export class Compiler extends EventEmitter {
         });
         this.reporter.process({
           issuer: 'DevServer',
-          message: [{ progress: { value: value.percentage, platform } }],
+          message: [{ progress: { platform, value: value.percentage } }],
           timestamp: Date.now(),
           type: 'progress',
         });
