@@ -74,6 +74,7 @@ const FALLBACK_SYMBOLS: Record<LogType, string> = {
 class InteractiveConsoleReporter implements Reporter {
   private requestBuffer: Record<string, Object> = {};
   private terminal: MultiPlatformTerminal;
+  private startTimeByPlatform: Record<string, number> = {};
 
   constructor(private config: ConsoleReporterConfig) {
     this.terminal = new MultiPlatformTerminal(process.stdout);
@@ -186,11 +187,42 @@ class InteractiveConsoleReporter implements Reporter {
 
     const percentage = Math.floor(value * 100);
 
-    const label =
-      typeof time === 'number' && percentage >= 100
-        ? `Built ${platform} in ${time} ms`
-        : `Compiling ${platform}: ${percentage}%`;
+    if (percentage >= 100) {
+      // Derive a reliable duration: prefer bundler-provided time, fallback to our own start time
+      if (this.startTimeByPlatform[platform] === undefined) {
+        this.startTimeByPlatform[platform] = log.timestamp;
+      }
+      const derivedMs =
+        typeof time === 'number' && time > 0
+          ? time
+          : Math.max(0, log.timestamp - this.startTimeByPlatform[platform]);
 
+      const finalMessage =
+        (IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress) +
+        ' ' +
+        this.prettifyLog({
+          timestamp: log.timestamp,
+          issuer: log.issuer,
+          type: 'info',
+          message: [
+            'Compiled',
+            this.renderProgressBar(percentage),
+            platform,
+            'in',
+            `${derivedMs} ms`,
+          ],
+        });
+      // Clear the live progress line for this platform, then print final
+      this.terminal.status(platform);
+      this.terminal.finalize(platform, finalMessage);
+      delete this.startTimeByPlatform[platform];
+      return;
+    }
+
+    const label = 'Compiling';
+    if (this.startTimeByPlatform[platform] === undefined) {
+      this.startTimeByPlatform[platform] = log.timestamp;
+    }
     this.terminal.status(
       platform,
       `${
@@ -199,7 +231,7 @@ class InteractiveConsoleReporter implements Reporter {
         timestamp: log.timestamp,
         issuer: log.issuer,
         type: 'info',
-        message: [label, this.renderProgressBar(percentage)],
+        message: [label, this.renderProgressBar(percentage), platform],
       })}`
     );
   };
