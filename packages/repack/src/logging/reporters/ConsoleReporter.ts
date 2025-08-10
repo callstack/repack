@@ -196,7 +196,6 @@ class InteractiveConsoleReporter implements Reporter {
         message: [`Compiling ${platform}: ${percentage}%`],
       })}`
     );
-    // match rspack progressplugin throttle for now
   };
 
   private prettifyLog(log: LogEntry) {
