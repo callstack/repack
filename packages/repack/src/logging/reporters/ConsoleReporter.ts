@@ -1,6 +1,6 @@
 import util from 'node:util';
 import * as colorette from 'colorette';
-import Terminal from '../Terminal.js';
+import TerminalAdapter from '../TerminalAdapter.js';
 import type { LogEntry, LogType, Reporter } from '../types.js';
 
 export interface ConsoleReporterConfig {
@@ -73,10 +73,10 @@ const FALLBACK_SYMBOLS: Record<LogType, string> = {
 
 class InteractiveConsoleReporter implements Reporter {
   private requestBuffer: Record<string, Object> = {};
-  private terminal: Terminal;
+  private terminal: TerminalAdapter;
 
   constructor(private config: ConsoleReporterConfig) {
-    this.terminal = new Terminal(process.stdout);
+    this.terminal = new TerminalAdapter(process.stdout);
   }
 
   process(log: LogEntry) {
@@ -187,6 +187,7 @@ class InteractiveConsoleReporter implements Reporter {
     const percentage = Math.floor(value * 100);
 
     this.terminal.status(
+      platform,
       `${
         IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
       } ${this.prettifyLog({
