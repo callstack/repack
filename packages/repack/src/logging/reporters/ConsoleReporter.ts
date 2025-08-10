@@ -1,6 +1,6 @@
 import util from 'node:util';
 import * as colorette from 'colorette';
-import TerminalAdapter from '../TerminalAdapter.js';
+import MultiPlatformTerminal from '../MultiPlatformTerminal.js';
 import type { LogEntry, LogType, Reporter } from '../types.js';
 
 export interface ConsoleReporterConfig {
@@ -73,10 +73,10 @@ const FALLBACK_SYMBOLS: Record<LogType, string> = {
 
 class InteractiveConsoleReporter implements Reporter {
   private requestBuffer: Record<string, Object> = {};
-  private terminal: TerminalAdapter;
+  private terminal: MultiPlatformTerminal;
 
   constructor(private config: ConsoleReporterConfig) {
-    this.terminal = new TerminalAdapter(process.stdout);
+    this.terminal = new MultiPlatformTerminal(process.stdout);
   }
 
   process(log: LogEntry) {
