@@ -182,21 +182,27 @@ class InteractiveConsoleReporter implements Reporter {
     const {
       progress: { value, platform, time },
     } = log.message[0] as {
-      progress: { value: number; platform: string; time?: number };
+      progress: { platform: string; time?: number; value?: number };
     };
 
-    const percentage = Math.floor(value * 100);
-
-    if (percentage >= 100) {
-      // Derive a reliable duration: prefer bundler-provided time, fallback to our own start time
+    if (value !== undefined) {
+      const percentage = Math.floor(value * 100);
+      const label = 'Compiling';
       if (this.startTimeByPlatform[platform] === undefined) {
         this.startTimeByPlatform[platform] = log.timestamp;
       }
-      const derivedMs =
-        typeof time === 'number' && time > 0
-          ? time
-          : Math.max(0, log.timestamp - this.startTimeByPlatform[platform]);
-
+      this.terminal.status(
+        platform,
+        `${
+          IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
+        } ${this.prettifyLog({
+          timestamp: log.timestamp,
+          issuer: log.issuer,
+          type: 'info',
+          message: [label, this.renderProgressBar(percentage), platform],
+        })}`
+      );
+    } else if (time !== undefined) {
       const finalMessage =
         (IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress) +
         ' ' +
@@ -204,36 +210,12 @@ class InteractiveConsoleReporter implements Reporter {
           timestamp: log.timestamp,
           issuer: log.issuer,
           type: 'info',
-          message: [
-            'Compiled',
-            this.renderProgressBar(percentage),
-            platform,
-            'in',
-            `${derivedMs} ms`,
-          ],
+          message: ['Compiled', platform, 'in', `${time} ms`],
         });
       // Clear the live progress line for this platform, then print final
-      this.terminal.status(platform);
+      // this.terminal.status(platform);
       this.terminal.finalize(platform, finalMessage);
-      delete this.startTimeByPlatform[platform];
-      return;
     }
-
-    const label = 'Compiling';
-    if (this.startTimeByPlatform[platform] === undefined) {
-      this.startTimeByPlatform[platform] = log.timestamp;
-    }
-    this.terminal.status(
-      platform,
-      `${
-        IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
-      } ${this.prettifyLog({
-        timestamp: log.timestamp,
-        issuer: log.issuer,
-        type: 'info',
-        message: [label, this.renderProgressBar(percentage), platform],
-      })}`
-    );
   };
 
   private renderProgressBar(percentage: number, width = 24) {
