@@ -19,7 +19,7 @@ export default Repack.defineWebpackConfig((env) => {
       rules: [
         {
           test: /\.[cm]?[jt]sx?$/,
-          use: 'babel-loader',
+          use: '@callstack/repack/babel-swc-loader',
           type: 'javascript/auto',
         },
         ...Repack.getAssetTransformRules({ inline: true }),

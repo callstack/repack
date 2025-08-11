@@ -20,6 +20,9 @@ export default Repack.defineRspackConfig((env) => {
     mode,
     context,
     entry: './index.js',
+    experiments: {
+      parallelLoader: true,
+    },
     resolve: {
       ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
@@ -28,9 +31,15 @@ export default Repack.defineRspackConfig((env) => {
     },
     module: {
       rules: [
-        ...Repack.getJsTransformRules({
-          swc: { importSource: 'nativewind' },
-        }),
+        {
+          test: /\.[cm]?[jt]sx?$/,
+          use: {
+            loader: '@callstack/repack/babel-swc-loader',
+            parallel: true,
+            options: {},
+          },
+          type: 'javascript/auto',
+        },
         {
           test: Repack.getAssetExtensionsRegExp(
             Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')

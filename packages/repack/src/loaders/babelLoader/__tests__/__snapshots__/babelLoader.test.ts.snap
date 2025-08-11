@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`babelLoader excludePlugins by default transforms ESM modules to CJS (baseline) 1`] = `
+""use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _bar = _interopRequireDefault(require("bar"));
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+var _default = exports.default = _bar.default;"
+`;
+
+exports[`babelLoader excludePlugins excludes transform-modules-commonjs so ESM stays intact 1`] = `
+"import foo from "bar";
+export default foo;"
+`;
+
+exports[`babelLoader includePlugins includes @babel/plugin-transform-react-jsx and transforms JSX 1`] = `
+""use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Component = void 0;
+var _jsxRuntime = require("react/jsx-runtime");
+const Component = () => /*#__PURE__*/(0, _jsxRuntime.jsx)(View, {
+  test: 1
+});
+exports.Component = Component;"
+`;
