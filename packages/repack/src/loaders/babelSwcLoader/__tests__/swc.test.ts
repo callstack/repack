@@ -54,6 +54,71 @@ describe('swc transforms support detection', () => {
         'transform-for-of',
       ]);
     });
+
+    it('applies loose mode to setSpreadProperties when not defined; preserves explicit true (snapshot)', () => {
+      const baseUndefined = {} as SwcLoaderOptions;
+      const { swcConfig: cfg1 } = getSupportedSwcConfigurableTransforms(
+        [['transform-object-rest-spread', { loose: true }]],
+        baseUndefined
+      );
+
+      expect(cfg1.jsc?.assumptions).toMatchSnapshot(
+        'object-rest-spread loose: setSpreadProperties'
+      );
+
+      const baseTrue: SwcLoaderOptions = {
+        jsc: { assumptions: { setSpreadProperties: true } },
+      } as SwcLoaderOptions;
+      const { swcConfig: cfg2 } = getSupportedSwcConfigurableTransforms(
+        [['transform-object-rest-spread', { loose: false }]],
+        baseTrue
+      );
+
+      expect(cfg2.jsc?.assumptions).toMatchSnapshot(
+        'object-rest-spread explicit true preserved'
+      );
+    });
+
+    it('sets optional-chaining/nullish and for-of assumptions with loose mode and respects explicit values (snapshot)', () => {
+      const base: SwcLoaderOptions = {
+        jsc: { assumptions: { noDocumentAll: true } },
+      } as SwcLoaderOptions;
+
+      const { swcConfig } = getSupportedSwcConfigurableTransforms(
+        [
+          ['transform-optional-chaining', { loose: false }],
+          ['transform-nullish-coalescing-operator', { loose: true }],
+          ['transform-for-of', { loose: true }],
+        ],
+        base
+      );
+
+      expect(swcConfig.jsc?.assumptions).toMatchSnapshot(
+        'optional-chaining/nullish and for-of assumptions'
+      );
+    });
+
+    it('updates both privateFieldsAsProperties and setPublicClassFields for private-property-in-object but does not override explicit true (snapshot)', () => {
+      const base: SwcLoaderOptions = {
+        jsc: {
+          assumptions: {
+            privateFieldsAsProperties: true,
+            setPublicClassFields: true,
+          },
+        },
+      } as SwcLoaderOptions;
+
+      const { swcConfig, transformNames } =
+        getSupportedSwcConfigurableTransforms(
+          [['transform-private-property-in-object', { loose: false }]],
+          base
+        );
+
+      expect({
+        transformNames,
+        assumptions: swcConfig.jsc?.assumptions,
+      }).toMatchSnapshot('private-property-in-object assumptions and names');
+    });
   });
 
   describe('getSupportedSwcCustomTransforms', () => {
@@ -87,6 +152,73 @@ describe('swc transforms support detection', () => {
         'transform-modules-commonjs',
         'proposal-export-default-from',
       ]);
+    });
+
+    it('overrides react runtime and importSource from transform-react-jsx config (snapshot)', () => {
+      const inputConfig: SwcLoaderOptions = {
+        jsc: {
+          transform: { react: { runtime: 'classic', importSource: 'preact' } },
+        },
+      };
+      const { swcConfig } = getSupportedSwcCustomTransforms(
+        [
+          [
+            'transform-react-jsx',
+            { runtime: 'automatic', importSource: 'react/jsx' },
+          ],
+        ],
+        inputConfig
+      );
+
+      expect(swcConfig.jsc?.transform?.react).toMatchSnapshot(
+        'react runtime override'
+      );
+    });
+
+    it('configures modules commonjs options based on provided config (snapshot)', () => {
+      const inputConfig: SwcLoaderOptions = {};
+      const { swcConfig } = getSupportedSwcCustomTransforms(
+        [
+          [
+            'transform-modules-commonjs',
+            { strict: false, strictMode: true, allowTopLevelThis: false },
+          ],
+        ],
+        inputConfig
+      );
+      expect(swcConfig.module).toMatchSnapshot('modules commonjs config');
+    });
+
+    it('enables external helpers via transform-runtime (snapshot)', () => {
+      const inputConfig: SwcLoaderOptions = {};
+      const { swcConfig } = getSupportedSwcCustomTransforms(
+        [['transform-runtime', {}]],
+        inputConfig
+      );
+      expect(swcConfig.jsc).toMatchSnapshot('runtime externalHelpers');
+    });
+
+    it('sets exportDefaultFrom only for ecmascript parser; leaves typescript parser unchanged (snapshot)', () => {
+      const inputConfigTs: SwcLoaderOptions = {
+        jsc: { parser: { syntax: 'typescript' } },
+      } as SwcLoaderOptions;
+
+      const { swcConfig: tsCfg } = getSupportedSwcCustomTransforms(
+        [['proposal-export-default-from', {}]],
+        inputConfigTs
+      );
+      expect(tsCfg.jsc?.parser).toMatchSnapshot('parser: typescript unchanged');
+
+      const inputConfigEcma: SwcLoaderOptions = {
+        jsc: { parser: { syntax: 'ecmascript' } },
+      } as SwcLoaderOptions;
+      const { swcConfig: ecmaCfg } = getSupportedSwcCustomTransforms(
+        [['proposal-export-default-from', {}]],
+        inputConfigEcma
+      );
+      expect(ecmaCfg.jsc?.parser).toMatchSnapshot(
+        'parser: ecmascript with exportDefaultFrom'
+      );
     });
   });
 });
