@@ -172,8 +172,6 @@ export class LoggerPlugin {
               ),
             ]
           : [
-              // Skip the generic "Bundle built" info entry; DevServer will
-              // render a final progress status with timing per platform.
               ...(warnings?.map((warning) =>
                 this.createEntry('LoggerPlugin', 'warn', [
                   `Warning in "${warning.moduleName}":\n${warning.message}`,
