@@ -115,12 +115,16 @@ export class Compiler extends EventEmitter {
           const percentage = Math.floor(value.percentage * 100);
           sendProgress({ completed: percentage, total: 100 });
         });
-        this.reporter.process({
-          issuer: 'DevServer',
-          message: [{ progress: { platform, value: value.percentage } }],
-          timestamp: Date.now(),
-          type: 'progress',
-        });
+        // skip reporting progress for the final last 1%
+        // rely on the done event from the `compiler.done` hook
+        if (value.percentage < 0.99) {
+          this.reporter.process({
+            issuer: 'DevServer',
+            message: [{ progress: { platform, value: value.percentage } }],
+            timestamp: Date.now(),
+            type: 'progress',
+          });
+        }
       } else {
         this.isCompilationInProgress[platform] = true;
         this.emit(value.event, { platform });

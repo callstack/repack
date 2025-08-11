@@ -86,8 +86,7 @@ class InteractiveConsoleReporter implements Reporter {
       return;
     }
 
-    const [firstMessage] = log.message;
-    if (typeof firstMessage === 'object' && 'progress' in firstMessage) {
+    if (log.type === 'progress') {
       this.processProgress(log);
       return;
     }
@@ -178,45 +177,32 @@ class InteractiveConsoleReporter implements Reporter {
     };
   }
 
-  private processProgress = (log: LogEntry) => {
+  private processProgress(log: LogEntry) {
     const {
-      progress: { value, platform, time },
+      progress: { platform, time, value },
     } = log.message[0] as {
-      progress: { platform: string; time?: number; value?: number };
+      progress: { platform: string; time?: number; value: number };
     };
 
-    if (value !== undefined) {
-      const percentage = Math.floor(value * 100);
-      const label = 'Compiling';
-      if (this.startTimeByPlatform[platform] === undefined) {
-        this.startTimeByPlatform[platform] = log.timestamp;
-      }
-      this.terminal.status(
-        platform,
-        `${
-          IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
-        } ${this.prettifyLog({
-          timestamp: log.timestamp,
-          issuer: log.issuer,
-          type: 'info',
-          message: [label, this.renderProgressBar(percentage), platform],
-        })}`
-      );
-    } else if (time !== undefined) {
-      const finalMessage =
-        (IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress) +
-        ' ' +
-        this.prettifyLog({
-          timestamp: log.timestamp,
-          issuer: log.issuer,
-          type: 'info',
-          message: ['Compiled', platform, 'in', `${time} ms`],
-        });
-      // Clear the live progress line for this platform, then print final
-      // this.terminal.status(platform);
-      this.terminal.finalize(platform, finalMessage);
+    const percentage = Math.floor(value * 100);
+    if (this.startTimeByPlatform[platform] === undefined) {
+      this.startTimeByPlatform[platform] = log.timestamp;
     }
-  };
+
+    this.terminal.status(
+      platform,
+      `${
+        IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
+      } ${this.prettifyLog({
+        timestamp: log.timestamp,
+        issuer: log.issuer,
+        type: 'progress',
+        message: time
+          ? ['Compiled', platform, 'in', `${time} ms`]
+          : ['Compiling', this.renderProgressBar(percentage), platform],
+      })}`
+    );
+  }
 
   private renderProgressBar(percentage: number, width = 24) {
     const filled = Math.max(
