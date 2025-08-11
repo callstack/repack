@@ -21,7 +21,7 @@ type InputSourceMap = TransformOptions['inputSourceMap'];
 
 export const raw = false;
 
-function partitionTransforms(
+export function partitionTransforms(
   filename: string,
   babelTransforms: BabelTransform[]
 ) {
