@@ -156,7 +156,6 @@ export class LoggerPlugin {
       if (compiler.options.devServer) {
         const { errors, warnings } = stats.toJson({
           all: false,
-          timings: true,
           errors: true,
           warnings: true,
         });

@@ -80,14 +80,14 @@ const FALLBACK_SYMBOLS: Record<LogType, string> = {
   progress: colorette.green('->'),
 };
 
+const PROGRESS_BAR_WIDTH = 16;
+
 class InteractiveConsoleReporter implements Reporter {
   private requestBuffer: Record<string, Object> = {};
   private terminal: MultiPlatformTerminal;
   private startTimeByPlatform: Record<string, number> = {};
-  private spinnerIndex = 0;
   private spinner: Spinner = new Spinner();
   private maxPlatformNameWidth = 0;
-  private progressBarWidth: number | undefined;
 
   constructor(private config: ConsoleReporterConfig) {
     this.terminal = new MultiPlatformTerminal(process.stdout);
@@ -221,15 +221,9 @@ class InteractiveConsoleReporter implements Reporter {
     );
   }
 
-  private renderProgressBar(percentage: number, width = 16, platform?: string) {
-    const barWidth = this.progressBarWidth ?? width;
-    if (this.progressBarWidth === undefined) {
-      this.progressBarWidth = barWidth;
-    }
-    return renderBar(percentage, { width: barWidth, platform });
+  private renderProgressBar(platform: string, percentage: number) {
+    return renderBar(percentage, { width: PROGRESS_BAR_WIDTH, platform });
   }
-
-  // Spinner and time helpers moved to renderers/progressBar
 
   private buildInProgressLine(
     platform: string,
@@ -238,16 +232,11 @@ class InteractiveConsoleReporter implements Reporter {
     issuer: string
   ) {
     const spinner = this.spinner.getNext();
-
     const percentText = `${percentage.toString().padStart(3, ' ')}%`;
-
     const platformPadded = platform.padEnd(this.maxPlatformNameWidth, ' ');
     const platformColored = colorizePlatformLabel(platform, platformPadded);
+    const bar = this.renderProgressBar(platform, percentage);
 
-    const bar = this.renderProgressBar(percentage, 16, platform);
-
-    // Prefix with timestamp and issuer using existing formatter
-    // Combine bar and percent to avoid extra space between them
     const barAndPercent = `${bar}${percentText}`;
     return `${spinner} ${this.prettifyLog({
       timestamp: now,
