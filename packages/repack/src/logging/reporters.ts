@@ -1,19 +1,22 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import util from 'node:util';
 import * as colorette from 'colorette';
+import throttle from 'throttleit';
 import {
   Spinner,
   colorizePlatformLabel,
   formatSecondsOneDecimal,
   renderProgressBar as renderBar,
-} from '../renderers/progressBar.js';
-import MultiPlatformTerminal from '../terminal/MultiPlatformTerminal.js';
-import type { LogEntry, LogType, Reporter } from '../types.js';
-
-export interface ConsoleReporterConfig {
-  asJson?: boolean;
-  isVerbose?: boolean;
-  isWorker?: boolean;
-}
+} from './internal/progress.js';
+import { MultiPlatformTerminal } from './internal/terminal.js';
+import type {
+  ConsoleReporterConfig,
+  FileReporterConfig,
+  LogEntry,
+  LogType,
+  Reporter,
+} from './types.js';
 
 export class ConsoleReporter implements Reporter {
   private internalReporter: Reporter;
@@ -352,4 +355,40 @@ function colorizeText(logType: LogType, text: string) {
   }
 
   return text;
+}
+
+export class FileReporter implements Reporter {
+  private buffer: string[] = ['\n\n--- BEGINNING OF NEW LOG ---\n'];
+
+  constructor(private config: FileReporterConfig) {
+    if (!path.isAbsolute(this.config.filename)) {
+      this.config.filename = path.join(process.cwd(), this.config.filename);
+    }
+
+    fs.mkdirSync(path.dirname(this.config.filename), { recursive: true });
+  }
+
+  throttledFlush: () => void = throttle(() => {
+    this.flush();
+  }, 1000);
+
+  process(log: LogEntry) {
+    this.buffer.push(JSON.stringify(log));
+    this.throttledFlush();
+  }
+
+  flush() {
+    if (!this.buffer.length) {
+      return;
+    }
+
+    fs.writeFileSync(this.config.filename, this.buffer.join('\n'), {
+      flag: 'a',
+    });
+    this.buffer = [];
+  }
+
+  stop() {
+    this.flush();
+  }
 }
