@@ -75,6 +75,9 @@ class InteractiveConsoleReporter implements Reporter {
   private requestBuffer: Record<string, Object> = {};
   private terminal: MultiPlatformTerminal;
   private startTimeByPlatform: Record<string, number> = {};
+  private spinnerIndex = 0;
+  private maxPlatformNameWidth = 0;
+  private progressBarWidth: number | undefined;
 
   constructor(private config: ConsoleReporterConfig) {
     this.terminal = new MultiPlatformTerminal(process.stdout);
@@ -189,30 +192,132 @@ class InteractiveConsoleReporter implements Reporter {
       this.startTimeByPlatform[platform] = log.timestamp;
     }
 
+    // Track platform name width for alignment
+    if (platform.length > this.maxPlatformNameWidth) {
+      this.maxPlatformNameWidth = platform.length;
+    }
+
+    if (typeof time === 'number') {
+      this.terminal.status(
+        platform,
+        this.buildDoneLine(platform, time, log.timestamp, log.issuer)
+      );
+      return;
+    }
+
     this.terminal.status(
       platform,
-      `${
-        IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
-      } ${this.prettifyLog({
-        timestamp: log.timestamp,
-        issuer: log.issuer,
-        type: 'progress',
-        message: time
-          ? ['Compiled', platform, 'in', `${time} ms`]
-          : ['Compiling', this.renderProgressBar(percentage), platform],
-      })}`
+      this.buildInProgressLine(platform, percentage, log.timestamp, log.issuer)
     );
   }
 
-  private renderProgressBar(percentage: number, width = 24) {
-    const filled = Math.max(
-      0,
-      Math.min(width, Math.round((percentage / 100) * width))
-    );
-    const empty = width - filled;
-    const bar =
-      colorette.green('#'.repeat(filled)) + colorette.gray('.'.repeat(empty));
-    return `[${bar}]`;
+  private renderProgressBar(percentage: number, width = 10, platform?: string) {
+    const barWidth = this.progressBarWidth ?? width;
+    if (this.progressBarWidth === undefined) {
+      this.progressBarWidth = barWidth;
+    }
+
+    const clamped = Math.max(0, Math.min(100, percentage));
+    const filled = Math.round((clamped / 100) * barWidth);
+    const empty = barWidth - filled;
+
+    const useUnicode = IS_SYMBOL_SUPPORTED;
+    const fullChar = useUnicode ? '=' : '#';
+    const emptyChar = useUnicode ? '-' : '.';
+
+    let filledStr = fullChar.repeat(Math.max(0, filled));
+    if (platform) {
+      const p = platform.toLowerCase();
+      if (p.includes('ios')) filledStr = colorette.blue(filledStr);
+      else if (p.includes('android')) filledStr = colorette.green(filledStr);
+      else filledStr = colorette.green(filledStr);
+    } else {
+      filledStr = colorette.green(filledStr);
+    }
+    const emptyStr = emptyChar.repeat(Math.max(0, empty));
+
+    return `[${filledStr}${emptyStr}]`;
+  }
+
+  private nextSpinnerFrame() {
+    const frames = IS_SYMBOL_SUPPORTED
+      ? ['⠋', '⠙', '⠸', '⠴', '⠦', '⠇']
+      : ['-', '\\', '|', '/'];
+    const frame = frames[this.spinnerIndex % frames.length];
+    this.spinnerIndex += 1;
+    return frame;
+  }
+
+  private formatElapsed(start: number, now: number): string {
+    const ms = Math.max(0, now - start);
+    if (ms < 1000) return `${(ms / 1000).toFixed(1)}s`;
+    if (ms < 60_000) return `${(ms / 1000).toFixed(1)}s`;
+    const minutes = Math.floor(ms / 60_000);
+    const seconds = Math.floor((ms % 60_000) / 1000)
+      .toString()
+      .padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  }
+
+  private buildInProgressLine(
+    platform: string,
+    percentage: number,
+    now: number,
+    issuer: string
+  ) {
+    const spinner = this.nextSpinnerFrame();
+
+    const percentText = `${percentage.toString().padStart(3, ' ')}%`;
+
+    const platformPadded = platform.padEnd(this.maxPlatformNameWidth, ' ');
+    const platformColored = this.colorizePlatform(platform, platformPadded);
+
+    const bar = this.renderProgressBar(percentage, 16, platform);
+
+    // Prefix with timestamp and issuer using existing formatter
+    // Combine bar and percent to avoid extra space between them
+    const barAndPercent = `${bar}${percentText}`;
+    return `${spinner} ${this.prettifyLog({
+      timestamp: now,
+      issuer,
+      type: 'progress',
+      message: [barAndPercent, platformColored],
+    })}`;
+  }
+
+  private buildDoneLine(
+    platform: string,
+    timeMs: number,
+    timestamp: number,
+    issuer: string
+  ) {
+    const icon = IS_SYMBOL_SUPPORTED
+      ? SYMBOLS.success
+      : FALLBACK_SYMBOLS.success;
+    const platformPadded = platform.padEnd(this.maxPlatformNameWidth, ' ');
+    const platformColored = this.colorizePlatform(platform, platformPadded);
+    return `${icon} ${this.prettifyLog({
+      timestamp,
+      issuer,
+      type: 'progress',
+      message: [
+        'Compiled',
+        platformColored,
+        'in',
+        this.colorizePlatform(platform, this.formatSecondsOneDecimal(timeMs)),
+      ],
+    })}`;
+  }
+
+  private formatSecondsOneDecimal(ms: number): string {
+    return `${(ms / 1000).toFixed(1)}s`;
+  }
+
+  private colorizePlatform(platform: string, label: string): string {
+    const p = platform.toLowerCase();
+    if (p.includes('ios')) return colorette.blue(label);
+    if (p.includes('android')) return colorette.green(label);
+    return label;
   }
 
   private prettifyLog(log: LogEntry) {
