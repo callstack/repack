@@ -152,7 +152,7 @@ export class LoggerPlugin {
       });
     });
 
-    compiler.hooks.done.tap('RepackLoggerPlugin', (stats) => {
+    compiler.hooks.afterDone.tap('RepackLoggerPlugin', (stats) => {
       if (compiler.options.devServer) {
         const { errors, warnings } = stats.toJson({
           all: false,
