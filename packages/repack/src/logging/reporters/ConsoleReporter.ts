@@ -1,5 +1,11 @@
 import util from 'node:util';
 import * as colorette from 'colorette';
+import {
+  Spinner,
+  colorizePlatformLabel,
+  formatSecondsOneDecimal,
+  renderProgressBar as renderBar,
+} from '../renderers/progressBar.js';
 import MultiPlatformTerminal from '../terminal/MultiPlatformTerminal.js';
 import type { LogEntry, LogType, Reporter } from '../types.js';
 
@@ -76,6 +82,7 @@ class InteractiveConsoleReporter implements Reporter {
   private terminal: MultiPlatformTerminal;
   private startTimeByPlatform: Record<string, number> = {};
   private spinnerIndex = 0;
+  private spinner: Spinner = new Spinner();
   private maxPlatformNameWidth = 0;
   private progressBarWidth: number | undefined;
 
@@ -211,53 +218,15 @@ class InteractiveConsoleReporter implements Reporter {
     );
   }
 
-  private renderProgressBar(percentage: number, width = 10, platform?: string) {
+  private renderProgressBar(percentage: number, width = 16, platform?: string) {
     const barWidth = this.progressBarWidth ?? width;
     if (this.progressBarWidth === undefined) {
       this.progressBarWidth = barWidth;
     }
-
-    const clamped = Math.max(0, Math.min(100, percentage));
-    const filled = Math.round((clamped / 100) * barWidth);
-    const empty = barWidth - filled;
-
-    const useUnicode = IS_SYMBOL_SUPPORTED;
-    const fullChar = useUnicode ? '=' : '#';
-    const emptyChar = useUnicode ? '-' : '.';
-
-    let filledStr = fullChar.repeat(Math.max(0, filled));
-    if (platform) {
-      const p = platform.toLowerCase();
-      if (p.includes('ios')) filledStr = colorette.blue(filledStr);
-      else if (p.includes('android')) filledStr = colorette.green(filledStr);
-      else filledStr = colorette.green(filledStr);
-    } else {
-      filledStr = colorette.green(filledStr);
-    }
-    const emptyStr = emptyChar.repeat(Math.max(0, empty));
-
-    return `[${filledStr}${emptyStr}]`;
+    return renderBar(percentage, { width: barWidth, platform });
   }
 
-  private nextSpinnerFrame() {
-    const frames = IS_SYMBOL_SUPPORTED
-      ? ['⠋', '⠙', '⠸', '⠴', '⠦', '⠇']
-      : ['-', '\\', '|', '/'];
-    const frame = frames[this.spinnerIndex % frames.length];
-    this.spinnerIndex += 1;
-    return frame;
-  }
-
-  private formatElapsed(start: number, now: number): string {
-    const ms = Math.max(0, now - start);
-    if (ms < 1000) return `${(ms / 1000).toFixed(1)}s`;
-    if (ms < 60_000) return `${(ms / 1000).toFixed(1)}s`;
-    const minutes = Math.floor(ms / 60_000);
-    const seconds = Math.floor((ms % 60_000) / 1000)
-      .toString()
-      .padStart(2, '0');
-    return `${minutes}:${seconds}`;
-  }
+  // Spinner and time helpers moved to renderers/progressBar
 
   private buildInProgressLine(
     platform: string,
@@ -265,12 +234,12 @@ class InteractiveConsoleReporter implements Reporter {
     now: number,
     issuer: string
   ) {
-    const spinner = this.nextSpinnerFrame();
+    const spinner = this.spinner.getNext();
 
     const percentText = `${percentage.toString().padStart(3, ' ')}%`;
 
     const platformPadded = platform.padEnd(this.maxPlatformNameWidth, ' ');
-    const platformColored = this.colorizePlatform(platform, platformPadded);
+    const platformColored = colorizePlatformLabel(platform, platformPadded);
 
     const bar = this.renderProgressBar(percentage, 16, platform);
 
@@ -295,7 +264,7 @@ class InteractiveConsoleReporter implements Reporter {
       ? SYMBOLS.success
       : FALLBACK_SYMBOLS.success;
     const platformPadded = platform.padEnd(this.maxPlatformNameWidth, ' ');
-    const platformColored = this.colorizePlatform(platform, platformPadded);
+    const platformColored = colorizePlatformLabel(platform, platformPadded);
     return `${icon} ${this.prettifyLog({
       timestamp,
       issuer,
@@ -304,20 +273,9 @@ class InteractiveConsoleReporter implements Reporter {
         'Compiled',
         platformColored,
         'in',
-        this.colorizePlatform(platform, this.formatSecondsOneDecimal(timeMs)),
+        colorizePlatformLabel(platform, formatSecondsOneDecimal(timeMs)),
       ],
     })}`;
-  }
-
-  private formatSecondsOneDecimal(ms: number): string {
-    return `${(ms / 1000).toFixed(1)}s`;
-  }
-
-  private colorizePlatform(platform: string, label: string): string {
-    const p = platform.toLowerCase();
-    if (p.includes('ios')) return colorette.blue(label);
-    if (p.includes('android')) return colorette.green(label);
-    return label;
   }
 
   private prettifyLog(log: LogEntry) {
