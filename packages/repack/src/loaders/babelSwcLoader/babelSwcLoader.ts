@@ -9,11 +9,10 @@ import {
 } from './swc.js';
 import {
   checkParallelModeAvailable,
+  getExtraBabelPlugins,
   getProjectBabelConfig,
   getProjectRootPath,
   getSwcParserConfig,
-  isTSXSource,
-  isTypeScriptSource,
   lazyGetSwc,
 } from './utils.js';
 
@@ -21,25 +20,6 @@ type BabelTransform = [string, Record<string, any> | undefined];
 type InputSourceMap = TransformOptions['inputSourceMap'];
 
 export const raw = false;
-
-function getExtraBabelPlugins(filename: string) {
-  const extraBabelPlugins: Array<string | [string, Record<string, any>]> = [];
-  // add TS syntax plugins since RN preset
-  // only uses transform-typescript plugin
-  // which includes the syntax-typescript plugin
-  if (isTypeScriptSource(filename)) {
-    extraBabelPlugins.push([
-      '@babel/plugin-syntax-typescript',
-      { isTSX: false, allowNamespaces: true },
-    ]);
-  } else if (isTSXSource(filename)) {
-    extraBabelPlugins.push([
-      '@babel/plugin-syntax-typescript',
-      { isTSX: true, allowNamespaces: true },
-    ]);
-  }
-  return extraBabelPlugins;
-}
 
 function partitionTransforms(
   filename: string,

@@ -21,6 +21,25 @@ export function getProjectBabelConfig(filename: string, projectRoot?: string) {
   return babelConfig ?? {};
 }
 
+export function getExtraBabelPlugins(filename: string) {
+  const extraBabelPlugins: Array<string | [string, Record<string, any>]> = [];
+  // add TS syntax plugins since RN preset
+  // only uses transform-typescript plugin
+  // which includes the syntax-typescript plugin
+  if (isTypeScriptSource(filename)) {
+    extraBabelPlugins.push([
+      '@babel/plugin-syntax-typescript',
+      { isTSX: false, allowNamespaces: true },
+    ]);
+  } else if (isTSXSource(filename)) {
+    extraBabelPlugins.push([
+      '@babel/plugin-syntax-typescript',
+      { isTSX: true, allowNamespaces: true },
+    ]);
+  }
+  return extraBabelPlugins;
+}
+
 export function getSwcParserConfig(filename: string): SwcLoaderParserConfig {
   if (isTypeScriptSource(filename)) {
     return { syntax: 'typescript', tsx: false };
