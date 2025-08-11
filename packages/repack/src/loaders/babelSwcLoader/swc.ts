@@ -22,6 +22,8 @@ const SWC_SUPPORTED_NORMAL_RULES = new Set([
   'transform-computed-properties',
 ]);
 
+// NOTE: 'transform-class-properties' and 'transform-private-methods' are disabled here
+// because, when combined with loose mode, these cause an internal swc error. Needs fixing upstream
 const SWC_SUPPORTED_CONFIGURABLE_RULES = new Set([
   // 'transform-class-properties',
   // 'transform-private-methods',
