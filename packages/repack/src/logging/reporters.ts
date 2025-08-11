@@ -1,13 +1,22 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import util from 'node:util';
 import * as colorette from 'colorette';
 import throttle from 'throttleit';
-import type { LogEntry, LogType, Reporter } from '../types.js';
-
-export interface ConsoleReporterConfig {
-  asJson?: boolean;
-  isVerbose?: boolean;
-  isWorker?: boolean;
-}
+import {
+  Spinner,
+  colorizePlatformLabel,
+  formatSecondsOneDecimal,
+  renderProgressBar as renderBar,
+} from './internal/progress.js';
+import { MultiPlatformTerminal } from './internal/terminal.js';
+import type {
+  ConsoleReporterConfig,
+  FileReporterConfig,
+  LogEntry,
+  LogType,
+  Reporter,
+} from './types.js';
 
 export class ConsoleReporter implements Reporter {
   private internalReporter: Reporter;
@@ -71,10 +80,18 @@ const FALLBACK_SYMBOLS: Record<LogType, string> = {
   progress: colorette.green('->'),
 };
 
+const PROGRESS_BAR_WIDTH = 16;
+
 class InteractiveConsoleReporter implements Reporter {
   private requestBuffer: Record<string, Object> = {};
+  private terminal: MultiPlatformTerminal;
+  private startTimeByPlatform: Record<string, number> = {};
+  private spinner: Spinner = new Spinner();
+  private maxPlatformNameWidth = 0;
 
-  constructor(private config: ConsoleReporterConfig) {}
+  constructor(private config: ConsoleReporterConfig) {
+    this.terminal = new MultiPlatformTerminal(process.stdout);
+  }
 
   process(log: LogEntry) {
     // Do not log debug messages in non-verbose mode
@@ -82,18 +99,17 @@ class InteractiveConsoleReporter implements Reporter {
       return;
     }
 
-    const [firstMessage] = log.message;
-    if (typeof firstMessage === 'object' && 'progress' in firstMessage) {
+    if (log.type === 'progress') {
       this.processProgress(log);
       return;
     }
 
     const normalizedLog = this.normalizeLog(log);
     if (normalizedLog) {
-      process.stdout.write(
+      this.terminal.log(
         `${
           IS_SYMBOL_SUPPORTED ? SYMBOLS[log.type] : FALLBACK_SYMBOLS[log.type]
-        } ${this.prettifyLog(normalizedLog)}\n`
+        } ${this.prettifyLog(normalizedLog)}`
       );
     }
   }
@@ -174,27 +190,85 @@ class InteractiveConsoleReporter implements Reporter {
     };
   }
 
-  private processProgress = throttle((log: LogEntry) => {
+  private processProgress(log: LogEntry) {
     const {
-      progress: { value, platform },
+      progress: { platform, time, value },
     } = log.message[0] as {
-      progress: { value: number; platform: string };
+      progress: { platform: string; time?: number; value: number };
     };
 
     const percentage = Math.floor(value * 100);
+    if (this.startTimeByPlatform[platform] === undefined) {
+      this.startTimeByPlatform[platform] = log.timestamp;
+    }
 
-    process.stdout.write(
-      `${
-        IS_SYMBOL_SUPPORTED ? SYMBOLS.progress : FALLBACK_SYMBOLS.progress
-      } ${this.prettifyLog({
-        timestamp: log.timestamp,
-        issuer: log.issuer,
-        type: 'info',
-        message: [`Compiling ${platform}: ${percentage}%`],
-      })}\n`
+    // Track platform name width for alignment
+    if (platform.length > this.maxPlatformNameWidth) {
+      this.maxPlatformNameWidth = platform.length;
+    }
+
+    if (typeof time === 'number') {
+      this.terminal.status(
+        platform,
+        this.buildDoneLine(platform, time, log.timestamp, log.issuer)
+      );
+      return;
+    }
+
+    this.terminal.status(
+      platform,
+      this.buildInProgressLine(platform, percentage, log.timestamp, log.issuer)
     );
-    // match rspack progressplugin throttle for now
-  }, 200);
+  }
+
+  private renderProgressBar(platform: string, percentage: number) {
+    return renderBar(percentage, { width: PROGRESS_BAR_WIDTH, platform });
+  }
+
+  private buildInProgressLine(
+    platform: string,
+    percentage: number,
+    now: number,
+    issuer: string
+  ) {
+    const spinner = this.spinner.getNext();
+    const percentText = `${percentage.toString().padStart(3, ' ')}%`;
+    const platformPadded = platform.padEnd(this.maxPlatformNameWidth, ' ');
+    const platformColored = colorizePlatformLabel(platform, platformPadded);
+    const bar = this.renderProgressBar(platform, percentage);
+
+    const barAndPercent = `${bar}${percentText}`;
+    return `${spinner} ${this.prettifyLog({
+      timestamp: now,
+      issuer,
+      type: 'progress',
+      message: [barAndPercent, platformColored],
+    })}`;
+  }
+
+  private buildDoneLine(
+    platform: string,
+    timeMs: number,
+    timestamp: number,
+    issuer: string
+  ) {
+    const icon = IS_SYMBOL_SUPPORTED
+      ? SYMBOLS.success
+      : FALLBACK_SYMBOLS.success;
+    const platformPadded = platform.padEnd(this.maxPlatformNameWidth, ' ');
+    const platformColored = colorizePlatformLabel(platform, platformPadded);
+    return `${icon} ${this.prettifyLog({
+      timestamp,
+      issuer,
+      type: 'progress',
+      message: [
+        'Compiled',
+        platformColored,
+        'in',
+        colorizePlatformLabel(platform, formatSecondsOneDecimal(timeMs)),
+      ],
+    })}`;
+  }
 
   private prettifyLog(log: LogEntry) {
     let body = '';
@@ -270,4 +344,40 @@ function colorizeText(logType: LogType, text: string) {
   }
 
   return text;
+}
+
+export class FileReporter implements Reporter {
+  private buffer: string[] = ['\n\n--- BEGINNING OF NEW LOG ---\n'];
+
+  constructor(private config: FileReporterConfig) {
+    if (!path.isAbsolute(this.config.filename)) {
+      this.config.filename = path.join(process.cwd(), this.config.filename);
+    }
+
+    fs.mkdirSync(path.dirname(this.config.filename), { recursive: true });
+  }
+
+  throttledFlush: () => void = throttle(() => {
+    this.flush();
+  }, 1000);
+
+  process(log: LogEntry) {
+    this.buffer.push(JSON.stringify(log));
+    this.throttledFlush();
+  }
+
+  flush() {
+    if (!this.buffer.length) {
+      return;
+    }
+
+    fs.writeFileSync(this.config.filename, this.buffer.join('\n'), {
+      flag: 'a',
+    });
+    this.buffer = [];
+  }
+
+  stop() {
+    this.flush();
+  }
 }

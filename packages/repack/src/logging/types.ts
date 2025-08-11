@@ -24,3 +24,13 @@ export interface LogEntry {
   issuer: string;
   message: Array<string | number | boolean | Object>;
 }
+
+export interface ConsoleReporterConfig {
+  asJson?: boolean;
+  isVerbose?: boolean;
+  isWorker?: boolean;
+}
+
+export interface FileReporterConfig {
+  filename: string;
+}

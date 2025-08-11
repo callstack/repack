@@ -100,6 +100,13 @@ export class Compiler extends EventEmitter {
           ),
         };
         this.emit(value.event, { platform, stats: value.stats });
+        // Emit final progress with timing for this platform
+        this.reporter.process({
+          issuer: 'DevServer',
+          timestamp: Date.now(),
+          type: 'progress',
+          message: [{ progress: { platform, time: value.stats.time } }],
+        });
         callPendingResolvers();
       } else if (value.event === 'error') {
         this.emit(value.event, value.error);
@@ -108,12 +115,16 @@ export class Compiler extends EventEmitter {
           const percentage = Math.floor(value.percentage * 100);
           sendProgress({ completed: percentage, total: 100 });
         });
-        this.reporter.process({
-          issuer: 'DevServer',
-          message: [{ progress: { value: value.percentage, platform } }],
-          timestamp: Date.now(),
-          type: 'progress',
-        });
+        // skip reporting progress for the final last 1%
+        // rely on the done event from the `compiler.done` hook
+        if (value.percentage < 0.99) {
+          this.reporter.process({
+            issuer: 'DevServer',
+            message: [{ progress: { platform, value: value.percentage } }],
+            timestamp: Date.now(),
+            type: 'progress',
+          });
+        }
       } else {
         this.isCompilationInProgress[platform] = true;
         this.emit(value.event, { platform });
