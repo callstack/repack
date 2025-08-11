@@ -152,40 +152,32 @@ export class LoggerPlugin {
       });
     });
 
-    compiler.hooks.done.tap('RepackLoggerPlugin', (stats) => {
+    compiler.hooks.afterDone.tap('RepackLoggerPlugin', (stats) => {
       if (compiler.options.devServer) {
-        const { time, errors, warnings } = stats.toJson({
+        const { errors, warnings } = stats.toJson({
           all: false,
-          timings: true,
           errors: true,
           warnings: true,
         });
 
-        let entires: Array<LogEntry | undefined> = [];
-        if (errors?.length) {
-          entires = [
-            this.createEntry('LoggerPlugin', 'error', [
-              'Failed to build bundle due to errors',
-            ]),
-            ...errors.map((error) =>
+        const entires: Array<LogEntry | undefined> = errors?.length
+          ? [
               this.createEntry('LoggerPlugin', 'error', [
-                `Error in "${error.moduleName}":\n${error.message}`,
-              ])
-            ),
-          ];
-        } else {
-          entires = [
-            this.createEntry('LoggerPlugin', 'info', [
-              warnings?.length ? 'Bundle built with warnings' : 'Bundle built',
-              { time },
-            ]),
-            ...(warnings?.map((warning) =>
-              this.createEntry('LoggerPlugin', 'warn', [
-                `Warning in "${warning.moduleName}":\n${warning.message}`,
-              ])
-            ) ?? []),
-          ];
-        }
+                'Failed to build bundle due to errors',
+              ]),
+              ...errors.map((error) =>
+                this.createEntry('LoggerPlugin', 'error', [
+                  `Error in "${error.moduleName}":\n${error.message}`,
+                ])
+              ),
+            ]
+          : [
+              ...(warnings?.map((warning) =>
+                this.createEntry('LoggerPlugin', 'warn', [
+                  `Warning in "${warning.moduleName}":\n${warning.message}`,
+                ])
+              ) ?? []),
+            ];
 
         for (const entry of entires.filter(Boolean) as LogEntry[]) {
           this.processEntry(entry);
