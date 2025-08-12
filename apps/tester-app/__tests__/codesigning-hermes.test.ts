@@ -15,7 +15,7 @@ function ensurePrivateKey(testAppRoot: string) {
   }
 }
 
-describe('codesigning', () => {
+describe('codesigning + hermes', () => {
   beforeAll(() => {
     // Ensure signing key exists for the plugin
     ensurePrivateKey(path.join(__dirname, '..'));
@@ -34,7 +34,7 @@ describe('codesigning', () => {
   ] as const;
 
   it.each(matrix)(
-    'adds signature with RCSSB marker to bundles using $bundler on $platform',
+    'produces signed hermes bytecode using $bundler on $platform',
     async ({ bundler, platform }) => {
       const commands = bundler === 'webpack' ? webpackCommands : rspackCommands;
       const bundleCommand = commands.find((c) => c.name === 'bundle');
@@ -42,10 +42,10 @@ describe('codesigning', () => {
 
       const BASE_DIR = path.join(
         __dirname,
-        `out/codesigning/${bundler}/${platform}`
+        `out/codesigning-hermes/${bundler}/${platform}`
       );
-      const TMP_DIR_NO = path.join(BASE_DIR, 'no-cs');
-      const TMP_DIR_CS = path.join(BASE_DIR, 'cs');
+      const TMP_DIR_BASE = path.join(BASE_DIR, 'base-js');
+      const TMP_DIR_SIGNED_HERMES = path.join(BASE_DIR, 'signed-hermes');
 
       await fs.promises.rm(BASE_DIR, { recursive: true, force: true });
 
@@ -53,7 +53,7 @@ describe('codesigning', () => {
         root: path.join(__dirname, '..'),
         platforms: { ios: {}, android: {} },
         reactNativePath: path.join(__dirname, '../node_modules/react-native'),
-      };
+      } as const;
 
       const makeBundle = async (configFile: string, outDir: string) => {
         const mainBundlePath = path.join(
@@ -88,34 +88,49 @@ describe('codesigning', () => {
         );
         const mainContent = await fs.promises.readFile(mainBundlePath);
         return {
-          chunks: Object.fromEntries(chunkEntries),
+          chunks: Object.fromEntries(chunkEntries) as Record<string, Buffer>,
           main: mainContent,
         };
       };
 
-      const jsAssets = await makeBundle(`${bundler}.config.mjs`, TMP_DIR_NO);
-      const signedAssets = await makeBundle(
-        `codesigning/${bundler}.config.mjs`,
-        TMP_DIR_CS
+      const jsAssets = await makeBundle(`${bundler}.config.mjs`, TMP_DIR_BASE);
+      const signedHermesAssets = await makeBundle(
+        `codesigning-hermes/${bundler}.config.mjs`,
+        TMP_DIR_SIGNED_HERMES
       );
 
       // Ensure we have common chunk file(s)
       expect(Object.keys(jsAssets.chunks).length).toEqual(
-        Object.keys(signedAssets.chunks).length
+        Object.keys(signedHermesAssets.chunks).length
       );
 
       const MARK = '/* RCSSB */';
 
       // main bundle is excluded from signing
       expect(jsAssets.main.includes(MARK)).toBe(false);
-      expect(signedAssets.main.includes(MARK)).toBe(false);
+      expect(signedHermesAssets.main.includes(MARK)).toBe(false);
 
-      // chunk bundles should be signed
+      // chunk bundles should be transformed to hermes bytecode AND signed
       for (const [file, jsContent] of Object.entries(jsAssets.chunks)) {
-        const signedContent = signedAssets.chunks[file];
-        expect(signedContent).toBeDefined();
-        expect(jsContent.includes(MARK)).toBe(false);
-        expect(signedContent.includes(MARK)).toBe(true);
+        const hermesSignedContent = signedHermesAssets.chunks[file];
+        expect(hermesSignedContent).toBeDefined();
+
+        // And the signed content should include the signing marker
+        expect(hermesSignedContent.includes(MARK)).toBe(true);
+
+        // Split at the signature marker and compare pre-marker with pure JS output
+        const markerIndex = hermesSignedContent.indexOf(MARK);
+        expect(markerIndex).toBeGreaterThan(0);
+        const preMarker = hermesSignedContent.subarray(0, markerIndex);
+
+        // Hermes transform should change the content vs plain JS
+        expect(Buffer.compare(preMarker, jsContent) !== 0).toBe(true);
+
+        // Ensure signature part exists and is non-empty
+        const signaturePart = hermesSignedContent.subarray(
+          markerIndex + Buffer.from(MARK).length
+        );
+        expect(signaturePart.length).toBeGreaterThan(0);
       }
     },
     60 * 1000

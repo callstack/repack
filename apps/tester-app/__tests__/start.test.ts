@@ -104,11 +104,11 @@ describe('start command', () => {
           };
 
           const args = {
-            port,
             platform,
-            logFile: path.join(TMP_DIR, 'server.log'),
-            webpackConfig: path.join(__dirname, 'configs', configFile),
-          };
+            config: path.join(__dirname, 'configs', configFile),
+            entryFile: 'index.js',
+            port,
+          } as const;
 
           // @ts-ignore
           const { stop } = await startCommand.func([], config, args);
