@@ -138,11 +138,11 @@ describe('bundle command', () => {
 
           const args = {
             platform,
+            config: path.join(__dirname, 'configs', configFile),
             entryFile: 'index.js',
             bundleOutput: bundleOutputPath,
             dev: false,
-            webpackConfig: path.join(__dirname, 'configs', configFile),
-          };
+          } as const;
 
           // @ts-ignore
           await bundleCommand.func([''], config, args);

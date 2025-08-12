@@ -84,7 +84,12 @@ export class CodeSigningPlugin {
 
     compiler.hooks.assetEmitted.tapPromise(
       { name: 'RepackCodeSigningPlugin', stage: 20 },
-      async (file, { outputPath, content, compilation }) => {
+      async (file, { outputPath, compilation }) => {
+        const outputFilepath = path.join(outputPath, file);
+        const readFileAsync = util.promisify(
+          compiler.outputFileSystem!.readFile
+        );
+        const content = (await readFileAsync(outputFilepath)) as Buffer;
         const mainBundleName = compilation.outputOptions.filename as string;
         if (!this.shouldSignFile(file, mainBundleName, excludedChunks)) {
           return;
@@ -103,7 +108,7 @@ export class CodeSigningPlugin {
         const writeFileAsync = util.promisify(
           compiler.outputFileSystem!.writeFile
         );
-        await writeFileAsync(path.join(outputPath, file), signedBundle);
+        await writeFileAsync(outputFilepath, signedBundle);
         logger.debug(`Signed ${file}`);
       }
     );
