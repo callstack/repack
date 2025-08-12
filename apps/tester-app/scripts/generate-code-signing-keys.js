@@ -15,7 +15,10 @@ try {
 } catch {}
 
 const opts = { stdio: 'inherit', cwd: testerAppRoot };
-execSync(`ssh-keygen -t rsa -b 4096 -m PEM -f "${privateKeyPath}" -N ""`, opts);
+execSync(
+  `ssh-keygen -t rsa -b 4096 -m PEM -f "${privateKeyPath}" -q -N ""`,
+  opts
+);
 execSync(
   `openssl rsa -in "${privateKeyPath}" -pubout -outform PEM -out "${publicKeyPath}"`,
   opts
