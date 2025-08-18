@@ -1,44 +1,97 @@
 # BabelSwcLoader
 
-The `BabelSwcLoader` combines Babel and SWC to speed up transformations while preserving compatibility with complex Babel setups. It:
+The `BabelSwcLoader` pairs Babel with SWC to deliver faster builds without sacrificing compatibility with complex Babel setups. It first runs Babel to respect your project’s configuration, then hands off the supported transforms to SWC.
 
-- Runs Babel first to apply your project Babel config (minus transforms that SWC can handle)
-- Detects supported Babel transforms and re-applies them via SWC for performance
-- Optionally uses SWC for module lazy loading and other optimizations
+This loader can be used universally—even if your project does not have SWC. When SWC isn’t available, it cleanly falls back to pure Babel transforms, so you can adopt it incrementally without extra setup.
+SWC can be provided either by Rspack (via its built-in integration) or by installing `@swc/core` in your project.
 
-If SWC is not available in the environment, it falls back to pure Babel automatically.
+:::danger Heads up!
+Do not use `@callstack/repack/babel-swc-loader` together with `getJSTransformRules`. They overlap in functionality and will duplicate transforms when combined in one configuration. It might often result in code that's malformed and won't execute properly in the target mobile environment.
+:::
 
-:::details
-This loader inspects your Babel config to partition transforms into SWC-supported buckets and configures `@rspack/core`/`@swc/core` accordingly. It also appends required Babel syntax plugins for `.ts/.tsx` sources.
+:::tip Maximizing performance
+For optimal performance, enable Rspack’s parallel transforms with [`experiments.parallelLoader`](https://rspack.rs/config/experiments#experimentsparallelloader). This allows for transformations to run in parallel through worker threads managed by Rspack.
+:::
+
+:::details How does this loader work?
+The loader reads your Babel config and checks each plugin against a capability map to see if SWC can produce the same semantics. From that, it builds two ordered sets: transforms that stay in Babel and transforms handed off to SWC. This preserves your original plugin order and avoids behavior changes.
+
+Babel runs first and executes only the Babel‑only pieces while adding the minimal syntax support your sources need (for example, TS/TSX and Hermes‑compatible parsing where applicable). SWC then runs on the result with a generated configuration (including targets and optional lazy imports) and applies its share of the work. Each transform is applied once—never duplicated—and the output matches what you’d get from Babel alone. 
+
+If SWC isn’t available, the SWC step is skipped and Babel handles everything.
 :::
 
 ## Options
 
 ```ts
 import type { TransformOptions } from "@babel/core";
-import type { SwcLoaderOptions } from "@rspack/core";
-
-type HermesParserOverrides = {
-  babel?: boolean;
-  flow?: "all" | "detect";
-  reactRuntimeTarget?: "18" | "19";
-  sourceType?: "module" | "script" | "unambiguous";
-};
-
-type HermesParserOptions = {
-  hermesParserPath?: string;
-  hermesParserOverrides?: HermesParserOverrides;
-};
+import type { Options } from "@swc/core";
 
 type BabelOverrides = TransformOptions;
-type SwcOverrides = Omit<SwcLoaderOptions, "rspackExperiments">;
+type SwcOverrides = Options;
 
 type BabelSwcLoaderOptions = {
   hideParallelModeWarning?: boolean;
   lazyImports?: boolean | string[];
   babelOverrides?: BabelOverrides;
   swcOverrides?: SwcOverrides;
-} & HermesParserOptions;
+  hermesParserPath?: string;
+  hermesParserOverrides?: {
+    babel?: boolean;
+    flow?: "all" | "detect";
+    reactRuntimeTarget?: "18" | "19";
+    sourceType?: "module" | "script" | "unambiguous";
+  };
+};
+```
+
+### lazyImports
+
+- Type: `boolean | string[]`
+- Default: `true`
+
+Enables SWC's lazy import functionality, which is roughly equivalent to Metro's `inlineRequires`. You can also provide an allowlist of module names. See [SWC documentation](https://swc.rs/docs/configuration/modules#lazy) for details on how to configure it.
+
+### babelOverrides
+
+- Type: `BabelOverrides`
+
+```ts
+type BabelOverrides = import('@babel/core').TransformOptions
+```
+
+Additional Babel loader options applied on top of the loader's computed Babel configuration. For available fields, see [Babel Documentation](https://babeljs.io/docs/options).
+
+### swcOverrides
+
+- Type: `SwcOverrides`
+
+```ts
+type SwcOverrides = import('@swc/core').Options
+```
+
+Additional SWC loader options applied on top of the loader's computed SWC configuration. For available fields, see [SWC Documentation](https://swc.rs/docs/configuration/swcrc).
+
+### hermesParserPath
+
+- Type: `string`
+
+Optional path to use for importing `hermes-parser`. By default, the path is obtained automatically.
+
+### hermesParserOverrides
+
+- Type: `HermesParserOverrides`
+- Default: `{ babel: true, reactRuntimeTarget: '19' }`
+
+Overrides passed to `hermes-parser` when parsing non-TypeScript files.
+
+```ts
+type HermesParserOverrides = {
+  babel?: boolean;
+  flow?: "all" | "detect";
+  reactRuntimeTarget?: "18" | "19";
+  sourceType?: "module" | "script" | "unambiguous";
+};
 ```
 
 ### hideParallelModeWarning
@@ -48,56 +101,20 @@ type BabelSwcLoaderOptions = {
 
 Hide the warning about Rspack `experiments.parallelLoader` when the rule isn't marked `parallel: true`.
 
-### lazyImports
+## Example
 
-- Type: `boolean | string[]`
-- Default: `true`
-
-Enables SWC's lazy import evaluation for faster startup. You can also provide an allowlist of module names.
-
-### babelOverrides
-
-- Type: `@babel/core` `TransformOptions`
-
-Additional Babel options merged into the auto-detected project config for the current file.
-
-### swcOverrides
-
-- Type: `Omit<SwcLoaderOptions, 'rspackExperiments'>`
-
-Additional SWC loader options merged after the loader's computed SWC configuration.
-
-### hermesParserPath / hermesParserOverrides
-
-Same as in [`BabelLoader`](/api/loaders/babel-loader#options).
-
-## Behavior details
-
-- Automatically disables source maps for `node_modules` and enables them for app sources.
-- Detects Babel plugins in your project config, filters out ones supported by SWC, and re-applies them using SWC for performance.
-- Always includes Babel syntax plugins for `.ts`/`.tsx` files to match React Native expectations.
-- If SWC can't be resolved (via Rspack experiments or `@swc/core`), the loader uses pure Babel.
-
-## Examples
-
-```js title=rspack.config.cjs
-module.exports = {
+```js title=rspack.config.mjs
+export default {
   module: {
     rules: [
       {
-        test: /\.[jt]sx?$/,
-        exclude: /node_modules/,
+        test: /\.[cm]?[jt]sx?$/,
         type: "javascript/auto",
-        // Optional: speed up with parallel threads in Rspack
-        // parallel: true,
         use: {
           loader: "@callstack/repack/babel-swc-loader",
+          parallel: true,
           options: {
             lazyImports: true,
-            babelOverrides: {
-              presets: ["module:metro-react-native-babel-preset"],
-              plugins: ["react-native-reanimated/plugin"],
-            },
           },
         },
       },
@@ -105,8 +122,4 @@ module.exports = {
   },
 };
 ```
-
-:::tip
-If you're already using `getJsTransformRules`, you typically don't need to add this loader manually. Use `BabelSwcLoader` if you want a hybrid Babel+SWC pipeline while keeping your existing Babel config.
-:::
 
