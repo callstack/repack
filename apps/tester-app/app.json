@@ -35,6 +35,5 @@
       "build/output/ios/src_asyncChunks_Async_local_tsx.chunk.bundle",
       "build/output/ios/assets"
     ]
-  },
-  "plugins": [["./scripts/codesigning-config-plugin.js"]]
+  }
 }

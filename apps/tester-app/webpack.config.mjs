@@ -130,6 +130,11 @@ export default Repack.defineWebpackConfig((env) => {
       }),
       new ReanimatedPlugin(),
       new NativeWindPlugin(),
+      // new Repack.plugins.HermesBytecodePlugin({
+      //   enabled: mode === 'production',
+      //   test: /\.(js)?bundle$/,
+      //   exclude: /index.bundle$/,
+      // }),
     ],
   };
 });

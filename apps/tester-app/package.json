@@ -13,7 +13,6 @@
     "bundle:android": "react-native webpack-bundle --platform android --entry-file index.js --dev=false --bundle-output build/output/android/index.android.bundle --assets-dest build/output/android/res",
     "bundle:ios": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false --bundle-output build/output/ios/main.jsbundle --assets-dest build/output/ios",
     "test": "vitest run",
-    "cs:keygen": "node ./scripts/generate-code-signing-keys.js",
     "serve-remote-assets:android": "adb reverse tcp:9999 tcp:9999 && pnpm http-server -p 9999 build/output/android/remote",
     "serve-remote-assets:ios": "pnpm http-server -p 9999 build/output/ios/remote"
   },

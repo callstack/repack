@@ -59,7 +59,3 @@ yarn-error.log
 # Ruby / CocoaPods
 **/Pods/
 /vendor/bundle/
-
-# Codesigning
-code-signing.pem
-code-signing.pem.pub
