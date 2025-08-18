@@ -123,14 +123,9 @@ export default Repack.defineRspackConfig((env) => {
           },
         ],
       }),
-      // new Repack.plugins.HermesBytecodePlugin({
-      //   enabled: mode === 'production',
-      //   test: /\.(js)?bundle$/,
-      //   exclude: /index.bundle$/,
-      // }),
-      process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
       new ReanimatedPlugin(),
       new NativeWindPlugin({ cssInteropOptions: { inlineRem: 16 } }),
+      process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
     ].filter(Boolean),
   };
 });
