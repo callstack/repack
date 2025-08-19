@@ -1,5 +1,6 @@
 import * as Repack from '@callstack/repack';
 import webpack from 'webpack';
+import pkg from '../package.json' with { type: 'json' };
 
 export default Repack.defineWebpackConfig((env) => {
   const { mode, context, platform } = env;
@@ -39,10 +40,6 @@ export default Repack.defineWebpackConfig((env) => {
       // @ts-ignore
       new Repack.plugins.ModuleFederationPluginV1({
         name: 'HostApp',
-        filename: 'HostApp.container.js.bundle',
-        remotes: {
-          MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
-        },
         shared: {
           react: {
             singleton: true,
@@ -52,37 +49,41 @@ export default Repack.defineWebpackConfig((env) => {
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.80.0',
+            requiredVersion: '0.81.0',
           },
           '@react-navigation/native': {
             singleton: true,
             eager: true,
-            requiredVersion: '^6.1.18',
+            requiredVersion: pkg.dependencies['@react-navigation/native'],
           },
           '@react-navigation/native-stack': {
             singleton: true,
             eager: true,
-            requiredVersion: '^6.10.1',
+            requiredVersion: pkg.dependencies['@react-navigation/native-stack'],
           },
           'react-native-safe-area-context': {
             singleton: true,
             eager: true,
-            requiredVersion: '^5.5.0',
+            requiredVersion: pkg.dependencies['react-native-safe-area-context'],
           },
           'react-native-screens': {
             singleton: true,
             eager: true,
-            requiredVersion: '^4.11.1',
+            requiredVersion: pkg.dependencies['react-native-screens'],
           },
           '@react-native-async-storage/async-storage': {
             singleton: true,
             eager: true,
-            requiredVersion: '^2.2.0',
+            requiredVersion:
+              pkg.dependencies['@react-native-async-storage/async-storage'],
           },
         },
       }),
       new webpack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,
+      }),
+      new webpack.EnvironmentPlugin({
+        MF_CACHE: null,
       }),
     ],
   };

@@ -1,6 +1,7 @@
 // @ts-check
 import * as Repack from '@callstack/repack';
 import webpack from 'webpack';
+import pkg from '../package.json' with { type: 'json' };
 
 export default Repack.defineWebpackConfig((env) => {
   const { mode, context, platform } = env;
@@ -54,33 +55,38 @@ export default Repack.defineWebpackConfig((env) => {
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.80.0',
+            requiredVersion: '0.81.0',
           },
           '@react-navigation/native': {
             singleton: true,
             eager: true,
-            requiredVersion: '^6.1.18',
+            requiredVersion: pkg.dependencies['@react-navigation/native'],
           },
           '@react-navigation/native-stack': {
             singleton: true,
             eager: true,
-            requiredVersion: '^6.10.1',
+            requiredVersion: pkg.dependencies['@react-navigation/native-stack'],
           },
           'react-native-safe-area-context': {
             singleton: true,
             eager: true,
-            requiredVersion: '^5.5.0',
+            requiredVersion: pkg.dependencies['react-native-safe-area-context'],
           },
           'react-native-screens': {
             singleton: true,
             eager: true,
-            requiredVersion: '^4.11.1',
+            requiredVersion: pkg.dependencies['react-native-screens'],
           },
         },
       }),
       // silence missing @react-native-masked-view optionally required by @react-navigation/elements
       new webpack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,
+      }),
+      new webpack.DefinePlugin({
+        __WITH_PRELOAD__:
+          process.env.WITH_PRELOAD === 'true' ||
+          process.env.WITH_PRELOAD === '1',
       }),
     ],
   };
