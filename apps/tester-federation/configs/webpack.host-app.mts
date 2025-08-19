@@ -40,20 +40,16 @@ export default Repack.defineWebpackConfig((env) => {
       // @ts-ignore
       new Repack.plugins.ModuleFederationPluginV1({
         name: 'HostApp',
-        filename: 'HostApp.container.js.bundle',
-        remotes: {
-          MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
-        },
         shared: {
           react: {
             singleton: true,
             eager: true,
-            requiredVersion: pkg.dependencies.react,
+            requiredVersion: '19.1.0',
           },
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: pkg.dependencies['react-native'],
+            requiredVersion: '0.81.0',
           },
           '@react-navigation/native': {
             singleton: true,
@@ -85,6 +81,9 @@ export default Repack.defineWebpackConfig((env) => {
       }),
       new webpack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,
+      }),
+      new webpack.EnvironmentPlugin({
+        MF_CACHE: null,
       }),
     ],
   };

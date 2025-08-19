@@ -50,12 +50,12 @@ export default Repack.defineWebpackConfig((env) => {
           react: {
             singleton: true,
             eager: true,
-            requiredVersion: pkg.dependencies.react,
+            requiredVersion: '19.1.0',
           },
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: pkg.dependencies['react-native'],
+            requiredVersion: '0.81.0',
           },
           '@react-navigation/native': {
             singleton: true,
@@ -82,6 +82,11 @@ export default Repack.defineWebpackConfig((env) => {
       // silence missing @react-native-masked-view optionally required by @react-navigation/elements
       new webpack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,
+      }),
+      new webpack.DefinePlugin({
+        __WITH_PRELOAD__:
+          process.env.WITH_PRELOAD === 'true' ||
+          process.env.WITH_PRELOAD === '1',
       }),
     ],
   };

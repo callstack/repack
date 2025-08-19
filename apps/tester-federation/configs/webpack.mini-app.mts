@@ -40,44 +40,44 @@ export default Repack.defineWebpackConfig((env) => {
       // @ts-ignore
       new Repack.plugins.ModuleFederationPluginV1({
         name: 'MiniApp',
-        filename: 'MiniApp.container.js.bundle',
+        filename: 'MiniApp.container.bundle',
         exposes: {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
         shared: {
           react: {
             singleton: true,
-            eager: true,
-            requiredVersion: pkg.dependencies.react,
+            eager: false,
+            requiredVersion: '19.1.0',
           },
           'react-native': {
             singleton: true,
-            eager: true,
-            requiredVersion: pkg.dependencies['react-native'],
+            eager: false,
+            requiredVersion: '0.81.0',
           },
           '@react-navigation/native': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: pkg.dependencies['@react-navigation/native'],
           },
           '@react-navigation/native-stack': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: pkg.dependencies['@react-navigation/native-stack'],
           },
           'react-native-safe-area-context': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: pkg.dependencies['react-native-safe-area-context'],
           },
           'react-native-screens': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion: pkg.dependencies['react-native-screens'],
           },
           '@react-native-async-storage/async-storage': {
             singleton: true,
-            eager: true,
+            eager: false,
             requiredVersion:
               pkg.dependencies['@react-native-async-storage/async-storage'],
           },

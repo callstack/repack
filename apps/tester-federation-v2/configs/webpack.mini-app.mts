@@ -49,12 +49,12 @@ export default Repack.defineWebpackConfig((env) => {
           react: {
             singleton: true,
             eager: false,
-            requiredVersion: pkg.dependencies.react,
+            requiredVersion: '19.1.0',
           },
           'react-native': {
             singleton: true,
             eager: false,
-            requiredVersion: pkg.dependencies['react-native'],
+            requiredVersion: '0.81.0',
           },
           '@react-navigation/native': {
             singleton: true,
