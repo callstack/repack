@@ -1,4 +1,5 @@
 export * from './getDevMiddleware.js';
+export * from './getMaxWorkers.js';
 export * from './getMimeType.js';
 export * from './parseUrl.js';
 export * from './resetPersistentCache.js';

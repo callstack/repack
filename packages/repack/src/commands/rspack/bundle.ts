@@ -3,11 +3,13 @@ import type { Stats } from '@rspack/core';
 import { CLIError } from '../../helpers/index.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
+  getMaxWorkers,
   normalizeStatsOptions,
   resetPersistentCache,
+  setupEnvironment,
+  setupRspackEnvironment,
   writeStats,
 } from '../common/index.js';
-import { setupEnvironment } from '../common/setupEnvironment.js';
 import type { BundleArguments, CliConfig } from '../types.js';
 
 /**
@@ -34,6 +36,9 @@ export async function bundle(
 
   // expose selected args as environment variables
   setupEnvironment(args);
+
+  const maxWorkers = args.maxWorkers ?? getMaxWorkers();
+  setupRspackEnvironment(maxWorkers.toString());
 
   if (!args.entryFile && !config.entry) {
     throw new CLIError("Option '--entry-file <path>' argument is missing");

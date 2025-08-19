@@ -12,15 +12,17 @@ import {
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getDevMiddleware,
+  getMaxWorkers,
   getMimeType,
   parseUrl,
   resetPersistentCache,
   resolveProjectPath,
+  runAdbReverse,
+  setupEnvironment,
   setupInteractions,
+  setupRspackEnvironment,
 } from '../common/index.js';
-import { runAdbReverse } from '../common/index.js';
 import logo from '../common/logo.js';
-import { setupEnvironment } from '../common/setupEnvironment.js';
 import type { CliConfig, StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
 
@@ -57,6 +59,9 @@ export async function start(
 
   // expose selected args as environment variables
   setupEnvironment(args);
+
+  const maxWorkers = args.maxWorkers ?? getMaxWorkers();
+  setupRspackEnvironment(maxWorkers.toString());
 
   const isVerbose = isTruthyEnv(process.env[VERBOSE_ENV_KEY]);
   const devServerOptions = configs[0].devServer ?? {};
