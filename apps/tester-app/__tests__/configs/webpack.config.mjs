@@ -8,7 +8,7 @@ export default async (env) => {
       path: process.env.TEST_WEBPACK_OUTPUT_DIR,
     },
     experiments: {
-      ...config.output.experiments,
+      ...config.experiments,
       lazyCompilation: false,
     },
   };

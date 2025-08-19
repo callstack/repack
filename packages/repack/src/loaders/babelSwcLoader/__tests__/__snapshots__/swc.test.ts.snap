@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`swc transforms support detection getSupportedSwcConfigurableTransforms applies loose mode to setSpreadProperties when not defined; preserves explicit true (snapshot): object-rest-spread explicit true preserved 1`] = `
+{
+  "setSpreadProperties": true,
+}
+`;
+
+exports[`swc transforms support detection getSupportedSwcConfigurableTransforms applies loose mode to setSpreadProperties when not defined; preserves explicit true (snapshot): object-rest-spread loose: setSpreadProperties 1`] = `
+{
+  "setSpreadProperties": true,
+}
+`;
+
+exports[`swc transforms support detection getSupportedSwcConfigurableTransforms sets optional-chaining/nullish and for-of assumptions with loose mode and respects explicit values (snapshot): optional-chaining/nullish and for-of assumptions 1`] = `
+{
+  "noDocumentAll": true,
+  "skipForOfIteratorClosing": true,
+}
+`;
+
+exports[`swc transforms support detection getSupportedSwcConfigurableTransforms updates both privateFieldsAsProperties and setPublicClassFields for private-property-in-object but does not override explicit true (snapshot): private-property-in-object assumptions and names 1`] = `
+{
+  "assumptions": {
+    "privateFieldsAsProperties": true,
+    "setPublicClassFields": true,
+  },
+  "transformNames": [
+    "transform-private-property-in-object",
+  ],
+}
+`;
+
+exports[`swc transforms support detection getSupportedSwcCustomTransforms configures modules commonjs options based on provided config (snapshot): modules commonjs config 1`] = `
+{
+  "allowTopLevelThis": false,
+  "ignoreDynamic": true,
+  "strict": false,
+  "strictMode": true,
+  "type": "commonjs",
+}
+`;
+
+exports[`swc transforms support detection getSupportedSwcCustomTransforms enables external helpers via transform-runtime (snapshot): runtime externalHelpers 1`] = `
+{
+  "externalHelpers": true,
+}
+`;
+
+exports[`swc transforms support detection getSupportedSwcCustomTransforms overrides react runtime and importSource from transform-react-jsx config (snapshot): react runtime override 1`] = `
+{
+  "importSource": "react/jsx",
+  "runtime": "automatic",
+}
+`;
+
+exports[`swc transforms support detection getSupportedSwcCustomTransforms sets exportDefaultFrom only for ecmascript parser; leaves typescript parser unchanged (snapshot): parser: ecmascript with exportDefaultFrom 1`] = `
+{
+  "exportDefaultFrom": true,
+  "syntax": "ecmascript",
+}
+`;
+
+exports[`swc transforms support detection getSupportedSwcCustomTransforms sets exportDefaultFrom only for ecmascript parser; leaves typescript parser unchanged (snapshot): parser: typescript unchanged 1`] = `
+{
+  "syntax": "typescript",
+}
+`;

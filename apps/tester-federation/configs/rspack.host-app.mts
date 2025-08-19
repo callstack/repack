@@ -9,6 +9,9 @@ export default Repack.defineRspackConfig((env) => {
     mode,
     context,
     entry: './src/host/index.js',
+    experiments: {
+      parallelLoader: true,
+    },
     resolve: {
       ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
@@ -18,7 +21,15 @@ export default Repack.defineRspackConfig((env) => {
     },
     module: {
       rules: [
-        ...Repack.getJsTransformRules(),
+        {
+          test: /\.[cm]?[jt]sx?$/,
+          type: 'javascript/auto',
+          use: {
+            loader: '@callstack/repack/babel-swc-loader',
+            parallel: true,
+            options: {},
+          },
+        },
         ...Repack.getAssetTransformRules(),
       ],
     },

@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`partitionTransforms ignores unsupported and disabled transforms (snapshot): unsupported and disabled 1`] = `
+{
+  "includedSwcTransforms": [],
+  "supportedSwcTransforms": [],
+  "swcConfig": {
+    "jsc": {
+      "parser": {
+        "jsx": true,
+        "syntax": "ecmascript",
+      },
+      "transform": {
+        "react": {
+          "useBuiltins": true,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`partitionTransforms only custom transforms are excluded from included set but present in supported set (snapshot): custom-only supported set 1`] = `
+{
+  "includedSwcTransforms": [],
+  "supportedSwcTransforms": [
+    "transform-react-jsx",
+    "transform-modules-commonjs",
+    "proposal-export-default-from",
+  ],
+  "swcConfig": {
+    "jsc": {
+      "parser": {
+        "exportDefaultFrom": true,
+        "jsx": true,
+        "syntax": "ecmascript",
+      },
+      "transform": {
+        "react": {
+          "importSource": undefined,
+          "runtime": undefined,
+          "useBuiltins": true,
+        },
+      },
+    },
+    "module": {
+      "allowTopLevelThis": false,
+      "ignoreDynamic": true,
+      "strict": false,
+      "strictMode": false,
+      "type": "commonjs",
+    },
+  },
+}
+`;
+
+exports[`partitionTransforms returns empty arrays when no transforms are specified (snapshot): empty arrays 1`] = `
+{
+  "includedSwcTransforms": [],
+  "supportedSwcTransforms": [],
+  "swcConfig": {
+    "jsc": {
+      "parser": {
+        "syntax": "typescript",
+        "tsx": false,
+      },
+      "transform": {
+        "react": {
+          "useBuiltins": true,
+        },
+      },
+    },
+  },
+}
+`;
