@@ -43,7 +43,7 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
   const commandConfig = getCommandConfig(command, bundler);
 
   // get defaults that will be applied on top of built-in ones (Rspack/webpack)
-  const repackConfig = getRepackConfig();
+  const repackConfig = await getRepackConfig(bundler, rootDir);
 
   // load the project config
   const rawConfig = await loadProjectConfig<C>(configPath);

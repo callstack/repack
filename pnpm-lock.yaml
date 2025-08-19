@@ -628,6 +628,9 @@ importers:
       schema-utils:
         specifier: ^4.2.0
         version: 4.3.0
+      semver:
+        specifier: ^7.7.2
+        version: 7.7.2
       shallowequal:
         specifier: ^1.1.0
         version: 1.1.0
@@ -692,6 +695,9 @@ importers:
       '@types/react-dom':
         specifier: ^17.0.7
         version: 17.0.25
+      '@types/semver':
+        specifier: ^7.7.0
+        version: 7.7.0
       '@types/shallowequal':
         specifier: ^1.1.1
         version: 1.1.5
@@ -13267,7 +13273,7 @@ snapshots:
       proxy-addr: 2.0.7
       rfdc: 1.4.1
       secure-json-parse: 2.7.0
-      semver: 7.6.3
+      semver: 7.7.2
       toad-cache: 3.7.0
 
   fastq@1.17.1:
@@ -16007,7 +16013,7 @@ snapshots:
       cosmiconfig: 9.0.0(typescript@5.8.3)
       jiti: 1.21.7
       postcss: 8.5.1
-      semver: 7.6.3
+      semver: 7.7.2
     optionalDependencies:
       '@rspack/core': 1.4.11(@swc/helpers@0.5.17)
       webpack: 5.100.2(@swc/core@1.13.3(@swc/helpers@0.5.17))
@@ -16161,7 +16167,7 @@ snapshots:
       react: 19.1.0
       react-native: 0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0)
       react-native-reanimated: 4.0.0(@babel/core@7.25.2)(react-native-worklets@0.4.0(@babel/core@7.25.2)(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
-      semver: 7.6.3
+      semver: 7.7.2
       tailwindcss: 3.4.17
     optionalDependencies:
       react-native-safe-area-context: 5.5.0(react-native@0.80.0(@babel/core@7.25.2)(@react-native-community/cli@19.0.0(typescript@5.8.3))(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)

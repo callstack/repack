@@ -1,6 +1,11 @@
-import TerserPlugin from 'terser-webpack-plugin';
+import { getMinimizerConfig } from './getMinimizerConfig.js';
 
-export function getRepackConfig() {
+export async function getRepackConfig(
+  bundler: 'rspack' | 'webpack',
+  rootDir: string
+) {
+  const minimizerConfiguration = await getMinimizerConfig(bundler, rootDir);
+
   return {
     devtool: 'source-map',
     output: {
@@ -13,20 +18,7 @@ export function getRepackConfig() {
     },
     optimization: {
       chunkIds: 'named',
-      minimizer: [
-        // TODO: remove this default in favour explicit configuration in webpack
-        // and implicit configuration in rspack using SwcJsMinimizerRspackPlugin
-        // once https://github.com/web-infra-dev/rspack/issues/11183 is resolved
-        new TerserPlugin({
-          test: /\.(js)?bundle(\?.*)?$/i,
-          extractComments: false,
-          terserOptions: {
-            format: {
-              comments: false,
-            },
-          },
-        }),
-      ],
+      minimizer: minimizerConfiguration,
     },
   };
 }
