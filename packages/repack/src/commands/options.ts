@@ -60,6 +60,12 @@ export const startCommandOptions = [
     description: 'Enables verbose logging',
   },
   {
+    name: '--max-workers <number>',
+    description:
+      '(Rspack only) The maximum number of workers to use for transformation parallelization ',
+    parse: (val: string) => Number(val),
+  },
+  {
     name: '--config <path>',
     description: 'Path to a bundler config file, e.g webpack.config.js',
     parse: (val: string) => path.resolve(val),
@@ -148,6 +154,12 @@ export const bundleCommandOptions = [
   {
     name: '--watch',
     description: 'Watch for file changes',
+  },
+  {
+    name: '--max-workers <number>',
+    description:
+      '(Rspack only) The maximum number of workers to use for transformation parallelization ',
+    parse: (val: string) => Number(val),
   },
   {
     name: '--config <path>',

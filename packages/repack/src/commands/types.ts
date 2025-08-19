@@ -13,6 +13,7 @@ export interface BundleArguments {
   resetCache?: boolean;
   verbose?: boolean;
   watch?: boolean;
+  maxWorkers?: number;
   config?: string;
   webpackConfig?: string;
 }
@@ -31,6 +32,7 @@ export interface StartArguments {
   resetCache?: boolean;
   reversePort?: boolean;
   verbose?: boolean;
+  maxWorkers?: number;
   config?: string;
   webpackConfig?: string;
 }
