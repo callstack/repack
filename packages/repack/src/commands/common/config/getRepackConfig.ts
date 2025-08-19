@@ -1,6 +1,64 @@
-import TerserPlugin from 'terser-webpack-plugin';
+import semver from 'semver';
 
-export function getRepackConfig() {
+// prefer `terser-webpack-plugin` installed in the project root to the one shipped with Re.Pack
+async function getTerserPlugin(rootDir: string) {
+  let terserPluginPath: string;
+  try {
+    terserPluginPath = require.resolve('terser-webpack-plugin', {
+      paths: [rootDir],
+    });
+  } catch {
+    terserPluginPath = require.resolve('terser-webpack-plugin');
+  }
+  const plugin = await import(terserPluginPath);
+  return 'default' in plugin ? plugin.default : plugin;
+}
+
+async function getTerserConfig(rootDir: string) {
+  const TerserPlugin = await getTerserPlugin(rootDir);
+  return new TerserPlugin({
+    test: /\.(js)?bundle(\?.*)?$/i,
+    extractComments: false,
+    terserOptions: {
+      format: { comments: false },
+    },
+  });
+}
+
+// use SwcJsMinimizerRspackPlugin for Rspack 1.5.0 and above
+function shouldUseTerserForRspack(rspackVersion: string): boolean {
+  const version = semver.coerce(rspackVersion) ?? '0.0.0';
+  return semver.lt(version, '1.5.0');
+}
+
+async function getWebpackMinimizer(rootDir: string) {
+  return [await getTerserConfig(rootDir)];
+}
+
+async function getRspackMinimizer(rootDir: string) {
+  const rspack = await import('@rspack/core');
+  return [
+    shouldUseTerserForRspack(rspack.rspackVersion)
+      ? await getTerserConfig(rootDir)
+      : new rspack.SwcJsMinimizerRspackPlugin({
+          test: /\.(js)?bundle(\?.*)?$/i,
+          extractComments: false,
+          minimizerOptions: {
+            format: { comments: false },
+          },
+        }),
+  ];
+}
+
+export async function getRepackConfig(
+  bundler: 'rspack' | 'webpack',
+  rootDir: string
+) {
+  const minimizerConfiguration =
+    bundler === 'rspack'
+      ? await getRspackMinimizer(rootDir)
+      : await getWebpackMinimizer(rootDir);
+
   return {
     devtool: 'source-map',
     output: {
@@ -13,20 +71,7 @@ export function getRepackConfig() {
     },
     optimization: {
       chunkIds: 'named',
-      minimizer: [
-        // TODO: remove this default in favour explicit configuration in webpack
-        // and implicit configuration in rspack using SwcJsMinimizerRspackPlugin
-        // once https://github.com/web-infra-dev/rspack/issues/11183 is resolved
-        new TerserPlugin({
-          test: /\.(js)?bundle(\?.*)?$/i,
-          extractComments: false,
-          terserOptions: {
-            format: {
-              comments: false,
-            },
-          },
-        }),
-      ],
+      minimizer: minimizerConfiguration,
     },
   };
 }
