@@ -3,4 +3,4 @@
 "@callstack/repack": minor
 ---
 
-Declare support for React Native 0.80
+Declare support for React Native 0.81
