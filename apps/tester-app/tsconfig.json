@@ -1,5 +1,7 @@
 {
   "extends": "@react-native/typescript-config",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["**/node_modules", "**/Pods"],
   "compilerOptions": {
     "module": "ES2022" // for dynamic imports & top-level await
   }
