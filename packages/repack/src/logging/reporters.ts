@@ -82,16 +82,17 @@ const FALLBACK_SYMBOLS: Record<LogType, string> = {
 
 const PROGRESS_BAR_WIDTH = 16;
 
+// singleton instance within the same process
+// TODO clean this up in 6.0
+const terminal = new MultiPlatformTerminal(process.stdout);
+
 class InteractiveConsoleReporter implements Reporter {
   private requestBuffer: Record<string, Object> = {};
-  private terminal: MultiPlatformTerminal;
   private startTimeByPlatform: Record<string, number> = {};
   private spinner: Spinner = new Spinner();
   private maxPlatformNameWidth = 0;
 
-  constructor(private config: ConsoleReporterConfig) {
-    this.terminal = new MultiPlatformTerminal(process.stdout);
-  }
+  constructor(private config: ConsoleReporterConfig) {}
 
   process(log: LogEntry) {
     // Do not log debug messages in non-verbose mode
@@ -106,7 +107,7 @@ class InteractiveConsoleReporter implements Reporter {
 
     const normalizedLog = this.normalizeLog(log);
     if (normalizedLog) {
-      this.terminal.log(
+      terminal.log(
         `${
           IS_SYMBOL_SUPPORTED ? SYMBOLS[log.type] : FALLBACK_SYMBOLS[log.type]
         } ${this.prettifyLog(normalizedLog)}`
@@ -208,14 +209,14 @@ class InteractiveConsoleReporter implements Reporter {
     }
 
     if (typeof time === 'number') {
-      this.terminal.status(
+      terminal.status(
         platform,
         this.buildDoneLine(platform, time, log.timestamp, log.issuer)
       );
       return;
     }
 
-    this.terminal.status(
+    terminal.status(
       platform,
       this.buildInProgressLine(platform, percentage, log.timestamp, log.issuer)
     );
