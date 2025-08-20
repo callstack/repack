@@ -10,9 +10,6 @@ export default Repack.defineRspackConfig((env) => {
     mode,
     context,
     entry: './src/host/index.js',
-    experiments: {
-      parallelLoader: true,
-    },
     resolve: {
       ...Repack.getResolveOptions({ enablePackageExports: true }),
     },
