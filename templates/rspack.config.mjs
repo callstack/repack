@@ -20,7 +20,15 @@ export default {
   },
   module: {
     rules: [
-      ...Repack.getJsTransformRules(),
+      {
+        test: /\.[cm]?[jt]sx?$/,
+        type: 'javascript/auto',
+        use: {
+          loader: '@callstack/repack/babel-swc-loader',
+          parallel: true,
+          options: {},
+        },
+      },
       ...Repack.getAssetTransformRules(),
     ],
   },

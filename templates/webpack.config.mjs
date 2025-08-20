@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as Repack from '@callstack/repack';
-import TerserPlugin from 'terser-webpack-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,23 +22,13 @@ export default {
     rules: [
       {
         test: /\.[cm]?[jt]sx?$/,
-        use: 'babel-loader',
         type: 'javascript/auto',
+        use: {
+          loader: '@callstack/repack/babel-swc-loader',
+          options: {},
+        },
       },
       ...Repack.getAssetTransformRules(),
-    ],
-  },
-  optimization: {
-    minimizer: [
-      new TerserPlugin({
-        test: /\.(js)?bundle(\?.*)?$/i,
-        extractComments: false,
-        terserOptions: {
-          format: {
-            comments: false,
-          },
-        },
-      }),
     ],
   },
   plugins: [new Repack.RepackPlugin()],
