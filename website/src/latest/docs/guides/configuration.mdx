@@ -238,22 +238,43 @@ Remember that if you define the same options in your configuration file (e.g. `r
 
 These are the base defaults that Re.Pack provides regardless of the command being run:
 
-```js
-{
-  devtool: "source-map",
-  output: {
-    clean: true,
-    hashFunction: "xxhash64",
-    filename: "index.bundle",
-    chunkFilename: "[name].chunk.bundle",
-    path: "[context]/build/generated/[platform]",
-    publicPath: "noop:///",
-  },
-  optimization: {
-    chunkIds: "named",
-  },
-}
-```
+<Tabs>
+  <Tab label="Rspack">
+    <CodeBlock language="js">{`{
+    devtool: "source-map",
+    experiments: {
+      parallelLoader: true,
+    },
+    output: {
+      clean: true,
+      hashFunction: "xxhash64",
+      filename: "index.bundle",
+      chunkFilename: "[name].chunk.bundle",
+      path: "[context]/build/generated/[platform]",
+      publicPath: "noop:///",
+    },
+    optimization: {
+      chunkIds: "named",
+    },
+}`}</CodeBlock>
+  </Tab>
+  <Tab label="webpack">
+    <CodeBlock language="js">{`{
+    devtool: "source-map",
+    output: {
+      clean: true,
+      hashFunction: "xxhash64",
+      filename: "index.bundle",
+      chunkFilename: "[name].chunk.bundle",
+      path: "[context]/build/generated/[platform]",
+      publicPath: "noop:///",
+    },
+    optimization: {
+      chunkIds: "named",
+    },
+}`}</CodeBlock>
+  </Tab>
+</Tabs>
 
 ## Configuration enhancements
 
