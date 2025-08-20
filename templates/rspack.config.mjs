@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
  * Learn about Re.Pack configuration: https://re-pack.dev/docs/guides/configuration
  */
 
-export default {
+export default Repack.defineRspackConfig({
   context: __dirname,
   entry: './index.js',
   resolve: {
@@ -33,4 +33,4 @@ export default {
     ],
   },
   plugins: [new Repack.RepackPlugin()],
-};
+});

@@ -7,7 +7,7 @@ const Repack = require('@callstack/repack');
  * Learn about Re.Pack configuration: https://re-pack.dev/docs/guides/configuration
  */
 
-module.exports = {
+module.exports = Repack.defineRspackConfig({
   context: __dirname,
   entry: './index.js',
   resolve: {
@@ -28,4 +28,4 @@ module.exports = {
     ],
   },
   plugins: [new Repack.RepackPlugin()],
-};
+});
