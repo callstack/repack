@@ -42,6 +42,7 @@ const SWC_SUPPORTED_CUSTOM_RULES = new Set([
   'transform-modules-commonjs',
   'proposal-export-default-from',
   'transform-typescript',
+  'transform-dynamic-import',
 ]);
 
 function getTransformRuntimeConfig(
@@ -131,6 +132,22 @@ function getTransformExportDefaultFromConfig(
         ...swcConfig.jsc?.parser,
         syntax: 'ecmascript',
         exportDefaultFrom: true,
+      },
+    },
+  };
+}
+
+function getTransformDynamicImportConfig(
+  swcConfig: SwcLoaderOptions
+): SwcLoaderOptions {
+  return {
+    ...swcConfig,
+    jsc: {
+      ...swcConfig.jsc,
+      parser: {
+        ...swcConfig.jsc?.parser,
+        syntax: swcConfig.jsc?.parser?.syntax!,
+        dynamicImport: true,
       },
     },
   };
@@ -253,6 +270,7 @@ const SWC_SUPPORTED_CUSTOM_RULES_MAP = {
   'transform-modules-commonjs': getTransformModulesCommonjsConfig,
   'proposal-export-default-from': getTransformExportDefaultFromConfig,
   'transform-typescript': getTransformTypescriptConfig,
+  'transform-dynamic-import': getTransformDynamicImportConfig,
 };
 
 export function getSupportedSwcNormalTransforms(
