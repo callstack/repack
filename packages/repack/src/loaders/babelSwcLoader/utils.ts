@@ -17,7 +17,11 @@ export function isTSXSource(fileName: string) {
 }
 
 export function getProjectBabelConfig(filename: string, projectRoot?: string) {
-  const babelConfig = loadOptions({ filename, root: projectRoot });
+  const babelConfig = loadOptions({
+    caller: { name: '@callstack/repack' },
+    filename,
+    root: projectRoot,
+  });
   return babelConfig ?? {};
 }
 
