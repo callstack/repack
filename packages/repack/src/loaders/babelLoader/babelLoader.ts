@@ -124,7 +124,7 @@ export default async function babelLoader(
     const result = await transform(
       source,
       {
-        caller: { name: '@callstack/repack/babel-loader' },
+        caller: { name: '@callstack/repack' },
         filename: this.resourcePath,
         sourceMaps: withSourceMaps,
         sourceFileName: this.resourcePath,

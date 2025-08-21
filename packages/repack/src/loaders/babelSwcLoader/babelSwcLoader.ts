@@ -62,7 +62,6 @@ export default async function babelSwcLoader(
 ) {
   this.cacheable();
   const callback = this.async();
-  const loaderName = '@callstack/repack/babel-swc-loader';
   const logger = this.getLogger('BabelSwcLoader');
   const options = this.getOptions();
 
@@ -81,7 +80,7 @@ export default async function babelSwcLoader(
     : this.sourceMap;
 
   const baseBabelConfig: TransformOptions = {
-    caller: { name: loaderName },
+    caller: { name: '@callstack/repack' },
     root: projectRoot,
     filename: this.resourcePath,
     sourceMaps: withSourceMaps,
@@ -138,7 +137,7 @@ export default async function babelSwcLoader(
 
     const swcResult = swc.transformSync(babelResult?.code!, {
       ...finalSwcConfig,
-      caller: { name: loaderName },
+      caller: { name: '@callstack/repack' },
       filename: this.resourcePath,
       configFile: false,
       swcrc: false,
