@@ -41,6 +41,7 @@ const SWC_SUPPORTED_CUSTOM_RULES = new Set([
   'transform-react-jsx',
   'transform-modules-commonjs',
   'proposal-export-default-from',
+  'transform-typescript',
 ]);
 
 function getTransformRuntimeConfig(
@@ -224,6 +225,13 @@ function getTransformForOfConfig(
   };
 }
 
+function getTransformTypescriptConfig(
+  swcConfig: SwcLoaderOptions
+): SwcLoaderOptions {
+  // passthrough
+  return swcConfig;
+}
+
 const SWC_SUPPORTED_CONFIGURABLE_RULES_MAP = {
   'transform-class-properties': getTransformClassPropertiesConfig,
   'transform-private-methods': getTransformPrivateMethodsPropertyConfig,
@@ -244,6 +252,7 @@ const SWC_SUPPORTED_CUSTOM_RULES_MAP = {
   'transform-react-jsx-source': getTransformReactDevelopmentConfig,
   'transform-modules-commonjs': getTransformModulesCommonjsConfig,
   'proposal-export-default-from': getTransformExportDefaultFromConfig,
+  'transform-typescript': getTransformTypescriptConfig,
 };
 
 export function getSupportedSwcNormalTransforms(
