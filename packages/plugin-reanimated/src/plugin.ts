@@ -5,6 +5,9 @@ import type { Compiler as WebpackCompiler } from 'webpack';
 import { createReanimatedModuleRules } from './rules.js';
 
 interface ReanimatedPluginOptions {
+  /**
+   * Custom options passed to 'react-native-reanimated/plugin' or 'react-native-worklets/plugin' babel plugins.
+   */
   babelPluginOptions?: Record<string, any>;
 }
 

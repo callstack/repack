@@ -120,7 +120,9 @@ export default Repack.defineRspackConfig((env) => {
           },
         ],
       }),
-      new ReanimatedPlugin(),
+      new ReanimatedPlugin({
+        babelPluginOptions: { relativeSourceLocation: true },
+      }),
       new NativeWindPlugin({ cssInteropOptions: { inlineRem: 16 } }),
       process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
     ].filter(Boolean),
