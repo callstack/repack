@@ -1,6 +1,9 @@
 import { getModulePaths } from '@callstack/repack';
 
-const createReanimatedModuleRules = (majorVersion: number) => {
+export const createReanimatedModuleRules = (
+  majorVersion: number,
+  pluginOptions: Record<string, any> = {}
+) => {
   const workletsBabelPlugin =
     majorVersion < 4
       ? 'react-native-reanimated/plugin'
@@ -27,7 +30,7 @@ const createReanimatedModuleRules = (majorVersion: number) => {
                 '@babel/plugin-syntax-typescript',
                 { isTSX: false, allowNamespaces: true },
               ],
-              workletsBabelPlugin,
+              [workletsBabelPlugin, pluginOptions],
             ],
           },
         },
@@ -42,7 +45,7 @@ const createReanimatedModuleRules = (majorVersion: number) => {
                 '@babel/plugin-syntax-typescript',
                 { isTSX: true, allowNamespaces: true },
               ],
-              workletsBabelPlugin,
+              [workletsBabelPlugin, pluginOptions],
             ],
           },
         },
@@ -54,7 +57,7 @@ const createReanimatedModuleRules = (majorVersion: number) => {
           options: {
             babelPlugins: [
               'babel-plugin-syntax-hermes-parser',
-              workletsBabelPlugin,
+              [workletsBabelPlugin, pluginOptions],
             ],
           },
         },
