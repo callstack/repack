@@ -40,4 +40,9 @@ class FileSystemScriptLoader(private val reactContext: ReactContext, private val
             )
         }
     }
+
+    fun prefetch(config: ScriptConfig, promise: Promise) {
+        // noop since there is no need to prefetch local scripts
+        promise.resolve(null)
+    }
 }
