@@ -94,8 +94,13 @@ export function pitch(
       if (!warningDisplayed) {
         warningDisplayed = true;
         logger.warn(
-          '`@callstack/repack-plugin-reanimated` should not be used with `@callstack/repack/babel-swc-loader`. ' +
-            'Instead, add the `react-native-reanimated/plugin` (or `react-native-worklets/plugin`) directly to your list of babel plugins in the `babel.config.js` file in the project root.'
+          'When using `@callstack/repack-plugin-reanimated` together with ' +
+            '`@callstack/repack/babel-swc-loader` you should turn off the ' +
+            'transforms for the reanimated plugin via the ' +
+            '`unstable_disableTransform` option. Instead, please add the ' +
+            '`react-native-reanimated/plugin` (or ' +
+            '`react-native-worklets/plugin`) directly to your list of babel ' +
+            'plugins in the `babel.config.js` file in the project root.'
         );
       }
     }
