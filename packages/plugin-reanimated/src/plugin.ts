@@ -2,9 +2,15 @@ import path from 'node:path';
 import type { Compiler as RspackCompiler } from '@rspack/core';
 import semver, { type SemVer } from 'semver';
 import type { Compiler as WebpackCompiler } from 'webpack';
-import { reanimated3ModuleRules, reanimated4ModuleRules } from './rules.js';
+import { createReanimatedModuleRules } from './rules.js';
+
+interface ReanimatedPluginOptions {
+  babelPluginOptions?: Record<string, any>;
+}
 
 export class ReanimatedPlugin {
+  constructor(private options: ReanimatedPluginOptions = {}) {}
+
   apply(compiler: RspackCompiler): void;
   apply(compiler: WebpackCompiler): void;
 
@@ -18,12 +24,17 @@ export class ReanimatedPlugin {
 
     const reanimatedVersion = this.getReanimatedVersion(reanimatedPath);
 
-    // add rules for transpiling wih reanimated loader
+    if (reanimatedVersion.major >= 4) {
+      this.ensureDependencyInstalled(compiler.context, 'react-native-worklets');
+    }
+
+    // add rules for transpiling with reanimated loader
     // TODO made obsolete by the new babel-swc-loader, remove in 6.0
     compiler.options.module.rules.push(
-      reanimatedVersion.major < 4
-        ? reanimated3ModuleRules
-        : reanimated4ModuleRules
+      createReanimatedModuleRules(
+        reanimatedVersion.major,
+        this.options.babelPluginOptions
+      )
     );
 
     // ignore the 'setUpTests' warning from reanimated which is not relevant
