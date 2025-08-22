@@ -9,6 +9,13 @@ interface ReanimatedPluginOptions {
    * Custom options passed to 'react-native-reanimated/plugin' or 'react-native-worklets/plugin' babel plugins.
    */
   babelPluginOptions?: Record<string, any>;
+
+  /**
+   * Disable adding transformation rules for reanimated / worklets babel plugin.
+   * This is useful when handling using `babel-swc-loader` or `babel-loader` and
+   * you have already added the babel plugin to your babel config.
+   */
+  unstable_disableTransform?: boolean;
 }
 
 export class ReanimatedPlugin {
@@ -31,14 +38,16 @@ export class ReanimatedPlugin {
       this.ensureDependencyInstalled(compiler.context, 'react-native-worklets');
     }
 
-    // add rules for transpiling with reanimated loader
-    // TODO made obsolete by the new babel-swc-loader, remove in 6.0
-    compiler.options.module.rules.push(
-      createReanimatedModuleRules(
-        reanimatedVersion.major,
-        this.options.babelPluginOptions
-      )
-    );
+    if (!this.options.unstable_disableTransform) {
+      // add rules for transpiling with reanimated loader
+      // TODO made obsolete by the new babel-swc-loader, remove in 6.0
+      compiler.options.module.rules.push(
+        createReanimatedModuleRules(
+          reanimatedVersion.major,
+          this.options.babelPluginOptions
+        )
+      );
+    }
 
     // ignore the 'setUpTests' warning from reanimated which is not relevant
     compiler.options.ignoreWarnings = compiler.options.ignoreWarnings ?? [];
