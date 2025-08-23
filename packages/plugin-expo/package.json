@@ -1,0 +1,58 @@
+{
+  "name": "@callstack/repack-plugin-expo",
+  "version": "5.1.3",
+  "description": "A plugin for @callstack/repack that integrates Expo CNG and Router",
+  "author": "Carlos Eduardo <ceo.paludetto@gmail.com>",
+  "contributors": ["Jakub Romańczyk <jakub.romanczyk@callstack.com>"],
+  "license": "MIT",
+  "homepage": "https://github.com/callstack/repack",
+  "repository": "github:callstack/repack",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist", "plugin"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./plugin": {
+      "types": "./plugin/index.d.ts",
+      "default": "./plugin/index.js"
+    }
+  },
+  "keywords": [
+    "repack",
+    "re.pack",
+    "plugin",
+    "repack-plugin",
+    "expo-router",
+    "expo-cng",
+    "expo"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "peerDependencies": {
+    "@callstack/repack": "workspace:*",
+    "@callstack/repack-plugin-expo-modules": "workspace:*",
+    "expo": "catalog:"
+  },
+  "devDependencies": {
+    "@callstack/repack": "workspace:*",
+    "@callstack/repack-plugin-expo-modules": "workspace:*",
+    "expo": "catalog:",
+    "@rspack/core": "catalog:",
+    "@types/node": "catalog:",
+    "webpack": "catalog:"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit"
+  }
+}
