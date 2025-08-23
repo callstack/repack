@@ -1,5 +1,4 @@
 const Repack = require('@callstack/repack');
-const TerserPlugin = require('terser-webpack-plugin');
 
 /**
  * Webpack configuration enhanced with Re.Pack defaults for React Native.
@@ -8,7 +7,7 @@ const TerserPlugin = require('terser-webpack-plugin');
  * Learn about Re.Pack configuration: https://re-pack.dev/docs/guides/configuration
  */
 
-module.exports = {
+module.exports = Repack.defineWebpackConfig({
   context: __dirname,
   entry: './index.js',
   resolve: {
@@ -18,24 +17,14 @@ module.exports = {
     rules: [
       {
         test: /\.[cm]?[jt]sx?$/,
-        use: 'babel-loader',
         type: 'javascript/auto',
+        use: {
+          loader: '@callstack/repack/babel-swc-loader',
+          options: {},
+        },
       },
       ...Repack.getAssetTransformRules(),
     ],
   },
-  optimization: {
-    minimizer: [
-      new TerserPlugin({
-        test: /\.(js)?bundle(\?.*)?$/i,
-        extractComments: false,
-        terserOptions: {
-          format: {
-            comments: false,
-          },
-        },
-      }),
-    ],
-  },
   plugins: [new Repack.RepackPlugin()],
-};
+});
