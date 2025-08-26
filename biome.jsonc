@@ -41,6 +41,9 @@
         "noUnusedImports": "error",
         "noUnusedVariables": "error"
       },
+      "performance": {
+        "noDelete": "off"
+      },
       "style": {
         "noNonNullAssertion": "off",
         "useTemplate": "off"

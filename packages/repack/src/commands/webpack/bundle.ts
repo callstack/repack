@@ -30,6 +30,9 @@ export async function bundle(
     reactNativePath: cliConfig.reactNativePath,
   });
 
+  // remove devServer configuration to avoid schema validation errors
+  delete config.devServer;
+
   // expose selected args as environment variables
   setupEnvironment(args);
 
