@@ -72,7 +72,7 @@ export default async function babelSwcLoader(
   const inputSourceMap: InputSourceMap = sourceMap
     ? JSON.parse(sourceMap)
     : undefined;
-  const lazyImports = options.lazyImports ?? true;
+  const lazyImports = options.lazyImports ?? false;
   const projectRoot = getProjectRootPath(this);
 
   const withSourceMaps = this.resourcePath.match(/node_modules/)
