@@ -25,10 +25,11 @@ async function getTerserConfig(rootDir: string) {
   });
 }
 
-// use SwcJsMinimizerRspackPlugin for Rspack 1.5.0 and above
+// use SwcJsMinimizerRspackPlugin for Rspack 1.4.11
+// Rspack 1.5.0 broke the minimizer again, pending a fix
 function shouldUseTerserForRspack(rspackVersion: string): boolean {
   const version = semver.coerce(rspackVersion) ?? '0.0.0';
-  return semver.lt(version, '1.5.0');
+  return semver.eq(version, '1.4.11');
 }
 
 async function getWebpackMinimizer(rootDir: string) {
