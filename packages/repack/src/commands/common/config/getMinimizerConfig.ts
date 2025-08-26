@@ -29,7 +29,7 @@ async function getTerserConfig(rootDir: string) {
 // Rspack 1.5.0 broke the minimizer again, pending a fix
 function shouldUseTerserForRspack(rspackVersion: string): boolean {
   const version = semver.coerce(rspackVersion) ?? '0.0.0';
-  return semver.eq(version, '1.4.11');
+  return !semver.eq(version, '1.4.11');
 }
 
 async function getWebpackMinimizer(rootDir: string) {
