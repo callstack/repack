@@ -1,5 +1,13 @@
 # @callstack/repack-init
 
+## 5.2.0
+
+### Minor Changes
+
+- [#1232](https://github.com/callstack/repack/pull/1232) [`2fdeed7abb6c4ed9d1a0d58839ae4287427b837c`](https://github.com/callstack/repack/commit/2fdeed7abb6c4ed9d1a0d58839ae4287427b837c) Thanks [@jbroma](https://github.com/jbroma)! - Declare support for React Native 0.80
+
+- [#1260](https://github.com/callstack/repack/pull/1260) [`6201bcd1c25673c4bf5a6fa194c6da022da55f2d`](https://github.com/callstack/repack/commit/6201bcd1c25673c4bf5a6fa194c6da022da55f2d) Thanks [@jbroma](https://github.com/jbroma)! - Declare support for React Native 0.81
+
 ## 5.1.3
 
 ### Patch Changes
