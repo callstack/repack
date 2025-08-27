@@ -1,5 +1,94 @@
 # @callstack/repack
 
+## 5.2.0
+
+### Minor Changes
+
+- [#1228](https://github.com/callstack/repack/pull/1228) [`e480ed6dd21cabc114601e8d42afd936ad2a6d75`](https://github.com/callstack/repack/commit/e480ed6dd21cabc114601e8d42afd936ad2a6d75) Thanks [@jbroma](https://github.com/jbroma)! - Drop dependency on `@react-native/dev-middleware` and obtain dev middleware dynamically depending on version of React Native in the project
+
+- [#1226](https://github.com/callstack/repack/pull/1226) [`396593afc992cd0357b49de08d6cdb0df89e3c9d`](https://github.com/callstack/repack/commit/396593afc992cd0357b49de08d6cdb0df89e3c9d) Thanks [@jbroma](https://github.com/jbroma)! - Reanimated Plugin: Add support for Reanimated 4
+
+- [#1172](https://github.com/callstack/repack/pull/1172) [`b15b7d77a60747c11d82fd9f7cf56833527e4caa`](https://github.com/callstack/repack/commit/b15b7d77a60747c11d82fd9f7cf56833527e4caa) Thanks [@jbroma](https://github.com/jbroma)! - Handle displaying relative paths to sourcefiles in DevTools similarly to Metro
+
+- [#1225](https://github.com/callstack/repack/pull/1225) [`47bf30cc7814f969ba69bedd814ccf4c21320c44`](https://github.com/callstack/repack/commit/47bf30cc7814f969ba69bedd814ccf4c21320c44) Thanks [@jbroma](https://github.com/jbroma)! - Add support for React Native 0.80 flow transforms
+
+- [#1206](https://github.com/callstack/repack/pull/1206) [`d41d7a39c2627256eeaea314fecafcca3692c906`](https://github.com/callstack/repack/commit/d41d7a39c2627256eeaea314fecafcca3692c906) Thanks [@jbroma](https://github.com/jbroma)! - Introduce `BabelSwcLoader`, available as `@callstack/repack/babel-swc-loader` which combines Babel and SWC into one loader, enabling Babel level of customiziability while maitaning good build performance. Can be run in parallel with `experiments.parallelLoader` in Rspack.
+
+- [#1206](https://github.com/callstack/repack/pull/1206) [`d41d7a39c2627256eeaea314fecafcca3692c906`](https://github.com/callstack/repack/commit/d41d7a39c2627256eeaea314fecafcca3692c906) Thanks [@jbroma](https://github.com/jbroma)! - ReanimatedPlugin: skip running the loader when `babel-swc-loader` is detected as part of loader chain
+
+- [#1096](https://github.com/callstack/repack/pull/1096) [`023a4a92c009cf92eba6c7ca133645a72be0a569`](https://github.com/callstack/repack/commit/023a4a92c009cf92eba6c7ca133645a72be0a569) Thanks [@szymonrybczak](https://github.com/szymonrybczak)! - Add support for TypeScript configs & introduce defineWebpackConfig & defineRspackConfig helpers for fully typed configuration
+
+- [#1248](https://github.com/callstack/repack/pull/1248) [`1e7d43dd302daaea4ea26be9b1b792aa7ce905a3`](https://github.com/callstack/repack/commit/1e7d43dd302daaea4ea26be9b1b792aa7ce905a3) Thanks [@jbroma](https://github.com/jbroma)! - Report Rspack compilation progress in the DevServer logs
+
+- [#1227](https://github.com/callstack/repack/pull/1227) [`cc9c132dd29380b8e63b4b2c266d1de9c513100e`](https://github.com/callstack/repack/commit/cc9c132dd29380b8e63b4b2c266d1de9c513100e) Thanks [@jbroma](https://github.com/jbroma)! - Support RN 80 in React Native DevTools integration
+
+- [#1257](https://github.com/callstack/repack/pull/1257) [`9c54343e4f93a185f4fe2d176360a05521ea5358`](https://github.com/callstack/repack/commit/9c54343e4f93a185f4fe2d176360a05521ea5358) Thanks [@jbroma](https://github.com/jbroma)! - Add `--max-workers` option to start & bundle commands. By default the number of workers is derived from available cores. This option is only effective for Rspack configurations
+
+- [#1204](https://github.com/callstack/repack/pull/1204) [`c7bb829fb19b154fe7d45ea25fd12439e0ea1749`](https://github.com/callstack/repack/commit/c7bb829fb19b154fe7d45ea25fd12439e0ea1749) Thanks [@jbroma](https://github.com/jbroma)! - Support 16kb page alignment on Android
+
+- [#1206](https://github.com/callstack/repack/pull/1206) [`d41d7a39c2627256eeaea314fecafcca3692c906`](https://github.com/callstack/repack/commit/d41d7a39c2627256eeaea314fecafcca3692c906) Thanks [@jbroma](https://github.com/jbroma)! - Introduce `BabelLoader`, available as `@callstack/repack/babel-loader` which utilizes `hermes-parser` for JS & Flow files and default babel parser for TS files. Can be run in parallel with `experiments.parallelLoader` in Rspack.
+
+- [#1209](https://github.com/callstack/repack/pull/1209) [`ecab9586c9e0af8ba3b5ebb9fe001b1cc46ec82f`](https://github.com/callstack/repack/commit/ecab9586c9e0af8ba3b5ebb9fe001b1cc46ec82f) Thanks [@jbroma](https://github.com/jbroma)! - Support Rspack 1.4 perfetto tracing method
+
+- [#1232](https://github.com/callstack/repack/pull/1232) [`2fdeed7abb6c4ed9d1a0d58839ae4287427b837c`](https://github.com/callstack/repack/commit/2fdeed7abb6c4ed9d1a0d58839ae4287427b837c) Thanks [@jbroma](https://github.com/jbroma)! - Declare support for React Native 0.80
+
+- [#1260](https://github.com/callstack/repack/pull/1260) [`6201bcd1c25673c4bf5a6fa194c6da022da55f2d`](https://github.com/callstack/repack/commit/6201bcd1c25673c4bf5a6fa194c6da022da55f2d) Thanks [@jbroma](https://github.com/jbroma)! - Declare support for React Native 0.81
+
+- [#1175](https://github.com/callstack/repack/pull/1175) [`2590cd86ad57d68ec1573173d48ba4e101d7740b`](https://github.com/callstack/repack/commit/2590cd86ad57d68ec1573173d48ba4e101d7740b) Thanks [@ilteoood](https://github.com/ilteoood)! - feat: allow passing additional SVGR options through `getAssetTransformRules`
+
+- [#1262](https://github.com/callstack/repack/pull/1262) [`bd8f287ddc69010bd5a02a93c9248ee94efcd283`](https://github.com/callstack/repack/commit/bd8f287ddc69010bd5a02a93c9248ee94efcd283) Thanks [@jbroma](https://github.com/jbroma)! - Enable `experiments.parallelLoader` by default for Rspack configurations
+
+- [#1234](https://github.com/callstack/repack/pull/1234) [`e0ffbc0816240150c13ec9008e8a14593177ecb5`](https://github.com/callstack/repack/commit/e0ffbc0816240150c13ec9008e8a14593177ecb5) Thanks [@jbroma](https://github.com/jbroma)! - Add support for adding custom middlewares to the DevServer through `setupMiddlewares` configuration option
+
+- [#1186](https://github.com/callstack/repack/pull/1186) [`38d8d1e0b477227af6d64ab287d38556e1b73222`](https://github.com/callstack/repack/commit/38d8d1e0b477227af6d64ab287d38556e1b73222) Thanks [@ilteoood](https://github.com/ilteoood)! - the signature of the JavaScript code is now verified even if the bundle is loaded from the file system
+
+### Patch Changes
+
+- [#1185](https://github.com/callstack/repack/pull/1185) [`7db4e4118eeaf119c742a2a477aa773155f5eba9`](https://github.com/callstack/repack/commit/7db4e4118eeaf119c742a2a477aa773155f5eba9) Thanks [@tringenbach](https://github.com/tringenbach)! - Resolve `react-native` package exports condition before `import` or `require`
+
+- [#1172](https://github.com/callstack/repack/pull/1172) [`b15b7d77a60747c11d82fd9f7cf56833527e4caa`](https://github.com/callstack/repack/commit/b15b7d77a60747c11d82fd9f7cf56833527e4caa) Thanks [@jbroma](https://github.com/jbroma)! - Fix opening stack frame source file from LogBox
+
+- [#1223](https://github.com/callstack/repack/pull/1223) [`51d44f37790c081d19407724e6bdbb40cbd561ec`](https://github.com/callstack/repack/commit/51d44f37790c081d19407724e6bdbb40cbd561ec) Thanks [@jbroma](https://github.com/jbroma)! - Add `transform-parameters` and `transform-function-name` to the SWC preset
+
+- [#1258](https://github.com/callstack/repack/pull/1258) [`f2b5f23853c58cf1bd4b300888229635917d9c6a`](https://github.com/callstack/repack/commit/f2b5f23853c58cf1bd4b300888229635917d9c6a) Thanks [@jbroma](https://github.com/jbroma)! - Configure the default minimizer for Rspack and webpack configuration
+
+- [#1252](https://github.com/callstack/repack/pull/1252) [`7dbf991677ec350bfb7b75a187c0101f20bdadf0`](https://github.com/callstack/repack/commit/7dbf991677ec350bfb7b75a187c0101f20bdadf0) Thanks [@jbroma](https://github.com/jbroma)! - Fix `CodeSigningPlugin` overwriting Hermes bytecode bundles with signed JS bundles
+
+- [#1172](https://github.com/callstack/repack/pull/1172) [`b15b7d77a60747c11d82fd9f7cf56833527e4caa`](https://github.com/callstack/repack/commit/b15b7d77a60747c11d82fd9f7cf56833527e4caa) Thanks [@jbroma](https://github.com/jbroma)! - Don't include 3rd party lib sourcemaps by default into the final sourcemaps
+
+- [#1266](https://github.com/callstack/repack/pull/1266) [`27c6e2246345cb8b0f19f832e71bedf2fd733e08`](https://github.com/callstack/repack/commit/27c6e2246345cb8b0f19f832e71bedf2fd733e08) Thanks [@jbroma](https://github.com/jbroma)! - Handle 'transform-dynamic-import' in `babel-swc-loader`
+
+- [#1274](https://github.com/callstack/repack/pull/1274) [`e613c04cfc7e472d5555ac0795c31702f6978b1e`](https://github.com/callstack/repack/commit/e613c04cfc7e472d5555ac0795c31702f6978b1e) Thanks [@jbroma](https://github.com/jbroma)! - Dont use lazy imports by default when using babel-swc-loader
+
+- [#1265](https://github.com/callstack/repack/pull/1265) [`b28d2b20c36cb0994ba300115a7eea360398c700`](https://github.com/callstack/repack/commit/b28d2b20c36cb0994ba300115a7eea360398c700) Thanks [@jbroma](https://github.com/jbroma)! - Let SWC handle `transform-typescript` when using `babel-swc-loader`
+
+- [#1276](https://github.com/callstack/repack/pull/1276) [`4de8bef827e6d3f7898f61425866ef4522d5a304`](https://github.com/callstack/repack/commit/4de8bef827e6d3f7898f61425866ef4522d5a304) Thanks [@jbroma](https://github.com/jbroma)! - Set NODE_ENV based on args.dev option
+
+- [#1222](https://github.com/callstack/repack/pull/1222) [`02862e93bc31c5c478341abeefd52d16388d1341`](https://github.com/callstack/repack/commit/02862e93bc31c5c478341abeefd52d16388d1341) Thanks [@jbroma](https://github.com/jbroma)! - Add `react-native-modal-datetime-picker` to list of libs with flow types
+
+- [#1268](https://github.com/callstack/repack/pull/1268) [`a9ac9f2d66a8101dc61dca950898d2fcd707b89c`](https://github.com/callstack/repack/commit/a9ac9f2d66a8101dc61dca950898d2fcd707b89c) Thanks [@jbroma](https://github.com/jbroma)! - Use noop handler for local filesystem prefetch calls on Android
+
+- [#1261](https://github.com/callstack/repack/pull/1261) [`0f3757147669652b30b9a5b0cc99f9e7a1cee0a8`](https://github.com/callstack/repack/commit/0f3757147669652b30b9a5b0cc99f9e7a1cee0a8) Thanks [@jbroma](https://github.com/jbroma)! - Use single terminal instance per process to ensure proper log message scheduling
+
+- [#1246](https://github.com/callstack/repack/pull/1246) [`c53900dc070bf34b15ef6b36fccbfaf373d67e5e`](https://github.com/callstack/repack/commit/c53900dc070bf34b15ef6b36fccbfaf373d67e5e) Thanks [@jbroma](https://github.com/jbroma)! - Fix `REPACK_VERBOSE` not affecting dev server logs
+
+- [#1210](https://github.com/callstack/repack/pull/1210) [`5867b52a121dd3d9ef9591258e2013e660502b6c`](https://github.com/callstack/repack/commit/5867b52a121dd3d9ef9591258e2013e660502b6c) Thanks [@ilteoood](https://github.com/ilteoood)! - upgraded nimbus jose to latest v9
+
+- [#1267](https://github.com/callstack/repack/pull/1267) [`1b71dcfd87d050c0979c054fc6a4c02128821c15`](https://github.com/callstack/repack/commit/1b71dcfd87d050c0979c054fc6a4c02128821c15) Thanks [@jbroma](https://github.com/jbroma)! - Use consistent name as a caller for babel & swc
+
+- [#1273](https://github.com/callstack/repack/pull/1273) [`03e10658bfa05d75fbd096376c8453dcf655ad94`](https://github.com/callstack/repack/commit/03e10658bfa05d75fbd096376c8453dcf655ad94) Thanks [@jbroma](https://github.com/jbroma)! - Use Terser for Rspack 1.5.0 and above
+
+- [#1272](https://github.com/callstack/repack/pull/1272) [`075c7977f41359618a89eb0249125d0b642f654e`](https://github.com/callstack/repack/commit/075c7977f41359618a89eb0249125d0b642f654e) Thanks [@jbroma](https://github.com/jbroma)! - Unset DevServer configuration when using the bundle command
+
+- [#1243](https://github.com/callstack/repack/pull/1243) [`0afd84b8b2b1909fbcafe9792ea656e622ff37e7`](https://github.com/callstack/repack/commit/0afd84b8b2b1909fbcafe9792ea656e622ff37e7) Thanks [@longb1997](https://github.com/longb1997)! - Fix support for file protocol in ScriptManager native module when loading scripts (Android) & prefetching scripts (iOS)
+
+- [#1203](https://github.com/callstack/repack/pull/1203) [`90e58901670e1327f4054be7e20fe3f6e2845946`](https://github.com/callstack/repack/commit/90e58901670e1327f4054be7e20fe3f6e2845946) Thanks [@jbroma](https://github.com/jbroma)! - Fix type mismatch in FileSystemScriptLoader on Android
+
+- [#1270](https://github.com/callstack/repack/pull/1270) [`ece451c750a42c0c6591c488f6afc144bffcfdb8`](https://github.com/callstack/repack/commit/ece451c750a42c0c6591c488f6afc144bffcfdb8) Thanks [@jbroma](https://github.com/jbroma)! - ReanimatedPlugin: add option to disable transforms. This is useful when using `babel-swc-loader` or `babel-loader`
+
+- Updated dependencies [[`e480ed6dd21cabc114601e8d42afd936ad2a6d75`](https://github.com/callstack/repack/commit/e480ed6dd21cabc114601e8d42afd936ad2a6d75), [`b15b7d77a60747c11d82fd9f7cf56833527e4caa`](https://github.com/callstack/repack/commit/b15b7d77a60747c11d82fd9f7cf56833527e4caa), [`cc9c132dd29380b8e63b4b2c266d1de9c513100e`](https://github.com/callstack/repack/commit/cc9c132dd29380b8e63b4b2c266d1de9c513100e), [`e0ffbc0816240150c13ec9008e8a14593177ecb5`](https://github.com/callstack/repack/commit/e0ffbc0816240150c13ec9008e8a14593177ecb5)]:
+  - @callstack/repack-dev-server@5.2.0
+
 ## 5.1.3
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @callstack/repack-dev-server
 
+## 5.2.0
+
+### Minor Changes
+
+- [#1228](https://github.com/callstack/repack/pull/1228) [`e480ed6dd21cabc114601e8d42afd936ad2a6d75`](https://github.com/callstack/repack/commit/e480ed6dd21cabc114601e8d42afd936ad2a6d75) Thanks [@jbroma](https://github.com/jbroma)! - Drop dependency on `@react-native/dev-middleware` and obtain dev middleware dynamically depending on version of React Native in the project
+
+- [#1227](https://github.com/callstack/repack/pull/1227) [`cc9c132dd29380b8e63b4b2c266d1de9c513100e`](https://github.com/callstack/repack/commit/cc9c132dd29380b8e63b4b2c266d1de9c513100e) Thanks [@jbroma](https://github.com/jbroma)! - Support RN 80 in React Native DevTools integration
+
+- [#1234](https://github.com/callstack/repack/pull/1234) [`e0ffbc0816240150c13ec9008e8a14593177ecb5`](https://github.com/callstack/repack/commit/e0ffbc0816240150c13ec9008e8a14593177ecb5) Thanks [@jbroma](https://github.com/jbroma)! - Add support for adding custom middlewares to the DevServer through `setupMiddlewares` configuration option
+
+### Patch Changes
+
+- [#1172](https://github.com/callstack/repack/pull/1172) [`b15b7d77a60747c11d82fd9f7cf56833527e4caa`](https://github.com/callstack/repack/commit/b15b7d77a60747c11d82fd9f7cf56833527e4caa) Thanks [@jbroma](https://github.com/jbroma)! - Fix opening stack frame source file from LogBox
+
 ## 5.1.3
 
 ## 5.1.2
