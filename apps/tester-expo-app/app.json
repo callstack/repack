@@ -1,0 +1,16 @@
+{
+  "name": "tester-expo-app",
+  "slug": "tester-expo-app",
+  "scheme": "testerexpoapp",
+  "version": "0.0.1",
+  "android": {
+    "package": "com.testerexpoapp"
+  },
+  "ios": {
+    "bundleIdentifier": "com.testerexpoapp"
+  },
+  "plugins": [
+    ["expo-router", { "root": "./src/screens" }],
+    "@callstack/repack-plugin-expo/plugin"
+  ]
+}
