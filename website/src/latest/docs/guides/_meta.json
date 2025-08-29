@@ -3,6 +3,7 @@
   "debugging",
   "bundle-analysis",
   "expo-modules",
+  "expo",
   "inline-assets",
   "remote-assets",
   "svg",
