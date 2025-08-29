@@ -19,7 +19,7 @@ catalog:
 catalogs:
   testers:
     "@types/react": ^19.1.0
-    "react-native-test-app": 4.4.6
+    "react-native-test-app": 4.4.7
     "@react-native/babel-preset": "0.81.0"
     "@react-native/typescript-config": "0.81.0"
     "@react-native-community/cli": "20.0.0"
