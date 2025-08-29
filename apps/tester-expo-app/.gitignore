@@ -1,0 +1,7 @@
+# Build artifacts
+.expo
+build
+
+# Native directories
+/android
+/ios

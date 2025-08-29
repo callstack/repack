@@ -1,0 +1,37 @@
+{
+  "name": "tester-expo-app",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./index.js",
+  "scripts": {
+    "start": "react-native start",
+    "ios": "react-native run-ios --no-packager",
+    "android": "react-native run-android --no-packager",
+    "prebuild": "expo prebuild"
+  },
+  "dependencies": {
+    "expo": "catalog:",
+    "expo-linking": "~7.1.7",
+    "expo-router": "~5.1.5",
+    "react": "19.0.0",
+    "react-native": "0.79.5",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.11.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@callstack/repack": "workspace:*",
+    "@callstack/repack-plugin-expo": "workspace:*",
+    "@react-native-community/cli": "catalog:testers",
+    "@react-native-community/cli-platform-android": "catalog:testers",
+    "@react-native-community/cli-platform-ios": "catalog:testers",
+    "@react-native/babel-preset": "catalog:testers",
+    "@react-native/typescript-config": "catalog:testers",
+    "@rspack/core": "catalog:",
+    "@swc/core": "^1.13.3",
+    "@swc/helpers": "catalog:",
+    "@types/react": "catalog:testers",
+    "react-native-test-app": "catalog:testers",
+    "typescript": "catalog:"
+  }
+}
