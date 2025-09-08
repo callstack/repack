@@ -133,6 +133,7 @@ export default async function babelSwcLoader(
         lazy: lazyImports,
         type: swcConfig.module!.type,
       },
+      isModule: babelResult.sourceType === 'module',
     };
 
     const swcResult = swc.transformSync(babelResult?.code!, {
