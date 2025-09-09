@@ -183,14 +183,22 @@ export class ModuleFederationPluginV1 {
     shared: SharedDependencies
   ): SharedDependencies {
     const sharedDependencyConfig = (
-      eager?: boolean,
-      version?: string | false
-    ) => ({
-      singleton: true,
-      eager: eager ?? true,
-      version: version || '*',
-      requiredVersion: version || '*',
-    });
+      eager: boolean | undefined,
+      importValue: string | false | undefined,
+      version: string | false | undefined
+    ) => {
+      const config: SharedConfig = {
+        singleton: true,
+        eager: eager ?? true,
+        version: version || '*',
+        requiredVersion: version || '*',
+      };
+      // set import to false if it's explicitly set to false
+      if (importValue === false) {
+        config.import = false;
+      }
+      return config;
+    };
 
     const findSharedDependency = (
       name: string,
@@ -213,6 +221,10 @@ export class ModuleFederationPluginV1 {
       typeof sharedReactNative === 'object'
         ? sharedReactNative.requiredVersion || sharedReactNative.version
         : undefined;
+    const reactNativeImport =
+      typeof sharedReactNative === 'object'
+        ? sharedReactNative.import
+        : undefined;
 
     if (!this.deepImports || !sharedReactNative) {
       return shared;
@@ -224,6 +236,7 @@ export class ModuleFederationPluginV1 {
         adjustedSharedDependencies.push({
           'react-native/': sharedDependencyConfig(
             reactNativeEager,
+            reactNativeImport,
             reactNativeVersion
           ),
         });
@@ -232,6 +245,7 @@ export class ModuleFederationPluginV1 {
         adjustedSharedDependencies.push({
           '@react-native/': sharedDependencyConfig(
             reactNativeEager,
+            reactNativeImport,
             reactNativeVersion
           ),
         });
@@ -241,12 +255,20 @@ export class ModuleFederationPluginV1 {
     const adjustedSharedDependencies = { ...shared };
     if (!findSharedDependency('react-native/', shared)) {
       Object.assign(adjustedSharedDependencies, {
-        'react-native/': sharedDependencyConfig(reactNativeEager),
+        'react-native/': sharedDependencyConfig(
+          reactNativeEager,
+          reactNativeImport,
+          reactNativeVersion
+        ),
       });
     }
     if (!findSharedDependency('@react-native/', shared)) {
       Object.assign(adjustedSharedDependencies, {
-        '@react-native/': sharedDependencyConfig(reactNativeEager),
+        '@react-native/': sharedDependencyConfig(
+          reactNativeEager,
+          reactNativeImport,
+          reactNativeVersion
+        ),
       });
     }
     return adjustedSharedDependencies;
