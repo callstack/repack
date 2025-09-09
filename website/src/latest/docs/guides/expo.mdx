@@ -1,0 +1,148 @@
+import { PackageManagerTabs } from 'rspress/theme';
+
+# Expo 
+
+::: warning
+Re.Pack adds minimal support for Expo managed projects. Since Re.Pack replaces Metro, some Expo features may not work as expected. Please refer to the [limitations section](#limitations) for more details.
+:::
+
+[Expo](https://docs.expo.dev/) is a popular framework for building React Native applications. Re.Pack provides a plugin to integrate with Expo managed projects, allowing you to leverage Re.Pack's bundling capabilities while still using Expo's features.
+
+Using Expo with Re.Pack requires some setup - this guide will show you how to get started with Expo in your project.
+
+## Installation
+
+### 1. Install Expo Package
+
+Install the Expo package in your project:
+
+<PackageManagerTabs command="install expo" />
+
+### 2. Add Re.Pack Integration
+
+First, install the official Re.Pack Expo plugin:
+
+<PackageManagerTabs command="install -D @callstack/repack-plugin-expo" />
+
+Then, add the plugin to your configuration file:
+
+```js title=rspack.config.cjs
+const { ExpoPlugin } = require("@callstack/repack-plugin-expo");
+
+module.exports = {
+  plugins: [
+    new ExpoPlugin(),
+  ]
+};
+```
+
+### 3. Modify CNG Configuration
+
+::: info
+This step is crucial as it ensures that React Native CLI will be used when building for production instead of Expo CLI, which is not compatible with Re.Pack.
+:::
+
+Modify your `app.json` or `app.config.js` to include the following configuration:
+
+```jsonc title=app.json
+{
+  // ...
+  "plugins": [
+    "@callstack/repack-plugin-expo/plugin"
+  ]
+}
+```
+
+## Usage
+
+After completing the setup, you can start using Re.Pack in your Expo application.
+
+### Generating the Development Build
+
+To generate a development build of your Expo application, run the following command:
+
+<PackageManagerTabs command="expo prebuild" />
+
+### Development Workflow
+
+After running this command, you can develop using the default Re.Pack workflow.
+
+## Expo Router Support
+
+`@callstack/repack-plugin-expo` has built-in support for [Expo Router](https://expo.github.io/router/docs).
+
+### 1. Install Expo Router
+
+If you haven't already, install the Expo Router and its dependencies:
+
+<PackageManagerTabs command="expo install expo-constants expo-router expo-linking expo-status-bar react-native-screens react-native-safe-area-context" exec />
+
+### 2. Modify CNG Configuration
+
+Add `expo-router` to the plugins array in your `app.json` or `app.config.js` along with the Re.Pack plugin:
+
+```jsonc title=app.json
+{
+  // ...
+  "plugins": [
+    "expo-router",
+    "@callstack/repack-plugin-expo/plugin"
+  ]
+}
+```
+
+### 3. Modify Re.Pack Integration
+
+Modify the plugin configuration in your `rspack.config.cjs` to enable the router support:
+
+```js title=rspack.config.cjs
+const { ExpoPlugin } = require("@callstack/repack-plugin-expo");
+
+module.exports = {
+  plugins: [
+    new ExpoPlugin({ router: true }),
+  ]
+};
+```
+
+You can also customize the base URL and root directory for the router:
+
+```js title=rspack.config.cjs
+const { ExpoPlugin } = require("@callstack/repack-plugin-expo");
+
+module.exports = {
+  plugins: [
+    new ExpoPlugin({ 
+      router: { baseUrl: '/some-base-url', root: './src/screens' }
+    }),
+  ]
+};
+```
+
+### 4. Change Your Application Entry Point
+
+::: danger
+Do not use `expo-router/entry` as your entry point when using Re.Pack. This entry point is designed to work with Metro bundler and may not function correctly with Re.Pack.
+:::
+
+Change your application entry point to use the router's `ExpoRoot` component. Update your `App.js` as follows:
+
+```jsx title=App.js
+import { ExpoRoot } from 'expo-router';
+import { ctx } from 'expo-router/_ctx';
+
+export default function Application() {
+  return <ExpoRoot context={ctx} />;
+}
+```
+
+## Limitations
+
+When using Re.Pack with Expo managed projects, there are some limitations to be aware of:
+
+- Expo CLI: Expo commands that rely on Metro bundler (like `expo start`, `expo run android` and `expo run ios`) will not work as expected. Use React Native CLI commands instead (e.g., `npx react-native start`, `npx react-native run-android`, `npx react-native run-ios`).
+- Expo Go: Re.Pack does not support running in Expo Go. You will need to do a development build to test your application.
+- EAS: Expo EAS doesn't allow custom bundlers, so you cannot use Re.Pack with EAS Build at the moment.
+- Expo Updates: Re.Pack does not support over-the-air updates with Expo Updates. You can use Remote Chunks though (see [code splitting](../features/code-splitting) for more details).
+- Type-safe routes: Re.Pack doesn't automatically generate type-safe `.d.ts` files for Expo Router.
+- Experimental RSC, server actions or API routes: These features are not supported in Expo managed projects with Re.Pack.
