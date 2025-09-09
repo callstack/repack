@@ -1,4 +1,5 @@
 import {
+  type BabelFileResult,
   type TransformOptions,
   loadOptions,
   parseSync,
@@ -63,11 +64,15 @@ function buildBabelConfig(
   return babelConfig;
 }
 
+type BabelTransformResult = BabelFileResult & {
+  sourceType: 'script' | 'module';
+};
+
 export const transform = async (
   src: string,
   transformOptions: TransformOptions,
   customOptions?: CustomTransformOptions
-) => {
+): Promise<BabelTransformResult> => {
   const babelConfig = buildBabelConfig(transformOptions, {
     includePlugins: customOptions?.includePlugins,
     excludePlugins: customOptions?.excludePlugins,
@@ -100,7 +105,12 @@ export const transform = async (
     throw new Error(`Failed to transform source file: ${babelConfig.filename}`);
   }
 
-  return result;
+  const sourceType = sourceAst.program.sourceType;
+
+  return {
+    ...result,
+    sourceType,
+  };
 };
 
 export default async function babelLoader(
