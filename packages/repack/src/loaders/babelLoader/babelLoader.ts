@@ -64,7 +64,7 @@ function buildBabelConfig(
   return babelConfig;
 }
 
-export type BabelTransformResult = BabelFileResult & {
+type BabelTransformResult = BabelFileResult & {
   sourceType: 'script' | 'module';
 };
 
