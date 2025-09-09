@@ -1,5 +1,4 @@
 import type { Compiler } from '@rspack/core';
-import { Federated } from '../../utils/federated.js';
 import { ModuleFederationPluginV1 } from '../ModuleFederationPluginV1.js';
 
 const mockPlugin = jest.fn().mockImplementation(() => ({
@@ -129,8 +128,8 @@ describe('ModuleFederationPlugin', () => {
     new ModuleFederationPluginV1({
       name: 'test',
       shared: {
-        react: Federated.SHARED_REACT,
-        'react-native': Federated.SHARED_REACT_NATIVE,
+        react: { singleton: true, eager: true },
+        'react-native': { singleton: true, eager: true },
       },
     }).apply(mockCompiler);
 
@@ -144,8 +143,8 @@ describe('ModuleFederationPlugin', () => {
       name: 'test',
       reactNativeDeepImports: false,
       shared: {
-        react: Federated.SHARED_REACT,
-        'react-native': Federated.SHARED_REACT_NATIVE,
+        react: { singleton: true, eager: true },
+        'react-native': { singleton: true, eager: true },
       },
     }).apply(mockCompiler);
 
@@ -158,7 +157,7 @@ describe('ModuleFederationPlugin', () => {
     new ModuleFederationPluginV1({
       name: 'test',
       shared: {
-        react: Federated.SHARED_REACT,
+        react: { singleton: true, eager: true },
       },
     }).apply(mockCompiler);
 
@@ -182,8 +181,8 @@ describe('ModuleFederationPlugin', () => {
     new ModuleFederationPluginV1({
       name: 'test',
       shared: {
-        react: Federated.SHARED_REACT,
-        'react-native': Federated.SHARED_REACT_NATIVE,
+        react: { singleton: true, eager: true },
+        'react-native': { singleton: true, eager: true },
         'react-native/': { singleton: true, eager: true },
       },
     }).apply(mockCompiler);
@@ -211,6 +210,21 @@ describe('ModuleFederationPlugin', () => {
     expect(config.shared).toHaveProperty('@react-native/');
     expect(config.shared['react-native/'].eager).toBe(false);
     expect(config.shared['@react-native/'].eager).toBe(false);
+  });
+
+  it('should propagate import=false to deep react-native imports', () => {
+    new ModuleFederationPluginV1({
+      name: 'test',
+      shared: {
+        'react-native': { singleton: true, eager: false, import: false },
+      },
+    }).apply(mockCompiler);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config.shared).toHaveProperty('react-native/');
+    expect(config.shared).toHaveProperty('@react-native/');
+    expect(config.shared['react-native/'].import).toBe(false);
+    expect(config.shared['@react-native/'].import).toBe(false);
   });
 
   it('should set default federated entry filename', () => {

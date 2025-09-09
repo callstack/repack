@@ -150,6 +150,22 @@ describe('ModuleFederationPlugin', () => {
     expect(config.shared['@react-native/'].eager).toBe(false);
   });
 
+  it('should propagate import=false to deep react-native imports', () => {
+    new ModuleFederationPluginV2({
+      name: 'test',
+      shared: {
+        react: { singleton: true, eager: true },
+        'react-native': { singleton: true, eager: false, import: false },
+      },
+    }).apply(mockCompiler);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config.shared).toHaveProperty('react-native/');
+    expect(config.shared).toHaveProperty('@react-native/');
+    expect(config.shared['react-native/'].import).toBe(false);
+    expect(config.shared['@react-native/'].import).toBe(false);
+  });
+
   it('should add CorePlugin & ResolverPlugin to runtime plugins by default', () => {
     new ModuleFederationPluginV2({ name: 'test' }).apply(mockCompiler);
 
