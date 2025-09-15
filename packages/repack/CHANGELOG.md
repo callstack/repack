@@ -1,5 +1,18 @@
 # @callstack/repack
 
+## 5.2.1
+
+### Patch Changes
+
+- [#1286](https://github.com/callstack/repack/pull/1286) [`2598d36331f8515f94d193fd52caf1214a9af7e1`](https://github.com/callstack/repack/commit/2598d36331f8515f94d193fd52caf1214a9af7e1) Thanks [@V3RON](https://github.com/V3RON)! - When using `babel-swc-loader`, SWC will now inherit the source type from Babel.
+
+- [#1263](https://github.com/callstack/repack/pull/1263) [`b289722d50bac6e571a96337699ad5c543e6064a`](https://github.com/callstack/repack/commit/b289722d50bac6e571a96337699ad5c543e6064a) Thanks [@jbroma](https://github.com/jbroma)! - Update new project templates for Re.Pack 5.2
+
+- [#1287](https://github.com/callstack/repack/pull/1287) [`1e6cd166871a0a593e909cf91d8bc741cdea44b4`](https://github.com/callstack/repack/commit/1e6cd166871a0a593e909cf91d8bc741cdea44b4) Thanks [@jbroma](https://github.com/jbroma)! - Propagate `import:false` to RN deep imports
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.2.1
+
 ## 5.2.0
 
 ### Minor Changes
