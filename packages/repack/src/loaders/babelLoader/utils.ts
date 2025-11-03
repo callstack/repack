@@ -1,4 +1,5 @@
 import type { ParseResult } from '@babel/core';
+import { importDefaultESM } from '../../helpers/index.js';
 
 interface HermesParser {
   parse: (
@@ -46,7 +47,7 @@ export async function loadHermesParser(
     const hermesParserPath =
       providedHermesParserPath ??
       resolveHermesParser(projectRoot ?? process.cwd());
-    const hermesParser = await import(hermesParserPath);
+    const hermesParser = await importDefaultESM<HermesParser>(hermesParserPath);
     return hermesParser;
   } catch (e) {
     console.error(e);

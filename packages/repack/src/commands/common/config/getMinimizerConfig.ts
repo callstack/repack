@@ -1,4 +1,6 @@
 import semver from 'semver';
+import type TerserPlugin from 'terser-webpack-plugin';
+import { importDefaultESM } from '../../../helpers/index.js';
 
 // prefer `terser-webpack-plugin` installed in the project root to the one shipped with Re.Pack
 async function getTerserPlugin(rootDir: string) {
@@ -10,8 +12,8 @@ async function getTerserPlugin(rootDir: string) {
   } catch {
     terserPluginPath = require.resolve('terser-webpack-plugin');
   }
-  const plugin = await import(terserPluginPath);
-  return 'default' in plugin ? plugin.default : plugin;
+  const plugin = await importDefaultESM<typeof TerserPlugin>(terserPluginPath);
+  return plugin;
 }
 
 async function getTerserConfig(rootDir: string) {

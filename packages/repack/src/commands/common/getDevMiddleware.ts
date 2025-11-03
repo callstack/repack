@@ -1,3 +1,5 @@
+import url from 'node:url';
+
 export async function getDevMiddleware(reactNativePath: string) {
   const reactNativeCommunityCliPluginPath = require.resolve(
     '@react-native/community-cli-plugin',
@@ -8,5 +10,7 @@ export async function getDevMiddleware(reactNativePath: string) {
     paths: [reactNativeCommunityCliPluginPath],
   });
 
-  return import(devMiddlewarePath);
+  // use fileURL to import correctly on both Windows & MacOS
+  const { href: fileUrl } = url.pathToFileURL(devMiddlewarePath);
+  return await import(fileUrl);
 }
