@@ -1,5 +1,14 @@
 # @callstack/repack
 
+## 5.2.2
+
+### Patch Changes
+
+- [#1302](https://github.com/callstack/repack/pull/1302) [`bc3ac46bfc6f025345caf194082249fa572655ad`](https://github.com/callstack/repack/commit/bc3ac46bfc6f025345caf194082249fa572655ad) Thanks [@jbroma](https://github.com/jbroma)! - Fix `ERR_UNSUPPORTED_ESM_URL_SCHEME` errors when bundling on Windows
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.2.2
+
 ## 5.2.1
 
 ### Patch Changes

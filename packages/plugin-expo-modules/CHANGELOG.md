@@ -1,5 +1,12 @@
 # @callstack/repack-plugin-expo-modules
 
+## 5.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`bc3ac46bfc6f025345caf194082249fa572655ad`](https://github.com/callstack/repack/commit/bc3ac46bfc6f025345caf194082249fa572655ad)]:
+  - @callstack/repack@5.2.2
+
 ## 5.2.1
 
 ### Patch Changes
