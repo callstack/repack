@@ -10,6 +10,7 @@ export async function getDevMiddleware(reactNativePath: string) {
     paths: [reactNativeCommunityCliPluginPath],
   });
 
+  // use fileURL to import correctly on both Windows & MacOS
   const { href: fileUrl } = url.pathToFileURL(devMiddlewarePath);
   return await import(fileUrl);
 }
