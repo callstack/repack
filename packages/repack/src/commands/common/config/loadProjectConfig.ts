@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import url from 'node:url';
-import { importDefaultESM } from '../../../helpers/index.js';
 import type { Configuration, ConfigurationObject } from '../../types.js';
 
 // logic based on crossImport from `rspack-cli`
@@ -40,7 +39,7 @@ export async function loadProjectConfig<C extends ConfigurationObject>(
 
   if (isEsmFile(configFilePath)) {
     const { href: fileUrl } = url.pathToFileURL(configFilePath);
-    config = await importDefaultESM(fileUrl);
+    config = await import(fileUrl);
   } else {
     config = require(configFilePath);
   }
