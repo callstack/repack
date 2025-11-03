@@ -1,4 +1,5 @@
 import os from 'node:os';
+import url from 'node:url';
 import type { Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
 
@@ -59,4 +60,10 @@ export function moveElementBefore<T>(
 
   // Insert source element right before the target element
   array.splice(targetIndex, 0, moveElement);
+}
+
+export async function importDefaultESM<T>(absolutePath: string): Promise<T> {
+  const { href: fileUrl } = url.pathToFileURL(absolutePath);
+  const module = await import(fileUrl);
+  return 'default' in module ? module.default : module;
 }

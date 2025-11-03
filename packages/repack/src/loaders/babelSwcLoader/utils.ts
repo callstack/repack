@@ -4,6 +4,8 @@ import type {
   SwcLoaderParserConfig,
   experiments,
 } from '@rspack/core';
+import type Rspack from '@rspack/core';
+import { importDefaultESM } from '../../helpers/index.js';
 
 type Swc = (typeof experiments)['swc'];
 type Logger = ReturnType<LoaderContext['getLogger']>;
@@ -136,26 +138,16 @@ async function getSwcModule(loaderContext: LoaderContext): Promise<Swc | null> {
     // use optional chaining to avoid type errors when there is no experiments.swc
     const rspackCorePath = safelyResolve('@rspack/core', projectRoot);
     if (rspackCorePath && !isWebpack) {
-      const rspack = await import(rspackCorePath);
-      if ('default' in rspack) {
-        return rspack.default?.experiments?.swc ?? null;
-      }
-      if (rspack) {
-        return rspack?.experiments?.swc ?? null;
-      }
+      const rspack = await importDefaultESM<typeof Rspack>(rspackCorePath);
+      return rspack.experiments?.swc ?? null;
     }
   }
   // fallback to checking for `@swc/core` installed in the project
   // this can be in both webpack & rspack projects
   const swcCorePath = safelyResolve('@swc/core', projectRoot);
   if (swcCorePath) {
-    const swc = await import(swcCorePath);
-    if ('default' in swc) {
-      return swc.default as Swc;
-    }
-    if (swc) {
-      return swc as Swc;
-    }
+    const swc = await importDefaultESM<Swc>(swcCorePath);
+    return swc;
   }
   // at this point, we've tried all possible ways to get swc and failed
   return null;
