@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import url from 'node:url';
 import { importDefaultESM } from '../../../helpers/index.js';
 import type { Configuration, ConfigurationObject } from '../../types.js';
 
@@ -38,12 +39,14 @@ export async function loadProjectConfig<C extends ConfigurationObject>(
   let config: Configuration<C>;
 
   if (isEsmFile(configFilePath)) {
-    config = await importDefaultESM(configFilePath);
+    const { href: fileUrl } = url.pathToFileURL(configFilePath);
+    config = await importDefaultESM(fileUrl);
   } else {
     config = require(configFilePath);
-    if ('default' in config) {
-      config = config.default as Configuration<C>;
-    }
+  }
+
+  if ('default' in config) {
+    config = config.default as Configuration<C>;
   }
 
   return config;
