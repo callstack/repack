@@ -41,10 +41,9 @@ export async function loadProjectConfig<C extends ConfigurationObject>(
     config = await importDefaultESM(configFilePath);
   } else {
     config = require(configFilePath);
-  }
-
-  if ('default' in config) {
-    config = config.default as Configuration<C>;
+    if ('default' in config) {
+      config = config.default as Configuration<C>;
+    }
   }
 
   return config;
