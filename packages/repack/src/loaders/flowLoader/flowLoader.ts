@@ -1,4 +1,4 @@
-import type { LoaderContext } from '@rspack/core';
+import type { LoaderContext, RawSourceMap } from '@rspack/core';
 import flowRemoveTypes from 'flow-remove-types';
 import { getOptions } from './options.js';
 
@@ -12,5 +12,5 @@ export default function flowLoader(this: LoaderContext, source: string) {
   const result = flowRemoveTypes(source, options);
   const sourceMap = options.pretty ? result.generateMap() : undefined;
 
-  callback(null, result.toString(), sourceMap);
+  callback(null, result.toString(), sourceMap as RawSourceMap);
 }
