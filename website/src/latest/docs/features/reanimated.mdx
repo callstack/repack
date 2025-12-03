@@ -4,6 +4,27 @@ import { PackageManagerTabs } from '@theme';
 
 Re.Pack provides first-class support for [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) through a dedicated plugin that simplifies integration.
 
+:::warning This plugin is primarily intended for Rspack users.
+
+The main purpose of this plugin is to limit the **build performance impact** of the `react-native-reanimated` babel plugin.
+
+If you're using webpack with `babel-loader`, you probably don't need this plugin. Instead, you should follow the [official Reanimated documentation](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/#step-2-add-reanimateds-babel-plugin) and add the Reanimated Babel plugin directly to your `babel.config.js`:
+
+```js
+module.exports = {
+  presets: ["module:@react-native/babel-preset"],
+  plugins: ["react-native-reanimated/plugin"],
+};
+```
+
+:::
+
+## How it Works
+
+The Worklets Babel Plugin transforms your code so that it can run on the Worklet Runtimes. It looks for functions marked with a `'worklet';` directive and converts them into serializable objects.
+
+When using Rspack, the worklets babel plugin is executed via `babel-swc-loader`. The `ReanimatedPlugin` handles configuration and suppresses warnings that would otherwise appear during the build process.
+
 ## Installation
 
 If you haven't already, install the `react-native-reanimated` package:
@@ -35,7 +56,7 @@ module.exports = {
 
 ### Rspack Configuration
 
-Add the plugin to your Rspack configuration:
+Add the plugin to your Rspack configuration with the `unstable_disableTransform` option set to `true`.
 
 ```js title="rspack.config.cjs"
 const Repack = require("@callstack/repack");
@@ -87,7 +108,3 @@ module.exports = {
   ],
 };
 ```
-
-## Webpack Configuration
-
-If you're using webpack with `babel-loader`, you don't need the `ReanimatedPlugin`. Simply add the Reanimated babel plugin to your `babel.config.js` as shown above.
