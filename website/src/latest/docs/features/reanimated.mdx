@@ -70,7 +70,7 @@ module.exports = {
 };
 ```
 
-This will defer the transformation to the `react-native-worklets/plugin` babel plugin, the Re.Pack reanimated plugin is now mostly used to silence warnings.
+This will disable adding now redundant `babel-loader` rules, and defer the transformation to Babel through `babel-swc-loader`.
 
 
 ## Usage with Reanimated 3
