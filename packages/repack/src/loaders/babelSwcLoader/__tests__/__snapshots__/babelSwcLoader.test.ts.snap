@@ -37,8 +37,8 @@ exports[`partitionTransforms only custom transforms are excluded from included s
       },
       "transform": {
         "react": {
-          "importSource": undefined,
-          "runtime": undefined,
+          "importSource": "react",
+          "runtime": "automatic",
           "useBuiltins": true,
         },
       },

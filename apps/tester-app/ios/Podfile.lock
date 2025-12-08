@@ -1,6 +1,6 @@
 PODS:
   - boost (1.84.0)
-  - callstack-repack (5.2.0):
+  - callstack-repack (5.2.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -2930,7 +2930,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
-  callstack-repack: 9c91d2c48b139e38919c656474f43ab0494b4c21
+  callstack-repack: c874fe60c49dcf3067bca0627b7ace673589737c
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   fast_float: b32c788ed9c6a8c584d114d0047beda9664e7cc6
   FBLazyVector: a867936a67af0d09c37935a1b900a1a3c795b6d1
@@ -3011,7 +3011,7 @@ SPEC CHECKSUMS:
   RNWorklets: 20451b83d42e7509f43599b405993e57e3a038af
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
-  Yoga: 00013dd9cde63a2d98e8002fcc4f5ddb66c10782
+  Yoga: b01392348aeea02064c21a2762a42893d82b60a7
 
 PODFILE CHECKSUM: 6d7cbe03444d5e87210979fb32a0eca299d758fe
 
