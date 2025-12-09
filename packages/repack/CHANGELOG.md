@@ -1,5 +1,14 @@
 # @callstack/repack
 
+## 5.2.3
+
+### Patch Changes
+
+- [#1315](https://github.com/callstack/repack/pull/1315) [`8964e05a5b4db0f0b8f2f4d4efea5a48f4d3a44a`](https://github.com/callstack/repack/commit/8964e05a5b4db0f0b8f2f4d4efea5a48f4d3a44a) Thanks [@dannyhw](https://github.com/dannyhw)! - Fix nativewind issue caused by jsx import source being overwritten to undefined when using babel-swc-loader
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.2.3
+
 ## 5.2.2
 
 ### Patch Changes
