@@ -18,7 +18,7 @@ This plugin seamlessly integrates NativeWind with Re.Pack's build process by:
 
 First, follow these steps from the official [NativeWind installation guide](https://www.nativewind.dev/docs/getting-started/installation):
 
-1. [Install NativeWind](https://www.nativewind.dev/docs/getting-started/installation#1-install-nativewind)
+1. [Install NativeWind](https://www.nativewind.dev/docs/getting-started/installation/frameworkless) - follow everything except the metro setup.
 2. [Setup Tailwind CSS](https://www.nativewind.dev/docs/getting-started/installation#2-setup-tailwind-css)
 3. [Import your CSS file](https://www.nativewind.dev/docs/getting-started/installation#5-import-your-css-file)
 4. (Optional) [Setup TypeScript support](https://www.nativewind.dev/docs/getting-started/installation#7-typescript-setup-optional)
@@ -36,24 +36,6 @@ These additional dependencies (`postcss`, `postcss-loader`, and `autoprefixer`) 
 :::
 
 ## Usage
-
-:::info{title="Webpack specific configuration"}
-If you are using Webpack (not Rspack), you need to add the following configuration to your `babel.config.js`:
-
-```js title="babel.config.js"
-plugins: [
-  [
-    '@babel/plugin-transform-react-jsx',
-    {
-      runtime: 'automatic',
-      importSource: 'nativewind',
-    },
-  ],
-],
-```
-:::
-
-### Plugin
 
 To add the plugin to your Re.Pack configuration, update your `rspack.config.js` or `webpack.config.js` as follows:
 
@@ -76,15 +58,12 @@ export default (env) => {
 
 - **Styles not applying?**
 
-  Ensure your CSS import is present and the plugin is added to your config.
-
-- **PostCSS errors?**
-
-  Double-check that all required dependencies are installed and your `postcss.config.js` is set up.
+  - Ensure your CSS import is present and the plugin is added to your rspack/webpack config.
+  - Make sure you have the `nativewind/babel` preset applied in your babel config.
 
 - **TypeScript issues?**
 
-  Follow the [NativeWind TypeScript setup guide](https://www.nativewind.dev/getting-started/typescript).
+  Follow the [NativeWind TypeScript setup guide](https://www.nativewind.dev/docs/getting-started/installation/frameworkless#6-typescript-setup-optional).
 
 ## Further Resources
 
