@@ -2,44 +2,17 @@ import { PackageManagerTabs } from '@theme';
 
 # React Native Reanimated
 
-Re.Pack provides first-class support for [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) through a dedicated plugin that simplifies integration and optimizes build performance.
+Re.Pack provides first-class support for [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) through a dedicated plugin that simplifies integration and in some cases, optimizes your build performance.
 
-:::warning This plugin is primarily intended for Rspack users.
-
-The main purpose of this plugin is to limit the **build performance impact** of the `react-native-reanimated` babel plugin.
-
-If you're using webpack with `babel-loader`, you probably don't need this plugin. Instead, you should follow the [official Reanimated documentation](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/#step-2-add-reanimateds-babel-plugin) and add the Reanimated Babel plugin directly to your `babel.config.js`:
-
-```js
-module.exports = {
-  presets: ["module:@react-native/babel-preset"],
-  plugins: ["react-native-reanimated/plugin"],
-};
-```
+:::info This plugin is primarily used to disable console warnings that are not relevant when bundling a React Native app.
 
 :::
 
-## How It Works
+## How it Works
 
-### The Problem
+The Worklets Babel Plugin transforms your code so that it can run on the Worklet Runtimes. It looks for functions marked with a `'worklet';` directive and converts them into serializable objects.
 
-React Native Reanimated requires a special Babel plugin to transform your code, particularly functions marked with `'worklet'`. 
-This transformation is necessary but comes with a cost - the babel transformation can slow down your build process significantly 
-when applied to all files. With Rspack under the hood, we want to make sure that we use `babel-loader` only as a last resort.
-
-### The Solution
-
-Our plugin takes a smarter approach by only applying the Reanimated transformation to files that actually need it:
-
-- **Smart Detection**: Before running babel, we scan files for Reanimated keywords like `worklet`
-- **Targeted Processing**: Only files containing these keywords go through the transformation
-- **Performance Boost**: Everything else skips this heavy processing step
-
-In simple terms: we make your builds faster by only doing the heavy Reanimated processing where it's actually needed.
-
-:::note Credits
-Shoutout to [Nate Wienert](https://x.com/natebirdman) who came up with a similar approach in [one.dev](https://one.dev) - his work was the inspiration for this plugin.
-:::
+When using Rspack, the worklets babel plugin is executed via `babel-swc-loader`. The `ReanimatedPlugin` handles configuration and suppresses warnings that would otherwise appear during the build process.
 
 ## Installation
 
@@ -51,11 +24,28 @@ To add Reanimated support to your Re.Pack project with Rspack, install the plugi
 
 <PackageManagerTabs command="install -D @callstack/repack-plugin-reanimated" />
 
-## Usage
+## Usage with Reanimated 4+
 
-### Plugin Configuration
+For Reanimated 4 and above, the worklet transformation is handled by the `react-native-worklets/plugin` babel plugin.
 
-Add the plugin to your Rspack configuration file (`rspack.config.js`):
+Install the worklets package:
+
+<PackageManagerTabs command="install react-native-worklets" />
+
+### Babel Configuration
+
+Add the worklets plugin to your `babel.config.js`:
+
+```js title="babel.config.js"
+module.exports = {
+  presets: ["module:@react-native/babel-preset"],
+  plugins: ["react-native-worklets/plugin"],
+};
+```
+
+### Rspack Configuration
+
+Add the plugin to your Rspack configuration with the `unstable_disableTransform` option set to `true`.
 
 ```js title="rspack.config.cjs"
 const Repack = require("@callstack/repack");
@@ -63,8 +53,42 @@ const { ReanimatedPlugin } = require("@callstack/repack-plugin-reanimated");
 
 module.exports = {
   plugins: [
-      new Repack.RepackPlugin(),
-      new ReanimatedPlugin(),
-    ],
+    new Repack.RepackPlugin(),
+    new ReanimatedPlugin({
+      unstable_disableTransform: true,
+    }),
+  ],
+};
+```
+
+This will disable adding now redundant `babel-loader` rules, and defer the transformation to Babel through `babel-swc-loader`.
+
+
+## Usage with Reanimated 3
+
+First add the `react-native-reanimated` babel plugin to your `babel.config.js`:
+
+```js title="babel.config.js"
+module.exports = {
+  presets: ["module:@react-native/babel-preset"],
+  plugins: [
+    "react-native-reanimated/plugin",
+  ],
+};
+```
+
+Then apply the `ReanimatedPlugin` with the  unstable_disableTransform option set to `true`.
+
+```js title="rspack.config.cjs"
+const Repack = require("@callstack/repack");
+const { ReanimatedPlugin } = require("@callstack/repack-plugin-reanimated");
+
+module.exports = {
+  plugins: [
+    new Repack.RepackPlugin(),
+    new ReanimatedPlugin({
+      unstable_disableTransform: true,
+    }),
+  ],
 };
 ```
