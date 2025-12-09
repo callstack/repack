@@ -256,6 +256,43 @@ ScriptManager.shared.hooks.afterResolve(async (args) => {
 });
 ```
 
+### Override shouldUpdateScript logic
+
+```js
+ScriptManager.shared.hooks.afterResolve(async (args) => {
+  const { locator } = args;
+  locator.shouldUpdateScript = async (scriptId, caller, isScriptCacheOutdated, cachedData) => {
+    // Custom logic to determine if the script should be updated
+    if (isScriptCacheOutdated) {
+      return true;
+    }
+    return false;
+  };
+  return args;
+});
+```
+
+`shouldUpdateScript` also exposes the cached script locator data for more advanced comparison:
+
+> **Note:** The `shallowEqual` function is a utility for comparing two objects' keys and values. You can use your own implementation or import one from a utility library.
+
+```js
+ScriptManager.shared.hooks.afterResolve(async (args) => {
+  const { locator } = args;
+  locator.shouldUpdateScript = async (scriptId, caller, isScriptCacheOutdated, cachedData) => {
+    // Custom logic to determine if the script should be updated
+    return (
+        cachedData.method !== locator.method ||
+        cachedData.url !== locator.url ||
+        cachedData.query !== locator.query ||
+        !shallowEqual(cachedData.headers, locator.headers) ||
+        cachedData.body !== locator.body
+      );
+  };
+  return args;
+});
+```
+
 ### Override script locator URL after resolution
 
 ```js
