@@ -1,4 +1,4 @@
-import { partitionTransforms } from '../babelSwcLoader.js';
+import { buildFinalSwcConfig, partitionTransforms } from '../babelSwcLoader.js';
 
 type TransformEntry = [string, Record<string, any> | undefined];
 
@@ -64,5 +64,29 @@ describe('partitionTransforms', () => {
     const result = partitionTransforms('/virtual/empty.ts', []);
 
     expect(result).toMatchSnapshot('empty arrays');
+  });
+});
+
+describe('buildFinalSwcConfig', () => {
+  it('uses module.type from swcConfig when transform-modules-commonjs is present', () => {
+    const result = buildFinalSwcConfig({
+      swcConfig: { module: { type: 'commonjs' } },
+      includedSwcTransforms: [],
+      lazyImports: false,
+      sourceType: 'module',
+    });
+
+    expect(result.module?.type).toBe('commonjs');
+  });
+
+  it('falls back to es6 module.type when transform-modules-commonjs is not present', () => {
+    const result = buildFinalSwcConfig({
+      swcConfig: {},
+      includedSwcTransforms: [],
+      lazyImports: false,
+      sourceType: 'module',
+    });
+
+    expect(result.module?.type).toBe('es6');
   });
 });
