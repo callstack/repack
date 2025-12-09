@@ -77,9 +77,7 @@ function getTransformReactDevelopmentConfig(
 
 function getTransformReactRuntimeConfig(
   swcConfig: SwcLoaderOptions,
-  reactRuntimeConfig: Record<string, any> = {
-    runtime: 'automatic',
-  }
+  reactRuntimeConfig: Record<string, any> = {}
 ): SwcLoaderOptions {
   return {
     ...swcConfig,
@@ -89,8 +87,14 @@ function getTransformReactRuntimeConfig(
         ...swcConfig.jsc?.transform,
         react: {
           ...swcConfig.jsc?.transform?.react,
-          runtime: reactRuntimeConfig.runtime,
-          importSource: reactRuntimeConfig.importSource,
+          runtime:
+            reactRuntimeConfig.runtime ??
+            swcConfig.jsc?.transform?.react?.runtime ??
+            'automatic',
+          importSource:
+            reactRuntimeConfig.importSource ??
+            swcConfig.jsc?.transform?.react?.importSource ??
+            'react',
         },
       },
     },

@@ -175,6 +175,90 @@ describe('swc transforms support detection', () => {
       );
     });
 
+    it('should apply default react transform when plugin has no react transform options', () => {
+      const inputConfig: SwcLoaderOptions = {
+        jsc: {
+          transform: { react: {} },
+        },
+      };
+      const { swcConfig } = getSupportedSwcCustomTransforms(
+        [['transform-react-jsx', {}]],
+        inputConfig
+      );
+
+      expect(swcConfig.jsc?.transform?.react).toEqual({
+        runtime: 'automatic',
+        importSource: 'react',
+      });
+    });
+
+    it('should preserve existing react transform config when plugin has none', () => {
+      const inputConfig: SwcLoaderOptions = {
+        jsc: {
+          transform: {
+            react: { runtime: 'automatic', importSource: 'nativewind' },
+          },
+        },
+      };
+      const { swcConfig } = getSupportedSwcCustomTransforms(
+        [['transform-react-jsx', {}]],
+        inputConfig
+      );
+
+      expect(swcConfig.jsc?.transform?.react).toEqual({
+        runtime: 'automatic',
+        importSource: 'nativewind',
+      });
+    });
+
+    it('should use plugin importSource option for react transform', () => {
+      const inputConfig: SwcLoaderOptions = {
+        jsc: {
+          transform: {
+            react: {},
+          },
+        },
+      };
+      const { swcConfig } = getSupportedSwcCustomTransforms(
+        [
+          [
+            'transform-react-jsx',
+            { runtime: 'automatic', importSource: 'nativewind' },
+          ],
+        ],
+        inputConfig
+      );
+
+      expect(swcConfig.jsc?.transform?.react).toEqual({
+        runtime: 'automatic',
+        importSource: 'nativewind',
+      });
+    });
+
+    it('should use plugin importSource option for react transform and override existing importSource', () => {
+      const inputConfig: SwcLoaderOptions = {
+        jsc: {
+          transform: {
+            react: { importSource: 'preact' },
+          },
+        },
+      };
+      const { swcConfig } = getSupportedSwcCustomTransforms(
+        [
+          [
+            'transform-react-jsx',
+            { runtime: 'automatic', importSource: 'nativewind' },
+          ],
+        ],
+        inputConfig
+      );
+
+      expect(swcConfig.jsc?.transform?.react).toEqual({
+        runtime: 'automatic',
+        importSource: 'nativewind',
+      });
+    });
+
     it('configures modules commonjs options based on provided config (snapshot)', () => {
       const inputConfig: SwcLoaderOptions = {};
       const { swcConfig } = getSupportedSwcCustomTransforms(
