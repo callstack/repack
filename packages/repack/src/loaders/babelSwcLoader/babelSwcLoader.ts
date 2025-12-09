@@ -55,6 +55,41 @@ export function partitionTransforms(
   return { includedSwcTransforms, supportedSwcTransforms, swcConfig };
 }
 
+export interface BuildFinalSwcConfigOptions {
+  swcConfig: SwcLoaderOptions;
+  includedSwcTransforms: string[];
+  lazyImports: boolean | string[];
+  sourceType: 'module' | 'script' | undefined;
+}
+
+export function buildFinalSwcConfig(
+  options: BuildFinalSwcConfigOptions
+): SwcLoaderOptions {
+  const { swcConfig, includedSwcTransforms, lazyImports, sourceType } = options;
+  return {
+    ...swcConfig,
+    // set env based on babel transforms
+    env: {
+      // node supports everything and does not include
+      // any transforms by default, so it can as a template
+      targets: { node: 24 },
+      include: includedSwcTransforms,
+    },
+    // set lazy imports based on loader options
+    module: {
+      ...swcConfig.module,
+      lazy: lazyImports,
+      // if type is not set, this means that we are not using
+      // transform-modules-commonjs babel plugin, which can be disabled
+      // in babel config through `disableImportExportTransform` option in the RN preset
+      // we use 'es6' as a fallback here to achieve the desired behaviour of
+      // keeping ES modules as they are found in the source code
+      type: swcConfig.module?.type ?? 'es6',
+    },
+    isModule: sourceType === 'module',
+  };
+}
+
 export default async function babelSwcLoader(
   this: LoaderContext<BabelSwcLoaderOptions>,
   source: string,
@@ -118,28 +153,12 @@ export default async function babelSwcLoader(
       hermesParserOverrides: options.hermesParserOverrides,
     });
 
-    const finalSwcConfig: SwcLoaderOptions = {
-      ...swcConfig,
-      // set env based on babel transforms
-      env: {
-        // node supports everything and does not include
-        // any transforms by default, so it can as a template
-        targets: { node: 24 },
-        include: includedSwcTransforms,
-      },
-      // set lazy imports based on loader options
-      module: {
-        ...swcConfig.module,
-        lazy: lazyImports,
-        // if type is not set, this means that we are not using
-        // transform-modules-commonjs babel plugin, which can be disabled
-        // in babel config through `disableImportExportTransform` option in the RN preset
-        // we use 'es6' as a fallback here to achieve the desired behaviour of
-        // keeping ES modules as they are found in the source code
-        type: swcConfig.module?.type ?? 'es6',
-      },
-      isModule: babelResult.sourceType === 'module',
-    };
+    const finalSwcConfig = buildFinalSwcConfig({
+      swcConfig,
+      includedSwcTransforms,
+      lazyImports,
+      sourceType: babelResult.sourceType,
+    });
 
     const swcResult = swc.transformSync(babelResult?.code!, {
       ...finalSwcConfig,

@@ -1,4 +1,4 @@
-import { partitionTransforms } from '../babelSwcLoader.js';
+import { buildFinalSwcConfig, partitionTransforms } from '../babelSwcLoader.js';
 
 type TransformEntry = [string, Record<string, any> | undefined];
 
@@ -65,25 +65,28 @@ describe('partitionTransforms', () => {
 
     expect(result).toMatchSnapshot('empty arrays');
   });
+});
 
-  it('sets swcConfig.module.type to commonjs when transform-modules-commonjs is present', () => {
-    const transforms: TransformEntry[] = [
-      ['transform-modules-commonjs', { strict: true }],
-    ];
+describe('buildFinalSwcConfig', () => {
+  it('uses module.type from swcConfig when transform-modules-commonjs is present', () => {
+    const result = buildFinalSwcConfig({
+      swcConfig: { module: { type: 'commonjs' } },
+      includedSwcTransforms: [],
+      lazyImports: false,
+      sourceType: 'module',
+    });
 
-    const { swcConfig } = partitionTransforms('/virtual/file.js', transforms);
-
-    expect(swcConfig.module?.type).toBe('commonjs');
+    expect(result.module?.type).toBe('commonjs');
   });
 
-  it('leaves swcConfig.module.type undefined when transform-modules-commonjs is not present', () => {
-    const transforms: TransformEntry[] = [
-      ['transform-block-scoping', {}],
-      ['transform-react-jsx', {}],
-    ];
+  it('falls back to es6 module.type when transform-modules-commonjs is not present', () => {
+    const result = buildFinalSwcConfig({
+      swcConfig: {},
+      includedSwcTransforms: [],
+      lazyImports: false,
+      sourceType: 'module',
+    });
 
-    const { swcConfig } = partitionTransforms('/virtual/file.js', transforms);
-
-    expect(swcConfig.module?.type).toBeUndefined();
+    expect(result.module?.type).toBe('es6');
   });
 });
