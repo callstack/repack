@@ -65,4 +65,25 @@ describe('partitionTransforms', () => {
 
     expect(result).toMatchSnapshot('empty arrays');
   });
+
+  it('sets swcConfig.module.type to commonjs when transform-modules-commonjs is present', () => {
+    const transforms: TransformEntry[] = [
+      ['transform-modules-commonjs', { strict: true }],
+    ];
+
+    const { swcConfig } = partitionTransforms('/virtual/file.js', transforms);
+
+    expect(swcConfig.module?.type).toBe('commonjs');
+  });
+
+  it('leaves swcConfig.module.type undefined when transform-modules-commonjs is not present', () => {
+    const transforms: TransformEntry[] = [
+      ['transform-block-scoping', {}],
+      ['transform-react-jsx', {}],
+    ];
+
+    const { swcConfig } = partitionTransforms('/virtual/file.js', transforms);
+
+    expect(swcConfig.module?.type).toBeUndefined();
+  });
 });
