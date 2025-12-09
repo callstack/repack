@@ -131,7 +131,12 @@ export default async function babelSwcLoader(
       module: {
         ...swcConfig.module,
         lazy: lazyImports,
-        type: swcConfig.module!.type,
+        // if type is not set, this means that we are not using
+        // transform-modules-commonjs babel plugin, which can be disabled
+        // in babel config through `disableImportExportTransform` option in the RN preset
+        // we use 'es6' as a fallback here to achieve the desired behaviour of
+        // keeping ES modules as they are found in the source code
+        type: swcConfig.module?.type ?? 'es6',
       },
       isModule: babelResult.sourceType === 'module',
     };
