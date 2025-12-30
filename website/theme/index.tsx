@@ -1,10 +1,10 @@
-import { PrevNextPage, VersionBadge } from '@callstack/rspress-theme';
+import { VersionBadge } from '@callstack/rspress-theme';
 import { NoSSR } from '@rspress/core/runtime';
 import {
   CodeBlockRuntime,
   Link,
   Layout as RspressLayout,
-} from '@rspress/core/theme';
+} from '@rspress/core/theme-original';
 
 const OldVersionAnnouncement = ({ version, latestVersion }) => (
   <div className="py-2 px-4 flex flex-col sm:flex-row items-center justify-center bg-amber-50 text-amber-900 border-b border-amber-200 text-sm">
@@ -52,12 +52,4 @@ export const CodeBlock = ({ children, language, title }) => {
   return <CodeBlockRuntime lang={language} title={title} code={children} />;
 };
 
-/* omit rendering for edge cases */
-const CustomPrevNextPage = (props) => {
-  if (!props.text) return null;
-  return <PrevNextPage {...props} />;
-};
-
-export { CustomPrevNextPage as PrevNextPage };
-
-export * from '@rspress/core/theme';
+export * from '@rspress/core/theme-original';
