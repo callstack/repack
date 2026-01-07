@@ -1,5 +1,5 @@
 import { Tab, Tabs } from '@theme';
-import { CodeBlock } from '@theme';
+import { CodeBlockRuntime } from '@theme';
 import RspackCJSTemplate from '../../../../../templates/rspack.config.cjs?raw';
 import RspackESMTemplate from '../../../../../templates/rspack.config.mjs?raw';
 import WebpackCJSTemplate from '../../../../../templates/webpack.config.cjs?raw';
@@ -36,24 +36,16 @@ These templates provide sensible defaults and common configurations for both Rsp
 
 <Tabs>
   <Tab label="Rspack ESM">
-    <CodeBlock language="js" title="rspack.config.mjs">
-      {RspackESMTemplate}
-    </CodeBlock>
+    <CodeBlockRuntime lang="js" title="rspack.config.mjs" code={RspackESMTemplate} />
   </Tab>
   <Tab label="Rspack CJS">
-    <CodeBlock language="js" title="rspack.config.cjs">
-      {RspackCJSTemplate}
-    </CodeBlock>
+    <CodeBlockRuntime lang="js" title="rspack.config.cjs" code={RspackCJSTemplate} />
   </Tab>
   <Tab label="webpack ESM">
-    <CodeBlock language="js" title="webpack.config.mjs">
-      {WebpackESMTemplate}
-    </CodeBlock>
+    <CodeBlockRuntime lang="js" title="webpack.config.mjs" code={WebpackESMTemplate} />
   </Tab>
   <Tab label="webpack CJS">
-    <CodeBlock language="js" title="webpack.config.cjs">
-      {WebpackCJSTemplate}
-    </CodeBlock>
+    <CodeBlockRuntime lang="js" title="webpack.config.cjs" code={WebpackCJSTemplate} />
   </Tab>
 </Tabs>
 
@@ -240,7 +232,7 @@ These are the base defaults that Re.Pack provides regardless of the command bein
 
 <Tabs>
   <Tab label="Rspack">
-    <CodeBlock language="js">{`{
+    <CodeBlockRuntime lang="js" code={`{
     devtool: "source-map",
     experiments: {
       parallelLoader: true,
@@ -256,10 +248,10 @@ These are the base defaults that Re.Pack provides regardless of the command bein
     optimization: {
       chunkIds: "named",
     },
-}`}</CodeBlock>
+}`} />
   </Tab>
   <Tab label="webpack">
-    <CodeBlock language="js">{`{
+    <CodeBlockRuntime lang="js" code={`{
     devtool: "source-map",
     output: {
       clean: true,
@@ -272,7 +264,7 @@ These are the base defaults that Re.Pack provides regardless of the command bein
     optimization: {
       chunkIds: "named",
     },
-}`}</CodeBlock>
+}`} />
   </Tab>
 </Tabs>
 

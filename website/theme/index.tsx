@@ -1,10 +1,6 @@
 import { VersionBadge } from '@callstack/rspress-theme';
 import { NoSSR } from '@rspress/core/runtime';
-import {
-  CodeBlockRuntime,
-  Link,
-  Layout as RspressLayout,
-} from '@rspress/core/theme-original';
+import { Link, Layout as RspressLayout } from '@rspress/core/theme-original';
 
 const OldVersionAnnouncement = ({ version, latestVersion }) => (
   <div className="py-2 px-4 flex flex-col sm:flex-row items-center justify-center bg-amber-50 text-amber-900 border-b border-amber-200 text-sm">
@@ -45,11 +41,5 @@ const Layout = () => (
 );
 
 export { Layout };
-
-/* expose internal CodeBlock component */
-export const CodeBlock = ({ children, language, title }) => {
-  // @ts-ignore
-  return <CodeBlockRuntime lang={language} title={title} code={children} />;
-};
 
 export * from '@rspress/core/theme-original';
