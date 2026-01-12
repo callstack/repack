@@ -282,3 +282,7 @@ ScriptManager.shared.hooks.errorLoad(async (args) => {
   return false;
 });
 ```
+
+## Related
+
+- [Script](/api/runtime/script) - Utility class for generating script URLs used with resolvers
