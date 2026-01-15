@@ -1,5 +1,5 @@
 import { PackageManagerTabs, Steps, Tabs, Tab } from '@theme';
-import { CodeBlock } from '@theme';
+import { CodeBlockRuntime } from '@theme';
 import RspackCJSTemplate from '../../../../../templates/rspack.config.cjs?raw';
 import RspackESMTemplate from '../../../../../templates/rspack.config.mjs?raw';
 import WebpackCJSTemplate from '../../../../../templates/webpack.config.cjs?raw';
@@ -56,24 +56,17 @@ Pick one of the templates below and create configuration file in the root direct
 
 <Tabs>
   <Tab label="Rspack ESM">
-    <CodeBlock language="js" title="rspack.config.mjs">
+    <CodeBlockRuntime lang="js" title="rspack.config.mjs" code={RspackESMTemplate} />
       {RspackESMTemplate}
-    </CodeBlock>
   </Tab>
   <Tab label="Rspack CJS">
-    <CodeBlock language="js" title="rspack.config.cjs">
-      {RspackCJSTemplate}
-    </CodeBlock>
+    <CodeBlockRuntime lang="js" title="rspack.config.cjs" code={RspackCJSTemplate} />
   </Tab>
   <Tab label="webpack ESM">
-    <CodeBlock language="js" title="webpack.config.mjs">
-      {WebpackESMTemplate}
-    </CodeBlock>
+    <CodeBlockRuntime lang="js" title="webpack.config.mjs" code={WebpackESMTemplate} />
   </Tab>
   <Tab label="webpack CJS">
-    <CodeBlock language="js" title="webpack.config.cjs">
-      {WebpackCJSTemplate}
-    </CodeBlock>
+    <CodeBlockRuntime lang="js" title="webpack.config.cjs" code={WebpackCJSTemplate} />
   </Tab>
 </Tabs>
 
