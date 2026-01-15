@@ -6,16 +6,14 @@
     "node": ">=20"
   },
   "scripts": {
-    "start": "rspress dev",
-    "export": "rspress build",
-    "preview": "rspress preview",
-    "diff:v3-v4:cjs": "git diff @callstack/repack@3.0.0:templates/webpack.config.cjs HEAD:templates/webpack.config.cjs > src/public/diffs/repack_v3-v4_cjs.diff",
-    "diff:v3-v4:mjs": "git diff @callstack/repack@3.0.0:templates/webpack.config.mjs HEAD:templates/webpack.config.mjs > src/public/diffs/repack_v3-v4_mjs.diff"
+    "dev": "rspress dev",
+    "build": "rspress build",
+    "preview": "rspress preview"
   },
   "dependencies": {
-    "@callstack/rspress-preset": "^0.5.0",
-    "@callstack/rspress-theme": "^0.5.0",
-    "@rspress/core": "2.0.0-rc.2"
+    "@callstack/rspress-preset": "^0.5.1",
+    "@callstack/rspress-theme": "^0.5.1",
+    "@rspress/core": "2.0.0-rc.4"
   },
   "devDependencies": {
     "@types/node": "catalog:",

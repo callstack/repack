@@ -783,14 +783,14 @@ importers:
   website:
     dependencies:
       '@callstack/rspress-preset':
-        specifier: ^0.5.0
-        version: 0.5.0(@rsbuild/core@1.6.15)(@rspress/core@2.0.0-rc.2(@types/react@18.3.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^0.5.1
+        version: 0.5.1(@rsbuild/core@1.6.15)(@rspress/core@2.0.0-rc.4(@types/react@18.3.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@callstack/rspress-theme':
-        specifier: ^0.5.0
-        version: 0.5.0(@rspress/core@2.0.0-rc.2(@types/react@18.3.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^0.5.1
+        version: 0.5.1(@rspress/core@2.0.0-rc.4(@types/react@18.3.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@rspress/core':
-        specifier: 2.0.0-rc.2
-        version: 2.0.0-rc.2(@types/react@18.3.3)
+        specifier: 2.0.0-rc.4
+        version: 2.0.0-rc.4(@types/react@18.3.3)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1616,15 +1616,15 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@callstack/rspress-preset@0.5.0':
-    resolution: {integrity: sha512-c5Kkqq+BUWYge1EoHLwYSG0MShExzVUZPuZfnSbdPgONDSiPEbdRWUAQ2aOy3ggSZOpCF3Rj41e+jvuJNcYXIQ==}
+  '@callstack/rspress-preset@0.5.1':
+    resolution: {integrity: sha512-AlfWFAClrcwtZNXU1fXrPgnoaIazIJX9Uz8oTd4bUqms4BUEq7Lb/n27JoLdQxZ1RzhXc3APTK12eEAT6DBdwg==}
     peerDependencies:
-      '@rspress/core': 2.0.0-rc.3
+      '@rspress/core': 2.0.0-rc.4
 
-  '@callstack/rspress-theme@0.5.0':
-    resolution: {integrity: sha512-is33Rab0PU3d+lmIzc8ZypOUDiftkgh6NFcMbWf8+deAYJ3hT93vswL2AjISnOhojH40jK+ZvG6Ktmt2w4peug==}
+  '@callstack/rspress-theme@0.5.1':
+    resolution: {integrity: sha512-p8iS0icR9JbAvYWKOeglxfnJwwCATEpItjDoFW5srTYNFw4swVD1Aahox8Fv89l+wHLTzADokmC8iqqG8jnvqg==}
     peerDependencies:
-      '@rspress/core': ^2.0.0-rc.3
+      '@rspress/core': ^2.0.0-rc.4
       react: ^19.2.0
       react-dom: ^19.2.0
 
@@ -3005,9 +3005,9 @@ packages:
       webpack-hot-middleware:
         optional: true
 
-  '@rspress/core@2.0.0-rc.2':
-    resolution: {integrity: sha512-gs33kIrkYKHk3y1ytPfoHPpgp2ifXdS67sPEeB/lrCI6ad2wcGuXYcchic0WPzUZO9bKqje4z3jJxqEafBmgBg==}
-    engines: {node: '>=18.0.0'}
+  '@rspress/core@2.0.0-rc.4':
+    resolution: {integrity: sha512-EHJjbc8yA/La6sJN3bjZus24KhSCdh5lEIVtjt7EBEnLteDN+wULzO1sFKj8agH3BXYE0XOuz2W1HbTTGfcGJQ==}
+    engines: {node: '>=20.9.0'}
     hasBin: true
 
   '@rspress/mdx-rs-darwin-arm64@0.6.6':
@@ -3062,24 +3062,24 @@ packages:
     resolution: {integrity: sha512-NpNhTKBIlV3O6ADhoZkgHvBFvXMW2TYlIWmIT1ysJESUBqDpaN9H3Teve5fugjU2pQ2ORBZO6SQGKliMw/8m/Q==}
     engines: {node: '>= 10'}
 
-  '@rspress/plugin-llms@2.0.0-rc.3':
-    resolution: {integrity: sha512-qvTLbBP9WBu6wYlyzwDzw4r6zb9ABI2+qLmu0HG+RZnZPTQw5Jl1li7c0oJXH84NX3578e82Y+NYbNEcyQydgA==}
-    engines: {node: '>=18.0.0'}
+  '@rspress/plugin-llms@2.0.0-rc.4':
+    resolution: {integrity: sha512-PSG8JOO2EOqCeViif48puAeiP2pBhe//v0sC8dm9wGmQsrq8xbx2rH1aiQElZIwcoximqukzHavrU6O3qPW2NA==}
+    engines: {node: '>=20.9.0'}
     peerDependencies:
-      '@rspress/core': ^2.0.0-rc.3
+      '@rspress/core': ^2.0.0-rc.4
 
-  '@rspress/plugin-sitemap@2.0.0-rc.3':
-    resolution: {integrity: sha512-QUoeeWPLI/r8BPPf7smT3VxWR718wyMJutjvhRXyxCWtUtLwEvDKAlk2WFi5ZAkte2D3otNIGWqkpgeT8tEmpw==}
-    engines: {node: '>=18.0.0'}
+  '@rspress/plugin-sitemap@2.0.0-rc.4':
+    resolution: {integrity: sha512-sr900krxs9ZVfbV+b/ig7t8mAPaMOonWz2Qj9zXg4TgEgnh+LnNtHQpHYeFbiTF5WAozVxdu5lJ1E36oh231pQ==}
+    engines: {node: '>=20.9.0'}
     peerDependencies:
-      '@rspress/core': ^2.0.0-rc.3
+      '@rspress/core': ^2.0.0-rc.4
 
-  '@rspress/runtime@2.0.0-rc.2':
-    resolution: {integrity: sha512-DkHvSEzwBrL9mLv5DGBk3oKFkMgpRtNhV0I2TfutlEerqKiq4WloFt6NXKkyhGsHU78DdtBVUgsZvXQKVQ6PHg==}
-    engines: {node: '>=18.0.0'}
+  '@rspress/runtime@2.0.0-rc.4':
+    resolution: {integrity: sha512-BcNs6zpIXcWfhXGCDS525HDwSgLXO+S+q2Ty6sQPmyYJzOg+V9tHIlulKTOfuBCyEhTZeTAJofP4+rG4EZBUgw==}
+    engines: {node: '>=20.9.0'}
 
-  '@rspress/shared@2.0.0-rc.2':
-    resolution: {integrity: sha512-CnU/ok1/tJHYqB3wf9mk7/YDNzfiQK7LHX1cWyqbWD6cdAdl+S9QVUKRossqGDgD1YdaKTaFsNpsK1c43XmIuw==}
+  '@rspress/shared@2.0.0-rc.4':
+    resolution: {integrity: sha512-46jTwxV8SRLMbe3euCEMWQudmdYE2Tf+EN/5l6EP10i6QICOXMIzUFFWfr0LOTr4aZCSTSJu7Tp6Xxml6JbheA==}
 
   '@sec-ant/readable-stream@0.4.1':
     resolution: {integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==}
@@ -9073,12 +9073,12 @@ snapshots:
   '@biomejs/cli-win32-x64@1.9.4':
     optional: true
 
-  '@callstack/rspress-preset@0.5.0(@rsbuild/core@1.6.15)(@rspress/core@2.0.0-rc.2(@types/react@18.3.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@callstack/rspress-preset@0.5.1(@rsbuild/core@1.6.15)(@rspress/core@2.0.0-rc.4(@types/react@18.3.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@callstack/rspress-theme': 0.5.0(@rspress/core@2.0.0-rc.2(@types/react@18.3.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@rspress/core': 2.0.0-rc.2(@types/react@18.3.3)
-      '@rspress/plugin-llms': 2.0.0-rc.3(@rspress/core@2.0.0-rc.2(@types/react@18.3.3))
-      '@rspress/plugin-sitemap': 2.0.0-rc.3(@rspress/core@2.0.0-rc.2(@types/react@18.3.3))
+      '@callstack/rspress-theme': 0.5.1(@rspress/core@2.0.0-rc.4(@types/react@18.3.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@rspress/core': 2.0.0-rc.4(@types/react@18.3.3)
+      '@rspress/plugin-llms': 2.0.0-rc.4(@rspress/core@2.0.0-rc.4(@types/react@18.3.3))
+      '@rspress/plugin-sitemap': 2.0.0-rc.4(@rspress/core@2.0.0-rc.4(@types/react@18.3.3))
       '@vercel/analytics': 1.5.0(react@19.2.3)
       rsbuild-plugin-open-graph: 1.0.2(@rsbuild/core@1.6.15)
       zod: 3.25.76
@@ -9094,9 +9094,9 @@ snapshots:
       - vue
       - vue-router
 
-  '@callstack/rspress-theme@0.5.0(@rspress/core@2.0.0-rc.2(@types/react@18.3.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@callstack/rspress-theme@0.5.1(@rspress/core@2.0.0-rc.4(@types/react@18.3.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@rspress/core': 2.0.0-rc.2(@types/react@18.3.3)
+      '@rspress/core': 2.0.0-rc.4(@types/react@18.3.3)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
@@ -11046,15 +11046,15 @@ snapshots:
       html-entities: 2.6.0
       react-refresh: 0.18.0
 
-  '@rspress/core@2.0.0-rc.2(@types/react@18.3.3)':
+  '@rspress/core@2.0.0-rc.4(@types/react@18.3.3)':
     dependencies:
       '@mdx-js/mdx': 3.1.1
       '@mdx-js/react': 3.1.1(@types/react@18.3.3)(react@19.2.3)
       '@rsbuild/core': 1.6.15
       '@rsbuild/plugin-react': 1.4.2(@rsbuild/core@1.6.15)
       '@rspress/mdx-rs': 0.6.6
-      '@rspress/runtime': 2.0.0-rc.2
-      '@rspress/shared': 2.0.0-rc.2
+      '@rspress/runtime': 2.0.0-rc.4
+      '@rspress/shared': 2.0.0-rc.4
       '@shikijs/rehype': 3.20.0
       '@types/unist': 3.0.3
       '@unhead/react': 2.0.19(react@19.2.3)
@@ -11131,9 +11131,9 @@ snapshots:
       '@rspress/mdx-rs-win32-arm64-msvc': 0.6.6
       '@rspress/mdx-rs-win32-x64-msvc': 0.6.6
 
-  '@rspress/plugin-llms@2.0.0-rc.3(@rspress/core@2.0.0-rc.2(@types/react@18.3.3))':
+  '@rspress/plugin-llms@2.0.0-rc.4(@rspress/core@2.0.0-rc.4(@types/react@18.3.3))':
     dependencies:
-      '@rspress/core': 2.0.0-rc.2(@types/react@18.3.3)
+      '@rspress/core': 2.0.0-rc.4(@types/react@18.3.3)
       remark-mdx: 3.1.1
       remark-parse: 11.0.0
       remark-stringify: 11.0.0
@@ -11142,19 +11142,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@rspress/plugin-sitemap@2.0.0-rc.3(@rspress/core@2.0.0-rc.2(@types/react@18.3.3))':
+  '@rspress/plugin-sitemap@2.0.0-rc.4(@rspress/core@2.0.0-rc.4(@types/react@18.3.3))':
     dependencies:
-      '@rspress/core': 2.0.0-rc.2(@types/react@18.3.3)
+      '@rspress/core': 2.0.0-rc.4(@types/react@18.3.3)
 
-  '@rspress/runtime@2.0.0-rc.2':
+  '@rspress/runtime@2.0.0-rc.4':
     dependencies:
-      '@rspress/shared': 2.0.0-rc.2
+      '@rspress/shared': 2.0.0-rc.4
       '@unhead/react': 2.0.19(react@19.2.3)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       react-router-dom: 7.11.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
 
-  '@rspress/shared@2.0.0-rc.2':
+  '@rspress/shared@2.0.0-rc.4':
     dependencies:
       '@rsbuild/core': 1.6.15
       '@shikijs/rehype': 3.20.0
