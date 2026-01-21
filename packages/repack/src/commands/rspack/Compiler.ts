@@ -278,6 +278,9 @@ export class Compiler {
       this.requestedPlatforms.add(platform);
       const entries = this.lazyEntries.get(platform);
       if (entries && this.watching) {
+        // Clear stub assets and mark compilation in progress before invalidation
+        delete this.assetsCache[platform];
+        this.isCompilationInProgress = true;
         this.watching.invalidateWithChangesAndRemovals(entries, undefined);
       }
     }
