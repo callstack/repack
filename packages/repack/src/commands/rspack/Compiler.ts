@@ -13,7 +13,7 @@ import type { Reporter } from '../../logging/types.js';
 import type { HMRMessage } from '../../types.js';
 import { runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
-import type { CompilerAsset } from './types.js';
+import type { CompilerAsset, MultiWatching } from './types.js';
 
 export class Compiler {
   compiler: MultiCompiler;
@@ -27,12 +27,20 @@ export class Compiler {
   // late-init
   devServerContext!: Server.DelegateContext;
 
+  // Lazy compilation state
+  private watching: MultiWatching | null = null;
+  private requestedPlatforms = new Set<string>();
+  private lazyEntries = new Map<string, Set<string>>();
+
   constructor(
     configs: MultiRspackOptions,
     private reporter: Reporter,
     private rootDir: string
   ) {
     const handler = (platform: string, value: number) => {
+      // Skip progress for platforms not yet requested (lazy compilation)
+      if (!this.requestedPlatforms.has(platform)) return;
+
       const percentage = Math.floor(value * 100);
       this.progressSenders[platform]?.forEach((sendProgress) => {
         sendProgress({ completed: percentage, total: 100 });
@@ -97,6 +105,9 @@ export class Compiler {
     this.compiler.hooks.watchRun.tap('repack:watch', () => {
       this.isCompilationInProgress = true;
       this.platforms.forEach((platform) => {
+        // Skip notifications for platforms not yet requested (lazy compilation)
+        if (!this.requestedPlatforms.has(platform)) return;
+
         if (platform === 'android') {
           void runAdbReverse({
             port: this.devServerContext.options.port,
@@ -114,6 +125,9 @@ export class Compiler {
     this.compiler.hooks.invalid.tap('repack:invalid', () => {
       this.isCompilationInProgress = true;
       this.platforms.forEach((platform) => {
+        // Skip notifications for platforms not yet requested (lazy compilation)
+        if (!this.requestedPlatforms.has(platform)) return;
+
         this.devServerContext.notifyBuildStart(platform);
         this.devServerContext.broadcastToHmrClients<HMRMessage>({
           action: 'compiling',
@@ -137,10 +151,14 @@ export class Compiler {
       try {
         stats.children!.map((childStats) => {
           const platform = childStats.name!;
-          this.devServerContext.broadcastToHmrClients<HMRMessage>({
-            action: 'hash',
-            body: { name: platform, hash: childStats.hash },
-          });
+
+          // Only broadcast HMR hash for requested platforms (lazy compilation)
+          if (this.requestedPlatforms.has(platform)) {
+            this.devServerContext.broadcastToHmrClients<HMRMessage>({
+              action: 'hash',
+              body: { name: platform, hash: childStats.hash },
+            });
+          }
 
           this.statsCache[platform] = childStats;
           const assets = childStats.assets!;
@@ -202,6 +220,10 @@ export class Compiler {
         const platform = childStats.name!;
         const time = childStats.time!;
         this.callPendingResolvers(platform);
+
+        // Skip notifications for platforms not yet requested (lazy compilation)
+        if (!this.requestedPlatforms.has(platform)) return;
+
         this.devServerContext.notifyBuildEnd(platform);
         this.devServerContext.broadcastToHmrClients<HMRMessage>({
           action: 'ok',
@@ -215,10 +237,30 @@ export class Compiler {
         });
       });
     });
+
+    // Lazy compilation: intercept module resolution for platforms not yet requested
+    this.compiler.compilers.forEach((childCompiler) => {
+      const platform = childCompiler.name!;
+
+      childCompiler.hooks.thisCompilation.tap(
+        'repack:lazy',
+        (_, { normalModuleFactory }) => {
+          normalModuleFactory.hooks.afterResolve.tap('repack:lazy', (data) => {
+            if (!this.requestedPlatforms.has(platform)) {
+              const resolvedPath = path.resolve(data.context, data.request);
+              const entries = this.lazyEntries.get(platform) ?? new Set();
+              entries.add(resolvedPath);
+              this.lazyEntries.set(platform, entries);
+              data.createData!.request = '/* lazy compilation placeholder */';
+            }
+          });
+        }
+      );
+    });
   }
 
   start() {
-    this.compiler.watch(this.watchOptions, (error) => {
+    this.watching = this.compiler.watch(this.watchOptions, (error) => {
       if (!error) return;
       this.platforms.forEach((platform) => {
         this.callPendingResolvers(platform, error);
@@ -231,6 +273,15 @@ export class Compiler {
     platform: string,
     sendProgress?: SendProgress
   ): Promise<CompilerAsset> {
+    // Trigger lazy compilation for platform on first request
+    if (!this.requestedPlatforms.has(platform)) {
+      this.requestedPlatforms.add(platform);
+      const entries = this.lazyEntries.get(platform);
+      if (entries && this.watching) {
+        this.watching.invalidateWithChangesAndRemovals(entries, undefined);
+      }
+    }
+
     // Return file from assetsCache if exists
     const fileFromCache = this.assetsCache[platform]?.[filename];
     if (fileFromCache) {
