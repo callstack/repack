@@ -1,6 +1,6 @@
 PODS:
   - boost (1.84.0)
-  - callstack-repack (5.2.2):
+  - callstack-repack (5.2.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -2930,7 +2930,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
-  callstack-repack: c874fe60c49dcf3067bca0627b7ace673589737c
+  callstack-repack: 15b29626cee2b659cd3f9afa4e8c33b1d42f5c59
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   fast_float: b32c788ed9c6a8c584d114d0047beda9664e7cc6
   FBLazyVector: a867936a67af0d09c37935a1b900a1a3c795b6d1
