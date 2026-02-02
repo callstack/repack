@@ -1,4 +1,5 @@
 [
+  "module-resolution",
   "code-splitting",
   "module-federation",
   "dev-server",
