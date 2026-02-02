@@ -6,6 +6,7 @@ import { HermesBytecodePlugin } from '../HermesBytecodePlugin/index.js';
 jest.mock('node:fs', () => ({
   __esModule: true,
   default: {
+    existsSync: jest.fn(),
     promises: {
       access: jest.fn(),
       rename: jest.fn(),
