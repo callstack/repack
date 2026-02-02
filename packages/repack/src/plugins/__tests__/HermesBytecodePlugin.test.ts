@@ -1,7 +1,9 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import { type Compiler, ModuleFilenameHelpers } from '@rspack/core';
 import execa from 'execa';
 import { HermesBytecodePlugin } from '../HermesBytecodePlugin/index.js';
+import { getHermesCLIPath } from '../HermesBytecodePlugin/utils/getHermesCLIPath.js';
 
 jest.mock('node:fs', () => ({
   __esModule: true,
@@ -141,6 +143,32 @@ describe('HermesBytecodePlugin', () => {
       );
       expect(execaMock).toHaveBeenCalledTimes(1);
       expect(execaMock.mock.calls[0][0]).toEqual('path/to/hermesc');
+    });
+  });
+
+  describe('getHermesCLIPath', () => {
+    const reactNativePath = 'path/to/react-native';
+
+    it('returns new hermes-compiler path when it exists', () => {
+      jest.spyOn(os, 'platform').mockReturnValue('darwin');
+      jest.mocked(fs.existsSync).mockReturnValue(true);
+
+      const hermesPath = getHermesCLIPath(reactNativePath);
+
+      expect(hermesPath).toBe(
+        'path/to/hermes-compiler/hermesc/osx-bin/hermesc'
+      );
+    });
+
+    it('falls back to legacy hermesc path when hermes-compiler does not exist', () => {
+      jest.spyOn(os, 'platform').mockReturnValue('darwin');
+      jest.mocked(fs.existsSync).mockReturnValue(false);
+
+      const hermesPath = getHermesCLIPath(reactNativePath);
+
+      expect(hermesPath).toBe(
+        'path/to/react-native/sdks/hermesc/osx-bin/hermesc'
+      );
     });
   });
 });
