@@ -28,7 +28,7 @@ async function testCompile(code: string, expectThrow?: string) {
       entry: 'index.js',
       output: {
         filename: 'index.bundle',
-        path: '/out',
+        path: path.join(tempDir, 'out'),
       },
       plugins: [
         new OutputPlugin({
