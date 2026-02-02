@@ -11,7 +11,7 @@ It can be used to download, manage and execute external (either local or remote)
 ## Usage
 
 ```js
-import { ScriptManager } from "@callstack/repack/client";
+import { Script, ScriptManager } from "@callstack/repack/client";
 
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
   if (__DEV__) {
@@ -45,48 +45,48 @@ export function App({ role }) {
 
 The globally shared instance of `ScriptManager`. You should always use this instead of creating new instances.
 
-- **Type:** `ScriptManager`
+- Type: `ScriptManager`
 
 ### addResolver
 
 Adds a new script locator resolver to handle script resolution.
 
-- **Type:** `addResolver(resolver: ScriptLocatorResolver, options?: ResolverOptions): void`
-- **Parameters:**
+- Type: `addResolver(resolver: ScriptLocatorResolver, options?: ResolverOptions): void`
+- Parameters:
   - `resolver`: Async function that resolves script location data
   - `options`: Configuration options for the resolver
-    - `priority`: Priority of the resolver (default: 2)
+    - `priority`: Priority of the resolver (default: `2`)
     - `key`: Unique key to identify the resolver
 
 ### removeResolver
 
 Removes a previously added resolver.
 
-- **Type:** `removeResolver(resolver: ScriptLocatorResolver | string): boolean`
-- **Parameters:**
+- Type: `removeResolver(resolver: ScriptLocatorResolver | string): boolean`
+- Parameters:
   - `resolver`: The resolver function or its unique key to remove
-- **Returns:** `true` if resolver was found and removed, `false` otherwise
+- Returns: `true` if resolver was found and removed, `false` otherwise
 
 ### removeAllResolvers
 
 Removes all previously added resolvers.
 
-- **Type:** `removeAllResolvers(): void`
+- Type: `removeAllResolvers(): void`
 
 ### setStorage
 
 Sets a storage backend for caching resolved script locator data.
 
-- **Type:** `setStorage(storage: StorageApi): void`
-- **Parameters:**
+- Type: `setStorage(storage: StorageApi): void`
+- Parameters:
   - `storage`: Storage API implementation with `getItem` and `setItem` methods
 
 ### loadScript
 
 Resolves, downloads, and executes a script.
 
-- **Type:** `loadScript(scriptId: string, caller?: string, webpackContext?: any, referenceUrl?: string): Promise<void>`
-- **Parameters:**
+- Type: `loadScript(scriptId: string, caller?: string, webpackContext?: any, referenceUrl?: string): Promise<void>`
+- Parameters:
   - `scriptId`: Id of the script to load
   - `caller`: Name of the calling script (optional)
   - `webpackContext`: Webpack context (optional)
@@ -96,8 +96,8 @@ Resolves, downloads, and executes a script.
 
 Downloads a script without executing it.
 
-- **Type:** `prefetchScript(scriptId: string, caller?: string, webpackContext?: any, referenceUrl?: string): Promise<void>`
-- **Parameters:**
+- Type: `prefetchScript(scriptId: string, caller?: string, webpackContext?: any, referenceUrl?: string): Promise<void>`
+- Parameters:
   - `scriptId`: Id of the script to prefetch
   - `caller`: Name of the calling script (optional)
   - `webpackContext`: Webpack context (optional)
@@ -107,10 +107,10 @@ Downloads a script without executing it.
 
 Clears cache and removes downloaded files for given scripts.
 
-- **Type:** `invalidateScripts(scriptIds?: string[]): Promise<string[]>`
-- **Parameters:**
+- Type: `invalidateScripts(scriptIds?: string[]): Promise<string[]>`
+- Parameters:
   - `scriptIds`: Array of script ids to invalidate (optional)
-- **Returns:** Promise resolving to array of invalidated script ids
+- Returns: Promise resolving to array of invalidated script ids
 
 ## Events
 
