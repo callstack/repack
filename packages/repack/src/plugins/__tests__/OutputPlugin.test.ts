@@ -1,12 +1,68 @@
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 import {
   type EntryNormalized,
   ModuleFilenameHelpers,
   type StatsChunk,
+  rspack,
 } from '@rspack/core';
+import RspackVirtualModulePlugin from 'rspack-plugin-virtual-module';
 import {
   OutputPlugin,
   type OutputPluginConfig,
 } from '../OutputPlugin/index.js';
+
+async function testCompile(code: string, expectThrow?: string) {
+  // Create a temporary directory to write files to.
+  const tempDir = await fs.mkdtemp(
+    path.join(os.tmpdir(), 'output-plugin-test-')
+  );
+
+  // And then run the compiler with the provided code.
+  try {
+    const compiler = rspack({
+      context: tempDir,
+      mode: 'production',
+      devtool: false,
+      entry: 'index.js',
+      output: {
+        filename: 'index.bundle',
+        path: '/out',
+      },
+      plugins: [
+        new OutputPlugin({
+          context: tempDir,
+          platform: 'ios',
+          output: {},
+        }),
+        new RspackVirtualModulePlugin({
+          'index.js': code,
+        }),
+      ],
+    });
+
+    const promise = new Promise<void>((resolve, reject) =>
+      compiler.run((error, _stats) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      })
+    );
+
+    // Depending on whether we expect an error or not, assert accordingly.
+    if (expectThrow) {
+      await expect(promise).rejects.toThrow(expectThrow);
+    } else {
+      await expect(promise).resolves.not.toThrow();
+    }
+  } finally {
+    // Delete the temporary directory after the test
+    await fs.rm(tempDir, { recursive: true, force: true });
+  }
+}
 
 const makeChunk = ({
   name,
@@ -202,6 +258,19 @@ describe('OutputPlugin', () => {
 
         expect(remoteChunks.has(chunks[0])).toBe(true); // chunk2
       });
+    });
+  });
+
+  describe('apply', () => {
+    it('should throw an error when compilation has errors', async () => {
+      await testCompile(
+        'const x = {{{',
+        '[RepackOutputPlugin] Compilation failed:'
+      );
+    });
+
+    it('should complete successfully when compilation succeeds', async () => {
+      await testCompile('const x = {};');
     });
   });
 });
