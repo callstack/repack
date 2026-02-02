@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -20,7 +21,7 @@ const getHermesOSBin = (): string | null => {
 /**
  * Determines the path to the Hermes compiler binary.
  *
- * Defaults to './node_modules/react-native/sdks/hermesc/{os-bin}/hermesc'
+ * Defaults to './node_modules/hermes-compiler/hermesc/{os-bin}/hermesc'
  */
 export const getHermesCLIPath = (reactNativePath: string): string => {
   const osBin = getHermesOSBin();
@@ -32,5 +33,19 @@ export const getHermesCLIPath = (reactNativePath: string): string => {
     );
   }
 
+  const hermesCompilerPath = path.join(
+    reactNativePath,
+    '..',
+    'hermes-compiler',
+    'hermesc',
+    osBin,
+    'hermesc'
+  );
+
+  if (fs.existsSync(hermesCompilerPath)) {
+    return hermesCompilerPath;
+  }
+
+  // Fallback to the previous hermesc path in older react native versions, <0.82.
   return path.join(reactNativePath, 'sdks', 'hermesc', osBin, 'hermesc');
 };
