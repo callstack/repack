@@ -125,42 +125,6 @@ Script.getScriptUniqueId("TeacherModule"); // "TeacherModule"
 Script.getScriptUniqueId("TeacherModule", "host"); // "host_TeacherModule"
 ```
 
-## Complete Example
-
-Here's a complete example showing how to use `Script` methods with `ScriptManager` for a typical code splitting setup:
-
-```js
-import * as React from "react";
-import { Script, ScriptManager } from "@callstack/repack/client";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// Configure storage for caching
-ScriptManager.shared.setStorage(AsyncStorage);
-
-// Add resolver with environment-aware URL generation
-ScriptManager.shared.addResolver(async (scriptId, caller) => {
-  // Development: use dev server
-  if (__DEV__) {
-    return {
-      url: Script.getDevServerURL(scriptId),
-      cache: false,
-    };
-  }
-
-  // Production: use CDN with retry logic
-  return {
-    url: Script.getRemoteURL(`https://mycdn.example/v1/assets/${scriptId}`),
-    retry: 3,
-    retryDelay: 1000,
-    timeout: 10000,
-  };
-});
-
-// Use with React.lazy for code splitting
-const TeacherModule = React.lazy(() => import("./TeacherModule"));
-const StudentModule = React.lazy(() => import("./StudentModule"));
-```
-
 ## Related
 
 - [ScriptManager](/api/runtime/script-manager) - The manager class that uses Script for URL resolution
