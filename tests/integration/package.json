@@ -1,0 +1,20 @@
+{
+  "name": "integration-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@callstack/repack": "workspace:*",
+    "@rspack/core": "catalog:",
+    "@types/node": "catalog:",
+    "memfs": "^4.11.1",
+    "rspack-plugin-virtual-module": "^0.1.2",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "webpack": "catalog:",
+    "webpack-virtual-modules": "^0.6.2"
+  }
+}

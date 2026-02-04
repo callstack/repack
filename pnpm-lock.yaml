@@ -726,6 +726,36 @@ importers:
         specifier: 'catalog:'
         version: 5.100.2(@swc/core@1.13.3)
 
+  tests/integration:
+    devDependencies:
+      '@callstack/repack':
+        specifier: workspace:*
+        version: link:../../packages/repack
+      '@rspack/core':
+        specifier: 'catalog:'
+        version: 1.6.0(@swc/helpers@0.5.18)
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.14.11
+      memfs:
+        specifier: ^4.11.1
+        version: 4.17.0
+      rspack-plugin-virtual-module:
+        specifier: ^0.1.2
+        version: 0.1.13
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 2.0.5(@types/node@20.14.11)(lightningcss@1.28.2)(terser@5.31.3)
+      webpack:
+        specifier: 'catalog:'
+        version: 5.100.2(@swc/core@1.13.3)
+      webpack-virtual-modules:
+        specifier: ^0.6.2
+        version: 0.6.2
+
   tests/metro-compat:
     devDependencies:
       '@callstack/repack':
@@ -7532,10 +7562,6 @@ packages:
   tinygradient@1.1.5:
     resolution: {integrity: sha512-8nIfc2vgQ4TeLnk2lFj4tRLvvJwEfQuabdsmvDdQPT0xlk9TaNtpGd6nNRxXoK6vQhN6RSzj+Cnp5tTQmpxmbw==}
 
-  tinypool@1.0.1:
-    resolution: {integrity: sha512-URZYihUbRPcGv95En+sz6MfghfIc2OJ1sv/RmhWZLouPY0/8Vo80viwPvg3dlaS9fuq7fQMEfgRRK7BBZThBEA==}
-    engines: {node: ^18.0.0 || >=20.0.0}
-
   tinypool@1.1.1:
     resolution: {integrity: sha512-Zba82s87IFq9A9XmjiX5uZA/ARWDrB03OHlq+Vw1fSdt0I+4/Kutwy8BP4Y/y/aORMo61FQ0vIb5j44vSo5Pkg==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -7863,6 +7889,9 @@ packages:
   webpack-sources@3.3.3:
     resolution: {integrity: sha512-yd1RBzSGanHkitROoPFd6qsrxt+oFhg/129YzheDGqeustzX0vTZJZsSsQjVQC4yzBQ56K55XU8gaNCtIzOnTg==}
     engines: {node: '>=10.13.0'}
+
+  webpack-virtual-modules@0.6.2:
+    resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
 
   webpack@5.100.2:
     resolution: {integrity: sha512-QaNKAvGCDRh3wW1dsDjeMdDXwZm2vqq3zn6Pvq4rHOEOGSaUMgOOjG2Y9ZbIGzpfkJk9ZYTHpDqgDfeBDcnLaw==}
@@ -16611,8 +16640,6 @@ snapshots:
       '@types/tinycolor2': 1.4.6
       tinycolor2: 1.6.0
 
-  tinypool@1.0.1: {}
-
   tinypool@1.1.1: {}
 
   tinyrainbow@1.2.0: {}
@@ -16858,7 +16885,7 @@ snapshots:
       pathe: 1.1.2
       std-env: 3.7.0
       tinybench: 2.9.0
-      tinypool: 1.0.1
+      tinypool: 1.1.1
       tinyrainbow: 1.2.0
       vite: 5.4.3(@types/node@20.14.11)(lightningcss@1.28.2)(terser@5.31.3)
       vite-node: 2.0.5(@types/node@20.14.11)(lightningcss@1.28.2)(terser@5.31.3)
@@ -16923,6 +16950,8 @@ snapshots:
       wildcard: 2.0.1
 
   webpack-sources@3.3.3: {}
+
+  webpack-virtual-modules@0.6.2: {}
 
   webpack@5.100.2(@swc/core@1.13.3(@swc/helpers@0.5.17)):
     dependencies:
