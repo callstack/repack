@@ -1,7 +1,12 @@
 {
-  "name": "integration-tests",
+  "name": "integration-test",
+  "version": "0.0.1",
+  "description": "Integration tests for @callstack/repack",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest"

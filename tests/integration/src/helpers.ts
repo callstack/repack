@@ -1,33 +1,43 @@
 import type {
-  rspack as Rspack,
   Compiler as RspackCompiler,
+  Configuration as RspackConfiguration,
 } from '@rspack/core';
 import { Volume, createFsFromVolume } from 'memfs';
-import type { webpack as Webpack, Compiler as WebpackCompiler } from 'webpack';
+import { inject } from 'vitest';
+import type {
+  Compiler as WebpackCompiler,
+  Configuration as WebpackConfiguration,
+} from 'webpack';
 
 export type BundlerType = 'rspack' | 'webpack';
-export type Bundler = typeof Rspack | typeof Webpack;
-export type Compiler = RspackCompiler | WebpackCompiler;
 
-/**
- * Dynamically import the bundler based on type
- */
-export async function getBundler(type: BundlerType): Promise<Bundler> {
-  if (type === 'rspack') {
-    const { rspack } = await import('@rspack/core');
-    return rspack;
-  }
-  const { webpack } = await import('webpack');
-  return webpack;
+type Compiler = RspackCompiler | WebpackCompiler;
+type Configuration = RspackConfiguration | WebpackConfiguration;
+
+function getBundlerType(): BundlerType {
+  return inject('bundlerType');
 }
 
 /**
- * Create a virtual module plugin based on bundler type
+ * Create a compiler instance for the current bundler
+ */
+export async function createCompiler(config: Configuration): Promise<Compiler> {
+  const type = getBundlerType();
+  if (type === 'rspack') {
+    const { rspack } = await import('@rspack/core');
+    return rspack(config as RspackConfiguration);
+  }
+  const { webpack } = await import('webpack');
+  return webpack(config as WebpackConfiguration);
+}
+
+/**
+ * Create a virtual module plugin for the current bundler
  */
 export async function createVirtualModulePlugin(
-  type: BundlerType,
   modules: Record<string, string>
-): Promise<unknown> {
+): Promise<{ apply(compiler: Compiler): void }> {
+  const type = getBundlerType();
   if (type === 'rspack') {
     const { rspack } = await import('@rspack/core');
     return new rspack.experiments.VirtualModulesPlugin(modules);
@@ -38,61 +48,37 @@ export async function createVirtualModulePlugin(
 }
 
 /**
- * Create an output filesystem from a memfs volume
- */
-export function createOutputFileSystem(volume: InstanceType<typeof Volume>) {
-  return createFsFromVolume(volume);
-}
-
-/**
- * Create a memfs volume
- */
-export function createVolume() {
-  return new Volume();
-}
-
-export interface CompileResult {
-  code: string;
-  volume: InstanceType<typeof Volume>;
-}
-
-/**
  * Run compilation and return the result
  */
-export function compile(compiler: Compiler): Promise<CompileResult> {
+export function compile(compiler: Compiler) {
   const volume = new Volume();
   const fileSystem = createFsFromVolume(volume);
 
   // @ts-expect-error memfs is compatible enough with webpack's output filesystem
   compiler.outputFileSystem = fileSystem;
 
-  return new Promise((resolve, reject) => {
-    compiler.run((error, stats) => {
-      if (error) {
-        reject(error);
-        return;
-      }
+  return new Promise<{ code: string; volume: InstanceType<typeof Volume> }>(
+    (resolve, reject) => {
+      compiler.run((error, stats) => {
+        if (error) {
+          reject(error);
+          return;
+        }
 
-      if (stats?.hasErrors()) {
-        reject(new Error(stats.toString({ errors: true })));
-        return;
-      }
+        if (stats?.hasErrors()) {
+          reject(new Error(stats.toString({ errors: true })));
+          return;
+        }
 
-      const code = fileSystem.readFileSync('/out/main.js', 'utf-8') as string;
-      resolve({ code, volume });
-    });
-  });
+        const code = fileSystem.readFileSync('/out/main.js', 'utf-8') as string;
+        resolve({ code, volume });
+      });
+    }
+  );
 }
 
 /**
- * Get the path to the assets loader from the built repack package
- */
-export function getAssetsLoaderPath(): string {
-  return require.resolve('@callstack/repack/assets-loader');
-}
-
-/**
- * Standard virtual modules for React Native mocking
+ * Virtual modules for mocking React Native in tests
  */
 export function getReactNativeVirtualModules(
   pixelRatio = 1
