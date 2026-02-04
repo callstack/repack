@@ -104,6 +104,8 @@ declare var __webpack_hash__: string;
 declare var __repack__: RepackRuntimeGlobals.RepackRuntimeObject;
 declare var __webpack_require__: RepackRuntimeGlobals.WebpackRequire;
 
-declare interface NodeModule {
-  hot?: RepackRuntimeGlobals.HotApi;
+declare namespace NodeJS {
+  interface Module {
+    hot?: RepackRuntimeGlobals.HotApi;
+  }
 }
