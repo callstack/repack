@@ -14,7 +14,7 @@ catalog:
   "webpack": ^5.99.9
   "react": "19.1.0"
   "react-native": "0.81.0"
-  "vitest": ^2.0.5
+  "vitest": ^4.0.18
 
 catalogs:
   testers:
