@@ -11,7 +11,6 @@
     "@rspack/core": "catalog:",
     "@types/node": "catalog:",
     "memfs": "^4.11.1",
-    "rspack-plugin-virtual-module": "^0.1.2",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "webpack": "catalog:",

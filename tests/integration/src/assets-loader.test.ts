@@ -10,7 +10,6 @@ import {
   getAssetsLoaderPath,
   getBundler,
   getReactNativeVirtualModules,
-  loadFixtures,
 } from './test-helpers.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -71,19 +70,12 @@ async function compileBundle(
 describe.each(['rspack', 'webpack'] as const)(
   'assetLoader with %s',
   (bundlerType) => {
-    const fixtures = loadFixtures(
-      'logo.png',
-      'star@1x.png',
-      'star@2x.png',
-      'star@3x.png'
-    );
-
     describe.each(['ios', 'android'])('on %s', (platform) => {
       it('should load and extract asset without scales', async () => {
         const { code, volume } = await compileBundle(bundlerType, platform, {
           ...getReactNativeVirtualModules(),
-          ...fixtures,
-          './index.js': "export { default } from './__fixtures__/logo.png';",
+          './index.js':
+            "export { default } from './__fixtures__/assets/logo.png';",
         });
 
         const context: { Export?: { default: Record<string, unknown> } } = {};
@@ -96,8 +88,8 @@ describe.each(['rspack', 'webpack'] as const)(
       it('should load and extract asset with scales', async () => {
         const { code, volume } = await compileBundle(bundlerType, platform, {
           ...getReactNativeVirtualModules(),
-          ...fixtures,
-          './index.js': "export { default } from './__fixtures__/star.png';",
+          './index.js':
+            "export { default } from './__fixtures__/assets/star.png';",
         });
 
         const context: { Export?: { default: Record<string, unknown> } } = {};
@@ -108,14 +100,10 @@ describe.each(['rspack', 'webpack'] as const)(
       });
 
       it('should prefer platform specific asset', async () => {
-        const platformFixtures = loadFixtures(
-          'logo.png',
-          `logo.${platform}.png`
-        );
         const { code, volume } = await compileBundle(bundlerType, platform, {
           ...getReactNativeVirtualModules(),
-          ...platformFixtures,
-          './index.js': "export { default } from './__fixtures__/logo.png';",
+          './index.js':
+            "export { default } from './__fixtures__/assets/logo.png';",
         });
 
         const context: { Export?: { default: Record<string, unknown> } } = {};
@@ -133,8 +121,8 @@ describe.each(['rspack', 'webpack'] as const)(
           'android',
           {
             ...getReactNativeVirtualModules(),
-            ...fixtures,
-            './index.js': "export { default } from './__fixtures__/logo.png';",
+            './index.js':
+              "export { default } from './__fixtures__/assets/logo.png';",
           },
           true
         );
@@ -156,8 +144,8 @@ describe.each(['rspack', 'webpack'] as const)(
           'android',
           {
             ...getReactNativeVirtualModules(preferredScale),
-            ...fixtures,
-            './index.js': "export { default } from './__fixtures__/star.png';",
+            './index.js':
+              "export { default } from './__fixtures__/assets/star.png';",
           },
           true
         );
@@ -177,8 +165,8 @@ describe.each(['rspack', 'webpack'] as const)(
           'ios', // platform doesn't matter for remote-assets
           {
             ...getReactNativeVirtualModules(),
-            ...fixtures,
-            './index.js': "export { default } from './__fixtures__/logo.png';",
+            './index.js':
+              "export { default } from './__fixtures__/assets/logo.png';",
           },
           false,
           {
@@ -204,8 +192,8 @@ describe.each(['rspack', 'webpack'] as const)(
           'ios', // platform doesn't matter for remote-assets
           {
             ...getReactNativeVirtualModules(preferredScale),
-            ...fixtures,
-            './index.js': "export { default } from './__fixtures__/star.png';",
+            './index.js':
+              "export { default } from './__fixtures__/assets/star.png';",
           },
           false,
           {
@@ -227,8 +215,8 @@ describe.each(['rspack', 'webpack'] as const)(
           'ios', // platform doesn't matter for remote-assets
           {
             ...getReactNativeVirtualModules(),
-            ...fixtures,
-            './index.js': "export { default } from './__fixtures__/logo.png';",
+            './index.js':
+              "export { default } from './__fixtures__/assets/logo.png';",
           },
           false,
           {
@@ -251,9 +239,8 @@ describe.each(['rspack', 'webpack'] as const)(
             'ios', // platform doesn't matter for remote-assets
             {
               ...getReactNativeVirtualModules(),
-              ...fixtures,
               './index.js':
-                "export { default } from './__fixtures__/logo.png';",
+                "export { default } from './__fixtures__/assets/logo.png';",
             },
             false,
             {
@@ -286,9 +273,8 @@ describe.each(['rspack', 'webpack'] as const)(
             'ios', // platform doesn't matter for remote-assets
             {
               ...getReactNativeVirtualModules(preferredScale),
-              ...fixtures,
               './index.js':
-                "export { default } from './__fixtures__/star.png';",
+                "export { default } from './__fixtures__/assets/star.png';",
             },
             false,
             {

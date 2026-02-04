@@ -1,14 +1,9 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import type {
   rspack as Rspack,
   Compiler as RspackCompiler,
 } from '@rspack/core';
 import { Volume, createFsFromVolume } from 'memfs';
 import type { webpack as Webpack, Compiler as WebpackCompiler } from 'webpack';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export type BundlerType = 'rspack' | 'webpack';
 export type Bundler = typeof Rspack | typeof Webpack;
@@ -34,10 +29,8 @@ export async function createVirtualModulePlugin(
   modules: Record<string, string>
 ): Promise<unknown> {
   if (type === 'rspack') {
-    const { RspackVirtualModulePlugin } = await import(
-      'rspack-plugin-virtual-module'
-    );
-    return new RspackVirtualModulePlugin(modules);
+    const { rspack } = await import('@rspack/core');
+    return new rspack.experiments.VirtualModulesPlugin(modules);
   }
   const VirtualModulesPlugin = (await import('webpack-virtual-modules'))
     .default;
@@ -89,21 +82,6 @@ export function compile(compiler: Compiler): Promise<CompileResult> {
       resolve({ code, volume });
     });
   });
-}
-
-/**
- * Load fixture files from the __fixtures__ directory
- */
-export function loadFixtures(...filenames: string[]): Record<string, Buffer> {
-  return filenames.reduce(
-    (acc, filename) => {
-      const localPath = path.join(__dirname, '__fixtures__/assets', filename);
-      const assetPath = `./__fixtures__/${filename}`;
-      acc[assetPath] = fs.readFileSync(localPath);
-      return acc;
-    },
-    {} as Record<string, Buffer>
-  );
 }
 
 /**

@@ -740,9 +740,6 @@ importers:
       memfs:
         specifier: ^4.11.1
         version: 4.17.0
-      rspack-plugin-virtual-module:
-        specifier: ^0.1.2
-        version: 0.1.13
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
