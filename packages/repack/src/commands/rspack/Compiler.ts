@@ -5,6 +5,7 @@ import { rspack } from '@rspack/core';
 import type {
   MultiCompiler,
   MultiRspackOptions,
+  Compiler as RspackCompiler,
   StatsCompilation,
 } from '@rspack/core';
 import memfs from 'memfs';
@@ -13,7 +14,7 @@ import type { Reporter } from '../../logging/types.js';
 import type { HMRMessage } from '../../types.js';
 import { runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
-import type { CompilerAsset, MultiWatching } from './types.js';
+import type { CompilerAsset } from './types.js';
 
 export class Compiler {
   compiler: MultiCompiler;
@@ -23,14 +24,13 @@ export class Compiler {
   statsCache: Record<string, StatsCompilation | undefined> = {};
   resolvers: Record<string, Array<(error?: Error) => void>> = {};
   progressSenders: Record<string, SendProgress[]> = {};
-  isCompilationInProgress = false;
+  isCompilationInProgress: Record<string, boolean> = {};
   // late-init
   devServerContext!: Server.DelegateContext;
 
-  // Lazy compilation state
-  private watching: MultiWatching | null = null;
-  private requestedPlatforms = new Set<string>();
-  private lazyEntries = new Map<string, Set<string>>();
+  private watchRunGates: Map<string, () => void> = new Map();
+  private activePlatforms: Set<string> = new Set();
+  private buildStartTime: Record<string, number> = {};
 
   constructor(
     configs: MultiRspackOptions,
@@ -38,8 +38,8 @@ export class Compiler {
     private rootDir: string
   ) {
     const handler = (platform: string, value: number) => {
-      // Skip progress for platforms not yet requested (lazy compilation)
-      if (!this.requestedPlatforms.has(platform)) return;
+      // Skip progress for platforms not yet activated
+      if (!this.activePlatforms.has(platform)) return;
 
       const percentage = Math.floor(value * 100);
       this.progressSenders[platform]?.forEach((sendProgress) => {
@@ -68,7 +68,7 @@ export class Compiler {
     // @ts-expect-error memfs is compatible enough
     this.compiler.outputFileSystem = this.filesystem;
 
-    this.setupCompiler();
+    this.setupCompilerHooks();
   }
 
   get devServerOptions() {
@@ -101,46 +101,74 @@ export class Compiler {
     this.devServerContext = ctx;
   }
 
-  private setupCompiler() {
-    this.compiler.hooks.watchRun.tap('repack:watch', () => {
-      this.isCompilationInProgress = true;
-      this.platforms.forEach((platform) => {
-        // Skip notifications for platforms not yet requested (lazy compilation)
-        if (!this.requestedPlatforms.has(platform)) return;
+  private setupCompilerHooks() {
+    for (const childCompiler of this.compiler.compilers) {
+      const platform = childCompiler.options.name!;
+      this.setupChildCompilerHooks(platform, childCompiler);
+    }
+  }
 
-        if (platform === 'android') {
-          void runAdbReverse({
-            port: this.devServerContext.options.port,
-            logger: this.devServerContext.log,
-          });
-        }
-        this.devServerContext.notifyBuildStart(platform);
-        this.devServerContext.broadcastToHmrClients<HMRMessage>({
-          action: 'compiling',
-          body: { name: platform },
+  private setupChildCompilerHooks(
+    platform: string,
+    childCompiler: RspackCompiler
+  ) {
+    // Gate: hold unrequested platforms at watchRun
+    childCompiler.hooks.watchRun.tapAsync('repack:gate', (_compiler, done) => {
+      if (this.activePlatforms.has(platform)) {
+        done();
+      } else {
+        this.watchRunGates.set(platform, done);
+      }
+    });
+
+    // Notify build start only for active platforms
+    childCompiler.hooks.watchRun.tap('repack:watch', () => {
+      if (!this.activePlatforms.has(platform)) return;
+
+      // Fix: #go() set startTime and lastWatcherStartTime at server startup
+      // (before the gate held). After gate release the stale values cause
+      // _done() to create a watcher that sees phantom file changes since
+      // server start, triggering a spurious rebuild. Resetting both here
+      // is safe for non-gated rebuilds too — #go() set them moments before
+      // watchRun fired.
+      if (childCompiler.watching) {
+        childCompiler.watching.startTime = Date.now();
+        childCompiler.watching.lastWatcherStartTime = Date.now();
+      }
+
+      this.isCompilationInProgress[platform] = true;
+      this.buildStartTime[platform] = Date.now();
+
+      if (platform === 'android') {
+        void runAdbReverse({
+          port: this.devServerContext.options.port,
+          logger: this.devServerContext.log,
         });
+      }
+
+      this.devServerContext.notifyBuildStart(platform);
+      this.devServerContext.broadcastToHmrClients<HMRMessage>({
+        action: 'compiling',
+        body: { name: platform },
       });
     });
 
-    this.compiler.hooks.invalid.tap('repack:invalid', () => {
-      this.isCompilationInProgress = true;
-      this.platforms.forEach((platform) => {
-        // Skip notifications for platforms not yet requested (lazy compilation)
-        if (!this.requestedPlatforms.has(platform)) return;
+    childCompiler.hooks.invalid.tap('repack:invalid', () => {
+      if (!this.activePlatforms.has(platform)) return;
 
-        this.devServerContext.notifyBuildStart(platform);
-        this.devServerContext.broadcastToHmrClients<HMRMessage>({
-          action: 'compiling',
-          body: { name: platform },
-        });
+      this.isCompilationInProgress[platform] = true;
+      this.devServerContext.notifyBuildStart(platform);
+      this.devServerContext.broadcastToHmrClients<HMRMessage>({
+        action: 'compiling',
+        body: { name: platform },
       });
     });
 
-    this.compiler.hooks.done.tap('repack:done', (multiStats) => {
-      const stats = multiStats.toJson({
+    childCompiler.hooks.done.tap('repack:done', (stats) => {
+      const buildEndTime = Date.now();
+      const childStats = stats.toJson({
         all: false,
         assets: true,
-        children: true,
         outputPath: true,
         timings: true,
         hash: true,
@@ -148,60 +176,55 @@ export class Compiler {
         warnings: true,
       });
 
+      const previousHash = this.statsCache[platform]?.hash;
+
       try {
-        stats.children!.map((childStats) => {
-          const platform = childStats.name!;
-
-          // Only broadcast HMR hash for requested platforms (lazy compilation)
-          if (this.requestedPlatforms.has(platform)) {
-            this.devServerContext.broadcastToHmrClients<HMRMessage>({
-              action: 'hash',
-              body: { name: platform, hash: childStats.hash },
-            });
-          }
-
-          this.statsCache[platform] = childStats;
-          const assets = childStats.assets!;
-
-          this.assetsCache[platform] = assets
-            .filter((asset) => asset.type === 'asset')
-            .reduce(
-              (acc, { name, info, size }) => {
-                const assetPath = path.join(childStats.outputPath!, name);
-                const data = this.filesystem.readFileSync(assetPath) as Buffer;
-                const asset = { data, info, size };
-
-                acc[adaptFilenameToPlatform(name)] = asset;
-
-                if (info.related?.sourceMap) {
-                  const sourceMapName = Array.isArray(info.related.sourceMap)
-                    ? info.related.sourceMap[0]
-                    : info.related.sourceMap;
-                  const sourceMapPath = path.join(
-                    childStats.outputPath!,
-                    sourceMapName
-                  );
-                  const sourceMapData = this.filesystem.readFileSync(
-                    sourceMapPath
-                  ) as Buffer;
-                  const sourceMapAsset = {
-                    data: sourceMapData,
-                    info: {
-                      hotModuleReplacement: info.hotModuleReplacement,
-                      size: sourceMapData.length,
-                    },
-                    size: sourceMapData.length,
-                  };
-
-                  acc[adaptFilenameToPlatform(sourceMapName)] = sourceMapAsset;
-                }
-
-                return acc;
-              },
-              // keep old assets
-              this.assetsCache[platform] ?? {}
-            );
+        this.devServerContext.broadcastToHmrClients<HMRMessage>({
+          action: 'hash',
+          body: { name: platform, hash: childStats.hash },
         });
+
+        this.statsCache[platform] = childStats;
+        const assets = childStats.assets!;
+
+        this.assetsCache[platform] = assets
+          .filter((asset) => asset.type === 'asset')
+          .reduce(
+            (acc, { name, info, size }) => {
+              const assetPath = path.join(childStats.outputPath!, name);
+              const data = this.filesystem.readFileSync(assetPath) as Buffer;
+              const asset = { data, info, size };
+
+              acc[adaptFilenameToPlatform(name)] = asset;
+
+              if (info.related?.sourceMap) {
+                const sourceMapName = Array.isArray(info.related.sourceMap)
+                  ? info.related.sourceMap[0]
+                  : info.related.sourceMap;
+                const sourceMapPath = path.join(
+                  childStats.outputPath!,
+                  sourceMapName
+                );
+                const sourceMapData = this.filesystem.readFileSync(
+                  sourceMapPath
+                ) as Buffer;
+                const sourceMapAsset = {
+                  data: sourceMapData,
+                  info: {
+                    hotModuleReplacement: info.hotModuleReplacement,
+                    size: sourceMapData.length,
+                  },
+                  size: sourceMapData.length,
+                };
+
+                acc[adaptFilenameToPlatform(sourceMapName)] = sourceMapAsset;
+              }
+
+              return acc;
+            },
+            // keep old assets
+            this.assetsCache[platform] ?? {}
+          );
       } catch (error) {
         this.reporter.process({
           type: 'error',
@@ -214,53 +237,40 @@ export class Compiler {
         });
       }
 
-      this.isCompilationInProgress = false;
+      this.isCompilationInProgress[platform] = false;
+      this.callPendingResolvers(platform);
 
-      stats.children?.forEach((childStats) => {
-        const platform = childStats.name!;
-        const time = childStats.time!;
-        this.callPendingResolvers(platform);
-
-        // Skip notifications for platforms not yet requested (lazy compilation)
-        if (!this.requestedPlatforms.has(platform)) return;
-
-        this.devServerContext.notifyBuildEnd(platform);
-        this.devServerContext.broadcastToHmrClients<HMRMessage>({
-          action: 'ok',
-          body: { name: platform },
-        });
+      this.devServerContext.notifyBuildEnd(platform);
+      this.devServerContext.broadcastToHmrClients<HMRMessage>({
+        action: 'ok',
+        body: { name: platform },
+      });
+      if (childStats.hash !== previousHash) {
+        const time = buildEndTime - this.buildStartTime[platform];
         this.reporter.process({
           issuer: 'DevServer',
           message: [{ progress: { platform, time } }],
           timestamp: Date.now(),
           type: 'progress',
         });
-      });
-    });
-
-    // Lazy compilation: intercept module resolution for platforms not yet requested
-    this.compiler.compilers.forEach((childCompiler) => {
-      const platform = childCompiler.name!;
-
-      childCompiler.hooks.thisCompilation.tap(
-        'repack:lazy',
-        (_, { normalModuleFactory }) => {
-          normalModuleFactory.hooks.afterResolve.tap('repack:lazy', (data) => {
-            if (!this.requestedPlatforms.has(platform)) {
-              const resolvedPath = path.resolve(data.context, data.request);
-              const entries = this.lazyEntries.get(platform) ?? new Set();
-              entries.add(resolvedPath);
-              this.lazyEntries.set(platform, entries);
-              data.createData!.request = '/* lazy compilation placeholder */';
-            }
-          });
-        }
-      );
+      }
     });
   }
 
+  private activatePlatform(platform: string) {
+    if (this.activePlatforms.has(platform)) return;
+    this.activePlatforms.add(platform);
+    this.isCompilationInProgress[platform] = true;
+
+    const gate = this.watchRunGates.get(platform);
+    if (gate) {
+      this.watchRunGates.delete(platform);
+      gate();
+    }
+  }
+
   start() {
-    this.watching = this.compiler.watch(this.watchOptions, (error) => {
+    this.compiler.watch(this.watchOptions, (error) => {
       if (!error) return;
       this.platforms.forEach((platform) => {
         this.callPendingResolvers(platform, error);
@@ -268,22 +278,22 @@ export class Compiler {
     });
   }
 
+  close(callback?: () => void) {
+    // Release all held gates so Watching instances can complete and close cleanly
+    for (const [, gate] of this.watchRunGates) {
+      gate();
+    }
+    this.watchRunGates.clear();
+    this.compiler.close(callback ?? (() => {}));
+  }
+
   async getAsset(
     filename: string,
     platform: string,
     sendProgress?: SendProgress
   ): Promise<CompilerAsset> {
-    // Trigger lazy compilation for platform on first request
-    if (!this.requestedPlatforms.has(platform)) {
-      this.requestedPlatforms.add(platform);
-      const entries = this.lazyEntries.get(platform);
-      if (entries && this.watching) {
-        // Clear stub assets and mark compilation in progress before invalidation
-        delete this.assetsCache[platform];
-        this.isCompilationInProgress = true;
-        this.watching.invalidateWithChangesAndRemovals(entries, undefined);
-      }
-    }
+    // Activate compiler for this platform on first request
+    this.activatePlatform(platform);
 
     // Return file from assetsCache if exists
     const fileFromCache = this.assetsCache[platform]?.[filename];
@@ -293,7 +303,7 @@ export class Compiler {
 
     this.addProgressSender(platform, sendProgress);
 
-    if (!this.isCompilationInProgress) {
+    if (!this.isCompilationInProgress[platform]) {
       this.removeProgressSender(platform, sendProgress);
       return Promise.reject(
         new Error(
