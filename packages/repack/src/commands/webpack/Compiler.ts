@@ -138,7 +138,11 @@ export class Compiler implements CompilerInterface {
           type: 'error',
           issuer: 'WebpackCompilerWorker',
           timestamp: Date.now(),
-          message: [String(value.error)],
+          message: [
+            value.error instanceof Error
+              ? (value.error.stack ?? String(value.error))
+              : String(value.error),
+          ],
         });
       } else if (value.event === 'progress') {
         this.progressSenders[platform]?.forEach((sendProgress) => {

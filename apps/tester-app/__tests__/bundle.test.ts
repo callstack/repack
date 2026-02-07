@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import rspackCommands from '@callstack/repack/commands/rspack';
-import webpackCommands from '@callstack/repack/commands/webpack';
+import commands from '@callstack/repack/commands';
 import { globby } from 'globby';
 import {
   afterEach,
@@ -17,15 +16,13 @@ describe('bundle command', () => {
   describe.each([
     {
       bundler: 'webpack',
-      commands: webpackCommands,
       configFile: './webpack.config.mjs',
     },
     {
       bundler: 'rspack',
-      commands: rspackCommands,
       configFile: './rspack.config.mjs',
     },
-  ])('using $bundler', ({ bundler, commands, configFile }) => {
+  ])('using $bundler', ({ bundler, configFile }) => {
     const bundleCommand = commands.find((command) => command.name === 'bundle');
     if (!bundleCommand) throw new Error('bundle command not found');
 

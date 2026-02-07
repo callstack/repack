@@ -65,7 +65,7 @@ export default async function run(options: Options) {
       options.entry
     );
 
-    modifyReactNativeConfig(bundler, projectRootDir);
+    modifyReactNativeConfig(projectRootDir);
 
     modifyIOS(projectRootDir);
 
