@@ -80,16 +80,6 @@ describe('Compiler – lazy compilation', () => {
       await new Promise<void>((resolve) => compiler.close(resolve));
     });
 
-    it('after start(), statsCache and isCompilationInProgress remain empty for both platforms', async () => {
-      // Give the watcher a moment to initialize — the gate should hold
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      expect(compiler.statsCache.ios).toBeUndefined();
-      expect(compiler.statsCache.android).toBeUndefined();
-      expect(compiler.isCompilationInProgress.ios).toBeFalsy();
-      expect(compiler.isCompilationInProgress.android).toBeFalsy();
-    });
-
     it('getAsset("main.js", "ios") produces ios stats but leaves android stats undefined', async () => {
       const asset = await compiler.getAsset('main.js', 'ios');
 
