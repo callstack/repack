@@ -1,37 +1,50 @@
-import EventEmitter from 'node:events';
 import fs from 'node:fs';
 import path from 'node:path';
 import { Worker } from 'node:worker_threads';
-import type { SendProgress } from '@callstack/repack-dev-server';
-import type webpack from 'webpack';
+import type { SendProgress, Server } from '@callstack/repack-dev-server';
+import type { StatsCompilation } from 'webpack';
 import { WORKER_ENV_KEY } from '../../env.js';
 import { CLIError } from '../../helpers/index.js';
 import type { LogType, Reporter } from '../../logging/types.js';
+import type { HMRMessage } from '../../types.js';
+import { runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
-import type { StartArguments } from '../types.js';
 import type {
   CompilerAsset,
-  WebpackWorkerOptions,
-  WorkerMessages,
-} from './types.js';
+  CompilerInterface,
+  StartArguments,
+} from '../types.js';
+import type { WebpackWorkerOptions, WorkerMessages } from './types.js';
 
 type Platform = string;
 
-export class Compiler extends EventEmitter {
+export class Compiler implements CompilerInterface {
   workers: Record<Platform, Worker> = {};
-  assetsCache: Record<Platform, Record<string, CompilerAsset>> = {};
-  statsCache: Record<Platform, webpack.StatsCompilation> = {};
+  platforms: string[];
+  assetsCache: Record<Platform, Record<string, CompilerAsset> | undefined> = {};
+  statsCache: Record<Platform, StatsCompilation | undefined> = {};
   resolvers: Record<Platform, Array<(error?: Error) => void>> = {};
   progressSenders: Record<Platform, SendProgress[]> = {};
   isCompilationInProgress: Record<Platform, boolean> = {};
+  // late-init
+  devServerContext!: Server.DelegateContext;
 
   constructor(
+    platforms: string[],
     private args: StartArguments,
     private reporter: Reporter,
     private rootDir: string,
     private reactNativePath: string
   ) {
-    super();
+    this.platforms = platforms;
+  }
+
+  setDevServerContext(ctx: Server.DelegateContext) {
+    this.devServerContext = ctx;
+  }
+
+  start() {
+    // no-op: webpack workers spawn lazily on first getAsset call
   }
 
   private spawnWorker(platform: string) {
@@ -80,7 +93,7 @@ export class Compiler extends EventEmitter {
     });
 
     const callPendingResolvers = (error?: Error) => {
-      this.resolvers[platform].forEach((resolver) => resolver(error));
+      this.resolvers[platform]?.forEach((resolver) => resolver(error));
       this.resolvers[platform] = [];
     };
 
@@ -99,7 +112,18 @@ export class Compiler extends EventEmitter {
             })
           ),
         };
-        this.emit(value.event, { platform, stats: value.stats });
+
+        // notify dev server of build completion
+        this.devServerContext.notifyBuildEnd(platform);
+        this.devServerContext.broadcastToHmrClients<HMRMessage>({
+          action: 'hash',
+          body: { name: platform, hash: value.stats.hash },
+        });
+        this.devServerContext.broadcastToHmrClients<HMRMessage>({
+          action: 'ok',
+          body: { name: platform },
+        });
+
         // Emit final progress with timing for this platform
         this.reporter.process({
           issuer: 'DevServer',
@@ -109,9 +133,15 @@ export class Compiler extends EventEmitter {
         });
         callPendingResolvers();
       } else if (value.event === 'error') {
-        this.emit(value.event, value.error);
+        // errors are logged but not fatal to the compiler lifecycle
+        this.reporter.process({
+          type: 'error',
+          issuer: 'WebpackCompilerWorker',
+          timestamp: Date.now(),
+          message: [String(value.error)],
+        });
       } else if (value.event === 'progress') {
-        this.progressSenders[platform].forEach((sendProgress) => {
+        this.progressSenders[platform]?.forEach((sendProgress) => {
           const percentage = Math.floor(value.percentage * 100);
           sendProgress({ completed: percentage, total: 100 });
         });
@@ -126,8 +156,19 @@ export class Compiler extends EventEmitter {
           });
         }
       } else {
+        // watchRun / invalid
         this.isCompilationInProgress[platform] = true;
-        this.emit(value.event, { platform });
+        this.devServerContext.notifyBuildStart(platform);
+        this.devServerContext.broadcastToHmrClients<HMRMessage>({
+          action: 'compiling',
+          body: { name: platform },
+        });
+        if (value.event === 'watchRun' && platform === 'android') {
+          void runAdbReverse({
+            port: this.devServerContext.options.port,
+            logger: this.devServerContext.log,
+          });
+        }
       }
     });
 
