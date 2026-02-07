@@ -1,45 +1,61 @@
-import type { Server } from '@callstack/repack-dev-server';
-import type { Configuration, StatsCompilation } from 'webpack';
-import packageJson from '../../../package.json';
-import { VERBOSE_ENV_KEY } from '../../env.js';
-import { CLIError, isTruthyEnv } from '../../helpers/index.js';
+import packageJson from '../../package.json';
+import { VERBOSE_ENV_KEY } from '../env.js';
+import { CLIError, isTruthyEnv } from '../helpers/index.js';
 import {
   ConsoleReporter,
   FileReporter,
   type Reporter,
   composeReporters,
   makeLogEntryFromFastifyLog,
-} from '../../logging/index.js';
-import type { HMRMessage } from '../../types.js';
-import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
+} from '../logging/index.js';
+import { detectBundler } from './common/config/detectBundler.js';
+import { makeCompilerConfig } from './common/config/makeCompilerConfig.js';
 import {
   getDevMiddleware,
+  getMaxWorkers,
   getMimeType,
   parseUrl,
   resetPersistentCache,
   resolveProjectPath,
   runAdbReverse,
+  setupEnvironment,
   setupInteractions,
-} from '../common/index.js';
-import logo from '../common/logo.js';
-import { setupEnvironment } from '../common/setupEnvironment.js';
-import type { CliConfig, StartArguments } from '../types.js';
-import { Compiler } from './Compiler.js';
+  setupRspackEnvironment,
+} from './common/index.js';
+import logo from './common/logo.js';
+import type {
+  Bundler,
+  CliConfig,
+  CompilerInterface,
+  StartArguments,
+} from './types.js';
 
 /**
- * Start command that runs a development server.
+ * Unified start command that runs a development server.
  * It runs `@callstack/repack-dev-server` to provide Development Server functionality
  * in development mode.
+ *
+ * Auto-detects the bundler engine (rspack or webpack) unless explicitly specified.
  *
  * @param _ Original, non-parsed arguments that were provided when running this command.
  * @param cliConfig Configuration object containing platform and project settings.
  * @param args Parsed command line arguments.
+ * @param forcedBundler Optional bundler override from deprecated entry points.
  */
 export async function start(
   _: string[],
   cliConfig: CliConfig,
-  args: StartArguments
+  args: StartArguments,
+  forcedBundler?: Bundler
 ) {
+  const bundler =
+    forcedBundler ??
+    detectBundler(
+      cliConfig.root,
+      args.config ?? args.webpackConfig,
+      args.bundler
+    );
+
   const detectedPlatforms = Object.keys(cliConfig.platforms);
 
   if (args.platform && !detectedPlatforms.includes(args.platform)) {
@@ -48,9 +64,9 @@ export async function start(
 
   const platforms = args.platform ? [args.platform] : detectedPlatforms;
 
-  const configs = await makeCompilerConfig<Configuration>({
+  const configs = await makeCompilerConfig<Record<string, any>>({
     args: args,
-    bundler: 'webpack',
+    bundler,
     command: 'start',
     rootDir: cliConfig.root,
     platforms: platforms,
@@ -59,6 +75,11 @@ export async function start(
 
   // expose selected args as environment variables
   setupEnvironment(args);
+
+  if (bundler === 'rspack') {
+    const maxWorkers = args.maxWorkers ?? getMaxWorkers();
+    setupRspackEnvironment(maxWorkers.toString());
+  }
 
   const isVerbose = isTruthyEnv(process.env[VERBOSE_ENV_KEY]);
   const devServerOptions = configs[0].devServer ?? {};
@@ -74,32 +95,59 @@ export async function start(
     ].filter(Boolean) as Reporter[]
   );
 
-  process.stdout.write(logo(packageJson.version, 'webpack'));
+  const bundlerLabel = bundler === 'rspack' ? 'Rspack' : 'webpack';
+  process.stdout.write(logo(packageJson.version, bundlerLabel));
 
   if (args.resetCache) {
-    resetPersistentCache({
-      bundler: 'webpack',
-      rootDir: cliConfig.root,
-      cacheConfigs: configs.map((config) => config.cache),
-    });
+    if (bundler === 'rspack') {
+      resetPersistentCache({
+        bundler: 'rspack',
+        rootDir: cliConfig.root,
+        cacheConfigs: configs.map((config: any) => config.experiments?.cache),
+      });
+    } else {
+      resetPersistentCache({
+        bundler: 'webpack',
+        rootDir: cliConfig.root,
+        cacheConfigs: configs.map((config: any) => config.cache),
+      });
+    }
   }
 
-  const compiler = new Compiler(
-    args,
-    reporter,
-    cliConfig.root,
-    cliConfig.reactNativePath
-  );
+  if (bundler === 'rspack' && process.env.RSPACK_PROFILE) {
+    const { applyProfile } = await import('./rspack/profile/index.js');
+    await applyProfile(
+      process.env.RSPACK_PROFILE,
+      process.env.RSPACK_TRACE_LAYER,
+      process.env.RSPACK_TRACE_OUTPUT
+    );
+  }
+
+  // Create compiler via dynamic import — both engines are optional peer dependencies
+  let compiler: CompilerInterface;
+  if (bundler === 'rspack') {
+    const { Compiler } = await import('./rspack/Compiler.js');
+    compiler = new Compiler(configs, reporter, cliConfig.root);
+  } else {
+    const { Compiler } = await import('./webpack/Compiler.js');
+    compiler = new Compiler(
+      platforms,
+      args,
+      reporter,
+      cliConfig.root,
+      cliConfig.reactNativePath
+    );
+  }
 
   const { createServer } = await import('@callstack/repack-dev-server');
-  const { start, stop } = await createServer({
+  const { start: serverStart, stop } = await createServer({
     options: {
       ...devServerOptions,
       rootDir: cliConfig.root,
       logRequests: showHttpRequests,
       devMiddleware,
     },
-    delegate: (ctx): Server.Delegate => {
+    delegate: (ctx) => {
       if (args.interactive) {
         setupInteractions(
           {
@@ -136,48 +184,7 @@ export async function start(
         });
       }
 
-      compiler.on('watchRun', ({ platform }) => {
-        ctx.notifyBuildStart(platform);
-        ctx.broadcastToHmrClients<HMRMessage>({
-          action: 'compiling',
-          body: { name: platform },
-        });
-        if (platform === 'android') {
-          void runAdbReverse({
-            port: ctx.options.port,
-            logger: ctx.log,
-          });
-        }
-      });
-
-      compiler.on('invalid', ({ platform }) => {
-        ctx.notifyBuildStart(platform);
-        ctx.broadcastToHmrClients<HMRMessage>({
-          action: 'compiling',
-          body: { name: platform },
-        });
-      });
-
-      compiler.on(
-        'done',
-        ({
-          platform,
-          stats,
-        }: {
-          platform: string;
-          stats: StatsCompilation;
-        }) => {
-          ctx.notifyBuildEnd(platform);
-          ctx.broadcastToHmrClients<HMRMessage>({
-            action: 'hash',
-            body: { name: platform, hash: stats.hash },
-          });
-          ctx.broadcastToHmrClients<HMRMessage>({
-            action: 'ok',
-            body: { name: platform },
-          });
-        }
-      );
+      compiler.setDevServerContext(ctx);
 
       return {
         compiler: {
@@ -225,7 +232,7 @@ export async function start(
           },
         },
         api: {
-          getPlatforms: () => Promise.resolve(Object.keys(compiler.workers)),
+          getPlatforms: () => Promise.resolve(compiler.platforms),
           getAssets: (platform) =>
             Promise.resolve(
               Object.entries(compiler.assetsCache[platform] ?? {}).map(
@@ -239,7 +246,8 @@ export async function start(
     },
   });
 
-  await start();
+  await serverStart();
+  compiler.start();
 
   return {
     stop: async () => {
