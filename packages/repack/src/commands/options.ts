@@ -76,6 +76,11 @@ export const startCommandOptions = [
       '[DEPRECATED] Path to a bundler config file, e.g webpack.config.js. Please use --config instead.',
     parse: (val: string) => path.resolve(val),
   },
+  {
+    name: '--bundler <string>',
+    description:
+      'Bundler engine to use: "rspack" or "webpack". If not specified, auto-detected from config filename.',
+  },
 ];
 
 export const bundleCommandOptions = [
@@ -171,5 +176,10 @@ export const bundleCommandOptions = [
     description:
       '[DEPRECATED] Path to a bundler config file, e.g webpack.config.js. Please use --config instead.',
     parse: (val: string) => path.resolve(val),
+  },
+  {
+    name: '--bundler <string>',
+    description:
+      'Bundler engine to use: "rspack" or "webpack". If not specified, auto-detected from config filename.',
   },
 ];

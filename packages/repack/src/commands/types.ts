@@ -1,4 +1,7 @@
+import type { SendProgress, Server } from '@callstack/repack-dev-server';
 import type { EnvOptions } from '../types.js';
+
+export type Bundler = 'rspack' | 'webpack';
 
 export interface BundleArguments {
   entryFile: string;
@@ -16,6 +19,7 @@ export interface BundleArguments {
   maxWorkers?: number;
   config?: string;
   webpackConfig?: string;
+  bundler?: Bundler;
 }
 
 export interface StartArguments {
@@ -35,6 +39,7 @@ export interface StartArguments {
   maxWorkers?: number;
   config?: string;
   webpackConfig?: string;
+  bundler?: Bundler;
 }
 
 export interface CliConfig {
@@ -76,3 +81,36 @@ export type ConfigurationObject = Partial<Record<ConfigKeys, any>>;
 export type Configuration<T> =
   | T
   | ((env: EnvOptions, argv: Record<string, any>) => T | Promise<T>);
+
+export interface CompilerAsset {
+  data: Buffer;
+  info: {
+    hotModuleReplacement?: boolean;
+    related?: { sourceMap?: string | string[] };
+    size?: number;
+    [key: string]: any;
+  };
+  size: number;
+}
+
+export interface CompilerInterface {
+  platforms: string[];
+  assetsCache: Record<string, Record<string, CompilerAsset> | undefined>;
+  statsCache: Record<string, Record<string, any> | undefined>;
+  setDevServerContext(ctx: Server.DelegateContext): void;
+  start(): void;
+  getAsset(
+    filename: string,
+    platform: string,
+    sendProgress?: SendProgress
+  ): Promise<CompilerAsset>;
+  getSource(
+    filename: string,
+    platform: string | undefined,
+    sendProgress?: SendProgress
+  ): Promise<string | Buffer>;
+  getSourceMap(
+    filename: string,
+    platform: string | undefined
+  ): Promise<string | Buffer>;
+}
