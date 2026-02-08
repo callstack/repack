@@ -9,7 +9,39 @@ import {
   setupRspackEnvironment,
   writeStats,
 } from './common/index.js';
-import type { BundleArguments, Bundler, CliConfig } from './types.js';
+import type {
+  BundleArguments,
+  Bundler,
+  CliConfig,
+  ConfigurationObject,
+} from './types.js';
+
+/**
+ * Minimal compiler interface for the bundle command.
+ * Both rspack() and webpack() return objects satisfying this shape.
+ * Defined here because both bundlers are optional peer dependencies.
+ */
+interface BundleCompiler {
+  run(callback: (error: Error | null, stats?: BundleStats) => void): void;
+  watch(
+    options: Record<string, unknown>,
+    callback: (error: Error | null, stats?: BundleStats) => void
+  ): unknown;
+  hooks: { watchClose: { tap(name: string, fn: () => void): void } };
+  close(callback: (error: Error | null) => void): void;
+  options: { stats: unknown };
+  context: string;
+}
+
+/**
+ * Minimal stats interface for the bundle command.
+ * Both rspack and webpack Stats objects satisfy this shape.
+ */
+interface BundleStats {
+  hasErrors(): boolean;
+  compilation?: { errors?: unknown[] };
+  toJson(options: unknown): Record<string, unknown>;
+}
 
 /**
  * Unified bundle command that builds and saves the bundle
@@ -36,7 +68,7 @@ export async function bundle(
       args.bundler
     );
 
-  const [config] = await makeCompilerConfig<Record<string, any>>({
+  const [config] = await makeCompilerConfig<ConfigurationObject>({
     args: args,
     bundler,
     command: 'bundle',
@@ -77,23 +109,23 @@ export async function bundle(
   }
 
   // Dynamic import of bundler engine — both are optional peer dependencies
-  let compiler: any;
+  let compiler: BundleCompiler;
   if (bundler === 'rspack') {
     const { rspack } = await import('@rspack/core');
-    compiler = rspack(config);
+    compiler = rspack(config) as BundleCompiler;
   } else {
     const webpack = (await import('webpack')).default;
-    compiler = webpack(config);
+    compiler = webpack(config) as BundleCompiler;
   }
 
   return new Promise<void>((resolve) => {
-    const errorHandler = async (error: Error | null, stats?: any) => {
+    const errorHandler = async (error: Error | null, stats?: BundleStats) => {
       if (error) {
         throw new CLIError(error.message);
       }
 
       if (stats?.hasErrors()) {
-        stats.compilation?.errors?.forEach((e: any) => {
+        stats.compilation?.errors?.forEach((e) => {
           console.error(e);
         });
         process.exit(2);
@@ -122,7 +154,7 @@ export async function bundle(
       compiler.hooks.watchClose.tap('bundle', resolve);
       compiler.watch(config.watchOptions ?? {}, errorHandler);
     } else {
-      compiler.run((error: Error | null, stats: any) => {
+      compiler.run((error: Error | null, stats?: BundleStats) => {
         // make cache work: https://webpack.js.org/api/node/#run
         compiler.close(async (closeErr: Error | null) => {
           if (closeErr) console.error(closeErr);

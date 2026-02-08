@@ -1,7 +1,12 @@
 import { bundle } from './bundle.js';
 import { bundleCommandOptions, startCommandOptions } from './options.js';
 import { start } from './start.js';
-import type { Bundler } from './types.js';
+import type {
+  BundleArguments,
+  Bundler,
+  CliConfig,
+  StartArguments,
+} from './types.js';
 
 const commands = [
   {
@@ -40,7 +45,10 @@ export default commands;
 export function createBoundCommands(bundler: Bundler) {
   return commands.map((cmd) => ({
     ...cmd,
-    func: (_: string[], cliConfig: any, args: any) =>
-      cmd.func(_, cliConfig, args, bundler),
+    func: (
+      _: string[],
+      cliConfig: CliConfig,
+      args: BundleArguments & StartArguments
+    ) => cmd.func(_, cliConfig, args, bundler),
   }));
 }

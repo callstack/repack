@@ -74,8 +74,20 @@ type ConfigKeys =
   | 'entry'
   | 'optimization'
   | 'output'
-  | 'resolve';
+  | 'resolve'
+  | 'experiments'
+  | 'cache'
+  | 'watchOptions'
+  | 'stats'
+  | 'plugins';
 
+/**
+ * Loose configuration shape used as a generic constraint for `makeCompilerConfig`.
+ * Values are intentionally `any` — both webpack and rspack `Configuration` types
+ * must satisfy `C extends ConfigurationObject` in generic helper functions that
+ * assign to `Partial<C>` properties (e.g. `getCliOverrides`, `normalizeConfig`).
+ * Using `unknown` values would break these generic assignments.
+ */
 export type ConfigurationObject = Partial<Record<ConfigKeys, any>>;
 
 export type Configuration<T> =
@@ -88,7 +100,7 @@ export interface CompilerAsset {
     hotModuleReplacement?: boolean;
     related?: { sourceMap?: string | string[] };
     size?: number;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   size: number;
 }
@@ -96,7 +108,7 @@ export interface CompilerAsset {
 export interface CompilerInterface {
   platforms: string[];
   assetsCache: Record<string, Record<string, CompilerAsset> | undefined>;
-  statsCache: Record<string, Record<string, any> | undefined>;
+  statsCache: Record<string, unknown>;
   setDevServerContext(ctx: Server.DelegateContext): void;
   start(): void;
   getAsset(

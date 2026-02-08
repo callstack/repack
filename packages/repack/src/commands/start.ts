@@ -27,6 +27,7 @@ import type {
   Bundler,
   CliConfig,
   CompilerInterface,
+  ConfigurationObject,
   StartArguments,
 } from './types.js';
 
@@ -64,7 +65,7 @@ export async function start(
 
   const platforms = args.platform ? [args.platform] : detectedPlatforms;
 
-  const configs = await makeCompilerConfig<Record<string, any>>({
+  const configs = await makeCompilerConfig<ConfigurationObject>({
     args: args,
     bundler,
     command: 'start',
@@ -103,13 +104,13 @@ export async function start(
       resetPersistentCache({
         bundler: 'rspack',
         rootDir: cliConfig.root,
-        cacheConfigs: configs.map((config: any) => config.experiments?.cache),
+        cacheConfigs: configs.map((config) => config.experiments?.cache),
       });
     } else {
       resetPersistentCache({
         bundler: 'webpack',
         rootDir: cliConfig.root,
-        cacheConfigs: configs.map((config: any) => config.cache),
+        cacheConfigs: configs.map((config) => config.cache),
       });
     }
   }
