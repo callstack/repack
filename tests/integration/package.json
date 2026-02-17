@@ -1,0 +1,24 @@
+{
+  "name": "integration-test",
+  "version": "0.0.1",
+  "description": "Integration tests for @callstack/repack",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@callstack/repack": "workspace:*",
+    "@rspack/core": "catalog:",
+    "@types/node": "catalog:",
+    "memfs": "^4.11.1",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "webpack": "catalog:",
+    "webpack-virtual-modules": "^0.6.2"
+  }
+}
