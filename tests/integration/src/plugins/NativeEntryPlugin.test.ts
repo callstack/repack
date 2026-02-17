@@ -141,74 +141,96 @@ describe('NativeEntryPlugin', () => {
     });
   });
 
-  describe('with Module Federation v2', () => {
-    it('should execute polyfills runtime module before MF v2 federation runtime', async () => {
-      const { code } = await compileBundle(
-        {
-          './index.js': 'globalThis.__APP_ENTRY__ = true;',
-          './App.js': 'export default globalThis.__FEDERATED_EXPORT__ = true;',
-        },
-        [
-          new plugins.ModuleFederationPluginV2({
-            name: 'testContainer',
-            exposes: {
-              './App': './App.js',
-            },
-            shared: {
-              react: { singleton: true, eager: true },
-              'react-native': { singleton: true, eager: true },
-            },
-            defaultRuntimePlugins: [],
-          }),
-        ],
-        ((
-          { request, context }: { request?: string; context?: string },
-          callback: (err: Error | null, result?: string) => void
-        ) => {
-          if (
-            request?.includes('@module-federation') ||
-            context?.includes('@module-federation') ||
-            request?.includes('isomorphic-rslog')
-          ) {
-            return callback(null, 'globalThis.__MF_EXTERNAL__');
-          }
-          callback(null);
-        }) as Configuration['externals']
-      );
+  const MF_V2_VERSIONS = [
+    { version: '0.8.9', pkg: '@module-federation/enhanced' },
+    { version: '0.15.0', pkg: '@module-federation/enhanced-v15' },
+    { version: '0.21.0', pkg: '@module-federation/enhanced-v21' },
+  ];
 
-      // Polyfill modules were processed through the loader pipeline
-      expect(code).toContain('__POLYFILL_1__');
-      expect(code).toContain('__POLYFILL_2__');
+  const mfExternals = ((
+    { request, context }: { request?: string; context?: string },
+    callback: (err: Error | null, result?: string) => void
+  ) => {
+    if (
+      request?.includes('@module-federation') ||
+      context?.includes('@module-federation') ||
+      request?.includes('isomorphic-rslog')
+    ) {
+      return callback(null, 'globalThis.__MF_EXTERNAL__');
+    }
+    callback(null);
+  }) as Configuration['externals'];
 
-      const bundlerType = inject('bundlerType');
-      if (bundlerType === 'rspack') {
-        // Rspack MF v2 wraps startup via embed_federation_runtime:
-        //   1. embed_federation_runtime saves original __webpack_require__.x and wraps it
-        //   2. repack/polyfills IIFE executes (polyfills loaded immediately)
-        //   3. __webpack_require__.x() called → MF init → original startup (polyfills are cache hits)
-        expect(code).toContain('embed_federation_runtime');
-        expectBundleOrder(code, [
-          'embed_federation_runtime',
-          'webpack/runtime/repack/polyfills',
-          '__webpack_require__.x()',
-        ]);
-      } else {
-        // Webpack MF v2 uses inline startup with a .federation/entry module:
-        //   1. repack/polyfills IIFE executes (polyfills loaded immediately)
-        //   2. Inline startup begins: federation entry, then polyfills (cache hits), then app
-        expect(code).toContain('.federation/entry');
-        expectBundleOrder(code, [
-          'webpack/runtime/repack/polyfills',
-          '.federation/entry',
-        ]);
-      }
+  describe.each(MF_V2_VERSIONS)(
+    'with Module Federation v2 ($version)',
+    ({ pkg }) => {
+      it('should execute polyfills runtime module before MF v2 federation runtime', async (ctx) => {
+        const bundlerType = inject('bundlerType');
 
-      // Normalize non-deterministic federation entry hash before snapshotting
-      const normalizedCode = code.replace(
-        /\.federation\/entry\.[a-f0-9]+\.js/g,
-        '.federation/entry.HASH.js'
-      );
-      expect(normalizedCode).toMatchSnapshot();
-    });
-  });
+        // Webpack can't load multiple @module-federation/enhanced versions in
+        // one process due to serializer registration conflicts in ObjectMiddleware.
+        if (bundlerType === 'webpack' && pkg !== '@module-federation/enhanced') {
+          ctx.skip();
+          return;
+        }
+
+        const subpath = bundlerType === 'rspack' ? 'rspack' : 'webpack';
+        const { ModuleFederationPlugin } = await import(`${pkg}/${subpath}`);
+
+        const { code } = await compileBundle(
+          {
+            './index.js': 'globalThis.__APP_ENTRY__ = true;',
+            './App.js':
+              'export default globalThis.__FEDERATED_EXPORT__ = true;',
+          },
+          [
+            new ModuleFederationPlugin({
+              name: 'testContainer',
+              exposes: {
+                './App': './App.js',
+              },
+              shared: {
+                react: { singleton: true, eager: true },
+                'react-native': { singleton: true, eager: true },
+              },
+            }),
+          ],
+          mfExternals
+        );
+
+        // Polyfill modules were processed through the loader pipeline
+        expect(code).toContain('__POLYFILL_1__');
+        expect(code).toContain('__POLYFILL_2__');
+
+        if (bundlerType === 'rspack') {
+          // Rspack MF v2 wraps startup via embed_federation_runtime:
+          //   1. embed_federation_runtime saves original __webpack_require__.x and wraps it
+          //   2. repack/polyfills IIFE executes (polyfills loaded immediately)
+          //   3. __webpack_require__.x() called → MF init → original startup (polyfills are cache hits)
+          expect(code).toContain('embed_federation_runtime');
+          expectBundleOrder(code, [
+            'embed_federation_runtime',
+            'webpack/runtime/repack/polyfills',
+            '__webpack_require__.x()',
+          ]);
+        } else {
+          // Webpack MF v2 uses inline startup with a .federation/entry module:
+          //   1. repack/polyfills IIFE executes (polyfills loaded immediately)
+          //   2. Inline startup begins: federation entry, then polyfills (cache hits), then app
+          expect(code).toContain('.federation/entry');
+          expectBundleOrder(code, [
+            'webpack/runtime/repack/polyfills',
+            '.federation/entry',
+          ]);
+        }
+
+        // Normalize non-deterministic federation entry hash before snapshotting
+        const normalizedCode = code.replace(
+          /\.federation\/entry\.[a-f0-9]+\.js/g,
+          '.federation/entry.HASH.js'
+        );
+        expect(normalizedCode).toMatchSnapshot();
+      });
+    }
+  );
 });

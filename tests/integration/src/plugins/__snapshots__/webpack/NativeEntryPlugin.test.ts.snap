@@ -194,7 +194,7 @@ globalThis.__APP_ENTRY__ = true;
 ;"
 `;
 
-exports[`NativeEntryPlugin > with Module Federation v2 > should execute polyfills runtime module before MF v2 federation runtime 1`] = `
+exports[`NativeEntryPlugin > with Module Federation v2 ('0.8.9') > should execute polyfills runtime module before MF v2 federation runtime 1`] = `
 "/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -211,8 +211,8 @@ exports[`NativeEntryPlugin > with Module Federation v2 > should execute polyfill
  * These modules are required by assetsLoader and should be shared as deep imports when using ModuleFederation.
  */
 
-/*require.resolve*/(/*! react-native/Libraries/Image/AssetRegistry */ "webpack/sharing/consume/default/react-native/Libraries/Image/AssetRegistry");
-/*require.resolve*/(/*! react-native/Libraries/Image/AssetSourceResolver */ "webpack/sharing/consume/default/react-native/Libraries/Image/AssetSourceResolver");
+/*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+/*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 /***/ }),
 
@@ -223,44 +223,6 @@ exports[`NativeEntryPlugin > with Module Federation v2 > should execute polyfill
 /***/ (() => {
 
 throw new Error("Module parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)\\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\\n> import { ScriptManager } from './ScriptManager/ScriptManager.js';\\n| ScriptManager.init();");
-
-/***/ }),
-
-/***/ "../../node_modules/.federation/entry.HASH.js":
-/*!********************************************************************************!*\\
-  !*** ../../node_modules/.federation/entry.HASH.js ***!
-  \\********************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Users_jbroma_Developer_repack_node_modules_pnpm_module_federation_webpack_bundler_runtime_0_8_9_node_modules_module_federation_webpack_bundler_runtime_dist_index_cjs_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.8.9/node_modules/@module-federation/webpack-bundler-runtime/dist/index.cjs.js */ "/Users/jbroma/Developer/repack/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.8.9/node_modules/@module-federation/webpack-bundler-runtime/dist/index.cjs.js");
-
-
-if(!__webpack_require__.federation.runtime){
-	var prevFederation = __webpack_require__.federation;
-	__webpack_require__.federation = {}
-	for(var key in _Users_jbroma_Developer_repack_node_modules_pnpm_module_federation_webpack_bundler_runtime_0_8_9_node_modules_module_federation_webpack_bundler_runtime_dist_index_cjs_js__WEBPACK_IMPORTED_MODULE_0__){
-		__webpack_require__.federation[key] = _Users_jbroma_Developer_repack_node_modules_pnpm_module_federation_webpack_bundler_runtime_0_8_9_node_modules_module_federation_webpack_bundler_runtime_dist_index_cjs_js__WEBPACK_IMPORTED_MODULE_0__[key];
-	}
-	for(var key in prevFederation){
-		__webpack_require__.federation[key] = prevFederation[key];
-	}
-}
-if(!__webpack_require__.federation.instance){
-
-	__webpack_require__.federation.instance = __webpack_require__.federation.runtime.init(__webpack_require__.federation.initOptions);
-	if(__webpack_require__.federation.attachShareScopeMap){
-		__webpack_require__.federation.attachShareScopeMap(__webpack_require__)
-	}
-	if(__webpack_require__.federation.installInitialConsumes){
-		__webpack_require__.federation.installInitialConsumes()
-	}
-
-	if(!__webpack_require__.federation.isMFRemote && __webpack_require__.federation.prefetch){
-	__webpack_require__.federation.prefetch()
-	}
-}
 
 /***/ }),
 
@@ -401,7 +363,7 @@ module.exports = globalThis.__MF_EXTERNAL__;
 /******/ 	(() => {
 /******/ 		if(!__webpack_require__.federation){
 /******/ 			__webpack_require__.federation = {
-/******/ 				initOptions: {"name":"testContainer","remotes":[],"shareStrategy":"loaded-first"},
+/******/ 				initOptions: {"name":"testContainer","remotes":[],"shareStrategy":"version-first"},
 /******/ 				chunkMatcher: function(chunkId) {return false},
 /******/ 				rootOutputDir: "",
 /******/ 				initialConsumes: undefined,
@@ -516,49 +478,6 @@ module.exports = globalThis.__MF_EXTERNAL__;
 /******/ 	(() => {
 /******/ 		__webpack_require__("./__fixtures__/react-native/polyfill1.js");
 /******/ 		__webpack_require__("./__fixtures__/react-native/polyfill2.js");
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/consumes */
-/******/ 	(() => {
-/******/ 		var installedModules = {};
-/******/ 		var moduleToHandlerMapping = {
-/******/ 			"webpack/sharing/consume/default/react-native/Libraries/Image/AssetRegistry": {
-/******/ 				getter: ()=>()=>{throw new Error("Can not get 'react-native/Libraries/Image/AssetRegistry'")},
-/******/ 				shareInfo: {
-/******/ 					shareConfig: {
-/******/ 					  "fixedDependencies": false,
-/******/ 					  "requiredVersion": "*",
-/******/ 					  "strictVersion": false,
-/******/ 					  "singleton": true,
-/******/ 					  "eager": true
-/******/ 					},
-/******/ 					scope: ["default"],
-/******/ 				},
-/******/ 				shareKey: "react-native/Libraries/Image/AssetRegistry",
-/******/ 			},
-/******/ 			"webpack/sharing/consume/default/react-native/Libraries/Image/AssetSourceResolver": {
-/******/ 				getter: ()=>()=>{throw new Error("Can not get 'react-native/Libraries/Image/AssetSourceResolver'")},
-/******/ 				shareInfo: {
-/******/ 					shareConfig: {
-/******/ 					  "fixedDependencies": false,
-/******/ 					  "requiredVersion": "*",
-/******/ 					  "strictVersion": false,
-/******/ 					  "singleton": true,
-/******/ 					  "eager": true
-/******/ 					},
-/******/ 					scope: ["default"],
-/******/ 				},
-/******/ 				shareKey: "react-native/Libraries/Image/AssetSourceResolver",
-/******/ 			}
-/******/ 		};
-/******/ 		var initialConsumes = ["webpack/sharing/consume/default/react-native/Libraries/Image/AssetRegistry","webpack/sharing/consume/default/react-native/Libraries/Image/AssetSourceResolver"];
-/******/ 		__webpack_require__.federation.installInitialConsumes = () => (__webpack_require__.federation.bundlerRuntime.installInitialConsumes({
-/******/ 			initialConsumes: initialConsumes,
-/******/ 			installedModules:installedModules,
-/******/ 			moduleToHandlerMapping:moduleToHandlerMapping,
-/******/ 			webpackRequire: __webpack_require__
-/******/ 		}))
-/******/ 		// no chunk loading of consumes
 /******/ 	})();
 /******/ 	
 /************************************************************************/
