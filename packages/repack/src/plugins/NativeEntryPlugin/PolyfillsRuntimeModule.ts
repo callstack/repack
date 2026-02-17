@@ -1,6 +1,6 @@
-import fs from 'node:fs';
 import type {
   Compiler,
+  NormalModule,
   RuntimeModule as RuntimeModuleType,
 } from '@rspack/core';
 
@@ -9,9 +9,10 @@ interface PolyfillsRuntimeModuleConfig {
 }
 
 /**
- * Creates a runtime module that inlines React Native polyfills.
- * Runtime modules are executed before the startup function (__webpack_require__.x),
- * which means they run before Module Federation's embed_federation_runtime wrapper.
+ * Runtime module that requires polyfill entry modules before the startup
+ * function (__webpack_require__.x), ensuring they run before Module Federation's
+ * embed_federation_runtime wrapper. Polyfills go through the normal loader
+ * pipeline as entry modules; this module only controls execution timing.
  */
 export const makePolyfillsRuntimeModule = (
   compiler: Compiler,
@@ -19,25 +20,33 @@ export const makePolyfillsRuntimeModule = (
 ): RuntimeModuleType => {
   const Template = compiler.webpack.Template;
   const RuntimeModule = compiler.webpack.RuntimeModule;
+  const RuntimeGlobals = compiler.webpack.RuntimeGlobals;
 
   const PolyfillsRuntimeModule = class extends RuntimeModule {
     constructor(private config: PolyfillsRuntimeModuleConfig) {
-      // Use STAGE_BASIC to ensure polyfills run early among runtime modules
       super('repack/polyfills', RuntimeModule.STAGE_BASIC);
     }
 
     generate() {
-      const polyfillCode = this.config.polyfillPaths.map((polyfillPath) => {
-        const content = fs.readFileSync(polyfillPath, 'utf-8');
-        return Template.asString([
-          `// Polyfill: ${polyfillPath.split('/').pop()}`,
-          '(function() {',
-          Template.indent(content),
-          '})();',
-        ]);
-      });
+      const compilation = this.compilation!;
+      const chunk = this.chunk!;
+      const chunkGraph = compilation.chunkGraph;
+      const chunkModules = new Set(chunkGraph.getChunkModules(chunk));
 
-      return Template.asString(polyfillCode);
+      const requireCalls = this.config.polyfillPaths
+        .map((polyfillPath) => {
+          for (const mod of compilation.modules) {
+            if ((mod as NormalModule).resource === polyfillPath) {
+              if (!chunkModules.has(mod)) return null;
+              const moduleId = chunkGraph.getModuleId(mod);
+              return `${RuntimeGlobals.require}(${JSON.stringify(moduleId)});`;
+            }
+          }
+          return null;
+        })
+        .filter(Boolean) as string[];
+
+      return Template.asString(requireCalls);
     }
   };
 

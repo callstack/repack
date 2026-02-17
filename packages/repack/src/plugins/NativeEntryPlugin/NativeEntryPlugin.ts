@@ -66,13 +66,15 @@ export class NativeEntryPlugin {
     const polyfillPaths = getReactNativePolyfills();
 
     const nativeEntries = [
+      ...polyfillPaths,
       initializeCorePath,
       initializeScriptManagerPath,
       includeModulesPath,
     ];
 
-    // Add polyfills as runtime modules so they execute before the startup function.
-    // This ensures polyfills run before Module Federation's embed_federation_runtime wrapper.
+    // Polyfills are entry modules (processed by loaders), but we also require them
+    // from a runtime module to guarantee they execute before Module Federation's
+    // startup wrapper. The duplicate require during startup is a cache hit.
     compiler.hooks.compilation.tap('RepackNativeEntryPlugin', (compilation) => {
       compilation.hooks.additionalTreeRuntimeRequirements.tap(
         'RepackNativeEntryPlugin',
@@ -94,7 +96,7 @@ export class NativeEntryPlugin {
           );
         }
 
-        // add native entries to each declared entry point
+        // add native entries (including polyfills) to each declared entry point
         Object.keys(entry).forEach((entryName) => {
           const entryChunkName = entry[entryName].runtime || entryName;
           for (const nativeEntry of nativeEntries) {
