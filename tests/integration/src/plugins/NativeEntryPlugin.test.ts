@@ -6,8 +6,39 @@ import { Volume, createFsFromVolume } from 'memfs';
 import { describe, expect, inject, it } from 'vitest';
 import { createCompiler, createVirtualModulePlugin } from '../helpers.js';
 
+// Webpack throws when multiple versions of @module-federation/enhanced register
+// serializers with the same key. Patch ObjectMiddleware.register to allow
+// re-registration since we externalize all MF modules and never use serialization.
+// @ts-expect-error no types for internal webpack module
+import ObjectMiddleware from 'webpack/lib/serialization/ObjectMiddleware';
+const _register = ObjectMiddleware.register.bind(ObjectMiddleware);
+ObjectMiddleware.register = (...args: unknown[]) => {
+  try {
+    _register(...args);
+  } catch (e: any) {
+    if (!e.message?.includes('is already registered')) throw e;
+  }
+};
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REACT_NATIVE_PATH = path.join(__dirname, '__fixtures__', 'react-native');
+const REPO_ROOT = path.resolve(__dirname, '..', '..', '..', '..');
+
+/**
+ * Normalizes bundle code for deterministic snapshots by replacing
+ * machine-specific absolute paths and non-deterministic hashes.
+ */
+function normalizeBundle(code: string): string {
+  // Webpack mangles absolute paths into variable names with underscores
+  const mangledRoot = REPO_ROOT.replaceAll('/', '_').replaceAll('-', '_');
+  return code
+    .replaceAll(REPO_ROOT, '<rootDir>')
+    .replaceAll(mangledRoot, '_rootDir_')
+    .replace(
+      /\.federation\/entry\.[a-f0-9]+\.js/g,
+      '.federation/entry.HASH.js'
+    );
+}
 
 /**
  * NativeEntryPlugin adds native entries (InitializeScriptManager, IncludeModules)
@@ -99,7 +130,7 @@ describe('NativeEntryPlugin', () => {
         'Load entry module and return exports',
       ]);
 
-      expect(code).toMatchSnapshot();
+      expect(normalizeBundle(code)).toMatchSnapshot();
     });
   });
 
@@ -137,7 +168,7 @@ describe('NativeEntryPlugin', () => {
         'Load entry module and return exports',
       ]);
 
-      expect(code).toMatchSnapshot();
+      expect(normalizeBundle(code)).toMatchSnapshot();
     });
   });
 
@@ -164,16 +195,8 @@ describe('NativeEntryPlugin', () => {
   describe.each(MF_V2_VERSIONS)(
     'with Module Federation v2 ($version)',
     ({ pkg }) => {
-      it('should execute polyfills runtime module before MF v2 federation runtime', async (ctx) => {
+      it('should execute polyfills runtime module before MF v2 federation runtime', async () => {
         const bundlerType = inject('bundlerType');
-
-        // Webpack can't load multiple @module-federation/enhanced versions in
-        // one process due to serializer registration conflicts in ObjectMiddleware.
-        if (bundlerType === 'webpack' && pkg !== '@module-federation/enhanced') {
-          ctx.skip();
-          return;
-        }
-
         const subpath = bundlerType === 'rspack' ? 'rspack' : 'webpack';
         const { ModuleFederationPlugin } = await import(`${pkg}/${subpath}`);
 
@@ -224,12 +247,7 @@ describe('NativeEntryPlugin', () => {
           ]);
         }
 
-        // Normalize non-deterministic federation entry hash before snapshotting
-        const normalizedCode = code.replace(
-          /\.federation\/entry\.[a-f0-9]+\.js/g,
-          '.federation/entry.HASH.js'
-        );
-        expect(normalizedCode).toMatchSnapshot();
+        expect(normalizeBundle(code)).toMatchSnapshot();
       });
     }
   );

@@ -234,14 +234,14 @@ throw new Error("Module parse failed: 'import' and 'export' may appear only with
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Users_jbroma_Developer_repack_node_modules_pnpm_module_federation_webpack_bundler_runtime_0_8_9_node_modules_module_federation_webpack_bundler_runtime_dist_index_cjs_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.8.9/node_modules/@module-federation/webpack-bundler-runtime/dist/index.cjs.js */ "/Users/jbroma/Developer/repack/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.8.9/node_modules/@module-federation/webpack-bundler-runtime/dist/index.cjs.js");
+/* harmony import */ var _rootDir__node_modules_pnpm_module_federation_webpack_bundler_runtime_0_8_9_node_modules_module_federation_webpack_bundler_runtime_dist_index_cjs_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.8.9/node_modules/@module-federation/webpack-bundler-runtime/dist/index.cjs.js */ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.8.9/node_modules/@module-federation/webpack-bundler-runtime/dist/index.cjs.js");
 
 
 if(!__webpack_require__.federation.runtime){
 	var prevFederation = __webpack_require__.federation;
 	__webpack_require__.federation = {}
-	for(var key in _Users_jbroma_Developer_repack_node_modules_pnpm_module_federation_webpack_bundler_runtime_0_8_9_node_modules_module_federation_webpack_bundler_runtime_dist_index_cjs_js__WEBPACK_IMPORTED_MODULE_0__){
-		__webpack_require__.federation[key] = _Users_jbroma_Developer_repack_node_modules_pnpm_module_federation_webpack_bundler_runtime_0_8_9_node_modules_module_federation_webpack_bundler_runtime_dist_index_cjs_js__WEBPACK_IMPORTED_MODULE_0__[key];
+	for(var key in _rootDir__node_modules_pnpm_module_federation_webpack_bundler_runtime_0_8_9_node_modules_module_federation_webpack_bundler_runtime_dist_index_cjs_js__WEBPACK_IMPORTED_MODULE_0__){
+		__webpack_require__.federation[key] = _rootDir__node_modules_pnpm_module_federation_webpack_bundler_runtime_0_8_9_node_modules_module_federation_webpack_bundler_runtime_dist_index_cjs_js__WEBPACK_IMPORTED_MODULE_0__[key];
 	}
 	for(var key in prevFederation){
 		__webpack_require__.federation[key] = prevFederation[key];
@@ -309,7 +309,7 @@ globalThis.__APP_ENTRY__ = true;
 
 /***/ }),
 
-/***/ "/Users/jbroma/Developer/repack/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.8.9/node_modules/@module-federation/webpack-bundler-runtime/dist/index.cjs.js":
+/***/ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.8.9/node_modules/@module-federation/webpack-bundler-runtime/dist/index.cjs.js":
 /*!*********************************************!*\\
   !*** external "globalThis.__MF_EXTERNAL__" ***!
   \\*********************************************/
@@ -486,6 +486,647 @@ module.exports = globalThis.__MF_EXTERNAL__;
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	__webpack_require__("../../node_modules/.federation/entry.HASH.js");
+/******/ 	__webpack_require__("./__fixtures__/react-native/polyfill1.js");
+/******/ 	__webpack_require__("./__fixtures__/react-native/polyfill2.js");
+/******/ 	__webpack_require__("./__fixtures__/react-native/Libraries/Core/InitializeCore.js");
+/******/ 	__webpack_require__("../../../../packages/repack/dist/modules/InitializeScriptManager.js");
+/******/ 	__webpack_require__("../../../../packages/repack/dist/modules/IncludeModules.js");
+/******/ 	var __webpack_exports__ = __webpack_require__("./index.js");
+/******/ 	
+/******/ })()
+;"
+`;
+
+exports[`NativeEntryPlugin > with Module Federation v2 ('0.15.0') > should execute polyfills runtime module before MF v2 federation runtime 1`] = `
+"/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "../../../../packages/repack/dist/modules/IncludeModules.js":
+/*!******************************************************************!*\\
+  !*** ../../../../packages/repack/dist/modules/IncludeModules.js ***!
+  \\******************************************************************/
+/***/ (() => {
+
+/*
+ * This module is added as an entry module to prevent stripping of these React Native deep imports from the bundle.
+ * We use require.resolve from Rspack/Webpack to ensure these modules are included even if not directly used.
+ * This allows us to include the modules into the bundle without evaluating them.
+ * These modules are required by assetsLoader and should be shared as deep imports when using ModuleFederation.
+ */
+
+/*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+/*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+/***/ }),
+
+/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js":
+/*!***************************************************************************!*\\
+  !*** ../../../../packages/repack/dist/modules/InitializeScriptManager.js ***!
+  \\***************************************************************************/
+/***/ (() => {
+
+throw new Error("Module parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)\\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\\n> import { ScriptManager } from './ScriptManager/ScriptManager.js';\\n| ScriptManager.init();");
+
+/***/ }),
+
+/***/ "../../node_modules/.federation/entry.HASH.js":
+/*!********************************************************************************!*\\
+  !*** ../../node_modules/.federation/entry.HASH.js ***!
+  \\********************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _rootDir__node_modules_pnpm_module_federation_webpack_bundler_runtime_0_15_0_node_modules_module_federation_webpack_bundler_runtime_dist_index_esm_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.15.0/node_modules/@module-federation/webpack-bundler-runtime/dist/index.esm.js */ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.15.0/node_modules/@module-federation/webpack-bundler-runtime/dist/index.esm.js");
+
+
+if(!__webpack_require__.federation.runtime){
+	var prevFederation = __webpack_require__.federation;
+	__webpack_require__.federation = {}
+	for(var key in _rootDir__node_modules_pnpm_module_federation_webpack_bundler_runtime_0_15_0_node_modules_module_federation_webpack_bundler_runtime_dist_index_esm_js__WEBPACK_IMPORTED_MODULE_0__){
+		__webpack_require__.federation[key] = _rootDir__node_modules_pnpm_module_federation_webpack_bundler_runtime_0_15_0_node_modules_module_federation_webpack_bundler_runtime_dist_index_esm_js__WEBPACK_IMPORTED_MODULE_0__[key];
+	}
+	for(var key in prevFederation){
+		__webpack_require__.federation[key] = prevFederation[key];
+	}
+}
+if(!__webpack_require__.federation.instance){
+
+	__webpack_require__.federation.instance = __webpack_require__.federation.runtime.init(__webpack_require__.federation.initOptions);
+	if(__webpack_require__.federation.attachShareScopeMap){
+		__webpack_require__.federation.attachShareScopeMap(__webpack_require__)
+	}
+	if(__webpack_require__.federation.installInitialConsumes){
+		__webpack_require__.federation.installInitialConsumes()
+	}
+
+	if(!__webpack_require__.federation.isMFRemote && __webpack_require__.federation.prefetch){
+	__webpack_require__.federation.prefetch()
+	}
+}
+
+/***/ }),
+
+/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js":
+/*!********************************************************************!*\\
+  !*** ./__fixtures__/react-native/Libraries/Core/InitializeCore.js ***!
+  \\********************************************************************/
+/***/ (() => {
+
+globalThis.__INITIALIZE_CORE__ = true;
+
+
+/***/ }),
+
+/***/ "./__fixtures__/react-native/polyfill1.js":
+/*!************************************************!*\\
+  !*** ./__fixtures__/react-native/polyfill1.js ***!
+  \\************************************************/
+/***/ (() => {
+
+globalThis.__POLYFILL_1__ = true;
+
+
+/***/ }),
+
+/***/ "./__fixtures__/react-native/polyfill2.js":
+/*!************************************************!*\\
+  !*** ./__fixtures__/react-native/polyfill2.js ***!
+  \\************************************************/
+/***/ (() => {
+
+globalThis.__POLYFILL_2__ = true;
+
+
+/***/ }),
+
+/***/ "./index.js":
+/*!******************!*\\
+  !*** ./index.js ***!
+  \\******************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+globalThis.__APP_ENTRY__ = true;
+
+/***/ }),
+
+/***/ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.15.0/node_modules/@module-federation/webpack-bundler-runtime/dist/index.esm.js":
+/*!*********************************************!*\\
+  !*** external "globalThis.__MF_EXTERNAL__" ***!
+  \\*********************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = globalThis.__MF_EXTERNAL__;
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		var execOptions = { id: moduleId, module: module, factory: __webpack_modules__[moduleId], require: __webpack_require__ };
+/******/ 		__webpack_require__.i.forEach(function(handler) { handler(execOptions); });
+/******/ 		module = execOptions.module;
+/******/ 		execOptions.factory.call(module.exports, module, module.exports, execOptions.require);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = __webpack_module_cache__;
+/******/ 	
+/******/ 	// expose the module execution interceptor
+/******/ 	__webpack_require__.i = [];
+/******/ 	
+/******/ 	// the startup function
+/******/ 	__webpack_require__.x = x => {};
+/************************************************************************/
+/******/ 	/* webpack/runtime/federation runtime */
+/******/ 	(() => {
+/******/ 		if(!__webpack_require__.federation){
+/******/ 			__webpack_require__.federation = {
+/******/ 				initOptions: {"name":"testContainer","remotes":[],"shareStrategy":"version-first"},
+/******/ 				chunkMatcher: function(chunkId) {return false},
+/******/ 				rootOutputDir: "",
+/******/ 				initialConsumes: undefined,
+/******/ 				bundlerRuntimeOptions: {}
+/******/ 			};
+/******/ 		}
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/sharing */
+/******/ 	(() => {
+/******/ 		__webpack_require__.S = {};
+/******/ 		var initPromises = {};
+/******/ 		var initTokens = {};
+/******/ 		__webpack_require__.I = (name, initScope) => {
+/******/ 			if(!initScope) initScope = [];
+/******/ 			// handling circular init calls
+/******/ 			var initToken = initTokens[name];
+/******/ 			if(!initToken) initToken = initTokens[name] = {};
+/******/ 			if(initScope.indexOf(initToken) >= 0) return;
+/******/ 			initScope.push(initToken);
+/******/ 			// only runs once
+/******/ 			if(initPromises[name]) return initPromises[name];
+/******/ 			// creates a new share scope if needed
+/******/ 			if(!__webpack_require__.o(__webpack_require__.S, name)) __webpack_require__.S[name] = {};
+/******/ 			// runs all init snippets from all modules reachable
+/******/ 			var scope = __webpack_require__.S[name];
+/******/ 			var warn = (msg) => {
+/******/ 				if (typeof console !== "undefined" && console.warn) console.warn(msg);
+/******/ 			};
+/******/ 			var uniqueName = undefined;
+/******/ 			var register = (name, version, factory, eager) => {
+/******/ 				var versions = scope[name] = scope[name] || {};
+/******/ 				var activeVersion = versions[version];
+/******/ 				if(!activeVersion || (!activeVersion.loaded && (!eager != !activeVersion.eager ? eager : uniqueName > activeVersion.from))) versions[version] = { get: factory, from: uniqueName, eager: !!eager };
+/******/ 			};
+/******/ 			var initExternal = (id) => {
+/******/ 				var handleError = (err) => (warn("Initialization of sharing external failed: " + err));
+/******/ 				try {
+/******/ 					var module = __webpack_require__(id);
+/******/ 					if(!module) return;
+/******/ 					var initFn = (module) => (module && module.init && module.init(__webpack_require__.S[name], initScope))
+/******/ 					if(module.then) return promises.push(module.then(initFn, handleError));
+/******/ 					var initResult = initFn(module);
+/******/ 					if(initResult && initResult.then) return promises.push(initResult['catch'](handleError));
+/******/ 				} catch(err) { handleError(err); }
+/******/ 			}
+/******/ 			var promises = [];
+/******/ 			switch(name) {
+/******/ 			}
+/******/ 			if(!promises.length) return initPromises[name] = 1;
+/******/ 			return initPromises[name] = Promise.all(promises).then(() => (initPromises[name] = 1));
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/sharing */
+/******/ 	(() => {
+/******/ 		__webpack_require__.federation.initOptions.shared = {}
+/******/ 		__webpack_require__.S = {};
+/******/ 		var initPromises = {};
+/******/ 		var initTokens = {};
+/******/ 		__webpack_require__.I = (name, initScope) => {
+/******/ 			return __webpack_require__.federation.bundlerRuntime.I({	shareScopeName: name,
+/******/ 				webpackRequire: __webpack_require__,
+/******/ 				initPromises: initPromises,
+/******/ 				initTokens: initTokens,
+/******/ 				initScope: initScope,
+/******/ 			})
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/repack/polyfills */
+/******/ 	(() => {
+/******/ 		__webpack_require__("./__fixtures__/react-native/polyfill1.js");
+/******/ 		__webpack_require__("./__fixtures__/react-native/polyfill2.js");
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/embed/federation */
+/******/ 	(() => {
+/******/ 		var oldStartup = __webpack_require__.x;
+/******/ 		var hasRun = false;
+/******/ 		__webpack_require__.x = () => {
+/******/ 			if (!hasRun) {
+/******/ 			  hasRun = true;
+/******/ 			  __webpack_require__(/*! ../../node_modules/.federation/entry.HASH.js */ "../../node_modules/.federation/entry.HASH.js");
+/******/ 			}
+/******/ 			return oldStartup();
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	// run runtime startup
+/******/ 	__webpack_require__.x();
+/******/ 	// module cache are used so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	__webpack_require__("./__fixtures__/react-native/polyfill1.js");
+/******/ 	__webpack_require__("./__fixtures__/react-native/polyfill2.js");
+/******/ 	__webpack_require__("./__fixtures__/react-native/Libraries/Core/InitializeCore.js");
+/******/ 	__webpack_require__("../../../../packages/repack/dist/modules/InitializeScriptManager.js");
+/******/ 	__webpack_require__("../../../../packages/repack/dist/modules/IncludeModules.js");
+/******/ 	var __webpack_exports__ = __webpack_require__("./index.js");
+/******/ 	
+/******/ })()
+;"
+`;
+
+exports[`NativeEntryPlugin > with Module Federation v2 ('0.21.0') > should execute polyfills runtime module before MF v2 federation runtime 1`] = `
+"/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "../../../../packages/repack/dist/modules/IncludeModules.js":
+/*!******************************************************************!*\\
+  !*** ../../../../packages/repack/dist/modules/IncludeModules.js ***!
+  \\******************************************************************/
+/***/ (() => {
+
+/*
+ * This module is added as an entry module to prevent stripping of these React Native deep imports from the bundle.
+ * We use require.resolve from Rspack/Webpack to ensure these modules are included even if not directly used.
+ * This allows us to include the modules into the bundle without evaluating them.
+ * These modules are required by assetsLoader and should be shared as deep imports when using ModuleFederation.
+ */
+
+/*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+/*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+/***/ }),
+
+/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js":
+/*!***************************************************************************!*\\
+  !*** ../../../../packages/repack/dist/modules/InitializeScriptManager.js ***!
+  \\***************************************************************************/
+/***/ (() => {
+
+throw new Error("Module parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)\\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\\n> import { ScriptManager } from './ScriptManager/ScriptManager.js';\\n| ScriptManager.init();");
+
+/***/ }),
+
+/***/ "../../node_modules/.federation/entry.HASH.js":
+/*!********************************************************************************!*\\
+  !*** ../../node_modules/.federation/entry.HASH.js ***!
+  \\********************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _rootDir__node_modules_pnpm_module_federation_webpack_bundler_runtime_0_21_0_node_modules_module_federation_webpack_bundler_runtime_dist_index_esm_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.21.0/node_modules/@module-federation/webpack-bundler-runtime/dist/index.esm.js */ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.21.0/node_modules/@module-federation/webpack-bundler-runtime/dist/index.esm.js");
+
+
+if(!__webpack_require__.federation.runtime){
+	var prevFederation = __webpack_require__.federation;
+	__webpack_require__.federation = {}
+	for(var key in _rootDir__node_modules_pnpm_module_federation_webpack_bundler_runtime_0_21_0_node_modules_module_federation_webpack_bundler_runtime_dist_index_esm_js__WEBPACK_IMPORTED_MODULE_0__){
+		__webpack_require__.federation[key] = _rootDir__node_modules_pnpm_module_federation_webpack_bundler_runtime_0_21_0_node_modules_module_federation_webpack_bundler_runtime_dist_index_esm_js__WEBPACK_IMPORTED_MODULE_0__[key];
+	}
+	for(var key in prevFederation){
+		__webpack_require__.federation[key] = prevFederation[key];
+	}
+}
+if(!__webpack_require__.federation.instance){
+
+	__webpack_require__.federation.instance = __webpack_require__.federation.runtime.init(__webpack_require__.federation.initOptions);
+	if(__webpack_require__.federation.attachShareScopeMap){
+		__webpack_require__.federation.attachShareScopeMap(__webpack_require__)
+	}
+	if(__webpack_require__.federation.installInitialConsumes){
+		__webpack_require__.federation.installInitialConsumes()
+	}
+
+	if(!__webpack_require__.federation.isMFRemote && __webpack_require__.federation.prefetch){
+	__webpack_require__.federation.prefetch()
+	}
+}
+
+/***/ }),
+
+/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js":
+/*!********************************************************************!*\\
+  !*** ./__fixtures__/react-native/Libraries/Core/InitializeCore.js ***!
+  \\********************************************************************/
+/***/ (() => {
+
+globalThis.__INITIALIZE_CORE__ = true;
+
+
+/***/ }),
+
+/***/ "./__fixtures__/react-native/polyfill1.js":
+/*!************************************************!*\\
+  !*** ./__fixtures__/react-native/polyfill1.js ***!
+  \\************************************************/
+/***/ (() => {
+
+globalThis.__POLYFILL_1__ = true;
+
+
+/***/ }),
+
+/***/ "./__fixtures__/react-native/polyfill2.js":
+/*!************************************************!*\\
+  !*** ./__fixtures__/react-native/polyfill2.js ***!
+  \\************************************************/
+/***/ (() => {
+
+globalThis.__POLYFILL_2__ = true;
+
+
+/***/ }),
+
+/***/ "./index.js":
+/*!******************!*\\
+  !*** ./index.js ***!
+  \\******************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+globalThis.__APP_ENTRY__ = true;
+
+/***/ }),
+
+/***/ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.21.0/node_modules/@module-federation/webpack-bundler-runtime/dist/index.esm.js":
+/*!*********************************************!*\\
+  !*** external "globalThis.__MF_EXTERNAL__" ***!
+  \\*********************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = globalThis.__MF_EXTERNAL__;
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		var execOptions = { id: moduleId, module: module, factory: __webpack_modules__[moduleId], require: __webpack_require__ };
+/******/ 		__webpack_require__.i.forEach(function(handler) { handler(execOptions); });
+/******/ 		module = execOptions.module;
+/******/ 		execOptions.factory.call(module.exports, module, module.exports, execOptions.require);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = __webpack_module_cache__;
+/******/ 	
+/******/ 	// expose the module execution interceptor
+/******/ 	__webpack_require__.i = [];
+/******/ 	
+/******/ 	// the startup function
+/******/ 	__webpack_require__.x = x => {};
+/************************************************************************/
+/******/ 	/* webpack/runtime/federation runtime */
+/******/ 	(() => {
+/******/ 		if(!__webpack_require__.federation){
+/******/ 			__webpack_require__.federation = {
+/******/ 				initOptions: {"name":"testContainer","remotes":[],"shareStrategy":"version-first"},
+/******/ 				chunkMatcher: function(chunkId) {return false},
+/******/ 				rootOutputDir: "",
+/******/ 				bundlerRuntimeOptions: { remotes: { remoteInfos: {}, webpackRequire: __webpack_require__,idToRemoteMap: {}, chunkMapping: {},idToExternalAndNameMapping: {} } }
+/******/ 			};
+/******/ 		__webpack_require__.consumesLoadingData = {}
+/******/ 		__webpack_require__.remotesLoadingData = {}
+/******/ 		}
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/sharing */
+/******/ 	(() => {
+/******/ 		__webpack_require__.S = {};
+/******/ 		var initPromises = {};
+/******/ 		var initTokens = {};
+/******/ 		__webpack_require__.I = (name, initScope) => {
+/******/ 			if(!initScope) initScope = [];
+/******/ 			// handling circular init calls
+/******/ 			var initToken = initTokens[name];
+/******/ 			if(!initToken) initToken = initTokens[name] = {};
+/******/ 			if(initScope.indexOf(initToken) >= 0) return;
+/******/ 			initScope.push(initToken);
+/******/ 			// only runs once
+/******/ 			if(initPromises[name]) return initPromises[name];
+/******/ 			// creates a new share scope if needed
+/******/ 			if(!__webpack_require__.o(__webpack_require__.S, name)) __webpack_require__.S[name] = {};
+/******/ 			// runs all init snippets from all modules reachable
+/******/ 			var scope = __webpack_require__.S[name];
+/******/ 			var warn = (msg) => {
+/******/ 				if (typeof console !== "undefined" && console.warn) console.warn(msg);
+/******/ 			};
+/******/ 			var uniqueName = undefined;
+/******/ 			var register = (name, version, factory, eager) => {
+/******/ 				var versions = scope[name] = scope[name] || {};
+/******/ 				var activeVersion = versions[version];
+/******/ 				if(!activeVersion || (!activeVersion.loaded && (!eager != !activeVersion.eager ? eager : uniqueName > activeVersion.from))) versions[version] = { get: factory, from: uniqueName, eager: !!eager };
+/******/ 			};
+/******/ 			var initExternal = (id) => {
+/******/ 				var handleError = (err) => (warn("Initialization of sharing external failed: " + err));
+/******/ 				try {
+/******/ 					var module = __webpack_require__(id);
+/******/ 					if(!module) return;
+/******/ 					var initFn = (module) => (module && module.init && module.init(__webpack_require__.S[name], initScope))
+/******/ 					if(module.then) return promises.push(module.then(initFn, handleError));
+/******/ 					var initResult = initFn(module);
+/******/ 					if(initResult && initResult.then) return promises.push(initResult['catch'](handleError));
+/******/ 				} catch(err) { handleError(err); }
+/******/ 			}
+/******/ 			var promises = [];
+/******/ 			switch(name) {
+/******/ 			}
+/******/ 			if(!promises.length) return initPromises[name] = 1;
+/******/ 			return initPromises[name] = Promise.all(promises).then(() => (initPromises[name] = 1));
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/sharing */
+/******/ 	(() => {
+/******/ 		__webpack_require__.federation.initOptions.shared = {}
+/******/ 		__webpack_require__.S = {};
+/******/ 		var initPromises = {};
+/******/ 		var initTokens = {};
+/******/ 		__webpack_require__.I = (name, initScope) => {
+/******/ 			return __webpack_require__.federation.bundlerRuntime.I({	shareScopeName: name,
+/******/ 				webpackRequire: __webpack_require__,
+/******/ 				initPromises: initPromises,
+/******/ 				initTokens: initTokens,
+/******/ 				initScope: initScope,
+/******/ 			})
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/repack/polyfills */
+/******/ 	(() => {
+/******/ 		__webpack_require__("./__fixtures__/react-native/polyfill1.js");
+/******/ 		__webpack_require__("./__fixtures__/react-native/polyfill2.js");
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/embed/federation */
+/******/ 	(() => {
+/******/ 		var prevStartup = __webpack_require__.x;
+/******/ 		var hasRun = false;
+/******/ 		__webpack_require__.x = () => {
+/******/ 			if (!hasRun) {
+/******/ 			  hasRun = true;
+/******/ 			  __webpack_require__(/*! ../../node_modules/.federation/entry.HASH.js */ "../../node_modules/.federation/entry.HASH.js");
+/******/ 			}
+/******/ 			if (typeof prevStartup === 'function') {
+/******/ 			  return prevStartup();
+/******/ 			} else {
+/******/ 			  console.warn('[Module Federation] prevStartup is not a function, skipping startup execution');
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	// run runtime startup
+/******/ 	__webpack_require__.x();
+/******/ 	// module cache are used so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
 /******/ 	__webpack_require__("./__fixtures__/react-native/polyfill1.js");
 /******/ 	__webpack_require__("./__fixtures__/react-native/polyfill2.js");
 /******/ 	__webpack_require__("./__fixtures__/react-native/Libraries/Core/InitializeCore.js");
