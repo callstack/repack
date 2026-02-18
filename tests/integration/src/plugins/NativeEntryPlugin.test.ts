@@ -209,6 +209,7 @@ describe('NativeEntryPlugin', () => {
           [
             new ModuleFederationPlugin({
               name: 'testContainer',
+              manifest: false,
               exposes: {
                 './App': './App.js',
               },
