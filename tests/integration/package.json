@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@callstack/repack": "workspace:*",
-    "@module-federation/enhanced": "0.8.9",
+    "@module-federation/enhanced": "2.0.1",
     "@module-federation/enhanced-v15": "npm:@module-federation/enhanced@0.15.0",
     "@module-federation/enhanced-v21": "npm:@module-federation/enhanced@0.21.0",
     "@rspack/core": "catalog:",

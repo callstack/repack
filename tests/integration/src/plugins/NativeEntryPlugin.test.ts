@@ -173,9 +173,9 @@ describe('NativeEntryPlugin', () => {
   });
 
   const MF_V2_VERSIONS = [
-    { version: '0.8.9', pkg: '@module-federation/enhanced' },
     { version: '0.15.0', pkg: '@module-federation/enhanced-v15' },
     { version: '0.21.0', pkg: '@module-federation/enhanced-v21' },
+    { version: '2.0.1', pkg: '@module-federation/enhanced' },
   ];
 
   const mfExternals = ((
