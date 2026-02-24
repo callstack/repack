@@ -8,7 +8,7 @@
   "scripts": {
     "prepare": "is-in-ci || husky",
     "build": "turbo run build",
-    "dev": "turbo run build --watch",
+    "dev": "turbo watch build",
     "lint": "biome check --write",
     "lint:ci": "biome check",
     "typecheck": "turbo run typecheck",
