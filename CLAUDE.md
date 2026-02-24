@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-This is a pnpm monorepo using Nx for task orchestration. The root package.json contains the most important commands:
+This is a pnpm monorepo using Turborepo for task orchestration. The root package.json contains the most important commands:
 
 **Build & Development:**
-- `pnpm build` - Build all packages using Nx
-- `pnpm dev` - Build once then watch for changes across all packages
+- `pnpm build` - Run a Turborepo build across workspace packages
+- `pnpm dev` - Run Turborepo watch mode for build across workspace packages
 - `pnpm lint` - Run Biome linter with auto-fix
 - `pnpm lint:ci` - Run Biome linter without auto-fix (CI mode)
 - `pnpm typecheck` - Run TypeScript checking across all packages
@@ -70,7 +70,7 @@ Re.Pack provides first-class support for Module Federation for microfrontend arc
 
 ## Key Development Notes
 
-- This is a monorepo managed by pnpm workspaces with Nx orchestration
+- This is a monorepo managed by pnpm workspaces with Turborepo orchestration
 - The project supports both Webpack and Rspack as bundling engines
 - Native modules require building iOS and Android code when making changes
 - Always run `pnpm lint` and `pnpm typecheck` before committing changes
