@@ -7,15 +7,15 @@
   },
   "scripts": {
     "prepare": "is-in-ci || husky",
-    "build": "nx run-many -t build",
-    "dev": "pnpm run build && nx watch --all -- pnpm run build",
+    "build": "turbo run build",
+    "dev": "turbo watch build",
     "lint": "biome check --write",
     "lint:ci": "biome check",
-    "typecheck": "nx run-many -t typecheck --exclude tests/metro-compat",
-    "test": "nx run-many -t test",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
     "release": "pnpm build && pnpm lint && pnpm test && pnpm changeset publish",
-    "pods": "nx run-many -t pods",
-    "pods:update": "nx run-many -t pods:update",
+    "pods": "turbo run pods",
+    "pods:update": "turbo run pods:update",
     "website:start": "pnpm --filter website run start",
     "website:build": "pnpm --filter website run export"
   },
@@ -32,7 +32,7 @@
     "@changesets/cli": "^2.29.4",
     "husky": "^9.1.6",
     "is-in-ci": "^1.0.0",
-    "nx": "22.4.1",
+    "turbo": "^2.8.10",
     "typescript": "catalog:"
   }
 }
