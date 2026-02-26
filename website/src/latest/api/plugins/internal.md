@@ -6,6 +6,8 @@
 
 ## NativeEntryPlugin
 
+Plugin that sets up the React Native entry point for each compilation entry. It adds React Native polyfills, `InitializeCore`, `InitializeScriptManager`, and `IncludeModules` as entry modules processed through the standard loader pipeline. A companion runtime module (`PolyfillsRuntimeModule`) ensures polyfills execute before Module Federation's startup wrapper, regardless of the federation version or bundler used.
+
 ## DevelopmentPlugin
 
 ## RepackTargetPlugin

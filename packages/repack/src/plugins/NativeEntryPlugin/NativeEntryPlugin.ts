@@ -1,7 +1,8 @@
 import path from 'node:path';
 import type { ResolveAlias, Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
-import { isRspackCompiler, moveElementBefore } from '../helpers/index.js';
+import { isRspackCompiler, moveElementBefore } from '../../helpers/index.js';
+import { makePolyfillsRuntimeModule } from './PolyfillsRuntimeModule.js';
 
 export interface NativeEntryPluginConfig {
   /**
@@ -55,17 +56,36 @@ export class NativeEntryPlugin {
       path.join(reactNativePath, 'Libraries/Core/InitializeCore.js');
 
     const initializeScriptManagerPath = require.resolve(
-      '../modules/InitializeScriptManager.js'
+      '../../modules/InitializeScriptManager.js'
     );
 
-    const includeModulesPath = require.resolve('../modules/IncludeModules.js');
+    const includeModulesPath = require.resolve(
+      '../../modules/IncludeModules.js'
+    );
+
+    const polyfillPaths = getReactNativePolyfills();
 
     const nativeEntries = [
-      ...getReactNativePolyfills(),
+      ...polyfillPaths,
       initializeCorePath,
       initializeScriptManagerPath,
       includeModulesPath,
     ];
+
+    // Polyfills are entry modules (processed by loaders), but we also require them
+    // from a runtime module to guarantee they execute before Module Federation's
+    // startup wrapper. The duplicate require during startup is a cache hit.
+    compiler.hooks.compilation.tap('RepackNativeEntryPlugin', (compilation) => {
+      compilation.hooks.additionalTreeRuntimeRequirements.tap(
+        'RepackNativeEntryPlugin',
+        (chunk) => {
+          compilation.addRuntimeModule(
+            chunk,
+            makePolyfillsRuntimeModule(compiler, { polyfillPaths })
+          );
+        }
+      );
+    });
 
     compiler.hooks.entryOption.tap(
       { name: 'RepackNativeEntryPlugin', before: 'RepackDevelopmentPlugin' },
@@ -76,14 +96,12 @@ export class NativeEntryPlugin {
           );
         }
 
+        // add native entries (including polyfills) to each declared entry point
         Object.keys(entry).forEach((entryName) => {
-          // runtime property defines the chunk name, otherwise it defaults to the entry key
           const entryChunkName = entry[entryName].runtime || entryName;
-
-          // add native entries to all declared entry points
           for (const nativeEntry of nativeEntries) {
             new compiler.webpack.EntryPlugin(compiler.context, nativeEntry, {
-              name: entryChunkName, // prepends the entry to the chunk of specified name
+              name: entryChunkName,
             }).apply(compiler);
           }
         });
