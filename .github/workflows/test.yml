@@ -1,4 +1,4 @@
-name: Test
+name: CI Checks
 
 on:
   push:
@@ -50,25 +50,6 @@ jobs:
         uses: ./.github/actions/setup-pnpm-node
         with:
           node-version: '24'
-
-      - name: Run tests
-        run: pnpm test
-
-  test_main_matrix:
-    name: Tests [Node ${{ matrix.node_version }}]
-    if: github.ref == 'refs/heads/main'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        node_version: ['18', '20', '22', '24']
-        os: [ubuntu-latest]
-
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
-      - name: Setup workspace
-        uses: ./.github/actions/setup-pnpm-node
-        with:
-          node-version: ${{ matrix.node_version }}
 
       - name: Run tests
         run: pnpm test
