@@ -22,6 +22,6 @@ catalogs:
     "react-native-test-app": 4.4.7
     "@react-native/babel-preset": "0.81.0"
     "@react-native/typescript-config": "0.81.0"
-    "@react-native-community/cli": "20.0.0"
-    "@react-native-community/cli-platform-android": "20.0.0"
-    "@react-native-community/cli-platform-ios": "20.0.0"
+    "@react-native-community/cli": "20.1.2"
+    "@react-native-community/cli-platform-android": "20.1.2"
+    "@react-native-community/cli-platform-ios": "20.1.2"
