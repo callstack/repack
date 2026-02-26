@@ -1,5 +1,11 @@
 # @callstack/repack-dev-server
 
+## 5.2.4
+
+### Patch Changes
+
+- [#1346](https://github.com/callstack/repack/pull/1346) [`aaf3cc968666e91586fd655053b75e0b2cc11cb1`](https://github.com/callstack/repack/commit/aaf3cc968666e91586fd655053b75e0b2cc11cb1) Thanks [@jbroma](https://github.com/jbroma)! - Upgrade Fastify to v5 to resolve CVE-2026-25223 (HIGH severity). Updated `fastify`, `@fastify/middie`, `@fastify/sensible`, `fastify-plugin`, and `fastify-favicon` to their v5-compatible versions.
+
 ## 5.2.3
 
 ## 5.2.2
