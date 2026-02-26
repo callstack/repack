@@ -11,7 +11,7 @@ catalog:
   "@types/node": ^20.19.31
   "terser-webpack-plugin": ^5.3.14
   "typescript": ^5.8.3
-  "webpack": ^5.99.9
+  "webpack": ^5.104.1
   "react": "19.1.0"
   "react-native": "0.81.0"
   "vitest": ^4.0.18

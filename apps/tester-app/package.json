@@ -43,7 +43,7 @@
     "@react-native-community/cli-platform-ios": "catalog:testers",
     "@react-native/babel-preset": "catalog:testers",
     "@react-native/typescript-config": "catalog:testers",
-    "@rsdoctor/rspack-plugin": "^0.4.11",
+    "@rsdoctor/rspack-plugin": "^1.5.2",
     "@rspack/core": "catalog:",
     "@svgr/webpack": "^8.1.0",
     "@swc/core": "^1.13.3",
