@@ -1,5 +1,24 @@
 # @callstack/repack
 
+## 5.2.4
+
+### Patch Changes
+
+- [#1332](https://github.com/callstack/repack/pull/1332) [`cbfcfd0700fe01233c7ff61e37bdbd48a3d887ea`](https://github.com/callstack/repack/commit/cbfcfd0700fe01233c7ff61e37bdbd48a3d887ea) Thanks [@ismarbesic](https://github.com/ismarbesic)! - Fix hermes-compiler path for RN 0.82+ in the hermes bytecode plugin
+
+- [#1348](https://github.com/callstack/repack/pull/1348) [`cc943dd42a97c0ca63a664411b97cc5413b5502f`](https://github.com/callstack/repack/commit/cc943dd42a97c0ca63a664411b97cc5413b5502f) Thanks [@jbroma](https://github.com/jbroma)! - Fix `--entry-file` being required even when `entry` is defined in the bundler config.
+
+- [#1333](https://github.com/callstack/repack/pull/1333) [`4023cc7503fae96c82a8d35df9434648d1bb9cae`](https://github.com/callstack/repack/commit/4023cc7503fae96c82a8d35df9434648d1bb9cae) Thanks [@OrfeasZ](https://github.com/OrfeasZ)! - Handle previous compiler errors and abort bundling in `RepackOutputPlugin`
+
+- [#1340](https://github.com/callstack/repack/pull/1340) [`7ee1b83fac97aeaf1b0727b2fadf58c7dc3fdb6a`](https://github.com/callstack/repack/commit/7ee1b83fac97aeaf1b0727b2fadf58c7dc3fdb6a) Thanks [@jbroma](https://github.com/jbroma)! - Fix polyfill execution order when using Module Federation by adding a `PolyfillsRuntimeModule` to `NativeEntryPlugin`. Polyfills are now required from a runtime module that runs before Module Federation's startup wrapper, guaranteeing they execute before MF startup.
+
+- [#1321](https://github.com/callstack/repack/pull/1321) [`a224e84354855bfc923009cab31f887c0e3452c9`](https://github.com/callstack/repack/commit/a224e84354855bfc923009cab31f887c0e3452c9) Thanks [@jbroma](https://github.com/jbroma)! - Fix bundling with `babel-swc-loader` when `disableImportExportTransform` is set to `true` in RN babel preset
+
+- [#1350](https://github.com/callstack/repack/pull/1350) [`b083b9d62d873388c4dd6b8165072cc4fbf6bee1`](https://github.com/callstack/repack/commit/b083b9d62d873388c4dd6b8165072cc4fbf6bee1) Thanks [@jbroma](https://github.com/jbroma)! - Update jsonwebtoken to ^9.0.3 to resolve jws security vulnerability.
+
+- Updated dependencies [[`aaf3cc968666e91586fd655053b75e0b2cc11cb1`](https://github.com/callstack/repack/commit/aaf3cc968666e91586fd655053b75e0b2cc11cb1)]:
+  - @callstack/repack-dev-server@5.2.4
+
 ## 5.2.3
 
 ### Patch Changes
