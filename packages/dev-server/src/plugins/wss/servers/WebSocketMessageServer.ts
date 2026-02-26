@@ -182,11 +182,10 @@ export class WebSocketMessageServer extends WebSocketServer {
           })
         );
       } catch (error) {
-        this.fastify.log.error('Failed to reply', {
-          clientId,
-          error,
-          errorMessage,
-        });
+        this.fastify.log.error(
+          { clientId, error, errorMessage },
+          'Failed to reply'
+        );
       }
     }
   }
