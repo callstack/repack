@@ -1,7 +1,7 @@
 import type { EnvOptions } from '../types.js';
 
 export interface BundleArguments {
-  entryFile: string;
+  entryFile?: string;
   platform: string;
   dev: boolean;
   minify?: boolean;
