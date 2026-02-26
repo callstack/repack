@@ -4,11 +4,11 @@ exports[`NativeEntryPlugin > with Module Federation v1 > should execute polyfill
 "/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "../../../../packages/repack/dist/modules/IncludeModules.js":
+/***/ "../../../../packages/repack/dist/modules/IncludeModules.js"
 /*!******************************************************************!*\\
   !*** ../../../../packages/repack/dist/modules/IncludeModules.js ***!
   \\******************************************************************/
-/***/ (() => {
+() {
 
 /*
  * This module is added as an entry module to prevent stripping of these React Native deep imports from the bundle.
@@ -20,62 +20,62 @@ exports[`NativeEntryPlugin > with Module Federation v1 > should execute polyfill
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
-/***/ }),
+/***/ },
 
-/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js":
+/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js"
 /*!***************************************************************************!*\\
   !*** ../../../../packages/repack/dist/modules/InitializeScriptManager.js ***!
   \\***************************************************************************/
-/***/ (() => {
+() {
 
 throw new Error("Module parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)\\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\\n> import { ScriptManager } from './ScriptManager/ScriptManager.js';\\n| ScriptManager.init();");
 
-/***/ }),
+/***/ },
 
-/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js":
+/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js"
 /*!********************************************************************!*\\
   !*** ./__fixtures__/react-native/Libraries/Core/InitializeCore.js ***!
   \\********************************************************************/
-/***/ (() => {
+() {
 
 globalThis.__INITIALIZE_CORE__ = true;
 
 
-/***/ }),
+/***/ },
 
-/***/ "./__fixtures__/react-native/polyfill1.js":
+/***/ "./__fixtures__/react-native/polyfill1.js"
 /*!************************************************!*\\
   !*** ./__fixtures__/react-native/polyfill1.js ***!
   \\************************************************/
-/***/ (() => {
+() {
 
 globalThis.__POLYFILL_1__ = true;
 
 
-/***/ }),
+/***/ },
 
-/***/ "./__fixtures__/react-native/polyfill2.js":
+/***/ "./__fixtures__/react-native/polyfill2.js"
 /*!************************************************!*\\
   !*** ./__fixtures__/react-native/polyfill2.js ***!
   \\************************************************/
-/***/ (() => {
+() {
 
 globalThis.__POLYFILL_2__ = true;
 
 
-/***/ }),
+/***/ },
 
-/***/ "./index.js":
+/***/ "./index.js"
 /*!******************!*\\
   !*** ./index.js ***!
   \\******************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 globalThis.__APP_ENTRY__ = true;
 
-/***/ })
+/***/ }
 
 /******/ 	});
 /************************************************************************/
@@ -97,6 +97,12 @@ globalThis.__APP_ENTRY__ = true;
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
@@ -198,11 +204,22 @@ exports[`NativeEntryPlugin > with Module Federation v2 ('0.15.0') > should execu
 "/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "../../../../packages/repack/dist/modules/IncludeModules.js":
+/***/ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.15.0/node_modules/@module-federation/webpack-bundler-runtime/dist/index.esm.js"
+/*!*********************************************!*\\
+  !*** external "globalThis.__MF_EXTERNAL__" ***!
+  \\*********************************************/
+(module) {
+
+"use strict";
+module.exports = globalThis.__MF_EXTERNAL__;
+
+/***/ },
+
+/***/ "../../../../packages/repack/dist/modules/IncludeModules.js"
 /*!******************************************************************!*\\
   !*** ../../../../packages/repack/dist/modules/IncludeModules.js ***!
   \\******************************************************************/
-/***/ (() => {
+() {
 
 /*
  * This module is added as an entry module to prevent stripping of these React Native deep imports from the bundle.
@@ -214,23 +231,56 @@ exports[`NativeEntryPlugin > with Module Federation v2 ('0.15.0') > should execu
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
-/***/ }),
+/***/ },
 
-/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js":
+/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js"
 /*!***************************************************************************!*\\
   !*** ../../../../packages/repack/dist/modules/InitializeScriptManager.js ***!
   \\***************************************************************************/
-/***/ (() => {
+() {
 
 throw new Error("Module parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)\\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\\n> import { ScriptManager } from './ScriptManager/ScriptManager.js';\\n| ScriptManager.init();");
 
-/***/ }),
+/***/ },
 
-/***/ "../../node_modules/.federation/entry.HASH.js":
+/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js"
+/*!********************************************************************!*\\
+  !*** ./__fixtures__/react-native/Libraries/Core/InitializeCore.js ***!
+  \\********************************************************************/
+() {
+
+globalThis.__INITIALIZE_CORE__ = true;
+
+
+/***/ },
+
+/***/ "./__fixtures__/react-native/polyfill1.js"
+/*!************************************************!*\\
+  !*** ./__fixtures__/react-native/polyfill1.js ***!
+  \\************************************************/
+() {
+
+globalThis.__POLYFILL_1__ = true;
+
+
+/***/ },
+
+/***/ "./__fixtures__/react-native/polyfill2.js"
+/*!************************************************!*\\
+  !*** ./__fixtures__/react-native/polyfill2.js ***!
+  \\************************************************/
+() {
+
+globalThis.__POLYFILL_2__ = true;
+
+
+/***/ },
+
+/***/ "../../node_modules/.federation/entry.HASH.js"
 /*!********************************************************************************!*\\
   !*** ../../node_modules/.federation/entry.HASH.js ***!
   \\********************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -262,63 +312,19 @@ if(!__webpack_require__.federation.instance){
 	}
 }
 
-/***/ }),
+/***/ },
 
-/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js":
-/*!********************************************************************!*\\
-  !*** ./__fixtures__/react-native/Libraries/Core/InitializeCore.js ***!
-  \\********************************************************************/
-/***/ (() => {
-
-globalThis.__INITIALIZE_CORE__ = true;
-
-
-/***/ }),
-
-/***/ "./__fixtures__/react-native/polyfill1.js":
-/*!************************************************!*\\
-  !*** ./__fixtures__/react-native/polyfill1.js ***!
-  \\************************************************/
-/***/ (() => {
-
-globalThis.__POLYFILL_1__ = true;
-
-
-/***/ }),
-
-/***/ "./__fixtures__/react-native/polyfill2.js":
-/*!************************************************!*\\
-  !*** ./__fixtures__/react-native/polyfill2.js ***!
-  \\************************************************/
-/***/ (() => {
-
-globalThis.__POLYFILL_2__ = true;
-
-
-/***/ }),
-
-/***/ "./index.js":
+/***/ "./index.js"
 /*!******************!*\\
   !*** ./index.js ***!
   \\******************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 globalThis.__APP_ENTRY__ = true;
 
-/***/ }),
-
-/***/ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.15.0/node_modules/@module-federation/webpack-bundler-runtime/dist/index.esm.js":
-/*!*********************************************!*\\
-  !*** external "globalThis.__MF_EXTERNAL__" ***!
-  \\*********************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = globalThis.__MF_EXTERNAL__;
-
-/***/ })
+/***/ }
 
 /******/ 	});
 /************************************************************************/
@@ -342,6 +348,12 @@ module.exports = globalThis.__MF_EXTERNAL__;
 /******/ 		// Execute the module function
 /******/ 		var execOptions = { id: moduleId, module: module, factory: __webpack_modules__[moduleId], require: __webpack_require__ };
 /******/ 		__webpack_require__.i.forEach(function(handler) { handler(execOptions); });
+/******/ 		if (!execOptions.factory) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
 /******/ 		module = execOptions.module;
 /******/ 		execOptions.factory.call(module.exports, module, module.exports, execOptions.require);
 /******/ 	
@@ -516,11 +528,22 @@ exports[`NativeEntryPlugin > with Module Federation v2 ('0.21.0') > should execu
 "/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "../../../../packages/repack/dist/modules/IncludeModules.js":
+/***/ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.21.0/node_modules/@module-federation/webpack-bundler-runtime/dist/index.esm.js"
+/*!*********************************************!*\\
+  !*** external "globalThis.__MF_EXTERNAL__" ***!
+  \\*********************************************/
+(module) {
+
+"use strict";
+module.exports = globalThis.__MF_EXTERNAL__;
+
+/***/ },
+
+/***/ "../../../../packages/repack/dist/modules/IncludeModules.js"
 /*!******************************************************************!*\\
   !*** ../../../../packages/repack/dist/modules/IncludeModules.js ***!
   \\******************************************************************/
-/***/ (() => {
+() {
 
 /*
  * This module is added as an entry module to prevent stripping of these React Native deep imports from the bundle.
@@ -532,23 +555,56 @@ exports[`NativeEntryPlugin > with Module Federation v2 ('0.21.0') > should execu
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
-/***/ }),
+/***/ },
 
-/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js":
+/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js"
 /*!***************************************************************************!*\\
   !*** ../../../../packages/repack/dist/modules/InitializeScriptManager.js ***!
   \\***************************************************************************/
-/***/ (() => {
+() {
 
 throw new Error("Module parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)\\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\\n> import { ScriptManager } from './ScriptManager/ScriptManager.js';\\n| ScriptManager.init();");
 
-/***/ }),
+/***/ },
 
-/***/ "../../node_modules/.federation/entry.HASH.js":
+/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js"
+/*!********************************************************************!*\\
+  !*** ./__fixtures__/react-native/Libraries/Core/InitializeCore.js ***!
+  \\********************************************************************/
+() {
+
+globalThis.__INITIALIZE_CORE__ = true;
+
+
+/***/ },
+
+/***/ "./__fixtures__/react-native/polyfill1.js"
+/*!************************************************!*\\
+  !*** ./__fixtures__/react-native/polyfill1.js ***!
+  \\************************************************/
+() {
+
+globalThis.__POLYFILL_1__ = true;
+
+
+/***/ },
+
+/***/ "./__fixtures__/react-native/polyfill2.js"
+/*!************************************************!*\\
+  !*** ./__fixtures__/react-native/polyfill2.js ***!
+  \\************************************************/
+() {
+
+globalThis.__POLYFILL_2__ = true;
+
+
+/***/ },
+
+/***/ "../../node_modules/.federation/entry.HASH.js"
 /*!********************************************************************************!*\\
   !*** ../../node_modules/.federation/entry.HASH.js ***!
   \\********************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -580,63 +636,19 @@ if(!__webpack_require__.federation.instance){
 	}
 }
 
-/***/ }),
+/***/ },
 
-/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js":
-/*!********************************************************************!*\\
-  !*** ./__fixtures__/react-native/Libraries/Core/InitializeCore.js ***!
-  \\********************************************************************/
-/***/ (() => {
-
-globalThis.__INITIALIZE_CORE__ = true;
-
-
-/***/ }),
-
-/***/ "./__fixtures__/react-native/polyfill1.js":
-/*!************************************************!*\\
-  !*** ./__fixtures__/react-native/polyfill1.js ***!
-  \\************************************************/
-/***/ (() => {
-
-globalThis.__POLYFILL_1__ = true;
-
-
-/***/ }),
-
-/***/ "./__fixtures__/react-native/polyfill2.js":
-/*!************************************************!*\\
-  !*** ./__fixtures__/react-native/polyfill2.js ***!
-  \\************************************************/
-/***/ (() => {
-
-globalThis.__POLYFILL_2__ = true;
-
-
-/***/ }),
-
-/***/ "./index.js":
+/***/ "./index.js"
 /*!******************!*\\
   !*** ./index.js ***!
   \\******************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 globalThis.__APP_ENTRY__ = true;
 
-/***/ }),
-
-/***/ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@0.21.0/node_modules/@module-federation/webpack-bundler-runtime/dist/index.esm.js":
-/*!*********************************************!*\\
-  !*** external "globalThis.__MF_EXTERNAL__" ***!
-  \\*********************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = globalThis.__MF_EXTERNAL__;
-
-/***/ })
+/***/ }
 
 /******/ 	});
 /************************************************************************/
@@ -660,6 +672,12 @@ module.exports = globalThis.__MF_EXTERNAL__;
 /******/ 		// Execute the module function
 /******/ 		var execOptions = { id: moduleId, module: module, factory: __webpack_modules__[moduleId], require: __webpack_require__ };
 /******/ 		__webpack_require__.i.forEach(function(handler) { handler(execOptions); });
+/******/ 		if (!execOptions.factory) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
 /******/ 		module = execOptions.module;
 /******/ 		execOptions.factory.call(module.exports, module, module.exports, execOptions.require);
 /******/ 	
@@ -839,11 +857,22 @@ exports[`NativeEntryPlugin > with Module Federation v2 ('2.0.1') > should execut
 "/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "../../../../packages/repack/dist/modules/IncludeModules.js":
+/***/ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@2.0.1/node_modules/@module-federation/webpack-bundler-runtime/dist/index.cjs.cjs"
+/*!*********************************************!*\\
+  !*** external "globalThis.__MF_EXTERNAL__" ***!
+  \\*********************************************/
+(module) {
+
+"use strict";
+module.exports = globalThis.__MF_EXTERNAL__;
+
+/***/ },
+
+/***/ "../../../../packages/repack/dist/modules/IncludeModules.js"
 /*!******************************************************************!*\\
   !*** ../../../../packages/repack/dist/modules/IncludeModules.js ***!
   \\******************************************************************/
-/***/ (() => {
+() {
 
 /*
  * This module is added as an entry module to prevent stripping of these React Native deep imports from the bundle.
@@ -855,23 +884,56 @@ exports[`NativeEntryPlugin > with Module Federation v2 ('2.0.1') > should execut
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
-/***/ }),
+/***/ },
 
-/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js":
+/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js"
 /*!***************************************************************************!*\\
   !*** ../../../../packages/repack/dist/modules/InitializeScriptManager.js ***!
   \\***************************************************************************/
-/***/ (() => {
+() {
 
 throw new Error("Module parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)\\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\\n> import { ScriptManager } from './ScriptManager/ScriptManager.js';\\n| ScriptManager.init();");
 
-/***/ }),
+/***/ },
 
-/***/ "../../node_modules/.federation/entry.HASH.js":
+/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js"
+/*!********************************************************************!*\\
+  !*** ./__fixtures__/react-native/Libraries/Core/InitializeCore.js ***!
+  \\********************************************************************/
+() {
+
+globalThis.__INITIALIZE_CORE__ = true;
+
+
+/***/ },
+
+/***/ "./__fixtures__/react-native/polyfill1.js"
+/*!************************************************!*\\
+  !*** ./__fixtures__/react-native/polyfill1.js ***!
+  \\************************************************/
+() {
+
+globalThis.__POLYFILL_1__ = true;
+
+
+/***/ },
+
+/***/ "./__fixtures__/react-native/polyfill2.js"
+/*!************************************************!*\\
+  !*** ./__fixtures__/react-native/polyfill2.js ***!
+  \\************************************************/
+() {
+
+globalThis.__POLYFILL_2__ = true;
+
+
+/***/ },
+
+/***/ "../../node_modules/.federation/entry.HASH.js"
 /*!********************************************************************************!*\\
   !*** ../../node_modules/.federation/entry.HASH.js ***!
   \\********************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -903,63 +965,19 @@ if(!__webpack_require__.federation.instance){
 	}
 }
 
-/***/ }),
+/***/ },
 
-/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js":
-/*!********************************************************************!*\\
-  !*** ./__fixtures__/react-native/Libraries/Core/InitializeCore.js ***!
-  \\********************************************************************/
-/***/ (() => {
-
-globalThis.__INITIALIZE_CORE__ = true;
-
-
-/***/ }),
-
-/***/ "./__fixtures__/react-native/polyfill1.js":
-/*!************************************************!*\\
-  !*** ./__fixtures__/react-native/polyfill1.js ***!
-  \\************************************************/
-/***/ (() => {
-
-globalThis.__POLYFILL_1__ = true;
-
-
-/***/ }),
-
-/***/ "./__fixtures__/react-native/polyfill2.js":
-/*!************************************************!*\\
-  !*** ./__fixtures__/react-native/polyfill2.js ***!
-  \\************************************************/
-/***/ (() => {
-
-globalThis.__POLYFILL_2__ = true;
-
-
-/***/ }),
-
-/***/ "./index.js":
+/***/ "./index.js"
 /*!******************!*\\
   !*** ./index.js ***!
   \\******************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 globalThis.__APP_ENTRY__ = true;
 
-/***/ }),
-
-/***/ "<rootDir>/node_modules/.pnpm/@module-federation+webpack-bundler-runtime@2.0.1/node_modules/@module-federation/webpack-bundler-runtime/dist/index.cjs.cjs":
-/*!*********************************************!*\\
-  !*** external "globalThis.__MF_EXTERNAL__" ***!
-  \\*********************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = globalThis.__MF_EXTERNAL__;
-
-/***/ })
+/***/ }
 
 /******/ 	});
 /************************************************************************/
@@ -983,6 +1001,12 @@ module.exports = globalThis.__MF_EXTERNAL__;
 /******/ 		// Execute the module function
 /******/ 		var execOptions = { id: moduleId, module: module, factory: __webpack_modules__[moduleId], require: __webpack_require__ };
 /******/ 		__webpack_require__.i.forEach(function(handler) { handler(execOptions); });
+/******/ 		if (!execOptions.factory) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
 /******/ 		module = execOptions.module;
 /******/ 		execOptions.factory.call(module.exports, module, module.exports, execOptions.require);
 /******/ 	
@@ -1162,11 +1186,11 @@ exports[`NativeEntryPlugin > without Module Federation > should execute polyfill
 "/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "../../../../packages/repack/dist/modules/IncludeModules.js":
+/***/ "../../../../packages/repack/dist/modules/IncludeModules.js"
 /*!******************************************************************!*\\
   !*** ../../../../packages/repack/dist/modules/IncludeModules.js ***!
   \\******************************************************************/
-/***/ (() => {
+() {
 
 /*
  * This module is added as an entry module to prevent stripping of these React Native deep imports from the bundle.
@@ -1178,62 +1202,62 @@ exports[`NativeEntryPlugin > without Module Federation > should execute polyfill
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
-/***/ }),
+/***/ },
 
-/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js":
+/***/ "../../../../packages/repack/dist/modules/InitializeScriptManager.js"
 /*!***************************************************************************!*\\
   !*** ../../../../packages/repack/dist/modules/InitializeScriptManager.js ***!
   \\***************************************************************************/
-/***/ (() => {
+() {
 
 throw new Error("Module parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)\\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\\n> import { ScriptManager } from './ScriptManager/ScriptManager.js';\\n| ScriptManager.init();");
 
-/***/ }),
+/***/ },
 
-/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js":
+/***/ "./__fixtures__/react-native/Libraries/Core/InitializeCore.js"
 /*!********************************************************************!*\\
   !*** ./__fixtures__/react-native/Libraries/Core/InitializeCore.js ***!
   \\********************************************************************/
-/***/ (() => {
+() {
 
 globalThis.__INITIALIZE_CORE__ = true;
 
 
-/***/ }),
+/***/ },
 
-/***/ "./__fixtures__/react-native/polyfill1.js":
+/***/ "./__fixtures__/react-native/polyfill1.js"
 /*!************************************************!*\\
   !*** ./__fixtures__/react-native/polyfill1.js ***!
   \\************************************************/
-/***/ (() => {
+() {
 
 globalThis.__POLYFILL_1__ = true;
 
 
-/***/ }),
+/***/ },
 
-/***/ "./__fixtures__/react-native/polyfill2.js":
+/***/ "./__fixtures__/react-native/polyfill2.js"
 /*!************************************************!*\\
   !*** ./__fixtures__/react-native/polyfill2.js ***!
   \\************************************************/
-/***/ (() => {
+() {
 
 globalThis.__POLYFILL_2__ = true;
 
 
-/***/ }),
+/***/ },
 
-/***/ "./index.js":
+/***/ "./index.js"
 /*!******************!*\\
   !*** ./index.js ***!
   \\******************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 globalThis.__APP_ENTRY__ = true;
 
-/***/ })
+/***/ }
 
 /******/ 	});
 /************************************************************************/
@@ -1262,14 +1286,14 @@ globalThis.__APP_ENTRY__ = true;
 /******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	__webpack_modules__["./__fixtures__/react-native/polyfill1.js"](0, {}, __webpack_require__);
-/******/ 	__webpack_modules__["./__fixtures__/react-native/polyfill2.js"](0, {}, __webpack_require__);
-/******/ 	__webpack_modules__["./__fixtures__/react-native/Libraries/Core/InitializeCore.js"](0, {}, __webpack_require__);
+/******/ 	__webpack_modules__["./__fixtures__/react-native/polyfill1.js"](0,{},__webpack_require__);
+/******/ 	__webpack_modules__["./__fixtures__/react-native/polyfill2.js"](0,{},__webpack_require__);
+/******/ 	__webpack_modules__["./__fixtures__/react-native/Libraries/Core/InitializeCore.js"](0,{},__webpack_require__);
 /******/ 	// This entry module doesn't tell about it's top-level declarations so it can't be inlined
-/******/ 	__webpack_modules__["../../../../packages/repack/dist/modules/InitializeScriptManager.js"](0, {}, __webpack_require__);
-/******/ 	__webpack_modules__["../../../../packages/repack/dist/modules/IncludeModules.js"](0, {}, __webpack_require__);
+/******/ 	__webpack_modules__["../../../../packages/repack/dist/modules/InitializeScriptManager.js"](0,{},__webpack_require__);
+/******/ 	__webpack_modules__["../../../../packages/repack/dist/modules/IncludeModules.js"](0,{},__webpack_require__);
 /******/ 	var __webpack_exports__ = {};
-/******/ 	__webpack_modules__["./index.js"](0, __webpack_exports__, __webpack_require__);
+/******/ 	__webpack_modules__["./index.js"](0,__webpack_exports__,__webpack_require__);
 /******/ 	
 /******/ })()
 ;"
