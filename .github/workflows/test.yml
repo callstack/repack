@@ -1,4 +1,4 @@
-name: Test
+name: CI Checks
 
 on:
   push:
@@ -11,32 +11,45 @@ on:
   workflow_dispatch:
 
 jobs:
-  verify:
-    name: Verify [Node ${{ matrix.node_version }}]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        node_version: ['18', '20', '22', '24']
-        os: [ubuntu-latest]
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
-      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # tag=v4.1.0
-
-      - name: Use Node.js ${{ matrix.node_version }}
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # tag=v4.4.0
+      - name: Setup workspace
+        uses: ./.github/actions/setup-pnpm-node
         with:
-          node-version: ${{ matrix.node_version }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          node-version: '24'
 
       - name: Lint
         run: pnpm lint:ci
 
+  typecheck:
+    name: TypeScript
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+      - name: Setup workspace
+        uses: ./.github/actions/setup-pnpm-node
+        with:
+          node-version: '24'
+
       - name: Type check
         run: pnpm typecheck
+
+  test_pr:
+    name: Tests
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+      - name: Setup workspace
+        uses: ./.github/actions/setup-pnpm-node
+        with:
+          node-version: '24'
 
       - name: Run tests
         run: pnpm test
