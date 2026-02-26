@@ -1,78 +1,33 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Re.Pack is a toolkit for building and developing React Native applications with Webpack or Rspack instead of Metro. This repository contains the core bundling/runtime packages, integration plugins, and validation apps/tests used to verify behavior across supported setups.
 
-## Development Commands
+## Repository Shape
 
-This is a pnpm monorepo using Turborepo for task orchestration. The root package.json contains the most important commands:
+- This is a JavaScript/TypeScript monorepo for Re.Pack (React Native bundling with Webpack/Rspack).
+- `packages/` contains core libraries and integrations.
+- `apps/` contains runnable validation applications.
+- `tests/` contains compatibility and regression suites.
 
-**Build & Development:**
-- `pnpm build` - Run a Turborepo build across workspace packages
-- `pnpm dev` - Run Turborepo watch mode for build across workspace packages
-- `pnpm lint` - Run Biome linter with auto-fix
-- `pnpm lint:ci` - Run Biome linter without auto-fix (CI mode)
-- `pnpm typecheck` - Run TypeScript checking across all packages
-- `pnpm test` - Run tests across all packages
+## Package Map (Relatively Stable Context)
 
-**iOS Development:**
-- `pnpm pods` - Install CocoaPods dependencies for all apps
-- `pnpm pods:update` - Update CocoaPods dependencies
+- `packages/repack/`: Core toolkit with CLI commands, bundler plugins/loaders, and runtime modules.
+- `packages/dev-server/`: Bundler-agnostic React Native development server.
+- `packages/init/`: Initialization tooling for integrating Re.Pack into React Native projects.
+- `packages/plugin-expo-modules/`: Re.Pack integration for Expo Modules.
+- `packages/plugin-nativewind/`: Re.Pack integration for NativeWind.
+- `packages/plugin-reanimated/`: Re.Pack integration for react-native-reanimated.
 
-**Testing with specific configurations:**
-Use the test apps in the `apps/` directory to verify functionality:
-- `apps/tester-app` - Main test application
-- `apps/tester-federation-v2` - Module Federation v2 testing
-- `apps/tester-federation` - Module Federation v1 testing
+## Validation Surfaces
 
-**Individual package commands:**
-Navigate to specific packages and use their local scripts. For example, in `packages/repack/`:
-- `pnpm test` - Run Jest tests
-- `pnpm build` - Build the package
-- `pnpm clang-format` - Format native code (iOS and Android)
+### Apps
 
-## Architecture Overview
+- `apps/tester-app/`: Primary manual/integration validation app.
+- `apps/tester-federation/`: Module Federation v1 validation app.
+- `apps/tester-federation-v2/`: Module Federation v2 validation app.
 
-Re.Pack is a React Native bundler that provides webpack/rspack bundling as an alternative to Metro. The codebase is organized as follows:
+### Tests
 
-**Core Packages:**
-- `packages/repack/` - Main bundler package with CLI commands, webpack plugins, and runtime modules
-- `packages/dev-server/` - Development server implementation
-- `packages/init/` - CLI tool for initializing Re.Pack in React Native projects
-- `packages/plugin-*` - Various plugins (expo-modules, nativewind, reanimated)
-
-**Key Architecture Components:**
-- **Commands** (`packages/repack/src/commands/`) - CLI implementations for rspack and webpack bundling
-- **Plugins** (`packages/repack/src/plugins/`) - Webpack/Rspack plugins for React Native bundling
-- **Loaders** (`packages/repack/src/loaders/`) - Custom webpack loaders (assets, babel, flow, react-refresh)
-- **Modules** (`packages/repack/src/modules/`) - Runtime modules including ScriptManager for chunk loading
-- **Native Code** - iOS (Swift/Objective-C) and Android (Kotlin) implementations in `packages/repack/ios/` and `packages/repack/android/`
-
-**Development Server:**
-The development server supports both single-platform (webpack CLI) and multi-platform (repack commands) modes with features like HMR, symbolication, and debugging.
-
-**Module Federation:**
-Re.Pack provides first-class support for Module Federation for microfrontend architectures, with plugins for both v1 and v2.
-
-## Code Style & Standards
-
-- **Biome:** Uses Biome (configured in `biome.jsonc`) for import organization, formatting, and linting with specific rules for different file types
-- **TypeScript:** Strict TypeScript configuration with path mapping
-- **Formatting:** 2-space indentation, single quotes, trailing commas (ES5), semicolons always
-- **Import Organization:** Biome automatically organizes imports when running `pnpm lint`
-- **Native Code:** Use clang-format for iOS/Android C++/Swift/Kotlin code formatting
-
-## Testing Strategy
-
-- Jest for unit tests with specific configurations per package
-- Metro compatibility tests in `tests/metro-compat/`
-- Resolver test cases in `tests/resolver-cases/`
-- Integration testing via tester apps
-
-## Key Development Notes
-
-- This is a monorepo managed by pnpm workspaces with Turborepo orchestration
-- The project supports both Webpack and Rspack as bundling engines
-- Native modules require building iOS and Android code when making changes
-- Always run `pnpm lint` and `pnpm typecheck` before committing changes
-- Use the tester apps to verify functionality across different React Native configurations
-- When working with native code, run `pnpm clang-format` to ensure consistent formatting
+- `tests/integration/`: Integration-level automated coverage.
+- `tests/metro-compat/`: Metro compatibility behavior coverage.
+- `tests/resolver-cases/`: Resolver behavior and edge-case coverage.
