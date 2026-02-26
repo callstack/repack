@@ -90,7 +90,7 @@
     "flow-remove-types": "^2.277.0",
     "gradient-string": "^2.0.2",
     "image-size": "^1.1.1",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^9.0.3",
     "memfs": "^4.11.1",
     "mime-types": "^2.1.35",
     "pretty-format": "^26.6.2",
