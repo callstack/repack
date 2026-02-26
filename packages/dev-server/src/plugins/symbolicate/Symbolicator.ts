@@ -1,6 +1,6 @@
 import { URL } from 'node:url';
 import { codeFrameColumns } from '@babel/code-frame';
-import type { FastifyLoggerInstance } from 'fastify';
+import type { FastifyBaseLogger } from 'fastify';
 import { SourceMapConsumer } from 'source-map';
 import type {
   CodeFrame,
@@ -70,7 +70,7 @@ export class Symbolicator {
    * @returns Symbolicated stack frames.
    */
   async process(
-    logger: FastifyLoggerInstance,
+    logger: FastifyBaseLogger,
     stack: ReactNativeStackFrame[]
   ): Promise<SymbolicatorResults> {
     logger.debug({ msg: 'Filtering out unnecessary frames' });
@@ -195,7 +195,7 @@ export class Symbolicator {
   }
 
   private async getCodeFrame(
-    logger: FastifyLoggerInstance,
+    logger: FastifyBaseLogger,
     processedFrames: StackFrame[]
   ): Promise<CodeFrame | undefined> {
     for (const frame of processedFrames) {
