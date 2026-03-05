@@ -59,6 +59,9 @@ catalogs:
       specifier: 4.4.7
       version: 4.4.7
 
+overrides:
+  caniuse-lite: ^1.0.30001774
+
 importers:
 
   .:
@@ -4407,9 +4410,6 @@ packages:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
 
-  caniuse-lite@1.0.30001716:
-    resolution: {integrity: sha512-49/c1+x3Kwz7ZIWt+4DvK3aMJy9oYXXG6/97JKsnjdCk/6n9vVyWL8NAwVt95Lwt9eigI10Hl782kDfZUUlRXw==}
-
   caniuse-lite@1.0.30001774:
     resolution: {integrity: sha512-DDdwPGz99nmIEv216hKSgLD+D4ikHQHjBC/seF98N9CPqRX4M5mSxT9eTV6oyisnJcuzxtZy4n17yKKQYmYQOA==}
 
@@ -8403,6 +8403,7 @@ packages:
   whatwg-encoding@2.0.0:
     resolution: {integrity: sha512-p41ogyeMUrw3jWclHWTQg1k05DSVXPLcVxRTYsXUk+ZooOCZLcoYgPZ/HL/D/N+uQPOtcp1me1WhBEaX02mhWg==}
     engines: {node: '>=12'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-fetch@3.6.20:
     resolution: {integrity: sha512-EqhiFU6daOA8kpjOWTL0olhVOF3i7OrFzSYiGsEMB8GcXS+RrzauAERX65xMeNWVqxA6HXH2m69Z9LaKKdisfg==}
@@ -10430,21 +10431,21 @@ snapshots:
   '@modern-js/utils@2.65.1':
     dependencies:
       '@swc/helpers': 0.5.13
-      caniuse-lite: 1.0.30001716
+      caniuse-lite: 1.0.30001774
       lodash: 4.17.21
       rslog: 1.2.3
 
   '@modern-js/utils@2.67.6':
     dependencies:
       '@swc/helpers': 0.5.18
-      caniuse-lite: 1.0.30001716
+      caniuse-lite: 1.0.30001774
       lodash: 4.17.21
       rslog: 1.2.3
 
   '@modern-js/utils@2.68.2':
     dependencies:
       '@swc/helpers': 0.5.18
-      caniuse-lite: 1.0.30001716
+      caniuse-lite: 1.0.30001774
       lodash: 4.17.21
       rslog: 1.2.3
 
@@ -12077,7 +12078,7 @@ snapshots:
       '@module-federation/runtime-tools': 0.11.2
       '@rspack/binding': 1.3.3
       '@rspack/lite-tapable': 1.0.1
-      caniuse-lite: 1.0.30001716
+      caniuse-lite: 1.0.30001774
     optionalDependencies:
       '@swc/helpers': 0.5.18
 
@@ -12850,7 +12851,7 @@ snapshots:
   autoprefixer@10.4.20(postcss@8.5.1):
     dependencies:
       browserslist: 4.24.4
-      caniuse-lite: 1.0.30001716
+      caniuse-lite: 1.0.30001774
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.1.1
@@ -13064,7 +13065,7 @@ snapshots:
 
   browserslist@4.24.4:
     dependencies:
-      caniuse-lite: 1.0.30001716
+      caniuse-lite: 1.0.30001774
       electron-to-chromium: 1.5.96
       node-releases: 2.0.19
       update-browserslist-db: 1.1.2(browserslist@4.24.4)
@@ -13142,8 +13143,6 @@ snapshots:
   camelcase@5.3.1: {}
 
   camelcase@6.3.0: {}
-
-  caniuse-lite@1.0.30001716: {}
 
   caniuse-lite@1.0.30001774: {}
 
