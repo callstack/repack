@@ -146,9 +146,7 @@ class Terminal {
       maybeCallback?: WriteCallback
     ) => {
       const encoding =
-        typeof encodingOrCallback === 'string'
-          ? encodingOrCallback
-          : undefined;
+        typeof encodingOrCallback === 'string' ? encodingOrCallback : undefined;
       const callback =
         typeof encodingOrCallback === 'function'
           ? encodingOrCallback
@@ -315,7 +313,10 @@ class Terminal {
       // plugin output lines.
       for (const externalWrite of externalWrites) {
         try {
-          await this._writeInternal(externalWrite.chunk, externalWrite.encoding);
+          await this._writeInternal(
+            externalWrite.chunk,
+            externalWrite.encoding
+          );
           externalWrite.callback?.(null);
         } catch (error) {
           externalWrite.callback?.(error as Error);
