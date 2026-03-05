@@ -1,14 +1,11 @@
-import { experiments, type SwcLoaderOptions } from '@rspack/core';
+import { type SwcLoaderOptions, experiments } from '@rspack/core';
+import { buildFinalSwcConfig, partitionTransforms } from '../babelSwcLoader.js';
 import {
   addSwcComplementaryTransforms,
   getSupportedSwcConfigurableTransforms,
   getSupportedSwcCustomTransforms,
   getSupportedSwcNormalTransforms,
 } from '../swc.js';
-import {
-  buildFinalSwcConfig,
-  partitionTransforms,
-} from '../babelSwcLoader.js';
 
 type TransformEntry = [string, Record<string, any> | undefined];
 
