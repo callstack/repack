@@ -1,5 +1,5 @@
 <a href="https://www.callstack.com/open-source?utm_campaign=generic&utm_source=github&utm_medium=referral&utm_content=repack" align="center">
-  <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.png" alt="Re.Pack" />
+  <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.webp" alt="Re.Pack" />
 </a>
 <h3 align="center">A toolkit to build your React Native application with Rspack or Webpack.</h3>
 <div align="center">
