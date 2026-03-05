@@ -186,7 +186,7 @@ globalThis.__APP_ENTRY__ = true;
 /******/ 	
 /************************************************************************/
 /******/ 	
-/******/ 	// module cache are used so entry inlining is disabled
+/******/ 	// module factories are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	__webpack_require__("./__fixtures__/react-native/polyfill1.js");
@@ -510,7 +510,7 @@ globalThis.__APP_ENTRY__ = true;
 /************************************************************************/
 /******/ 	// run runtime startup
 /******/ 	__webpack_require__.x();
-/******/ 	// module cache are used so entry inlining is disabled
+/******/ 	// module factories are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	__webpack_require__("./__fixtures__/react-native/polyfill1.js");
@@ -839,7 +839,7 @@ globalThis.__APP_ENTRY__ = true;
 /************************************************************************/
 /******/ 	// run runtime startup
 /******/ 	__webpack_require__.x();
-/******/ 	// module cache are used so entry inlining is disabled
+/******/ 	// module factories are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	__webpack_require__("./__fixtures__/react-native/polyfill1.js");
@@ -1168,7 +1168,7 @@ globalThis.__APP_ENTRY__ = true;
 /************************************************************************/
 /******/ 	// run runtime startup
 /******/ 	__webpack_require__.x();
-/******/ 	// module cache are used so entry inlining is disabled
+/******/ 	// module factories are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	__webpack_require__("./__fixtures__/react-native/polyfill1.js");
@@ -1177,6 +1177,53 @@ globalThis.__APP_ENTRY__ = true;
 /******/ 	__webpack_require__("../../../../packages/repack/dist/modules/InitializeScriptManager.js");
 /******/ 	__webpack_require__("../../../../packages/repack/dist/modules/IncludeModules.js");
 /******/ 	var __webpack_exports__ = __webpack_require__("./index.js");
+/******/ 	
+/******/ })()
+;"
+`;
+
+exports[`NativeEntryPlugin > without Module Federation > in production mode > should expose inlined polyfills if runtime requirements are removed 1`] = `
+"runtime/repack/polyfills */
+/******/ 	(() => {
+/******/ 		__webpack_require__(721);
+/******/ 		__webpack_require__(320);
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	__webpack_modules__[721]();
+/******/ 	__webpack_modules__[320]();
+/******/ 	__webpack_modules__[110]();
+/******/ 	// This entry module doesn't tell about it's top-level declarations so it can't be inlined
+/******/ 	__webpack_modules__[741]();
+/******/ 	__webpack_modules__[980]();
+/******/ 	var __webpack_exports__ = {};
+/******/ 	__webpack_modules__[620]();
+/******/ 	
+/******/ })()
+;"
+`;
+
+exports[`NativeEntryPlugin > without Module Federation > in production mode > should keep runtime polyfill requires aligned with production module ids 1`] = `
+"runtime/repack/polyfills */
+/******/ 	(() => {
+/******/ 		__webpack_require__(721);
+/******/ 		__webpack_require__(320);
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// module factories are used so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	__webpack_require__(721);
+/******/ 	__webpack_require__(320);
+/******/ 	__webpack_require__(110);
+/******/ 	__webpack_require__(741);
+/******/ 	__webpack_require__(980);
+/******/ 	var __webpack_exports__ = __webpack_require__(620);
 /******/ 	
 /******/ })()
 ;"
@@ -1261,8 +1308,38 @@ globalThis.__APP_ENTRY__ = true;
 
 /******/ 	});
 /************************************************************************/
-/******/ 	// The require scope
-/******/ 	var __webpack_require__ = {};
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/make namespace object */
@@ -1284,16 +1361,15 @@ globalThis.__APP_ENTRY__ = true;
 /******/ 	
 /************************************************************************/
 /******/ 	
+/******/ 	// module factories are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	__webpack_modules__["./__fixtures__/react-native/polyfill1.js"](0,{},__webpack_require__);
-/******/ 	__webpack_modules__["./__fixtures__/react-native/polyfill2.js"](0,{},__webpack_require__);
-/******/ 	__webpack_modules__["./__fixtures__/react-native/Libraries/Core/InitializeCore.js"](0,{},__webpack_require__);
-/******/ 	// This entry module doesn't tell about it's top-level declarations so it can't be inlined
-/******/ 	__webpack_modules__["../../../../packages/repack/dist/modules/InitializeScriptManager.js"](0,{},__webpack_require__);
-/******/ 	__webpack_modules__["../../../../packages/repack/dist/modules/IncludeModules.js"](0,{},__webpack_require__);
-/******/ 	var __webpack_exports__ = {};
-/******/ 	__webpack_modules__["./index.js"](0,__webpack_exports__,__webpack_require__);
+/******/ 	__webpack_require__("./__fixtures__/react-native/polyfill1.js");
+/******/ 	__webpack_require__("./__fixtures__/react-native/polyfill2.js");
+/******/ 	__webpack_require__("./__fixtures__/react-native/Libraries/Core/InitializeCore.js");
+/******/ 	__webpack_require__("../../../../packages/repack/dist/modules/InitializeScriptManager.js");
+/******/ 	__webpack_require__("../../../../packages/repack/dist/modules/IncludeModules.js");
+/******/ 	var __webpack_exports__ = __webpack_require__("./index.js");
 /******/ 	
 /******/ })()
 ;"

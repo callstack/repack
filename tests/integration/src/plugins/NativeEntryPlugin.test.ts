@@ -23,6 +23,28 @@ ObjectMiddleware.register = (...args: unknown[]) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REACT_NATIVE_PATH = path.join(__dirname, '__fixtures__', 'react-native');
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..', '..');
+const APP_ENTRY_VIRTUAL_MODULES = {
+  './index.js': 'globalThis.__APP_ENTRY__ = true;',
+};
+
+type CompileBundleOverrides = Pick<
+  Configuration,
+  'mode' | 'optimization' | 'output'
+>;
+
+const PRODUCTION_OPTIMIZATION: NonNullable<Configuration['optimization']> = {
+  moduleIds: 'deterministic',
+  concatenateModules: true,
+  mangleExports: true,
+  innerGraph: true,
+  usedExports: true,
+  sideEffects: true,
+  // Keep runtime/startup sections readable in snapshots and assertion failures.
+  minimize: false,
+  // NativeEntryPlugin test fixture intentionally leaves unresolved modules.
+  // We still need emitted output to validate runtime/startup code shape.
+  emitOnErrors: true,
+};
 
 /**
  * Normalizes bundle code for deterministic snapshots by replacing
@@ -30,10 +52,12 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..', '..', '..');
  */
 function normalizeBundle(code: string): string {
   // Webpack mangles absolute paths into variable names with underscores
-  const mangledRoot = REPO_ROOT.replaceAll('/', '_').replaceAll('-', '_');
+  const mangledRoot = REPO_ROOT.replaceAll(/[^a-zA-Z0-9]/g, '_');
+  const compactMangledRoot = mangledRoot.replaceAll(/_+/g, '_');
   return code
     .replaceAll(REPO_ROOT, '<rootDir>')
     .replaceAll(mangledRoot, '_rootDir_')
+    .replaceAll(compactMangledRoot, '_rootDir_')
     .replace(
       /\.federation\/entry\.[a-f0-9]+\.js/g,
       '.federation/entry.HASH.js'
@@ -48,18 +72,21 @@ function normalizeBundle(code: string): string {
 async function compileBundle(
   virtualModules: Record<string, string>,
   extraPlugins: Array<{ apply(compiler: any): void }> = [],
-  externals?: Configuration['externals']
+  externals?: Configuration['externals'],
+  overrides: CompileBundleOverrides = {}
 ) {
   const virtualPlugin = await createVirtualModulePlugin(virtualModules);
 
   const compiler = await createCompiler({
     context: __dirname,
-    mode: 'development',
+    mode: overrides.mode ?? 'development',
     devtool: false,
     entry: './index.js',
     output: {
       path: '/out',
+      ...(overrides.output ?? {}),
     },
+    optimization: overrides.optimization,
     resolve: {
       alias: {
         'react-native': REACT_NATIVE_PATH,
@@ -109,12 +136,83 @@ function expectBundleOrder(code: string, markers: string[]) {
   }
 }
 
+function normalizeModuleId(moduleId: string): string {
+  return moduleId
+    .trim()
+    .replace(/,$/, '')
+    .replace(/^["']|["']$/g, '');
+}
+
+function extractModuleIdByMarker(code: string, marker: string): string {
+  const webpackModuleRegex =
+    /\/\*\*\*\/\s*([^\n]+)\n(?:\/\*![\s\S]*?\*\/\n)?\([^)]*\)\s*\{([\s\S]*?)\n\/\*\*\*\/\s*\},/g;
+  for (const match of code.matchAll(webpackModuleRegex)) {
+    const moduleId = normalizeModuleId(match[1]);
+    const moduleBody = match[2];
+    if (moduleBody.includes(marker)) return moduleId;
+  }
+
+  const rspackModuleRegex =
+    /\n([^\s:\n]+):\s*\(function\s*\([^)]*\)\s*\{([\s\S]*?)\n\}\),/g;
+  for (const match of code.matchAll(rspackModuleRegex)) {
+    const moduleId = normalizeModuleId(match[1]);
+    const moduleBody = match[2];
+    if (moduleBody.includes(marker)) return moduleId;
+  }
+
+  throw new Error(`Could not find module id for marker "${marker}" in bundle`);
+}
+
+function extractRuntimePolyfillRequireIds(code: string): string[] {
+  const runtimeStart = code.indexOf('runtime/repack/polyfills');
+  expect(runtimeStart).toBeGreaterThan(-1);
+  const startupStart = code.indexOf('// startup', runtimeStart);
+  expect(startupStart).toBeGreaterThan(runtimeStart);
+
+  const runtimeSection = code.slice(runtimeStart, startupStart);
+  return [...runtimeSection.matchAll(/__webpack_require__\(([^)]+)\);/g)].map(
+    (match) => normalizeModuleId(match[1])
+  );
+}
+
+function getStartupSection(code: string): string {
+  const startupStart = code.indexOf('// startup');
+  expect(startupStart).toBeGreaterThan(-1);
+  return code.slice(startupStart, startupStart + 600);
+}
+
+function getRuntimeAndStartupSnippet(code: string): string {
+  const runtimeStart = code.indexOf('runtime/repack/polyfills');
+  expect(runtimeStart).toBeGreaterThan(-1);
+  return code.slice(runtimeStart, runtimeStart + 900);
+}
+
+class RemovePolyfillRuntimeRequirementsPlugin {
+  apply(compiler: any) {
+    compiler.hooks.compilation.tap(
+      'RemovePolyfillRuntimeRequirementsPlugin',
+      (compilation: any) => {
+        compilation.hooks.additionalTreeRuntimeRequirements.tap(
+          {
+            name: 'RemovePolyfillRuntimeRequirementsPlugin',
+            stage: 10_000,
+          },
+          (_chunk: unknown, runtimeRequirements: Set<string>) => {
+            runtimeRequirements.delete(compiler.webpack.RuntimeGlobals.require);
+            runtimeRequirements.delete(
+              compiler.webpack.RuntimeGlobals.moduleFactories
+            );
+          }
+        );
+      }
+    );
+  }
+}
+
 describe('NativeEntryPlugin', () => {
   describe('without Module Federation', () => {
     it('should execute polyfills runtime module before entry startup', async () => {
-      const { code } = await compileBundle({
-        './index.js': 'globalThis.__APP_ENTRY__ = true;',
-      });
+      const { code } = await compileBundle(APP_ENTRY_VIRTUAL_MODULES);
 
       // Polyfill modules were processed through the loader pipeline
       expect(code).toContain('__POLYFILL_1__');
@@ -131,6 +229,75 @@ describe('NativeEntryPlugin', () => {
       ]);
 
       expect(normalizeBundle(code)).toMatchSnapshot();
+    });
+
+    describe('in production mode', () => {
+      it('should expose inlined polyfills if runtime requirements are removed', async () => {
+        const { code } = await compileBundle(
+          APP_ENTRY_VIRTUAL_MODULES,
+          [new RemovePolyfillRuntimeRequirementsPlugin()],
+          undefined,
+          {
+            mode: 'production',
+            output: { iife: true },
+            optimization: PRODUCTION_OPTIMIZATION,
+          }
+        );
+
+        const runtimePolyfillIds = extractRuntimePolyfillRequireIds(code);
+        expect(runtimePolyfillIds).toHaveLength(2);
+
+        const startupSection = getStartupSection(code);
+        expect(startupSection).toContain('__webpack_modules__[');
+        for (const moduleId of runtimePolyfillIds) {
+          expect(startupSection).toContain(
+            `__webpack_modules__[${moduleId}]();`
+          );
+        }
+
+        expect(
+          normalizeBundle(getRuntimeAndStartupSnippet(code))
+        ).toMatchSnapshot();
+      });
+
+      it('should keep runtime polyfill requires aligned with production module ids', async () => {
+        const { code } = await compileBundle(
+          APP_ENTRY_VIRTUAL_MODULES,
+          [],
+          undefined,
+          {
+            mode: 'production',
+            output: { iife: true },
+            optimization: PRODUCTION_OPTIMIZATION,
+          }
+        );
+
+        const runtimePolyfillIds = extractRuntimePolyfillRequireIds(code);
+        expect(runtimePolyfillIds).toHaveLength(2);
+
+        const polyfillModuleIds = [
+          extractModuleIdByMarker(code, '__POLYFILL_1__'),
+          extractModuleIdByMarker(code, '__POLYFILL_2__'),
+        ];
+
+        expect(runtimePolyfillIds).toEqual(polyfillModuleIds);
+
+        const startupSection = getStartupSection(code);
+        expect(startupSection).not.toContain('__webpack_modules__[');
+        for (const moduleId of runtimePolyfillIds) {
+          expect(startupSection).toContain(`__webpack_require__(${moduleId});`);
+        }
+
+        // RuntimeGlobals.moduleFactories should keep module factories available.
+        expect(code).toContain('__webpack_require__.m = __webpack_modules__');
+        expect(code).toContain(
+          'module factories are used so entry inlining is disabled'
+        );
+
+        expect(
+          normalizeBundle(getRuntimeAndStartupSnippet(code))
+        ).toMatchSnapshot();
+      });
     });
   });
 
