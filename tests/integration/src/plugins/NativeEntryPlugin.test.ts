@@ -137,7 +137,10 @@ function expectBundleOrder(code: string, markers: string[]) {
 }
 
 function normalizeModuleId(moduleId: string): string {
-  return moduleId.trim().replace(/,$/, '').replace(/^["']|["']$/g, '');
+  return moduleId
+    .trim()
+    .replace(/,$/, '')
+    .replace(/^["']|["']$/g, '');
 }
 
 function extractModuleIdByMarker(code: string, marker: string): string {
@@ -247,10 +250,14 @@ describe('NativeEntryPlugin', () => {
         const startupSection = getStartupSection(code);
         expect(startupSection).toContain('__webpack_modules__[');
         for (const moduleId of runtimePolyfillIds) {
-          expect(startupSection).toContain(`__webpack_modules__[${moduleId}]();`);
+          expect(startupSection).toContain(
+            `__webpack_modules__[${moduleId}]();`
+          );
         }
 
-        expect(normalizeBundle(getRuntimeAndStartupSnippet(code))).toMatchSnapshot();
+        expect(
+          normalizeBundle(getRuntimeAndStartupSnippet(code))
+        ).toMatchSnapshot();
       });
 
       it('should keep runtime polyfill requires aligned with production module ids', async () => {
@@ -287,7 +294,9 @@ describe('NativeEntryPlugin', () => {
           'module factories are used so entry inlining is disabled'
         );
 
-        expect(normalizeBundle(getRuntimeAndStartupSnippet(code))).toMatchSnapshot();
+        expect(
+          normalizeBundle(getRuntimeAndStartupSnippet(code))
+        ).toMatchSnapshot();
       });
     });
   });

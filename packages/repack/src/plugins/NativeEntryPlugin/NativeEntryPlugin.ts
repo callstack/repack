@@ -79,7 +79,9 @@ export class NativeEntryPlugin {
       compilation.hooks.additionalTreeRuntimeRequirements.tap(
         'RepackNativeEntryPlugin',
         (chunk, runtimeRequirements) => {
-          runtimeRequirements.add(compiler.webpack.RuntimeGlobals.moduleFactories);
+          runtimeRequirements.add(
+            compiler.webpack.RuntimeGlobals.moduleFactories
+          );
           runtimeRequirements.add(compiler.webpack.RuntimeGlobals.require);
           compilation.addRuntimeModule(
             chunk,
