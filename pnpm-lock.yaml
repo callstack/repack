@@ -248,13 +248,13 @@ importers:
         specifier: workspace:*
         version: link:../../packages/repack
       '@react-native-async-storage/async-storage':
-        specifier: ^3.0.1
+        specifier: 3.0.1
         version: 3.0.1(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       '@react-navigation/native':
-        specifier: ^7.1.33
+        specifier: 7.1.33
         version: 7.1.33(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       '@react-navigation/native-stack':
-        specifier: ^7.14.4
+        specifier: 7.14.4
         version: 7.14.4(@react-navigation/native@7.1.33(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native-safe-area-context@5.7.0(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native-screens@4.24.0(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       react:
         specifier: 'catalog:'
@@ -263,10 +263,10 @@ importers:
         specifier: 'catalog:'
         version: 0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3)
       react-native-safe-area-context:
-        specifier: ^5.7.0
+        specifier: 5.7.0
         version: 5.7.0(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       react-native-screens:
-        specifier: ^4.24.0
+        specifier: 4.24.0
         version: 4.24.0(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@babel/core':
@@ -327,13 +327,13 @@ importers:
         specifier: 2.1.0
         version: 2.1.0
       '@react-native-async-storage/async-storage':
-        specifier: ^3.0.1
+        specifier: 3.0.1
         version: 3.0.1(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       '@react-navigation/native':
-        specifier: ^7.1.33
+        specifier: 7.1.33
         version: 7.1.33(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       '@react-navigation/native-stack':
-        specifier: ^7.14.4
+        specifier: 7.14.4
         version: 7.14.4(@react-navigation/native@7.1.33(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native-safe-area-context@5.7.0(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native-screens@4.24.0(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       react:
         specifier: 'catalog:'
@@ -342,10 +342,10 @@ importers:
         specifier: 'catalog:'
         version: 0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3)
       react-native-safe-area-context:
-        specifier: ^5.7.0
+        specifier: 5.7.0
         version: 5.7.0(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       react-native-screens:
-        specifier: ^4.24.0
+        specifier: 4.24.0
         version: 4.24.0(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@babel/core':

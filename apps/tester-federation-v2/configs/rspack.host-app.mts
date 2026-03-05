@@ -61,21 +61,25 @@ export default Repack.defineRspackConfig((env) => {
           '@react-navigation/native': {
             singleton: true,
             eager: true,
+            version: pkg.dependencies['@react-navigation/native'],
             requiredVersion: pkg.dependencies['@react-navigation/native'],
           },
           '@react-navigation/native-stack': {
             singleton: true,
             eager: true,
+            version: pkg.dependencies['@react-navigation/native-stack'],
             requiredVersion: pkg.dependencies['@react-navigation/native-stack'],
           },
           'react-native-safe-area-context': {
             singleton: true,
             eager: true,
+            version: pkg.dependencies['react-native-safe-area-context'],
             requiredVersion: pkg.dependencies['react-native-safe-area-context'],
           },
           'react-native-screens': {
             singleton: true,
             eager: true,
+            version: pkg.dependencies['react-native-screens'],
             requiredVersion: pkg.dependencies['react-native-screens'],
           },
         },
