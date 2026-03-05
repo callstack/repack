@@ -78,7 +78,9 @@ export class NativeEntryPlugin {
     compiler.hooks.compilation.tap('RepackNativeEntryPlugin', (compilation) => {
       compilation.hooks.additionalTreeRuntimeRequirements.tap(
         'RepackNativeEntryPlugin',
-        (chunk) => {
+        (chunk, runtimeRequirements) => {
+          runtimeRequirements.add(compiler.webpack.RuntimeGlobals.moduleFactories);
+          runtimeRequirements.add(compiler.webpack.RuntimeGlobals.require);
           compilation.addRuntimeModule(
             chunk,
             makePolyfillsRuntimeModule(compiler, { polyfillPaths })
