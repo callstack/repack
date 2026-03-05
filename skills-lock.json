@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "upgrade-react-native": {
+      "source": "react-native-community/skills",
+      "sourceType": "github",
+      "computedHash": "f120c3e4c5e696b147c24a953c18b0fabbf1fe46d0c8ab68db4fdb146e54075a"
+    }
+  }
+}

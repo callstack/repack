@@ -47,12 +47,12 @@ export default Repack.defineRspackConfig((env) => {
           react: {
             singleton: true,
             eager: true,
-            requiredVersion: '19.1.0',
+            requiredVersion: '19.2.0',
           },
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.81.0',
+            requiredVersion: '0.83.3',
           },
           '@react-navigation/native': {
             singleton: true,
