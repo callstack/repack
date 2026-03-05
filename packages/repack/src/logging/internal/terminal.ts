@@ -18,18 +18,16 @@ import util from 'node:util';
 import throttle from 'throttleit';
 
 type UnderlyingStream = NodeJS.WritableStream;
+type StreamChunk = Buffer | Uint8Array | string;
 
 const moveCursor = util.promisify(readline.moveCursor);
 const clearScreenDown = util.promisify(readline.clearScreenDown);
-const streamWrite = util.promisify(
-  (
-    stream: UnderlyingStream,
-    chunk: Buffer | Uint8Array | string,
-    callback?: (data: any) => void
-  ) => {
-    return stream.write(chunk, callback);
-  }
-);
+type WriteCallback = (error?: Error | null) => void;
+type ExternalWrite = {
+  chunk: StreamChunk;
+  encoding?: BufferEncoding;
+  callback?: WriteCallback;
+};
 
 /**
  * Cut a string into an array of string of the specific maximum size. A newline
@@ -94,8 +92,16 @@ class Terminal {
   _statusStr: string;
   _stream: UnderlyingStream;
   _ttyStream: tty.WriteStream | null;
+  // Bound reference to the original stream.write. We keep this so our
+  // interception layer can still delegate to the real writer.
+  _rawStreamWrite: (...args: Array<any>) => boolean;
+  // Writes performed outside Terminal.log/status while a status is visible.
+  // We replay them in _update() so they are not erased by status redraws.
+  _externalWrites: Array<ExternalWrite>;
   _updatePromise: Promise<void> | null;
   _isUpdating: boolean;
+  // Guards our own cursor/status writes from being treated as "external".
+  _isInternalWrite: boolean;
   _isPendingUpdate: boolean;
   _shouldFlush: boolean;
   _writeStatusThrottled: (status: string) => void;
@@ -109,14 +115,119 @@ class Terminal {
     this._statusStr = '';
     this._stream = stream;
     this._ttyStream = ttyPrint ? getTTYStream(stream) : null;
+    this._rawStreamWrite = stream.write.bind(stream) as (
+      ...args: Array<any>
+    ) => boolean;
+    this._externalWrites = [];
     this._updatePromise = null;
     this._isUpdating = false;
+    this._isInternalWrite = false;
     this._isPendingUpdate = false;
     this._shouldFlush = false;
-    this._writeStatusThrottled = throttle(
-      (status) => this._stream.write(status),
-      3500
-    );
+    this._writeStatusThrottled = throttle((status) => {
+      this._writeRaw(status);
+    }, 3500);
+
+    this._patchTTYStreamWrites();
+  }
+
+  _patchTTYStreamWrites(): void {
+    if (!this._ttyStream) {
+      return;
+    }
+
+    // In interactive TTY mode, status redraw uses cursor movement + clear.
+    // Any direct stream.write from other sources (plugins, other loggers)
+    // can be wiped by that redraw. Intercept those writes and route them
+    // through _update() so they are persisted above the status line.
+    this._stream.write = ((
+      chunk: StreamChunk,
+      encodingOrCallback?: BufferEncoding | WriteCallback,
+      maybeCallback?: WriteCallback
+    ) => {
+      const encoding =
+        typeof encodingOrCallback === 'string'
+          ? encodingOrCallback
+          : undefined;
+      const callback =
+        typeof encodingOrCallback === 'function'
+          ? encodingOrCallback
+          : maybeCallback;
+
+      const shouldCaptureExternalWrite =
+        !this._isInternalWrite && this._hasVisibleStatus();
+
+      if (!shouldCaptureExternalWrite) {
+        return this._writeRaw(chunk, encoding, callback);
+      }
+
+      // Queue for replay in _update() before status is drawn again.
+      this._externalWrites.push({ chunk, encoding, callback });
+      this._scheduleUpdate();
+      return true;
+    }) as UnderlyingStream['write'];
+  }
+
+  _writeRaw(
+    chunk: StreamChunk,
+    encoding?: BufferEncoding,
+    callback?: WriteCallback
+  ): boolean {
+    if (encoding !== undefined) {
+      return this._rawStreamWrite(chunk, encoding, callback);
+    }
+
+    if (callback) {
+      return this._rawStreamWrite(chunk, callback);
+    }
+
+    return this._rawStreamWrite(chunk);
+  }
+
+  async _writeInternal(
+    chunk: StreamChunk,
+    encoding?: BufferEncoding
+  ): Promise<void> {
+    // Wrap stream writes in a promise so _update() can preserve ordering:
+    // clear old status -> logs/external writes -> new status.
+    await new Promise<void>((resolve, reject) => {
+      this._isInternalWrite = true;
+
+      const done: WriteCallback = (error) => {
+        this._isInternalWrite = false;
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve();
+      };
+
+      try {
+        this._writeRaw(chunk, encoding, done);
+      } catch (error) {
+        this._isInternalWrite = false;
+        reject(error as Error);
+      }
+    });
+  }
+
+  _hasVisibleStatus(): boolean {
+    return this._statusStr.length > 0 || this._nextStatusStr.length > 0;
+  }
+
+  async _clearCurrentStatus(
+    ttyStream: tty.WriteStream,
+    statusStr: string
+  ): Promise<void> {
+    const statusLinesCount = statusStr.split('\n').length - 1;
+    // extra -1 because we print the status with a trailing new line
+    this._isInternalWrite = true;
+    try {
+      await moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
+      await clearScreenDown(ttyStream);
+    } finally {
+      this._isInternalWrite = false;
+    }
   }
 
   /**
@@ -159,8 +270,8 @@ class Terminal {
       this._shouldFlush = true;
     }
     await this.waitForUpdates();
-    // @ts-expect-error missing type
-    this._writeStatusThrottled.flush();
+    // @ts-expect-error missing type on throttle return
+    this._writeStatusThrottled.flush?.();
   }
 
   /**
@@ -175,29 +286,47 @@ class Terminal {
     const nextStatusStr = this._nextStatusStr;
     const statusStr = this._statusStr;
     const logLines = this._logLines;
+    const externalWrites = this._externalWrites;
 
     // reset these here to not have them changed while updating
     this._statusStr = nextStatusStr;
     this._logLines = [];
+    this._externalWrites = [];
 
-    if (statusStr === nextStatusStr && logLines.length === 0) {
+    if (
+      statusStr === nextStatusStr &&
+      logLines.length === 0 &&
+      externalWrites.length === 0
+    ) {
       return;
     }
 
     if (ttyStream && statusStr.length > 0) {
-      const statusLinesCount = statusStr.split('\n').length - 1;
-      // extra -1 because we print the status with a trailing new line
-      await moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
-      await clearScreenDown(ttyStream);
+      await this._clearCurrentStatus(ttyStream, statusStr);
     }
 
     if (logLines.length > 0) {
-      await streamWrite(this._stream, logLines.join('\n') + '\n');
+      await this._writeInternal(logLines.join('\n') + '\n');
+    }
+
+    if (externalWrites.length > 0) {
+      // Preserve third-party stdout lines by writing them after the clear and
+      // before redrawing status. This keeps status live while avoiding "eaten"
+      // plugin output lines.
+      for (const externalWrite of externalWrites) {
+        try {
+          await this._writeInternal(externalWrite.chunk, externalWrite.encoding);
+          externalWrite.callback?.(null);
+        } catch (error) {
+          externalWrite.callback?.(error as Error);
+          throw error;
+        }
+      }
     }
 
     if (ttyStream) {
       if (nextStatusStr.length > 0) {
-        await streamWrite(this._stream, nextStatusStr + '\n');
+        await this._writeInternal(nextStatusStr + '\n');
       }
     } else {
       this._writeStatusThrottled(
