@@ -26,7 +26,7 @@ catalogs:
       version: 0.83.3
     terser-webpack-plugin:
       specifier: ^5.3.14
-      version: 5.3.14
+      version: 5.3.16
     typescript:
       specifier: ^5.8.3
       version: 5.8.3
@@ -58,6 +58,9 @@ catalogs:
     react-native-test-app:
       specifier: 5.1.0
       version: 5.1.0
+
+overrides:
+  caniuse-lite: ^1.0.30001774
 
 importers:
 
@@ -225,7 +228,7 @@ importers:
         version: 3.4.17
       terser-webpack-plugin:
         specifier: 'catalog:'
-        version: 5.3.14(@swc/core@1.13.3(@swc/helpers@0.5.18))(webpack@5.105.3(@swc/core@1.13.3(@swc/helpers@0.5.18)))
+        version: 5.3.16(@swc/core@1.13.3(@swc/helpers@0.5.18))(webpack@5.105.3(@swc/core@1.13.3(@swc/helpers@0.5.18)))
       thread-loader:
         specifier: ^4.0.4
         version: 4.0.4(webpack@5.105.3(@swc/core@1.13.3(@swc/helpers@0.5.18)))
@@ -304,7 +307,7 @@ importers:
         version: 5.1.0(react-native@0.83.3(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
       terser-webpack-plugin:
         specifier: 'catalog:'
-        version: 5.3.14(webpack@5.105.3)
+        version: 5.3.16(webpack@5.105.3)
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -383,7 +386,7 @@ importers:
         version: 5.1.0(react-native@0.83.3(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.8.3))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
       terser-webpack-plugin:
         specifier: 'catalog:'
-        version: 5.3.14(webpack@5.105.3)
+        version: 5.3.16(webpack@5.105.3)
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -7735,22 +7738,6 @@ packages:
   term-size@2.2.1:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
     engines: {node: '>=8'}
-
-  terser-webpack-plugin@5.3.14:
-    resolution: {integrity: sha512-vkZjpUjb6OMS7dhV+tILUW6BhpDR7P2L/aQSAv+Uwk+m8KATX9EccViHTJR2qDtACKPIYndLGCyl3FMo+r2LMw==}
-    engines: {node: '>= 10.13.0'}
-    peerDependencies:
-      '@swc/core': '*'
-      esbuild: '*'
-      uglify-js: '*'
-      webpack: ^5.1.0
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      esbuild:
-        optional: true
-      uglify-js:
-        optional: true
 
   terser-webpack-plugin@5.3.16:
     resolution: {integrity: sha512-h9oBFCWrq78NyWWVcSwZarJkZ01c2AyGrzs1crmHZO3QUg9D61Wu4NPjBy69n7JqylFF5y+CsUZYmYEIZ3mR+Q==}
@@ -17187,26 +17174,6 @@ snapshots:
   tapable@2.3.0: {}
 
   term-size@2.2.1: {}
-
-  terser-webpack-plugin@5.3.14(@swc/core@1.13.3(@swc/helpers@0.5.18))(webpack@5.105.3(@swc/core@1.13.3(@swc/helpers@0.5.18))):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.31
-      jest-worker: 27.5.1
-      schema-utils: 4.3.3
-      serialize-javascript: 6.0.2
-      terser: 5.31.3
-      webpack: 5.105.3(@swc/core@1.13.3(@swc/helpers@0.5.18))
-    optionalDependencies:
-      '@swc/core': 1.13.3(@swc/helpers@0.5.18)
-
-  terser-webpack-plugin@5.3.14(webpack@5.105.3):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.31
-      jest-worker: 27.5.1
-      schema-utils: 4.3.3
-      serialize-javascript: 6.0.2
-      terser: 5.31.3
-      webpack: 5.105.3
 
   terser-webpack-plugin@5.3.16(@swc/core@1.13.3(@swc/helpers@0.5.18))(webpack@5.105.3(@swc/core@1.13.3(@swc/helpers@0.5.18))):
     dependencies:
