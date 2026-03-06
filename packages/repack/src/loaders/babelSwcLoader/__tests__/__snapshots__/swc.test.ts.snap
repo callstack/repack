@@ -19,18 +19,6 @@ exports[`swc transforms support detection getSupportedSwcConfigurableTransforms 
 }
 `;
 
-exports[`swc transforms support detection getSupportedSwcConfigurableTransforms updates both privateFieldsAsProperties and setPublicClassFields for private-property-in-object but does not override explicit true (snapshot): private-property-in-object assumptions and names 1`] = `
-{
-  "assumptions": {
-    "privateFieldsAsProperties": true,
-    "setPublicClassFields": true,
-  },
-  "transformNames": [
-    "transform-private-property-in-object",
-  ],
-}
-`;
-
 exports[`swc transforms support detection getSupportedSwcCustomTransforms configures modules commonjs options based on provided config (snapshot): modules commonjs config 1`] = `
 {
   "allowTopLevelThis": false,

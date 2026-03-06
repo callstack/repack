@@ -1,11 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`partitionTransforms ignores unsupported and disabled transforms (snapshot): unsupported and disabled 1`] = `
+exports[`partitionTransforms ignores unsupported transforms (snapshot): unsupported only 1`] = `
 {
-  "includedSwcTransforms": [],
-  "supportedSwcTransforms": [],
+  "includedSwcTransforms": [
+    "transform-class-static-block",
+    "transform-class-properties",
+    "transform-private-methods",
+  ],
+  "supportedSwcTransforms": [
+    "transform-class-static-block",
+    "transform-class-properties",
+    "transform-private-methods",
+  ],
   "swcConfig": {
     "jsc": {
+      "assumptions": {
+        "privateFieldsAsProperties": true,
+        "setPublicClassFields": true,
+      },
       "parser": {
         "jsx": true,
         "syntax": "ecmascript",
