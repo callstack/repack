@@ -2,15 +2,15 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { plugins } from '@callstack/repack';
 import type { Configuration } from '@rspack/core';
-import { createFsFromVolume, Volume } from 'memfs';
+import { Volume, createFsFromVolume } from 'memfs';
 import { describe, expect, inject, it } from 'vitest';
+import { createCompiler, createVirtualModulePlugin } from '../helpers.js';
+
 // Webpack throws when multiple versions of @module-federation/enhanced register
 // serializers with the same key. Patch ObjectMiddleware.register to allow
 // re-registration since we externalize all MF modules and never use serialization.
 // @ts-expect-error no types for internal webpack module
 import ObjectMiddleware from 'webpack/lib/serialization/ObjectMiddleware';
-import { createCompiler, createVirtualModulePlugin } from '../helpers.js';
-
 const _register = ObjectMiddleware.register.bind(ObjectMiddleware);
 ObjectMiddleware.register = (...args: unknown[]) => {
   try {

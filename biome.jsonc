@@ -28,6 +28,11 @@
       "!**/website/src/4.x/**"
     ]
   },
+  "json": {
+    "formatter": {
+      "expand": "auto"
+    }
+  },
   "assist": {
     "includes": [
       "**",
@@ -65,6 +70,7 @@
         "noFallthroughSwitchClause": "off",
         "noConfusingVoidType": "off",
         "noNonNullAssertedOptionalChain": "off",
+        "noTsIgnore": "off",
         "useIterableCallbackReturn": "off"
       }
     },

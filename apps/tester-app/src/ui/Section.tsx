@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
-import { Colors } from './colors';
 import { Text } from './Text';
+import { Colors } from './colors';
 import type { WithChildren } from './types';
 
 type SectionProps = WithChildren<{

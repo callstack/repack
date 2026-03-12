@@ -52,6 +52,7 @@ export async function applyProfile(
         ? defaultRustTraceChromeOutput
         : defaultRustTraceLoggerOutput;
 
+    // biome-ignore lint/style/noParameterAssign: setting default value makes sense
     traceOutput = defaultTraceOutput;
   }
 

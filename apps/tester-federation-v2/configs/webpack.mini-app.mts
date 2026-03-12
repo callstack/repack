@@ -27,7 +27,7 @@ export default Repack.defineWebpackConfig((env) => {
       ],
     },
     plugins: [
-      // @ts-expect-error
+      // @ts-ignore
       new Repack.RepackPlugin({
         extraChunks: [
           {
@@ -37,7 +37,7 @@ export default Repack.defineWebpackConfig((env) => {
           },
         ],
       }),
-      // @ts-expect-error
+      // @ts-ignore
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'MiniApp',
         filename: 'MiniApp.container.js.bundle',

@@ -1,6 +1,6 @@
 import {
-  createNativeStackNavigator,
   type NativeStackNavigationProp,
+  createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { StyleSheet } from 'react-native';
 

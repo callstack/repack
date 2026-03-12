@@ -1,4 +1,4 @@
-import { experiments, type SwcLoaderOptions } from '@rspack/core';
+import { type SwcLoaderOptions, experiments } from '@rspack/core';
 import { buildFinalSwcConfig, partitionTransforms } from '../babelSwcLoader.js';
 import {
   addSwcComplementaryTransforms,

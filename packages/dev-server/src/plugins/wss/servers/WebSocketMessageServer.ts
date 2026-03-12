@@ -355,7 +355,7 @@ export class WebSocketMessageServer extends WebSocketServer {
     socket.addEventListener('message', (event) => {
       const message = this.parseMessage(
         event.data.toString(),
-        // @ts-expect-error
+        // @ts-ignore
         event.binary
       );
 
