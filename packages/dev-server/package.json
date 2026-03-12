@@ -23,8 +23,10 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b tsconfig.build.json",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "archive": "pnpm build && pnpm pack"
   },
   "dependencies": {
@@ -46,6 +48,7 @@
     "@types/babel__code-frame": "^7.0.6",
     "@types/node": "catalog:",
     "@types/ws": "^8.18.0",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }
