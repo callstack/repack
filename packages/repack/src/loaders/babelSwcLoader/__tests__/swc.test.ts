@@ -1,5 +1,7 @@
-import type { SwcLoaderOptions } from '@rspack/core';
+import { type SwcLoaderOptions, experiments } from '@rspack/core';
+import { buildFinalSwcConfig, partitionTransforms } from '../babelSwcLoader.js';
 import {
+  addSwcComplementaryTransforms,
   getSupportedSwcConfigurableTransforms,
   getSupportedSwcCustomTransforms,
   getSupportedSwcNormalTransforms,
@@ -8,13 +10,52 @@ import {
 type TransformEntry = [string, Record<string, any> | undefined];
 
 describe('swc transforms support detection', () => {
+  describe('addSwcComplementaryTransforms', () => {
+    it('adds transform-class-static-block when transform-class-properties is present', () => {
+      const transforms: TransformEntry[] = [
+        ['transform-class-properties', { loose: true }],
+      ];
+
+      const result = addSwcComplementaryTransforms(transforms);
+
+      expect(result).toEqual([
+        ['transform-class-properties', { loose: true }],
+        ['transform-class-static-block', undefined],
+      ]);
+    });
+
+    it('adds transform-object-rest-spread when transform-destructuring is present', () => {
+      const transforms: TransformEntry[] = [['transform-destructuring', {}]];
+
+      const result = addSwcComplementaryTransforms(transforms);
+
+      expect(result).toEqual([
+        ['transform-destructuring', {}],
+        ['transform-object-rest-spread', undefined],
+      ]);
+    });
+
+    it('does not duplicate already included complementary transforms', () => {
+      const transforms: TransformEntry[] = [
+        ['transform-class-properties', { loose: true }],
+        ['transform-class-static-block', {}],
+        ['transform-destructuring', {}],
+        ['transform-object-rest-spread', { loose: true }],
+      ];
+
+      const result = addSwcComplementaryTransforms(transforms);
+
+      expect(result).toEqual(transforms);
+    });
+  });
+
   describe('getSupportedSwcNormalTransforms', () => {
     it('returns only supported normal transform names preserving order', () => {
       const transforms: TransformEntry[] = [
         ['transform-block-scoping', undefined],
         ['transform-classes', {}],
         ['transform-react-jsx', undefined], // custom
-        ['transform-private-methods', undefined], // configurable (disabled)
+        ['transform-private-methods', undefined], // configurable
         ['unknown-plugin', undefined],
         ['transform-object-rest-spread', undefined], // configurable
       ];
@@ -29,8 +70,8 @@ describe('swc transforms support detection', () => {
     it('returns only supported configurable transform names preserving order', () => {
       const baseSwcConfig = {};
       const transforms: TransformEntry[] = [
-        ['transform-class-properties', { loose: true }], // disabled
-        ['transform-private-methods', { loose: true }], // disabled
+        ['transform-class-properties', { loose: true }],
+        ['transform-private-methods', { loose: true }],
         ['transform-private-property-in-object', {}],
         ['transform-object-rest-spread', {}],
         ['transform-optional-chaining', {}],
@@ -47,12 +88,29 @@ describe('swc transforms support detection', () => {
       );
 
       expect(transformNames).toEqual([
+        'transform-class-properties',
+        'transform-private-methods',
         'transform-private-property-in-object',
         'transform-object-rest-spread',
         'transform-optional-chaining',
         'transform-nullish-coalescing-operator',
         'transform-for-of',
       ]);
+    });
+
+    it('sets class fields and private methods assumptions explicitly in loose mode', () => {
+      const { swcConfig } = getSupportedSwcConfigurableTransforms(
+        [
+          ['transform-class-properties', { loose: true }],
+          ['transform-private-methods', { loose: true }],
+        ],
+        {} as SwcLoaderOptions
+      );
+
+      expect(swcConfig.jsc?.assumptions).toEqual({
+        setPublicClassFields: true,
+        privateFieldsAsProperties: true,
+      });
     });
 
     it('applies loose mode to setSpreadProperties when not defined; preserves explicit true (snapshot)', () => {
@@ -98,7 +156,7 @@ describe('swc transforms support detection', () => {
       );
     });
 
-    it('updates both privateFieldsAsProperties and setPublicClassFields for private-property-in-object but does not override explicit true (snapshot)', () => {
+    it('updates both privateFieldsAsProperties and setPublicClassFields for private-property-in-object but does not override explicit true', () => {
       const base: SwcLoaderOptions = {
         jsc: {
           assumptions: {
@@ -114,10 +172,11 @@ describe('swc transforms support detection', () => {
           base
         );
 
-      expect({
-        transformNames,
-        assumptions: swcConfig.jsc?.assumptions,
-      }).toMatchSnapshot('private-property-in-object assumptions and names');
+      expect(transformNames).toEqual(['transform-private-property-in-object']);
+      expect(swcConfig.jsc?.assumptions).toEqual({
+        privateFieldsAsProperties: true,
+        setPublicClassFields: true,
+      });
     });
   });
 
@@ -303,6 +362,57 @@ describe('swc transforms support detection', () => {
       expect(ecmaCfg.jsc?.parser).toMatchSnapshot(
         'parser: ecmascript with exportDefaultFrom'
       );
+    });
+  });
+
+  describe('real swc transform regression', () => {
+    it('compiles loose class properties and private methods with complementary static block support', () => {
+      const source = `
+        class Example {
+          static value = 1;
+          static {
+            this.value += 1;
+          }
+
+          #count = 0;
+
+          #increment() {
+            this.#count += 1;
+          }
+
+          run() {
+            this.#increment();
+            return this.#count;
+          }
+        }
+
+        export default new Example().run();
+      `;
+
+      const { includedSwcTransforms, swcConfig } = partitionTransforms(
+        '/virtual/file.js',
+        [
+          ['transform-class-properties', { loose: true }],
+          ['transform-private-methods', { loose: true }],
+        ]
+      );
+      const finalSwcConfig = buildFinalSwcConfig({
+        swcConfig,
+        includedSwcTransforms,
+        lazyImports: false,
+        sourceType: 'module',
+      });
+
+      const result = experiments.swc.transformSync(source, {
+        ...finalSwcConfig,
+        filename: '/virtual/file.js',
+        configFile: false,
+        swcrc: false,
+        sourceMaps: false,
+      });
+
+      expect(result.code).not.toContain('static {');
+      expect(result.code).not.toContain('#count');
     });
   });
 });
