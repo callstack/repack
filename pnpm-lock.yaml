@@ -729,6 +729,18 @@ importers:
         specifier: 'catalog:'
         version: 5.105.3
 
+  tests/init:
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.19.31
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.18(@types/node@20.19.31)(jiti@2.6.1)(lightningcss@1.28.2)(terser@5.31.3)(yaml@2.8.2)
+
   tests/integration:
     devDependencies:
       '@callstack/repack':

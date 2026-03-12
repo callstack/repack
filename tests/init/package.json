@@ -1,0 +1,19 @@
+{
+  "name": "init-test",
+  "version": "0.0.1",
+  "description": "Tests for @callstack/repack-init",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "pnpm --filter @callstack/repack-init build && vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

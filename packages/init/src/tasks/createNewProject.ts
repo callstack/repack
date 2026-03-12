@@ -5,6 +5,37 @@ import type { PackageManager } from '../types/pm.js';
 import { RepackInitError } from '../utils/error.js';
 import spinner from '../utils/spinner.js';
 
+function getCreateCommand(packageManager: PackageManager) {
+  if (packageManager.name === 'npm') {
+    // Use `npm exec` with the package's explicit bin name. Nested `npx`
+    // invocations can fail when repack-init itself is launched through `npx`.
+    return {
+      command: packageManager.runCommand,
+      args: [
+        'exec',
+        '--yes',
+        '--package',
+        '@react-native-community/cli@latest',
+        '--',
+        'rnc-cli',
+      ],
+      shell: false,
+    };
+  }
+
+  return {
+    command: packageManager.dlxCommand,
+    args: ['@react-native-community/cli@latest'],
+    shell: true,
+  };
+}
+
+function getReactNativeVersion() {
+  const version = versionsJson['react-native'];
+
+  return /^\d+\.\d+$/.test(version) ? `${version}.0` : version;
+}
+
 export default async function createNewProject(
   cwd: string,
   projectName: string,
@@ -12,14 +43,15 @@ export default async function createNewProject(
   override: boolean
 ) {
   try {
+    const createCommand = getCreateCommand(packageManager);
     const args = [
-      '@react-native-community/cli@latest',
+      ...createCommand.args,
       'init',
       projectName,
       '--directory',
       path.join(cwd, projectName),
       '--version',
-      versionsJson['react-native'],
+      getReactNativeVersion(),
       '--skip-install',
       '--skip-git-init',
     ];
@@ -32,9 +64,9 @@ export default async function createNewProject(
       'Creating new project from the React Native Community Template'
     );
 
-    return await execa(packageManager.dlxCommand, args, {
+    return await execa(createCommand.command, args, {
       stdio: 'ignore',
-      shell: true,
+      shell: createCommand.shell,
     });
   } catch {
     throw new RepackInitError(
