@@ -98,7 +98,7 @@ export default Repack.defineRspackConfig((env) => {
   };
 
   if (process.env.RSDOCTOR) {
-    // @ts-ignore
+    // @ts-expect-error
     config.plugins?.push(new RsdoctorRspackPlugin());
   }
 

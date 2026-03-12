@@ -28,7 +28,7 @@ export default Repack.defineWebpackConfig((env) => {
       ],
     },
     plugins: [
-      // @ts-ignore
+      // @ts-expect-error
       new Repack.RepackPlugin({
         extraChunks: [
           {
@@ -38,7 +38,7 @@ export default Repack.defineWebpackConfig((env) => {
           },
         ],
       }),
-      // @ts-ignore
+      // @ts-expect-error
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'HostApp',
         filename: 'HostApp.container.js.bundle',

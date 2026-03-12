@@ -1,12 +1,12 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "defaultBranch": "main",
     "useIgnoreFile": true
   },
-  "files": { "ignoreUnknown": false, "ignore": [] },
+  "files": { "ignoreUnknown": false, "includes": ["**"] },
   "formatter": {
     "enabled": true,
     "useEditorconfig": true,
@@ -17,17 +17,26 @@
     "lineWidth": 80,
     "attributePosition": "auto",
     "bracketSpacing": true,
-    "ignore": [
-      "pnpm-lock.yaml",
-      "tests/metro-compat/**/__tests__/**",
-      "website/src/2.x/**",
-      "website/src/3.x/**",
-      "website/src/4.x/**"
+    "includes": [
+      "**",
+      "!**/pnpm-lock.yaml",
+      "!**/tests/metro-compat/**/__tests__/**",
+      "!**/packages/repack/client/*.js",
+      "!**/packages/repack/mf/*.js",
+      "!**/website/src/2.x/**",
+      "!**/website/src/3.x/**",
+      "!**/website/src/4.x/**"
     ]
   },
-  "organizeImports": {
-    "enabled": true,
-    "ignore": ["templates/*", "tests/metro-compat/**/__tests__/**"]
+  "assist": {
+    "includes": [
+      "**",
+      "!**/templates/**/*",
+      "!**/tests/metro-compat/**/__tests__/**",
+      "!**/packages/repack/client/*.js",
+      "!**/packages/repack/mf/*.js"
+    ],
+    "actions": { "source": { "organizeImports": "on" } }
   },
   "linter": {
     "enabled": true,
@@ -38,6 +47,7 @@
         "noForEach": "off"
       },
       "correctness": {
+        "noUnusedPrivateClassMembers": "off",
         "noUnusedImports": "error",
         "noUnusedVariables": "error"
       },
@@ -45,6 +55,7 @@
         "noDelete": "off"
       },
       "style": {
+        "recommended": true,
         "noNonNullAssertion": "off",
         "useTemplate": "off"
       },
@@ -52,10 +63,18 @@
         "noControlCharactersInRegex": "off",
         "noExplicitAny": "off",
         "noFallthroughSwitchClause": "off",
-        "noConfusingVoidType": "off"
+        "noConfusingVoidType": "off",
+        "noNonNullAssertedOptionalChain": "off",
+        "useIterableCallbackReturn": "off"
       }
     },
-    "ignore": ["templates/*", "tests/metro-compat/**/__tests__/**"]
+    "includes": [
+      "**",
+      "!**/templates/**/*",
+      "!**/tests/metro-compat/**/__tests__/**",
+      "!**/packages/repack/client/*.js",
+      "!**/packages/repack/mf/*.js"
+    ]
   },
   "javascript": {
     "formatter": {
@@ -70,20 +89,22 @@
       "bracketSpacing": true
     }
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "overrides": [
     {
-      "include": ["packages/**/*"],
+      "includes": ["**/packages/**/*"],
       "linter": {
         "rules": {
           "correctness": {
             "useImportExtensions": {
               "level": "error",
               "options": {
-                "suggestedExtensions": {
-                  "ts": {
-                    "module": "js",
-                    "component": "js"
-                  }
+                "extensionMappings": {
+                  "ts": "js"
                 }
               }
             }
@@ -92,15 +113,19 @@
       }
     },
     {
-      "include": ["**/*.d.ts"],
-      "linter": { "rules": { "style": { "noVar": "off" } } }
+      "includes": ["**/*.d.ts"],
+      "linter": { "rules": { "style": {}, "suspicious": { "noVar": "off" } } }
     },
     {
-      "include": ["website/**/*.css"],
+      "includes": ["**/website/**/*.css"],
       "formatter": { "lineWidth": 120 }
     },
     {
-      "include": ["packages/repack/src/**/implementation/**"],
+      "includes": ["**/apps/tester-app/global.css"],
+      "linter": { "rules": { "suspicious": { "noUnknownAtRules": "off" } } }
+    },
+    {
+      "includes": ["**/packages/repack/src/**/implementation/**"],
       "linter": { "enabled": false }
     }
   ]
