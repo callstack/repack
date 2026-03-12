@@ -448,6 +448,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.18(@types/node@20.19.31)(jiti@2.6.1)(lightningcss@1.28.2)(terser@5.31.3)(yaml@2.8.2)
 
   packages/init:
     dependencies:
