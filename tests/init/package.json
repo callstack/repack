@@ -8,7 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "pnpm --filter @callstack/repack-init build && vitest run",
+    "test": "vitest run",
     "test:watch": "vitest"
   },
   "devDependencies": {
