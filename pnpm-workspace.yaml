@@ -10,6 +10,9 @@ packageManagerStrict: true
 packageManagerStrictVersion: false
 updateNotifier: false
 
+overrides:
+  "caniuse-lite": ^1.0.30001774
+
 catalog:
   "@rspack/core": ^1.6.0
   "@rslib/core": ^0.6.3

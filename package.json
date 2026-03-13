@@ -36,9 +36,6 @@
     "typescript": "catalog:"
   },
   "pnpm": {
-    "overrides": {
-      "caniuse-lite": "^1.0.30001774"
-    },
     "onlyBuiltDependencies": [
       "@biomejs/biome",
       "@swc/core",
