@@ -1,5 +1,13 @@
 # @callstack/repack-init
 
+## 5.2.5
+
+### Patch Changes
+
+- [#1373](https://github.com/callstack/repack/pull/1373) [`1f81fe8`](https://github.com/callstack/repack/commit/1f81fe8d853610f927e9d314593657e5b29aa1d7) Thanks [@jbroma](https://github.com/jbroma)! - Add support for bootstrapping new Re.Pack projects with React Native 0.84.1 and refresh the default bundler dependency versions used during initialization.
+
+- [#1370](https://github.com/callstack/repack/pull/1370) [`84acbdd`](https://github.com/callstack/repack/commit/84acbdde35e35132738b5540a0a5d38160718333) Thanks [@jbroma](https://github.com/jbroma)! - Fix npm-based project creation by using `npm exec ... -- rnc-cli` instead of a nested `npx` invocation, and pass a fully qualified React Native patch version to the React Native CLI.
+
 ## 5.2.4
 
 ## 5.2.3

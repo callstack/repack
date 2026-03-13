@@ -1,5 +1,11 @@
 # @callstack/repack-dev-server
 
+## 5.2.5
+
+### Patch Changes
+
+- [#1371](https://github.com/callstack/repack/pull/1371) [`1ab6e4e`](https://github.com/callstack/repack/commit/1ab6e4ee5e466f97b5583aad5940d1371f252299) Thanks [@jbroma](https://github.com/jbroma)! - Avoid crashing Android apps when opening React Native DevTools by handling cross-origin `Network.loadNetworkResource` requests inside the dev server.
+
 ## 5.2.4
 
 ### Patch Changes
