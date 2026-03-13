@@ -1,9 +1,9 @@
 {
   "name": "repack",
   "private": true,
-  "packageManager": "pnpm@9.5.0",
+  "packageManager": "pnpm@10.32.1",
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
   "scripts": {
     "prepare": "is-in-ci || husky",
@@ -28,11 +28,11 @@
     "@babel/preset-typescript": "^7.23.3",
     "@babel/runtime": "^7.25.0",
     "@biomejs/biome": "^1.9.4",
-    "@changesets/changelog-github": "^0.4.8",
-    "@changesets/cli": "^2.29.4",
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.30.0",
     "husky": "^9.1.6",
     "is-in-ci": "^1.0.0",
-    "turbo": "^2.8.10",
+    "turbo": "^2.8.16",
     "typescript": "catalog:"
   },
   "pnpm": {
