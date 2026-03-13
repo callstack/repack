@@ -1,8 +1,8 @@
 import {
   type BabelFileResult,
-  type TransformOptions,
   loadOptions,
   parseSync,
+  type TransformOptions,
   transformFromAstSync,
 } from '@babel/core';
 import type { LoaderContext } from '@rspack/core';

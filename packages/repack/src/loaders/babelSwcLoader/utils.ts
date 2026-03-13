@@ -1,10 +1,10 @@
 import { loadOptions } from '@babel/core';
+import type Rspack from '@rspack/core';
 import type {
+  experiments,
   LoaderContext,
   SwcLoaderParserConfig,
-  experiments,
 } from '@rspack/core';
-import type Rspack from '@rspack/core';
 import { importDefaultESM } from '../../helpers/index.js';
 
 type Swc = (typeof experiments)['swc'];

@@ -9,7 +9,7 @@ describe('getAssetTransformRules', () => {
   it('should return rules with inline option when provided', () => {
     const rules = getAssetTransformRules({ inline: true });
 
-    // @ts-ignore
+    // @ts-expect-error
     expect(rules[0]?.use?.options?.inline).toEqual(true);
     expect(rules).toMatchSnapshot();
   });
@@ -18,7 +18,7 @@ describe('getAssetTransformRules', () => {
     const remoteOptions = { publicPath: 'https://example.com/assets' };
     const rules = getAssetTransformRules({ remote: remoteOptions });
 
-    // @ts-ignore
+    // @ts-expect-error
     expect(rules[0]?.use?.options?.remote).toHaveProperty('enabled', true);
     expect(rules).toMatchSnapshot();
   });
@@ -35,7 +35,7 @@ describe('getAssetTransformRules', () => {
     const rules = getAssetTransformRules({ svg: 'xml' });
 
     expect(rules).toHaveLength(2);
-    // @ts-ignore
+    // @ts-expect-error
     expect(rules[1]?.type).toEqual('asset/source');
     expect(rules).toMatchSnapshot();
   });
@@ -44,7 +44,7 @@ describe('getAssetTransformRules', () => {
     const rules = getAssetTransformRules({ svg: 'uri' });
 
     expect(rules).toHaveLength(2);
-    // @ts-ignore
+    // @ts-expect-error
     expect(rules[1]?.type).toEqual('asset/inline');
     expect(rules).toMatchSnapshot();
   });

@@ -105,7 +105,7 @@ describe('start command', () => {
           webpackConfig: path.join(__dirname, 'configs', configFile),
         };
 
-        // @ts-ignore
+        // @ts-expect-error
         const { stop } = await startCommand.func([], config, args);
         stopServer = stop;
       });

@@ -1,6 +1,5 @@
-import type { Compiler as RspackCompiler, container } from '@rspack/core';
+import type { container, Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
-// biome-ignore lint/correctness/noUnusedImports: needed for jsdoc
 import type { Federated } from '../utils/federated.js';
 import {
   ModuleFederationPluginV1,

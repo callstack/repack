@@ -4,10 +4,10 @@ import util from 'node:util';
 import * as colorette from 'colorette';
 import throttle from 'throttleit';
 import {
-  Spinner,
   colorizePlatformLabel,
   formatSecondsOneDecimal,
   renderProgressBar as renderBar,
+  Spinner,
 } from './internal/progress.js';
 import { MultiPlatformTerminal } from './internal/terminal.js';
 import type {

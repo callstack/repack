@@ -4,11 +4,11 @@ import { VERBOSE_ENV_KEY, WORKER_ENV_KEY } from '../env.js';
 import { isTruthyEnv } from '../helpers/index.js';
 import {
   ConsoleReporter,
+  composeReporters,
   FileReporter,
   type LogEntry,
   type LogType,
   type Reporter,
-  composeReporters,
 } from '../logging/index.js';
 
 export type GenericFilter = Array<string | RegExp>;
