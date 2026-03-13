@@ -34,10 +34,5 @@
     "is-in-ci": "^1.0.0",
     "turbo": "^2.8.16",
     "typescript": "catalog:"
-  },
-  "pnpm": {
-    "overrides": {
-      "caniuse-lite": "^1.0.30001774"
-    }
   }
 }
