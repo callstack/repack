@@ -34,13 +34,5 @@
     "is-in-ci": "^1.0.0",
     "turbo": "^2.8.16",
     "typescript": "catalog:"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@biomejs/biome",
-      "@swc/core",
-      "core-js",
-      "esbuild"
-    ]
   }
 }
