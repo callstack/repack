@@ -1,5 +1,20 @@
 # @callstack/repack
 
+## 5.2.5
+
+### Patch Changes
+
+- [#1357](https://github.com/callstack/repack/pull/1357) [`1705f2a`](https://github.com/callstack/repack/commit/1705f2ac1f687e235a7f41f46bd53d833b8136ab) Thanks [@jbroma](https://github.com/jbroma)! - Fix production bundles so `NativeEntryPlugin` keeps polyfills on module-id based `__webpack_require__(id)` startup.
+
+- [#1358](https://github.com/callstack/repack/pull/1358) [`60e6a17`](https://github.com/callstack/repack/commit/60e6a1709e1b21b56d3202e95a9ed08e17da0926) Thanks [@jbroma](https://github.com/jbroma)! - Bump the Android `nimbus-jose-jwt` dependency from `9.48` to `10.8` for upstream security fixes.
+
+- [#1361](https://github.com/callstack/repack/pull/1361) [`b4178c2`](https://github.com/callstack/repack/commit/b4178c23c43db7fe64e8795e871bd54f7291ec20) Thanks [@jbroma](https://github.com/jbroma)! - Preserve non-terminal stdout logs while interactive status is active, so plugin output lines are not cleared by status redraws.
+
+- [#1364](https://github.com/callstack/repack/pull/1364) [`d0058e2`](https://github.com/callstack/repack/commit/d0058e224bbe62781515fb1707154ce08b5394eb) Thanks [@jbroma](https://github.com/jbroma)! - Fix `babel-swc-loader` compatibility for loose class fields, private methods, and destructuring by adding the complementary SWC transforms SWC expects to run alongside them.
+
+- Updated dependencies [[`1ab6e4e`](https://github.com/callstack/repack/commit/1ab6e4ee5e466f97b5583aad5940d1371f252299)]:
+  - @callstack/repack-dev-server@5.2.5
+
 ## 5.2.4
 
 ### Patch Changes
