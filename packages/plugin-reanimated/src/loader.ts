@@ -67,7 +67,7 @@ export default function reanimatedLoader(
         return;
       }
 
-      // @ts-expect-error
+      // @ts-ignore
       callback(null, result.code, result.map);
       return;
     }

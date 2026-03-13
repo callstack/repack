@@ -16,12 +16,12 @@ const RepackCorePlugin: () => FederationRuntimePlugin = () => ({
         entry
       );
 
-      // @ts-expect-error
+      // @ts-ignore
       if (!globalThis[entryGlobalName]) {
         throw new Error();
       }
 
-      // @ts-expect-error
+      // @ts-ignore
       return globalThis[entryGlobalName];
     } catch {
       console.error(`Failed to load remote entry: ${entryGlobalName}`);

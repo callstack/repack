@@ -50,56 +50,62 @@ describe('ScriptManager hooks', () => {
     ['afterResolve', 'resolveScript'],
     ['beforeLoad', 'loadScript'],
     ['afterLoad', 'loadScript'],
-  ] as const)('should sequentially call hook in series - %s', async (hookName, methodName) => {
-    const executionOrder: string[] = [];
-    ['first', 'second', 'third'].forEach((prefix) => {
-      ScriptManager.shared.hooks[hookName](async (args) => {
-        executionOrder.push(`${prefix}-${hookName}`);
-        return args as any;
+  ] as const)(
+    'should sequentially call hook in series - %s',
+    async (hookName, methodName) => {
+      const executionOrder: string[] = [];
+      ['first', 'second', 'third'].forEach((prefix) => {
+        ScriptManager.shared.hooks[hookName](async (args) => {
+          executionOrder.push(`${prefix}-${hookName}`);
+          return args as any;
+        });
       });
-    });
 
-    ScriptManager.shared.addResolver(async (scriptId) => {
-      return { url: Script.getRemoteURL(`http://domain.ext/${scriptId}`) };
-    });
+      ScriptManager.shared.addResolver(async (scriptId) => {
+        return { url: Script.getRemoteURL(`http://domain.ext/${scriptId}`) };
+      });
 
-    await ScriptManager.shared[methodName]('test-script', 'test-caller');
+      await ScriptManager.shared[methodName]('test-script', 'test-caller');
 
-    expect(executionOrder).toEqual([
-      `first-${hookName}`,
-      `second-${hookName}`,
-      `third-${hookName}`,
-    ]);
-  });
+      expect(executionOrder).toEqual([
+        `first-${hookName}`,
+        `second-${hookName}`,
+        `third-${hookName}`,
+      ]);
+    }
+  );
 
   it.each([
     ['beforeResolve', 'resolveScript'],
     ['afterResolve', 'resolveScript'],
     ['beforeLoad', 'loadScript'],
     ['afterLoad', 'loadScript'],
-  ] as const)('should pass args between hooks using waterfall pattern - %s', async (hookName, methodName) => {
-    let testScriptId: string;
-    let testCaller: string;
+  ] as const)(
+    'should pass args between hooks using waterfall pattern - %s',
+    async (hookName, methodName) => {
+      let testScriptId: string;
+      let testCaller: string;
 
-    ['first', 'second', 'third'].forEach((prefix) => {
-      ScriptManager.shared.hooks[hookName](async (args) => {
-        args.options.scriptId =
-          testScriptId = `${prefix}-${args.options.scriptId}`;
-        args.options.caller = testCaller = `${prefix}-${args.options.caller}`;
+      ['first', 'second', 'third'].forEach((prefix) => {
+        ScriptManager.shared.hooks[hookName](async (args) => {
+          args.options.scriptId =
+            testScriptId = `${prefix}-${args.options.scriptId}`;
+          args.options.caller = testCaller = `${prefix}-${args.options.caller}`;
 
-        return args as any;
+          return args as any;
+        });
       });
-    });
 
-    ScriptManager.shared.addResolver(async (scriptId) => {
-      return { url: Script.getRemoteURL(`http://domain.ext/${scriptId}`) };
-    });
+      ScriptManager.shared.addResolver(async (scriptId) => {
+        return { url: Script.getRemoteURL(`http://domain.ext/${scriptId}`) };
+      });
 
-    await ScriptManager.shared[methodName]('test-script', 'test-caller');
+      await ScriptManager.shared[methodName]('test-script', 'test-caller');
 
-    expect(testScriptId!).toBe('third-second-first-test-script');
-    expect(testCaller!).toBe('third-second-first-test-caller');
-  });
+      expect(testScriptId!).toBe('third-second-first-test-script');
+      expect(testCaller!).toBe('third-second-first-test-caller');
+    }
+  );
 
   describe('resolve hooks', () => {
     it('should call resolve hooks in correct lifecycle order', async () => {

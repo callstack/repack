@@ -235,45 +235,45 @@ describe('setupInteractions', () => {
     expect(mockProcess.emit).toHaveBeenCalledWith('SIGTSTP', 'SIGTSTP');
   });
 
-  describe.each([
-    true,
-    false,
-  ])('should properly display a list of supported interactions (debugger support: %s)', (debuggerSupport) => {
-    it('should display interaction messages', () => {
-      setupInteractions(
-        {
-          onOpenDevTools: debuggerSupport ? jest.fn() : undefined,
-          onOpenDevMenu() {},
-          onReload() {},
-          onAdbReverse() {},
-        },
-        {
-          logger: mockLogger,
-          process: mockProcess,
-          readline: mockReadline,
-        }
-      );
+  describe.each([true, false])(
+    'should properly display a list of supported interactions (debugger support: %s)',
+    (debuggerSupport) => {
+      it('should display interaction messages', () => {
+        setupInteractions(
+          {
+            onOpenDevTools: debuggerSupport ? jest.fn() : undefined,
+            onOpenDevMenu() {},
+            onReload() {},
+            onAdbReverse() {},
+          },
+          {
+            logger: mockLogger,
+            process: mockProcess,
+            readline: mockReadline,
+          }
+        );
 
-      expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
-        1,
-        ' r: Reload app\n'
-      );
-      expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
-        2,
-        ' d: Open developer menu\n'
-      );
-      expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
-        3,
-        ` j: Open debugger${debuggerSupport ? '' : ' (unsupported by the current bundler)'}\n`
-      );
-      expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
-        4,
-        ' a: Run adb reverse\n'
-      );
-      expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
-        5,
-        '\nPress Ctrl+c or Ctrl+z to quit the dev server\n\n'
-      );
-    });
-  });
+        expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
+          1,
+          ' r: Reload app\n'
+        );
+        expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
+          2,
+          ' d: Open developer menu\n'
+        );
+        expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
+          3,
+          ` j: Open debugger${debuggerSupport ? '' : ' (unsupported by the current bundler)'}\n`
+        );
+        expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
+          4,
+          ' a: Run adb reverse\n'
+        );
+        expect(mockProcess.stdout.write).toHaveBeenNthCalledWith(
+          5,
+          '\nPress Ctrl+c or Ctrl+z to quit the dev server\n\n'
+        );
+      });
+    }
+  );
 });

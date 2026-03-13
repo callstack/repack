@@ -1,4 +1,4 @@
-import type { container, Compiler as RspackCompiler } from '@rspack/core';
+import type { Compiler as RspackCompiler, container } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { isRspackCompiler } from '../helpers/index.js';
 import { Federated } from '../utils/federated.js';

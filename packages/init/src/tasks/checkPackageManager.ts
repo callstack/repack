@@ -1,6 +1,6 @@
 import preferredPM from 'preferred-pm';
 import whichPmRuns from 'which-pm-runs';
-import type { PackageManager, PM } from '../types/pm.js';
+import type { PM, PackageManager } from '../types/pm.js';
 import logger from '../utils/logger.js';
 
 const PM_COMMANDS: Record<PM, PackageManager> = {

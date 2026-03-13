@@ -4,8 +4,8 @@ import path from 'node:path';
 import {
   type EntryNormalized,
   ModuleFilenameHelpers,
-  rspack,
   type StatsChunk,
+  rspack,
 } from '@rspack/core';
 import RspackVirtualModulePlugin from 'rspack-plugin-virtual-module';
 import {

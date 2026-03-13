@@ -78,81 +78,87 @@ describe('start command', () => {
           'src/ui/undraw_Developer_activity_re_39tg.svg',
         ],
       },
-    ])('should successfully produce bundle assets', ({
-      platform,
-      requests,
-    }) => {
-      const TMP_DIR = path.join(__dirname, `out/start/${bundler}/${platform}`);
+    ])(
+      'should successfully produce bundle assets',
+      ({ platform, requests }) => {
+        const TMP_DIR = path.join(
+          __dirname,
+          `out/start/${bundler}/${platform}`
+        );
 
-      beforeAll(async () => {
-        await fs.promises.rm(TMP_DIR, {
-          recursive: true,
-          force: true,
+        beforeAll(async () => {
+          await fs.promises.rm(TMP_DIR, {
+            recursive: true,
+            force: true,
+          });
+
+          port = await getPort();
+
+          const config = {
+            root: path.join(__dirname, '..'),
+            platforms: { ios: {}, android: {} },
+            reactNativePath: path.join(
+              __dirname,
+              '../node_modules/react-native'
+            ),
+          };
+
+          const args = {
+            port,
+            platform,
+            logFile: path.join(TMP_DIR, 'server.log'),
+            webpackConfig: path.join(__dirname, 'configs', configFile),
+          };
+
+          // @ts-ignore
+          const { stop } = await startCommand.func([], config, args);
+          stopServer = stop;
         });
 
-        port = await getPort();
+        afterAll(async () => {
+          await stopServer();
+        });
 
-        const config = {
-          root: path.join(__dirname, '..'),
-          platforms: { ios: {}, android: {} },
-          reactNativePath: path.join(__dirname, '../node_modules/react-native'),
-        };
+        it(
+          `for ${platform}`,
+          async () => {
+            let response = await fetch(`http://localhost:${port}/`);
+            await expect(response.text()).resolves.toEqual(
+              'React Native packager is running'
+            );
 
-        const args = {
-          port,
-          platform,
-          logFile: path.join(TMP_DIR, 'server.log'),
-          webpackConfig: path.join(__dirname, 'configs', configFile),
-        };
+            const [bundleRequest, ...assetsRequests] = requests;
 
-        // @ts-expect-error
-        const { stop } = await startCommand.func([], config, args);
-        stopServer = stop;
-      });
+            response = await fetch(`http://localhost:${port}/${bundleRequest}`);
 
-      afterAll(async () => {
-        await stopServer();
-      });
-
-      it(
-        `for ${platform}`,
-        async () => {
-          let response = await fetch(`http://localhost:${port}/`);
-          await expect(response.text()).resolves.toEqual(
-            'React Native packager is running'
-          );
-
-          const [bundleRequest, ...assetsRequests] = requests;
-
-          response = await fetch(`http://localhost:${port}/${bundleRequest}`);
-
-          const responseText = await response.text();
-          if (responseText.length < 100000) {
-            console.log(response, responseText);
-          }
-          expect(responseText.length).toBeGreaterThan(100000);
-
-          const responses = await Promise.all(
-            assetsRequests.map((asset) =>
-              fetch(`http://localhost:${port}/${asset}`)
-            )
-          );
-
-          responses.forEach((response) => {
-            if (!response.ok) {
-              console.log(response);
+            const responseText = await response.text();
+            if (responseText.length < 100000) {
+              console.log(response, responseText);
             }
-            expect(response.ok).toBe(true);
-          });
+            expect(responseText.length).toBeGreaterThan(100000);
 
-          (
-            await Promise.all(responses.map((response) => response.text()))
-          ).forEach((text) => {
-            expect(text.length).toBeGreaterThan(0);
-          });
-        },
-        60 * 1000
-      );
-    });
+            const responses = await Promise.all(
+              assetsRequests.map((asset) =>
+                fetch(`http://localhost:${port}/${asset}`)
+              )
+            );
+
+            responses.forEach((response) => {
+              if (!response.ok) {
+                console.log(response);
+              }
+              expect(response.ok).toBe(true);
+            });
+
+            (
+              await Promise.all(responses.map((response) => response.text()))
+            ).forEach((text) => {
+              expect(text.length).toBeGreaterThan(0);
+            });
+          },
+          60 * 1000
+        );
+      }
+    );
   });
 });

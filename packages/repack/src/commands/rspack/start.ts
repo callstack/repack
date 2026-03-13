@@ -4,10 +4,10 @@ import { VERBOSE_ENV_KEY } from '../../env.js';
 import { CLIError, isTruthyEnv } from '../../helpers/index.js';
 import {
   ConsoleReporter,
-  composeReporters,
   FileReporter,
-  makeLogEntryFromFastifyLog,
   type Reporter,
+  composeReporters,
+  makeLogEntryFromFastifyLog,
 } from '../../logging/index.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {

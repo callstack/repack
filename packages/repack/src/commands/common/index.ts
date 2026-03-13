@@ -1,4 +1,3 @@
-export * from './config/makeCompilerConfig.js';
 export * from './getDevMiddleware.js';
 export * from './getMaxWorkers.js';
 export * from './getMimeType.js';
@@ -9,3 +8,5 @@ export * from './runAdbReverse.js';
 export * from './setupEnvironment.js';
 export * from './setupInteractions.js';
 export * from './setupStatsWriter.js';
+
+export * from './config/makeCompilerConfig.js';
