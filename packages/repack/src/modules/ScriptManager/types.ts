@@ -1,3 +1,5 @@
+import type { NormalizedScriptLocator } from './NativeScriptManager.js';
+
 /**
  * Interface specifying how to fetch a script.
  * It represents the output of {@link ScriptLocatorResolver} function used by {@link ScriptManager}.
@@ -132,7 +134,11 @@ export interface ScriptLocator {
   shouldUpdateScript?: (
     scriptId?: string,
     caller?: string,
-    isScriptCacheOutdated?: boolean
+    isScriptCacheOutdated?: boolean,
+    cachedData?: Pick<
+      NormalizedScriptLocator,
+      'method' | 'url' | 'query' | 'headers' | 'body'
+    >
   ) => Promise<boolean> | boolean;
 }
 
