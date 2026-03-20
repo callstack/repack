@@ -15,7 +15,11 @@ import java.util.concurrent.TimeUnit
 
 class RemoteScriptLoader(val reactContext: ReactContext, private val nativeLoader: NativeScriptLoader) {
     private val scriptsDirName = "scripts"
-    private val client = OkHttpClient()
+    private val client: OkHttpClient by lazy(okHttpClientFactory)
+
+    companion object {
+        var okHttpClientFactory: () -> OkHttpClient = { OkHttpClient() }
+    }
 
     private fun getScriptFilePath(scriptUniqueId: String): String {
         return "${scriptsDirName}/$scriptUniqueId.script.bundle"
