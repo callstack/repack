@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { rspack } from '@rspack/core';
+import { type Compiler, rspack } from '@rspack/core';
 import jwt from 'jsonwebtoken';
 import memfs from 'memfs';
 import RspackVirtualModulePlugin from 'rspack-plugin-virtual-module';
@@ -15,7 +15,8 @@ const BUNDLE_WITH_JWT_REGEX =
 async function compileBundle(
   outputFilename: string,
   virtualModules: Record<string, string>,
-  codeSigningConfig: CodeSigningPluginConfig
+  codeSigningConfig: CodeSigningPluginConfig,
+  additionalPlugins: Array<{ apply(compiler: Compiler): void }> = []
 ) {
   const fileSystem = memfs.createFsFromVolume(new memfs.Volume());
 
@@ -36,6 +37,7 @@ async function compileBundle(
         'package.json': '{ "type": "module" }',
         ...virtualModules,
       }),
+      ...additionalPlugins,
     ],
   });
 
@@ -79,6 +81,59 @@ describe('CodeSigningPlugin', () => {
     const chunkBundle = getBundle('myChunk.chunk.bundle');
     expect(chunkBundle.toString().match(BUNDLE_WITH_JWT_REGEX)).toBeTruthy();
     expect(chunkBundle.length).toBeGreaterThan(1280);
+  });
+
+  it('exposes signed chunk assets to processAssets REPORT (after ANALYSE signing)', async () => {
+    const seenAtReportStage: Record<string, string> = {};
+
+    const captureAtReportStage = {
+      apply(compiler: Compiler) {
+        compiler.hooks.thisCompilation.tap(
+          'TestReportStageCapture',
+          (compilation) => {
+            compilation.hooks.processAssets.tap(
+              {
+                name: 'TestReportStageCapture',
+                stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_REPORT,
+              },
+              () => {
+                for (const chunk of compilation.chunks) {
+                  for (const file of chunk.files) {
+                    const asset = compilation.getAsset(file);
+                    if (!asset) continue;
+                    const raw = asset.source.source();
+                    const buf = Buffer.isBuffer(raw) ? raw : Buffer.from(raw);
+                    seenAtReportStage[file] = buf.toString();
+                  }
+                }
+              }
+            );
+          }
+        );
+      },
+    };
+
+    await compileBundle(
+      'index.bundle',
+      {
+        'index.js': `
+          const chunk = import(/* webpackChunkName: "myChunk" */'./myChunk.js');
+          chunk.then(console.log);
+        `,
+        'myChunk.js': `
+          export default 'myChunk';
+        `,
+      },
+      { enabled: true, privateKeyPath: '__fixtures__/testRS256.pem' },
+      [captureAtReportStage]
+    );
+
+    expect(
+      seenAtReportStage['myChunk.chunk.bundle']?.match(BUNDLE_WITH_JWT_REGEX)
+    ).toBeTruthy();
+    expect(
+      seenAtReportStage['index.bundle']?.match(BUNDLE_WITH_JWT_REGEX)
+    ).toBeNull();
   });
 
   it('produces code-signed bundles with valid JWTs', async () => {
