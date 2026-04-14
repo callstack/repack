@@ -30,6 +30,29 @@ export class CodeSigningPlugin {
     });
   }
 
+  private signAsset(
+    asset: { source: { source(): string | Buffer } },
+    privateKey: Buffer,
+    beginMark: string,
+    tokenBufferSize: number
+  ): Buffer {
+    const source = asset.source.source();
+    const content = Buffer.isBuffer(source) ? source : Buffer.from(source);
+
+    const hash = crypto
+      .createHash('sha256')
+      .update(content)
+      .digest('hex');
+    const token = jwt.sign({ hash }, privateKey, {
+      algorithm: 'RS256',
+    });
+
+    return Buffer.concat(
+      [content, Buffer.from(beginMark), Buffer.from(token)],
+      content.length + tokenBufferSize
+    );
+  }
+
   apply(compiler: RspackCompiler): void;
   apply(compiler: WebpackCompiler): void;
 
@@ -70,17 +93,14 @@ export class CodeSigningPlugin {
     compiler.hooks.thisCompilation.tap(
       'RepackCodeSigningPlugin',
       (compilation) => {
-        // @ts-ignore — sources is available on both rspack and webpack compilers
         const { sources } = compiler.webpack;
         const mainBundleName = compilation.outputOptions.filename as string;
 
         compilation.hooks.processAssets.tap(
           {
             name: 'RepackCodeSigningPlugin',
-            // Sign at ANALYSE (2000) so assets are signed before any plugin
-            // running at REPORT (5000) — e.g. withZephyr() — captures them.
-            // The original assetEmitted hook fires after processAssets completes,
-            // which is too late when Zephyr uploads assets at REPORT stage.
+            // Sign at ANALYSE (2000) so later processAssets consumers,
+            // such as Zephyr at REPORT (5000), receive already-signed assets
             stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ANALYSE,
           },
           () => {
@@ -95,25 +115,12 @@ export class CodeSigningPlugin {
                 const asset = compilation.getAsset(file);
                 if (!asset) continue;
 
-                const source = asset.source.source();
-                const content = Buffer.isBuffer(source)
-                  ? source
-                  : Buffer.from(source);
-
                 logger.debug(`Signing ${file}`);
-                /** generate bundle hash */
-                const hash = crypto
-                  .createHash('sha256')
-                  .update(content)
-                  .digest('hex');
-                /** generate token */
-                const token = jwt.sign({ hash }, privateKey, {
-                  algorithm: 'RS256',
-                });
-                /** combine the bundle and the token */
-                const signedBundle = Buffer.concat(
-                  [content, Buffer.from(BEGIN_CS_MARK), Buffer.from(token)],
-                  content.length + TOKEN_BUFFER_SIZE
+                const signedBundle = this.signAsset(
+                  asset,
+                  privateKey,
+                  BEGIN_CS_MARK,
+                  TOKEN_BUFFER_SIZE
                 );
 
                 compilation.updateAsset(

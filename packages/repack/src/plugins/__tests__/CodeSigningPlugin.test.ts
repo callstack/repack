@@ -84,6 +84,7 @@ describe('CodeSigningPlugin', () => {
   });
 
   it('exposes signed chunk assets to processAssets REPORT (after ANALYSE signing)', async () => {
+    const seenBeforeSigning: Record<string, string> = {};
     const seenAtReportStage: Record<string, string> = {};
 
     const captureAtReportStage = {
@@ -91,10 +92,34 @@ describe('CodeSigningPlugin', () => {
         compiler.hooks.thisCompilation.tap(
           'TestReportStageCapture',
           (compilation) => {
+            const { PROCESS_ASSETS_STAGE_ANALYSE, PROCESS_ASSETS_STAGE_REPORT } =
+              compiler.webpack.Compilation;
+
+            /** Immediately before CodeSigningPlugin (ANALYSE / 2000) so content is still unsigned. */
+            const beforeSigningStage = PROCESS_ASSETS_STAGE_ANALYSE - 1;
+
+            compilation.hooks.processAssets.tap(
+              {
+                name: 'TestPreAnalyseCapture',
+                stage: beforeSigningStage,
+              },
+              () => {
+                for (const chunk of compilation.chunks) {
+                  for (const file of chunk.files) {
+                    const asset = compilation.getAsset(file);
+                    if (!asset) continue;
+                    const raw = asset.source.source();
+                    const buf = Buffer.isBuffer(raw) ? raw : Buffer.from(raw);
+                    seenBeforeSigning[file] = buf.toString();
+                  }
+                }
+              }
+            );
+
             compilation.hooks.processAssets.tap(
               {
                 name: 'TestReportStageCapture',
-                stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_REPORT,
+                stage: PROCESS_ASSETS_STAGE_REPORT,
               },
               () => {
                 for (const chunk of compilation.chunks) {
@@ -128,9 +153,18 @@ describe('CodeSigningPlugin', () => {
       [captureAtReportStage]
     );
 
-    expect(
-      seenAtReportStage['myChunk.chunk.bundle']?.match(BUNDLE_WITH_JWT_REGEX)
-    ).toBeTruthy();
+    const chunkFile = 'myChunk.chunk.bundle';
+    const before = seenBeforeSigning[chunkFile];
+    const atReport = seenAtReportStage[chunkFile];
+
+    expect(before).toBeDefined();
+    expect(atReport).toBeDefined();
+    /** Regression guard: signing at ANALYSE must mutate assets before REPORT (not only on emit). */
+    expect(before.includes('/* RCSSB */')).toBe(false);
+    expect(atReport.includes('/* RCSSB */')).toBe(true);
+    expect(atReport.length).toBeGreaterThan(before.length);
+
+    expect(atReport.match(BUNDLE_WITH_JWT_REGEX)).toBeTruthy();
     expect(
       seenAtReportStage['index.bundle']?.match(BUNDLE_WITH_JWT_REGEX)
     ).toBeNull();
