@@ -10,6 +10,24 @@ export interface CodeSigningPluginConfig {
   privateKeyPath: string;
   /** Names of chunks to exclude from being signed. */
   excludeChunks?: string[] | RegExp | RegExp[];
+  /**
+   * Path to the public key file. When provided, the plugin will automatically
+   * embed the public key into native project files (Info.plist for iOS,
+   * strings.xml for Android) so that the runtime can verify signed bundles.
+   *
+   * Relative paths are resolved from the project root (compiler context).
+   */
+  publicKeyPath?: string;
+  /**
+   * Override auto-detected paths to native project files where the public key
+   * should be embedded. Only used when `publicKeyPath` is set.
+   */
+  nativeProjectPaths?: {
+    /** Path to iOS Info.plist. Auto-detected if not provided. */
+    ios?: string;
+    /** Path to Android strings.xml. Auto-detected if not provided. */
+    android?: string;
+  };
 }
 
 type Schema = Parameters<typeof validate>[0];
@@ -37,6 +55,15 @@ export const optionsSchema: Schema = {
           instanceof: 'RegExp',
         },
       ],
+    },
+    publicKeyPath: { type: 'string' },
+    nativeProjectPaths: {
+      type: 'object',
+      properties: {
+        ios: { type: 'string' },
+        android: { type: 'string' },
+      },
+      additionalProperties: false,
     },
   },
   required: ['privateKeyPath'],

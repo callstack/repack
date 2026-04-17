@@ -6,6 +6,7 @@ import type { Compiler as RspackCompiler } from '@rspack/core';
 import jwt from 'jsonwebtoken';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { type CodeSigningPluginConfig, validateConfig } from './config.js';
+import { embedPublicKey } from './embedPublicKey.js';
 
 export class CodeSigningPlugin {
   private chunkFilenames: Set<string>;
@@ -26,7 +27,6 @@ export class CodeSigningPlugin {
     mainOutputFilename: string,
     excludedChunks: string[] | RegExp[]
   ): boolean {
-    /** Exclude non-chunks & main chunk as it's always local */
     if (!this.chunkFilenames.has(file) || file === mainOutputFilename) {
       return false;
     }
@@ -37,6 +37,65 @@ export class CodeSigningPlugin {
       }
       return chunk === file;
     });
+  }
+
+  private embedPublicKeyInNativeProjects(compiler: RspackCompiler) {
+    if (!this.config.publicKeyPath) {
+      return;
+    }
+
+    const logger = compiler.getInfrastructureLogger('RepackCodeSigningPlugin');
+    const projectRoot = compiler.context;
+
+    const publicKeyPath = path.isAbsolute(this.config.publicKeyPath)
+      ? this.config.publicKeyPath
+      : path.resolve(projectRoot, this.config.publicKeyPath);
+
+    if (!fs.existsSync(publicKeyPath)) {
+      logger.warn(
+        `Public key not found at ${publicKeyPath}. ` +
+          'Skipping automatic embedding into native project files.'
+      );
+      return;
+    }
+
+    const result = embedPublicKey({
+      publicKeyPath,
+      projectRoot,
+      iosInfoPlistPath: this.config.nativeProjectPaths?.ios
+        ? path.isAbsolute(this.config.nativeProjectPaths.ios)
+          ? this.config.nativeProjectPaths.ios
+          : path.resolve(projectRoot, this.config.nativeProjectPaths.ios)
+        : undefined,
+      androidStringsXmlPath: this.config.nativeProjectPaths?.android
+        ? path.isAbsolute(this.config.nativeProjectPaths.android)
+          ? this.config.nativeProjectPaths.android
+          : path.resolve(projectRoot, this.config.nativeProjectPaths.android)
+        : undefined,
+    });
+
+    if (result.ios.modified) {
+      logger.info(`Embedded public key in iOS Info.plist: ${result.ios.path}`);
+    } else if (result.ios.error) {
+      logger.warn(`Failed to embed public key in iOS: ${result.ios.error}`);
+    }
+
+    if (result.android.modified) {
+      logger.info(
+        `Embedded public key in Android strings.xml: ${result.android.path}`
+      );
+    } else if (result.android.error) {
+      logger.warn(
+        `Failed to embed public key in Android: ${result.android.error}`
+      );
+    }
+
+    if (!result.ios.modified && !result.android.modified && !result.ios.error && !result.android.error) {
+      logger.warn(
+        'No native project files found. Use nativeProjectPaths to specify custom paths ' +
+          'or manually add the public key to Info.plist / strings.xml.'
+      );
+    }
   }
 
   apply(compiler: RspackCompiler): void;
@@ -50,6 +109,8 @@ export class CodeSigningPlugin {
     if (this.config.enabled === false) {
       return;
     }
+
+    this.embedPublicKeyInNativeProjects(compiler);
 
     if (typeof compiler.options.output.filename === 'function') {
       throw new Error(
