@@ -418,3 +418,78 @@ exports[`assetLoader > should inline asset > without scales 2`] = `
 └─ out/
    └─ main.js"
 `;
+
+exports[`assetLoader > should inline asset based on maxInlineSize > extracts asset when size exceeds threshold 1`] = `
+{
+  "__packager_asset": true,
+  "hash": "373411381c08b2c5034c814c24c26b19",
+  "height": 51,
+  "httpServerLocation": "assets/__fixtures__/assets",
+  "name": "logo",
+  "scales": [
+    1,
+  ],
+  "type": "png",
+  "width": 297,
+}
+`;
+
+exports[`assetLoader > should inline asset based on maxInlineSize > extracts asset when size exceeds threshold 2`] = `
+"/
+└─ out/
+   ├─ drawable-mdpi/
+   │  └─ __fixtures___assets_logo.png
+   └─ main.js"
+`;
+
+exports[`assetLoader > should inline asset based on maxInlineSize > inlines asset when size is within threshold 1`] = `
+{
+  "__packager_asset": true,
+  "hash": "373411381c08b2c5034c814c24c26b19",
+  "height": 51,
+  "httpServerLocation": "assets/__fixtures__/assets",
+  "name": "logo",
+  "scales": [
+    1,
+  ],
+  "type": "png",
+  "width": 297,
+}
+`;
+
+exports[`assetLoader > should inline asset based on maxInlineSize > inlines asset when size is within threshold 2`] = `
+"/
+└─ out/
+   ├─ drawable-mdpi/
+   │  └─ __fixtures___assets_logo.png
+   └─ main.js"
+`;
+
+exports[`assetLoader > should inline asset based on maxInlineSize > uses largest variant to determine threshold (multi-scale asset) 1`] = `
+{
+  "__packager_asset": true,
+  "hash": "86abef08a42e972a96c958d6fa9d43da,02ad731a8881911e488b51c48a4cc6c1,d9f7c31eebb3a41cc180431867b04f38",
+  "height": 272,
+  "httpServerLocation": "assets/__fixtures__/assets",
+  "name": "star",
+  "scales": [
+    1,
+    2,
+    3,
+  ],
+  "type": "png",
+  "width": 286,
+}
+`;
+
+exports[`assetLoader > should inline asset based on maxInlineSize > uses largest variant to determine threshold (multi-scale asset) 2`] = `
+"/
+└─ out/
+   ├─ drawable-mdpi/
+   │  └─ __fixtures___assets_star.png
+   ├─ drawable-xhdpi/
+   │  └─ __fixtures___assets_star.png
+   ├─ drawable-xxhdpi/
+   │  └─ __fixtures___assets_star.png
+   └─ main.js"
+`;
