@@ -355,6 +355,36 @@ describe('ScriptManagerAPI', () => {
     });
   });
 
+  it('should resolve with custom public key override', async () => {
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        verifyScriptSignature: 'strict',
+        publicKey:
+          '-----BEGIN PUBLIC KEY-----\\ncustom\\n-----END PUBLIC KEY-----',
+      };
+    });
+
+    const script = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+
+    expect(script.locator).toEqual({
+      url: 'http://domain.ext/src_App_js.chunk.bundle',
+      fetch: true,
+      absolute: false,
+      method: 'GET',
+      timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: 'strict',
+      publicKey:
+        '-----BEGIN PUBLIC KEY-----\\ncustom\\n-----END PUBLIC KEY-----',
+      uniqueId: 'main_src_App_js',
+    });
+  });
+
   it('should resolve with body', async () => {
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
@@ -568,6 +598,33 @@ describe('ScriptManagerAPI', () => {
       'main'
     );
     expect(script6.locator.fetch).toBe(true);
+  });
+
+  it('should refetch when public key changes', async () => {
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        publicKey: 'first-key',
+      };
+    });
+
+    await ScriptManager.shared.loadScript('src_App_js');
+
+    ScriptManager.shared.removeAllResolvers();
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        publicKey: 'second-key',
+      };
+    });
+
+    const script = await ScriptManager.shared.resolveScript('src_App_js');
+
+    expect(script.locator.fetch).toBe(true);
+    expect(script.locator.publicKey).toBe('second-key');
   });
 
   it('should throw an error on non-network errors occurrence in load script with retry', async () => {
