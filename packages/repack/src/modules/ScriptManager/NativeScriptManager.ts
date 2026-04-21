@@ -23,6 +23,7 @@ export interface NormalizedScriptLocator {
   headers: { [key: string]: string } | undefined;
   body: string | undefined;
   verifyScriptSignature: NormalizedScriptLocatorSignatureVerificationMode;
+  publicKey?: string;
 }
 
 export interface Spec extends TurboModule {

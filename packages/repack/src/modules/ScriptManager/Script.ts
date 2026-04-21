@@ -137,6 +137,7 @@ export class Script {
         verifyScriptSignature:
           (locator.verifyScriptSignature as NormalizedScriptLocatorSignatureVerificationMode) ??
           NormalizedScriptLocatorSignatureVerificationMode.OFF,
+        ...(locator.publicKey ? { publicKey: locator.publicKey } : {}),
       },
       locator.cache
     );
@@ -170,7 +171,7 @@ export class Script {
   shouldUpdateCache(
     cachedData: Pick<
       NormalizedScriptLocator,
-      'method' | 'url' | 'query' | 'headers' | 'body'
+      'method' | 'url' | 'query' | 'headers' | 'body' | 'publicKey'
     >
   ) {
     if (!this.cache || !cachedData) {
@@ -191,7 +192,7 @@ export class Script {
   shouldRefetch(
     cachedData: Pick<
       NormalizedScriptLocator,
-      'method' | 'url' | 'query' | 'headers' | 'body'
+      'method' | 'url' | 'query' | 'headers' | 'body' | 'publicKey'
     >
   ) {
     if (!this.cache) {
@@ -211,7 +212,7 @@ export class Script {
   checkIfCacheDataOutdated(
     cachedData: Pick<
       NormalizedScriptLocator,
-      'method' | 'url' | 'query' | 'headers' | 'body'
+      'method' | 'url' | 'query' | 'headers' | 'body' | 'publicKey'
     >
   ) {
     return (
@@ -219,7 +220,8 @@ export class Script {
       cachedData.url !== this.locator.url ||
       cachedData.query !== this.locator.query ||
       !shallowEqual(cachedData.headers, this.locator.headers) ||
-      cachedData.body !== this.locator.body
+      cachedData.body !== this.locator.body ||
+      cachedData.publicKey !== this.locator.publicKey
     );
   }
 
@@ -235,6 +237,7 @@ export class Script {
       query: this.locator.query,
       headers: this.locator.headers,
       body: this.locator.body,
+      publicKey: this.locator.publicKey,
     };
   }
 
