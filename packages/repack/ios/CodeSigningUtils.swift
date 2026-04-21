@@ -80,12 +80,12 @@ public class CodeSigningUtils: NSObject {
     }
     
     @objc
-    public static func verifyBundle(token: String?, fileContent: NSData?) throws {
+    public static func verifyBundle(token: String?, fileContent: NSData?, publicKey: String?) throws {
         guard let token = token else {
             throw CodeSigningError.tokenNotFound
         }
         
-        guard let publicKey = getPublicKey() else {
+        guard let publicKey = publicKey ?? getPublicKey() else {
             throw CodeSigningError.publicKeyNotFound
         }
         
