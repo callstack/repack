@@ -78,6 +78,11 @@ export class CodeSigningPlugin {
       logger.info(`Embedded public key in iOS Info.plist: ${result.ios.path}`);
     } else if (result.ios.error) {
       logger.warn(`Failed to embed public key in iOS: ${result.ios.error}`);
+    } else {
+      logger.warn(
+        'Could not find iOS Info.plist. Skipping auto-embedding for iOS. ' +
+          'Use nativeProjectPaths.ios or manually add the public key to Info.plist.'
+      );
     }
 
     if (result.android.modified) {
@@ -88,12 +93,10 @@ export class CodeSigningPlugin {
       logger.warn(
         `Failed to embed public key in Android: ${result.android.error}`
       );
-    }
-
-    if (!result.ios.modified && !result.android.modified && !result.ios.error && !result.android.error) {
+    } else {
       logger.warn(
-        'No native project files found. Use nativeProjectPaths to specify custom paths ' +
-          'or manually add the public key to Info.plist / strings.xml.'
+        'Could not find Android strings.xml. Skipping auto-embedding for Android. ' +
+          'Use nativeProjectPaths.android or manually add the public key to strings.xml.'
       );
     }
   }
@@ -110,8 +113,6 @@ export class CodeSigningPlugin {
       return;
     }
 
-    this.embedPublicKeyInNativeProjects(compiler);
-
     if (typeof compiler.options.output.filename === 'function') {
       throw new Error(
         '[RepackCodeSigningPlugin] Dynamic output filename is not supported. Please use static filename instead.'
@@ -123,7 +124,7 @@ export class CodeSigningPlugin {
      */
     const TOKEN_BUFFER_SIZE = 1280;
     /**
-     * Used to denote beginning of the code-signing section of the bundle
+     * Used to denote the beginning of the code-signing section of the bundle
      * alias for "Repack Code-Signing Signature Begin"
      */
     const BEGIN_CS_MARK = '/* RCSSB */';
@@ -132,6 +133,8 @@ export class CodeSigningPlugin {
       ? this.config.privateKeyPath
       : path.resolve(compiler.context, this.config.privateKeyPath);
     const privateKey = fs.readFileSync(privateKeyPath);
+
+    this.embedPublicKeyInNativeProjects(compiler);
 
     const excludedChunks = Array.isArray(this.config.excludeChunks)
       ? this.config.excludeChunks
