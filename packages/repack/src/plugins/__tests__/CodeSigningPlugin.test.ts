@@ -92,8 +92,10 @@ describe('CodeSigningPlugin', () => {
         compiler.hooks.thisCompilation.tap(
           'TestReportStageCapture',
           (compilation) => {
-            const { PROCESS_ASSETS_STAGE_ANALYSE, PROCESS_ASSETS_STAGE_REPORT } =
-              compiler.webpack.Compilation;
+            const {
+              PROCESS_ASSETS_STAGE_ANALYSE,
+              PROCESS_ASSETS_STAGE_REPORT,
+            } = compiler.webpack.Compilation;
 
             /** Immediately before CodeSigningPlugin (ANALYSE / 2000) so content is still unsigned. */
             const beforeSigningStage = PROCESS_ASSETS_STAGE_ANALYSE - 1;

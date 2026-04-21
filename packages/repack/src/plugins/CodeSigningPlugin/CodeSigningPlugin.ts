@@ -39,10 +39,7 @@ export class CodeSigningPlugin {
     const source = asset.source.source();
     const content = Buffer.isBuffer(source) ? source : Buffer.from(source);
 
-    const hash = crypto
-      .createHash('sha256')
-      .update(content)
-      .digest('hex');
+    const hash = crypto.createHash('sha256').update(content).digest('hex');
     const token = jwt.sign({ hash }, privateKey, {
       algorithm: 'RS256',
     });
