@@ -83,15 +83,17 @@ class CodeSigningUtils {
             return null
         }
 
-        fun verifyBundle(context: Context, token: String?, fileContent: ByteArray?) {
+        fun verifyBundle(
+                context: Context, token: String?, fileContent: ByteArray?, stringPublicKey: String?
+        ) {
             if (token == null) {
                 throw Exception("The bundle verification failed because no token for the bundle was found.")
             }
 
-            val stringPublicKey = getPublicKeyFromStringsIfExist(context)
+            val resolvedPublicKey = stringPublicKey ?: getPublicKeyFromStringsIfExist(context)
                     ?: throw Exception("The bundle verification failed because PublicKey was not found in the bundle. Make sure you've added the PublicKey to the res/values/strings.xml under RepackPublicKey key.")
 
-            val publicKey = parsePublicKey(stringPublicKey)
+            val publicKey = parsePublicKey(resolvedPublicKey)
                     ?: throw Exception("The bundle verification failed because the PublicKey is invalid.")
 
             val claims: Map<String, Any?> = verifyAndDecodeToken(token, publicKey)

@@ -19,6 +19,7 @@ data class ScriptConfig(
     val timeout: Int,
     val headers: Headers,
     val verifyScriptSignature: String,
+    val publicKey: String?,
     val uniqueId: String,
     val sourceUrl: String
 ) {
@@ -33,6 +34,7 @@ data class ScriptConfig(
             val headersMap = value.getMap("headers")
             val timeout = value.getInt("timeout")
             val verifyScriptSignature = requireNotNull(value.getString("verifyScriptSignature"))
+            val publicKey = value.getString("publicKey")
             val uniqueId = requireNotNull(value.getString("uniqueId"))
 
             val initialUrl = URL(urlString)
@@ -79,6 +81,7 @@ data class ScriptConfig(
                 timeout,
                 headers.build(),
                 verifyScriptSignature,
+                publicKey,
                 uniqueId,
                 sourceUrl
             )
