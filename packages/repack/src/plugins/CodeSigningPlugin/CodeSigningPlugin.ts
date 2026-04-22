@@ -7,7 +7,6 @@ import type { Compiler as WebpackCompiler } from 'webpack';
 import { type CodeSigningPluginConfig, validateConfig } from './config.js';
 
 export class CodeSigningPlugin {
-  
   /**
    * Constructs new `RepackPlugin`.
    *
