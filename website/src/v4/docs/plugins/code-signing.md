@@ -176,4 +176,8 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
 });
 ```
 
-Only return public keys from a trusted backend or another authenticated source. Fetching both the bundle and its verification key from the same untrusted location defeats the integrity check.
+:::danger Security warning
+
+Only return public keys from a **trusted, authenticated backend**. If both the bundle and its public key can be fetched from the same untrusted location, signature verification no longer protects the download and an attacker can replace both at the same time.
+
+:::
