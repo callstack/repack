@@ -4,6 +4,7 @@ import {
   NormalizedScriptLocatorHTTPMethod,
   NormalizedScriptLocatorSignatureVerificationMode,
 } from './NativeScriptManager.js';
+import { normalizePublicKey } from './normalizePublicKey.js';
 import type { ScriptLocator } from './types.js';
 
 /**
@@ -117,6 +118,14 @@ export class Script {
       throw new Error('Property url as a function is not support');
     }
 
+    const verifyScriptSignature =
+      (locator.verifyScriptSignature as NormalizedScriptLocatorSignatureVerificationMode) ??
+      NormalizedScriptLocatorSignatureVerificationMode.OFF;
+    const publicKey = normalizePublicKey(
+      locator.publicKey,
+      verifyScriptSignature
+    );
+
     return new Script(
       key.scriptId,
       key.caller,
@@ -134,10 +143,8 @@ export class Script {
         body,
         headers: Object.keys(headers).length ? headers : undefined,
         fetch: locator.cache === false ? true : fetch,
-        verifyScriptSignature:
-          (locator.verifyScriptSignature as NormalizedScriptLocatorSignatureVerificationMode) ??
-          NormalizedScriptLocatorSignatureVerificationMode.OFF,
-        ...(locator.publicKey ? { publicKey: locator.publicKey } : {}),
+        verifyScriptSignature,
+        ...(publicKey ? { publicKey } : {}),
       },
       locator.cache
     );
