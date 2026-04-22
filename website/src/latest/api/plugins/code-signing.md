@@ -39,10 +39,6 @@ Whether to enable the plugin. You typically want to enable the plugin only for p
 
 Names of chunks to exclude from code-signing. You might want to use this if some of the chunks in your setup are not being delivered remotely and don't need to be verified.
 
-## Behavior
-
-Chunk signatures are applied during `processAssets` at the `ANALYSE` stage (2000), before later stages of the same hook. This ensures that plugins or tooling that capture or upload chunk outputs at subsequent stages — such as `withZephyr()` which runs at `REPORT` stage (5000) — receive bundles that already include the signature.
-
 ## Guide
 
 To add code-signing to your app, you first need to generate a pair of cryptographic keys that will be used for both signing the bundles (private key) and verifying their integrity in runtime.

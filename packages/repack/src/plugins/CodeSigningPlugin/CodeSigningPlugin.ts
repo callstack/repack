@@ -7,6 +7,12 @@ import type { Compiler as WebpackCompiler } from 'webpack';
 import { type CodeSigningPluginConfig, validateConfig } from './config.js';
 
 export class CodeSigningPlugin {
+  
+  /**
+   * Constructs new `RepackPlugin`.
+   *
+   * @param config Plugin configuration options.
+   */
   constructor(private config: CodeSigningPluginConfig) {
     validateConfig(config);
     this.config.excludeChunks = this.config.excludeChunks ?? [];
