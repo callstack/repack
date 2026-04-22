@@ -36,7 +36,7 @@ export const optionsSchema: Schema = {
   type: 'object',
   properties: {
     enabled: { type: 'boolean' },
-    privateKeyPath: { type: 'string' },
+    privateKeyPath: { type: 'string', minLength: 1 },
     excludeChunks: {
       anyOf: [
         {
@@ -56,12 +56,12 @@ export const optionsSchema: Schema = {
         },
       ],
     },
-    publicKeyPath: { type: 'string' },
+    publicKeyPath: { type: 'string', minLength: 1 },
     nativeProjectPaths: {
       type: 'object',
       properties: {
-        ios: { type: 'string' },
-        android: { type: 'string' },
+        ios: { type: 'string', minLength: 1 },
+        android: { type: 'string', minLength: 1 },
       },
       additionalProperties: false,
     },

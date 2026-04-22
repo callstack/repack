@@ -13,6 +13,7 @@ export interface EmbedPublicKeyConfig {
 }
 
 export interface EmbedPublicKeyResult {
+  error?: string;
   ios: { modified: boolean; path?: string; error?: string };
   android: { modified: boolean; path?: string; error?: string };
 }
@@ -22,8 +23,20 @@ export interface EmbedPublicKeyResult {
  * Modifies `Info.plist` (iOS) and `strings.xml` (Android) so the runtime
  * can verify signed bundles without manual file editing.
  */
-export function embedPublicKey(config: EmbedPublicKeyConfig): EmbedPublicKeyResult {
-  const publicKey = fs.readFileSync(config.publicKeyPath, 'utf-8').trim();
+export function embedPublicKey(
+  config: EmbedPublicKeyConfig
+): EmbedPublicKeyResult {
+  let publicKey: string;
+  try {
+    publicKey = fs.readFileSync(config.publicKeyPath, 'utf-8').trim();
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    return {
+      error: `Failed to read public key from ${config.publicKeyPath}: ${message}`,
+      ios: { modified: false },
+      android: { modified: false },
+    };
+  }
 
   const result: EmbedPublicKeyResult = {
     ios: { modified: false },
@@ -31,8 +44,7 @@ export function embedPublicKey(config: EmbedPublicKeyConfig): EmbedPublicKeyResu
   };
 
   const plistPath =
-    config.iosInfoPlistPath ??
-    findIOSInfoPlistPath(config.projectRoot);
+    config.iosInfoPlistPath ?? findIOSInfoPlistPath(config.projectRoot);
 
   if (plistPath) {
     try {
@@ -54,7 +66,11 @@ export function embedPublicKey(config: EmbedPublicKeyConfig): EmbedPublicKeyResu
       result.android = { modified: true, path: stringsXmlPath };
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
-      result.android = { modified: false, path: stringsXmlPath, error: message };
+      result.android = {
+        modified: false,
+        path: stringsXmlPath,
+        error: message,
+      };
     }
   }
 
@@ -81,7 +97,12 @@ export function findIOSInfoPlistPath(projectRoot: string): string | null {
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
     // Skip common non-app directories
-    if (entry.name === 'Pods' || entry.name === 'build' || entry.name.endsWith('.xcodeproj') || entry.name.endsWith('.xcworkspace')) {
+    if (
+      entry.name === 'Pods' ||
+      entry.name === 'build' ||
+      entry.name.endsWith('.xcodeproj') ||
+      entry.name.endsWith('.xcworkspace')
+    ) {
       continue;
     }
     const plistPath = path.join(iosDir, entry.name, 'Info.plist');
@@ -186,10 +207,7 @@ export function embedPublicKeyInStringsXml(
       );
     }
     content =
-      content.slice(0, insertIdx) +
-      newEntry +
-      '\n' +
-      content.slice(insertIdx);
+      content.slice(0, insertIdx) + newEntry + '\n' + content.slice(insertIdx);
   }
 
   fs.writeFileSync(stringsXmlPath, content, 'utf-8');

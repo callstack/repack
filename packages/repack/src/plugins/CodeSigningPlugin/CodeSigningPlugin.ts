@@ -8,6 +8,16 @@ import type { Compiler as WebpackCompiler } from 'webpack';
 import { type CodeSigningPluginConfig, validateConfig } from './config.js';
 import { embedPublicKey } from './embedPublicKey.js';
 
+function resolveProjectPath(
+  projectRoot: string,
+  configPath?: string
+): string | undefined {
+  if (!configPath) return undefined;
+  return path.isAbsolute(configPath)
+    ? configPath
+    : path.resolve(projectRoot, configPath);
+}
+
 export class CodeSigningPlugin {
   private chunkFilenames: Set<string>;
 
@@ -47,9 +57,10 @@ export class CodeSigningPlugin {
     const logger = compiler.getInfrastructureLogger('RepackCodeSigningPlugin');
     const projectRoot = compiler.context;
 
-    const publicKeyPath = path.isAbsolute(this.config.publicKeyPath)
-      ? this.config.publicKeyPath
-      : path.resolve(projectRoot, this.config.publicKeyPath);
+    const publicKeyPath = resolveProjectPath(
+      projectRoot,
+      this.config.publicKeyPath
+    )!;
 
     if (!fs.existsSync(publicKeyPath)) {
       logger.warn(
@@ -62,17 +73,20 @@ export class CodeSigningPlugin {
     const result = embedPublicKey({
       publicKeyPath,
       projectRoot,
-      iosInfoPlistPath: this.config.nativeProjectPaths?.ios
-        ? path.isAbsolute(this.config.nativeProjectPaths.ios)
-          ? this.config.nativeProjectPaths.ios
-          : path.resolve(projectRoot, this.config.nativeProjectPaths.ios)
-        : undefined,
-      androidStringsXmlPath: this.config.nativeProjectPaths?.android
-        ? path.isAbsolute(this.config.nativeProjectPaths.android)
-          ? this.config.nativeProjectPaths.android
-          : path.resolve(projectRoot, this.config.nativeProjectPaths.android)
-        : undefined,
+      iosInfoPlistPath: resolveProjectPath(
+        projectRoot,
+        this.config.nativeProjectPaths?.ios
+      ),
+      androidStringsXmlPath: resolveProjectPath(
+        projectRoot,
+        this.config.nativeProjectPaths?.android
+      ),
     });
+
+    if (result.error) {
+      logger.warn(result.error);
+      return;
+    }
 
     if (result.ios.modified) {
       logger.info(`Embedded public key in iOS Info.plist: ${result.ios.path}`);
@@ -129,10 +143,20 @@ export class CodeSigningPlugin {
      */
     const BEGIN_CS_MARK = '/* RCSSB */';
 
-    const privateKeyPath = path.isAbsolute(this.config.privateKeyPath)
-      ? this.config.privateKeyPath
-      : path.resolve(compiler.context, this.config.privateKeyPath);
-    const privateKey = fs.readFileSync(privateKeyPath);
+    const privateKeyPath = resolveProjectPath(
+      compiler.context,
+      this.config.privateKeyPath
+    )!;
+
+    let privateKey: Buffer;
+    try {
+      privateKey = fs.readFileSync(privateKeyPath);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `Failed to read private key from ${privateKeyPath}: ${message}`
+      );
+    }
 
     this.embedPublicKeyInNativeProjects(compiler);
 
