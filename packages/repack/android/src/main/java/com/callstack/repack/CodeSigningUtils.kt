@@ -45,13 +45,18 @@ class CodeSigningUtils {
         private fun parsePublicKey(stringPublicKey: String): PublicKey? {
             val formattedPublicKey = stringPublicKey.replace("-----BEGIN PUBLIC KEY-----", "")
                     .replace("-----END PUBLIC KEY-----", "")
-                    .replace(System.getProperty("line.separator")!!, "")
+                    .replace("\\s".toRegex(), "")
 
-            val byteKey: ByteArray = Base64.decode(formattedPublicKey.toByteArray(), Base64.DEFAULT)
-            val x509Key = X509EncodedKeySpec(byteKey)
-            val kf = KeyFactory.getInstance("RSA")
+            if (formattedPublicKey.isBlank()) {
+                return null
+            }
 
-            return kf.generatePublic(x509Key)
+            return runCatching {
+                val byteKey: ByteArray = Base64.decode(formattedPublicKey.toByteArray(), Base64.DEFAULT)
+                val x509Key = X509EncodedKeySpec(byteKey)
+                val kf = KeyFactory.getInstance("RSA")
+                kf.generatePublic(x509Key)
+            }.getOrNull()
         }
 
         private fun verifyAndDecodeToken(
