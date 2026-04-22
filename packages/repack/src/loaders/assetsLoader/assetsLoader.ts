@@ -226,8 +226,8 @@ export default async function repackAssetsLoader(
       ...assets.map((asset) => asset.data.length)
     );
     const shouldInlineAsset =
-      !!options.inline ||
-      (!!options.maxInlineSize && largestVariantSize <= options.maxInlineSize);
+      !!options.inline &&
+      (!options.maxInlineSize || largestVariantSize <= options.maxInlineSize);
 
     let result: string;
     if (shouldInlineAsset) {

@@ -63,7 +63,7 @@ The value of `image` in this example would be either an object with `uri`, `widt
 
 ## Size-based inlining
 
-Instead of inlining all assets unconditionally, you can use `maxInlineSize` to set a file size threshold in bytes. Assets whose **largest scale variant** is smaller than or equal to the threshold will be inlined; larger assets will be extracted as separate files.
+You can combine `inline: true` with `maxInlineSize` to set a file size threshold in bytes. Assets whose **largest scale variant** is smaller than or equal to the threshold will be inlined; larger assets will be extracted as separate files.
 
 ```js title="rspack.config.cjs"
 const Repack = require("@callstack/repack");
@@ -75,7 +75,7 @@ module.exports = {
         test: Repack.getAssetExtensionsRegExp(),
         use: {
           loader: "@callstack/repack/assets-loader",
-          options: { maxInlineSize: 20 * 1024 }, // inline assets up to 20 KB
+          options: { inline: true, maxInlineSize: 20 * 1024 }, // inline assets up to 20 KB
         },
       },
     ],
@@ -90,7 +90,7 @@ const Repack = require("@callstack/repack");
 
 module.exports = {
   module: {
-    rules: [...Repack.getAssetTransformRules({ maxInlineSize: 20 * 1024 })],
+    rules: [...Repack.getAssetTransformRules({ inline: true, maxInlineSize: 20 * 1024 })],
   },
 };
 ```
@@ -99,7 +99,7 @@ module.exports = {
 
 The threshold is compared against the **largest scale variant** of the asset (e.g. `@3x`), not the `@1x` file. This is intentional — when an asset is inlined, all scale variants are embedded into the bundle, so the largest one is what determines the worst-case size impact.
 
-For example, a `@1x` PNG that is 10 KB may have a `@3x` variant of 80 KB. With `maxInlineSize: 20 * 1024` the asset would be extracted, not inlined, because the `@3x` variant exceeds the threshold.
+For example, a `@1x` PNG that is 10 KB may have a `@3x` variant of 80 KB. With `inline: true` and `maxInlineSize: 20 * 1024` the asset would be extracted, not inlined, because the `@3x` variant exceeds the threshold.
 
 :::
 

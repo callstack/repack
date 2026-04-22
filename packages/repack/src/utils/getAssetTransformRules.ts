@@ -41,8 +41,8 @@ interface GetAssetTransformRulesOptions {
 
   /**
    * Maximum asset file size in bytes to inline as base64 URIs.
-   * Assets larger than this threshold will be extracted as separate files.
-   * Mutually exclusive with `inline`.
+   * Requires `inline: true`. Assets whose largest scale variant exceeds this
+   * threshold will be extracted as separate files instead of being inlined.
    */
   maxInlineSize?: number;
 
@@ -65,7 +65,7 @@ interface GetAssetTransformRulesOptions {
  *
  * @param options Configuration options
  * @param options.inline Whether to inline all assets as base64 URIs (defaults to false)
- * @param options.maxInlineSize Maximum asset file size in bytes to inline as base64 URIs; larger assets are extracted as separate files
+ * @param options.maxInlineSize Maximum asset file size in bytes to inline as base64 URIs (requires inline: true); larger assets are extracted as separate files
  * @param options.remote Configuration for remote asset loading with publicPath and optional assetPath function
  * @param options.svg Determines how SVG files should be processed ('svgr', 'xml', or 'uri')
  *

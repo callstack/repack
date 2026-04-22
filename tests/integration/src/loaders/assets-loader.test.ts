@@ -159,7 +159,7 @@ describe('assetLoader', () => {
           './index.js':
             "export { default } from './__fixtures__/assets/logo.png';",
         },
-        undefined,
+        true,
         undefined,
         2000
       );
@@ -180,7 +180,7 @@ describe('assetLoader', () => {
           './index.js':
             "export { default } from './__fixtures__/assets/logo.png';",
         },
-        undefined,
+        true,
         undefined,
         1000
       );
@@ -201,7 +201,7 @@ describe('assetLoader', () => {
           './index.js':
             "export { default } from './__fixtures__/assets/star.png';",
         },
-        undefined,
+        true,
         undefined,
         10000 // below star@3x (21176 bytes), so should extract
       );
