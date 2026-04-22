@@ -385,6 +385,42 @@ describe('ScriptManagerAPI', () => {
     });
   });
 
+  it('should reject malformed public key override when verification is enabled', async () => {
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        verifyScriptSignature: 'strict',
+        publicKey: 'not-a-valid-pem-public-key',
+      };
+    });
+
+    await expect(
+      ScriptManager.shared.resolveScript('src_App_js', 'main')
+    ).rejects.toThrow(
+      'Property publicKey must be a PEM-formatted public key enclosed in BEGIN/END PUBLIC KEY markers.'
+    );
+  });
+
+  it('should allow public key override with surrounding whitespace', async () => {
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        verifyScriptSignature: 'strict',
+        publicKey:
+          '\n  -----BEGIN PUBLIC KEY-----\\ncustom\\n-----END PUBLIC KEY-----  \n',
+      };
+    });
+
+    const script = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+
+    expect(script.locator.publicKey).toBe(
+      '-----BEGIN PUBLIC KEY-----\\ncustom\\n-----END PUBLIC KEY-----'
+    );
+  });
+
   it('should resolve with body', async () => {
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
