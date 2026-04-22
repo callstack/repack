@@ -444,15 +444,9 @@ exports[`assetLoader > should inline asset based on maxInlineSize > extracts ass
 
 exports[`assetLoader > should inline asset based on maxInlineSize > inlines asset when size is within threshold 1`] = `
 {
-  "__packager_asset": true,
-  "hash": "373411381c08b2c5034c814c24c26b19",
   "height": 51,
-  "httpServerLocation": "assets/__fixtures__/assets",
-  "name": "logo",
-  "scales": [
-    1,
-  ],
-  "type": "png",
+  "scale": 1,
+  "uri": "data:image/png;base64,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",
   "width": 297,
 }
 `;
@@ -460,8 +454,6 @@ exports[`assetLoader > should inline asset based on maxInlineSize > inlines asse
 exports[`assetLoader > should inline asset based on maxInlineSize > inlines asset when size is within threshold 2`] = `
 "/
 └─ out/
-   ├─ drawable-mdpi/
-   │  └─ __fixtures___assets_logo.png
    └─ main.js"
 `;
 
