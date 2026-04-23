@@ -222,8 +222,15 @@ export default async function repackAssetsLoader(
       })
     );
 
+    const largestVariantSize = Math.max(
+      ...assets.map((asset) => asset.data.length)
+    );
+    const shouldInlineAsset =
+      !!options.inline &&
+      (!options.maxInlineSize || largestVariantSize <= options.maxInlineSize);
+
     let result: string;
-    if (options.inline) {
+    if (shouldInlineAsset) {
       logger.debug(`Inlining assets for request ${resourcePath}`);
       result = inlineAssets({ assets, resourcePath });
     } else {

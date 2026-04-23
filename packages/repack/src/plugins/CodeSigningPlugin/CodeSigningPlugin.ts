@@ -9,7 +9,6 @@ import { type CodeSigningPluginConfig, validateConfig } from './config.js';
 
 export class CodeSigningPlugin {
   private chunkFilenames: Set<string>;
-
   /**
    * Constructs new `RepackPlugin`.
    *
