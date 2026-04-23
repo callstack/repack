@@ -27,7 +27,10 @@ export default Repack.defineRspackConfig((env) => {
           },
           type: 'javascript/auto',
         },
-        ...Repack.getAssetTransformRules(),
+        ...Repack.getAssetTransformRules({
+          inline: true,
+          maxInlineSize: 90 * 1024,
+        }),
       ],
     },
     plugins: [
