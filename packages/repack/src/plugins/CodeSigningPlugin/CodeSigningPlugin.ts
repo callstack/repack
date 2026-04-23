@@ -1,14 +1,12 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import util from 'node:util';
 import type { Compiler as RspackCompiler } from '@rspack/core';
 import jwt from 'jsonwebtoken';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { type CodeSigningPluginConfig, validateConfig } from './config.js';
 
 export class CodeSigningPlugin {
-  private chunkFilenames: Set<string>;
   /**
    * Constructs new `RepackPlugin`.
    *
@@ -17,7 +15,6 @@ export class CodeSigningPlugin {
   constructor(private config: CodeSigningPluginConfig) {
     validateConfig(config);
     this.config.excludeChunks = this.config.excludeChunks ?? [];
-    this.chunkFilenames = new Set();
   }
 
   private shouldSignFile(
@@ -26,7 +23,7 @@ export class CodeSigningPlugin {
     excludedChunks: string[] | RegExp[]
   ): boolean {
     /** Exclude non-chunks & main chunk as it's always local */
-    if (!this.chunkFilenames.has(file) || file === mainOutputFilename) {
+    if (file === mainOutputFilename) {
       return false;
     }
 
@@ -36,6 +33,26 @@ export class CodeSigningPlugin {
       }
       return chunk === file;
     });
+  }
+
+  private signAsset(
+    asset: { source: { source(): string | Buffer } },
+    privateKey: Buffer,
+    beginMark: string,
+    tokenBufferSize: number
+  ): Buffer {
+    const source = asset.source.source();
+    const content = Buffer.isBuffer(source) ? source : Buffer.from(source);
+
+    const hash = crypto.createHash('sha256').update(content).digest('hex');
+    const token = jwt.sign({ hash }, privateKey, {
+      algorithm: 'RS256',
+    });
+
+    return Buffer.concat(
+      [content, Buffer.from(beginMark), Buffer.from(token)],
+      content.length + tokenBufferSize
+    );
   }
 
   apply(compiler: RspackCompiler): void;
@@ -75,40 +92,49 @@ export class CodeSigningPlugin {
       ? this.config.excludeChunks
       : [this.config.excludeChunks as RegExp];
 
-    compiler.hooks.emit.tap('RepackCodeSigningPlugin', (compilation) => {
-      compilation.chunks.forEach((chunk) => {
-        chunk.files.forEach((file) => this.chunkFilenames.add(file));
-      });
-    });
-
-    compiler.hooks.assetEmitted.tapPromise(
-      { name: 'RepackCodeSigningPlugin', stage: 20 },
-      async (file, { outputPath, compilation }) => {
-        const outputFilepath = path.join(outputPath, file);
-        const readFileAsync = util.promisify(
-          compiler.outputFileSystem!.readFile
-        );
-        const content = (await readFileAsync(outputFilepath)) as Buffer;
+    compiler.hooks.thisCompilation.tap(
+      'RepackCodeSigningPlugin',
+      (compilation) => {
+        const { sources } = compiler.webpack;
         const mainBundleName = compilation.outputOptions.filename as string;
-        if (!this.shouldSignFile(file, mainBundleName, excludedChunks)) {
-          return;
-        }
-        logger.debug(`Signing ${file}`);
-        /** generate bundle hash */
-        const hash = crypto.createHash('sha256').update(content).digest('hex');
-        /** generate token */
-        const token = jwt.sign({ hash }, privateKey, { algorithm: 'RS256' });
-        /** combine the bundle and the token */
-        const signedBundle = Buffer.concat(
-          [content, Buffer.from(BEGIN_CS_MARK), Buffer.from(token)],
-          content.length + TOKEN_BUFFER_SIZE
-        );
 
-        const writeFileAsync = util.promisify(
-          compiler.outputFileSystem!.writeFile
+        compilation.hooks.processAssets.tap(
+          {
+            name: 'RepackCodeSigningPlugin',
+            // Sign at ANALYSE (2000) so later processAssets consumers,
+            // such as Zephyr at REPORT (5000), receive already-signed assets
+            stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ANALYSE,
+          },
+          () => {
+            for (const chunk of compilation.chunks) {
+              for (const file of chunk.files) {
+                if (
+                  !this.shouldSignFile(file, mainBundleName, excludedChunks)
+                ) {
+                  continue;
+                }
+
+                const asset = compilation.getAsset(file);
+                if (!asset) continue;
+
+                logger.debug(`Signing ${file}`);
+                const signedBundle = this.signAsset(
+                  asset,
+                  privateKey,
+                  BEGIN_CS_MARK,
+                  TOKEN_BUFFER_SIZE
+                );
+
+                compilation.updateAsset(
+                  file,
+                  new sources.RawSource(signedBundle)
+                );
+
+                logger.debug(`Signed ${file}`);
+              }
+            }
+          }
         );
-        await writeFileAsync(outputFilepath, signedBundle);
-        logger.debug(`Signed ${file}`);
       }
     );
   }
