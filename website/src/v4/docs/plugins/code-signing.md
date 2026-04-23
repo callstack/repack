@@ -141,3 +141,43 @@ Integrity verification can be set (through `verifyScriptSignature`) to one of th
 | `strict` | Always verify the integrity of the bundle |
 | `lax` | Verify the integrity only if the signtarure is present |
 | `off` | Never verify the integrity of the bundle |
+
+### Use multiple public keys
+
+If different teams sign different bundles, the resolver can provide a script-specific public key at runtime. When `publicKey` is present, Re.Pack uses it for verification. When it is omitted, Re.Pack falls back to the key embedded in the app under `RepackPublicKey`.
+
+```js title="index.js"
+import { ScriptManager, Federated } from '@callstack/repack/client';
+
+const containers = {
+  MiniApp: 'https://cdn.example.com/[name][ext]',
+};
+
+ScriptManager.shared.addResolver(async (scriptId, caller) => {
+  const resolveURL = Federated.createURLResolver({ containers });
+  const url = resolveURL(scriptId, caller);
+
+  if (!url) {
+    return;
+  }
+
+  const metadata = await fetch(
+    `https://api.example.com/miniapps/${scriptId}/bundle-metadata`
+  ).then((response) => response.json());
+
+  return {
+    url,
+    query: {
+      platform: Platform.OS,
+    },
+    verifyScriptSignature: __DEV__ ? 'off' : 'strict',
+    publicKey: metadata.publicKey,
+  };
+});
+```
+
+:::danger Security warning
+
+Only return public keys from a **trusted, authenticated backend**. If both the bundle and its public key can be fetched from the same untrusted location, signature verification no longer protects the download and an attacker can replace both at the same time.
+
+:::

@@ -355,6 +355,72 @@ describe('ScriptManagerAPI', () => {
     });
   });
 
+  it('should resolve with custom public key override', async () => {
+    ScriptManager.shared.addResolver(async (scriptId, caller) => {
+      expect(caller).toEqual('main');
+
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        verifyScriptSignature: 'strict',
+        publicKey:
+          '-----BEGIN PUBLIC KEY-----\\ncustom\\n-----END PUBLIC KEY-----',
+      };
+    });
+
+    const script = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+
+    expect(script.locator).toEqual({
+      url: 'http://domain.ext/src_App_js.chunk.bundle',
+      fetch: true,
+      absolute: false,
+      method: 'GET',
+      timeout: Script.DEFAULT_TIMEOUT,
+      verifyScriptSignature: 'strict',
+      publicKey:
+        '-----BEGIN PUBLIC KEY-----\\ncustom\\n-----END PUBLIC KEY-----',
+      uniqueId: 'main_src_App_js',
+    });
+  });
+
+  it('should reject malformed public key override when verification is enabled', async () => {
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        verifyScriptSignature: 'strict',
+        publicKey: 'not-a-valid-pem-public-key',
+      };
+    });
+
+    await expect(
+      ScriptManager.shared.resolveScript('src_App_js', 'main')
+    ).rejects.toThrow(
+      'Property publicKey must be a PEM-formatted public key enclosed in BEGIN/END PUBLIC KEY markers.'
+    );
+  });
+
+  it('should allow public key override with surrounding whitespace', async () => {
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        verifyScriptSignature: 'strict',
+        publicKey:
+          '\n  -----BEGIN PUBLIC KEY-----\\ncustom\\n-----END PUBLIC KEY-----  \n',
+      };
+    });
+
+    const script = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+
+    expect(script.locator.publicKey).toBe(
+      '-----BEGIN PUBLIC KEY-----\\ncustom\\n-----END PUBLIC KEY-----'
+    );
+  });
+
   it('should resolve with body', async () => {
     const cache = new FakeCache();
     ScriptManager.shared.setStorage(cache);
@@ -568,6 +634,33 @@ describe('ScriptManagerAPI', () => {
       'main'
     );
     expect(script6.locator.fetch).toBe(true);
+  });
+
+  it('should refetch when public key changes', async () => {
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        publicKey: 'first-key',
+      };
+    });
+
+    await ScriptManager.shared.loadScript('src_App_js');
+
+    ScriptManager.shared.removeAllResolvers();
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        publicKey: 'second-key',
+      };
+    });
+
+    const script = await ScriptManager.shared.resolveScript('src_App_js');
+
+    expect(script.locator.fetch).toBe(true);
+    expect(script.locator.publicKey).toBe('second-key');
   });
 
   it('should throw an error on non-network errors occurrence in load script with retry', async () => {

@@ -4,6 +4,7 @@ import {
   NormalizedScriptLocatorHTTPMethod,
   NormalizedScriptLocatorSignatureVerificationMode,
 } from './NativeScriptManager.js';
+import { normalizePublicKey } from './normalizePublicKey.js';
 import type { ScriptLocator } from './types.js';
 
 /**
@@ -117,6 +118,14 @@ export class Script {
       throw new Error('Property url as a function is not support');
     }
 
+    const verifyScriptSignature =
+      (locator.verifyScriptSignature as NormalizedScriptLocatorSignatureVerificationMode) ??
+      NormalizedScriptLocatorSignatureVerificationMode.OFF;
+    const publicKey = normalizePublicKey(
+      locator.publicKey,
+      verifyScriptSignature
+    );
+
     return new Script(
       key.scriptId,
       key.caller,
@@ -134,9 +143,8 @@ export class Script {
         body,
         headers: Object.keys(headers).length ? headers : undefined,
         fetch: locator.cache === false ? true : fetch,
-        verifyScriptSignature:
-          (locator.verifyScriptSignature as NormalizedScriptLocatorSignatureVerificationMode) ??
-          NormalizedScriptLocatorSignatureVerificationMode.OFF,
+        verifyScriptSignature,
+        ...(publicKey ? { publicKey } : {}),
       },
       locator.cache
     );
@@ -170,7 +178,7 @@ export class Script {
   shouldUpdateCache(
     cachedData: Pick<
       NormalizedScriptLocator,
-      'method' | 'url' | 'query' | 'headers' | 'body'
+      'method' | 'url' | 'query' | 'headers' | 'body' | 'publicKey'
     >
   ) {
     if (!this.cache || !cachedData) {
@@ -191,7 +199,7 @@ export class Script {
   shouldRefetch(
     cachedData: Pick<
       NormalizedScriptLocator,
-      'method' | 'url' | 'query' | 'headers' | 'body'
+      'method' | 'url' | 'query' | 'headers' | 'body' | 'publicKey'
     >
   ) {
     if (!this.cache) {
@@ -211,7 +219,7 @@ export class Script {
   checkIfCacheDataOutdated(
     cachedData: Pick<
       NormalizedScriptLocator,
-      'method' | 'url' | 'query' | 'headers' | 'body'
+      'method' | 'url' | 'query' | 'headers' | 'body' | 'publicKey'
     >
   ) {
     return (
@@ -219,7 +227,8 @@ export class Script {
       cachedData.url !== this.locator.url ||
       cachedData.query !== this.locator.query ||
       !shallowEqual(cachedData.headers, this.locator.headers) ||
-      cachedData.body !== this.locator.body
+      cachedData.body !== this.locator.body ||
+      cachedData.publicKey !== this.locator.publicKey
     );
   }
 
@@ -235,6 +244,7 @@ export class Script {
       query: this.locator.query,
       headers: this.locator.headers,
       body: this.locator.body,
+      publicKey: this.locator.publicKey,
     };
   }
 

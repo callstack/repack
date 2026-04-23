@@ -56,7 +56,7 @@ class RemoteScriptLoader(val reactContext: ReactContext, private val nativeLoade
                         } ?: Pair(null, null)
 
                         if (config.verifyScriptSignature == "strict" || (config.verifyScriptSignature == "lax" && token != null)) {
-                            CodeSigningUtils.verifyBundle(reactContext, token, bundle)
+                            CodeSigningUtils.verifyBundle(reactContext, token, bundle, config.publicKey)
                         }
 
                         if (bundle == null) {
