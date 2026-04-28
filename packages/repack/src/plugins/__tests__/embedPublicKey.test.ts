@@ -80,6 +80,27 @@ describe('embedPublicKeyInPlist', () => {
     expect(result).toContain('<key>CFBundleName</key>');
   });
 
+  it('returns false and skips write when key is already up-to-date', () => {
+    const plistPath = path.join(tmpDir, 'Info.plist');
+    fs.writeFileSync(
+      plistPath,
+      `<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+<dict>
+</dict>
+</plist>`
+    );
+
+    embedPublicKeyInPlist(SAMPLE_PUBLIC_KEY, plistPath);
+    const mtimeBefore = fs.statSync(plistPath).mtimeMs;
+
+    const written = embedPublicKeyInPlist(SAMPLE_PUBLIC_KEY, plistPath);
+    const mtimeAfter = fs.statSync(plistPath).mtimeMs;
+
+    expect(written).toBe(false);
+    expect(mtimeAfter).toBe(mtimeBefore);
+  });
+
   it('throws when plist has no </dict> tag', () => {
     const plistPath = path.join(tmpDir, 'Info.plist');
     fs.writeFileSync(plistPath, '<plist><broken></plist>');
@@ -168,6 +189,25 @@ describe('embedPublicKeyInStringsXml', () => {
     expect(result).toContain('<resources>');
     expect(result).toContain('name="RepackPublicKey"');
     expect(result).toContain('</resources>');
+  });
+
+  it('returns false and skips write when key is already up-to-date', () => {
+    const xmlPath = path.join(tmpDir, 'strings.xml');
+    fs.writeFileSync(
+      xmlPath,
+      `<?xml version="1.0" encoding="utf-8"?>
+<resources>
+</resources>`
+    );
+
+    embedPublicKeyInStringsXml(SAMPLE_PUBLIC_KEY, xmlPath);
+    const mtimeBefore = fs.statSync(xmlPath).mtimeMs;
+
+    const written = embedPublicKeyInStringsXml(SAMPLE_PUBLIC_KEY, xmlPath);
+    const mtimeAfter = fs.statSync(xmlPath).mtimeMs;
+
+    expect(written).toBe(false);
+    expect(mtimeAfter).toBe(mtimeBefore);
   });
 
   it('throws when strings.xml has no </resources> tag', () => {

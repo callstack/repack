@@ -77,7 +77,9 @@ export class CodeSigningPlugin {
     const publicKeyPath = resolveProjectPath(
       projectRoot,
       this.config.publicKeyPath
-    )!;
+    );
+
+    if (!publicKeyPath) return;
 
     if (!fs.existsSync(publicKeyPath)) {
       logger.warn(
@@ -109,6 +111,10 @@ export class CodeSigningPlugin {
       logger.info(`Embedded public key in iOS Info.plist: ${result.ios.path}`);
     } else if (result.ios.error) {
       logger.warn(`Failed to embed public key in iOS: ${result.ios.error}`);
+    } else if (result.ios.path) {
+      logger.debug(
+        `Public key already up-to-date in iOS Info.plist: ${result.ios.path}`
+      );
     } else {
       logger.warn(
         'Could not find iOS Info.plist. Skipping auto-embedding for iOS. ' +
@@ -123,6 +129,10 @@ export class CodeSigningPlugin {
     } else if (result.android.error) {
       logger.warn(
         `Failed to embed public key in Android: ${result.android.error}`
+      );
+    } else if (result.android.path) {
+      logger.debug(
+        `Public key already up-to-date in Android strings.xml: ${result.android.path}`
       );
     } else {
       logger.warn(
@@ -163,7 +173,11 @@ export class CodeSigningPlugin {
     const privateKeyPath = resolveProjectPath(
       compiler.context,
       this.config.privateKeyPath
-    )!;
+    );
+
+    if (!privateKeyPath) {
+      throw new Error('[RepackCodeSigningPlugin] privateKeyPath is required.');
+    }
 
     let privateKey: Buffer;
     try {

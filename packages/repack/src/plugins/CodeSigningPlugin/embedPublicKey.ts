@@ -48,8 +48,8 @@ export function embedPublicKey(
 
   if (plistPath) {
     try {
-      embedPublicKeyInPlist(publicKey, plistPath);
-      result.ios = { modified: true, path: plistPath };
+      const written = embedPublicKeyInPlist(publicKey, plistPath);
+      result.ios = { modified: written, path: plistPath };
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       result.ios = { modified: false, path: plistPath, error: message };
@@ -62,8 +62,8 @@ export function embedPublicKey(
 
   if (stringsXmlPath) {
     try {
-      embedPublicKeyInStringsXml(publicKey, stringsXmlPath);
-      result.android = { modified: true, path: stringsXmlPath };
+      const written = embedPublicKeyInStringsXml(publicKey, stringsXmlPath);
+      result.android = { modified: written, path: stringsXmlPath };
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       result.android = {
@@ -133,12 +133,13 @@ export function findAndroidStringsXmlPath(projectRoot: string): string | null {
 
 /**
  * Embeds or updates `RepackPublicKey` in an iOS `Info.plist` file.
+ * Returns true if the file was written, false if it was already up-to-date.
  */
 export function embedPublicKeyInPlist(
   publicKey: string,
   plistPath: string
-): void {
-  let content = fs.readFileSync(plistPath, 'utf-8');
+): boolean {
+  const existing = fs.readFileSync(plistPath, 'utf-8');
 
   const existingKeyPattern =
     /[ \t]*<key>RepackPublicKey<\/key>\s*<string>[\s\S]*?<\/string>/;
@@ -147,34 +148,39 @@ export function embedPublicKeyInPlist(
     '\t<key>RepackPublicKey</key>\n' +
     `\t<string>${escapeXml(publicKey)}</string>`;
 
-  if (existingKeyPattern.test(content)) {
-    content = content.replace(existingKeyPattern, replacement);
+  let newContent: string;
+  if (existingKeyPattern.test(existing)) {
+    newContent = existing.replace(existingKeyPattern, replacement);
   } else {
-    const insertIdx = content.lastIndexOf('</dict>');
+    const insertIdx = existing.lastIndexOf('</dict>');
     if (insertIdx === -1) {
       throw new Error(
         `[CodeSigningPlugin] Could not find </dict> in ${plistPath}. ` +
           'The file may not be a valid Info.plist.'
       );
     }
-    content =
-      content.slice(0, insertIdx) +
+    newContent =
+      existing.slice(0, insertIdx) +
       replacement +
       '\n' +
-      content.slice(insertIdx);
+      existing.slice(insertIdx);
   }
 
-  fs.writeFileSync(plistPath, content, 'utf-8');
+  if (newContent === existing) return false;
+
+  fs.writeFileSync(plistPath, newContent, 'utf-8');
+  return true;
 }
 
 /**
  * Embeds or updates `RepackPublicKey` in an Android `strings.xml` file.
  * Creates the file if it does not exist.
+ * Returns true if the file was written, false if it was already up-to-date.
  */
 export function embedPublicKeyInStringsXml(
   publicKey: string,
   stringsXmlPath: string
-): void {
+): boolean {
   const escapedKey = escapeXml(publicKey);
   const newEntry = `    <string name="RepackPublicKey" translatable="false">${escapedKey}</string>`;
 
@@ -188,29 +194,36 @@ export function embedPublicKeyInStringsXml(
       '\n' +
       '</resources>\n';
     fs.writeFileSync(stringsXmlPath, content, 'utf-8');
-    return;
+    return true;
   }
 
-  let content = fs.readFileSync(stringsXmlPath, 'utf-8');
+  const existing = fs.readFileSync(stringsXmlPath, 'utf-8');
 
   const existingPattern =
     /[ \t]*<string name="RepackPublicKey"[^>]*>[\s\S]*?<\/string>/;
 
-  if (existingPattern.test(content)) {
-    content = content.replace(existingPattern, newEntry);
+  let newContent: string;
+  if (existingPattern.test(existing)) {
+    newContent = existing.replace(existingPattern, newEntry);
   } else {
-    const insertIdx = content.lastIndexOf('</resources>');
+    const insertIdx = existing.lastIndexOf('</resources>');
     if (insertIdx === -1) {
       throw new Error(
         `[CodeSigningPlugin] Could not find </resources> in ${stringsXmlPath}. ` +
           'The file may not be a valid strings.xml.'
       );
     }
-    content =
-      content.slice(0, insertIdx) + newEntry + '\n' + content.slice(insertIdx);
+    newContent =
+      existing.slice(0, insertIdx) +
+      newEntry +
+      '\n' +
+      existing.slice(insertIdx);
   }
 
-  fs.writeFileSync(stringsXmlPath, content, 'utf-8');
+  if (newContent === existing) return false;
+
+  fs.writeFileSync(stringsXmlPath, newContent, 'utf-8');
+  return true;
 }
 
 function escapeXml(str: string): string {
