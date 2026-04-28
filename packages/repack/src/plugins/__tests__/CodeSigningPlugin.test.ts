@@ -389,6 +389,7 @@ describe('CodeSigningPlugin - public key embedding', () => {
         enabled: true,
         privateKeyPath: path.join(tmpDir, 'code-signing.pem'),
       },
+      [],
       tmpDir
     );
 
@@ -434,6 +435,7 @@ describe('CodeSigningPlugin - public key embedding', () => {
         privateKeyPath: path.join(tmpDir, 'code-signing.pem'),
         publicKeyPath: path.join(tmpDir, 'code-signing.pem.pub'),
       },
+      [],
       tmpDir
     );
 
@@ -468,6 +470,7 @@ describe('CodeSigningPlugin - public key embedding', () => {
         privateKeyPath: path.join(tmpDir, 'code-signing.pem'),
         publicKeyPath: path.join(tmpDir, 'code-signing.pem.pub'),
       },
+      [],
       tmpDir
     );
 
