@@ -39,6 +39,23 @@ Whether to enable the plugin. You typically want to enable the plugin only for p
 
 Names of chunks to exclude from code-signing. You might want to use this if some of the chunks in your setup are not being delivered remotely and don't need to be verified.
 
+### publicKeyPath
+
+- Type: `string`
+
+Path to the public key file. When provided, the plugin will automatically embed the public key into native project files (`Info.plist` for iOS, `strings.xml` for Android) so that the runtime can verify signed bundles without manual file editing.
+
+Relative paths are resolved from the project root (compiler context).
+
+### nativeProjectPaths
+
+- Type: `{ ios?: string; android?: string }`
+
+Override auto-detected paths to native project files where the public key should be embedded. Only used when `publicKeyPath` is set.
+
+- `ios` — Path to `Info.plist`. Auto-detected from `ios/<AppName>/Info.plist` if not provided.
+- `android` — Path to `strings.xml`. Auto-detected from `android/app/src/main/res/values/strings.xml` if not provided.
+
 ## Guide
 
 To add code-signing to your app, you first need to generate a pair of cryptographic keys that will be used for both signing the bundles (private key) and verifying their integrity in runtime.
@@ -62,7 +79,7 @@ The passphrase must be left empty.
 
 After that, you need to add `CodeSigningPlugin` to your configuration. Make sure the `privateKeyPath` points to the location of your `code-signing.pem`.
 
-```js title="rspack.config.cjs" {8-11}
+```js title="rspack.config.cjs" {8-12}
 const Repack = require("@callstack/repack");
 
 module.exports = (env) => {
@@ -73,6 +90,7 @@ module.exports = (env) => {
       new Repack.plugins.CodeSigningPlugin({
         enabled: mode === "production",
         privateKeyPath: "./code-signing.pem",
+        publicKeyPath: "./code-signing.pem.pub",
       }),
     ],
   };
@@ -81,11 +99,68 @@ module.exports = (env) => {
 
 ### Add the public key
 
-To be able to verify the bundles in runtime, we need to add the public key (`code-signing.pem.pub`) to the app assets. The public key needs to be included for every platform separately.
+To be able to verify the bundles in runtime, the public key (`code-signing.pem.pub`) needs to be added to the native project files so that the app can verify signed bundles.
 
-#### iOS
+#### Automatic embedding (recommended)
 
-You need to add the public key to `ios/<appName>/Info.plist` under the name `RepackPublicKey`. Add the following to your `Info.plist` and then copy the contents of `code-signing.pem.pub` and paste them inside of the `<string>` tags:
+When `publicKeyPath` is provided in the plugin configuration (as shown above), the plugin will **automatically** embed the public key into your native project files:
+
+- **iOS**: Adds `RepackPublicKey` entry to `ios/<AppName>/Info.plist`
+- **Android**: Adds `RepackPublicKey` string resource to `android/app/src/main/res/values/strings.xml`
+
+The plugin auto-detects the correct file paths. If your project has a non-standard directory structure, you can specify custom paths:
+
+```js title="rspack.config.cjs" {12-15}
+const Repack = require("@callstack/repack");
+
+module.exports = (env) => {
+  const { mode } = env;
+  return {
+    plugins: [
+      new Repack.RepackPlugin(),
+      new Repack.plugins.CodeSigningPlugin({
+        enabled: mode === "production",
+        privateKeyPath: "./code-signing.pem",
+        publicKeyPath: "./code-signing.pem.pub",
+        nativeProjectPaths: {
+          ios: "./ios/MyApp/Info.plist",
+          android: "./android/app/src/main/res/values/strings.xml",
+        },
+      }),
+    ],
+  };
+};
+```
+
+:::info
+
+The automatic embedding modifies your source files in-place. After the first build with `publicKeyPath` set, the native files will contain the public key and subsequent builds will reuse it. If you change the key pair, the plugin will update the files automatically on the next build.
+
+:::
+
+#### Standalone usage
+
+You can also use the `embedPublicKey` function independently of the plugin, for example in a setup script:
+
+```js title="setup-code-signing.js"
+const { plugins } = require("@callstack/repack");
+
+const result = plugins.embedPublicKey({
+  publicKeyPath: "./code-signing.pem.pub",
+  projectRoot: __dirname,
+});
+
+console.log("iOS:", result.ios);
+console.log("Android:", result.android);
+```
+
+#### Manual setup
+
+If you prefer to add the public key manually (or if automatic detection doesn't work for your project structure), you can follow the steps below.
+
+##### iOS
+
+Add the public key to `ios/<appName>/Info.plist` under the name `RepackPublicKey`. Add the following to your `Info.plist` and then copy the contents of `code-signing.pem.pub` and paste them inside of the `<string>` tags:
 
 ```xml title="Info.plist"
 <plist>
@@ -98,9 +173,9 @@ You need to add the public key to `ios/<appName>/Info.plist` under the name `Rep
 </plist>
 ```
 
-#### Android
+##### Android
 
-You need to add the public key to `android/app/src/main/res/values/strings.xml` under the name `RepackPublicKey`. Add the following to your `strings.xml` and then copy the contents of `code-signing.pem.pub` and paste them inside of the `<string>` tags:
+Add the public key to `android/app/src/main/res/values/strings.xml` under the name `RepackPublicKey`. Add the following to your `strings.xml` and then copy the contents of `code-signing.pem.pub` and paste them inside of the `<string>` tags:
 
 ```xml title="strings.xml"
 <resources>
