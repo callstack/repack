@@ -18,6 +18,12 @@ const HomeScreen = () => {
         >
           <Text style={styles.buttonText}>See details</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, styles.secondaryButton]}
+          onPress={() => navigation.navigate('HostAssets')}
+        >
+          <Text style={styles.secondaryButtonText}>Host assets</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.miniAppSection}>
         <Text style={styles.sectionTitle}>Mini Apps</Text>
@@ -84,8 +90,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
   },
+  secondaryButton: {
+    marginTop: 12,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#3498DB',
+    borderWidth: 1,
+  },
   buttonText: {
     color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  secondaryButtonText: {
+    color: '#3498DB',
     fontSize: 16,
     fontWeight: '600',
   },
