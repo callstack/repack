@@ -5,6 +5,17 @@ import type { Compiler as RspackCompiler } from '@rspack/core';
 import jwt from 'jsonwebtoken';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { type CodeSigningPluginConfig, validateConfig } from './config.js';
+import { embedPublicKey } from './embedPublicKey.js';
+
+function resolveProjectPath(
+  projectRoot: string,
+  configPath?: string
+): string | undefined {
+  if (!configPath) return undefined;
+  return path.isAbsolute(configPath)
+    ? configPath
+    : path.resolve(projectRoot, configPath);
+}
 
 export class CodeSigningPlugin {
   /**
@@ -55,6 +66,82 @@ export class CodeSigningPlugin {
     );
   }
 
+  private embedPublicKeyInNativeProjects(compiler: RspackCompiler) {
+    if (!this.config.publicKeyPath) {
+      return;
+    }
+
+    const logger = compiler.getInfrastructureLogger('RepackCodeSigningPlugin');
+    const projectRoot = compiler.context;
+
+    const publicKeyPath = resolveProjectPath(
+      projectRoot,
+      this.config.publicKeyPath
+    );
+
+    if (!publicKeyPath) return;
+
+    if (!fs.existsSync(publicKeyPath)) {
+      logger.warn(
+        `Public key not found at ${publicKeyPath}. ` +
+          'Skipping automatic embedding into native project files.'
+      );
+      return;
+    }
+
+    const result = embedPublicKey({
+      publicKeyPath,
+      projectRoot,
+      iosInfoPlistPath: resolveProjectPath(
+        projectRoot,
+        this.config.nativeProjectPaths?.ios
+      ),
+      androidStringsXmlPath: resolveProjectPath(
+        projectRoot,
+        this.config.nativeProjectPaths?.android
+      ),
+    });
+
+    if (result.error) {
+      logger.warn(result.error);
+      return;
+    }
+
+    if (result.ios.modified) {
+      logger.info(`Embedded public key in iOS Info.plist: ${result.ios.path}`);
+    } else if (result.ios.error) {
+      logger.warn(`Failed to embed public key in iOS: ${result.ios.error}`);
+    } else if (result.ios.path) {
+      logger.debug(
+        `Public key already up-to-date in iOS Info.plist: ${result.ios.path}`
+      );
+    } else {
+      logger.warn(
+        'Could not find iOS Info.plist. Skipping auto-embedding for iOS. ' +
+          'Use nativeProjectPaths.ios or manually add the public key to Info.plist.'
+      );
+    }
+
+    if (result.android.modified) {
+      logger.info(
+        `Embedded public key in Android strings.xml: ${result.android.path}`
+      );
+    } else if (result.android.error) {
+      logger.warn(
+        `Failed to embed public key in Android: ${result.android.error}`
+      );
+    } else if (result.android.path) {
+      logger.debug(
+        `Public key already up-to-date in Android strings.xml: ${result.android.path}`
+      );
+    } else {
+      logger.warn(
+        'Could not find Android strings.xml. Skipping auto-embedding for Android. ' +
+          'Use nativeProjectPaths.android or manually add the public key to strings.xml.'
+      );
+    }
+  }
+
   apply(compiler: RspackCompiler): void;
   apply(compiler: WebpackCompiler): void;
 
@@ -78,15 +165,31 @@ export class CodeSigningPlugin {
      */
     const TOKEN_BUFFER_SIZE = 1280;
     /**
-     * Used to denote beginning of the code-signing section of the bundle
+     * Used to denote the beginning of the code-signing section of the bundle
      * alias for "Repack Code-Signing Signature Begin"
      */
     const BEGIN_CS_MARK = '/* RCSSB */';
 
-    const privateKeyPath = path.isAbsolute(this.config.privateKeyPath)
-      ? this.config.privateKeyPath
-      : path.resolve(compiler.context, this.config.privateKeyPath);
-    const privateKey = fs.readFileSync(privateKeyPath);
+    const privateKeyPath = resolveProjectPath(
+      compiler.context,
+      this.config.privateKeyPath
+    );
+
+    if (!privateKeyPath) {
+      throw new Error('[RepackCodeSigningPlugin] privateKeyPath is required.');
+    }
+
+    let privateKey: Buffer;
+    try {
+      privateKey = fs.readFileSync(privateKeyPath);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `Failed to read private key from ${privateKeyPath}: ${message}`
+      );
+    }
+
+    this.embedPublicKeyInNativeProjects(compiler);
 
     const excludedChunks = Array.isArray(this.config.excludeChunks)
       ? this.config.excludeChunks
