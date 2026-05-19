@@ -281,6 +281,7 @@ ScriptManager.shared.hooks.afterResolve(async (args) => {
   const { locator } = args;
   locator.shouldUpdateScript = async (scriptId, caller, isScriptCacheOutdated, cachedData) => {
     // Custom logic to determine if the script should be updated
+    if (!cachedData) return true;
     return (
         cachedData.method !== locator.method ||
         cachedData.url !== locator.url ||
