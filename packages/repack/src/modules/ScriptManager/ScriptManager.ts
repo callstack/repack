@@ -506,7 +506,7 @@ export class ScriptManager extends EventEmitter {
         scriptId,
         caller,
         script.shouldUpdateCache(this.cache[cacheKey]),
-        this.cache[cacheKey]
+        this.cache[cacheKey] ? { ...this.cache[cacheKey] } : undefined
       );
 
       // If it returns true, we need to fetch the script
