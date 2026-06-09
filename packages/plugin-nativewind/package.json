@@ -6,7 +6,10 @@
   "contributors": ["Jakub Romańczyk <jakub.romanczyk@callstack.com>"],
   "license": "MIT",
   "homepage": "https://github.com/callstack/repack",
-  "repository": "github:callstack/repack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callstack/repack.git"
+  },
   "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -42,7 +45,7 @@
     "dedent": "^0.7.0"
   },
   "peerDependencies": {
-    "@callstack/repack": "workspace:*",
+    "@callstack/repack": "workspace:^",
     "nativewind": ">=4.1.23",
     "react-native-css-interop": ">=0.1.22",
     "postcss": ">=8.4.31",
