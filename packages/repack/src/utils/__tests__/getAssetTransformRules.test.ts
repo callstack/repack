@@ -14,6 +14,14 @@ describe('getAssetTransformRules', () => {
     expect(rules).toMatchSnapshot();
   });
 
+  it('should return rules with maxInlineSize option when provided', () => {
+    const rules = getAssetTransformRules({ maxInlineSize: 1024 });
+
+    // @ts-ignore
+    expect(rules[0]?.use?.options?.maxInlineSize).toEqual(1024);
+    expect(rules).toMatchSnapshot();
+  });
+
   it('should return rules with remote options when provided', () => {
     const remoteOptions = { publicPath: 'https://example.com/assets' };
     const rules = getAssetTransformRules({ remote: remoteOptions });

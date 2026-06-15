@@ -18,6 +18,7 @@ export interface AssetLoaderOptions {
   scalableAssetExtensions?: string[];
   scalableAssetResolutions?: string[];
   inline?: boolean;
+  maxInlineSize?: number;
   publicPath?: string;
   remote?: AssetLoaderRemoteOptions;
 }
@@ -39,6 +40,7 @@ export const optionsSchema: Schema = {
       type: 'array',
     },
     inline: { type: 'boolean' },
+    maxInlineSize: { type: 'number' },
     publicPath: { type: 'string' },
     remote: {
       type: 'object',

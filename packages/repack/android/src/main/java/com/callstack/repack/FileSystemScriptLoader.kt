@@ -12,7 +12,7 @@ class FileSystemScriptLoader(private val reactContext: ReactContext, private val
         }
 
         if (config.verifyScriptSignature == "strict" || (config.verifyScriptSignature == "lax" && token != null)) {
-            CodeSigningUtils.verifyBundle(reactContext, token, bundle)
+            CodeSigningUtils.verifyBundle(reactContext, token, bundle, config.publicKey)
         }
 
         return bundle

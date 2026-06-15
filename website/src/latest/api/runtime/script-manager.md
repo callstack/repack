@@ -231,6 +231,28 @@ ScriptManager.shared.addResolver(async (scriptId) => {
 });
 ```
 
+### Code signing with a per-script public key
+
+When different teams sign remote bundles with different private keys, your resolver can provide the matching public key for each script. Re.Pack will use `publicKey` when present and fall back to the app-embedded `RepackPublicKey` only when it's omitted.
+
+```js
+import { ScriptManager } from "@callstack/repack/client";
+
+ScriptManager.shared.addResolver(async (scriptId) => {
+  const metadata = await fetch(`https://myapp.example/scripts/${scriptId}`).then(
+    (response) => response.json()
+  );
+
+  return {
+    url: metadata.bundleUrl,
+    verifyScriptSignature: "strict",
+    publicKey: metadata.publicKey,
+  };
+});
+```
+
+Only use a `publicKey` value that comes from a trusted source. If both the bundle and the public key can be tampered with by the same attacker, signature verification no longer protects the download.
+
 ### Enabling caching through AsyncStorage
 
 ```js

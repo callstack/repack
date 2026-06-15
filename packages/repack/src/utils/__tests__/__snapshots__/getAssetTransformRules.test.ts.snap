@@ -8,6 +8,7 @@ exports[`getAssetTransformRules should add SVGR rule when svg="svgr" 1`] = `
       "loader": "@callstack/repack/assets-loader",
       "options": {
         "inline": undefined,
+        "maxInlineSize": undefined,
         "remote": undefined,
       },
     },
@@ -32,6 +33,7 @@ exports[`getAssetTransformRules should add URI rule when svg="uri" 1`] = `
       "loader": "@callstack/repack/assets-loader",
       "options": {
         "inline": undefined,
+        "maxInlineSize": undefined,
         "remote": undefined,
       },
     },
@@ -51,6 +53,7 @@ exports[`getAssetTransformRules should add XML rule when svg="xml" 1`] = `
       "loader": "@callstack/repack/assets-loader",
       "options": {
         "inline": undefined,
+        "maxInlineSize": undefined,
         "remote": undefined,
       },
     },
@@ -70,6 +73,7 @@ exports[`getAssetTransformRules should include additional options for SVGR 1`] =
       "loader": "@callstack/repack/assets-loader",
       "options": {
         "inline": undefined,
+        "maxInlineSize": undefined,
         "remote": undefined,
       },
     },
@@ -95,6 +99,7 @@ exports[`getAssetTransformRules should return default asset transform rules when
       "loader": "@callstack/repack/assets-loader",
       "options": {
         "inline": undefined,
+        "maxInlineSize": undefined,
         "remote": undefined,
       },
     },
@@ -110,6 +115,23 @@ exports[`getAssetTransformRules should return rules with inline option when prov
       "loader": "@callstack/repack/assets-loader",
       "options": {
         "inline": true,
+        "maxInlineSize": undefined,
+        "remote": undefined,
+      },
+    },
+  },
+]
+`;
+
+exports[`getAssetTransformRules should return rules with maxInlineSize option when provided 1`] = `
+[
+  {
+    "test": /\\\\\\.\\(bmp\\|gif\\|jpg\\|jpeg\\|png\\|psd\\|svg\\|webp\\|tiff\\|m4v\\|mov\\|mp4\\|mpeg\\|mpg\\|webm\\|aac\\|aiff\\|caf\\|m4a\\|mp3\\|wav\\|html\\|pdf\\|yaml\\|yml\\|otf\\|ttf\\|zip\\|obj\\)\\$/,
+    "use": {
+      "loader": "@callstack/repack/assets-loader",
+      "options": {
+        "inline": undefined,
+        "maxInlineSize": 1024,
         "remote": undefined,
       },
     },
@@ -125,6 +147,7 @@ exports[`getAssetTransformRules should return rules with remote options when pro
       "loader": "@callstack/repack/assets-loader",
       "options": {
         "inline": undefined,
+        "maxInlineSize": undefined,
         "remote": {
           "enabled": true,
           "publicPath": "https://example.com/assets",

@@ -40,6 +40,13 @@ interface GetAssetTransformRulesOptions {
   inline?: boolean;
 
   /**
+   * Maximum asset file size in bytes to inline as base64 URIs.
+   * Requires `inline: true`. Assets whose largest scale variant exceeds this
+   * threshold will be extracted as separate files instead of being inlined.
+   */
+  maxInlineSize?: number;
+
+  /**
    * Configuration for remote asset loading.
    */
   remote?: Omit<AssetLoaderRemoteOptions, 'enabled'>;
@@ -57,7 +64,8 @@ interface GetAssetTransformRulesOptions {
  * Creates `module.rules` configuration for handling assets in React Native applications.
  *
  * @param options Configuration options
- * @param options.inline Whether to inline assets as base64 URIs (defaults to false)
+ * @param options.inline Whether to inline all assets as base64 URIs (defaults to false)
+ * @param options.maxInlineSize Maximum asset file size in bytes to inline as base64 URIs (requires inline: true); larger assets are extracted as separate files
  * @param options.remote Configuration for remote asset loading with publicPath and optional assetPath function
  * @param options.svg Determines how SVG files should be processed ('svgr', 'xml', or 'uri')
  *
@@ -65,6 +73,7 @@ interface GetAssetTransformRulesOptions {
  */
 export function getAssetTransformRules({
   inline,
+  maxInlineSize,
   remote,
   svg,
 }: GetAssetTransformRulesOptions = {}) {
@@ -85,7 +94,7 @@ export function getAssetTransformRules({
     test: getAssetExtensionsRegExp(extensions),
     use: {
       loader: '@callstack/repack/assets-loader',
-      options: { inline, remote: remoteOptions },
+      options: { inline, maxInlineSize, remote: remoteOptions },
     },
   });
 

@@ -11,6 +11,7 @@ This helper function allows you to create a single configuration for all assets 
 ```ts
 interface GetAssetTransformRulesOptions {
   inline?: boolean;
+  maxInlineSize?: number;
   remote?: {
     publicPath: string;
     assetPath?: (args: {
@@ -36,6 +37,16 @@ Whether to inline assets as base64 URIs.
 
 :::tip
 Learn more about the inlining assets in the [Inlining Assets guide](/docs/guides/inline-assets).
+:::
+
+### options.maxInlineSize
+
+- Type: `number`
+
+File size threshold in bytes used together with `inline: true`. Assets whose largest scale variant is smaller than or equal to this value will be inlined; larger assets will be extracted as separate files. Has no effect when `inline` is not `true`.
+
+:::tip
+Learn more about size-based inlining in the [Inlining Assets guide](/docs/guides/inline-assets#size-based-inlining).
 :::
 
 ### options.remote
