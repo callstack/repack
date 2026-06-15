@@ -18,6 +18,14 @@ class RemoteScriptLoader(val reactContext: ReactContext, private val nativeLoade
     private val client: OkHttpClient by lazy(okHttpClientFactory)
 
     companion object {
+        /**
+         * Factory used to create the [OkHttpClient] for downloading remote scripts.
+         *
+         * Set this before any remote script is loaded (e.g. in your Application's
+         * onCreate) to provide a custom client - for SSL pinning, interceptors,
+         * proxies, timeouts, etc. Defaults to a plain `OkHttpClient()`. This is the
+         * Android counterpart of `ScriptManager.urlSessionFactory` on iOS.
+         */
         var okHttpClientFactory: () -> OkHttpClient = { OkHttpClient() }
     }
 
