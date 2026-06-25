@@ -23,11 +23,41 @@
 @end
 #endif
 
+static NSURLSession * (^_urlSessionFactory)(void) = nil;
+static NSURLSession *_cachedURLSession = nil;
+
 @implementation ScriptManager
 
 RCT_EXPORT_MODULE()
 
 @synthesize bridge = _bridge;
+
++ (NSURLSession * (^)(void))urlSessionFactory
+{
+  if (_urlSessionFactory == nil) {
+    _urlSessionFactory = ^NSURLSession * {
+      return [NSURLSession sharedSession];
+    };
+  }
+  return _urlSessionFactory;
+}
+
++ (void)setUrlSessionFactory:(NSURLSession * (^)(void))urlSessionFactory
+{
+  _urlSessionFactory = [urlSessionFactory copy];
+  // Invalidate the cached session so the next download picks up the new factory.
+  _cachedURLSession = nil;
+}
+
+// Lazily build (and cache) the session from the factory, mirroring Android's
+// `OkHttpClient by lazy(okHttpClientFactory)`.
+- (NSURLSession *)urlSession
+{
+  if (_cachedURLSession == nil) {
+    _cachedURLSession = ScriptManager.urlSessionFactory();
+  }
+  return _cachedURLSession;
+}
 
 #ifdef RCT_NEW_ARCH_ENABLED
 RCT_EXPORT_METHOD(loadScript
@@ -235,7 +265,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(unstable_evaluateScript
     [request setValue:@"text/plain" forHTTPHeaderField:@"content-type"];
   }
 
-  NSURLSessionDataTask *task = [[NSURLSession sharedSession]
+  NSURLSessionDataTask *task = [self.urlSession
       dataTaskWithRequest:request
         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
           NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;

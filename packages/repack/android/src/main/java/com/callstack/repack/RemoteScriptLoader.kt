@@ -15,7 +15,19 @@ import java.util.concurrent.TimeUnit
 
 class RemoteScriptLoader(val reactContext: ReactContext, private val nativeLoader: NativeScriptLoader) {
     private val scriptsDirName = "scripts"
-    private val client = OkHttpClient()
+    private val client: OkHttpClient by lazy(okHttpClientFactory)
+
+    companion object {
+        /**
+         * Factory used to create the [OkHttpClient] for downloading remote scripts.
+         *
+         * Set this before any remote script is loaded (e.g. in your Application's
+         * onCreate) to provide a custom client - for SSL pinning, interceptors,
+         * proxies, timeouts, etc. Defaults to a plain `OkHttpClient()`. This is the
+         * Android counterpart of `ScriptManager.urlSessionFactory` on iOS.
+         */
+        var okHttpClientFactory: () -> OkHttpClient = { OkHttpClient() }
+    }
 
     private fun getScriptFilePath(scriptUniqueId: String): String {
         return "${scriptsDirName}/$scriptUniqueId.script.bundle"
