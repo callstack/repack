@@ -16,7 +16,7 @@
     "version-packages": "pnpm changeset version && pnpm lint",
     "version-packages:canary": "pnpm changeset version --snapshot canary && pnpm lint",
     "release": "pnpm changeset publish",
-    "release:canary": "pnpm changeset publish --tag canary --no-git-tag --snapshot",
+    "release:canary": "pnpm changeset publish --tag canary --no-git-tag",
     "pods": "turbo run pods",
     "pods:update": "turbo run pods:update",
     "website:start": "pnpm --filter website run start",
