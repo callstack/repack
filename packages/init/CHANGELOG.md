@@ -1,5 +1,7 @@
 # @callstack/repack-init
 
+## 5.3.0
+
 ## 5.2.5
 
 ### Patch Changes
