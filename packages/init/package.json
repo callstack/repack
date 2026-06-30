@@ -5,7 +5,10 @@
   "license": "MIT",
   "version": "5.2.5",
   "homepage": "https://github.com/callstack/repack",
-  "repository": "github:callstack/repack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callstack/repack.git"
+  },
   "keywords": ["repack", "re.pack", "init", "repack-init"],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

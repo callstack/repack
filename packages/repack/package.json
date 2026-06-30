@@ -30,7 +30,10 @@
     "src/modules/ScriptManager/NativeScriptManager.ts"
   ],
   "homepage": "https://github.com/callstack/repack",
-  "repository": "github:callstack/repack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callstack/repack.git"
+  },
   "keywords": [
     "react-native",
     "react native",

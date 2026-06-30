@@ -12,7 +12,10 @@
   },
   "files": ["dist", "static"],
   "homepage": "https://github.com/callstack/repack",
-  "repository": "github:callstack/repack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callstack/repack.git"
+  },
   "keywords": ["react-native", "repack", "re.pack", "server", "dev-server"],
   "author": "zamotany <zamotany.oss@gmail.com>",
   "engines": {

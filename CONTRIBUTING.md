@@ -70,13 +70,45 @@ The documentation is a part of the website, which is stored in `website` directo
 
 ### Publishing a release
 
-We use [changesets](https://github.com/changesets/changesets) to automate to bump the version, update `CHANGELOG.md` files in published packages and publish to NPM registry. If you have publish access to the NPM `@callstack` scope, run the following from the default branch (usually `main` branch) to publish a new release:
+We use [changesets](https://github.com/changesets/changesets) and the
+[Changesets GitHub Action](https://github.com/changesets/action) to bump package
+versions, update package `CHANGELOG.md` files, publish to npm, and create GitHub
+releases.
 
-```sh
-pnpm release
-```
+#### Stable releases
 
-NOTE: You must have a `GITHUB_TOKEN` environment variable available. You can create a GitHub access token with the "repo" access [here](https://github.com/settings/tokens).
+When releasable changesets are merged to `main`, the `Release` workflow creates
+or updates a `chore: changeset version` pull request. This PR contains the exact
+package version changes and generated changelog entries for the next release.
+
+Review the version numbers and changelog entries in that PR before merging it.
+When the version PR is merged to `main`, the same workflow runs `pnpm release`,
+publishes the packages to npm, pushes the release tags, and creates GitHub
+releases from the generated changelog entries.
+
+#### Canary releases
+
+Canary releases are published manually from the `Release` workflow in GitHub
+Actions. Run it only from the `main` branch. The workflow creates snapshot
+versions with the `canary` snapshot label, runs the full release checks, and
+publishes with the `canary` npm dist-tag without committing version changes or
+creating GitHub releases.
+
+#### npm trusted publishing
+
+Releases use npm trusted publishing instead of long-lived npm automation tokens.
+Do not add `NPM_TOKEN` or `NODE_AUTH_TOKEN` secrets for publishing.
+
+Each published package in the `@callstack` scope must have trusted publishing
+configured on npmjs.com with GitHub Actions as the publisher:
+
+- Owner: `callstack`
+- Repository: `repack`
+- Workflow file: `release.yml`
+- Allowed action: `npm publish`
+
+The release workflows intentionally disable package-manager caching to avoid
+using a pnpm cache during publishing.
 
 ## Reporting issues
 
