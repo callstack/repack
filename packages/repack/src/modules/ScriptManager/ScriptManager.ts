@@ -505,7 +505,8 @@ export class ScriptManager extends EventEmitter {
       const fetch = await locator.shouldUpdateScript(
         scriptId,
         caller,
-        script.shouldUpdateCache(this.cache[cacheKey])
+        script.shouldUpdateCache(this.cache[cacheKey]),
+        this.cache[cacheKey] ? { ...this.cache[cacheKey] } : undefined
       );
 
       // If it returns true, we need to fetch the script
