@@ -44,26 +44,6 @@ function isRuntimeErrorStack(stack: ReactNativeStackFrame[]) {
   );
 }
 
-function getRemoteNameFromStack(stack: ReactNativeStackFrame[]) {
-  for (const frame of stack) {
-    const filename = frame.file?.split(/[?#]/)[0].split('/').pop() ?? '';
-    const remoteName = filename.match(
-      /\.([^.]+)\.chunk\.bundle(?:\.map)?$/
-    )?.[1];
-    if (remoteName) {
-      return remoteName;
-    }
-  }
-}
-
-function getPrintableFile(file: string, remoteName: string | undefined) {
-  if (remoteName && file.startsWith('[projectRoot]/')) {
-    return `apps/features/${remoteName}/${file.slice('[projectRoot]/'.length)}`;
-  }
-
-  return file;
-}
-
 async function symbolicatePlugin(
   instance: FastifyInstance,
   {
@@ -87,11 +67,9 @@ async function symbolicatePlugin(
         const frame = getFirstUsefulFrame(results.stack);
         if (isRuntimeErrorStack(stack) && frame?.file && frame.lineNumber) {
           const column = frame.column ?? 0;
-          const remoteName = getRemoteNameFromStack(stack);
-          const file = getPrintableFile(frame.file, remoteName);
 
           request.log.info({
-            msg: `Symbolicated stack frame: ${file}:${frame.lineNumber}:${column}`,
+            msg: `Symbolicated stack frame: ${frame.file}:${frame.lineNumber}:${column}`,
             methodName: frame.methodName,
           });
         }

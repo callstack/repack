@@ -88,21 +88,6 @@ function resolveStackFrameFile(
     return projectFile;
   }
 
-  const workspaceRoot = path.resolve(shellRoot, '../..');
-  const featuresRoot = path.join(workspaceRoot, 'apps/features');
-
-  try {
-    for (const featureName of fs.readdirSync(featuresRoot)) {
-      const candidate = path.join(featuresRoot, featureName, relativeFile);
-      const featureRoot = path.join(featuresRoot, featureName);
-      if (isPathInside(candidate, featureRoot) && fs.existsSync(candidate)) {
-        return candidate;
-      }
-    }
-  } catch {
-    // Fall back to the original resolved path.
-  }
-
   return filepath;
 }
 
