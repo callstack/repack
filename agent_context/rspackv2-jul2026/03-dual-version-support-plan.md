@@ -4,6 +4,10 @@ Goal: one `@callstack/repack` release line that works with the user's installed
 `@rspack/core`, whether that's 1.x or 2.x. Peer dependency already allows it
 (`"@rspack/core": ">=1"`); this plan makes it true.
 
+Grounded in the [breaking-changes discussion (rspack#9270)](https://github.com/web-infra-dev/rspack/discussions/9270),
+the [official migration guide](https://rspack.rs/guide/migration/rspack_1.x), and the
+codebase findings in [02-impact-analysis.md](./02-impact-analysis.md).
+
 ## Guiding decisions
 
 1. **Runtime version detection, not separate builds.** Branch on the user's installed

@@ -3,6 +3,13 @@
 Findings from a full audit of `packages/*` against the breaking-changes inventory
 ([01](./01-breaking-changes-inventory.md)). Organized by severity.
 
+External sources referenced throughout:
+
+- [Planned breaking changes discussion (web-infra-dev/rspack#9270)](https://github.com/web-infra-dev/rspack/discussions/9270)
+- [Official 1.x → 2.0 migration guide](https://rspack.rs/guide/migration/rspack_1.x)
+- [Announcing Rspack 2.0](https://rspack.rs/blog/announcing-2-0)
+- npm metadata: [@rspack/core](https://www.npmjs.com/package/@rspack/core), [@rspack/plugin-react-refresh](https://www.npmjs.com/package/@rspack/plugin-react-refresh)
+
 ## Confirmed breaks (Rspack 2 build fails or code throws)
 
 ### 1. `experiments.parallelLoader` injection — config validation error

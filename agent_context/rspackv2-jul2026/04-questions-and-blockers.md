@@ -3,6 +3,11 @@
 Ordered roughly by how much they gate implementation. "Verify" items are cheap experiments
 to run at the start of implementation; "Decide" items need a team call.
 
+External sources behind the questions: the
+[breaking-changes discussion (rspack#9270)](https://github.com/web-infra-dev/rspack/discussions/9270)
+and the [official migration guide](https://rspack.rs/guide/migration/rspack_1.x);
+upstream PRs are linked inline where a specific change is at issue.
+
 > **Status 2026-07-02: Q1–Q5 are decided** (decisions recorded inline below), and the
 > React Refresh approach is decided too — drop the v1 plugin dep; official v2 plugin for
 > Rspack ≥ 2, vendored client files for Rspack 1 + webpack. Details in

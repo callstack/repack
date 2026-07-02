@@ -5,6 +5,15 @@ Executed 2026-07-02 against `@rspack/core@2.1.2`, `@rspack/plugin-react-refresh@
 (CJS consumer, mirroring `@callstack/repack`'s published module format). Checklist
 defined in [04-questions-and-blockers.md](./04-questions-and-blockers.md).
 
+External sources:
+
+- [Planned breaking changes discussion (web-infra-dev/rspack#9270)](https://github.com/web-infra-dev/rspack/discussions/9270)
+- [Official 1.x → 2.0 migration guide](https://rspack.rs/guide/migration/rspack_1.x)
+- Packages tested (from npm): [@rspack/core@2.1.2](https://www.npmjs.com/package/@rspack/core/v/2.1.2),
+  [@rspack/core@1.7.12](https://www.npmjs.com/package/@rspack/core/v/1.7.12),
+  [@rspack/plugin-react-refresh@2.0.2](https://www.npmjs.com/package/@rspack/plugin-react-refresh/v/2.0.2),
+  [@module-federation/enhanced@2.6.0](https://www.npmjs.com/package/@module-federation/enhanced/v/2.6.0)
+
 ## Scoreboard
 
 | # | Check | Verdict |

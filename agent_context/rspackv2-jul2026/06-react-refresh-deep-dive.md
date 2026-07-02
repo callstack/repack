@@ -4,7 +4,9 @@ Context for break №2 in [02-impact-analysis.md](./02-impact-analysis.md): what
 why Re.Pack depends on it, why upstream removed it in v2, and the better v2-supported
 approach to replace it.
 
-Verified against published tarballs (`@rspack/plugin-react-refresh@1.0.0` and `@2.0.2`) and
+Verified against published tarballs
+([`@rspack/plugin-react-refresh@1.0.0`](https://www.npmjs.com/package/@rspack/plugin-react-refresh/v/1.0.0)
+and [`@2.0.2`](https://www.npmjs.com/package/@rspack/plugin-react-refresh/v/2.0.2)) and
 upstream history:
 
 - Removal PR: [rstackjs/rspack-plugin-react-refresh#95](https://github.com/rstackjs/rspack-plugin-react-refresh/pull/95) — "fix: remove deprecated static method for runtime paths" (merged 2026-04-07, part of v2.0.0)
