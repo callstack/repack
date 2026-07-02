@@ -1,7 +1,7 @@
 # Rspack 2.0 Support — Research & Planning
 
-> Status: **Research complete — Q1–Q5 decided (see doc 04), implementation unblocked.**
-> Remaining open discussion: React Refresh end-state approach (doc 06).
+> Status: **Research complete — all decisions made (Q1–Q5 in doc 04, React Refresh in
+> doc 06). Ready for implementation.**
 > Branch: `feat/rspack-2-support`
 > Last updated: 2026-07-02
 

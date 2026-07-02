@@ -77,31 +77,26 @@ The path-extraction logic (`storage.directory`) is unchanged between majors.
 
 ### 1.3 React Refresh <a name="react-refresh"></a>
 
-> Full background in [06-react-refresh-deep-dive.md](./06-react-refresh-deep-dive.md):
-> what `deprecated_runtimePaths` is, why v2 removed it, and the target-state approach of
-> applying the v2 plugin with its new integrator options (`injectEntry: false` +
-> `reactRefreshLoader`). The steps below are the *interim* fix that ships with dual support.
+> ✅ **Decided 2026-07-02** — full background and rationale in
+> [06-react-refresh-deep-dive.md](./06-react-refresh-deep-dive.md). No interim step; this
+> lands directly in the dual-support release.
 
-Interim: **stop importing `@rspack/plugin-react-refresh` for path discovery** and
-resolve the client files directly, so the installed plugin major stops mattering:
+Drop the `@rspack/plugin-react-refresh@1.0.0` dependency entirely; split by bundler/major:
 
-```ts
-// DevelopmentPlugin.ts — replaces the deprecated_runtimePaths destructuring
-const refreshPkgDir = path.dirname(
-  require.resolve('@rspack/plugin-react-refresh/package.json')
-);
-const reactRefreshEntryPath = path.join(refreshPkgDir, 'client/reactRefreshEntry.js');
-const reactRefreshPath = path.join(refreshPkgDir, 'client/reactRefresh.js');
-const refreshUtilsPath = path.join(refreshPkgDir, 'client/refreshUtils.js');
-```
+- **Rspack ≥ 2**: apply the official v2 plugin with `injectEntry: false` +
+  `reactRefreshLoader: '@callstack/repack/react-refresh-loader'`; inject the entry
+  ourselves from the supported `@rspack/plugin-react-refresh/react-refresh-entry` subpath.
+  The plugin becomes an **optional peerDependency (`^2`)** with a friendly install
+  pre-check; `repack-init` adds it by default (new projects default to Rspack 2, Q3).
+  Require it **lazily inside the rspack≥2 branch** — the package is ESM-only, so a
+  top-level import would crash Node 18 users even on webpack; inside the branch the §1.4
+  Node guard guarantees `require(esm)` works.
+- **Rspack 1 + webpack**: keep today's manual wiring, pointed at the three client files
+  **vendored into `packages/repack/src/modules`** (adapted from the v2 files, MIT,
+  overlay-free); swap the removed overlay defines for `__reload_on_runtime_errors__: false`.
+- At the next major (Rspack 1 support ends, Q5) the vendored path becomes webpack-only.
 
-All three files exist in both plugin majors (verified against 1.0.0 and 2.0.2 tarballs);
-resolving via `package.json` sidesteps v2's exports map (which doesn't expose
-`client/refreshUtils.js`). Then relax the dependency pin `1.0.0` → `^1.0.0` (staying on
-the v1 line is safe: it has no `@rspack/core` peer dep and we never `apply()` the plugin).
-Moving the dependency to v2 later becomes a pure version bump with no code change.
-
-Also make the path computation lazy (inside `apply()`), not at module top level — today a
+Also make all refresh wiring lazy (inside `apply()`), not at module top level — today a
 resolution failure crashes even webpack-only commands.
 
 ### 1.4 Runtime guard for Node version

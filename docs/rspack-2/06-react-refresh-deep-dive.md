@@ -90,11 +90,32 @@ custom loader, and the overlay problem evaporated because v2 deleted the overlay
 
 ## The better approach for Re.Pack
 
-### Target state (Rspack ≥ 2): apply the plugin with integrator options
+> ✅ **DECIDED (2026-07-02).** Drop the `@rspack/plugin-react-refresh@1.0.0` dependency
+> entirely. Architecture:
+>
+> - **Rspack ≥ 2** → apply the official v2 plugin with `injectEntry: false` +
+>   `reactRefreshLoader` (target-state code below); entry from the supported
+>   `/react-refresh-entry` subpath. The plugin becomes an **optional peerDependency**
+>   (`^2`) with a friendly install pre-check (same pattern as `@module-federation/enhanced`);
+>   `repack-init` adds it by default since new projects default to Rspack 2 (Q3).
+>   The plugin must be **lazily required inside the rspack≥2 branch** — it's ESM-only, and
+>   a top-level import would crash Node 18 users even on webpack; the branch is guarded by
+>   the Q2 Node ≥ 20.19 runtime check, where `require(esm)` works.
+> - **Rspack 1 + webpack** → vendor the three client files (adapted from v2, MIT,
+>   overlay-free) into `packages/repack/src/modules`; keep today's manual wiring pointed at
+>   them, swapping the removed overlay defines for `__reload_on_runtime_errors__: false`.
+>   No `moduleCache` tap needed — today's manual wiring already works without it on
+>   rspack 1/webpack.
+> - **No interim step** — this lands directly in the dual-support release. When Rspack 1
+>   support ends at the next major (Q5), the vendored path becomes webpack-only with no
+>   rework.
+
+### Rspack ≥ 2 branch: apply the plugin with integrator options
 
 ```ts
-// DevelopmentPlugin.ts — rspack branch
-import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh'; // named export in v2
+// DevelopmentPlugin.ts — inside the rspack≥2 branch (NOT top-level: package is ESM-only,
+// safe here because the Node ≥20.19 guard has already run and require(esm) works)
+const { ReactRefreshRspackPlugin } = require('@rspack/plugin-react-refresh'); // named export in v2
 
 new ReactRefreshRspackPlugin({
   injectEntry: false, // we inject the entry ourselves, per entrypoint, in our required order
@@ -126,33 +147,33 @@ Deletions this enables in `DevelopmentPlugin`: both `ProvidePlugin` calls, the r
 `DefinePlugin` call, the `resolve.alias` patch, and the manual loader-rule unshift
 (~30 lines), for the rspack branch.
 
-### Webpack branch (Re.Pack supports both bundlers)
+### Rspack 1 + webpack branch: vendored client files + today's manual wiring
 
-The v2 plugin is rspack-only (it calls `compiler.rspack.*`), so the webpack path keeps
-manual wiring. Two options:
+The v2 plugin is rspack-2-only for us (it calls `compiler.rspack.*`, is ESM-only, and
+peer-requires core `^2`), so the Rspack 1 and webpack paths keep the existing manual
+wiring — with the client files **vendored into Re.Pack** instead of harvested from the v1
+package:
 
-- **(a) Keep depending on the v1 plugin line** (`^1.0.0`) purely as a client-file carrier
-  for webpack — zero code change, works today, but leaves two plugin majors installed once
-  the rspack branch moves to v2, and v1 will eventually stop receiving fixes.
-- **(b) Vendor the three client files into Re.Pack** (they're small, MIT-licensed, and
-  originally ported from `@pmmmwh/react-refresh-webpack-plugin` anyway; RN needs no overlay
-  so the v1 files minus overlay defines are ~150 lines total). Removes the external
-  contract entirely for the webpack path.
+- Adapt the three v2 client files (MIT, originally ported from
+  `@pmmmwh/react-refresh-webpack-plugin`; RN needs no overlay so it's ~150–200 lines total)
+  into `packages/repack/src/modules`, next to `WebpackHMRClient`.
+- Manual wiring changes only in the defines: drop
+  `__react_refresh_error_overlay__` / `__react_refresh_socket__` (v1-file contract), add
+  `__reload_on_runtime_errors__: false` (v2-file contract).
+- The loader footer contract (`$ReactRefreshRuntime$.refresh/register/createSignatureFunctionForTransform`)
+  is satisfied by the v2 files unchanged (verified).
+- Vendoring is also the escape valve if upstream ever changes the v2 option surface.
 
-Recommendation: **(a)** while dual-supporting, **(b)** when we next touch the webpack dev
-experience — vendoring is also the escape valve if upstream ever changes the v2 option
-surface.
+### Implementation notes
 
-### Sequencing
-
-1. **Interim (ships with dual support, plan §1.3):** keep the `^1.0.0` dependency and
-   today's manual wiring, but resolve paths via `require.resolve('@rspack/plugin-react-refresh/package.json')`
-   + `path.join` instead of `deprecated_runtimePaths`, and do it lazily inside `apply()`.
-   Works under Rspack 1 *and* 2 (plugin v1 has no `@rspack/core` peer dep), and stops a
-   plugin-v2 install from crashing every command at import time.
-2. **Target (follow-up, can land in the same release if V7 validation passes):** rspack
-   branch applies the official v2 plugin with `injectEntry: false` +
-   `reactRefreshLoader`; webpack branch stays on manual wiring per (a)/(b) above.
+- **Dependency shape:** `@rspack/plugin-react-refresh@1.0.0` regular dep → deleted.
+  `@rspack/plugin-react-refresh@^2` → optional peerDependency + install pre-check in the
+  rspack≥2 branch (mirror `ModuleFederationPluginV2.ensureModuleFederationPackageInstalled`).
+- **Lazy require:** `const { ReactRefreshRspackPlugin } = require('@rspack/plugin-react-refresh')`
+  *inside* the rspack≥2 branch only — never top-level (ESM-only package; Node 18
+  webpack/rspack-1 users must never evaluate it).
+- **Sunset path:** at Re.Pack's next major (Rspack 1 support ends per Q5), the vendored
+  path becomes webpack-only; no rework needed.
 
 ### Watch-outs when adopting the v2 plugin
 
