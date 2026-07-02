@@ -113,7 +113,7 @@ export async function start(
   // Unlike `bundle`, `devServer` cannot be stripped from the config here -
   // the dev server flow reads it back from `compiler.options`. At runtime
   // Rspack accepts & preserves the key (validation is permissive, verified
-  // in docs/rspack-2/07-verification-results.md).
+  // in agent_context/rspackv2-jul2026/07-verification-results.md).
   const compiler = new Compiler(
     configs as unknown as MultiRspackOptions,
     reporter,

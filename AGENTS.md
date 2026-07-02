@@ -31,3 +31,7 @@ Re.Pack is a toolkit for building and developing React Native applications with 
 - `tests/integration/`: Integration-level automated coverage.
 - `tests/metro-compat/`: Metro compatibility behavior coverage.
 - `tests/resolver-cases/`: Resolver behavior and edge-case coverage.
+
+## Agent Context (Historical Records)
+
+- `agent_context/` contains dated documentation of substantial agent-assisted work — research, decisions, plans, and verification results (one folder per effort, e.g. `rspackv2-jul2026`). Consult it before revisiting a past decision, and add a new dated folder when doing comparable deep-dive work. Conventions are in `agent_context/README.md`.
