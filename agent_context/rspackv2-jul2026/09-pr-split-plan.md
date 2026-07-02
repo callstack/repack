@@ -14,12 +14,55 @@
 > Maintainer feedback on #1393 is recorded below and must be incorporated
 > while building the stack.
 
-## Maintainer feedback on #1393
+## Maintainer feedback on #1393 (Jakub, Discord, 2026-07-02)
 
-> _To be filled in — feedback received from the PR maintainer, to incorporate
-> before/while creating the stack._
+Overall verdict: *"PR looks mostly good / overally looks sensible"*, split into
+~5 PRs confirmed as the right approach (everything must stay backwards
+compatible — not aiming for a 6.0). Specific points, each mapped to an action:
 
-<!-- PENDING: paste maintainer feedback here -->
+1. **Vendoring the React Refresh client files is fine.** He used
+   `deprecated_runtimePaths` originally just for ease of use — no attachment
+   to it. ✅ validates the doc 06 decision.
+2. **BUT keep vendored code out of main `src/`** — put it in a dedicated
+   `vendor` directory instead of `src/modules/reactRefresh/`.
+   → **Action (PR 5):** relocate the vendored files (note: `vendor/` outside
+   `src/` ships as-is rather than through babel — the files are plain JS, so
+   add the dir to `package.json#files` and point the manual wiring at it; or
+   use `src/vendor/` if build-processing is preferred — decide during PR 5).
+3. **Revisit the React Refresh / DevelopmentPlugin changes and minimize their
+   footprint.** `DevelopmentPlugin` is used by BOTH rspack and webpack — test
+   both paths. He suspects little actually *needed* to change beyond cleaning
+   up deprecated usage, and floated splitting the plugin per-bundler if the
+   refresh plugin diverged that much.
+   → **Action (PR 5):** re-examine how small the diff can be; explicitly test
+   the webpack path; consider (but don't default to) a per-bundler split.
+4. **`start.ts` changes are further deviation from webpack** — the rspack and
+   webpack command paths should ultimately be bridged to avoid maintaining
+   the same thing twice.
+   → **Action (PRs 2–4):** keep `start.ts` diffs minimal; where a change is
+   needed (Node guard, lazy loading, cache handling), either mirror the same
+   approach in the webpack commands or structure it as shared code.
+5. **Don't auto-migrate the user's cache config.** If a user bumps rspack,
+   *they* should migrate their config. It's fine to **silently set newer
+   options when the project doesn't configure caching at all** (we know which
+   rspack version is targeted).
+   → **DECISION OVERRIDE (2026-07-02):** replaces the earlier "honor the
+   legacy value by copying it over" decision (docs 03 §1.2 / 08). New
+   behavior for PR 4: when v2 + `experiments.cache` is set, **warn only**
+   (clear message pointing at top-level `cache`) — do not copy the value.
+6. **`parallelLoader` was always per-rule** — the experiments flag was just
+   the global toggle, and in Rspack 2 parallel loading is **enabled by
+   default**.
+   → **Action (PR 4):** verify against upstream (our docs assumed per-rule
+   opt-in remained); if parallel is default-on under v2, our loader's
+   parallel-mode warning is fully obsolete there (current code already skips
+   it under v2 — confirm that's the right call) and docs 01/02 need a small
+   correction.
+7. **The ESM `require` flow needs testing on Windows** — including monorepo
+   setups and the super-app showcase.
+   → **New verification item (PR 3 / phase 3):** Windows smoke pass for the
+   require(esm) loading path and path handling in the version helpers.
+8. **MFv1 changes look good.** ✅ no action.
 
 ## The stack
 
@@ -51,18 +94,27 @@ tests, lint, and the dual-major smoke tests from doc 08 where applicable).
   `jest.rspack-core-bridge.js`, `jest.config.js`)
 - Note for reviewers: the cache *types* land here; their runtime purpose
   completes in PR 4 (cross-link the PRs).
+- Verification to add per maintainer feedback #7: **Windows** smoke pass of
+  the require(esm) loading path (monorepo + super-app-showcase setups).
 
 ### PR 4 — Route renamed/moved config options
 - `getRepackConfig`: `parallelLoader` gating + `exportsPresence: 'auto'`
-- `migrateLegacyRspackCacheConfig` + wiring in `start`/`bundle`
-- Version-aware parallel-mode warning probe in babelSwcLoader
+- Legacy cache config handling in `start`/`bundle` — **warn-only** per
+  maintainer feedback #5 (rework the reference branch's auto-migrate
+  behavior before porting it over)
+- Version-aware parallel-mode warning probe in babelSwcLoader — first verify
+  maintainer feedback #6 (parallel default-on in v2) against upstream
 - `profile-2.ts` (logger trace layer default under v2)
-- MFv1 `@module-federation/runtime-tools` pre-check
+- MFv1 `@module-federation/runtime-tools` pre-check (maintainer-approved)
+- Keep `start.ts` diffs minimal / mirrored in webpack commands (feedback #4)
 - Depends on PR 2 (`isRspack2`) and PR 3 (cache types).
 
 ### PR 5 — React Refresh restructure
-- Vendored client files (`src/modules/reactRefresh/`), `DevelopmentPlugin`
-  split, `@rspack/plugin-react-refresh@1.0.0` dependency → `^2` optional peer
+- Vendored client files — relocated to a dedicated **vendor directory**, not
+  `src/modules/` (maintainer feedback #2); `DevelopmentPlugin` split;
+  `@rspack/plugin-react-refresh@1.0.0` dependency → `^2` optional peer
+- Re-examine how small the `DevelopmentPlugin` diff can be and explicitly
+  test the **webpack** path (feedback #3)
 - Depends on PR 2 only (`getRspackMajorVersionFromCompiler`) — can be
   reviewed in parallel with PR 3/4
 - The riskiest PR for dev experience; needs its own manual HMR pass

@@ -81,6 +81,11 @@ So additionally: when running v2 with `experiments.cache` set in the user config
 clear warning pointing to top-level `cache` (and consider honoring it by copying the value
 over) so users don't silently lose caching.
 
+> ⚠️ **AMENDED (2026-07-02, maintainer feedback — see [09](./09-pr-split-plan.md)):**
+> do **not** auto-migrate the user's value — **warn only**; users who bump
+> rspack should migrate their own config. Silently setting newer options is
+> only acceptable when the project doesn't configure caching at all.
+
 ### 1.3 React Refresh <a name="react-refresh"></a>
 
 > ✅ **Decided 2026-07-02** — full background and rationale in
