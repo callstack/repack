@@ -77,7 +77,12 @@ The path-extraction logic (`storage.directory`) is unchanged between majors.
 
 ### 1.3 React Refresh <a name="react-refresh"></a>
 
-Recommended: **stop importing `@rspack/plugin-react-refresh` for path discovery** and
+> Full background in [06-react-refresh-deep-dive.md](./06-react-refresh-deep-dive.md):
+> what `deprecated_runtimePaths` is, why v2 removed it, and the target-state approach of
+> applying the v2 plugin with its new integrator options (`injectEntry: false` +
+> `reactRefreshLoader`). The steps below are the *interim* fix that ships with dual support.
+
+Interim: **stop importing `@rspack/plugin-react-refresh` for path discovery** and
 resolve the client files directly, so the installed plugin major stops mattering:
 
 ```ts

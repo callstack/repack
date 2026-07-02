@@ -16,6 +16,7 @@ while keeping Rspack 1.x working (dual-version support).
 | [03-dual-version-support-plan.md](./03-dual-version-support-plan.md) | Implementation plan for supporting Rspack 1.x and 2.x from a single Re.Pack release |
 | [04-questions-and-blockers.md](./04-questions-and-blockers.md) | Open questions, concerns, and potential blockers to resolve before/while implementing |
 | [05-user-benefits.md](./05-user-benefits.md) | What Rspack 2.0 gives Re.Pack users (performance, bundle size, DX) |
+| [06-react-refresh-deep-dive.md](./06-react-refresh-deep-dive.md) | Deep dive: what `deprecated_runtimePaths` is, why v2 removed it, and the supported v2 approach (`injectEntry`/`reactRefreshLoader` options) |
 
 ## TL;DR
 
