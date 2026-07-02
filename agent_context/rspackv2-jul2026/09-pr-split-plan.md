@@ -11,18 +11,18 @@
 > [#1393](https://github.com/callstack/repack/pull/1393) will be **closed
 > (not merged)** once the stack PRs are open, and referenced from them.
 >
-> Maintainer feedback on #1393 is recorded below and must be incorporated
+> Maintainer feedback on #1393 is recorded below (distilled to the substance) and must be incorporated
 > while building the stack.
 
-## Maintainer feedback on #1393 (Jakub, Discord, 2026-07-02)
+## Maintainer feedback on #1393 (2026-07-02)
 
 Overall verdict: *"PR looks mostly good / overally looks sensible"*, split into
 ~5 PRs confirmed as the right approach (everything must stay backwards
 compatible — not aiming for a 6.0). Specific points, each mapped to an action:
 
-1. **Vendoring the React Refresh client files is fine.** He used
-   `deprecated_runtimePaths` originally just for ease of use — no attachment
-   to it. ✅ validates the doc 06 decision.
+1. **Vendoring the React Refresh client files is fine.**
+   `deprecated_runtimePaths` was originally used just for ease of use — no
+   attachment to it. ✅ validates the doc 06 decision.
 2. **BUT keep vendored code out of main `src/`** — put it in a dedicated
    `vendor` directory instead of `src/modules/reactRefresh/`.
    → **Action (PR 5):** relocate the vendored files (note: `vendor/` outside
@@ -31,9 +31,9 @@ compatible — not aiming for a 6.0). Specific points, each mapped to an action:
    use `src/vendor/` if build-processing is preferred — decide during PR 5).
 3. **Revisit the React Refresh / DevelopmentPlugin changes and minimize their
    footprint.** `DevelopmentPlugin` is used by BOTH rspack and webpack — test
-   both paths. He suspects little actually *needed* to change beyond cleaning
-   up deprecated usage, and floated splitting the plugin per-bundler if the
-   refresh plugin diverged that much.
+   both paths. The expectation is that little actually *needed* to change
+   beyond cleaning up deprecated usage; splitting the plugin per-bundler was
+   floated as an option if the refresh plugin diverged that much.
    → **Action (PR 5):** re-examine how small the diff can be; explicitly test
    the webpack path; consider (but don't default to) a per-bundler split.
 4. **`start.ts` changes are further deviation from webpack** — the rspack and
