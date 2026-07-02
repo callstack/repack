@@ -1,7 +1,7 @@
 import type { TransformOptions } from '@babel/core';
-import type { LoaderContext, SwcLoaderOptions } from '@rspack/core';
+import type { LoaderContext } from '@rspack/core';
 import { transform } from '../babelLoader/babelLoader.js';
-import type { BabelSwcLoaderOptions } from './options.js';
+import type { BabelSwcLoaderOptions, SwcConfig } from './options.js';
 import {
   addSwcComplementaryTransforms,
   getSupportedSwcConfigurableTransforms,
@@ -30,7 +30,7 @@ export function partitionTransforms(
   let configurableTransforms: string[] = [];
   let customTransforms: string[] = [];
 
-  let swcConfig: SwcLoaderOptions = {
+  let swcConfig: SwcConfig = {
     jsc: {
       parser: getSwcParserConfig(filename),
       transform: { react: { useBuiltins: true } },
@@ -59,7 +59,7 @@ export function partitionTransforms(
 }
 
 export interface BuildFinalSwcConfigOptions {
-  swcConfig: SwcLoaderOptions;
+  swcConfig: SwcConfig;
   includedSwcTransforms: string[];
   lazyImports: boolean | string[];
   sourceType: 'module' | 'script' | undefined;
@@ -67,7 +67,7 @@ export interface BuildFinalSwcConfigOptions {
 
 export function buildFinalSwcConfig(
   options: BuildFinalSwcConfigOptions
-): SwcLoaderOptions {
+): SwcConfig {
   const { swcConfig, includedSwcTransforms, lazyImports, sourceType } = options;
   return {
     ...swcConfig,
@@ -163,7 +163,10 @@ export default async function babelSwcLoader(
       sourceType: babelResult.sourceType,
     });
 
-    const swcResult = swc.transformSync(babelResult?.code!, {
+    // cast: `SwcConfig` carries loader-only fields (e.g. `rspackExperiments`)
+    // that Rspack's SWC `transformSync` options type doesn't declare -
+    // they are ignored at runtime, same as when passed to builtin:swc-loader
+    const swcTransformOptions = {
       ...finalSwcConfig,
       caller: { name: '@callstack/repack' },
       filename: this.resourcePath,
@@ -178,7 +181,12 @@ export default async function babelSwcLoader(
       sourceFileName: this.resourcePath,
       sourceRoot: this.context!,
       ...options.swcOverrides,
-    });
+    } as unknown as Parameters<typeof swc.transformSync>[1];
+
+    const swcResult = swc.transformSync(
+      babelResult?.code!,
+      swcTransformOptions
+    );
 
     callback(null, swcResult?.code, swcResult?.map);
   } catch (error) {

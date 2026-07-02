@@ -1,8 +1,10 @@
 # Rspack 2.0 Support — Research & Planning
 
-> Status: **Research complete — all decisions made (Q1–Q5 in doc 04, React Refresh in
-> doc 06) and the V1–V11 verification checklist executed against 2.1.2 with no blockers
-> (doc 07). Ready for implementation.**
+> Status: **Implemented on this branch** — core dual-version support (plan phases 0–2)
+> is in `packages/repack`; all decisions recorded (Q1–Q5 in doc 04, React Refresh in
+> doc 06), V1–V11 verification executed with no blockers (doc 07).
+> Remaining follow-ups: CI matrix + tester-app/metro-compat validation under v2 (phase 3)
+> and flipping init/templates/website defaults to v2 (phase 4).
 > Branch: `feat/rspack-2-support`
 > Last updated: 2026-07-02
 

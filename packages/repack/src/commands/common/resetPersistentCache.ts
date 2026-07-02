@@ -1,13 +1,31 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { Configuration as RspackConfiguration } from '@rspack/core';
 import * as colorette from 'colorette';
 import type { Configuration as WebpackConfiguration } from 'webpack';
 
-type RspackCacheOptions = NonNullable<
-  RspackConfiguration['experiments']
->['cache'];
+// Structural type covering both Rspack majors:
+// v1 configures the persistent cache via `experiments.cache`,
+// v2 via the top-level `cache` option (same shape).
+type RspackCacheOptions =
+  | boolean
+  | { type?: string; storage?: { directory?: string } }
+  | undefined;
 type WebpackCacheOptions = WebpackConfiguration['cache'];
+
+/**
+ * Reads the persistent cache configuration from a Rspack config,
+ * supporting both the Rspack 1 (`experiments.cache`) and
+ * Rspack 2 (top-level `cache`) locations.
+ */
+export function getRspackCacheConfig(config: {
+  cache?: unknown;
+  experiments?: unknown;
+}): RspackCacheOptions {
+  const experiments = config.experiments as
+    | { cache?: RspackCacheOptions }
+    | undefined;
+  return experiments?.cache ?? (config.cache as RspackCacheOptions);
+}
 
 function getDefaultCacheDirectory(
   bundler: 'rspack' | 'webpack',
@@ -31,6 +49,7 @@ function getRspackCachePaths(
   for (const cacheConfig of cacheConfigs) {
     if (
       typeof cacheConfig === 'object' &&
+      cacheConfig !== null &&
       'storage' in cacheConfig &&
       cacheConfig.storage?.directory
     ) {

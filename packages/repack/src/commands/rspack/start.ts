@@ -1,4 +1,4 @@
-import type { Configuration } from '@rspack/core';
+import type { Configuration, MultiRspackOptions } from '@rspack/core';
 import packageJson from '../../../package.json';
 import { VERBOSE_ENV_KEY } from '../../env.js';
 import { CLIError, isTruthyEnv } from '../../helpers/index.js';
@@ -14,6 +14,7 @@ import {
   getDevMiddleware,
   getMaxWorkers,
   getMimeType,
+  getRspackCacheConfig,
   parseUrl,
   resetPersistentCache,
   resolveProjectPath,
@@ -83,7 +84,7 @@ export async function start(
     resetPersistentCache({
       bundler: 'rspack',
       rootDir: cliConfig.root,
-      cacheConfigs: configs.map((config) => config.experiments?.cache),
+      cacheConfigs: configs.map(getRspackCacheConfig),
     });
   }
 
@@ -96,7 +97,14 @@ export async function start(
     );
   }
 
-  const compiler = new Compiler(configs, reporter, cliConfig.root);
+  // cast: Re.Pack augments `Configuration.devServer` with its own dev server
+  // options which are not assignable to Rspack 2's bundled DevServer type;
+  // Rspack accepts (and ignores) the extra `devServer` key at runtime
+  const compiler = new Compiler(
+    configs as unknown as MultiRspackOptions,
+    reporter,
+    cliConfig.root
+  );
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({

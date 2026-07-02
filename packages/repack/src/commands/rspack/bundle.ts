@@ -1,9 +1,10 @@
 import { type Configuration, rspack } from '@rspack/core';
-import type { Stats } from '@rspack/core';
+import type { RspackOptions, Stats } from '@rspack/core';
 import { CLIError } from '../../helpers/index.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getMaxWorkers,
+  getRspackCacheConfig,
   normalizeStatsOptions,
   resetPersistentCache,
   setupEnvironment,
@@ -51,7 +52,7 @@ export async function bundle(
     resetPersistentCache({
       bundler: 'rspack',
       rootDir: cliConfig.root,
-      cacheConfigs: [config.experiments?.cache],
+      cacheConfigs: [getRspackCacheConfig(config)],
     });
   }
 
@@ -86,7 +87,10 @@ export async function bundle(
     }
   };
 
-  const compiler = rspack(config);
+  // cast: Re.Pack augments `Configuration.devServer` with its own dev server
+  // options which are not assignable to Rspack 2's bundled DevServer type;
+  // `devServer` was already deleted from the config above
+  const compiler = rspack(config as unknown as RspackOptions);
 
   return new Promise<void>((resolve) => {
     if (args.watch) {
