@@ -1,10 +1,11 @@
 import { type Configuration, rspack } from '@rspack/core';
-import type { RspackOptions, Stats } from '@rspack/core';
-import { CLIError } from '../../helpers/index.js';
+import type { Stats } from '@rspack/core';
+import { CLIError, isRspack2 } from '../../helpers/index.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getMaxWorkers,
   getRspackCacheConfig,
+  migrateLegacyRspackCacheConfig,
   normalizeStatsOptions,
   resetPersistentCache,
   setupEnvironment,
@@ -26,17 +27,21 @@ export async function bundle(
   cliConfig: CliConfig,
   args: BundleArguments
 ) {
-  const [config] = await makeCompilerConfig<Configuration>({
-    args: args,
-    bundler: 'rspack',
-    command: 'bundle',
-    rootDir: cliConfig.root,
-    platforms: [args.platform],
-    reactNativePath: cliConfig.reactNativePath,
-  });
+  const [{ devServer: _devServer, ...config }] =
+    await makeCompilerConfig<Configuration>({
+      args: args,
+      bundler: 'rspack',
+      command: 'bundle',
+      rootDir: cliConfig.root,
+      platforms: [args.platform],
+      reactNativePath: cliConfig.reactNativePath,
+    });
 
-  // remove devServer configuration to avoid schema validation errors
-  delete config.devServer;
+  // Rspack 2 silently ignores the legacy `experiments.cache` option -
+  // honor it by moving it to the top-level `cache` option & warn the user
+  if (isRspack2(cliConfig.root)) {
+    migrateLegacyRspackCacheConfig([config]);
+  }
 
   // expose selected args as environment variables
   setupEnvironment(args);
@@ -87,10 +92,10 @@ export async function bundle(
     }
   };
 
-  // cast: Re.Pack augments `Configuration.devServer` with its own dev server
-  // options which are not assignable to Rspack 2's bundled DevServer type;
-  // `devServer` was already deleted from the config above
-  const compiler = rspack(config as unknown as RspackOptions);
+  // `devServer` is split off above - it's not needed for bundling, and
+  // Re.Pack's own dev server options (augmented onto `Configuration`) are
+  // not assignable to Rspack's bundled `DevServer` type
+  const compiler = rspack(config);
 
   return new Promise<void>((resolve) => {
     if (args.watch) {

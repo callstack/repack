@@ -1,7 +1,7 @@
 import type { Configuration, MultiRspackOptions } from '@rspack/core';
 import packageJson from '../../../package.json';
 import { VERBOSE_ENV_KEY } from '../../env.js';
-import { CLIError, isTruthyEnv } from '../../helpers/index.js';
+import { CLIError, isRspack2, isTruthyEnv } from '../../helpers/index.js';
 import {
   ConsoleReporter,
   FileReporter,
@@ -15,6 +15,7 @@ import {
   getMaxWorkers,
   getMimeType,
   getRspackCacheConfig,
+  migrateLegacyRspackCacheConfig,
   parseUrl,
   resetPersistentCache,
   resolveProjectPath,
@@ -58,6 +59,12 @@ export async function start(
     reactNativePath: cliConfig.reactNativePath,
   });
 
+  // Rspack 2 silently ignores the legacy `experiments.cache` option -
+  // honor it by moving it to the top-level `cache` option & warn the user
+  if (isRspack2(cliConfig.root)) {
+    migrateLegacyRspackCacheConfig(configs);
+  }
+
   // expose selected args as environment variables
   setupEnvironment(args);
 
@@ -97,9 +104,16 @@ export async function start(
     );
   }
 
-  // cast: Re.Pack augments `Configuration.devServer` with its own dev server
-  // options which are not assignable to Rspack 2's bundled DevServer type;
-  // Rspack accepts (and ignores) the extra `devServer` key at runtime
+  // CAST - no clean solution available here:
+  // Re.Pack augments `Configuration.devServer` with its own dev server options
+  // (src/types/dev-server-options.d.ts), while Rspack 2 types `devServer` with
+  // its bundled `DevServer` type. The two are structurally incompatible solely
+  // because each pulls `proxy` types from a different copy of
+  // http-proxy-middleware, so no narrowing or `satisfies` can bridge them.
+  // Unlike `bundle`, `devServer` cannot be stripped from the config here -
+  // the dev server flow reads it back from `compiler.options`. At runtime
+  // Rspack accepts & preserves the key (validation is permissive, verified
+  // in docs/rspack-2/07-verification-results.md).
   const compiler = new Compiler(
     configs as unknown as MultiRspackOptions,
     reporter,

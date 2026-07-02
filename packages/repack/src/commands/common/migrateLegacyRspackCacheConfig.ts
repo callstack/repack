@@ -1,9 +1,5 @@
 import * as colorette from 'colorette';
-
-interface CacheLikeConfiguration {
-  cache?: unknown;
-  experiments?: { cache?: unknown };
-}
+import type { RspackConfigurationWithLegacyCache } from './resetPersistentCache.js';
 
 let warningDisplayed = false;
 
@@ -17,8 +13,10 @@ let warningDisplayed = false;
  * value by moving it to `cache` (unless `cache` is already set) and warn the
  * user to update their project config.
  */
-export function migrateLegacyRspackCacheConfig(configs: object[]) {
-  for (const config of configs as CacheLikeConfiguration[]) {
+export function migrateLegacyRspackCacheConfig(
+  configs: RspackConfigurationWithLegacyCache[]
+) {
+  for (const config of configs) {
     const legacyCacheConfig = config.experiments?.cache;
     if (legacyCacheConfig === undefined) continue;
 

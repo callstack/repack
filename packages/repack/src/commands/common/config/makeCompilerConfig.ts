@@ -1,11 +1,9 @@
 import { merge } from 'webpack-merge';
-import { isRspack2 } from '../../../helpers/index.js';
 import type {
   BundleArguments,
   ConfigurationObject,
   StartArguments,
 } from '../../types.js';
-import { migrateLegacyRspackCacheConfig } from '../migrateLegacyRspackCacheConfig.js';
 import { getCliOverrides } from './getCliOverrides.js';
 import { getCommandConfig } from './getCommandConfig.js';
 import { getConfigFilePath } from './getConfigFilePath.js';
@@ -71,12 +69,6 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
   const normalizedConfigs = configs.map((config, index) =>
     normalizeConfig(config, options.platforms[index])
   );
-
-  // Rspack 2 silently ignores the legacy `experiments.cache` option -
-  // honor it by moving it to the top-level `cache` option & warn the user
-  if (bundler === 'rspack' && isRspack2(rootDir)) {
-    migrateLegacyRspackCacheConfig(normalizedConfigs);
-  }
 
   const plugins = normalizedConfigs.flatMap((config) =>
     'plugins' in config ? config.plugins : []

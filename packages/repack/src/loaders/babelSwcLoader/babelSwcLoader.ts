@@ -163,11 +163,18 @@ export default async function babelSwcLoader(
       sourceType: babelResult.sourceType,
     });
 
-    // cast: `SwcConfig` carries loader-only fields (e.g. `rspackExperiments`)
-    // that Rspack's SWC `transformSync` options type doesn't declare -
-    // they are ignored at runtime, same as when passed to builtin:swc-loader
-    const swcTransformOptions = {
-      ...finalSwcConfig,
+    // `SwcConfig` can carry `builtin:swc-loader`-only options which the raw
+    // SWC transform API doesn't accept - split them off before calling it
+    const {
+      collectTypeScriptInfo: _collectTypeScriptInfo,
+      transformImport: _transformImport,
+      rspackExperiments: _rspackExperiments,
+      detectSyntax: _detectSyntax,
+      ...transformSwcConfig
+    } = finalSwcConfig;
+
+    const swcResult = swc.transformSync(babelResult?.code!, {
+      ...transformSwcConfig,
       caller: { name: '@callstack/repack' },
       filename: this.resourcePath,
       configFile: false,
@@ -181,12 +188,7 @@ export default async function babelSwcLoader(
       sourceFileName: this.resourcePath,
       sourceRoot: this.context!,
       ...options.swcOverrides,
-    } as unknown as Parameters<typeof swc.transformSync>[1];
-
-    const swcResult = swc.transformSync(
-      babelResult?.code!,
-      swcTransformOptions
-    );
+    });
 
     callback(null, swcResult?.code, swcResult?.map);
   } catch (error) {

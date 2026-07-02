@@ -14,7 +14,15 @@ export type SwcConfig = Omit<SwcLoaderOptions, 'jsc' | 'detectSyntax'> & {
 };
 
 type BabelOverrides = TransformOptions;
-type SwcOverrides = Omit<SwcLoaderOptions, 'rspackExperiments'>;
+// overrides are passed to the raw SWC transform API, so
+// `builtin:swc-loader`-only options are not accepted here
+type SwcOverrides = Omit<
+  SwcConfig,
+  | 'rspackExperiments'
+  | 'transformImport'
+  | 'collectTypeScriptInfo'
+  | 'detectSyntax'
+>;
 
 export type BabelSwcLoaderOptions = {
   hideParallelModeWarning?: boolean;

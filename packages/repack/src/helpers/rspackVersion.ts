@@ -22,7 +22,7 @@ export function getRspackVersion(context?: string): string | null {
       '@rspack/core/package.json',
       options
     );
-    const { version } = require(packageJsonPath) as { version: string };
+    const { version }: { version: string } = require(packageJsonPath);
     return version;
   } catch {
     return null;

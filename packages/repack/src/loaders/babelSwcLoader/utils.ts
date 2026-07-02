@@ -107,11 +107,13 @@ export function checkParallelModeAvailable(
   }
   // in parallel mode compiler.options.experiments are not available
   // but since we're already running in parallel mode, we can ignore this check
-  // (cast: `parallelLoader` no longer exists in Rspack 2 types)
-  const experiments = loaderContext._compiler.options?.experiments as
-    | { parallelLoader?: boolean }
-    | undefined;
-  if (experiments?.parallelLoader) {
+  // ('in' narrowing: `parallelLoader` no longer exists in Rspack 2 types)
+  const experiments = loaderContext._compiler.options?.experiments;
+  if (
+    experiments &&
+    'parallelLoader' in experiments &&
+    experiments.parallelLoader
+  ) {
     parallelModeWarningDisplayed = true;
     logger.warn(disabledParalleModeWarning);
   }
