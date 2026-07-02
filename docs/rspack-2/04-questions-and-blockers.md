@@ -3,6 +3,10 @@
 Ordered roughly by how much they gate implementation. "Verify" items are cheap experiments
 to run at the start of implementation; "Decide" items need a team call.
 
+> **Status 2026-07-02: Q1–Q5 are decided** (decisions recorded inline below).
+> Still open: the React Refresh end-state approach — options in
+> [06-react-refresh-deep-dive.md](./06-react-refresh-deep-dive.md).
+
 ## Decide (product/policy calls)
 
 ### Q1. `exportsPresence` default: do we shield RN users? <a name="exportspresence"></a>
@@ -22,6 +26,9 @@ Options:
 **Recommendation: (a)**, matching Re.Pack's Metro-compatibility posture. Cheap to do,
 documented as overridable.
 
+> ✅ **DECIDED (2026-07-02): option (a)** — set `exportsPresence: 'auto'` in
+> `getRepackConfig` under Rspack 2.
+
 ### Q2. Node support policy
 
 - Keep `engines.node: ">=18"` and enforce the Rspack-2 floor (≥20.19 / ≥22.12) at runtime
@@ -32,12 +39,18 @@ documented as overridable.
 - Note: React Native 0.84 tooling generally assumes Node ≥20 already, so the practical
   impact of keeping `>=18` is small either way.
 
+> ✅ **DECIDED (2026-07-02): keep `engines.node: ">=18"`** and enforce the Rspack-2 floor
+> at runtime with a clear error (plan §1.4).
+
 ### Q3. What do new projects get (`repack-init`, docs, templates)?
 
 `packages/init/src/versions.json` pins `@rspack/core: ^1.7.8`. Once dual support ships, do
 new projects default to v2? Suggest yes (upstream recommends v2; v1 is critical-fixes-only)
 — but only after the full tester-app validation pass. Interim option: ship dual support
 first, flip the init default in a follow-up.
+
+> ✅ **DECIDED (2026-07-02): default new projects to Rspack v2** (`repack-init`,
+> templates, docs) once the validation pass is green.
 
 ### Q4. Minimizer default under v2
 
@@ -46,11 +59,17 @@ Terser (current, battle-tested for RN/Hermes output) vs `SwcJsMinimizerRspackPlu
 `shouldUseTerserForRspack` and its 1.4.11/1.5.0 history). Needs an output-parity
 check on Hermes before switching. Safe default: keep Terser, offer SWC opt-in.
 
+> ✅ **DECIDED (2026-07-02): keep Terser as the default**, offer
+> `SwcJsMinimizerRspackPlugin` as an opt-in; revisit after a Hermes output-parity check.
+
 ### Q5. Do we still test/support Rspack 1 in CI indefinitely?
 
 Dual support doubles the integration matrix. Proposal: full matrix until repack's next
 major, then v1 moves to a legacy lane (smoke tests only). Needs maintainer sign-off
 because it affects CI minutes and release checklists.
+
+> ✅ **DECIDED (2026-07-02): keep supporting/testing Rspack 1 at least until Re.Pack's
+> next major release.**
 
 ## Verify (cheap experiments, do first during implementation)
 

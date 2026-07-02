@@ -133,10 +133,9 @@ engine crash into a supported-configuration error.
   confirm our per-rule SWC `env`/`jsc` options override the propagated top-level target,
   and that `RepackTargetPlugin`'s target handling doesn't produce surprising SWC/browserslist
   defaults. Add explicit loader targets if needed.
-- `exportsPresence`: decide default posture for RN ecosystem leniency (open question in
-  [04](./04-questions-and-blockers.md#exportspresence)) — if agreed, set
-  `module.parser.javascript.exportsPresence: 'auto'` (or `'warn'`) in `getRepackConfig`
-  for v2 to preserve Metro-like tolerance.
+- `exportsPresence`: **decided (Q1)** — set
+  `module.parser.javascript.exportsPresence: 'auto'` in `getRepackConfig` for Rspack 2 to
+  preserve Metro-like tolerance; document as overridable.
 
 ### 2.3 Module Federation
 
@@ -174,8 +173,9 @@ Verify the `--trace-*` flow (`profile-1.4.ts`) against v2's tracing implementati
 
 - `templates/rspack.config.{cjs,mjs}`: verify against v2 (they set no `experiments`, so
   likely fine as-is).
-- `packages/init/src/versions.json`: decide the default `@rspack/core` for new projects
-  (suggest `^2` once validated; init could also accept `--rspack-version`).
+- `packages/init/src/versions.json`: **decided (Q3)** — new projects default to
+  `@rspack/core@^2` once the validation pass is green (init could also accept
+  `--rspack-version` for opting into v1).
 - Website: "Using Rspack 2 with Re.Pack" migration page — Node floor, removed experiment
   keys, `experiments.cache` → `cache`, `stats.json` content changes, chunk-global rename
   note for anyone post-processing bundles, MFv1 runtime-tools install requirement.
