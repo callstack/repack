@@ -24,4 +24,4 @@ would otherwise live only in chat transcripts.
 
 | Folder | Topic | Status |
 | --- | --- | --- |
-| [rspackv2-jul2026](./rspackv2-jul2026/README.md) | Rspack 2 support with dual Rspack 1/2 compatibility | Implemented (PR [#1393](https://github.com/callstack/repack/pull/1393)); follow-ups: workspace adoption + defaults flip |
+| [rspackv2-jul2026](./rspackv2-jul2026/README.md) | Rspack 2 support with dual Rspack 1/2 compatibility | Implemented on reference branch `feat/rspack-2-support`; being split into a PR stack (see doc 09) |

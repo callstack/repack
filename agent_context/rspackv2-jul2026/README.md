@@ -1,11 +1,13 @@
 # Rspack 2.0 Support — Research & Planning
 
-> Status: **Implemented on this branch** — core dual-version support (plan phases 0–2)
-> is in `packages/repack`; all decisions recorded (Q1–Q5 in doc 04, React Refresh in
-> doc 06), V1–V11 verification executed with no blockers (doc 07).
-> Remaining follow-ups: CI matrix + tester-app/metro-compat validation under v2 (phase 3)
-> and flipping init/templates/website defaults to v2 (phase 4).
-> Branch: `feat/rspack-2-support`
+> Status: **Implemented on the reference branch, pending PR split** — core
+> dual-version support (plan phases 0–2) is complete and verified on
+> `feat/rspack-2-support` (kept as a reference; draft PR #1393 to be closed in
+> favor of a PR stack). **Where we left off + next actions: see
+> [09-pr-split-plan.md](./09-pr-split-plan.md).**
+> All decisions recorded (Q1–Q5 in doc 04, React Refresh in doc 06), V1–V11
+> verification executed with no blockers (doc 07), implementation details in
+> doc 08.
 > Last updated: 2026-07-02
 
 This folder tracks the investigation and plan for adding Rspack 2.0 support to Re.Pack
@@ -22,6 +24,8 @@ while keeping Rspack 1.x working (dual-version support).
 | [05-user-benefits.md](./05-user-benefits.md) | What Rspack 2.0 gives Re.Pack users (performance, bundle size, DX) |
 | [06-react-refresh-deep-dive.md](./06-react-refresh-deep-dive.md) | Deep dive: what `deprecated_runtimePaths` is, why v2 removed it, and the supported v2 approach (`injectEntry`/`reactRefreshLoader` options) |
 | [07-verification-results.md](./07-verification-results.md) | Executed V1–V11 verification results against `@rspack/core@2.1.2` — no blockers; two impact-analysis revisions and one new work item (perfetto tracing) |
+| [08-implementation-notes.md](./08-implementation-notes.md) | What was built on the reference branch: commits, technical landmines (Jest ESM escape, v2 type fallout patterns), working agreements, verification performed |
+| [09-pr-split-plan.md](./09-pr-split-plan.md) | **Where we left off** — the agreed PR stack (docs → foundations → types → config routing → React Refresh), branch/PR strategy, maintainer feedback, and reading order for a fresh start |
 
 ## TL;DR
 
