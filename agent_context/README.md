@@ -9,13 +9,16 @@ would otherwise live only in chat transcripts.
 - One folder per effort, named `<topic>-<month><year>` (e.g. `rspackv2-jul2026`).
 - Each folder has a `README.md` index with a status line (research → decided →
   implemented) kept up to date as the effort progresses.
+- While an effort is **in flight**, its folder is a living document — revise
+  freely as understanding improves.
 - Record *decisions* inline where the open question was raised, with the date —
-  don't delete the analysis that led to them.
+  keep the analysis that led to them, so the "why" survives alongside the "what".
 - Prefer verifiable claims: link upstream PRs/issues, note exact versions
   tested against, and keep verification results (what was run, what it showed).
-- These documents are historical records: when an effort completes, update the
-  status rather than rewriting history. Point to follow-up folders if work
-  continues later.
+- Once the work is **completed and merged**, the folder is settled: future or
+  follow-up work gets a new dated folder (which can link back), rather than
+  editing the old one. Status-line updates and cross-links to successor
+  folders are the exception.
 
 ## Index
 
