@@ -11,6 +11,24 @@ import type {
   SymbolicatorResults,
 } from './types.js';
 
+const REACT_RUNTIME_METHOD_NAMES = new Set([
+  'react-stack-bottom-frame',
+  'renderWithHooks',
+  'updateFunctionComponent',
+  'beginWork',
+  'runWithFiberInDEV',
+  'performUnitOfWork',
+  'workLoopSync',
+  'renderRootSync',
+  'performWorkOnRoot',
+  'performSyncWorkOnRoot',
+  'flushSyncWorkAcrossRoots_impl',
+  'scheduleUpdateOnFiber',
+  'dispatchSetState',
+  'reportException',
+  'handleException',
+]);
+
 /**
  * Class for transforming stack traces from React Native application with using Source Map.
  * Raw stack frames produced by React Native, points to some location from the bundle
@@ -78,7 +96,12 @@ export class Symbolicator {
     const frames: InputStackFrame[] = [];
     for (const frame of stack) {
       const { file } = frame;
-      if (file?.startsWith('http')) {
+      if (
+        file &&
+        (file.startsWith('http') ||
+          file.includes('.bundle') ||
+          file.includes('.hot-update.js'))
+      ) {
         frames.push(frame as InputStackFrame);
       }
     }
@@ -88,41 +111,61 @@ export class Symbolicator {
 
       const processedFrames: StackFrame[] = [];
       for (const frame of frames) {
-        if (!this.sourceMapConsumerCache[frame.file]) {
-          logger.debug({
-            msg: 'Loading raw source map data',
-            fileUrl: frame.file,
+        if (this.shouldSkipSourceMap(frame)) {
+          processedFrames.push({
+            ...frame,
+            collapse: true,
           });
-
-          const rawSourceMap = await this.delegate.getSourceMap(frame.file);
-
-          logger.debug({
-            msg: 'Creating source map instance',
-            fileUrl: frame.file,
-            sourceMapLength: rawSourceMap.length,
-          });
-          const sourceMapConsumer = await new SourceMapConsumer(
-            rawSourceMap.toString()
-          );
-
-          logger.debug({
-            msg: 'Saving source map instance into cache',
-            fileUrl: frame.file,
-          });
-          this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
+          continue;
         }
 
-        logger.debug({
-          msg: 'Symbolicating frame',
-          frame,
-        });
-        const processedFrame = this.processFrame(frame);
+        try {
+          if (!this.sourceMapConsumerCache[frame.file]) {
+            logger.debug({
+              msg: 'Loading raw source map data',
+              fileUrl: frame.file,
+            });
 
-        logger.debug({
-          msg: 'Finished symbolicating frame',
-          frame,
-        });
-        processedFrames.push(processedFrame);
+            const rawSourceMap = await this.delegate.getSourceMap(frame.file);
+
+            logger.debug({
+              msg: 'Creating source map instance',
+              fileUrl: frame.file,
+              sourceMapLength: rawSourceMap.length,
+            });
+            const sourceMapConsumer = await new SourceMapConsumer(
+              rawSourceMap.toString()
+            );
+
+            logger.debug({
+              msg: 'Saving source map instance into cache',
+              fileUrl: frame.file,
+            });
+            this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
+          }
+
+          logger.debug({
+            msg: 'Symbolicating frame',
+            frame,
+          });
+          const processedFrame = this.processFrame(frame);
+
+          logger.debug({
+            msg: 'Finished symbolicating frame',
+            frame,
+          });
+          processedFrames.push(processedFrame);
+        } catch (error) {
+          logger.debug({
+            msg: 'Failed to symbolicate frame',
+            fileUrl: frame.file,
+            error: (error as Error).message,
+          });
+          processedFrames.push({
+            ...frame,
+            collapse: false,
+          });
+        }
       }
 
       const codeFrame =
@@ -144,6 +187,10 @@ export class Symbolicator {
         delete this.sourceMapConsumerCache[key];
       }
     }
+  }
+
+  private shouldSkipSourceMap(frame: InputStackFrame): boolean {
+    return REACT_RUNTIME_METHOD_NAMES.has(frame.methodName ?? '');
   }
 
   private processFrame(frame: InputStackFrame): StackFrame {
@@ -194,6 +241,19 @@ export class Symbolicator {
     };
   }
 
+  private getSourceContent(frame: StackFrame): string | undefined {
+    for (const consumer of Object.values(this.sourceMapConsumerCache)) {
+      try {
+        const source = consumer.sourceContentFor(frame.file, true);
+        if (source) {
+          return source;
+        }
+      } catch {
+        // Try the next source map.
+      }
+    }
+  }
+
   private async getCodeFrame(
     logger: FastifyBaseLogger,
     processedFrames: StackFrame[]
@@ -213,9 +273,13 @@ export class Symbolicator {
       });
 
       try {
+        const source =
+          this.getSourceContent(frame) ??
+          (await this.delegate.getSource(frame.file)).toString();
+
         return {
           content: codeFrameColumns(
-            (await this.delegate.getSource(frame.file)).toString(),
+            source,
             {
               start: { column: frame.column, line: frame.lineNumber },
             },

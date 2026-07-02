@@ -26,6 +26,146 @@ import logo from '../common/logo.js';
 import type { CliConfig, StartArguments } from '../types.js';
 import { Compiler } from './Compiler.js';
 
+function isDigits(value: string): boolean {
+  for (const character of value) {
+    if (character < '0' || character > '9') {
+      return false;
+    }
+  }
+
+  return value.length > 0;
+}
+
+function isHostPortPath(value: string): boolean {
+  const pathStart = value.indexOf('/');
+  if (pathStart === -1) {
+    return false;
+  }
+
+  const authority = value.slice(0, pathStart);
+  const portStart = authority.lastIndexOf(':');
+  if (portStart <= 0) {
+    return false;
+  }
+
+  const hostname = authority.slice(0, portStart);
+  const port = authority.slice(portStart + 1);
+  return (
+    !hostname.includes(':') &&
+    (hostname === 'localhost' || hostname.includes('.')) &&
+    isDigits(port)
+  );
+}
+
+function getFetchableSourceMapUrl(url: string): URL | undefined {
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    if (isHostPortPath(url)) {
+      parsedUrl = new URL(`http://${url}`);
+    } else if (url.startsWith('//')) {
+      parsedUrl = new URL(`http:${url}`);
+    } else {
+      return undefined;
+    }
+  }
+
+  if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+    return undefined;
+  }
+
+  if (!parsedUrl.pathname.endsWith('.map')) {
+    parsedUrl.pathname = `${parsedUrl.pathname}.map`;
+  }
+
+  return parsedUrl;
+}
+
+function getRemoteNameFromBundleUrl(url: string): string | undefined {
+  const filename = url.split(/[?#]/)[0].split('/').pop() ?? '';
+
+  return (
+    filename.match(/\.([^.]+)\.chunk\.bundle(?:\.map)?$/)?.[1] ??
+    filename.match(/^([^/.]+)\.container\.js\.bundle(?:\.map)?$/)?.[1]
+  );
+}
+
+function getSourceMapUrlsFromRemoteConfig(
+  url: string,
+  configs: Configuration[]
+): URL[] {
+  const remoteName = getRemoteNameFromBundleUrl(url);
+  const filename = url.split(/[?#]/)[0].split('/').pop();
+  if (!filename) {
+    return [];
+  }
+
+  const sourceMapFilename = filename.endsWith('.map')
+    ? filename
+    : `${filename}.map`;
+
+  return configs
+    .flatMap((config) => config.plugins ?? [])
+    .flatMap((plugin) => {
+      const remotes =
+        (plugin as { config?: { remotes?: Record<string, unknown> } })?.config
+          ?.remotes ?? {};
+      const remoteSpecs = remoteName
+        ? [remotes[remoteName]]
+        : Object.values(remotes);
+      const remoteValues = remoteSpecs.flatMap((remoteSpec) =>
+        Array.isArray(remoteSpec) ? remoteSpec : [remoteSpec]
+      );
+
+      return remoteValues.flatMap((value) => {
+        if (typeof value !== 'string') {
+          return [];
+        }
+
+        const remoteUrl = getFetchableSourceMapUrl(
+          value.includes('@') ? value.slice(value.indexOf('@') + 1) : value
+        );
+        if (!remoteUrl) {
+          return [];
+        }
+
+        remoteUrl.pathname = `${remoteUrl.pathname.replace(
+          /\/[^/]*$/,
+          ''
+        )}/${sourceMapFilename}`;
+        return [remoteUrl];
+      });
+    });
+}
+
+async function fetchSourceMapFromBundleServer(
+  url: string,
+  configs: Configuration[]
+): Promise<Buffer | undefined> {
+  const sourceMapUrls = [
+    getFetchableSourceMapUrl(url),
+    ...getSourceMapUrlsFromRemoteConfig(url, configs),
+  ].filter(Boolean) as URL[];
+
+  const results = await Promise.allSettled(
+    sourceMapUrls.map(async (sourceMapUrl) => {
+      const response = await fetch(sourceMapUrl, {
+        signal: AbortSignal.timeout(2000),
+      });
+      if (response.ok) {
+        return Buffer.from(await response.arrayBuffer());
+      }
+    })
+  );
+
+  for (const result of results) {
+    if (result.status === 'fulfilled' && result.value) {
+      return result.value;
+    }
+  }
+}
+
 /**
  * Start command that runs a development server.
  * It runs `@callstack/repack-dev-server` to provide Development Server functionality
@@ -172,7 +312,23 @@ export async function start(
           },
           getSourceMap: (url) => {
             const { resourcePath, platform } = parseUrl(url, platforms);
-            return compiler.getSourceMap(resourcePath, platform);
+            return compiler
+              .getSourceMap(resourcePath, platform)
+              .catch(async (error) => {
+                try {
+                  const sourceMap = await fetchSourceMapFromBundleServer(
+                    url,
+                    configs
+                  );
+                  if (sourceMap) {
+                    return sourceMap;
+                  }
+                } catch {
+                  // Preserve the original compiler error below.
+                }
+
+                throw error;
+              });
           },
           shouldIncludeFrame: (frame) => {
             // If the frame points to internal bootstrap/module system logic, skip the code frame.
