@@ -17,11 +17,15 @@ function getExperimentsConfig(bundler: 'rspack' | 'webpack') {
 }
 ```
 
-Rspack 2 removed `experiments.parallelLoader` ([PR #12658](https://github.com/web-infra-dev/rspack/pull/12658))
-and enables config validation by default → **every Rspack 2 build fails at startup with a
-schema validation error**. Parallel loading is still opt-in per rule via
-`module.rules[].use[].parallel` (which we don't currently set — the experiment flag alone
-never parallelized our loaders; users had to add `parallel: true` to rules themselves).
+Rspack 2 removed `experiments.parallelLoader` ([PR #12658](https://github.com/web-infra-dev/rspack/pull/12658)).
+**Verified against 2.1.2 ([07](./07-verification-results.md)): the key is silently
+ignored, not rejected** — v2's config validation turned out to be loose (unknown keys
+pass). So this is dead config rather than a hard failure: no build error, but the option
+does nothing, v2 TypeScript types reject it at compile time, and our loader's
+parallel-mode warning probe goes permanently quiet. Still gated by major in the fix.
+Parallel loading is still opt-in per rule via `module.rules[].use[].parallel` (which we
+don't currently set — the experiment flag alone never parallelized our loaders; users had
+to add `parallel: true` to rules themselves).
 
 Related soft spot: `packages/repack/src/loaders/babelSwcLoader/utils.ts:93-107`
 (`checkParallelModeAvailable`) reads `loaderContext._compiler.options?.experiments?.parallelLoader`
@@ -80,6 +84,12 @@ type RspackCacheOptions = NonNullable<
 Under v2, users configure `cache: { type: 'persistent', storage: { directory } }` at the
 top level ([PR #12705](https://github.com/web-infra-dev/rspack/pull/12705)). Fix is simple:
 read `config.cache ?? config.experiments?.cache` and widen the type.
+
+**Verified against 2.1.2 ([07](./07-verification-results.md))**: `experiments.cache` is
+**silently inert** under v2 — the build succeeds with no warning and no cache directory is
+created, while top-level `cache` works. So beyond the `--reset-cache` fix, Re.Pack should
+warn (or auto-migrate the value) when it detects a v1-style cache config under v2, or
+users silently lose persistent caching.
 
 ## Structural: ESM-only `@rspack/core` + Node floor
 

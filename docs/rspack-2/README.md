@@ -1,7 +1,8 @@
 # Rspack 2.0 Support — Research & Planning
 
 > Status: **Research complete — all decisions made (Q1–Q5 in doc 04, React Refresh in
-> doc 06). Ready for implementation.**
+> doc 06) and the V1–V11 verification checklist executed against 2.1.2 with no blockers
+> (doc 07). Ready for implementation.**
 > Branch: `feat/rspack-2-support`
 > Last updated: 2026-07-02
 
@@ -18,6 +19,7 @@ while keeping Rspack 1.x working (dual-version support).
 | [04-questions-and-blockers.md](./04-questions-and-blockers.md) | Open questions, concerns, and potential blockers to resolve before/while implementing |
 | [05-user-benefits.md](./05-user-benefits.md) | What Rspack 2.0 gives Re.Pack users (performance, bundle size, DX) |
 | [06-react-refresh-deep-dive.md](./06-react-refresh-deep-dive.md) | Deep dive: what `deprecated_runtimePaths` is, why v2 removed it, and the supported v2 approach (`injectEntry`/`reactRefreshLoader` options) |
+| [07-verification-results.md](./07-verification-results.md) | Executed V1–V11 verification results against `@rspack/core@2.1.2` — no blockers; two impact-analysis revisions and one new work item (perfetto tracing) |
 
 ## TL;DR
 
@@ -26,17 +28,18 @@ good shape because it configures almost everything explicitly rather than relyin
 Rspack defaults, and it already has a version-branching precedent
 (`packages/repack/src/commands/rspack/profile/index.ts`).
 
-**Only 3 confirmed hard breaks in Re.Pack code:**
+**3 confirmed breaks in Re.Pack code** (severity revised after lab verification — doc 07):
 
 1. `experiments: { parallelLoader: true }` injected by `getRepackConfig` — the option was
-   **removed** in Rspack 2 and config validation is on by default → immediate validation
-   error on every Rspack 2 build.
+   removed in Rspack 2. *Verified: silently ignored, not a validation error* — dead config
+   plus a permanently-silent parallel-mode warning probe; still must be gated by major.
 2. `ReactRefreshPlugin.deprecated_runtimePaths` (used in `DevelopmentPlugin`) — removed in
-   `@rspack/plugin-react-refresh@2`. Mitigated today by the pinned `1.0.0` dependency, but
-   needs a deliberate strategy.
-3. Persistent cache config moved `experiments.cache` → top-level `cache` — Re.Pack reads
-   `config.experiments?.cache` in `start`/`bundle` for `--reset-cache`, and the TS type it
-   derives from `experiments.cache` no longer exists in v2 types.
+   `@rspack/plugin-react-refresh@2`. **The only true hard crash** (throws at module load).
+   Strategy decided in doc 06.
+3. Persistent cache config moved `experiments.cache` → top-level `cache`. *Verified: the
+   v1-style key is silently inert under v2* — users lose persistent caching with no
+   signal, and `--reset-cache` misdetects; the TS type Re.Pack derives from
+   `experiments.cache` is also gone from v2 types.
 
 **Biggest structural consideration:** `@rspack/core@2` is pure ESM and requires
 Node `^20.19.0 || >=22.12.0`. Re.Pack's published CJS (`require('@rspack/core')`) keeps

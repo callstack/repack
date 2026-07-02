@@ -74,19 +74,23 @@ because it affects CI minutes and release checklists.
 
 ## Verify (cheap experiments, do first during implementation)
 
-| # | Check | Why it matters | Expected |
-| --- | --- | --- | --- |
-| V1 | `require('@rspack/core')` from repack's compiled CJS on Node 20.19+/22.12+ — named exports (`rspack`, `rspackVersion`) AND Babel default-interop | The entire rspack command tree loads this way | Works (`require(esm)` + Node's `__esModule` interop marker), but must be smoke-tested before anything else |
-| V2 | `rspackVersion` still exported from `@rspack/core@2` | Our version-detection helper depends on it | Yes (webpack-compat export) |
-| V3 | `rspack.experiments.swc` still exposed in v2 JS API | `babelSwcLoader` uses it to get a SWC instance (`utils.ts:134-142`) | Unclear — **potential blocker for babel-swc-loader under v2** if moved/removed; fallback to `@swc/core` exists but changes behavior |
-| V4 | `compiler.webpack.container.ModuleFederationPluginV1` exists in v2 | `ModuleFederationPluginV1` resolves it | Expected yes (MF 1.5 plugin kept; only runtime-tools became optional peer) |
-| V5 | `devServer` key in config: does v2 schema validation reject it? | `bundle.ts:38` already deletes it "to avoid schema validation errors"; the `start` flow passes configs to `rspack()` with `devServer` present | If rejected, strip it in `makeCompilerConfig` for v2 |
-| V6 | `chunkLoading: 'jsonp'` + `chunkFormat: 'array-push'` + `globalObject` produce working RN bundles under v2 (ScriptManager local chunks, MF remotes) | Core of Re.Pack's RN runtime | Expected yes; integration-test it |
-| V7 | HMR end-to-end under v2 (`__webpack_hash__`, hot-update chunk fetch/eval, React Refresh with **v1 plugin client files**) | HMR client + DevelopmentPlugin wiring | Expected yes; the client files use the stable `module.hot` API |
-| V8 | Top-level `target` propagation doesn't override our per-rule SWC options ([PR #12752](https://github.com/web-infra-dev/rspack/pull/12752)) | We pass explicit `jsc`/`env` per rule for RN/Hermes syntax floors | Explicit options should win; confirm |
-| V9 | `--trace-*` profiling flow against v2 tracing | `profile-1.4.ts` gates on `major > 1` so v2 takes this path today — was that contract kept? | Unknown; may need `profile-2.ts` |
-| V10 | `@module-federation/enhanced` version(s) certified for Rspack 2 (and whether `enhanced/rspack` subpath imports v2 core cleanly from CJS) | `ModuleFederationPluginV2` + both tester-federation apps | Needs upstream matrix check (enhanced ≥2.x expected) |
-| V11 | `tests/metro-compat` under v2 — especially aliased dynamic require (`requireAlias` now `false` by default, [PR #12697](https://github.com/web-infra-dev/rspack/pull/12697)) | RN packages (moment-style locale loading, lazy platform requires) may silently stop bundling context modules | Unknown — **most likely source of subtle user regressions** |
+> ✅ **EXECUTED 2026-07-02** against `@rspack/core@2.1.2` — full details and lab setup in
+> [07-verification-results.md](./07-verification-results.md). **No blockers**; both
+> flagged potential blockers (V3, V10) cleared; one new work item (V9 perfetto).
+
+| # | Check | Result |
+| --- | --- | --- |
+| V1 | `require('@rspack/core')` from repack's compiled CJS — named exports and Babel default-interop | ✅ PASS — v2 uses the `module.exports` ESM-interop convention; `require()` returns the callable `rspack` fn, v1-identical shape |
+| V2 | `rspackVersion` still exported from core v2 | ✅ PASS (`2.1.2`) |
+| V3 | `rspack.experiments.swc` still exposed in v2 JS API | ✅ PASS — `transform/transformSync/minify/minifySync` present; blocker cleared |
+| V4 | `compiler.webpack.container.ModuleFederationPluginV1` exists in v2 | ✅ PASS — functional host build; `library: {type: 'self'}` renders `self.name = __webpack_exports__`; runtime-tools pre-check still needed |
+| V5 | Does v2 schema validation reject the `devServer` key? | ✅ PASS — accepted; v2 validation is loose overall (unknown keys silently ignored) |
+| V6 | `chunkLoading: 'jsonp'` + `chunkFormat: 'array-push'` + `globalObject` produce working RN bundles under v2 | ✅ PASS — full RepackTargetPlugin mechanism replicated and bundle **executed**: `load_script` name intact, `module.source.source` mutation works, custom RuntimeModule injection works, lazy chunk loaded |
+| V7 | HMR machinery under v2 (`__webpack_hash__`, hot-update globals, `module.hot`) | ✅ PASS build-level (`rspackHotUpdate*` confirmed live); device e2e stays in Phase 3 |
+| V8 | Top-level `target` propagation doesn't override our per-rule SWC options | ✅ PASS — explicit `jsc.target` wins; propagation applies only without loader options |
+| V9 | `--trace-*` profiling flow against v2 tracing | ⚠️ **PARTIAL** — API compatible, but **perfetto layer missing from published binaries**; `'logger'` works. `--trace` default breaks under v2 → plan §2.5 gains a `profile-2` item |
+| V10 | `@module-federation/enhanced` on Rspack 2; CJS require of `enhanced/rspack` | ✅ PASS — `enhanced@2.6.0` builds an MF host cleanly on 2.1.2; blocker cleared |
+| V11 | Aliased dynamic require + `exportsPresence` under v2 | ✅ PASS — `exportsPresence: 'error'` default confirmed and `'auto'` fix works (Q1 validated); **aliased-require regression did not reproduce** on 2.1.2. Full metro-compat sweep stays in Phase 3 |
 
 ## Concerns (not blockers, keep on the radar)
 
@@ -111,11 +115,14 @@ because it affects CI minutes and release checklists.
 
 ## Current blocker summary
 
-No hard blockers found for dual support. The two items that could *become* blockers if
-they verify badly:
+**No blockers — verified empirically** ([07-verification-results.md](./07-verification-results.md)).
+The two items previously flagged as potential blockers both cleared:
 
-1. **V3** — if `experiments.swc` disappeared from v2's JS API, `babel-swc-loader` needs a
-   new SWC acquisition path for v2 (fallback to project-installed `@swc/core` exists but
-   changes the default experience).
-2. **V10** — if current `@module-federation/enhanced` releases don't support Rspack 2
-   cleanly, MFv2 users can't move until upstream ships support (out of our control).
+1. **V3** ✅ — `experiments.swc` is present in v2's JS API; `babel-swc-loader` needs no
+   new SWC acquisition path.
+2. **V10** ✅ — `@module-federation/enhanced@2.6.0` loads via CJS and builds MF hosts
+   cleanly on Rspack 2.1.2.
+
+One new work item from verification: **V9** — published v2 binaries lack the perfetto
+trace layer, so `--trace-*` needs a v2 code path defaulting to the `logger` layer
+(plan §2.5).

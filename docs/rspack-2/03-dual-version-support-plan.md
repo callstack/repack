@@ -75,6 +75,12 @@ cacheConfigs: [config.cache ?? config.experiments?.cache]
 `experiments` (define a minimal structural type: `boolean | { type?: string; storage?: { directory?: string } }`).
 The path-extraction logic (`storage.directory`) is unchanged between majors.
 
+Verified nuance ([07 §revised findings](./07-verification-results.md)): under v2,
+`experiments.cache` is **silently inert** — no error, persistent cache just turns off.
+So additionally: when running v2 with `experiments.cache` set in the user config, emit a
+clear warning pointing to top-level `cache` (and consider honoring it by copying the value
+over) so users don't silently lose caching.
+
 ### 1.3 React Refresh <a name="react-refresh"></a>
 
 > ✅ **Decided 2026-07-02** — full background and rationale in
@@ -149,8 +155,12 @@ stripping), prefer it for v2 and keep Terser for 1.x.
 
 ### 2.5 Tracing/profiling
 
-Verify the `--trace-*` flow (`profile-1.4.ts`) against v2's tracing implementation; add a
-`profile-2.ts` variant if the env-var/layer contract changed.
+**Verified (V9, [07](./07-verification-results.md))**: the `globalTrace` API is
+compatible, but published v2 binaries are built *without* the perfetto layer —
+`traceLayer: 'perfetto'` (our current default) throws under v2 while `'logger'` works.
+Add a `profile-2.ts` variant that defaults to `'logger'` under v2 and surfaces a clear
+error if perfetto is explicitly requested; track whether upstream restores perfetto in
+later binaries.
 
 ## Phase 3 — Validation surfaces & CI
 
