@@ -5,7 +5,8 @@
 > `feat/rspack-2-support` (kept as a reference; draft PR #1393 to be closed in
 > favor of a PR stack). The maintainer-feedback reworks are **applied on the
 > branch itself** (warn-only cache, vendor directory), `tester-app` is now
-> the **Rspack 2 example**, and the standalone `apps/tester-app-rspack1`
+> the **Rspack 2 example**, the workspace **default catalog is Rspack 2**
+> (doc 08 § Catalog flip), and the standalone `apps/tester-app-rspack1`
 > (outside the workspace, tarball-installed repack) is the Rspack 1 lane —
 > all device-verified incl. HMR and the interactive chunk/asset flows.
 > **Where we left off + next actions: see

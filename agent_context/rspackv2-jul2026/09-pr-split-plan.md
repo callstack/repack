@@ -277,7 +277,18 @@ Other notes:
   retires when Rspack 1 support ends at the next major.
 
 ### Follow-up — workspace adoption (phase 3, separate effort)
-- Catalog/tests bump to v2, CI matrix lanes (Node 18/20 = v1-only),
+
+> ✅ **Partially executed early (2026-07-03, reference branch):** the
+> default pnpm catalog was flipped to `@rspack/core@^2.1.2` (the named
+> `rspack2` catalog is gone; tester-app pins plain `catalog:` again and both
+> federation apps declare `@rspack/plugin-react-refresh`). Rationale: the
+> v1 default was cosmetic — every workspace consumer already *ran* 2.1.2
+> via repack's devDep (doc 08 § Discovery), so manifests now match reality.
+> The flip surfaced the first true-v2 run of `tests/integration`'s rspack
+> lane; findings and test fixes in doc 08 § Catalog flip. Remaining
+> phase-3 items below still stand.
+
+- CI matrix lanes (Node 18/20 = v1-only),
   metro-compat + resolver-cases sweeps, device HMR e2e — run against **both**
   tester apps now that each major has one (the earlier "bump tester-app to
   v2" item is superseded by PR 8)

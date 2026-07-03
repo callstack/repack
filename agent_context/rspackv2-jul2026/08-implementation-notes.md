@@ -319,3 +319,58 @@ Practical notes for re-running (also apply to CI/e2e follow-up):
   app dir (re-run both after changing `packages/repack` — the tarball is a
   snapshot). Its copied Android shell needed tester-app's
   async-storage-specific maven block removed from `build.gradle`.
+
+## Catalog flip: workspace default is Rspack 2 (2026-07-03)
+
+Decided with the maintainer after the per-major tester-app restructure. The
+default pnpm catalog previously pinned `@rspack/core: ^1.6.0`, but those v1
+pins were cosmetic for anything compiled through repack: every workspace
+consumer already ran 2.1.2 via repack's devDep (§ Discovery above). The
+workspace now says what it runs:
+
+- Default catalog: `@rspack/core: ^2.1.2`, `@rspack/plugin-react-refresh:
+  ^2.0.2`, `@swc/helpers: ^0.5.23`. The named `rspack2` catalog is deleted;
+  `tester-app` pins plain `catalog:` again (no longer the odd one out), and
+  both federation apps declare the refresh plugin like any real v2 app.
+- The Rspack 1 surfaces are unchanged and explicit: the standalone
+  `apps/tester-app-rspack1` lab and the `pnpm test:rspack1` jest lane.
+
+### Findings: first true-v2 run of tests/integration's rspack lane
+
+`tests/integration` imported `@rspack/core` directly (not through repack),
+so its rspack lane was the one workspace surface genuinely on v1 until the
+flip. Running it on 2.1.2 surfaced three **output-format** changes (no
+behavioral regressions — useful for anyone post-processing bundles):
+
+1. **Custom runtime-module banners** lost the `webpack/runtime/` prefix:
+   `// webpack/runtime/repack/polyfills` (v1/webpack) is `// repack/polyfills`
+   under v2. Built-in and MF-plugin runtime modules keep the prefix
+   (`// webpack/runtime/embed_federation_runtime`).
+2. **Unminified module factories** use shorthand method syntax under v2
+   (`721() { ... },`) instead of `721: (function (...) { ... }),`.
+3. **Runtime-module order vs MFv2's `embed_federation_runtime` flipped**:
+   polyfills now precede the embed wrapper in the runtime section. The
+   invariant Re.Pack cares about — polyfills execute before
+   `__webpack_require__.x()` is invoked — holds under both majors (verified
+   by inspecting the emitted bundle end-to-end).
+
+Test-side fixes in `NativeEntryPlugin.test.ts`: version-agnostic
+`repack/polyfills` marker, an added Rspack-2 module-factory regex in
+`extractModuleIdByMarker`, the MFv2 order assertion reduced to the real
+invariant, and rspack-lane snapshots regenerated under 2.1.2 (webpack-lane
+snapshots changed only by the marker offset). All 58 tests pass in both
+lanes; the semantic assertions (polyfill/startup ordering, runtime require
+ids aligned with production module ids) now genuinely verify v2.
+
+### Revalidation after the flip (2026-07-03)
+
+Full sweep, all green: build/typecheck/lint; `turbo run typecheck test
+--force` (17/17 incl. integration, metro-compat, resolver-cases, tester-app
+bundle tests on 2.1.2 + webpack); `test:rspack1` 281/281;
+`tester-federation` host+mini bundles on both platforms under Rspack 2.1.2
+and the `USE_WEBPACK` lane; `tester-federation-v2` host+mini bundles on both
+platforms (container + `mf-manifest.json` emitted) plus a dev-server smoke
+(host bundle, mini container, and manifest all served 200). The standalone
+lab is outside the workspace and unaffected by catalogs; it was validated
+the same day (release bundles on 1.7.12, dev bundle served with the
+vendored refresh runtime).

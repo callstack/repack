@@ -48,8 +48,9 @@ Refactor `commands/rspack/profile/index.ts` to use it. For code paths that can't
   at least one app/test suite on v1.
 
 > ⚠️ **AMENDED (2026-07-03, decided & implemented — see doc 08 § Discovery and
-> doc 09 PR 8):** `tester-app` **is** the Rspack 2 example (manifest on the
-> `rspack2` named catalog). But "keep at least one app on v1" cannot be a
+> doc 09 PR 8):** `tester-app` **is** the Rspack 2 example (the workspace
+> **default** catalog is Rspack 2 as of the same-day catalog flip — doc 08
+> § Catalog flip). But "keep at least one app on v1" cannot be a
 > *workspace* app: in-workspace, repack's `@rspack/core@^2` devDependency
 > shadows any app-level v1 pin, and shipped code deliberately carries no
 > monorepo-aware resolution workaround. The v1 surface is the **standalone**
