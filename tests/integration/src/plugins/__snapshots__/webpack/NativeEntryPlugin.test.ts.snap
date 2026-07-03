@@ -1183,7 +1183,7 @@ globalThis.__APP_ENTRY__ = true;
 `;
 
 exports[`NativeEntryPlugin > without Module Federation > in production mode > should expose inlined polyfills if runtime requirements are removed 1`] = `
-"runtime/repack/polyfills */
+"repack/polyfills */
 /******/ 	(() => {
 /******/ 		__webpack_require__(721);
 /******/ 		__webpack_require__(320);
@@ -1207,7 +1207,7 @@ exports[`NativeEntryPlugin > without Module Federation > in production mode > sh
 `;
 
 exports[`NativeEntryPlugin > without Module Federation > in production mode > should keep runtime polyfill requires aligned with production module ids 1`] = `
-"runtime/repack/polyfills */
+"repack/polyfills */
 /******/ 	(() => {
 /******/ 		__webpack_require__(721);
 /******/ 		__webpack_require__(320);

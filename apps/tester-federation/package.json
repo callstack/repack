@@ -36,6 +36,7 @@
     "@react-native/typescript-config": "catalog:testers",
     "@rsdoctor/rspack-plugin": "^1.5.2",
     "@rspack/core": "catalog:",
+    "@rspack/plugin-react-refresh": "catalog:",
     "@swc/helpers": "catalog:",
     "@types/jest": "^29.5.13",
     "@types/react": "catalog:testers",
