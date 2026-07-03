@@ -9,11 +9,23 @@ const { TestEnvironment: NodeEnvironment } = require('jest-environment-node');
  * module system, where loading ESM through `require()`/`import()` is
  * supported. Load @rspack/core here and expose it to the sandbox via a
  * global - see jest.rspack-core-bridge.js for the consuming side.
+ *
+ * The environment is parameterized on RSPACK_MAJOR (default 2) so the suite
+ * can run against both supported Rspack majors:
+ * - v2: `await import('@rspack/core')` (ESM-only package),
+ * - v1: plain `require` of the aliased `@rspack/core-v1` devDependency - the
+ *   package is CJS, and requiring it directly sidesteps any reliance on
+ *   cjs-module-lexer named-export synthesis.
+ * `__RSPACK_MAJOR__` is exposed alongside so tests can gate major-specific
+ * assertions.
  */
 class RspackCoreEnvironment extends NodeEnvironment {
   async setup() {
     await super.setup();
-    this.global.__RSPACK_CORE__ = await import('@rspack/core');
+    const major = Number(process.env.RSPACK_MAJOR ?? '2');
+    this.global.__RSPACK_CORE__ =
+      major === 1 ? require('@rspack/core-v1') : await import('@rspack/core');
+    this.global.__RSPACK_MAJOR__ = major;
   }
 }
 
