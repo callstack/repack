@@ -1,21 +1,41 @@
 # Rspack 2.0 Support — Research & Planning
 
-> Status: **Implemented on the reference branch, pending PR split** — core
-> dual-version support (plan phases 0–2) is complete and verified on
-> `feat/rspack-2-support` (kept as a reference; draft PR #1393 to be closed in
-> favor of a PR stack). The maintainer-feedback reworks are **applied on the
-> branch itself** (warn-only cache, vendor directory), `tester-app` is now
-> the **Rspack 2 example**, the workspace **default catalog is Rspack 2**
-> (doc 08 § Catalog flip), and the standalone `apps/tester-app-rspack1`
-> (outside the workspace, tarball-installed repack) is the Rspack 1 lane —
-> all device-verified incl. HMR and the interactive chunk/asset flows.
-> **Where we left off + next actions: see
-> [09-pr-split-plan.md](./09-pr-split-plan.md).**
+> Status: **Implemented, committed, pushed, CI green — pending PR split.**
+> Core dual-version support (plan phases 0–2) is complete and verified on
+> `feat/rspack-2-support` (`d0ea05d6..604392c8`, commit map in doc 08; kept
+> as a reference — draft PR #1393 to be closed in favor of a PR stack). The
+> maintainer-feedback reworks are **applied on the branch itself** (warn-only
+> cache, vendor directory), `tester-app` is the **Rspack 2 example**, the
+> workspace **default catalog is Rspack 2** (doc 08 § Catalog flip), and the
+> standalone `apps/tester-app-rspack1` (outside the workspace,
+> tarball-installed repack) is the Rspack 1 lane — all device-verified incl.
+> HMR and the interactive chunk/asset flows; MF apps validated (bundles both
+> platforms + MFv2 dev-server smoke).
 > All decisions recorded (Q1–Q5 in doc 04, React Refresh in doc 06, feedback
 > responses + reversals in docs 08–10), V1–V11 verification executed with no
 > blockers (doc 07), implementation details + reference-branch updates in
 > doc 08.
 > Last updated: 2026-07-03
+
+## Picking this up in a fresh session — start here
+
+1. Read [09-pr-split-plan.md](./09-pr-split-plan.md) top to bottom — it holds
+   the current state, the PR stack, the maintainer feedback, execution
+   mechanics (branch-cutting, per-PR validation commands, porting deltas),
+   and the working agreements. Its "Context for a fresh start" section gives
+   the full reading order.
+2. **The task is executing the PR split** (doc 09 § The stack + § Mechanics).
+   Everything to port already exists on `feat/rspack-2-support`; the split is
+   cherry-picking, not new implementation. Known still-open work items:
+   the Windows require(esm) smoke pass + CI lane (PR 2, feedback #7), a CI
+   lane for `test:rspack1` (PR 2), and the DevelopmentPlugin
+   `git diff --color-moved` footprint check (PR 6, feedback #3).
+3. Consult [08-implementation-notes.md](./08-implementation-notes.md) before
+   touching anything — commit map, technical landmines, the devDep-shadowing
+   discovery, CI snapshot-portability rules, and the on-device validation
+   record live there.
+4. Do not revisit settled decisions without new information — they are
+   recorded inline with dates (docs 04/06/08/09/10).
 
 This folder tracks the investigation and plan for adding Rspack 2.0 support to Re.Pack
 while keeping Rspack 1.x working (dual-version support).
@@ -31,7 +51,7 @@ while keeping Rspack 1.x working (dual-version support).
 | [05-user-benefits.md](./05-user-benefits.md) | What Rspack 2.0 gives Re.Pack users (performance, bundle size, DX) |
 | [06-react-refresh-deep-dive.md](./06-react-refresh-deep-dive.md) | Deep dive: what `deprecated_runtimePaths` is, why v2 removed it, and the supported v2 approach (`injectEntry`/`reactRefreshLoader` options) |
 | [07-verification-results.md](./07-verification-results.md) | Executed V1–V11 verification results against `@rspack/core@2.1.2` — no blockers; two impact-analysis revisions and one new work item (perfetto tracing) |
-| [08-implementation-notes.md](./08-implementation-notes.md) | What was built on the reference branch: commits, technical landmines (Jest ESM escape, v2 type fallout patterns), working agreements, verification performed — **plus the reference-branch updates**: applied feedback reworks, the devDep-shadowing discovery and the `loadRspack` implement-then-revert decision, per-major tester apps, and the on-device validation record (incl. interactive chunk/remote-asset flows) |
+| [08-implementation-notes.md](./08-implementation-notes.md) | What was built on the reference branch: commits, technical landmines (Jest ESM escape, v2 type fallout patterns), working agreements, verification performed — **plus the reference-branch updates**: applied feedback reworks, the devDep-shadowing discovery and the `loadRspack` implement-then-revert decision, per-major tester apps, the on-device validation record (incl. interactive chunk/remote-asset flows), the **catalog flip** with the true-v2 integration findings, and the CI snapshot-portability rules |
 | [09-pr-split-plan.md](./09-pr-split-plan.md) | **Where we left off** — the agreed PR stack, restructured for parallel execution (docs + foundations → 4 conflict-free parallel PRs → closer + per-major tester apps: tester-app as the v2 example, standalone tester-app-rspack1 as the v1 lane), dual-major testing strategy, branch/PR strategy, maintainer feedback, and reading order for a fresh start |
 | [10-maintainer-feedback-evaluation.md](./10-maintainer-feedback-evaluation.md) | Point-by-point evaluation of the #1393 maintainer feedback — understanding, validity verdict (with upstream verification of #6), and the concrete implementation revision per point, with code examples |
 | [appendix-smoke-harness/](./appendix-smoke-harness/README.md) | Verification artifact: the dual-major smoke script + lab setup used for doc 07/08 verification, preserved as the seed for the closer PR's committed smoke suite |

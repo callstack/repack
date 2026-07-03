@@ -1,10 +1,12 @@
 # PR Split Plan & Where We Left Off
 
-> **STATUS / WHERE WE LEFT OFF (2026-07-02):** All research, decisions,
-> implementation (plan phases 0–2), and verification are complete on branch
-> `feat/rspack-2-support` (see [08-implementation-notes.md](./08-implementation-notes.md)).
-> The next step is executing the split below. **The split has not been
-> executed yet.**
+> **STATUS / WHERE WE LEFT OFF (updated 2026-07-03):** All research,
+> decisions, implementation (plan phases 0–2), feedback reworks, per-major
+> tester apps, the default-catalog flip, and verification are complete,
+> **committed, and pushed** on `feat/rspack-2-support` (`d0ea05d6..604392c8`;
+> commit map in [doc 08](./08-implementation-notes.md)). CI on the branch is
+> **green** (TypeScript, Tests, Lint). The next step is executing the split
+> below. **The split has not been executed yet.**
 >
 > **Plan restructured 2026-07-02 (same day, after maintainer feedback) for
 > parallel execution** — see "Why this structure" for the conflict analysis
@@ -16,8 +18,9 @@
 > **Reference branch updated 2026-07-02/03:** the feedback reworks are now
 > **applied on `feat/rspack-2-support` itself** — warn-only cache (feedback
 > #5), vendor-directory relocation (feedback #2), plus the PR 8 apps:
-> **`tester-app` is now the Rspack 2 example** (manifest on the `rspack2`
-> catalog) and **`apps/tester-app-rspack1`** is the special case — a
+> **`tester-app` is now the Rspack 2 example** (on the workspace default
+> catalog, which is Rspack 2 since the 2026-07-03 flip — doc 08 § Catalog
+> flip) and **`apps/tester-app-rspack1`** is the special case — a
 > standalone app outside the workspace, v1 via tarball-installed repack. A
 > `loadRspack` project-context loading fix was implemented and then
 > **reverted by decision (2026-07-03)** — shipped code must not carry
@@ -237,8 +240,10 @@ window:
 - **`apps/tester-app` becomes the Rspack 2 example** (maintainer decision
   2026-07-03). In-workspace it already *runs* repack's devDep major (v2, see
   doc 08 § Discovery) — this just makes the manifest honest: `@rspack/core`
-  + `@swc/helpers` move to the new `rspack2` named catalog, and it gains
-  `@rspack/plugin-react-refresh: catalog:rspack2` plus a direct
+  + `@swc/helpers` pin the workspace **default catalog** (Rspack 2 since the
+  2026-07-03 flip; an interim `rspack2` named catalog existed for a few
+  hours and was folded into the default same day), and it gains
+  `@rspack/plugin-react-refresh: catalog:` plus a direct
   `react-refresh@^0.18.0` (pnpm-strict layouts don't hoist repack's copy
   into the official plugin's scope — doc 08 lab note). No other changes —
   full feature surface (assets matrix incl. remote, async/remote chunks,
@@ -263,10 +268,13 @@ genuinely run v1, so "tester-app stays on v1" was illusory and the mirror
 was redundant with tester-app itself.
 
 Other notes:
-- The `rspack2` named catalog in `pnpm-workspace.yaml` carries
+- The **default catalog** in `pnpm-workspace.yaml` carries
   `@rspack/core: ^2.1.2`, `@swc/helpers: ^0.5.23`,
-  `@rspack/plugin-react-refresh: ^2.0.2`; the default catalog stays v1 for
-  the remaining workspace consumers until phase 3.
+  `@rspack/plugin-react-refresh: ^2.0.2` (flipped 2026-07-03 — doc 08
+  § Catalog flip; the earlier plan kept the default on v1 until phase 3,
+  but the v1 default was cosmetic given devDep shadowing). Porting note:
+  this workspace change ships together with the integration-test v2 fixes
+  (see § Mechanics).
 - Node floor is a non-issue: the monorepo already requires Node ≥24.
 - No CI wiring — tester apps are a manual validation surface; device e2e
   stays in the follow-up. No changeset (private apps).
@@ -402,8 +410,21 @@ dual-support contract itself.
   (PR 6, feedback #3). The branch also gained the two PR 8 tester apps;
   a `loadRspack` project-context loader was implemented and **reverted**
   (2026-07-03 decision — no monorepo workarounds in shipped code).
-- Re-run per branch: `pnpm typecheck && pnpm build && pnpm test` (both
-  majors) in `packages/repack`, `npx biome check`.
+- **Catalog flip + integration-test v2 fixes travel together** (2026-07-03,
+  commits `41cc2d30`/`926ff298`/`55b6739e`): the default-catalog flip is what
+  puts the workspace integration rspack lane on v2, and the
+  `NativeEntryPlugin.test.ts` changes (version-agnostic markers, Rspack 2
+  module-factory regex, ANSI + URL-encoded-path normalization in
+  normalizeBundle, regenerated rspack-lane snapshots) are required for it to
+  be green — port them in the same PR (fits PR 8 or the workspace-adoption
+  slice). When regenerating rspack-lane snapshots, run once with
+  `FORCE_COLOR=3` locally to surface env-dependent output before CI does
+  (doc 08 § CI snapshot portability).
+- Re-run per branch: `pnpm turbo run typecheck test --force` at the root,
+  `pnpm test:rspack1` in `packages/repack` (the v1 jest lane), `pnpm lint:ci`.
+  For app-level checks: `pnpm bundle` in `apps/tester-federation` (plus the
+  `USE_WEBPACK=1` lane) and `pnpm run pack-repack && pnpm install &&
+  pnpm bundle:ios bundle:android` in `apps/tester-app-rspack1`.
 - Changesets: uniquely-named file per PR (no conflicts); patch-level on PRs
   2–5 where user-visible, the headline minor ("Rspack 2 support") on PR 7.
   The reference branch's single `.changeset/rspack-2-support.md` gets split

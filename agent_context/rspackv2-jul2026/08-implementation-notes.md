@@ -18,7 +18,21 @@ the original conversation.
 | `f623076f` | docs moved to `agent_context/rspackv2-jul2026/` |
 | `2f50d03b` | agent_context lifecycle refinement |
 | `9075eb20` | docs: external sources cited |
-| *(working tree)* | **2026-07-02/03, not yet committed:** the post-feedback reworks — warn-only cache, vendor-directory move, per-major tester apps (tester-app → v2 example, standalone tester-app-rspack1), `loadRspack` implemented-then-reverted — see § Reference branch updates below. The sections above describe the branch as of `d0ea05d6`/`ba841a6a`; where they conflict, § Reference branch updates wins. |
+| `4c6c1ab9` | **refactor: warn about legacy experiments.cache instead of auto-migrating it** (feedback #5) |
+| `a4e77af0` | **refactor: move vendored react-refresh client files to package-root vendor/** (feedback #2) |
+| `ff80bdc8` | **test: add RSPACK_MAJOR jest lane** (doc 09 PR 2 spec + lane-guard test) |
+| `95ed7aab` | **feat: per-major tester apps** — tester-app → v2 example, standalone tester-app-rspack1 lab |
+| `10a6dfa6` | docs: reworks, corrections (incl. jest-lane correction), on-device validation |
+| `41cc2d30` | **feat: flip the workspace default catalog to Rspack 2** (+ integration-test fixes for v2 output formats) |
+| `e9705ac6` | docs: catalog flip + true-v2 integration findings |
+| `926ff298` | **test: strip ANSI codes from bundle snapshots** (CI-only failure; see § CI snapshot portability) |
+| `55b6739e` | **test: normalize URL-encoded repo paths in MFv2 bundle snapshots** (CI-only failure; see § CI snapshot portability) |
+| `604392c8` | docs: empirical parallel-loader matrix (doc 10 §6) |
+
+All of the above are pushed; CI on the branch is **green** as of `55b6739e`
+(run 28670402784: TypeScript, Tests, Lint). The narrative sections below were
+written as of `d0ea05d6`/`ba841a6a`; where they conflict with later commits,
+§ Reference branch updates and § Catalog flip win.
 
 Draft PR for the whole branch: [#1393](https://github.com/callstack/repack/pull/1393)
 (to be closed in favor of the PR stack — see doc 09).
@@ -182,10 +196,11 @@ a rework), plus one new discovery made while validating them:
   construction. The `require.resolve('../../vendor/react-refresh/*')` paths
   resolve identically from `src/plugins` and `dist/plugins`.
 - **PR 8 apps** (restructured 2026-07-03, maintainer decision):
-  **`tester-app` is the Rspack 2 example** — its manifest moved to the new
-  `rspack2` named catalog (`@rspack/core@^2.1.2`, `@swc/helpers@^0.5.23`)
-  plus `@rspack/plugin-react-refresh: catalog:rspack2` and a direct
-  `react-refresh@^0.18.0`; **`apps/tester-app-rspack1`** is the special
+  **`tester-app` is the Rspack 2 example** — its manifest moved to an
+  interim `rspack2` named catalog, folded into the workspace **default**
+  catalog the same day (§ Catalog flip below): `@rspack/core@^2.1.2`,
+  `@swc/helpers@^0.5.23`, `@rspack/plugin-react-refresh` all `catalog:`,
+  plus a direct `react-refresh@^0.18.0`; **`apps/tester-app-rspack1`** is the special
   case (standalone v1, § Discovery below). An interim
   `apps/tester-app-rspack2` shared-src mirror (built + device-verified
   2026-07-02/03) was removed in the restructure: in-workspace, tester-app
@@ -214,8 +229,9 @@ the consequence is accepted and solved at the fixture level instead:
 - **In-workspace apps always run repack's devDep major (currently v2).**
   A v1 pin in a workspace app manifest would affect only that app's own
   types/`node_modules`, not what the CLI loads — which is why `tester-app`
-  was moved to the `rspack2` catalog (its manifest now matches what runs)
-  and no workspace app claims to be a v1 surface.
+  was moved to a v2 catalog pin — now the workspace default (§ Catalog
+  flip) — so its manifest matches what runs, and no workspace app claims
+  to be a v1 surface.
 - **The Rspack 1 validation surface is `apps/tester-app-rspack1`** — a
   standalone app *outside* the pnpm workspace (negation glob in the root
   `pnpm-workspace.yaml` + its own `pnpm-workspace.yaml` marking a separate
@@ -259,7 +275,7 @@ object/compilation surface**, not version-routing logic.
 - `tester-app-rspack1` (standalone, tarball install): `bundle:android` and
   `bundle:ios` print "(Rspack **1.7.12**) compiled successfully"; dev bundle
   contains the **vendored** refresh runtime and zero official-plugin refs.
-- `tester-app` (now manifested on the `rspack2` catalog): `bundle:android`
+- `tester-app` (manifested on the v2 catalog, now the default): `bundle:android`
   / `bundle:ios` → "(Rspack **2.1.2**) compiled successfully" incl.
   local/remote chunks + assets; dev bundle contains the **official
   plugin's** refresh runtime and zero vendored refs; its vitest suite
@@ -374,3 +390,28 @@ platforms (container + `mf-manifest.json` emitted) plus a dev-server smoke
 lab is outside the workspace and unaffected by catalogs; it was validated
 the same day (release bundles on 1.7.12, dev bundle served with the
 vendored refresh runtime).
+
+### CI snapshot portability (2026-07-03, post-flip)
+
+The first CI runs after the catalog flip failed on rspack-lane
+`NativeEntryPlugin` snapshots for two reasons that never reproduce in a
+default local run — both fixed in `normalizeBundle`
+(`tests/integration/src/plugins/NativeEntryPlugin.test.ts`), no product code
+involved:
+
+1. **ANSI color codes** (`926ff298`): Rspack 2 colorizes the diagnostics it
+   inlines into error-stub modules when the environment enables color (CI
+   does). The codes reach the bundle as escaped text (backslash-u001b + SGR)
+   inside the stub's string literal. Reproduce locally with `FORCE_COLOR=3`;
+   normalizeBundle strips both the raw and string-escaped forms.
+2. **Machine-specific absolute paths** (`55b6739e`): for
+   `@module-federation/enhanced` 0.15.x/0.21.x under Rspack 2,
+   `embed_federation_runtime` inlines a `data:` URI module whose URL-encoded
+   source embeds the absolute path to `webpack-bundler-runtime`
+   (`%2FUsers%2F...` locally vs `%2Fhome%2Frunner%2F...` on CI).
+   normalizeBundle now also rewrites the `encodeURIComponent` form of the
+   repo root; the snapshot files contain no machine paths (grep-verified).
+
+Rule of thumb this establishes: **regenerate rspack-lane snapshots with
+`FORCE_COLOR=3` locally at least once before pushing** — it surfaces the
+env-dependent class locally.
