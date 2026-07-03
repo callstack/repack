@@ -63,7 +63,9 @@ export type RemoveRecord<T> = T extends infer U & Record<string, any>
 
 type ConfigKeys =
   | 'name'
+  | 'cache'
   | 'context'
+  | 'experiments'
   | 'mode'
   | 'devServer'
   | 'entry'
