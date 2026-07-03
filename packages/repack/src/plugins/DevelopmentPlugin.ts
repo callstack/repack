@@ -154,20 +154,22 @@ export class DevelopmentPlugin {
 
   /**
    * Sets up React Refresh manually using the client runtime files vendored
-   * from `@rspack/plugin-react-refresh` - used for webpack and Rspack 1
-   * compilers, where the official v2 plugin cannot be applied.
+   * from `@rspack/plugin-react-refresh` (package-root `vendor/` directory,
+   * shipped as-is) - used for webpack and Rspack 1 compilers, where the
+   * official v2 plugin cannot be applied.
    *
    * @returns Path to the react-refresh entry module.
    */
   private setupManualReactRefresh(compiler: RspackCompiler): string {
+    // resolves from both src/plugins and dist/plugins to the package root
     const reactRefreshPath = require.resolve(
-      '../modules/reactRefresh/reactRefresh.js'
+      '../../vendor/react-refresh/reactRefresh.js'
     );
     const refreshUtilsPath = require.resolve(
-      '../modules/reactRefresh/refreshUtils.js'
+      '../../vendor/react-refresh/refreshUtils.js'
     );
     const reactRefreshEntryPath = require.resolve(
-      '../modules/reactRefresh/reactRefreshEntry.js'
+      '../../vendor/react-refresh/reactRefreshEntry.js'
     );
 
     new compiler.webpack.ProvidePlugin({
