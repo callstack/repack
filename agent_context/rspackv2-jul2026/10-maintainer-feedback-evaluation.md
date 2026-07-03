@@ -27,6 +27,22 @@ files is acceptable.
 for integrators and was removed in `@rspack/plugin-react-refresh@2`
 (doc 06). No revision needed; this de-risks the riskiest decision.
 
+**Empirical verification (2026-07-03).** Probed with a thread-id-reporting
+loader (worker_threads) against both real majors, `experiments.parallelLoader`
+unset unless stated:
+
+| @rspack/core | `use[].parallel` | `experiments.parallelLoader` | loader ran in |
+| --- | --- | --- | --- |
+| 2.1.2 | true | *(removed)* | **worker thread** |
+| 2.1.2 | false | *(removed)* | main thread |
+| 1.7.12 | true | not set | main thread (silently serial) |
+| 1.7.12 | true | true | **worker thread** |
+
+Confirms the shipped gating exactly: v1 needs both flags (so
+`getRepackConfig` keeps emitting the global one), v2 honors the per-rule
+flag alone (so emitting nothing is correct and users keep parallel loading
+with no config change).
+
 **Plan impact.** None (confirmation). The considered-and-rejected alternative
 is recorded under #3 for completeness.
 
