@@ -157,7 +157,8 @@ resolves the main entry, so unaffected.
    dir created), while top-level `cache` works. A user migrating to v2 with a v1-style
    config **loses persistent caching without any signal**. Plan §1.2 gains a sub-item:
    when running v2 and `experiments.cache` is set, emit a warning pointing to top-level
-   `cache` (consider honoring it by copying it over).
+   `cache` (consider honoring it by copying it over). *(The "copy it over" idea was
+   later rejected by maintainer feedback #5 — warn-only, no mutation; doc 10 §5.)*
 3. **Break №2 (React Refresh) stands** as the only import-time hard crash, and the
    named-export-only detail was independently confirmed.
 4. **New: v2 config validation is loose** — unknown keys silently pass. Good for

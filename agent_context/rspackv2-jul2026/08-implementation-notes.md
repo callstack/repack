@@ -17,6 +17,8 @@ the original conversation.
 | `ba841a6a` | **refactor: replace type casts with proper typing** |
 | `f623076f` | docs moved to `agent_context/rspackv2-jul2026/` |
 | `2f50d03b` | agent_context lifecycle refinement |
+| `9075eb20` | docs: external sources cited |
+| *(working tree)* | **2026-07-02/03, not yet committed:** the post-feedback reworks — warn-only cache, vendor-directory move, per-major tester apps (tester-app → v2 example, standalone tester-app-rspack1), `loadRspack` implemented-then-reverted — see § Reference branch updates below. The sections above describe the branch as of `d0ea05d6`/`ba841a6a`; where they conflict, § Reference branch updates wins. |
 
 Draft PR for the whole branch: [#1393](https://github.com/callstack/repack/pull/1393)
 (to be closed in favor of the PR stack — see doc 09).
@@ -41,9 +43,12 @@ Draft PR for the whole branch: [#1393](https://github.com/callstack/repack/pull/
    choice there, not a misconfiguration).
 4. **Persistent cache** — `getRspackCacheConfig` reads both the v1
    (`experiments.cache`) and v2 (top-level `cache`) locations;
-   `migrateLegacyRspackCacheConfig` (called from `start`/`bundle` when
-   `isRspack2`) moves a legacy value to `cache` with a one-time warning —
+   `warnLegacyRspackCacheConfig` (called from `start`/`bundle` when
+   `isRspack2`) emits a one-time warning and leaves the config untouched —
    because v2 *silently ignores* the legacy key (verified in doc 07).
+   (Originally implemented as `migrateLegacyRspackCacheConfig`, which
+   auto-copied the value; reworked to warn-only per maintainer feedback #5 —
+   doc 10 §5.)
 5. **React Refresh** — per the doc 06 decision: `@rspack/plugin-react-refresh@1.0.0`
    dependency deleted; v2 plugin added as **optional peerDependency** (`^2.0.0`);
    `DevelopmentPlugin` splits on major — rspack≥2 applies the official plugin
@@ -51,8 +56,11 @@ Draft PR for the whole branch: [#1393](https://github.com/callstack/repack/pull/
    `reactRefreshLoader: '@callstack/repack/react-refresh-loader'`, lazily
    `require`d inside the branch since the package is ESM-only), webpack +
    rspack 1 use the manual wiring pointed at client files **vendored** into
-   `src/modules/reactRefresh/` (adapted from plugin v2.0.2, MIT; defines swap
-   the removed overlay flags for `__reload_on_runtime_errors__: false`).
+   the package-root `vendor/react-refresh/` (adapted from plugin v2.0.2,
+   MIT, with a LICENSE/provenance file; defines swap the removed overlay
+   flags for `__reload_on_runtime_errors__: false`). (Originally vendored
+   into `src/modules/reactRefresh/`; relocated per maintainer feedback #2 —
+   doc 10 §2.)
 6. **Tracing** — `profile-2.ts` defaults the trace layer to `'logger'` under
    v2 (published v2 binaries lack perfetto, verified V9).
 7. **MFv1 pre-check** — `ModuleFederationPluginV1.apply` verifies
@@ -132,8 +140,9 @@ rest-destructuring `devServer` off (it's not needed for bundling).
 
 - `pnpm typecheck` / `build` / `test` (280/280) / biome — clean;
   `turbo run build typecheck` green across all 12 workspace tasks.
-- **Smoke tests of the built dist** in isolated projects (Node 26), script
-  kept in the session scratchpad (`smoke.cjs`, labs `v1-lab`/`v2-lab`):
+- **Smoke tests of the built dist** in isolated projects (Node 26); the
+  script and lab setup are preserved in
+  [appendix-smoke-harness/](./appendix-smoke-harness/README.md):
   - Rspack **1.7.12**: parallelLoader kept, no parser override, cache
     accessor + migration, Node guard, full dev build with HMR + React Refresh
     via the **vendored files** — all PASS.
@@ -145,5 +154,168 @@ rest-destructuring `devServer` off (it's not needed for bundling).
     `resolveLoader.alias`; rspack-2 users of the official plugin also need
     `react-refresh` installed (pnpm-strict layouts won't hoist repack's copy
     into the plugin's resolution scope).
-- NOT yet verified (phase 3): device HMR e2e, tester apps, metro-compat /
-  resolver-cases suites under v2, CI matrix.
+- NOT yet verified (phase 3): metro-compat / resolver-cases suites under v2,
+  CI matrix. (Tester apps + device HMR were manually verified 2026-07-03 —
+  see § On-device validation below.)
+
+## Reference branch updates (2026-07-02, post-feedback)
+
+The maintainer-feedback reworks planned in [doc 09](./09-pr-split-plan.md) /
+[doc 10](./10-maintainer-feedback-evaluation.md) were applied directly to
+`feat/rspack-2-support` (so porting into the stack PRs is a cherry-pick, not
+a rework), plus one new discovery made while validating them:
+
+### Applied reworks
+
+- **Warn-only cache** (feedback #5, PR 4 material):
+  `commands/common/migrateLegacyRspackCacheConfig.ts` →
+  `warnLegacyRspackCacheConfig.ts`; warns once, mutates nothing; call sites
+  in `start.ts`/`bundle.ts` updated. Runtime-verified against the built dist
+  (warns exactly once, config untouched, accessor still reads the legacy
+  location).
+- **Vendor directory** (feedback #2, PR 6 material):
+  `src/modules/reactRefresh/` → package-root `vendor/react-refresh/` with an
+  upstream LICENSE/provenance file (files are verbatim upstream v2.0.2 client
+  files apart from headers/formatting — diffed to confirm). Shipped as-is via
+  `package.json#files` (`"vendor"`); excluded from biome
+  (`packages/repack/vendor/**`); outside the babel `src → dist` build by
+  construction. The `require.resolve('../../vendor/react-refresh/*')` paths
+  resolve identically from `src/plugins` and `dist/plugins`.
+- **PR 8 apps** (restructured 2026-07-03, maintainer decision):
+  **`tester-app` is the Rspack 2 example** — its manifest moved to the new
+  `rspack2` named catalog (`@rspack/core@^2.1.2`, `@swc/helpers@^0.5.23`)
+  plus `@rspack/plugin-react-refresh: catalog:rspack2` and a direct
+  `react-refresh@^0.18.0`; **`apps/tester-app-rspack1`** is the special
+  case (standalone v1, § Discovery below). An interim
+  `apps/tester-app-rspack2` shared-src mirror (built + device-verified
+  2026-07-02/03) was removed in the restructure: in-workspace, tester-app
+  already runs v2, so a nominally-v1 tester-app plus a v2 mirror was one
+  app too many and the wrong one labeled.
+
+### Discovery: repack's devDep shadows the project's rspack in-workspace
+
+First smoke run of the two tester apps showed **both** compiling with Rspack
+2.1.2 — including `tester-app`, whose manifest pins `@rspack/core@^1.6.0`.
+Cause: `Compiler.ts`/`bundle.ts`/`profile-*.ts` do a bare
+`import { rspack } from '@rspack/core'`, which from `packages/repack/dist`
+resolves repack's **own devDependency** (v2, added for types/tests) before
+the app's copy — because workspace apps link repack as a symlink, so
+resolution walks up from `packages/repack`. Published packages are
+unaffected (`@rspack/core` is only a peer there; tarball installs have no
+nested `node_modules`), but in-workspace no app manifest can pin Rspack 1.
+
+**Decision (Daniel, 2026-07-03): do NOT work around this in shipped code.**
+A first fix (`helpers/loadRspack.ts`, resolving `@rspack/core` from the
+project root and threading context through the commands) was implemented,
+verified, and then **reverted** — it let monorepo layout details leak into
+the published package. The shipped code keeps plain `import '@rspack/core'`;
+the consequence is accepted and solved at the fixture level instead:
+
+- **In-workspace apps always run repack's devDep major (currently v2).**
+  A v1 pin in a workspace app manifest would affect only that app's own
+  types/`node_modules`, not what the CLI loads — which is why `tester-app`
+  was moved to the `rspack2` catalog (its manifest now matches what runs)
+  and no workspace app claims to be a v1 surface.
+- **The Rspack 1 validation surface is `apps/tester-app-rspack1`** — a
+  standalone app *outside* the pnpm workspace (negation glob in the root
+  `pnpm-workspace.yaml` + its own `pnpm-workspace.yaml` marking a separate
+  workspace root), with its own `node_modules` and repack installed from a
+  **packed tarball** (`pnpm run pack-repack` → `file:./callstack-repack.tgz`)
+  so resolution behaves exactly like a real user project. Minimal own src
+  (async local chunk + HMR target; not shared with tester-app — sharing src
+  across the workspace boundary would load two copies of react). See its
+  README.
+- The dual-major **unit** lane (`pnpm test:rspack1`) is unaffected — the
+  Jest environment explicitly loads the aliased `@rspack/core-v1`.
+
+### Correction (2026-07-03): the dual-major unit lane didn't exist until now
+
+Earlier notes in this doc claimed "280/280 under both majors" via
+`RSPACK_MAJOR=1 pnpm test`. **That claim was wrong**: `jest.environment.js`
+unconditionally imported `@rspack/core` (v2) and no `@rspack/core-v1` alias
+or `test:rspack1` script existed — the env var was silently ignored, so both
+runs tested v2. (Caught by an external review of the docs, 2026-07-03.)
+
+The lane described in doc 09 (PR 2 § testing) is now **implemented on the
+reference branch**: aliased devDep `"@rspack/core-v1": "npm:@rspack/core@^1.7.12"`,
+`jest.environment.js` parameterized on `RSPACK_MAJOR` (v1 via plain
+`require` — CJS, outside the sandbox; v2 via `await import`), exposed
+`__RSPACK_MAJOR__` global, and `"test:rspack1": "cross-env RSPACK_MAJOR=1 jest"`
+(cross-env for Windows shells, per the doc 09 note). A permanent guard test
+(`src/__tests__/rspackTestLane.test.ts`) asserts the loaded core's major
+matches the requested lane, so a silently-unwired lane can't pass again.
+Verified for real: **281/281 under v2 and under v1 (1.7.12)** — including
+the plugin suites that run actual compilations (OutputPlugin, CodeSigning,
+MFv2). No test needed `__RSPACK_MAJOR__` gating yet: the suite's
+version-detection paths resolve repack's own devDep (v2) in-workspace either
+way (see § Discovery), so the v1 lane's coverage is the real v1 **core
+object/compilation surface**, not version-routing logic.
+
+### Verification (2026-07-02/03, after the revert where relevant)
+
+- `pnpm build` / `typecheck` / biome clean; `pnpm test` and
+  `pnpm test:rspack1`: **281/281 under both majors** — see the correction
+  below on when the v1 lane became real.
+- `tester-app-rspack1` (standalone, tarball install): `bundle:android` and
+  `bundle:ios` print "(Rspack **1.7.12**) compiled successfully"; dev bundle
+  contains the **vendored** refresh runtime and zero official-plugin refs.
+- `tester-app` (now manifested on the `rspack2` catalog): `bundle:android`
+  / `bundle:ios` → "(Rspack **2.1.2**) compiled successfully" incl.
+  local/remote chunks + assets; dev bundle contains the **official
+  plugin's** refresh runtime and zero vendored refs; its vitest suite
+  passes (12/12).
+- Appendix smoke-harness assertions updated to warn-only (2b) and the new
+  vendored path (4b).
+
+## On-device validation (2026-07-03, agent-device)
+
+Run on real targets — Android: **Pixel 7 (physical device)**; iOS:
+**iPhone 17 simulator**. Final state after the 2026-07-03 restructure
+(tester-app = v2 example, standalone tester-app-rspack1 = v1 lane); all with
+clean shipped code (post-`loadRspack`-revert):
+
+- **`tester-app` (Rspack 2.1.2, official refresh plugin), both platforms**,
+  including the interactive flows (not just passive rendering):
+  - all six sections render; async local chunk auto-loads;
+  - **Remote chunks**: "Prefetch chunk" → button flips to "Prefetched",
+    "Load chunk" → "Remote: this text comes from remote chunk";
+  - **Mini-apps**: Install (chunk fetch) → Show → "MiniApp: this text comes
+    from MiniApp" + its embedded PNG renders → Hide/Remove
+    (`invalidateScripts`) re-enables Install;
+  - **Assets test incl. the remote asset**: with
+    `pnpm serve-remote-assets:<platform>` running (http-server :9999 over
+    `build/output/<platform>/remote`, populated by `bundle:<platform>`;
+    plus `adb reverse tcp:9999 tcp:9999` on Android), all three frames
+    (local / inline / remote) render — the :9999 access log shows the
+    device fetching `remote-assets/.../webpack@3x.png`. **Without that
+    server the remote frame is blank** — that is environment setup, not a
+    Re.Pack regression;
+  - live React Refresh edit+revert; Reanimated + NativeWind sections render.
+- **`tester-app-rspack1` (standalone, Rspack 1.7.12, vendored refresh
+  runtime), both platforms**: boot, async local chunk auto-loads, live
+  React Refresh edit+revert.
+
+Notes: the only in-app console warning anywhere was RN's own `SafeAreaView`
+deprecation (pre-existing, unrelated). The removed interim
+`tester-app-rspack2` mirror had also passed the same checks minus the
+button-driven flows before its removal.
+
+Practical notes for re-running (also apply to CI/e2e follow-up):
+- RNTA's gradle **requires** a `resources` section in `app.json` (crashes
+  with `containsKey() on null` without one) — chunk filenames in it are
+  path-derived, so apps with different roots get different names (e.g.
+  `tester-app-rspack1` uses `src_Async_local_tsx.chunk.bundle`).
+- The RN CLI's wrapped `pod install` step is flaky when the `resources`
+  files don't exist yet; `pnpm bundle:ios` once (or manual
+  `bundle exec pod install`) unblocks it. `RBENV_VERSION` may need overriding
+  (tester-app pins `.ruby-version` 2.7.6, which isn't installed) and
+  CocoaPods needs a UTF-8 locale in non-interactive shells.
+- Android: the app's main bundle comes from device `localhost:8081`
+  (`adb reverse tcp:8081 tcp:<server port>`); chunks use the
+  `__PUBLIC_PORT__` baked into the bundle (repack auto-reverses that port).
+  iOS simulator: `xcrun simctl spawn booted defaults write <bundle id>
+  RCT_jsLocation "127.0.0.1:<port>"` before relaunch.
+- `tester-app-rspack1` setup: `pnpm run pack-repack && pnpm install` in the
+  app dir (re-run both after changing `packages/repack` — the tarball is a
+  snapshot). Its copied Android shell needed tester-app's
+  async-storage-specific maven block removed from `build.gradle`.

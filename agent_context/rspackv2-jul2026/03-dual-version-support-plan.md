@@ -47,6 +47,15 @@ Refactor `commands/rspack/profile/index.ts` to use it. For code paths that can't
 - Decide the default for `apps/tester-app` (suggest: v2, since that's the future) and keep
   at least one app/test suite on v1.
 
+> ⚠️ **AMENDED (2026-07-03, decided & implemented — see doc 08 § Discovery and
+> doc 09 PR 8):** `tester-app` **is** the Rspack 2 example (manifest on the
+> `rspack2` named catalog). But "keep at least one app on v1" cannot be a
+> *workspace* app: in-workspace, repack's `@rspack/core@^2` devDependency
+> shadows any app-level v1 pin, and shipped code deliberately carries no
+> monorepo-aware resolution workaround. The v1 surface is the **standalone**
+> `apps/tester-app-rspack1` (outside the workspace, own node_modules, repack
+> installed from a packed tarball).
+
 ## Phase 1 — Fix the confirmed breaks
 
 ### 1.1 `experiments.parallelLoader` (config generation)
@@ -154,6 +163,16 @@ engine crash into a supported-configuration error.
   `ModuleFederationPluginV2.ensureModuleFederationPackageInstalled`).
 - Establish and document the supported `@module-federation/enhanced` version range per
   Rspack major; run `tester-federation` and `tester-federation-v2` against both majors.
+
+> ⚠️ **AMENDED (2026-07-03):** the pre-check is implemented (reference
+> branch; PR 5 in [doc 09](./09-pr-split-plan.md), maintainer-approved). The
+> enhanced-range + federation-app runs move to the **workspace-adoption
+> follow-up** (doc 09 § Follow-up) with an important caveat: in-workspace,
+> the federation apps always run repack's `@rspack/core@^2` devDependency
+> (doc 08 § Discovery), so those runs only cover **v2**. True-v1 federation
+> validation needs a standalone lab (the `tester-app-rspack1`
+> tarball-install pattern, plus `@module-federation/enhanced`) — scoped in
+> the follow-up, not this stack.
 
 ### 2.4 Minimizer
 

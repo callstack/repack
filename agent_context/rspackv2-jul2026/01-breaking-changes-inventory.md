@@ -23,13 +23,18 @@ change affects **Re.Pack users' projects** instead.
 
 ## Configuration schema (validation is on by default in 2.0)
 
+> Note (verified against 2.1.2, [doc 07](./07-verification-results.md)):
+> despite "validation on by default", unknown top-level and `experiments`
+> keys are **silently accepted** — removed keys are TS-type and semantic
+> issues (dead config), not reliable runtime validation failures.
+
 | # | Change | Upstream ref | Impact on Re.Pack |
 | --- | --- | --- | --- |
-| 6 | **`experiments.parallelLoader` removed** (stable; opt-in stays via `module.rules[].use[].parallel`) | [PR #12658](https://github.com/web-infra-dev/rspack/pull/12658) | **HIGH — confirmed break.** `getRepackConfig` sets `experiments: { parallelLoader: true }` for rspack → schema validation error on every Rspack 2 build. |
+| 6 | **`experiments.parallelLoader` removed** (stable; opt-in stays via `module.rules[].use[].parallel` — re-verified against the migration guide 2026-07-02, [doc 10 §6](./10-maintainer-feedback-evaluation.md)) | [PR #12658](https://github.com/web-infra-dev/rspack/pull/12658) | **MEDIUM — confirmed break (severity revised, [doc 07](./07-verification-results.md)).** `getRepackConfig` sets `experiments: { parallelLoader: true }` for rspack → **silently ignored** under v2 (validation is loose, not a schema error): dead config, rejected by v2 TS types, and the loader's parallel-mode warning probe goes permanently quiet. Still gated by major. |
 | 7 | **`experiments.cache` → top-level `cache`** (persistent cache stable) | [PR #12705](https://github.com/web-infra-dev/rspack/pull/12705) | **HIGH — confirmed break.** `--reset-cache` reads `config.experiments?.cache`; `resetPersistentCache` types derive from `experiments.cache` (gone from v2 types). |
 | 8 | `experiments.incremental` → top-level `incremental` | [PR #12793](https://github.com/web-infra-dev/rspack/pull/12793) | **NONE.** Not set by us. |
 | 9 | `experiments.lazyCompilation` → top-level `lazyCompilation` | [PRs #12721, #12736](https://github.com/web-infra-dev/rspack/pull/12721) | **NONE.** Not set by us. Doc-only impact for users. |
-| 10 | Removed stabilized experiments: `topLevelAwait`, `lazyBarrel`, `inlineConst`, `inlineEnum`, `typeReexportsPresence`, `layers`, `css`, `outputModule` (→ `output.module`), `rspackFuture` | [PRs #12722–#12744, #12654](https://github.com/web-infra-dev/rspack/pull/12722) | **NONE for us**; **LOW (users)** — any user config setting these keys fails validation in v2. Worth a migration-guide note on our docs site. |
+| 10 | Removed stabilized experiments: `topLevelAwait`, `lazyBarrel`, `inlineConst`, `inlineEnum`, `typeReexportsPresence`, `layers`, `css`, `outputModule` (→ `output.module`), `rspackFuture` | [PRs #12722–#12744, #12654](https://github.com/web-infra-dev/rspack/pull/12722) | **NONE for us**; **LOW (users)** — user configs setting these keys get **dead config** under v2 (silently ignored — validation is loose, see note above; the keys are also rejected by v2 TS types for typed configs). Worth a migration-guide note on our docs site. |
 | 11 | **`stats.toJson()` defaults** — `modules`, `assets`, `chunks`, `chunkGroups`, `entryPoints` now default to `false` | [PR #12701](https://github.com/web-infra-dev/rspack/pull/12701) | **LOW.** All our `toJson()` calls pass explicit options (`OutputPlugin`, `LoggerPlugin`, `Compiler`). User-facing: `bundle --json` output content depends on user `stats` config and may shrink. |
 | 12 | **`profile` and `stats.profile` removed** (use tracing/Rsdoctor) | [PR #12662](https://github.com/web-infra-dev/rspack/pull/12662) | **LOW.** Our `--trace-*` profiling uses env-var tracing, already version-branched (`profile-1.4.ts` vs `profile-legacy.ts`); needs a compat check for the v2 tracing API. |
 | 13 | `module.unsafeCache` removed | migration guide | **NONE.** Not used. (Refactor was deferred, removal landed in the guide.) |

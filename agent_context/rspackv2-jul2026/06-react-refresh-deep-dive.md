@@ -106,6 +106,8 @@ custom loader, and the overlay problem evaporated because v2 deleted the overlay
 > - **Rspack 1 + webpack** → vendor the three client files (adapted from v2, MIT,
 >   overlay-free) into `packages/repack/src/modules`; keep today's manual wiring pointed at
 >   them, swapping the removed overlay defines for `__reload_on_runtime_errors__: false`.
+>   *(Location later amended per maintainer feedback #2: package-root
+>   `vendor/react-refresh/` shipped as-is, with a LICENSE/provenance file — doc 10 §2.)*
 >   No `moduleCache` tap needed — today's manual wiring already works without it on
 >   rspack 1/webpack.
 > - **No interim step** — this lands directly in the dual-support release. When Rspack 1
@@ -158,7 +160,9 @@ package:
 
 - Adapt the three v2 client files (MIT, originally ported from
   `@pmmmwh/react-refresh-webpack-plugin`; RN needs no overlay so it's ~150–200 lines total)
-  into `packages/repack/src/modules`, next to `WebpackHMRClient`.
+  into `packages/repack/src/modules`, next to `WebpackHMRClient`. *(Amended per
+  maintainer feedback #2: they live at package-root `vendor/react-refresh/`,
+  shipped as-is — doc 10 §2.)*
 - Manual wiring changes only in the defines: drop
   `__react_refresh_error_overlay__` / `__react_refresh_socket__` (v1-file contract), add
   `__reload_on_runtime_errors__: false` (v2-file contract).

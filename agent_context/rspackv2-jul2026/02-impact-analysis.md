@@ -12,7 +12,7 @@ External sources referenced throughout:
 
 ## Confirmed breaks (Rspack 2 build fails or code throws)
 
-### 1. `experiments.parallelLoader` injection — config validation error
+### 1. `experiments.parallelLoader` injection — dead config (silently ignored)
 
 `packages/repack/src/commands/common/config/getRepackConfig.ts:3-7`
 
@@ -95,8 +95,9 @@ read `config.cache ?? config.experiments?.cache` and widen the type.
 **Verified against 2.1.2 ([07](./07-verification-results.md))**: `experiments.cache` is
 **silently inert** under v2 — the build succeeds with no warning and no cache directory is
 created, while top-level `cache` works. So beyond the `--reset-cache` fix, Re.Pack should
-warn (or auto-migrate the value) when it detects a v1-style cache config under v2, or
-users silently lose persistent caching.
+warn when it detects a v1-style cache config under v2, or users silently lose persistent
+caching. *(Auto-migrating the value was considered and rejected — maintainer feedback #5,
+warn-only; doc 10 §5.)*
 
 ## Structural: ESM-only `@rspack/core` + Node floor
 

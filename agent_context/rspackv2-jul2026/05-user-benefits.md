@@ -40,8 +40,10 @@ matters for React Native + Re.Pack workflows.
 
 ## DX & correctness
 
-- **Config validation on by default** — typos in `rspack.config.*` fail fast instead of
-  being silently ignored.
+- **Config validation on by default** — announced as catching config mistakes early.
+  *In practice weaker than the announcement (verified against 2.1.2, [doc 07](./07-verification-results.md)):
+  unknown top-level and `experiments` keys are silently accepted — validation catches some
+  structural invariants, not typos or removed keys. Don't rely on it as a migration signal.*
 - **Top-level `target` propagates to SWC/LightningCSS/minimizers** — one place to declare
   the syntax floor instead of three (Re.Pack still pins RN-appropriate loader options, but
   user overrides get simpler).
