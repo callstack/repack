@@ -15,7 +15,6 @@ import {
   getMaxWorkers,
   getMimeType,
   getRspackCacheConfig,
-  migrateLegacyRspackCacheConfig,
   parseUrl,
   resetPersistentCache,
   resolveProjectPath,
@@ -23,6 +22,7 @@ import {
   setupEnvironment,
   setupInteractions,
   setupRspackEnvironment,
+  warnLegacyRspackCacheConfig,
 } from '../common/index.js';
 import logo from '../common/logo.js';
 import type { CliConfig, StartArguments } from '../types.js';
@@ -60,9 +60,9 @@ export async function start(
   });
 
   // Rspack 2 silently ignores the legacy `experiments.cache` option -
-  // honor it by moving it to the top-level `cache` option & warn the user
+  // warn the user so they migrate it to the top-level `cache` option
   if (isRspack2(cliConfig.root)) {
-    migrateLegacyRspackCacheConfig(configs);
+    warnLegacyRspackCacheConfig(configs);
   }
 
   // expose selected args as environment variables
