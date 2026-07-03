@@ -54,22 +54,31 @@ function normalizeBundle(code: string): string {
   // Webpack mangles absolute paths into variable names with underscores
   const mangledRoot = REPO_ROOT.replaceAll(/[^a-zA-Z0-9]/g, '_');
   const compactMangledRoot = mangledRoot.replaceAll(/_+/g, '_');
-  return code
-    .replaceAll(
-      // Rspack 2 colorizes the diagnostics it inlines into error-stub modules
-      // when the environment enables color (e.g. CI). The codes reach the
-      // bundle as escaped text (backslash-u001b) inside the stub error's
-      // string literal - strip both forms so snapshots are env-independent.
-      /(?:\u001b|\\u001b)\[[0-9;]*m/g,
-      ''
-    )
-    .replaceAll(REPO_ROOT, '<rootDir>')
-    .replaceAll(mangledRoot, '_rootDir_')
-    .replaceAll(compactMangledRoot, '_rootDir_')
-    .replace(
-      /\.federation\/entry\.[a-f0-9]+\.js/g,
-      '.federation/entry.HASH.js'
-    );
+  return (
+    code
+      .replaceAll(
+        // Rspack 2 colorizes the diagnostics it inlines into error-stub modules
+        // when the environment enables color (e.g. CI). The codes reach the
+        // bundle as escaped text (backslash-u001b) inside the stub error's
+        // string literal - strip both forms so snapshots are env-independent.
+        /(?:\u001b|\\u001b)\[[0-9;]*m/g,
+        ''
+      )
+      .replaceAll(REPO_ROOT, '<rootDir>')
+      // MF v2's embed_federation_runtime (0.15.x/0.21.x) inlines a data: URI
+      // module whose URL-encoded source embeds the absolute path to
+      // @module-federation/webpack-bundler-runtime
+      .replaceAll(
+        encodeURIComponent(REPO_ROOT),
+        encodeURIComponent('<rootDir>')
+      )
+      .replaceAll(mangledRoot, '_rootDir_')
+      .replaceAll(compactMangledRoot, '_rootDir_')
+      .replace(
+        /\.federation\/entry\.[a-f0-9]+\.js/g,
+        '.federation/entry.HASH.js'
+      )
+  );
 }
 
 /**
