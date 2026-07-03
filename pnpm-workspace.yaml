@@ -1,6 +1,9 @@
 packages:
   - "packages/*"
   - "apps/*"
+  # standalone Rspack 1 lab - has its own node_modules and installs repack
+  # from a packed tarball, so workspace resolution never leaks into it
+  - "!apps/tester-app-rspack1"
   - "tests/*"
   - "website"
 
@@ -32,6 +35,13 @@ catalog:
   "vitest": ^4.1.0
 
 catalogs:
+  # Rspack 2 lane for apps/tester-app - the default catalog stays on
+  # Rspack 1 while 5.x promises dual support (the Rspack 1 validation app is
+  # the standalone apps/tester-app-rspack1)
+  rspack2:
+    "@rspack/core": ^2.1.2
+    "@rspack/plugin-react-refresh": ^2.0.2
+    "@swc/helpers": ^0.5.23
   testers:
     "@types/react": ^19.2.0
     "react-native-test-app": 5.1.0

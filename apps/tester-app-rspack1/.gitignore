@@ -1,0 +1,8 @@
+# standalone lab - its install artifacts stay out of the repository
+node_modules/
+pnpm-lock.yaml
+callstack-repack.tgz
+.repack-pack/
+build/
+ios/Pods/
+ios/*.xcworkspace/
