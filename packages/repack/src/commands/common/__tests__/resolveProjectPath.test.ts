@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { resolveProjectPath } from '../resolveProjectPath.js';
 
 describe('resolveProjectPath', () => {
@@ -6,7 +7,9 @@ describe('resolveProjectPath', () => {
     expected: string,
     root = '/project/root'
   ) => {
-    expect(resolveProjectPath(input, root)).toBe(expected);
+    // path.resolve makes the expectation platform-agnostic - on Windows the
+    // resolved paths carry a drive letter and win32 separators
+    expect(resolveProjectPath(input, root)).toBe(path.resolve(expected));
   };
 
   it('should resolve [projectRoot] prefix correctly', () => {
@@ -40,5 +43,14 @@ describe('resolveProjectPath', () => {
       '/a/very/deep/file.js',
       '/a/b/c/d/e/f'
     );
+  });
+
+  it('should resolve correctly when up-level navigation reaches the filesystem root', () => {
+    // regression: string-replace + path.join composition produced UNC-like
+    // `\\...` paths on Windows once the `../` navigation collapsed rootDir
+    // to the bare filesystem root
+    expectResolved('[projectRoot^1]/src/index.js', '/src/index.js', '/project');
+    expectResolved('[projectRoot^2]/index.js', '/index.js', '/project/root');
+    expectResolved('[projectRoot^4]/index.js', '/index.js', '/a/b');
   });
 });
