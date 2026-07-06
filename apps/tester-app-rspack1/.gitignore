@@ -6,3 +6,4 @@ callstack-repack.tgz
 build/
 ios/Pods/
 ios/*.xcworkspace/
+.xcode.env
