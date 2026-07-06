@@ -14,7 +14,7 @@ import {
   getDevMiddleware,
   getMaxWorkers,
   getMimeType,
-  getRspackCacheConfig,
+  getRspackCacheConfigs,
   parseUrl,
   resetPersistentCache,
   resolveProjectPath,
@@ -84,7 +84,7 @@ export async function start(
     resetPersistentCache({
       bundler: 'rspack',
       rootDir: cliConfig.root,
-      cacheConfigs: configs.map(getRspackCacheConfig),
+      cacheConfigs: configs.flatMap(getRspackCacheConfigs),
     });
   }
 
