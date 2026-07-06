@@ -19,6 +19,7 @@
     "bracketSpacing": true,
     "ignore": [
       "pnpm-lock.yaml",
+      "packages/repack/vendor/**",
       "tests/metro-compat/**/__tests__/**",
       "website/src/2.x/**",
       "website/src/3.x/**",
@@ -27,7 +28,11 @@
   },
   "organizeImports": {
     "enabled": true,
-    "ignore": ["templates/*", "tests/metro-compat/**/__tests__/**"]
+    "ignore": [
+      "templates/*",
+      "packages/repack/vendor/**",
+      "tests/metro-compat/**/__tests__/**"
+    ]
   },
   "linter": {
     "enabled": true,
@@ -55,7 +60,11 @@
         "noConfusingVoidType": "off"
       }
     },
-    "ignore": ["templates/*", "tests/metro-compat/**/__tests__/**"]
+    "ignore": [
+      "templates/*",
+      "packages/repack/vendor/**",
+      "tests/metro-compat/**/__tests__/**"
+    ]
   },
   "javascript": {
     "formatter": {
