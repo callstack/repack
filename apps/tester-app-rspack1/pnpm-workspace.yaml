@@ -1,0 +1,4 @@
+# Marks this directory as its own workspace root, so pnpm treats it as a
+# standalone project instead of a member of the repository workspace.
+# See README.md for why this app must stay outside the workspace.
+packages: []
