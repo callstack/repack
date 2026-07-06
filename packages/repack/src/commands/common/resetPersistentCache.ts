@@ -21,14 +21,20 @@ export interface RspackConfigurationWithLegacyCache {
 type WebpackCacheOptions = WebpackConfiguration['cache'];
 
 /**
- * Reads the persistent cache configuration from a Rspack config,
- * supporting both the Rspack 1 (`experiments.cache`) and
- * Rspack 2 (top-level `cache`) locations.
+ * Collects the persistent cache configurations from a Rspack config,
+ * covering both the Rspack 1 (`experiments.cache`) and
+ * Rspack 2 (top-level `cache`) locations. A merged or dual-major config
+ * can carry both keys and which one is active depends on the installed
+ * Rspack major, so `--reset-cache` clears both locations.
  */
-export function getRspackCacheConfig(
+export function getRspackCacheConfigs(
   config: RspackConfigurationWithLegacyCache
-): RspackCacheOptions {
-  return config.experiments?.cache ?? config.cache;
+): RspackCacheOptions[] {
+  const cacheConfigs = [config.experiments?.cache, config.cache].filter(
+    (cacheConfig) => cacheConfig !== undefined
+  );
+  // without an explicit cache config, the default cache location still applies
+  return cacheConfigs.length > 0 ? cacheConfigs : [undefined];
 }
 
 function getDefaultCacheDirectory(

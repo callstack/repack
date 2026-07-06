@@ -4,7 +4,7 @@ import { CLIError } from '../../helpers/index.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getMaxWorkers,
-  getRspackCacheConfig,
+  getRspackCacheConfigs,
   normalizeStatsOptions,
   resetPersistentCache,
   setupEnvironment,
@@ -50,7 +50,7 @@ export async function bundle(
     resetPersistentCache({
       bundler: 'rspack',
       rootDir: cliConfig.root,
-      cacheConfigs: [getRspackCacheConfig(config)],
+      cacheConfigs: getRspackCacheConfigs(config),
     });
   }
 
