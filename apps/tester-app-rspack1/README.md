@@ -39,6 +39,11 @@ pnpm install           # standalone install (own lockfile, gitignored)
 Re-run both steps after changing `packages/repack` - the tarball is a
 snapshot, not a link.
 
+The lockfile is intentionally untracked: it pins the locally packed tarball,
+which changes on every `pack-repack`. The local `.npmrc` sets
+`frozen-lockfile=false` so plain `pnpm install` also works in CI (where pnpm
+would otherwise default to a frozen lockfile).
+
 ## Usage
 
 ```sh
