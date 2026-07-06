@@ -193,7 +193,14 @@ export class DevelopmentPlugin {
 
     compiler.options.module.rules.unshift({
       test: REACT_REFRESH_LOADER_TEST,
-      exclude: REACT_REFRESH_LOADER_EXCLUDE,
+      // like upstream, exclude the refresh runtime files themselves - they
+      // live outside of node_modules in workspace (symlinked) installs
+      exclude: [
+        REACT_REFRESH_LOADER_EXCLUDE,
+        reactRefreshPath,
+        refreshUtilsPath,
+        reactRefreshEntryPath,
+      ],
       use: '@callstack/repack/react-refresh-loader',
     });
 
