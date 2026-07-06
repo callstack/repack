@@ -56,11 +56,15 @@ identical to v1.
 Rspack 2 moved the persistent cache configuration from `experiments.cache`
 to top-level `cache` (same shape) and **silently ignores** the legacy key.
 
-- `getRspackCacheConfig` reads both locations, so `--reset-cache` works
-  against configs written for either major.
+- `getRspackCacheConfigs` collects the cache configuration from **both**
+  locations, so `--reset-cache` clears every candidate directory regardless
+  of which major the config was written for (with both keys set, the wrong
+  cache would otherwise survive a reset under v2).
 - Under Rspack 2 with `experiments.cache` set, `warnLegacyRspackCacheConfig`
-  emits a one-time warning pointing at the top-level option. The config is
-  left untouched — migration is the user's action.
+  emits a one-time warning pointing at the top-level option — unless the
+  same config already sets a top-level persistent cache (then the leftover
+  legacy key is inert and no warning fires). The config is left untouched —
+  migration is the user's action.
 
 ## React Refresh
 
@@ -76,8 +80,10 @@ to top-level `cache` (same shape) and **silently ignores** the legacy key.
   vendored at `packages/repack/vendor/react-refresh/` (adapted from
   upstream plugin v2.0.2, MIT, with a LICENSE/provenance file). The
   `vendor/` directory ships as-is via `package.json#files` and is excluded
-  from linting and the babel build. There is no dependency on
-  `@rspack/plugin-react-refresh@1`.
+  from linting and the babel build. The refresh loader rule excludes the
+  vendored runtime files themselves (mirroring the official plugin's
+  self-exclusion) so they are never re-processed in symlinked-workspace
+  layouts. There is no dependency on `@rspack/plugin-react-refresh@1`.
 
 ## Tracing / profiling
 
