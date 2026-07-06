@@ -9,4 +9,3 @@ To move a project to Rspack 2:
 - Use Node.js `^20.19.0 || >=22.12.0` - required by Rspack 2 itself; Re.Pack raises a clear error on older versions instead of failing with `ERR_REQUIRE_ESM`
 - Install `@rspack/plugin-react-refresh@^2` and `react-refresh` - under Rspack 2, development/HMR support is wired through the official React Refresh plugin
 - Move any `experiments.cache` configuration to the top-level `cache` option - Rspack 2 ignores the legacy location, and Re.Pack warns when it detects it
-- Module Federation v1 users: install `@module-federation/runtime-tools` - it is no longer installed automatically with Rspack 2
