@@ -831,6 +831,8 @@ importers:
         specifier: 'catalog:'
         version: 4.1.0(@types/node@20.19.31)(jiti@2.6.1)(lightningcss@1.28.2)(terser@5.31.3)(yaml@2.8.2)
 
+  tests/rspack-compat: {}
+
   website:
     dependencies:
       '@callstack/rspress-preset':

@@ -1,0 +1,7 @@
+{
+  "name": "react-native",
+  "version": "0.84.1",
+  "description": "Stub of react-native for the rspack-compat smoke fixtures - covers the modules imported by Re.Pack's development runtime (real RN sources need the full flow/babel loader chain, which is out of scope for wiring-level smoke tests)",
+  "private": true,
+  "main": "index.js"
+}

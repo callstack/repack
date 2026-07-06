@@ -1,0 +1,11 @@
+{
+  "name": "rspack-compat-fixture-rspack-1",
+  "version": "0.0.1",
+  "description": "Rspack 1 smoke fixture - installs @callstack/repack from a packed tarball like a real user project",
+  "private": true,
+  "devDependencies": {
+    "@callstack/repack": "file:./callstack-repack.tgz",
+    "@rspack/core": "^1.7.12",
+    "react-native": "file:../shared/rn-stub"
+  }
+}
