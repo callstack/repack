@@ -427,7 +427,13 @@ describe('NativeEntryPlugin', () => {
           // Rspack majors (polyfills first on 2.x, embed first on 1.x) - the
           // invariant is that polyfills execute before __webpack_require__.x()
           // is invoked (MF init → original startup, polyfills are cache hits).
-          expect(code).toContain('embed_federation_runtime');
+          // Each chain is asserted independently against the startup call so
+          // the polyfill-vs-embed relative order stays flexible across majors,
+          // while a regression that moves either after startup still fails.
+          expectBundleOrder(code, [
+            'embed_federation_runtime',
+            '__webpack_require__.x()',
+          ]);
           expectBundleOrder(code, [
             'repack/polyfills',
             '__webpack_require__.x()',
