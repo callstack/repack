@@ -110,6 +110,7 @@
   "devDependencies": {
     "@babel/cli": "^7.25.2",
     "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-dynamic-import": "^7.24.7",
     "@babel/plugin-transform-export-namespace-from": "^7.24.6",
     "@babel/plugin-transform-modules-commonjs": "^7.23.2",
     "@module-federation/enhanced": "0.8.9",
