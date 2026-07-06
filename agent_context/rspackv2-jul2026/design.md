@@ -87,9 +87,13 @@ Published Rspack 2 binaries do not include the perfetto trace layer, so
 
 ## Module Federation v1
 
-Under Rspack 2, `@module-federation/runtime-tools` is no longer installed
-automatically by `@rspack/core`. `ModuleFederationPluginV1.apply` verifies
-it is resolvable and raises an actionable error otherwise.
+No changes required. Rspack's delegated `ModuleFederationPluginV1` does not
+use `@module-federation/runtime-tools` under either major - only the
+enhanced MF 1.5 plugin (`container.ModuleFederationPlugin`) resolves it,
+and that plugin raises its own actionable install error. (An earlier
+revision of this design added a resolvability pre-check to
+`ModuleFederationPluginV1.apply`; it was dropped after verification -
+see the evidence on PR #1400.)
 
 ## Types
 
