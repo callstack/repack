@@ -1,6 +1,9 @@
 import type { Compiler as RspackCompiler, container } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
-import { isRspackCompiler } from '../helpers/index.js';
+import {
+  getRspackMajorVersionFromCompiler,
+  isRspackCompiler,
+} from '../helpers/index.js';
 import { Federated } from '../utils/federated.js';
 
 type MFPluginV1 = typeof container.ModuleFederationPluginV1;
@@ -123,6 +126,31 @@ export class ModuleFederationPluginV1 {
     }
     // @ts-expect-error webpack has MF1 under ModuleFederationPlugin
     return compiler.webpack.container.ModuleFederationPlugin;
+  }
+
+  /**
+   * In Rspack 2, `@module-federation/runtime-tools` became an optional
+   * peer dependency of `@rspack/core` and is no longer installed
+   * automatically. The built-in ModuleFederationPluginV1 still needs it,
+   * so verify it's installed to fail with an actionable error instead of
+   * a raw module resolution error at build time.
+   */
+  private ensureModuleFederationRuntimeToolsInstalled(context: string) {
+    try {
+      require.resolve('@module-federation/runtime-tools', {
+        paths: [context],
+      });
+    } catch {
+      const error = new Error(
+        '[RepackModuleFederationPluginV1] ' +
+          "Dependency named '@module-federation/runtime-tools' is required when using Module Federation with Rspack 2 " +
+          '(it became an optional peer dependency of @rspack/core) but is not found in your project. ' +
+          'Did you forget to install it?'
+      );
+      // remove the stack trace to make the error more readable
+      error.stack = undefined;
+      throw error;
+    }
   }
 
   private replaceRemotes<T extends string | string[] | RemotesObject>(
@@ -279,6 +307,11 @@ export class ModuleFederationPluginV1 {
 
   apply(__compiler: unknown) {
     const compiler = __compiler as RspackCompiler;
+
+    const rspackMajor = getRspackMajorVersionFromCompiler(compiler);
+    if (rspackMajor !== null && rspackMajor >= 2) {
+      this.ensureModuleFederationRuntimeToolsInstalled(compiler.context);
+    }
 
     const ModuleFederationPlugin = this.getModuleFederationPlugin(compiler);
 
