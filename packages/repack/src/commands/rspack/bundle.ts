@@ -4,6 +4,7 @@ import { CLIError } from '../../helpers/index.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getMaxWorkers,
+  getRspackCacheConfig,
   normalizeStatsOptions,
   resetPersistentCache,
   setupEnvironment,
@@ -25,17 +26,15 @@ export async function bundle(
   cliConfig: CliConfig,
   args: BundleArguments
 ) {
-  const [config] = await makeCompilerConfig<Configuration>({
-    args: args,
-    bundler: 'rspack',
-    command: 'bundle',
-    rootDir: cliConfig.root,
-    platforms: [args.platform],
-    reactNativePath: cliConfig.reactNativePath,
-  });
-
-  // remove devServer configuration to avoid schema validation errors
-  delete config.devServer;
+  const [{ devServer: _devServer, ...config }] =
+    await makeCompilerConfig<Configuration>({
+      args: args,
+      bundler: 'rspack',
+      command: 'bundle',
+      rootDir: cliConfig.root,
+      platforms: [args.platform],
+      reactNativePath: cliConfig.reactNativePath,
+    });
 
   // expose selected args as environment variables
   setupEnvironment(args);
@@ -51,7 +50,7 @@ export async function bundle(
     resetPersistentCache({
       bundler: 'rspack',
       rootDir: cliConfig.root,
-      cacheConfigs: [config.experiments?.cache],
+      cacheConfigs: [getRspackCacheConfig(config)],
     });
   }
 
@@ -86,6 +85,9 @@ export async function bundle(
     }
   };
 
+  // `devServer` is split off above - it's not needed for bundling, and
+  // Re.Pack's own dev server options (augmented onto `Configuration`) are
+  // not assignable to Rspack's bundled `DevServer` type
   const compiler = rspack(config);
 
   return new Promise<void>((resolve) => {

@@ -1,4 +1,4 @@
-import type { Configuration } from '@rspack/core';
+import type { Configuration, MultiRspackOptions } from '@rspack/core';
 import packageJson from '../../../package.json';
 import { VERBOSE_ENV_KEY } from '../../env.js';
 import { CLIError, isTruthyEnv } from '../../helpers/index.js';
@@ -14,6 +14,7 @@ import {
   getDevMiddleware,
   getMaxWorkers,
   getMimeType,
+  getRspackCacheConfig,
   parseUrl,
   resetPersistentCache,
   resolveProjectPath,
@@ -83,7 +84,7 @@ export async function start(
     resetPersistentCache({
       bundler: 'rspack',
       rootDir: cliConfig.root,
-      cacheConfigs: configs.map((config) => config.experiments?.cache),
+      cacheConfigs: configs.map(getRspackCacheConfig),
     });
   }
 
@@ -96,7 +97,21 @@ export async function start(
     );
   }
 
-  const compiler = new Compiler(configs, reporter, cliConfig.root);
+  // CAST - no clean solution available here:
+  // Re.Pack augments `Configuration.devServer` with its own dev server options
+  // (src/types/dev-server-options.d.ts), while Rspack 2 types `devServer` with
+  // its bundled `DevServer` type. The two are structurally incompatible solely
+  // because each pulls `proxy` types from a different copy of
+  // http-proxy-middleware, so no narrowing or `satisfies` can bridge them.
+  // Unlike `bundle`, `devServer` cannot be stripped from the config here -
+  // the dev server flow reads it back from `compiler.options`. At runtime
+  // Rspack accepts & preserves the key (validation is permissive, verified
+  // in agent_context/rspackv2-jul2026/07-verification-results.md).
+  const compiler = new Compiler(
+    configs as unknown as MultiRspackOptions,
+    reporter,
+    cliConfig.root
+  );
 
   const { createServer } = await import('@callstack/repack-dev-server');
   const { start, stop } = await createServer({

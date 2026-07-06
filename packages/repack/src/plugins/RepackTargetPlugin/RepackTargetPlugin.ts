@@ -117,7 +117,10 @@ export class RepackTargetPlugin {
               compiler,
               {
                 chunkId: chunk.id ?? undefined,
-                hmrEnabled: !!compiler.options.devServer?.hot,
+                // `devServer` can also be `false` in Rspack 2 types
+                hmrEnabled:
+                  typeof compiler.options.devServer === 'object' &&
+                  !!compiler.options.devServer.hot,
               }
             );
 

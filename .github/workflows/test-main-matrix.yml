@@ -7,6 +7,9 @@ on:
       - 'website/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   test_main_matrix:
     name: Tests [Node ${{ matrix.node_version }}]
@@ -23,5 +26,9 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
 
+      # Rspack 2 requires Node ^20.19.0 || >=22.12.0, so the older Node
+      # lanes run the repack unit suite against Rspack 1
       - name: Run tests
         run: pnpm test
+        env:
+          RSPACK_MAJOR: ${{ contains(fromJSON('["18", "20"]'), matrix.node_version) && '1' || '2' }}
