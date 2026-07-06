@@ -26,11 +26,18 @@ dedicated lane.
 1. `getRepackConfig` routing — `experiments.parallelLoader` kept under
    Rspack 1 / dropped under Rspack 2; `exportsPresence: 'auto'` parser
    override under Rspack 2 only.
-2. Legacy `experiments.cache` handling — warns exactly once under the
-   warn-only policy, never mutates the config, and the cache accessor reads
-   the legacy location.
+2. Legacy `experiments.cache` handling, composed with the `isRspack2` gate
+   the commands use — the gate reads the fixture's installed major, Rspack 1
+   sees no warning, Rspack 2 warns exactly once under the warn-only policy,
+   the config is never mutated, and the cache accessor reads the legacy
+   location.
 3. `ensureNodeSupportsRspack` passes on a supported Node version.
-4. A full dev build through `DevelopmentPlugin` — HMR client and React
+4. The compiled command modules (`dist/commands/rspack/{bundle,start,Compiler}.js`)
+   load from the tarball-installed package — the eager
+   `require('@rspack/core')` they compile to (`require(esm)` under
+   Rspack 2), the `rspack` named export they call, and the lazy
+   `@callstack/repack/commands/rspack` entry.
+5. A full dev build through `DevelopmentPlugin` — HMR client and React
    Refresh wiring present in the bundle, with the refresh runtime coming
    from the correct source per major: the vendored client files
    (`packages/repack/vendor/react-refresh/`) under Rspack 1 with zero

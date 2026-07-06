@@ -4,8 +4,10 @@
 // Run by run.mjs with a fixture directory as cwd and
 // RSPACK_COMPAT_EXPECTED_MAJOR set to the major the fixture pins.
 // The script asserts the dual-major behavior matrix: config routing,
-// legacy-cache warning, Node compatibility guard, and a full dev build
-// with HMR + React Refresh wired from the correct source per major.
+// legacy-cache warning (gated the way the commands gate it), Node
+// compatibility guard, the compiled command modules' require('@rspack/core')
+// path, and a full dev build with HMR + React Refresh wired from the
+// correct source per major.
 const fs = require('node:fs');
 const { createRequire } = require('node:module');
 const path = require('node:path');
@@ -108,6 +110,9 @@ const major = expectedMajor;
   const { warnLegacyRspackCacheConfig } = repackRequire(
     path.join(REPACK, 'dist/commands/common/warnLegacyRspackCacheConfig.js')
   );
+  const { isRspack2 } = repackRequire(
+    path.join(REPACK, 'dist/helpers/index.js')
+  );
   const legacyCfg = {
     experiments: {
       cache: { type: 'persistent', storage: { directory: '/custom' } },
@@ -117,22 +122,39 @@ const major = expectedMajor;
     '2a. accessor reads legacy location',
     getRspackCacheConfig(legacyCfg)?.storage?.directory === '/custom'
   );
+  // The warning is a Rspack 2 migration aid: bundle.ts/start.ts only call
+  // the helper behind an isRspack2(root) gate, so what a user sees per
+  // major is the gate composed with the helper. Assert the gate reads the
+  // fixture's actual install, then mirror the command wiring: Rspack 1
+  // users must see no warning, Rspack 2 users exactly one - and the config
+  // is never mutated.
+  const gated = isRspack2(FIXTURE);
+  report(
+    '2b. isRspack2 gate matches fixture major',
+    gated === major >= 2,
+    `isRspack2=${gated}`
+  );
   const warns = [];
   const origWarn = console.warn;
   console.warn = (msg) => warns.push(String(msg));
-  warnLegacyRspackCacheConfig([legacyCfg]);
-  warnLegacyRspackCacheConfig([legacyCfg]); // must warn only once
+  if (gated) {
+    warnLegacyRspackCacheConfig([legacyCfg]);
+    warnLegacyRspackCacheConfig([legacyCfg]); // must warn only once
+  }
   console.warn = origWarn;
   const untouched =
     legacyCfg.cache === undefined &&
     legacyCfg.experiments.cache?.storage?.directory === '/custom';
+  const expectedWarns = major >= 2 ? 1 : 0;
   report(
-    '2b. warns once, mutates nothing',
-    warns.length === 1 && untouched,
+    major >= 2
+      ? '2c. warns once, mutates nothing'
+      : '2c. no rspack-2 warning under rspack 1',
+    warns.length === expectedWarns && untouched,
     `warns=${warns.length} untouched=${untouched}`
   );
   report(
-    '2c. accessor still reads legacy location',
+    '2d. accessor still reads legacy location',
     getRspackCacheConfig(legacyCfg)?.storage?.directory === '/custom'
   );
 
@@ -147,9 +169,61 @@ const major = expectedMajor;
     report('3.  node guard passes', false, error.message);
   }
 
-  // --- 4. dev build through DevelopmentPlugin (HMR + React Refresh) ---------
-  const rspack = fixtureRequire('@rspack/core');
-  const rspackFn = rspack.rspack ?? rspack;
+  // --- 4. command modules: the compiled require('@rspack/core') path --------
+  // Re.Pack's built command modules require('@rspack/core') eagerly at load
+  // time and call its `rspack` named export - under Rspack 2 that is a CJS
+  // require() of an ESM-only package (require(esm) interop). Load them from
+  // the tarball-installed package so a regression in that interop, the
+  // export shape, or the lazy `@callstack/repack/commands/rspack` entry
+  // can't slip past the DevelopmentPlugin build below, which never imports
+  // the commands.
+  const rspackCommands = fixtureRequire('@callstack/repack/commands/rspack');
+  report(
+    '4a. lazy command entry exposes bundle/start',
+    Array.isArray(rspackCommands) &&
+      ['bundle', 'start'].every((name) =>
+        rspackCommands.some(
+          (command) =>
+            command.name === name && typeof command.func === 'function'
+        )
+      )
+  );
+  let commandModulesOk = false;
+  let commandModulesDetail;
+  try {
+    const { bundle } = repackRequire(
+      path.join(REPACK, 'dist/commands/rspack/bundle.js')
+    );
+    const { start } = repackRequire(
+      path.join(REPACK, 'dist/commands/rspack/start.js')
+    );
+    const { Compiler } = repackRequire(
+      path.join(REPACK, 'dist/commands/rspack/Compiler.js')
+    );
+    commandModulesOk =
+      typeof bundle === 'function' &&
+      typeof start === 'function' &&
+      typeof Compiler === 'function';
+  } catch (error) {
+    commandModulesDetail = error.code ?? error.message;
+  }
+  report(
+    '4b. command modules load against this major',
+    commandModulesOk,
+    commandModulesDetail
+  );
+  const rspack = repackRequire('@rspack/core');
+  report(
+    '4c. rspack named export shape',
+    typeof rspack.rspack === 'function',
+    `typeof rspack.rspack === '${typeof rspack.rspack}'`
+  );
+
+  // --- 5. dev build through DevelopmentPlugin (HMR + React Refresh) ---------
+  // Create the compiler exactly the way the compiled commands do: through
+  // the `rspack` named export of the copy repack itself resolves - no
+  // fallback that could mask a missing export.
+  const rspackFn = rspack.rspack;
   const { DevelopmentPlugin } = repackRequire(
     path.join(REPACK, 'dist/plugins/DevelopmentPlugin.js')
   );
@@ -200,7 +274,7 @@ const major = expectedMajor;
         error.message.split('\n').slice(0, 2).join(' | ').slice(0, 200)
       );
     }
-    report('4a. dev build with refresh + HMR', false, 'compilation errors');
+    report('5a. dev build with refresh + HMR', false, 'compilation errors');
   } else {
     await new Promise((resolve) => compiler.close(resolve));
     const out = fs.readFileSync(path.join(OUT, 'index.bundle'), 'utf8');
@@ -223,7 +297,7 @@ const major = expectedMajor;
         console.error('missing from bundle:', name);
       }
     }
-    report('4a. dev build with refresh + HMR', bundleOk);
+    report('5a. dev build with refresh + HMR', bundleOk);
 
     // the refresh runtime must come from the correct source per major:
     // vendored client files (packages/repack/vendor/react-refresh) under
@@ -238,7 +312,7 @@ const major = expectedMajor;
         ? usedOfficial && !usedVendored
         : usedVendored && !usedOfficial;
     report(
-      '4b. refresh runtime source correct',
+      '5b. refresh runtime source correct',
       sourceOk,
       `vendored=${usedVendored} official=${usedOfficial}, ` +
         `expected ${major >= 2 ? 'official plugin' : 'vendored files'}`
