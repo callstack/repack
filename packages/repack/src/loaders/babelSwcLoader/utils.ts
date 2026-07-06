@@ -98,6 +98,13 @@ export function checkParallelModeAvailable(
   if (parallelModeWarningDisplayed || isWebpackBackend(loaderContext)) {
     return;
   }
+  // Rspack 2 removed `experiments.parallelLoader` (parallel loading is stable
+  // and opt-in per rule only), so there is no global flag to check against -
+  // running non-parallel is a valid choice there, not a misconfiguration
+  const rspackVersion = loaderContext._compiler?.webpack?.rspackVersion;
+  if (rspackVersion && Number(rspackVersion.split('.')[0]) >= 2) {
+    return;
+  }
   // in parallel mode compiler.options.experiments are not available
   // but since we're already running in parallel mode, we can ignore this check
   // ('in' narrowing: `parallelLoader` no longer exists in Rspack 2 types)

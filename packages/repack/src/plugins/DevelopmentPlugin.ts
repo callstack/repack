@@ -5,14 +5,20 @@ import type {
   Plugins,
   Compiler as RspackCompiler,
 } from '@rspack/core';
-import ReactRefreshPlugin from '@rspack/plugin-react-refresh';
 import type { Compiler as WebpackCompiler } from 'webpack';
-import { isRspackCompiler, moveElementBefore } from '../helpers/index.js';
-
-const [reactRefreshEntryPath, reactRefreshPath, refreshUtilsPath] =
-  ReactRefreshPlugin.deprecated_runtimePaths;
+import {
+  getRspackMajorVersionFromCompiler,
+  isRspackCompiler,
+  moveElementBefore,
+} from '../helpers/index.js';
 
 type PackageJSON = { version: string };
+
+// matches the file conditions of Re.Pack's JS transform rules
+// (includes .flow files, unlike the react-refresh plugin defaults)
+const REACT_REFRESH_LOADER_TEST = /\.([cm]js|[jt]sx?|flow)$/i;
+const REACT_REFRESH_LOADER_EXCLUDE = /node_modules/i;
+
 /**
  * {@link DevelopmentPlugin} configuration options.
  */
@@ -87,6 +93,120 @@ export class DevelopmentPlugin {
     return 'http';
   }
 
+  private resolveReactRefreshPluginRequest(context: string, request: string) {
+    try {
+      return require.resolve(request, { paths: [context] });
+    } catch {
+      try {
+        // fallback to Re.Pack's own resolution paths
+        return require.resolve(request);
+      } catch {
+        const error = new Error(
+          '[RepackDevelopmentPlugin] ' +
+            "Dependency named '@rspack/plugin-react-refresh' (version 2.x) is required " +
+            'when using React Refresh with Rspack 2 but is not found in your project. ' +
+            'Did you forget to install it?'
+        );
+        // remove the stack trace to make the error more readable
+        error.stack = undefined;
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Sets up React Refresh using the official `@rspack/plugin-react-refresh` (v2)
+   * with its integrator options: entry injection is left to Re.Pack (to control
+   * placement per entrypoint) and the loader is swapped for Re.Pack's own
+   * React Native-aware react-refresh-loader.
+   *
+   * The plugin package is ESM-only, so it's loaded lazily inside this branch -
+   * it must never be evaluated on setups that don't support `require(esm)`
+   * (webpack or Rspack 1 users on Node 18).
+   *
+   * @returns Path to the react-refresh entry module.
+   */
+  private setupOfficialReactRefresh(compiler: RspackCompiler): string {
+    const pluginPath = this.resolveReactRefreshPluginRequest(
+      compiler.context,
+      '@rspack/plugin-react-refresh'
+    );
+    // Rspack 2 requires Node >= 20.19 (enforced by Re.Pack commands),
+    // where require() of an ESM module is supported
+    const { ReactRefreshRspackPlugin } = require(pluginPath);
+
+    new ReactRefreshRspackPlugin({
+      // entries are injected by Re.Pack per entrypoint to control their order
+      injectEntry: false,
+      // DevelopmentPlugin gates on devServer.hot already - don't let
+      // the plugin second-guess based on `mode`
+      forceEnable: true,
+      reactRefreshLoader: '@callstack/repack/react-refresh-loader',
+      test: REACT_REFRESH_LOADER_TEST,
+      exclude: REACT_REFRESH_LOADER_EXCLUDE,
+    }).apply(compiler);
+
+    return this.resolveReactRefreshPluginRequest(
+      compiler.context,
+      '@rspack/plugin-react-refresh/react-refresh-entry'
+    );
+  }
+
+  /**
+   * Sets up React Refresh manually using the client runtime files vendored
+   * from `@rspack/plugin-react-refresh` (package-root `vendor/` directory,
+   * shipped as-is) - used for webpack and Rspack 1 compilers, where the
+   * official v2 plugin cannot be applied.
+   *
+   * @returns Path to the react-refresh entry module.
+   */
+  private setupManualReactRefresh(compiler: RspackCompiler): string {
+    // resolves from both src/plugins and dist/plugins to the package root
+    const reactRefreshPath = require.resolve(
+      '../../vendor/react-refresh/reactRefresh.js'
+    );
+    const refreshUtilsPath = require.resolve(
+      '../../vendor/react-refresh/refreshUtils.js'
+    );
+    const reactRefreshEntryPath = require.resolve(
+      '../../vendor/react-refresh/reactRefreshEntry.js'
+    );
+
+    new compiler.webpack.ProvidePlugin({
+      $ReactRefreshRuntime$: reactRefreshPath,
+    }).apply(compiler);
+
+    new compiler.webpack.DefinePlugin({
+      __react_refresh_library__: JSON.stringify(
+        compiler.webpack.Template.toIdentifier(
+          compiler.options.output.uniqueName || compiler.options.output.library
+        )
+      ),
+      // full reload on unrecoverable runtime errors is a web-oriented
+      // behavior - in React Native errors are surfaced through LogBox
+      __reload_on_runtime_errors__: false,
+    }).apply(compiler);
+
+    new compiler.webpack.ProvidePlugin({
+      __react_refresh_utils__: refreshUtilsPath,
+    }).apply(compiler);
+
+    compiler.options.module.rules.unshift({
+      test: REACT_REFRESH_LOADER_TEST,
+      // like upstream, exclude the refresh runtime files themselves - they
+      // live outside of node_modules in workspace (symlinked) installs
+      exclude: [
+        REACT_REFRESH_LOADER_EXCLUDE,
+        reactRefreshPath,
+        refreshUtilsPath,
+        reactRefreshEntryPath,
+      ],
+      use: '@callstack/repack/react-refresh-loader',
+    });
+
+    return reactRefreshEntryPath;
+  }
+
   apply(compiler: RspackCompiler): void;
   apply(compiler: WebpackCompiler): void;
 
@@ -121,38 +241,22 @@ export class DevelopmentPlugin {
       // setup HMR
       new compiler.webpack.HotModuleReplacementPlugin().apply(compiler);
 
-      // setup React Refresh manually instead of using the official plugin
-      // to avoid issues with placement of reactRefreshEntry
-      new compiler.webpack.ProvidePlugin({
-        $ReactRefreshRuntime$: reactRefreshPath,
-      }).apply(compiler);
-
-      new compiler.webpack.DefinePlugin({
-        __react_refresh_error_overlay__: false,
-        __react_refresh_socket__: false,
-        __react_refresh_library__: JSON.stringify(
-          compiler.webpack.Template.toIdentifier(
-            compiler.options.output.uniqueName ||
-              compiler.options.output.library
-          )
-        ),
-      }).apply(compiler);
-
-      new compiler.webpack.ProvidePlugin({
-        __react_refresh_utils__: refreshUtilsPath,
-      }).apply(compiler);
-
+      // alias react-refresh to Re.Pack's own copy to keep a single,
+      // version-controlled instance of the refresh runtime
       const refreshPath = path.dirname(require.resolve('react-refresh'));
       compiler.options.resolve.alias = {
         'react-refresh': refreshPath,
         ...compiler.options.resolve.alias,
       };
 
-      compiler.options.module.rules.unshift({
-        include: /\.([cm]js|[jt]sx?|flow)$/i,
-        exclude: /node_modules/i,
-        use: '@callstack/repack/react-refresh-loader',
-      });
+      // Rspack 2 gets the official react-refresh plugin (driven through
+      // its integrator options), webpack & Rspack 1 get manual wiring
+      // based on the vendored client runtime files
+      const rspackMajor = getRspackMajorVersionFromCompiler(compiler);
+      const reactRefreshEntryPath =
+        rspackMajor !== null && rspackMajor >= 2
+          ? this.setupOfficialReactRefresh(compiler)
+          : this.setupManualReactRefresh(compiler);
 
       const devEntries = [
         reactRefreshEntryPath,

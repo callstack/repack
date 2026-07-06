@@ -31,6 +31,11 @@ module.exports = {
     // Transform everything in `test` environment, so unit test can pass.
     test: {
       presets: [['@babel/preset-env', { targets: { node: 18 } }]],
+      // Jest's sandboxed CJS runtime cannot execute native `import()` without
+      // --experimental-vm-modules (which breaks other tests), so transform
+      // dynamic imports to `require` in tests - this also makes jest module
+      // mocks apply to lazily-imported modules.
+      plugins: ['@babel/plugin-transform-dynamic-import'],
     },
   },
 };
