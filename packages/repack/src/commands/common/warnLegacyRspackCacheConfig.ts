@@ -3,24 +3,33 @@ import type { RspackConfigurationWithLegacyCache } from './resetPersistentCache.
 
 let warningDisplayed = false;
 
+function hasPersistentCacheEnabled(config: RspackConfigurationWithLegacyCache) {
+  return typeof config.cache === 'object' && config.cache.type === 'persistent';
+}
+
 /**
  * Rspack 2 moved the persistent cache configuration from `experiments.cache`
  * to the top-level `cache` option and silently ignores the legacy key
  * (validation is loose) - users migrating a Rspack 1 config would lose
  * persistent caching without any signal.
  *
- * Warn (once) when running Rspack 2 with a legacy `experiments.cache` value,
- * but leave the config untouched - migrating it is the user's move, and
- * mutating it here would make Re.Pack behave differently from bare Rspack
- * given the same config.
+ * Warn (once) when running Rspack 2 with a legacy `experiments.cache` value
+ * and no top-level persistent `cache` option (a migrated config that only
+ * left the inert legacy key behind has persistent caching enabled, so the
+ * warning would be false there). The config is left untouched - migrating it
+ * is the user's move, and mutating it here would make Re.Pack behave
+ * differently from bare Rspack given the same config.
  */
 export function warnLegacyRspackCacheConfig(
   configs: RspackConfigurationWithLegacyCache[]
 ) {
   if (warningDisplayed) return;
-  if (configs.every((config) => config.experiments?.cache === undefined)) {
-    return;
-  }
+  const misconfigured = configs.some(
+    (config) =>
+      config.experiments?.cache !== undefined &&
+      !hasPersistentCacheEnabled(config)
+  );
+  if (!misconfigured) return;
   warningDisplayed = true;
   console.warn(
     colorette.yellow(
