@@ -26,6 +26,7 @@
     "client",
     "commands",
     "mf",
+    "vendor",
     "callstack-repack.podspec",
     "src/modules/ScriptManager/NativeScriptManager.ts"
   ],
@@ -66,6 +67,7 @@
   "peerDependencies": {
     "@module-federation/enhanced": ">=0.6.10",
     "@rspack/core": ">=1",
+    "@rspack/plugin-react-refresh": "^2.0.0",
     "react-native": ">=0.74",
     "webpack": ">=5.90"
   },
@@ -76,6 +78,9 @@
     "@rspack/core": {
       "optional": true
     },
+    "@rspack/plugin-react-refresh": {
+      "optional": true
+    },
     "webpack": {
       "optional": true
     }
@@ -83,7 +88,6 @@
   "dependencies": {
     "@callstack/repack-dev-server": "workspace:*",
     "@discoveryjs/json-ext": "^0.5.7",
-    "@rspack/plugin-react-refresh": "1.0.0",
     "babel-loader": "^9.2.1",
     "colorette": "^2.0.20",
     "dedent": "^0.7.0",
@@ -116,6 +120,7 @@
     "@module-federation/sdk": "0.6.10",
     "@rspack/core": "^2.1.2",
     "@rspack/core-v1": "npm:@rspack/core@^1.7.12",
+    "@rspack/plugin-react-refresh": "^2.0.2",
     "@swc/helpers": "^0.5.23",
     "@types/babel__core": "^7.20.5",
     "@types/dedent": "^0.7.0",
