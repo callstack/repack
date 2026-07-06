@@ -41,6 +41,7 @@
     "@types/jest": "^29.5.13",
     "@types/react": "catalog:testers",
     "react-native-test-app": "catalog:testers",
+    "react-refresh": "^0.18.0",
     "terser-webpack-plugin": "catalog:",
     "typescript": "catalog:",
     "webpack": "catalog:"

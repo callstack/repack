@@ -317,6 +317,9 @@ importers:
       react-native-test-app:
         specifier: catalog:testers
         version: 5.1.0(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.9.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
+      react-refresh:
+        specifier: ^0.18.0
+        version: 0.18.0
       terser-webpack-plugin:
         specifier: 'catalog:'
         version: 5.3.16(webpack@5.105.3)
@@ -399,6 +402,9 @@ importers:
       react-native-test-app:
         specifier: catalog:testers
         version: 5.1.0(react-native@0.84.1(@babel/core@7.25.2)(@react-native-community/cli@20.1.2(typescript@5.9.3))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
+      react-refresh:
+        specifier: ^0.18.0
+        version: 0.18.0
       terser-webpack-plugin:
         specifier: 'catalog:'
         version: 5.3.16(webpack@5.105.3)
