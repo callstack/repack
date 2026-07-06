@@ -10,6 +10,9 @@ on:
       - 'website/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint
@@ -53,3 +56,39 @@ jobs:
 
       - name: Run tests
         run: pnpm test
+
+  test_pr_rspack1:
+    name: Tests [Rspack 1]
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+      - name: Setup workspace
+        uses: ./.github/actions/setup-pnpm-node
+        with:
+          node-version: '24'
+
+      - name: Run tests against Rspack 1
+        run: pnpm turbo run test:rspack1
+
+  test_pr_windows:
+    name: Tests [Windows]
+    if: github.event_name == 'pull_request'
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+      - name: Setup workspace
+        uses: ./.github/actions/setup-pnpm-node
+        with:
+          node-version: '24'
+
+      # the require(esm) loading path of @rspack/core@2 and the version
+      # helpers' filesystem resolution are Windows-sensitive - run the
+      # repack unit suite under both majors
+      - name: Run repack tests
+        run: pnpm turbo run test --filter @callstack/repack
+
+      - name: Run repack tests against Rspack 1
+        run: pnpm turbo run test:rspack1

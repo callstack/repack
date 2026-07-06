@@ -1,5 +1,6 @@
-import { type SwcLoaderOptions, experiments } from '@rspack/core';
+import { experiments } from '@rspack/core';
 import { buildFinalSwcConfig, partitionTransforms } from '../babelSwcLoader.js';
+import type { SwcConfig } from '../options.js';
 import {
   addSwcComplementaryTransforms,
   getSupportedSwcConfigurableTransforms,
@@ -84,7 +85,7 @@ describe('swc transforms support detection', () => {
 
       const { transformNames } = getSupportedSwcConfigurableTransforms(
         transforms,
-        baseSwcConfig as SwcLoaderOptions
+        baseSwcConfig as SwcConfig
       );
 
       expect(transformNames).toEqual([
@@ -104,7 +105,7 @@ describe('swc transforms support detection', () => {
           ['transform-class-properties', { loose: true }],
           ['transform-private-methods', { loose: true }],
         ],
-        {} as SwcLoaderOptions
+        {} as SwcConfig
       );
 
       expect(swcConfig.jsc?.assumptions).toEqual({
@@ -114,7 +115,7 @@ describe('swc transforms support detection', () => {
     });
 
     it('applies loose mode to setSpreadProperties when not defined; preserves explicit true (snapshot)', () => {
-      const baseUndefined = {} as SwcLoaderOptions;
+      const baseUndefined = {} as SwcConfig;
       const { swcConfig: cfg1 } = getSupportedSwcConfigurableTransforms(
         [['transform-object-rest-spread', { loose: true }]],
         baseUndefined
@@ -124,9 +125,9 @@ describe('swc transforms support detection', () => {
         'object-rest-spread loose: setSpreadProperties'
       );
 
-      const baseTrue: SwcLoaderOptions = {
+      const baseTrue: SwcConfig = {
         jsc: { assumptions: { setSpreadProperties: true } },
-      } as SwcLoaderOptions;
+      } as SwcConfig;
       const { swcConfig: cfg2 } = getSupportedSwcConfigurableTransforms(
         [['transform-object-rest-spread', { loose: false }]],
         baseTrue
@@ -138,9 +139,9 @@ describe('swc transforms support detection', () => {
     });
 
     it('sets optional-chaining/nullish and for-of assumptions with loose mode and respects explicit values (snapshot)', () => {
-      const base: SwcLoaderOptions = {
+      const base: SwcConfig = {
         jsc: { assumptions: { noDocumentAll: true } },
-      } as SwcLoaderOptions;
+      } as SwcConfig;
 
       const { swcConfig } = getSupportedSwcConfigurableTransforms(
         [
@@ -157,14 +158,14 @@ describe('swc transforms support detection', () => {
     });
 
     it('updates both privateFieldsAsProperties and setPublicClassFields for private-property-in-object but does not override explicit true', () => {
-      const base: SwcLoaderOptions = {
+      const base: SwcConfig = {
         jsc: {
           assumptions: {
             privateFieldsAsProperties: true,
             setPublicClassFields: true,
           },
         },
-      } as SwcLoaderOptions;
+      } as SwcConfig;
 
       const { swcConfig, transformNames } =
         getSupportedSwcConfigurableTransforms(
@@ -200,7 +201,7 @@ describe('swc transforms support detection', () => {
 
       const { transformNames } = getSupportedSwcCustomTransforms(
         transforms,
-        baseSwcConfig as SwcLoaderOptions
+        baseSwcConfig as SwcConfig
       );
 
       expect(transformNames).toEqual([
@@ -214,7 +215,7 @@ describe('swc transforms support detection', () => {
     });
 
     it('overrides react runtime and importSource from transform-react-jsx config (snapshot)', () => {
-      const inputConfig: SwcLoaderOptions = {
+      const inputConfig: SwcConfig = {
         jsc: {
           transform: { react: { runtime: 'classic', importSource: 'preact' } },
         },
@@ -235,7 +236,7 @@ describe('swc transforms support detection', () => {
     });
 
     it('should apply default react transform when plugin has no react transform options', () => {
-      const inputConfig: SwcLoaderOptions = {
+      const inputConfig: SwcConfig = {
         jsc: {
           transform: { react: {} },
         },
@@ -252,7 +253,7 @@ describe('swc transforms support detection', () => {
     });
 
     it('should preserve existing react transform config when plugin has none', () => {
-      const inputConfig: SwcLoaderOptions = {
+      const inputConfig: SwcConfig = {
         jsc: {
           transform: {
             react: { runtime: 'automatic', importSource: 'nativewind' },
@@ -271,7 +272,7 @@ describe('swc transforms support detection', () => {
     });
 
     it('should use plugin importSource option for react transform', () => {
-      const inputConfig: SwcLoaderOptions = {
+      const inputConfig: SwcConfig = {
         jsc: {
           transform: {
             react: {},
@@ -295,7 +296,7 @@ describe('swc transforms support detection', () => {
     });
 
     it('should use plugin importSource option for react transform and override existing importSource', () => {
-      const inputConfig: SwcLoaderOptions = {
+      const inputConfig: SwcConfig = {
         jsc: {
           transform: {
             react: { importSource: 'preact' },
@@ -319,7 +320,7 @@ describe('swc transforms support detection', () => {
     });
 
     it('configures modules commonjs options based on provided config (snapshot)', () => {
-      const inputConfig: SwcLoaderOptions = {};
+      const inputConfig: SwcConfig = {};
       const { swcConfig } = getSupportedSwcCustomTransforms(
         [
           [
@@ -333,7 +334,7 @@ describe('swc transforms support detection', () => {
     });
 
     it('enables external helpers via transform-runtime (snapshot)', () => {
-      const inputConfig: SwcLoaderOptions = {};
+      const inputConfig: SwcConfig = {};
       const { swcConfig } = getSupportedSwcCustomTransforms(
         [['transform-runtime', {}]],
         inputConfig
@@ -342,9 +343,9 @@ describe('swc transforms support detection', () => {
     });
 
     it('sets exportDefaultFrom only for ecmascript parser; leaves typescript parser unchanged (snapshot)', () => {
-      const inputConfigTs: SwcLoaderOptions = {
+      const inputConfigTs: SwcConfig = {
         jsc: { parser: { syntax: 'typescript' } },
-      } as SwcLoaderOptions;
+      } as SwcConfig;
 
       const { swcConfig: tsCfg } = getSupportedSwcCustomTransforms(
         [['proposal-export-default-from', {}]],
@@ -352,9 +353,9 @@ describe('swc transforms support detection', () => {
       );
       expect(tsCfg.jsc?.parser).toMatchSnapshot('parser: typescript unchanged');
 
-      const inputConfigEcma: SwcLoaderOptions = {
+      const inputConfigEcma: SwcConfig = {
         jsc: { parser: { syntax: 'ecmascript' } },
-      } as SwcLoaderOptions;
+      } as SwcConfig;
       const { swcConfig: ecmaCfg } = getSupportedSwcCustomTransforms(
         [['proposal-export-default-from', {}]],
         inputConfigEcma
