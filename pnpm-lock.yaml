@@ -664,6 +664,9 @@ importers:
       '@babel/core':
         specifier: ^7.29.7
         version: 7.29.7
+      '@babel/plugin-transform-dynamic-import':
+        specifier: ^7.24.7
+        version: 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-export-namespace-from':
         specifier: ^7.29.7
         version: 7.29.7(@babel/core@7.29.7)
