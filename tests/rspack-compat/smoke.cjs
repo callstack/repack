@@ -104,7 +104,7 @@ const major = expectedMajor;
   }
 
   // --- 2. cache accessor + legacy-cache warning (warn-only) -----------------
-  const { getRspackCacheConfig } = repackRequire(
+  const { getRspackCacheConfigs } = repackRequire(
     path.join(REPACK, 'dist/commands/common/resetPersistentCache.js')
   );
   const { warnLegacyRspackCacheConfig } = repackRequire(
@@ -119,8 +119,24 @@ const major = expectedMajor;
     },
   };
   report(
-    '2a. accessor reads legacy location',
-    getRspackCacheConfig(legacyCfg)?.storage?.directory === '/custom'
+    '2a. accessor collects legacy location',
+    getRspackCacheConfigs(legacyCfg)[0]?.storage?.directory === '/custom'
+  );
+  // regression guard: with both keys set, both locations must be collected
+  // (previously the legacy key shadowed the top-level one)
+  const bothCfg = {
+    cache: { type: 'persistent', storage: { directory: '/top' } },
+    experiments: {
+      cache: { type: 'persistent', storage: { directory: '/custom' } },
+    },
+  };
+  const bothDirs = getRspackCacheConfigs(bothCfg).map(
+    (cacheConfig) => cacheConfig?.storage?.directory
+  );
+  report(
+    '2b. accessor collects both cache locations',
+    bothDirs.includes('/custom') && bothDirs.includes('/top'),
+    `dirs=${bothDirs.join(',')}`
   );
   // The warning is a Rspack 2 migration aid: bundle.ts/start.ts only call
   // the helper behind an isRspack2(root) gate, so what a user sees per
@@ -130,7 +146,7 @@ const major = expectedMajor;
   // is never mutated.
   const gated = isRspack2(FIXTURE);
   report(
-    '2b. isRspack2 gate matches fixture major',
+    '2c. isRspack2 gate matches fixture major',
     gated === major >= 2,
     `isRspack2=${gated}`
   );
@@ -148,14 +164,14 @@ const major = expectedMajor;
   const expectedWarns = major >= 2 ? 1 : 0;
   report(
     major >= 2
-      ? '2c. warns once, mutates nothing'
-      : '2c. no rspack-2 warning under rspack 1',
+      ? '2d. warns once, mutates nothing'
+      : '2d. no rspack-2 warning under rspack 1',
     warns.length === expectedWarns && untouched,
     `warns=${warns.length} untouched=${untouched}`
   );
   report(
-    '2d. accessor still reads legacy location',
-    getRspackCacheConfig(legacyCfg)?.storage?.directory === '/custom'
+    '2e. accessor still collects legacy location',
+    getRspackCacheConfigs(legacyCfg)[0]?.storage?.directory === '/custom'
   );
 
   // --- 3. node compatibility guard -------------------------------------------
