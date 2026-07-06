@@ -8,5 +8,6 @@ export * from './runAdbReverse.js';
 export * from './setupEnvironment.js';
 export * from './setupInteractions.js';
 export * from './setupStatsWriter.js';
+export * from './warnLegacyRspackCacheConfig.js';
 
 export * from './config/makeCompilerConfig.js';

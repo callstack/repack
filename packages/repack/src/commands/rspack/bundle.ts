@@ -1,6 +1,6 @@
 import { type Configuration, rspack } from '@rspack/core';
 import type { Stats } from '@rspack/core';
-import { CLIError } from '../../helpers/index.js';
+import { CLIError, isRspack2 } from '../../helpers/index.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
   getMaxWorkers,
@@ -9,6 +9,7 @@ import {
   resetPersistentCache,
   setupEnvironment,
   setupRspackEnvironment,
+  warnLegacyRspackCacheConfig,
   writeStats,
 } from '../common/index.js';
 import type { BundleArguments, CliConfig } from '../types.js';
@@ -35,6 +36,12 @@ export async function bundle(
       platforms: [args.platform],
       reactNativePath: cliConfig.reactNativePath,
     });
+
+  // Rspack 2 silently ignores the legacy `experiments.cache` option -
+  // warn the user so they migrate it to the top-level `cache` option
+  if (isRspack2(cliConfig.root)) {
+    warnLegacyRspackCacheConfig([config]);
+  }
 
   // expose selected args as environment variables
   setupEnvironment(args);
