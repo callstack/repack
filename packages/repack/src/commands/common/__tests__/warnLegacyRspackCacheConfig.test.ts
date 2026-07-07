@@ -76,7 +76,10 @@ describe('warnLegacyRspackCacheConfig', () => {
     // beyond `type` - there is nothing Rspack 2 could drop
     warnLegacyRspackCacheConfig([
       {
-        cache: { type: 'persistent', storage: { directory: '/custom' } },
+        cache: {
+          type: 'persistent',
+          storage: { type: 'filesystem', directory: '/custom' },
+        },
         experiments: { cache: { type: 'persistent' } },
       },
     ]);
@@ -93,13 +96,13 @@ describe('warnLegacyRspackCacheConfig', () => {
       {
         cache: {
           type: 'persistent',
-          storage: { directory: '/custom' },
+          storage: { type: 'filesystem', directory: '/custom' },
           buildDependencies: ['/project/rspack.config.mjs'],
         },
         experiments: {
           cache: {
             type: 'persistent',
-            storage: { directory: '/custom' },
+            storage: { type: 'filesystem', directory: '/custom' },
             buildDependencies: ['/project/rspack.config.mjs'],
           },
         },
@@ -118,7 +121,10 @@ describe('warnLegacyRspackCacheConfig', () => {
       {
         cache: { type: 'persistent' },
         experiments: {
-          cache: { type: 'persistent', storage: { directory: '/custom' } },
+          cache: {
+            type: 'persistent',
+            storage: { type: 'filesystem', directory: '/custom' },
+          },
         },
       },
     ]);
@@ -136,7 +142,10 @@ describe('warnLegacyRspackCacheConfig', () => {
     warnLegacyRspackCacheConfig([
       {
         experiments: {
-          cache: { type: 'persistent', storage: { directory: '/custom' } },
+          cache: {
+            type: 'persistent',
+            storage: { type: 'filesystem', directory: '/custom' },
+          },
         },
       },
     ]);
@@ -152,7 +161,10 @@ describe('warnLegacyRspackCacheConfig', () => {
       {
         cache: { type: 'persistent' },
         experiments: {
-          cache: { type: 'persistent', storage: { directory: '/custom' } },
+          cache: {
+            type: 'persistent',
+            storage: { type: 'filesystem', directory: '/custom' },
+          },
         },
       },
       { experiments: { cache: { type: 'persistent' } } },
