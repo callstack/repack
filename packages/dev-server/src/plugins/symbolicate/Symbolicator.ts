@@ -5,11 +5,89 @@ import { SourceMapConsumer } from 'source-map';
 import type {
   CodeFrame,
   InputStackFrame,
+  PassthroughStackFrame,
   ReactNativeStackFrame,
   StackFrame,
   SymbolicatorDelegate,
   SymbolicatorResults,
 } from './types.js';
+
+/**
+ * Frames whose symbolicated source path matches this pattern are marked with
+ * `collapse: true`, hiding them by default in LogBox. Mirrors the approach of
+ * React Native's default Metro config (`INTERNAL_CALLSITES_REGEX` in
+ * `@react-native/metro-config`), which collapses by resolved file path —
+ * never by method name, so user code with a coincidental name is unaffected.
+ */
+const INTERNAL_CALLSITES = new RegExp(
+  [
+    'node_modules/react-native/Libraries/BatchedBridge/MessageQueue\\.js$',
+    'node_modules/react-native/Libraries/Core/.+',
+    'node_modules/react-native/Libraries/LogBox/.+',
+    'node_modules/react-native/Libraries/Renderer/implementations/.+',
+    'node_modules/react-native/Libraries/Utilities/HMRClient\\.js$',
+    'node_modules/react/cjs/.+',
+    'node_modules/scheduler/.+',
+    'node_modules/metro-runtime/.+',
+    '^\\[native code\\]$',
+  ]
+    .map((pattern) => pattern.replaceAll('/', '[/\\\\]'))
+    .join('|')
+);
+
+interface SourceMapCacheEntry {
+  consumer: SourceMapConsumer;
+  /** Original sources listed in the map's `ignoreList`/`x_google_ignoreList`. */
+  ignoredSources: Set<string>;
+}
+
+type ProcessedFrame =
+  | { frame: StackFrame; symbolicated: true }
+  | { frame: PassthroughStackFrame; symbolicated: false };
+
+/**
+ * Replaces source names that are not URL-parseable so `SourceMapConsumer`
+ * construction cannot fail on them. Module Federation v2 is known to emit a
+ * corrupt `webpack://` source name (containing raw runtime code) into host
+ * bundle maps, which makes the consumer throw `Invalid URL` — taking down
+ * symbolication of every frame in the bundle. Indices are preserved so
+ * mappings stay aligned.
+ */
+export function sanitizeRawSourceMap(rawSourceMap: string): {
+  sourceMap: string;
+  ignoredSources: Set<string>;
+} {
+  const map: { sources?: unknown[]; [key: string]: unknown } =
+    JSON.parse(rawSourceMap);
+
+  const sources = Array.isArray(map.sources) ? map.sources : [];
+  map.sources = sources.map((source, index) => {
+    if (typeof source !== 'string') {
+      return `unparseable-source-${index}`;
+    }
+    try {
+      new URL(source, 'file:///');
+      return source;
+    } catch {
+      return `unparseable-source-${index}`;
+    }
+  });
+
+  const ignoreList = Array.isArray(map.ignoreList)
+    ? map.ignoreList
+    : Array.isArray(map.x_google_ignoreList)
+      ? map.x_google_ignoreList
+      : [];
+  const ignoredSources = new Set<string>();
+  for (const index of ignoreList) {
+    const source = typeof index === 'number' ? map.sources[index] : undefined;
+    if (typeof source === 'string') {
+      ignoredSources.add(source);
+    }
+  }
+
+  return { sourceMap: JSON.stringify(map), ignoredSources };
+}
 
 /**
  * Class for transforming stack traces from React Native application with using Source Map.
@@ -48,7 +126,13 @@ export class Symbolicator {
   /**
    * Cache with initialized `SourceMapConsumer` to improve symbolication performance.
    */
-  sourceMapConsumerCache: Record<string, SourceMapConsumer> = {};
+  sourceMapConsumerCache: Record<string, SourceMapCacheEntry> = {};
+
+  /**
+   * Files whose source map failed to load during the current `process` call,
+   * so repeated frames from the same file don't repeat the failing lookup.
+   */
+  private failedSourceMapFiles = new Set<string>();
 
   /**
    * Constructs new `Symbolicator` instance.
@@ -65,6 +149,10 @@ export class Symbolicator {
    * For example out of 10 frames, it's possible that only first 7 will be symbolicated and the
    * remaining 3 will be unchanged.
    *
+   * A failure to symbolicate one frame (e.g. a Module Federation remote chunk
+   * whose source map is unavailable) never fails the whole request — the
+   * failed frame passes through unchanged, mirroring Metro's behavior.
+   *
    * @param logger Fastify logger instance.
    * @param stack Raw stack frames.
    * @returns Symbolicated stack frames.
@@ -73,56 +161,22 @@ export class Symbolicator {
     logger: FastifyBaseLogger,
     stack: ReactNativeStackFrame[]
   ): Promise<SymbolicatorResults> {
-    logger.debug({ msg: 'Filtering out unnecessary frames' });
-
-    const frames: InputStackFrame[] = [];
-    for (const frame of stack) {
-      const { file } = frame;
-      if (file?.startsWith('http')) {
-        frames.push(frame as InputStackFrame);
-      }
-    }
-
     try {
-      logger.debug({ msg: 'Processing frames', frames });
+      logger.debug({ msg: 'Processing frames', frames: stack });
 
-      const processedFrames: StackFrame[] = [];
-      for (const frame of frames) {
-        if (!this.sourceMapConsumerCache[frame.file]) {
-          logger.debug({
-            msg: 'Loading raw source map data',
-            fileUrl: frame.file,
+      const processedFrames: ProcessedFrame[] = [];
+      for (const frame of stack) {
+        if (!frame.file) {
+          // Keep the response 1:1 with the request — LogBox rejects
+          // symbolication results with a different number of frames.
+          processedFrames.push({
+            frame: { ...frame, collapse: false },
+            symbolicated: false,
           });
-
-          const rawSourceMap = await this.delegate.getSourceMap(frame.file);
-
-          logger.debug({
-            msg: 'Creating source map instance',
-            fileUrl: frame.file,
-            sourceMapLength: rawSourceMap.length,
-          });
-          const sourceMapConsumer = await new SourceMapConsumer(
-            rawSourceMap.toString()
-          );
-
-          logger.debug({
-            msg: 'Saving source map instance into cache',
-            fileUrl: frame.file,
-          });
-          this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
+          continue;
         }
-
-        logger.debug({
-          msg: 'Symbolicating frame',
-          frame,
-        });
-        const processedFrame = this.processFrame(frame);
-
-        logger.debug({
-          msg: 'Finished symbolicating frame',
-          frame,
-        });
-        processedFrames.push(processedFrame);
+        const inputFrame: InputStackFrame = { ...frame, file: frame.file };
+        processedFrames.push(await this.processFrameSafe(logger, inputFrame));
       }
 
       const codeFrame =
@@ -135,33 +189,85 @@ export class Symbolicator {
       });
 
       return {
-        stack: processedFrames,
+        stack: processedFrames.map(({ frame }) => frame),
         codeFrame,
       };
     } finally {
+      this.failedSourceMapFiles.clear();
       for (const key in this.sourceMapConsumerCache) {
-        this.sourceMapConsumerCache[key].destroy();
+        this.sourceMapConsumerCache[key].consumer.destroy();
         delete this.sourceMapConsumerCache[key];
       }
     }
   }
 
-  private processFrame(frame: InputStackFrame): StackFrame {
-    if (!frame.lineNumber || !frame.column) {
+  /**
+   * Only frames that plausibly come from a served bundle get a source-map
+   * lookup; everything else (native frames, unrelated files) passes through.
+   */
+  private shouldAttemptSymbolication(frame: InputStackFrame): boolean {
+    if (frame.lineNumber == null || frame.column == null) {
+      return false;
+    }
+    return (
+      frame.file.startsWith('http') ||
+      frame.file.includes('.bundle') ||
+      frame.file.includes('.hot-update.js')
+    );
+  }
+
+  private async processFrameSafe(
+    logger: FastifyBaseLogger,
+    frame: InputStackFrame
+  ): Promise<ProcessedFrame> {
+    const passthrough: ProcessedFrame = {
+      frame: { ...frame, collapse: INTERNAL_CALLSITES.test(frame.file) },
+      symbolicated: false,
+    };
+
+    if (
+      !this.shouldAttemptSymbolication(frame) ||
+      this.failedSourceMapFiles.has(frame.file)
+    ) {
+      return passthrough;
+    }
+
+    try {
+      if (!this.sourceMapConsumerCache[frame.file]) {
+        logger.debug({
+          msg: 'Loading raw source map data',
+          fileUrl: frame.file,
+        });
+        const rawSourceMap = await this.delegate.getSourceMap(frame.file);
+
+        const { sourceMap, ignoredSources } = sanitizeRawSourceMap(
+          rawSourceMap.toString()
+        );
+        const consumer = await new SourceMapConsumer(sourceMap);
+        this.sourceMapConsumerCache[frame.file] = { consumer, ignoredSources };
+      }
+
+      return this.processFrame(frame);
+    } catch (error) {
+      this.failedSourceMapFiles.add(frame.file);
+      logger.warn({
+        msg: `Failed to symbolicate ${frame.file} — returning the frame unsymbolicated`,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return passthrough;
+    }
+  }
+
+  private processFrame(frame: InputStackFrame): ProcessedFrame {
+    const entry = this.sourceMapConsumerCache[frame.file];
+    if (entry == null || frame.lineNumber == null || frame.column == null) {
       return {
-        ...frame,
-        collapse: false,
+        frame: { ...frame, collapse: false },
+        symbolicated: false,
       };
     }
 
-    const consumer = this.sourceMapConsumerCache[frame.file];
-    if (!consumer) {
-      return {
-        ...frame,
-        collapse: false,
-      };
-    }
-
+    const { consumer, ignoredSources } = entry;
     let lookup = consumer.originalPositionFor({
       line: frame.lineNumber,
       column: frame.column,
@@ -180,26 +286,39 @@ export class Symbolicator {
     // return the original frame when both lookups fail
     if (!lookup.source) {
       return {
-        ...frame,
-        collapse: false,
+        frame: { ...frame, collapse: false },
+        symbolicated: false,
       };
     }
 
     return {
-      lineNumber: lookup.line || frame.lineNumber,
-      column: lookup.column || frame.column,
-      file: lookup.source,
-      methodName: lookup.name || frame.methodName,
-      collapse: false,
+      frame: {
+        lineNumber: lookup.line ?? frame.lineNumber,
+        column: lookup.column ?? frame.column,
+        file: lookup.source,
+        methodName: lookup.name ?? frame.methodName,
+        collapse:
+          ignoredSources.has(lookup.source) ||
+          INTERNAL_CALLSITES.test(lookup.source),
+      },
+      symbolicated: true,
     };
   }
 
   private async getCodeFrame(
     logger: FastifyBaseLogger,
-    processedFrames: StackFrame[]
+    processedFrames: ProcessedFrame[]
   ): Promise<CodeFrame | undefined> {
-    for (const frame of processedFrames) {
-      if (frame.collapse || !frame.lineNumber || !frame.column) {
+    for (const { frame, symbolicated } of processedFrames) {
+      // Only frames resolved to an original source can anchor the code
+      // frame — rendering a raw bundle at generated coordinates produces
+      // a garbage snippet.
+      if (
+        !symbolicated ||
+        frame.collapse ||
+        frame.lineNumber == null ||
+        frame.column == null
+      ) {
         continue;
       }
 
@@ -230,7 +349,7 @@ export class Symbolicator {
       } catch (error) {
         logger.error({
           msg: 'Failed to create code frame',
-          error: (error as Error).message,
+          error: error instanceof Error ? error.message : String(error),
         });
       }
 

@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import launchEditor from 'launch-editor';
@@ -45,7 +47,31 @@ async function devtoolsPlugin(
         request.body
       );
       const filepath = delegate.devTools?.resolveProjectPath(file) ?? file;
-      launchEditor(`${filepath}:${lineNumber}`, process.env.REACT_EDITOR);
+
+      // launch-editor silently ignores files that don't exist, so surface
+      // resolution failures here — otherwise tapping a stack frame does
+      // nothing with no trace of why.
+      if (!fs.existsSync(filepath)) {
+        request.log.warn(
+          `Could not open ${file} in your editor: it resolved to ` +
+            `${filepath}, which does not exist.`
+        );
+        reply.send('OK');
+        return;
+      }
+
+      launchEditor(
+        `${filepath}:${lineNumber}`,
+        process.env.REACT_EDITOR,
+        (fileName, errorMessage) => {
+          request.log.warn(
+            `Could not open ${path.basename(fileName)} in your editor` +
+              `${errorMessage ? `: ${errorMessage}` : ''}. Set the ` +
+              'REACT_EDITOR environment variable (e.g. REACT_EDITOR=code) ' +
+              'and restart the dev server.'
+          );
+        }
+      );
       reply.send('OK');
     },
   });

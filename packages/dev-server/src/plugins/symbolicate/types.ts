@@ -23,6 +23,16 @@ export interface StackFrame extends InputStackFrame {
 }
 
 /**
+ * Stack frame returned unchanged when symbolication was not attempted or
+ * failed (e.g. a native frame, or a bundle whose source map is unavailable).
+ * The response stack is always 1:1 with the request — React Native's LogBox
+ * rejects symbolication results with a different number of frames.
+ */
+export type PassthroughStackFrame = ReactNativeStackFrame & {
+  collapse: boolean;
+};
+
+/**
  * Represents [@babel/core-frame](https://babeljs.io/docs/en/babel-code-frame).
  */
 export interface CodeFrame {
@@ -39,7 +49,7 @@ export interface CodeFrame {
  */
 export interface SymbolicatorResults {
   codeFrame: CodeFrame | null;
-  stack: StackFrame[];
+  stack: PassthroughStackFrame[];
 }
 
 /**
