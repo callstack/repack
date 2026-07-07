@@ -202,7 +202,9 @@ function readEditorLog(): string[] {
 /** Waits for the fake editor to record a new invocation, returning its argv. */
 async function waitForEditorInvocation(
   sinceLength: number,
-  timeoutMs = 5000
+  // Generous: under a fully parallel test run the editor process can take
+  // a while to spawn on a loaded machine.
+  timeoutMs = 20_000
 ): Promise<string | undefined> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
@@ -219,6 +221,21 @@ describe.skipIf(process.platform === 'win32')(
   'dev-server symbolication (tester-federation-v2)',
   () => {
     beforeAll(async () => {
+      // A server already listening here is a stale orphan from an aborted
+      // run — it would answer our requests with the wrong environment
+      // (e.g. a different editor log) and make failures unexplainable.
+      for (const port of [HOST_PORT, MINI_PORT]) {
+        const stale = await fetch(`http://localhost:${port}/`, {
+          signal: AbortSignal.timeout(1000),
+        }).catch(() => undefined);
+        if (stale) {
+          throw new Error(
+            `Port ${port} is already in use — kill the stale dev server ` +
+              `before running this suite (e.g. lsof -nP -iTCP:${port}).`
+          );
+        }
+      }
+
       editorLog = path.join(
         fs.mkdtempSync(path.join(os.tmpdir(), 'repack-symbolication-e2e-')),
         'editor-invocations.log'
@@ -226,6 +243,13 @@ describe.skipIf(process.platform === 'win32')(
 
       hostServer = startServer('config.host-app.mts', HOST_PORT);
       miniServer = startServer('config.mini-app.mts', MINI_PORT);
+
+      // afterAll doesn't run if the process is killed mid-run; make sure the
+      // detached server process groups never outlive the test runner.
+      process.on('exit', () => {
+        stopServer(hostServer);
+        stopServer(miniServer);
+      });
 
       await Promise.all([
         waitFor(
