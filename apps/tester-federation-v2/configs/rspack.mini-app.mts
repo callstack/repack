@@ -15,6 +15,7 @@ export default Repack.defineRspackConfig((env) => {
     output: {
       path: '[context]/build/mini-app/[platform]',
       uniqueName: 'MF2Tester-MiniApp',
+      chunkFilename: '[name].MiniApp.chunk.bundle',
     },
     module: {
       rules: [

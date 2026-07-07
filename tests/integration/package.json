@@ -19,6 +19,7 @@
     "@rspack/core": "catalog:",
     "@types/node": "catalog:",
     "memfs": "^4.11.1",
+    "source-map": "^0.7.6",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "webpack": "catalog:",

@@ -18,6 +18,15 @@ export default defineConfig({
     projects: [
       {
         test: {
+          name: 'dev-server-e2e',
+          include: ['e2e/**/*.test.ts'],
+          environment: 'node',
+          testTimeout: 60_000,
+          hookTimeout: 300_000,
+        },
+      },
+      {
+        test: {
           name: 'rspack',
           include: ['src/**/*.test.ts'],
           environment: 'node',
