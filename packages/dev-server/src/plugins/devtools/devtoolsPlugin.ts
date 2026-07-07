@@ -46,6 +46,14 @@ async function devtoolsPlugin(
       const { file, lineNumber } = parseRequestBody<OpenStackFrameRequestBody>(
         request.body
       );
+      if (
+        typeof file !== 'string' ||
+        file.includes('\0') ||
+        !Number.isFinite(Number(lineNumber))
+      ) {
+        reply.badRequest('Invalid open-stack-frame request body');
+        return;
+      }
       const filepath = delegate.devTools?.resolveProjectPath(file) ?? file;
 
       // launch-editor silently ignores files that don't exist, so surface
@@ -88,5 +96,5 @@ async function devtoolsPlugin(
 
 export default fastifyPlugin(devtoolsPlugin, {
   name: 'devtools-plugin',
-  dependencies: ['wss-plugin'],
+  dependencies: ['@fastify/sensible', 'wss-plugin'],
 });

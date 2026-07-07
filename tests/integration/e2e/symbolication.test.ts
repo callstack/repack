@@ -54,7 +54,17 @@ let remoteFrame: StackFrame;
 function startServer(configFile: string, port: number): ChildProcess {
   const child = spawn(
     reactNativeBin,
-    ['webpack-start', '--config', configFile, '--port', String(port)],
+    [
+      'webpack-start',
+      '--config',
+      configFile,
+      '--port',
+      String(port),
+      // Compile a single platform: the suite only exercises one, and the
+      // extra compilation is wasted load on shared CI runners.
+      '--platform',
+      PLATFORM,
+    ],
     {
       cwd: appDir,
       env: {
@@ -74,7 +84,10 @@ function startServer(configFile: string, port: number): ChildProcess {
 function stopServer(child: ChildProcess | undefined) {
   if (child?.pid) {
     try {
-      process.kill(-child.pid, 'SIGTERM');
+      // SIGKILL the whole process group: these are throwaway test servers,
+      // and a SIGTERM caught mid-compilation has been observed to leave an
+      // orphan behind that breaks subsequent runs.
+      process.kill(-child.pid, 'SIGKILL');
     } catch {
       // Already gone.
     }
