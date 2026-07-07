@@ -53,4 +53,21 @@ describe('resolveProjectPath', () => {
     expectResolved('[projectRoot^2]/index.js', '/index.js', '/project/root');
     expectResolved('[projectRoot^4]/index.js', '/index.js', '/a/b');
   });
+
+  it('should stay inside the project root on duplicated separators', () => {
+    // regression: a leading separator in the remainder made path.resolve
+    // treat it as an absolute path, escaping rootDir and dropping the
+    // [projectRoot^N] up-segments entirely
+    expectResolved('[projectRoot]//src/index.js', '/project/root/src/index.js');
+    expectResolved(
+      '[projectRoot]/src//nested///index.js',
+      '/project/root/src/nested/index.js'
+    );
+    expectResolved('[projectRoot^1]//src/index.js', '/project/src/index.js');
+    expectResolved(
+      '[projectRoot^2]//shared/utils.js',
+      '/deep/shared/utils.js',
+      '/deep/nested/project'
+    );
+  });
 });
