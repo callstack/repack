@@ -21,10 +21,17 @@ function parseRequestBody<T>(body: unknown): T {
   throw new Error(`Unsupported body type: ${typeof body}`);
 }
 
+const SAME_FRAME_SUPPRESSION_MS = 1000;
+
 async function devtoolsPlugin(
   instance: FastifyInstance,
   { delegate }: { delegate: Server.Delegate }
 ) {
+  // Repeated identical open-stack-frame requests (double taps, a client
+  // stuck retrying) would each spawn an editor process; suppress launches
+  // of the same frame in quick succession.
+  let lastLaunchedFrame: string | undefined;
+  let lastLaunchedAt = 0;
   // reference implementation in `@react-native-community/cli-server-api`:
   // https://github.com/react-native-community/cli/blob/46436a12478464752999d34ed86adf3212348007/packages/cli-server-api/src/openURLMiddleware.ts
   instance.route({
@@ -55,6 +62,17 @@ async function devtoolsPlugin(
         return;
       }
       const filepath = delegate.devTools?.resolveProjectPath(file) ?? file;
+
+      const frame = `${filepath}:${lineNumber}`;
+      if (
+        frame === lastLaunchedFrame &&
+        Date.now() - lastLaunchedAt < SAME_FRAME_SUPPRESSION_MS
+      ) {
+        reply.send('OK');
+        return;
+      }
+      lastLaunchedFrame = frame;
+      lastLaunchedAt = Date.now();
 
       // launch-editor silently ignores files that don't exist, so surface
       // resolution failures here — otherwise tapping a stack frame does
