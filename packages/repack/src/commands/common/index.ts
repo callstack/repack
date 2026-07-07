@@ -1,3 +1,4 @@
+export * from './fetchDeclaredSourceMap.js';
 export * from './getDevMiddleware.js';
 export * from './getMaxWorkers.js';
 export * from './getMimeType.js';

@@ -26,6 +26,24 @@ describe('resolveProjectPath', () => {
     );
   });
 
+  it('should resolve URL-encoded [projectRoot%5EN] prefixes', () => {
+    // Bundlers percent-encode `^` in source map paths, so /symbolicate
+    // returns parent-escape tokens as e.g. `[projectRoot%5E2]/...`.
+    expectResolved(
+      '[projectRoot%5E2]/node_modules/.pnpm/react@19.0.0/node_modules/react/index.js',
+      '/node_modules/.pnpm/react@19.0.0/node_modules/react/index.js'
+    );
+    expectResolved('[projectRoot%5E1]/src/index.js', '/project/src/index.js');
+    expectResolved('[projectRoot%5e1]/src/index.js', '/project/src/index.js');
+  });
+
+  it('should not decode percent sequences outside the token', () => {
+    expectResolved(
+      '[projectRoot]/src/file%5Ename.js',
+      '/project/root/src/file%5Ename.js'
+    );
+  });
+
   it('should resolve [projectRoot^N] prefix with up-level navigation', () => {
     expectResolved('[projectRoot^1]/src/index.js', '/project/src/index.js');
     expectResolved('[projectRoot^2]/shared/utils.js', '/shared/utils.js');

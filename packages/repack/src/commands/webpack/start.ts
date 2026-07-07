@@ -13,6 +13,7 @@ import {
 import type { HMRMessage } from '../../types.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
+  fetchDeclaredSourceMap,
   getDevMiddleware,
   getMimeType,
   parseUrl,
@@ -204,9 +205,20 @@ export async function start(
             resourcePath = resolveProjectPath(resourcePath, cliConfig.root);
             return compiler.getSource(resourcePath, platform);
           },
-          getSourceMap: (url) => {
-            const { resourcePath, platform } = parseUrl(url, platforms);
-            return compiler.getSourceMap(resourcePath, platform);
+          getSourceMap: async (url) => {
+            try {
+              const { resourcePath, platform } = parseUrl(url, platforms);
+              return await compiler.getSourceMap(resourcePath, platform);
+            } catch (error) {
+              // The compiler only has maps for bundles it built. For anything
+              // else (e.g. Module Federation remotes served by another dev
+              // server) fall back to the map the bundle declares for itself.
+              const declaredSourceMap = await fetchDeclaredSourceMap(url);
+              if (declaredSourceMap) {
+                return declaredSourceMap;
+              }
+              throw error;
+            }
           },
           shouldIncludeFrame: (frame) => {
             // If the frame points to internal bootstrap/module system logic, skip the code frame.
