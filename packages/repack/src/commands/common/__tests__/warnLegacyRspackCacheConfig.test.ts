@@ -72,15 +72,106 @@ describe('warnLegacyRspackCacheConfig', () => {
   it('does not warn for a migrated config that only left the inert legacy key behind', () => {
     const warnLegacyRspackCacheConfig = loadHelper();
 
-    // persistent caching IS enabled here - warning that it is not would be false
+    // persistent caching IS enabled and the legacy key carries no options
+    // beyond `type` - there is nothing Rspack 2 could drop
     warnLegacyRspackCacheConfig([
       {
-        cache: { type: 'persistent' },
+        cache: {
+          type: 'persistent',
+          storage: { type: 'filesystem', directory: '/custom' },
+        },
         experiments: { cache: { type: 'persistent' } },
       },
     ]);
 
     expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('does not warn when the legacy key is deep-equal to the top-level cache', () => {
+    const warnLegacyRspackCacheConfig = loadHelper();
+
+    // every option under the legacy key is mirrored at the top level,
+    // so ignoring the legacy key changes nothing
+    warnLegacyRspackCacheConfig([
+      {
+        cache: {
+          type: 'persistent',
+          storage: { type: 'filesystem', directory: '/custom' },
+          buildDependencies: ['/project/rspack.config.mjs'],
+        },
+        experiments: {
+          cache: {
+            type: 'persistent',
+            storage: { type: 'filesystem', directory: '/custom' },
+            buildDependencies: ['/project/rspack.config.mjs'],
+          },
+        },
+      },
+    ]);
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('warns softly for a partial migration that leaves options under the legacy key', () => {
+    const warnLegacyRspackCacheConfig = loadHelper();
+
+    // persistent caching IS enabled, but the storage directory only lives
+    // under the legacy key - Rspack 2 drops it and uses the default location
+    warnLegacyRspackCacheConfig([
+      {
+        cache: { type: 'persistent' },
+        experiments: {
+          cache: {
+            type: 'persistent',
+            storage: { type: 'filesystem', directory: '/custom' },
+          },
+        },
+      },
+    ]);
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/experiments\.cache/);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/not applied/);
+    // caching IS enabled - the soft warning must not claim otherwise
+    expect(warnSpy.mock.calls[0][0]).not.toMatch(/NOT enabled/);
+  });
+
+  it('warns strongly when legacy options come without a top-level persistent cache', () => {
+    const warnLegacyRspackCacheConfig = loadHelper();
+
+    warnLegacyRspackCacheConfig([
+      {
+        experiments: {
+          cache: {
+            type: 'persistent',
+            storage: { type: 'filesystem', directory: '/custom' },
+          },
+        },
+      },
+    ]);
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/NOT enabled/);
+  });
+
+  it('prefers the strong warning when configs trigger both tiers', () => {
+    const warnLegacyRspackCacheConfig = loadHelper();
+
+    warnLegacyRspackCacheConfig([
+      {
+        cache: { type: 'persistent' },
+        experiments: {
+          cache: {
+            type: 'persistent',
+            storage: { type: 'filesystem', directory: '/custom' },
+          },
+        },
+      },
+      { experiments: { cache: { type: 'persistent' } } },
+    ]);
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/NOT enabled/);
   });
 
   it('warns when any config of a multi-config array is misconfigured', () => {
