@@ -21,6 +21,14 @@ user project:
   - a tarball install has no nested `node_modules`, so `@rspack/core`
   resolves to this app's own `^1.x` copy.
 
+One consequence: runtime dependencies resolve from the npm registry, not the
+workspace - notably `@callstack/repack-dev-server`, because `pnpm pack`
+rewrites repack's `workspace:*` dependency to the published version. This app
+therefore validates the locally packed repack against **published** runtime
+deps; changes to `packages/dev-server` are not exercised here and need
+re-validation via [`tester-app`](../tester-app/) (or an additional
+dev-server pack step).
+
 The src is intentionally minimal and **not** shared with `tester-app`
 (sharing src across the workspace boundary would resolve `react`/
 `react-native` from two different installs). It covers the bundler-major
