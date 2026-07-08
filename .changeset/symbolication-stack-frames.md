@@ -11,3 +11,4 @@ Fix stack-frame symbolication and open-in-editor for Module Federation setups:
 - Frames are collapsed by resolved source path (like React Native's default Metro config) and the source map `ignoreList`/`x_google_ignoreList` field, instead of not at all.
 - `/open-stack-frame` now decodes URL-encoded `[projectRoot^N]` tokens (returned as `[projectRoot%5E2]/...` by symbolication), so tapping frames that resolve into `node_modules` opens the editor instead of silently doing nothing.
 - Editor launch failures are logged with an actionable hint (set `REACT_EDITOR`) instead of being silently swallowed; frames at generated column 0 symbolicate correctly.
+- The dev server now blocks cross-origin browser requests (restoring the `securityHeadersMiddleware` behavior of the React Native community CLI), so a website the developer visits cannot drive dev-only endpoints such as `/open-stack-frame` and `/open-url` to open arbitrary files or URLs on their machine.

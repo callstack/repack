@@ -14,6 +14,7 @@ import wssPlugin from './plugins/wss/wssPlugin.js';
 import { Internal, type Middleware, type Server } from './types.js';
 import { handleCustomNetworkLoadResource } from './utils/networkLoadResourceHandler.js';
 import { normalizeOptions } from './utils/normalizeOptions.js';
+import { registerOriginGuard } from './utils/originGuard.js';
 
 /**
  * Create instance of development server, powered by Fastify.
@@ -43,6 +44,11 @@ export async function createServer(config: Server.Config) {
     },
     ...(options.https ? { https: options.https } : {}),
   });
+
+  // Block cross-origin browser requests before anything else runs, so a
+  // malicious website cannot drive dev-only endpoints (e.g. opening files or
+  // URLs on the developer's machine) via the browser.
+  registerOriginGuard(instance, options.host);
 
   delegate = config.delegate({
     options,
