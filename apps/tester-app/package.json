@@ -34,7 +34,7 @@
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
+    "@babel/core": "^7.29.7",
     "@callstack/repack": "workspace:*",
     "@callstack/repack-plugin-nativewind": "workspace:*",
     "@callstack/repack-plugin-reanimated": "workspace:*",
@@ -54,7 +54,7 @@
     "get-port": "^6.1.2",
     "globby": "^13.1.2",
     "http-server": "^14.1.1",
-    "postcss": "^8.4.49",
+    "postcss": "^8.5.23",
     "postcss-loader": "^8.1.1",
     "react-native-test-app": "catalog:testers",
     "tailwindcss": "^3.4.17",
