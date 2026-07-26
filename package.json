@@ -1,7 +1,7 @@
 {
   "name": "repack",
   "private": true,
-  "packageManager": "pnpm@10.32.1",
+  "packageManager": "pnpm@10.34.5",
   "engines": {
     "node": ">=24"
   },
@@ -23,19 +23,19 @@
     "website:build": "pnpm --filter website run export"
   },
   "devDependencies": {
-    "@babel/cli": "^7.25.2",
-    "@babel/core": "^7.25.2",
-    "@babel/plugin-syntax-flow": "^7.23.3",
-    "@babel/plugin-transform-react-jsx": "^7.23.4",
-    "@babel/preset-env": "^7.25.3",
-    "@babel/preset-typescript": "^7.23.3",
-    "@babel/runtime": "^7.25.0",
+    "@babel/cli": "^7.29.7",
+    "@babel/core": "^7.29.7",
+    "@babel/plugin-syntax-flow": "^7.29.7",
+    "@babel/plugin-transform-react-jsx": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "@babel/preset-typescript": "^7.29.7",
+    "@babel/runtime": "^7.29.7",
     "@biomejs/biome": "^1.9.4",
     "@changesets/changelog-github": "^0.7.0",
-    "@changesets/cli": "^2.31.0",
+    "@changesets/cli": "^2.31.1",
     "husky": "^9.1.6",
     "is-in-ci": "^1.0.0",
-    "turbo": "^2.8.16",
+    "turbo": "^2.10.6",
     "typescript": "catalog:"
   }
 }

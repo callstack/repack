@@ -28,7 +28,7 @@
     "react-native-screens": "4.24.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
+    "@babel/core": "^7.29.7",
     "@react-native-community/cli": "catalog:testers",
     "@react-native-community/cli-platform-android": "catalog:testers",
     "@react-native-community/cli-platform-ios": "catalog:testers",

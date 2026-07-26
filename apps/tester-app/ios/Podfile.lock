@@ -21,7 +21,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - callstack-repack (5.2.4):
+  - callstack-repack (5.2.5):
     - hermes-engine
     - JWTDecode (~> 3.0.0)
     - RCTRequired
@@ -1901,7 +1901,7 @@ PODS:
     - React-utils (= 0.84.1)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.84.1)
-  - ReactNativeHost (0.5.16):
+  - ReactNativeHost (0.5.21):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2201,7 +2201,7 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios/ReactCodegen`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
-  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@5.1.0_react-native@0.84.1_@babel+core@7.25.2_@react-native-community+cl_ud36qqqczp7xfpwwlwshp326ei/node_modules/@rnx-kit/react-native-host`)"
+  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@5.1.0_@react-native-community+cli-types@20.1.2_memfs@4.64.0_metro_c33ef41f68fefd35a2e8dc62efd8dfff/node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
   - ReactTestApp-Resources (from `..`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -2367,7 +2367,7 @@ EXTERNAL SOURCES:
   ReactNativeDependencies:
     :podspec: "../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
   ReactNativeHost:
-    :path: "../../../node_modules/.pnpm/react-native-test-app@5.1.0_react-native@0.84.1_@babel+core@7.25.2_@react-native-community+cl_ud36qqqczp7xfpwwlwshp326ei/node_modules/@rnx-kit/react-native-host"
+    :path: "../../../node_modules/.pnpm/react-native-test-app@5.1.0_@react-native-community+cli-types@20.1.2_memfs@4.64.0_metro_c33ef41f68fefd35a2e8dc62efd8dfff/node_modules/@rnx-kit/react-native-host"
   ReactTestApp-DevSupport:
     :path: "../node_modules/react-native-test-app"
   ReactTestApp-Resources:
@@ -2383,9 +2383,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AsyncStorage: 0a927dc82ea8eaa0350779b37d73b11d070ea677
-  callstack-repack: a35688de295884a73fadb39448d91c1c0905bb9e
+  callstack-repack: ac761bfc09e2d4c5946bcbe5d1ee7518aae8ac58
   FBLazyVector: e97c19a5a442429d1988f182a1940fb08df514da
-  hermes-engine: f317b2ce95bb923bfd26a3a6ac85ca7c18eb936a
+  hermes-engine: 65a8d78c7ddbd165206fa2023950b4fbbe9ae74f
   JWTDecode: 2eed97c2fa46ccaf3049a787004eedf0be474a87
   RCTDeprecation: af44b104091a34482596cd9bd7e8d90c4e9b4bd7
   RCTRequired: bb77b070f75f53398ce43c0aaaa58337cebe2bf6
@@ -2395,7 +2395,7 @@ SPEC CHECKSUMS:
   React: 1ba7d364ade7d883a1ec055bfc3606f35fdee17b
   React-callinvoker: bc2a26f8d84fb01f003fc6de6c9337b64715f95b
   React-Core: bdaa87b276ca31877632a982ecf7c36f8c826414
-  React-Core-prebuilt: 884854d96d5348d5ccc4458bf7966157d3d6e6df
+  React-Core-prebuilt: 8cc1199f6bea6dd09e23827d44673cf1a75c6879
   React-CoreModules: b24989f62d56390ae08ca4f65e6f38fe6802de42
   React-cxxreact: 1a2dfcbc18a6b610664dba152adf327f063a0d12
   React-debug: 755200a6e7f5e6e0a40ff8d215493d43cce285fc
@@ -2455,17 +2455,17 @@ SPEC CHECKSUMS:
   React-utils: 2f8dd43fed5c6d881ac5971666bbb34cc4a03fa1
   React-webperformancenativemodule: afbee7a9fd0b5bf92f6765eb41767f865b293bcc
   ReactAppDependencyProvider: 26bbf1e26768d08dd965a2b5e372e53f67b21fee
-  ReactCodegen: 5e772d048f7dd41685b365f76f0d424adf884d52
+  ReactCodegen: 515e20a1599f424614cba766cd1d4a15890bb24d
   ReactCommon: 309419492d417c4cbb87af06f67735afa40ecb9d
-  ReactNativeDependencies: 767b6ece1facd2f4df1f47fc434f0f9d0e5da963
-  ReactNativeHost: 36390b077b4717e51a2bdb4b3a48b121821f4a74
+  ReactNativeDependencies: dd5e73a0e936bb10ff93634e7c0292d485fde937
+  ReactNativeHost: 1c3968e84d54a07b3898922f4917fb5f16b808c5
   ReactTestApp-DevSupport: 0520f3f0e6f13e2d915fc146389c855c94117c2b
   ReactTestApp-Resources: 8d72c3deef156833760694a288ff334af4d427d7
-  RNReanimated: 2483e62686494657737c421f5162fa851d805306
+  RNReanimated: 9eef0036871454c708cd8524691e5ead9b3caabd
   RNSVG: 13970bfde0ea9c9e10e01ab0d7b4a6cde11fca1b
-  RNWorklets: e1d046d6c92e3262c929ba4554ffc59d1416e7c8
+  RNWorklets: 0e6446400f626c7ad2c632d6e1feddcec9ef5031
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
-  Yoga: c0b3f2c7e8d3e327e450223a2414ca3fa296b9a2
+  Yoga: 7c1c3b93e408ac46c7ed64b5641ca7161747378d
 
 PODFILE CHECKSUM: 6d7cbe03444d5e87210979fb32a0eca299d758fe
 

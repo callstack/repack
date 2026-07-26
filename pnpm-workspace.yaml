@@ -12,6 +12,12 @@ updateNotifier: false
 
 overrides:
   "caniuse-lite": ^1.0.30001774
+  # Security fixes for advisories in @module-federation/dts-plugin, which pins
+  # these to exact versions - no parent upgrade can reach them.
+  "koa@2": ^2.16.4
+  "koa@3": ^3.1.2
+  "ws@8": ^8.21.1
+  "adm-zip": ^0.6.0
 
 allowBuilds:
   "@biomejs/biome": true
@@ -20,13 +26,16 @@ allowBuilds:
   "esbuild": true
 
 catalog:
-  "@rspack/core": ^1.6.0
+  # Pinned: 1.6.2+ breaks MF v2 polyfill ordering; 1.6.4+ fails typecheck.
+  "@rspack/core": 1.6.0
   "@rslib/core": ^0.6.3
   "@swc/helpers": ~0.5.17
   "@types/node": ^20.19.31
-  "terser-webpack-plugin": ^5.3.14
+  # Pinned: 5.6+ silently skips minification (#1390).
+  "terser-webpack-plugin": 5.5.0
   "typescript": ^5.9.3
-  "webpack": ^5.104.1
+  # Held: 5.106+ removes a webpack internal needed by @module-federation/enhanced <2.4.0.
+  "webpack": ~5.105.0
   "react": "19.2.3"
   "react-native": "0.84.1"
   "vitest": ^4.1.0

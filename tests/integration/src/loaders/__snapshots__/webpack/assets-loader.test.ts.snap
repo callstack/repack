@@ -167,12 +167,12 @@ exports[`assetLoader > should convert to remote-asset > with URL containing a pa
 exports[`assetLoader > should convert to remote-asset > with URL containing a path after basename 2`] = `
 "/
 └─ out/
-   ├─ main.js
-   └─ remote-assets/
-      └─ assets/
-         └─ __fixtures__/
-            └─ assets/
-               └─ logo.png"
+   ├─ remote-assets/
+   │  └─ assets/
+   │     └─ __fixtures__/
+   │        └─ assets/
+   │           └─ logo.png
+   └─ main.js"
 `;
 
 exports[`assetLoader > should convert to remote-asset > with scales 1 1`] = `
@@ -188,14 +188,14 @@ exports[`assetLoader > should convert to remote-asset > with scales 1 1`] = `
 exports[`assetLoader > should convert to remote-asset > with scales 1 2`] = `
 "/
 └─ out/
-   ├─ main.js
-   └─ remote-assets/
-      └─ assets/
-         └─ __fixtures__/
-            └─ assets/
-               ├─ star.png
-               ├─ star@2x.png
-               └─ star@3x.png"
+   ├─ remote-assets/
+   │  └─ assets/
+   │     └─ __fixtures__/
+   │        └─ assets/
+   │           ├─ star.png
+   │           ├─ star@2x.png
+   │           └─ star@3x.png
+   └─ main.js"
 `;
 
 exports[`assetLoader > should convert to remote-asset > with scales 2 1`] = `
@@ -211,14 +211,14 @@ exports[`assetLoader > should convert to remote-asset > with scales 2 1`] = `
 exports[`assetLoader > should convert to remote-asset > with scales 2 2`] = `
 "/
 └─ out/
-   ├─ main.js
-   └─ remote-assets/
-      └─ assets/
-         └─ __fixtures__/
-            └─ assets/
-               ├─ star.png
-               ├─ star@2x.png
-               └─ star@3x.png"
+   ├─ remote-assets/
+   │  └─ assets/
+   │     └─ __fixtures__/
+   │        └─ assets/
+   │           ├─ star.png
+   │           ├─ star@2x.png
+   │           └─ star@3x.png
+   └─ main.js"
 `;
 
 exports[`assetLoader > should convert to remote-asset > with scales 3 1`] = `
@@ -234,14 +234,14 @@ exports[`assetLoader > should convert to remote-asset > with scales 3 1`] = `
 exports[`assetLoader > should convert to remote-asset > with scales 3 2`] = `
 "/
 └─ out/
-   ├─ main.js
-   └─ remote-assets/
-      └─ assets/
-         └─ __fixtures__/
-            └─ assets/
-               ├─ star.png
-               ├─ star@2x.png
-               └─ star@3x.png"
+   ├─ remote-assets/
+   │  └─ assets/
+   │     └─ __fixtures__/
+   │        └─ assets/
+   │           ├─ star.png
+   │           ├─ star@2x.png
+   │           └─ star@3x.png
+   └─ main.js"
 `;
 
 exports[`assetLoader > should convert to remote-asset > with specified assetPath > with scales 1 1`] = `
@@ -257,15 +257,15 @@ exports[`assetLoader > should convert to remote-asset > with specified assetPath
 exports[`assetLoader > should convert to remote-asset > with specified assetPath > with scales 1 2`] = `
 "/
 └─ out/
-   ├─ main.js
-   └─ remote-assets/
-      └─ assets/
-         └─ __fixtures__/
-            └─ assets/
-               └─ nested-folder/
-                  ├─ star-fake-hash.png
-                  ├─ star-fake-hash@2x.png
-                  └─ star-fake-hash@3x.png"
+   ├─ remote-assets/
+   │  └─ assets/
+   │     └─ __fixtures__/
+   │        └─ assets/
+   │           └─ nested-folder/
+   │              ├─ star-fake-hash.png
+   │              ├─ star-fake-hash@2x.png
+   │              └─ star-fake-hash@3x.png
+   └─ main.js"
 `;
 
 exports[`assetLoader > should convert to remote-asset > with specified assetPath > with scales 2 1`] = `
@@ -281,15 +281,15 @@ exports[`assetLoader > should convert to remote-asset > with specified assetPath
 exports[`assetLoader > should convert to remote-asset > with specified assetPath > with scales 2 2`] = `
 "/
 └─ out/
-   ├─ main.js
-   └─ remote-assets/
-      └─ assets/
-         └─ __fixtures__/
-            └─ assets/
-               └─ nested-folder/
-                  ├─ star-fake-hash.png
-                  ├─ star-fake-hash@2x.png
-                  └─ star-fake-hash@3x.png"
+   ├─ remote-assets/
+   │  └─ assets/
+   │     └─ __fixtures__/
+   │        └─ assets/
+   │           └─ nested-folder/
+   │              ├─ star-fake-hash.png
+   │              ├─ star-fake-hash@2x.png
+   │              └─ star-fake-hash@3x.png
+   └─ main.js"
 `;
 
 exports[`assetLoader > should convert to remote-asset > with specified assetPath > with scales 3 1`] = `
@@ -305,15 +305,15 @@ exports[`assetLoader > should convert to remote-asset > with specified assetPath
 exports[`assetLoader > should convert to remote-asset > with specified assetPath > with scales 3 2`] = `
 "/
 └─ out/
-   ├─ main.js
-   └─ remote-assets/
-      └─ assets/
-         └─ __fixtures__/
-            └─ assets/
-               └─ nested-folder/
-                  ├─ star-fake-hash.png
-                  ├─ star-fake-hash@2x.png
-                  └─ star-fake-hash@3x.png"
+   ├─ remote-assets/
+   │  └─ assets/
+   │     └─ __fixtures__/
+   │        └─ assets/
+   │           └─ nested-folder/
+   │              ├─ star-fake-hash.png
+   │              ├─ star-fake-hash@2x.png
+   │              └─ star-fake-hash@3x.png
+   └─ main.js"
 `;
 
 exports[`assetLoader > should convert to remote-asset > with specified assetPath > without scales 1`] = `
@@ -329,13 +329,13 @@ exports[`assetLoader > should convert to remote-asset > with specified assetPath
 exports[`assetLoader > should convert to remote-asset > with specified assetPath > without scales 2`] = `
 "/
 └─ out/
-   ├─ main.js
-   └─ remote-assets/
-      └─ assets/
-         └─ __fixtures__/
-            └─ assets/
-               └─ nested-folder/
-                  └─ logo-fake-hash.png"
+   ├─ remote-assets/
+   │  └─ assets/
+   │     └─ __fixtures__/
+   │        └─ assets/
+   │           └─ nested-folder/
+   │              └─ logo-fake-hash.png
+   └─ main.js"
 `;
 
 exports[`assetLoader > should convert to remote-asset > without scales 1`] = `
@@ -351,12 +351,12 @@ exports[`assetLoader > should convert to remote-asset > without scales 1`] = `
 exports[`assetLoader > should convert to remote-asset > without scales 2`] = `
 "/
 └─ out/
-   ├─ main.js
-   └─ remote-assets/
-      └─ assets/
-         └─ __fixtures__/
-            └─ assets/
-               └─ logo.png"
+   ├─ remote-assets/
+   │  └─ assets/
+   │     └─ __fixtures__/
+   │        └─ assets/
+   │           └─ logo.png
+   └─ main.js"
 `;
 
 exports[`assetLoader > should inline asset > with scales (1) 1`] = `
