@@ -1,6 +1,9 @@
 packages:
   - "packages/*"
   - "apps/*"
+  # standalone Rspack 1 lab - has its own node_modules and installs repack
+  # from a packed tarball, so workspace resolution never leaks into it
+  - "!apps/tester-app-rspack1"
   - "tests/*"
   - "website"
 
@@ -19,10 +22,16 @@ allowBuilds:
   "core-js": true
   "esbuild": true
 
+# Rspack 2 is the workspace default - it is the maintained line and what
+# in-workspace apps actually run (repack's own @rspack/core@^2 devDependency
+# shadows any app-level pin; see agent_context/rspackv2-jul2026/08). The
+# Rspack 1 surfaces are the standalone apps/tester-app-rspack1 lab and
+# repack's aliased @rspack/core-v1 jest lane (pnpm test:rspack1).
 catalog:
-  "@rspack/core": ^1.6.0
+  "@rspack/core": ^2.1.2
+  "@rspack/plugin-react-refresh": ^2.0.2
   "@rslib/core": ^0.6.3
-  "@swc/helpers": ~0.5.17
+  "@swc/helpers": ^0.5.23
   "@types/node": ^20.19.31
   "terser-webpack-plugin": ^5.3.14
   "typescript": ^5.9.3
