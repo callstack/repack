@@ -42,16 +42,17 @@ catalog:
   "typescript": ^5.9.3
   # Held: 5.106+ removes a webpack internal needed by @module-federation/enhanced <2.4.0.
   "webpack": ~5.105.0
-  "react": "19.2.3"
-  "react-native": "0.84.1"
+  "react": "19.2.8"
+  "react-native": "0.86.0"
   "vitest": ^4.1.0
 
 catalogs:
   testers:
     "@types/react": ^19.2.0
-    "react-native-test-app": 5.1.0
-    "@react-native/babel-preset": "0.84.1"
-    "@react-native/typescript-config": "0.84.1"
-    "@react-native-community/cli": "20.1.2"
-    "@react-native-community/cli-platform-android": "20.1.2"
-    "@react-native-community/cli-platform-ios": "20.1.2"
+    # Held: 5.4.5 is the newest release, and it caps react-native at <0.87.
+    "react-native-test-app": 5.4.5
+    "@react-native/babel-preset": "0.86.0"
+    "@react-native/typescript-config": "0.86.0"
+    "@react-native-community/cli": "20.2.0"
+    "@react-native-community/cli-platform-android": "20.2.0"
+    "@react-native-community/cli-platform-ios": "20.2.0"
