@@ -1,4 +1,4 @@
-import type { SwcLoaderOptions } from '@rspack/core';
+import type { SwcConfig } from './options.js';
 
 const SWC_SUPPORTED_NORMAL_RULES = new Set([
   'transform-block-scoping',
@@ -80,9 +80,7 @@ export function addSwcComplementaryTransforms(
   return finalTransforms;
 }
 
-function getTransformRuntimeConfig(
-  swcConfig: SwcLoaderOptions
-): SwcLoaderOptions {
+function getTransformRuntimeConfig(swcConfig: SwcConfig): SwcConfig {
   return {
     ...swcConfig,
     jsc: {
@@ -92,9 +90,7 @@ function getTransformRuntimeConfig(
   };
 }
 
-function getTransformReactDevelopmentConfig(
-  swcConfig: SwcLoaderOptions
-): SwcLoaderOptions {
+function getTransformReactDevelopmentConfig(swcConfig: SwcConfig): SwcConfig {
   return {
     ...swcConfig,
     jsc: {
@@ -111,9 +107,9 @@ function getTransformReactDevelopmentConfig(
 }
 
 function getTransformReactRuntimeConfig(
-  swcConfig: SwcLoaderOptions,
+  swcConfig: SwcConfig,
   reactRuntimeConfig: Record<string, any> = {}
-): SwcLoaderOptions {
+): SwcConfig {
   return {
     ...swcConfig,
     jsc: {
@@ -137,13 +133,13 @@ function getTransformReactRuntimeConfig(
 }
 
 function getTransformModulesCommonjsConfig(
-  swcConfig: SwcLoaderOptions,
+  swcConfig: SwcConfig,
   moduleConfig: Record<string, any> = {
     strict: true,
     strictMode: true,
     allowTopLevelThis: true,
   }
-): SwcLoaderOptions {
+): SwcConfig {
   return {
     ...swcConfig,
     module: {
@@ -157,9 +153,7 @@ function getTransformModulesCommonjsConfig(
   };
 }
 
-function getTransformExportDefaultFromConfig(
-  swcConfig: SwcLoaderOptions
-): SwcLoaderOptions {
+function getTransformExportDefaultFromConfig(swcConfig: SwcConfig): SwcConfig {
   if (swcConfig.jsc?.parser?.syntax === 'typescript') {
     return swcConfig;
   }
@@ -176,9 +170,7 @@ function getTransformExportDefaultFromConfig(
   };
 }
 
-function getTransformDynamicImportConfig(
-  swcConfig: SwcLoaderOptions
-): SwcLoaderOptions {
+function getTransformDynamicImportConfig(swcConfig: SwcConfig): SwcConfig {
   return {
     ...swcConfig,
     jsc: {
@@ -193,9 +185,9 @@ function getTransformDynamicImportConfig(
 }
 
 function getTransformClassPropertiesConfig(
-  swcConfig: SwcLoaderOptions,
+  swcConfig: SwcConfig,
   ruleConfig: Record<string, any> = { loose: false }
-): SwcLoaderOptions {
+): SwcConfig {
   return {
     ...swcConfig,
     jsc: {
@@ -210,9 +202,9 @@ function getTransformClassPropertiesConfig(
 }
 
 function getTransformPrivateMethodsPropertyConfig(
-  swcConfig: SwcLoaderOptions,
+  swcConfig: SwcConfig,
   ruleConfig: Record<string, any> = { loose: false }
-): SwcLoaderOptions {
+): SwcConfig {
   return {
     ...swcConfig,
     jsc: {
@@ -230,9 +222,9 @@ function getTransformPrivateMethodsPropertyConfig(
 }
 
 function getTransformObjectRestSpreadConfig(
-  swcConfig: SwcLoaderOptions,
+  swcConfig: SwcConfig,
   ruleConfig: Record<string, any> = { loose: false }
-): SwcLoaderOptions {
+): SwcConfig {
   return {
     ...swcConfig,
     jsc: {
@@ -247,9 +239,9 @@ function getTransformObjectRestSpreadConfig(
 }
 
 function getTransformOptionalChainingNullishCoalescingConfig(
-  swcConfig: SwcLoaderOptions,
+  swcConfig: SwcConfig,
   ruleConfig: Record<string, any> = { loose: false }
-): SwcLoaderOptions {
+): SwcConfig {
   return {
     ...swcConfig,
     jsc: {
@@ -264,9 +256,9 @@ function getTransformOptionalChainingNullishCoalescingConfig(
 }
 
 function getTransformForOfConfig(
-  swcConfig: SwcLoaderOptions,
+  swcConfig: SwcConfig,
   ruleConfig: Record<string, any> = { loose: false }
-): SwcLoaderOptions {
+): SwcConfig {
   return {
     ...swcConfig,
     jsc: {
@@ -281,9 +273,7 @@ function getTransformForOfConfig(
   };
 }
 
-function getTransformTypescriptConfig(
-  swcConfig: SwcLoaderOptions
-): SwcLoaderOptions {
+function getTransformTypescriptConfig(swcConfig: SwcConfig): SwcConfig {
   // passthrough
   return swcConfig;
 }
@@ -322,7 +312,7 @@ export function getSupportedSwcNormalTransforms(
 
 export function getSupportedSwcConfigurableTransforms(
   transforms: [string, Record<string, any> | undefined][],
-  swcConfig: SwcLoaderOptions
+  swcConfig: SwcConfig
 ) {
   const transformNames = transforms
     .filter(([transform]) => SWC_SUPPORTED_CONFIGURABLE_RULES.has(transform))
@@ -341,7 +331,7 @@ export function getSupportedSwcConfigurableTransforms(
 
 export function getSupportedSwcCustomTransforms(
   transforms: [string, Record<string, any> | undefined][],
-  swcConfig: SwcLoaderOptions
+  swcConfig: SwcConfig
 ) {
   const transformNames = transforms
     .filter(([transform]) => SWC_SUPPORTED_CUSTOM_RULES.has(transform))

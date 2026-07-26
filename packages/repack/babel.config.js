@@ -31,6 +31,10 @@ module.exports = {
     // Transform everything in `test` environment, so unit test can pass.
     test: {
       presets: [['@babel/preset-env', { targets: { node: 18 } }]],
+      // The build keeps `import(...)` untransformed (see the override above),
+      // but Jest runs modules as CJS, so tests need `import(...)` lowered
+      // to `require(...)` as well.
+      plugins: ['@babel/plugin-transform-dynamic-import'],
     },
   },
 };

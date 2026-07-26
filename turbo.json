@@ -9,6 +9,10 @@
       "dependsOn": ["^build"]
     },
     "test": {
+      "dependsOn": ["^build"],
+      "env": ["RSPACK_MAJOR"]
+    },
+    "test:rspack1": {
       "dependsOn": ["^build"]
     },
     "pods": {

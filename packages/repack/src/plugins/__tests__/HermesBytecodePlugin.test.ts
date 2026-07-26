@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import os from 'node:os';
+import path from 'node:path';
 import { type Compiler, ModuleFilenameHelpers } from '@rspack/core';
 import execa from 'execa';
 import { HermesBytecodePlugin } from '../HermesBytecodePlugin/index.js';
@@ -108,7 +109,7 @@ describe('HermesBytecodePlugin', () => {
 
       expect(execaNodeMock).toHaveBeenCalledTimes(1);
       expect(execaNodeMock.mock.calls[0][0]).toEqual(
-        'path/to/react-native/scripts/compose-source-maps.js'
+        path.join('path/to/react-native', 'scripts', 'compose-source-maps.js')
       );
     });
 
@@ -156,7 +157,7 @@ describe('HermesBytecodePlugin', () => {
       const hermesPath = getHermesCLIPath(reactNativePath);
 
       expect(hermesPath).toBe(
-        'path/to/hermes-compiler/hermesc/osx-bin/hermesc'
+        path.join('path/to', 'hermes-compiler', 'hermesc', 'osx-bin', 'hermesc')
       );
     });
 
@@ -167,7 +168,13 @@ describe('HermesBytecodePlugin', () => {
       const hermesPath = getHermesCLIPath(reactNativePath);
 
       expect(hermesPath).toBe(
-        'path/to/react-native/sdks/hermesc/osx-bin/hermesc'
+        path.join(
+          'path/to/react-native',
+          'sdks',
+          'hermesc',
+          'osx-bin',
+          'hermesc'
+        )
       );
     });
   });
