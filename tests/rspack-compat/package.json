@@ -1,0 +1,13 @@
+{
+  "name": "rspack-compat-test",
+  "version": "0.0.1",
+  "description": "Built-dist smoke tests for @callstack/repack against both @rspack/core majors",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test:smoke": "node run.mjs"
+  }
+}

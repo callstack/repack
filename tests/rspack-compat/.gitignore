@@ -1,0 +1,7 @@
+# per-run artifacts - the fixtures are standalone projects that get a fresh
+# repack tarball installed on every run
+.pack/
+fixtures/*/node_modules/
+fixtures/*/pnpm-lock.yaml
+fixtures/*/callstack-repack.tgz
+fixtures/*/dist/

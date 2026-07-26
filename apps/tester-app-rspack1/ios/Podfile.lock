@@ -1,26 +1,4 @@
 PODS:
-  - AsyncStorage (3.0.1):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
   - callstack-repack (5.2.5):
     - hermes-engine
     - JWTDecode (~> 3.0.0)
@@ -1447,75 +1425,6 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-  - react-native-safe-area-context (5.7.0):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - react-native-safe-area-context/common (= 5.7.0)
-    - react-native-safe-area-context/fabric (= 5.7.0)
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
-  - react-native-safe-area-context/common (5.7.0):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
-  - react-native-safe-area-context/fabric (5.7.0):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - react-native-safe-area-context/common
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
   - React-NativeModulesApple (0.84.1):
     - hermes-engine
     - React-callinvoker
@@ -1901,7 +1810,7 @@ PODS:
     - React-utils (= 0.84.1)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.84.1)
-  - ReactNativeHost (0.5.16):
+  - ReactNativeHost (0.5.19):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1929,203 +1838,12 @@ PODS:
     - React-Core
     - React-jsi
   - ReactTestApp-Resources (1.0.0-dev)
-  - RNReanimated (4.2.2):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - RNReanimated/reanimated (= 4.2.2)
-    - RNWorklets
-    - Yoga
-  - RNReanimated/reanimated (4.2.2):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - RNReanimated/reanimated/apple (= 4.2.2)
-    - RNWorklets
-    - Yoga
-  - RNReanimated/reanimated/apple (4.2.2):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - RNWorklets
-    - Yoga
-  - RNSVG (15.15.3):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - RNSVG/common (= 15.15.3)
-    - Yoga
-  - RNSVG/common (15.15.3):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
-  - RNWorklets (0.7.4):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - RNWorklets/worklets (= 0.7.4)
-    - Yoga
-  - RNWorklets/worklets (0.7.4):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - RNWorklets/worklets/apple (= 0.7.4)
-    - Yoga
-  - RNWorklets/worklets/apple (0.7.4):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
   - SwiftyRSA (1.7.0):
     - SwiftyRSA/ObjC (= 1.7.0)
   - SwiftyRSA/ObjC (1.7.0)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
-  - "AsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "callstack-repack (from `../node_modules/@callstack/repack`)"
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
@@ -2166,7 +1884,6 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
-  - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-networking (from `../node_modules/react-native/ReactCommon/react/networking`)
   - React-oscompat (from `../node_modules/react-native/ReactCommon/oscompat`)
@@ -2201,12 +1918,9 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios/ReactCodegen`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
-  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@5.1.0_react-native@0.84.1_@babel+core@7.25.2_@react-native-commun_f26b7d0f2318c9dfa8ca60eadb230840/node_modules/@rnx-kit/react-native-host`)"
+  - "ReactNativeHost (from `../node_modules/.pnpm/react-native-test-app@5.1.0_@react-native-community+cli-types@20.1.2_memfs@4.57.8_tslib_c20fa268d9d21a026c9e9e7083cd5d34/node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
   - ReactTestApp-Resources (from `..`)
-  - RNReanimated (from `../node_modules/react-native-reanimated`)
-  - RNSVG (from `../node_modules/react-native-svg`)
-  - RNWorklets (from `../node_modules/react-native-worklets`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -2215,8 +1929,6 @@ SPEC REPOS:
     - SwiftyRSA
 
 EXTERNAL SOURCES:
-  AsyncStorage:
-    :path: "../node_modules/@react-native-async-storage/async-storage"
   callstack-repack:
     :path: "../node_modules/@callstack/repack"
   FBLazyVector:
@@ -2296,8 +2008,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
-  react-native-safe-area-context:
-    :path: "../node_modules/react-native-safe-area-context"
   React-NativeModulesApple:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-networking:
@@ -2367,25 +2077,18 @@ EXTERNAL SOURCES:
   ReactNativeDependencies:
     :podspec: "../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
   ReactNativeHost:
-    :path: "../../../node_modules/.pnpm/react-native-test-app@5.1.0_react-native@0.84.1_@babel+core@7.25.2_@react-native-commun_f26b7d0f2318c9dfa8ca60eadb230840/node_modules/@rnx-kit/react-native-host"
+    :path: "../node_modules/.pnpm/react-native-test-app@5.1.0_@react-native-community+cli-types@20.1.2_memfs@4.57.8_tslib_c20fa268d9d21a026c9e9e7083cd5d34/node_modules/@rnx-kit/react-native-host"
   ReactTestApp-DevSupport:
     :path: "../node_modules/react-native-test-app"
   ReactTestApp-Resources:
     :path: ".."
-  RNReanimated:
-    :path: "../node_modules/react-native-reanimated"
-  RNSVG:
-    :path: "../node_modules/react-native-svg"
-  RNWorklets:
-    :path: "../node_modules/react-native-worklets"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  AsyncStorage: 0a927dc82ea8eaa0350779b37d73b11d070ea677
   callstack-repack: ac761bfc09e2d4c5946bcbe5d1ee7518aae8ac58
   FBLazyVector: e97c19a5a442429d1988f182a1940fb08df514da
-  hermes-engine: 65a8d78c7ddbd165206fa2023950b4fbbe9ae74f
+  hermes-engine: da5fd6f422bc00c802d445ebf33c05553b72c038
   JWTDecode: 2eed97c2fa46ccaf3049a787004eedf0be474a87
   RCTDeprecation: af44b104091a34482596cd9bd7e8d90c4e9b4bd7
   RCTRequired: bb77b070f75f53398ce43c0aaaa58337cebe2bf6
@@ -2395,7 +2098,7 @@ SPEC CHECKSUMS:
   React: 1ba7d364ade7d883a1ec055bfc3606f35fdee17b
   React-callinvoker: bc2a26f8d84fb01f003fc6de6c9337b64715f95b
   React-Core: bdaa87b276ca31877632a982ecf7c36f8c826414
-  React-Core-prebuilt: 8cc1199f6bea6dd09e23827d44673cf1a75c6879
+  React-Core-prebuilt: 27887b0d16370aa651ff972a82099e70679c7317
   React-CoreModules: b24989f62d56390ae08ca4f65e6f38fe6802de42
   React-cxxreact: 1a2dfcbc18a6b610664dba152adf327f063a0d12
   React-debug: 755200a6e7f5e6e0a40ff8d215493d43cce285fc
@@ -2423,7 +2126,6 @@ SPEC CHECKSUMS:
   React-logger: 517377b1d2ba7ac722d47fb2183b98de86632063
   React-Mapbuffer: 45e088dfb58dc326ae20cca1814d3726553c4cad
   React-microtasksnativemodule: ab9d1a05fe1f58ea44a97d307ef1b53463f45a3f
-  react-native-safe-area-context: 29044d05d61f2c60d0828c373bd0ebe17eed58d0
   React-NativeModulesApple: b94faa2dce6d8c0a9d722ed7ee27b996d28b62d1
   React-networking: e409d8fb062162da6293e98b77f8d80cf4430e07
   React-oscompat: ff26abf0ae3e3fdbe47b44224571e3fc7226a573
@@ -2455,18 +2157,15 @@ SPEC CHECKSUMS:
   React-utils: 2f8dd43fed5c6d881ac5971666bbb34cc4a03fa1
   React-webperformancenativemodule: afbee7a9fd0b5bf92f6765eb41767f865b293bcc
   ReactAppDependencyProvider: 26bbf1e26768d08dd965a2b5e372e53f67b21fee
-  ReactCodegen: f2be4b209e7253cbfeb6e089156b4c9b974170f0
+  ReactCodegen: 42e524ec41d02c516ce8b35bd44b8b75dc4c7fcf
   ReactCommon: 309419492d417c4cbb87af06f67735afa40ecb9d
-  ReactNativeDependencies: dd5e73a0e936bb10ff93634e7c0292d485fde937
-  ReactNativeHost: 36390b077b4717e51a2bdb4b3a48b121821f4a74
+  ReactNativeDependencies: 870a3b61809578eb6379bad33a343d92766c0c08
+  ReactNativeHost: 20818d27dd5e0bec793bd0003d1f10d36feac923
   ReactTestApp-DevSupport: 0520f3f0e6f13e2d915fc146389c855c94117c2b
-  ReactTestApp-Resources: 8d72c3deef156833760694a288ff334af4d427d7
-  RNReanimated: 83187f37b09cea8336bcacbd0c03e1e9658e81d9
-  RNSVG: 13970bfde0ea9c9e10e01ab0d7b4a6cde11fca1b
-  RNWorklets: 52ea154a166723dc08b373fe3f50fca13180eecd
+  ReactTestApp-Resources: c23f2e686b950af8ff3086201cf738e16cbf068d
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
   Yoga: c0b3f2c7e8d3e327e450223a2414ca3fa296b9a2
 
-PODFILE CHECKSUM: 6d7cbe03444d5e87210979fb32a0eca299d758fe
+PODFILE CHECKSUM: ffac462424742325a2ad7e4b3328caeaf7ca6cc3
 
 COCOAPODS: 1.15.2

@@ -1,0 +1,29 @@
+{
+  "name": "tester-app-rspack1",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "pack-repack": "cd ../../packages/repack && pnpm build && pnpm pack --pack-destination ../../apps/tester-app-rspack1/.repack-pack && cd ../../apps/tester-app-rspack1 && mv .repack-pack/*.tgz callstack-repack.tgz && rmdir .repack-pack",
+    "android": "react-native run-android --appId com.testerapprspack1 --no-packager",
+    "ios": "react-native run-ios --no-packager",
+    "pods": "(cd ios && bundle install && (bundle exec pod install || bundle exec pod update))",
+    "start": "react-native webpack-start",
+    "bundle:android": "react-native webpack-bundle --platform android --entry-file index.js --dev=false --bundle-output build/output/android/index.android.bundle --assets-dest build/output/android/res",
+    "bundle:ios": "react-native webpack-bundle --platform ios --entry-file index.js --dev=false --bundle-output build/output/ios/main.jsbundle --assets-dest build/output/ios"
+  },
+  "dependencies": {
+    "react": "19.2.3",
+    "react-native": "0.84.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@callstack/repack": "file:./callstack-repack.tgz",
+    "@react-native-community/cli": "20.1.2",
+    "@react-native-community/cli-platform-android": "20.1.2",
+    "@react-native-community/cli-platform-ios": "20.1.2",
+    "@react-native/babel-preset": "0.84.1",
+    "@rspack/core": "^1.7.12",
+    "@swc/helpers": "~0.5.17",
+    "react-native-test-app": "5.1.0"
+  }
+}
