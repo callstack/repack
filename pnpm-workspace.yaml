@@ -24,6 +24,9 @@ overrides:
   # Security fix for GHSA-w5hq-g745-h8pq. xcode pins uuid to ^7 and is
   # unmaintained; it only calls uuid.v4(), which is unaffected either way.
   "uuid@7": ^11.1.1
+  # Held: vite 8 is rolldown-based; rolldown requires Node >=20.19, which
+  # would drop Node 18 from the supported test matrix.
+  "vite": ^7.3.1
 
 allowBuilds:
   "@biomejs/biome": true
