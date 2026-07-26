@@ -1,4 +1,4 @@
 [tools]
 node = "24"
-ruby = "3.3"
+ruby = "3.4"
 java = "zulu-17"

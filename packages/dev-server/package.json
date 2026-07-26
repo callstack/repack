@@ -47,7 +47,7 @@
     "ws": "^8.21.1"
   },
   "devDependencies": {
-    "@react-native/dev-middleware": "^0.84.1",
+    "@react-native/dev-middleware": "^0.86.0",
     "@types/babel__code-frame": "^7.0.6",
     "@types/node": "catalog:",
     "@types/ws": "^8.18.0",
