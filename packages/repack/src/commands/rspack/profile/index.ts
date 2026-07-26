@@ -9,7 +9,12 @@ function getInstalledRspackVersion() {
 
 async function getProfilingHandler() {
   const { major, minor } = getInstalledRspackVersion();
-  if (major > 1 || (major === 1 && minor >= 4)) {
+  if (major >= 2) {
+    // Rspack 2 publishes binaries without the perfetto trace layer,
+    // so tracing defaults differ - see profile-2.ts
+    return await import('./profile-2.js');
+  }
+  if (major === 1 && minor >= 4) {
     return await import('./profile-1.4.js');
   }
   return await import('./profile-legacy.js');

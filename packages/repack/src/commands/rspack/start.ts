@@ -1,7 +1,7 @@
 import type { Configuration, MultiRspackOptions } from '@rspack/core';
 import packageJson from '../../../package.json';
 import { VERBOSE_ENV_KEY } from '../../env.js';
-import { CLIError, isTruthyEnv } from '../../helpers/index.js';
+import { CLIError, isRspack2, isTruthyEnv } from '../../helpers/index.js';
 import {
   ConsoleReporter,
   FileReporter,
@@ -22,6 +22,7 @@ import {
   setupEnvironment,
   setupInteractions,
   setupRspackEnvironment,
+  warnLegacyRspackCacheConfig,
 } from '../common/index.js';
 import logo from '../common/logo.js';
 import type { CliConfig, StartArguments } from '../types.js';
@@ -57,6 +58,12 @@ export async function start(
     platforms: platforms,
     reactNativePath: cliConfig.reactNativePath,
   });
+
+  // Rspack 2 silently ignores the legacy `experiments.cache` option -
+  // warn the user so they migrate it to the top-level `cache` option
+  if (isRspack2(cliConfig.root)) {
+    warnLegacyRspackCacheConfig(configs);
+  }
 
   // expose selected args as environment variables
   setupEnvironment(args);
