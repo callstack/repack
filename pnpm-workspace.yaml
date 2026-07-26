@@ -18,6 +18,9 @@ overrides:
   "koa@3": ^3.1.2
   "ws@8": ^8.21.1
   "adm-zip": ^0.6.0
+  # Held: vite 8 is rolldown-based; rolldown requires Node >=20.19, which
+  # would drop Node 18 from the supported test matrix.
+  "vite": ^7.3.1
 
 allowBuilds:
   "@biomejs/biome": true
