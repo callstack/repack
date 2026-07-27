@@ -7,6 +7,9 @@ on:
       - 'website/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   test_main_matrix:
     name: Tests [Node ${{ matrix.node_version }}]
