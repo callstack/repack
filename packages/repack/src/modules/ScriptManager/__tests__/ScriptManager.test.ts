@@ -401,6 +401,22 @@ describe('ScriptManagerAPI', () => {
     );
   });
 
+  it('should reject a large malformed public key without excessive backtracking', async () => {
+    ScriptManager.shared.addResolver(async (scriptId) => {
+      return {
+        url: Script.getRemoteURL(`http://domain.ext/${scriptId}`),
+        verifyScriptSignature: 'strict',
+        publicKey: `-----BEGIN PUBLIC KEY-----${' '.repeat(4096)}x`,
+      };
+    });
+
+    await expect(
+      ScriptManager.shared.resolveScript('src_App_js', 'main')
+    ).rejects.toThrow(
+      'Property publicKey must be a PEM-formatted public key enclosed in BEGIN/END PUBLIC KEY markers.'
+    );
+  });
+
   it('should allow public key override with surrounding whitespace', async () => {
     ScriptManager.shared.addResolver(async (scriptId) => {
       return {
