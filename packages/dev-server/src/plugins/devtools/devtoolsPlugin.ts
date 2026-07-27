@@ -4,19 +4,49 @@ import launchEditor from 'launch-editor';
 import open from 'open';
 import type { Server } from '../../types.js';
 
-interface OpenURLRequestBody {
-  url: string;
-}
-
 interface OpenStackFrameRequestBody {
   file: string;
   lineNumber: number;
 }
 
+const INVALID_URL = 'Invalid URL';
+const POWERSHELL_INTERPOLATION_CHARACTERS = /[$`]/;
+
 function parseRequestBody<T>(body: unknown): T {
   if (typeof body === 'object') return body as T;
   if (typeof body === 'string') return JSON.parse(body) as T;
   throw new Error(`Unsupported body type: ${typeof body}`);
+}
+
+function validateURLForOpen(body: unknown): string {
+  const parsedBody = parseRequestBody<unknown>(body);
+  if (
+    typeof parsedBody !== 'object' ||
+    parsedBody === null ||
+    Array.isArray(parsedBody)
+  ) {
+    throw new Error(INVALID_URL);
+  }
+
+  const { url } = parsedBody as { url?: unknown };
+  if (typeof url !== 'string') {
+    throw new Error(INVALID_URL);
+  }
+
+  const parsedURL = new URL(url);
+  if (parsedURL.protocol !== 'http:' && parsedURL.protocol !== 'https:') {
+    throw new Error(INVALID_URL);
+  }
+
+  const normalizedURL = parsedURL.href;
+
+  // open@10 interpolates its target into a double-quoted PowerShell command on
+  // Windows. Reject characters that PowerShell expands inside those strings.
+  if (POWERSHELL_INTERPOLATION_CHARACTERS.test(normalizedURL)) {
+    throw new Error(INVALID_URL);
+  }
+
+  return normalizedURL;
 }
 
 async function devtoolsPlugin(
@@ -29,7 +59,14 @@ async function devtoolsPlugin(
     method: ['POST'],
     url: '/open-url',
     handler: async (request, reply) => {
-      const { url } = parseRequestBody<OpenURLRequestBody>(request.body);
+      let url: string;
+      try {
+        url = validateURLForOpen(request.body);
+      } catch {
+        reply.code(400).send(INVALID_URL);
+        return;
+      }
+
       await open(url);
       reply.send('OK');
     },
