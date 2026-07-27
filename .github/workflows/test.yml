@@ -10,6 +10,9 @@ on:
       - 'website/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint
