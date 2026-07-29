@@ -8,8 +8,8 @@ describe('partitionTransforms', () => {
       ['transform-block-scoping', {}],
       ['transform-react-jsx', {}],
       ['transform-object-rest-spread', { loose: true }],
-      ['transform-class-properties', { loose: true }], // disabled configurable
-      ['transform-private-methods', { loose: true }], // disabled configurable
+      ['transform-class-properties', { loose: true }],
+      ['transform-private-methods', { loose: true }],
       ['unknown-plugin', {}],
       ['transform-modules-commonjs', {}],
       ['transform-classes', {}],
@@ -22,30 +22,36 @@ describe('partitionTransforms', () => {
     expect(includedSwcTransforms).toEqual([
       'transform-block-scoping',
       'transform-classes',
+      'transform-class-static-block',
       'transform-object-rest-spread',
+      'transform-class-properties',
+      'transform-private-methods',
       'transform-for-of',
     ]);
 
     expect(supportedSwcTransforms).toEqual([
       'transform-block-scoping',
       'transform-classes',
+      'transform-class-static-block',
       'transform-object-rest-spread',
+      'transform-class-properties',
+      'transform-private-methods',
       'transform-for-of',
       'transform-react-jsx',
       'transform-modules-commonjs',
     ]);
   });
 
-  it('ignores unsupported and disabled transforms (snapshot)', () => {
+  it('ignores unsupported transforms (snapshot)', () => {
     const transforms: TransformEntry[] = [
-      ['transform-class-properties', { loose: true }], // disabled
-      ['transform-private-methods', { loose: true }], // disabled
+      ['transform-class-properties', { loose: true }],
+      ['transform-private-methods', { loose: true }],
       ['unknown-plugin', {}],
     ];
 
     const result = partitionTransforms('/virtual/file.js', transforms);
 
-    expect(result).toMatchSnapshot('unsupported and disabled');
+    expect(result).toMatchSnapshot('unsupported only');
   });
 
   it('only custom transforms are excluded from included set but present in supported set (snapshot)', () => {
@@ -64,6 +70,46 @@ describe('partitionTransforms', () => {
     const result = partitionTransforms('/virtual/empty.ts', []);
 
     expect(result).toMatchSnapshot('empty arrays');
+  });
+
+  it('adds transform-object-rest-spread when transform-destructuring is present', () => {
+    const transforms: TransformEntry[] = [
+      ['transform-destructuring', {}],
+      ['transform-react-jsx', {}],
+    ];
+
+    const { includedSwcTransforms, supportedSwcTransforms } =
+      partitionTransforms('/virtual/file.js', transforms);
+
+    expect(includedSwcTransforms).toEqual([
+      'transform-destructuring',
+      'transform-object-rest-spread',
+    ]);
+    expect(supportedSwcTransforms).toEqual([
+      'transform-destructuring',
+      'transform-object-rest-spread',
+      'transform-react-jsx',
+    ]);
+  });
+
+  it('adds transform-class-static-block when transform-class-properties is present', () => {
+    const transforms: TransformEntry[] = [
+      ['transform-class-properties', { loose: true }],
+      ['transform-react-jsx', {}],
+    ];
+
+    const { includedSwcTransforms, supportedSwcTransforms } =
+      partitionTransforms('/virtual/file.js', transforms);
+
+    expect(includedSwcTransforms).toEqual([
+      'transform-class-static-block',
+      'transform-class-properties',
+    ]);
+    expect(supportedSwcTransforms).toEqual([
+      'transform-class-static-block',
+      'transform-class-properties',
+      'transform-react-jsx',
+    ]);
   });
 });
 

@@ -86,7 +86,7 @@ export function Home({ user }) {
   const Side = React.useMemo(
     () => user.role === 'student'
       ? <StudentSide user={user} />
-      : <TeacherSize user={user} />,
+      : <TeacherSide user={user} />,
     [user]
   );
 

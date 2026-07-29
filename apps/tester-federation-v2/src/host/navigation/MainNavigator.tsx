@@ -6,11 +6,13 @@ import { StyleSheet } from 'react-native';
 
 import DetailScreen from '../screens/DetailScreen';
 import HomeScreen from '../screens/HomeScreen';
+import HostAssetsScreen from '../screens/HostAssetsScreen';
 import MiniAppScreen from '../screens/MiniAppScreen';
 
 export type MainStackParamList = {
   Home: undefined;
   Detail: undefined;
+  HostAssets: undefined;
   MiniApp: undefined;
 };
 
@@ -24,7 +26,7 @@ const MainNavigator = () => {
     <Main.Navigator
       screenOptions={{
         headerTitle: 'Host App',
-        headerBackTitleVisible: true,
+        headerBackButtonDisplayMode: 'default',
         headerBackTitle: 'Back',
         headerLargeTitle: true,
         headerStyle: styles.header,
@@ -34,6 +36,19 @@ const MainNavigator = () => {
     >
       <Main.Screen name="Home" component={HomeScreen} />
       <Main.Screen name="Detail" component={DetailScreen} />
+      <Main.Screen
+        name="HostAssets"
+        component={HostAssetsScreen}
+        options={{
+          title: 'Host Assets',
+          headerTitle: 'Host Assets',
+          headerLargeTitleEnabled: true,
+          headerStyle: styles.header,
+          headerLargeStyle: styles.hostAssetsLargeHeader,
+          headerTitleStyle: styles.headerTitle,
+          headerLargeTitleStyle: styles.hostAssetsLargeTitle,
+        }}
+      />
       <Main.Screen
         name="MiniApp"
         component={MiniAppScreen}
@@ -49,6 +64,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#FFFFFF', // White text
+  },
+  hostAssetsLargeHeader: {
+    backgroundColor: 'transparent',
+  },
+  hostAssetsLargeTitle: {
+    color: '#2C3E50',
   },
 });
 

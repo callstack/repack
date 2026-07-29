@@ -25,7 +25,8 @@ async function compileBundle(
       resourceExtensionType: string;
     }) => string;
     publicPath: string;
-  }
+  },
+  maxInlineSize?: number
 ) {
   const virtualPlugin = await createVirtualModulePlugin(virtualModules);
 
@@ -49,6 +50,7 @@ async function compileBundle(
               platform,
               inline,
               remote,
+              maxInlineSize,
             },
           },
         },
@@ -137,6 +139,71 @@ describe('assetLoader', () => {
             "export { default } from './__fixtures__/assets/star.png';",
         },
         true
+      );
+
+      const context: { Export?: { default: Record<string, unknown> } } = {};
+      vm.runInNewContext(code, context);
+
+      expect(context.Export?.default).toMatchSnapshot();
+      expect(volume.toTree()).toMatchSnapshot();
+    });
+  });
+
+  describe('should inline asset based on maxInlineSize', () => {
+    it('inlines asset when size is within threshold', async () => {
+      // logo.android.png is 1948 bytes — threshold above it triggers inline
+      const { code, volume } = await compileBundle(
+        'android',
+        {
+          ...getReactNativeVirtualModules(),
+          './index.js':
+            "export { default } from './__fixtures__/assets/logo.png';",
+        },
+        true,
+        undefined,
+        2000
+      );
+
+      const context: { Export?: { default: Record<string, unknown> } } = {};
+      vm.runInNewContext(code, context);
+
+      expect(context.Export?.default).toMatchSnapshot();
+      expect(volume.toTree()).toMatchSnapshot();
+    });
+
+    it('extracts asset when size exceeds threshold', async () => {
+      // logo.android.png is 1948 bytes — threshold below it prevents inline
+      const { code, volume } = await compileBundle(
+        'android',
+        {
+          ...getReactNativeVirtualModules(),
+          './index.js':
+            "export { default } from './__fixtures__/assets/logo.png';",
+        },
+        true,
+        undefined,
+        1000
+      );
+
+      const context: { Export?: { default: Record<string, unknown> } } = {};
+      vm.runInNewContext(code, context);
+
+      expect(context.Export?.default).toMatchSnapshot();
+      expect(volume.toTree()).toMatchSnapshot();
+    });
+
+    it('uses largest variant to determine threshold (multi-scale asset)', async () => {
+      // star@3x.png is 21176 bytes — the largest variant determines whether to inline
+      const { code, volume } = await compileBundle(
+        'android',
+        {
+          ...getReactNativeVirtualModules(),
+          './index.js':
+            "export { default } from './__fixtures__/assets/star.png';",
+        },
+        true,
+        undefined,
+        10000 // below star@3x (21176 bytes), so should extract
       );
 
       const context: { Export?: { default: Record<string, unknown> } } = {};

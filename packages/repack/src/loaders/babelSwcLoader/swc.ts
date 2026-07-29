@@ -22,11 +22,9 @@ const SWC_SUPPORTED_NORMAL_RULES = new Set([
   'transform-computed-properties',
 ]);
 
-// NOTE: 'transform-class-properties' and 'transform-private-methods' are disabled here
-// because, when combined with loose mode, these cause an internal swc error. Needs fixing upstream
 const SWC_SUPPORTED_CONFIGURABLE_RULES = new Set([
-  // 'transform-class-properties',
-  // 'transform-private-methods',
+  'transform-class-properties',
+  'transform-private-methods',
   'transform-private-property-in-object',
   'transform-object-rest-spread',
   'transform-optional-chaining',
@@ -44,6 +42,43 @@ const SWC_SUPPORTED_CUSTOM_RULES = new Set([
   'transform-typescript',
   'transform-dynamic-import',
 ]);
+
+type AdditionalTransformRule = {
+  rule: string;
+  include: string[];
+};
+
+// Babel expects these transform pairs to run together for best compatibility.
+const SWC_COMPLEMENTARY_RULES: AdditionalTransformRule[] = [
+  {
+    rule: 'transform-class-properties',
+    include: ['transform-class-static-block'],
+  },
+  {
+    rule: 'transform-destructuring',
+    include: ['transform-object-rest-spread'],
+  },
+];
+
+export function addSwcComplementaryTransforms(
+  transforms: [string, Record<string, any> | undefined][]
+) {
+  const finalTransforms = [...transforms];
+  const detectedTransforms = new Set(
+    transforms.map(([transform]) => transform)
+  );
+
+  for (const { rule, include } of SWC_COMPLEMENTARY_RULES) {
+    if (!detectedTransforms.has(rule)) continue;
+    for (const transformName of include) {
+      if (detectedTransforms.has(transformName)) continue;
+      finalTransforms.push([transformName, undefined]);
+      detectedTransforms.add(transformName);
+    }
+  }
+
+  return finalTransforms;
+}
 
 function getTransformRuntimeConfig(
   swcConfig: SwcLoaderOptions

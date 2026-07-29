@@ -231,6 +231,28 @@ ScriptManager.shared.addResolver(async (scriptId) => {
 });
 ```
 
+### Code signing with a per-script public key
+
+When different teams sign remote bundles with different private keys, your resolver can provide the matching public key for each script. Re.Pack will use `publicKey` when present and fall back to the app-embedded `RepackPublicKey` only when it's omitted.
+
+```js
+import { ScriptManager } from "@callstack/repack/client";
+
+ScriptManager.shared.addResolver(async (scriptId) => {
+  const metadata = await fetch(`https://myapp.example/scripts/${scriptId}`).then(
+    (response) => response.json()
+  );
+
+  return {
+    url: metadata.bundleUrl,
+    verifyScriptSignature: "strict",
+    publicKey: metadata.publicKey,
+  };
+});
+```
+
+Only use a `publicKey` value that comes from a trusted source. If both the bundle and the public key can be tampered with by the same attacker, signature verification no longer protects the download.
+
 ### Enabling caching through AsyncStorage
 
 ```js
@@ -281,6 +303,83 @@ ScriptManager.shared.hooks.errorLoad(async (args) => {
   }
   return false;
 });
+```
+
+## Customizing the native HTTP client
+
+Remote scripts are downloaded by the native side of Re.Pack - `OkHttpClient` on Android and `NSURLSession` on iOS. By default a plain client is used, but you can provide your own to customize networking behavior such as **SSL/certificate pinning**, **interceptors**, **proxies**, **custom headers**, or **timeouts**.
+
+The factory must be set **before any remote script is loaded** - the earliest app lifecycle hook is the safest place (Android `Application.onCreate`, iOS `application:didFinishLaunchingWithOptions:`). The client is created lazily and reused for all subsequent downloads.
+
+:::warning Native customization only
+
+This applies to the native HTTP client used for downloading scripts. Per-request options exposed to JavaScript (such as `headers`, `method`, `body`, `timeout` and `retry`) are still configured through the [resolver](#addresolver).
+
+:::
+
+### Android
+
+Assign a factory to `RemoteScriptLoader.okHttpClientFactory`:
+
+```kotlin
+// MainApplication.kt
+import com.callstack.repack.RemoteScriptLoader
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
+
+class MainApplication : Application(), ReactApplication {
+  override fun onCreate() {
+    super.onCreate()
+
+    RemoteScriptLoader.okHttpClientFactory = {
+      OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .addInterceptor(MyAuthInterceptor())
+        // .certificatePinner(...) for SSL pinning
+        .build()
+    }
+    // ...
+  }
+}
+```
+
+### iOS
+
+Assign a factory to `ScriptManager.urlSessionFactory`. Assign `nil` to restore the default `[NSURLSession sharedSession]`.
+
+```swift
+// AppDelegate.swift
+import callstack_repack
+
+func application(
+  _ application: UIApplication,
+  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+) -> Bool {
+  ScriptManager.urlSessionFactory = {
+    let configuration = URLSessionConfiguration.default
+    configuration.timeoutIntervalForRequest = 30
+    configuration.httpAdditionalHeaders = ["X-Custom-Header": "value"]
+    // Pass a delegate for SSL pinning if needed.
+    return URLSession(configuration: configuration)
+  }
+  // ...
+}
+```
+
+```objc
+// AppDelegate.mm
+#import <callstack_repack/callstack_repack-Swift.h> // or "ScriptManager.h"
+
+- (BOOL)application:(UIApplication *)application
+    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  ScriptManager.urlSessionFactory = ^NSURLSession * {
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    configuration.timeoutIntervalForRequest = 30;
+    return [NSURLSession sessionWithConfiguration:configuration];
+  };
+  // ...
+}
 ```
 
 ## Related

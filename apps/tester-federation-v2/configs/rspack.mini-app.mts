@@ -1,5 +1,7 @@
 import * as Repack from '@callstack/repack';
 import rspack from '@rspack/core';
+import reactNativePkg from 'react-native/package.json' with { type: 'json' };
+import reactPkg from 'react/package.json' with { type: 'json' };
 import pkg from '../package.json' with { type: 'json' };
 
 export default Repack.defineRspackConfig((env) => {
@@ -51,31 +53,37 @@ export default Repack.defineRspackConfig((env) => {
           react: {
             singleton: true,
             eager: false,
-            requiredVersion: '19.1.0',
+            version: reactPkg.version,
+            requiredVersion: reactPkg.version,
           },
           'react-native': {
             singleton: true,
             eager: false,
-            requiredVersion: '0.81.0',
+            version: reactNativePkg.version,
+            requiredVersion: reactNativePkg.version,
           },
           '@react-navigation/native': {
             singleton: true,
             eager: false,
+            version: pkg.dependencies['@react-navigation/native'],
             requiredVersion: pkg.dependencies['@react-navigation/native'],
           },
           '@react-navigation/native-stack': {
             singleton: true,
             eager: false,
+            version: pkg.dependencies['@react-navigation/native-stack'],
             requiredVersion: pkg.dependencies['@react-navigation/native-stack'],
           },
           'react-native-safe-area-context': {
             singleton: true,
             eager: false,
+            version: pkg.dependencies['react-native-safe-area-context'],
             requiredVersion: pkg.dependencies['react-native-safe-area-context'],
           },
           'react-native-screens': {
             singleton: true,
             eager: false,
+            version: pkg.dependencies['react-native-screens'],
             requiredVersion: pkg.dependencies['react-native-screens'],
           },
         },

@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) NSDictionary *headers;
 @property (nonatomic, readonly) NSNumber *timeout;
 @property (nonatomic, readonly) NSString *verifyScriptSignature;
+@property (nonatomic, readonly, nullable) NSString *publicKey;
 @property (nonatomic, readonly) NSString *uniqueId;
 @property (nonatomic, readonly) NSString *sourceUrl;
 
@@ -39,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
                         withBody:(nullable NSData *)body
                      withTimeout:(NSNumber *)timeout
        withVerifyScriptSignature:(NSString *)verifyScriptSignature
+                   withPublicKey:(nullable NSString *)publicKey
                     withUniqueId:(NSString *)uniqueId
                    withSourceUrl:(NSString *)sourceUrl;
 

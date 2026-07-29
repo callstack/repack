@@ -33,6 +33,7 @@ interface AssetsLoaderOptions {
   scalableAssetResolutions?: string[];
   devServerEnabled?: boolean;
   inline?: boolean;
+  maxInlineSize?: number;
   publicPath?: string;
   remote?: {
     enabled: boolean;
@@ -80,6 +81,19 @@ Whether development server is enabled. By default, this option is determined by 
 - Default: `false`
 
 When true, assets will be inlined as base64 in the JS bundle instead of being extracted to separate files.
+
+### maxInlineSize
+
+- Type: `number`
+- Default: `undefined`
+
+File size threshold in bytes used together with `inline: true`. Assets whose largest scale variant is smaller than or equal to this value will be inlined; larger assets will be extracted as separate files. Has no effect when `inline` is not `true`.
+
+The threshold is compared against the **largest scale variant** (e.g. `@3x`), not the `@1x` file — when an asset is inlined, all scale variants are embedded into the bundle.
+
+:::tip
+Learn more about size-based inlining in the [Inlining Assets guide](/docs/guides/inline-assets#size-based-inlining).
+:::
 
 ### publicPath
 

@@ -1,5 +1,17 @@
 # @callstack/repack-dev-server
 
+## 5.2.5
+
+### Patch Changes
+
+- [#1371](https://github.com/callstack/repack/pull/1371) [`1ab6e4e`](https://github.com/callstack/repack/commit/1ab6e4ee5e466f97b5583aad5940d1371f252299) Thanks [@jbroma](https://github.com/jbroma)! - Avoid crashing Android apps when opening React Native DevTools by handling cross-origin `Network.loadNetworkResource` requests inside the dev server.
+
+## 5.2.4
+
+### Patch Changes
+
+- [#1346](https://github.com/callstack/repack/pull/1346) [`aaf3cc968666e91586fd655053b75e0b2cc11cb1`](https://github.com/callstack/repack/commit/aaf3cc968666e91586fd655053b75e0b2cc11cb1) Thanks [@jbroma](https://github.com/jbroma)! - Upgrade Fastify to v5 to resolve CVE-2026-25223 (HIGH severity). Updated `fastify`, `@fastify/middie`, `@fastify/sensible`, `fastify-plugin`, and `fastify-favicon` to their v5-compatible versions.
+
 ## 5.2.3
 
 ## 5.2.2

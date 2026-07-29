@@ -1,5 +1,19 @@
 # @callstack/repack-plugin-nativewind
 
+## 5.2.5
+
+### Patch Changes
+
+- Updated dependencies [[`1705f2a`](https://github.com/callstack/repack/commit/1705f2ac1f687e235a7f41f46bd53d833b8136ab), [`60e6a17`](https://github.com/callstack/repack/commit/60e6a1709e1b21b56d3202e95a9ed08e17da0926), [`b4178c2`](https://github.com/callstack/repack/commit/b4178c23c43db7fe64e8795e871bd54f7291ec20), [`d0058e2`](https://github.com/callstack/repack/commit/d0058e224bbe62781515fb1707154ce08b5394eb)]:
+  - @callstack/repack@5.2.5
+
+## 5.2.4
+
+### Patch Changes
+
+- Updated dependencies [[`cbfcfd0700fe01233c7ff61e37bdbd48a3d887ea`](https://github.com/callstack/repack/commit/cbfcfd0700fe01233c7ff61e37bdbd48a3d887ea), [`cc943dd42a97c0ca63a664411b97cc5413b5502f`](https://github.com/callstack/repack/commit/cc943dd42a97c0ca63a664411b97cc5413b5502f), [`4023cc7503fae96c82a8d35df9434648d1bb9cae`](https://github.com/callstack/repack/commit/4023cc7503fae96c82a8d35df9434648d1bb9cae), [`7ee1b83fac97aeaf1b0727b2fadf58c7dc3fdb6a`](https://github.com/callstack/repack/commit/7ee1b83fac97aeaf1b0727b2fadf58c7dc3fdb6a), [`a224e84354855bfc923009cab31f887c0e3452c9`](https://github.com/callstack/repack/commit/a224e84354855bfc923009cab31f887c0e3452c9), [`b083b9d62d873388c4dd6b8165072cc4fbf6bee1`](https://github.com/callstack/repack/commit/b083b9d62d873388c4dd6b8165072cc4fbf6bee1)]:
+  - @callstack/repack@5.2.4
+
 ## 5.2.3
 
 ### Patch Changes

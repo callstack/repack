@@ -2,7 +2,7 @@
   "name": "@callstack/repack-dev-server",
   "description": "A bundler-agnostic development server for React Native applications as part of @callstack/repack.",
   "license": "MIT",
-  "version": "5.2.3",
+  "version": "5.2.5",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -12,7 +12,10 @@
   },
   "files": ["dist", "static"],
   "homepage": "https://github.com/callstack/repack",
-  "repository": "github:callstack/repack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callstack/repack.git"
+  },
   "keywords": ["react-native", "repack", "re.pack", "server", "dev-server"],
   "author": "zamotany <zamotany.oss@gmail.com>",
   "engines": {
@@ -23,29 +26,32 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b tsconfig.build.json",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "archive": "pnpm build && pnpm pack"
   },
   "dependencies": {
-    "@babel/code-frame": "^7.26.2",
-    "@fastify/middie": "^8.3.0",
-    "@fastify/sensible": "^5.5.0",
-    "fastify": "^4.24.3",
-    "fastify-favicon": "^4.3.0",
-    "fastify-plugin": "^4.5.1",
-    "http-proxy-middleware": "^3.0.3",
-    "launch-editor": "^2.10.0",
+    "@babel/code-frame": "^7.29.7",
+    "@fastify/middie": "^9.3.3",
+    "@fastify/sensible": "^6.0.0",
+    "fastify": "^5.10.0",
+    "fastify-favicon": "^5.0.0",
+    "fastify-plugin": "^5.0.0",
+    "http-proxy-middleware": "^3.0.7",
+    "launch-editor": "^2.14.1",
     "open": "^10.1.0",
     "pretty-format": "^28.1.0",
     "source-map": "^0.7.4",
-    "ws": "^8.18.1"
+    "ws": "^8.21.1"
   },
   "devDependencies": {
-    "@react-native/dev-middleware": "^0.81.0",
+    "@react-native/dev-middleware": "^0.86.0",
     "@types/babel__code-frame": "^7.0.6",
     "@types/node": "catalog:",
     "@types/ws": "^8.18.0",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }
