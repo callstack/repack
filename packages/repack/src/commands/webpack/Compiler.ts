@@ -133,7 +133,7 @@ export class Compiler implements CompilerInterface {
         });
         callPendingResolvers();
       } else if (value.event === 'error') {
-        // errors are logged but not fatal to the compiler lifecycle
+        this.isCompilationInProgress[platform] = false;
         this.reporter.process({
           type: 'error',
           issuer: 'WebpackCompilerWorker',
@@ -144,6 +144,7 @@ export class Compiler implements CompilerInterface {
               : String(value.error),
           ],
         });
+        callPendingResolvers(value.error);
       } else if (value.event === 'progress') {
         this.progressSenders[platform]?.forEach((sendProgress) => {
           const percentage = Math.floor(value.percentage * 100);
