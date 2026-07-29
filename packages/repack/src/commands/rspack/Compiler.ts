@@ -258,6 +258,9 @@ export class Compiler {
   }
 
   private activatePlatform(platform: string) {
+    if (!this.platforms.includes(platform)) {
+      throw new CLIError(`Unrecognized platform: ${platform}`);
+    }
     if (this.activePlatforms.has(platform)) return;
     this.activePlatforms.add(platform);
     this.isCompilationInProgress[platform] = true;

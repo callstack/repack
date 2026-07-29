@@ -92,6 +92,13 @@ describe('Compiler – lazy compilation', () => {
       });
     });
 
+    it('rejects unconfigured platforms', async () => {
+      await expect(
+        compiler.getAsset('main.js', 'windows')
+      ).rejects.toThrowError('Unrecognized platform: windows');
+      expect(compilationCounts).toEqual({ ios: 0, android: 0 });
+    });
+
     it('getAsset("main.js", "ios") produces ios stats but leaves android stats undefined', async () => {
       // Change source after both watchers are gated, then let polling observe it.
       await new Promise((resolve) => setTimeout(resolve, 100));
