@@ -4,24 +4,58 @@ packages:
   - "tests/*"
   - "website"
 
+autoInstallPeers: false
+linkWorkspacePackages: true
+packageManagerStrict: true
+packageManagerStrictVersion: false
+updateNotifier: false
+
+overrides:
+  "caniuse-lite": ^1.0.30001774
+  # Security fixes for advisories in @module-federation/dts-plugin, which pins
+  # these to exact versions - no parent upgrade can reach them.
+  "koa@2": ^2.16.4
+  "koa@3": ^3.1.2
+  "ws@8": ^8.21.1
+  "adm-zip": ^0.6.0
+  # Security fix for GHSA-67mh-4wv8-2f99, reached only through
+  # @modern-js/node-bundle-require inside @module-federation/cli.
+  "esbuild@<0.25.0": ^0.25.0
+  # Security fix for GHSA-w5hq-g745-h8pq. xcode pins uuid to ^7 and is
+  # unmaintained; it only calls uuid.v4(), which is unaffected either way.
+  "uuid@7": ^11.1.1
+  # Held: vite 8 is rolldown-based; rolldown requires Node >=20.19, which
+  # would drop Node 18 from the supported test matrix.
+  "vite": ^7.3.1
+
+allowBuilds:
+  "@biomejs/biome": true
+  "@swc/core": true
+  "core-js": true
+  "esbuild": true
+
 catalog:
-  "@rspack/core": ^1.6.0
+  # Pinned: 1.6.2+ breaks MF v2 polyfill ordering; 1.6.4+ fails typecheck.
+  "@rspack/core": 1.6.0
   "@rslib/core": ^0.6.3
   "@swc/helpers": ~0.5.17
   "@types/node": ^20.19.31
-  "terser-webpack-plugin": ^5.3.14
-  "typescript": ^5.8.3
-  "webpack": ^5.99.9
-  "react": "19.1.0"
-  "react-native": "0.81.0"
-  "vitest": ^4.0.18
+  # Pinned: 5.6+ silently skips minification (#1390).
+  "terser-webpack-plugin": 5.5.0
+  "typescript": ^5.9.3
+  # Held: 5.106+ removes a webpack internal needed by @module-federation/enhanced <2.4.0.
+  "webpack": ~5.105.0
+  "react": "19.2.8"
+  "react-native": "0.86.0"
+  "vitest": ^4.1.0
 
 catalogs:
   testers:
-    "@types/react": ^19.1.0
-    "react-native-test-app": 4.4.7
-    "@react-native/babel-preset": "0.81.0"
-    "@react-native/typescript-config": "0.81.0"
-    "@react-native-community/cli": "20.0.0"
-    "@react-native-community/cli-platform-android": "20.0.0"
-    "@react-native-community/cli-platform-ios": "20.0.0"
+    "@types/react": ^19.2.0
+    # Held: 5.4.5 is the newest release, and it caps react-native at <0.87.
+    "react-native-test-app": 5.4.5
+    "@react-native/babel-preset": "0.86.0"
+    "@react-native/typescript-config": "0.86.0"
+    "@react-native-community/cli": "20.2.0"
+    "@react-native-community/cli-platform-android": "20.2.0"
+    "@react-native-community/cli-platform-ios": "20.2.0"

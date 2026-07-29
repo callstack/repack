@@ -3,6 +3,7 @@ import type { LoaderContext, SwcLoaderOptions } from '@rspack/core';
 import { transform } from '../babelLoader/babelLoader.js';
 import type { BabelSwcLoaderOptions } from './options.js';
 import {
+  addSwcComplementaryTransforms,
   getSupportedSwcConfigurableTransforms,
   getSupportedSwcCustomTransforms,
   getSupportedSwcNormalTransforms,
@@ -36,11 +37,13 @@ export function partitionTransforms(
     },
   };
 
-  normalTransforms = getSupportedSwcNormalTransforms(babelTransforms);
+  const swcTransforms = addSwcComplementaryTransforms(babelTransforms);
+
+  normalTransforms = getSupportedSwcNormalTransforms(swcTransforms);
   ({ swcConfig, transformNames: configurableTransforms } =
-    getSupportedSwcConfigurableTransforms(babelTransforms, swcConfig));
+    getSupportedSwcConfigurableTransforms(swcTransforms, swcConfig));
   ({ swcConfig, transformNames: customTransforms } =
-    getSupportedSwcCustomTransforms(babelTransforms, swcConfig));
+    getSupportedSwcCustomTransforms(swcTransforms, swcConfig));
 
   const includedSwcTransforms: string[] = [
     ...normalTransforms,

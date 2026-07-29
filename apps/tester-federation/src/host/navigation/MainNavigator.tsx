@@ -24,7 +24,7 @@ const MainNavigator = () => {
     <Main.Navigator
       screenOptions={{
         headerTitle: 'Host App',
-        headerBackTitleVisible: true,
+        headerBackButtonDisplayMode: 'default',
         headerBackTitle: 'Back',
         headerLargeTitle: true,
         headerStyle: styles.header,

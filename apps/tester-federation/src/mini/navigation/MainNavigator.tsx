@@ -20,7 +20,7 @@ const MainNavigator = () => {
     <Main.Navigator
       screenOptions={{
         headerTitle: 'Gallery Mini App',
-        headerBackTitleVisible: true,
+        headerBackButtonDisplayMode: 'default',
         headerBackTitle: 'Back',
         headerStyle: styles.header,
         headerTitleStyle: styles.headerTitle,

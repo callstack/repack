@@ -113,6 +113,17 @@ export interface ScriptLocator {
   verifyScriptSignature?: 'strict' | 'lax' | 'off';
 
   /**
+   * Public key in PEM format used to verify the script's signature.
+   *
+   * When omitted, Re.Pack falls back to the default key embedded in the host app
+   * under `RepackPublicKey`.
+   *
+   * This is useful when different teams or script owners sign their bundles with
+   * different private keys and the host app fetches the matching public key at runtime.
+   */
+  publicKey?: string;
+
+  /**
    * Function called before loading or getting from the cache and after resolving the script locator.
    * It's an async function which should return a boolean indicating whether the script should be loaded or use default behaviour.
    * This is useful when you want to load a script only when certain conditions are met

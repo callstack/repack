@@ -12,6 +12,7 @@ import multipartPlugin from './plugins/multipart/multipartPlugin.js';
 import symbolicatePlugin from './plugins/symbolicate/sybmolicatePlugin.js';
 import wssPlugin from './plugins/wss/wssPlugin.js';
 import { Internal, type Middleware, type Server } from './types.js';
+import { handleCustomNetworkLoadResource } from './utils/networkLoadResourceHandler.js';
 import { normalizeOptions } from './utils/normalizeOptions.js';
 
 /**
@@ -97,15 +98,13 @@ export async function createServer(config: Server.Config) {
         }
       },
     },
-    // we need to let `Network.loadNetworkResource` event pass
-    // through the InspectorProxy interceptor, otherwise it will
-    // prevent fetching source maps over the network for MF2 remotes
+    // Preserve RN default handling for same-origin resources while
+    // allowing remote-origin source maps/resources to be loaded here.
     unstable_customInspectorMessageHandler: (connection) => {
       return {
         handleDeviceMessage: () => {},
-        handleDebuggerMessage: (msg: { method?: string }) => {
-          if (msg.method === 'Network.loadNetworkResource') {
-            connection.device.sendMessage(msg);
+        handleDebuggerMessage: (msg) => {
+          if (handleCustomNetworkLoadResource(connection, msg, options.url)) {
             return true;
           }
         },

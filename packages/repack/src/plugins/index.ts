@@ -9,3 +9,4 @@ export * from './ModuleFederationPluginV1.js';
 export * from './ModuleFederationPluginV2.js';
 export * from './CodeSigningPlugin/index.js';
 export * from './HermesBytecodePlugin/index.js';
+export * from './NativeEntryPlugin/index.js';

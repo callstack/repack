@@ -25,7 +25,9 @@ export function getCliOverrides<C extends ConfigurationObject>(
     const bundleArgs = opts.args as BundleArguments;
     overrides.mode = bundleArgs.dev ? 'development' : 'production';
     overrides.optimization = { minimize: bundleArgs.minify };
-    overrides.entry = normalizeEntryFile(bundleArgs.entryFile);
+    if (bundleArgs.entryFile) {
+      overrides.entry = normalizeEntryFile(bundleArgs.entryFile);
+    }
   } else {
     const startArgs = opts.args as StartArguments;
     overrides.devServer = {

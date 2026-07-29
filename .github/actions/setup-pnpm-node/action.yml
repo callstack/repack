@@ -1,0 +1,20 @@
+name: Setup pnpm and Node dependencies
+description: Setup pnpm, setup Node.js with pnpm cache, and install dependencies.
+inputs:
+  node-version:
+    description: Node.js version to install.
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # tag=v4.1.0
+
+    - name: Use Node.js ${{ inputs.node-version }}
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # tag=v4.4.0
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: pnpm
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile

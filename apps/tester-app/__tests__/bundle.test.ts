@@ -146,6 +146,13 @@ describe('bundle command', () => {
 
           const files = await globby(['**/*'], { cwd: TMP_DIR, dot: true });
           expect(files.sort()).toEqual(assets.sort());
+
+          // The default minimizer can silently no-op instead of failing, which
+          // ships unminified production bundles (see #1390). Minified output is
+          // a few very long lines; unminified output keeps its indentation.
+          const bundle = fs.readFileSync(bundleOutputPath, 'utf-8');
+          const lines = bundle.split('\n').length;
+          expect(bundle.length / lines).toBeGreaterThan(1000);
         },
         60 * 1000
       );

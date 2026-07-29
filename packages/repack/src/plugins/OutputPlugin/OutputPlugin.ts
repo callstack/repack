@@ -184,6 +184,13 @@ export class OutputPlugin {
     );
 
     compiler.hooks.done.tapPromise('RepackOutputPlugin', async (stats) => {
+      if (stats.hasErrors()) {
+        throw new Error(
+          '[RepackOutputPlugin] Compilation failed:\n' +
+            stats.toString('errors-only')
+        );
+      }
+
       const compilationStats = stats.toJson({
         all: false,
         assets: true,

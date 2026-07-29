@@ -13,6 +13,7 @@
 @synthesize headers = _headers;
 @synthesize timeout = _timeout;
 @synthesize verifyScriptSignature = _verifyScriptSignature;
+@synthesize publicKey = _publicKey;
 @synthesize uniqueId = _uniqueId;
 @synthesize sourceUrl = _sourceUrl;
 
@@ -42,6 +43,7 @@
                                      withBody:[config.body() dataUsingEncoding:NSUTF8StringEncoding]
                                   withTimeout:[NSNumber numberWithDouble:config.timeout()]
                     withVerifyScriptSignature:config.verifyScriptSignature()
+                                withPublicKey:config.publicKey()
                                  withUniqueId:config.uniqueId()
                                 withSourceUrl:sourceUrl];
 }
@@ -67,6 +69,7 @@
                                      withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
                                   withTimeout:config[@"timeout"]
                     withVerifyScriptSignature:config[@"verifyScriptSignature"]
+                                withPublicKey:config[@"publicKey"]
                                  withUniqueId:config[@"uniqueId"]
                                 withSourceUrl:sourceUrl];
 }
@@ -90,6 +93,7 @@
                         withBody:(nullable NSData *)body
                      withTimeout:(nonnull NSNumber *)timeout
        withVerifyScriptSignature:(NSString *)verifyScriptSignature
+                   withPublicKey:(nullable NSString *)publicKey
                     withUniqueId:(NSString *)uniqueId
                    withSourceUrl:(nonnull NSString *)sourceUrl
 {
@@ -103,6 +107,7 @@
   _headers = headers;
   _timeout = timeout;
   _verifyScriptSignature = verifyScriptSignature;
+  _publicKey = publicKey;
   _uniqueId = uniqueId;
   _sourceUrl = sourceUrl;
   return self;

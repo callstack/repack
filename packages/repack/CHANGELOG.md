@@ -1,5 +1,39 @@
 # @callstack/repack
 
+## 5.2.5
+
+### Patch Changes
+
+- [#1357](https://github.com/callstack/repack/pull/1357) [`1705f2a`](https://github.com/callstack/repack/commit/1705f2ac1f687e235a7f41f46bd53d833b8136ab) Thanks [@jbroma](https://github.com/jbroma)! - Fix production bundles so `NativeEntryPlugin` keeps polyfills on module-id based `__webpack_require__(id)` startup.
+
+- [#1358](https://github.com/callstack/repack/pull/1358) [`60e6a17`](https://github.com/callstack/repack/commit/60e6a1709e1b21b56d3202e95a9ed08e17da0926) Thanks [@jbroma](https://github.com/jbroma)! - Bump the Android `nimbus-jose-jwt` dependency from `9.48` to `10.8` for upstream security fixes.
+
+- [#1361](https://github.com/callstack/repack/pull/1361) [`b4178c2`](https://github.com/callstack/repack/commit/b4178c23c43db7fe64e8795e871bd54f7291ec20) Thanks [@jbroma](https://github.com/jbroma)! - Preserve non-terminal stdout logs while interactive status is active, so plugin output lines are not cleared by status redraws.
+
+- [#1364](https://github.com/callstack/repack/pull/1364) [`d0058e2`](https://github.com/callstack/repack/commit/d0058e224bbe62781515fb1707154ce08b5394eb) Thanks [@jbroma](https://github.com/jbroma)! - Fix `babel-swc-loader` compatibility for loose class fields, private methods, and destructuring by adding the complementary SWC transforms SWC expects to run alongside them.
+
+- Updated dependencies [[`1ab6e4e`](https://github.com/callstack/repack/commit/1ab6e4ee5e466f97b5583aad5940d1371f252299)]:
+  - @callstack/repack-dev-server@5.2.5
+
+## 5.2.4
+
+### Patch Changes
+
+- [#1332](https://github.com/callstack/repack/pull/1332) [`cbfcfd0700fe01233c7ff61e37bdbd48a3d887ea`](https://github.com/callstack/repack/commit/cbfcfd0700fe01233c7ff61e37bdbd48a3d887ea) Thanks [@ismarbesic](https://github.com/ismarbesic)! - Fix hermes-compiler path for RN 0.82+ in the hermes bytecode plugin
+
+- [#1348](https://github.com/callstack/repack/pull/1348) [`cc943dd42a97c0ca63a664411b97cc5413b5502f`](https://github.com/callstack/repack/commit/cc943dd42a97c0ca63a664411b97cc5413b5502f) Thanks [@jbroma](https://github.com/jbroma)! - Fix `--entry-file` being required even when `entry` is defined in the bundler config.
+
+- [#1333](https://github.com/callstack/repack/pull/1333) [`4023cc7503fae96c82a8d35df9434648d1bb9cae`](https://github.com/callstack/repack/commit/4023cc7503fae96c82a8d35df9434648d1bb9cae) Thanks [@OrfeasZ](https://github.com/OrfeasZ)! - Handle previous compiler errors and abort bundling in `RepackOutputPlugin`
+
+- [#1340](https://github.com/callstack/repack/pull/1340) [`7ee1b83fac97aeaf1b0727b2fadf58c7dc3fdb6a`](https://github.com/callstack/repack/commit/7ee1b83fac97aeaf1b0727b2fadf58c7dc3fdb6a) Thanks [@jbroma](https://github.com/jbroma)! - Fix polyfill execution order when using Module Federation by adding a `PolyfillsRuntimeModule` to `NativeEntryPlugin`. Polyfills are now required from a runtime module that runs before Module Federation's startup wrapper, guaranteeing they execute before MF startup.
+
+- [#1321](https://github.com/callstack/repack/pull/1321) [`a224e84354855bfc923009cab31f887c0e3452c9`](https://github.com/callstack/repack/commit/a224e84354855bfc923009cab31f887c0e3452c9) Thanks [@jbroma](https://github.com/jbroma)! - Fix bundling with `babel-swc-loader` when `disableImportExportTransform` is set to `true` in RN babel preset
+
+- [#1350](https://github.com/callstack/repack/pull/1350) [`b083b9d62d873388c4dd6b8165072cc4fbf6bee1`](https://github.com/callstack/repack/commit/b083b9d62d873388c4dd6b8165072cc4fbf6bee1) Thanks [@jbroma](https://github.com/jbroma)! - Update jsonwebtoken to ^9.0.3 to resolve jws security vulnerability.
+
+- Updated dependencies [[`aaf3cc968666e91586fd655053b75e0b2cc11cb1`](https://github.com/callstack/repack/commit/aaf3cc968666e91586fd655053b75e0b2cc11cb1)]:
+  - @callstack/repack-dev-server@5.2.4
+
 ## 5.2.3
 
 ### Patch Changes

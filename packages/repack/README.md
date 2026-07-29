@@ -1,7 +1,7 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.png" width="650" alt="Re.Pack logo" />
-  <h3>A toolkit to build your React Native application with Rspack or Webpack.</h3>
-</div>
+<a href="https://www.callstack.com/open-source?utm_campaign=generic&utm_source=github&utm_medium=referral&utm_content=repack" align="center">
+  <img src="https://raw.githubusercontent.com/callstack/repack/HEAD/logo.png" alt="Re.Pack" />
+</a>
+<h3 align="center">A toolkit to build your React Native application with Rspack or Webpack.</h3>
 <div align="center">
 
 [![mit licence][license-badge]][license]

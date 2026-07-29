@@ -3,7 +3,7 @@ import type { Compiler as WebpackCompiler } from 'webpack';
 import { BabelPlugin } from './BabelPlugin.js';
 import { DevelopmentPlugin } from './DevelopmentPlugin.js';
 import { LoggerPlugin, type LoggerPluginConfig } from './LoggerPlugin.js';
-import { NativeEntryPlugin } from './NativeEntryPlugin.js';
+import { NativeEntryPlugin } from './NativeEntryPlugin/index.js';
 import { OutputPlugin, type OutputPluginConfig } from './OutputPlugin/index.js';
 import { RepackTargetPlugin } from './RepackTargetPlugin/index.js';
 import { SourceMapPlugin } from './SourceMapPlugin.js';

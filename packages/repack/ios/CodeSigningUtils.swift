@@ -38,21 +38,33 @@ public class CodeSigningUtils: NSObject {
         }
         
         let signatureB64 = convertBase64URLtoBase64(jwtSignature)
-        let signature = Signature(data: Data(base64Encoded: signatureB64)!)
+        guard let signatureData = Data(base64Encoded: signatureB64) else {
+            throw CodeSigningError.tokenInvalid
+        }
+        let signature = Signature(data: signatureData)
         
-        guard let pk = try? PublicKey(pemEncoded: publicKey) else {
+        guard let pk = try? PublicKey(
+            pemEncoded: publicKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        ) else {
             throw CodeSigningError.publicKeyInvalid
         }
         
         // use b64-encoded header and payload for signature verification
         let tokenWithoutSignature = token.components(separatedBy: ".").dropLast().joined(separator: ".")
-        let clearMessage = try? ClearMessage(string: tokenWithoutSignature, using: .utf8)
+        guard let clearMessage = try? ClearMessage(string: tokenWithoutSignature, using: .utf8) else {
+            throw CodeSigningError.tokenInvalid
+        }
         
-        let isSuccesfullyVerified = try? clearMessage?.verify(with: pk, signature: signature, digestType: .sha256)
-        
-        if isSuccesfullyVerified! {
-            return jwt
-        } else {
+        do {
+            let isSuccesfullyVerified = try clearMessage.verify(with: pk, signature: signature, digestType: .sha256)
+            if isSuccesfullyVerified {
+                return jwt
+            } else {
+                throw CodeSigningError.tokenVerificationFailed
+            }
+        } catch let error as CodeSigningError {
+            throw error
+        } catch {
             throw CodeSigningError.tokenVerificationFailed
         }
     }
@@ -80,12 +92,12 @@ public class CodeSigningUtils: NSObject {
     }
     
     @objc
-    public static func verifyBundle(token: String?, fileContent: NSData?) throws {
+    public static func verifyBundle(token: String?, fileContent: NSData?, publicKey: String?) throws {
         guard let token = token else {
             throw CodeSigningError.tokenNotFound
         }
         
-        guard let publicKey = getPublicKey() else {
+        guard let publicKey = publicKey ?? getPublicKey() else {
             throw CodeSigningError.publicKeyNotFound
         }
         
