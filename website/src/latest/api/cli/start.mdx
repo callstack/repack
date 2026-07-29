@@ -110,6 +110,12 @@ Enables verbose logging.
 
 Path to a bundler config file, e.g webpack.config.js.
 
+### `--bundler`
+
+- Type: `"rspack" | "webpack"`
+
+Select the bundler explicitly. Without this option, Re.Pack infers the bundler from the `--config` filename, then checks the standard Rspack and webpack config filenames, and defaults to Rspack.
+
 ### `--webpackConfig`
 
 - Type: `path`
