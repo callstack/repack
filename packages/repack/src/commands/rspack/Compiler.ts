@@ -278,13 +278,13 @@ export class Compiler {
     });
   }
 
-  close(callback?: () => void) {
+  close(callback: (error?: Error | null) => void = () => {}) {
     // Release all held gates so Watching instances can complete and close cleanly
     for (const [, gate] of this.watchRunGates) {
       gate();
     }
     this.watchRunGates.clear();
-    this.compiler.close(callback ?? (() => {}));
+    this.compiler.close(callback);
   }
 
   async getAsset(

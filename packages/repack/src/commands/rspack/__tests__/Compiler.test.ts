@@ -77,7 +77,9 @@ describe('Compiler – lazy compilation', () => {
     });
 
     afterAll(async () => {
-      await new Promise<void>((resolve) => compiler.close(resolve));
+      await new Promise<void>((resolve, reject) => {
+        compiler.close((error) => (error ? reject(error) : resolve()));
+      });
     });
 
     it('getAsset("main.js", "ios") produces ios stats but leaves android stats undefined', async () => {
@@ -113,7 +115,23 @@ describe('Compiler – lazy compilation', () => {
       compiler.start();
 
       // Gates are held for both platforms — close() should release them
-      await new Promise<void>((resolve) => compiler.close(resolve));
+      await new Promise<void>((resolve, reject) => {
+        compiler.close((error) => (error ? reject(error) : resolve()));
+      });
+    });
+
+    it('forwards compiler close errors to the caller', async () => {
+      const compiler = new Compiler(createConfigs(), reporter, tmpDir);
+      const closeError = new Error('close failed');
+      jest
+        .spyOn(compiler.compiler, 'close')
+        .mockImplementation((callback) => callback(closeError));
+
+      await expect(
+        new Promise<void>((resolve, reject) => {
+          compiler.close((error) => (error ? reject(error) : resolve()));
+        })
+      ).rejects.toBe(closeError);
     });
   });
 });

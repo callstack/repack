@@ -211,7 +211,9 @@ export async function start(
   return {
     stop: async () => {
       reporter.stop();
-      await new Promise<void>((resolve) => compiler.close(resolve));
+      await new Promise<void>((resolve, reject) => {
+        compiler.close((error) => (error ? reject(error) : resolve()));
+      });
       await stop();
     },
   };
