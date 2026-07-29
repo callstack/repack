@@ -14,6 +14,7 @@ jest.mock('../../common/runAdbReverse.js', () => ({
 describe('Compiler – lazy compilation', () => {
   let tmpDir: string;
   let entryPath: string;
+  const compilationCounts = { ios: 0, android: 0 };
 
   const reporter: Reporter = {
     process: jest.fn(),
@@ -53,6 +54,7 @@ describe('Compiler – lazy compilation', () => {
         entry: entryPath,
         output: { filename: 'main.js', path: path.join(tmpDir, 'out-ios') },
         plugins: [],
+        watchOptions: { poll: 10 },
       },
       {
         name: 'android',
@@ -63,6 +65,7 @@ describe('Compiler – lazy compilation', () => {
           path: path.join(tmpDir, 'out-android'),
         },
         plugins: [],
+        watchOptions: { poll: 10 },
       },
     ];
   }
@@ -73,6 +76,13 @@ describe('Compiler – lazy compilation', () => {
     beforeAll(() => {
       compiler = new Compiler(createConfigs(), reporter, tmpDir);
       compiler.setDevServerContext(mockDevServerContext);
+      for (const childCompiler of compiler.compiler.compilers) {
+        const platform = childCompiler.options
+          .name as keyof typeof compilationCounts;
+        childCompiler.hooks.done.tap('test:count-builds', () => {
+          compilationCounts[platform]++;
+        });
+      }
       compiler.start();
     });
 
@@ -83,12 +93,19 @@ describe('Compiler – lazy compilation', () => {
     });
 
     it('getAsset("main.js", "ios") produces ios stats but leaves android stats undefined', async () => {
+      // Change source after both watchers are gated, then let polling observe it.
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      fs.writeFileSync(entryPath, 'module.exports = { updated: true };');
+      await new Promise((resolve) => setTimeout(resolve, 100));
       const asset = await compiler.getAsset('main.js', 'ios');
+      // Give polling time to trigger any stale-timestamp rebuild.
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       expect(asset).toBeDefined();
       expect(asset.data).toBeInstanceOf(Buffer);
       expect(compiler.statsCache.ios).toBeDefined();
       expect(compiler.statsCache.android).toBeUndefined();
+      expect(compilationCounts).toEqual({ ios: 1, android: 0 });
     });
 
     it('getAsset("main.js", "android") produces android stats independently of ios', async () => {
@@ -97,14 +114,18 @@ describe('Compiler – lazy compilation', () => {
       expect(asset).toBeDefined();
       expect(asset.data).toBeInstanceOf(Buffer);
       expect(compiler.statsCache.android).toBeDefined();
+      expect(compilationCounts).toEqual({ ios: 1, android: 1 });
     });
 
     it('getAsset for an already-compiled platform resolves from cache without recompilation', async () => {
       // Both platforms are already compiled from previous tests
+      const countsBeforeRequest = { ...compilationCounts };
       const asset = await compiler.getAsset('main.js', 'ios');
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       expect(asset).toBeDefined();
       expect(asset.data).toBeInstanceOf(Buffer);
+      expect(compilationCounts).toEqual(countsBeforeRequest);
     });
   });
 
