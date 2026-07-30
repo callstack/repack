@@ -1,0 +1,39 @@
+{
+  "name": "tester-expo-widget",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "repack:start": "react-native webpack-start",
+    "repack:start:remote": "react-native webpack-start --port 8082",
+    "repack:ios": "expo run:ios --no-bundler",
+    "repack:android": "expo run:android --no-bundler",
+    "repack:build:production": "pnpm run repack:build:production:ios && pnpm run repack:build:production:android",
+    "repack:build:production:ios": "node ./scripts/build-production.mjs ios",
+    "repack:build:production:android": "node ./scripts/build-production.mjs android",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@callstack/repack": "workspace:*",
+    "@callstack/repack-expo": "workspace:*",
+    "@module-federation/enhanced": "2.1.0",
+    "expo": "~56.0.5",
+    "expo-asset": "~56.0.21",
+    "expo-constants": "~56.0.16",
+    "expo-font": "~56.0.7",
+    "react": "19.2.3",
+    "react-native": "0.85.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@react-native-community/cli": "20.1.2",
+    "@react-native-community/cli-platform-android": "20.1.2",
+    "@react-native-community/cli-platform-ios": "20.1.2",
+    "@react-native/babel-preset": "0.85.3",
+    "@react-native/community-cli-plugin": "0.85.3",
+    "@rspack/core": "catalog:",
+    "@types/react": "~19.2.2",
+    "babel-preset-expo": "~56.0.13",
+    "typescript": "~6.0.3"
+  }
+}

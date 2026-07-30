@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Repack Expo Widget",
+    "slug": "repack-expo-widget",
+    "scheme": "repackexpowidget",
+    "version": "1.0.0",
+    "newArchEnabled": true,
+    "updates": {
+      "enabled": false
+    },
+    "plugins": ["@callstack/repack-expo"],
+    "ios": {
+      "bundleIdentifier": "com.callstack.repackexpowidget"
+    },
+    "android": {
+      "package": "com.callstack.repackexpowidget"
+    }
+  }
+}

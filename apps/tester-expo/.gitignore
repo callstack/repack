@@ -1,0 +1,4 @@
+# Native projects are committed as deterministic validation fixtures, but EAS
+# Build must exclude them so CNG runs the Config Plugin on a clean worker.
+/android
+/ios

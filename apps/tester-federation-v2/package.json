@@ -8,7 +8,8 @@
     "pods": "(cd ios && bundle install && (bundle exec pod install || bundle exec pod update))",
     "pods:update": "(cd ios && bundle install && bundle exec pod update)",
     "start:hostapp": "react-native webpack-start --config config.host-app.mts",
-    "start:miniapp": "react-native webpack-start --config config.mini-app.mts --port 8082"
+    "start:miniapp": "react-native webpack-start --config config.mini-app.mts --port 8082",
+    "start:expo-host-widget": "react-native webpack-start --config config.expo-host-widget.mts --port 8083"
   },
   "dependencies": {
     "@callstack/repack": "workspace:*",
@@ -24,7 +25,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@babel/plugin-syntax-typescript": "7.25.4",
     "@react-native/babel-preset": "catalog:testers",
+    "@react-native/community-cli-plugin": "0.84.1",
     "@react-native/typescript-config": "catalog:testers",
     "@react-native-community/cli": "catalog:testers",
     "@react-native-community/cli-platform-ios": "catalog:testers",

@@ -1,0 +1,60 @@
+{
+  "name": "@callstack/repack-expo",
+  "version": "0.0.0",
+  "description": "First-class Expo integration for Re.Pack and Rspack",
+  "author": "Callstack",
+  "license": "MIT",
+  "homepage": "https://github.com/callstack/repack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callstack/repack.git"
+  },
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "repack-expo": "dist/cli/bin.js"
+  },
+  "files": ["dist", "README.md"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./rspack": {
+      "types": "./dist/rspack/index.d.ts",
+      "default": "./dist/rspack/index.js"
+    },
+    "./babel-loader": {
+      "types": "./dist/rspack/loaders/expoBabelLoader.d.ts",
+      "default": "./dist/rspack/loaders/expoBabelLoader.js"
+    }
+  },
+  "keywords": ["repack", "rspack", "react-native", "expo", "config-plugin"],
+  "engineStrict": true,
+  "engines": {
+    "node": ">=20.12"
+  },
+  "dependencies": {
+    "@callstack/repack-plugin-expo-modules": "workspace:^",
+    "@expo/env": "~2.3.1"
+  },
+  "peerDependencies": {
+    "@callstack/repack": "workspace:^",
+    "@rspack/core": ">=1",
+    "expo": ">=56"
+  },
+  "devDependencies": {
+    "@callstack/repack": "workspace:*",
+    "@rspack/core": "catalog:",
+    "@types/node": "catalog:",
+    "expo": "~56.0.5",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "pnpm build && node --test test/*.test.cjs"
+  }
+}

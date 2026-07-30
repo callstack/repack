@@ -1,0 +1,7 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true
+  },
+  "include": ["*.ts", "*.tsx", "src/**/*.ts", "src/**/*.tsx", "expo-env.d.ts"]
+}
