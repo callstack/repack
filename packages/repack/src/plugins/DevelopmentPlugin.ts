@@ -52,24 +52,24 @@ export class DevelopmentPlugin {
   private getModuleFederationEntryChunks(plugins: Plugins) {
     const entrypoints = plugins.map((plugin) => {
       if (typeof plugin !== 'object' || !plugin) {
-        return;
+        return undefined;
       }
 
       if (!plugin.constructor?.name.startsWith('ModuleFederationPlugin')) {
-        return;
+        return undefined;
       }
 
       // repack MF plugins expose config property
-      if ('config' in plugin && !!plugin.config.exposes) {
+      if ('config' in plugin && plugin.config.exposes) {
         return plugin.config.name;
       }
 
       // official MF plugins expose _options property
-      if ('_options' in plugin && !!plugin.config.exposes) {
+      if ('_options' in plugin && plugin.config.exposes) {
         return plugin._options.name;
       }
 
-      return;
+      return undefined;
     });
 
     return entrypoints.filter(Boolean);

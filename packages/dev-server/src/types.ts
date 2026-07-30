@@ -39,9 +39,9 @@ export type Middleware<
   | MiddlewareObject<RequestInternal, ResponseInternal>
   | MiddlewareHandler<RequestInternal, ResponseInternal>;
 
-export type { CompilerDelegate };
 export type {
   CodeFrame,
+  CompilerDelegate,
   InputStackFrame,
   ReactNativeStackFrame,
   StackFrame,

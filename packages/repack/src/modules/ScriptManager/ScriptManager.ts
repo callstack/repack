@@ -1,11 +1,10 @@
-// biome-ignore lint/style/useNodejsImportProtocol: use 'events' module instead of node builtin
 import EventEmitter from 'events';
 import { AsyncSeriesBailHook, AsyncSeriesWaterfallHook } from 'tapable';
+import { getWebpackContext } from './getWebpackContext.js';
 import NativeScriptManager, {
   type NormalizedScriptLocator,
 } from './NativeScriptManager.js';
 import { Script } from './Script.js';
-import { getWebpackContext } from './getWebpackContext.js';
 import type {
   ScriptLocator,
   ScriptLocatorResolver,
