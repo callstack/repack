@@ -28,12 +28,9 @@ export default (env) => {
     mode,
     name: platform,
     module: {
-      rules:
-        mode === 'production'
-          ? Repack.getAssetTransformRules({
-              remote: { publicPath: remotePublicPath },
-            })
-          : [],
+      rules: Repack.getAssetTransformRules({
+        remote: { publicPath: remotePublicPath },
+      }),
     },
     output: {
       clean: true,

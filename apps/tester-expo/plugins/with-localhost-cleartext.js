@@ -14,15 +14,11 @@ const NETWORK_SECURITY_CONFIG_XML = `<?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
   <domain-config cleartextTrafficPermitted="true">
     <domain includeSubdomains="false">localhost</domain>
+    <domain includeSubdomains="false">10.0.2.2</domain>
   </domain-config>
 </network-security-config>
 `;
 
-/**
- * Allows the Android emulator to fetch EXPO-020 test artifacts from its
- * localhost port-forward. The application default stays deny-by-default;
- * this is deliberately not reusable production configuration.
- */
 function withLocalhostCleartext(config) {
   const withManifest = withAndroidManifest(config, (modConfig) => {
     const application = modConfig.modResults.manifest.application?.[0];
