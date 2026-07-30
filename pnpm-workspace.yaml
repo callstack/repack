@@ -10,6 +10,14 @@ packageManagerStrict: true
 packageManagerStrictVersion: false
 updateNotifier: false
 
+packageExtensions:
+  # react-native-worklets 0.10.1 imports these from its Babel plugin but does
+  # not declare them, which breaks strict pnpm dependency isolation.
+  "react-native-worklets@0.10.1":
+    dependencies:
+      "@babel/generator": ^7.29.7
+      "@babel/traverse": ^7.29.7
+
 overrides:
   "caniuse-lite": ^1.0.30001774
   # Security fixes for advisories in @module-federation/dts-plugin, which pins
@@ -27,14 +35,6 @@ overrides:
   # Held: vite 8 is rolldown-based; rolldown requires Node >=20.19, which
   # would drop Node 18 from the supported test matrix.
   "vite": ^7.3.1
-
-packageExtensions:
-  # react-native-worklets 0.10.1 imports these from its Babel plugin but does
-  # not declare them, which breaks strict pnpm installations.
-  "react-native-worklets@0.10.1":
-    dependencies:
-      "@babel/generator": ^7.29.7
-      "@babel/traverse": ^7.29.7
 
 allowBuilds:
   "@biomejs/biome": true
