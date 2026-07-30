@@ -46,7 +46,7 @@ export function configureAndroidMainApplication(
       code: 'INCOMPATIBLE_NATIVE_TEMPLATE',
       message: `Expected a Kotlin Expo MainApplication, received ${language}.`,
       recovery:
-        'Regenerate with the Expo SDK 56 Kotlin template or report the native template for explicit support.',
+        'Regenerate with a supported Expo SDK 56+ Kotlin template or report the native template for explicit support.',
     });
   }
 

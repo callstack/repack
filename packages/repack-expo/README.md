@@ -8,17 +8,17 @@ First-class Expo integration for Re.Pack and Rspack.
 
 ## Requirements
 
-- Expo SDK 56
+- Expo SDK 56 or newer
 - iOS or Android
 - React Native New Architecture
 - Hermes
 - Rspack
-- Node.js 20.12 or newer
+- Node.js supported by the selected Expo SDK (20.19+ minimum)
 - Expo prebuild or CNG
 
-SDK 56 is the validated shape. The integration does not hard-code an Expo
-version allowlist: it validates the required generated-native seams and fails
-with recovery guidance when an Expo template is incompatible.
+SDK 56 is the minimum supported contract. The integration does not hard-code an
+upper Expo version allowlist: it validates the required generated-native seams
+and fails with recovery guidance when an Expo template is incompatible.
 
 ## Quick start
 
@@ -82,7 +82,7 @@ before rerunning `init`.
 | File | Managed result |
 | --- | --- |
 | `package.json` | Adds compatible Re.Pack, Expo integration, Community CLI and Rspack development dependencies, plus `repack:start`, `repack:ios` and `repack:android` scripts. |
-| `app.json` or `package.json#expo` | Registers `@callstack/repack-expo` and disables Expo Updates. SDK 56's removed `newArchEnabled` and `jsEngine` defaults are not written. |
+| `app.json` or `package.json#expo` | Registers `@callstack/repack-expo` and disables Expo Updates. SDK 56+ New Architecture and Hermes defaults are not written redundantly. |
 | `react-native.config.js` | Registers the existing Re.Pack Rspack CLI commands. |
 | `rspack.config.mjs` | Adds a minimal application config containing one `ExpoPlugin`. Existing compatible configs are preserved. |
 
@@ -575,7 +575,7 @@ npx @callstack/repack-expo doctor --json
 | --- | --- |
 | `DYNAMIC_EXPO_CONFIG` | Use static `app.json`/`package.json#expo`, or apply the reported configuration manually before prebuild. The CLI will not execute application config code. |
 | `RSPACK_CONFIG_CONFLICT` | Preserve and update the existing config, or explicitly allow replacement with `init --force`. Keep only one `ExpoPlugin` and no separate `RepackPlugin`. |
-| New Architecture or Hermes conflict | Remove `newArchEnabled: false` or a non-Hermes `jsEngine` override. SDK 56 supplies the supported defaults when those fields are absent. |
+| New Architecture or Hermes conflict | Remove `newArchEnabled: false` or a non-Hermes `jsEngine` override. SDK 56+ supplies the supported defaults when those fields are absent. |
 | Expo Updates conflict | Set `expo.updates.enabled` to `false` and regenerate the native projects. OTA is not supported. |
 | Development client requests Metro or cannot find `index.bundle` | Rerun prebuild, start `repack:start`, launch with `repack:ios`/`repack:android`, and verify the generated Re.Pack commands with `doctor`. |
 | ScriptManager autolinking cannot be verified | Install dependencies, run a clean prebuild, install iOS pods when applicable, then rerun `doctor`. Do not add another native ScriptManager module. |
@@ -589,11 +589,11 @@ npx @callstack/repack-expo doctor --json
 
 | Capability | V1 status |
 | --- | --- |
-| Expo SDK 56 | Supported and validated; newer template shapes are accepted only when all required seams validate. |
+| Expo SDK 56+ | Supported; template shapes are accepted when all required native seams validate. |
 | iOS and Android native applications | Supported. |
 | Rspack | Supported. |
 | Webpack | Unsupported. |
-| New Architecture and Hermes | Required; SDK 56 defaults do not need explicit app-config fields. |
+| New Architecture and Hermes | Required; SDK 56+ defaults do not need explicit app-config fields. |
 | Expo Router | Supported. |
 | Resolvable plain `package.json#main` entry | Supported. |
 | Expo prebuild/CNG | Supported and required. |

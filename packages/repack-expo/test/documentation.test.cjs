@@ -31,7 +31,7 @@ function runCli(projectRoot, arguments_) {
   });
 }
 
-test('the documented init, check, and doctor sequence works from a clean static SDK 56-shaped fixture', () => {
+test('the documented init, check, and doctor sequence works from a clean static Expo fixture', () => {
   const projectRoot = createProject({
     expoName: 'Documented Expo App',
     includeCommunityCli: false,

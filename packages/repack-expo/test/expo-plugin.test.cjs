@@ -101,7 +101,7 @@ function createProject({
     'node_modules',
     'react-native'
   );
-  createPackage(reactNativeRoot, 'react-native', '0.85.3');
+  createPackage(reactNativeRoot, 'react-native', '0.86.2');
   fs.writeFileSync(
     path.join(reactNativeRoot, 'rn-get-polyfills.js'),
     'module.exports = () => [];'
@@ -114,7 +114,7 @@ function createProject({
       'assets-registry'
     ),
     '@react-native/assets-registry',
-    '0.85.3'
+    '0.86.2'
   );
   if (rootAssetsRegistryVersion) {
     createPackage(
@@ -606,7 +606,7 @@ test('resolves React Native and its matching assets registry from the project ru
     JSON.parse(
       fs.readFileSync(path.join(matchingRegistryRoot, 'package.json'), 'utf8')
     ).version,
-    '0.85.3'
+    '0.86.2'
   );
   assert.equal(
     JSON.parse(

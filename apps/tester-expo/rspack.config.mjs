@@ -47,22 +47,22 @@ export default (env) => {
           'react-native': {
             singleton: true,
             eager: true,
-            requiredVersion: '0.85.3',
+            requiredVersion: '0.86.2',
           },
           'expo-constants': {
             singleton: true,
             eager: true,
-            requiredVersion: '~56.0.16',
+            requiredVersion: '~57.0.8',
           },
           'expo-asset': {
             singleton: true,
             eager: true,
-            requiredVersion: '~56.0.21',
+            requiredVersion: '~57.0.8',
           },
           'expo-font': {
             singleton: true,
             eager: true,
-            requiredVersion: '~56.0.7',
+            requiredVersion: '~57.0.1',
           },
         },
       }),

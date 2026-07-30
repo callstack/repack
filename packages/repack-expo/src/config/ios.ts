@@ -65,7 +65,7 @@ export function configureIosAppDelegate(
       code: 'INCOMPATIBLE_NATIVE_TEMPLATE',
       message: `Expected a Swift Expo AppDelegate, received ${language}.`,
       recovery:
-        'Regenerate with the Expo SDK 56 Swift template or report the native template for explicit support.',
+        'Regenerate with a supported Expo SDK 56+ Swift template or report the native template for explicit support.',
     });
   }
 

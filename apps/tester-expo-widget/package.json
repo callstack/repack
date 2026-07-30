@@ -17,23 +17,23 @@
     "@callstack/repack": "workspace:*",
     "@callstack/repack-expo": "workspace:*",
     "@module-federation/enhanced": "2.1.0",
-    "expo": "~56.0.5",
-    "expo-asset": "~56.0.21",
-    "expo-constants": "~56.0.16",
-    "expo-font": "~56.0.7",
+    "expo": "~57.0.9",
+    "expo-asset": "~57.0.8",
+    "expo-constants": "~57.0.8",
+    "expo-font": "~57.0.1",
     "react": "19.2.3",
-    "react-native": "0.85.3"
+    "react-native": "0.86.2"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@react-native-community/cli": "20.1.2",
     "@react-native-community/cli-platform-android": "20.1.2",
     "@react-native-community/cli-platform-ios": "20.1.2",
-    "@react-native/babel-preset": "0.85.3",
-    "@react-native/community-cli-plugin": "0.85.3",
+    "@react-native/babel-preset": "0.86.2",
+    "@react-native/community-cli-plugin": "0.86.2",
     "@rspack/core": "catalog:",
     "@types/react": "~19.2.2",
-    "babel-preset-expo": "~56.0.13",
+    "babel-preset-expo": "~57.0.5",
     "typescript": "~6.0.3"
   }
 }

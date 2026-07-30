@@ -404,7 +404,7 @@ test('init preserves additional disabled Updates configuration', () => {
   });
 });
 
-test('init removes legacy SDK 56 runtime defaults from app config', () => {
+test('init removes redundant supported Expo runtime defaults from app config', () => {
   const projectRoot = createProject({
     expo: { jsEngine: 'hermes', newArchEnabled: true },
   });
@@ -419,7 +419,7 @@ test('init removes legacy SDK 56 runtime defaults from app config', () => {
   assert.equal('jsEngine' in expo, false);
 });
 
-test('init rejects explicit SDK 56 runtime opt-outs without writing', () => {
+test('init rejects explicit supported Expo runtime opt-outs without writing', () => {
   const projectRoot = createProject({
     expo: { jsEngine: 'jsc', newArchEnabled: false },
   });

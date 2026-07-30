@@ -161,7 +161,7 @@ function disableExpoUpdates(expo: JsonObject): Diagnostic | undefined {
   return undefined;
 }
 
-function normalizeSdk56RuntimeDefaults(expo: JsonObject): Diagnostic[] {
+function normalizeExpoRuntimeDefaults(expo: JsonObject): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
   if (expo.newArchEnabled === true) {
     delete expo.newArchEnabled;
@@ -170,7 +170,7 @@ function normalizeSdk56RuntimeDefaults(expo: JsonObject): Diagnostic[] {
       diagnosticError(
         'EXPO_NEW_ARCH_CONFLICT',
         'Expo config explicitly disables React Native New Architecture.',
-        'Remove expo.newArchEnabled; Expo SDK 56 enables New Architecture by default.'
+        'Remove expo.newArchEnabled; Expo SDK 56+ enables New Architecture by default.'
       )
     );
   }
@@ -182,7 +182,7 @@ function normalizeSdk56RuntimeDefaults(expo: JsonObject): Diagnostic[] {
       diagnosticError(
         'EXPO_JS_ENGINE_CONFLICT',
         'Expo config explicitly selects a non-Hermes JavaScript engine.',
-        'Remove expo.jsEngine; Expo SDK 56 uses Hermes by default.'
+        'Remove expo.jsEngine; Expo SDK 56+ uses Hermes by default.'
       )
     );
   }
@@ -358,7 +358,7 @@ export function runInit(options: InitOptions = {}): InitResult {
     configPluginOptions = plugin.options;
     const configDiagnostics = [
       plugin.diagnostic,
-      ...normalizeSdk56RuntimeDefaults(expo),
+      ...normalizeExpoRuntimeDefaults(expo),
       disableExpoUpdates(expo),
     ].filter((item): item is Diagnostic => item !== undefined);
     diagnostics.push(...configDiagnostics);
