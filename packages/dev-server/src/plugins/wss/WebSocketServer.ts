@@ -28,7 +28,7 @@ export abstract class WebSocketServer<T extends WebSocket = WebSocket>
   protected clients: Map<string, T>;
   protected nextClientId = 0;
 
-  private heartbeatTimer: NodeJS.Timeout;
+  private heartbeatTimer: ReturnType<typeof setInterval>;
 
   /**
    * Create a new instance of the WebSocketServer.
