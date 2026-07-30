@@ -1,5 +1,7 @@
 import * as Repack from '@callstack/repack';
 import rspack from '@rspack/core';
+import reactNativePkg from 'react-native/package.json' with { type: 'json' };
+import reactPkg from 'react/package.json' with { type: 'json' };
 import pkg from '../package.json' with { type: 'json' };
 
 export default Repack.defineRspackConfig((env) => {
@@ -51,12 +53,14 @@ export default Repack.defineRspackConfig((env) => {
           react: {
             singleton: true,
             eager: false,
-            requiredVersion: '19.2.3',
+            version: reactPkg.version,
+            requiredVersion: reactPkg.version,
           },
           'react-native': {
             singleton: true,
             eager: false,
-            requiredVersion: '0.84.1',
+            version: reactNativePkg.version,
+            requiredVersion: reactNativePkg.version,
           },
           '@react-navigation/native': {
             singleton: true,
