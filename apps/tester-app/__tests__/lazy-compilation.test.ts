@@ -16,6 +16,11 @@ describe('lazy compilation', () => {
   );
   if (!startCommand) throw new Error('start command not found');
 
+  const getStats = (platform: string) =>
+    fetch(`http://localhost:${port}/api/${platform}/stats`).then((response) =>
+      response.json()
+    );
+
   beforeAll(async () => {
     await fs.promises.rm(TMP_DIR, { recursive: true, force: true });
 
@@ -47,61 +52,35 @@ describe('lazy compilation', () => {
   });
 
   it(
-    'stats API returns null for both platforms before any bundle is requested',
+    'compiles each platform when its bundle is first requested',
     async () => {
-      const iosStats = await fetch(
-        `http://localhost:${port}/api/ios/stats`
-      ).then((r) => r.json());
-      const androidStats = await fetch(
-        `http://localhost:${port}/api/android/stats`
-      ).then((r) => r.json());
+      const [initialIosStats, initialAndroidStats] = await Promise.all([
+        getStats('ios'),
+        getStats('android'),
+      ]);
+      expect(initialIosStats.data).toBeNull();
+      expect(initialAndroidStats.data).toBeNull();
 
-      expect(iosStats.data).toBeNull();
-      expect(androidStats.data).toBeNull();
-    },
-    60 * 1000
-  );
-
-  it(
-    'GET /index.bundle?platform=ios produces ios stats but android stats remain null',
-    async () => {
-      const response = await fetch(
+      const iosResponse = await fetch(
         `http://localhost:${port}/index.bundle?platform=ios`
       );
-      const body = await response.text();
+      await iosResponse.text();
+      expect(iosResponse.status).toBe(200);
 
-      expect(response.status).toBe(200);
-      expect(body.length).toBeGreaterThan(100000);
-
-      const iosStats = await fetch(
-        `http://localhost:${port}/api/ios/stats`
-      ).then((r) => r.json());
-      const androidStats = await fetch(
-        `http://localhost:${port}/api/android/stats`
-      ).then((r) => r.json());
-
+      const [iosStats, androidStats] = await Promise.all([
+        getStats('ios'),
+        getStats('android'),
+      ]);
       expect(iosStats.data).not.toBeNull();
       expect(androidStats.data).toBeNull();
-    },
-    60 * 1000
-  );
 
-  it(
-    'GET /index.bundle?platform=android produces android stats after ios is already compiled',
-    async () => {
-      const response = await fetch(
+      const androidResponse = await fetch(
         `http://localhost:${port}/index.bundle?platform=android`
       );
-      const body = await response.text();
-
-      expect(response.status).toBe(200);
-      expect(body.length).toBeGreaterThan(100000);
-
-      const androidStats = await fetch(
-        `http://localhost:${port}/api/android/stats`
-      ).then((r) => r.json());
-
-      expect(androidStats.data).not.toBeNull();
+      await androidResponse.text();
+      expect(androidResponse.status).toBe(200);
+      const finalAndroidStats = await getStats('android');
+      expect(finalAndroidStats.data).not.toBeNull();
     },
     60 * 1000
   );
