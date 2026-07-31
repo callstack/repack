@@ -282,6 +282,11 @@ export class Compiler {
   }
 
   close(callback: (error?: Error | null) => void = () => {}) {
+    const error = new Error('Compiler closed before compilation completed');
+    this.platforms.forEach((platform) => {
+      this.callPendingResolvers(platform, error);
+    });
+
     // Release all held gates so Watching instances can complete and close cleanly
     for (const [, gate] of this.watchRunGates) {
       gate();

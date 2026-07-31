@@ -137,6 +137,25 @@ describe('Compiler – lazy compilation', () => {
   });
 
   describe('close()', () => {
+    it('rejects pending asset requests', async () => {
+      const compiler = new Compiler(createConfigs(), reporter, tmpDir);
+      compiler.setDevServerContext(mockDevServerContext);
+      compiler.compiler.compilers[0].hooks.make.tapAsync(
+        'test:hold-compilation',
+        (_compilation, done) => setTimeout(done, 100)
+      );
+      compiler.start();
+
+      const assetRequest = expect(
+        compiler.getAsset('main.js', 'ios')
+      ).rejects.toThrow('Compiler closed before compilation completed');
+      await new Promise<void>((resolve, reject) => {
+        compiler.close((error) => (error ? reject(error) : resolve()));
+      });
+
+      await assetRequest;
+    });
+
     it('resolves when both platform gates are still held (no getAsset calls)', async () => {
       const compiler = new Compiler(createConfigs(), reporter, tmpDir);
       compiler.setDevServerContext(mockDevServerContext);
