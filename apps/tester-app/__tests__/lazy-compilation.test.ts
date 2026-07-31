@@ -1,13 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import rspackCommands from '@callstack/repack/commands/rspack';
+import { MultiCompiler } from '@rspack/core';
 import getPort from 'get-port';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const TMP_DIR = path.join(__dirname, 'out/lazy-compilation');
 
 let port: number;
-let stopServer: () => Promise<void>;
+let stopServer: (() => Promise<void>) | undefined;
 
 describe('lazy compilation', () => {
   const startCommand = rspackCommands.find(
@@ -40,7 +41,7 @@ describe('lazy compilation', () => {
   });
 
   afterAll(async () => {
-    await stopServer();
+    await stopServer?.();
   });
 
   it(
@@ -102,4 +103,20 @@ describe('lazy compilation', () => {
     },
     60 * 1000
   );
+
+  it('stops the dev server when compiler shutdown fails', async () => {
+    const close = MultiCompiler.prototype.close;
+    const closeError = new Error('close failed');
+    MultiCompiler.prototype.close = function (callback) {
+      close.call(this, () => callback(closeError));
+    };
+
+    try {
+      await expect(stopServer!()).rejects.toBe(closeError);
+      await expect(fetch(`http://localhost:${port}/status`)).rejects.toThrow();
+      stopServer = undefined;
+    } finally {
+      MultiCompiler.prototype.close = close;
+    }
+  });
 });
