@@ -31,6 +31,7 @@ export class Compiler {
   private watchRunGates: Map<string, () => void> = new Map();
   private activePlatforms: Set<string> = new Set();
   private buildStartTime: Record<string, number> = {};
+  private isClosed = false;
 
   constructor(
     configs: MultiRspackOptions,
@@ -282,6 +283,7 @@ export class Compiler {
   }
 
   close(callback: (error?: Error | null) => void = () => {}) {
+    this.isClosed = true;
     const error = new Error('Compiler closed before compilation completed');
     this.platforms.forEach((platform) => {
       this.callPendingResolvers(platform, error);
@@ -300,6 +302,10 @@ export class Compiler {
     platform: string,
     sendProgress?: SendProgress
   ): Promise<CompilerAsset> {
+    if (this.isClosed) {
+      throw new Error('Compiler closed before compilation completed');
+    }
+
     // Activate compiler for this platform on first request
     this.activatePlatform(platform);
 

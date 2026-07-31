@@ -154,6 +154,9 @@ describe('Compiler – lazy compilation', () => {
       });
 
       await assetRequest;
+      await expect(compiler.getAsset('main.js', 'android')).rejects.toThrow(
+        'Compiler closed before compilation completed'
+      );
     });
 
     it('resolves when both platform gates are still held (no getAsset calls)', async () => {
