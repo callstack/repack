@@ -69,7 +69,9 @@ export class Compiler {
     // @ts-expect-error memfs is compatible enough
     this.compiler.outputFileSystem = this.filesystem;
 
-    this.setupCompilerHooks();
+    for (const childCompiler of this.compiler.compilers) {
+      this.setupChildCompilerHooks(childCompiler);
+    }
   }
 
   get devServerOptions() {
@@ -102,17 +104,9 @@ export class Compiler {
     this.devServerContext = ctx;
   }
 
-  private setupCompilerHooks() {
-    for (const childCompiler of this.compiler.compilers) {
-      const platform = childCompiler.options.name!;
-      this.setupChildCompilerHooks(platform, childCompiler);
-    }
-  }
+  private setupChildCompilerHooks(childCompiler: RspackCompiler) {
+    const platform = childCompiler.options.name!;
 
-  private setupChildCompilerHooks(
-    platform: string,
-    childCompiler: RspackCompiler
-  ) {
     // Gate: hold unrequested platforms at watchRun
     childCompiler.hooks.watchRun.tapAsync('repack:gate', (_compiler, done) => {
       if (this.activePlatforms.has(platform)) {
