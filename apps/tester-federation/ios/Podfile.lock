@@ -2276,7 +2276,7 @@ SPEC CHECKSUMS:
   AsyncStorage: 163ab23f6aa37a58b7f2379d0b4ee7ac84d6655c
   callstack-repack: 2d0e744d37013ccc33451e4c797d5dd67eae6e56
   FBLazyVector: b3e7ad108f0d882e30445c5527d774e3fd432f3d
-  hermes-engine: e43b2312391cd7fd1d3c54c63ccbcc69cf3b477e
+  hermes-engine: 399db9aa65675d12edcd906c1caab4a41e98f4e1
   JWTDecode: 2eed97c2fa46ccaf3049a787004eedf0be474a87
   RCTDeprecation: 2a74a2c57675e64419bd89078efde81f7c1de90b
   RCTRequired: 30451112e6fef4e6f31b4e7eee0845156e35e4b0
