@@ -41,7 +41,9 @@ describe('lazy compilation', () => {
   });
 
   afterAll(async () => {
-    await stopServer?.();
+    if (stopServer) {
+      await stopServer();
+    }
   });
 
   it(
@@ -105,6 +107,9 @@ describe('lazy compilation', () => {
   );
 
   it('stops the dev server when compiler shutdown fails', async () => {
+    const stop = stopServer;
+    if (!stop) throw new Error('Dev server was not started');
+
     const close = MultiCompiler.prototype.close;
     const closeError = new Error('close failed');
     MultiCompiler.prototype.close = function (callback) {
@@ -112,7 +117,7 @@ describe('lazy compilation', () => {
     };
 
     try {
-      await expect(stopServer!()).rejects.toBe(closeError);
+      await expect(stop()).rejects.toBe(closeError);
       await expect(fetch(`http://localhost:${port}/status`)).rejects.toThrow();
       stopServer = undefined;
     } finally {
