@@ -132,6 +132,12 @@ Watch for file changes.
 
 Path to a bundler config file, e.g rspack.config.js.
 
+### `--bundler`
+
+- Type: `"rspack" | "webpack"`
+
+Select the bundler explicitly. Without this option, Re.Pack infers the bundler from the `--config` filename, then checks the standard Rspack and webpack config filenames, and defaults to Rspack.
+
 ### `--webpackConfig`
 
 - Type: `string`

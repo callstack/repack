@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import rspackCommands from '@callstack/repack/commands/rspack';
-import webpackCommands from '@callstack/repack/commands/webpack';
+import commands from '@callstack/repack/commands';
 import getPort from 'get-port';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -12,15 +11,13 @@ describe('start command', () => {
   describe.each([
     {
       bundler: 'webpack',
-      commands: webpackCommands,
       configFile: './webpack.config.mjs',
     },
     {
       bundler: 'rspack',
-      commands: rspackCommands,
       configFile: './rspack.config.mjs',
     },
-  ])('using $bundler', ({ bundler, commands, configFile }) => {
+  ])('using $bundler', ({ bundler, configFile }) => {
     const startCommand = commands.find((command) => command.name === 'start');
     if (!startCommand) throw new Error('start command not found');
 

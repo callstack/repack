@@ -1,2 +1,2 @@
-import commands from '../dist/commands/webpack/index.js';
+import commands from '../dist/commands/index.js';
 export = commands;

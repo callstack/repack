@@ -1,5 +1,7 @@
 import type { StatsAsset, StatsCompilation } from 'webpack';
-import type { RemoveRecord, StartArguments } from '../types.js';
+import type { CompilerAsset, RemoveRecord, StartArguments } from '../types.js';
+
+export type { CompilerAsset };
 
 export interface WebpackWorkerOptions {
   platform: string;
@@ -9,12 +11,6 @@ export interface WebpackWorkerOptions {
 }
 
 type WebpackStatsAsset = RemoveRecord<StatsAsset>;
-
-export interface CompilerAsset {
-  data: Buffer;
-  info: WebpackStatsAsset['info'];
-  size: number;
-}
 
 export interface WorkerAsset {
   data: Uint8Array;

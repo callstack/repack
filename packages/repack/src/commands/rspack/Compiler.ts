@@ -13,9 +13,9 @@ import type { Reporter } from '../../logging/types.js';
 import type { HMRMessage } from '../../types.js';
 import { runAdbReverse } from '../common/index.js';
 import { DEV_SERVER_ASSET_TYPES } from '../consts.js';
-import type { CompilerAsset } from './types.js';
+import type { CompilerAsset, CompilerInterface } from '../types.js';
 
-export class Compiler {
+export class Compiler implements CompilerInterface {
   compiler: MultiCompiler;
   filesystem: memfs.IFs;
   platforms: string[];

@@ -8,6 +8,7 @@
   "exports": {
     ".": "./dist/index.js",
     "./client": "./client/index.js",
+    "./commands": "./commands/index.js",
     "./commands/*": "./commands/*.js",
     "./assets-loader": "./dist/loaders/assetsLoader/index.js",
     "./babel-loader": "./dist/loaders/babelLoader/index.js",

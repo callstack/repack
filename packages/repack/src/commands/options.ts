@@ -1,4 +1,16 @@
 import path from 'node:path';
+import { CLIError } from '../helpers/index.js';
+import type { Bundler } from './types.js';
+
+function parseBundler(value: string): Bundler {
+  if (value === 'rspack' || value === 'webpack') {
+    return value;
+  }
+
+  throw new CLIError(
+    `Invalid bundler "${value}". Expected "rspack" or "webpack".`
+  );
+}
 
 export const startCommandOptions = [
   {
@@ -75,6 +87,12 @@ export const startCommandOptions = [
     description:
       '[DEPRECATED] Path to a bundler config file, e.g webpack.config.js. Please use --config instead.',
     parse: (val: string) => path.resolve(val),
+  },
+  {
+    name: '--bundler <string>',
+    description:
+      'Bundler engine to use: "rspack" or "webpack". If not specified, auto-detected from config filename.',
+    parse: parseBundler,
   },
 ];
 
@@ -171,5 +189,11 @@ export const bundleCommandOptions = [
     description:
       '[DEPRECATED] Path to a bundler config file, e.g webpack.config.js. Please use --config instead.',
     parse: (val: string) => path.resolve(val),
+  },
+  {
+    name: '--bundler <string>',
+    description:
+      'Bundler engine to use: "rspack" or "webpack". If not specified, auto-detected from config filename.',
+    parse: parseBundler,
   },
 ];
