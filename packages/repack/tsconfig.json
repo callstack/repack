@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "types": ["node", "jest"],
     "rootDirs": ["src", "../dev-server/src"],
     "paths": {
       "@callstack/repack-dev-server": ["../dev-server/src/index.ts"],
