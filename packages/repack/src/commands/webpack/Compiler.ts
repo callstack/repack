@@ -93,7 +93,9 @@ export class Compiler implements CompilerInterface {
     });
 
     const callPendingResolvers = (error?: Error) => {
-      this.resolvers[platform]?.forEach((resolver) => resolver(error));
+      this.resolvers[platform]?.forEach((resolver) => {
+        resolver(error);
+      });
       this.resolvers[platform] = [];
     };
 

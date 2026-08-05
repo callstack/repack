@@ -1,7 +1,7 @@
 import * as Repack from '@callstack/repack';
 import rspack from '@rspack/core';
-import reactNativePkg from 'react-native/package.json' with { type: 'json' };
 import reactPkg from 'react/package.json' with { type: 'json' };
+import reactNativePkg from 'react-native/package.json' with { type: 'json' };
 import pkg from '../package.json' with { type: 'json' };
 
 export default Repack.defineRspackConfig((env) => {

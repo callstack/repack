@@ -3,10 +3,10 @@ import { VERBOSE_ENV_KEY } from '../env.js';
 import { CLIError, isTruthyEnv } from '../helpers/index.js';
 import {
   ConsoleReporter,
-  FileReporter,
-  type Reporter,
   composeReporters,
+  FileReporter,
   makeLogEntryFromFastifyLog,
+  type Reporter,
 } from '../logging/index.js';
 import { detectBundler } from './common/config/detectBundler.js';
 import { makeCompilerConfig } from './common/config/makeCompilerConfig.js';

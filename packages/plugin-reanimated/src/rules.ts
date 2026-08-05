@@ -73,7 +73,7 @@ const reanimated4ModuleRules = createReanimatedModuleRules(4);
 const reanimatedModuleRules = reanimated3ModuleRules;
 
 export {
-  reanimatedModuleRules,
   reanimated3ModuleRules,
   reanimated4ModuleRules,
+  reanimatedModuleRules,
 };

@@ -2,7 +2,7 @@ import type {
   Compiler as RspackCompiler,
   Configuration as RspackConfiguration,
 } from '@rspack/core';
-import { Volume, createFsFromVolume } from 'memfs';
+import { createFsFromVolume, Volume } from 'memfs';
 import { inject } from 'vitest';
 import type {
   Compiler as WebpackCompiler,
