@@ -99,19 +99,25 @@ export class OutputPlugin {
     chunks
       .filter((chunk) => chunk.initial && chunk.entry)
       .filter((chunk) => chunk.id! in entryOptions)
-      .forEach((chunk) => localChunks.add(chunk));
+      .forEach((chunk) => {
+        localChunks.add(chunk);
+      });
 
     // Add siblings of known initial chunks as local chunks
     chunks
       .filter((chunk) => localChunks.has(chunk))
       .flatMap((chunk) => chunk.siblings!)
       .map((chunkId) => chunksById.get(chunkId))
-      .forEach((chunk) => localChunks.add(chunk!));
+      .forEach((chunk) => {
+        localChunks.add(chunk!);
+      });
 
     // Add chunks matching local specs as local chunks
     chunks
       .filter((chunk) => chunkMatcher(chunk, this.localSpecs).length)
-      .forEach((chunk) => localChunks.add(chunk));
+      .forEach((chunk) => {
+        localChunks.add(chunk);
+      });
 
     // Add parents of local chunks as local chunks
     const addParentsOfLocalChunks = () => {
@@ -119,7 +125,9 @@ export class OutputPlugin {
         .filter((chunk) => localChunks.has(chunk))
         .flatMap((chunk) => chunk.parents!)
         .map((chunkId) => chunksById.get(chunkId))
-        .forEach((chunk) => localChunks.add(chunk!));
+        .forEach((chunk) => {
+          localChunks.add(chunk!);
+        });
       return localChunks.size;
     };
 
@@ -129,7 +137,9 @@ export class OutputPlugin {
     // Add all other chunks as remote chunks
     chunks
       .filter((chunk) => !localChunks.has(chunk))
-      .forEach((chunk) => remoteChunks.add(chunk));
+      .forEach((chunk) => {
+        remoteChunks.add(chunk);
+      });
 
     return { localChunks, remoteChunks };
   }
@@ -146,7 +156,9 @@ export class OutputPlugin {
 
     compiler.hooks.beforeCompile.tap('RepackOutputPlugin', () => {
       const deprecationMessages = getDeprecationMessages(this.config);
-      deprecationMessages.forEach((message) => logger.warn(message));
+      deprecationMessages.forEach((message) => {
+        logger.warn(message);
+      });
     });
 
     const logger = compiler.getInfrastructureLogger('RepackOutputPlugin');
@@ -210,7 +222,9 @@ export class OutputPlugin {
       // Collect auxiliary assets (only remote-assets for now)
       assets
         .filter((asset) => /^remote-assets/.test(asset.name))
-        .forEach((asset) => auxiliaryAssets.add(asset.name));
+        .forEach((asset) => {
+          auxiliaryAssets.add(asset.name);
+        });
 
       let localAssetsCopyProcessor: AssetsCopyProcessor | undefined;
 

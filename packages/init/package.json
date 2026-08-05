@@ -3,20 +3,27 @@
   "description": "Automates the integration of the @callstack/repack into React-Native projects",
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
-  "version": "5.2.5",
+  "version": "5.3.0",
   "homepage": "https://github.com/callstack/repack",
   "repository": {
     "type": "git",
     "url": "https://github.com/callstack/repack.git"
   },
-  "keywords": ["repack", "re.pack", "init", "repack-init"],
+  "keywords": [
+    "repack",
+    "re.pack",
+    "init",
+    "repack-init"
+  ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "bin": "dist/bin.js",
   "main": "dist/bin.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "engineStrict": true,
   "engines": {
     "node": ">=18"

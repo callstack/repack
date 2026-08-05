@@ -42,7 +42,7 @@ catalog:
   "@types/node": ^20.19.31
   # Pinned: 5.6+ silently skips minification (#1390).
   "terser-webpack-plugin": 5.5.0
-  "typescript": ^5.9.3
+  "typescript": ^7.0.2
   # Held: 5.106+ removes a webpack internal needed by @module-federation/enhanced <2.4.0.
   "webpack": ~5.105.0
   "react": "19.2.8"

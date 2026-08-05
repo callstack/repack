@@ -163,7 +163,7 @@ export default async function babelSwcLoader(
       sourceType: babelResult.sourceType,
     });
 
-    const swcResult = swc.transformSync(babelResult?.code!, {
+    const swcResult = swc.transformSync(babelResult.code!, {
       ...finalSwcConfig,
       caller: { name: '@callstack/repack' },
       filename: this.resourcePath,

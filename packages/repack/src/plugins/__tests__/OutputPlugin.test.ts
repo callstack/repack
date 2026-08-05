@@ -4,8 +4,8 @@ import path from 'node:path';
 import {
   type EntryNormalized,
   ModuleFilenameHelpers,
-  type StatsChunk,
   rspack,
+  type StatsChunk,
 } from '@rspack/core';
 import RspackVirtualModulePlugin from 'rspack-plugin-virtual-module';
 import {
@@ -238,7 +238,9 @@ describe('OutputPlugin', () => {
         expect(localChunks.size).toBe(5);
         expect(remoteChunks.size).toBe(0);
 
-        chunks.forEach((chunk) => expect(localChunks.has(chunk)).toBe(true));
+        chunks.forEach((chunk) => {
+          expect(localChunks.has(chunk)).toBe(true);
+        });
       });
     });
 

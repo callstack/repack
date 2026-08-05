@@ -2,7 +2,7 @@
   "name": "@callstack/repack-dev-server",
   "description": "A bundler-agnostic development server for React Native applications as part of @callstack/repack.",
   "license": "MIT",
-  "version": "5.2.5",
+  "version": "5.3.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,13 +10,22 @@
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "static"],
+  "files": [
+    "dist",
+    "static"
+  ],
   "homepage": "https://github.com/callstack/repack",
   "repository": {
     "type": "git",
     "url": "https://github.com/callstack/repack.git"
   },
-  "keywords": ["react-native", "repack", "re.pack", "server", "dev-server"],
+  "keywords": [
+    "react-native",
+    "repack",
+    "re.pack",
+    "server",
+    "dev-server"
+  ],
   "author": "zamotany <zamotany.oss@gmail.com>",
   "engines": {
     "node": ">=18"

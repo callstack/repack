@@ -2,8 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
+    "rootDir": "../..",
     "rootDirs": ["src", "../repack/src", "../dev-server/src"],
-    "types": ["../repack/src/types/dev-server-options.d.ts"],
+    "types": ["node", "../repack/src/types/dev-server-options.d.ts"],
     "paths": {
       "@callstack/repack": ["../repack/src/index.ts"],
       "@callstack/repack/*": ["../repack/src/*"],

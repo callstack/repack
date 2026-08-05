@@ -1,15 +1,15 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { SendProgress, Server } from '@callstack/repack-dev-server';
-import { rspack } from '@rspack/core';
 import type {
   MultiCompiler,
   MultiRspackOptions,
   Compiler as RspackCompiler,
   StatsCompilation,
 } from '@rspack/core';
+import { rspack } from '@rspack/core';
 import memfs from 'memfs';
-import { CLIError, adaptFilenameToPlatform } from '../../helpers/index.js';
+import { adaptFilenameToPlatform, CLIError } from '../../helpers/index.js';
 import type { Reporter } from '../../logging/types.js';
 import type { HMRMessage } from '../../types.js';
 import { runAdbReverse } from '../common/index.js';
@@ -83,7 +83,9 @@ export class Compiler {
   }
 
   private callPendingResolvers(platform: string, error?: Error) {
-    this.resolvers[platform]?.forEach((resolver) => resolver(error));
+    this.resolvers[platform]?.forEach((resolver) => {
+      resolver(error);
+    });
     this.resolvers[platform] = [];
   }
 
