@@ -1,5 +1,13 @@
 # @callstack/repack-dev-server
 
+## 5.3.0
+
+### Patch Changes
+
+- [#1409](https://github.com/callstack/repack/pull/1409) [`742d575`](https://github.com/callstack/repack/commit/742d57551dc652b3e1803e72d8f021f9e22363de) Thanks [@dannyhw](https://github.com/dannyhw)! - Update dependencies to resolve reported security advisories.
+
+  `@callstack/repack-dev-server` raises its minimum versions for `@fastify/middie`, `fastify`, `http-proxy-middleware`, `launch-editor` and `ws`. `@callstack/repack` raises `image-size`, and pins `terser-webpack-plugin` to 5.5.0: it no longer depends on the vulnerable `serialize-javascript`, and it is the last release before 5.6.0, which silently skips minification under Rspack and leaves production bundles unminified. All bumps stay within the existing major versions, so there are no API changes.
+
 ## 5.2.5
 
 ### Patch Changes

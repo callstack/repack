@@ -19,8 +19,8 @@
     "release:canary": "pnpm changeset publish --tag canary --no-git-tag",
     "pods": "turbo run pods",
     "pods:update": "turbo run pods:update",
-    "website:start": "pnpm --filter website run start",
-    "website:build": "pnpm --filter website run export"
+    "website:start": "pnpm --filter website run dev",
+    "website:build": "pnpm --filter website run build"
   },
   "devDependencies": {
     "@babel/cli": "^7.29.7",
