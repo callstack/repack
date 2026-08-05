@@ -144,7 +144,7 @@ describe('bundle command', () => {
             webpackConfig: path.join(__dirname, 'configs', configFile),
           };
 
-          // @ts-ignore
+          // @ts-expect-error
           await bundleCommand.func([''], config, args);
 
           const files = await globby(['**/*'], { cwd: TMP_DIR, dot: true });

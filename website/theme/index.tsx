@@ -40,6 +40,5 @@ const Layout = () => (
   />
 );
 
-export { Layout };
-
 export * from '@rspress/core/theme-original';
+export { Layout };

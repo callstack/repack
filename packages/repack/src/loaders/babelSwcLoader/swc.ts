@@ -185,7 +185,8 @@ function getTransformDynamicImportConfig(
       ...swcConfig.jsc,
       parser: {
         ...swcConfig.jsc?.parser,
-        syntax: swcConfig.jsc?.parser?.syntax!,
+        // parser config from the loader always defines syntax; fallback is unreachable
+        syntax: swcConfig.jsc?.parser?.syntax ?? 'ecmascript',
         dynamicImport: true,
       },
     },

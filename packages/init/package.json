@@ -9,14 +9,21 @@
     "type": "git",
     "url": "https://github.com/callstack/repack.git"
   },
-  "keywords": ["repack", "re.pack", "init", "repack-init"],
+  "keywords": [
+    "repack",
+    "re.pack",
+    "init",
+    "repack-init"
+  ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "bin": "dist/bin.js",
   "main": "dist/bin.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "engineStrict": true,
   "engines": {
     "node": ">=18"

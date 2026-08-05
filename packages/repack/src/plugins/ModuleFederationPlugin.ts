@@ -1,6 +1,5 @@
-import type { Compiler as RspackCompiler, container } from '@rspack/core';
+import type { container, Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
-// biome-ignore lint/correctness/noUnusedImports: needed for jsdoc
 import type { Federated } from '../utils/federated.js';
 import {
   ModuleFederationPluginV1,
@@ -85,7 +84,9 @@ export type ModuleFederationPluginConfig = ModuleFederationPluginV1Config;
  * @category Webpack Plugin
  */
 export class ModuleFederationPlugin {
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: exposed at runtime for compat with V1 plugin
   private config: MFPluginV1Options;
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: exposed at runtime for compat with V1 plugin
   private deepImports: boolean;
   private plugin: ModuleFederationPluginV1;
 

@@ -1,7 +1,7 @@
 // @ts-check
 import * as Repack from '@callstack/repack';
-import reactNativePkg from 'react-native/package.json' with { type: 'json' };
 import reactPkg from 'react/package.json' with { type: 'json' };
+import reactNativePkg from 'react-native/package.json' with { type: 'json' };
 import webpack from 'webpack';
 import pkg from '../package.json' with { type: 'json' };
 
@@ -30,7 +30,7 @@ export default Repack.defineWebpackConfig((env) => {
       ],
     },
     plugins: [
-      // @ts-ignore
+      // @ts-expect-error
       new Repack.RepackPlugin({
         extraChunks: [
           {
@@ -40,7 +40,7 @@ export default Repack.defineWebpackConfig((env) => {
           },
         ],
       }),
-      // @ts-ignore
+      // @ts-expect-error
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'HostApp',
         filename: 'HostApp.container.js.bundle',
