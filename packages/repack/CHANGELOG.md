@@ -1,5 +1,32 @@
 # @callstack/repack
 
+## 5.3.0
+
+### Minor Changes
+
+- [#1378](https://github.com/callstack/repack/pull/1378) [`d806b04`](https://github.com/callstack/repack/commit/d806b04a5b36ebcf9ca27c3aa895fdd2a70623d2) Thanks [@bartekkrok](https://github.com/bartekkrok)! - Add `maxInlineSize` option to assets loader for size-based asset inlining. Use it together with `inline: true` — assets whose largest variant is within the threshold are inlined as base64 URIs; larger assets are extracted as separate files.
+
+- [#1376](https://github.com/callstack/repack/pull/1376) [`daad54d`](https://github.com/callstack/repack/commit/daad54d3417b9df3749e5424d8c3061a6cf7a0e1) Thanks [@whydidoo](https://github.com/whydidoo)! - Allow customizing the native HTTP client used to download remote scripts: `RemoteScriptLoader.okHttpClientFactory` on Android and `ScriptManager.urlSessionFactory` on iOS (for SSL pinning, interceptors, custom headers, timeouts, etc.)
+
+- [#1381](https://github.com/callstack/repack/pull/1381) [`997816e`](https://github.com/callstack/repack/commit/997816e16e1e6de1b5fcd57ea2591a53aaa3d42b) Thanks [@bartekkrok](https://github.com/bartekkrok)! - Add `publicKeyPath` and `nativeProjectPaths` options to `CodeSigningPlugin`. When `publicKeyPath` is set, the plugin automatically embeds the public key into `Info.plist` (iOS) and `strings.xml` (Android) during compilation, removing the need for manual native file setup. The `embedPublicKey` utility is also exported for standalone use.
+
+### Patch Changes
+
+- [#1417](https://github.com/callstack/repack/pull/1417) [`376c996`](https://github.com/callstack/repack/commit/376c99603ac482e042aeca034877dacf73f7b5ca) Thanks [@dannyhw](https://github.com/dannyhw)! - Prevent excessive regular-expression backtracking when validating per-script public keys.
+
+- [#1379](https://github.com/callstack/repack/pull/1379) [`8ab3105`](https://github.com/callstack/repack/commit/8ab3105c5c5e4b3cbe58489adc031a9d02b709fe) Thanks [@JhohellsDL](https://github.com/JhohellsDL)! - Fix CodeSigningPlugin signing assets at processAssets ANALYSE stage (2000) instead of assetEmitted, ensuring bundles are signed before plugins running at REPORT stage (5000) such as withZephyr() can capture and upload them
+
+- [#1382](https://github.com/callstack/repack/pull/1382) [`ac3577b`](https://github.com/callstack/repack/commit/ac3577be686ec8d0e850e72ddb1ffa24747c3f4c) Thanks [@MikitasK](https://github.com/MikitasK)! - Add support for passing a per-script `publicKey` from `ScriptManager` resolvers so signed bundles can be verified with a runtime-provided public key instead of only the app-embedded `RepackPublicKey`
+
+- [#1409](https://github.com/callstack/repack/pull/1409) [`742d575`](https://github.com/callstack/repack/commit/742d57551dc652b3e1803e72d8f021f9e22363de) Thanks [@dannyhw](https://github.com/dannyhw)! - Update dependencies to resolve reported security advisories.
+
+  `@callstack/repack-dev-server` raises its minimum versions for `@fastify/middie`, `fastify`, `http-proxy-middleware`, `launch-editor` and `ws`. `@callstack/repack` raises `image-size`, and pins `terser-webpack-plugin` to 5.5.0: it no longer depends on the vulnerable `serialize-javascript`, and it is the last release before 5.6.0, which silently skips minification under Rspack and leaves production bundles unminified. All bumps stay within the existing major versions, so there are no API changes.
+
+- [#1380](https://github.com/callstack/repack/pull/1380) [`856f1c1`](https://github.com/callstack/repack/commit/856f1c1253538205750dccadb77334f31523568f) Thanks [@MikitasK](https://github.com/MikitasK)! - Fix Android dev-server URLs on physical devices by preserving `localhost` instead of rewriting it to `10.0.2.2`.
+
+- Updated dependencies [[`742d575`](https://github.com/callstack/repack/commit/742d57551dc652b3e1803e72d8f021f9e22363de)]:
+  - @callstack/repack-dev-server@5.3.0
+
 ## 5.2.5
 
 ### Patch Changes
