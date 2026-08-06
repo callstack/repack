@@ -1,4 +1,4 @@
-import type { MultiCompiler, StatsAsset } from '@rspack/core';
+import type { StatsAsset } from '@rspack/core';
 import type { RemoveRecord } from '../types.js';
 
 type RspackStatsAsset = RemoveRecord<StatsAsset>;
@@ -8,5 +8,3 @@ export interface CompilerAsset {
   info: RspackStatsAsset['info'];
   size: number;
 }
-
-export type MultiWatching = ReturnType<MultiCompiler['watch']>;
