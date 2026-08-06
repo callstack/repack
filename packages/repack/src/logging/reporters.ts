@@ -4,10 +4,10 @@ import util from 'node:util';
 import * as colorette from 'colorette';
 import throttle from 'throttleit';
 import {
-  Spinner,
   colorizePlatformLabel,
   formatSecondsOneDecimal,
   renderProgressBar as renderBar,
+  Spinner,
 } from './internal/progress.js';
 import { MultiPlatformTerminal } from './internal/terminal.js';
 import type {
@@ -24,7 +24,7 @@ export class ConsoleReporter implements Reporter {
   constructor(private config: ConsoleReporterConfig) {
     this.internalReporter =
       this.config.isWorker || this.config.asJson
-        ? new JsonConsoleReporter(this.config)
+        ? new JsonConsoleReporter()
         : new InteractiveConsoleReporter(this.config);
   }
 
@@ -42,8 +42,6 @@ export class ConsoleReporter implements Reporter {
 }
 
 class JsonConsoleReporter implements Reporter {
-  constructor(private config: ConsoleReporterConfig) {}
-
   process(log: LogEntry) {
     console.log(JSON.stringify(log));
   }

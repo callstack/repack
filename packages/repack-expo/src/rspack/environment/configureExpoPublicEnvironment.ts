@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import type { Compiler } from '@rspack/core';
 import {
+  createExpoPublicEnvironmentSnapshot,
   type ExpoEnvironmentMode,
   type ExpoPublicEnvironmentSnapshot,
-  createExpoPublicEnvironmentSnapshot,
   getExpoEnvironmentFiles,
 } from './expoPublicEnvironment.js';
 

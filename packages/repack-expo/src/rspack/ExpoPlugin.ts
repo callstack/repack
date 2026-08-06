@@ -1,11 +1,11 @@
 import { RepackPlugin, type RepackPluginConfig } from '@callstack/repack';
 import { ExpoModulesPlugin as RepackExpoModulesPlugin } from '@callstack/repack-plugin-expo-modules';
 import type { Compiler } from '@rspack/core';
-import { ExpoPluginError } from './ExpoPluginError.js';
 import { configureAndroidFontAssets } from './assets/configureAndroidFontAssets.js';
 import { configureExpoAssets } from './assets/configureExpoAssets.js';
 import { configureExpoBabelLoaders } from './babel/configureExpoBabelLoaders.js';
 import { createExpoBabelCaller } from './babel/createExpoBabelCaller.js';
+import { ExpoPluginError } from './ExpoPluginError.js';
 import { configureExpoCompilerEntry } from './entry/configureExpoCompilerEntry.js';
 import {
   type ExpoNativePlatform,

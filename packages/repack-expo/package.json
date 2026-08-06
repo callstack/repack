@@ -16,7 +16,10 @@
   "bin": {
     "repack-expo": "dist/cli/bin.js"
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -31,7 +34,13 @@
       "default": "./dist/rspack/loaders/expoBabelLoader.js"
     }
   },
-  "keywords": ["repack", "rspack", "react-native", "expo", "config-plugin"],
+  "keywords": [
+    "repack",
+    "rspack",
+    "react-native",
+    "expo",
+    "config-plugin"
+  ],
   "engineStrict": true,
   "engines": {
     "node": ">=20.19"

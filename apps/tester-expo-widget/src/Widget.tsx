@@ -24,11 +24,7 @@ type LazyDetailsLoadState =
   | { component: LazyDetailsComponent; status: 'loaded' }
   | { error: Error; status: 'failed' };
 
-function LazyDetailsLoader({
-  onReady,
-}: {
-  onReady: () => void;
-}) {
+function LazyDetailsLoader({ onReady }: { onReady: () => void }) {
   const [loadState, setLoadState] = useState<LazyDetailsLoadState>({
     status: 'loading',
   });

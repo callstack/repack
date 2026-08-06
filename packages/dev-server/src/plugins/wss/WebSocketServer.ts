@@ -28,7 +28,7 @@ export abstract class WebSocketServer<T extends WebSocket = WebSocket>
   protected clients: Map<string, T>;
   protected nextClientId = 0;
 
-  private timer: NodeJS.Timer | number | null = null;
+  private heartbeatTimer: ReturnType<typeof setInterval>;
 
   /**
    * Create a new instance of the WebSocketServer.
@@ -48,7 +48,7 @@ export abstract class WebSocketServer<T extends WebSocket = WebSocket>
     this.clients = new Map();
 
     // setup heartbeat timer
-    this.timer = setInterval(() => {
+    this.heartbeatTimer = setInterval(() => {
       this.clients.forEach((socket) => {
         if (!socket.isAlive) {
           socket.terminate();
@@ -58,6 +58,10 @@ export abstract class WebSocketServer<T extends WebSocket = WebSocket>
         }
       });
     }, 30000);
+
+    this.fastify.addHook('onClose', async () => {
+      clearInterval(this.heartbeatTimer);
+    });
   }
 
   shouldUpgrade(pathname: string) {

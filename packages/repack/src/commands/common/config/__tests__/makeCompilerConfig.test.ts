@@ -1,5 +1,8 @@
-import type { ConfigurationObject, StartArguments } from '../../../types.js';
-import type { BundleArguments } from '../../../types.js';
+import type {
+  BundleArguments,
+  ConfigurationObject,
+  StartArguments,
+} from '../../../types.js';
 import * as getConfigFilePathModule from '../getConfigFilePath.js';
 import * as loadProjectConfigModule from '../loadProjectConfig.js';
 import { makeCompilerConfig } from '../makeCompilerConfig.js';

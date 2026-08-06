@@ -1,12 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {
-  CONFIG_PLUGIN,
-  REQUIRED_DEV_DEPENDENCIES,
-  REQUIRED_SCRIPTS,
-  RSPACK_COMMANDS,
-  RSPACK_CONFIG_NAMES,
   addDependencyCommand,
+  CONFIG_PLUGIN,
   dependencyRanges,
   detectPackageManager,
   diagnosticError,
@@ -14,6 +10,10 @@ import {
   getConfigPluginRegistration,
   hasDependency,
   installCommand,
+  REQUIRED_DEV_DEPENDENCIES,
+  REQUIRED_SCRIPTS,
+  RSPACK_COMMANDS,
+  RSPACK_CONFIG_NAMES,
   readJson,
   stringifyJson,
   writeFilesAtomically,

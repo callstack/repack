@@ -2,8 +2,8 @@ import { type ConfigPlugin, createRunOncePlugin } from 'expo/config-plugins';
 import { withAndroidRepack } from './config/android.js';
 import { withIosRepack } from './config/ios.js';
 import {
-  type RepackExpoPluginOptions,
   normalizeConfigPluginOptions,
+  type RepackExpoPluginOptions,
 } from './config/options.js';
 import { validateExpoConfig } from './config/validateExpoConfig.js';
 

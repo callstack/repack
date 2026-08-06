@@ -3,16 +3,16 @@ import path from 'node:path';
 import { resolveExpoEntry } from '../rspack/entry/resolveExpoEntry.js';
 import {
   CONFIG_PLUGIN,
-  REQUIRED_DEV_DEPENDENCIES,
-  REQUIRED_SCRIPTS,
-  RSPACK_COMMANDS,
-  RSPACK_CONFIG_NAMES,
   dynamicExpoConfig,
   diagnosticError as error,
   filesContain,
   findFiles,
   getConfigPluginRegistration,
   hasDependency,
+  REQUIRED_DEV_DEPENDENCIES,
+  REQUIRED_SCRIPTS,
+  RSPACK_COMMANDS,
+  RSPACK_CONFIG_NAMES,
   readJson,
   diagnosticWarning as warning,
 } from './project.js';

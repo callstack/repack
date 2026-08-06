@@ -1,12 +1,21 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.6/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "defaultBranch": "main",
     "useIgnoreFile": true
   },
-  "files": { "ignoreUnknown": false, "ignore": [] },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      // ESM redirect stubs in a commonjs package - biome 2 infers module type
+      // from package.json and refuses to parse them as modules
+      "!packages/repack/client/*.js",
+      "!packages/repack/mf/*.js"
+    ]
+  },
   "formatter": {
     "enabled": true,
     "useEditorconfig": true,
@@ -17,22 +26,27 @@
     "lineWidth": 80,
     "attributePosition": "auto",
     "bracketSpacing": true,
-    "ignore": [
-      "pnpm-lock.yaml",
-      "tests/metro-compat/**/__tests__/**",
-      "website/src/2.x/**",
-      "website/src/3.x/**",
-      "website/src/4.x/**"
+    "includes": [
+      "**",
+      "!**/pnpm-lock.yaml",
+      "!**/tests/metro-compat/**/__tests__/**",
+      "!**/website/src/2.x/**",
+      "!**/website/src/3.x/**",
+      "!**/website/src/4.x/**"
     ]
   },
-  "organizeImports": {
-    "enabled": true,
-    "ignore": ["templates/*", "tests/metro-compat/**/__tests__/**"]
+  "assist": {
+    "actions": { "source": { "organizeImports": "on" } },
+    "includes": [
+      "**",
+      "!**/templates/**/*",
+      "!**/tests/metro-compat/**/__tests__/**"
+    ]
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "complexity": {
         "noBannedTypes": "off",
         "noForEach": "off"
@@ -55,7 +69,11 @@
         "noConfusingVoidType": "off"
       }
     },
-    "ignore": ["templates/*", "tests/metro-compat/**/__tests__/**"]
+    "includes": [
+      "**",
+      "!**/templates/**/*",
+      "!**/tests/metro-compat/**/__tests__/**"
+    ]
   },
   "javascript": {
     "formatter": {
@@ -72,19 +90,14 @@
   },
   "overrides": [
     {
-      "include": ["packages/**/*"],
+      "includes": ["**/packages/**/*"],
       "linter": {
         "rules": {
           "correctness": {
             "useImportExtensions": {
               "level": "error",
               "options": {
-                "suggestedExtensions": {
-                  "ts": {
-                    "module": "js",
-                    "component": "js"
-                  }
-                }
+                "forceJsExtensions": true
               }
             }
           }
@@ -92,15 +105,25 @@
       }
     },
     {
-      "include": ["**/*.d.ts"],
-      "linter": { "rules": { "style": { "noVar": "off" } } }
+      // static SVG assets don't need accessibility titles
+      "includes": ["**/*.svg"],
+      "linter": { "rules": { "a11y": { "noSvgWithoutTitle": "off" } } }
     },
     {
-      "include": ["website/**/*.css"],
+      // tailwind at-rules (@tailwind, @apply, etc.)
+      "includes": ["**/*.css"],
+      "linter": { "rules": { "suspicious": { "noUnknownAtRules": "off" } } }
+    },
+    {
+      "includes": ["**/*.d.ts"],
+      "linter": { "rules": { "suspicious": { "noVar": "off" } } }
+    },
+    {
+      "includes": ["**/website/**/*.css"],
       "formatter": { "lineWidth": 120 }
     },
     {
-      "include": ["packages/repack/src/**/implementation/**"],
+      "includes": ["**/packages/repack/src/**/implementation/**"],
       "linter": { "enabled": false }
     }
   ]

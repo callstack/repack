@@ -26,6 +26,7 @@ overrides:
   "koa@3": ^3.1.2
   "ws@8": ^8.21.1
   "adm-zip": ^0.6.0
+  "@module-federation/dts-plugin@2.8.0>undici": 7.29.0
   # Security fix for GHSA-67mh-4wv8-2f99, reached only through
   # @modern-js/node-bundle-require inside @module-federation/cli.
   "esbuild@<0.25.0": ^0.25.0
@@ -50,7 +51,7 @@ catalog:
   "@types/node": ^20.19.31
   # Pinned: 5.6+ silently skips minification (#1390).
   "terser-webpack-plugin": 5.5.0
-  "typescript": ^5.9.3
+  "typescript": ^7.0.2
   # Held: 5.106+ removes a webpack internal needed by @module-federation/enhanced <2.4.0.
   "webpack": ~5.105.0
   "react": "19.2.8"

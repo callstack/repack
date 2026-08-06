@@ -1,5 +1,5 @@
 import { type ErrorBoundaryProps, Link } from 'expo-router';
-import { Suspense, lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 const LazyCard = lazy(() => import('../components/LazyCard.local'));
