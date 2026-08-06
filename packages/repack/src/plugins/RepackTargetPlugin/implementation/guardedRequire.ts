@@ -27,10 +27,29 @@ module.exports = function () {
     }
   }
 
-  // Copy all properties from the original function to the wrapped function
+  // Copy the original require's runtime properties without invoking getters.
+  // Function intrinsics such as `prototype`, `arguments`, and `caller` are
+  // non-configurable on the wrapper and cannot be redefined. Assigning every
+  // property directly is also unsafe in strict-mode bundles because some
+  // function properties are read-only and would throw during startup.
   Object.getOwnPropertyNames(originalWebpackRequire).forEach((key) => {
-    // @ts-ignore
-    guardedWebpackRequire[key] = originalWebpackRequire[key];
+    const sourceDescriptor = Object.getOwnPropertyDescriptor(
+      originalWebpackRequire,
+      key
+    );
+    const targetDescriptor = Object.getOwnPropertyDescriptor(
+      guardedWebpackRequire,
+      key
+    );
+
+    if (
+      !sourceDescriptor ||
+      (targetDescriptor && !targetDescriptor.configurable)
+    ) {
+      return;
+    }
+
+    Object.defineProperty(guardedWebpackRequire, key, sourceDescriptor);
   });
 
   // @ts-ignore
