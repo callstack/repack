@@ -97,8 +97,12 @@ function repackFederationPluginAliases(source: string): {
   for (const match of source.matchAll(
     /(ModuleFederationPlugin(?:V[12])?)\s*(?:as\s+|:\s*)([A-Za-z_$][\w$]*)/g
   )) {
-    const version = match[1] === 'ModuleFederationPluginV2' ? 'v2' : 'v1';
-    aliases[version].add(match[2] as string);
+    const importedName = match[1] as string;
+    const alias = match[2] as string;
+    const version = importedName === 'ModuleFederationPluginV2' ? 'v2' : 'v1';
+    const otherVersion = version === 'v2' ? 'v1' : 'v2';
+    aliases[otherVersion].delete(alias);
+    aliases[version].add(alias);
   }
   return aliases;
 }
@@ -140,11 +144,13 @@ export function getRspackFederationUsage(
 }
 
 export function isRspackConfigCompatible(contents: string): boolean {
+  const source = maskJavaScriptNonCode(contents, false);
+  const executable = maskJavaScriptNonCode(contents, true);
   const federation = getRspackFederationUsage(contents);
   return (
-    /@callstack\/repack-expo\/rspack/.test(contents) &&
-    /new\s+(?:\w+\.)?ExpoPlugin\s*\(/.test(contents) &&
-    !/new\s+(?:Repack\.)?RepackPlugin\s*\(/.test(contents) &&
+    importsPackage(source, '@callstack/repack-expo/rspack') &&
+    /\bnew\s+(?:\w+\.)?ExpoPlugin\s*\(/.test(executable) &&
+    !/\bnew\s+(?:Repack\.)?RepackPlugin\s*\(/.test(executable) &&
     federation !== 'raw' &&
     federation !== 'v1'
   );

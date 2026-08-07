@@ -13,7 +13,7 @@ function addEnvironmentDigestToPersistentCache(
   compiler: Compiler,
   digest: string
 ): void {
-  const cache = compiler.options.experiments?.cache;
+  const cache = compiler.options.cache || compiler.options.experiments?.cache;
   if (typeof cache !== 'object' || cache.type !== 'persistent') return;
 
   cache.version = [cache.version, `${PLUGIN_NAME}:${digest}`]

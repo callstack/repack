@@ -47,7 +47,7 @@ const projectRoot = path.resolve(__dirname, ${JSON.stringify(rootFromConfig)});
 module.exports = (env) => createConfig(env, projectRoot);
 
 function createConfig(env, projectRoot) {
-  const { mode = 'development', platform = process.env.PLATFORM, devServer } = env;
+  const { entry, mode = 'development', platform = process.env.PLATFORM, devServer } = env;
 
   if (platform !== 'ios' && platform !== 'android') {
     throw new Error('ExpoPlugin requires PLATFORM=ios or android');
@@ -63,7 +63,7 @@ function createConfig(env, projectRoot) {
       path: path.join(projectRoot, 'build', 'rspack', platform),
       uniqueName: ${JSON.stringify(uniqueName)},
     },
-    plugins: [new ExpoPlugin({ platform })],
+    plugins: [new ExpoPlugin({ entry, platform })],
   };
 }
 `;
@@ -78,7 +78,7 @@ const projectRoot = path.resolve(
 );
 
 export default (env) => {
-  const { mode = 'development', platform = process.env.PLATFORM, devServer } = env;
+  const { entry, mode = 'development', platform = process.env.PLATFORM, devServer } = env;
 
   if (platform !== 'ios' && platform !== 'android') {
     throw new Error('ExpoPlugin requires PLATFORM=ios or android');
@@ -94,7 +94,7 @@ export default (env) => {
       path: path.join(projectRoot, 'build', 'rspack', platform),
       uniqueName: ${JSON.stringify(uniqueName)},
     },
-    plugins: [new ExpoPlugin({ platform })],
+    plugins: [new ExpoPlugin({ entry, platform })],
   };
 };
 `;

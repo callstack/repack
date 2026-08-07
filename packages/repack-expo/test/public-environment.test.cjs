@@ -6,6 +6,9 @@ const test = require('node:test');
 const { transformSync } = require('@babel/core');
 const { rspack } = require('@rspack/core');
 const { ExpoPlugin } = require('../dist/rspack/index.js');
+const {
+  configureExpoPublicEnvironment,
+} = require('../dist/rspack/environment/configureExpoPublicEnvironment.js');
 
 const {
   getExpoEnvironmentFiles,
@@ -481,6 +484,29 @@ test('invalidates Rspack persistent loader cache when a public shell value chang
       assert.doesNotMatch(secondArtifacts, /persistent-private-shell-value/);
     }
   );
+});
+
+test('adds the Expo environment digest to both Rspack persistent cache locations', () => {
+  const projectRoot = createEnvironmentProject({
+    '.env': 'EXPO_PUBLIC_VALUE=cache-value',
+  });
+
+  for (const location of ['cache', 'experiments']) {
+    const cache = { type: 'persistent', version: 'base-version' };
+    const compiler = {
+      options: {
+        mode: 'development',
+        ...(location === 'cache' ? { cache } : { experiments: { cache } }),
+      },
+    };
+
+    const environment = configureExpoPublicEnvironment(compiler, projectRoot);
+
+    assert.equal(
+      cache.version,
+      `base-version|RepackExpoPublicEnvironmentPlugin:${environment.digest}`
+    );
+  }
 });
 
 test('rebuilds transformed application modules when an Expo public dotenv value changes', async () => {

@@ -40,11 +40,31 @@ test('init configures a clean static Expo app without touching native directorie
   );
   assert.match(
     fs.readFileSync(path.join(projectRoot, 'rspack.config.mjs'), 'utf8'),
-    /new ExpoPlugin\(\{ platform \}\)/
+    /new ExpoPlugin\(\{ entry, platform \}\)/
   );
   assert.equal(fs.existsSync(path.join(projectRoot, 'ios')), false);
   assert.equal(fs.existsSync(path.join(projectRoot, 'android')), false);
   assert.equal(result.packageManager, 'pnpm');
+});
+
+test('generated Rspack configs forward the CLI entry to ExpoPlugin', () => {
+  for (const configName of ['rspack.config.mjs', 'rspack.config.cjs']) {
+    const projectRoot = createProject();
+    const configPath = path.join(projectRoot, configName);
+    if (configName.endsWith('.cjs')) {
+      fs.writeFileSync(configPath, 'module.exports = {};\n');
+    }
+
+    const result = runInit({
+      force: configName.endsWith('.cjs'),
+      projectRoot,
+    });
+    const contents = fs.readFileSync(configPath, 'utf8');
+
+    assert.equal(result.ok, true, JSON.stringify(result.diagnostics));
+    assert.match(contents, /const \{ entry, mode = 'development'/);
+    assert.match(contents, /new ExpoPlugin\(\{ entry, platform \}\)/);
+  }
 });
 
 function snapshotTree(projectRoot) {
@@ -154,6 +174,20 @@ test('preserves public Module Federation v2 config and doctor validates it stati
   assert.deepEqual(initialized.changedFiles, []);
   assert.deepEqual(snapshotTree(projectRoot), before);
   assert.equal(doctor.ok, true, JSON.stringify(doctor.diagnostics));
+});
+
+test('detects an aliased Module Federation v2 plugin', () => {
+  const projectRoot = createProject();
+  assert.equal(runInit({ projectRoot }).ok, true);
+  writeRspackConfig(projectRoot, {
+    federationImport:
+      "import { ModuleFederationPluginV2 as ModuleFederationPlugin } from '@callstack/repack';",
+    federationPlugin: "new ModuleFederationPlugin({ name: 'Host' })",
+  });
+
+  const result = runDoctor({ projectRoot });
+
+  assert.equal(result.ok, true, JSON.stringify(result.diagnostics));
 });
 
 test('doctor rejects unsupported active federation shapes with stable diagnostics', () => {
@@ -322,6 +356,41 @@ test('requires force before replacing an incompatible Rspack config', () => {
   const forced = runInit({ force: true, projectRoot });
   assert.equal(forced.ok, true);
   assert.match(fs.readFileSync(rspackPath, 'utf8'), /new ExpoPlugin/);
+});
+
+test('does not treat a commented ExpoPlugin constructor as compatible', () => {
+  const projectRoot = createProject();
+  const rspackPath = path.join(projectRoot, 'rspack.config.mjs');
+  fs.writeFileSync(
+    rspackPath,
+    [
+      "import { ExpoPlugin } from '@callstack/repack-expo/rspack';",
+      '// new ExpoPlugin();',
+      'export default {};',
+    ].join('\n')
+  );
+
+  const result = runInit({ projectRoot });
+
+  assert.equal(result.ok, false);
+  assert.equal(result.diagnostics[0].code, 'RSPACK_CONFIG_CONFLICT');
+});
+
+test('does not treat a commented RepackPlugin constructor as active', () => {
+  const projectRoot = createProject();
+  const rspackPath = path.join(projectRoot, 'rspack.config.mjs');
+  fs.writeFileSync(
+    rspackPath,
+    [
+      "import { ExpoPlugin } from '@callstack/repack-expo/rspack';",
+      '// new RepackPlugin();',
+      "export default { plugins: [new ExpoPlugin({ platform: 'ios' })] };",
+    ].join('\n')
+  );
+
+  const result = runInit({ projectRoot });
+
+  assert.equal(result.ok, true, JSON.stringify(result.diagnostics));
 });
 
 test('force replaces the single discovered Rspack config without shadowing it', () => {
