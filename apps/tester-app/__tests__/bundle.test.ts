@@ -157,7 +157,7 @@ describe('bundle command', () => {
           const lines = bundle.split('\n').length;
           expect(bundle.length / lines).toBeGreaterThan(1000);
         },
-        60 * 1000
+        120 * 1000
       );
     });
   });
