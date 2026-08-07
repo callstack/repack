@@ -111,7 +111,8 @@ export function detectPackageManager(
     if (
       parent === current ||
       fs.existsSync(path.join(current, '.git')) ||
-      fs.existsSync(path.join(current, 'pnpm-workspace.yaml'))
+      fs.existsSync(path.join(current, 'pnpm-workspace.yaml')) ||
+      (currentPackageJson !== undefined && 'workspaces' in currentPackageJson)
     ) {
       break;
     }

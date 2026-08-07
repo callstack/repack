@@ -8,6 +8,7 @@ import {
 import { ConfigPluginError } from './ConfigPluginError.js';
 import {
   assertUniqueAnchor,
+  createWhitespaceTolerantAnchor,
   hasIntactGeneratedSection,
   replaceLineWithGeneratedSection,
 } from './generated.js';
@@ -16,16 +17,16 @@ import type { RepackExpoPluginOptions } from './options.js';
 const IOS_BUNDLE_URL_TAG = 'repack-expo-ios-bundle-url';
 const IOS_BUNDLE_COMMAND_TAG = 'repack-expo-ios-bundle-command';
 const EXPO_DEBUG_URL =
-  '    return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")';
+  'return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")';
 const REPACK_DEBUG_URL =
   '    return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")';
 const EXPO_CLI_DEFAULTS = `if [[ -z "$CLI_PATH" ]]; then
-  # Use Expo CLI
-  export CLI_PATH="$("$NODE_BINARY" --print "require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })")"
+# Use Expo CLI
+export CLI_PATH="$("$NODE_BINARY" --print "require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })")"
 fi
 if [[ -z "$BUNDLE_COMMAND" ]]; then
-  # Default Expo CLI command for bundling
-  export BUNDLE_COMMAND="export:embed"
+# Default Expo CLI command for bundling
+export BUNDLE_COMMAND="export:embed"
 fi`;
 const XCODE_BUNDLE_SCRIPT_ANCHOR = /react-native-xcode\.sh/;
 
@@ -71,14 +72,18 @@ export function configureIosAppDelegate(
 
   for (const anchor of [
     'class ReactNativeDelegate: ExpoReactNativeFactoryDelegate',
-    '  override func bundleURL() -> URL? {',
-    '    return Bundle.main.url(forResource: "main", withExtension: "jsbundle")',
+    'override func bundleURL() -> URL? {',
+    'return Bundle.main.url(forResource: "main", withExtension: "jsbundle")',
   ]) {
-    assertUniqueAnchor(contents, anchor, 'Expo AppDelegate shape');
+    assertUniqueAnchor(
+      contents,
+      createWhitespaceTolerantAnchor(anchor),
+      'Expo AppDelegate shape'
+    );
   }
 
   return replaceLineWithGeneratedSection({
-    anchorLine: EXPO_DEBUG_URL,
+    anchorLine: createWhitespaceTolerantAnchor(EXPO_DEBUG_URL),
     comment: '    //',
     contents,
     replacementLine: REPACK_DEBUG_URL,
@@ -92,7 +97,7 @@ export function configureIosBundleScript(
 ): string {
   assertUniqueAnchor(
     contents,
-    EXPO_CLI_DEFAULTS,
+    createWhitespaceTolerantAnchor(EXPO_CLI_DEFAULTS),
     'Expo iOS CLI bundle defaults'
   );
   assertUniqueAnchor(

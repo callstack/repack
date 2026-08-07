@@ -7,6 +7,7 @@ import {
 import { ConfigPluginError } from './ConfigPluginError.js';
 import {
   assertUniqueAnchor,
+  createWhitespaceTolerantAnchor,
   hasIntactGeneratedSection,
   replaceLineWithGeneratedSection,
 } from './generated.js';
@@ -14,10 +15,10 @@ import type { RepackExpoPluginOptions } from './options.js';
 
 const ANDROID_MAIN_MODULE_TAG = 'repack-expo-android-main-module';
 const ANDROID_BUNDLE_COMMAND_TAG = 'repack-expo-android-bundle-command';
-const EXPO_CLI_BLOCK = `    // Use Expo CLI to bundle the app, this ensures the Metro config
-    // works correctly with Expo projects.
-    cliFile = new File(["node", "--print", "require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })"].execute(null, rootDir).text.trim())
-    bundleCommand = "export:embed"`;
+const EXPO_CLI_BLOCK = `// Use Expo CLI to bundle the app, this ensures the Metro config
+// works correctly with Expo projects.
+cliFile = new File(["node", "--print", "require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })"].execute(null, rootDir).text.trim())
+bundleCommand = "export:embed"`;
 const REPACK_CLI_BLOCK = `    cliFile = new File(["node", "--print", "require.resolve('@react-native-community/cli/build/bin.js')"].execute(null, rootDir).text.trim())
     bundleCommand = "bundle"`;
 
@@ -52,7 +53,7 @@ export function configureAndroidMainApplication(
 
   assertUniqueAnchor(
     contents,
-    '    ExpoReactHostFactory.getDefaultReactHost(',
+    createWhitespaceTolerantAnchor('ExpoReactHostFactory.getDefaultReactHost('),
     'ExpoReactHostFactory call'
   );
   if (
@@ -68,11 +69,11 @@ export function configureAndroidMainApplication(
 
   assertUniqueAnchor(
     contents,
-    '      packageList =',
+    createWhitespaceTolerantAnchor('packageList ='),
     'ExpoReactHostFactory packageList argument'
   );
   return CodeGenerator.mergeContents({
-    anchor: /^ {6}packageList =/,
+    anchor: /^[\t ]*packageList[\t ]*=/,
     comment: '      //',
     newSrc: '      jsMainModulePath = "index",',
     offset: 0,
@@ -86,7 +87,7 @@ export function configureAndroidBuildGradle(
   options: RepackExpoPluginOptions = {}
 ): string {
   return replaceLineWithGeneratedSection({
-    anchorLine: EXPO_CLI_BLOCK,
+    anchorLine: createWhitespaceTolerantAnchor(EXPO_CLI_BLOCK),
     comment: '    //',
     contents,
     replacementLine: createAndroidCliBlock(options),

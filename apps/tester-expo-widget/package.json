@@ -16,24 +16,24 @@
   "dependencies": {
     "@callstack/repack": "workspace:*",
     "@callstack/repack-expo": "workspace:*",
-    "@module-federation/enhanced": "2.1.0",
-    "expo": "~57.0.9",
-    "expo-asset": "~57.0.8",
-    "expo-constants": "~57.0.8",
-    "expo-font": "~57.0.1",
-    "react": "19.2.3",
-    "react-native": "0.86.2"
+    "@module-federation/enhanced": "catalog:expo57",
+    "expo": "catalog:expo57",
+    "expo-asset": "catalog:expo57",
+    "expo-constants": "catalog:expo57",
+    "expo-font": "catalog:expo57",
+    "react": "catalog:expo57",
+    "react-native": "catalog:"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
-    "@react-native-community/cli": "20.1.2",
-    "@react-native-community/cli-platform-android": "20.1.2",
-    "@react-native-community/cli-platform-ios": "20.1.2",
-    "@react-native/babel-preset": "0.86.2",
-    "@react-native/community-cli-plugin": "0.86.2",
+    "@babel/core": "catalog:",
+    "@react-native-community/cli": "catalog:expo57",
+    "@react-native-community/cli-platform-android": "catalog:expo57",
+    "@react-native-community/cli-platform-ios": "catalog:expo57",
+    "@react-native/babel-preset": "catalog:testers",
+    "@react-native/community-cli-plugin": "catalog:expo57",
     "@rspack/core": "catalog:",
-    "@types/react": "~19.2.2",
-    "babel-preset-expo": "~57.0.5",
-    "typescript": "~6.0.3"
+    "@types/react": "catalog:expo57",
+    "babel-preset-expo": "catalog:expo57",
+    "typescript": "catalog:"
   }
 }

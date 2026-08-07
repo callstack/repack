@@ -8,6 +8,19 @@ type GeneratedSectionOptions = {
   tag: string;
 };
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function createWhitespaceTolerantAnchor(value: string): RegExp {
+  const lines = value.trim().split(/\r?\n/);
+  const pattern = lines
+    .map((line) => escapeRegExp(line.trim()).replace(/[\t ]+/g, '[\\t ]+'))
+    .join('[\\t ]*\\r?\\n[\\t ]*');
+
+  return new RegExp(`[\\t ]*${pattern}[\\t ]*`);
+}
+
 export function assertUniqueAnchor(
   contents: string,
   anchor: string | RegExp,
@@ -16,7 +29,14 @@ export function assertUniqueAnchor(
   const matches =
     typeof anchor === 'string'
       ? contents.split(anchor).length - 1
-      : [...contents.matchAll(new RegExp(anchor, 'g'))].length;
+      : [
+          ...contents.matchAll(
+            new RegExp(
+              anchor.source,
+              anchor.global ? anchor.flags : `${anchor.flags}g`
+            )
+          ),
+        ].length;
 
   if (matches !== 1) {
     throw new ConfigPluginError({
@@ -61,7 +81,7 @@ export function hasIntactGeneratedSection(
 }
 
 export function replaceLineWithGeneratedSection(options: {
-  anchorLine: string;
+  anchorLine: string | RegExp;
   comment: string;
   contents: string;
   replacementLine: string;

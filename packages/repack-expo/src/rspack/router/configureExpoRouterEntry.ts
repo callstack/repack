@@ -1,3 +1,4 @@
+import type { RuleSetRules } from '@rspack/core';
 import type { ResolvedExpoEntry } from '../entry/resolveExpoEntry.js';
 
 const EXPO_ROUTER_ENTRY = 'expo-router/entry';
@@ -7,7 +8,7 @@ function escapeRegExp(value: string): string {
 }
 
 export function configureExpoRouterEntry(
-  rules: unknown[],
+  rules: RuleSetRules,
   entry: ResolvedExpoEntry,
   loaderPath: string
 ): boolean {

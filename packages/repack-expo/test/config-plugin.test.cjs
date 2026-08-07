@@ -144,6 +144,26 @@ test('configures the iOS Debug URL without disturbing Expo release loading', () 
   );
 });
 
+test('configures iOS native templates with whitespace-only differences', () => {
+  const appDelegate = IOS_APP_DELEGATE.replace(
+    '    return RCTBundleURLProvider',
+    '\treturn   RCTBundleURLProvider'
+  ).replace('    return Bundle.main.url', '\treturn   Bundle.main.url');
+  const bundleScript = IOS_BUNDLE_SCRIPT.replaceAll('  #', '\t#').replaceAll(
+    '  export',
+    '\t  export'
+  );
+
+  const configuredDelegate = configureIosAppDelegate(appDelegate, 'swift');
+  const configuredBundleScript = configureIosBundleScript(bundleScript);
+
+  assert.match(configuredDelegate, /forBundleRoot: "index"/);
+  assert.match(
+    configuredBundleScript,
+    /@react-native-community\/cli\/build\/bin\.js/
+  );
+});
+
 test('adds the final Re.Pack iOS bundle command override once', () => {
   const once = configureIosBundleScript(IOS_BUNDLE_SCRIPT);
   const twice = configureIosBundleScript(once);
@@ -247,6 +267,38 @@ test('replaces only the Expo Android bundle command block', () => {
   assert.match(once, /entryFile = file\("entry\.js"\)/);
   assert.match(once, /autolinkLibrariesWithApp\(\)/);
   assert.equal(once.match(/repack-expo-android-bundle-command/g).length, 2);
+});
+
+test('configures Android native templates with whitespace-only differences', () => {
+  const mainApplication = ANDROID_MAIN_APPLICATION.replace(
+    '    ExpoReactHostFactory.getDefaultReactHost(',
+    '\tExpoReactHostFactory.getDefaultReactHost('
+  ).replace('      packageList =', '\t  packageList   =');
+  const buildGradle = ANDROID_BUILD_GRADLE.replaceAll('    //', '\t//')
+    .replace('    cliFile =', '\tcliFile   =')
+    .replace('    bundleCommand =', '\tbundleCommand   =');
+
+  const configuredApplication = configureAndroidMainApplication(
+    mainApplication,
+    'kt'
+  );
+  const configuredBuildGradle = configureAndroidBuildGradle(buildGradle);
+
+  assert.match(configuredApplication, /jsMainModulePath = "index"/);
+  assert.match(
+    configuredBuildGradle,
+    /@react-native-community\/cli\/build\/bin\.js/
+  );
+  assert.throws(
+    () =>
+      configureAndroidBuildGradle(
+        buildGradle.replace(
+          'bundleCommand   = "export:embed"',
+          'bundleCommand   = "custom"'
+        )
+      ),
+    (error) => error.code === 'INCOMPATIBLE_NATIVE_TEMPLATE'
+  );
 });
 
 test('plumbs custom entry and Rspack config into native bundle commands', () => {

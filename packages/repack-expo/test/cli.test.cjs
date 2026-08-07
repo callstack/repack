@@ -291,6 +291,23 @@ test('detects package manager metadata at the workspace root', () => {
   assert.equal(detectPackageManager(projectRoot), 'yarn');
 });
 
+test('stops package manager detection at a package.json workspace root', () => {
+  const parentRoot = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'repack-expo-parent-workspace-')
+  );
+  fs.writeFileSync(path.join(parentRoot, 'yarn.lock'), '');
+  const workspaceRoot = path.join(parentRoot, 'workspace');
+  fs.mkdirSync(workspaceRoot);
+  fs.writeFileSync(
+    path.join(workspaceRoot, 'package.json'),
+    '{"private":true,"workspaces":["apps/*"]}\n'
+  );
+  const projectRoot = path.join(workspaceRoot, 'apps', 'fixture');
+  fs.mkdirSync(projectRoot, { recursive: true });
+
+  assert.equal(detectPackageManager(projectRoot), 'npm');
+});
+
 test('requires force before replacing an incompatible Rspack config', () => {
   const projectRoot = createProject();
   const rspackPath = path.join(projectRoot, 'rspack.config.mjs');
