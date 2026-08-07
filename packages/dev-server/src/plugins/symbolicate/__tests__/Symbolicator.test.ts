@@ -1,5 +1,5 @@
 import type { FastifyBaseLogger } from 'fastify';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { logSymbolicatedStackFrame } from '../logSymbolicatedStackFrame.js';
 import { Symbolicator } from '../Symbolicator.js';
 import type {
@@ -13,6 +13,10 @@ const logger = {
   error: vi.fn(),
   info: vi.fn(),
 } as unknown as FastifyBaseLogger;
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 function createSourceMap(source: string, content: string) {
   return JSON.stringify({
@@ -33,6 +37,21 @@ function createDelegate(
       throw new Error('Source is not available from the host compiler');
     }),
     shouldIncludeFrame: () => true,
+  };
+}
+
+function getMockResults(): SymbolicatorResults {
+  return {
+    stack: [
+      {
+        file: '[projectRoot]/src/RemoteScreen.tsx',
+        lineNumber: 42,
+        column: 18,
+        methodName: 'RemoteScreen',
+        collapse: false,
+      },
+    ],
+    codeFrame: null,
   };
 }
 
@@ -153,19 +172,6 @@ describe('Symbolicator', () => {
 });
 
 describe('logSymbolicatedStackFrame', () => {
-  const results: SymbolicatorResults = {
-    stack: [
-      {
-        file: '[projectRoot]/src/RemoteScreen.tsx',
-        lineNumber: 42,
-        column: 18,
-        methodName: 'RemoteScreen',
-        collapse: false,
-      },
-    ],
-    codeFrame: null,
-  };
-
   it('logs the first useful frame for a runtime error', () => {
     const info = vi.fn();
     const runtimeLogger = { info } as unknown as FastifyBaseLogger;
@@ -186,7 +192,7 @@ describe('logSymbolicatedStackFrame', () => {
           methodName: 'renderWithHooks',
         },
       ],
-      results
+      getMockResults()
     );
 
     expect(info).toHaveBeenCalledWith({
@@ -209,7 +215,7 @@ describe('logSymbolicatedStackFrame', () => {
           methodName: 'RemoteScreen',
         },
       ],
-      results
+      getMockResults()
     );
 
     expect(info).not.toHaveBeenCalled();
