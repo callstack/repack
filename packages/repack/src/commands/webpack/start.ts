@@ -13,6 +13,7 @@ import {
 import type { HMRMessage } from '../../types.js';
 import { makeCompilerConfig } from '../common/config/makeCompilerConfig.js';
 import {
+  fetchSourceMapFromBundle,
   getDevMiddleware,
   getMimeType,
   parseUrl,
@@ -204,9 +205,17 @@ export async function start(
             resourcePath = resolveProjectPath(resourcePath, cliConfig.root);
             return compiler.getSource(resourcePath, platform);
           },
-          getSourceMap: (url) => {
-            const { resourcePath, platform } = parseUrl(url, platforms);
-            return compiler.getSourceMap(resourcePath, platform);
+          getSourceMap: async (url) => {
+            try {
+              const { resourcePath, platform } = parseUrl(url, platforms);
+              return await compiler.getSourceMap(resourcePath, platform);
+            } catch (error) {
+              const remoteSourceMap = await fetchSourceMapFromBundle(url);
+              if (remoteSourceMap) {
+                return remoteSourceMap;
+              }
+              throw error;
+            }
           },
           shouldIncludeFrame: (frame) => {
             // If the frame points to internal bootstrap/module system logic, skip the code frame.
