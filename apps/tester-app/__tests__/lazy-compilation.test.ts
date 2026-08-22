@@ -82,7 +82,7 @@ describe('lazy compilation', () => {
       const finalAndroidStats = await getStats('android');
       expect(finalAndroidStats.data).not.toBeNull();
     },
-    120 * 1000
+    60 * 1000
   );
 
   it('stops the dev server when compiler shutdown fails', async () => {
