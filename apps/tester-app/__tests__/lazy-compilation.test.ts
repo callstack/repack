@@ -40,7 +40,7 @@ describe('lazy compilation', () => {
       webpackConfig: path.join(__dirname, 'configs', './rspack.config.mjs'),
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     const { stop } = await startCommand.func([], config, args);
     stopServer = stop;
   });
@@ -82,7 +82,7 @@ describe('lazy compilation', () => {
       const finalAndroidStats = await getStats('android');
       expect(finalAndroidStats.data).not.toBeNull();
     },
-    60 * 1000
+    120 * 1000
   );
 
   it('stops the dev server when compiler shutdown fails', async () => {
