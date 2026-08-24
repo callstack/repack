@@ -47,9 +47,9 @@ export class NativeEntryPlugin {
         : undefined
     );
 
-    const getReactNativePolyfills: () => string[] = require(
-      path.join(reactNativePath, 'rn-get-polyfills.js')
-    );
+    const rnGetPolyfillsPath = path.join(reactNativePath, 'rn-get-polyfills.js');
+    const getReactNativePolyfills = require(require('node:fs').existsSync(rnGetPolyfillsPath) ? rnGetPolyfillsPath : '@react-native/js-polyfills');
+
 
     const initializeCorePath =
       this.config?.initializeCoreLocation ??
