@@ -1,0 +1,431 @@
+import type { FastifyBaseLogger } from 'fastify';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { logSymbolicatedStackFrame } from '../logSymbolicatedStackFrame.js';
+import { Symbolicator } from '../Symbolicator.js';
+import type {
+  ReactNativeStackFrame,
+  SymbolicatorDelegate,
+  SymbolicatorResults,
+} from '../types.js';
+
+const logger = {
+  debug: vi.fn(),
+  error: vi.fn(),
+  info: vi.fn(),
+} as unknown as FastifyBaseLogger;
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+function createSourceMap(source: string, content: string) {
+  return JSON.stringify({
+    version: 3,
+    sources: [source],
+    sourcesContent: [content],
+    names: [],
+    mappings: 'AAAA',
+  });
+}
+
+function createDelegate(
+  getSourceMap: SymbolicatorDelegate['getSourceMap'],
+  getSource: SymbolicatorDelegate['getSource'] = vi.fn(async () => {
+    throw new Error('Source is not available from the host compiler');
+  })
+): SymbolicatorDelegate {
+  return {
+    getSourceMap,
+    getSource,
+    shouldIncludeFrame: () => true,
+  };
+}
+
+function createSourceMapWithoutContent(source: string) {
+  return JSON.stringify({
+    version: 3,
+    sources: [source],
+    names: [],
+    mappings: 'AAAA',
+  });
+}
+
+function createDeferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void;
+  const promise = new Promise<T>((resolvePromise) => {
+    resolve = resolvePromise;
+  });
+  return { promise, resolve };
+}
+
+function getMockResults(): SymbolicatorResults {
+  return {
+    stack: [
+      {
+        file: '[projectRoot]/src/RemoteScreen.tsx',
+        lineNumber: 42,
+        column: 18,
+        methodName: 'RemoteScreen',
+        collapse: false,
+      },
+    ],
+    codeFrame: null,
+  };
+}
+
+describe('Symbolicator', () => {
+  it('symbolicates remaining frames when one source map is unavailable', async () => {
+    const remoteUrl = 'http://localhost:8082/remote.chunk.bundle';
+    const stack: ReactNativeStackFrame[] = [
+      {
+        file: 'http://localhost:8082/missing.chunk.bundle',
+        lineNumber: 1,
+        column: 1,
+        methodName: 'missing',
+      },
+      {
+        file: remoteUrl,
+        lineNumber: 1,
+        column: 1,
+        methodName: 'RemoteScreen',
+      },
+    ];
+    const symbolicator = new Symbolicator(
+      createDelegate(async (url) => {
+        if (url !== remoteUrl) {
+          throw new Error('Source map is missing');
+        }
+        return createSourceMap(
+          '[projectRoot]/src/RemoteScreen.tsx',
+          "throw new Error('REMOTE ERROR');"
+        );
+      })
+    );
+
+    const result = await symbolicator.process(logger, stack);
+
+    expect(result.stack).toHaveLength(2);
+    expect(result.stack[0]?.file).toBe(stack[0]?.file);
+    expect(result.stack[1]).toMatchObject({
+      file: '[projectRoot]/src/RemoteScreen.tsx',
+      lineNumber: 1,
+      column: 0,
+    });
+    expect(result.codeFrame?.content).toContain('REMOTE ERROR');
+  });
+
+  it('normalizes malformed webpack ignored-module source URLs', async () => {
+    const symbolicator = new Symbolicator(
+      createDelegate(async () =>
+        createSourceMap('webpack://ignored|/buffer', 'module.exports = {};')
+      )
+    );
+
+    const result = await symbolicator.process(logger, [
+      {
+        file: 'http://localhost:8082/ignored.chunk.bundle',
+        lineNumber: 1,
+        column: 1,
+        methodName: 'ignored',
+      },
+    ]);
+
+    expect(result.stack[0]?.file).toBe('webpack://ignored/buffer');
+  });
+
+  it('keeps valid application mappings when another webpack source URL is invalid', async () => {
+    const symbolicator = new Symbolicator(
+      createDelegate(async () =>
+        JSON.stringify({
+          version: 3,
+          sources: [
+            'webpack://=="undefined"};generated federation runtime',
+            '[projectRoot]/src/App.tsx',
+          ],
+          sourcesContent: ['generated runtime', 'const app = 1;'],
+          names: [],
+          mappings: 'ACAA',
+        })
+      )
+    );
+
+    const result = await symbolicator.process(logger, [
+      {
+        file: 'http://localhost:8081/index.bundle?platform=ios',
+        lineNumber: 1,
+        column: 0,
+        methodName: 'App',
+      },
+    ]);
+
+    expect(result.stack[0]).toMatchObject({
+      file: '[projectRoot]/src/App.tsx',
+      lineNumber: 1,
+      column: 0,
+    });
+  });
+
+  it('supports generated and original column zero', async () => {
+    const symbolicator = new Symbolicator(
+      createDelegate(async () =>
+        createSourceMap('[projectRoot]/src/App.tsx', 'const app = 1;')
+      )
+    );
+
+    const result = await symbolicator.process(logger, [
+      {
+        file: 'http://localhost:8082/zero.chunk.bundle',
+        lineNumber: 1,
+        column: 0,
+        methodName: 'App',
+      },
+    ]);
+
+    expect(result.stack[0]).toMatchObject({
+      file: '[projectRoot]/src/App.tsx',
+      lineNumber: 1,
+      column: 0,
+    });
+  });
+
+  it('loads a source map once for repeated frames in one request', async () => {
+    const bundleUrl = 'http://localhost:8082/repeated.chunk.bundle';
+    const getSourceMap = vi.fn(async () =>
+      createSourceMap(
+        '[projectRoot]/src/Repeated.tsx',
+        'export const repeated = true;'
+      )
+    );
+    const symbolicator = new Symbolicator(createDelegate(getSourceMap));
+
+    const result = await symbolicator.process(logger, [
+      {
+        file: bundleUrl,
+        lineNumber: 1,
+        column: 0,
+        methodName: 'FirstFrame',
+      },
+      {
+        file: bundleUrl,
+        lineNumber: 1,
+        column: 0,
+        methodName: 'SecondFrame',
+      },
+    ]);
+
+    expect(getSourceMap).toHaveBeenCalledTimes(1);
+    expect(result.stack).toHaveLength(2);
+    expect(
+      result.stack.every((frame) => frame.file.endsWith('Repeated.tsx'))
+    ).toBe(true);
+  });
+
+  it('loads a fresh source map for each request', async () => {
+    const bundleUrl = 'http://localhost:8082/rebuilt.chunk.bundle';
+    const getSourceMap = vi
+      .fn<SymbolicatorDelegate['getSourceMap']>()
+      .mockResolvedValueOnce(
+        createSourceMap(
+          '[projectRoot]/src/BeforeRebuild.tsx',
+          'export const version = 1;'
+        )
+      )
+      .mockResolvedValueOnce(
+        createSourceMap(
+          '[projectRoot]/src/AfterRebuild.tsx',
+          'export const version = 2;'
+        )
+      );
+    const symbolicator = new Symbolicator(createDelegate(getSourceMap));
+    const stack = [
+      {
+        file: bundleUrl,
+        lineNumber: 1,
+        column: 0,
+        methodName: 'App',
+      },
+    ];
+
+    const beforeRebuild = await symbolicator.process(logger, stack);
+    const afterRebuild = await symbolicator.process(logger, stack);
+
+    expect(getSourceMap).toHaveBeenCalledTimes(2);
+    expect(beforeRebuild.stack[0]?.file).toBe(
+      '[projectRoot]/src/BeforeRebuild.tsx'
+    );
+    expect(afterRebuild.stack[0]?.file).toBe(
+      '[projectRoot]/src/AfterRebuild.tsx'
+    );
+  });
+
+  it('isolates source map consumers between concurrent requests', async () => {
+    const bundleUrl = 'http://localhost:8082/concurrent.chunk.bundle';
+    const firstSourceRequested = createDeferred<void>();
+    const releaseFirstSource = createDeferred<string>();
+    let getSourceCallCount = 0;
+    const getSource = vi.fn(async () => {
+      getSourceCallCount += 1;
+      if (getSourceCallCount === 1) {
+        firstSourceRequested.resolve();
+        return releaseFirstSource.promise;
+      }
+      return 'export const request = 2;';
+    });
+    const getSourceMap = vi
+      .fn<SymbolicatorDelegate['getSourceMap']>()
+      .mockResolvedValueOnce(
+        createSourceMapWithoutContent('[projectRoot]/src/FirstRequest.tsx')
+      )
+      .mockResolvedValueOnce(
+        createSourceMapWithoutContent('[projectRoot]/src/SecondRequest.tsx')
+      );
+    const symbolicator = new Symbolicator(
+      createDelegate(getSourceMap, getSource)
+    );
+    const stack = [
+      {
+        file: bundleUrl,
+        lineNumber: 1,
+        column: 0,
+        methodName: 'App',
+      },
+    ];
+
+    const firstRequest = symbolicator.process(logger, stack);
+    await firstSourceRequested.promise;
+
+    const secondResult = await symbolicator.process(logger, stack);
+    releaseFirstSource.resolve('export const request = 1;');
+    const firstResult = await firstRequest;
+
+    expect(getSourceMap).toHaveBeenCalledTimes(2);
+    expect(firstResult.stack[0]?.file).toBe(
+      '[projectRoot]/src/FirstRequest.tsx'
+    );
+    expect(secondResult.stack[0]?.file).toBe(
+      '[projectRoot]/src/SecondRequest.tsx'
+    );
+  });
+});
+
+describe('logSymbolicatedStackFrame', () => {
+  it('logs the first useful frame for a runtime error', () => {
+    const info = vi.fn();
+    const runtimeLogger = { info } as unknown as FastifyBaseLogger;
+
+    logSymbolicatedStackFrame(
+      runtimeLogger,
+      [
+        {
+          file: 'http://localhost:8082/remote.chunk.bundle',
+          lineNumber: 100,
+          column: 20,
+          methodName: 'RemoteScreen',
+        },
+        {
+          file: 'http://localhost:8081/index.bundle?platform=ios',
+          lineNumber: 200,
+          column: 30,
+          methodName: 'renderWithHooks',
+        },
+      ],
+      getMockResults()
+    );
+
+    expect(info).toHaveBeenCalledWith({
+      msg: 'Symbolicated stack frame: src/RemoteScreen.tsx:42:18',
+      methodName: 'RemoteScreen',
+    });
+  });
+
+  it('does not log component-stack-only symbolication', () => {
+    const info = vi.fn();
+    const runtimeLogger = { info } as unknown as FastifyBaseLogger;
+
+    logSymbolicatedStackFrame(
+      runtimeLogger,
+      [
+        {
+          file: 'http://localhost:8082/remote.chunk.bundle',
+          lineNumber: 100,
+          column: 20,
+          methodName: 'RemoteScreen',
+        },
+      ],
+      getMockResults()
+    );
+
+    expect(info).not.toHaveBeenCalled();
+  });
+
+  it('includes the remote name for a federated source frame', () => {
+    const info = vi.fn();
+    const runtimeLogger = { info } as unknown as FastifyBaseLogger;
+
+    logSymbolicatedStackFrame(
+      runtimeLogger,
+      [
+        {
+          file: 'http://localhost:9007/android/__federation_expose_RegistrationNavigator.registration.chunk.bundle',
+          lineNumber: 100,
+          column: 20,
+          methodName: 'App',
+        },
+        {
+          file: 'http://localhost:8081/index.bundle?platform=android',
+          lineNumber: 200,
+          column: 30,
+          methodName: 'renderWithHooks',
+        },
+      ],
+      {
+        stack: [
+          {
+            file: 'http://localhost:9007/__repack_source__/[projectRoot]/src/App.tsx',
+            lineNumber: 13,
+            column: 17,
+            methodName: 'App',
+            collapse: false,
+          },
+        ],
+        codeFrame: null,
+      }
+    );
+
+    expect(info).toHaveBeenCalledWith({
+      msg: 'Symbolicated stack frame: registration/src/App.tsx:13:17',
+      methodName: 'App',
+    });
+  });
+
+  it('does not report a generated bundle frame as symbolicated', () => {
+    const info = vi.fn();
+    const runtimeLogger = { info } as unknown as FastifyBaseLogger;
+
+    logSymbolicatedStackFrame(
+      runtimeLogger,
+      [
+        {
+          file: 'http://localhost:8081/index.bundle?platform=ios',
+          lineNumber: 100,
+          column: 20,
+          methodName: 'renderWithHooks',
+        },
+      ],
+      {
+        stack: [
+          {
+            file: 'http://localhost:8081/index.bundle?platform=ios',
+            lineNumber: 100,
+            column: 20,
+            methodName: 'App',
+            collapse: false,
+          },
+        ],
+        codeFrame: null,
+      }
+    );
+
+    expect(info).not.toHaveBeenCalled();
+  });
+});
