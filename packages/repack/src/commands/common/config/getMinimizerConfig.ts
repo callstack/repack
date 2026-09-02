@@ -16,11 +16,34 @@ async function getTerserPlugin(rootDir: string) {
   return plugin;
 }
 
+type TerserMinifyArgs = Parameters<(typeof TerserPlugin)['terserMinify']>;
+
+// since 5.6.0 the plugin's own `terserMinify` carries a `.filter` that rejects `.bundle`
+// assets; a wrapper carries none. It runs in a worker, so it must stay self-contained.
+function repackTerserMinify(
+  input: TerserMinifyArgs[0],
+  sourceMap: TerserMinifyArgs[1],
+  minimizerOptions: TerserMinifyArgs[2],
+  extractComments: TerserMinifyArgs[3]
+) {
+  return require('terser-webpack-plugin').terserMinify(
+    input,
+    sourceMap,
+    minimizerOptions,
+    extractComments
+  );
+}
+
+// read on the main thread only, to keep terser's version in the chunk hash
+repackTerserMinify.getMinimizerVersion = () =>
+  require('terser-webpack-plugin').terserMinify.getMinimizerVersion?.();
+
 async function getTerserConfig(rootDir: string) {
   const TerserPlugin = await getTerserPlugin(rootDir);
   return new TerserPlugin({
     test: /\.(js)?bundle(\?.*)?$/i,
     extractComments: false,
+    minify: repackTerserMinify,
     terserOptions: {
       format: { comments: false },
     },
