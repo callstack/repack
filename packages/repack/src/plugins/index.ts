@@ -10,3 +10,4 @@ export * from './ModuleFederationPluginV2.js';
 export * from './NativeEntryPlugin/index.js';
 export * from './OutputPlugin/index.js';
 export * from './RepackTargetPlugin/index.js';
+export * from './SentryDebugIdPlugin.js';
