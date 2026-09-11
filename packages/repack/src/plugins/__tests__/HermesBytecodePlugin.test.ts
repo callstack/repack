@@ -109,7 +109,7 @@ describe('HermesBytecodePlugin', () => {
 
       expect(execaNodeMock).toHaveBeenCalledTimes(1);
       expect(execaNodeMock.mock.calls[0][0]).toEqual(
-        path.join('path/to/react-native/scripts/compose-source-maps.js')
+        path.normalize('path/to/react-native/scripts/compose-source-maps.js')
       );
     });
 
@@ -157,7 +157,7 @@ describe('HermesBytecodePlugin', () => {
       const hermesPath = getHermesCLIPath(reactNativePath);
 
       expect(hermesPath).toBe(
-        path.join('path/to/hermes-compiler/hermesc/osx-bin/hermesc')
+        path.normalize('path/to/hermes-compiler/hermesc/osx-bin/hermesc')
       );
     });
 
@@ -168,7 +168,7 @@ describe('HermesBytecodePlugin', () => {
       const hermesPath = getHermesCLIPath(reactNativePath);
 
       expect(hermesPath).toBe(
-        path.join('path/to/react-native/sdks/hermesc/osx-bin/hermesc')
+        path.normalize('path/to/react-native/sdks/hermesc/osx-bin/hermesc')
       );
     });
   });
