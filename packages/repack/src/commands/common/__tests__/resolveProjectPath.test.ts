@@ -2,13 +2,9 @@ import path from 'node:path';
 import { resolveProjectPath } from '../resolveProjectPath.js';
 
 describe('resolveProjectPath', () => {
-  // The cases below are written with POSIX literals for readability.
-  // `resolveProjectPath` returns an absolute, platform-native path, so both the
-  // root and the expectation are run through `path.resolve` to give them a
-  // drive letter on Windows. Both calls are no-ops on POSIX.
-  // Resolving the root matters: without a drive, up-level navigation that
-  // reaches the root collapses to a bare "\\", which Windows then reads as the
-  // start of a UNC share rather than a local path.
+  // Cases use POSIX literals; `path.resolve` makes them platform-native.
+  // The root must be resolved too: on Windows a drive-less root that walks up
+  // to "/" collapses to "\\", which is then parsed as a UNC share.
   const expectResolved = (
     input: string,
     expected: string,
