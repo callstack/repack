@@ -5,5 +5,10 @@
  * These modules are required by assetsLoader and should be shared as deep imports when using ModuleFederation.
  */
 
-require.resolve('react-native/Libraries/Image/AssetRegistry');
+// react-native/Libraries/Image/AssetRegistry was replaced by react-native/asset-registry in newer versions.
+try {
+  require.resolve('react-native/Libraries/Image/AssetRegistry');
+} catch {
+  require.resolve('react-native/asset-registry');
+}
 require.resolve('react-native/Libraries/Image/AssetSourceResolver');
