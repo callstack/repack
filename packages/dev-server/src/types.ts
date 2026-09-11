@@ -191,6 +191,16 @@ export namespace Server {
      * @returns The resolved project path.
      */
     resolveProjectPath: (filepath: string) => string;
+
+    /**
+     * Open a stack frame owned by another development server.
+     *
+     * @returns Whether the frame was handled remotely.
+     */
+    openStackFrame?: (
+      filepath: string,
+      lineNumber: number
+    ) => boolean | Promise<boolean>;
   }
 
   /**

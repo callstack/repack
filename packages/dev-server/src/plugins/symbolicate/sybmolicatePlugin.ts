@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import type { Server } from '../../types.js';
+import { logSymbolicatedStackFrame } from './logSymbolicatedStackFrame.js';
 import { Symbolicator } from './Symbolicator.js';
 import type { ReactNativeStackFrame } from './types.js';
 
@@ -42,6 +43,7 @@ async function symbolicatePlugin(
       } else {
         request.log.debug({ msg: 'Starting symbolication', platform, stack });
         const results = await symbolicator.process(request.log, stack);
+        logSymbolicatedStackFrame(request.log, stack, results);
         reply.send(results);
       }
     } catch (error) {

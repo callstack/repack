@@ -1,4 +1,5 @@
 export * from './config/makeCompilerConfig.js';
+export * from './fetchSourceMapFromBundle.js';
 export * from './getDevMiddleware.js';
 export * from './getMaxWorkers.js';
 export * from './getMimeType.js';
