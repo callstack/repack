@@ -44,8 +44,14 @@ async function devtoolsPlugin(
       const { file, lineNumber } = parseRequestBody<OpenStackFrameRequestBody>(
         request.body
       );
-      const filepath = delegate.devTools?.resolveProjectPath(file) ?? file;
-      launchEditor(`${filepath}:${lineNumber}`, process.env.REACT_EDITOR);
+      const openedRemotely = await delegate.devTools?.openStackFrame?.(
+        file,
+        lineNumber
+      );
+      if (!openedRemotely) {
+        const filepath = delegate.devTools?.resolveProjectPath(file) ?? file;
+        launchEditor(`${filepath}:${lineNumber}`, process.env.REACT_EDITOR);
+      }
       reply.send('OK');
     },
   });
