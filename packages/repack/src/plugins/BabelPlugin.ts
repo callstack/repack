@@ -1,5 +1,6 @@
 import type { Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
+
 /**
  * Plugin that adds babel-loader fallback to resolveLoader configuration.
  * This ensures babel-loader can be resolved regardless of the package manager used,
@@ -18,7 +19,7 @@ export class BabelPlugin {
       ...compiler.options.resolveLoader,
       fallback: {
         ...compiler.options.resolveLoader?.fallback,
-        'babel-loader': require.resolve('babel-loader'),
+        'babel-loader': [require.resolve('babel-loader')],
       },
     };
   }
