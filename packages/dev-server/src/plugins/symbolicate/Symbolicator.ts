@@ -2,6 +2,11 @@ import { URL } from 'node:url';
 import { codeFrameColumns } from '@babel/code-frame';
 import type { FastifyBaseLogger } from 'fastify';
 import { SourceMapConsumer } from 'source-map';
+import {
+  isGeneratedBundleFrame,
+  isSymbolicatableFrame,
+  normalizeInvalidWebpackSourceUrls,
+} from '../../utils/symbolication.js';
 import type {
   CodeFrame,
   InputStackFrame,
@@ -46,11 +51,6 @@ export class Symbolicator {
   }
 
   /**
-   * Cache with initialized `SourceMapConsumer` to improve symbolication performance.
-   */
-  sourceMapConsumerCache: Record<string, SourceMapConsumer> = {};
-
-  /**
    * Constructs new `Symbolicator` instance.
    *
    * @param delegate Delegate instance with symbolication functions.
@@ -75,58 +75,72 @@ export class Symbolicator {
   ): Promise<SymbolicatorResults> {
     logger.debug({ msg: 'Filtering out unnecessary frames' });
 
-    const frames: InputStackFrame[] = [];
-    for (const frame of stack) {
-      const { file } = frame;
-      if (file?.startsWith('http')) {
-        frames.push(frame as InputStackFrame);
-      }
-    }
+    const frames = stack.filter(isSymbolicatableFrame);
 
+    // A Symbolicator instance is shared by the route. Keep consumers local to
+    // one request so concurrent call-stack and component-stack requests cannot
+    // destroy or read each other's source maps.
+    const sourceMapConsumers = new Map<string, SourceMapConsumer>();
     try {
       logger.debug({ msg: 'Processing frames', frames });
 
       const processedFrames: StackFrame[] = [];
       for (const frame of frames) {
-        if (!this.sourceMapConsumerCache[frame.file]) {
-          logger.debug({
-            msg: 'Loading raw source map data',
-            fileUrl: frame.file,
-          });
+        try {
+          if (!sourceMapConsumers.has(frame.file)) {
+            logger.debug({
+              msg: 'Loading raw source map data',
+              fileUrl: frame.file,
+            });
 
-          const rawSourceMap = await this.delegate.getSourceMap(frame.file);
+            const rawSourceMap = await this.delegate.getSourceMap(frame.file);
+
+            logger.debug({
+              msg: 'Creating source map instance',
+              fileUrl: frame.file,
+              sourceMapLength: rawSourceMap.length,
+            });
+            const sourceMapConsumer = await new SourceMapConsumer(
+              normalizeInvalidWebpackSourceUrls(rawSourceMap)
+            );
+
+            logger.debug({
+              msg: 'Saving source map instance into cache',
+              fileUrl: frame.file,
+            });
+            sourceMapConsumers.set(frame.file, sourceMapConsumer);
+          }
 
           logger.debug({
-            msg: 'Creating source map instance',
-            fileUrl: frame.file,
-            sourceMapLength: rawSourceMap.length,
+            msg: 'Symbolicating frame',
+            frame,
           });
-          const sourceMapConsumer = await new SourceMapConsumer(
-            rawSourceMap.toString()
-          );
+          const processedFrame = this.processFrame(frame, sourceMapConsumers);
 
           logger.debug({
-            msg: 'Saving source map instance into cache',
-            fileUrl: frame.file,
+            msg: 'Finished symbolicating frame',
+            frame,
           });
-          this.sourceMapConsumerCache[frame.file] = sourceMapConsumer;
+          processedFrames.push(processedFrame);
+        } catch (error) {
+          // Match Metro's best-effort behavior: one unavailable or malformed
+          // source map must not discard frames that can still be symbolicated.
+          logger.debug({
+            msg: 'Failed to symbolicate frame',
+            fileUrl: frame.file,
+            error: (error as Error).message,
+          });
+          processedFrames.push({ ...frame, collapse: false });
         }
-
-        logger.debug({
-          msg: 'Symbolicating frame',
-          frame,
-        });
-        const processedFrame = this.processFrame(frame);
-
-        logger.debug({
-          msg: 'Finished symbolicating frame',
-          frame,
-        });
-        processedFrames.push(processedFrame);
       }
 
       const codeFrame =
-        (await this.getCodeFrame(logger, processedFrames)) ?? null;
+        (await this.getCodeFrame(
+          logger,
+          processedFrames,
+          frames,
+          sourceMapConsumers
+        )) ?? null;
 
       logger.debug({
         msg: 'Finished symbolicating frames',
@@ -134,27 +148,26 @@ export class Symbolicator {
         codeFrame,
       });
 
-      return {
-        stack: processedFrames,
-        codeFrame,
-      };
+      return { stack: processedFrames, codeFrame };
     } finally {
-      for (const key in this.sourceMapConsumerCache) {
-        this.sourceMapConsumerCache[key].destroy();
-        delete this.sourceMapConsumerCache[key];
+      for (const consumer of sourceMapConsumers.values()) {
+        consumer.destroy();
       }
     }
   }
 
-  private processFrame(frame: InputStackFrame): StackFrame {
-    if (!frame.lineNumber || !frame.column) {
+  private processFrame(
+    frame: InputStackFrame,
+    sourceMapConsumers: Map<string, SourceMapConsumer>
+  ): StackFrame {
+    if (frame.lineNumber == null || frame.column == null) {
       return {
         ...frame,
         collapse: false,
       };
     }
 
-    const consumer = this.sourceMapConsumerCache[frame.file];
+    const consumer = sourceMapConsumers.get(frame.file);
     if (!consumer) {
       return {
         ...frame,
@@ -186,8 +199,8 @@ export class Symbolicator {
     }
 
     return {
-      lineNumber: lookup.line || frame.lineNumber,
-      column: lookup.column || frame.column,
+      lineNumber: lookup.line ?? frame.lineNumber,
+      column: lookup.column ?? frame.column,
       file: lookup.source,
       methodName: lookup.name || frame.methodName,
       collapse: false,
@@ -196,10 +209,16 @@ export class Symbolicator {
 
   private async getCodeFrame(
     logger: FastifyBaseLogger,
-    processedFrames: StackFrame[]
+    processedFrames: StackFrame[],
+    inputFrames: InputStackFrame[],
+    sourceMapConsumers: Map<string, SourceMapConsumer>
   ): Promise<CodeFrame | undefined> {
-    for (const frame of processedFrames) {
-      if (frame.collapse || !frame.lineNumber || !frame.column) {
+    for (const [index, frame] of processedFrames.entries()) {
+      if (frame.collapse || frame.lineNumber == null || frame.column == null) {
+        continue;
+      }
+
+      if (isGeneratedBundleFrame(frame)) {
         continue;
       }
 
@@ -213,9 +232,15 @@ export class Symbolicator {
       });
 
       try {
+        const consumer = sourceMapConsumers.get(inputFrames[index]?.file);
+        const embeddedSource = consumer?.sourceContentFor(frame.file, true);
+        const source =
+          embeddedSource ??
+          (await this.delegate.getSource(frame.file)).toString();
+
         return {
           content: codeFrameColumns(
-            (await this.delegate.getSource(frame.file)).toString(),
+            source,
             {
               start: { column: frame.column, line: frame.lineNumber },
             },
