@@ -5,9 +5,5 @@
  * These modules are required by assetsLoader and should be shared as deep imports when using ModuleFederation.
  */
 
-// Canonical asset registry request. NativeEntryPlugin aliases this to the real
-// file for the installed React Native version (Libraries/Image/AssetRegistry on
-// <= 0.86, src/asset-registry.js on >= 0.87). Keeping the `react-native/` prefix
-// preserves Module Federation deep-import sharing.
-require.resolve('react-native/asset-registry');
+require.resolve('react-native/Libraries/Image/AssetRegistry');
 require.resolve('react-native/Libraries/Image/AssetSourceResolver');

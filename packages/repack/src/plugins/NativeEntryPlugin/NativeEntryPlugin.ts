@@ -56,17 +56,19 @@ export class NativeEntryPlugin {
       reactNativePath
     );
 
-    // Map the canonical `react-native/asset-registry` request (emitted by the
-    // assets loader and IncludeModules) to the registry file that exists for
-    // the installed React Native layout. Done here because Repack's default
-    // resolver ignores `package.json` exports and the two layouts are not
-    // reachable by a single request across both resolver modes.
+    // Map `react-native/Libraries/Image/AssetRegistry` to the relocated
+    // `src/asset-registry.js` on the React Native >= 0.87 layout (no-op on <= 0.86).
+    // Done here because Repack's default resolver ignores `package.json` exports.
+    // The exact-match alias must be prepended: enhanced-resolve and Rspack match
+    // aliases in insertion order, so a user's generic `react-native` alias would
+    // otherwise win and rewrite the request to a non-existent path before the
+    // specific key is consulted.
     const assetRegistryAlias =
       getReactNativeAssetRegistryAlias(reactNativePath);
     if (assetRegistryAlias) {
       compiler.options.resolve.alias = {
-        ...compiler.options.resolve.alias,
         ...assetRegistryAlias,
+        ...compiler.options.resolve.alias,
       };
     }
 

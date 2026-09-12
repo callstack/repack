@@ -2,21 +2,25 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 /**
- * Canonical request used to reach React Native's asset registry.
+ * Request the assets loader and IncludeModules emit for the asset registry.
  *
- * React Native <= 0.86 exposed the registry at
- * `react-native/Libraries/Image/AssetRegistry`; 0.87 moved it to
- * `src/asset-registry.js`, reachable only through the package `exports` map.
- * There is no single request string that resolves across both layouts under
- * both of Repack's resolver modes (the default resolver ignores `exports`,
- * while `enablePackageExports` honours it and 0.87 dropped the `./*` wildcard).
+ * React Native <= 0.86 ships this file and, on 0.86, resolves it directly (its
+ * `exports` map has a `./Libraries/*` wildcard, so it works with package exports
+ * on or off). React Native 0.87 removes the file and drops the `./*` wildcard, so
+ * the request is remapped to `src/asset-registry.js` with a resolve alias (see
+ * {@link getReactNativeAssetRegistryAlias}).
  *
- * We therefore always emit this canonical request and map it to the real file
- * with a resolve alias (see {@link getReactNativeAssetRegistryAlias}). Keeping
- * the `react-native/` prefix is required so Module Federation's deep-import
- * sharing (`shared['react-native/']`) continues to treat it as a singleton.
+ * Keeping this request unchanged across versions preserves the Module Federation
+ * deep-import share key (`shared['react-native/']`) so hosts and remotes built
+ * with different Re.Pack versions still share a single registry instance.
  */
-export const ASSET_REGISTRY_REQUEST = 'react-native/asset-registry';
+export const ASSET_REGISTRY_REQUEST =
+  'react-native/Libraries/Image/AssetRegistry';
+
+type Resolver = (request: string, paths: string[]) => string;
+
+const defaultResolver: Resolver = (request, paths) =>
+  require.resolve(request, { paths });
 
 /**
  * Resolves React Native's polyfill list, returning the same
@@ -25,41 +29,51 @@ export const ASSET_REGISTRY_REQUEST = 'react-native/asset-registry';
  * React Native <= 0.86 shipped `rn-get-polyfills.js` at the package root, which
  * re-exported `@react-native/js-polyfills` (a direct dependency of react-native).
  * 0.87 removed that file and dropped the dependency entirely, so the polyfills
- * are now only reachable through packages that still pull them in (e.g.
- * `@react-native/metro-config`, itself an optional peer of the CLI plugin).
+ * are now only reachable through packages that still pull them in - in practice
+ * `@react-native/metro-config`, itself an optional peer of the CLI plugin and a
+ * template devDependency.
  *
  * The polyfills are inlined into the emitted bundle, so they must be resolvable
- * for production bundles too - they cannot be treated as dev-only. We resolve
- * from every plausible location and fail with an actionable message rather than
- * a cryptic `MODULE_NOT_FOUND` from Repack's own directory.
+ * for production bundles too - they cannot be treated as dev-only. `resolveFrom`
+ * is injectable so the lookup chain can be exercised hermetically (the real
+ * resolver leaks the surrounding install layout, e.g. pnpm's virtual store).
  */
 export function resolveReactNativePolyfills(
   projectRoot: string,
-  reactNativePath: string
+  reactNativePath: string,
+  resolveFrom: Resolver = defaultResolver
 ): () => string[] {
   const rnGetPolyfillsPath = path.join(reactNativePath, 'rn-get-polyfills.js');
   if (fs.existsSync(rnGetPolyfillsPath)) {
     return require(rnGetPolyfillsPath) as () => string[];
   }
 
-  // React Native >= 0.87: locate `@react-native/js-polyfills` from locations
-  // that own it, following the same "resolve the owner, then chain" pattern
-  // used for the hermes parser.
-  const lookupPaths = [reactNativePath, projectRoot];
+  // React Native >= 0.87: resolve the polyfills from the project, then chain
+  // through `@react-native/metro-config`, which owns the dependency. Each
+  // location is tried in turn (same "resolve the owner, then chain" pattern used
+  // for the hermes parser).
+  const lookupDirs: string[] = [projectRoot];
   try {
-    lookupPaths.push(
-      require.resolve('@react-native/metro-config', { paths: [projectRoot] })
+    const metroConfigPackageJson = resolveFrom(
+      '@react-native/metro-config/package.json',
+      [projectRoot]
     );
+    lookupDirs.push(path.dirname(metroConfigPackageJson));
   } catch {
     // metro-config is an optional peer; a missing entry is handled below.
   }
 
-  try {
-    const jsPolyfillsPath = require.resolve('@react-native/js-polyfills', {
-      paths: lookupPaths,
-    });
-    return require(jsPolyfillsPath) as () => string[];
-  } catch {
+  let jsPolyfillsPath: string | undefined;
+  for (const dir of lookupDirs) {
+    try {
+      jsPolyfillsPath = resolveFrom('@react-native/js-polyfills', [dir]);
+      break;
+    } catch {
+      // try the next location
+    }
+  }
+
+  if (!jsPolyfillsPath) {
     throw new Error(
       '[RepackNativeEntryPlugin] Unable to locate React Native polyfills. ' +
         "React Native >= 0.87 no longer depends on '@react-native/js-polyfills', " +
@@ -68,41 +82,43 @@ export function resolveReactNativePolyfills(
         '`@react-native/metro-config`) to your project so it is available while bundling.'
     );
   }
+
+  return require(jsPolyfillsPath) as () => string[];
 }
 
 /**
- * Builds the `resolve.alias` entry that maps the canonical
- * {@link ASSET_REGISTRY_REQUEST} to the real registry file for the installed
- * React Native layout.
+ * Builds the `resolve.alias` entry that maps {@link ASSET_REGISTRY_REQUEST} to
+ * the relocated registry file on the React Native >= 0.87 layout.
  *
- * The alias target is extensionless so platform extensions (`.native.js`,
- * `.ios.js`, ...) still apply. Returns `null` when no registry file is found
- * (for example in test fixtures), in which case no alias is injected and the
- * canonical request is left to fail resolution like any missing module.
+ * Returns `null` (no alias) whenever the legacy file already exists, or no
+ * registry can be found at all. On <= 0.86 the legacy request resolves natively,
+ * so injecting an alias there would mutate resolution for no benefit - and would
+ * break the 0.86 `exports` wildcard path. The alias target is extensionless so
+ * platform extensions (`.native.js`, `.ios.js`, ...) still apply.
  */
 export function getReactNativeAssetRegistryAlias(
   reactNativePath: string
 ): Record<string, string> | null {
-  const modern = path.join(reactNativePath, 'src', 'asset-registry');
-  const legacy = path.join(
+  const legacyFile = path.join(
     reactNativePath,
     'Libraries',
     'Image',
-    'AssetRegistry'
+    'AssetRegistry.js'
   );
+  const modernFile = path.join(reactNativePath, 'src', 'asset-registry.js');
 
-  let target: string | undefined;
-  if (fs.existsSync(`${modern}.js`)) {
-    target = modern;
-  } else if (fs.existsSync(`${legacy}.js`)) {
-    target = legacy;
-  }
-
-  if (!target) {
+  // Only remap on the new layout: legacy file gone, relocated file present.
+  if (fs.existsSync(legacyFile) || !fs.existsSync(modernFile)) {
     return null;
   }
 
-  // Exact-match alias (`$`) so only the canonical request is remapped, while
-  // the request keeps its `react-native/` prefix for Module Federation sharing.
-  return { [`${ASSET_REGISTRY_REQUEST}$`]: target };
+  // Exact-match alias (`$`) so only the exact request is remapped, and the
+  // request keeps its `react-native/` prefix for Module Federation sharing.
+  return {
+    [`${ASSET_REGISTRY_REQUEST}$`]: path.join(
+      reactNativePath,
+      'src',
+      'asset-registry'
+    ),
+  };
 }

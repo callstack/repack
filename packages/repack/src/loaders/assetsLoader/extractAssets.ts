@@ -56,7 +56,7 @@ export function extractAssets(
   );
 
   return dedent`
-    var AssetRegistry = require('react-native/asset-registry');
+    var AssetRegistry = require('react-native/Libraries/Image/AssetRegistry');
     module.exports = AssetRegistry.registerAsset({
       __packager_asset: true,
       scales: ${JSON.stringify(scales)},
