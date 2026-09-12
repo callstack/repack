@@ -88,7 +88,10 @@ export function getReactNativeVirtualModules(
     'node_modules/react-native/package.json':
       '{ "name": "react-native", "main": "./index.js" }',
     'node_modules/react-native/index.js': `module.exports = { PixelRatio: { get: () => ${pixelRatio} } };`,
-    'node_modules/react-native/Libraries/Image/AssetRegistry.js':
+    // Canonical asset registry request emitted by the assets loader. On a real
+    // app this is aliased to the version-appropriate file by NativeEntryPlugin;
+    // in tests the virtual React Native exposes it directly at this path.
+    'node_modules/react-native/asset-registry.js':
       'module.exports = { registerAsset: (spec) => spec };',
     'node_modules/react-native/Libraries/Image/AssetSourceResolver.js': `
       module.exports = class AssetSourceResolver {

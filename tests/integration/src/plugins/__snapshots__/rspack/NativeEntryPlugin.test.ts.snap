@@ -15,12 +15,11 @@ var __webpack_modules__ = ({
  * These modules are required by assetsLoader and should be shared as deep imports when using ModuleFederation.
  */
 
-// react-native/Libraries/Image/AssetRegistry was replaced by react-native/asset-registry in newer versions.
-try {
-  /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-} catch {
-  /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/asset-registry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-}
+// Canonical asset registry request. NativeEntryPlugin aliases this to the real
+// file for the installed React Native version (Libraries/Image/AssetRegistry on
+// <= 0.86, src/asset-registry.js on >= 0.87). Keeping the \`react-native/\` prefix
+// preserves Module Federation deep-import sharing.
+/*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/asset-registry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 }),
@@ -772,12 +771,11 @@ module.exports = globalThis.__MF_EXTERNAL__;
  * These modules are required by assetsLoader and should be shared as deep imports when using ModuleFederation.
  */
 
-// react-native/Libraries/Image/AssetRegistry was replaced by react-native/asset-registry in newer versions.
-try {
-  /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-} catch {
-  /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/asset-registry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-}
+// Canonical asset registry request. NativeEntryPlugin aliases this to the real
+// file for the installed React Native version (Libraries/Image/AssetRegistry on
+// <= 0.86, src/asset-registry.js on >= 0.87). Keeping the \`react-native/\` prefix
+// preserves Module Federation deep-import sharing.
+/*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/asset-registry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 }),
@@ -977,12 +975,11 @@ module.exports = globalThis.__MF_EXTERNAL__;
  * These modules are required by assetsLoader and should be shared as deep imports when using ModuleFederation.
  */
 
-// react-native/Libraries/Image/AssetRegistry was replaced by react-native/asset-registry in newer versions.
-try {
-  /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-} catch {
-  /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/asset-registry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-}
+// Canonical asset registry request. NativeEntryPlugin aliases this to the real
+// file for the installed React Native version (Libraries/Image/AssetRegistry on
+// <= 0.86, src/asset-registry.js on >= 0.87). Keeping the \`react-native/\` prefix
+// preserves Module Federation deep-import sharing.
+/*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/asset-registry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 }),
@@ -1182,12 +1179,11 @@ module.exports = globalThis.__MF_EXTERNAL__;
  * These modules are required by assetsLoader and should be shared as deep imports when using ModuleFederation.
  */
 
-// react-native/Libraries/Image/AssetRegistry was replaced by react-native/asset-registry in newer versions.
-try {
-  /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-} catch {
-  /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/asset-registry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-}
+// Canonical asset registry request. NativeEntryPlugin aliases this to the real
+// file for the installed React Native version (Libraries/Image/AssetRegistry on
+// <= 0.86, src/asset-registry.js on >= 0.87). Keeping the \`react-native/\` prefix
+// preserves Module Federation deep-import sharing.
+/*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/asset-registry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 }),
@@ -1429,12 +1425,11 @@ var __webpack_modules__ = ({
  * These modules are required by assetsLoader and should be shared as deep imports when using ModuleFederation.
  */
 
-// react-native/Libraries/Image/AssetRegistry was replaced by react-native/asset-registry in newer versions.
-try {
-  /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetRegistry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-} catch {
-  /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/asset-registry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-}
+// Canonical asset registry request. NativeEntryPlugin aliases this to the real
+// file for the installed React Native version (Libraries/Image/AssetRegistry on
+// <= 0.86, src/asset-registry.js on >= 0.87). Keeping the \`react-native/\` prefix
+// preserves Module Federation deep-import sharing.
+/*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/asset-registry'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 /*require.resolve*/(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-native/Libraries/Image/AssetSourceResolver'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 }),

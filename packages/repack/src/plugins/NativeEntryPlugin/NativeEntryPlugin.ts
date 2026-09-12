@@ -3,6 +3,10 @@ import type { ResolveAlias, Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { isRspackCompiler, moveElementBefore } from '../../helpers/index.js';
 import { makePolyfillsRuntimeModule } from './PolyfillsRuntimeModule.js';
+import {
+  getReactNativeAssetRegistryAlias,
+  resolveReactNativePolyfills,
+} from './reactNativeRuntime.js';
 
 export interface NativeEntryPluginConfig {
   /**
@@ -47,15 +51,24 @@ export class NativeEntryPlugin {
         : undefined
     );
 
-    const rnGetPolyfillsPath = path.join(
-      reactNativePath,
-      'rn-get-polyfills.js'
+    const getReactNativePolyfills = resolveReactNativePolyfills(
+      compiler.context,
+      reactNativePath
     );
-    const getReactNativePolyfills = require(
-      require('node:fs').existsSync(rnGetPolyfillsPath)
-        ? rnGetPolyfillsPath
-        : '@react-native/js-polyfills'
-    );
+
+    // Map the canonical `react-native/asset-registry` request (emitted by the
+    // assets loader and IncludeModules) to the registry file that exists for
+    // the installed React Native layout. Done here because Repack's default
+    // resolver ignores `package.json` exports and the two layouts are not
+    // reachable by a single request across both resolver modes.
+    const assetRegistryAlias =
+      getReactNativeAssetRegistryAlias(reactNativePath);
+    if (assetRegistryAlias) {
+      compiler.options.resolve.alias = {
+        ...compiler.options.resolve.alias,
+        ...assetRegistryAlias,
+      };
+    }
 
     const initializeCorePath =
       this.config?.initializeCoreLocation ??
