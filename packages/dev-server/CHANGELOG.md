@@ -1,5 +1,11 @@
 # @callstack/repack-dev-server
 
+## 5.4.0
+
+### Patch Changes
+
+- [#1434](https://github.com/callstack/repack/pull/1434) [`ed1003f`](https://github.com/callstack/repack/commit/ed1003fe1eec193001724ad239b279f543438b13) Thanks [@MikitasK](https://github.com/MikitasK)! - Fix development symbolication for Module Federation host and remote bundles. The host now follows a remote bundle's declared source map, invalid generated webpack source URLs no longer invalidate an otherwise usable map, symbolication continues when an individual frame cannot be mapped, and code frames use the matching source map's embedded source content. The dev server also logs the first useful symbolicated runtime frame as a fallback when opening the source file from the device is delayed.
+
 ## 5.3.0
 
 ### Patch Changes

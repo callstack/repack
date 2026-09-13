@@ -1,5 +1,52 @@
 # @callstack/repack
 
+## 5.4.0
+
+### Minor Changes
+
+- [#1430](https://github.com/callstack/repack/pull/1430) [`33df89a`](https://github.com/callstack/repack/commit/33df89a735314be29cc8bc6f8e23f8d139164aa8) Thanks [@jbroma](https://github.com/jbroma)! - Bring the Rspack development experience in line with Webpack by compiling each
+  platform only when its bundle is first requested. Multi-platform development
+  servers no longer eagerly build unused platforms, so launching an iOS app does
+  not wait for Android to compile, and vice versa.
+
+- [#1424](https://github.com/callstack/repack/pull/1424) [`8dcc116`](https://github.com/callstack/repack/commit/8dcc116c291fe7fb7eb9f0f6c9640058e83a9c50) Thanks [@jbroma](https://github.com/jbroma)! - Add the unified `@callstack/repack/commands` entry point with automatic bundler detection and a `--bundler` override. Re.Pack Init now uses it, while bundler-specific entry points remain available with deprecation warnings.
+
+### Patch Changes
+
+- [#1453](https://github.com/callstack/repack/pull/1453) [`4a24b29`](https://github.com/callstack/repack/commit/4a24b29c1bf274fb341c368efc38c4f1dce8a562) Thanks [@gabrieldonadel](https://github.com/gabrieldonadel)! - Fix Android configuration on AGP 9, where built-in Kotlin support registers the
+  `kotlin` extension itself and the explicit `kotlin-android` apply failed with
+  "Cannot add extension with name 'kotlin'". The plugin - and the `kotlinOptions`
+  block it contributes - is now applied only when nothing has registered that
+  extension, leaving AGP 8 and `android.builtInKotlin=false` projects unchanged.
+
+- [#1456](https://github.com/callstack/repack/pull/1456) [`e283ccf`](https://github.com/callstack/repack/commit/e283ccfe76113b632454684de2ae0933bc11f133) Thanks [@ilteoood](https://github.com/ilteoood)! - Fix `BabelPlugin` to set the `babel-loader` entry of `resolveLoader.fallback` as an array containing the resolved path, instead of a plain string. Rspack's resolver and downstream tools that consume the resolved loader config (e.g. `RSDoctor`) expect the value to be an array; a bare string triggered `Given napi value is not an array on NapiResolveOptions.fallback`. This still matches Rspack's `ResolveAlias` (`{ [x: string]: string | false | (string | false)[] }`) and Webpack's resolver loader fallback shape.
+
+- [#1440](https://github.com/callstack/repack/pull/1440) [`9f3278c`](https://github.com/callstack/repack/commit/9f3278c0ac4cd26a318a5f03eff8fd4a3e717b61) Thanks [@MikitasK](https://github.com/MikitasK)! - Let `ChunkLoadError` propagate through the guarded `__webpack_require__` instead of reporting it as fatal, so a failed dynamic import (including a missing Module Federation exposed chunk) rejects the import promise and can be handled by a React Error Boundary. Other remote loading failures, such as an unreachable remote entry, are not affected by this change.
+
+- [#1434](https://github.com/callstack/repack/pull/1434) [`ed1003f`](https://github.com/callstack/repack/commit/ed1003fe1eec193001724ad239b279f543438b13) Thanks [@MikitasK](https://github.com/MikitasK)! - Fix development symbolication for Module Federation host and remote bundles. The host now follows a remote bundle's declared source map, invalid generated webpack source URLs no longer invalidate an otherwise usable map, symbolication continues when an individual frame cannot be mapped, and code frames use the matching source map's embedded source content. The dev server also logs the first useful symbolicated runtime frame as a fallback when opening the source file from the device is delayed.
+
+- [#1449](https://github.com/callstack/repack/pull/1449) [`09e7375`](https://github.com/callstack/repack/commit/09e7375e9b2a07afffb0417edd01a21007dd74e5) Thanks [@yunsung-miso](https://github.com/yunsung-miso)! - Keep the original error message for iOS script download failures instead of surfacing "Unknown error from a native module".
+
+- [#1454](https://github.com/callstack/repack/pull/1454) [`b440b44`](https://github.com/callstack/repack/commit/b440b44dd89c7a6be098527559c2e2e46c0957d8) Thanks [@giaBaoJS](https://github.com/giaBaoJS)! - Read the `react-native` config from the array form of `shared` in `ModuleFederationPlugin`, so the generated `react-native/` and `@react-native/` deep imports inherit its `eager`, `import` and `version` values instead of falling back to the defaults.
+
+- [#1424](https://github.com/callstack/repack/pull/1424) [`8dcc116`](https://github.com/callstack/repack/commit/8dcc116c291fe7fb7eb9f0f6c9640058e83a9c50) Thanks [@jbroma](https://github.com/jbroma)! - Reject pending webpack asset requests when compilation fails instead of leaving requests hanging.
+
+- [#1443](https://github.com/callstack/repack/pull/1443) [`c17c212`](https://github.com/callstack/repack/commit/c17c212230fb37d3f0d2d7e41db7ddf75cc1d6bd) Thanks [@Francesco-Voto](https://github.com/Francesco-Voto)! - Support React Native 0.87. Polyfills are read from `rn-get-polyfills.js` when
+  present, otherwise from `@react-native/js-polyfills` (resolved from the project,
+  falling back through `@react-native/metro-config`), with an actionable error when
+  neither can be found. The asset registry request is aliased to
+  `src/asset-registry.js` on the 0.87 layout, and `react-native/src/private` is
+  aliased to disk so first-party packages' deep imports keep resolving once package
+  exports are enabled (0.87 dropped the `./src/*` export wildcard). On 0.86 and
+  earlier behaviour is unchanged.
+
+- [#1446](https://github.com/callstack/repack/pull/1446) [`87c6d94`](https://github.com/callstack/repack/commit/87c6d94d6bd9b703a67d383bf284e92c2ad5ec17) Thanks [@giaBaoJS](https://github.com/giaBaoJS)! - Fix the webpack compiler double-joining absolute paths in `getSource`. The dev server resolves symbolicated stack frames to absolute paths before asking the compiler for their source, but the webpack compiler joined them onto the project root a second time, so the lookup failed. This only affected the fallback used when a frame's source is not embedded in the source map, for example with `nosources-*` devtools, and now matches the Rspack compiler.
+
+- [#1444](https://github.com/callstack/repack/pull/1444) [`8fba597`](https://github.com/callstack/repack/commit/8fba59747fe1e6682f4e3bd629457467b5a9ca5c) Thanks [@giaBaoJS](https://github.com/giaBaoJS)! - Fix production bundles shipping unminified with `terser-webpack-plugin` 5.6.0 and newer, which only minifies `.js` assets by default and silently skipped Re.Pack's `.bundle` output.
+
+- Updated dependencies [[`ed1003f`](https://github.com/callstack/repack/commit/ed1003fe1eec193001724ad239b279f543438b13)]:
+  - @callstack/repack-dev-server@5.4.0
+
 ## 5.3.0
 
 ### Minor Changes
