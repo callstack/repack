@@ -1,0 +1,13 @@
+{
+  "type": "commonjs",
+  "name": "react-native",
+  "version": "0.87.1",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./Libraries/*": "./Libraries/*.js",
+    "./Libraries/*.js": "./Libraries/*.js",
+    "./asset-registry": "./src/asset-registry.js",
+    "./package.json": "./package.json"
+  }
+}
