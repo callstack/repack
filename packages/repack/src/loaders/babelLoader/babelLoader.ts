@@ -1,6 +1,7 @@
 import {
   type BabelFileResult,
   loadOptions,
+  type ParseResult,
   parseSync,
   type TransformOptions,
   transformFromAstSync,
@@ -16,6 +17,7 @@ import {
   isTSXSource,
   isTypeScriptSource,
   loadHermesParser,
+  shouldUseHermesParser,
 } from './utils.js';
 
 export const raw = false;
@@ -78,23 +80,33 @@ export const transform = async (
     excludePlugins: customOptions?.excludePlugins,
   });
   const projectRoot = babelConfig.root ?? babelConfig.cwd;
-  // load hermes parser dynamically to match the version from preset
-  const hermesParser = await loadHermesParser(
-    projectRoot,
-    customOptions?.hermesParserPath
-  );
 
   // filename will be always defined at this point
-  const sourceAst =
+  const isTypeScript =
     isTypeScriptSource(babelConfig.filename!) ||
-    isTSXSource(babelConfig.filename!)
-      ? parseSync(src, babelConfig)
-      : hermesParser.parse(src, {
-          babel: true,
-          reactRuntimeTarget: '19',
-          sourceType: babelConfig.sourceType,
-          ...customOptions?.hermesParserOverrides,
-        });
+    isTSXSource(babelConfig.filename!);
+
+  const needsHermesParser =
+    !isTypeScript &&
+    shouldUseHermesParser(src, customOptions?.hermesParserOverrides?.flow);
+
+  let sourceAst: ParseResult | null;
+  if (needsHermesParser) {
+    // load hermes parser dynamically to match the version from preset
+    const hermesParser = await loadHermesParser(
+      projectRoot,
+      customOptions?.hermesParserPath
+    );
+
+    sourceAst = hermesParser.parse(src, {
+      babel: true,
+      reactRuntimeTarget: '19',
+      sourceType: babelConfig.sourceType,
+      ...customOptions?.hermesParserOverrides,
+    });
+  } else {
+    sourceAst = parseSync(src, babelConfig);
+  }
 
   if (!sourceAst) {
     throw new Error(`Failed to parse source file: ${babelConfig.filename}`);
