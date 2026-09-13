@@ -40,6 +40,37 @@ function makeProjectRoot() {
   return dir;
 }
 
+type Compiler = Awaited<ReturnType<typeof createCompiler>>;
+
+/**
+ * Runs the compiler and returns every compilation error plus the emitted main
+ * chunk. The harness configures no JS loaders, so repack's own runtime entries
+ * (InitializeScriptManager/ScriptManager) emit unrelated ESM parse errors, exactly
+ * as in NativeEntryPlugin.test.ts. Callers filter the messages for the specific
+ * resolution failures they care about instead of asserting on a clean build.
+ */
+function compileCollectingErrors(compiler: Compiler) {
+  const volume = new Volume();
+  // @ts-expect-error memfs is compatible enough with the output filesystem
+  compiler.outputFileSystem = createFsFromVolume(volume);
+  return new Promise<{ errorMessages: string[]; code: string }>(
+    (resolve, reject) => {
+      compiler.run((error, stats) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        const errors = stats?.toJson({ errors: true }).errors ?? [];
+        const errorMessages = errors.map(
+          (e) => `${e.message ?? ''}\n${e.details ?? ''}`
+        );
+        const code = volume.readFileSync('/out/main.js', 'utf-8').toString();
+        resolve({ errorMessages, code });
+      });
+    }
+  );
+}
+
 afterEach(() => {
   if (projectRoot) {
     fs.rmSync(projectRoot, { recursive: true, force: true });
@@ -71,7 +102,10 @@ describe('NativeEntryPlugin - React Native 0.87 src layout', () => {
     // The specific alias must be injected and ordered before the generic key,
     // otherwise a user `react-native` alias rewrites the request to a path that
     // does not exist on the 0.87 layout before the specific key is consulted.
-    const alias = compiler.options.resolve.alias as Record<string, string>;
+    const alias = compiler.options.resolve.alias;
+    if (!alias || Array.isArray(alias)) {
+      throw new Error('expected resolve.alias to be an object');
+    }
     const aliasKeys = Object.keys(alias);
     expect(alias[ASSET_REGISTRY_ALIAS_KEY]).toBe(
       path.join(FIXTURE, 'src', 'asset-registry')
@@ -84,22 +118,11 @@ describe('NativeEntryPlugin - React Native 0.87 src layout', () => {
     // entries (InitializeScriptManager/ScriptManager) emit unrelated ESM parse
     // errors, exactly as in NativeEntryPlugin.test.ts. We assert only that nothing
     // related to the asset registry / IncludeModules / polyfills failed to resolve.
-    const volume = new Volume();
-    // @ts-expect-error memfs is compatible enough with the output filesystem
-    compiler.outputFileSystem = createFsFromVolume(volume);
-    const stats = await new Promise<any>((resolve, reject) => {
-      compiler.run((error, s) => (error ? reject(error) : resolve(s)));
-    });
-
-    const messages: string[] = (
-      stats.toJson({ errors: true }).errors ?? []
-    ).map((e: any) => `${e.message ?? ''}\n${e.details ?? ''}`);
-    const offenders = messages.filter((m) =>
+    const { errorMessages, code } = await compileCollectingErrors(compiler);
+    const offenders = errorMessages.filter((m) =>
       /AssetRegistry|asset-registry|IncludeModules|polyfill/i.test(m)
     );
     expect(offenders).toEqual([]);
-
-    const code = volume.readFileSync('/out/main.js', 'utf-8') as string;
     expect(code).toContain('__SRC_LAYOUT_POLYFILL__');
     expect(code).toContain('__SRC_LAYOUT_INITIALIZE_CORE__');
   });
@@ -131,7 +154,10 @@ describe('NativeEntryPlugin - React Native 0.87 src layout', () => {
       plugins: [new plugins.NativeEntryPlugin({}), virtualPlugin],
     });
 
-    const alias = compiler.options.resolve.alias as Record<string, string>;
+    const alias = compiler.options.resolve.alias;
+    if (!alias || Array.isArray(alias)) {
+      throw new Error('expected resolve.alias to be an object');
+    }
     const aliasKeys = Object.keys(alias);
     expect(alias[SRC_PRIVATE_ALIAS_KEY]).toBe(
       path.join(FIXTURE, 'src', 'private')
@@ -140,21 +166,12 @@ describe('NativeEntryPlugin - React Native 0.87 src layout', () => {
       aliasKeys.indexOf('react-native')
     );
 
-    const volume = new Volume();
-    // @ts-expect-error memfs is compatible enough with the output filesystem
-    compiler.outputFileSystem = createFsFromVolume(volume);
-    const stats = await new Promise<any>((resolve, reject) => {
-      compiler.run((error, s) => (error ? reject(error) : resolve(s)));
-    });
-
-    const messages: string[] = (
-      stats.toJson({ errors: true }).errors ?? []
-    ).map((e: any) => `${e.message ?? ''}\n${e.details ?? ''}`);
+    const { errorMessages, code } = await compileCollectingErrors(compiler);
     expect(
-      messages.filter((m) => /src\/private|ReactNativeFeatureFlags/i.test(m))
+      errorMessages.filter((m) =>
+        /src\/private|ReactNativeFeatureFlags/i.test(m)
+      )
     ).toEqual([]);
-
-    const code = volume.readFileSync('/out/main.js', 'utf-8') as string;
     expect(code).toContain('__SRC_LAYOUT_FEATURE_FLAGS__');
   });
 });

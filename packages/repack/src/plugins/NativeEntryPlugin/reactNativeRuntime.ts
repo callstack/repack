@@ -45,7 +45,8 @@ export function resolveReactNativePolyfills(
 ): () => string[] {
   const rnGetPolyfillsPath = path.join(reactNativePath, 'rn-get-polyfills.js');
   if (fs.existsSync(rnGetPolyfillsPath)) {
-    return require(rnGetPolyfillsPath) as () => string[];
+    const getPolyfills: () => string[] = require(rnGetPolyfillsPath);
+    return getPolyfills;
   }
 
   // React Native >= 0.87: resolve the polyfills from the project, then chain
@@ -83,7 +84,8 @@ export function resolveReactNativePolyfills(
     );
   }
 
-  return require(jsPolyfillsPath) as () => string[];
+  const getPolyfills: () => string[] = require(jsPolyfillsPath);
+  return getPolyfills;
 }
 
 /**
@@ -153,13 +155,12 @@ export function getReactNativeDeepImportAliases(
 
   let exportsMap: Record<string, unknown> | undefined;
   try {
-    const pkg = JSON.parse(
+    const pkg: { exports?: unknown } = JSON.parse(
       fs.readFileSync(path.join(reactNativePath, 'package.json'), 'utf8')
-    ) as { exports?: unknown };
-    exportsMap =
-      pkg.exports && typeof pkg.exports === 'object'
-        ? (pkg.exports as Record<string, unknown>)
-        : undefined;
+    );
+    if (pkg.exports && typeof pkg.exports === 'object') {
+      exportsMap = { ...pkg.exports };
+    }
   } catch {
     return null;
   }

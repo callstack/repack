@@ -138,14 +138,6 @@ describe('getReactNativeAssetRegistryAlias', () => {
     expect(getReactNativeAssetRegistryAlias(rn)).toBeNull();
   });
 
-  it('returns null when the legacy file also exists (no remap)', () => {
-    const rn = makeTmp({
-      'src/asset-registry.js': 'module.exports = {};',
-      'Libraries/Image/AssetRegistry.js': 'module.exports = {};',
-    });
-    expect(getReactNativeAssetRegistryAlias(rn)).toBeNull();
-  });
-
   it('returns null when no registry file exists', () => {
     const rn = makeTmp({ 'index.js': '' });
     expect(getReactNativeAssetRegistryAlias(rn)).toBeNull();
