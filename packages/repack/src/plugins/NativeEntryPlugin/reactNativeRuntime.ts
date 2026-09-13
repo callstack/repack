@@ -122,3 +122,63 @@ export function getReactNativeAssetRegistryAlias(
     ),
   };
 }
+
+/**
+ * Builds the `resolve.alias` entries that keep React Native's internal deep
+ * imports working when package exports are enabled (`enablePackageExports`).
+ *
+ * React Native <= 0.86 exposed its `exports` map with a `./*` / `./src/*`
+ * wildcard, so deep requests such as
+ * `react-native/src/private/featureflags/ReactNativeFeatureFlags` (imported by
+ * `@react-native/virtualized-lists` and other first-party packages) resolved
+ * through the exports map. React Native 0.87 narrowed the map to a small set of
+ * explicit subpaths and dropped those wildcards, so the same deep requests no
+ * longer match any export condition and resolution fails once package exports
+ * are on. React Native still ships `src/private/**` on disk - it is simply not
+ * exported - and no resolve condition can un-hide it, so the only way to keep
+ * bundling with package exports enabled is to remap the prefix to the on-disk
+ * directory. Aliasing to an absolute path bypasses the exports map entirely.
+ *
+ * Returns `null` (no alias) when `src/private` is already reachable through the
+ * exports map (<= 0.86), when React Native declares no exports map at all, or
+ * when the directory is absent - so this is a no-op on the legacy layout.
+ */
+export function getReactNativeDeepImportAliases(
+  reactNativePath: string
+): Record<string, string> | null {
+  const privateDir = path.join(reactNativePath, 'src', 'private');
+  if (!fs.existsSync(privateDir)) {
+    return null;
+  }
+
+  let exportsMap: Record<string, unknown> | undefined;
+  try {
+    const pkg = JSON.parse(
+      fs.readFileSync(path.join(reactNativePath, 'package.json'), 'utf8')
+    ) as { exports?: unknown };
+    exportsMap =
+      pkg.exports && typeof pkg.exports === 'object'
+        ? (pkg.exports as Record<string, unknown>)
+        : undefined;
+  } catch {
+    return null;
+  }
+
+  // No exports map: resolution is file-path based, nothing to work around.
+  if (!exportsMap) {
+    return null;
+  }
+
+  // Already reachable through the exports map (React Native <= 0.86 wildcards).
+  if (
+    exportsMap['./*'] ||
+    exportsMap['./src/*'] ||
+    exportsMap['./src/private/*']
+  ) {
+    return null;
+  }
+
+  return {
+    'react-native/src/private': privateDir,
+  };
+}

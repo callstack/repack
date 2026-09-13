@@ -4,6 +4,7 @@ import path from 'node:path';
 import {
   ASSET_REGISTRY_REQUEST,
   getReactNativeAssetRegistryAlias,
+  getReactNativeDeepImportAliases,
   resolveReactNativePolyfills,
 } from '../reactNativeRuntime.js';
 
@@ -115,7 +116,7 @@ describe('resolveReactNativePolyfills', () => {
     const rn = makeTmp({ 'index.js': '' });
     const projectRoot = makeTmp({ 'package.json': '{}' });
     expect(() =>
-      resolveReactNativePolyfills(rn, projectRoot, () => {
+      resolveReactNativePolyfills(projectRoot, rn, () => {
         throw new Error('cannot resolve');
       })
     ).toThrow(/Unable to locate React Native polyfills/);
@@ -148,5 +149,56 @@ describe('getReactNativeAssetRegistryAlias', () => {
   it('returns null when no registry file exists', () => {
     const rn = makeTmp({ 'index.js': '' });
     expect(getReactNativeAssetRegistryAlias(rn)).toBeNull();
+  });
+});
+
+describe('getReactNativeDeepImportAliases', () => {
+  it('remaps react-native/src/private when the exports map drops the wildcards (React Native >= 0.87)', () => {
+    const rn = makeTmp({
+      'package.json': JSON.stringify({
+        exports: {
+          '.': './index.js',
+          './asset-registry': './src/asset-registry.js',
+        },
+      }),
+      'src/private/featureflags/ReactNativeFeatureFlags.js': '',
+    });
+    expect(getReactNativeDeepImportAliases(rn)).toEqual({
+      'react-native/src/private': path.join(rn, 'src', 'private'),
+    });
+  });
+
+  it('returns null when the exports map exposes ./src/* (React Native <= 0.86)', () => {
+    const rn = makeTmp({
+      'package.json': JSON.stringify({
+        exports: { './*': './*', './src/*': './src/*' },
+      }),
+      'src/private/index.js': '',
+    });
+    expect(getReactNativeDeepImportAliases(rn)).toBeNull();
+  });
+
+  it('returns null when the exports map exposes a ./* wildcard', () => {
+    const rn = makeTmp({
+      'package.json': JSON.stringify({ exports: { './*': './*' } }),
+      'src/private/index.js': '',
+    });
+    expect(getReactNativeDeepImportAliases(rn)).toBeNull();
+  });
+
+  it('returns null when React Native declares no exports map', () => {
+    const rn = makeTmp({
+      'package.json': JSON.stringify({ name: 'react-native' }),
+      'src/private/index.js': '',
+    });
+    expect(getReactNativeDeepImportAliases(rn)).toBeNull();
+  });
+
+  it('returns null when src/private does not exist', () => {
+    const rn = makeTmp({
+      'package.json': JSON.stringify({ exports: { '.': './index.js' } }),
+      'index.js': '',
+    });
+    expect(getReactNativeDeepImportAliases(rn)).toBeNull();
   });
 });

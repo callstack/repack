@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { plugins } from '@callstack/repack';
+import { getResolveOptions, plugins } from '@callstack/repack';
 import { createFsFromVolume, Volume } from 'memfs';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createCompiler, createVirtualModulePlugin } from '../helpers.js';
@@ -10,6 +10,7 @@ import { createCompiler, createVirtualModulePlugin } from '../helpers.js';
 const _dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURE = path.join(_dirname, '__fixtures__', 'react-native-src-layout');
 const ASSET_REGISTRY_ALIAS_KEY = 'react-native/Libraries/Image/AssetRegistry$';
+const SRC_PRIVATE_ALIAS_KEY = 'react-native/src/private';
 
 let projectRoot: string | undefined;
 
@@ -101,5 +102,59 @@ describe('NativeEntryPlugin - React Native 0.87 src layout', () => {
     const code = volume.readFileSync('/out/main.js', 'utf-8') as string;
     expect(code).toContain('__SRC_LAYOUT_POLYFILL__');
     expect(code).toContain('__SRC_LAYOUT_INITIALIZE_CORE__');
+  });
+
+  it('aliases react-native/src/private when package exports are enabled', async () => {
+    projectRoot = makeProjectRoot();
+    // Mirrors @react-native/virtualized-lists, which deep-imports a path that
+    // React Native 0.87 no longer lists in its exports map.
+    const virtualPlugin = await createVirtualModulePlugin({
+      './index.js':
+        "require('react-native/src/private/featureflags/ReactNativeFeatureFlags');" +
+        'globalThis.__APP_ENTRY__ = true;',
+    });
+
+    const compiler = await createCompiler({
+      context: projectRoot,
+      mode: 'development',
+      devtool: false,
+      entry: './index.js',
+      resolve: {
+        ...getResolveOptions({ enablePackageExports: true }),
+        // Point at the entry file (supported by NativeEntryPlugin) so the generic
+        // alias alone cannot satisfy the deep request: `<fixture>/index.js/src/...`
+        // does not exist. Only the injected `react-native/src/private` alias,
+        // ordered ahead of it, makes the request resolve.
+        alias: { 'react-native': path.join(FIXTURE, 'index.js') },
+      },
+      output: { path: '/out' },
+      plugins: [new plugins.NativeEntryPlugin({}), virtualPlugin],
+    });
+
+    const alias = compiler.options.resolve.alias as Record<string, string>;
+    const aliasKeys = Object.keys(alias);
+    expect(alias[SRC_PRIVATE_ALIAS_KEY]).toBe(
+      path.join(FIXTURE, 'src', 'private')
+    );
+    expect(aliasKeys.indexOf(SRC_PRIVATE_ALIAS_KEY)).toBeLessThan(
+      aliasKeys.indexOf('react-native')
+    );
+
+    const volume = new Volume();
+    // @ts-expect-error memfs is compatible enough with the output filesystem
+    compiler.outputFileSystem = createFsFromVolume(volume);
+    const stats = await new Promise<any>((resolve, reject) => {
+      compiler.run((error, s) => (error ? reject(error) : resolve(s)));
+    });
+
+    const messages: string[] = (
+      stats.toJson({ errors: true }).errors ?? []
+    ).map((e: any) => `${e.message ?? ''}\n${e.details ?? ''}`);
+    expect(
+      messages.filter((m) => /src\/private|ReactNativeFeatureFlags/i.test(m))
+    ).toEqual([]);
+
+    const code = volume.readFileSync('/out/main.js', 'utf-8') as string;
+    expect(code).toContain('__SRC_LAYOUT_FEATURE_FLAGS__');
   });
 });

@@ -5,6 +5,7 @@ import { isRspackCompiler, moveElementBefore } from '../../helpers/index.js';
 import { makePolyfillsRuntimeModule } from './PolyfillsRuntimeModule.js';
 import {
   getReactNativeAssetRegistryAlias,
+  getReactNativeDeepImportAliases,
   resolveReactNativePolyfills,
 } from './reactNativeRuntime.js';
 
@@ -63,11 +64,16 @@ export class NativeEntryPlugin {
     // aliases in insertion order, so a user's generic `react-native` alias would
     // otherwise win and rewrite the request to a non-existent path before the
     // specific key is consulted.
-    const assetRegistryAlias =
-      getReactNativeAssetRegistryAlias(reactNativePath);
-    if (assetRegistryAlias) {
+    // `getReactNativeDeepImportAliases` likewise remaps `react-native/src/private`
+    // to disk so first-party packages' deep imports keep resolving once package
+    // exports are enabled (RN 0.87 dropped the `./src/*` export wildcard).
+    const reactNativeAliases = {
+      ...getReactNativeAssetRegistryAlias(reactNativePath),
+      ...getReactNativeDeepImportAliases(reactNativePath),
+    };
+    if (Object.keys(reactNativeAliases).length > 0) {
       compiler.options.resolve.alias = {
-        ...assetRegistryAlias,
+        ...reactNativeAliases,
         ...compiler.options.resolve.alias,
       };
     }
