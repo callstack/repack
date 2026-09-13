@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:7.3.1")
+        classpath("com.android.tools.build:gradle:8.3.2")
         // noinspection DifferentKotlinGradleVersion
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
@@ -35,7 +35,8 @@ apply plugin: 'com.android.library'
 // itself. Applying the Kotlin plugin on top of it fails configuration with
 // "Cannot add extension with name 'kotlin'". Only apply it when nothing has
 // registered that extension yet.
-if (project.extensions.findByName('kotlin') == null) {
+def appliesKotlinPlugin = project.extensions.findByName('kotlin') == null
+if (appliesKotlinPlugin) {
     apply plugin: 'kotlin-android'
 }
 
@@ -136,11 +137,13 @@ android {
         }
     }
 
-    kotlinOptions {
-        if (REACT_NATIVE_MINOR_VERSION < 69) {
-            jvmTarget = JavaVersion.VERSION_1_8
-        } else if (REACT_NATIVE_MINOR_VERSION < 73) {
-            jvmTarget = JavaVersion.VERSION_11
+    if (appliesKotlinPlugin) {
+        kotlinOptions {
+            if (REACT_NATIVE_MINOR_VERSION < 69) {
+                jvmTarget = JavaVersion.VERSION_1_8
+            } else if (REACT_NATIVE_MINOR_VERSION < 73) {
+                jvmTarget = JavaVersion.VERSION_11
+            }
         }
     }
 
