@@ -26,7 +26,8 @@ function repackTerserMinify(
   minimizerOptions: TerserMinifyArgs[2],
   extractComments: TerserMinifyArgs[3]
 ) {
-  return require('terser-webpack-plugin').terserMinify(
+  const plugin: typeof TerserPlugin = require('terser-webpack-plugin');
+  return plugin.terserMinify(
     input,
     sourceMap,
     minimizerOptions,
@@ -35,8 +36,10 @@ function repackTerserMinify(
 }
 
 // read on the main thread only, to keep terser's version in the chunk hash
-repackTerserMinify.getMinimizerVersion = () =>
-  require('terser-webpack-plugin').terserMinify.getMinimizerVersion?.();
+repackTerserMinify.getMinimizerVersion = () => {
+  const plugin: typeof TerserPlugin = require('terser-webpack-plugin');
+  return plugin.terserMinify.getMinimizerVersion?.();
+};
 
 async function getTerserConfig(rootDir: string) {
   const TerserPlugin = await getTerserPlugin(rootDir);
