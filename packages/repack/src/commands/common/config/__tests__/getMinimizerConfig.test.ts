@@ -60,9 +60,11 @@ describe('getMinimizerConfig', () => {
       minimizer as unknown as NormalizedPlugin
     ).options.minimizer;
 
-    // the plugin re-evaluates the minifier from its source inside a worker
+    // the plugin re-evaluates the minifier from its source inside a worker,
+    // where `require` belongs to the worker and not to Re.Pack
+    const workerRequire = jest.fn((id: string) => require(id));
     const deserialized = new Function('require', `return ${implementation}`)(
-      require
+      workerRequire
     );
     const { code } = await deserialized(
       { 'index.bundle': 'const answer = 40 + 2;' },
@@ -72,6 +74,10 @@ describe('getMinimizerConfig', () => {
     );
 
     expect(code).toBe('const answer=42;');
+    // it loads the copy the config resolved, not whatever `terser-webpack-plugin` means in the worker
+    expect(workerRequire).toHaveBeenCalledWith(
+      require.resolve('terser-webpack-plugin')
+    );
   });
 
   it('should report the terser version the built-in minifier reports', async () => {

@@ -13,42 +13,46 @@ async function getTerserPlugin(rootDir: string) {
     terserPluginPath = require.resolve('terser-webpack-plugin');
   }
   const plugin = await importDefaultESM<typeof TerserPlugin>(terserPluginPath);
-  return plugin;
+  return { plugin, terserPluginPath };
 }
 
 type TerserMinifyArgs = Parameters<(typeof TerserPlugin)['terserMinify']>;
 
+// the resolved plugin path rides along in the serialized `terserOptions` so the
+// wrapper can load the same copy from inside a worker
+type RepackTerserOptions = TerserMinifyArgs[2] & {
+  repackTerserPluginPath: string;
+};
+
 // since 5.6.0 the plugin's own `terserMinify` carries a `.filter` that rejects `.bundle`
-// assets; a wrapper carries none. It runs in a worker, so it must stay self-contained.
+// assets; a wrapper carries none. The plugin re-evaluates this from source in a
+// worker, so it must not reference anything outside its own scope.
 function repackTerserMinify(
   input: TerserMinifyArgs[0],
   sourceMap: TerserMinifyArgs[1],
-  minimizerOptions: TerserMinifyArgs[2],
+  minimizerOptions: RepackTerserOptions,
   extractComments: TerserMinifyArgs[3]
 ) {
-  const plugin: typeof TerserPlugin = require('terser-webpack-plugin');
-  return plugin.terserMinify(
-    input,
-    sourceMap,
-    minimizerOptions,
-    extractComments
-  );
+  const { repackTerserPluginPath, ...terserOptions } = minimizerOptions;
+  const plugin: typeof TerserPlugin = require(repackTerserPluginPath);
+  return plugin.terserMinify(input, sourceMap, terserOptions, extractComments);
 }
 
-// read on the main thread only, to keep terser's version in the chunk hash
-repackTerserMinify.getMinimizerVersion = () => {
-  const plugin: typeof TerserPlugin = require('terser-webpack-plugin');
-  return plugin.terserMinify.getMinimizerVersion?.();
-};
-
 async function getTerserConfig(rootDir: string) {
-  const TerserPlugin = await getTerserPlugin(rootDir);
-  return new TerserPlugin({
+  const { plugin: Plugin, terserPluginPath } = await getTerserPlugin(rootDir);
+
+  // read on the main thread only, to keep terser's version in the chunk hash
+  const minify = Object.assign(repackTerserMinify, {
+    getMinimizerVersion: () => Plugin.terserMinify.getMinimizerVersion?.(),
+  });
+
+  return new Plugin<RepackTerserOptions>({
     test: /\.(js)?bundle(\?.*)?$/i,
     extractComments: false,
-    minify: repackTerserMinify,
+    minify,
     terserOptions: {
       format: { comments: false },
+      repackTerserPluginPath: terserPluginPath,
     },
   });
 }
