@@ -26,6 +26,20 @@
 static NSURLSession * (^_urlSessionFactory)(void) = nil;
 static NSURLSession *_cachedURLSession = nil;
 
+// NSURLError instances fill in localizedDescription but leave localizedFailureReason nil.
+// Passing a nil message to the reject block makes React Native substitute
+// "Unknown error from a native module", which hides whether the download timed out,
+// lost the connection or failed TLS. Fall back to the description and append the
+// domain/code so the cause survives the bridge.
+static NSString *DescribeScriptDownloadError(NSError *error)
+{
+  NSString *reason = error.localizedFailureReason ?: error.localizedDescription;
+  if (reason.length == 0) {
+    reason = @"Script download failed";
+  }
+  return [NSString stringWithFormat:@"%@ (%@ %ld)", reason, error.domain, (long)error.code];
+}
+
 @implementation ScriptManager
 
 RCT_EXPORT_MODULE()
@@ -88,7 +102,7 @@ RCT_EXPORT_METHOD(loadScript
         [self downloadAndCache:config
              completionHandler:^(NSError *error) {
                if (error) {
-                 reject(ScriptDownloadFailure, error.localizedFailureReason, nil);
+                 reject(ScriptDownloadFailure, DescribeScriptDownloadError(error), error);
                } else {
                  [self execute:config resolve:resolve reject:reject];
                }
@@ -139,7 +153,7 @@ RCT_EXPORT_METHOD(prefetchScript
         [self downloadAndCache:config
              completionHandler:^(NSError *error) {
                if (error) {
-                 reject(ScriptDownloadFailure, error.localizedFailureReason, nil);
+                 reject(ScriptDownloadFailure, DescribeScriptDownloadError(error), error);
                } else {
                  resolve(nil);
                }

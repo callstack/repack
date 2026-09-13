@@ -205,9 +205,16 @@ export class ModuleFederationPluginV1 {
       dependencies: SharedDependencies
     ): SharedConfig | string | undefined => {
       if (Array.isArray(dependencies)) {
-        return dependencies.find((item) =>
-          typeof item === 'string' ? item === name : Boolean(item[name])
-        );
+        // object entries wrap the config under the dependency name,
+        // so unwrap it instead of returning the wrapper
+        for (const item of dependencies) {
+          if (typeof item === 'string') {
+            if (item === name) return item;
+          } else if (item[name]) {
+            return item[name];
+          }
+        }
+        return undefined;
       }
       return dependencies[name];
     };

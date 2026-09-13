@@ -1,12 +1,18 @@
+import path from 'node:path';
 import { resolveProjectPath } from '../resolveProjectPath.js';
 
 describe('resolveProjectPath', () => {
+  // Cases use POSIX literals; `path.resolve` makes them platform-native.
+  // The root must be resolved too: on Windows a drive-less root that walks up
+  // to "/" collapses to "\\", which is then parsed as a UNC share.
   const expectResolved = (
     input: string,
     expected: string,
     root = '/project/root'
   ) => {
-    expect(resolveProjectPath(input, root)).toBe(expected);
+    expect(resolveProjectPath(input, path.resolve(root))).toBe(
+      path.resolve(expected)
+    );
   };
 
   it('should resolve [projectRoot] prefix correctly', () => {
