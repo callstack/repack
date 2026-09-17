@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "Repack Expo Tester",
+    "slug": "repack-expo-tester",
+    "scheme": "repackexpo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "updates": {
+      "enabled": false
+    },
+    "plugins": [
+      "expo-router",
+      "@callstack/repack-expo",
+      "./plugins/with-localhost-cleartext"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.callstack.repackexpo"
+    },
+    "android": {
+      "package": "com.callstack.repackexpo"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "49a167cf-9412-446e-ba71-0c07c816ed93"
+      }
+    },
+    "owner": "wuskas"
+  }
+}
