@@ -25,7 +25,13 @@
     "bundleIdentifier": "com.tester.federationV2"
   },
   "resources": {
-    "android": [],
-    "ios": []
+    "android": [
+      "build/host-app/android/output-local/index.android.bundle",
+      "build/host-app/android/output-local/res"
+    ],
+    "ios": [
+      "build/host-app/ios/output-local/main.jsbundle",
+      "build/host-app/ios/output-local/assets"
+    ]
   }
 }

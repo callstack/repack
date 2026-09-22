@@ -13,16 +13,46 @@ async function getTerserPlugin(rootDir: string) {
     terserPluginPath = require.resolve('terser-webpack-plugin');
   }
   const plugin = await importDefaultESM<typeof TerserPlugin>(terserPluginPath);
-  return plugin;
+  return { plugin, terserPluginPath };
+}
+
+type TerserMinifyArgs = Parameters<(typeof TerserPlugin)['terserMinify']>;
+
+// the resolved plugin path rides along in the serialized `terserOptions` so the
+// wrapper can load the same copy from inside a worker
+type RepackTerserOptions = TerserMinifyArgs[2] & {
+  repackTerserPluginPath: string;
+};
+
+// since 5.6.0 the plugin's own `terserMinify` carries a `.filter` that rejects `.bundle`
+// assets; a wrapper carries none. The plugin re-evaluates this from source in a
+// worker, so it must not reference anything outside its own scope.
+function repackTerserMinify(
+  input: TerserMinifyArgs[0],
+  sourceMap: TerserMinifyArgs[1],
+  minimizerOptions: RepackTerserOptions,
+  extractComments: TerserMinifyArgs[3]
+) {
+  const { repackTerserPluginPath, ...terserOptions } = minimizerOptions;
+  const plugin: typeof TerserPlugin = require(repackTerserPluginPath);
+  return plugin.terserMinify(input, sourceMap, terserOptions, extractComments);
 }
 
 async function getTerserConfig(rootDir: string) {
-  const TerserPlugin = await getTerserPlugin(rootDir);
-  return new TerserPlugin({
+  const { plugin: Plugin, terserPluginPath } = await getTerserPlugin(rootDir);
+
+  // read on the main thread only, to keep terser's version in the chunk hash
+  const minify = Object.assign(repackTerserMinify, {
+    getMinimizerVersion: () => Plugin.terserMinify.getMinimizerVersion?.(),
+  });
+
+  return new Plugin<RepackTerserOptions>({
     test: /\.(js)?bundle(\?.*)?$/i,
     extractComments: false,
+    minify,
     terserOptions: {
       format: { comments: false },
+      repackTerserPluginPath: terserPluginPath,
     },
   });
 }

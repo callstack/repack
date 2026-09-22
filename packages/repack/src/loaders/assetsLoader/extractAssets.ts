@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
 import dedent from 'dedent';
+import { ASSET_REGISTRY_REQUEST } from '../../plugins/NativeEntryPlugin/reactNativeRuntime.js';
 import type { Asset } from './types.js';
 import { getAssetSize } from './utils.js';
 
@@ -56,7 +57,7 @@ export function extractAssets(
   );
 
   return dedent`
-    var AssetRegistry = require('react-native/Libraries/Image/AssetRegistry');
+    var AssetRegistry = require(${JSON.stringify(ASSET_REGISTRY_REQUEST)});
     module.exports = AssetRegistry.registerAsset({
       __packager_asset: true,
       scales: ${JSON.stringify(scales)},
