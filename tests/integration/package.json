@@ -18,6 +18,7 @@
     "@module-federation/enhanced-v21": "npm:@module-federation/enhanced@0.21.0",
     "@rspack/core": "catalog:",
     "@types/node": "catalog:",
+    "hermes-parser": "0.36.0",
     "memfs": "^4.11.1",
     "typescript": "catalog:",
     "vitest": "catalog:",

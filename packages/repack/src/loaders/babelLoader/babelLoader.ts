@@ -138,7 +138,6 @@ export default async function babelLoader(
         filename: this.resourcePath,
         sourceMaps: withSourceMaps,
         sourceFileName: this.resourcePath,
-        sourceRoot: this.context,
         inputSourceMap: withSourceMaps ? inputSourceMap : undefined,
         ...babelOverrides,
       },
