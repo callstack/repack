@@ -3,6 +3,11 @@ import type { ResolveAlias, Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { isRspackCompiler, moveElementBefore } from '../../helpers/index.js';
 import { makePolyfillsRuntimeModule } from './PolyfillsRuntimeModule.js';
+import {
+  getReactNativeAssetRegistryAlias,
+  getReactNativeDeepImportAliases,
+  resolveReactNativePolyfills,
+} from './reactNativeRuntime.js';
 
 export interface NativeEntryPluginConfig {
   /**
@@ -47,9 +52,31 @@ export class NativeEntryPlugin {
         : undefined
     );
 
-    const getReactNativePolyfills: () => string[] = require(
-      path.join(reactNativePath, 'rn-get-polyfills.js')
+    const getReactNativePolyfills = resolveReactNativePolyfills(
+      compiler.context,
+      reactNativePath
     );
+
+    // Map `react-native/Libraries/Image/AssetRegistry` to the relocated
+    // `src/asset-registry.js` on the React Native >= 0.87 layout (no-op on <= 0.86).
+    // Done here because Repack's default resolver ignores `package.json` exports.
+    // The exact-match alias must be prepended: enhanced-resolve and Rspack match
+    // aliases in insertion order, so a user's generic `react-native` alias would
+    // otherwise win and rewrite the request to a non-existent path before the
+    // specific key is consulted.
+    // `getReactNativeDeepImportAliases` likewise remaps `react-native/src/private`
+    // to disk so first-party packages' deep imports keep resolving once package
+    // exports are enabled (RN 0.87 dropped the `./src/*` export wildcard).
+    const reactNativeAliases = {
+      ...getReactNativeAssetRegistryAlias(reactNativePath),
+      ...getReactNativeDeepImportAliases(reactNativePath),
+    };
+    if (Object.keys(reactNativeAliases).length > 0) {
+      compiler.options.resolve.alias = {
+        ...reactNativeAliases,
+        ...compiler.options.resolve.alias,
+      };
+    }
 
     const initializeCorePath =
       this.config?.initializeCoreLocation ??

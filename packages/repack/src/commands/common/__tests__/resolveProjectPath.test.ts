@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { parseUrl } from '../parseUrl.js';
 import { resolveProjectPath } from '../resolveProjectPath.js';
 
 describe('resolveProjectPath', () => {
@@ -45,6 +46,23 @@ describe('resolveProjectPath', () => {
       '[projectRoot^5]/very/deep/file.js',
       '/a/very/deep/file.js',
       '/a/b/c/d/e/f'
+    );
+  });
+
+  it('should resolve paths returned by parseUrl', () => {
+    // The dev server passes symbolicated file names through parseUrl before
+    // resolving them, so encoded characters must not survive that step.
+    const resolveParsed = (input: string) =>
+      resolveProjectPath(
+        parseUrl(input, ['ios', 'android']).resourcePath,
+        path.resolve('/workspace/apps/app')
+      );
+
+    expect(resolveParsed('[projectRoot^2]/node_modules/pkg/index.js')).toBe(
+      path.resolve('/workspace/node_modules/pkg/index.js')
+    );
+    expect(resolveParsed('[projectRoot]/src/Home Screen.tsx')).toBe(
+      path.resolve('/workspace/apps/app/src/Home Screen.tsx')
     );
   });
 });
