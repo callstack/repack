@@ -26,8 +26,10 @@ export function convertToRemoteAssets({
     .join(assetsDirname, resourceDirname)
     .replace(pathSeparatorRegexp, '/');
 
-  // works on both unix & windows
-  const publicPathURL = new URL(path.join(remotePublicPath, assetPath));
+  // `remotePublicPath` is a URL, not a filesystem path, so it is joined with
+  // `path.posix` — `path.join` would rewrite the separators on Windows and
+  // produce something `new URL` rejects.
+  const publicPathURL = new URL(path.posix.join(remotePublicPath, assetPath));
 
   const size = getAssetSize(assets);
 

@@ -37,7 +37,10 @@ export function extractAssets(
     .replace(pathSeparatorRegexp, '/');
 
   if (customPublicPath) {
-    publicPath = path.join(customPublicPath, publicPath);
+    // `publicPath` is served over HTTP and always uses forward slashes, so it
+    // is joined with `path.posix` regardless of the platform the bundle is
+    // built on.
+    publicPath = path.posix.join(customPublicPath, publicPath);
   }
 
   const size = getAssetSize(assets);
