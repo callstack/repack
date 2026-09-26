@@ -1,5 +1,11 @@
 # @callstack/repack-init
 
+## 5.4.0
+
+### Patch Changes
+
+- [#1424](https://github.com/callstack/repack/pull/1424) [`8dcc116`](https://github.com/callstack/repack/commit/8dcc116c291fe7fb7eb9f0f6c9640058e83a9c50) Thanks [@jbroma](https://github.com/jbroma)! - Add the unified `@callstack/repack/commands` entry point with automatic bundler detection and a `--bundler` override. Re.Pack Init now uses it, while bundler-specific entry points remain available with deprecation warnings.
+
 ## 5.3.0
 
 ## 5.2.5
