@@ -123,7 +123,6 @@ export default async function babelSwcLoader(
     filename: this.resourcePath,
     sourceMaps: withSourceMaps,
     sourceFileName: this.resourcePath,
-    sourceRoot: this.context,
     inputSourceMap: withSourceMaps ? inputSourceMap : undefined,
     ...options.babelOverrides,
   };
@@ -176,7 +175,6 @@ export default async function babelSwcLoader(
         ? JSON.stringify(babelResult?.map)
         : undefined,
       sourceFileName: this.resourcePath,
-      sourceRoot: this.context!,
       ...options.swcOverrides,
     });
 

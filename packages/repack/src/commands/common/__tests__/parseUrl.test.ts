@@ -80,6 +80,34 @@ describe('parseUrl', () => {
     });
   });
 
+  it('should return the decoded path', () => {
+    // Symbolicated stack frames are passed as file names, not URLs.
+    expectParsed('[projectRoot^2]/node_modules/pkg/index.js', {
+      resourcePath: '[projectRoot^2]/node_modules/pkg/index.js',
+      platform: undefined,
+    });
+    expectParsed('[projectRoot]/src/Home Screen.tsx', {
+      resourcePath: '[projectRoot]/src/Home Screen.tsx',
+      platform: undefined,
+    });
+    expectParsed('[projectRoot]/src/Écran.ios.tsx', {
+      resourcePath: '[projectRoot]/src/Écran.ios.tsx',
+      platform: 'ios',
+    });
+    // Request URLs arrive percent-encoded.
+    expectParsed('/assets/src/caret%5Edir/image.png?platform=ios', {
+      resourcePath: 'assets/src/caret^dir/image.png',
+      platform: 'ios',
+    });
+  });
+
+  it('should keep a path that is not a valid escape sequence', () => {
+    expectParsed('assets/100%.png?platform=ios', {
+      resourcePath: 'assets/100%.png',
+      platform: 'ios',
+    });
+  });
+
   it('should work with different platform lists', () => {
     expectParsed(
       '/react-native/src/index.js',
