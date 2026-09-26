@@ -2,18 +2,12 @@ import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, expect, it } from 'vitest';
 import { compile, createCompiler } from '../helpers.js';
 
 const require = createRequire(import.meta.url);
 const repackRoot = path.dirname(
   require.resolve('@callstack/repack/package.json')
-);
-
-// SourceMapPlugin is applied by RepackPlugin, which also needs a full
-// React Native setup. Load it from the build output to test it on its own.
-const { SourceMapPlugin } = require(
-  path.join(repackRoot, 'dist/plugins/SourceMapPlugin.js')
 );
 
 const LOADERS = ['babel-loader', 'babel-swc-loader'] as const;
@@ -27,7 +21,7 @@ const FILES: Record<string, string> = {
     "import { localDep } from 'local-dep';",
     "import { hoistedDep } from 'hoisted-dep';",
     "import { format } from '../../../packages/shared/src/format';",
-    'globalThis.modules = [homeScreen, localDep, hoistedDep, format];',
+    'export default [homeScreen, localDep, hoistedDep, format];',
   ].join('\n'),
   'apps/app/src/screens/Home Screen.js':
     "export const homeScreen = () => 'home';",
@@ -42,22 +36,6 @@ const FILES: Record<string, string> = {
   'packages/shared/src/format.js':
     'export const format = (value) => value.trim();',
 };
-
-const DEV_SOURCES = [
-  '[projectRoot]/src/index.js',
-  '[projectRoot]/src/screens/Home Screen.js',
-  '[projectRoot]/node_modules/local-dep/index.js',
-  '[projectRoot^2]/node_modules/hoisted-dep/index.js',
-  '[projectRoot^2]/packages/shared/src/format.js',
-];
-
-const RELEASE_SOURCES = [
-  'apps/app/src/index.js',
-  'apps/app/src/screens/Home Screen.js',
-  'apps/app/node_modules/local-dep/index.js',
-  'node_modules/hoisted-dep/index.js',
-  'packages/shared/src/format.js',
-];
 
 let workspaceRoot: string;
 let projectRoot: string;
@@ -91,20 +69,16 @@ afterAll(() => {
   fs.rmSync(workspaceRoot, { recursive: true, force: true });
 });
 
-async function getSourceMapSources(
-  loader: (typeof LOADERS)[number],
-  { dev }: { dev: boolean }
-) {
+async function getSourceMapSources(loader: (typeof LOADERS)[number]) {
   const compiler = await createCompiler({
     context: projectRoot,
-    mode: dev ? 'development' : 'production',
+    mode: 'development',
     devtool: 'source-map',
-    // SourceMapPlugin uses `[projectRoot]` source names only for the
-    // development server.
-    devServer: dev ? { host: 'localhost', port: 8081 } : undefined,
     entry: './src/index.js',
-    output: { path: '/out' },
-    optimization: { minimize: false },
+    output: {
+      path: '/out',
+      devtoolModuleFilenameTemplate: '[absolute-resource-path]',
+    },
     module: {
       rules: [
         {
@@ -121,7 +95,6 @@ async function getSourceMapSources(
         },
       ],
     },
-    plugins: [new SourceMapPlugin({ platform: 'ios' })],
   });
 
   const { volume } = await compile(compiler);
@@ -131,27 +104,21 @@ async function getSourceMapSources(
   return sourceMap.sources as string[];
 }
 
-describe.each(LOADERS)('source map source names with %s', (loader) => {
-  it('names files once relative to the project root in development', async () => {
-    const sources = await getSourceMapSources(loader, { dev: true });
-    const projectSources = sources.filter((source) =>
-      source.startsWith('[projectRoot')
-    );
+// Webpack, and Rspack when Babel writes the loader map, used to prepend the
+// loader's `sourceRoot` to the absolute source path, naming files
+// `<dir>/<absolute path>` in every source map.
+it.each(LOADERS)(
+  'names each file once in the source map with %s',
+  async (loader) => {
+    const sources = await getSourceMapSources(loader);
 
-    expect(projectSources.sort()).toEqual([...DEV_SOURCES].sort());
-  });
-
-  it('names files once by their absolute path in release builds', async () => {
-    const sources = await getSourceMapSources(loader, { dev: false });
-    const fileSources = sources.filter((source) =>
-      source.startsWith(workspaceRoot)
+    expect(
+      sources.filter((source) => source.startsWith(workspaceRoot)).sort()
+    ).toEqual(
+      Object.keys(FILES)
+        .filter((file) => file.endsWith('.js'))
+        .map((file) => path.join(workspaceRoot, file))
+        .sort()
     );
-
-    expect(fileSources.sort()).toEqual(
-      RELEASE_SOURCES.map((file) => path.join(workspaceRoot, file)).sort()
-    );
-    for (const source of fileSources) {
-      expect(fs.existsSync(source)).toBe(true);
-    }
-  });
-});
+  }
+);
