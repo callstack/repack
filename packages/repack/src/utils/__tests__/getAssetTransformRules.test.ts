@@ -10,7 +10,7 @@ describe('getAssetTransformRules', () => {
     const rules = getAssetTransformRules({ inline: true });
 
     // @ts-expect-error
-    expect(rules[0]?.use?.options?.inline).toEqual(true);
+    expect(rules[1]?.use?.options?.inline).toEqual(true);
     expect(rules).toMatchSnapshot();
   });
 
@@ -18,7 +18,7 @@ describe('getAssetTransformRules', () => {
     const rules = getAssetTransformRules({ maxInlineSize: 1024 });
 
     // @ts-expect-error
-    expect(rules[0]?.use?.options?.maxInlineSize).toEqual(1024);
+    expect(rules[1]?.use?.options?.maxInlineSize).toEqual(1024);
     expect(rules).toMatchSnapshot();
   });
 
@@ -27,39 +27,39 @@ describe('getAssetTransformRules', () => {
     const rules = getAssetTransformRules({ remote: remoteOptions });
 
     // @ts-expect-error
-    expect(rules[0]?.use?.options?.remote).toHaveProperty('enabled', true);
+    expect(rules[1]?.use?.options?.remote).toHaveProperty('enabled', true);
     expect(rules).toMatchSnapshot();
   });
 
   it('should add SVGR rule when svg="svgr"', () => {
     const rules = getAssetTransformRules({ svg: 'svgr' });
 
-    expect(rules).toHaveLength(2);
-    expect(rules[1]?.use?.loader).toEqual('@svgr/webpack');
+    expect(rules).toHaveLength(3);
+    expect(rules[2]?.use?.loader).toEqual('@svgr/webpack');
     expect(rules).toMatchSnapshot();
   });
 
   it('should add XML rule when svg="xml"', () => {
     const rules = getAssetTransformRules({ svg: 'xml' });
 
-    expect(rules).toHaveLength(2);
+    expect(rules).toHaveLength(3);
     // @ts-expect-error
-    expect(rules[1]?.type).toEqual('asset/source');
+    expect(rules[2]?.type).toEqual('asset/source');
     expect(rules).toMatchSnapshot();
   });
 
   it('should add URI rule when svg="uri"', () => {
     const rules = getAssetTransformRules({ svg: 'uri' });
 
-    expect(rules).toHaveLength(2);
+    expect(rules).toHaveLength(3);
     // @ts-expect-error
-    expect(rules[1]?.type).toEqual('asset/inline');
+    expect(rules[2]?.type).toEqual('asset/inline');
     expect(rules).toMatchSnapshot();
   });
 
   it('should exclude .svg from main asset extensions when svg option is provided', () => {
     const rules = getAssetTransformRules({ svg: 'uri' });
-    const ruleTest = rules[0]?.test;
+    const ruleTest = rules[1]?.test;
     expect(ruleTest.test('test.svg')).toEqual(false);
   });
 
@@ -68,8 +68,26 @@ describe('getAssetTransformRules', () => {
       svg: { type: 'svgr', options: { dimensions: false } },
     });
 
-    expect(rules).toHaveLength(2);
-    expect(rules[1]?.use?.options).toHaveProperty('dimensions', false);
+    expect(rules).toHaveLength(3);
+    expect(rules[2]?.use?.options).toHaveProperty('dimensions', false);
+    expect(rules).toMatchSnapshot();
+  });
+
+  it('should add raw JSON rule by default', () => {
+    const rules = getAssetTransformRules();
+
+    expect(rules[0]).toEqual({
+      test: /\.json$/,
+      type: 'json',
+      generator: { JSONParse: false },
+    });
+  });
+
+  it('should omit the raw JSON rule when enableRawJson is false', () => {
+    const rules = getAssetTransformRules({ enableRawJson: false });
+
+    expect(rules).toHaveLength(1);
+    expect(rules[0]?.test.source).not.toContain('json');
     expect(rules).toMatchSnapshot();
   });
 });
