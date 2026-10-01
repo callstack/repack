@@ -292,6 +292,7 @@ export class OutputPlugin {
             bundleOutputDir: specOutputPath,
             sourcemapOutput: '',
             assetsDest: specOutputPath,
+            isRemote: true,
             logger,
           });
         }

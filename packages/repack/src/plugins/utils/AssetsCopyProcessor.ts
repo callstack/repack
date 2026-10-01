@@ -4,6 +4,7 @@ import type { StatsChunk } from '@rspack/core';
 
 export class AssetsCopyProcessor {
   queue: Array<() => Promise<void>> = [];
+  private readonly androidResources = new Set<string>();
 
   constructor(
     public readonly config: {
@@ -13,6 +14,7 @@ export class AssetsCopyProcessor {
       bundleOutputDir: string;
       sourcemapOutput: string;
       assetsDest: string;
+      isRemote?: boolean;
       logger: {
         debug: (...args: string[]) => void;
       };
@@ -140,6 +142,19 @@ export class AssetsCopyProcessor {
       .filter((file) => !/\.(map|bundle\.json)$/.test(file))
       .filter((file) => !/^remote-assets/.test(file));
 
+    if (platform === 'android' && !this.config.isRemote) {
+      for (const asset of mediaAssets) {
+        const resource =
+          /^(drawable|raw|font)(?:-[^/]+)?\/([^/]+)\.[^/.]+$/.exec(
+            asset.replace(/\\/g, '/')
+          );
+
+        if (resource) {
+          this.androidResources.add(`@${resource[1]}/${resource[2]}`);
+        }
+      }
+    }
+
     this.queue.push(
       ...mediaAssets.map(
         (asset) => () =>
@@ -196,6 +211,26 @@ export class AssetsCopyProcessor {
   execute() {
     const queue = this.queue;
     this.queue = [];
-    return queue.map((work) => work());
+    const resources = [...this.androidResources].sort();
+    this.androidResources.clear();
+    const tasks = queue.map((work) => work());
+
+    if (!resources.length) {
+      return tasks;
+    }
+
+    // Keep resources loaded by name from JavaScript.
+    const keepFile = Promise.all(tasks).then(async () => {
+      const keepPath = path.join(this.config.assetsDest, 'raw', 'keep.xml');
+      const content = `<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="${resources.join(',')}" />\n`;
+
+      await this.filesystem.promises.mkdir(path.dirname(keepPath), {
+        recursive: true,
+      });
+
+      await this.filesystem.promises.writeFile(keepPath, content);
+    });
+
+    return [...tasks, keepFile];
   }
 }

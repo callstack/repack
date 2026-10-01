@@ -1,5 +1,7 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import type { StatsChunk } from '@rspack/core';
+import { vol } from 'memfs';
 import { AssetsCopyProcessor } from '../AssetsCopyProcessor.js';
 
 jest.mock('node:fs', () => jest.requireActual('memfs').fs);
@@ -13,8 +15,25 @@ const write = (path: string, content: string) => {
 const read = (path: string) => {
   return fs.readFileSync(path, 'utf-8');
 };
+const makeChunk = (
+  file: string,
+  auxiliaryFiles: string[],
+  isEntry = true
+): StatsChunk => ({
+  type: 'chunk',
+  rendered: true,
+  initial: isEntry,
+  entry: isEntry,
+  size: 0,
+  files: [file],
+  auxiliaryFiles,
+});
 
 describe('AssetsCopyProcessor', () => {
+  beforeEach(() => {
+    vol.reset();
+  });
+
   describe('for ios', () => {
     const acpConfigStub = {
       platform: 'ios',
@@ -161,6 +180,117 @@ describe('AssetsCopyProcessor', () => {
           '/target/generated/res/react/release/drawable-mdpi/node_modules_reactnative_libraries_newappscreen_components_logo.png'
         )
       ).toEqual('image');
+      expect(read('/target/generated/res/react/release/raw/keep.xml')).toEqual(
+        '<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@drawable/node_modules_reactnative_libraries_newappscreen_components_logo" />\n'
+      );
+    });
+
+    it('should keep resources from all local chunks, deduplicating density variants', async () => {
+      const entryAssets = [
+        'drawable-mdpi/assets_logo.png',
+        'raw/assets_inter.otf',
+        'font/assets_inter.otf',
+        'index.bundle.map',
+        'index.bundle.json',
+        'remote-assets/assets/remote.png',
+      ];
+      const chunkAssets = [
+        'drawable-xhdpi/assets_logo.png',
+        'raw/assets_clip.mp4',
+        'font/assets_family.xml',
+      ];
+      for (const file of [
+        'index.bundle',
+        'async.chunk.bundle',
+        ...entryAssets,
+        ...chunkAssets,
+      ]) {
+        mkdirp(path.dirname(`/dist/${file}`));
+        write(`/dist/${file}`, 'content');
+      }
+
+      const acp = new AssetsCopyProcessor(acpConfigStub, fs as any);
+      acp.enqueueChunk(makeChunk('index.bundle', entryAssets), {
+        isEntry: true,
+        sourceMapFile: 'index.bundle.map',
+      });
+      acp.enqueueChunk(makeChunk('async.chunk.bundle', chunkAssets, false), {
+        isEntry: false,
+      });
+      await Promise.all(acp.execute());
+
+      expect(read(`${acpConfigStub.assetsDest}/raw/keep.xml`)).toEqual(
+        '<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@drawable/assets_logo,@font/assets_family,@font/assets_inter,@raw/assets_clip,@raw/assets_inter" />\n'
+      );
+      expect(read(`${acpConfigStub.assetsDest}/raw/assets_inter.otf`)).toBe(
+        'content'
+      );
+      expect(read(`${acpConfigStub.assetsDest}/font/assets_inter.otf`)).toBe(
+        'content'
+      );
+      expect(
+        fs.existsSync(
+          `${acpConfigStub.assetsDest}/remote-assets/assets/remote.png`
+        )
+      ).toBe(false);
+    });
+
+    it.each([{ assets: [] }, { assets: ['assets/Inter.otf'] }])(
+      'should not create a keep file when no Android resources are copied ($assets)',
+      async ({ assets }) => {
+        mkdirp('/dist/assets');
+        write('/dist/index.bundle', 'bundle');
+        write('/dist/assets/Inter.otf', 'font');
+        const acp = new AssetsCopyProcessor(acpConfigStub, fs as any);
+        acp.enqueueChunk(makeChunk('index.bundle', assets), { isEntry: true });
+        await Promise.all(acp.execute());
+
+        expect(fs.existsSync(`${acpConfigStub.assetsDest}/raw/keep.xml`)).toBe(
+          false
+        );
+      }
+    );
+
+    it.each([
+      { platform: 'ios', isRemote: false },
+      { platform: 'android', isRemote: true },
+    ])(
+      'should not create a keep file for platform $platform with isRemote=$isRemote',
+      async ({ platform, isRemote }) => {
+        mkdirp('/dist/raw');
+        write('/dist/index.bundle', 'bundle');
+        write('/dist/raw/inter.otf', 'font');
+        const acp = new AssetsCopyProcessor(
+          { ...acpConfigStub, platform, isRemote },
+          fs as any
+        );
+        acp.enqueueChunk(makeChunk('index.bundle', ['raw/inter.otf']), {
+          isEntry: true,
+        });
+        await Promise.all(acp.execute());
+
+        expect(fs.existsSync(`${acpConfigStub.assetsDest}/raw/keep.xml`)).toBe(
+          false
+        );
+      }
+    );
+
+    it('should not retain resource names from an earlier execution', async () => {
+      mkdirp('/dist/raw');
+      write('/dist/index.bundle', 'bundle');
+      write('/dist/raw/first.otf', 'first font');
+      write('/dist/raw/second.otf', 'second font');
+      const acp = new AssetsCopyProcessor(acpConfigStub, fs as any);
+      for (const name of ['first', 'second']) {
+        acp.enqueueChunk(makeChunk('index.bundle', [`raw/${name}.otf`]), {
+          isEntry: true,
+        });
+        await Promise.all(acp.execute());
+      }
+
+      expect(read(`${acpConfigStub.assetsDest}/raw/keep.xml`)).toEqual(
+        '<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@raw/second" />\n'
+      );
     });
 
     it("should copy regular chunk's files into correct directories", async () => {
