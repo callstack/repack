@@ -1039,6 +1039,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 20.19.43
+      hermes-parser:
+        specifier: 0.36.0
+        version: 0.36.0
       memfs:
         specifier: ^4.11.1
         version: 4.64.0

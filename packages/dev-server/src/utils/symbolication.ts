@@ -5,15 +5,28 @@ interface StackFrameLike {
   file: string | null;
 }
 
-export function normalizeInvalidWebpackSourceUrls(
-  rawSourceMap: string | Buffer
-): string | RawSourceMap | RawIndexMap {
-  const sourceMapText = rawSourceMap.toString();
-  if (!sourceMapText.includes('webpack://')) {
-    return sourceMapText;
-  }
+// `source-map` normalises every source name through `new URL()`, which
+// percent-encodes characters such as spaces, non-ASCII letters and the caret
+// in `[projectRoot^N]`. Escaping `%` before the consumer reads the map makes
+// `decodeSourceName` an exact inverse, so a file name that contains `%` keeps
+// it instead of being decoded a second time.
+export function escapeSourceName(source: string) {
+  return source.replaceAll('%', '%25');
+}
 
-  const sourceMap = JSON.parse(sourceMapText) as {
+export function decodeSourceName(source: string) {
+  return decodeURIComponent(source);
+}
+
+/**
+ * Prepare a raw source map for `SourceMapConsumer`: replace webpack source
+ * URLs that would make it reject the map and escape every source name, so
+ * names returned by the consumer can be restored with `decodeSourceName`.
+ */
+export function prepareSourceMap(
+  rawSourceMap: string | Buffer
+): RawSourceMap | RawIndexMap {
+  const sourceMap = JSON.parse(rawSourceMap.toString()) as {
     sources?: unknown[];
     sections?: Array<{ map?: unknown }>;
   };
@@ -39,12 +52,12 @@ export function normalizeInvalidWebpackSourceUrls(
           'webpack://$1/'
         );
         if (!normalizedSource.startsWith('webpack://')) {
-          return normalizedSource;
+          return escapeSourceName(normalizedSource);
         }
 
         try {
           new URL(normalizedSource);
-          return normalizedSource;
+          return escapeSourceName(normalizedSource);
         } catch {
           // Some generated Module Federation runtime modules use their source
           // text as a webpack URL. A single invalid URL makes source-map reject

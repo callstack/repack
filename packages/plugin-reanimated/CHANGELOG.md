@@ -1,5 +1,7 @@
 # @callstack/repack-plugin-reanimated
 
+## 5.4.0
+
 ## 5.3.0
 
 ## 5.2.5

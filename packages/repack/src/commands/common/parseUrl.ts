@@ -1,5 +1,17 @@
+// `new URL()` percent-encodes characters such as spaces, non-ASCII letters
+// and the caret in `[projectRoot^N]`, but callers look the path up as a file.
+function decodePathname(pathname: string) {
+  try {
+    return decodeURIComponent(pathname);
+  } catch {
+    // a malformed escape sequence, e.g. a literal `%` in a file name
+    return pathname;
+  }
+}
+
 export function parseUrl(url: string, platforms: string[], base = 'file:///') {
-  const { pathname, searchParams } = new URL(url, base);
+  const { pathname: encodedPathname, searchParams } = new URL(url, base);
+  const pathname = decodePathname(encodedPathname);
 
   let path = pathname;
   let platform = searchParams.get('platform');
