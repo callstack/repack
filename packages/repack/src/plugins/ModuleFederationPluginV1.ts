@@ -2,6 +2,10 @@ import type { container, Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { isRspackCompiler } from '../helpers/index.js';
 import { Federated } from '../utils/federated.js';
+import {
+  applyFederationManifest,
+  type FederationManifestOption,
+} from './federationManifest/index.js';
 
 type MFPluginV1 = typeof container.ModuleFederationPluginV1;
 type MFPluginV1Options = ConstructorParameters<MFPluginV1>[0];
@@ -32,6 +36,15 @@ type SharedConfig = SharedObject extends { [key: string]: infer U }
 export interface ModuleFederationPluginV1Config extends MFPluginV1Options {
   /** Enable or disable adding React Native deep imports to shared dependencies */
   reactNativeDeepImports?: boolean;
+  /**
+   * Emit a `repack-federation-manifest.json` describing this container:
+   * resolved shared dependency versions, remotes, exposes and a React Native
+   * native-module block. Disabled by default.
+   *
+   * Pass `true` for defaults or an object to customize `fileName`,
+   * `filePath` and `nativeAnalysis`.
+   */
+  manifest?: FederationManifestOption;
 }
 
 /**
@@ -102,11 +115,13 @@ export interface ModuleFederationPluginV1Config extends MFPluginV1Options {
 export class ModuleFederationPluginV1 {
   private config: MFPluginV1Options;
   private deepImports: boolean;
+  private manifest: FederationManifestOption | undefined;
 
   constructor(pluginConfig: ModuleFederationPluginV1Config) {
-    const { reactNativeDeepImports, ...config } = pluginConfig;
+    const { reactNativeDeepImports, manifest, ...config } = pluginConfig;
     this.config = config;
     this.deepImports = reactNativeDeepImports ?? true;
+    this.manifest = manifest || undefined;
   }
 
   /**
@@ -318,5 +333,18 @@ export class ModuleFederationPluginV1 {
       remotes: remotesConfig,
       shared: sharedConfig,
     }).apply(compiler);
+
+    // Taps compiler hooks, so it stays behind the opt-in flag: existing
+    // setups (and compiler mocks without `hooks`) must not hit this path.
+    if (this.manifest) {
+      applyFederationManifest(compiler, {
+        option: this.manifest,
+        name: this.config.name || 'unknown',
+        shared: sharedConfig,
+        remotes: this.config.remotes,
+        exposes: this.config.exposes,
+        filename: filenameConfig,
+      });
+    }
   }
 }
