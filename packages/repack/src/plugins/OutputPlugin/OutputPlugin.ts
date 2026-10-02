@@ -271,6 +271,8 @@ export class OutputPlugin {
         });
       }
 
+      localAssetsCopyProcessor?.enqueueAndroidKeepFile();
+
       for (const chunk of remoteChunks) {
         const specs = matchChunkToSpecs(chunk, this.remoteSpecs);
 
@@ -292,7 +294,6 @@ export class OutputPlugin {
             bundleOutputDir: specOutputPath,
             sourcemapOutput: '',
             assetsDest: specOutputPath,
-            isRemote: true,
             logger,
           });
         }

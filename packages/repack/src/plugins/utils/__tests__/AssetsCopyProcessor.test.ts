@@ -165,6 +165,7 @@ describe('AssetsCopyProcessor', () => {
         } as unknown as StatsChunk,
         { isEntry: true, sourceMapFile: 'index.bundle.map' }
       );
+      acp.enqueueAndroidKeepFile();
       await Promise.all(acp.execute());
 
       expect(
@@ -217,6 +218,7 @@ describe('AssetsCopyProcessor', () => {
       acp.enqueueChunk(makeChunk('async.chunk.bundle', chunkAssets, false), {
         isEntry: false,
       });
+      acp.enqueueAndroidKeepFile();
       await Promise.all(acp.execute());
 
       expect(read(`${acpConfigStub.assetsDest}/raw/keep.xml`)).toEqual(
@@ -243,6 +245,7 @@ describe('AssetsCopyProcessor', () => {
         write('/dist/assets/Inter.otf', 'font');
         const acp = new AssetsCopyProcessor(acpConfigStub, fs as any);
         acp.enqueueChunk(makeChunk('index.bundle', assets), { isEntry: true });
+        acp.enqueueAndroidKeepFile();
         await Promise.all(acp.execute());
 
         expect(fs.existsSync(`${acpConfigStub.assetsDest}/raw/keep.xml`)).toBe(
@@ -251,45 +254,38 @@ describe('AssetsCopyProcessor', () => {
       }
     );
 
-    it.each([
-      { platform: 'ios', isRemote: false },
-      { platform: 'android', isRemote: true },
-    ])(
-      'should not create a keep file for platform $platform with isRemote=$isRemote',
-      async ({ platform, isRemote }) => {
-        mkdirp('/dist/raw');
-        write('/dist/index.bundle', 'bundle');
-        write('/dist/raw/inter.otf', 'font');
-        const acp = new AssetsCopyProcessor(
-          { ...acpConfigStub, platform, isRemote },
-          fs as any
-        );
-        acp.enqueueChunk(makeChunk('index.bundle', ['raw/inter.otf']), {
-          isEntry: true,
-        });
-        await Promise.all(acp.execute());
-
-        expect(fs.existsSync(`${acpConfigStub.assetsDest}/raw/keep.xml`)).toBe(
-          false
-        );
-      }
-    );
-
-    it('should not retain resource names from an earlier execution', async () => {
+    it('should not create a keep file for iOS', async () => {
       mkdirp('/dist/raw');
       write('/dist/index.bundle', 'bundle');
-      write('/dist/raw/first.otf', 'first font');
-      write('/dist/raw/second.otf', 'second font');
-      const acp = new AssetsCopyProcessor(acpConfigStub, fs as any);
-      for (const name of ['first', 'second']) {
-        acp.enqueueChunk(makeChunk('index.bundle', [`raw/${name}.otf`]), {
-          isEntry: true,
-        });
-        await Promise.all(acp.execute());
-      }
+      write('/dist/raw/inter.otf', 'font');
+      const acp = new AssetsCopyProcessor(
+        { ...acpConfigStub, platform: 'ios' },
+        fs as any
+      );
+      acp.enqueueChunk(makeChunk('index.bundle', ['raw/inter.otf']), {
+        isEntry: true,
+      });
+      acp.enqueueAndroidKeepFile();
+      await Promise.all(acp.execute());
 
-      expect(read(`${acpConfigStub.assetsDest}/raw/keep.xml`)).toEqual(
-        '<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@raw/second" />\n'
+      expect(fs.existsSync(`${acpConfigStub.assetsDest}/raw/keep.xml`)).toBe(
+        false
+      );
+    });
+
+    it('should not create a keep file unless it is enqueued', async () => {
+      mkdirp('/dist/raw');
+      write('/dist/index.bundle', 'bundle');
+      write('/dist/raw/inter.otf', 'font');
+      const acp = new AssetsCopyProcessor(acpConfigStub, fs as any);
+      acp.enqueueChunk(makeChunk('index.bundle', ['raw/inter.otf']), {
+        isEntry: true,
+      });
+      await Promise.all(acp.execute());
+
+      expect(read(`${acpConfigStub.assetsDest}/raw/inter.otf`)).toBe('font');
+      expect(fs.existsSync(`${acpConfigStub.assetsDest}/raw/keep.xml`)).toBe(
+        false
       );
     });
 
