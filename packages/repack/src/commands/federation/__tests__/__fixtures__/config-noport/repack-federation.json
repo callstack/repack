@@ -1,0 +1,6 @@
+{
+  "host": { "manifest": "./manifests/host.json" },
+  "remotes": {
+    "store": { "manifest": "./manifests/store.json" }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "host": { "manifest": "./manifests/host.json" },
+  "remotes": {
+    "catalog": { "manifest": "./manifests/catalog.json", "port": 9000 }
+  }
+}

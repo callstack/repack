@@ -65,7 +65,9 @@ export function normalizeOptions(options: Server.Options): NormalizedOptions {
   const hot = options.hot ?? false;
 
   const protocol = https ? 'https' : 'http';
-  const url = `${protocol}://${host}:${options.port}`;
+  // the normalized `port`, not `options.port` — an omitted port would
+  // otherwise leak `undefined` into every url built from this one
+  const url = `${protocol}://${host}:${port}`;
 
   const proxy = normalizeProxyOptions(options.proxy, url);
   const setupMiddlewares = normalizeSetupMiddlewares(options.setupMiddlewares);

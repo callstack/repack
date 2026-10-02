@@ -1,0 +1,139 @@
+import http from 'node:http';
+import net from 'node:net';
+import type { PlannedApp } from '../devPlan.js';
+import {
+  classifyDeadChild,
+  getFreePort,
+  isPortBusy,
+  planPorts,
+} from '../portPlanner.js';
+
+const app = (name: string, port?: number): PlannedApp => ({
+  name,
+  role: name === 'host' ? 'host' : 'remote',
+  root: `/workspace/${name}`,
+  bundler: 'rspack',
+  ...(port === undefined ? {} : { port }),
+  url: `http://localhost:${port ?? '<auto>'}`,
+  spawn: { file: process.execPath, args: [], cwd: `/workspace/${name}` },
+  commandLine: '',
+});
+
+describe('planPorts', () => {
+  it('keeps free declared ports verbatim (declared ports win)', async () => {
+    const result = await planPorts([app('host', 8081), app('MiniApp', 8082)], {
+      autoPorts: false,
+      probePort: async () => false,
+    });
+    expect(result.ports).toEqual({ host: 8081, MiniApp: 8082 });
+    expect(result.conflicts).toEqual([]);
+  });
+
+  it('assigns unmanaged apps a free port without probing', async () => {
+    const probePort = jest.fn(async (_port: number) => false);
+    const result = await planPorts([app('host', 8081), app('floater')], {
+      autoPorts: false,
+      probePort,
+    });
+    expect(result.ports.host).toBe(8081);
+    const assigned = result.ports.floater!;
+    expect(typeof assigned).toBe('number');
+    expect(assigned).toBeGreaterThan(0);
+    // Only declared ports are probed — an unmanaged app has nothing to clash.
+    expect(probePort.mock.calls.map(([port]) => port)).toEqual([8081]);
+  });
+
+  it('reports a busy declared port as a conflict without --auto-ports', async () => {
+    const result = await planPorts([app('host', 8081), app('MiniApp', 8082)], {
+      autoPorts: false,
+      probePort: async (port) => port === 8082, // MiniApp's port is busy
+    });
+    expect(result.conflicts).toEqual([{ app: 'MiniApp', port: 8082 }]);
+    // The conflicted app gets NO port: the command must exit 1 before any
+    // spawn, so nothing may carry a "resolved" value forward.
+    expect(result.ports).toEqual({ host: 8081 });
+  });
+
+  it('reassigns a busy declared port to a free one with --auto-ports', async () => {
+    const result = await planPorts([app('host', 8081), app('MiniApp', 8082)], {
+      autoPorts: true,
+      probePort: async (port) => port === 8082,
+    });
+    expect(result.conflicts).toEqual([]);
+    expect(result.ports.host).toBe(8081);
+    expect(result.ports.MiniApp).not.toBe(8082);
+    expect(typeof result.ports.MiniApp).toBe('number');
+  });
+});
+
+describe('isPortBusy (real listeners)', () => {
+  let server: http.Server | net.Server | null = null;
+
+  const closeServer = async () => {
+    if (server) {
+      const s = server;
+      server = null;
+      await new Promise<void>((resolve) => s.close(() => resolve()));
+    }
+  };
+
+  afterEach(closeServer);
+
+  it('classifies a dev-server-style responder as busy', async () => {
+    server = http.createServer((_req, res) =>
+      res.end('packager-status:running')
+    );
+    const port = await listen(server);
+    await expect(isPortBusy(port)).resolves.toBe(true);
+  });
+
+  it('classifies a garbage-body responder as busy (threat row "Network probes")', async () => {
+    server = http.createServer((_req, res) => res.end('\0garbage \f'));
+    const port = await listen(server);
+    await expect(isPortBusy(port)).resolves.toBe(true);
+  });
+
+  it('classifies a hang-without-response as busy within a hard timeout', async () => {
+    // Accepts the connection, never answers: the listener itself is the
+    // positive answer, and the call must still settle on its own clock.
+    server = http.createServer(() => {
+      // deliberately never responds
+    });
+    const port = await listen(server);
+    const started = Date.now();
+    await expect(isPortBusy(port)).resolves.toBe(true);
+    expect(Date.now() - started).toBeLessThan(3000);
+  });
+
+  it('classifies a bare TCP listener (no HTTP) as busy', async () => {
+    server = net.createServer();
+    const port = await listen(server);
+    await expect(isPortBusy(port)).resolves.toBe(true);
+  });
+
+  it('reports a free port as not busy', async () => {
+    const free = await getFreePort();
+    await expect(isPortBusy(free)).resolves.toBe(false);
+  });
+});
+
+describe('classifyDeadChild (TOCTOU)', () => {
+  it('names the app and port with an address-in-use verdict when the port answers /status', () => {
+    const verdict = classifyDeadChild('MiniApp', 8082, true);
+    expect(verdict.kind).toBe('address-in-use');
+    expect(verdict.message).toContain('MiniApp');
+    expect(verdict.message).toContain('8082');
+  });
+
+  it('reports a plain crash when the port is silent', () => {
+    const verdict = classifyDeadChild('MiniApp', 8082, false);
+    expect(verdict.kind).toBe('crash');
+    expect(verdict.message).toContain('MiniApp');
+  });
+});
+
+async function listen(server: http.Server | net.Server): Promise<number> {
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const address = server.address() as net.AddressInfo;
+  return address.port;
+}

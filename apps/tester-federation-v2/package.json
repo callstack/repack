@@ -7,8 +7,8 @@
     "ios": "react-native run-ios --no-packager",
     "pods": "(cd ios && bundle install && (bundle exec pod install || bundle exec pod update))",
     "pods:update": "(cd ios && bundle install && bundle exec pod update)",
-    "start:hostapp": "react-native webpack-start --config config.host-app.mts",
-    "start:miniapp": "react-native webpack-start --config config.mini-app.mts --port 8082"
+    "start": "react-native federation-dev",
+    "start:dry": "react-native federation-dev --dry-run"
   },
   "dependencies": {
     "@callstack/repack": "workspace:*",

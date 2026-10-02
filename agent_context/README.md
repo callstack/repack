@@ -9,3 +9,4 @@ works, and is kept in sync with the implementation as it evolves.
 | Folder | Topic |
 | --- | --- |
 | [rspackv2-jul2026](./rspackv2-jul2026/design.md) | Dual Rspack 1.x/2.x support |
+| [federation-tools](./federation-tools/design.md) | Federation manifest, doctor, shared-config retrofit, dev runner |

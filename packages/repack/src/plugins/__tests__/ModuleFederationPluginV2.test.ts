@@ -26,6 +26,70 @@ const mockPlugin = MFPluginRspack as unknown as jest.Mock<
   typeof MFPluginRspack
 >;
 
+/**
+ * Compiler stub with just enough surface for the opt-in manifest emission:
+ * real `compilation`/`afterProcessAssets` tap chains, driven manually.
+ * Context is this package so `@module-federation/enhanced` and the default
+ * shared dependencies resolve for real.
+ */
+function createHookCompiler() {
+  const compilationTaps: Array<(compilation: unknown) => void> = [];
+  const compiler = {
+    context: __dirname,
+    options: { name: 'ios', output: { publicPath: 'auto' } },
+    hooks: {
+      compilation: {
+        tap: (_name: string, cb: (compilation: unknown) => void) => {
+          compilationTaps.push(cb);
+        },
+      },
+    },
+    webpack: {
+      DefinePlugin: jest.fn(() => ({
+        apply: jest.fn(),
+      })),
+      rspackVersion: '1.0.0',
+      sources: {
+        RawSource: class {
+          constructor(public value: string) {}
+          source() {
+            return this.value;
+          }
+        },
+      },
+    },
+  };
+
+  const emit = (plugin: ModuleFederationPluginV2) => {
+    plugin.apply(compiler as unknown as Compiler);
+    const assets: Record<string, string> = {};
+    const compilation = {
+      modules: new Set(),
+      warnings: [],
+      hooks: {
+        afterProcessAssets: {
+          tap: (_name: string, cb: () => void) => {
+            cb();
+          },
+        },
+      },
+      getAsset: (name: string) =>
+        assets[name]
+          ? ({ source: { source: () => assets[name] } } as never)
+          : undefined,
+      emitAsset: (name: string, source: { source: () => string }) => {
+        assets[name] = source.source();
+      },
+    };
+    compilationTaps.forEach((cb) => {
+      cb(compilation);
+    });
+    return assets;
+  };
+
+  return { compiler, emit };
+}
+
 const corePluginPath = require.resolve('@callstack/repack/mf/core-plugin');
 const resolverPluginPath = require.resolve(
   '@callstack/repack/mf/resolver-plugin'
@@ -324,5 +388,64 @@ describe('ModuleFederationPlugin', () => {
         new ModuleFederationPluginV2({ name }).apply(mockCompiler);
       }).not.toThrow();
     });
+  });
+
+  it('should not touch compiler hooks when the manifest option is absent', () => {
+    // `mockCompiler` has no `hooks`: any unconditional hook registration
+    // would throw here, so the existing mocks pin the default no-op behavior
+    expect(() => {
+      new ModuleFederationPluginV2({ name: 'test' }).apply(mockCompiler);
+    }).not.toThrow();
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config).not.toHaveProperty('manifest');
+  });
+
+  it('should emit repack-federation-manifest.json when manifest is enabled', () => {
+    const { emit } = createHookCompiler();
+    const assets = emit(
+      new ModuleFederationPluginV2({
+        name: 'app1',
+        exposes: { './App': './src/App' },
+        manifest: true,
+      })
+    );
+
+    const manifest = JSON.parse(assets['repack-federation-manifest.json']);
+    expect(manifest).toMatchObject({
+      manifestVersion: 1,
+      name: 'app1',
+      metaData: { type: 'remote' },
+    });
+    expect(
+      manifest.shared.map((entry: { name: string }) => entry.name)
+    ).toEqual(expect.arrayContaining(['react', 'react-native']));
+    // resolved from the real node_modules of this package, never the
+    // declared `*` range
+    expect(
+      manifest.shared.find((entry: { name: string }) => entry.name === 'react')
+        .version
+    ).toMatch(/^\d+\.\d+\.\d+/);
+    expect(manifest.reactNative.version).toMatch(/^\d+\.\d+\.\d+/);
+  });
+
+  it('should honor a custom fileName and keep it out of the inner plugin config', () => {
+    const { emit } = createHookCompiler();
+    const assets = emit(
+      new ModuleFederationPluginV2({
+        name: 'app1',
+        manifest: { fileName: 'custom-manifest.json', nativeAnalysis: false },
+      })
+    );
+
+    expect(assets['custom-manifest.json']).toBeDefined();
+    expect(assets['repack-federation-manifest.json']).toBeUndefined();
+
+    const manifest = JSON.parse(assets['custom-manifest.json']);
+    expect(manifest.reactNative.nativeModules).toEqual([]);
+    expect(manifest.reactNative.note).toMatch(/disabled/);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config).not.toHaveProperty('manifest');
   });
 });

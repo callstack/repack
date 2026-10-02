@@ -1,0 +1,67 @@
+# repack-federation.json
+
+`repack-federation.json` is the per-repo federation workspace map. It tells Re.Pack tooling where the host and each remote live, which remotes support standalone mode, which bundler config each app runs, and which dev-server port each app uses. Its presence is what unlocks **zero-flag operation** of [`federation-doctor`](/api/cli/federation-doctor), [`federation-init`](/api/cli/federation-init) and the dev runner [`federation-dev`](/api/cli/federation-dev).
+
+## Schema
+
+```json
+{
+  "host": {
+    "manifest": "./shell/build",
+    "root": ".",
+    "config": "config.host-app.mts",
+    "port": 8081
+  },
+  "remotes": {
+    "store": {
+      "manifest": "http://localhost:8082",
+      "root": "./apps/store",
+      "standalone": true,
+      "port": 8082,
+      "config": "config.store.mts"
+    }
+  }
+}
+```
+
+| Field | Type | Required | Meaning |
+| --- | --- | --- | --- |
+| `host.manifest` | string | yes | Host manifest source: a `.json` file, a build output directory containing `repack-federation-manifest.json`, or an `http(s)` URL |
+| `host.root` | string | no | Host app root |
+| `host.config` | string | no | Bundler config for the host dev server, resolved against this file's directory; consumed by `federation-dev` |
+| `host.port` | number | no | Host dev-server port (default `8081`); consumed by `federation-dev` |
+| `remotes.<name>` | object | — | One entry per remote, keyed by its declared name (used to label findings) |
+| `remotes.<name>.manifest` | string | yes | Remote manifest source (same shapes as `host.manifest`) |
+| `remotes.<name>.root` | string | no | Remote app root |
+| `remotes.<name>.standalone` | boolean | no | Whether the remote supports `--standalone`; absence means unsupported and commands refuse `--standalone` for it |
+| `remotes.<name>.port` | number | no | Dev-server port; `federation-dev` fails with a conflict when a declared port is busy (escape hatch: `--auto-ports`) |
+| `remotes.<name>.config` | string | no | Bundler config for this remote's dev server, resolved against this file's directory; consumed by `federation-dev` |
+
+Relative `manifest`, `root` and `config` values resolve against the directory containing `repack-federation.json`, not the caller's working directory. The schema is strict: any field outside this shape is a validation error naming the offending field path.
+
+:::caution Forward incompatibility
+Strictness cuts both ways: `config` and `host.port` are new keys, and older Re.Pack tooling **rejects** a file that contains them instead of ignoring them. Bump the Re.Pack version across a workspace before adding these fields, or every tool pinned to the older version fails with exit code 2 on the same file.
+:::
+
+## Discovery
+
+Tools walk up from the current working directory — the file's own directory first, then each ancestor — and use the **first** `repack-federation.json` found. One invocation operates on exactly one config file, so in split checkouts (host and remotes in different trees) run tools from the directory whose walk-up hits the file you mean.
+
+## Precedence: flags over file over defaults
+
+Precedence applies per value:
+
+- `--host <source>` overrides only `host.manifest`; remaining values still come from the file.
+- `--remotes <list>` replaces the file's remote set wholesale (a list cannot be merged per-value).
+- A "required option missing" failure happens only when neither a flag nor the file supplies the value.
+- An invalid file is never silently ignored: the tool exits with code 2 and prints the file path and the exact validation failure (no stack trace, no fallback to defaults).
+
+## Example: zero-flag CI
+
+With the file above committed at the repository root, CI gates drift with a bare command:
+
+```bash
+react-native federation-doctor
+```
+
+Both `--host` and `--remotes` come from the file; explicit flags still win when passed.

@@ -1,0 +1,57 @@
+{
+  "manifestVersion": 1,
+  "id": "store",
+  "name": "store",
+  "metaData": {
+    "name": "store",
+    "globalName": "store",
+    "type": "remote",
+    "buildInfo": { "buildVersion": "def5678", "buildName": "store" },
+    "remoteEntry": {
+      "name": "store.container.js",
+      "path": "",
+      "type": "var"
+    },
+    "publicPath": "auto"
+  },
+  "shared": [
+    {
+      "name": "react",
+      "version": "19.0.0",
+      "singleton": true,
+      "eager": true,
+      "requiredVersion": "^19.0.0"
+    },
+    {
+      "name": "react-native",
+      "version": "0.79.2",
+      "singleton": true,
+      "eager": true,
+      "requiredVersion": "~0.79.2"
+    },
+    {
+      "name": "zustand",
+      "version": "5.0.3",
+      "singleton": true,
+      "eager": false,
+      "requiredVersion": "^5.0.0"
+    }
+  ],
+  "remotes": [],
+  "exposes": [
+    { "id": "store:Button", "name": "Button", "path": "./src/Button" }
+  ],
+  "reactNative": {
+    "version": "0.79.2",
+    "platforms": ["ios", "android"],
+    "nativeModules": [
+      {
+        "package": "react-native-reanimated",
+        "version": "3.17.1",
+        "turboModule": true,
+        "confidence": "static"
+      }
+    ],
+    "dynamicImportDetected": false
+  }
+}

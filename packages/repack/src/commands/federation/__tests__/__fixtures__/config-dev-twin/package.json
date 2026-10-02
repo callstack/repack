@@ -1,0 +1,6 @@
+{
+  "name": "config-dev-twin",
+  "dependencies": {
+    "react": "19.1.0"
+  }
+}

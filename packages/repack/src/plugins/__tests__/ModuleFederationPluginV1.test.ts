@@ -1,3 +1,4 @@
+import path from 'node:path';
 import type { Compiler } from '@rspack/core';
 import { ModuleFederationPluginV1 } from '../ModuleFederationPluginV1.js';
 
@@ -13,6 +14,68 @@ const mockCompiler = {
     },
   },
 } as unknown as Compiler;
+
+/**
+ * Compiler stub with just enough surface for the opt-in manifest emission:
+ * real `compilation`/`afterProcessAssets` tap chains, driven manually.
+ */
+function createHookCompiler(context: string) {
+  const compilationTaps: Array<(compilation: unknown) => void> = [];
+  const compiler = {
+    context,
+    options: { name: 'ios', output: { publicPath: 'auto' } },
+    hooks: {
+      compilation: {
+        tap: (_name: string, cb: (compilation: unknown) => void) => {
+          compilationTaps.push(cb);
+        },
+      },
+    },
+    webpack: {
+      container: {
+        ModuleFederationPluginV1: mockPlugin,
+        ModuleFederationPlugin: mockPlugin,
+      },
+      sources: {
+        RawSource: class {
+          constructor(public value: string) {}
+          source() {
+            return this.value;
+          }
+        },
+      },
+    },
+  };
+
+  const emit = (plugin: ModuleFederationPluginV1) => {
+    plugin.apply(compiler as unknown as Compiler);
+    const assets: Record<string, string> = {};
+    const compilation = {
+      modules: new Set(),
+      warnings: [],
+      hooks: {
+        afterProcessAssets: {
+          tap: (_name: string, cb: () => void) => {
+            cb();
+          },
+        },
+      },
+      getAsset: (name: string) =>
+        assets[name]
+          ? ({ source: { source: () => assets[name] } } as never)
+          : undefined,
+      emitAsset: (name: string, source: { source: () => string }) => {
+        assets[name] = source.source();
+      },
+    };
+    compilationTaps.forEach((cb) => {
+      cb(compilation);
+    });
+    return assets;
+  };
+
+  return { compiler, emit };
+}
 
 describe('ModuleFederationPlugin', () => {
   afterEach(() => {
@@ -283,5 +346,72 @@ describe('ModuleFederationPlugin', () => {
 
     const config = mockPlugin.mock.calls[0][0];
     expect(config.filename).toBe('remoteEntry.js');
+  });
+
+  it('should not touch compiler hooks when the manifest option is absent', () => {
+    // `mockCompiler` has no `hooks`: any unconditional hook registration
+    // would throw here, so the existing mocks pin the default no-op behavior
+    expect(() => {
+      new ModuleFederationPluginV1({ name: 'test' }).apply(mockCompiler);
+    }).not.toThrow();
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config).not.toHaveProperty('manifest');
+  });
+
+  it('should emit repack-federation-manifest.json when manifest is enabled', () => {
+    const { emit } = createHookCompiler(
+      path.join(__dirname, '__fixtures__', 'manifest-context')
+    );
+    const assets = emit(
+      new ModuleFederationPluginV1({
+        name: 'app1',
+        exposes: { './App': './src/App' },
+        manifest: true,
+      })
+    );
+
+    const manifest = JSON.parse(assets['repack-federation-manifest.json']);
+    expect(manifest).toMatchObject({
+      manifestVersion: 1,
+      name: 'app1',
+      metaData: { type: 'remote' },
+    });
+    const sharedNames = manifest.shared.map(
+      (entry: { name: string }) => entry.name
+    );
+    expect(sharedNames).toEqual(
+      expect.arrayContaining(['react', 'react-native'])
+    );
+    // Synthetic deep-import prefixes injected by the plugin must not leak
+    // into the manifest as fake shared dependencies
+    expect(sharedNames).not.toContain('react-native/');
+    expect(sharedNames).not.toContain('@react-native/');
+    expect(
+      manifest.shared.find((entry: { name: string }) => entry.name === 'react')
+    ).toMatchObject({
+      version: '18.0.0-fixture',
+      singleton: true,
+      eager: true,
+    });
+    expect(manifest.reactNative.version).toBe('0.0.0-fixture');
+  });
+
+  it('should honor a custom fileName and keep it out of the inner plugin config', () => {
+    const { emit } = createHookCompiler(
+      path.join(__dirname, '__fixtures__', 'manifest-context')
+    );
+    const assets = emit(
+      new ModuleFederationPluginV1({
+        name: 'app1',
+        manifest: { fileName: 'custom-manifest.json' },
+      })
+    );
+
+    expect(assets['custom-manifest.json']).toBeDefined();
+    expect(assets['repack-federation-manifest.json']).toBeUndefined();
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config).not.toHaveProperty('manifest');
   });
 });

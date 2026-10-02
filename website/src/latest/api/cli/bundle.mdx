@@ -145,6 +145,12 @@ Select the bundler explicitly. Without this option, Re.Pack infers the bundler f
 
 Path to a bundler config file, e.g webpack.config.js.
 
+### `--standalone`
+
+- Type: `boolean`
+
+Build the bundle in standalone mode: the flag reaches your bundler config as `env.argv.standalone`, so configs can switch shared dependencies to eager, e.g. `mode: env.argv?.standalone ? 'standalone' : 'federated'` in [`defineShared`](/api/utils/define-shared). It is runtime-only — never written to any file, so there is nothing to forget to revert. If a [`repack-federation.json`](/api/cli/repack-federation-json) declares this app's remote without `"standalone": true`, the command refuses with a clear message before compiling; no config file, or an app that is not listed, builds standalone unopposed.
+
 ### `-h`, `--help`
 
 Display help for command.

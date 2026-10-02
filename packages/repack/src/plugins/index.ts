@@ -1,6 +1,7 @@
 export * from './BabelPlugin.js';
 export * from './CodeSigningPlugin/index.js';
 export * from './DevelopmentPlugin.js';
+export * from './federationManifest/types.js';
 export * from './HermesBytecodePlugin/index.js';
 export * from './LoggerPlugin.js';
 export * from './ManifestPlugin.js';
