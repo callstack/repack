@@ -271,6 +271,8 @@ export class OutputPlugin {
         });
       }
 
+      localAssetsCopyProcessor?.enqueueAndroidKeepFile();
+
       for (const chunk of remoteChunks) {
         const specs = matchChunkToSpecs(chunk, this.remoteSpecs);
 
