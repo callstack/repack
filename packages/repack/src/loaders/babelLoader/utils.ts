@@ -13,12 +13,32 @@ interface HermesParser {
   ) => ParseResult;
 }
 
+const FLOW_PRAGMA_REGEX = /@flow/;
+
 export function isTypeScriptSource(fileName: string) {
   return !!fileName && fileName.endsWith('.ts');
 }
 
 export function isTSXSource(fileName: string) {
   return !!fileName && fileName.endsWith('.tsx');
+}
+
+/**
+ * Decides whether a source file needs hermes-parser.
+ *
+ * Mirrors `babel-plugin-syntax-hermes-parser` with the React Native preset's default
+ * `parseLangTypes: 'flow'`, which sends only files carrying an `@flow` pragma to hermes-parser
+ * and leaves everything else to `@babel/parser`. hermes-parser converts its own AST into a Babel
+ * AST, and that conversion is quadratic in the number of sibling nodes, so prebuilt minified
+ * dependencies can take minutes.
+ *
+ * `flow: 'all'` opts every file back into hermes-parser.
+ */
+export function shouldUseHermesParser(
+  src: string,
+  flow?: 'all' | 'detect'
+): boolean {
+  return flow === 'all' || FLOW_PRAGMA_REGEX.test(src);
 }
 
 function resolveHermesParser(projectRoot: string) {
