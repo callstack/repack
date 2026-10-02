@@ -77,6 +77,14 @@ export interface EnvOptions {
    * If `undefined`, then development server should not be run.
    */
   devServer?: DevServerOptions;
+
+  /**
+   * Tooling-set runtime flags passed through from the CLI, never persisted.
+   * The only key today is `standalone: boolean`, set by `--standalone` on
+   * `start`/`bundle`; configs derive mode from it, e.g.
+   * `mode: env.argv?.standalone ? 'standalone' : 'federated'`.
+   */
+  argv?: Record<string, any>;
 }
 
 export interface HMRMessage {

@@ -1,0 +1,9 @@
+{
+  "host": { "manifest": "../apps/host/build", "root": "../apps/host" },
+  "remotes": {
+    "remote-drift": {
+      "manifest": "../apps/remote-drift/build",
+      "root": "../apps/remote-drift"
+    }
+  }
+}

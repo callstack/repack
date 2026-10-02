@@ -1,0 +1,14 @@
+{
+  "host": {
+    "root": ".",
+    "manifest": "build/host-app/ios"
+  },
+  "remotes": {
+    "MiniApp": {
+      "root": ".",
+      "manifest": "build/mini-app/ios",
+      "standalone": true,
+      "port": 8082
+    }
+  }
+}

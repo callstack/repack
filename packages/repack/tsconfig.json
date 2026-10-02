@@ -8,5 +8,9 @@
       "@callstack/repack-dev-server/*": ["../dev-server/src/*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  // Capability fixtures are scanner/evaluation INPUT data (stub configs,
+  // fake feature sources), not project code: they import packages that do
+  // not exist and must keep their literal shape — never typechecked.
+  "exclude": ["src/commands/federation/__fixtures__/**"]
 }

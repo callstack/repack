@@ -1,5 +1,14 @@
 import { bundle } from './bundle.js';
-import { bundleCommandOptions, startCommandOptions } from './options.js';
+import { federationDoctor } from './federationDoctor.js';
+import { federationInit } from './federationInit.js';
+import { federationManifest } from './federationManifest.js';
+import {
+  bundleCommandOptions,
+  federationDoctorCommandOptions,
+  federationInitCommandOptions,
+  federationManifestCommandOptions,
+  startCommandOptions,
+} from './options.js';
 import { start } from './start.js';
 import type {
   BundleArguments,
@@ -8,7 +17,7 @@ import type {
   StartArguments,
 } from './types.js';
 
-const commands = [
+const bundlerCommands = [
   {
     name: 'bundle',
     description: 'Build the bundle for the provided JavaScript entry file.',
@@ -35,15 +44,45 @@ const commands = [
   },
 ] as const;
 
+const federationCommands = [
+  {
+    // Optional positional declared in the name: RN CLI >= 17 routes plugin
+    // commands through commander, which only forwards positionals that the
+    // command name declares — otherwise argv[0] is the options object.
+    name: 'federation-manifest [source]',
+    description: 'Inspect a federation manifest from a file, directory or URL.',
+    options: federationManifestCommandOptions,
+    func: federationManifest,
+  },
+  {
+    name: 'federation-doctor',
+    description:
+      'Check host and remote federation manifests for shared and native module drift.',
+    options: federationDoctorCommandOptions,
+    func: federationDoctor,
+  },
+  {
+    // Positional declaration required for RN CLI >= 17 (see federation-manifest).
+    name: 'federation-init [feature-folder]',
+    description:
+      'Scaffold a new federation remote from a feature folder: scanned deps, versionless defineShared configs and workspace registration, all diffed before any write.',
+    options: federationInitCommandOptions,
+    func: federationInit,
+  },
+] as const;
+
+const commands = [...bundlerCommands, ...federationCommands];
+
 export default commands;
 
 /**
  * Creates command definitions with a forced bundler engine.
  * Used by deprecated entry points (`commands/rspack`, `commands/webpack`)
- * to maintain backwards compatibility.
+ * to maintain backwards compatibility. Bundler-independent commands
+ * (`federation-*`) are not exposed through those entry points.
  */
 export function createBoundCommands(bundler: Bundler) {
-  return commands.map((cmd) => ({
+  return bundlerCommands.map((cmd) => ({
     ...cmd,
     func: (
       _: string[],

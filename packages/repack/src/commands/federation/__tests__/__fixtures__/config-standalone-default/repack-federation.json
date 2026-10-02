@@ -1,0 +1,6 @@
+{
+  "host": { "manifest": "./manifests/host.json" },
+  "remotes": {
+    "default-root": { "manifest": "./manifests/default-root.json" }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "remote-drift-app",
+  "version": "0.0.0",
+  "dependencies": {
+    "react": "9.8.7"
+  }
+}
