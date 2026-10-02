@@ -1,5 +1,16 @@
 # @callstack/repack
 
+## 5.4.1
+
+### Patch Changes
+
+- [#1473](https://github.com/callstack/repack/pull/1473) [`f9326a0`](https://github.com/callstack/repack/commit/f9326a0a5fcc7de753190fc7576b91320498dfa8) Thanks [@whydidoo](https://github.com/whydidoo)! - Emit an additional `res/raw` copy of bundled Android font binaries so Metro-compatible consumers such as Skia can load them by name. Preserve the existing `res/font` output for native `@font/...`, `R.font`, and XML font-family references. Generate `res/raw/keep.xml` for bundled Android resources so resource shrinking preserves both font copies and other assets loaded by name at runtime.
+
+  XML font-family resources continue to use `res/font`. Asset metadata and iOS, development-server, inline, and remote-loader output paths are unchanged.
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.4.1
+
 ## 5.4.0
 
 ### Minor Changes
