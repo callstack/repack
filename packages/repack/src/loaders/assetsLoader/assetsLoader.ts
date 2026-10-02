@@ -240,6 +240,20 @@ export default async function repackAssetsLoader(
 
         // Assets are emitted relatively to `output.path`.
         this.emitFile(filename, data ?? '');
+
+        if (
+          platform === 'android' &&
+          path.dirname(filename) === 'font' &&
+          testFonts.test(filename)
+        ) {
+          const rawFilename = path.join('raw', path.basename(filename));
+
+          logger.debug(
+            `Emitting asset ${rawFilename} for request ${resourcePath}`
+          );
+
+          this.emitFile(rawFilename, data ?? '');
+        }
       }
 
       if (options.remote?.enabled) {
