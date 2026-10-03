@@ -1,9 +1,21 @@
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as Repack from '@callstack/repack';
 import { ExpoPlugin } from '@callstack/repack-expo/rspack';
 
+const require = createRequire(import.meta.url);
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
+
+// Must match the host's shared list. Versions come from the installed
+// packages so they follow the workspace catalogs.
+const SHARED_SINGLETONS = [
+  'react',
+  'react-native',
+  'expo-constants',
+  'expo-asset',
+  'expo-font',
+];
 
 export default (env) => {
   const {
@@ -61,33 +73,16 @@ export default (env) => {
           './Widget': './src/Widget',
         },
         dts: false,
-        shared: {
-          react: {
-            singleton: true,
-            eager: true,
-            requiredVersion: '19.2.3',
-          },
-          'react-native': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '0.86.2',
-          },
-          'expo-constants': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '~57.0.8',
-          },
-          'expo-asset': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '~57.0.8',
-          },
-          'expo-font': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '~57.0.1',
-          },
-        },
+        shared: Object.fromEntries(
+          SHARED_SINGLETONS.map((name) => [
+            name,
+            {
+              singleton: true,
+              eager: true,
+              requiredVersion: require(`${name}/package.json`).version,
+            },
+          ])
+        ),
       }),
     ],
   };
