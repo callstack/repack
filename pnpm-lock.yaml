@@ -962,6 +962,9 @@ importers:
       '@expo/env':
         specifier: ~2.3.1
         version: 2.3.1
+      hermes-parser:
+        specifier: ^0.36.0
+        version: 0.36.0
     devDependencies:
       '@babel/core':
         specifier: 'catalog:'

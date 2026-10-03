@@ -943,8 +943,10 @@ test('adds isNodeModule per transformed resource inside package-local loaders', 
 });
 
 test('clears the default Babel source root while preserving an explicit override', () => {
+  const hermesParserPath = require.resolve('hermes-parser');
   assert.deepEqual(getExpoBabelLoaderOptions({ caller: { name: 'test' } }), {
     caller: { name: 'test', isNodeModule: false },
+    hermesParserPath,
     sourceRoot: undefined,
   });
   assert.deepEqual(
@@ -954,8 +956,23 @@ test('clears the default Babel source root while preserving an explicit override
     }),
     {
       caller: { name: 'test', isNodeModule: false },
+      hermesParserPath,
       sourceRoot: '/custom/source/root',
     }
+  );
+});
+
+test('uses its own hermes-parser unless the application configures one', () => {
+  assert.equal(
+    getExpoBabelLoaderOptions({ caller: { name: 'test' } }).hermesParserPath,
+    require.resolve('hermes-parser')
+  );
+  assert.equal(
+    getExpoBabelLoaderOptions({
+      caller: { name: 'test' },
+      hermesParserPath: '/custom/hermes-parser/dist/index.js',
+    }).hermesParserPath,
+    '/custom/hermes-parser/dist/index.js'
   );
 });
 

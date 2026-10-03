@@ -47,7 +47,8 @@
   },
   "dependencies": {
     "@callstack/repack-plugin-expo-modules": "workspace:^",
-    "@expo/env": "~2.3.1"
+    "@expo/env": "~2.3.1",
+    "hermes-parser": "^0.36.0"
   },
   "peerDependencies": {
     "@callstack/repack": "workspace:^",

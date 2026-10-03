@@ -6,6 +6,7 @@ import {
   type ExpoPublicEnvironmentSnapshot,
   getExpoEnvironmentFiles,
 } from '../environment/expoPublicEnvironment.js';
+import { resolveHermesParser } from './resolveHermesParser.js';
 import { withExpoBabelCaller } from './withExpoBabelCaller.js';
 
 export { raw };
@@ -15,6 +16,19 @@ type ExpoLoaderCaller = {
   isNodeModule?: boolean;
   projectRoot?: string;
 };
+
+function getProjectRoot(options: Record<string, unknown>): string | undefined {
+  const { caller } = options;
+  if (
+    typeof caller === 'object' &&
+    caller !== null &&
+    'projectRoot' in caller &&
+    typeof caller.projectRoot === 'string'
+  ) {
+    return caller.projectRoot;
+  }
+  return undefined;
+}
 
 function withExpoPublicEnvironment(
   loader: LoaderContext<Record<string, unknown>>,
@@ -66,7 +80,13 @@ export default function expoBabelLoader(
   const options = withExpoPublicEnvironment(
     this,
     withExpoBabelCaller(
-      { sourceRoot: undefined, ...babelLoaderOptions },
+      {
+        sourceRoot: undefined,
+        hermesParserPath: resolveHermesParser(
+          getProjectRoot(babelLoaderOptions) ?? this.rootContext
+        ),
+        ...babelLoaderOptions,
+      },
       this.resourcePath
     ),
     expoPublicEnvironment
