@@ -13,6 +13,7 @@
     "./assets-loader": "./dist/loaders/assetsLoader/index.js",
     "./babel-loader": "./dist/loaders/babelLoader/index.js",
     "./babel-swc-loader": "./dist/loaders/babelSwcLoader/index.js",
+    "./babel-plugin-syntax-react-native": "./dist/babelPlugins/syntaxReactNative.js",
     "./flow-loader": "./dist/loaders/flowLoader/index.js",
     "./react-refresh-loader": "./dist/loaders/reactRefreshLoader/index.js",
     "./mf/*": "./mf/*.js",
