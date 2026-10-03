@@ -73,6 +73,6 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "test": "pnpm build && node --test test/*.test.cjs"
+    "test": "node test/run.cjs"
   }
 }
