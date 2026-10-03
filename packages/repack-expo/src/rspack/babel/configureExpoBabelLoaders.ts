@@ -7,6 +7,7 @@ type Rule = {
   loader?: string;
   oneOf?: Rule[];
   options?: LoaderOptions;
+  resolve?: Record<string, unknown> & { fullySpecified?: boolean };
   rules?: Rule[];
   use?: LoaderUse | LoaderUse[];
 };
@@ -78,6 +79,17 @@ function configureUse(
   };
 }
 
+// The Expo Babel caller keeps ES modules (`supportsStaticESM`), so Rspack
+// applies Node's fully-specified ESM resolution to `.mjs` files and `.js`
+// files in `"type": "module"` packages. React Native libraries rely on
+// Metro-style extensionless imports with platform extensions (for example
+// `./useBackButton` resolving to `useBackButton.native.js`), so relax it for
+// modules compiled by the Expo Babel loader unless the rule sets it explicitly.
+function withMetroCompatibleResolution(rule: Rule): void {
+  if (rule.resolve?.fullySpecified !== undefined) return;
+  rule.resolve = { ...rule.resolve, fullySpecified: false };
+}
+
 function configureRule(
   rule: Rule,
   caller: ExpoBabelCaller,
@@ -98,6 +110,7 @@ function configureRule(
       rule.loader = expoLoader;
       rule.options = options;
       configured += 1;
+      withMetroCompatibleResolution(rule);
     }
   }
 
@@ -106,10 +119,12 @@ function configureRule(
     const configuredUses = uses.map((use) =>
       configureUse(use, caller, paths, publicEnvironment)
     );
-    configured += configuredUses.filter(
+    const configuredUseCount = configuredUses.filter(
       (use, index) => use !== uses[index]
     ).length;
+    configured += configuredUseCount;
     rule.use = Array.isArray(rule.use) ? configuredUses : configuredUses[0];
+    if (configuredUseCount > 0) withMetroCompatibleResolution(rule);
   }
 
   for (const child of [...(rule.oneOf ?? []), ...(rule.rules ?? [])]) {
@@ -141,6 +156,7 @@ export function configureExpoBabelLoaders(
     rules.push({
       test: /\.[cm]?[jt]sx?$/,
       type: 'javascript/auto',
+      resolve: { fullySpecified: false },
       use: {
         loader: paths.babel,
         options: { caller, expoPublicEnvironment: publicEnvironment },

@@ -341,6 +341,7 @@ test('adds a Babel rule when module.rules is empty', () => {
   );
   assert.equal(babelRules.length, 1);
   assert.equal(babelRules[0].type, 'javascript/auto');
+  assert.deepEqual(babelRules[0].resolve, { fullySpecified: false });
   assert.match(ruleUse(babelRules[0]).loader, /expoBabelLoader\.js$/);
 });
 
@@ -375,6 +376,30 @@ test('adapts an existing Babel rule without losing its options or adding a dupli
   assert.equal(use.options.sourceMaps, false);
   assert.equal(use.options.caller.custom, true);
   assert.equal(use.options.caller.platform, 'ios');
+  assert.deepEqual(existingRule.resolve, { fullySpecified: false });
+});
+
+test('keeps an explicit fullySpecified setting on an adapted Babel rule', () => {
+  const existingRule = {
+    resolve: { fullySpecified: true, preferRelative: true },
+    test: /\.[jt]sx?$/,
+    type: 'javascript/auto',
+    use: { loader: '@callstack/repack/babel-loader' },
+  };
+  const unrelatedRule = { test: /\.svg$/, use: { loader: 'svg-loader' } };
+  const plugin = createUnitExpoPlugin();
+  const compiler = createCompiler({
+    moduleRules: [existingRule, unrelatedRule],
+    plugins: [plugin],
+  });
+
+  plugin.apply(compiler);
+
+  assert.deepEqual(existingRule.resolve, {
+    fullySpecified: true,
+    preferRelative: true,
+  });
+  assert.equal(unrelatedRule.resolve, undefined);
 });
 
 test('defaults every extra chunk to local in its internal RepackPlugin', () => {
