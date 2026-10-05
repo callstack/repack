@@ -1,5 +1,5 @@
 
-# ModuleFederationV2Plugin
+# ModuleFederationPluginV2
 
 This plugin is designed to configure Module Federation 2.0. It's an enhanced version of the standard Module Federation plugin that's specifically tailored for React Native environments.
 
@@ -19,6 +19,7 @@ The plugin extends the standard Module Federation 2.0 plugin with functionality 
 3. **Default Runtime Plugins** - Comes with pre-configured runtime plugins for React Native:
    - `@callstack/repack/mf/core-plugin` - Core functionality
    - `@callstack/repack/mf/resolver-plugin` - React Native-specific module resolution
+   - `@callstack/repack/mf/prefetch-plugin` - `preloadRemote` support using `ScriptManager` prefetching
 4. **React Native Deep Imports Support** - Automatically handles sharing of deep imports from React Native core and official packages.
 5. **Container Name Validation** - Enforces valid JavaScript identifiers for container names (`name` option) to prevent runtime issues
 
@@ -90,7 +91,7 @@ This feature solves a common Module Federation issue where deep imports create s
 ### defaultRuntimePlugins
 
 - Type: `string[]`
-- Default: `["@callstack/repack/mf/core-plugin", "@callstack/repack/mf/resolver-plugin"]`
+- Default: `["@callstack/repack/mf/core-plugin", "@callstack/repack/mf/resolver-plugin", "@callstack/repack/mf/prefetch-plugin"]`
 
 List of default runtime plugins for Federation Runtime. These plugins provide core functionality and React Native-specific resolution for Module Federation.
 
@@ -118,7 +119,7 @@ new Repack.plugins.ModuleFederationPluginV2({
 new Repack.plugins.ModuleFederationPluginV2({
   name: "host",
   remotes: {
-    module1: "module1@http://example.com/module1.container.bundle",
+    module1: `module1@http://localhost:8082/${platform}/mf-manifest.json`,
   },
   shared: {
     react: { singleton: true, eager: true },
