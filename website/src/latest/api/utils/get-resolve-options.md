@@ -33,9 +33,9 @@ Target application platform (e.g. `ios` or `android`).
 Whether to enable Package Exports support. When enabled, uses the `exports` field in `package.json` instead of main fields.
 
 :::warning
-Package Exports support differs significantly between Metro and Re.Pack. Since this option is still marked as experimental in Metro, it's recommended to avoid using in Re.Pack for best compatbility.
+React Native 0.88 requires `enablePackageExports: true` in your Re.Pack resolver configuration. Its `react-native/setup-env` and `react-native/react-private-interface` entry points, as well as `@react-native/asset-utils`, use package exports.
 
-For more details, please refer to the [Module Resolution guide](/docs/features/module-resolution).
+Enabling package exports can change how existing dependencies resolve. For more details, please refer to the [Module Resolution guide](/docs/features/module-resolution).
 :::
 
 ### options.preferNativePlatform
@@ -60,7 +60,7 @@ module.exports = (env) => {
   return {
     resolve: {
       ...Repack.getResolveOptions(platform, {
-        enablePackageExports: false,
+        enablePackageExports: true,
         preferNativePlatform: true,
       }),
     },

@@ -26,15 +26,16 @@ export async function loadReactNativeParser(
   projectRoot?: string | null,
   providedParserPath?: string
 ): Promise<ReactNativeParser> {
+  const parserPath =
+    providedParserPath ??
+    resolveReactNativeParser(projectRoot ?? process.cwd()).parserPath;
+
   try {
-    const parserPath =
-      providedParserPath ??
-      resolveReactNativeParser(projectRoot ?? process.cwd()).parserPath;
     return await importDefaultESM<ReactNativeParser>(parserPath);
-  } catch (e) {
-    console.error(e);
-    throw new Error(
-      `Failed to import the React Native parser. Make sure you have '@react-native/babel-preset' and its parser dependencies installed in your project.`
+  } catch (cause) {
+    throw Object.assign(
+      new Error(`Failed to import the React Native parser at '${parserPath}'.`),
+      { cause }
     );
   }
 }

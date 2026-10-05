@@ -150,6 +150,45 @@ beforeAll(() => {
   for (const preset of presets) {
     createFixtureProject(path.join(workspaceRoot, preset), preset);
   }
+
+  const legacyPresetRequire = createRequire(
+    require.resolve('@react-native/babel-preset-legacy/package.json')
+  );
+  for (const fixture of ['unsupported-preset', 'missing-flow-parser']) {
+    const projectRoot = path.join(workspaceRoot, fixture);
+    const presetRoot = path.join(
+      projectRoot,
+      'node_modules/@react-native/babel-preset'
+    );
+    fs.mkdirSync(presetRoot, { recursive: true });
+    fs.writeFileSync(
+      path.join(projectRoot, 'index.js'),
+      'module.exports = 42;'
+    );
+    fs.writeFileSync(
+      path.join(presetRoot, 'package.json'),
+      JSON.stringify({
+        name: '@react-native/babel-preset',
+        version: '99.0.0-test',
+        dependencies:
+          fixture === 'missing-flow-parser' ? { 'flow-parser': '*' } : {},
+      })
+    );
+    linkPackage(projectRoot, '@callstack/repack', repackRoot);
+    linkPackage(projectRoot, '@swc/core', swcRoot);
+    if (fixture === 'missing-flow-parser') {
+      // A broken Flow installation must not silently use a hoisted Hermes plugin.
+      linkPackage(
+        projectRoot,
+        'babel-plugin-syntax-hermes-parser',
+        path.dirname(
+          legacyPresetRequire.resolve(
+            'babel-plugin-syntax-hermes-parser/package.json'
+          )
+        )
+      );
+    }
+  }
 });
 
 afterAll(() => {
@@ -285,3 +324,57 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
     });
   });
 });
+
+describe.each(['unsupported-preset', 'missing-flow-parser'])(
+  'React Native parser errors: %s',
+  (fixture) => {
+    it.each([...loaders, 'syntax-plugin'])(
+      'reports the preset and parser dependencies through %s',
+      async (loader) => {
+        const projectRoot = path.join(workspaceRoot, fixture);
+        const babelOptions = {
+          cwd: projectRoot,
+          babelrc: false,
+          configFile: false,
+        };
+        const use =
+          loader === 'syntax-plugin'
+            ? {
+                loader: require.resolve('babel-loader', {
+                  paths: [repackRoot],
+                }),
+                options: {
+                  ...babelOptions,
+                  plugins: [
+                    '@callstack/repack/babel-plugin-syntax-react-native',
+                  ],
+                },
+              }
+            : {
+                loader: require.resolve(`@callstack/repack/${loader}`),
+                options:
+                  loader === 'babel-loader'
+                    ? babelOptions
+                    : {
+                        hideParallelModeWarning: true,
+                        babelOverrides: babelOptions,
+                      },
+              };
+
+        await expect(
+          compileAndClose({
+            context: projectRoot,
+            mode: 'development',
+            entry: './index.js',
+            output: { path: '/out' },
+            module: { rules: [{ test: /\.js$/, use }] },
+          })
+        ).rejects.toThrow(
+          `Failed to resolve the React Native parser from @react-native/babel-preset@99.0.0-test (${path.join(projectRoot, 'node_modules/@react-native/babel-preset/package.json')}). ` +
+            `Make sure '@react-native/babel-preset' and its parser dependencies ` +
+            `('flow-parser' or 'babel-plugin-syntax-hermes-parser' with 'hermes-parser') are installed.`
+        );
+      }
+    );
+  }
+);
