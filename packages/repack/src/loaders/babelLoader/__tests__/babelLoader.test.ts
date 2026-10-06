@@ -5,7 +5,7 @@ jest.mock('../utils.js', () => {
   const { parseSync } = require('@babel/core');
   return {
     ...actual,
-    loadHermesParser: jest.fn(async () => ({
+    loadReactNativeParser: jest.fn(async () => ({
       parse: (
         src: string,
         opts: { sourceType?: 'script' | 'module' | 'unambiguous' }

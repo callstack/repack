@@ -22,7 +22,9 @@ import * as Repack from "@callstack/repack";
 export default (env) => {
   return {
     resolve: {
-      ...Repack.getResolveOptions(),
+      ...Repack.getResolveOptions(env.platform, {
+        enablePackageExports: true,
+      }),
     },
   };
 };
@@ -144,7 +146,7 @@ Modern packages use the `exports` field in `package.json` to define entry points
 
 :::caution
 
-Package exports support is **disabled by default** (`enablePackageExports: false`) to maintain backwards compatibility with existing React Native projects. Enable it explicitly if your dependencies require it.
+Package exports support is **disabled by default** (`enablePackageExports: false`) to maintain backwards compatibility with existing React Native projects. React Native 0.88 requires it for `react-native/setup-env`, `react-native/react-private-interface`, and `@react-native/asset-utils`. Enable it explicitly for React Native 0.88 or whenever your dependencies require it.
 
 :::
 
