@@ -7,12 +7,12 @@
   {
     "type": "file",
     "name": "module-federation-v1",
-    "label": "ModuleFederationV1Plugin"
+    "label": "ModuleFederationPluginV1"
   },
   {
     "type": "file",
     "name": "module-federation-v2",
-    "label": "ModuleFederationV2Plugin"
+    "label": "ModuleFederationPluginV2"
   },
   {
     "type": "file",
