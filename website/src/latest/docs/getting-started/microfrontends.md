@@ -8,13 +8,13 @@ Re.Pack is largely designed to enable microfrontends on mobile. It's one of the 
 
 ## Use Cases
 
-Mobile microfrontends shine in scenarios where complexity and team size grow beyond what a monolith can handle. Here are some use cases we found compelling for this archiecture:
+Mobile microfrontends shine in scenarios where complexity and team size grow beyond what a monolith can handle. Here are some use cases we found compelling for this architecture:
 
 - **Strong Team Boundaries**: If you’ve got separate teams working on different parts of an app (say, one for product listing, another for user settings), and often at different geographical locations or even company divisions, MFEs let each team own their domain end-to-end without stepping on each other’s toes.
 - **Independent Deployments**: While React Native allows for over-the-air updates, MFEs offer a more targeted deployments possibility, instead of replacing the whole JavaScript bundle like all OTA solutions out there.
 - **Super Apps**: When building a mobile super app with features loaded on demand, MFEs let you ship lightweight containers that pull in functionality as users need it, without them to be available in the initial app bundle, reducing the overall app size.
 
-It's crucial to be sure about what you want to achieve with microfrontends. Adopting this architecture, as with any other engineering design choice, comes with its own complexity. Make sure the trade-offs are worth it. And avoid using microforntends because it's some trend to follow.
+It's crucial to be sure about what you want to achieve with microfrontends. Adopting this architecture, as with any other engineering design choice, comes with its own complexity. Make sure the trade-offs are worth it. And avoid using microfrontends because it's some trend to follow.
 
 ## Module Federation
 
