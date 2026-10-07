@@ -32,7 +32,7 @@ While Module Federation 2 enables Re.Pack to use the same conventions and APIs a
 
 ## Challenges
 
-One of the complexities of microfrontends is version management. It’s challenging to handle on your own and can be quite cumbersome based on our experience. If you’re open to third-party services, we recommend Zephyr Cloud, which simplifies this problem, allows for sub-second deploys, and officially [integrates with Re.Pack](https://docs.zephyr-cloud.io/recipes/repack-mf) in a form of a Rspack/webpack plugin.
+One of the complexities of microfrontends is version management. It’s challenging to handle on your own and can be quite cumbersome based on our experience. If you’re open to third-party services, we recommend Zephyr Cloud, which simplifies this problem, allows for sub-second deploys, and officially [integrates with Re.Pack](https://docs.zephyr-cloud.io/bundlers/repack) in a form of a Rspack/webpack plugin.
 
 ## Examples
 

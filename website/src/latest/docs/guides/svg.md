@@ -1,12 +1,12 @@
 # SVG support
 
-By default, Re.Pack's [Assets loader](../../api/loaders/assets-loader) is configured to allow you to import SVGs in you code, but that doesn't mean you can render them immediately.
+By default, Re.Pack's [Assets loader](../../api/loaders/assets-loader) is configured to allow you to import SVGs in your code, but that doesn't mean you can render them immediately.
 
 ## Pre-requisites
 
 To render SVGs in your application, you first need to add [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) native module to your application.
 
-Please follow this installation instructions [here](https://github.com/react-native-svg/react-native-svg#installation).
+Please follow these installation instructions [here](https://github.com/react-native-svg/react-native-svg#installation).
 
 ## Exclude SVG from Re.Pack's Assets loader
 
@@ -16,9 +16,9 @@ Go to your Rspack/webpack configuration file and apply the following diff:
 
 ```diff
       {
-        test: ReactNative.getAssetExtensionsRegExp(
--         ReactNative.ASSET_EXTENSIONS
-+         ReactNative.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+        test: Repack.getAssetExtensionsRegExp(
+-         Repack.ASSET_EXTENSIONS
++         Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
         ),
         use: {
           loader: '@callstack/repack/assets-loader',
@@ -26,7 +26,7 @@ Go to your Rspack/webpack configuration file and apply the following diff:
 
 :::tip
 
-If you don't have Re.Pack's Assets loader rule in your Rspack/webpack config, read [this guide](/api/loaders/assets-loader#migrating-from-assetsplugin) first.
+If you don't have Re.Pack's Assets loader rule in your Rspack/webpack config, read [this guide](/api/loaders/assets-loader#excluding-assets) first.
 
 :::
 
@@ -148,7 +148,7 @@ module.exports = {
 };
 ```
 
-Now you can import the XML of your SVG in you code and render it using `SvgXml` from [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) or `SvgUri` if you chose `asset/inline` type.
+Now you can import the XML of your SVG in your code and render it using `SvgXml` from [`react-native-svg`](https://github.com/react-native-svg/react-native-svg) or `SvgUri` if you chose `asset/inline` type.
 
 :::info
 
@@ -193,7 +193,7 @@ module.exports = {
 
 :::tip
 
-When using both `assets/source` and `assets/inline`, you can specify different `test`, `include` and `exclude` values,
+When using both `asset/source` and `asset/inline`, you can specify different `test`, `include` and `exclude` values,
 so that Rspack/webpack can figure out which mechanism to use for which SVG. You can read more about rule conditions here:
 
 - [Condition](https://rspack.dev/config/module#condition)

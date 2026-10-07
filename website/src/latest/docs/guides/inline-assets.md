@@ -9,7 +9,7 @@ Common examples of such use cases are:
 
 :::tip Use sparingly and only when necessary
 
-Inlining assets into the bundle makes the **bundle size larger** and increases the **initial startup time** of an app. It's most noticable when you inline an asset which has 3 scales (e.g. `@1x`, `@2x` and `@3x`). In that scenario, all of the scales will be inlined into the bundle since it's not possible to determine which scale is needed at runtime.
+Inlining assets into the bundle makes the **bundle size larger** and increases the **initial startup time** of an app. It's most noticeable when you inline an asset which has 3 scales (e.g. `@1x`, `@2x` and `@3x`). In that scenario, all of the scales will be inlined into the bundle since it's not possible to determine which scale is needed at runtime.
 
 :::
 
@@ -35,14 +35,14 @@ module.exports = {
 };
 ```
 
-You can also use the `inline: true` option in the [getAssetsTransformRules](/api/utils/get-asset-transform-rules) helper function:
+You can also use the `inline: true` option in the [getAssetTransformRules](/api/utils/get-asset-transform-rules) helper function:
 
 ```js title="rspack.config.cjs"
 const Repack = require("@callstack/repack");
 
 module.exports = {
   module: {
-    rules: [...Repack.getAssetsTransformRules({ inline: true })],
+    rules: [...Repack.getAssetTransformRules({ inline: true })],
   },
 };
 ```
@@ -111,6 +111,9 @@ Make sure you configure those rules not to overlap, so that any single asset is 
 
 ```js title="rspack.config.cjs"
 const Repack = require("@callstack/repack");
+const path = require("node:path");
+
+const context = process.cwd();
 
 module.exports = {
   module: {

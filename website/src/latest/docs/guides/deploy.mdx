@@ -5,7 +5,7 @@ import { PackageManagerTabs } from '@theme';
 
 ## Zephyr Cloud Integration
 
-Re.Pack supports deploying your React Native Applications with MiniApps to [Zephyr Cloud](https://zephyr-cloud.io) with `zephyr-repack-plugin` by adding one line of code in your build configuration file - whether you're using [Rspack](https://rspack.dev) or [webpack](https://webpack.js.org) - you can seemlessly integrate deployment into your workflow. 
+Re.Pack supports deploying your React Native Applications with MiniApps to [Zephyr Cloud](https://zephyr-cloud.io) with `zephyr-repack-plugin` by adding one line of code in your build configuration file - whether you're using [Rspack](https://rspack.dev) or [webpack](https://webpack.js.org) - you can seamlessly integrate deployment into your workflow. 
 
 
 ## About Zephyr Cloud
@@ -16,7 +16,7 @@ When you are using `zephyr-repack-plugin` with a React Native project with MiniA
 ## Prerequisites
 
 
-1. We assume you have a React Native project with MiniApps ready. If not, you can follow the [Quick start guide](/docs/getting-started/quick-start) from Re.pack docs or use the bootstrap CLI provided by Zephyr Cloud by running `create-zephyr-apps` and select `React Native` as the framework. 
+1. We assume you have a React Native project with MiniApps ready. If not, you can follow the [Quick start guide](/docs/getting-started/quick-start) from Re.Pack docs or use the bootstrap CLI provided by Zephyr Cloud by running `create-zephyr-apps` and select `React Native` as the framework. 
 ```bash 
 npx create-zephyr-apps@latest
 ```
@@ -25,7 +25,7 @@ npx create-zephyr-apps@latest
 
 :::info Related docs
 
-For more details related to `create-zephyr-apps` CLI, please refer to the [Zephyr Cloud's documentation for React Native, Re.Pack and Module Federation](https://docs.zephyr-cloud.io/recipes/repack-mf).
+For more details related to `create-zephyr-apps` CLI, please refer to the [Zephyr Cloud's documentation for React Native, Re.Pack and Module Federation](https://docs.zephyr-cloud.io/bundlers/repack).
 
 You can also read more about deployment, concepts and best practices about how to use Zephyr Cloud in their [documentation](https://docs.zephyr-cloud.io).
 
@@ -53,7 +53,7 @@ module.exports = withZephyr({
 });
 ```
 
-For more details about configuration, please refer to the [configuration guide](https://docs.zephyr-cloud.io/recipes/repack-mf#modify-thehostapp) on Zephyr Cloud's documentation.
+For more details about configuration, please refer to the [configuration guide](https://docs.zephyr-cloud.io/bundlers/repack#host-application-consumer) on Zephyr Cloud's documentation.
 
 ## Deploy to Zephyr Cloud
 
@@ -67,7 +67,7 @@ If you click on the deploy URL, you will see this image:
 
 ![Asset not found](/img/asset-not-found.png)
 
-This is expected behavior as MiniApps on React Native doesn't have a default root `index.html` file.
+This is expected behavior as MiniApps on React Native don't have a default root `index.html` file.
 
 However, you can inspect whether anything was deployed by adding the suffix `/mf-manifest.json` at the end of the URL to see if the manifest file exists (this behaviour will be improved soon). 
 
