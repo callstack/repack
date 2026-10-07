@@ -120,19 +120,9 @@ Consider the following example:
 
 ```js title="rspack.config.cjs"
 const Repack = require("@callstack/repack");
-const crypto = require("node:crypto");
 
-function getCustomHash() {
-  return crypto.createHash("md5").update("some-content").digest("hex").slice(0, 8);
-}
-
-function getCustomAssetPath({
-  resourceFilename,
-  resourceDirname,
-  resourceExtensionType,
-}) {
-  const customHash = getCustomHash();
-  return `my-remote-assets/${resourceFilename}-${customHash}.${resourceExtensionType}`;
+function getCustomAssetPath({ resourceFilename, resourceExtensionType }) {
+  return `my-remote-assets/${resourceFilename}.${resourceExtensionType}`;
 }
 
 module.exports = {
@@ -158,7 +148,34 @@ module.exports = {
 
 The configuration above would generate the following paths:
 
-| Property   | Value                                                                     |
-| ---------- | ------------------------------------------------------------------------- |
-| asset path | `<buildFolder>/remote-assets/assets/my-remote-assets/logo-customhash.png` |
-| asset URL  | `http://localhost:9999/assets/my-remote-assets/logo-customhash.png`       |
+| Property   | Value                                                          |
+| ---------- | -------------------------------------------------------------- |
+| asset path | `<buildFolder>/remote-assets/assets/my-remote-assets/logo.png` |
+| asset URL  | `http://localhost:9999/assets/my-remote-assets/logo.png`       |
+
+:::tip Cache-busting hashes
+
+`assetPath` receives paths, never the contents of the asset, so derive the hash from the file itself if you want the URL to change whenever the file changes:
+
+```js title="rspack.config.cjs"
+const crypto = require("node:crypto");
+const fs = require("node:fs");
+
+function getCustomAssetPath({
+  resourcePath,
+  resourceFilename,
+  resourceExtensionType,
+}) {
+  const hash = crypto
+    .createHash("md5")
+    .update(fs.readFileSync(resourcePath))
+    .digest("hex")
+    .slice(0, 8);
+
+  return `my-remote-assets/${resourceFilename}-${hash}.${resourceExtensionType}`;
+}
+```
+
+`assetPath` is called synchronously, so the file has to be read synchronously too. It is also called once per asset request with the base file: the `@2x` and `@3x` variants reuse the returned path, so the hash only ever describes the base file.
+
+:::
