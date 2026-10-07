@@ -130,7 +130,7 @@ Re.Pack will resolve to `lib/native.js` because `react-native` has the highest p
 
 :::tip
 
-For more details on how main fields work, see the [resolve.mainFields](https://rspack.dev/config/resolve#resolvemainfields) documentation.
+For more details on how main fields work, see the [resolve.mainFields](https://rspack.rs/config/resolve#resolvemainfields) documentation.
 
 :::
 
@@ -296,7 +296,7 @@ When enabling `enablePackageExports`, some packages may resolve differently:
 ## Related documentation
 
 - [getResolveOptions](/api/utils/get-resolve-options) — API reference
-- [Rspack resolve configuration](https://rspack.dev/config/resolve) — Rspack resolver options
+- [Rspack resolve configuration](https://rspack.rs/config/resolve) — Rspack resolver options
 - [webpack resolve configuration](https://webpack.js.org/configuration/resolve/) — webpack resolver options
 - [Code Splitting](/docs/features/code-splitting) — For chunk resolution
 - [Glossary](/docs/resources/glossary) — Terminology reference

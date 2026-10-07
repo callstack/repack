@@ -142,7 +142,7 @@ module.exports = {
 
 You can read more about loader rules and how to configure them in:
 
-- [Rspack Module Rules documentation](https://rspack.dev/config/module.html#modulerules)
+- [Rspack Module Rules documentation](https://rspack.rs/config/module#modulerules)
 - [Webpack Module Rules documentation](https://webpack.js.org/configuration/module/#modulerules)
 
 :::

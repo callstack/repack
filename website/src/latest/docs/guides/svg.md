@@ -92,7 +92,7 @@ and you're fine with using `SvgXml` or `SvgUri` component from [`react-native-sv
 
 :::info
 
-You can read more about Rspack/webpack's asset modules [here](https://rspack.dev/guide/features/asset-module).
+You can read more about Rspack/webpack's asset modules [here](https://rspack.rs/guide/features/asset-module).
 
 :::
 
@@ -196,10 +196,10 @@ module.exports = {
 When using both `asset/source` and `asset/inline`, you can specify different `test`, `include` and `exclude` values,
 so that Rspack/webpack can figure out which mechanism to use for which SVG. You can read more about rule conditions here:
 
-- [Condition](https://rspack.dev/config/module#condition)
-- [Rule.include](https://rspack.dev/config/module#ruleinclude)
-- [Rule.exclude](https://rspack.dev/config/module#ruleexclude)
-- [Rule.test](https://rspack.dev/config/module#ruletest)
+- [Condition](https://rspack.rs/config/module-rules#condition)
+- [Rule.include](https://rspack.rs/config/module-rules#rulesinclude)
+- [Rule.exclude](https://rspack.rs/config/module-rules#rulesexclude)
+- [Rule.test](https://rspack.rs/config/module-rules#rulestest)
 
 :::
 
