@@ -13,10 +13,10 @@ Re.Pack uses the same configuration system as Rspack and webpack. This means you
 
 Since Re.Pack is built on top of Rspack and webpack, you can refer to their respective documentation for available configuration options:
 
-- [Rspack documentation](https://rspack.dev/config.html)
+- [Rspack documentation](https://rspack.rs/config/)
 - [Webpack documentation](https://webpack.js.org/configuration/)
 
-For example, if you want to configure output options for your bundles, you would look up these options in the [Rspack output documentation](https://rspack.dev/config/output.html) or [webpack output documentation](https://webpack.js.org/configuration/output/) and use them in the project config:
+For example, if you want to configure output options for your bundles, you would look up these options in the [Rspack output documentation](https://rspack.rs/config/output) or [webpack output documentation](https://webpack.js.org/configuration/output/) and use them in the project config:
 
 ```js title="rspack.config.cjs"
 module.exports = {
@@ -87,7 +87,7 @@ const __dirname = path.dirname(__filename);
 /**
  * Rspack configuration enhanced with Re.Pack defaults for React Native.
  *
- * Learn about Rspack configuration: https://rspack.dev/config/
+ * Learn about Rspack configuration: https://rspack.rs/config/
  * Learn about Re.Pack configuration: https://re-pack.dev/docs/guides/configuration
  */
 
@@ -117,7 +117,7 @@ Configuration can be defined in two ways: as a static object or as a function th
 The simplest form is a static object that defines your configuration:
 
 ```js title="rspack.config.cjs"
-const Repack = require("repack");
+const Repack = require("@callstack/repack");
 
 module.exports = {
   entry: "./index.js",
@@ -136,7 +136,7 @@ For more flexibility, you can export a function that returns the configuration o
 - Enable or disable configuration based on the `mode`
 
 ```js title="rspack.config.cjs"
-const Repack = require("repack");
+const Repack = require("@callstack/repack");
 
 module.exports = function (env) {
   const { mode, platform } = env;
@@ -170,7 +170,7 @@ The `env` argument is an object with the following properties:
 
 Re.Pack follows a specific order when resolving configuration values. When the same option is defined in multiple places, the value with higher precedence takes priority. Here's the precedence order from highest to lowest:
 
-1. CLI flags (e.g. `--mode production`)
+1. CLI flags (e.g. `--dev false`)
 2. Project configuration (your `rspack.config.js` or `webpack.config.js`)
 3. Command-specific configuration
 4. Re.Pack defaults
@@ -187,10 +187,10 @@ module.exports = {
 But run the CLI with a different mode:
 
 ```bash
-npx react-native bundle --mode production
+npx react-native bundle --dev false
 ```
 
-The CLI flag (`production`) will take precedence over the configuration file value (`development`).
+The mode derived by the CLI from `--dev false` (`production`) will take precedence over the configuration file value (`development`).
 
 ### Command-specific defaults
 
