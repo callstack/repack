@@ -26,7 +26,7 @@ Go to your Rspack/webpack configuration file and apply the following diff:
 
 :::tip
 
-If you don't have Re.Pack's Assets loader rule in your Rspack/webpack config, read [this guide](/api/loaders/assets-loader#excluding-assets) first.
+If you don't have Re.Pack's Assets loader rule in your Rspack/webpack config, read [this guide](/api/loaders/assets-loader#example) first.
 
 :::
 
