@@ -6,5 +6,6 @@
   "inline-assets",
   "remote-assets",
   "svg",
+  "fonts",
   "deploy"
 ]
