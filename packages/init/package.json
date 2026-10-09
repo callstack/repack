@@ -31,7 +31,8 @@
   "type": "module",
   "scripts": {
     "build": "rslib build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "update-versions": "node scripts/update-versions.mjs"
   },
   "dependencies": {
     "preferred-pm": "^4.1.1",

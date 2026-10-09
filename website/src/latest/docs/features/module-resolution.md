@@ -146,7 +146,7 @@ Modern packages use the `exports` field in `package.json` to define entry points
 
 :::caution
 
-Package exports support is **disabled by default** (`enablePackageExports: false`) to maintain backwards compatibility with existing React Native projects. React Native 0.88 requires it for `react-native/setup-env`, `react-native/react-private-interface`, and `@react-native/asset-utils`. Enable it explicitly for React Native 0.88 or whenever your dependencies require it.
+Package exports support is **disabled by default** (`enablePackageExports: false`) to maintain backwards compatibility with existing React Native projects. React Native 0.87 requires it for `@react-native/asset-utils`, and 0.88 also for `react-native/setup-env` and `react-native/react-private-interface`. Enable it explicitly for React Native 0.87 and newer, or whenever your dependencies require it. The configuration templates used by `@callstack/repack-init` enable it.
 
 :::
 
