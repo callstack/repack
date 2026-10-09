@@ -1,12 +1,12 @@
 import { transform } from '../babelLoader.js';
-import { loadHermesParser } from '../utils.js';
+import { loadReactNativeParser } from '../utils.js';
 
 jest.mock('../utils.js', () => {
   const actual = jest.requireActual('../utils.js');
   const { parseSync } = require('@babel/core');
   return {
     ...actual,
-    loadHermesParser: jest.fn(async () => ({
+    loadReactNativeParser: jest.fn(async () => ({
       parse: (
         src: string,
         opts: { sourceType?: 'script' | 'module' | 'unambiguous' }
@@ -43,7 +43,7 @@ describe('babelLoader', () => {
         baseTransformOptions('/virtual/plain.js')
       );
 
-      expect(loadHermesParser).not.toHaveBeenCalled();
+      expect(loadReactNativeParser).not.toHaveBeenCalled();
     });
 
     it('uses hermes-parser for sources with an @flow pragma', async () => {
@@ -52,7 +52,7 @@ describe('babelLoader', () => {
         baseTransformOptions('/virtual/flow.js')
       );
 
-      expect(loadHermesParser).toHaveBeenCalled();
+      expect(loadReactNativeParser).toHaveBeenCalled();
     });
 
     it('uses hermes-parser for every source when flow is set to all', async () => {
@@ -62,7 +62,7 @@ describe('babelLoader', () => {
         { hermesParserOverrides: { flow: 'all' } }
       );
 
-      expect(loadHermesParser).toHaveBeenCalled();
+      expect(loadReactNativeParser).toHaveBeenCalled();
     });
 
     it('skips hermes-parser for TypeScript sources', async () => {
@@ -71,7 +71,7 @@ describe('babelLoader', () => {
         baseTransformOptions('/virtual/typescript.ts')
       );
 
-      expect(loadHermesParser).not.toHaveBeenCalled();
+      expect(loadReactNativeParser).not.toHaveBeenCalled();
     });
   });
 

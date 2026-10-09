@@ -1,7 +1,8 @@
 import type { ParseResult } from '@babel/core';
 import { importDefaultESM } from '../../helpers/index.js';
+import { resolveReactNativeParser } from '../../helpers/resolveReactNativeParser.js';
 
-interface HermesParser {
+interface ReactNativeParser {
   parse: (
     src: string,
     opts: {
@@ -24,55 +25,37 @@ export function isTSXSource(fileName: string) {
 }
 
 /**
- * Decides whether a source file needs hermes-parser.
+ * Decides whether a source file needs the React Native parser (hermes-parser or flow-parser).
  *
- * Mirrors `babel-plugin-syntax-hermes-parser` with the React Native preset's default
- * `parseLangTypes: 'flow'`, which sends only files carrying an `@flow` pragma to hermes-parser
- * and leaves everything else to `@babel/parser`. hermes-parser converts its own AST into a Babel
+ * Mirrors the React Native preset's parser syntax plugin with its default
+ * `parseLangTypes: 'flow'`, which sends only files carrying an `@flow` pragma to the parser
+ * and leaves everything else to `@babel/parser`. The parser converts its own AST into a Babel
  * AST, and that conversion is quadratic in the number of sibling nodes, so prebuilt minified
  * dependencies can take minutes.
  *
- * `flow: 'all'` opts every file back into hermes-parser.
+ * `flow: 'all'` opts every file back into the React Native parser.
  */
-export function shouldUseHermesParser(
+export function shouldUseReactNativeParser(
   src: string,
   flow?: 'all' | 'detect'
 ): boolean {
   return flow === 'all' || FLOW_PRAGMA_REGEX.test(src);
 }
 
-function resolveHermesParser(projectRoot: string) {
-  const reactNativeBabelPresetPath = require.resolve(
-    '@react-native/babel-preset',
-    { paths: [projectRoot] }
-  );
-
-  const babelPluginSyntaxHermesParserPath = require.resolve(
-    'babel-plugin-syntax-hermes-parser',
-    { paths: [reactNativeBabelPresetPath] }
-  );
-
-  const hermesParserPath = require.resolve('hermes-parser', {
-    paths: [babelPluginSyntaxHermesParserPath],
-  });
-
-  return hermesParserPath;
-}
-
-export async function loadHermesParser(
+export async function loadReactNativeParser(
   projectRoot?: string | null,
-  providedHermesParserPath?: string
-): Promise<HermesParser> {
+  providedParserPath?: string
+): Promise<ReactNativeParser> {
+  const parserPath =
+    providedParserPath ??
+    resolveReactNativeParser(projectRoot ?? process.cwd()).parserPath;
+
   try {
-    const hermesParserPath =
-      providedHermesParserPath ??
-      resolveHermesParser(projectRoot ?? process.cwd());
-    const hermesParser = await importDefaultESM<HermesParser>(hermesParserPath);
-    return hermesParser;
-  } catch (e) {
-    console.error(e);
-    throw new Error(
-      `Failed to import 'hermes-parser'. Make sure you have '@react-native/babel-preset' installed in your project.`
+    return await importDefaultESM<ReactNativeParser>(parserPath);
+  } catch (cause) {
+    throw Object.assign(
+      new Error(`Failed to import the React Native parser at '${parserPath}'.`),
+      { cause }
     );
   }
 }

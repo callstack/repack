@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
@@ -26,7 +27,8 @@ async function compileBundle(
     }) => string;
     publicPath: string;
   },
-  maxInlineSize?: number
+  maxInlineSize?: number,
+  configuration: { extensions?: string[]; devServer?: boolean } = {}
 ) {
   const virtualPlugin = await createVirtualModulePlugin(virtualModules);
 
@@ -34,6 +36,7 @@ async function compileBundle(
     context: __dirname,
     mode: 'development',
     devtool: false,
+    ...(configuration.devServer ? { devServer: {} } : {}),
     entry: './index.js',
     resolve: getResolveOptions(platform),
     output: {
@@ -43,7 +46,7 @@ async function compileBundle(
     module: {
       rules: [
         {
-          test: getAssetExtensionsRegExp(),
+          test: getAssetExtensionsRegExp(configuration.extensions),
           use: {
             loader: require.resolve('@callstack/repack/assets-loader'),
             options: {
@@ -63,6 +66,220 @@ async function compileBundle(
 }
 
 describe('assetLoader', () => {
+  describe('font asset placement', () => {
+    const extensions = ['ttf', 'otf', 'ttc'];
+
+    it.each(extensions)(
+      'should emit .%s fonts to font and raw without changing metadata',
+      async (extension) => {
+        const content = `font fixture ${extension}\n`;
+        const { code, volume } = await compileBundle(
+          'android',
+          {
+            ...getReactNativeVirtualModules(),
+            './index.js': `export { default } from './__fixtures__/assets/TestFont.${extension}';`,
+          },
+          false,
+          { enabled: false, publicPath: 'http://localhost:9999' },
+          undefined,
+          { extensions }
+        );
+
+        const context: { Export?: { default: Record<string, unknown> } } = {};
+        vm.runInNewContext(code, context);
+
+        expect(context.Export?.default).toMatchObject({
+          name: 'TestFont',
+          type: extension,
+          scales: [1],
+          hash: createHash('md5').update(content).digest('hex'),
+          httpServerLocation: 'assets/__fixtures__/assets',
+        });
+        expect(
+          volume.readFileSync(
+            `/out/raw/__fixtures___assets_testfont.${extension}`,
+            'utf8'
+          )
+        ).toBe(content);
+        expect(
+          volume.readFileSync(
+            `/out/font/__fixtures___assets_testfont.${extension}`,
+            'utf8'
+          )
+        ).toBe(content);
+      }
+    );
+
+    it('should inline fonts without emitting files', async () => {
+      const content = 'font fixture ttf\n';
+      const { code, volume } = await compileBundle(
+        'android',
+        {
+          ...getReactNativeVirtualModules(),
+          './index.js':
+            "export { default } from './__fixtures__/assets/TestFont.ttf';",
+        },
+        true
+      );
+
+      const context: { Export?: { default: Record<string, unknown> } } = {};
+      vm.runInNewContext(code, context);
+
+      expect(context.Export?.default).toMatchObject({
+        uri: `data:font/ttf;base64,${Buffer.from(content).toString('base64')}`,
+        scale: 1,
+      });
+      expect(volume.existsSync('/out/raw')).toBe(false);
+      expect(volume.existsSync('/out/font')).toBe(false);
+      expect(volume.existsSync('/out/assets')).toBe(false);
+    });
+
+    it.each([
+      {
+        filename: 'TestFontFamily',
+        content: '<font-family></font-family>\n',
+        destination: 'font',
+      },
+      {
+        filename: 'TestShape',
+        content: '<shape></shape>\n',
+        destination: 'drawable-mdpi',
+      },
+    ])(
+      'should emit XML resources to $destination',
+      async ({ filename, content, destination }) => {
+        const { code, volume } = await compileBundle(
+          'android',
+          {
+            ...getReactNativeVirtualModules(),
+            './index.js': `export { default } from './__fixtures__/assets/${filename}.xml';`,
+          },
+          false,
+          undefined,
+          undefined,
+          { extensions: ['xml'] }
+        );
+
+        const context: { Export?: { default: Record<string, unknown> } } = {};
+        vm.runInNewContext(code, context);
+
+        expect(context.Export?.default).toMatchObject({
+          name: filename,
+          type: 'xml',
+        });
+        expect(
+          volume.readFileSync(
+            `/out/${destination}/__fixtures___assets_${filename.toLowerCase()}.xml`,
+            'utf8'
+          )
+        ).toBe(content);
+      }
+    );
+
+    it('should emit scaled .jpeg images to matching drawable-* folders', async () => {
+      const { code, volume } = await compileBundle(
+        'android',
+        {
+          ...getReactNativeVirtualModules(),
+          './index.js':
+            "export { default } from './__fixtures__/assets/TestPhoto.jpeg';",
+        },
+        false,
+        undefined,
+        undefined,
+        { extensions: ['jpeg'] }
+      );
+
+      const context: { Export?: { default: Record<string, unknown> } } = {};
+      vm.runInNewContext(code, context);
+
+      expect(context.Export?.default).toMatchObject({
+        name: 'TestPhoto',
+        type: 'jpeg',
+        scales: [1, 2, 3],
+      });
+      for (const [scale, destination] of [
+        [1, 'drawable-mdpi'],
+        [2, 'drawable-xhdpi'],
+        [3, 'drawable-xxhdpi'],
+      ]) {
+        expect(
+          volume.readFileSync(
+            `/out/${destination}/__fixtures___assets_testphoto.jpeg`,
+            'utf8'
+          )
+        ).toBe(`image fixture jpeg @${scale}x\n`);
+      }
+      expect(volume.existsSync('/out/raw')).toBe(false);
+    });
+
+    describe.each([
+      { mode: 'iOS', platform: 'ios', devServer: false, remote: false },
+      {
+        mode: 'Android dev server',
+        platform: 'android',
+        devServer: true,
+        remote: false,
+      },
+      {
+        mode: 'Android remote',
+        platform: 'android',
+        devServer: false,
+        remote: true,
+      },
+    ])('$mode fonts', ({ platform, devServer, remote }) => {
+      it.each(extensions)(
+        'should preserve existing .%s asset paths',
+        async (extension) => {
+          const content = `font fixture ${extension}\n`;
+          const { code, volume } = await compileBundle(
+            platform,
+            {
+              ...getReactNativeVirtualModules(),
+              './index.js': `export { default } from './__fixtures__/assets/TestFont.${extension}';`,
+            },
+            false,
+            remote
+              ? { enabled: true, publicPath: 'http://localhost:9999' }
+              : undefined,
+            undefined,
+            { extensions, devServer }
+          );
+
+          const context: { Export?: { default: Record<string, unknown> } } = {};
+          vm.runInNewContext(code, context);
+
+          expect(
+            volume.readFileSync(
+              `/out/${remote ? 'remote-assets/' : ''}assets/__fixtures__/assets/TestFont.${extension}`,
+              'utf8'
+            )
+          ).toBe(content);
+          expect(volume.existsSync('/out/raw')).toBe(false);
+          expect(volume.existsSync('/out/font')).toBe(false);
+          if (remote) {
+            expect(context.Export?.default).toMatchObject({
+              uri: `http://localhost:9999/assets/__fixtures__/assets/TestFont.${extension}`,
+              scale: 1,
+            });
+          } else {
+            expect(context.Export?.default).toMatchObject({
+              name: 'TestFont',
+              type: extension,
+              httpServerLocation: 'assets/__fixtures__/assets',
+            });
+            if (devServer) {
+              expect(context.Export?.default).toHaveProperty(
+                'fileSystemLocation',
+                '__fixtures__/assets'
+              );
+            }
+          }
+        }
+      );
+    });
+  });
+
   describe.each(['ios', 'android'])('on %s', (platform) => {
     it('should load and extract asset without scales', async () => {
       const { code, volume } = await compileBundle(platform, {

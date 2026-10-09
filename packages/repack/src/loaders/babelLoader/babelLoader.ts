@@ -16,8 +16,8 @@ import {
   isIgnoredRepackDeepImport,
   isTSXSource,
   isTypeScriptSource,
-  loadHermesParser,
-  shouldUseHermesParser,
+  loadReactNativeParser,
+  shouldUseReactNativeParser,
 } from './utils.js';
 
 export const raw = false;
@@ -86,19 +86,19 @@ export const transform = async (
     isTypeScriptSource(babelConfig.filename!) ||
     isTSXSource(babelConfig.filename!);
 
-  const needsHermesParser =
+  const needsReactNativeParser =
     !isTypeScript &&
-    shouldUseHermesParser(src, customOptions?.hermesParserOverrides?.flow);
+    shouldUseReactNativeParser(src, customOptions?.hermesParserOverrides?.flow);
 
   let sourceAst: ParseResult | null;
-  if (needsHermesParser) {
-    // load hermes parser dynamically to match the version from preset
-    const hermesParser = await loadHermesParser(
+  if (needsReactNativeParser) {
+    // load the parser dynamically to match the version from preset
+    const parser = await loadReactNativeParser(
       projectRoot,
       customOptions?.hermesParserPath
     );
 
-    sourceAst = hermesParser.parse(src, {
+    sourceAst = parser.parse(src, {
       babel: true,
       reactRuntimeTarget: '19',
       sourceType: babelConfig.sourceType,
@@ -150,7 +150,6 @@ export default async function babelLoader(
         filename: this.resourcePath,
         sourceMaps: withSourceMaps,
         sourceFileName: this.resourcePath,
-        sourceRoot: this.context,
         inputSourceMap: withSourceMaps ? inputSourceMap : undefined,
         ...babelOverrides,
       },

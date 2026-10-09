@@ -1,0 +1,9 @@
+interface Person {
+  name: string;
+}
+
+function greet<T extends Person>(person: T): string {
+  return `Hello ${person.name}`;
+}
+
+export const typescriptResult: string = greet({ name: 'TypeScript' });
