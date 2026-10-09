@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Repack Expo Tester",
+    "slug": "repack-expo-tester",
+    "scheme": "repackexpo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "updates": {
+      "enabled": false
+    },
+    "plugins": [
+      "expo-router",
+      "@callstack/repack-expo",
+      "./plugins/with-localhost-cleartext"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.callstack.repackexpo"
+    },
+    "android": {
+      "package": "com.callstack.repackexpo"
+    }
+  }
+}
