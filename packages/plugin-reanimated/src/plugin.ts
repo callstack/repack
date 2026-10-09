@@ -4,12 +4,14 @@ import semver, { type SemVer } from 'semver';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { createReanimatedModuleRules } from './rules.js';
 
+// Reanimated 4 prefixes the message with `[Reanimated] `
 const REANIMATED_SETUP_TESTS_WARNING =
-  /'`setUpTests` is available only in Jest environment\.'/;
+  /`setUpTests` is available only in Jest environment\./;
 const WORKLETS_CRITICAL_DEPENDENCY_WARNING =
   /Critical dependency: require function is used in a way in which dependencies cannot be statically extracted/;
-const WORKLETS_INITIALIZERS_MODULE =
-  /react-native-(?:worklets|reanimated)[\\/].*initializers(?:\.[cm]?[jt]sx?)?/;
+// Modules that call `require` dynamically to load Jest-only dependencies
+const WORKLETS_DYNAMIC_REQUIRE_MODULE =
+  /react-native-(?:worklets|reanimated)[\\/].*(?:initializers|jestUtils)/;
 
 type WarningLike = {
   message?: unknown;
@@ -101,7 +103,7 @@ export class ReanimatedPlugin {
       return (
         REANIMATED_SETUP_TESTS_WARNING.test(warningText) ||
         (WORKLETS_CRITICAL_DEPENDENCY_WARNING.test(warningText) &&
-          WORKLETS_INITIALIZERS_MODULE.test(warningText))
+          WORKLETS_DYNAMIC_REQUIRE_MODULE.test(warningText))
       );
     });
   }

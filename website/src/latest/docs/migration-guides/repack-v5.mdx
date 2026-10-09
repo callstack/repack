@@ -28,6 +28,19 @@ Update the Re.Pack plugins you use (`@callstack/repack-plugin-*`) to the same ma
 
 React Native 0.82 removed the legacy architecture, so Re.Pack's native module is now built only as a TurboModule. If your app still sets `newArchEnabled=false`, migrate it to the [New Architecture](https://reactnative.dev/architecture/landing-page) before upgrading.
 
+## Package exports are enabled by default
+
+`getResolveOptions()` now sets `enablePackageExports` to `true` by default, matching Metro's default since React Native 0.79. Configs that already pass `enablePackageExports: true` don't need changes. If your project relies on main-field resolution, opt out explicitly:
+
+```diff
+  resolve: {
+-   ...Repack.getResolveOptions(),
++   ...Repack.getResolveOptions({ enablePackageExports: false }),
+  },
+```
+
+See [Module Resolution](/docs/features/module-resolution#package-exports-conditional-exports) for how package exports change resolution.
+
 ## Module Federation V1 was removed
 
 `ModuleFederationPluginV1` is no longer available, and `Repack.plugins.ModuleFederationPlugin` now points to [`ModuleFederationPluginV2`](/api/plugins/module-federation-v2). Follow [Migrating from V1](/docs/features/module-federation#migrating-from-v1) to move your configs to Module Federation 2.0.
