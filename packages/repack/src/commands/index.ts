@@ -1,5 +1,12 @@
 import { bundle } from './bundle.js';
-import { bundleCommandOptions, startCommandOptions } from './options.js';
+import { federationDoctor } from './federationDoctor.js';
+import { federationManifest } from './federationManifest.js';
+import {
+  bundleCommandOptions,
+  federationDoctorCommandOptions,
+  federationManifestCommandOptions,
+  startCommandOptions,
+} from './options.js';
 import { start } from './start.js';
 import type {
   BundleArguments,
@@ -8,7 +15,7 @@ import type {
   StartArguments,
 } from './types.js';
 
-const commands = [
+const bundlerCommands = [
   {
     name: 'bundle',
     description: 'Build the bundle for the provided JavaScript entry file.',
@@ -35,15 +42,34 @@ const commands = [
   },
 ] as const;
 
+const federationCommands = [
+  {
+    name: 'federation-manifest',
+    description: 'Inspect a federation manifest from a file, directory or URL.',
+    options: federationManifestCommandOptions,
+    func: federationManifest,
+  },
+  {
+    name: 'federation-doctor',
+    description:
+      'Check host and remote federation manifests for shared and native module drift.',
+    options: federationDoctorCommandOptions,
+    func: federationDoctor,
+  },
+] as const;
+
+const commands = [...bundlerCommands, ...federationCommands];
+
 export default commands;
 
 /**
  * Creates command definitions with a forced bundler engine.
  * Used by deprecated entry points (`commands/rspack`, `commands/webpack`)
- * to maintain backwards compatibility.
+ * to maintain backwards compatibility. Bundler-independent commands
+ * (`federation-*`) are not exposed through those entry points.
  */
 export function createBoundCommands(bundler: Bundler) {
-  return commands.map((cmd) => ({
+  return bundlerCommands.map((cmd) => ({
     ...cmd,
     func: (
       _: string[],

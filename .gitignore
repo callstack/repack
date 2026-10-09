@@ -389,3 +389,6 @@ packages/**/docs
 
 # watchman
 .watchman-cookie*
+
+# Fixture node_modules for federation manifest tests
+!packages/repack/src/plugins/__tests__/__fixtures__/manifest-context/node_modules/

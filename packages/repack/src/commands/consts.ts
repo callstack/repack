@@ -43,6 +43,7 @@ export const DEV_SERVER_ASSET_TYPES = new RegExp(
     '^remote-assets',
     // TODO (jbroma): Find a more generic way to handle this
     '^mf-manifest.json$',
+    '^repack-federation-manifest.json$',
     '^@mf-types.zip$',
     '^@mf-types.d.ts$',
   ].join('|')

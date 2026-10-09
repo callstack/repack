@@ -42,6 +42,19 @@ export interface StartArguments {
   bundler?: Bundler;
 }
 
+export interface FederationManifestArguments {
+  source?: string;
+  json?: boolean;
+}
+
+export interface FederationDoctorArguments {
+  host?: string;
+  /** Comma-separated string; an array appears if the CLI merges repeated flags. */
+  remotes?: string | string[];
+  format?: string;
+  allowMissingManifests?: boolean;
+}
+
 export interface CliConfig {
   root: string;
   platforms: string[];

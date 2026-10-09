@@ -3,6 +3,10 @@ import type { Compiler as RspackCompiler } from '@rspack/core';
 import { name as isIdentifier } from 'estree-util-is-identifier-name';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { isRspackCompiler } from '../helpers/index.js';
+import {
+  applyFederationManifest,
+  type FederationManifestOption,
+} from './federationManifest/index.js';
 
 type JsModuleDescriptor = {
   identifier: string;
@@ -30,6 +34,19 @@ export interface ModuleFederationPluginV2Config
   defaultRuntimePlugins?: string[];
   /** Enable or disable adding React Native deep imports to shared dependencies. Defaults to true */
   reactNativeDeepImports?: boolean;
+  /**
+   * Emit a `repack-federation-manifest.json` describing this container:
+   * resolved shared dependency versions, remotes, exposes and a React Native
+   * native-module block. Disabled by default.
+   *
+   * Pass `true` for defaults or an object to customize `fileName`,
+   * `filePath` and `nativeAnalysis`.
+   *
+   * Note: this option is consumed by Re.Pack and not forwarded to the
+   * `@module-federation/enhanced` plugin, which emits its own
+   * `mf-manifest.json` with its own defaults regardless of this flag.
+   */
+  manifest?: FederationManifestOption;
 }
 
 /**
@@ -101,12 +118,18 @@ export class ModuleFederationPluginV2 {
   public config: MF.ModuleFederationPluginOptions;
   private deepImports: boolean;
   private defaultRuntimePlugins: string[];
+  private manifest: FederationManifestOption | undefined;
 
   constructor(pluginConfig: ModuleFederationPluginV2Config) {
-    const { defaultRuntimePlugins, reactNativeDeepImports, ...config } =
-      pluginConfig;
+    const {
+      defaultRuntimePlugins,
+      reactNativeDeepImports,
+      manifest,
+      ...config
+    } = pluginConfig;
     this.config = config;
     this.deepImports = reactNativeDeepImports ?? true;
+    this.manifest = manifest || undefined;
     this.defaultRuntimePlugins = defaultRuntimePlugins ?? [
       '@callstack/repack/mf/core-plugin',
       '@callstack/repack/mf/resolver-plugin',
@@ -367,5 +390,18 @@ export class ModuleFederationPluginV2 {
     };
 
     new ModuleFederationPlugin(config).apply(compiler);
+
+    // Taps compiler hooks, so it stays behind the opt-in flag: existing
+    // setups (and compiler mocks without `hooks`) must not hit this path.
+    if (this.manifest) {
+      applyFederationManifest(compiler, {
+        option: this.manifest,
+        name: this.config.name || 'unknown',
+        shared: sharedConfig,
+        remotes: this.config.remotes,
+        exposes: this.config.exposes,
+        filename: this.config.filename,
+      });
+    }
   }
 }
