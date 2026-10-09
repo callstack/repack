@@ -46,7 +46,7 @@ function warningToSearchableText(warning: unknown): string {
 
 interface ReanimatedPluginOptions {
   /**
-   * Custom options passed to 'react-native-reanimated/plugin' or 'react-native-worklets/plugin' babel plugins.
+   * Custom options passed to the 'react-native-worklets/plugin' babel plugin.
    */
   babelPluginOptions?: Record<string, any>;
 
@@ -74,18 +74,23 @@ export class ReanimatedPlugin {
 
     const reanimatedVersion = this.getReanimatedVersion(reanimatedPath);
 
-    if (reanimatedVersion.major >= 4) {
-      this.ensureDependencyInstalled(compiler.context, 'react-native-worklets');
+    if (reanimatedVersion.major < 4) {
+      const error = new Error(
+        `[RepackReanimatedPlugin] react-native-reanimated ${reanimatedVersion.version} is not supported. ` +
+          'Re.Pack 6 requires react-native-reanimated 4 or newer.'
+      );
+      // remove the stack trace to make the error more readable
+      error.stack = undefined;
+      throw error;
     }
+
+    this.ensureDependencyInstalled(compiler.context, 'react-native-worklets');
 
     if (!this.options.unstable_disableTransform) {
       // add rules for transpiling with reanimated loader
       // TODO made obsolete by the new babel-swc-loader, remove in 6.0
       compiler.options.module.rules.push(
-        createReanimatedModuleRules(
-          reanimatedVersion.major,
-          this.options.babelPluginOptions
-        )
+        createReanimatedModuleRules(this.options.babelPluginOptions)
       );
     }
 

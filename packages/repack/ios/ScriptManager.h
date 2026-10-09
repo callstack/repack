@@ -1,12 +1,8 @@
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "RNScriptManagerSpec.h"
-
-@interface ScriptManager : NSObject <NativeScriptManagerSpec>
-#else
 #import <React/RCTBridgeModule.h>
 
+// Conformance to the C++ codegen spec is declared in ScriptManager.mm so this
+// header stays importable from Swift and Objective-C.
 @interface ScriptManager : NSObject <RCTBridgeModule>
-#endif
 
 /**
  * Factory used to create the `NSURLSession` for downloading remote scripts.

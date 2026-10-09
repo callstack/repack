@@ -67,7 +67,7 @@
     "@babel/core": "^7.20.0",
     "@module-federation/enhanced": ">=2.0.0",
     "@rspack/core": ">=1",
-    "react-native": ">=0.79",
+    "react-native": ">=0.82",
     "webpack": ">=5.90"
   },
   "peerDependenciesMeta": {
