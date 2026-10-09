@@ -15,7 +15,7 @@ interface GetResolveOptionsResult {
  */
 export interface ResolveOptions {
   /**
-   * Whether to enable Package Exports support. Defaults to `false`.
+   * Whether to enable Package Exports support. Defaults to `true`, matching Metro.
    */
   enablePackageExports?: boolean;
   /**
@@ -28,8 +28,8 @@ export interface ResolveOptions {
  * Get Webpack's resolve options to properly resolve JavaScript files:
  * - resolve platform extensions (e.g. `file.ios.js`)
  * - resolve native extensions (e.g. `file.native.js`)
- * - optionally use package exports (`exports` field in `package.json`) instead of
- *   main fields (e.g. `main` or `browser` or `react-native`)
+ * - use package exports (`exports` field in `package.json`) before main fields
+ *   (e.g. `main` or `browser` or `react-native`), unless disabled
  *
  * @param platform Target application platform.
  * @param options Additional options that can modify resolution behaviour.
@@ -48,7 +48,7 @@ export interface ResolveOptions {
  *   return {
  *     resolve: {
  *       ...Repack.getResolveOptions(platform, {
- *         enablePackageExports: false,
+ *         enablePackageExports: true,
  *         preferNativePlatform: true
  *       }),
  *     },
@@ -78,7 +78,7 @@ export function getResolveOptions(
   ) as ResolveOptions | undefined;
 
   const preferNativePlatform = _options?.preferNativePlatform ?? true;
-  const enablePackageExports = _options?.enablePackageExports ?? false;
+  const enablePackageExports = _options?.enablePackageExports ?? true;
 
   let extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
 

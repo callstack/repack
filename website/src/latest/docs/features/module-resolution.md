@@ -22,9 +22,7 @@ import * as Repack from "@callstack/repack";
 export default (env) => {
   return {
     resolve: {
-      ...Repack.getResolveOptions(env.platform, {
-        enablePackageExports: true,
-      }),
+      ...Repack.getResolveOptions(env.platform),
     },
   };
 };
@@ -105,7 +103,7 @@ Main fields are `package.json` properties that point to a package's entry file. 
 
 :::
 
-When resolving a package's entry point, Re.Pack checks these fields in `package.json` in order:
+When a package has no `exports` field, or [package exports](#package-exports-conditional-exports) are disabled, Re.Pack resolves its entry point by checking these fields in `package.json` in order:
 
 1. `react-native` — React Native-specific entry point
 2. `browser` — Browser-compatible entry point
@@ -146,15 +144,15 @@ Modern packages use the `exports` field in `package.json` to define entry points
 
 :::caution
 
-Package exports support is **disabled by default** (`enablePackageExports: false`) to maintain backwards compatibility with existing React Native projects. React Native 0.87 requires it for `@react-native/asset-utils`, and 0.88 also for `react-native/setup-env` and `react-native/react-private-interface`. Enable it explicitly for React Native 0.87 and newer, or whenever your dependencies require it. The configuration templates used by `@callstack/repack-init` enable it.
+Package exports support is **enabled by default** (`enablePackageExports: true`), matching Metro's default since React Native 0.79. React Native 0.87 requires it for `@react-native/asset-utils`, and 0.88 also for `react-native/setup-env` and `react-native/react-private-interface`, so only disable it if your React Native version and dependencies don't need it.
 
 :::
 
-### Enabling package exports
+### Disabling package exports
 
 ```ts
 Repack.getResolveOptions({
-  enablePackageExports: true,
+  enablePackageExports: false,
 });
 ```
 
@@ -277,7 +275,7 @@ export default (env) => {
 
 1. **Check the package's `package.json`** — Look at `main`, `react-native`, `browser`, and `exports` fields
 2. **Verify platform extensions** — Ensure platform-specific files use correct naming (`.ios.js`, not `.iOS.js`)
-3. **Check `enablePackageExports`** — Some modern packages require this to be `true`
+3. **Check `enablePackageExports`** — Some modern packages require this to be `true` (the default)
 
 ### Platform-specific files not being picked up
 
@@ -287,7 +285,7 @@ export default (env) => {
 
 ### Package exports compatibility issues
 
-When enabling `enablePackageExports`, some packages may resolve differently:
+With `enablePackageExports` enabled, some packages may resolve differently than with main fields only:
 
 1. **Compare with Metro** — Test the same import in a Metro-bundled project
 2. **Check condition order** — The `react-native` condition should take precedence
