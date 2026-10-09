@@ -9,7 +9,6 @@
     ".": "./dist/index.js",
     "./client": "./client/index.js",
     "./commands": "./commands/index.js",
-    "./commands/*": "./commands/*.js",
     "./assets-loader": "./dist/loaders/assetsLoader/index.js",
     "./babel-loader": "./dist/loaders/babelLoader/index.js",
     "./babel-swc-loader": "./dist/loaders/babelSwcLoader/index.js",
@@ -47,7 +46,7 @@
   "author": "zamotany <zamotany.oss@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=18"
+    "node": ">=22.12.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -65,9 +64,9 @@
     "clang-format:android": "find android/src/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i"
   },
   "peerDependencies": {
-    "@module-federation/enhanced": ">=0.6.10",
+    "@module-federation/enhanced": ">=2.0.0",
     "@rspack/core": ">=1",
-    "react-native": ">=0.74",
+    "react-native": ">=0.79",
     "webpack": ">=5.90"
   },
   "peerDependenciesMeta": {
@@ -104,7 +103,7 @@
     "semver": "^7.7.2",
     "shallowequal": "^1.1.0",
     "tapable": "^2.2.1",
-    "terser-webpack-plugin": "5.5.0",
+    "terser-webpack-plugin": "^5.6.1",
     "throttleit": "^2.1.0",
     "webpack-merge": "^6.0.1"
   },
@@ -113,8 +112,8 @@
     "@babel/core": "^7.29.7",
     "@babel/plugin-transform-export-namespace-from": "^7.29.7",
     "@babel/plugin-transform-modules-commonjs": "^7.29.7",
-    "@module-federation/enhanced": "0.8.9",
-    "@module-federation/sdk": "0.6.10",
+    "@module-federation/enhanced": "catalog:testers",
+    "@module-federation/sdk": "2.8.0",
     "@rspack/core": "catalog:",
     "@swc/helpers": "catalog:",
     "@types/babel__core": "^7.20.5",
@@ -125,7 +124,6 @@
     "@types/mime-types": "^2.1.1",
     "@types/node": "catalog:",
     "@types/react": "catalog:testers",
-    "@types/react-dom": "^17.0.7",
     "@types/semver": "^7.7.0",
     "@types/shallowequal": "^1.1.1",
     "babel-jest": "^29.7.0",
