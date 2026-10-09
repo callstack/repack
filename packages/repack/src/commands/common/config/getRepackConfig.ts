@@ -13,7 +13,7 @@ export async function getRepackConfig(
   rootDir: string
 ) {
   const moduleConfig = getModuleConfig(bundler);
-  const minimizerConfiguration = await getMinimizerConfig(bundler, rootDir);
+  const minimizerConfiguration = await getMinimizerConfig(rootDir);
 
   return {
     devtool: 'source-map',

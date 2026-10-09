@@ -43,7 +43,7 @@ describe('getMinimizerConfig', () => {
     });
     importDefaultESMMock.mockResolvedValue(PluginMock);
 
-    await getMinimizerConfig('webpack', '/project');
+    await getMinimizerConfig('/project');
 
     const { minify } = PluginMock.mock.calls[0][0];
     const implementation = minify ?? PluginMock.terserMinify;
@@ -55,7 +55,7 @@ describe('getMinimizerConfig', () => {
   it('should run terser on a .bundle asset after worker serialization', async () => {
     importDefaultESMMock.mockImplementation(async (path) => require(path));
 
-    const [minimizer] = await getMinimizerConfig('webpack', process.cwd());
+    const [minimizer] = await getMinimizerConfig(process.cwd());
     const { implementation, options } = (
       minimizer as unknown as NormalizedPlugin
     ).options.minimizer;
@@ -83,7 +83,7 @@ describe('getMinimizerConfig', () => {
   it('should report the terser version the built-in minifier reports', async () => {
     importDefaultESMMock.mockImplementation(async (path) => require(path));
 
-    const [minimizer] = await getMinimizerConfig('webpack', process.cwd());
+    const [minimizer] = await getMinimizerConfig(process.cwd());
     const { implementation } = (minimizer as unknown as NormalizedPlugin)
       .options.minimizer;
     const { terserMinify } = require('terser-webpack-plugin');
