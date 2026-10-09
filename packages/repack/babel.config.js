@@ -16,7 +16,7 @@ module.exports = {
         [
           '@babel/preset-env',
           {
-            targets: { node: 18 },
+            targets: { node: 22 },
             // Disable CJS transform and add it manually.
             // Otherwise it will replace `import(...)` with `require(...)`, which
             // is not what we want.
@@ -30,7 +30,7 @@ module.exports = {
   env: {
     // Transform everything in `test` environment, so unit test can pass.
     test: {
-      presets: [['@babel/preset-env', { targets: { node: 18 } }]],
+      presets: [['@babel/preset-env', { targets: { node: 22 } }]],
     },
   },
 };
