@@ -1,5 +1,29 @@
 # @callstack/repack-dev-server
 
+## 5.4.2
+
+## 5.4.1
+
+## 5.4.0
+
+### Patch Changes
+
+- [#1434](https://github.com/callstack/repack/pull/1434) [`ed1003f`](https://github.com/callstack/repack/commit/ed1003fe1eec193001724ad239b279f543438b13) Thanks [@MikitasK](https://github.com/MikitasK)! - Fix development symbolication for Module Federation host and remote bundles. The host now follows a remote bundle's declared source map, invalid generated webpack source URLs no longer invalidate an otherwise usable map, symbolication continues when an individual frame cannot be mapped, and code frames use the matching source map's embedded source content. The dev server also logs the first useful symbolicated runtime frame as a fallback when opening the source file from the device is delayed.
+
+- [#1470](https://github.com/callstack/repack/pull/1470) [`4a36980`](https://github.com/callstack/repack/commit/4a36980ad0b7a0d362b95cbab03474ff52be4ea4) Thanks [@dannyhw](https://github.com/dannyhw)! - Fix source map source names and development stack frames for files whose path
+  URLs would encode.
+
+  - `babel-loader` and `babel-swc-loader` no longer set `sourceRoot`. Webpack, and
+    Rspack whenever Babel produced the map, prepended it to the absolute source
+    path, so project files were named `src/<dir>/<absolute path>` in development
+    and release source maps.
+  - The dev server now returns symbolicated file names exactly as the bundler
+    emitted them. Before, `source-map` percent-encoded them, so a frame outside the
+    project root came back as `[projectRoot%5E2]/...`, and a path with a space or
+    non-ASCII character came back encoded. The encoded name broke opening the file
+    from LogBox and reading its source when the map has no embedded content.
+  - Development asset requests with an encoded directory name no longer 404.
+
 ## 5.3.0
 
 ### Patch Changes

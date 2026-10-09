@@ -1,0 +1,177 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { getResolveOptions, plugins } from '@callstack/repack';
+import { createFsFromVolume, Volume } from 'memfs';
+import { afterEach, describe, expect, it } from 'vitest';
+import { createCompiler, createVirtualModulePlugin } from '../helpers.js';
+
+const _dirname = path.dirname(fileURLToPath(import.meta.url));
+const FIXTURE = path.join(_dirname, '__fixtures__', 'react-native-src-layout');
+const ASSET_REGISTRY_ALIAS_KEY = 'react-native/Libraries/Image/AssetRegistry$';
+const SRC_PRIVATE_ALIAS_KEY = 'react-native/src/private';
+
+let projectRoot: string | undefined;
+
+/**
+ * Creates a temporary project root that carries a real `@react-native/js-polyfills`
+ * package, mirroring how RN >= 0.87 exposes polyfills only through a package that
+ * still depends on js-polyfills (rather than through react-native itself).
+ */
+function makeProjectRoot() {
+  const dir = fs.realpathSync(
+    fs.mkdtempSync(path.join(os.tmpdir(), 'rn87-project-'))
+  );
+  const pkg = path.join(dir, 'node_modules', '@react-native', 'js-polyfills');
+  fs.mkdirSync(pkg, { recursive: true });
+  fs.writeFileSync(
+    path.join(pkg, 'package.json'),
+    JSON.stringify({ name: '@react-native/js-polyfills', main: 'index.js' })
+  );
+  fs.writeFileSync(
+    path.join(pkg, 'index.js'),
+    "module.exports = () => [require.resolve('./error-guard.js')];"
+  );
+  fs.writeFileSync(
+    path.join(pkg, 'error-guard.js'),
+    'globalThis.__SRC_LAYOUT_POLYFILL__ = true;'
+  );
+  return dir;
+}
+
+type Compiler = Awaited<ReturnType<typeof createCompiler>>;
+
+/**
+ * Runs the compiler and returns every compilation error plus the emitted main
+ * chunk. The harness configures no JS loaders, so repack's own runtime entries
+ * (InitializeScriptManager/ScriptManager) emit unrelated ESM parse errors, exactly
+ * as in NativeEntryPlugin.test.ts. Callers filter the messages for the specific
+ * resolution failures they care about instead of asserting on a clean build.
+ */
+function compileCollectingErrors(compiler: Compiler) {
+  const volume = new Volume();
+  // @ts-expect-error memfs is compatible enough with the output filesystem
+  compiler.outputFileSystem = createFsFromVolume(volume);
+  return new Promise<{ errorMessages: string[]; code: string }>(
+    (resolve, reject) => {
+      compiler.run((error, stats) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        const errors = stats?.toJson({ errors: true }).errors ?? [];
+        const errorMessages = errors.map(
+          (e) => `${e.message ?? ''}\n${e.details ?? ''}`
+        );
+        const code = volume.readFileSync('/out/main.js', 'utf-8').toString();
+        resolve({ errorMessages, code });
+      });
+    }
+  );
+}
+
+afterEach(() => {
+  if (projectRoot) {
+    fs.rmSync(projectRoot, { recursive: true, force: true });
+    projectRoot = undefined;
+  }
+});
+
+describe('NativeEntryPlugin - React Native 0.87 src layout', () => {
+  it('aliases the legacy asset registry request, ahead of a user react-native alias', async () => {
+    projectRoot = makeProjectRoot();
+    const virtualPlugin = await createVirtualModulePlugin({
+      './index.js':
+        "var A = require('react-native/Libraries/Image/AssetRegistry');" +
+        "globalThis.__APP_REGISTERED__ = A.registerAsset({ name: 'logo' });",
+    });
+
+    const compiler = await createCompiler({
+      context: projectRoot,
+      mode: 'development',
+      devtool: false,
+      entry: './index.js',
+      resolve: {
+        alias: { 'react-native': FIXTURE },
+      },
+      output: { path: '/out' },
+      plugins: [new plugins.NativeEntryPlugin({}), virtualPlugin],
+    });
+
+    // The specific alias must be injected and ordered before the generic key,
+    // otherwise a user `react-native` alias rewrites the request to a path that
+    // does not exist on the 0.87 layout before the specific key is consulted.
+    const alias = compiler.options.resolve.alias;
+    if (!alias || Array.isArray(alias)) {
+      throw new Error('expected resolve.alias to be an object');
+    }
+    const aliasKeys = Object.keys(alias);
+    expect(alias[ASSET_REGISTRY_ALIAS_KEY]).toBe(
+      path.join(FIXTURE, 'src', 'asset-registry')
+    );
+    expect(aliasKeys.indexOf(ASSET_REGISTRY_ALIAS_KEY)).toBeLessThan(
+      aliasKeys.indexOf('react-native')
+    );
+
+    // Run manually: the harness configures no JS loaders, so repack's own runtime
+    // entries (InitializeScriptManager/ScriptManager) emit unrelated ESM parse
+    // errors, exactly as in NativeEntryPlugin.test.ts. We assert only that nothing
+    // related to the asset registry / IncludeModules / polyfills failed to resolve.
+    const { errorMessages, code } = await compileCollectingErrors(compiler);
+    const offenders = errorMessages.filter((m) =>
+      /AssetRegistry|asset-registry|IncludeModules|polyfill/i.test(m)
+    );
+    expect(offenders).toEqual([]);
+    expect(code).toContain('__SRC_LAYOUT_POLYFILL__');
+    expect(code).toContain('__SRC_LAYOUT_INITIALIZE_CORE__');
+  });
+
+  it('aliases react-native/src/private when package exports are enabled', async () => {
+    projectRoot = makeProjectRoot();
+    // Mirrors @react-native/virtualized-lists, which deep-imports a path that
+    // React Native 0.87 no longer lists in its exports map.
+    const virtualPlugin = await createVirtualModulePlugin({
+      './index.js':
+        "require('react-native/src/private/featureflags/ReactNativeFeatureFlags');" +
+        'globalThis.__APP_ENTRY__ = true;',
+    });
+
+    const compiler = await createCompiler({
+      context: projectRoot,
+      mode: 'development',
+      devtool: false,
+      entry: './index.js',
+      resolve: {
+        ...getResolveOptions({ enablePackageExports: true }),
+        // Point at the entry file (supported by NativeEntryPlugin) so the generic
+        // alias alone cannot satisfy the deep request: `<fixture>/index.js/src/...`
+        // does not exist. Only the injected `react-native/src/private` alias,
+        // ordered ahead of it, makes the request resolve.
+        alias: { 'react-native': path.join(FIXTURE, 'index.js') },
+      },
+      output: { path: '/out' },
+      plugins: [new plugins.NativeEntryPlugin({}), virtualPlugin],
+    });
+
+    const alias = compiler.options.resolve.alias;
+    if (!alias || Array.isArray(alias)) {
+      throw new Error('expected resolve.alias to be an object');
+    }
+    const aliasKeys = Object.keys(alias);
+    expect(alias[SRC_PRIVATE_ALIAS_KEY]).toBe(
+      path.join(FIXTURE, 'src', 'private')
+    );
+    expect(aliasKeys.indexOf(SRC_PRIVATE_ALIAS_KEY)).toBeLessThan(
+      aliasKeys.indexOf('react-native')
+    );
+
+    const { errorMessages, code } = await compileCollectingErrors(compiler);
+    expect(
+      errorMessages.filter((m) =>
+        /src\/private|ReactNativeFeatureFlags/i.test(m)
+      )
+    ).toEqual([]);
+    expect(code).toContain('__SRC_LAYOUT_FEATURE_FLAGS__');
+  });
+});

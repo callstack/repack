@@ -1,3 +1,4 @@
+import { stripVTControlCharacters } from 'node:util';
 import type { FastifyBaseLogger } from 'fastify';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { logSymbolicatedStackFrame } from '../logSymbolicatedStackFrame.js';
@@ -47,6 +48,20 @@ function createSourceMapWithoutContent(source: string) {
     sources: [source],
     names: [],
     mappings: 'AAAA',
+  });
+}
+
+// Maps generated line N to the start of `sources[N - 1]`.
+function createSourceMapWithSources(
+  sources: string[],
+  sourcesContent?: string[]
+) {
+  return JSON.stringify({
+    version: 3,
+    sources,
+    sourcesContent,
+    names: [],
+    mappings: ['AAAA', ...sources.slice(1).map(() => 'ACAA')].join(';'),
   });
 }
 
@@ -185,6 +200,87 @@ describe('Symbolicator', () => {
       file: '[projectRoot]/src/App.tsx',
       lineNumber: 1,
       column: 0,
+    });
+  });
+
+  describe('source names that URLs encode', () => {
+    const bundleUrl = 'http://localhost:8081/index.bundle?platform=ios';
+    const sources = [
+      '[projectRoot^2]/node_modules/react-native/Libraries/Core/ExceptionsManager.js',
+      '[projectRoot]/src/screens/Home Screen.tsx',
+      '[projectRoot]/src/Écran.tsx',
+      '[projectRoot]/src/100%25 done.tsx',
+      '/Users/me/My Projects/app/src/App.tsx',
+    ];
+    const frameFor = (source: string) => ({
+      file: bundleUrl,
+      lineNumber: sources.indexOf(source) + 1,
+      column: 0,
+      methodName: 'frame',
+    });
+
+    it.each(sources)('returns %s as emitted by the bundler', async (source) => {
+      const symbolicator = new Symbolicator(
+        createDelegate(async () =>
+          createSourceMapWithSources(
+            sources,
+            sources.map((name) => `// content of ${name}`)
+          )
+        )
+      );
+
+      const result = await symbolicator.process(logger, [frameFor(source)]);
+
+      expect(result.stack[0]?.file).toBe(source);
+      expect(result.codeFrame?.fileName).toBe(source);
+      expect(
+        stripVTControlCharacters(result.codeFrame?.content ?? '')
+      ).toContain(`content of ${source}`);
+    });
+
+    it.each(sources)(
+      'reads %s from the compiler when the map has no content',
+      async (source) => {
+        const getSource = vi.fn(async () => 'const fromDisk = true;');
+        const symbolicator = new Symbolicator(
+          createDelegate(
+            async () => createSourceMapWithSources(sources),
+            getSource
+          )
+        );
+
+        const result = await symbolicator.process(logger, [frameFor(source)]);
+
+        expect(getSource).toHaveBeenCalledWith(source);
+        expect(
+          stripVTControlCharacters(result.codeFrame?.content ?? '')
+        ).toContain('const fromDisk = true;');
+      }
+    );
+
+    it('keeps remote source URLs encoded', async () => {
+      // `fetchSourceMapFromBundle` rewrites remote source names to URLs.
+      const remoteSource =
+        'http://localhost:8082/__repack_source__/[projectRoot%5E2]/packages/remote/src/App.tsx';
+      const symbolicator = new Symbolicator(
+        createDelegate(async () =>
+          createSourceMapWithSources([remoteSource], ['const remote = 1;'])
+        )
+      );
+
+      const result = await symbolicator.process(logger, [
+        {
+          file: 'http://localhost:8082/remote.chunk.bundle',
+          lineNumber: 1,
+          column: 0,
+          methodName: 'App',
+        },
+      ]);
+
+      expect(result.stack[0]?.file).toBe(remoteSource);
+      expect(
+        stripVTControlCharacters(result.codeFrame?.content ?? '')
+      ).toContain('const remote = 1;');
     });
   });
 
@@ -335,6 +431,41 @@ describe('logSymbolicatedStackFrame', () => {
     expect(info).toHaveBeenCalledWith({
       msg: 'Symbolicated stack frame: src/RemoteScreen.tsx:42:18',
       methodName: 'RemoteScreen',
+    });
+  });
+
+  it('strips the placeholder from a frame outside of the project root', async () => {
+    const info = vi.fn();
+    const runtimeLogger = { ...logger, info } as unknown as FastifyBaseLogger;
+    const stack = [
+      {
+        file: 'http://localhost:8081/index.bundle?platform=ios',
+        lineNumber: 1,
+        column: 0,
+        methodName: 'Shared',
+      },
+      {
+        file: 'http://localhost:8081/index.bundle?platform=ios',
+        lineNumber: 200,
+        column: 30,
+        methodName: 'renderWithHooks',
+      },
+    ];
+    const symbolicator = new Symbolicator(
+      createDelegate(async () =>
+        createSourceMapWithSources(
+          ['[projectRoot^2]/packages/shared/src/Shared.tsx'],
+          ['export const Shared = () => null;']
+        )
+      )
+    );
+
+    const results = await symbolicator.process(runtimeLogger, stack);
+    logSymbolicatedStackFrame(runtimeLogger, stack, results);
+
+    expect(info).toHaveBeenCalledWith({
+      msg: 'Symbolicated stack frame: packages/shared/src/Shared.tsx:1:0',
+      methodName: 'Shared',
     });
   });
 

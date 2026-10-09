@@ -3,9 +3,11 @@ import { codeFrameColumns } from '@babel/code-frame';
 import type { FastifyBaseLogger } from 'fastify';
 import { SourceMapConsumer } from 'source-map';
 import {
+  decodeSourceName,
+  escapeSourceName,
   isGeneratedBundleFrame,
   isSymbolicatableFrame,
-  normalizeInvalidWebpackSourceUrls,
+  prepareSourceMap,
 } from '../../utils/symbolication.js';
 import type {
   CodeFrame,
@@ -101,7 +103,7 @@ export class Symbolicator {
               sourceMapLength: rawSourceMap.length,
             });
             const sourceMapConsumer = await new SourceMapConsumer(
-              normalizeInvalidWebpackSourceUrls(rawSourceMap)
+              prepareSourceMap(rawSourceMap)
             );
 
             logger.debug({
@@ -201,7 +203,7 @@ export class Symbolicator {
     return {
       lineNumber: lookup.line ?? frame.lineNumber,
       column: lookup.column ?? frame.column,
-      file: lookup.source,
+      file: decodeSourceName(lookup.source),
       methodName: lookup.name || frame.methodName,
       collapse: false,
     };
@@ -233,7 +235,10 @@ export class Symbolicator {
 
       try {
         const consumer = sourceMapConsumers.get(inputFrames[index]?.file);
-        const embeddedSource = consumer?.sourceContentFor(frame.file, true);
+        const embeddedSource = consumer?.sourceContentFor(
+          escapeSourceName(frame.file),
+          true
+        );
         const source =
           embeddedSource ??
           (await this.delegate.getSource(frame.file)).toString();

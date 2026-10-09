@@ -8,7 +8,7 @@ To debug build process and compilation time, compilation transformations, module
 
 ## Debugging runtime
 
-Re.pack has first-class support for debugging runtime. You can use React Native DevTools to debug your app and inspect component state, props, and performance in real-time. Take a look at our detailed guide [here](/docs/features/devtools).
+Re.Pack has first-class support for debugging runtime. You can use React Native DevTools to debug your app and inspect component state, props, and performance in real-time. Take a look at our detailed guide [here](/docs/features/devtools).
 
 ## Other
 

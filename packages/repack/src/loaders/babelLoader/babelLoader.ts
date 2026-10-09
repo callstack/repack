@@ -1,6 +1,7 @@
 import {
   type BabelFileResult,
   loadOptions,
+  type ParseResult,
   parseSync,
   type TransformOptions,
   transformFromAstSync,
@@ -15,7 +16,8 @@ import {
   isIgnoredRepackDeepImport,
   isTSXSource,
   isTypeScriptSource,
-  loadHermesParser,
+  loadReactNativeParser,
+  shouldUseReactNativeParser,
 } from './utils.js';
 
 export const raw = false;
@@ -78,23 +80,43 @@ export const transform = async (
     excludePlugins: customOptions?.excludePlugins,
   });
   const projectRoot = babelConfig.root ?? babelConfig.cwd;
-  // load hermes parser dynamically to match the version from preset
-  const hermesParser = await loadHermesParser(
-    projectRoot,
-    customOptions?.hermesParserPath
-  );
 
   // filename will be always defined at this point
-  const sourceAst =
+  const isTypeScript =
     isTypeScriptSource(babelConfig.filename!) ||
-    isTSXSource(babelConfig.filename!)
-      ? parseSync(src, babelConfig)
-      : hermesParser.parse(src, {
-          babel: true,
-          reactRuntimeTarget: '19',
-          sourceType: babelConfig.sourceType,
-          ...customOptions?.hermesParserOverrides,
-        });
+    isTSXSource(babelConfig.filename!);
+
+  const needsReactNativeParser =
+    !isTypeScript &&
+    shouldUseReactNativeParser(src, customOptions?.hermesParserOverrides?.flow);
+
+  let sourceAst: ParseResult | null;
+  if (needsReactNativeParser) {
+    // load the parser dynamically to match the version from preset
+    const parser = await loadReactNativeParser(
+      projectRoot,
+      customOptions?.hermesParserPath
+    );
+
+    sourceAst = parser.parse(src, {
+      babel: true,
+      reactRuntimeTarget: '19',
+      sourceType: babelConfig.sourceType,
+      ...customOptions?.hermesParserOverrides,
+    });
+  } else if (isTypeScript) {
+    sourceAst = parseSync(src, babelConfig);
+  } else {
+    // the RN parser would accept JSX & Flow regardless of babel plugins,
+    // keep that working when JSX/Flow transforms are excluded (e.g. handled by SWC)
+    sourceAst = parseSync(src, {
+      ...babelConfig,
+      parserOpts: {
+        ...babelConfig.parserOpts,
+        plugins: [...(babelConfig.parserOpts?.plugins ?? []), 'jsx', 'flow'],
+      },
+    });
+  }
 
   if (!sourceAst) {
     throw new Error(`Failed to parse source file: ${babelConfig.filename}`);
@@ -138,7 +160,6 @@ export default async function babelLoader(
         filename: this.resourcePath,
         sourceMaps: withSourceMaps,
         sourceFileName: this.resourcePath,
-        sourceRoot: this.context,
         inputSourceMap: withSourceMaps ? inputSourceMap : undefined,
         ...babelOverrides,
       },

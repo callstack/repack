@@ -1,5 +1,94 @@
 # @callstack/repack
 
+## 5.4.2
+
+### Patch Changes
+
+- [#1480](https://github.com/callstack/repack/pull/1480) [`166388b`](https://github.com/callstack/repack/commit/166388b76fc4641f15cd63d3e96aec9d7e582c84) Thanks [@CristiCeban](https://github.com/CristiCeban)! - Fix `.jpeg` images not showing in Android release builds. They were emitted to `raw` instead of `drawable-*`, where React Native looks for them.
+
+  If you have a `.jpeg` and a `.png`/`.jpg`/`.gif`/`.webp` image with the same name in the same directory (e.g. `logo.png` and `logo.jpeg`), rename one of them. Both now resolve to the same Android drawable resource name, and the build fails with a duplicate resources error.
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.4.2
+
+## 5.4.1
+
+### Patch Changes
+
+- [#1479](https://github.com/callstack/repack/pull/1479) [`811a6d8`](https://github.com/callstack/repack/commit/811a6d84ed09ad83f4395c85218e055e7e9abf91) Thanks [@CristiCeban](https://github.com/CristiCeban)! - Ship consumer ProGuard rules for the Android library so release builds with R8 (`minifyEnabled true`) no longer fail with missing `com.google.errorprone.annotations` classes referenced by `nimbus-jose-jwt`.
+
+- [#1476](https://github.com/callstack/repack/pull/1476) [`5bb41f0`](https://github.com/callstack/repack/commit/5bb41f045f43d935fc79b153f889a1195a0f19ad) Thanks [@whydidoo](https://github.com/whydidoo)! - Support React Native 0.88's Flow parser in Babel loaders, native component codegen, and Reanimated transforms while retaining Hermes parser compatibility with older React Native presets.
+
+- [#1473](https://github.com/callstack/repack/pull/1473) [`f9326a0`](https://github.com/callstack/repack/commit/f9326a0a5fcc7de753190fc7576b91320498dfa8) Thanks [@whydidoo](https://github.com/whydidoo)! - Emit an additional `res/raw` copy of bundled Android font binaries so Metro-compatible consumers such as Skia can load them by name. Preserve the existing `res/font` output for native `@font/...`, `R.font`, and XML font-family references. Generate `res/raw/keep.xml` for bundled Android resources so resource shrinking preserves both font copies and other assets loaded by name at runtime.
+
+  XML font-family resources continue to use `res/font`. Asset metadata and iOS, development-server, inline, and remote-loader output paths are unchanged.
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.4.1
+
+## 5.4.0
+
+### Minor Changes
+
+- [#1430](https://github.com/callstack/repack/pull/1430) [`33df89a`](https://github.com/callstack/repack/commit/33df89a735314be29cc8bc6f8e23f8d139164aa8) Thanks [@jbroma](https://github.com/jbroma)! - Bring the Rspack development experience in line with Webpack by compiling each
+  platform only when its bundle is first requested. Multi-platform development
+  servers no longer eagerly build unused platforms, so launching an iOS app does
+  not wait for Android to compile, and vice versa.
+
+- [#1424](https://github.com/callstack/repack/pull/1424) [`8dcc116`](https://github.com/callstack/repack/commit/8dcc116c291fe7fb7eb9f0f6c9640058e83a9c50) Thanks [@jbroma](https://github.com/jbroma)! - Add the unified `@callstack/repack/commands` entry point with automatic bundler detection and a `--bundler` override. Re.Pack Init now uses it, while bundler-specific entry points remain available with deprecation warnings.
+
+### Patch Changes
+
+- [#1453](https://github.com/callstack/repack/pull/1453) [`4a24b29`](https://github.com/callstack/repack/commit/4a24b29c1bf274fb341c368efc38c4f1dce8a562) Thanks [@gabrieldonadel](https://github.com/gabrieldonadel)! - Fix Android configuration on AGP 9, where built-in Kotlin support registers the
+  `kotlin` extension itself and the explicit `kotlin-android` apply failed with
+  "Cannot add extension with name 'kotlin'". The plugin - and the `kotlinOptions`
+  block it contributes - is now applied only when nothing has registered that
+  extension, leaving AGP 8 and `android.builtInKotlin=false` projects unchanged.
+
+- [#1457](https://github.com/callstack/repack/pull/1457) [`20e5a64`](https://github.com/callstack/repack/commit/20e5a64355169855c4bd77ea057bde31f8e24a9c) Thanks [@KallinikosMil](https://github.com/KallinikosMil)! - Fix the assets loader failing on Windows. Public paths for both remote and extracted assets were joined with `path.join`, which rewrites the separators to backslashes on Windows; for remote assets that turned `https://…` into a string `new URL` rejects, so any bundle containing a remote asset failed with `TypeError: Invalid URL`. Both are URLs rather than filesystem paths and are now joined with `path.posix.join`, which produces the same output on Linux and macOS as before.
+
+- [#1456](https://github.com/callstack/repack/pull/1456) [`e283ccf`](https://github.com/callstack/repack/commit/e283ccfe76113b632454684de2ae0933bc11f133) Thanks [@ilteoood](https://github.com/ilteoood)! - Fix `BabelPlugin` to set the `babel-loader` entry of `resolveLoader.fallback` as an array containing the resolved path, instead of a plain string. Rspack's resolver and downstream tools that consume the resolved loader config (e.g. `RSDoctor`) expect the value to be an array; a bare string triggered `Given napi value is not an array on NapiResolveOptions.fallback`. This still matches Rspack's `ResolveAlias` (`{ [x: string]: string | false | (string | false)[] }`) and Webpack's resolver loader fallback shape.
+
+- [#1440](https://github.com/callstack/repack/pull/1440) [`9f3278c`](https://github.com/callstack/repack/commit/9f3278c0ac4cd26a318a5f03eff8fd4a3e717b61) Thanks [@MikitasK](https://github.com/MikitasK)! - Let `ChunkLoadError` propagate through the guarded `__webpack_require__` instead of reporting it as fatal, so a failed dynamic import (including a missing Module Federation exposed chunk) rejects the import promise and can be handled by a React Error Boundary. Other remote loading failures, such as an unreachable remote entry, are not affected by this change.
+
+- [#1434](https://github.com/callstack/repack/pull/1434) [`ed1003f`](https://github.com/callstack/repack/commit/ed1003fe1eec193001724ad239b279f543438b13) Thanks [@MikitasK](https://github.com/MikitasK)! - Fix development symbolication for Module Federation host and remote bundles. The host now follows a remote bundle's declared source map, invalid generated webpack source URLs no longer invalidate an otherwise usable map, symbolication continues when an individual frame cannot be mapped, and code frames use the matching source map's embedded source content. The dev server also logs the first useful symbolicated runtime frame as a fallback when opening the source file from the device is delayed.
+
+- [#1470](https://github.com/callstack/repack/pull/1470) [`4a36980`](https://github.com/callstack/repack/commit/4a36980ad0b7a0d362b95cbab03474ff52be4ea4) Thanks [@dannyhw](https://github.com/dannyhw)! - Fix source map source names and development stack frames for files whose path
+  URLs would encode.
+
+  - `babel-loader` and `babel-swc-loader` no longer set `sourceRoot`. Webpack, and
+    Rspack whenever Babel produced the map, prepended it to the absolute source
+    path, so project files were named `src/<dir>/<absolute path>` in development
+    and release source maps.
+  - The dev server now returns symbolicated file names exactly as the bundler
+    emitted them. Before, `source-map` percent-encoded them, so a frame outside the
+    project root came back as `[projectRoot%5E2]/...`, and a path with a space or
+    non-ASCII character came back encoded. The encoded name broke opening the file
+    from LogBox and reading its source when the map has no embedded content.
+  - Development asset requests with an encoded directory name no longer 404.
+
+- [#1449](https://github.com/callstack/repack/pull/1449) [`09e7375`](https://github.com/callstack/repack/commit/09e7375e9b2a07afffb0417edd01a21007dd74e5) Thanks [@yunsung-miso](https://github.com/yunsung-miso)! - Keep the original error message for iOS script download failures instead of surfacing "Unknown error from a native module".
+
+- [#1454](https://github.com/callstack/repack/pull/1454) [`b440b44`](https://github.com/callstack/repack/commit/b440b44dd89c7a6be098527559c2e2e46c0957d8) Thanks [@giaBaoJS](https://github.com/giaBaoJS)! - Read the `react-native` config from the array form of `shared` in `ModuleFederationPlugin`, so the generated `react-native/` and `@react-native/` deep imports inherit its `eager`, `import` and `version` values instead of falling back to the defaults.
+
+- [#1424](https://github.com/callstack/repack/pull/1424) [`8dcc116`](https://github.com/callstack/repack/commit/8dcc116c291fe7fb7eb9f0f6c9640058e83a9c50) Thanks [@jbroma](https://github.com/jbroma)! - Reject pending webpack asset requests when compilation fails instead of leaving requests hanging.
+
+- [#1443](https://github.com/callstack/repack/pull/1443) [`c17c212`](https://github.com/callstack/repack/commit/c17c212230fb37d3f0d2d7e41db7ddf75cc1d6bd) Thanks [@Francesco-Voto](https://github.com/Francesco-Voto)! - Support React Native 0.87. Polyfills are read from `rn-get-polyfills.js` when
+  present, otherwise from `@react-native/js-polyfills` (resolved from the project,
+  falling back through `@react-native/metro-config`), with an actionable error when
+  neither can be found. The asset registry request is aliased to
+  `src/asset-registry.js` on the 0.87 layout, and `react-native/src/private` is
+  aliased to disk so first-party packages' deep imports keep resolving once package
+  exports are enabled (0.87 dropped the `./src/*` export wildcard). On 0.86 and
+  earlier behaviour is unchanged.
+
+- [#1446](https://github.com/callstack/repack/pull/1446) [`87c6d94`](https://github.com/callstack/repack/commit/87c6d94d6bd9b703a67d383bf284e92c2ad5ec17) Thanks [@giaBaoJS](https://github.com/giaBaoJS)! - Fix the webpack compiler double-joining absolute paths in `getSource`. The dev server resolves symbolicated stack frames to absolute paths before asking the compiler for their source, but the webpack compiler joined them onto the project root a second time, so the lookup failed. This only affected the fallback used when a frame's source is not embedded in the source map, for example with `nosources-*` devtools, and now matches the Rspack compiler.
+
+- [#1444](https://github.com/callstack/repack/pull/1444) [`8fba597`](https://github.com/callstack/repack/commit/8fba59747fe1e6682f4e3bd629457467b5a9ca5c) Thanks [@giaBaoJS](https://github.com/giaBaoJS)! - Fix production bundles shipping unminified with `terser-webpack-plugin` 5.6.0 and newer, which only minifies `.js` assets by default and silently skipped Re.Pack's `.bundle` output.
+
+- Updated dependencies [[`ed1003f`](https://github.com/callstack/repack/commit/ed1003fe1eec193001724ad239b279f543438b13), [`4a36980`](https://github.com/callstack/repack/commit/4a36980ad0b7a0d362b95cbab03474ff52be4ea4)]:
+  - @callstack/repack-dev-server@5.4.0
+
 ## 5.3.0
 
 ### Minor Changes
