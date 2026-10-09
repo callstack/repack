@@ -91,7 +91,7 @@ export function getReactNativeVirtualModules(
     'node_modules/react-native/Libraries/Image/AssetRegistry.js':
       'module.exports = { registerAsset: (spec) => spec };',
     'node_modules/react-native/Libraries/Image/AssetSourceResolver.js': `
-      module.exports = class AssetSourceResolver {
+      exports.default = class AssetSourceResolver {
         constructor(a, b, c) {
           this.asset = c;
         }
