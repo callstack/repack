@@ -564,9 +564,6 @@ importers:
       '@babel/core':
         specifier: ^7.29.7
         version: 7.29.7
-      '@babel/plugin-syntax-typescript':
-        specifier: 7.25.4
-        version: 7.25.4(@babel/core@7.29.7)
       '@react-native-community/cli':
         specifier: catalog:testers
         version: 20.2.0(typescript@7.0.2)
@@ -796,6 +793,9 @@ importers:
 
   packages/repack:
     dependencies:
+      '@babel/plugin-syntax-typescript':
+        specifier: ^7.25.4
+        version: 7.25.4(@babel/core@7.29.7)
       '@callstack/repack-dev-server':
         specifier: workspace:*
         version: link:../dev-server
