@@ -30,11 +30,6 @@ function normalizePublicPath(
   host?: string,
   port?: number
 ): string {
-  /* set public path to noop if it's using the deprecated `getPublicPath` function */
-  if (publicPath === 'DEPRECATED_GET_PUBLIC_PATH') {
-    return 'noop:///';
-  }
-
   if (publicPath === 'DEV_SERVER_PUBLIC_PATH') {
     return `http://${host}:${port}/${platform}/`;
   }

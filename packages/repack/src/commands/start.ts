@@ -26,7 +26,6 @@ import {
 } from './common/index.js';
 import logo from './common/logo.js';
 import type {
-  Bundler,
   CliConfig,
   CompilerInterface,
   ConfigurationObject,
@@ -43,21 +42,13 @@ import type {
  * @param _ Original, non-parsed arguments that were provided when running this command.
  * @param cliConfig Configuration object containing platform and project settings.
  * @param args Parsed command line arguments.
- * @param forcedBundler Optional bundler override from deprecated entry points.
  */
 export async function start(
   _: string[],
   cliConfig: CliConfig,
-  args: StartArguments,
-  forcedBundler?: Bundler
+  args: StartArguments
 ) {
-  const bundler =
-    forcedBundler ??
-    detectBundler(
-      cliConfig.root,
-      args.config ?? args.webpackConfig,
-      args.bundler
-    );
+  const bundler = detectBundler(cliConfig.root, args.config, args.bundler);
 
   const detectedPlatforms = Object.keys(cliConfig.platforms);
 
