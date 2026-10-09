@@ -1,5 +1,20 @@
 # @callstack/repack
 
+## 5.4.1
+
+### Patch Changes
+
+- [#1479](https://github.com/callstack/repack/pull/1479) [`811a6d8`](https://github.com/callstack/repack/commit/811a6d84ed09ad83f4395c85218e055e7e9abf91) Thanks [@CristiCeban](https://github.com/CristiCeban)! - Ship consumer ProGuard rules for the Android library so release builds with R8 (`minifyEnabled true`) no longer fail with missing `com.google.errorprone.annotations` classes referenced by `nimbus-jose-jwt`.
+
+- [#1476](https://github.com/callstack/repack/pull/1476) [`5bb41f0`](https://github.com/callstack/repack/commit/5bb41f045f43d935fc79b153f889a1195a0f19ad) Thanks [@whydidoo](https://github.com/whydidoo)! - Support React Native 0.88's Flow parser in Babel loaders, native component codegen, and Reanimated transforms while retaining Hermes parser compatibility with older React Native presets.
+
+- [#1473](https://github.com/callstack/repack/pull/1473) [`f9326a0`](https://github.com/callstack/repack/commit/f9326a0a5fcc7de753190fc7576b91320498dfa8) Thanks [@whydidoo](https://github.com/whydidoo)! - Emit an additional `res/raw` copy of bundled Android font binaries so Metro-compatible consumers such as Skia can load them by name. Preserve the existing `res/font` output for native `@font/...`, `R.font`, and XML font-family references. Generate `res/raw/keep.xml` for bundled Android resources so resource shrinking preserves both font copies and other assets loaded by name at runtime.
+
+  XML font-family resources continue to use `res/font`. Asset metadata and iOS, development-server, inline, and remote-loader output paths are unchanged.
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.4.1
+
 ## 5.4.0
 
 ### Minor Changes
