@@ -1,6 +1,8 @@
 import type {
   Compiler as RspackCompiler,
   Configuration as RspackConfiguration,
+  RuleSetRule,
+  RuleSetUseItem,
 } from '@rspack/core';
 import { createFsFromVolume, Volume } from 'memfs';
 import { inject } from 'vitest';
@@ -111,4 +113,33 @@ export function getReactNativeVirtualModules(
         }
       };`,
   };
+}
+
+export type SwcLoaderOptions = {
+  jsc?: {
+    transform?: {
+      react?: { development?: boolean; importSource?: string };
+    };
+  };
+};
+
+/**
+ * Collect options of every `builtin:swc-loader` in `module.rules`,
+ * including nested `oneOf` and `rules`
+ */
+export function collectSwcLoaderOptions(rules: unknown[]): SwcLoaderOptions[] {
+  return rules.flatMap((rule) => {
+    if (!rule || typeof rule !== 'object') return [];
+    const { use, loader, options, oneOf, rules: nested } = rule as RuleSetRule;
+    const uses = [use].flat().filter(Boolean) as RuleSetUseItem[];
+    return [
+      ...(loader === 'builtin:swc-loader' ? [options as SwcLoaderOptions] : []),
+      ...uses
+        .filter((item) => typeof item === 'object')
+        .filter((item) => item.loader === 'builtin:swc-loader')
+        .map((item) => (item as { options: SwcLoaderOptions }).options),
+      ...collectSwcLoaderOptions(oneOf ?? []),
+      ...collectSwcLoaderOptions(nested ?? []),
+    ];
+  });
 }
