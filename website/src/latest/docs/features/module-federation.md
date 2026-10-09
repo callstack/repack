@@ -153,9 +153,9 @@ npx react-native start --port 8082
 
 ## Migrating from V1
 
-`ModuleFederationPluginV1` will be removed in the next major. To move to V2:
+`ModuleFederationPluginV1` and the `Federated` helpers were removed in Re.Pack 6. To move to V2:
 
-1. Install `@module-federation/enhanced` and replace `ModuleFederationPluginV1` with `ModuleFederationPluginV2` in every config.
+1. Install `@module-federation/enhanced` (2.0 or newer) and replace `ModuleFederationPluginV1` with `ModuleFederationPluginV2` in every config.
 2. Point remotes to the manifest instead of the container bundle:
 
    ```diff
