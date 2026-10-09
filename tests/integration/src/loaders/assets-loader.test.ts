@@ -176,6 +176,43 @@ describe('assetLoader', () => {
       }
     );
 
+    it('should emit scaled .jpeg images to matching drawable-* folders', async () => {
+      const { code, volume } = await compileBundle(
+        'android',
+        {
+          ...getReactNativeVirtualModules(),
+          './index.js':
+            "export { default } from './__fixtures__/assets/TestPhoto.jpeg';",
+        },
+        false,
+        undefined,
+        undefined,
+        { extensions: ['jpeg'] }
+      );
+
+      const context: { Export?: { default: Record<string, unknown> } } = {};
+      vm.runInNewContext(code, context);
+
+      expect(context.Export?.default).toMatchObject({
+        name: 'TestPhoto',
+        type: 'jpeg',
+        scales: [1, 2, 3],
+      });
+      for (const [scale, destination] of [
+        [1, 'drawable-mdpi'],
+        [2, 'drawable-xhdpi'],
+        [3, 'drawable-xxhdpi'],
+      ]) {
+        expect(
+          volume.readFileSync(
+            `/out/${destination}/__fixtures___assets_testphoto.jpeg`,
+            'utf8'
+          )
+        ).toBe(`image fixture jpeg @${scale}x\n`);
+      }
+      expect(volume.existsSync('/out/raw')).toBe(false);
+    });
+
     describe.each([
       { mode: 'iOS', platform: 'ios', devServer: false, remote: false },
       {
