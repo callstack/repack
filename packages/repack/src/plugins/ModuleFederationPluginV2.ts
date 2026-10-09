@@ -157,9 +157,9 @@ export class ModuleFederationPluginV2 {
           const pluginPath = require.resolve(runtimePluginPath(plugin), {
             paths: [context],
           });
-          return typeof plugin === 'string'
-            ? pluginPath
-            : ([pluginPath, plugin[1]] as RuntimePlugin);
+          if (typeof plugin === 'string') return pluginPath;
+          const entry: RuntimePlugin = [pluginPath, plugin[1]];
+          return entry;
         } catch {
           // ignore invalid paths
           return undefined;
