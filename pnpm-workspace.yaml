@@ -25,9 +25,6 @@ overrides:
   # Security fix for GHSA-w5hq-g745-h8pq. xcode pins uuid to ^7 and is
   # unmaintained; it only calls uuid.v4(), which is unaffected either way.
   "uuid@7": ^11.1.1
-  # Held: vite 8 is rolldown-based; rolldown requires Node >=20.19, which
-  # would drop Node 18 from the supported test matrix.
-  "vite": ^7.3.1
   # expo-router declares react-native-screens as a regular dependency, which
   # would otherwise resolve a second, newer copy than the apps' native one.
   "react-native-screens": "catalog:testers"
@@ -42,17 +39,17 @@ catalog:
   "@babel/core": ^7.29.7
   # Pinned: 1.6.2+ breaks MF v2 polyfill ordering; 1.6.4+ fails typecheck.
   "@rspack/core": 1.6.0
-  "@rslib/core": ^0.6.3
+  "@rslib/core": ^1.0.3
   "@swc/helpers": ~0.5.17
-  "@types/node": ^20.19.31
-  # Pinned: 5.6+ silently skips minification (#1390).
-  "terser-webpack-plugin": 5.5.0
+  "@types/node": ^22.20.5
+  "terser-webpack-plugin": ^5.6.1
   "typescript": ^7.0.2
   # Held: 5.106+ removes a webpack internal needed by @module-federation/enhanced <2.4.0.
   "webpack": ~5.105.0
   "react": "19.2.8"
   "react-native": "0.86.3"
-  "vitest": ^4.1.0
+  "vite": ^8.3.4
+  "vitest": ^5.0.3
 
 catalogs:
   # Expo-only packages. Libraries shared with the other testers come from the

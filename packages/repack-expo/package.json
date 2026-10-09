@@ -43,7 +43,7 @@
   ],
   "engineStrict": true,
   "engines": {
-    "node": ">=20.19"
+    "node": ">=22.12.0"
   },
   "dependencies": {
     "@callstack/repack-plugin-expo-modules": "workspace:^",

@@ -44,7 +44,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=18"
+    "node": ">=22.12.0"
   },
   "dependencies": {
     "dedent": "^0.7.0"
