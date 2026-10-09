@@ -234,8 +234,12 @@ These are the base defaults that Re.Pack provides regardless of the command bein
   <Tab label="Rspack">
     <CodeBlockRuntime lang="js" code={`{
     devtool: "source-map",
-    experiments: {
-      parallelLoader: true,
+    module: {
+      parser: {
+        javascript: {
+          exportsPresence: "auto",
+        },
+      },
     },
     output: {
       clean: true,
