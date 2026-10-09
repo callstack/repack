@@ -104,8 +104,18 @@ export const transform = async (
       sourceType: babelConfig.sourceType,
       ...customOptions?.hermesParserOverrides,
     });
-  } else {
+  } else if (isTypeScript) {
     sourceAst = parseSync(src, babelConfig);
+  } else {
+    // the RN parser would accept JSX & Flow regardless of babel plugins,
+    // keep that working when JSX/Flow transforms are excluded (e.g. handled by SWC)
+    sourceAst = parseSync(src, {
+      ...babelConfig,
+      parserOpts: {
+        ...babelConfig.parserOpts,
+        plugins: [...(babelConfig.parserOpts?.plugins ?? []), 'jsx', 'flow'],
+      },
+    });
   }
 
   if (!sourceAst) {
