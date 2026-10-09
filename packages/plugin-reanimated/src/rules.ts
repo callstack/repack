@@ -69,11 +69,4 @@ export const createReanimatedModuleRules = (
 const reanimated3ModuleRules = createReanimatedModuleRules(3);
 const reanimated4ModuleRules = createReanimatedModuleRules(4);
 
-// backwards compatibility export
-const reanimatedModuleRules = reanimated3ModuleRules;
-
-export {
-  reanimated3ModuleRules,
-  reanimated4ModuleRules,
-  reanimatedModuleRules,
-};
+export { reanimated3ModuleRules, reanimated4ModuleRules };
