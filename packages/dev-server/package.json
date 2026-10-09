@@ -45,7 +45,7 @@
     "@babel/code-frame": "^7.29.7",
     "@fastify/middie": "^9.3.3",
     "@fastify/sensible": "^6.0.0",
-    "fastify": "^5.10.0",
+    "fastify": "^5.12.5",
     "fastify-favicon": "^5.0.0",
     "fastify-plugin": "^5.0.0",
     "http-proxy-middleware": "^3.0.7",
