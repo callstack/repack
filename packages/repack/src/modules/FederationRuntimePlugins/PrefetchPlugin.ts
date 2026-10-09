@@ -1,5 +1,5 @@
-import type { FederationRuntimePlugin } from '@module-federation/enhanced/runtime';
 import type * as RepackClient from '../ScriptManager/index.js';
+import type { MFRuntimePlugin } from './types.js';
 
 interface PrefetchAsset {
   name: string;
@@ -32,7 +32,7 @@ function prefetchAsset(asset: PrefetchAsset) {
   );
 }
 
-const RepackPrefetchPlugin: () => FederationRuntimePlugin = () => ({
+const RepackPrefetchPlugin: () => MFRuntimePlugin = () => ({
   name: 'repack-prefetch-plugin',
   generatePreloadAssets: async (args) => {
     const preloadConfig = args.preloadOptions.preloadConfig;
