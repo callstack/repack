@@ -32,7 +32,7 @@
     "@react-native/babel-preset": "catalog:testers",
     "@react-native/community-cli-plugin": "catalog:testers",
     "@react-native/typescript-config": "catalog:testers",
-    "@rsdoctor/rspack-plugin": "1.5.2",
+    "@rsdoctor/rspack-plugin": "1.6.4",
     "@rspack/core": "catalog:",
     "@swc/helpers": "catalog:",
     "@types/jest": "^29.5.13",
