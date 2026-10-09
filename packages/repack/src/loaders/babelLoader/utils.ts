@@ -12,9 +12,11 @@ interface ReactNativeParser {
     src: string,
     opts: {
       babel: boolean;
-      flow?: 'all' | 'detect';
-      reactRuntimeTarget: string;
-      sourceType: 'script' | 'module' | 'unambiguous' | null | undefined;
+      flow?: HermesParserOverrides['flow'];
+      reactRuntimeTarget: NonNullable<
+        HermesParserOverrides['reactRuntimeTarget']
+      >;
+      sourceType: HermesParserOverrides['sourceType'] | null;
       transformOptions?: {
         TransformEnumSyntax?: { enable: boolean; getRuntime?: () => unknown };
       };
@@ -86,8 +88,8 @@ export async function parseReactNativeSource(
   }: {
     projectRoot: string;
     parserPath?: string;
-    flow?: 'all' | 'detect';
-    sourceType?: 'script' | 'module' | 'unambiguous' | null;
+    flow?: HermesParserOverrides['flow'];
+    sourceType?: HermesParserOverrides['sourceType'] | null;
     overrides?: HermesParserOverrides;
   }
 ): Promise<ParseResult> {
@@ -113,7 +115,7 @@ export async function parseReactNativeSource(
 
 // ESTree `require(request)` in the shape of the parser's own AST builders
 function requireCall(request: string) {
-  const etc = () => ({
+  const syntheticLocation = () => ({
     loc: { start: { line: 1, column: 0 }, end: { line: 1, column: 0 } },
     range: [0, 0],
     parent: null,
@@ -126,7 +128,7 @@ function requireCall(request: string) {
       name: 'require',
       optional: false,
       typeAnnotation: null,
-      ...etc(),
+      ...syntheticLocation(),
     },
     arguments: [
       {
@@ -134,12 +136,12 @@ function requireCall(request: string) {
         value: request,
         raw: JSON.stringify(request),
         literalType: 'string',
-        ...etc(),
+        ...syntheticLocation(),
       },
     ],
     typeArguments: null,
     optional: false,
-    ...etc(),
+    ...syntheticLocation(),
   };
 }
 

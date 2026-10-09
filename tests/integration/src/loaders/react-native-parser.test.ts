@@ -49,15 +49,14 @@ const flowSyntaxFiles = [
   'hook.js',
   'enum.js',
   'match.js',
+  'class-fields.js',
 ];
 
 const FLOW_LIB_FILES: Record<string, string> = {
   'package.json': '{ "name": "flow-lib", "main": "index.js" }',
   'index.js': [
     '// @flow',
-    "import type { Marker } from './marker';",
-    // unused value import, kept for its side effect
-    "import marker from './marker';",
+    "export { label } from './register';",
     '',
     'export enum Mode { Visible, Hidden }',
     '',
@@ -71,6 +70,17 @@ const FLOW_LIB_FILES: Record<string, string> = {
     '',
     'export function describeCount(count: number): string {',
     "  return match (count) { 0 => 'none', _ => 'some' };",
+    '}',
+  ].join('\n'),
+  // plain Flow (no lowering), so it pins how unused imports are stripped
+  'register.js': [
+    '// @flow',
+    "import type { Marker } from './marker';",
+    // unused value import, kept for its side effect
+    "import marker from './marker';",
+    '',
+    'export function label(value: Marker): string {',
+    '  return value;',
     '}',
   ].join('\n'),
   'marker.js': [
@@ -437,7 +447,12 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
     {
       devtool = false,
       project = '.',
-    }: { devtool?: 'source-map' | false; project?: '.' | 'react18' } = {}
+      loaderOptions = {},
+    }: {
+      devtool?: 'source-map' | false;
+      project?: '.' | 'react18';
+      loaderOptions?: Record<string, unknown>;
+    } = {}
   ) {
     const projectRoot = path.join(workspaceRoot, preset, project);
     return compileAndClose({
@@ -456,7 +471,7 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
             test: /\.js$/,
             use: {
               loader: require.resolve('@callstack/repack/flow-loader'),
-              options: { all: true },
+              options: { all: true, ...loaderOptions },
             },
           },
         ],
@@ -466,11 +481,29 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
 
   async function bundleWithFlowLoader(
     file: (typeof flowSyntaxFiles)[number],
-    project?: '.' | 'react18'
+    project?: '.' | 'react18',
+    loaderOptions?: Record<string, unknown>
   ) {
-    const { code } = await compileWithFlowLoader(file, { project });
+    const { code } = await compileWithFlowLoader(file, {
+      project,
+      loaderOptions,
+    });
     return executeBundle(code);
   }
+
+  // lowered files must strip class fields the same way `flow-remove-types` does
+  it.each([
+    [false, ['count']],
+    [true, []],
+  ])(
+    'strips class fields of lowered files with ignoreUninitializedFields: %s',
+    async (ignoreUninitializedFields, fields) => {
+      const { useStore } = (await bundleWithFlowLoader('class-fields.js', '.', {
+        ignoreUninitializedFields,
+      })) as { useStore: () => object };
+      expect(Object.keys(useStore())).toEqual(fields);
+    }
+  );
 
   it('maps lowered Flow syntax back to the original source', async () => {
     const { volume } = await compileWithFlowLoader('component.js', {
