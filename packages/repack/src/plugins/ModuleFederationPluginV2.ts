@@ -4,14 +4,12 @@ import { name as isIdentifier } from 'estree-util-is-identifier-name';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { isRspackCompiler } from '../helpers/index.js';
 
-type JsModuleDescriptor = {
-  identifier: string;
-  name: string;
-  id?: string;
-};
+type RuntimePlugin = NonNullable<
+  MF.ModuleFederationPluginOptions['runtimePlugins']
+>[number];
 
 /**
- * {@link ModuleFederationPlugin} configuration options.
+ * {@link ModuleFederationPluginV2} configuration options.
  *
  * The fields and types are exactly the same as in the official `ModuleFederationPlugin`.
  *
@@ -33,22 +31,18 @@ export interface ModuleFederationPluginV2Config
 }
 
 /**
- * Webpack plugin to configure Module Federation with platform differences
- * handled under the hood.
+ * Webpack plugin to configure Module Federation 2.0 with platform differences
+ * handled under the hood. Wraps `ModuleFederationPlugin` from `@module-federation/enhanced`.
  *
- * Usually, you should use `Repack.plugin.ModuleFederationPlugin`
- * instead of `webpack.container.ModuleFederationPlugin`.
+ * Also available as `Repack.plugins.ModuleFederationPlugin`.
  *
- * `Repack.plugin.ModuleFederationPlugin` creates:
- * - default for `filename` option when `exposes` is defined
- * - default for `library` option when `exposes` is defined
- * - default for `shared` option with `react` and `react-native` dependencies
- * - converts `remotes` into `ScriptManager`-powered `promise new Promise` loaders
+ * On top of the official plugin, it:
+ * - registers Re.Pack's default runtime plugins (see `defaultRuntimePlugins`)
+ * - defaults `shared` to eager singletons of `react` and `react-native`
+ * - shares `react-native/` and `@react-native/` deep imports when `react-native` is shared
+ * - defaults `shareStrategy` to `'loaded-first'`
  *
  * You can overwrite all defaults by passing respective options.
- *
- * `remotes` will always be converted to ScriptManager`-powered `promise new Promise` loaders
- * using {@link Federated.createRemote}.
  *
  * @example Host example.
  * ```js
@@ -56,41 +50,21 @@ export interface ModuleFederationPluginV2Config
  *
  * new Repack.plugins.ModuleFederationPlugin({
  *   name: 'host',
- * });
- * ```
- *
- * @example Host example with additional `shared` dependencies.
- * ```js
- * import * as Repack from '@callstack/repack';
- *
- * new Repack.plugins.ModuleFederationPlugin({
- *   name: 'host',
- *   shared: {
- *     react: Repack.Federated.SHARED_REACT,
- *     'react-native': Repack.Federated.SHARED_REACT,
- *     'react-native-reanimated': {
- *       singleton: true,
- *     },
+ *   remotes: {
+ *     module1: 'module1@https://example.com/ios/mf-manifest.json',
  *   },
  * });
  * ```
  *
- * @example Container examples.
+ * @example Container example.
  * ```js
  * import * as Repack from '@callstack/repack';
  *
  * new Repack.plugins.ModuleFederationPlugin({
- *   name: 'app1',
- *   remotes: {
- *     module1: 'module1@https://example.com/module1.container.bundle',
- *   },
- * });
- *
- * new Repack.plugins.ModuleFederationPlugin({
- *   name: 'app2',
- *   remotes: {
- *     module1: 'module1@https://example.com/module1.container.bundle',
- *     module2: 'module1@dynamic',
+ *   name: 'module1',
+ *   filename: 'module1.container.js.bundle',
+ *   exposes: {
+ *     './Button': './src/Button',
  *   },
  * });
  * ```
@@ -140,23 +114,29 @@ export class ModuleFederationPluginV2 {
 
   private adaptRuntimePlugins(
     context: string,
-    runtimePlugins: string[] | undefined = []
-  ) {
-    const plugins = runtimePlugins
-      .map((pluginPath) => {
-        try {
-          // resolve the paths to compare against absolute paths
-          return require.resolve(pluginPath, { paths: [context] });
-        } catch {
-          // ignore invalid paths
-          return undefined;
-        }
-      })
-      .filter((pluginPath) => !!pluginPath) as string[];
+    runtimePlugins: RuntimePlugin[] = []
+  ): RuntimePlugin[] {
+    const getPluginPath = (plugin: RuntimePlugin) =>
+      typeof plugin === 'string' ? plugin : plugin[0];
+
+    const plugins = runtimePlugins.flatMap((plugin): RuntimePlugin[] => {
+      try {
+        // resolve the paths to compare against absolute paths
+        const pluginPath = require.resolve(getPluginPath(plugin), {
+          paths: [context],
+        });
+        return [
+          typeof plugin === 'string' ? pluginPath : [pluginPath, plugin[1]],
+        ];
+      } catch {
+        // ignore invalid paths
+        return [];
+      }
+    });
 
     for (const plugin of this.defaultRuntimePlugins) {
       const pluginPath = require.resolve(plugin);
-      if (!plugins.includes(pluginPath)) {
+      if (!plugins.some((item) => getPluginPath(item) === pluginPath)) {
         plugins.unshift(pluginPath);
       }
     }
@@ -295,30 +275,6 @@ export class ModuleFederationPluginV2 {
     compiler.options.ignoreWarnings.push(
       (warning) => warning.name === 'EnvironmentNotSupportAsyncWarning'
     );
-    // MF2 produces warning about dynamic import in loadEsmEntry but it's not relevant
-    // in RN env since we override the loadEntry logic through a hook
-    // https://github.com/module-federation/core/blob/fa7a0bd20eb64eccd6648fea340c6078a2268e39/packages/runtime/src/utils/load.ts#L28-L37
-    compiler.options.ignoreWarnings.push((warning) => {
-      if ('moduleDescriptor' in warning) {
-        const moduleDescriptor = warning.moduleDescriptor as JsModuleDescriptor;
-
-        // warning can come from either runtime or runtime-core (in newer versions of MF2)
-        const isMF2Runtime = moduleDescriptor.name.endsWith(
-          '@module-federation/runtime/dist/index.cjs.js'
-        );
-        const isMF2RuntimeCore = moduleDescriptor.name.endsWith(
-          '@module-federation/runtime-core/dist/index.cjs.js'
-        );
-
-        if (isMF2Runtime || isMF2RuntimeCore) {
-          const requestExpressionWarning =
-            /Critical dependency: the request of a dependency is an expression/;
-          return requestExpressionWarning.test(warning.message);
-        }
-      }
-
-      return false;
-    });
   }
 
   apply(compiler: RspackCompiler): void;
