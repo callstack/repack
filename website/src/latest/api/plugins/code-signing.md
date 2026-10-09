@@ -198,24 +198,16 @@ Integrity verification can be set (through `verifyScriptSignature`) to one of th
 
 Go to `index.js` and modify your `ScriptManager` setup like this:
 
-```js title="index.js" {17}
-import { ScriptManager, Federated } from "@callstack/repack/client";
+```js title="index.js" {9}
+import { Platform } from "react-native";
+import { ScriptManager } from "@callstack/repack/client";
 
-const containers = {
-  MiniApp: "http://localhost:9000/[name][ext]",
-};
-
-ScriptManager.shared.addResolver(async (scriptId, caller) => {
-  const resolveURL = Federated.createURLResolver({ containers });
-
-  const url = resolveURL(scriptId, caller);
-  if (url) {
-    return {
-      url,
-      query: { platform: Platform.OS },
-      verifyScriptSignature: __DEV__ ? "off" : "strict",
-    };
-  }
+ScriptManager.shared.addResolver(async (scriptId) => {
+  return {
+    url: `https://cdn.example.com/${Platform.OS}/${scriptId}.chunk.bundle`,
+    query: { platform: Platform.OS },
+    verifyScriptSignature: __DEV__ ? "off" : "strict",
+  };
 });
 ```
 
@@ -224,19 +216,11 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
 If different teams sign different bundles, the resolver can provide a script-specific public key at runtime. When `publicKey` is present, Re.Pack uses it for verification. When it is omitted, Re.Pack falls back to the key embedded in the app under `RepackPublicKey`.
 
 ```js title="index.js"
-import { ScriptManager, Federated } from "@callstack/repack/client";
+import { Platform } from "react-native";
+import { ScriptManager } from "@callstack/repack/client";
 
-const containers = {
-  MiniApp: "https://cdn.example.com/[name][ext]",
-};
-
-ScriptManager.shared.addResolver(async (scriptId, caller) => {
-  const resolveURL = Federated.createURLResolver({ containers });
-  const url = resolveURL(scriptId, caller);
-
-  if (!url) {
-    return;
-  }
+ScriptManager.shared.addResolver(async (scriptId) => {
+  const url = `https://cdn.example.com/${Platform.OS}/${scriptId}.chunk.bundle`;
 
   const metadata = await fetch(
     `https://api.example.com/miniapps/${scriptId}/bundle-metadata`
