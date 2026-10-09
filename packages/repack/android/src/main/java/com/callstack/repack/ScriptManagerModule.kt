@@ -1,9 +1,10 @@
 package com.callstack.repack
 
 import android.os.Handler
+import com.facebook.fbreact.specs.NativeScriptManagerSpec
 import com.facebook.react.bridge.*
 
-class ScriptManagerModule(reactContext: ReactApplicationContext) : ScriptManagerSpec(reactContext) {
+class ScriptManagerModule(reactContext: ReactApplicationContext) : NativeScriptManagerSpec(reactContext) {
     private val nativeLoader = NativeScriptLoader(reactApplicationContext)
     private val remoteLoader = RemoteScriptLoader(reactApplicationContext, nativeLoader)
     private val fileSystemLoader = FileSystemScriptLoader(reactApplicationContext, nativeLoader)

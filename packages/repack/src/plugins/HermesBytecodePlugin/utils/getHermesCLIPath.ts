@@ -46,6 +46,6 @@ export const getHermesCLIPath = (reactNativePath: string): string => {
     return hermesCompilerPath;
   }
 
-  // Fallback to the previous hermesc path in older react native versions, <0.82.
+  // React Native < 0.83 ships hermesc inside the react-native package.
   return path.join(reactNativePath, 'sdks', 'hermesc', osBin, 'hermesc');
 };

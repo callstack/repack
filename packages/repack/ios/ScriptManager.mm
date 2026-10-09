@@ -13,15 +13,14 @@
 #import <ReactCommon/CallInvoker.h>
 #import <jsi/jsi.h>
 
+#import "RNScriptManagerSpec.h"
+
+@interface ScriptManager () <NativeScriptManagerSpec>
+@end
+
 @interface RCTBridge (JSIRuntime)
 - (void *)runtime;
 @end
-
-#ifndef RCT_NEW_ARCH_ENABLED
-@interface RCTBridge (RCTTurboModule)
-- (std::shared_ptr<facebook::react::CallInvoker>)jsCallInvoker;
-@end
-#endif
 
 static NSURLSession * (^_urlSessionFactory)(void) = nil;
 static NSURLSession *_cachedURLSession = nil;
@@ -73,19 +72,11 @@ RCT_EXPORT_MODULE()
   return _cachedURLSession;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
 RCT_EXPORT_METHOD(loadScript
                   : (nonnull NSString *)scriptId scriptConfig
                   : (JS::NativeScriptManager::NormalizedScriptLocator &)scriptConfig resolve
                   : (RCTPromiseResolveBlock)resolve reject
                   : (RCTPromiseRejectBlock)reject)
-#else
-RCT_EXPORT_METHOD(loadScript
-                  : (nonnull NSString *)scriptId scriptConfig
-                  : (nonnull NSDictionary *)scriptConfig resolve
-                  : (RCTPromiseResolveBlock)resolve reject
-                  : (RCTPromiseRejectBlock)reject)
-#endif
 {
   ScriptConfig *config;
   @try {
@@ -122,19 +113,11 @@ RCT_EXPORT_METHOD(loadScript
   }];
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
 RCT_EXPORT_METHOD(prefetchScript
                   : (nonnull NSString *)scriptId scriptConfig
                   : (JS::NativeScriptManager::NormalizedScriptLocator &)scriptConfig resolve
                   : (RCTPromiseResolveBlock)resolve reject
                   : (RCTPromiseRejectBlock)reject)
-#else
-RCT_EXPORT_METHOD(prefetchScript
-                  : (nonnull NSString *)scriptId scriptConfig
-                  : (nonnull NSDictionary *)scriptConfig resolve
-                  : (RCTPromiseResolveBlock)resolve reject
-                  : (RCTPromiseRejectBlock)reject)
-#endif
 {
   ScriptConfig *config;
   @try {
@@ -428,12 +411,10 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(unstable_evaluateScript
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback);
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params
 {
   return std::make_shared<facebook::react::NativeScriptManagerSpecJSI>(params);
 }
-#endif
 
 @end
