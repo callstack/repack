@@ -395,7 +395,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(unstable_evaluateScript
 {
   std::shared_ptr<facebook::react::CallInvoker> callInvoker = self.bridge.jsCallInvoker;
   if (!callInvoker) {
-    reject(CallInvokerUnavailableError, @"Missing CallInvoker - bridgeless on RN 0.73 is not supported", nil);
+    reject(CallInvokerUnavailableError, @"Missing CallInvoker", nil);
     return;
   }
 
