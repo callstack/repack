@@ -93,6 +93,8 @@ function createEnvironmentCompiler(
     devtool: 'source-map',
     mode,
     module: {
+      // the Re.Pack CLI default, React Native reads `React.unstable_Activity`
+      parser: { javascript: { exportsPresence: 'auto' } },
       rules: [
         {
           test: /\.js$/,
