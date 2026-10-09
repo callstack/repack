@@ -161,6 +161,10 @@ function createFixtureProject(
     path.join(react18Root, 'src/ref-component.js')
   );
   writeReactPackage(react18Root, '18.3.1');
+  fs.copyFileSync(
+    path.join(projectRoot, 'babel.config.cjs'),
+    path.join(react18Root, 'babel.config.cjs')
+  );
 
   // pnpm layout: lowered Flow enums need `flow-enums-runtime`, which only
   // React Native depends on, so it can't be resolved from the project root
@@ -493,6 +497,78 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
       greeting: 'Hello Flow!',
     });
   });
+
+  // The preset strips Flow enums before its enum plugin runs, so the React
+  // Native parser has to lower them itself
+  async function bundleWithBabelLoader(
+    loader: (typeof loaders)[number],
+    file: (typeof flowSyntaxFiles)[number],
+    project: '.' | 'react18' = '.'
+  ) {
+    const projectRoot = path.join(workspaceRoot, preset, project);
+    const { code } = await compileAndClose({
+      context: projectRoot,
+      mode: 'development',
+      devtool: false,
+      entry: `./src/${file}`,
+      output: { path: '/out', library: { type: 'commonjs2' } },
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            // keep SWC's own ESM helpers out of the SWC transform
+            exclude: /node_modules/,
+            use: {
+              loader: require.resolve(`@callstack/repack/${loader}`),
+              options:
+                loader === 'babel-loader'
+                  ? { root: projectRoot }
+                  : {
+                      hideParallelModeWarning: true,
+                      babelOverrides: { cwd: projectRoot },
+                    },
+            },
+          },
+        ],
+      },
+    });
+
+    return executeBundle(code);
+  }
+
+  it.each(loaders)('keeps Flow enums working with %s', async (loader) => {
+    const { Status, parseStatus } = (await bundleWithBabelLoader(
+      loader,
+      'enum.js'
+    )) as {
+      Status: { Active: unknown; members: () => Iterable<unknown> };
+      parseStatus: (value: string) => unknown;
+    };
+    expect(parseStatus('Active')).toBe(Status.Active);
+    expect([...Status.members()]).toEqual(['Active', 'Paused']);
+  });
+
+  it.each(loaders)(
+    'wraps components with refs in forwardRef on React 18 with %s',
+    async (loader) => {
+      const { Field } = (await bundleWithBabelLoader(
+        loader,
+        'ref-component.js',
+        'react18'
+      )) as {
+        Field: {
+          $$typeof: string;
+          render: (props: { label: string }, ref: unknown) => unknown;
+        };
+      };
+      const ref = () => {};
+      expect(Field.$$typeof).toBe('react.forward_ref');
+      expect(Field.render({ label: 'Name' }, ref)).toEqual({
+        label: 'Name',
+        ref,
+      });
+    }
+  );
 
   it('passes component refs as a prop on React 19', async () => {
     const { Field } = (await bundleWithFlowLoader('ref-component.js')) as {

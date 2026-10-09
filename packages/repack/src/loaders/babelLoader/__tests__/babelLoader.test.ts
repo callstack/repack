@@ -1,15 +1,15 @@
 import { transform } from '../babelLoader.js';
-import { loadReactNativeParser } from '../utils.js';
+import { parseReactNativeSource } from '../utils.js';
 
 jest.mock('../utils.js', () => {
   const actual = jest.requireActual('../utils.js');
   const { parseSync } = require('@babel/core');
   return {
     ...actual,
-    loadReactNativeParser: jest.fn(async () => ({
-      parse: (
+    parseReactNativeSource: jest.fn(
+      async (
         src: string,
-        opts: { sourceType?: 'script' | 'module' | 'unambiguous' }
+        opts: { sourceType?: 'script' | 'module' | 'unambiguous' | null }
       ) =>
         parseSync(src, {
           sourceType: opts?.sourceType ?? 'unambiguous',
@@ -17,8 +17,8 @@ jest.mock('../utils.js', () => {
           filename: '/virtual/hermes-parser-stand-in.js',
           babelrc: false,
           configFile: false,
-        }),
-    })),
+        })
+    ),
   };
 });
 
@@ -43,7 +43,7 @@ describe('babelLoader', () => {
         baseTransformOptions('/virtual/plain.js')
       );
 
-      expect(loadReactNativeParser).not.toHaveBeenCalled();
+      expect(parseReactNativeSource).not.toHaveBeenCalled();
     });
 
     it('uses hermes-parser for sources with an @flow pragma', async () => {
@@ -52,7 +52,7 @@ describe('babelLoader', () => {
         baseTransformOptions('/virtual/flow.js')
       );
 
-      expect(loadReactNativeParser).toHaveBeenCalled();
+      expect(parseReactNativeSource).toHaveBeenCalled();
     });
 
     it('uses hermes-parser for every source when flow is set to all', async () => {
@@ -62,7 +62,7 @@ describe('babelLoader', () => {
         { hermesParserOverrides: { flow: 'all' } }
       );
 
-      expect(loadReactNativeParser).toHaveBeenCalled();
+      expect(parseReactNativeSource).toHaveBeenCalled();
     });
 
     it('skips hermes-parser for TypeScript sources', async () => {
@@ -71,7 +71,7 @@ describe('babelLoader', () => {
         baseTransformOptions('/virtual/typescript.ts')
       );
 
-      expect(loadReactNativeParser).not.toHaveBeenCalled();
+      expect(parseReactNativeSource).not.toHaveBeenCalled();
     });
   });
 

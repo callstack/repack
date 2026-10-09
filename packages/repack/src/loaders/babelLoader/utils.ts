@@ -5,6 +5,7 @@ import {
   resolveReactNativeParser,
   resolveReactRuntimeTarget,
 } from '../../helpers/resolveReactNativeParser.js';
+import type { HermesParserOverrides } from './options.js';
 
 interface ReactNativeParser {
   parse: (
@@ -78,20 +79,28 @@ export async function parseReactNativeSource(
   src: string,
   {
     projectRoot,
+    parserPath,
     flow,
+    sourceType = 'unambiguous',
+    overrides,
   }: {
     projectRoot: string;
+    parserPath?: string;
     flow?: 'all' | 'detect';
+    sourceType?: 'script' | 'module' | 'unambiguous' | null;
+    overrides?: HermesParserOverrides;
   }
 ): Promise<ParseResult> {
-  const parser = await loadReactNativeParser(projectRoot);
+  const parser = await loadReactNativeParser(projectRoot, parserPath);
   const runtimePath = resolveFlowEnumsRuntime(projectRoot);
 
   return parser.parse(src, {
     babel: true,
-    flow,
+    // the parser rejects `flow: undefined`
+    ...(flow && { flow }),
     reactRuntimeTarget: resolveReactRuntimeTarget(projectRoot),
-    sourceType: 'unambiguous',
+    sourceType,
+    ...overrides,
     transformOptions: {
       TransformEnumSyntax: {
         enable: true,
