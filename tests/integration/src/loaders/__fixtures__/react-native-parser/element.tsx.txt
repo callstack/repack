@@ -1,0 +1,2 @@
+const title: string = 'TSX';
+export const element = <span title={title} />;

@@ -1,0 +1,9 @@
+// @flow
+
+type Person = { name: string, ... };
+
+function greet(person: Person): string {
+  return `Hello ${person.name}`;
+}
+
+export const flowResult: string = greet({ name: 'Flow' });

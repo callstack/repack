@@ -5,6 +5,8 @@ The `BabelSwcLoader` pairs Babel with SWC to deliver faster builds without sacri
 This loader can be used universally—even if your project does not have SWC. When SWC isn’t available, it cleanly falls back to pure Babel transforms, so you can adopt it incrementally without extra setup.
 SWC can be provided either by Rspack (via its built-in integration) or by installing `@swc/core` in your project.
 
+For JavaScript and Flow-typed files, the loader selects the parser used by your installed `@react-native/babel-preset`: `flow-parser` when declared by the preset, otherwise `hermes-parser` from the preset's syntax plugin. TypeScript and TSX files use Babel's standard parser.
+
 :::danger Heads up!
 Do not use `@callstack/repack/babel-swc-loader` together with `getJSTransformRules`. They overlap in functionality and will duplicate transforms when combined in one configuration. It might often result in code that's malformed and won't execute properly in the target mobile environment.
 :::
@@ -16,7 +18,7 @@ For optimal performance, enable Rspack’s parallel transforms with [`experiment
 :::details How does this loader work?
 The loader reads your Babel config and checks each plugin against a capability map to see if SWC can produce the same semantics. From that, it builds two ordered sets: transforms that stay in Babel and transforms handed off to SWC. This preserves your original plugin order and avoids behavior changes.
 
-Babel runs first and executes only the Babel‑only pieces while adding the minimal syntax support your sources need (for example, TS/TSX and Hermes‑compatible parsing where applicable). SWC then runs on the result with a generated configuration (including targets and optional lazy imports) and applies its share of the work. Each transform is applied once—never duplicated—and the output matches what you’d get from Babel alone. 
+Babel runs first and executes only the Babel‑only pieces while adding the minimal syntax support your sources need (for example, TS/TSX and React Native parsing where applicable). SWC then runs on the result with a generated configuration (including targets and optional lazy imports) and applies its share of the work. Each transform is applied once—never duplicated—and the output matches what you’d get from Babel alone.
 
 If SWC isn’t available, the SWC step is skipped and Babel handles everything.
 :::
@@ -76,14 +78,14 @@ Additional SWC loader options applied on top of the loader's computed SWC config
 
 - Type: `string`
 
-Optional path to use for importing `hermes-parser`. By default, the path is obtained automatically.
+Optional path to the React Native parser module. This overrides automatic parser selection, which resolves `@react-native/babel-preset` from Babel's `root` or `cwd` (falling back to `process.cwd()`) and uses the preset's parser dependencies. The option name is retained for backward compatibility and also applies to `flow-parser`.
 
 ### hermesParserOverrides
 
 - Type: `HermesParserOverrides`
 - Default: `{ babel: true, reactRuntimeTarget: '19' }`
 
-Overrides passed to `hermes-parser` when parsing non-TypeScript files.
+Overrides passed to the selected React Native parser when parsing non-TypeScript files. The option name is retained for backward compatibility and also applies to `flow-parser`.
 
 ```ts
 type HermesParserOverrides = {
@@ -122,4 +124,3 @@ export default {
   },
 };
 ```
-
