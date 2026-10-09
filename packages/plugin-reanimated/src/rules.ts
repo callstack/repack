@@ -1,14 +1,10 @@
 import { getModulePaths } from '@callstack/repack';
 
+const workletsBabelPlugin = 'react-native-worklets/plugin';
+
 export const createReanimatedModuleRules = (
-  majorVersion: number,
   pluginOptions: Record<string, any> = {}
 ) => {
-  const workletsBabelPlugin =
-    majorVersion < 4
-      ? 'react-native-reanimated/plugin'
-      : 'react-native-worklets/plugin';
-
   return {
     exclude: getModulePaths([
       'react',
@@ -66,7 +62,6 @@ export const createReanimatedModuleRules = (
   };
 };
 
-const reanimated3ModuleRules = createReanimatedModuleRules(3);
-const reanimated4ModuleRules = createReanimatedModuleRules(4);
+const reanimated4ModuleRules = createReanimatedModuleRules();
 
-export { reanimated3ModuleRules, reanimated4ModuleRules };
+export { reanimated4ModuleRules };

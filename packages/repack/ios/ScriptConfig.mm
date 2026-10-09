@@ -17,7 +17,6 @@
 @synthesize uniqueId = _uniqueId;
 @synthesize sourceUrl = _sourceUrl;
 
-#ifdef RCT_NEW_ARCH_ENABLED
 + (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator &)config
                 withScriptId:(nonnull NSString *)scriptId
 {
@@ -47,33 +46,6 @@
                                  withUniqueId:config.uniqueId()
                                 withSourceUrl:sourceUrl];
 }
-#else
-+ (ScriptConfig *)fromConfig:(NSDictionary *)config withScriptId:(nonnull NSString *)scriptId
-{
-  NSURLComponents *urlComponents = [NSURLComponents componentsWithString:config[@"url"]];
-  if (config[@"query"] != nil) {
-    urlComponents.percentEncodedQuery = config[@"query"];
-  }
-  NSURL *url = urlComponents.URL;
-
-  urlComponents.query = nil;
-  NSString *sourceUrl = urlComponents.URL.absoluteString;
-
-  return [[ScriptConfig alloc] initWithScript:scriptId
-                                      withURL:url
-                                   withMethod:config[@"method"]
-                                    withQuery:config[@"query"]
-                                    withFetch:[config[@"fetch"] boolValue]
-                                 withAbsolute:[config[@"absolute"] boolValue]
-                                  withHeaders:config[@"headers"]
-                                     withBody:[config[@"body"] dataUsingEncoding:NSUTF8StringEncoding]
-                                  withTimeout:config[@"timeout"]
-                    withVerifyScriptSignature:config[@"verifyScriptSignature"]
-                                withPublicKey:config[@"publicKey"]
-                                 withUniqueId:config[@"uniqueId"]
-                                withSourceUrl:sourceUrl];
-}
-#endif
 
 - (id)init
 {
