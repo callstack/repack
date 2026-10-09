@@ -1,0 +1,19 @@
+{
+  "host": { "manifest": "./manifests/host.json", "root": "." },
+  "remotes": {
+    "supported": {
+      "manifest": "./manifests/supported.json",
+      "root": "./apps/supported",
+      "standalone": true
+    },
+    "undeclared": {
+      "manifest": "./manifests/undeclared.json",
+      "root": "./apps/undeclared"
+    },
+    "declined": {
+      "manifest": "./manifests/declined.json",
+      "root": "./apps/declined",
+      "standalone": false
+    }
+  }
+}

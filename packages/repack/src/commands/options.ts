@@ -94,6 +94,134 @@ export const startCommandOptions = [
       'Bundler engine to use: "rspack" or "webpack". If not specified, auto-detected from config filename.',
     parse: parseBundler,
   },
+  {
+    name: '--standalone',
+    description:
+      'Run this app in standalone mode: all shared dependencies become eager and no remote is consumed. Runtime-only — it is never persisted to any file',
+  },
+];
+
+export const federationManifestCommandOptions = [
+  {
+    name: '--source <path>',
+    description:
+      'Federation manifest to inspect: a .json file, a directory containing repack-federation-manifest.json, or an http(s) URL. Also accepted as the first positional argument',
+  },
+  {
+    name: '--json',
+    description: 'Print the raw manifest as JSON to stdout',
+  },
+];
+
+export const federationDoctorCommandOptions = [
+  {
+    name: '--host <source>',
+    description:
+      'Host manifest source: a .json file, a build output directory containing repack-federation-manifest.json, or an http(s) URL. Optional when repack-federation.json provides it',
+  },
+  {
+    name: '--remotes <list>',
+    description:
+      'Comma-separated list of remote manifest sources (same shapes as --host). Optional when repack-federation.json provides them',
+  },
+  {
+    name: '--format <format>',
+    description: 'Output format: "json" prints machine-readable findings',
+  },
+  {
+    name: '--allow-missing-manifests',
+    description:
+      'Report remotes without a manifest as warnings instead of errors',
+  },
+  {
+    name: '--pairwise',
+    description:
+      'Additionally compare every remote pair for shared-dependency drift (shared checks only; native checks stay host-to-remote)',
+  },
+  {
+    name: '--dry-run',
+    description:
+      'Pre-build mode: check shared version alignment, expected-library provisioning and config sanity from package.json and bundler configs only — no builds, no manifest fetches. Every finding carries an unbuilt caveat',
+  },
+];
+
+export const federationInitCommandOptions = [
+  {
+    name: '--name <remote>',
+    description:
+      'Name of the remote to scaffold from the given feature folder (used as the federation name and remote key)',
+  },
+  {
+    name: '--yes',
+    description:
+      'Pre-approve all presented diffs and auto-align divergent remote shared pins to the host versions (reporting each pkg: old → new)',
+  },
+  {
+    name: '--standalone',
+    description:
+      'Record standalone support for the scaffolded remote in repack-federation.json. Refused for an existing remote that does not declare it',
+  },
+];
+
+export const federationDevCommandOptions = [
+  {
+    name: '--apps <list>',
+    description:
+      'Comma-separated remotes to run for this session (default: every remote in repack-federation.json)',
+  },
+  {
+    name: '--platform <platform>',
+    description: 'App platform to print run guidance for: "ios" or "android"',
+  },
+  {
+    name: '--launch',
+    description:
+      'Launch the app on the device once the session is ready (requires a single --platform; the wizard asks when neither launch flag is given on a TTY)',
+  },
+  {
+    name: '--no-launch',
+    description:
+      'Never launch the app — serve only (the default without a TTY or with --no-interactive)',
+  },
+  {
+    name: '--device <id>',
+    description:
+      'Device id passed through verbatim to react-native run-<platform> (only meaningful with --launch)',
+    parse: (val: string) => val,
+  },
+  {
+    name: '--port <port>',
+    description:
+      'Host dev-server port (overrides the port declared in repack-federation.json)',
+    parse: (val: string) => Number(val),
+  },
+  {
+    name: '--auto-ports',
+    description: 'Reassign busy ports to free ones instead of failing',
+  },
+  {
+    name: '--standalone <remote>',
+    description:
+      'Launch the named remote in standalone mode (requires it to declare "standalone": true)',
+  },
+  {
+    name: '--no-interactive',
+    description: 'Skip the interactive session wizard and use the default plan',
+  },
+  {
+    name: '--json',
+    description: 'Print the plan and status as machine-readable JSON',
+  },
+  {
+    name: '--dry-run',
+    description:
+      'Print the plan a live run would use and exit without spawning anything',
+  },
+  {
+    name: '--config <path>',
+    description:
+      'Path to a specific repack-federation.json (default: the nearest one up from the current directory)',
+  },
 ];
 
 export const bundleCommandOptions = [
@@ -195,5 +323,10 @@ export const bundleCommandOptions = [
     description:
       'Bundler engine to use: "rspack" or "webpack". If not specified, auto-detected from config filename.',
     parse: parseBundler,
+  },
+  {
+    name: '--standalone',
+    description:
+      'Build this app in standalone mode: all shared dependencies become eager and no remote is consumed. Runtime-only — it is never persisted to any file',
   },
 ];

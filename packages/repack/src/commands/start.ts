@@ -25,6 +25,7 @@ import {
   setupRspackEnvironment,
 } from './common/index.js';
 import logo from './common/logo.js';
+import { assertStandaloneSupported } from './federation/configFile.js';
 import type {
   Bundler,
   CliConfig,
@@ -51,6 +52,13 @@ export async function start(
   args: StartArguments,
   forcedBundler?: Bundler
 ) {
+  // Tooling-side standalone refusal, before anything is compiled: refuse
+  // only if repack-federation.json exists and declares this app's remote
+  // entry unsupported. The bundler runtime never reads the workspace map.
+  if (args.standalone) {
+    assertStandaloneSupported(cliConfig.root);
+  }
+
   const bundler =
     forcedBundler ??
     detectBundler(

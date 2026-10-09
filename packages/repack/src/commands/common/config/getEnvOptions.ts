@@ -14,6 +14,10 @@ export function getEnvOptions(opts: GetEnvOptionsOptions): EnvOptions {
   const env: EnvOptions = {
     context: opts.rootDir,
     reactNativePath: opts.reactNativePath,
+    // Always present so configs can read `env.argv?.standalone` safely.
+    // Reaches the config function through the same `{ ...env, platform }`
+    // spread that carries `platform` — no second injection point.
+    argv: { standalone: opts.args.standalone === true },
   };
 
   if (opts.command === 'bundle') {

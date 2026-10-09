@@ -1,0 +1,9 @@
+{
+  "host": { "manifest": "../apps/host/build", "root": "../apps/host" },
+  "remotes": {
+    "remote-clean": {
+      "manifest": "../apps/remote-clean/build",
+      "root": "../apps/remote-clean"
+    }
+  }
+}

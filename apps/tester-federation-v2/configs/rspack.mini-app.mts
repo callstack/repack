@@ -1,8 +1,17 @@
 import * as Repack from '@callstack/repack';
 import rspack from '@rspack/core';
-import reactPkg from 'react/package.json' with { type: 'json' };
-import reactNativePkg from 'react-native/package.json' with { type: 'json' };
-import pkg from '../package.json' with { type: 'json' };
+
+// Shared dependencies are versionless here: defineShared pins every entry to
+// the exact version installed in this workspace, so host and remotes always
+// agree without hand-maintained literals.
+const SHARED_DEPS = [
+  'react',
+  'react-native',
+  '@react-navigation/native',
+  '@react-navigation/native-stack',
+  'react-native-safe-area-context',
+  'react-native-screens',
+];
 
 export default Repack.defineRspackConfig((env) => {
   const { mode, context, platform } = env;
@@ -49,44 +58,12 @@ export default Repack.defineRspackConfig((env) => {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
         dts: false,
-        shared: {
-          react: {
-            singleton: true,
-            eager: false,
-            version: reactPkg.version,
-            requiredVersion: reactPkg.version,
-          },
-          'react-native': {
-            singleton: true,
-            eager: false,
-            version: reactNativePkg.version,
-            requiredVersion: reactNativePkg.version,
-          },
-          '@react-navigation/native': {
-            singleton: true,
-            eager: false,
-            version: pkg.dependencies['@react-navigation/native'],
-            requiredVersion: pkg.dependencies['@react-navigation/native'],
-          },
-          '@react-navigation/native-stack': {
-            singleton: true,
-            eager: false,
-            version: pkg.dependencies['@react-navigation/native-stack'],
-            requiredVersion: pkg.dependencies['@react-navigation/native-stack'],
-          },
-          'react-native-safe-area-context': {
-            singleton: true,
-            eager: false,
-            version: pkg.dependencies['react-native-safe-area-context'],
-            requiredVersion: pkg.dependencies['react-native-safe-area-context'],
-          },
-          'react-native-screens': {
-            singleton: true,
-            eager: false,
-            version: pkg.dependencies['react-native-screens'],
-            requiredVersion: pkg.dependencies['react-native-screens'],
-          },
-        },
+        shared: Repack.defineShared(SHARED_DEPS, {
+          context,
+          role: 'remote',
+          // `--standalone` is runtime-only (env.argv): never committed.
+          mode: env.argv?.standalone ? 'standalone' : 'federated',
+        }),
       }),
       // silence missing @react-native-masked-view optionally required by @react-navigation/elements
       new rspack.IgnorePlugin({

@@ -20,6 +20,8 @@ export interface BundleArguments {
   config?: string;
   webpackConfig?: string;
   bundler?: Bundler;
+  /** Runtime-only standalone mode; reaches configs via `env.argv`. */
+  standalone?: boolean;
 }
 
 export interface StartArguments {
@@ -40,6 +42,62 @@ export interface StartArguments {
   config?: string;
   webpackConfig?: string;
   bundler?: Bundler;
+  /** Runtime-only standalone mode; reaches configs via `env.argv`. */
+  standalone?: boolean;
+}
+
+export interface FederationManifestArguments {
+  source?: string;
+  json?: boolean;
+}
+
+export interface FederationDoctorArguments {
+  host?: string;
+  /** Comma-separated string; an array appears if the CLI merges repeated flags. */
+  remotes?: string | string[];
+  format?: string;
+  allowMissingManifests?: boolean;
+  /** Also compare every remote pair, shared-dependency checks only. */
+  pairwise?: boolean;
+  /** Pre-build mode over package.json + bundler configs; never reads manifests. */
+  dryRun?: boolean;
+}
+
+export interface FederationDevArguments {
+  /** Comma-separated remote names; absent means every declared remote. */
+  apps?: string | string[];
+  /** App platform for child compile scope and run guidance; validated by the command. */
+  platform?: string;
+  /**
+   * --launch / --no-launch: true launches the app on first readiness,
+   * false never, absent defers to the wizard (TTY) or means no (CI).
+   */
+  launch?: boolean;
+  /** Device id forwarded verbatim to run-<platform>. */
+  device?: string;
+  /** Host dev-server port; parsed Number, range-checked by the command. */
+  port?: number;
+  /** Reassign busy declared ports instead of failing with a conflict. */
+  autoPorts?: boolean;
+  /** Remote to launch in standalone mode, gated by the file declaration. */
+  standalone?: string;
+  /** False with --no-interactive: suppresses the interactive wizard. */
+  interactive?: boolean;
+  /** Machine-readable plan/status documents on stdout. */
+  json?: boolean;
+  /** Print the plan and spawn nothing. */
+  dryRun?: boolean;
+  /** Specific repack-federation.json to run; overrides the walk-up default. */
+  config?: string;
+}
+
+export interface FederationInitArguments {
+  /** Name of the remote to scaffold. */
+  name?: string;
+  /** Pre-approve all diffs and auto-align divergent remote pins to the host. */
+  yes?: boolean;
+  /** Record standalone support for the new remote (refused for unsupported targets). */
+  standalone?: boolean;
 }
 
 export interface CliConfig {

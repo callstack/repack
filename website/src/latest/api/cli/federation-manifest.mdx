@@ -1,0 +1,65 @@
+# federation-manifest
+
+`federation-manifest` prints the contents of a Repack federation manifest — the `repack-federation-manifest.json` file emitted by a build with the [`manifest` option](/docs/features/federation-manifest) enabled — so you can inspect what a host or remote actually shipped.
+
+## Usage
+
+A manifest source is one of:
+
+- a path to a `.json` manifest file,
+- a directory containing `repack-federation-manifest.json` (for example a build output directory),
+- an `http(s)` URL pointing at either of the two.
+
+Pass the source as the first positional argument, or with `--source`:
+
+import { PackageManagerTabs } from '@theme';
+
+<PackageManagerTabs command={{
+  npm: 'npm run react-native federation-manifest ./build',
+  yarn: 'yarn react-native federation-manifest ./build',
+  pnpm: 'pnpm react-native federation-manifest ./build',
+  bun: 'bun react-native federation-manifest ./build',
+}} />
+
+Examples:
+
+```bash
+# a build output directory
+npx react-native federation-manifest ./build
+
+# an explicit manifest file
+npx react-native federation-manifest ./build/repack-federation-manifest.json
+
+# a deployed manifest, straight from the server
+npx react-native federation-manifest http://localhost:8082
+
+# machine-readable output for scripts
+npx react-native federation-manifest ./build --json | jq '.reactNative.nativeModules'
+```
+
+The default output is a human-readable summary: identity and build info, the shared dependency table with resolved and required versions, remotes, exposes, and the React Native block with detected native modules.
+
+## Options
+
+### `--source`
+
+- Type: `string`
+
+The manifest to inspect. Equivalent to passing the source as the first positional argument; the positional argument wins when both are given.
+
+### `--json`
+
+- Type: `boolean`
+
+Print the raw manifest document as JSON to stdout. Nothing else is written to stdout in this mode, so the output pipes directly into `jq` and similar tools.
+
+## Exit codes
+
+| Code | Meaning |
+| ---- | ------- |
+| `0` | The manifest was printed. |
+| `2` | No source was given, no manifest exists at the source, or the manifest is not readable/valid JSON. |
+
+## `-h`, `--help`
+
+Display help for command.
