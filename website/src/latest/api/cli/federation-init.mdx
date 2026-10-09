@@ -1,0 +1,49 @@
+# federation-init
+
+`federation-init` scaffolds a new Module Federation remote from an existing feature folder in one command. It scans the folder's imports, generates **versionless** rspack and webpack configurations built on [`defineShared`](/api/utils/define-shared), and registers the remote in its `package.json`, the host's `remotes` and [`repack-federation.json`](/api/cli/repack-federation-json). Nothing is written before you see the diff.
+
+## Usage
+
+import { PackageManagerTabs } from '@theme';
+
+<PackageManagerTabs command={{
+  npm: 'npm run react-native federation-init ./features/store --name store',
+  yarn: 'yarn react-native federation-init ./features/store --name store',
+  pnpm: 'pnpm react-native federation-init ./features/store --name store',
+  bun: 'bun react-native federation-init ./features/store --name store',
+}} />
+
+Run it inside a federation workspace — a directory tree containing a `repack-federation.json` that declares the host and its remotes. The feature folder is the first positional argument; `--name` is the remote name used in every registration.
+
+## Options
+
+| Option | Description |
+| --- | --- |
+| `--name <remote>` | Name of the remote to scaffold (required) |
+| `--yes` | Pre-approve all presented diffs and auto-align divergent remote shared pins to the host |
+| `--standalone` | Record standalone support for the scaffolded remote in `repack-federation.json`. Refused for an existing remote that does not declare it |
+
+## What it writes
+
+For a new remote `store` from `features/store`:
+
+- `remotes/store/package.json` — dependencies derived from the feature-folder scan, intersected with what the host actually shares, pinned to the host's exact installed versions;
+- `remotes/store/rspack.store.mts` and `remotes/store/webpack.store.mts` — versionless configs whose shared setup is a `defineShared(SHARED_DEPS, { role: 'remote', mode: env.argv?.standalone ? ... })` call. They contain **no version pins**: exact pins materialize at build time from the installed packages. The Module Federation plugin version mirrors the one the host config instantiates;
+- the host config — its `remotes` object gains `store: 'store@store/remoteEntry.js'` via anchored text surgery;
+- `repack-federation.json` — a `remotes.store` entry with its `manifest` path and `root`.
+
+## Diff-before-write and idempotency
+
+Every run prints the exact diff of every file it intends to write, plus advisories and manual steps, and asks before applying anything (`[y/N]`). Re-running for an already-scaffolded remote is a no-op: all merges are key-level, so manual edits to generated files always survive and no duplicate keys ever appear. If the host config cannot be anchored safely, the plan shows manual instructions instead of guessing — and `--yes` refuses to skip them.
+
+When the scan sees dynamic `import()` or computed `require()` patterns, the output carries an honesty advisory: dependencies behind them may be missing from the generated config.
+
+## Shared version divergence
+
+If an existing remote resolves a shared dependency to a different installed version than the host, `federation-init` shows the version diff and asks: `[a]lign` rewrites the divergent remote's pins to the host's exact versions, `[i]gnore` continues without touching them, `[c]ancel` writes nothing. With `--yes` the alignment happens automatically and every rewritten pin is reported (`react: ^19.1.0 → 19.2.3`) — pins are rewritten, not installed, so run your package manager install afterwards.
+
+## Exit codes
+
+- `0` — scaffolding applied, or nothing left to do
+- `1` — cancelled at the divergence prompt
+- `2` — unusable input or workspace (missing `--name`/feature folder, malformed `repack-federation.json`, standalone refusal, manual steps blocking `--yes`); always a clear message, never a stack trace, and never a partial write

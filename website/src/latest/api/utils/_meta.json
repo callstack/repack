@@ -1,5 +1,6 @@
 [
   "constants",
+  "define-shared",
   "get-asset-extension-regexp",
   "get-asset-transform-rules",
   "get-codegen-transform-rules",

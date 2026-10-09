@@ -1,0 +1,6 @@
+{
+  "host": { "manifest": "../config-valid/manifests/host.json" },
+  "remotes": {
+    "store": { "manifest": "http://localhost:8082" }
+  }
+}

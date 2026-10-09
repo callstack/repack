@@ -389,3 +389,13 @@ packages/**/docs
 
 # watchman
 .watchman-cookie*
+
+# Fixture node_modules for federation manifest / defineShared version tests
+!packages/repack/src/plugins/__tests__/__fixtures__/manifest-context/node_modules/
+!packages/repack/src/utils/__tests__/__fixtures__/define-shared-app/node_modules/
+!packages/repack/src/utils/__tests__/__fixtures__/define-shared-split-app/node_modules/
+!packages/repack/src/commands/federation/__fixtures__/dry-run-workspace/apps/host/node_modules/
+!packages/repack/src/commands/federation/__fixtures__/dry-run-workspace/apps/remote-clean/node_modules/
+!packages/repack/src/commands/federation/__fixtures__/dry-run-workspace/apps/remote-drift/node_modules/
+!packages/repack/src/commands/federation/__fixtures__/init-workspace/apps/host/node_modules/
+!packages/repack/src/commands/federation/__fixtures__/init-workspace/apps/remote-drift/node_modules/

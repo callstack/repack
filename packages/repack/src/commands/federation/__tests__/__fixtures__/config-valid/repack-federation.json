@@ -1,0 +1,11 @@
+{
+  "host": { "manifest": "./manifests/host.json", "root": "." },
+  "remotes": {
+    "store": {
+      "manifest": "./manifests/store.json",
+      "root": "./apps/store",
+      "standalone": true,
+      "port": 8082
+    }
+  }
+}

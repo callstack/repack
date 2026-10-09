@@ -1,0 +1,9 @@
+{
+  "host": { "manifest": "../apps/host/build", "root": "../apps/host" },
+  "remotes": {
+    "broken": {
+      "manifest": "../apps/broken/build",
+      "root": "../apps/broken"
+    }
+  }
+}

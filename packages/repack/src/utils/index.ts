@@ -1,5 +1,6 @@
 export * from './assetExtensions.js';
 export * from './defineConfig.js';
+export * from './defineShared.js';
 export * from './federated.js';
 export * from './getAssetTransformRules.js';
 export * from './getCodegenTransformRules.js';

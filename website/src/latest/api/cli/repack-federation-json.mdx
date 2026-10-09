@@ -1,0 +1,57 @@
+# repack-federation.json
+
+`repack-federation.json` is the per-repo federation workspace map. It tells Re.Pack tooling where the host and each remote live, which remotes support standalone mode, and (reserved for a later release) which dev-server port each remote uses. Its presence is what unlocks **zero-flag operation** of `federation-doctor` (and, once shipped, `federation-init`).
+
+## Schema
+
+```json
+{
+  "host": {
+    "manifest": "./shell/build",
+    "root": "."
+  },
+  "remotes": {
+    "store": {
+      "manifest": "http://localhost:8082",
+      "root": "./apps/store",
+      "standalone": true,
+      "port": 8082
+    }
+  }
+}
+```
+
+| Field | Type | Required | Meaning |
+| --- | --- | --- | --- |
+| `host.manifest` | string | yes | Host manifest source: a `.json` file, a build output directory containing `repack-federation-manifest.json`, or an `http(s)` URL |
+| `host.root` | string | no | Host app root |
+| `remotes.<name>` | object | — | One entry per remote, keyed by its declared name (used to label findings) |
+| `remotes.<name>.manifest` | string | yes | Remote manifest source (same shapes as `host.manifest`) |
+| `remotes.<name>.root` | string | no | Remote app root |
+| `remotes.<name>.standalone` | boolean | no | Whether the remote supports `--standalone`; absence means unsupported and commands refuse `--standalone` for it |
+| `remotes.<name>.port` | number | no | Dev-server port; validated and preserved for the future dev-runner, no shipped tool acts on it today |
+
+Relative `manifest` and `root` values resolve against the directory containing `repack-federation.json`, not the caller's working directory. The schema is strict: any field outside this shape is a validation error naming the offending field path.
+
+## Discovery
+
+Tools walk up from the current working directory — the file's own directory first, then each ancestor — and use the **first** `repack-federation.json` found. One invocation operates on exactly one config file, so in split checkouts (host and remotes in different trees) run tools from the directory whose walk-up hits the file you mean.
+
+## Precedence: flags over file over defaults
+
+Precedence applies per value:
+
+- `--host <source>` overrides only `host.manifest`; remaining values still come from the file.
+- `--remotes <list>` replaces the file's remote set wholesale (a list cannot be merged per-value).
+- A "required option missing" failure happens only when neither a flag nor the file supplies the value.
+- An invalid file is never silently ignored: the tool exits with code 2 and prints the file path and the exact validation failure (no stack trace, no fallback to defaults).
+
+## Example: zero-flag CI
+
+With the file above committed at the repository root, CI gates drift with a bare command:
+
+```bash
+react-native federation-doctor
+```
+
+Both `--host` and `--remotes` come from the file; explicit flags still win when passed.

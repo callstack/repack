@@ -1,7 +1,19 @@
 import * as Repack from '@callstack/repack';
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 import rspack from '@rspack/core';
-import pkg from '../package.json' with { type: 'json' };
+
+// Shared dependencies are versionless here: defineShared pins every entry to
+// the exact version installed in this workspace, so host and remotes always
+// agree without hand-maintained literals.
+const SHARED_DEPS = [
+  'react',
+  'react-native',
+  '@react-navigation/native',
+  '@react-navigation/native-stack',
+  'react-native-safe-area-context',
+  'react-native-screens',
+  '@react-native-async-storage/async-storage',
+];
 
 export default Repack.defineRspackConfig((env) => {
   const { mode, context, platform } = env;
@@ -43,50 +55,10 @@ export default Repack.defineRspackConfig((env) => {
       }),
       new Repack.plugins.ModuleFederationPluginV1({
         name: 'HostApp',
-        shared: {
-          react: {
-            singleton: true,
-            eager: true,
-            requiredVersion: '19.2.3',
-          },
-          'react-native': {
-            singleton: true,
-            eager: true,
-            requiredVersion: '0.84.1',
-          },
-          '@react-navigation/native': {
-            singleton: true,
-            eager: true,
-            version: pkg.dependencies['@react-navigation/native'],
-            requiredVersion: pkg.dependencies['@react-navigation/native'],
-          },
-          '@react-navigation/native-stack': {
-            singleton: true,
-            eager: true,
-            version: pkg.dependencies['@react-navigation/native-stack'],
-            requiredVersion: pkg.dependencies['@react-navigation/native-stack'],
-          },
-          'react-native-safe-area-context': {
-            singleton: true,
-            eager: true,
-            version: pkg.dependencies['react-native-safe-area-context'],
-            requiredVersion: pkg.dependencies['react-native-safe-area-context'],
-          },
-          'react-native-screens': {
-            singleton: true,
-            eager: true,
-            version: pkg.dependencies['react-native-screens'],
-            requiredVersion: pkg.dependencies['react-native-screens'],
-          },
-          '@react-native-async-storage/async-storage': {
-            singleton: true,
-            eager: true,
-            version:
-              pkg.dependencies['@react-native-async-storage/async-storage'],
-            requiredVersion:
-              pkg.dependencies['@react-native-async-storage/async-storage'],
-          },
-        },
+        shared: Repack.defineShared(SHARED_DEPS, {
+          context,
+          role: 'host',
+        }),
       }),
       new rspack.IgnorePlugin({
         resourceRegExp: /^@react-native-masked-view/,

@@ -20,6 +20,8 @@ export interface BundleArguments {
   config?: string;
   webpackConfig?: string;
   bundler?: Bundler;
+  /** Runtime-only standalone mode; reaches configs via `env.argv`. */
+  standalone?: boolean;
 }
 
 export interface StartArguments {
@@ -40,6 +42,34 @@ export interface StartArguments {
   config?: string;
   webpackConfig?: string;
   bundler?: Bundler;
+  /** Runtime-only standalone mode; reaches configs via `env.argv`. */
+  standalone?: boolean;
+}
+
+export interface FederationManifestArguments {
+  source?: string;
+  json?: boolean;
+}
+
+export interface FederationDoctorArguments {
+  host?: string;
+  /** Comma-separated string; an array appears if the CLI merges repeated flags. */
+  remotes?: string | string[];
+  format?: string;
+  allowMissingManifests?: boolean;
+  /** Also compare every remote pair, shared-dependency checks only. */
+  pairwise?: boolean;
+  /** Pre-build mode over package.json + bundler configs; never reads manifests. */
+  dryRun?: boolean;
+}
+
+export interface FederationInitArguments {
+  /** Name of the remote to scaffold. */
+  name?: string;
+  /** Pre-approve all diffs and auto-align divergent remote pins to the host. */
+  yes?: boolean;
+  /** Record standalone support for the new remote (refused for unsupported targets). */
+  standalone?: boolean;
 }
 
 export interface CliConfig {
