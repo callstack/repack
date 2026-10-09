@@ -1,6 +1,8 @@
 import type { Compiler, SourceMapDevToolPluginOptions } from '@rspack/core';
 
-const MALFORMED_VIRTUAL_MODULE_PREFIX = 'webpack://=="undefined"}';
+// the Module Federation runtime is a `data:` URI module, whose percent-encoded
+// resource path Re.Pack's dev template splits into a bogus `webpack://` source
+const MALFORMED_VIRTUAL_MODULE_PREFIX = 'webpack://%3D%3D%22undefined%22%7D';
 
 type ModuleFilenameTemplate =
   SourceMapDevToolPluginOptions['moduleFilenameTemplate'];
