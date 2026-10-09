@@ -117,7 +117,9 @@ export class RepackTargetPlugin {
               compiler,
               {
                 chunkId: chunk.id ?? undefined,
-                hmrEnabled: !!compiler.options.devServer?.hot,
+                hmrEnabled: compiler.options.devServer
+                  ? !!compiler.options.devServer.hot
+                  : false,
               }
             );
 

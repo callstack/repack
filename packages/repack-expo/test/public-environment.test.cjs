@@ -105,17 +105,14 @@ function createEnvironmentCompiler(
         },
       ],
     },
-    experiments: {
-      ...(cacheDirectory
-        ? {
-            cache: {
-              storage: { directory: cacheDirectory, type: 'filesystem' },
-              type: 'persistent',
-            },
-          }
-        : {}),
-      ...(parallelLoader ? { parallelLoader: true } : {}),
-    },
+    ...(cacheDirectory
+      ? {
+          cache: {
+            storage: { directory: cacheDirectory, type: 'filesystem' },
+            type: 'persistent',
+          },
+        }
+      : {}),
     name: platform,
     output: {
       path: path.join(projectRoot, 'dist', platform),
@@ -491,27 +488,20 @@ test('invalidates Rspack persistent loader cache when a public shell value chang
   );
 });
 
-test('adds the Expo environment digest to both Rspack persistent cache locations', () => {
+test('adds the Expo environment digest to the Rspack persistent cache version', () => {
   const projectRoot = createEnvironmentProject({
     '.env': 'EXPO_PUBLIC_VALUE=cache-value',
   });
 
-  for (const location of ['cache', 'experiments']) {
-    const cache = { type: 'persistent', version: 'base-version' };
-    const compiler = {
-      options: {
-        mode: 'development',
-        ...(location === 'cache' ? { cache } : { experiments: { cache } }),
-      },
-    };
+  const cache = { type: 'persistent', version: 'base-version' };
+  const compiler = { options: { mode: 'development', cache } };
 
-    const environment = configureExpoPublicEnvironment(compiler, projectRoot);
+  const environment = configureExpoPublicEnvironment(compiler, projectRoot);
 
-    assert.equal(
-      cache.version,
-      `base-version|RepackExpoPublicEnvironmentPlugin:${environment.digest}`
-    );
-  }
+  assert.equal(
+    cache.version,
+    `base-version|RepackExpoPublicEnvironmentPlugin:${environment.digest}`
+  );
 });
 
 test('rebuilds transformed application modules when an Expo public dotenv value changes', async () => {
