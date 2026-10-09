@@ -1,3 +1,5 @@
+import { resolveSyntaxTypeScriptPlugin } from '../helpers/resolveBabelPlugins.js';
+
 /**
  * Returns `module.rules` configuration for handling React Native codegen transformation.
  * This is required for projects using React Native New Architecture.
@@ -5,6 +7,8 @@
  * @returns Array of module rules
  */
 export function getCodegenTransformRules() {
+  const syntaxTypeScriptPlugin = resolveSyntaxTypeScriptPlugin();
+
   return [
     {
       type: 'javascript/auto',
@@ -21,8 +25,9 @@ export function getCodegenTransformRules() {
           },
           plugins: [
             '@callstack/repack/babel-plugin-syntax-react-native',
-            ['@babel/plugin-syntax-typescript', false],
-            '@react-native/babel-plugin-codegen',
+            [syntaxTypeScriptPlugin, false],
+            // resolves the codegen plugin through the project's @react-native/babel-preset
+            '@callstack/repack/babel-plugin-codegen',
           ],
           // config merging reference: https://babeljs.io/docs/options#pluginpreset-entries
           overrides: [
@@ -30,7 +35,7 @@ export function getCodegenTransformRules() {
               test: /\.ts$/,
               plugins: [
                 [
-                  '@babel/plugin-syntax-typescript',
+                  syntaxTypeScriptPlugin,
                   { isTSX: false, allowNamespaces: true },
                 ],
               ],
@@ -39,7 +44,7 @@ export function getCodegenTransformRules() {
               test: /\.tsx$/,
               plugins: [
                 [
-                  '@babel/plugin-syntax-typescript',
+                  syntaxTypeScriptPlugin,
                   { isTSX: true, allowNamespaces: true },
                 ],
               ],

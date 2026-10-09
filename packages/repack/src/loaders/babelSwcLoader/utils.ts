@@ -6,9 +6,12 @@ import type {
   SwcLoaderParserConfig,
 } from '@rspack/core';
 import { importDefaultESM } from '../../helpers/index.js';
+import { resolveSyntaxTypeScriptPlugin } from '../../helpers/resolveBabelPlugins.js';
 
 type Swc = (typeof experiments)['swc'];
 type Logger = ReturnType<LoaderContext['getLogger']>;
+
+const syntaxTypeScriptPlugin = resolveSyntaxTypeScriptPlugin();
 
 export function isTypeScriptSource(fileName: string) {
   return !!fileName && fileName.endsWith('.ts');
@@ -34,12 +37,12 @@ export function getExtraBabelPlugins(filename: string) {
   // which includes the syntax-typescript plugin
   if (isTypeScriptSource(filename)) {
     extraBabelPlugins.push([
-      '@babel/plugin-syntax-typescript',
+      syntaxTypeScriptPlugin,
       { isTSX: false, allowNamespaces: true },
     ]);
   } else if (isTSXSource(filename)) {
     extraBabelPlugins.push([
-      '@babel/plugin-syntax-typescript',
+      syntaxTypeScriptPlugin,
       { isTSX: true, allowNamespaces: true },
     ]);
   }

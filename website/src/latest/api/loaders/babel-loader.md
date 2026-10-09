@@ -61,6 +61,12 @@ plugins: ["@callstack/repack/babel-plugin-syntax-react-native"]
 
 Re.Pack's `getCodegenTransformRules()` and Reanimated plugin already include this syntax plugin automatically.
 
+For custom codegen rules, use `@callstack/repack/babel-plugin-codegen` instead of `@react-native/babel-plugin-codegen`. It resolves the codegen plugin through the installed React Native preset the same way, so it works when the plugin isn't installed directly in the project (e.g. with pnpm). `getCodegenTransformRules()` already uses it.
+
+```js
+plugins: ["@callstack/repack/babel-plugin-codegen"]
+```
+
 ## Example
 
 ```js title=rspack.config.mjs

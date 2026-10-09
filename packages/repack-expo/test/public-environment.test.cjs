@@ -232,6 +232,7 @@ test('resolves Expo development and production dotenv precedence without exposin
   const projectRoot = createEnvironmentProject({
     '.env': [
       'EXPO_PUBLIC_VALUE=base',
+      // biome-ignore lint/suspicious/noTemplateCurlyInString: literal dotenv variable expansion under test
       'EXPO_PUBLIC_EXPANDED=${SHARED_SUFFIX}-base',
       'PRIVATE_TEST_SECRET=private-value-that-must-not-escape',
     ].join('\n'),
