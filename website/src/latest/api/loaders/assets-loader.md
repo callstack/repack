@@ -10,13 +10,15 @@ By default, extracted asset files are copied to `assets/` directory for iOS and 
 
 When bundling for Android without the development server, extracted assets are placed in the following resource directories:
 
-| Asset                                        | Output directory                                                 |
-| -------------------------------------------- | ---------------------------------------------------------------- |
-| Images (`png`, `jpg`, `webp`, etc.)          | `drawable-*` (e.g. `drawable-mdpi`, `drawable-hdpi`) per scale   |
-| Font binaries (`ttf`, `otf`, `ttc`)          | `font` **and** `raw`                                             |
-| XML font families (`<font-family>`)          | `font`                                                           |
-| Other XML files                              | `drawable-*`                                                     |
-| Everything else (video, audio, other files)  | `raw`                                                            |
+| Asset                                                                                    | Output directory                                               |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Images (`png`, `jpg`, `gif`, `webp`)                                                     | `drawable-*` (e.g. `drawable-mdpi`, `drawable-hdpi`) per scale |
+| Font binaries (`ttf`, `otf`, `ttc`)                                                      | `font` **and** `raw`                                           |
+| XML font families (`<font-family>`)                                                      | `font`                                                         |
+| Other XML files                                                                          | `drawable-*`                                                   |
+| Everything else (other image formats such as `jpeg` or `svg`, video, audio, other files) | `raw`                                                          |
+
+`xml` and `ttc` are not included in the default [asset extensions](/api/utils/constants#asset_extensions), so `getAssetTransformRules()` doesn't process them. To bundle them, add a rule that uses the Assets loader for these extensions.
 
 Font binaries are emitted twice: the `font` copy keeps native references such as `@font/...` and `R.font` working, while the `raw` copy lets libraries that load fonts by name at runtime (e.g. [React Native Skia](https://shopify.github.io/react-native-skia/)) find them the same way they do with Metro.
 

@@ -31,7 +31,12 @@ Add the font files to the native projects so they are available in both debug an
 
 ### Register fonts emitted by Re.Pack (Android release builds)
 
-In Android release builds, fonts bundled by Re.Pack are available as `font` resources, named after their path in the project (e.g. `assets/fonts/Inter.ttf` becomes `assets_fonts_inter`). You can register them in `MainApplication` with `ReactFontManager`:
+In Android release builds, fonts bundled by Re.Pack are available as `font` resources. A font is only bundled if it is `require`d or `import`ed somewhere in your JavaScript code. The resource name comes from the font's path relative to the project root, not to the file that requires it (e.g. `assets/fonts/Inter.ttf` becomes `assets_fonts_inter`). You can register these fonts in `MainApplication` with `ReactFontManager`:
+
+```js title="index.js"
+// makes Re.Pack bundle the font, even if it's only used by native <Text>
+require('./assets/fonts/Inter.ttf');
+```
 
 ```kotlin title="MainApplication.kt"
 import com.facebook.react.common.assets.ReactFontManager
@@ -49,6 +54,8 @@ override fun onCreate() {
 
 :::warning Release builds only
 When using the development server, fonts are served over HTTP and are not part of the Android resources, so the resource lookup above returns `0` and the font falls back to the system font. Link the font natively if you need it in debug builds as well.
+
+The lookup also returns `0` in release builds if the font isn't required from JavaScript. Because of the `fontId != 0` check, this fails silently and the text uses the system font.
 :::
 
 ## Font collections (`.ttc`)
@@ -70,3 +77,5 @@ module.exports = {
   },
 };
 ```
+
+This is enough for libraries that load fonts from JavaScript, such as React Native Skia. Native `<Text>` on Android only looks up `.ttf` and `.otf` files in `assets/fonts/`, so a `.ttc` file can't be linked natively there. In Android release builds, you can still register the `font` resource emitted by Re.Pack with [`addCustomFont`](#register-fonts-emitted-by-repack-android-release-builds).
