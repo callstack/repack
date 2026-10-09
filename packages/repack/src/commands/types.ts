@@ -18,7 +18,6 @@ export interface BundleArguments {
   watch?: boolean;
   maxWorkers?: number;
   config?: string;
-  webpackConfig?: string;
   bundler?: Bundler;
 }
 
@@ -38,7 +37,6 @@ export interface StartArguments {
   verbose?: boolean;
   maxWorkers?: number;
   config?: string;
-  webpackConfig?: string;
   bundler?: Bundler;
 }
 

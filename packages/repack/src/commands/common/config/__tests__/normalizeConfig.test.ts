@@ -62,14 +62,6 @@ describe('normalizeConfig', () => {
   });
 
   describe('output.publicPath normalization', () => {
-    it('should set publicPath to noop if it uses deprecated getPublicPath', () => {
-      const config = {
-        output: { publicPath: 'DEPRECATED_GET_PUBLIC_PATH' },
-      } as ConfigurationObject;
-      const normalized = normalizeConfig(config, 'ios');
-      expect(normalized.output?.publicPath).toBe('noop:///');
-    });
-
     it('should set publicPath to devServer public path if it uses DEV_SERVER_PUBLIC_PATH', () => {
       const config = {
         devServer: { host: 'example.com', port: 3000 },
