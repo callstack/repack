@@ -26,6 +26,7 @@ interface GetJsTransformRulesOptions {
     externalHelpers?: boolean;
     importSource?: string;
     jsxRuntime?: "automatic" | "classic";
+    development?: boolean;
     lazyImports?: boolean | string[];
   };
   flow?: {
@@ -63,6 +64,7 @@ Configuration options for SWC transformations. For detailed documentation of the
     externalHelpers: true,
     importSource: 'react',
     jsxRuntime: 'automatic',
+    // development: defaults to the build `mode`
     lazyImports: false,
   }
 }
