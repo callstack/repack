@@ -6,7 +6,7 @@ The `BabelLoader` runs Babel transformations for JavaScript and TypeScript sourc
 
 There are two similarly named loaders: `@callstack/repack/babel-loader` (this loader) and `babel-loader` from npm. This loader is tailored for Re.Pack and aims for Metro parity, so the same Babel config used in Metro works as-is in Re.Pack. It automatically selects the React Native parser for JS/JSX and Flow, and Babel's parser for TypeScript and TSX.
 
-It is also optimized for parallel transforms. In Rspack, enable [`experiments.parallelLoader`](https://rspack.rs/config/experiments#experimentsparallelloader) to fan out transforms; in webpack, pair it with [`thread-loader`](https://www.npmjs.com/package/thread-loader) to run a worker pool. On projects with heavier Babel pipelines, this often translates into noticeably faster builds.
+It is also optimized for parallel transforms. In Rspack, set [`parallel: true`](https://rspack.rs/config/module-rules#rulesuseparallel) on the loader rule to fan out transforms; in webpack, pair it with [`thread-loader`](https://www.npmjs.com/package/thread-loader) to run a worker pool. On projects with heavier Babel pipelines, this often translates into noticeably faster builds.
 
 :::
 
