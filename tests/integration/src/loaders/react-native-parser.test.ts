@@ -163,7 +163,7 @@ beforeAll(() => {
     fs.mkdirSync(presetRoot, { recursive: true });
     fs.writeFileSync(
       path.join(projectRoot, 'index.js'),
-      'module.exports = 42;'
+      '// @flow\nmodule.exports = 42;'
     );
     fs.writeFileSync(
       path.join(presetRoot, 'package.json'),
