@@ -56,7 +56,7 @@
   "scripts": {
     "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --ignore \"**/__tests__/**\" --delete-dir-on-start",
     "build:ts": "tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "build": "pnpm run \"/^build:.*/\"",
+    "build": "pnpm run build:js && pnpm run build:ts",
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "archive": "pnpm build && pnpm pack",
