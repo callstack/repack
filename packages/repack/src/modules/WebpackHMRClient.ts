@@ -173,32 +173,15 @@ if (__DEV__ && module.hot) {
     LogBox.clearAllLogs();
   };
 
-  const showLoadingView = (text: string, type: 'load' | 'refresh') => {
-    let LoadingView: RNLoadingView;
-    if (__REACT_NATIVE_MINOR_VERSION__ >= 79) {
-      LoadingView =
-        require('react-native/Libraries/Utilities/DevLoadingView').default;
-    } else if (__REACT_NATIVE_MINOR_VERSION__ >= 75) {
-      LoadingView = require('react-native/Libraries/Utilities/DevLoadingView');
-    } else {
-      LoadingView = require('react-native/Libraries/Utilities/LoadingView');
-    }
+  const getLoadingView = (): RNLoadingView =>
+    require('react-native/Libraries/Utilities/DevLoadingView').default;
 
-    LoadingView.showMessage(text, type);
+  const showLoadingView = (text: string, type: 'load' | 'refresh') => {
+    getLoadingView().showMessage(text, type);
   };
 
   const hideLoadingView = () => {
-    let LoadingView: RNLoadingView;
-    if (__REACT_NATIVE_MINOR_VERSION__ >= 79) {
-      LoadingView =
-        require('react-native/Libraries/Utilities/DevLoadingView').default;
-    } else if (__REACT_NATIVE_MINOR_VERSION__ >= 75) {
-      LoadingView = require('react-native/Libraries/Utilities/DevLoadingView');
-    } else {
-      LoadingView = require('react-native/Libraries/Utilities/LoadingView');
-    }
-
-    LoadingView.hide();
+    getLoadingView().hide();
   };
 
   new HMRClient({
