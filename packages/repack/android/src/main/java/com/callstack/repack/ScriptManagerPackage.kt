@@ -18,14 +18,13 @@ class ScriptManagerPackage : BaseReactPackage() {
     override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
         return ReactModuleInfoProvider {
             val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
-            val isTurboModule: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
             moduleInfos[ScriptManagerModule.NAME] = ReactModuleInfo(
                     ScriptManagerModule.NAME,
                     ScriptManagerModule.NAME,
                     false, // canOverrideExistingModule
                     true, // needsEagerInit
                     false, // isCxxModule
-                    isTurboModule
+                    true // isTurboModule
             )
             moduleInfos
         }

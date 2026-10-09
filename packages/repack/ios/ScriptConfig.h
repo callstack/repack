@@ -1,7 +1,7 @@
 #ifndef ScriptConfig_h
 #define ScriptConfig_h
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef __cplusplus
 #import "RNScriptManagerSpec.h"
 #endif
 
@@ -23,11 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSString *uniqueId;
 @property (nonatomic, readonly) NSString *sourceUrl;
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef __cplusplus
 + (ScriptConfig *)fromConfig:(JS::NativeScriptManager::NormalizedScriptLocator &)config
                 withScriptId:(NSString *)scriptId;
-#else
-+ (ScriptConfig *)fromConfig:(NSDictionary *)config withScriptId:(NSString *)scriptId;
 #endif
 
 - (ScriptConfig *)initWithScript:(NSString *)scriptId
