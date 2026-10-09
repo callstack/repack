@@ -9,7 +9,10 @@ type CompilerWarning = Error & {
   };
 };
 
-jest.mock('@module-federation/enhanced/rspack');
+jest.mock('@module-federation/enhanced/rspack', () => ({
+  // 2.x's export shape can't be automocked into a constructor
+  ModuleFederationPlugin: jest.fn(() => ({ apply: jest.fn() })),
+}));
 
 const mockCompiler = {
   context: __dirname,
@@ -208,6 +211,22 @@ describe('ModuleFederationPlugin', () => {
     const config = mockPlugin.mock.calls[0][0];
     expect(config.runtimePlugins).toContain(corePluginPath);
     expect(config.runtimePlugins).toContain(resolverPluginPath);
+    expect(config.runtimePlugins).toContain(prefetchPluginPath);
+    expect(config.runtimePlugins).toHaveLength(3);
+  });
+
+  it('should keep options of runtime plugins passed as [path, options]', () => {
+    new ModuleFederationPluginV2({
+      name: 'test',
+      runtimePlugins: [['@callstack/repack/mf/resolver-plugin', { retry: 2 }]],
+    }).apply(mockCompiler);
+
+    const config = mockPlugin.mock.calls[0][0];
+    expect(config.runtimePlugins).toContainEqual([
+      resolverPluginPath,
+      { retry: 2 },
+    ]);
+    expect(config.runtimePlugins).toContain(corePluginPath);
     expect(config.runtimePlugins).toContain(prefetchPluginPath);
     expect(config.runtimePlugins).toHaveLength(3);
   });

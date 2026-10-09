@@ -32,6 +32,14 @@ export interface ModuleFederationPluginV2Config
   reactNativeDeepImports?: boolean;
 }
 
+// a runtime plugin path, or [path, options] (Module Federation 2.x)
+type RuntimePlugin = NonNullable<
+  MF.ModuleFederationPluginOptions['runtimePlugins']
+>[number];
+
+const runtimePluginPath = (plugin: RuntimePlugin) =>
+  typeof plugin === 'string' ? plugin : plugin[0];
+
 /**
  * Webpack plugin to configure Module Federation with platform differences
  * handled under the hood.
@@ -140,23 +148,28 @@ export class ModuleFederationPluginV2 {
 
   private adaptRuntimePlugins(
     context: string,
-    runtimePlugins: string[] | undefined = []
+    runtimePlugins: RuntimePlugin[] | undefined = []
   ) {
     const plugins = runtimePlugins
-      .map((pluginPath) => {
+      .map((plugin) => {
         try {
           // resolve the paths to compare against absolute paths
-          return require.resolve(pluginPath, { paths: [context] });
+          const pluginPath = require.resolve(runtimePluginPath(plugin), {
+            paths: [context],
+          });
+          if (typeof plugin === 'string') return pluginPath;
+          const entry: RuntimePlugin = [pluginPath, plugin[1]];
+          return entry;
         } catch {
           // ignore invalid paths
           return undefined;
         }
       })
-      .filter((pluginPath) => !!pluginPath) as string[];
+      .filter((plugin): plugin is RuntimePlugin => !!plugin);
 
     for (const plugin of this.defaultRuntimePlugins) {
       const pluginPath = require.resolve(plugin);
-      if (!plugins.includes(pluginPath)) {
+      if (!plugins.some((entry) => runtimePluginPath(entry) === pluginPath)) {
         plugins.unshift(pluginPath);
       }
     }
