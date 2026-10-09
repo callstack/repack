@@ -12,11 +12,15 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
+    "@babel/runtime": "^7.29.7",
     "@callstack/repack": "workspace:*",
     "@module-federation/enhanced": "2.0.1",
     "@module-federation/enhanced-v15": "npm:@module-federation/enhanced@0.15.0",
     "@module-federation/enhanced-v21": "npm:@module-federation/enhanced@0.21.0",
+    "@react-native/babel-preset-current": "npm:@react-native/babel-preset@0.88.0-rc.3",
+    "@react-native/babel-preset-legacy": "npm:@react-native/babel-preset@0.87.0",
     "@rspack/core": "catalog:",
+    "@swc/core": "^1.15.46",
     "@types/node": "catalog:",
     "hermes-parser": "0.36.0",
     "memfs": "^4.11.1",

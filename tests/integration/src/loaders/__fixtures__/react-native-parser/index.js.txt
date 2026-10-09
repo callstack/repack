@@ -1,0 +1,5 @@
+import { element } from './element';
+import { flowResult } from './flow';
+import { typescriptResult } from './typescript';
+
+export const result = { flowResult, typescriptResult, element };

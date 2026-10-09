@@ -13,8 +13,8 @@ See the [Migration from Re.Pack 4 guide](/docs/migration-guides/repack-v4) for m
 
 :::tip Why migrate to Rspack?
 
-[Rspack](https://rspack.dev/) is a fast Rust-based bundler that's compatible with the webpack ecosystem, offering significantly faster build times for both development and production while maintaining webpack compatibility with minimal migration effort.
-For more details on why Rspack was created and its advantages, see the [official rationale](https://rspack.dev/guide/start/introduction#why-rspack).
+[Rspack](https://rspack.rs/) is a fast Rust-based bundler that's compatible with the webpack ecosystem, offering significantly faster build times for both development and production while maintaining webpack compatibility with minimal migration effort.
+For more details on why Rspack was created and its advantages, see the [official rationale](https://rspack.rs/guide/start/introduction#why-rspack).
 :::
 
 ## Update dependencies in `package.json`
@@ -52,12 +52,12 @@ When migrating from webpack to Rspack, you'll need to make several changes to yo
 :::warning Additional steps may be required for complex configurations
 The modifications outlined below cover the basic changes needed for most React Native projects. However, if you have a more complex webpack setup with custom loaders, plugins, or configurations, these changes might not be sufficient.
 
-For more advanced migration scenarios, refer to the [official Rspack migration guide](https://rspack.dev/guide/migration/webpack), which provides detailed instructions for migrating various webpack features, plugins, and loaders to their Rspack equivalents.
+For more advanced migration scenarios, refer to the [official Rspack migration guide](https://rspack.rs/guide/migration/webpack), which provides detailed instructions for migrating various webpack features, plugins, and loaders to their Rspack equivalents.
 :::
 
 #### Remove `TerserPlugin` import and configuration
 
-Rspack uses [SwcJsMinimizerRspackPlugin](https://rspack.dev/plugins/rspack/swc-js-minimizer-rspack-plugin) for minification, which is much faster than `TerserPlugin` and comes configured by default. You can remove both the `TerserPlugin` import and its configuration.
+Rspack uses [SwcJsMinimizerRspackPlugin](https://rspack.rs/plugins/swc-js-minimizer-rspack-plugin) for minification, which is much faster than `TerserPlugin` and comes configured by default. You can remove both the `TerserPlugin` import and its configuration.
 
 ```diff
 - const TerserPlugin = require('terser-webpack-plugin');

@@ -75,6 +75,14 @@ We use [changesets](https://github.com/changesets/changesets) and the
 versions, update package `CHANGELOG.md` files, publish to npm, and create GitHub
 releases.
 
+#### Updating `repack-init` versions
+
+`@callstack/repack-init` creates projects with the React Native and bundler
+versions listed in `packages/init/versions.json`. Run
+`pnpm --filter @callstack/repack-init update-versions` to refresh them to the
+newest published releases, then create a project with the built init and check
+that it bundles for both platforms before adding a changeset.
+
 #### Stable releases
 
 When releasable changesets are merged to `main`, the `Release` workflow creates

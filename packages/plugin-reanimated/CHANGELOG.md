@@ -1,5 +1,11 @@
 # @callstack/repack-plugin-reanimated
 
+## 5.4.1
+
+### Patch Changes
+
+- [#1476](https://github.com/callstack/repack/pull/1476) [`5bb41f0`](https://github.com/callstack/repack/commit/5bb41f045f43d935fc79b153f889a1195a0f19ad) Thanks [@whydidoo](https://github.com/whydidoo)! - Support React Native 0.88's Flow parser in Babel loaders, native component codegen, and Reanimated transforms while retaining Hermes parser compatibility with older React Native presets.
+
 ## 5.4.0
 
 ## 5.3.0

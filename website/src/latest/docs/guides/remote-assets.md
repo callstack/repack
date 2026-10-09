@@ -36,7 +36,7 @@ module.exports = {
 };
 ```
 
-You can also use the remote assets configuration with [getAssetsTransformRules](/api/utils/get-asset-transform-rules) helper function:
+You can also use the remote assets configuration with [getAssetTransformRules](/api/utils/get-asset-transform-rules) helper function:
 
 ```js title="rspack.config.cjs"
 const Repack = require("@callstack/repack");
@@ -44,7 +44,7 @@ const Repack = require("@callstack/repack");
 module.exports = {
   module: {
     rules: [
-      ...Repack.getAssetsTransformRules({
+      ...Repack.getAssetTransformRules({
         remote: {
           enabled: true,
           publicPath: "http://localhost:9999",
@@ -64,7 +64,7 @@ import image from './image.png';
 <Image source={require('./image.png')} />
 ```
 
-In both cases shown above, the the value of `source` prop will resolve to an object of shape:
+In both cases shown above, the value of `source` prop will resolve to an object of shape:
 
 ```ts
 type Source = {
@@ -72,12 +72,13 @@ type Source = {
   width: number;
   height: number;
   scale: number;
+  __packager_asset: true;
 };
 ```
 
 ### Default behaviour
 
-The `uri` prop will have a value of an URL that's constructed by joining `publicPath`, 'assets' and local path to the asset together. If `publicPath` is set to https://example.com and the local path to the asset is logo.png, then the resulting `uri` value would be: `https://example.com/assets/images/logo.png`.
+The `uri` prop will have a value of an URL that's constructed by joining `publicPath`, 'assets' and the path of the asset relative to the project root together. If `publicPath` is set to https://example.com and the local path to the asset is images/logo.png, then the resulting `uri` value would be: `https://example.com/assets/images/logo.png`.
 
 :::info Scaled assets are fully supported
 
@@ -91,6 +92,7 @@ By default, the remote-assets directory will be located at `build/generated/<pla
 
 ```js title="rspack.config.cjs"
 const Repack = require("@callstack/repack");
+const path = require("node:path");
 
 module.exports = (env) => {
   const { platform } = env;
@@ -99,10 +101,11 @@ module.exports = (env) => {
     plugins: [
       new Repack.RepackPlugin({
         output: {
-        auxiliaryAssetsPath: path.join("build/output", platform, "remote"),
-      },
-    }),
-  ],
+          auxiliaryAssetsPath: path.join("build/output", platform, "remote"),
+        },
+      }),
+    ],
+  };
 };
 ```
 
@@ -118,13 +121,8 @@ Consider the following example:
 ```js title="rspack.config.cjs"
 const Repack = require("@callstack/repack");
 
-function getCustomAssetPath({
-  resourceFilename,
-  resourceDirname,
-  resourceExtensionType,
-}) {
-  const customHash = getCustomHash();
-  return `my-remote-assets/${resourceFilename}-${customHash}.${resourceExtensionType}`;
+function getCustomAssetPath({ resourceFilename, resourceExtensionType }) {
+  return `my-remote-assets/${resourceFilename}.${resourceExtensionType}`;
 }
 
 module.exports = {
@@ -150,7 +148,34 @@ module.exports = {
 
 The configuration above would generate the following paths:
 
-| Property   | Value                                                                     |
-| ---------- | ------------------------------------------------------------------------- |
-| asset path | `<buildFolder>/remote-assets/assets/my-remote-assets/logo-customhash.png` |
-| asset URL  | `http://localhost:9999/my-remote-assets/logo-customhash.png`              |
+| Property   | Value                                                          |
+| ---------- | -------------------------------------------------------------- |
+| asset path | `<buildFolder>/remote-assets/assets/my-remote-assets/logo.png` |
+| asset URL  | `http://localhost:9999/assets/my-remote-assets/logo.png`       |
+
+:::tip Cache-busting hashes
+
+`assetPath` receives paths, never the contents of the asset, so derive the hash from the file itself if you want the URL to change whenever the file changes:
+
+```js title="rspack.config.cjs"
+const crypto = require("node:crypto");
+const fs = require("node:fs");
+
+function getCustomAssetPath({
+  resourcePath,
+  resourceFilename,
+  resourceExtensionType,
+}) {
+  const hash = crypto
+    .createHash("md5")
+    .update(fs.readFileSync(resourcePath))
+    .digest("hex")
+    .slice(0, 8);
+
+  return `my-remote-assets/${resourceFilename}-${hash}.${resourceExtensionType}`;
+}
+```
+
+`assetPath` is called synchronously, so the file has to be read synchronously too. It is also called once per asset request with the base file: the `@2x` and `@3x` variants reuse the returned path, so the hash only ever describes the base file.
+
+:::
