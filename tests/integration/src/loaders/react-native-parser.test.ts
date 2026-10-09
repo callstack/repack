@@ -43,7 +43,13 @@ const sourceFiles = [
 
 const codegenFile = 'ParserNativeComponent.js';
 // Flow syntax that `flow-remove-types` alone cannot strip
-const flowSyntaxFiles = ['component.js', 'hook.js', 'enum.js', 'match.js'];
+const flowSyntaxFiles = [
+  'component.js',
+  'ref-component.js',
+  'hook.js',
+  'enum.js',
+  'match.js',
+];
 
 const FLOW_LIB_FILES: Record<string, string> = {
   'package.json': '{ "name": "flow-lib", "main": "index.js" }',
@@ -84,6 +90,19 @@ function linkPackage(root: string, name: string, packageRoot: string) {
   const destination = path.join(root, 'node_modules', name);
   fs.mkdirSync(path.dirname(destination), { recursive: true });
   fs.symlinkSync(packageRoot, destination, 'junction');
+}
+
+function writeReactPackage(root: string, version: string) {
+  const reactRoot = path.join(root, 'node_modules/react');
+  fs.mkdirSync(reactRoot, { recursive: true });
+  fs.writeFileSync(
+    path.join(reactRoot, 'package.json'),
+    JSON.stringify({ name: 'react', version, main: 'index.js' })
+  );
+  fs.writeFileSync(
+    path.join(reactRoot, 'index.js'),
+    "exports.forwardRef = (render) => ({ $$typeof: 'react.forward_ref', render });"
+  );
 }
 
 function createFixtureProject(
@@ -131,6 +150,18 @@ function createFixtureProject(
 
   linkPackage(projectRoot, '@callstack/repack', repackRoot);
   linkPackage(projectRoot, '@babel/runtime', babelRuntimeRoot);
+
+  // Flow `component` lowering depends on the React version: the project uses
+  // React 19, a nested project overrides it with React 18
+  writeReactPackage(projectRoot, '19.2.0');
+  const react18Root = path.join(projectRoot, 'react18');
+  fs.mkdirSync(path.join(react18Root, 'src'), { recursive: true });
+  fs.copyFileSync(
+    path.join(fixtureRoot, 'ref-component.js.txt'),
+    path.join(react18Root, 'src/ref-component.js')
+  );
+  writeReactPackage(react18Root, '18.3.1');
+
   // pnpm layout: lowered Flow enums need `flow-enums-runtime`, which only
   // React Native depends on, so it can't be resolved from the project root
   const reactNativeStoreRoot = path.join(
@@ -399,9 +430,12 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
 
   function compileWithFlowLoader(
     file: (typeof flowSyntaxFiles)[number],
-    devtool: 'source-map' | false = false
+    {
+      devtool = false,
+      project = '.',
+    }: { devtool?: 'source-map' | false; project?: '.' | 'react18' } = {}
   ) {
-    const projectRoot = path.join(workspaceRoot, preset);
+    const projectRoot = path.join(workspaceRoot, preset, project);
     return compileAndClose({
       context: projectRoot,
       mode: 'development',
@@ -426,16 +460,18 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
     });
   }
 
-  async function bundleWithFlowLoader(file: (typeof flowSyntaxFiles)[number]) {
-    const { code } = await compileWithFlowLoader(file);
+  async function bundleWithFlowLoader(
+    file: (typeof flowSyntaxFiles)[number],
+    project?: '.' | 'react18'
+  ) {
+    const { code } = await compileWithFlowLoader(file, { project });
     return executeBundle(code);
   }
 
   it('maps lowered Flow syntax back to the original source', async () => {
-    const { volume } = await compileWithFlowLoader(
-      'component.js',
-      'source-map'
-    );
+    const { volume } = await compileWithFlowLoader('component.js', {
+      devtool: 'source-map',
+    });
 
     const sourceMap = JSON.parse(
       volume.readFileSync('/out/main.js.map', 'utf-8') as string
@@ -455,6 +491,32 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
     expect(Greeting({ name: 'Flow' })).toEqual({ greeting: 'Hello Flow' });
     expect(Greeting({ name: 'Flow', excited: true })).toEqual({
       greeting: 'Hello Flow!',
+    });
+  });
+
+  it('passes component refs as a prop on React 19', async () => {
+    const { Field } = (await bundleWithFlowLoader('ref-component.js')) as {
+      Field: (props: { label: string; ref: unknown }) => unknown;
+    };
+    const ref = () => {};
+    expect(Field({ label: 'Name', ref })).toEqual({ label: 'Name', ref });
+  });
+
+  it('wraps components with refs in forwardRef on React 18', async () => {
+    const { Field } = (await bundleWithFlowLoader(
+      'ref-component.js',
+      'react18'
+    )) as {
+      Field: {
+        $$typeof: string;
+        render: (props: { label: string }, ref: unknown) => unknown;
+      };
+    };
+    const ref = () => {};
+    expect(Field.$$typeof).toBe('react.forward_ref');
+    expect(Field.render({ label: 'Name' }, ref)).toEqual({
+      label: 'Name',
+      ref,
     });
   });
 

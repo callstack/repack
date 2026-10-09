@@ -3,6 +3,7 @@ import { importDefaultESM } from '../../helpers/index.js';
 import {
   resolveFlowEnumsRuntime,
   resolveReactNativeParser,
+  resolveReactRuntimeTarget,
 } from '../../helpers/resolveReactNativeParser.js';
 
 interface ReactNativeParser {
@@ -89,7 +90,7 @@ export async function parseReactNativeSource(
   return parser.parse(src, {
     babel: true,
     flow,
-    reactRuntimeTarget: '19',
+    reactRuntimeTarget: resolveReactRuntimeTarget(projectRoot),
     sourceType: 'unambiguous',
     transformOptions: {
       TransformEnumSyntax: {

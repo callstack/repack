@@ -39,6 +39,22 @@ export function resolveFlowEnumsRuntime(projectRoot: string): string | null {
   }
 }
 
+/**
+ * Picks the React runtime that Flow `component` declarations are lowered for,
+ * based on the project's `react` version: React 19 passes `ref` as a prop,
+ * React 18 needs `forwardRef`. Defaults to React 19.
+ */
+export function resolveReactRuntimeTarget(projectRoot: string): '18' | '19' {
+  try {
+    const { version } = require(
+      require.resolve('react/package.json', { paths: [projectRoot] })
+    );
+    return Number.parseInt(version, 10) < 19 ? '18' : '19';
+  } catch {
+    return '19';
+  }
+}
+
 export function resolveReactNativeParser(projectRoot: string) {
   let presetLocation = projectRoot;
 
