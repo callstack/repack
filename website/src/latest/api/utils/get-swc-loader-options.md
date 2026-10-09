@@ -62,9 +62,9 @@ See [SWC `jsc.transform.react.runtime`](https://swc.rs/docs/configuration/compil
 ### options.development
 
 - Type: `boolean`
-- Default: the build `mode`
+- Default: the build `mode` (set by [`RepackPlugin`](/api/plugins/repack)), otherwise SWC's default `false`
 
-Whether to apply JSX development transforms (`jsxDEV`, `__source`, `__self`), which give accurate component stacks and "open in editor" during development. When omitted, [`RepackPlugin`](/api/plugins/repack) sets it from `mode`: `true` in development, `false` in production.
+Whether to apply JSX development transforms (`jsxDEV`, `__source`, `__self`), which give accurate component stacks and "open in editor" during development. When omitted, [`RepackPlugin`](/api/plugins/repack) sets it from `mode`: `true` in development, `false` in production. Development builds then import `<importSource>/jsx-dev-runtime`; set it to `false` if your `importSource` doesn't provide one.
 
 See [SWC `jsc.transform.react.development`](https://swc.rs/docs/configuration/compilation#jsctransformreactdevelopment).
 
