@@ -25,7 +25,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
-    "@babel/plugin-syntax-typescript": "7.25.4",
     "@react-native-community/cli": "catalog:testers",
     "@react-native-community/cli-platform-android": "catalog:testers",
     "@react-native-community/cli-platform-ios": "catalog:testers",

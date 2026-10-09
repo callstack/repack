@@ -87,12 +87,9 @@ function createFixtureProject(
 
   linkPackage(projectRoot, '@callstack/repack', repackRoot);
   linkPackage(projectRoot, '@babel/runtime', babelRuntimeRoot);
-  for (const name of [
-    '@react-native/babel-plugin-codegen',
-    '@babel/plugin-syntax-typescript',
-  ]) {
-    linkPackage(projectRoot, name, resolvePresetPackage(name));
-  }
+  // '@react-native/babel-plugin-codegen' and '@babel/plugin-syntax-typescript'
+  // are intentionally not linked: Re.Pack resolves them through the preset and
+  // its own dependencies, as with isolated (e.g. pnpm) installs.
   // Webpack needs a resolvable SWC to exercise the SWC path instead of Babel.
   linkPackage(projectRoot, '@swc/core', swcRoot);
 }
