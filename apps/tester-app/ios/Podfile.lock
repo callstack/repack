@@ -21,7 +21,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - callstack-repack (5.4.0):
+  - callstack-repack (5.4.2):
     - hermes-engine
     - JWTDecode (~> 3.0.0)
     - RCTRequired
@@ -92,7 +92,7 @@ PODS:
     - React-utils
     - ReactNativeDependencies
     - Yoga
-  - React-Core-prebuilt (0.86.2):
+  - React-Core-prebuilt (0.86.3):
     - ReactNativeDependencies
   - React-Core/CoreModulesHeaders (0.86.3):
     - hermes-engine
@@ -2266,7 +2266,7 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios/ReactCodegen`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
-  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@5.4.5_@expo+config-plugins@57.0.9_typescript@7.0.2__@react-native_7c529de154f01eddca5a102ec2b2b3e5/node_modules/@rnx-kit/react-native-host`)"
+  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@5.4.5_@expo+config-plugins@57.0.10_typescript@7.0.2__@react-nativ_aa541094f43fc7255af68251f04c4df2/node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
   - ReactTestApp-Resources (from `..`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -2436,7 +2436,7 @@ EXTERNAL SOURCES:
   ReactNativeDependencies:
     :podspec: "../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
   ReactNativeHost:
-    :path: "../../../node_modules/.pnpm/react-native-test-app@5.4.5_@expo+config-plugins@57.0.9_typescript@7.0.2__@react-native_7c529de154f01eddca5a102ec2b2b3e5/node_modules/@rnx-kit/react-native-host"
+    :path: "../../../node_modules/.pnpm/react-native-test-app@5.4.5_@expo+config-plugins@57.0.10_typescript@7.0.2__@react-nativ_aa541094f43fc7255af68251f04c4df2/node_modules/@rnx-kit/react-native-host"
   ReactTestApp-DevSupport:
     :path: "../node_modules/react-native-test-app"
   ReactTestApp-Resources:
@@ -2452,7 +2452,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AsyncStorage: 163ab23f6aa37a58b7f2379d0b4ee7ac84d6655c
-  callstack-repack: 3f61a1d346f8b2892226889d5ea0b7d66be3570f
+  callstack-repack: d7797d6edeba000cb29b4a5cecbab51c7f3558ec
   FBLazyVector: 2138c6c2ab66c31bf5754dc18097fbc498a49c7f
   hermes-engine: f950618e994e43d007f013c66a7666906b11ed29
   JWTDecode: 2eed97c2fa46ccaf3049a787004eedf0be474a87
@@ -2464,7 +2464,7 @@ SPEC CHECKSUMS:
   React: 52dce66f71097ed7a4968673d95eeb8095ded74e
   React-callinvoker: afa0525ab27f4ffbb4c377f855fe9368edb099bc
   React-Core: fdb67992e049f2526ade3e258c21b8404e7943a3
-  React-Core-prebuilt: 405cf395d66cf694faf9aed3483a21b5515cec85
+  React-Core-prebuilt: 9abc518a8aa7aa4fa3bbbe52bc825bcd9fb3c3ce
   React-CoreModules: 456d91152aa283ddc6ae8abfcec3292af88912f6
   React-cxxreact: 73a20c0dde5ec221f98d5e4da0e71349ab48353d
   React-debug: d06757ac6c78b84af0c31e513a83662d6b8d0ac7

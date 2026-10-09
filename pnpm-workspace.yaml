@@ -13,12 +13,13 @@ updateNotifier: false
 overrides:
   "caniuse-lite": ^1.0.30001774
   # Security fixes for advisories in @module-federation/dts-plugin, which pins
-  # these to exact versions - no parent upgrade can reach them.
+  # these to exact versions. Current MF releases are fixed; these are only
+  # still reached through the older MF versions pinned on purpose for
+  # compatibility coverage (packages/repack and tests/integration devDeps).
   "koa@2": ^2.16.4
   "koa@3": ^3.1.2
   "ws@8": ^8.21.1
-  "adm-zip": ^0.6.0
-  "@module-federation/dts-plugin@2.8.0>undici": 7.29.0
+  "adm-zip": ^0.6.1
   # Security fix for GHSA-67mh-4wv8-2f99, reached only through
   # @modern-js/node-bundle-require inside @module-federation/cli.
   "esbuild@<0.25.0": ^0.25.0
@@ -52,7 +53,7 @@ catalog:
   "webpack": ~5.105.0
   "react": "19.2.8"
   "react-native": "0.86.3"
-  "vitest": ^4.1.0
+  "vitest": ^4.1.11
 
 catalogs:
   # Expo-only packages. Libraries shared with the other testers come from the

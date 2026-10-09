@@ -94,7 +94,7 @@
     "exit-hook": "^4.0.0",
     "flow-remove-types": "^2.277.0",
     "gradient-string": "^2.0.2",
-    "image-size": "^1.2.1",
+    "image-size": "^2.0.4",
     "jsonwebtoken": "^9.0.3",
     "memfs": "^4.11.1",
     "mime-types": "^2.1.35",
