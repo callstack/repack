@@ -1,0 +1,10 @@
+// @flow
+
+export enum Status {
+  Active,
+  Paused,
+}
+
+export function parseStatus(value: string): ?Status {
+  return Status.cast(value);
+}

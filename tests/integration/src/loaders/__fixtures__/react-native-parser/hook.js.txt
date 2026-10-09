@@ -1,0 +1,5 @@
+// @flow
+
+export hook useDouble(value: number): number {
+  return value * 2;
+}

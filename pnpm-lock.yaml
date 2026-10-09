@@ -1040,6 +1040,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 20.19.43
+      flow-enums-runtime:
+        specifier: 0.0.6
+        version: 0.0.6
       hermes-parser:
         specifier: 0.36.0
         version: 0.36.0

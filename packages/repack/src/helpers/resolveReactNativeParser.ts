@@ -1,5 +1,44 @@
 import { createRequire } from 'node:module';
 
+/**
+ * Resolves a dependency of the project's `@react-native/babel-preset`,
+ * e.g. a Babel plugin the preset ships with.
+ */
+export function resolveFromReactNativePreset(
+  projectRoot: string,
+  request: string
+): string {
+  const presetPath = require.resolve(
+    '@react-native/babel-preset/package.json',
+    {
+      paths: [projectRoot],
+    }
+  );
+
+  return createRequire(presetPath).resolve(request);
+}
+
+/**
+ * Resolves `flow-enums-runtime`, which lowered Flow enums require.
+ *
+ * Only React Native depends on it, so with isolated installs (pnpm) it often
+ * can't be resolved from the project root or from the file using an enum.
+ */
+export function resolveFlowEnumsRuntime(projectRoot: string): string | null {
+  try {
+    return require.resolve('flow-enums-runtime', { paths: [projectRoot] });
+  } catch {}
+
+  try {
+    const reactNativePath = require.resolve('react-native/package.json', {
+      paths: [projectRoot],
+    });
+    return createRequire(reactNativePath).resolve('flow-enums-runtime');
+  } catch {
+    return null;
+  }
+}
+
 export function resolveReactNativeParser(projectRoot: string) {
   let presetLocation = projectRoot;
 

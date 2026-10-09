@@ -1,0 +1,9 @@
+// @flow
+
+export function describeCount(count: number): string {
+  return match (Math.abs(count)) {
+    0 => 'none',
+    1 => 'one',
+    _ => 'many',
+  };
+}

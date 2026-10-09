@@ -3,7 +3,9 @@
 The `FlowLoader` removes Flow type annotations from JavaScript files, ensuring they can be processed by loaders that do not support Flow syntax. It should be positioned before other loaders (e.g. `builtin:swc-loader`) to prevent parsing errors when encountering Flow-specific code.
 
 :::details
-This loader uses `flow-remove-types` under the hood. You can learn more about it [here](https://github.com/facebook/flow/tree/main/packages/flow-remove-types).
+Most files go through `flow-remove-types`. You can learn more about it [here](https://github.com/facebook/flow/tree/main/packages/flow-remove-types).
+
+`flow-remove-types` only erases type annotations, so files using Flow `component` and `hook` declarations, enums or `match` expressions (React Native ships them since 0.81) are compiled with the React Native parser from your project's `@react-native/babel-preset` (`hermes-parser` or `flow-parser`) and `@babel/plugin-transform-flow-strip-types` instead. This requires `@react-native/babel-preset` and `@babel/core`, which React Native projects already have. Flow enums are lowered to [`flow-enums-runtime`](https://www.npmjs.com/package/flow-enums-runtime), resolved from your project or from `react-native`.
 :::
 
 ## Options

@@ -106,7 +106,7 @@ The `getJsTransformRules()` function returns the default rules for transforming 
 
 #### Configure Flow support (if needed)
 
-If your project uses [Flow](https://flow.org/) for type checking, you'll need to add a dedicated loader since SWC (used by Rspack) doesn't support Flow natively. Re.Pack provides a `@callstack/repack/flow-loader` to strip Flow type annotations from your code. Add the following rule to your module configuration:
+If your project uses [Flow](https://flow.org/) for type checking, you'll need to add a dedicated loader since Rspack's built-in SWC loader can't parse Flow yet. Re.Pack provides a `@callstack/repack/flow-loader` to strip Flow type annotations from your code. Add the following rule to your module configuration:
 
 ```diff title="rspack.config.cjs"
 module.exports = {

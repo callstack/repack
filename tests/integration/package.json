@@ -22,6 +22,7 @@
     "@rspack/core": "catalog:",
     "@swc/core": "^1.15.46",
     "@types/node": "catalog:",
+    "flow-enums-runtime": "0.0.6",
     "hermes-parser": "0.36.0",
     "memfs": "^4.11.1",
     "typescript": "catalog:",
