@@ -12,7 +12,6 @@ import { isRspackCompiler, moveElementBefore } from '../helpers/index.js';
 const [reactRefreshEntryPath, reactRefreshPath, refreshUtilsPath] =
   ReactRefreshPlugin.deprecated_runtimePaths;
 
-type PackageJSON = { version: string };
 /**
  * {@link DevelopmentPlugin} configuration options.
  */
@@ -97,10 +96,6 @@ export class DevelopmentPlugin {
       return;
     }
 
-    const reactNativePackageJson: PackageJSON = require('react-native/package.json');
-    const [majorVersion, minorVersion, patchVersion] =
-      reactNativePackageJson.version.split('-')[0].split('.');
-
     const host = compiler.options.devServer.host;
     const port = compiler.options.devServer.port;
     // @ts-expect-error: devServertypes here are not being overridden properly
@@ -112,9 +107,6 @@ export class DevelopmentPlugin {
       __PUBLIC_PROTOCOL__: JSON.stringify(protocol),
       __PUBLIC_HOST__: JSON.stringify(host),
       __PUBLIC_PORT__: Number(port),
-      __REACT_NATIVE_MAJOR_VERSION__: Number(majorVersion),
-      __REACT_NATIVE_MINOR_VERSION__: Number(minorVersion),
-      __REACT_NATIVE_PATCH_VERSION__: Number(patchVersion),
     }).apply(compiler);
 
     if (compiler.options.devServer.hot) {

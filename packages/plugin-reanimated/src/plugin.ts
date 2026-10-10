@@ -4,12 +4,14 @@ import semver, { type SemVer } from 'semver';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { createReanimatedModuleRules } from './rules.js';
 
+// Reanimated 4 prefixes the message with `[Reanimated] `
 const REANIMATED_SETUP_TESTS_WARNING =
-  /'`setUpTests` is available only in Jest environment\.'/;
+  /`setUpTests` is available only in Jest environment\./;
 const WORKLETS_CRITICAL_DEPENDENCY_WARNING =
   /Critical dependency: require function is used in a way in which dependencies cannot be statically extracted/;
-const WORKLETS_INITIALIZERS_MODULE =
-  /react-native-(?:worklets|reanimated)[\\/].*initializers(?:\.[cm]?[jt]sx?)?/;
+// Modules that call `require` dynamically to load Jest-only dependencies
+const WORKLETS_DYNAMIC_REQUIRE_MODULE =
+  /react-native-(?:worklets|reanimated)[\\/].*(?:initializers|jestUtils)/;
 
 type WarningLike = {
   message?: unknown;
@@ -46,7 +48,7 @@ function warningToSearchableText(warning: unknown): string {
 
 interface ReanimatedPluginOptions {
   /**
-   * Custom options passed to 'react-native-reanimated/plugin' or 'react-native-worklets/plugin' babel plugins.
+   * Custom options passed to the 'react-native-worklets/plugin' babel plugin.
    */
   babelPluginOptions?: Record<string, any>;
 
@@ -74,18 +76,23 @@ export class ReanimatedPlugin {
 
     const reanimatedVersion = this.getReanimatedVersion(reanimatedPath);
 
-    if (reanimatedVersion.major >= 4) {
-      this.ensureDependencyInstalled(compiler.context, 'react-native-worklets');
+    if (reanimatedVersion.major < 4) {
+      const error = new Error(
+        `[RepackReanimatedPlugin] react-native-reanimated ${reanimatedVersion.version} is not supported. ` +
+          'Re.Pack 6 requires react-native-reanimated 4 or newer.'
+      );
+      // remove the stack trace to make the error more readable
+      error.stack = undefined;
+      throw error;
     }
+
+    this.ensureDependencyInstalled(compiler.context, 'react-native-worklets');
 
     if (!this.options.unstable_disableTransform) {
       // add rules for transpiling with reanimated loader
       // TODO made obsolete by the new babel-swc-loader, remove in 6.0
       compiler.options.module.rules.push(
-        createReanimatedModuleRules(
-          reanimatedVersion.major,
-          this.options.babelPluginOptions
-        )
+        createReanimatedModuleRules(this.options.babelPluginOptions)
       );
     }
 
@@ -96,7 +103,7 @@ export class ReanimatedPlugin {
       return (
         REANIMATED_SETUP_TESTS_WARNING.test(warningText) ||
         (WORKLETS_CRITICAL_DEPENDENCY_WARNING.test(warningText) &&
-          WORKLETS_INITIALIZERS_MODULE.test(warningText))
+          WORKLETS_DYNAMIC_REQUIRE_MODULE.test(warningText))
       );
     });
   }

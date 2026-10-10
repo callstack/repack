@@ -10,17 +10,7 @@ interface SymbolicateRequestBody {
 }
 
 function getStackFromRequestBody(request: FastifyRequest) {
-  let body: SymbolicateRequestBody;
-
-  if (request.headers['content-type'] === 'application/json') {
-    // RN >= 0.79 uses application/json
-    body = request.body as SymbolicateRequestBody;
-  } else {
-    // RN < 0.79 uses text/plain
-    body = JSON.parse(request.body as string) as SymbolicateRequestBody;
-  }
-
-  return body.stack;
+  return (request.body as SymbolicateRequestBody).stack;
 }
 
 async function symbolicatePlugin(

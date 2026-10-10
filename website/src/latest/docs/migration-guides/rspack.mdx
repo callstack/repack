@@ -25,13 +25,12 @@ To use Rspack, you'll need to update your dependencies by adding the following:
 
 ## Update `react-native.config.js`
 
-Since Re.Pack now supports multiple bundlers, you need to specify that you want to use Rspack commands explicitly.
-Update your `react-native.config.js` file to use Rspack commands:
+Make sure your `react-native.config.js` uses the unified Re.Pack commands. They pick the bundler based on the config file name, so renaming the config to `rspack.config.*` (see below) is enough to switch to Rspack:
 
 ```diff title="react-native.config.js"
 module.exports = {
 -  commands: require('@callstack/repack/commands/webpack'),
-+  commands: require('@callstack/repack/commands/rspack'),
++  commands: require('@callstack/repack/commands'),
 };
 ```
 

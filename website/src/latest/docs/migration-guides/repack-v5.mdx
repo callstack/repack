@@ -1,0 +1,104 @@
+# Migrating from Re.Pack 5
+
+Re.Pack 6 raises the minimum supported versions of Node.js, React Native, Module Federation and Reanimated, and removes APIs that were deprecated in Re.Pack 5.
+
+## Update dependencies in `package.json`
+
+```diff
+{
+  "devDependencies": {
+-    "@callstack/repack": "5.x.x"
++    "@callstack/repack": "^6.0.0"
+  }
+}
+```
+
+Update the Re.Pack plugins you use (`@callstack/repack-plugin-*`) to the same major version.
+
+## Minimum supported versions
+
+| Dependency                    | Re.Pack 5   | Re.Pack 6 |
+| ----------------------------- | ----------- | --------- |
+| Node.js                       | `>=18`      | `>=22.12` |
+| React Native                  | `>=0.74`    | `>=0.82`  |
+| `@module-federation/enhanced` | `>=0.6.10`  | `>=2.0.0` |
+| `react-native-reanimated`     | `>=3`       | `>=4`     |
+
+## The legacy architecture is no longer supported
+
+React Native 0.82 removed the legacy architecture, so Re.Pack's native module is now built only as a TurboModule. If your app still sets `newArchEnabled=false`, migrate it to the [New Architecture](https://reactnative.dev/architecture/landing-page) before upgrading.
+
+## Package exports are enabled by default
+
+`getResolveOptions()` now sets `enablePackageExports` to `true` by default, matching Metro's default since React Native 0.79. Configs that already pass `enablePackageExports: true` don't need changes. If your project relies on main-field resolution, opt out explicitly:
+
+```diff
+  resolve: {
+-   ...Repack.getResolveOptions(),
++   ...Repack.getResolveOptions({ enablePackageExports: false }),
+  },
+```
+
+See [Module Resolution](/docs/features/module-resolution#package-exports-conditional-exports) for how package exports change resolution.
+
+## Module Federation V1 was removed
+
+`ModuleFederationPluginV1` is no longer available, and `Repack.plugins.ModuleFederationPlugin` now points to [`ModuleFederationPluginV2`](/api/plugins/module-federation-v2). Follow [Migrating from V1](/docs/features/module-federation#migrating-from-v1) to move your configs to Module Federation 2.0.
+
+The `Federated` helpers, which only worked with V1, were removed as well:
+
+- `Federated.SHARED_REACT`, `Federated.SHARED_REACT_NATIVE` and `Federated.createRemote` from `@callstack/repack`
+- `Federated.createURLResolver` and `Federated.importModule` from `@callstack/repack/client`
+
+## Removed deprecated APIs
+
+### `ChunksToHermesBytecodePlugin`
+
+Use `HermesBytecodePlugin` instead. The options are the same.
+
+```diff
+- new Repack.plugins.ChunksToHermesBytecodePlugin({ ... })
++ new Repack.plugins.HermesBytecodePlugin({ ... })
+```
+
+### `getPublicPath`
+
+Remove the call. Re.Pack configures `output.publicPath` out of the box.
+
+```diff
+  output: {
+-   publicPath: Repack.getPublicPath({ platform, devServer }),
+  },
+```
+
+### `--webpackConfig` CLI option
+
+Use [`--config`](/api/cli/start#--config) instead.
+
+```diff
+- react-native start --webpackConfig webpack.config.js
++ react-native start --config webpack.config.js
+```
+
+### `@callstack/repack/commands/rspack` and `@callstack/repack/commands/webpack`
+
+Use the unified commands. They pick the bundler based on the config file name, or the [`--bundler`](/api/cli/start#--bundler) option.
+
+```diff title="react-native.config.js"
+module.exports = {
+-  commands: require('@callstack/repack/commands/rspack'),
++  commands: require('@callstack/repack/commands'),
+};
+```
+
+### `OutputPlugin` output options
+
+`output.bundleFilename`, `output.sourceMapFilename` and `output.assetsPath` had no effect since Re.Pack 5 and are now rejected by `OutputPlugin`'s option validation. Remove them and use the `--bundle-output`, `--sourcemap-output` and `--assets-dest` CLI options instead.
+
+### `reanimatedModuleRules` from `@callstack/repack-plugin-reanimated`
+
+Use `reanimated4ModuleRules` instead. `reanimatedModuleRules` was an alias of `reanimated3ModuleRules`, which was removed together with Reanimated 3 support (see below).
+
+### Reanimated 3 support in `@callstack/repack-plugin-reanimated`
+
+Reanimated 3 doesn't support React Native 0.82 or newer, so `ReanimatedPlugin` now requires `react-native-reanimated` 4 together with `react-native-worklets`, and `reanimated3ModuleRules` was removed. Follow the [Reanimated 4 migration guide](https://docs.swmansion.com/react-native-reanimated/docs/guides/migration-from-3.x/), then replace `react-native-reanimated/plugin` with `react-native-worklets/plugin` in your Babel config.

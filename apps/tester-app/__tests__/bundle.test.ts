@@ -139,7 +139,7 @@ describe('bundle command', () => {
             entryFile: 'index.js',
             bundleOutput: bundleOutputPath,
             dev: false,
-            webpackConfig: path.join(__dirname, 'configs', configFile),
+            config: path.join(__dirname, 'configs', configFile),
           };
 
           // @ts-expect-error

@@ -73,6 +73,7 @@ export async function createServer(config: Server.Config) {
   let handledDevMiddlewareNotice = false;
 
   const devMiddleware = options.devMiddleware.createDevMiddleware({
+    // @ts-expect-error required by @react-native/dev-middleware < 0.83, removed in 0.83
     projectRoot: options.rootDir,
     serverBaseUrl: options.url,
     logger: {
@@ -112,10 +113,6 @@ export async function createServer(config: Server.Config) {
           }
         },
       };
-    },
-    unstable_experiments: {
-      // @ts-expect-error removed in 0.76, keep this for backkwards compatibility
-      enableNewDebugger: true,
     },
   });
 

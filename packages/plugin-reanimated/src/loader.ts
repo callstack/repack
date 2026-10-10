@@ -99,8 +99,7 @@ export function pitch(
             '`@callstack/repack/babel-swc-loader` you should turn off the ' +
             'transforms for `react-native-reanimated` via the ' +
             '`unstable_disableTransform` option. Instead, please add the ' +
-            '`react-native-reanimated/plugin` (or ' +
-            '`react-native-worklets/plugin`) directly to your list of babel ' +
+            '`react-native-worklets/plugin` directly to your list of babel ' +
             'plugins in the `babel.config.js` file in the project root.'
         );
       }
