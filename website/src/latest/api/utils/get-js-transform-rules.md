@@ -64,7 +64,6 @@ Configuration options for SWC transformations. For detailed documentation of the
     externalHelpers: true,
     importSource: 'react',
     jsxRuntime: 'automatic',
-    // development: defaults to the build `mode`
     lazyImports: false,
   }
 }
