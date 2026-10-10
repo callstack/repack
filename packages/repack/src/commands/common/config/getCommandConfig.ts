@@ -11,10 +11,7 @@ function isExperimentalCacheEnabled() {
 function getCacheConfig(bundler: 'rspack' | 'webpack') {
   if (isExperimentalCacheEnabled()) {
     if (bundler === 'rspack') {
-      return {
-        cache: true,
-        experiments: { cache: { type: 'persistent' } },
-      };
+      return { cache: { type: 'persistent' } };
     }
     return { cache: { type: 'filesystem' } };
   }

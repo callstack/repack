@@ -122,7 +122,7 @@ test('emits symbolication-safe development source maps with Module Federation v2
     assert.notEqual(sourceMap.mappings, '');
     assert.equal(
       sourceMap.sources.some((source) =>
-        source.startsWith('webpack://=="undefined"}')
+        source.startsWith('webpack://%3D%3D%22undefined%22%7D')
       ),
       false
     );

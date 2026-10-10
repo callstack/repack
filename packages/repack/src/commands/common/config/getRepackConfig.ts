@@ -1,8 +1,10 @@
 import { getMinimizerConfig } from './getMinimizerConfig.js';
 
-function getExperimentsConfig(bundler: 'rspack' | 'webpack') {
+function getModuleConfig(bundler: 'rspack' | 'webpack') {
   if (bundler === 'rspack') {
-    return { parallelLoader: true };
+    // Rspack 2 defaults to 'error', which fails builds on the broken
+    // re-exports some React Native libraries ship. Match webpack instead.
+    return { parser: { javascript: { exportsPresence: 'auto' } } };
   }
 }
 
@@ -10,12 +12,12 @@ export async function getRepackConfig(
   bundler: 'rspack' | 'webpack',
   rootDir: string
 ) {
-  const experiments = getExperimentsConfig(bundler);
-  const minimizerConfiguration = await getMinimizerConfig(bundler, rootDir);
+  const moduleConfig = getModuleConfig(bundler);
+  const minimizerConfiguration = await getMinimizerConfig(rootDir);
 
   return {
     devtool: 'source-map',
-    experiments,
+    module: moduleConfig,
     output: {
       clean: true,
       hashFunction: 'xxhash64',

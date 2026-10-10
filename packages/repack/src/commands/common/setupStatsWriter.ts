@@ -15,6 +15,17 @@ function ensureFilepathExists(filepath: string) {
   fs.mkdirSync(path.dirname(filepath), { recursive: true });
 }
 
+// Rspack 2 leaves these out of `stats.toJson()` unless asked for,
+// webpack includes them by default
+const DEFAULT_JSON_STATS_OPTIONS = {
+  assets: true,
+  chunks: true,
+  chunkGroups: true,
+  chunkModules: true,
+  entrypoints: true,
+  modules: true,
+};
+
 export function normalizeStatsOptions<Stats>(
   options: Stats,
   preset?: string
@@ -27,6 +38,14 @@ export function normalizeStatsOptions<Stats>(
   }
   if (options === false) {
     return { preset: 'none' } as Stats;
+  }
+  if (
+    options === undefined ||
+    (typeof options === 'object' &&
+      options !== null &&
+      Object.keys(options).length === 0)
+  ) {
+    return DEFAULT_JSON_STATS_OPTIONS as Stats;
   }
   return options;
 }

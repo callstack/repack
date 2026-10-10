@@ -60,8 +60,9 @@ function defaultModuleFilenameTemplateHandler(
       return `inlined-${info.hash}`;
     }
   }
-  // use absolute path for all other modules
-  return info.absoluteResourcePath;
+  // use absolute path for all other modules - Rspack 2 joins it from the context
+  // without resolving, e.g. `<context>/../../node_modules/...`
+  return path.normalize(info.absoluteResourcePath);
 }
 
 interface SourceMapPluginConfig {
