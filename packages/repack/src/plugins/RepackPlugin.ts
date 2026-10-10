@@ -7,6 +7,7 @@ import { NativeEntryPlugin } from './NativeEntryPlugin/index.js';
 import { OutputPlugin, type OutputPluginConfig } from './OutputPlugin/index.js';
 import { RepackTargetPlugin } from './RepackTargetPlugin/index.js';
 import { SourceMapPlugin } from './SourceMapPlugin.js';
+import { setSwcJsxDevelopment } from './utils/setSwcJsxDevelopment.js';
 
 /**
  * {@link RepackPlugin} configuration options.
@@ -106,6 +107,11 @@ export class RepackPlugin {
     new compiler.webpack.DefinePlugin({
       __DEV__: JSON.stringify(compiler.options.mode === 'development'),
     }).apply(compiler);
+
+    setSwcJsxDevelopment(
+      compiler.options.module.rules,
+      compiler.options.mode === 'development'
+    );
 
     new BabelPlugin().apply(compiler);
 

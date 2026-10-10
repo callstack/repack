@@ -2,6 +2,8 @@
 
 This is the main plugin that enables React Native app development & bundling with Re.Pack and should be included in all of your configurations. It abstracts the configuration of other core internal plugins into one plugin.
 
+It also makes JSX development transforms of `builtin:swc-loader` rules (e.g. from [`getJsTransformRules`](/api/utils/get-js-transform-rules)) follow `mode`, unless `jsc.transform.react.development` is set explicitly.
+
 :::warning About internal plugins
 
 Plugins configured by the `RepackPlugin` are considered internal and there is no need to use or configure them directly. Their use is heavily discouraged and they are only included for the sake of completeness of the API.
