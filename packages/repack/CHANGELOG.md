@@ -1,5 +1,23 @@
 # @callstack/repack
 
+## 5.4.3
+
+### Patch Changes
+
+- [#1452](https://github.com/callstack/repack/pull/1452) [`a87b592`](https://github.com/callstack/repack/commit/a87b59247cb9595da7880cb8e8b1c6235cae94c7) Thanks [@elirangoshen](https://github.com/elirangoshen)! - Send only sources carrying an `@flow` pragma through hermes-parser in `babelLoader`, matching
+  `babel-plugin-syntax-hermes-parser` with the React Native preset's default
+  `parseLangTypes: 'flow'`. hermes-parser converts its own AST into a Babel AST, and that conversion
+  is quadratic in the number of sibling nodes, so a single prebuilt minified dependency could add
+  minutes to a build. Set `hermesParserOverrides.flow` to `'all'` to keep parsing every file with
+  hermes-parser.
+
+- [#1471](https://github.com/callstack/repack/pull/1471) [`c9dab5d`](https://github.com/callstack/repack/commit/c9dab5d00e4f1c12549c48eba4c432aa638aec99) Thanks [@giaBaoJS](https://github.com/giaBaoJS)! - Fix `DevelopmentPlugin` crashing with `Cannot read properties of undefined (reading 'exposes')` when an official Module Federation plugin (from `@module-federation/enhanced`, or the built-in `container.ModuleFederationPlugin` of Rspack or webpack) is used with the dev server. The check for official plugins read `exposes` from `plugin.config`, which only Re.Pack's own Module Federation plugins have, instead of `plugin._options`.
+
+- [#1486](https://github.com/callstack/repack/pull/1486) [`fd8e33e`](https://github.com/callstack/repack/commit/fd8e33e587e4a2866087aeea266b6f809562a5f2) Thanks [@dannyhw](https://github.com/dannyhw)! - Update `image-size` to v2 and `fastify` to 5.12.5 to resolve security advisories
+
+- Updated dependencies [[`44431b3`](https://github.com/callstack/repack/commit/44431b3cea3bca36de9cfb493221f11f3892a1c8), [`fd8e33e`](https://github.com/callstack/repack/commit/fd8e33e587e4a2866087aeea266b6f809562a5f2)]:
+  - @callstack/repack-dev-server@5.4.3
+
 ## 5.4.2
 
 ### Patch Changes
