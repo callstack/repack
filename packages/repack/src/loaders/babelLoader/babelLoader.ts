@@ -16,7 +16,7 @@ import {
   isIgnoredRepackDeepImport,
   isTSXSource,
   isTypeScriptSource,
-  loadReactNativeParser,
+  parseReactNativeSource,
   shouldUseReactNativeParser,
 } from './utils.js';
 
@@ -92,17 +92,13 @@ export const transform = async (
 
   let sourceAst: ParseResult | null;
   if (needsReactNativeParser) {
-    // load the parser dynamically to match the version from preset
-    const parser = await loadReactNativeParser(
-      projectRoot,
-      customOptions?.hermesParserPath
-    );
-
-    sourceAst = parser.parse(src, {
-      babel: true,
-      reactRuntimeTarget: '19',
+    // the parser comes from the preset, it also lowers Flow enums that the
+    // preset would otherwise strip before its enum plugin runs
+    sourceAst = await parseReactNativeSource(src, {
+      projectRoot: projectRoot ?? process.cwd(),
+      parserPath: customOptions?.hermesParserPath,
       sourceType: babelConfig.sourceType,
-      ...customOptions?.hermesParserOverrides,
+      overrides: customOptions?.hermesParserOverrides,
     });
   } else if (isTypeScript) {
     sourceAst = parseSync(src, babelConfig);

@@ -83,9 +83,9 @@ Optional path to the React Native parser module. This overrides automatic parser
 ### hermesParserOverrides
 
 - Type: `HermesParserOverrides`
-- Default: `{ babel: true, reactRuntimeTarget: '19' }`
+- Default: `{ babel: true, reactRuntimeTarget }`, where `reactRuntimeTarget` follows the project's `react` version (`'18'` before React 19, `'19'` otherwise)
 
-Overrides passed to the selected React Native parser when parsing non-TypeScript files. The option name is retained for backward compatibility and also applies to `flow-parser`.
+Overrides passed to the selected React Native parser when parsing non-TypeScript files. The option name is retained for backward compatibility and also applies to `flow-parser`. Flow enums are lowered by the parser to [`flow-enums-runtime`](https://www.npmjs.com/package/flow-enums-runtime), resolved from your project or from `react-native`, because `@react-native/babel-preset` strips them before its enum plugin runs.
 
 ```ts
 type HermesParserOverrides = {
