@@ -2,7 +2,12 @@ import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
-import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+
+// Rsdoctor (through rslog) throws on import under Node < 20, so only load it
+// when it's actually enabled to keep the Node 18 test matrix working.
+const { RsdoctorRspackPlugin } = process.env.RSDOCTOR
+  ? await import('@rsdoctor/rspack-plugin')
+  : {};
 
 const dirname = Repack.getDirname(import.meta.url);
 
