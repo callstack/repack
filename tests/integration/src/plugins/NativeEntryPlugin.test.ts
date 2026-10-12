@@ -40,14 +40,20 @@ function normalizeBundle(code: string): string {
   // Webpack mangles absolute paths into variable names with underscores
   const mangledRoot = REPO_ROOT.replaceAll(/[^a-zA-Z0-9]/g, '_');
   const compactMangledRoot = mangledRoot.replaceAll(/_+/g, '_');
-  return code
-    .replaceAll(REPO_ROOT, '<rootDir>')
-    .replaceAll(mangledRoot, '_rootDir_')
-    .replaceAll(compactMangledRoot, '_rootDir_')
-    .replace(
-      /\.federation\/entry\.[a-f0-9]+\.js/g,
-      '.federation/entry.HASH.js'
-    );
+  return (
+    code
+      .replaceAll(REPO_ROOT, '<rootDir>')
+      // Rspack 2 inlines the MF v2 bundler runtime as a URL-encoded data: URI
+      .replaceAll(encodeURIComponent(REPO_ROOT), '%3CrootDir%3E')
+      .replaceAll(mangledRoot, '_rootDir_')
+      .replaceAll(compactMangledRoot, '_rootDir_')
+      // Rspack 2 colors inlined error messages when color output is enabled (CI)
+      .replaceAll(/\\u001b\[[0-9;]*m/g, '')
+      .replace(
+        /\.federation\/entry\.[a-f0-9]+\.js/g,
+        '.federation/entry.HASH.js'
+      )
+  );
 }
 
 /**
