@@ -46,14 +46,16 @@ jobs:
 
       - name: Create release PR or publish packages
         id: changesets
-        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # tag=v1.9.0
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # tag=v2.1.2
         with:
-          version: pnpm version-packages
-          publish: pnpm release
-          commit: 'chore: changeset version'
-          title: 'chore: changeset version'
-          createGithubReleases: true
+          version-script: pnpm version-packages
+          publish-script: pnpm release
+          commit-message: 'chore: changeset version'
+          pr-title: 'chore: changeset version'
+          create-github-releases: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
+          # @changesets/changelog-github reads the token from the environment.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   canary-release:
