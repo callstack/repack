@@ -233,10 +233,7 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
                 options:
                   loader === 'babel-loader'
                     ? { root: projectRoot }
-                    : {
-                        hideParallelModeWarning: true,
-                        babelOverrides: { cwd: projectRoot },
-                      },
+                    : { babelOverrides: { cwd: projectRoot } },
               },
             },
           ],
@@ -355,10 +352,7 @@ describe.each(['unsupported-preset', 'missing-flow-parser'])(
                 options:
                   loader === 'babel-loader'
                     ? babelOptions
-                    : {
-                        hideParallelModeWarning: true,
-                        babelOverrides: babelOptions,
-                      },
+                    : { babelOverrides: babelOptions },
               };
 
         await expect(

@@ -4,26 +4,20 @@ import { fileURLToPath } from 'node:url';
 
 const REGISTRY = 'https://registry.npmjs.org';
 
-// Keep Rspack on 1.x until Re.Pack supports Rspack 2.
-const DIST_TAGS = {
-  '@rspack/core': 'latest-v1',
-};
-
 const versionsPath = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   '../versions.json'
 );
 
 async function getVersion(name) {
-  const tag = DIST_TAGS[name] ?? 'latest';
   const response = await fetch(`${REGISTRY}/-/package/${name}/dist-tags`);
   if (!response.ok) {
     throw new Error(`Failed to fetch dist-tags of ${name}: ${response.status}`);
   }
 
-  const version = (await response.json())[tag];
+  const version = (await response.json()).latest;
   if (!version) {
-    throw new Error(`Package ${name} has no "${tag}" dist-tag`);
+    throw new Error(`Package ${name} has no "latest" dist-tag`);
   }
 
   return version;
