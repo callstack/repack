@@ -2,6 +2,10 @@ import path from 'node:path';
 import type { Compiler as RspackCompiler } from '@rspack/core';
 import semver, { type SemVer } from 'semver';
 import type { Compiler as WebpackCompiler } from 'webpack';
+import {
+  detectWorkletsBundleMode,
+  WorkletsBundleModePlugin,
+} from './bundleMode.js';
 import { createReanimatedModuleRules } from './rules.js';
 
 const REANIMATED_SETUP_TESTS_WARNING =
@@ -78,13 +82,25 @@ export class ReanimatedPlugin {
       this.ensureDependencyInstalled(compiler.context, 'react-native-worklets');
     }
 
+    const bundleMode = this.isBundleModeEnabled(compiler.context);
+    if (bundleMode && reanimatedVersion.major < 4) {
+      console.warn(
+        '[RepackReanimatedPlugin] Worklets Bundle Mode requires ' +
+          'react-native-reanimated 4 or newer, ignoring it.'
+      );
+    } else if (bundleMode) {
+      new WorkletsBundleModePlugin({
+        context: compiler.context,
+      }).apply(compiler);
+    }
+
     if (!this.options.unstable_disableTransform) {
       // add rules for transpiling with reanimated loader
       // TODO made obsolete by the new babel-swc-loader, remove in 6.0
       compiler.options.module.rules.push(
         createReanimatedModuleRules(
           reanimatedVersion.major,
-          this.options.babelPluginOptions
+          this.getBabelPluginOptions(bundleMode)
         )
       );
     }
@@ -119,6 +135,21 @@ export class ReanimatedPlugin {
       error.stack = undefined;
       throw error;
     }
+  }
+
+  private isBundleModeEnabled(context: string) {
+    return detectWorkletsBundleMode(context);
+  }
+
+  private getBabelPluginOptions(bundleMode: boolean) {
+    const { babelPluginOptions } = this.options;
+    if (!bundleMode || babelPluginOptions?.bundleMode !== undefined) {
+      return babelPluginOptions;
+    }
+    // Keep the transform this plugin runs consistent with Bundle Mode, so apps that
+    // let the plugin do the transformation work the same way as the babel.config.js
+    // path does.
+    return { ...babelPluginOptions, bundleMode: true };
   }
 
   private getReanimatedVersion(reanimatedPath: string): SemVer {

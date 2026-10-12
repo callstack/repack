@@ -9,3 +9,4 @@ works, and is kept in sync with the implementation as it evolves.
 | Folder | Topic |
 | --- | --- |
 | [rspackv2-jul2026](./rspackv2-jul2026/design.md) | Dual Rspack 1.x/2.x support |
+| [worklets-bundle-mode-oct2026](./worklets-bundle-mode-oct2026/design.md) | Worklets Bundle Mode support in `plugin-reanimated` |
