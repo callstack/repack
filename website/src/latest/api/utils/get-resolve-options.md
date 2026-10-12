@@ -28,12 +28,12 @@ Target application platform (e.g. `ios` or `android`).
 ### options.enablePackageExports
 
 - Type: `boolean`
-- Default: `false`
+- Default: `true`
 
 Whether to enable Package Exports support. When enabled, uses the `exports` field in `package.json` instead of main fields.
 
 :::warning
-React Native 0.88 requires `enablePackageExports: true` in your Re.Pack resolver configuration. Its `react-native/setup-env` and `react-native/react-private-interface` entry points, as well as `@react-native/asset-utils`, use package exports.
+React Native 0.88 requires package exports, so don't set `enablePackageExports: false` there. Its `react-native/setup-env` and `react-native/react-private-interface` entry points, as well as `@react-native/asset-utils`, use package exports.
 
 Enabling package exports can change how existing dependencies resolve. For more details, please refer to the [Module Resolution guide](/docs/features/module-resolution).
 :::

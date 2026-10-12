@@ -61,6 +61,7 @@
     "terser-webpack-plugin": "catalog:",
     "thread-loader": "^4.0.4",
     "typescript": "catalog:",
+    "vite": "catalog:",
     "vitest": "catalog:",
     "webpack": "catalog:"
   }

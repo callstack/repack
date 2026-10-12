@@ -6,11 +6,6 @@
   },
   {
     "type": "file",
-    "name": "module-federation-v1",
-    "label": "ModuleFederationPluginV1"
-  },
-  {
-    "type": "file",
     "name": "module-federation-v2",
     "label": "ModuleFederationPluginV2"
   },

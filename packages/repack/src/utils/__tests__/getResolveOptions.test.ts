@@ -42,6 +42,18 @@ describe('getResolveOptions', () => {
     expect(result.extensions).not.toContain('.android.js');
   });
 
+  it('should enable package exports by default', () => {
+    const result = getResolveOptions('ios');
+    expect(result.exportsFields).toEqual(['exports']);
+    expect(result.conditionNames).toEqual(['react-native']);
+  });
+
+  it('should disable package exports when enablePackageExports is false', () => {
+    const result = getResolveOptions('ios', { enablePackageExports: false });
+    expect(result.exportsFields).toEqual([]);
+    expect(result.conditionNames).toEqual([]);
+  });
+
   it('should use actual platform value when provided', () => {
     const result = getResolveOptions('ios');
     expect(result).toBeDefined();
