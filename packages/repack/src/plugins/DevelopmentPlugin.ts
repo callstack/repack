@@ -65,7 +65,7 @@ export class DevelopmentPlugin {
       }
 
       // official MF plugins expose _options property
-      if ('_options' in plugin && plugin.config.exposes) {
+      if ('_options' in plugin && plugin._options.exposes) {
         return plugin._options.name;
       }
 
