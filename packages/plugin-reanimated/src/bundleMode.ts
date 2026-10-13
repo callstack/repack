@@ -6,6 +6,7 @@ import type {
   Module,
   Compiler as RspackCompiler,
 } from '@rspack/core';
+import semver from 'semver';
 import type { Compiler as WebpackCompiler } from 'webpack';
 
 const WORKLETS_PACKAGE = 'react-native-worklets';
@@ -16,6 +17,15 @@ const POLYFILL_RELATIVE_PATH = path.join(
   'polyfills',
   'prepareBundleMode.js'
 );
+
+/**
+ * First Worklets release shipping everything Bundle Mode needs: the `prepareBundleMode`
+ * polyfill, `WorkletsModule.prepareBundleMode` and the native ScriptLoader driving `__r`.
+ * Its own early prereleases predate the polyfill, which is why that file is checked
+ * separately. Compared against the release part of a version, so a `0.14.0-nightly` is not
+ * treated as older than `0.13.0`.
+ */
+const MINIMUM_WORKLETS_VERSION = '0.13.0';
 
 /**
  * The module id native asks `__r` for in order to boot Worklets, reserved by
@@ -124,6 +134,71 @@ export function resolveWorkletsRoot(context: string): string | undefined {
   } catch {
     return undefined;
   }
+}
+
+/**
+ * Reads the version a resolved Worklets package declares, or `undefined` when it declares
+ * none. Returned as written, so a message can quote what the project actually has.
+ */
+function readWorkletsVersion(workletsRoot: string) {
+  try {
+    const packageJson = JSON.parse(
+      fs.readFileSync(path.join(workletsRoot, 'package.json'), 'utf-8')
+    ) as { version?: unknown };
+    return typeof packageJson.version === 'string'
+      ? packageJson.version
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Checks a resolved Worklets package for what Bundle Mode needs, and returns the build
+ * message to raise when it does not have it.
+ *
+ * The Babel flag is not enough: running a bundle needs `WorkletsModule.prepareBundleMode`
+ * and the native ScriptLoader that calls `__r`, both native and only in recent Worklets.
+ * The version answers that first, and asking it is what turns the unresolved
+ * `…/worklets-polyfill` request such a project otherwise dies on into a message naming the
+ * floor. Version alone cannot cover a prerelease of the floor that predates the polyfill,
+ * so the one file this plugin hard-requires from the entry chunk is checked too — which
+ * also settles a package that declares no comparable version at all.
+ */
+function getWorkletsBundleModeIncompatibility(workletsRoot: string) {
+  const declared = readWorkletsVersion(workletsRoot);
+  // `coerce` rather than `parse`: prereleases are compared by the release they are built
+  // from, so a `0.13.0-nightly-*` is not treated as older than `0.13.0`.
+  const version = semver.coerce(declared);
+  const hasPolyfill = fs.existsSync(
+    path.join(workletsRoot, POLYFILL_RELATIVE_PATH)
+  );
+  const found = `'${WORKLETS_PACKAGE}@${declared ?? 'unknown'}'`;
+
+  if (version && !semver.gte(version, MINIMUM_WORKLETS_VERSION)) {
+    return (
+      `[${PLUGIN_NAME}] Worklets Bundle Mode requires ` +
+      `'${WORKLETS_PACKAGE}' ${MINIMUM_WORKLETS_VERSION} or newer, but the project has ` +
+      `${found} at '${workletsRoot}'. That version does not ship ` +
+      `'${toPosixPath(POLYFILL_RELATIVE_PATH)}', ` +
+      "'WorkletsModule.prepareBundleMode' or the native ScriptLoader, so a Worklet " +
+      'Runtime could not drive this bundle. Update Worklets, or remove ' +
+      '`bundleMode: true` from the Babel config.'
+    );
+  }
+
+  if (!hasPolyfill) {
+    return (
+      `[${PLUGIN_NAME}] ${found} at '${workletsRoot}' does not ship ` +
+      `'${toPosixPath(POLYFILL_RELATIVE_PATH)}', which the bundle requires to start ` +
+      `Worklets on a Worklet Runtime. It ships with '${WORKLETS_PACKAGE}' ` +
+      `${MINIMUM_WORKLETS_VERSION} and newer, the same releases that added the native ` +
+      'ScriptLoader Bundle Mode needs. Update Worklets, or remove ' +
+      '`bundleMode: true` from the Babel config.'
+    );
+  }
+
+  return undefined;
 }
 
 /**
@@ -250,6 +325,20 @@ export class WorkletsBundleModePlugin {
         `[${PLUGIN_NAME}] '${WORKLETS_PACKAGE}' was not found in the project, ` +
           'skipping Worklets Bundle Mode setup.'
       );
+      return;
+    }
+
+    // Setup cannot fix an older Worklets - the native side of Bundle Mode is simply not
+    // there to drive the bundle - so it is a build error rather than a warning, and the
+    // rest of the setup is skipped: the aliases and the runtime module would only add a
+    // second, less useful failure on top of this one.
+    const incompatibility = getWorkletsBundleModeIncompatibility(workletsRoot);
+    if (incompatibility) {
+      compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation) => {
+        (compilation.errors as unknown as Error[]).push(
+          new Error(incompatibility)
+        );
+      });
       return;
     }
 

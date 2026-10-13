@@ -99,6 +99,38 @@ then transform worklets the same way as the `babel.config.js` path does.
 Without this, worklet artifacts emitted in non-bundle-mode shape would land in
 a bundle native believes is bundle-mode.
 
+That gate covers Reanimated's major only. What Worklets itself needs is checked
+separately, below.
+
+## The Worklets version gate (`bundleMode.ts`)
+
+Bundle Mode is not something the setup can add to an older Worklets: it needs
+`WorkletsModule.prepareBundleMode` and the native ScriptLoader that calls `__r`,
+both of which are native code. `0.13.0` is where all three requirements — those
+two and `bundleMode/polyfills/prepareBundleMode.js` — shipped together, so
+`MINIMUM_WORKLETS_VERSION` is `0.13.0` and
+`getWorkletsBundleModeIncompatibility` compares the resolved package against it
+with `semver.coerce`, which measures a prerelease by the release it is built
+from: a `0.14.0-nightly` is newer than the floor, not older than it.
+
+The version is the first question because it is the one a JS build can answer,
+and it is what turns the failure such a project otherwise hits — an unresolved
+`…/worklets-polyfill` request naming no version — into a message naming the
+floor, the installed version and both ways out.
+
+It cannot be the only question. `0.13.0`'s *own* prereleases predate the
+polyfill (it landed mid-cycle), so `0.13.0-nightly-*` passes the floor while
+being unable to work, and a linked or patched copy declares a version that says
+nothing at all. So the existence of the polyfill — the one file the runtime
+module hard-requires from the entry chunk — is checked as well, and it settles
+both of those cases. A package that is new enough and has the file passes.
+
+An incompatible Worklets is a **compilation error**, not a warning, and the rest
+of `apply` is skipped: the aliases and the runtime module would only add a
+second, less useful failure on top of it. It does not depend on configuration
+this plugin could adjust, and building on would produce a bundle whose Worklet
+Runtimes silently do nothing.
+
 ## Resolve aliases (`bundleMode.ts`)
 
 | Alias | Target | Why |
@@ -320,7 +352,16 @@ in `node:vm` behind `__RUNTIME_KIND`:
   chunk, with a plugin-less build as the control, and the same worklet is named
   in a warning when `splitChunks: false` leaves the group inert;
 - the `-2` collision path: `mainFields: ['main']` puts both entry variants in the
-  chunk, and the alias target still owns the id while the loser is warned about.
+  chunk, and the alias target still owns the id while the loser is warned about;
+- the version gate, on a copy of the fixture app whose Worklets release is
+  rewritten (`withWorklets`, a temp project under `node_modules` so resolution
+  still reaches this package's dependencies): the floor passes, `0.12.2` is
+  rejected with a message naming the floor and the installed version and leaves
+  no unresolved request behind, a `0.13.0-nightly` with the polyfill removed is
+  rejected by the file rather than the version, a package with no version at all
+  is accepted with the file and rejected without it, the error also surfaces
+  through `ReanimatedPlugin`, and a project whose Babel config does not ask for
+  Bundle Mode is left alone on the same old Worklets.
 
 ## Known limitations
 
@@ -347,8 +388,4 @@ in `node:vm` behind `__RUNTIME_KIND`:
   `react-native-worklets`; the Worklets Babel plugin resolves the same package
   from its own location, so a monorepo where those two land on different copies
   would alias one copy's files onto another's.
-- **No worklets version check.** Bundle Mode needs `WorkletsModule.prepareBundleMode`
-  and the native ScriptLoader, so only worklets versions shipping it work. The
-  gate covers Reanimated's major; a worklets too old to ship the polyfill fails
-  later, as an unresolved `…/worklets-polyfill` request rather than a message
-  naming the version floor.
+

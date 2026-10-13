@@ -18,7 +18,8 @@ makes one scoped exception for it.
       node_modules/
         react-native-reanimated/ # version 4, which ReanimatedPlugin requires
         react-native-worklets/
-          package.json           # react-native -> src, main -> lib/module, like the real one
+          package.json           # 0.13.0, the floor the version gate enforces; react-native -> src,
+                                 # main -> lib/module, like the real one
           src/index.ts           # WORKLETS_ENTRY_PATHS[0]: the module that owns id -2
           lib/module/index.js    # WORKLETS_ENTRY_PATHS[1]: the variant it competes with
           bundleMode/polyfills/prepareBundleMode.js

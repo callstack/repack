@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,7 +10,7 @@ import {
 } from '@callstack/repack-plugin-reanimated';
 import type { Configuration } from '@rspack/core';
 import { createFsFromVolume, Volume } from 'memfs';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { createCompiler } from '../helpers.js';
 
 const requireFromModule = createRequire(import.meta.url);
@@ -25,6 +26,10 @@ const WORKLETS_POLYFILL_MODULE =
 /** The two checked-in `.worklets/<hash>.js` fixtures, by the hash in their file name. */
 const EAGER_WORKLET = 10110358253470;
 const LAZY_WORKLET = 10110358253471;
+/** First Worklets release Bundle Mode works with, which is the release that shipped it. */
+const SUPPORTED_WORKLETS_VERSION = '0.13.0';
+/** The release just above the floor that predates it: no polyfill, no ScriptLoader. */
+const UNSUPPORTED_WORKLETS_VERSION = '0.12.2';
 
 // `__RUNTIME_KIND` values Worklets uses: 1 is the React Native Runtime, anything else is
 // a Worklet Runtime.
@@ -36,7 +41,9 @@ const UI_RUNTIME = 2;
  * Bundle Mode only turns on because that rule transforms the files holding the flag, so
  * the tests compile through a real loader rather than pre-transformed sources.
  */
-const workletsTransformRule: NonNullable<Configuration['module']>['rules'] = [
+const workletsTransformRule = (
+  project: string
+): NonNullable<Configuration['module']>['rules'] => [
   {
     test: /\.[cm]?[jt]sx?$/,
     use: {
@@ -46,7 +53,7 @@ const workletsTransformRule: NonNullable<Configuration['module']>['rules'] = [
       options: {
         babelPlugins: [
           [
-            path.join(PROJECT, 'node_modules/react-native-worklets/plugin'),
+            path.join(project, 'node_modules/react-native-worklets/plugin'),
             { bundleMode: true },
           ],
         ],
@@ -56,11 +63,15 @@ const workletsTransformRule: NonNullable<Configuration['module']>['rules'] = [
 ];
 
 interface CompileOptions {
+  /** The fixture app; a copy of it when a test needs another Worklets release. */
+  project?: string;
   plugins?: Configuration['plugins'];
   /** `[]` for no rules of the caller's own, e.g. when the plugin adds its own. */
   rules?: NonNullable<Configuration['module']>['rules'];
   mainFields?: string[];
   optimization?: Configuration['optimization'];
+  /** Reports compilation errors instead of rejecting the build on them. */
+  allowErrors?: boolean;
 }
 
 /**
@@ -68,13 +79,15 @@ interface CompileOptions {
  * warnings, which is what the placement and collision assertions read.
  */
 async function compileFixture({
+  project = PROJECT,
   plugins = [],
-  rules = workletsTransformRule,
+  rules,
   mainFields = ['react-native', 'main'],
   optimization,
+  allowErrors = false,
 }: CompileOptions = {}) {
   const compiler = await createCompiler({
-    context: PROJECT,
+    context: project,
     mode: 'development',
     devtool: false,
     entry: './index.js',
@@ -82,7 +95,7 @@ async function compileFixture({
     resolve: { mainFields, extensions: ['.js', '.ts'] },
     // Keeps module ids readable and identical across the two bundlers.
     optimization: { moduleIds: 'named', ...optimization },
-    module: { rules },
+    module: { rules: rules ?? workletsTransformRule(project) },
     plugins,
   });
 
@@ -97,7 +110,7 @@ async function compileFixture({
         reject(error);
         return;
       }
-      if (compilationStats?.hasErrors()) {
+      if (!allowErrors && compilationStats?.hasErrors()) {
         reject(new Error(compilationStats.toString({ errors: true })));
         return;
       }
@@ -107,21 +120,27 @@ async function compileFixture({
 
   const assets: Record<string, string> = {};
   for (const asset of Object.keys(stats.compilation.assets)) {
-    assets[asset] = fileSystem.readFileSync(
-      path.join('/out', asset),
-      'utf-8'
-    ) as string;
+    const file = path.join('/out', asset);
+    // A failing compilation may keep assets out of the output, which the assertions on
+    // them then read as absent rather than as a different file.
+    assets[asset] = fileSystem.existsSync(file)
+      ? (fileSystem.readFileSync(file, 'utf-8') as string)
+      : '';
   }
 
-  const warnings: string[] = stats.compilation.warnings.map((warning: any) =>
-    String(warning.message ?? warning).replace(/\s+/g, ' ')
-  );
+  const toMessages = (entries: any[]) =>
+    entries.map((entry) => String(entry.message ?? entry).replace(/\s+/g, ' '));
 
-  return { assets, code: assets['main.js'], warnings };
+  return {
+    assets,
+    code: assets['main.js'],
+    warnings: toMessages(stats.compilation.warnings),
+    errors: toMessages(stats.compilation.errors),
+  };
 }
 
-const bundleModePlugin = () =>
-  new WorkletsBundleModePlugin({ context: PROJECT });
+const bundleModePlugin = (project = PROJECT) =>
+  new WorkletsBundleModePlugin({ context: project });
 
 /** The `webpack/runtime/worklets/bundleMode` section appended to the entry chunk. */
 function getWorkletsRuntimeSection(code: string) {
@@ -187,6 +206,54 @@ function runWorklet(namespace: any, ...closures: unknown[]) {
   );
   return namespace.default(closures);
 }
+
+let copiedProjects: string[] = [];
+
+/**
+ * A copy of the fixture app carrying another Worklets release, which is how the version
+ * gate is tested without checking in a second package for every release. It goes under
+ * this package's `node_modules`, so module resolution from the copy reaches the same
+ * packages the checked-in fixture resolves through, and nothing is left behind if a test
+ * dies before cleanup.
+ */
+function withWorklets(
+  version: string | undefined,
+  { withoutPolyfill = false }: { withoutPolyfill?: boolean } = {}
+) {
+  const root = fs.realpathSync(
+    fs.mkdtempSync(
+      path.join(__dirname, '..', '..', 'node_modules', '.worklets-version-')
+    )
+  );
+  const project = path.join(root, 'project');
+  fs.cpSync(PROJECT, project, { recursive: true });
+  const worklets = path.join(project, 'node_modules', 'react-native-worklets');
+  const packageJsonPath = path.join(worklets, 'package.json');
+  const packageJson = JSON.parse(
+    fs.readFileSync(packageJsonPath, 'utf-8')
+  ) as Record<string, unknown>;
+  if (version === undefined) {
+    delete packageJson.version;
+  } else {
+    packageJson.version = version;
+  }
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  if (withoutPolyfill) {
+    fs.rmSync(path.join(worklets, 'bundleMode'), {
+      recursive: true,
+      force: true,
+    });
+  }
+  copiedProjects.push(root);
+  return project;
+}
+
+afterEach(() => {
+  for (const root of copiedProjects) {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+  copiedProjects = [];
+});
 
 describe('WorkletsBundleModePlugin', () => {
   it('reads Bundle Mode from the project Babel config', () => {
@@ -416,6 +483,146 @@ describe('WorkletsBundleModePlugin', () => {
     // node_modules, native would drive a bundle whose guards all stay armed.
     expect(code.match(/_WORKLETS_BUNDLE_MODE_ENABLED\s*=\s*false/g)).toBeNull();
     expect(runtime.context._WORKLETS_BUNDLE_MODE_ENABLED).toBe(true);
+  });
+
+  describe('the Worklets version gate', () => {
+    it('accepts the Worklets release that introduced Bundle Mode', async () => {
+      // The floor itself has to pass: every test below would also pass if the gate
+      // rejected everything, and an off-by-one would break working projects.
+      const project = withWorklets(SUPPORTED_WORKLETS_VERSION);
+      const { code, errors } = await compileFixture({
+        project,
+        plugins: [bundleModePlugin(project)],
+      });
+
+      expect(errors).toEqual([]);
+      expect(getEntryModuleId(code)).toBe(WORKLETS_ENTRY_MODULE);
+    });
+
+    it('rejects a Worklets release predating Bundle Mode, naming the floor', async () => {
+      // The release just below the floor: no polyfill, no `WorkletsModule.prepareBundleMode`
+      // and no native ScriptLoader, so this is the project whose build would otherwise die
+      // on an unresolved `…/worklets-polyfill` request that names no version at all.
+      const project = withWorklets(UNSUPPORTED_WORKLETS_VERSION, {
+        withoutPolyfill: true,
+      });
+      const { errors, code } = await compileFixture({
+        project,
+        plugins: [bundleModePlugin(project)],
+        allowErrors: true,
+      });
+
+      const error = errors.find((entry) =>
+        entry.includes('Worklets Bundle Mode requires')
+      );
+      expect(error).toContain(`'react-native-worklets@0.12.2'`);
+      expect(error).toContain(`${SUPPORTED_WORKLETS_VERSION} or newer`);
+      // Both ways out, because updating Worklets is not always the answer.
+      expect(error).toContain('bundleMode: true');
+
+      // The setup is skipped rather than half applied, so it does not add a second, less
+      // useful failure: no runtime module, and no unresolved request for the polyfill.
+      expect(code).not.toContain('worklets/bundleMode');
+      // Rspack spells the failure "Can't resolve", webpack "Cannot find module"; either
+      // one here would mean the setup kept running against a package that cannot work.
+      expect(
+        errors.filter((entry) =>
+          /can.?t resolve|cannot find module/i.test(entry)
+        )
+      ).toEqual([]);
+    });
+
+    it('rejects a Worklets package with no polyfill for the bundle to require', async () => {
+      // A prerelease of the floor is not older than it, so the version cannot answer this
+      // one — a `0.13.0-nightly-*` predating the polyfill passes the floor. The file the
+      // runtime module hard-requires is what shows the package cannot work.
+      const project = withWorklets('0.13.0-nightly-20260915-07aa7ab51', {
+        withoutPolyfill: true,
+      });
+      const { errors } = await compileFixture({
+        project,
+        plugins: [bundleModePlugin(project)],
+        allowErrors: true,
+      });
+
+      const error = errors.find((entry) => entry.includes('does not ship'));
+      // Quoted relative to the package, which is how the message reads next to the root
+      // the test above already printed.
+      expect(error).toContain('bundleMode/polyfills/prepareBundleMode.js');
+      expect(error).toContain(
+        "'react-native-worklets@0.13.0-nightly-20260915-07aa7ab51'"
+      );
+      expect(error).toContain(`${SUPPORTED_WORKLETS_VERSION} and newer`);
+    });
+
+    it('settles a Worklets copy that declares no version by its files', async () => {
+      // A linked or patched copy has nothing to compare against, so the version says
+      // nothing about it. It must not be rejected for that, and must still be rejected
+      // once the file the bundle needs is missing.
+      const withPolyfill = withWorklets(undefined);
+      const withoutPolyfill = withWorklets(undefined, {
+        withoutPolyfill: true,
+      });
+
+      const passed = await compileFixture({
+        project: withPolyfill,
+        plugins: [bundleModePlugin(withPolyfill)],
+        allowErrors: true,
+      });
+      expect(passed.errors).toEqual([]);
+      expect(getEntryModuleId(passed.code)).toBe(WORKLETS_ENTRY_MODULE);
+
+      const failed = await compileFixture({
+        project: withoutPolyfill,
+        plugins: [bundleModePlugin(withoutPolyfill)],
+        allowErrors: true,
+      });
+      expect(
+        failed.errors.find((entry) => entry.includes('does not ship'))
+      ).toContain("'react-native-worklets@unknown'");
+    });
+
+    it('fails the build through ReanimatedPlugin too', async () => {
+      // `ReanimatedPlugin` is what an app applies, and it is the one that decides to set
+      // Bundle Mode up at all, so the error has to surface from that path as well.
+      const project = withWorklets(UNSUPPORTED_WORKLETS_VERSION, {
+        withoutPolyfill: true,
+      });
+      const { errors } = await compileFixture({
+        project,
+        plugins: [new ReanimatedPlugin()],
+        rules: [],
+        allowErrors: true,
+      });
+
+      expect(
+        errors.find((entry) => entry.includes('Worklets Bundle Mode requires'))
+      ).toContain(`'react-native-worklets@${UNSUPPORTED_WORKLETS_VERSION}'`);
+    });
+
+    it('leaves a project that did not ask for Bundle Mode alone', async () => {
+      // An older Worklets is fine without Bundle Mode, so the gate may only speak for
+      // projects whose Babel config turned the feature on.
+      const project = withWorklets(UNSUPPORTED_WORKLETS_VERSION, {
+        withoutPolyfill: true,
+      });
+      fs.writeFileSync(
+        path.join(project, 'babel.config.js'),
+        "module.exports = { plugins: [['react-native-worklets/plugin', {}]] };\n"
+      );
+
+      expect(detectWorkletsBundleMode(project)).toBe(false);
+
+      const { errors, code } = await compileFixture({
+        project,
+        plugins: [new ReanimatedPlugin()],
+        rules: [],
+        allowErrors: true,
+      });
+
+      expect(errors).toEqual([]);
+      expect(code).not.toContain('worklets/bundleMode');
+    });
   });
 
   describe('through ReanimatedPlugin', () => {
