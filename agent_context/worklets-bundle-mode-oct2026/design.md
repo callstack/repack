@@ -289,13 +289,45 @@ Without Bundle Mode the outer worklet runs and `scheduleOnUI` is the guard stub,
 so the failure alert fires. With Bundle Mode the inner worklet executes on the
 UI runtime and hops back to the JS thread through `scheduleOnRN`.
 
+### Automated coverage
+
+`tests/integration/src/plugins/WorkletsBundleModePlugin.test.ts` compiles
+`__fixtures__/worklets-bundle-mode/project` under both bundlers. The fixture is a
+real on-disk app — a `babel.config.js` with `bundleMode: true`, and a
+`node_modules/react-native-worklets` carrying `src/index.ts`,
+`lib/module/index.js`, the polyfill, a `plugin/` stub and two
+`.worklets/<hash>.js` files — so the plugin resolves Worklets, detects the flag
+and transforms the flag files the way it does in a real project. `plugin/` flips
+the `_WORKLETS_BUNDLE_MODE_ENABLED` literal the same way Worklets' own plugin
+does; workletization is not reproduced, the fixture imports the generated
+factories directly, which is the request the real plugin emits.
+
+What it asserts, against emitted bundle text and against the bundle re-evaluated
+in `node:vm` behind `__RUNTIME_KIND`:
+
+- the `__r` shim, the `nativeModuleProxy` stand-in and the neutralised startup,
+  and that `__r` never appears on the RN Runtime;
+- the id map: `-2` to the entry file, each hash to its `.worklets` module, the
+  polyfill required by id rather than through the map, and Worklets' own error
+  for an unknown id;
+- that `__r(-2)` and `__r(<hash>)` really return the entry exports and the
+  worklet factory, so the map is checked through native's access pattern and not
+  just its text;
+- that the polyfill runs first on every runtime and asks native to warm the UI
+  Runtime only from the RN Runtime, and that neither the app entry nor Worklets
+  evaluates on a Worklet Runtime;
+- cache-group placement: the worklet behind a `import()` is pulled into the entry
+  chunk, with a plugin-less build as the control, and the same worklet is named
+  in a warning when `splitChunks: false` leaves the group inert;
+- the `-2` collision path: `mainFields: ['main']` puts both entry variants in the
+  chunk, and the alias target still owns the id while the loser is warned about.
+
 ## Known limitations
 
-- **No automated coverage.** `packages/plugin-reanimated/src/__tests__` does not
-  exist; the tester app button is the only verification, and the checked-in
-  `apps/tester-app/build/generated/**` bundles predate the change. A
-  compile-time test asserting the `__r` shim, the `-2` mapping and the
-  cache-group placement from a fixture build is the cheap next step.
+- **Nothing asserts the worklet runtimes end to end.** The tests evaluate the
+  emitted bundle in `node:vm` and call `__r` the way ScriptLoader does, which
+  covers the bridge Re.Pack owns. Whether Worklets then runs a worklet on a real
+  UI/Worker runtime is still only what the tester app button proves.
 - **Single entry chunk for the id map.**
   `WorkletsBundleModeRuntimeModule.generate` builds `__workletsModuleIds` from
   `this.chunk`, and `addWorkletsCacheGroup` pins Worklets to
