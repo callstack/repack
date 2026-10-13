@@ -2,7 +2,7 @@
 const workletsPluginOptions = {
   bundleMode: true,
   strictGlobal: true,
-}
+};
 
 module.exports = {
   presets: ['@react-native/babel-preset'],

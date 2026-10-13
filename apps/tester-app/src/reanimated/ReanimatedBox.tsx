@@ -12,7 +12,8 @@ export function ReanimatedBox() {
 
   const onTestBundleMode = () => {
     const runtime = createWorkletRuntime('test');
-    const showAlert = (title: string, message: string) => Alert.alert(title, message);
+    const showAlert = (title: string, message: string) =>
+      Alert.alert(title, message);
 
     scheduleOnRuntime(runtime, () => {
       'worklet';
@@ -29,8 +30,6 @@ export function ReanimatedBox() {
       }
     });
   };
-
-
 
   const handlePress = () => {
     width.value = withSpring(width.value + 50);
