@@ -16,7 +16,7 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <View style={styles.container}>
+        <View testID="miniapp-error" style={styles.container}>
           <Text>Failed to load Mini App</Text>
         </View>
       );
