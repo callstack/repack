@@ -99,6 +99,7 @@ export default Repack.defineRspackConfig((env) => {
         __WITH_PRELOAD__:
           process.env.WITH_PRELOAD === 'true' ||
           process.env.WITH_PRELOAD === '1',
+        __E2E__: process.env.E2E === 'true',
       }),
     ],
   };

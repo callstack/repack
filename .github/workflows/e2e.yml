@@ -1,12 +1,5 @@
 name: e2e
 
-# Module Federation v2 e2e on a real Android emulator, mirroring the local flow:
-# start both dev servers, build the app, run the tests on a booted device.
-#
-# `pull_request_target` runs workflow code from the base revision, so a
-# contributor cannot change what executes; the PR head is checked out
-# explicitly below. The job reads no secrets (every test is deterministic) and
-# the token is pinned to `contents: read`.
 on:
   pull_request_target:
     types: [opened, reopened, synchronize, labeled, unlabeled]
@@ -14,36 +7,27 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# An emulator run is too expensive to let superseded commits queue up behind it.
+# one run per PR; a new push cancels the older one
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+# keep it read-only
 permissions:
   contents: read
 
 jobs:
   android:
     name: e2e (Android)
-    # Same-repo PRs run unconditionally; a fork PR runs while the `e2e` label
-    # is on it (the label does not exist in repo settings yet). No workflow-level
-    # `paths:` filter — a path-filtered required check is never created and the
-    # merge hangs forever.
+    # same-repo PRs - always run; forks - run only with the `e2e` label
     if: >-
       github.event_name != 'pull_request_target' ||
       github.event.pull_request.head.repo.full_name == github.repository ||
       contains(github.event.pull_request.labels.*.name, 'e2e')
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    # Measurement phase: flip to false and mark the check required in branch
-    # protection in the same change — a required check on a continue-on-error
-    # job is permanently green, which is worse than no check.
-    continue-on-error: true
 
     steps:
-      # pull_request_target checks out the base by default, which would test
-      # the wrong code; every other trigger has no PR context and falls
-      # through to github.sha.
       - name: Checkout pull request head
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
         with:
@@ -52,8 +36,6 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-pnpm-node
         with:
-          # e2e requires Node ^22.22.3 || >=24.8.0; exact pin so the floor
-          # cannot drift.
           node-version: '24.18.0'
 
       - name: Setup Java
@@ -62,43 +44,20 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # Required by android-emulator-runner on GitHub-hosted runners.
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Cache Gradle
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # tag=v6.1.0
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('apps/tester-federation-v2/android/gradle/wrapper/gradle-wrapper.properties', 'apps/tester-federation-v2/android/**/*.gradle', 'apps/tester-federation-v2/android/gradle.properties', 'pnpm-lock.yaml') }}
-
-      # The emulator runner action has no caching of its own.
-      - name: Cache Android emulator
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # tag=v6.1.0
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ runner.os }}-api-35
-
-      # The dev servers are the thing under test: this is how the PR's Repack
-      # change reaches them (workspace dist/ is gitignored).
       - name: Build workspace packages
         run: pnpm --filter tester-federation-v2... build
 
-      # Servers before Gradle: the cold compile overlaps the build and the
-      # emulator boot. nohup/disown because the action runs each script line
-      # in its own shell and these must outlive this step. The /status wait is
-      # not ceremony: react-native-test-app picks its bundle source once at app
-      # start and never retries, so an app launched while 8081 is still booting
-      # shows an alert no later tap dismisses.
+      # nohup/disown: the runner kills step processes at the end. /status wait: RNTA picks its bundle source once, never retries
       - name: Start dev servers
         working-directory: apps/tester-federation-v2
+        env:
+          E2E: 'true'
         run: |
           nohup pnpm start:hostapp > /tmp/hostapp.log 2>&1 &
           disown
@@ -106,17 +65,19 @@ jobs:
           disown
           timeout 180 sh -c 'until [ "$(curl -sf localhost:8081/status)" = "packager-status:running" ] && [ "$(curl -sf localhost:8082/status)" = "packager-status:running" ]; do sleep 2; done'
 
+      # ask for the bundles now so the servers compile them — they only build on first request
+      - name: Warm both compilers
+        working-directory: apps/tester-federation-v2
+        run: |
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8081/android/index.bundle?platform=android&dev=true&lazy=true&minify=false&app=com.tester.federationV2&modulesOnly=false&runModule=true'
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/android/index.bundle?platform=android&dev=true&lazy=true&minify=false&app=com.tester.federationV2&modulesOnly=false&runModule=true'
+          echo 'Both bundles served; compilers are warm.'
+
       - name: Build Android app
         working-directory: apps/tester-federation-v2/android
         run: ./gradlew :app:assembleDebug -PreactNativeArchitectures=x86_64
 
-      # The reverses are load-bearing for 8082: the MiniApp remote URL is baked
-      # into the bundle as http://localhost:8082/..., and the device's localhost
-      # is the device itself (8081 needs no reverse — the app reaches it via
-      # 10.0.2.2). Proven locally: with reverses wiped, exactly the Gallery
-      # test fails. google_apis, never google_apis_playstore — the Play image
-      # could not launch the app in earlier testing (unconfirmed mechanism; do
-      # not switch without verifying).
+      # expose dev servers to the emulator, install the APK, run the tests
       - name: Run e2e on an emulator
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # tag=v2.38.0
         with:
@@ -126,25 +87,102 @@ jobs:
           profile: pixel_7
           working-directory: apps/tester-federation-v2
           script: |
+            adb shell settings put global hide_error_dialogs 1
+            for i in 1 2 3; do adb shell "uiautomator dump /sdcard/d.xml >/dev/null && grep -q aerr_ /sdcard/d.xml" && { echo 'ANR dialog on screen, clearing it'; adb shell am force-stop com.google.android.apps.nexuslauncher; }; sleep 2; done
             adb reverse tcp:8081 tcp:8081
             adb reverse tcp:8082 tcp:8082
+            adb reverse --list
+            adb reverse --list | grep -q 'tcp:8081' || { echo '::error::adb reverse missing for tcp:8081'; exit 1; }
+            adb reverse --list | grep -q 'tcp:8082' || { echo '::error::adb reverse missing for tcp:8082'; exit 1; }
             adb install -r -g android/app/build/outputs/apk/debug/app-debug.apk
-            pnpm exec e2e run --target android --reporter list,junit
+            pnpm exec e2e run --target android --reporter list,junit; ec=$?; adb logcat -d -v time > .e2e/logcat.txt 2>&1; exit $ec
 
-      # !cancelled() keeps evidence from a test that failed then passed on retry.
       - name: Upload e2e artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # tag=v7.0.1
         with:
           name: e2e-android
           path: apps/tester-federation-v2/.e2e
-          if-no-files-found: warn
+          include-hidden-files: true
+          if-no-files-found: error
           retention-days: 7
 
-      # The nohup'd server logs are otherwise invisible on a red run.
-      - name: Show dev server logs on failure
-        if: ${{ failure() }}
-        run: tail -n 60 /tmp/hostapp.log /tmp/miniapp.log
+      - name: Show dev server logs
+        if: ${{ !cancelled() }}
+        run: tail -n 80 /tmp/hostapp.log /tmp/miniapp.log
 
-  # iOS is Phase 1b: needs an xcodebuild lane, a pinned simulator runtime and a
-  # ~/.agent-device cache, none measured yet.
+  # dispatch + main only for now — no PR triggers until this lane has greens
+  ios:
+    name: e2e (iOS)
+    if: github.event_name != 'pull_request_target'
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-pnpm-node
+        with:
+          node-version: '24.18.0'
+
+      - name: Build workspace packages
+        run: pnpm --filter tester-federation-v2... build
+
+      # start both dev servers in the background, wait until both answer /status
+      - name: Start dev servers
+        working-directory: apps/tester-federation-v2
+        env:
+          E2E: 'true'
+        run: |
+          nohup pnpm start:hostapp > /tmp/hostapp.log 2>&1 &
+          disown
+          nohup pnpm start:miniapp > /tmp/miniapp.log 2>&1 &
+          disown
+          for p in 8081 8082; do curl -sf --retry 90 --retry-delay 2 --retry-all-errors --retry-connrefused -o /dev/null "http://localhost:$p/status"; done
+
+      # ask for the iOS bundles now so the servers compile them — they only build on first request
+      - name: Warm both compilers
+        working-directory: apps/tester-federation-v2
+        run: |
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8081/index.bundle?platform=ios&dev=true&lazy=true&minify=false&modulesOnly=false&runModule=true&app=com.tester.federationV2'
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/index.bundle?platform=ios&dev=true&lazy=true&minify=false&modulesOnly=false&runModule=true&app=com.tester.federationV2'
+          echo 'Both bundles served; compilers are warm.'
+
+      # match the runtime to the default Xcode's SDK (16.4 → iOS 18.x), not just newest available
+      - name: Boot simulator
+        run: |
+          RT=$(xcrun simctl list runtimes -j | jq -r '.runtimes | map(select(.isAvailable and (.identifier | startswith("com.apple.CoreSimulator.SimRuntime.iOS-18-")))) | sort_by(.version) | last | .identifier')
+          echo "using $RT"
+          [ "$RT" != "null" ] && [ -n "$RT" ]
+          xcrun simctl create e2e "iPhone 16" "$RT"
+          xcrun simctl boot e2e
+          xcrun simctl bootstatus e2e -b
+
+      # pod install generates the Xcode project the workspace points at
+      - name: Build iOS app
+        working-directory: apps/tester-federation-v2/ios
+        run: pod install && xcodebuild -workspace ModuleFederationTesterV2.xcworkspace -scheme ReactTestApp -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO ARCHS=arm64 build
+
+      - name: Run e2e
+        working-directory: apps/tester-federation-v2
+        run: |
+          xcrun simctl install booted ios/build/Build/Products/Debug-iphonesimulator/*.app
+          pnpm exec e2e run --target ios --reporter list,junit
+
+      - name: Upload e2e artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # tag=v7.0.1
+        with:
+          name: e2e-ios
+          path: apps/tester-federation-v2/.e2e
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Show dev server logs
+        if: ${{ !cancelled() }}
+        run: tail -n 80 /tmp/hostapp.log /tmp/miniapp.log
