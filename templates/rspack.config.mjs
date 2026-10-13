@@ -16,7 +16,7 @@ export default Repack.defineRspackConfig({
   context: __dirname,
   entry: './index.js',
   resolve: {
-    ...Repack.getResolveOptions(),
+    ...Repack.getResolveOptions({ enablePackageExports: true }),
   },
   module: {
     rules: [

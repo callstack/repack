@@ -11,7 +11,7 @@ module.exports = Repack.defineWebpackConfig({
   context: __dirname,
   entry: './index.js',
   resolve: {
-    ...Repack.getResolveOptions(),
+    ...Repack.getResolveOptions({ enablePackageExports: true }),
   },
   module: {
     rules: [

@@ -3,7 +3,7 @@
   "description": "Automates the integration of the @callstack/repack into React-Native projects",
   "author": "Jakub Romańczyk <jakub.romanczyk@callstack.com>",
   "license": "MIT",
-  "version": "5.4.1",
+  "version": "5.4.2",
   "homepage": "https://github.com/callstack/repack",
   "repository": {
     "type": "git",
@@ -31,7 +31,8 @@
   "type": "module",
   "scripts": {
     "build": "rslib build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "update-versions": "node scripts/update-versions.mjs"
   },
   "dependencies": {
     "preferred-pm": "^4.1.1",

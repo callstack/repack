@@ -1,0 +1,48 @@
+{
+  "name": "tester-expo",
+  "version": "0.0.1",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "postinstall": "node ./scripts/eas-workspace-postinstall.mjs",
+    "repack:start": "react-native webpack-start",
+    "repack:ios": "expo run:ios --no-bundler",
+    "repack:android": "expo run:android --no-bundler",
+    "repack:release:android": "repack-expo build --platform android",
+    "repack:release:ios": "repack-expo build --platform ios",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@callstack/repack": "workspace:*",
+    "@callstack/repack-expo": "workspace:*",
+    "@callstack/repack-plugin-reanimated": "workspace:*",
+    "@module-federation/enhanced": "catalog:testers",
+    "expo": "catalog:expo57",
+    "expo-asset": "catalog:expo57",
+    "expo-constants": "catalog:expo57",
+    "expo-font": "catalog:expo57",
+    "expo-linking": "catalog:expo57",
+    "expo-router": "catalog:expo57",
+    "expo-status-bar": "catalog:expo57",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "react-native-gesture-handler": "catalog:expo57",
+    "react-native-reanimated": "catalog:testers",
+    "react-native-safe-area-context": "catalog:testers",
+    "react-native-screens": "catalog:testers",
+    "react-native-worklets": "catalog:testers"
+  },
+  "devDependencies": {
+    "@babel/core": "catalog:",
+    "@react-native-community/cli": "catalog:testers",
+    "@react-native-community/cli-platform-android": "catalog:testers",
+    "@react-native-community/cli-platform-ios": "catalog:testers",
+    "@react-native/babel-preset": "catalog:testers",
+    "@react-native/community-cli-plugin": "catalog:testers",
+    "@rspack/core": "catalog:",
+    "@types/react": "catalog:testers",
+    "babel-preset-expo": "catalog:expo57",
+    "typescript": "catalog:",
+    "ws": "^8.21.1"
+  }
+}

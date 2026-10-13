@@ -1,5 +1,16 @@
 # @callstack/repack
 
+## 5.4.2
+
+### Patch Changes
+
+- [#1480](https://github.com/callstack/repack/pull/1480) [`166388b`](https://github.com/callstack/repack/commit/166388b76fc4641f15cd63d3e96aec9d7e582c84) Thanks [@CristiCeban](https://github.com/CristiCeban)! - Fix `.jpeg` images not showing in Android release builds. They were emitted to `raw` instead of `drawable-*`, where React Native looks for them.
+
+  If you have a `.jpeg` and a `.png`/`.jpg`/`.gif`/`.webp` image with the same name in the same directory (e.g. `logo.png` and `logo.jpeg`), rename one of them. Both now resolve to the same Android drawable resource name, and the build fails with a duplicate resources error.
+
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.4.2
+
 ## 5.4.1
 
 ### Patch Changes
