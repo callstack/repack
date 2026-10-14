@@ -70,14 +70,10 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      # No caching, deliberately, until this lane is reliably green. Neither the
-      # Gradle nor the AVD cache had ever been written or hit — `actions/cache`
-      # only saves on a green run and every run so far was red — so deleting them
-      # costs no time and removes a variable: every run is then explainable by the
-      # workflow you can see, with no dependence on state left by an earlier run.
-      # Re-add as one change once green. The AVD cache is only worth having
-      # together with snapshot boot, since the emulator's default `-no-snapshot`
-      # leaves boot cold either way.
+      # No caching, deliberately, until this lane is reliably green. Neither cache
+      # had ever been written or hit — `actions/cache` only saves on a green run
+      # and every run so far was red — so deleting them costs no time and removes
+      # a variable: nothing here depends on state an earlier run left behind.
       #
       # The dev servers are the thing under test: this is how the PR's Repack
       # change reaches them (workspace dist/ is gitignored).
@@ -154,6 +150,11 @@ jobs:
           # starting with '#', so no multi-line construct (no `for`/`if`/here-doc
           # blocks) and no comments may be relied on. Keep each check one line.
           script: |
+            free -m
+            ps -eo rss,comm --sort=-rss | head -n 8
+            uptime
+            adb logcat -d -v time > /tmp/logcat.txt 2>&1
+            nohup adb logcat -v time >> /tmp/logcat.txt 2>&1 &
             adb shell settings put global hide_error_dialogs 1
             adb reverse tcp:8081 tcp:8081
             adb reverse tcp:8082 tcp:8082
@@ -193,6 +194,26 @@ jobs:
       - name: Show dev server logs
         if: ${{ !cancelled() }}
         run: tail -n 80 /tmp/hostapp.log /tmp/miniapp.log
+
+      # The only step whose purpose is to find the cause rather than prove the
+      # symptom. Runs 38531417287 and 38557739117 both froze the same way — every
+      # test timed out against a 12-node screen tree that turned out to be
+      # Android's own "Pixel Launcher isn't responding" dialog — and nothing in
+      # the server logs, the traces or the screenshots says why the launcher
+      # stopped responding. logcat is where the system writes that verdict: the
+      # ANRing process, the reason, and the load average and CPU split at the
+      # moment of the freeze. Without it every next step is a guess at cores or
+      # API level or profile; with it, the fix has a name.
+      - name: Show the ANR report
+        if: ${{ failure() }}
+        run: |
+          test -s /tmp/logcat.txt || { echo 'no logcat captured'; exit 0; }
+          echo '### ANR / crash lines'
+          grep -iE "ANR in|Reason:|not responding|FATAL EXCEPTION|Force finishing|am_anr|LOW MEMORY|lowmemorykiller" /tmp/logcat.txt | head -n 40
+          echo '### CPU and memory at the freeze'
+          grep -A 12 -m 1 "ANR in" /tmp/logcat.txt || true
+          echo '### last 40 lines'
+          tail -n 40 /tmp/logcat.txt
 
   # iOS is Phase 1b: needs an xcodebuild lane, a pinned simulator runtime and a
   # ~/.agent-device cache, none measured yet.
