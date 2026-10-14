@@ -70,23 +70,15 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Cache Gradle
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # tag=v6.1.0
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('apps/tester-federation-v2/android/gradle/wrapper/gradle-wrapper.properties', 'apps/tester-federation-v2/android/**/*.gradle', 'apps/tester-federation-v2/android/gradle.properties', 'pnpm-lock.yaml') }}
-
-      # The emulator runner action has no caching of its own.
-      - name: Cache Android emulator
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # tag=v6.1.0
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ runner.os }}-api-35
-
+      # No caching, deliberately, until this lane is reliably green. Neither the
+      # Gradle nor the AVD cache had ever been written or hit — `actions/cache`
+      # only saves on a green run and every run so far was red — so deleting them
+      # costs no time and removes a variable: every run is then explainable by the
+      # workflow you can see, with no dependence on state left by an earlier run.
+      # Re-add as one change once green. The AVD cache is only worth having
+      # together with snapshot boot, since the emulator's default `-no-snapshot`
+      # leaves boot cold either way.
+      #
       # The dev servers are the thing under test: this is how the PR's Repack
       # change reaches them (workspace dist/ is gitignored).
       - name: Build workspace packages
@@ -162,6 +154,7 @@ jobs:
           # starting with '#', so no multi-line construct (no `for`/`if`/here-doc
           # blocks) and no comments may be relied on. Keep each check one line.
           script: |
+            adb shell settings put global hide_error_dialogs 1
             adb reverse tcp:8081 tcp:8081
             adb reverse tcp:8082 tcp:8082
             adb reverse --list
