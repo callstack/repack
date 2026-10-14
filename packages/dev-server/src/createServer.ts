@@ -28,6 +28,10 @@ export async function createServer(config: Server.Config) {
 
   /** Fastify instance powering the development server. */
   const instance = Fastify({
+    // Since fastify 5.12 the default ('idle') leaves idle keep-alive sockets
+    // to `server.close()`, which only closes them on Node 19+. Force-closing
+    // keeps `stop()` from hanging on Node 18.
+    forceCloseConnections: true,
     disableRequestLogging: options.disableRequestLogging,
     logger: {
       level: 'trace',
