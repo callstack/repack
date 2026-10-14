@@ -1,10 +1,22 @@
 import { ScriptManager } from '@callstack/repack/client';
 import { preloadRemote } from '@module-federation/runtime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppRegistry } from 'react-native';
+import { AppRegistry, LogBox } from 'react-native';
 
 import { components } from '../../app.json';
 import App from './App';
+
+// Set via DefinePlugin when the dev servers run with E2E=true (see CI's
+// e2e.yml). Warning toasts are part of the app's own view tree and sit on
+// top of the bottom of the screen, so a logged warning can silently absorb a
+// tap meant for a control there — this cost the Gallery e2e test several CI
+// runs (agent_context/e2e-ci-oct2026/design.md had flagged exactly this
+// risk). Errors are NOT ignored: red screens still render, so a broken
+// change still fails loudly. No flag, no muting: normal development keeps
+// every warning.
+if (__E2E__) {
+  LogBox.ignoreAllLogs(true);
+}
 
 if (__WITH_PRELOAD__) {
   // enable caching of scripts in the AsyncStorage

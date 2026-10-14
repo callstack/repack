@@ -88,8 +88,17 @@ jobs:
       # react-native-test-app picks its bundle source once at app start and
       # never retries, so an app launched while 8081 is still booting shows an
       # alert no later tap dismisses.
+      # E2E=true reaches DefinePlugin in the host configs and compiles the
+      # bundle with warning UI muted (LogBox.ignoreAllLogs in src/host/index.js).
+      # Needed because a warning toast is drawn over the bottom of the app and
+      # absorbs taps meant for controls there — it killed the Gallery test on
+      # CI's smaller screen, which has everything ~15% closer. Red error
+      # screens are NOT muted, so a broken change still fails loudly. Local
+      # dev without this env keeps every warning.
       - name: Start dev servers
         working-directory: apps/tester-federation-v2
+        env:
+          E2E: 'true'
         run: |
           nohup pnpm start:hostapp > /tmp/hostapp.log 2>&1 &
           disown
@@ -150,11 +159,6 @@ jobs:
           # starting with '#', so no multi-line construct (no `for`/`if`/here-doc
           # blocks) and no comments may be relied on. Keep each check one line.
           script: |
-            free -m
-            ps -eo rss,comm --sort=-rss | head -n 8
-            uptime
-            adb logcat -d -v time > /tmp/logcat.txt 2>&1
-            nohup adb logcat -v time >> /tmp/logcat.txt 2>&1 &
             adb shell settings put global hide_error_dialogs 1
             adb reverse tcp:8081 tcp:8081
             adb reverse tcp:8082 tcp:8082
@@ -162,7 +166,7 @@ jobs:
             adb reverse --list | grep -q 'tcp:8081' || { echo '::error::adb reverse missing for tcp:8081'; exit 1; }
             adb reverse --list | grep -q 'tcp:8082' || { echo '::error::adb reverse missing for tcp:8082'; exit 1; }
             adb install -r -g android/app/build/outputs/apk/debug/app-debug.apk
-            pnpm exec e2e run --target android --reporter list,junit
+            pnpm exec e2e run --target android --reporter list,junit; ec=$?; adb logcat -d -v time > .e2e/logcat.txt 2>&1; exit $ec
 
       # !cancelled() keeps evidence from a test that failed then passed on
       # retry. include-hidden-files is the load-bearing line: upload-artifact
@@ -195,25 +199,23 @@ jobs:
         if: ${{ !cancelled() }}
         run: tail -n 80 /tmp/hostapp.log /tmp/miniapp.log
 
-      # The only step whose purpose is to find the cause rather than prove the
-      # symptom. Runs 38531417287 and 38557739117 both froze the same way — every
-      # test timed out against a 12-node screen tree that turned out to be
-      # Android's own "Pixel Launcher isn't responding" dialog — and nothing in
-      # the server logs, the traces or the screenshots says why the launcher
-      # stopped responding. logcat is where the system writes that verdict: the
-      # ANRing process, the reason, and the load average and CPU split at the
-      # moment of the freeze. Without it every next step is a guess at cores or
-      # API level or profile; with it, the fix has a name.
-      - name: Show the ANR report
+      # Captured inside the emulator step (a background `adb logcat` there dies
+      # with the per-line shell the action spawns), written to `.e2e/logcat.txt`
+      # so it rides up with the artifact. On a red run this is the app's own
+      # voice: ReactNativeJS lines say what the MF runtime did when the remote
+      # was requested, and `ActivityManager` lines say whether anything ever
+      # asked to navigate.
+      - name: Show device log on failure
         if: ${{ failure() }}
         run: |
-          test -s /tmp/logcat.txt || { echo 'no logcat captured'; exit 0; }
+          f=apps/tester-federation-v2/.e2e/logcat.txt
+          test -s $f || { echo 'no logcat captured'; exit 0; }
+          echo '### app console (ReactNativeJS)'
+          grep "ReactNativeJS" $f | tail -n 40
           echo '### ANR / crash lines'
-          grep -iE "ANR in|Reason:|not responding|FATAL EXCEPTION|Force finishing|am_anr|LOW MEMORY|lowmemorykiller" /tmp/logcat.txt | head -n 40
-          echo '### CPU and memory at the freeze'
-          grep -A 12 -m 1 "ANR in" /tmp/logcat.txt || true
-          echo '### last 40 lines'
-          tail -n 40 /tmp/logcat.txt
+          grep -iE "ANR in|Reason:|not responding|FATAL EXCEPTION|Force finishing|am_anr|lowmemorykiller" $f | tail -n 30
+          echo '### app lifecycle'
+          grep -E "ActivityManager.*federationV2|Displayed com.tester" $f | tail -n 15
 
   # iOS is Phase 1b: needs an xcodebuild lane, a pinned simulator runtime and a
   # ~/.agent-device cache, none measured yet.
