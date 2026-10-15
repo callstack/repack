@@ -1,12 +1,5 @@
 name: e2e
 
-# Module Federation v2 e2e on a real Android emulator, mirroring the local flow:
-# start both dev servers, build the app, run the tests on a booted device.
-#
-# `pull_request_target` runs workflow code from the base revision, so a
-# contributor cannot change what executes; the PR head is checked out
-# explicitly below. The job reads no secrets (every test is deterministic) and
-# the token is pinned to `contents: read`.
 on:
   pull_request_target:
     types: [opened, reopened, synchronize, labeled, unlabeled]
@@ -14,37 +7,27 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# An emulator run is too expensive to let superseded commits queue up behind it.
+# one run per PR; a new push cancels the older one
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+# keep it read-only
 permissions:
   contents: read
 
 jobs:
   android:
     name: e2e (Android)
-    # Same-repo PRs run unconditionally; a fork PR runs while the `e2e` label
-    # is on it (the label does not exist in repo settings yet). No workflow-level
-    # `paths:` filter — a path-filtered required check is never created and the
-    # merge hangs forever.
+    # same-repo PRs - always run; forks - run only with the `e2e` label
     if: >-
       github.event_name != 'pull_request_target' ||
       github.event.pull_request.head.repo.full_name == github.repository ||
       contains(github.event.pull_request.labels.*.name, 'e2e')
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    # NOT continue-on-error. A job that cannot fail reports green over red
-    # tests: run 38408377768 concluded "success" with the Gallery test failing.
-    # Still not a *required* check — branch protection is a separate decision
-    # and the suite has no stability history — but "not required" and "cannot
-    # fail" are independent switches, and only the first one is set here.
 
     steps:
-      # pull_request_target checks out the base by default, which would test
-      # the wrong code; every other trigger has no PR context and falls
-      # through to github.sha.
       - name: Checkout pull request head
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
         with:
@@ -53,8 +36,6 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-pnpm-node
         with:
-          # e2e requires Node ^22.22.3 || >=24.8.0; exact pin so the floor
-          # cannot drift.
           node-version: '24.18.0'
 
       - name: Setup Java
@@ -63,38 +44,16 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # Required by android-emulator-runner on GitHub-hosted runners.
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      # No caching, deliberately, until this lane is reliably green. Neither cache
-      # had ever been written or hit — `actions/cache` only saves on a green run
-      # and every run so far was red — so deleting them costs no time and removes
-      # a variable: nothing here depends on state an earlier run left behind.
-      #
-      # The dev servers are the thing under test: this is how the PR's Repack
-      # change reaches them (workspace dist/ is gitignored).
       - name: Build workspace packages
         run: pnpm --filter tester-federation-v2... build
 
-      # Servers before Gradle so their cold compile overlaps the build and the
-      # emulator boot — but "listening" is not "compiled", so the overlap only
-      # happens if something actually asks for a bundle (see the warm step).
-      # nohup/disown because the action runs each script line in its own shell
-      # and these must outlive this step. The /status wait is not ceremony:
-      # react-native-test-app picks its bundle source once at app start and
-      # never retries, so an app launched while 8081 is still booting shows an
-      # alert no later tap dismisses.
-      # E2E=true reaches DefinePlugin in the host configs and compiles the
-      # bundle with warning UI muted (LogBox.ignoreAllLogs in src/host/index.js).
-      # Needed because a warning toast is drawn over the bottom of the app and
-      # absorbs taps meant for controls there — it killed the Gallery test on
-      # CI's smaller screen, which has everything ~15% closer. Red error
-      # screens are NOT muted, so a broken change still fails loudly. Local
-      # dev without this env keeps every warning.
+      # nohup/disown: the runner kills step processes at the end. /status wait: RNTA picks its bundle source once, never retries
       - name: Start dev servers
         working-directory: apps/tester-federation-v2
         env:
@@ -106,28 +65,7 @@ jobs:
           disown
           timeout 180 sh -c 'until [ "$(curl -sf localhost:8081/status)" = "packager-status:running" ] && [ "$(curl -sf localhost:8082/status)" = "packager-status:running" ]; do sleep 2; done'
 
-      # /status answers as soon as the server *listens* (createServer.ts
-      # registers it as a static reply — it never touches the compiler), and
-      # Re.Pack builds a platform lazily, on that platform's first asset
-      # request: Compiler.ts `getAsset` -> `activatePlatform`, with a `watchRun`
-      # hook that parks the initial build until then. So the previous step's
-      # wait started the overlap it was meant to have but never achieved: in run
-      # 38408377768 both servers listened at 06:09:13 and the host did not
-      # compile until 06:16:55, and 8082 never compiled at all — the device
-      # never sent it a single request, which is why the Gallery test hung.
-      # These two fetches are what make the overlap real, and they move 8082's
-      # cold build off the device's critical path, where it currently lands
-      # *after* a tap and gets killed when the step ends.
-      #
-      # The paths are RNTA's dev-bundle shape (verified against a live 8082:
-      # `/android/index.bundle?platform=android` -> 200 + "Compiled android",
-      # while the Metro-style `/index.android.bundle` 404s). The compile is
-      # keyed per platform, so any accepted filename triggers it; the params
-      # mirror what the app itself sends.
-      #
-      # A cold miss takes seconds (host: 10.5s, warm cache). 300s of budget, and
-      # -f so a server that 404s or dies fails the step here rather than
-      # presenting as a test failure 15 minutes later.
+      # ask for the bundles now so the servers compile them — they only build on first request
       - name: Warm both compilers
         working-directory: apps/tester-federation-v2
         run: |
@@ -139,13 +77,7 @@ jobs:
         working-directory: apps/tester-federation-v2/android
         run: ./gradlew :app:assembleDebug -PreactNativeArchitectures=x86_64
 
-      # The reverses are load-bearing for 8082: the MiniApp remote URL is baked
-      # into the bundle as http://localhost:8082/..., and the device's localhost
-      # is the device itself (8081 needs no reverse — the app reaches it via
-      # 10.0.2.2). Proven locally: with reverses wiped, exactly the Gallery
-      # test fails. google_apis, never google_apis_playstore — the Play image
-      # could not launch the app in earlier testing (unconfirmed mechanism; do
-      # not switch without verifying).
+      # expose dev servers to the emulator, install the APK, run the tests
       - name: Run e2e on an emulator
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # tag=v2.38.0
         with:
@@ -154,10 +86,6 @@ jobs:
           arch: x86_64
           profile: pixel_7
           working-directory: apps/tester-federation-v2
-          # Every line here is run in its own `sh -c`: the action's
-          # script-parser.ts splits this input on newlines and drops lines
-          # starting with '#', so no multi-line construct (no `for`/`if`/here-doc
-          # blocks) and no comments may be relied on. Keep each check one line.
           script: |
             adb shell settings put global hide_error_dialogs 1
             adb reverse tcp:8081 tcp:8081
@@ -168,17 +96,6 @@ jobs:
             adb install -r -g android/app/build/outputs/apk/debug/app-debug.apk
             pnpm exec e2e run --target android --reporter list,junit; ec=$?; adb logcat -d -v time > .e2e/logcat.txt 2>&1; exit $ec
 
-      # !cancelled() keeps evidence from a test that failed then passed on
-      # retry. include-hidden-files is the load-bearing line: upload-artifact
-      # v7.0.1 passes `excludeHiddenFiles: !includeHiddenFiles` into
-      # @actions/glob and the input defaults to false, so a path whose basename
-      # starts with a dot — `.e2e` — matches zero files. Run 38408377768 then
-      # reported the step a *success* having uploaded nothing (`total_count: 0`
-      # artifacts, one `##[warning]No files were found`), and the trace and
-      # screenshots that would have said what was on screen were gone. Verified
-      # by experiment against @actions/glob, not inferred. if-no-files-found:
-      # error so a missing evidence directory is a build failure, never a
-      # warning that scrolls past again.
       - name: Upload e2e artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # tag=v7.0.1
@@ -189,33 +106,6 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-      # The nohup'd server logs are otherwise invisible, and they are the one
-      # diagnostic that survives on its own (they live outside `.e2e`, so they
-      # arrive even when the upload above does not). On a red run read this step
-      # first: "Compiled android" under each port is the whole story of whether
-      # the device ever reached that server. !cancelled() rather than failure()
-      # so a cancelled run keeps them too.
       - name: Show dev server logs
         if: ${{ !cancelled() }}
         run: tail -n 80 /tmp/hostapp.log /tmp/miniapp.log
-
-      # Captured inside the emulator step (a background `adb logcat` there dies
-      # with the per-line shell the action spawns), written to `.e2e/logcat.txt`
-      # so it rides up with the artifact. On a red run this is the app's own
-      # voice: ReactNativeJS lines say what the MF runtime did when the remote
-      # was requested, and `ActivityManager` lines say whether anything ever
-      # asked to navigate.
-      - name: Show device log on failure
-        if: ${{ failure() }}
-        run: |
-          f=apps/tester-federation-v2/.e2e/logcat.txt
-          test -s $f || { echo 'no logcat captured'; exit 0; }
-          echo '### app console (ReactNativeJS)'
-          grep "ReactNativeJS" $f | tail -n 40
-          echo '### ANR / crash lines'
-          grep -iE "ANR in|Reason:|not responding|FATAL EXCEPTION|Force finishing|am_anr|lowmemorykiller" $f | tail -n 30
-          echo '### app lifecycle'
-          grep -E "ActivityManager.*federationV2|Displayed com.tester" $f | tail -n 15
-
-  # iOS is Phase 1b: needs an xcodebuild lane, a pinned simulator runtime and a
-  # ~/.agent-device cache, none measured yet.

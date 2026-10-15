@@ -99,10 +99,6 @@ export default Repack.defineRspackConfig((env) => {
         __WITH_PRELOAD__:
           process.env.WITH_PRELOAD === 'true' ||
           process.env.WITH_PRELOAD === '1',
-        // read by src/host/index.js — see the comment there for why e2e
-        // mutes warning UI; must stay defined in *both* host configs, the
-        // webpack and rspack builds share the entry and a missing global is
-        // a startup ReferenceError
         __E2E__: process.env.E2E === 'true',
       }),
     ],
