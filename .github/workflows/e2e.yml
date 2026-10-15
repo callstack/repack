@@ -151,11 +151,12 @@ jobs:
           curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/index.bundle?platform=ios&dev=true&lazy=true&minify=false&modulesOnly=false&runModule=true&app=com.tester.federationV2'
           echo 'Both bundles served; compilers are warm.'
 
-      # pick the newest iOS runtime the runner image actually ships
+      # match the runtime to the default Xcode's SDK (16.4 → iOS 18.x), not just newest available
       - name: Boot simulator
         run: |
-          RT=$(xcrun simctl list runtimes -j | jq -r '.runtimes | map(select(.isAvailable and (.identifier | startswith("com.apple.CoreSimulator.SimRuntime.iOS-")))) | sort_by(.version) | last | .identifier')
+          RT=$(xcrun simctl list runtimes -j | jq -r '.runtimes | map(select(.isAvailable and (.identifier | startswith("com.apple.CoreSimulator.SimRuntime.iOS-18-")))) | sort_by(.version) | last | .identifier')
           echo "using $RT"
+          [ "$RT" != "null" ] && [ -n "$RT" ]
           xcrun simctl create e2e "iPhone 16" "$RT"
           xcrun simctl boot e2e
           xcrun simctl bootstatus e2e -b
