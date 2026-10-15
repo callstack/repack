@@ -49,25 +49,36 @@ async function getJsxDevelopmentFlags(
 // builtin:swc-loader only exists in Rspack
 describe.runIf(inject('bundlerType') === 'rspack')('RepackPlugin', () => {
   it.each([
-    ['development', true],
-    ['production', false],
+    ['automatic', 'development', true],
+    ['automatic', 'production', false],
+    ['classic', 'development', true],
+    ['classic', 'production', false],
   ] as const)(
-    'sets SWC JSX development transforms for %s mode',
-    async (mode, development) => {
-      const flags = await getJsxDevelopmentFlags(mode, getJsTransformRules());
+    'sets SWC JSX development transforms for %s runtime in %s mode',
+    async (jsxRuntime, mode, development) => {
+      const flags = await getJsxDevelopmentFlags(
+        mode,
+        getJsTransformRules({ swc: { jsxRuntime } })
+      );
 
       expect(flags.length).toBeGreaterThan(0);
       expect(new Set(flags)).toEqual(new Set([development]));
     }
   );
 
-  it('keeps an explicit SWC JSX development option', async () => {
-    const flags = await getJsxDevelopmentFlags(
-      'development',
-      getJsTransformRules({ swc: { development: false } })
-    );
+  it.each([
+    ['development', false],
+    ['production', true],
+  ] as const)(
+    'keeps an explicit SWC JSX development option in %s mode',
+    async (mode, development) => {
+      const flags = await getJsxDevelopmentFlags(
+        mode,
+        getJsTransformRules({ swc: { development } })
+      );
 
-    expect(flags.length).toBeGreaterThan(0);
-    expect(new Set(flags)).toEqual(new Set([false]));
-  });
+      expect(flags.length).toBeGreaterThan(0);
+      expect(new Set(flags)).toEqual(new Set([development]));
+    }
+  );
 });
