@@ -1,4 +1,5 @@
-import type { ParseResult } from '@babel/core';
+import type { ParseResult, TransformOptions } from '@babel/core';
+import type { RawSourceMap } from '@rspack/core';
 import { importDefaultESM } from '../../helpers/index.js';
 import {
   resolveFlowEnumsRuntime,
@@ -32,6 +33,17 @@ export function isTypeScriptSource(fileName: string) {
 
 export function isTSXSource(fileName: string) {
   return !!fileName && fileName.endsWith('.tsx');
+}
+
+/**
+ * Previous loaders pass their source map either serialized or as an object
+ * (e.g. `flow-loader`, Babel), while Babel expects an object.
+ */
+export function normalizeInputSourceMap(
+  sourceMap: string | RawSourceMap | undefined
+): TransformOptions['inputSourceMap'] {
+  if (!sourceMap) return undefined;
+  return typeof sourceMap === 'string' ? JSON.parse(sourceMap) : sourceMap;
 }
 
 /**

@@ -227,6 +227,22 @@ async function compileAndClose(config: Parameters<typeof createCompiler>[0]) {
   }
 }
 
+function getBabelLoaderUse(
+  loader: (typeof loaders)[number],
+  projectRoot: string
+) {
+  return {
+    loader: require.resolve(`@callstack/repack/${loader}`),
+    options:
+      loader === 'babel-loader'
+        ? { root: projectRoot }
+        : {
+            hideParallelModeWarning: true,
+            babelOverrides: { cwd: projectRoot },
+          },
+  };
+}
+
 function executeBundle(
   code: string,
   runtimeRequire?: (name: string) => unknown
@@ -347,16 +363,7 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
           rules: [
             {
               test: /\.[jt]sx?$/,
-              use: {
-                loader: require.resolve(`@callstack/repack/${loader}`),
-                options:
-                  loader === 'babel-loader'
-                    ? { root: projectRoot }
-                    : {
-                        hideParallelModeWarning: true,
-                        babelOverrides: { cwd: projectRoot },
-                      },
-              },
+              use: getBabelLoaderUse(loader, projectRoot),
             },
           ],
         },
@@ -419,13 +426,7 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
             use: {
               ...rule.use,
               loader: require.resolve('babel-loader', { paths: [repackRoot] }),
-              options: {
-                ...rule.use.options,
-                cwd: projectRoot,
-                // Stock Babel emits map objects; Re.Pack's loader expects a
-                // serialized input map. Keep this syntax-selection test focused.
-                sourceMaps: false,
-              },
+              options: { ...rule.use.options, cwd: projectRoot },
             },
           })),
         ],
@@ -532,6 +533,76 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
     });
   });
 
+  // flow-loader hands its source map to the Babel loader as an object
+  function compileWithFlowAndBabelLoader(
+    loader: (typeof loaders)[number],
+    file: string,
+    flowLoaderOptions: Record<string, unknown> = {}
+  ) {
+    const projectRoot = path.join(workspaceRoot, preset);
+    return compileAndClose({
+      context: projectRoot,
+      mode: 'development',
+      devtool: 'source-map',
+      entry: `./src/${file}`,
+      output: {
+        path: '/out',
+        library: { type: 'commonjs2' },
+        devtoolModuleFilenameTemplate: '[absolute-resource-path]',
+      },
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            // loaders run from last to first
+            use: [
+              getBabelLoaderUse(loader, projectRoot),
+              {
+                loader: require.resolve('@callstack/repack/flow-loader'),
+                options: { all: true, ...flowLoaderOptions },
+              },
+            ],
+          },
+        ],
+      },
+    });
+  }
+
+  it.each(loaders)(
+    'maps lowered Flow syntax back to the original source through flow-loader and %s',
+    async (loader) => {
+      const { code, volume } = await compileWithFlowAndBabelLoader(
+        loader,
+        'component.js'
+      );
+
+      expect(executeBundle(code)).toHaveProperty('Greeting');
+      const sourceMap = JSON.parse(
+        volume.readFileSync('/out/main.js.map', 'utf-8') as string
+      );
+      const sourcePath = path.join(workspaceRoot, preset, 'src/component.js');
+      const index = sourceMap.sources.indexOf(sourcePath);
+      expect(index).toBeGreaterThanOrEqual(0);
+      expect(sourceMap.sourcesContent[index]).toBe(
+        fs.readFileSync(sourcePath, 'utf-8')
+      );
+    }
+  );
+
+  // `flow-remove-types` names the source of its pretty map `source.js`, so
+  // only check that the Babel loader accepts the map
+  it.each(loaders)(
+    'accepts the pretty source map of flow-loader in %s',
+    async (loader) => {
+      const { code } = await compileWithFlowAndBabelLoader(loader, 'flow.js', {
+        pretty: true,
+      });
+
+      expect(executeBundle(code)).toEqual({ flowResult: 'Hello Flow' });
+    }
+  );
+
   // The preset strips Flow enums before its enum plugin runs, so the React
   // Native parser has to lower them itself
   async function bundleWithBabelLoader(
@@ -552,16 +623,7 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
             test: /\.js$/,
             // keep SWC's own ESM helpers out of the SWC transform
             exclude: /node_modules/,
-            use: {
-              loader: require.resolve(`@callstack/repack/${loader}`),
-              options:
-                loader === 'babel-loader'
-                  ? { root: projectRoot }
-                  : {
-                      hideParallelModeWarning: true,
-                      babelOverrides: { cwd: projectRoot },
-                    },
-            },
+            use: getBabelLoaderUse(loader, projectRoot),
           },
         ],
       },

@@ -6,7 +6,7 @@ import {
   type TransformOptions,
   transformFromAstSync,
 } from '@babel/core';
-import type { LoaderContext } from '@rspack/core';
+import type { LoaderContext, RawSourceMap } from '@rspack/core';
 import type {
   BabelLoaderOptions,
   BabelPluginOverrides,
@@ -16,6 +16,7 @@ import {
   isIgnoredRepackDeepImport,
   isTSXSource,
   isTypeScriptSource,
+  normalizeInputSourceMap,
   parseReactNativeSource,
   shouldUseReactNativeParser,
 } from './utils.js';
@@ -134,7 +135,7 @@ export const transform = async (
 export default async function babelLoader(
   this: LoaderContext<BabelLoaderOptions>,
   source: string,
-  sourceMap: string | undefined
+  sourceMap: string | RawSourceMap | undefined
 ) {
   this.cacheable();
   const callback = this.async();
@@ -143,7 +144,6 @@ export default async function babelLoader(
   const { hermesParserPath, hermesParserOverrides, ...babelOverrides } =
     options;
 
-  const inputSourceMap = sourceMap ? JSON.parse(sourceMap) : undefined;
   const withSourceMaps = this.resourcePath.match(/node_modules/)
     ? false
     : this.sourceMap;
@@ -156,7 +156,9 @@ export default async function babelLoader(
         filename: this.resourcePath,
         sourceMaps: withSourceMaps,
         sourceFileName: this.resourcePath,
-        inputSourceMap: withSourceMaps ? inputSourceMap : undefined,
+        inputSourceMap: withSourceMaps
+          ? normalizeInputSourceMap(sourceMap)
+          : undefined,
         ...babelOverrides,
       },
       {
