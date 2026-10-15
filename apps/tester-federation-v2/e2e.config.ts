@@ -9,5 +9,10 @@ export default {
       engine: mobile({ platform: 'android' }),
       app: { bundleId: 'com.tester.federationV2' },
     },
+    {
+      name: 'ios',
+      engine: mobile({ platform: 'ios' }),
+      app: { bundleId: 'com.tester.federationV2' },
+    },
   ],
 } satisfies E2EConfig;

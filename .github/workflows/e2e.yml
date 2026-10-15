@@ -109,3 +109,75 @@ jobs:
       - name: Show dev server logs
         if: ${{ !cancelled() }}
         run: tail -n 80 /tmp/hostapp.log /tmp/miniapp.log
+
+  # dispatch + main only for now — no PR triggers until this lane has greens
+  ios:
+    name: e2e (iOS)
+    if: github.event_name != 'pull_request_target'
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-pnpm-node
+        with:
+          node-version: '24.18.0'
+
+      - name: Build workspace packages
+        run: pnpm --filter tester-federation-v2... build
+
+      # like the android job, minus timeout (no such command on macOS) — the retry counter bounds it
+      - name: Start dev servers
+        working-directory: apps/tester-federation-v2
+        env:
+          E2E: 'true'
+        run: |
+          nohup pnpm start:hostapp > /tmp/hostapp.log 2>&1 &
+          disown
+          nohup pnpm start:miniapp > /tmp/miniapp.log 2>&1 &
+          disown
+          i=0; until curl -sf localhost:8081/status | grep -q packager-status:running && curl -sf localhost:8082/status | grep -q packager-status:running; do sleep 2; i=$((i+1)); [ "$i" -ge 90 ] && exit 1; done
+
+      # same trick as android, iOS bundle URLs; the simulator shares localhost so no adb reverse
+      - name: Warm both compilers
+        working-directory: apps/tester-federation-v2
+        run: |
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8081/index.bundle?platform=ios&dev=true&lazy=true&minify=false&modulesOnly=false&runModule=true&app=com.tester.federationV2'
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/index.bundle?platform=ios&dev=true&lazy=true&minify=false&modulesOnly=false&runModule=true&app=com.tester.federationV2'
+          echo 'Both bundles served; compilers are warm.'
+
+      - name: Boot simulator
+        run: |
+          xcrun simctl create e2e "iPhone 16" latest
+          xcrun simctl boot e2e
+          xcrun simctl bootstatus e2e -b
+
+      # pod install generates the Xcode project the workspace points at
+      - name: Build iOS app
+        working-directory: apps/tester-federation-v2/ios
+        run: pod install && xcodebuild -workspace ModuleFederationTesterV2.xcworkspace -scheme ReactTestApp -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+
+      - name: Run e2e
+        working-directory: apps/tester-federation-v2
+        run: |
+          xcrun simctl install booted ios/build/Build/Products/Debug-iphonesimulator/*.app
+          pnpm exec e2e run --target ios --reporter list,junit
+
+      - name: Upload e2e artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # tag=v7.0.1
+        with:
+          name: e2e-ios
+          path: apps/tester-federation-v2/.e2e
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Show dev server logs
+        if: ${{ !cancelled() }}
+        run: tail -n 80 /tmp/hostapp.log /tmp/miniapp.log
