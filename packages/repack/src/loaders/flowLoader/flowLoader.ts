@@ -1,7 +1,10 @@
 import type { PluginObj } from '@babel/core';
 import type { LoaderContext, RawSourceMap } from '@rspack/core';
 import flowRemoveTypes from 'flow-remove-types';
-import { resolveFromReactNativePreset } from '../../helpers/resolveReactNativeParser.js';
+import {
+  getFlowEnumsPlugins,
+  resolveFromReactNativePreset,
+} from '../../helpers/resolveReactNativeParser.js';
 import { parseReactNativeSource } from '../babelLoader/utils.js';
 import { type FlowLoaderOptions, getOptions } from './options.js';
 
@@ -51,6 +54,8 @@ async function lowerFlowSyntax(
     sourceMaps: loaderContext.sourceMap,
     sourceFileName: loaderContext.resourcePath,
     plugins: [
+      // before `flow-strip-types`, which would remove the enums
+      ...getFlowEnumsPlugins(projectRoot),
       [
         resolveFromReactNativePreset(
           projectRoot,

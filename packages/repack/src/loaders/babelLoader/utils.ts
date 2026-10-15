@@ -2,7 +2,6 @@ import type { ParseResult, TransformOptions } from '@babel/core';
 import type { RawSourceMap } from '@rspack/core';
 import { importDefaultESM } from '../../helpers/index.js';
 import {
-  resolveFlowEnumsRuntime,
   resolveReactNativeParser,
   resolveReactRuntimeTarget,
 } from '../../helpers/resolveReactNativeParser.js';
@@ -18,9 +17,6 @@ interface ReactNativeParser {
         HermesParserOverrides['reactRuntimeTarget']
       >;
       sourceType: HermesParserOverrides['sourceType'] | null;
-      transformOptions?: {
-        TransformEnumSyntax?: { enable: boolean; getRuntime?: () => unknown };
-      };
     }
   ) => ParseResult;
 }
@@ -86,8 +82,8 @@ export async function loadReactNativeParser(
  * Parses a Flow source with the project's React Native parser into a Babel AST.
  *
  * The parser lowers Flow syntax that has no Babel plugin (e.g. `component`
- * declarations) and Flow enums to `flow-enums-runtime`; the remaining type
- * annotations are left for `@babel/plugin-transform-flow-strip-types`.
+ * declarations); enums are left for `babel-plugin-transform-flow-enums` and
+ * type annotations for `@babel/plugin-transform-flow-strip-types`.
  */
 export async function parseReactNativeSource(
   src: string,
@@ -106,7 +102,6 @@ export async function parseReactNativeSource(
   }
 ): Promise<ParseResult> {
   const parser = await loadReactNativeParser(projectRoot, parserPath);
-  const runtimePath = resolveFlowEnumsRuntime(projectRoot);
 
   return parser.parse(src, {
     babel: true,
@@ -115,46 +110,7 @@ export async function parseReactNativeSource(
     reactRuntimeTarget: resolveReactRuntimeTarget(projectRoot),
     sourceType,
     ...overrides,
-    transformOptions: {
-      TransformEnumSyntax: {
-        enable: true,
-        // the parser defaults to `require('flow-enums-runtime')`
-        getRuntime: runtimePath ? () => requireCall(runtimePath) : undefined,
-      },
-    },
   });
-}
-
-// ESTree `require(request)` in the shape of the parser's own AST builders
-function requireCall(request: string) {
-  const syntheticLocation = () => ({
-    loc: { start: { line: 1, column: 0 }, end: { line: 1, column: 0 } },
-    range: [0, 0],
-    parent: null,
-  });
-
-  return {
-    type: 'CallExpression',
-    callee: {
-      type: 'Identifier',
-      name: 'require',
-      optional: false,
-      typeAnnotation: null,
-      ...syntheticLocation(),
-    },
-    arguments: [
-      {
-        type: 'Literal',
-        value: request,
-        raw: JSON.stringify(request),
-        literalType: 'string',
-        ...syntheticLocation(),
-      },
-    ],
-    typeArguments: null,
-    optional: false,
-    ...syntheticLocation(),
-  };
 }
 
 const IGNORED_REPACK_FILENAMES = [

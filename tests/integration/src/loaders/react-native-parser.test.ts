@@ -48,6 +48,7 @@ const flowSyntaxFiles = [
   'ref-component.js',
   'hook.js',
   'enum.js',
+  'enum-no-pragma.js',
   'match.js',
   'class-fields.js',
 ];
@@ -229,16 +230,17 @@ async function compileAndClose(config: Parameters<typeof createCompiler>[0]) {
 
 function getBabelLoaderUse(
   loader: (typeof loaders)[number],
-  projectRoot: string
+  projectRoot: string,
+  babelOptions?: Record<string, unknown>
 ) {
   return {
     loader: require.resolve(`@callstack/repack/${loader}`),
     options:
       loader === 'babel-loader'
-        ? { root: projectRoot }
+        ? { root: projectRoot, ...babelOptions }
         : {
             hideParallelModeWarning: true,
-            babelOverrides: { cwd: projectRoot },
+            babelOverrides: { cwd: projectRoot, ...babelOptions },
           },
   };
 }
@@ -603,12 +605,13 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
     }
   );
 
-  // The preset strips Flow enums before its enum plugin runs, so the React
-  // Native parser has to lower them itself
+  // The preset strips Flow enums before its enum plugin runs, so the loaders
+  // run the enum plugin ahead of the preset
   async function bundleWithBabelLoader(
     loader: (typeof loaders)[number],
     file: (typeof flowSyntaxFiles)[number],
-    project: '.' | 'react18' = '.'
+    project: '.' | 'react18' = '.',
+    babelOptions?: Record<string, unknown>
   ) {
     const projectRoot = path.join(workspaceRoot, preset, project);
     const { code } = await compileAndClose({
@@ -623,7 +626,7 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
             test: /\.js$/,
             // keep SWC's own ESM helpers out of the SWC transform
             exclude: /node_modules/,
-            use: getBabelLoaderUse(loader, projectRoot),
+            use: getBabelLoaderUse(loader, projectRoot, babelOptions),
           },
         ],
       },
@@ -632,17 +635,34 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
     return executeBundle(code);
   }
 
-  it.each(loaders)('keeps Flow enums working with %s', async (loader) => {
-    const { Status, parseStatus } = (await bundleWithBabelLoader(
-      loader,
-      'enum.js'
-    )) as {
-      Status: { Active: unknown; members: () => Iterable<unknown> };
-      parseStatus: (value: string) => unknown;
-    };
-    expect(parseStatus('Active')).toBe(Status.Active);
-    expect([...Status.members()]).toEqual(['Active', 'Paused']);
+  // files without the pragma skip the React Native parser
+  describe.each(['enum.js', 'enum-no-pragma.js'] as const)('%s', (file) => {
+    it.each(loaders)('keeps Flow enums working with %s', async (loader) => {
+      const { Status, parseStatus } = (await bundleWithBabelLoader(
+        loader,
+        file
+      )) as {
+        Status: { Active: unknown; members: () => Iterable<unknown> };
+        parseStatus: (value: string) => unknown;
+      };
+      expect(parseStatus('Active')).toBe(Status.Active);
+      expect([...Status.members()]).toEqual(['Active', 'Paused']);
+    });
   });
+
+  // Babel resolves a relative `root` against `cwd`, not the process directory
+  it.each(loaders)(
+    'keeps Flow enums working with a relative Babel root with %s',
+    async (loader) => {
+      const { Status } = (await bundleWithBabelLoader(
+        loader,
+        'enum-no-pragma.js',
+        '.',
+        { cwd: path.join(workspaceRoot, preset), root: '.' }
+      )) as { Status: { members: () => Iterable<unknown> } };
+      expect([...Status.members()]).toEqual(['Active', 'Paused']);
+    }
+  );
 
   it.each(loaders)(
     'wraps components with refs in forwardRef on React 18 with %s',

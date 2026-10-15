@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module';
+import type { PluginItem, types } from '@babel/core';
 
 function resolvePreset(projectRoot: string) {
   const presetPath = require.resolve(
@@ -62,7 +63,7 @@ export function resolveFromReactNativePreset(
  * Only React Native depends on it, so with isolated installs (pnpm) it often
  * can't be resolved from the project root or from the file using an enum.
  */
-export const resolveFlowEnumsRuntime = cacheByProjectRoot(
+const resolveFlowEnumsRuntime = cacheByProjectRoot(
   (projectRoot): string | null => {
     try {
       return require.resolve('flow-enums-runtime', { paths: [projectRoot] });
@@ -76,6 +77,43 @@ export const resolveFlowEnumsRuntime = cacheByProjectRoot(
     } catch {
       return null;
     }
+  }
+);
+
+/**
+ * `babel-plugin-transform-flow-enums` from the project's React Native preset,
+ * or nothing when the preset isn't installed.
+ *
+ * Has to run ahead of the preset: the preset's `flow-strip-types` removes enum
+ * declarations before the preset's own enum plugin gets to them.
+ */
+export const getFlowEnumsPlugins = cacheByProjectRoot(
+  (projectRoot): PluginItem[] => {
+    let pluginPath: string;
+    try {
+      pluginPath = resolveFromReactNativePreset(
+        projectRoot,
+        'babel-plugin-transform-flow-enums'
+      );
+    } catch {
+      return [];
+    }
+
+    const runtimePath = resolveFlowEnumsRuntime(projectRoot);
+    // the plugin defaults to `require('flow-enums-runtime')`
+    if (!runtimePath) return [pluginPath];
+
+    return [
+      [
+        pluginPath,
+        {
+          getRuntime: (t: typeof types) =>
+            t.callExpression(t.identifier('require'), [
+              t.stringLiteral(runtimePath),
+            ]),
+        },
+      ],
+    ];
   }
 );
 

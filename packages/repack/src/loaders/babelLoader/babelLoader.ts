@@ -1,12 +1,15 @@
 import {
   type BabelFileResult,
+  createConfigItem,
   loadOptions,
+  loadPartialConfig,
   type ParseResult,
   parseSync,
   type TransformOptions,
   transformFromAstSync,
 } from '@babel/core';
 import type { LoaderContext, RawSourceMap } from '@rspack/core';
+import { getFlowEnumsPlugins } from '../../helpers/resolveReactNativeParser.js';
 import type {
   BabelLoaderOptions,
   BabelPluginOverrides,
@@ -25,15 +28,20 @@ export const raw = false;
 
 function buildBabelConfig(
   babelOptions: TransformOptions,
-  { includePlugins, excludePlugins }: BabelPluginOverrides
+  {
+    includePlugins,
+    excludePlugins,
+    lowerFlowEnums,
+  }: BabelPluginOverrides & { lowerFlowEnums: boolean }
 ): TransformOptions {
   const config: TransformOptions = {
     babelrc: true,
     highlightCode: true,
     comments: true,
-    plugins: [],
     sourceType: 'unambiguous',
     ...babelOptions,
+    // a copy: loader options are shared between modules
+    plugins: [...(babelOptions.plugins ?? []), ...(includePlugins ?? [])],
     // output settings
     ast: false,
     code: true,
@@ -43,11 +51,24 @@ function buildBabelConfig(
     minified: false,
   };
 
-  if (includePlugins) {
-    config.plugins!.push(...includePlugins);
+  const partialConfig = loadPartialConfig(config);
+  if (!partialConfig) {
+    throw new Error('Failed to load babel config');
   }
 
-  const babelConfig = loadOptions(config);
+  const { options } = partialConfig;
+  if (lowerFlowEnums) {
+    // top-level plugins run ahead of the preset, which strips enums before
+    // its own enum plugin runs; `root` is resolved by Babel at this point
+    options.plugins = [
+      ...getFlowEnumsPlugins(options.root!).map((plugin) =>
+        createConfigItem(plugin, { type: 'plugin' })
+      ),
+      ...(options.plugins ?? []),
+    ];
+  }
+
+  const babelConfig = loadOptions(options);
   if (!babelConfig) {
     throw new Error('Failed to load babel config');
   }
@@ -76,16 +97,17 @@ export const transform = async (
   transformOptions: TransformOptions,
   customOptions?: CustomTransformOptions
 ): Promise<BabelTransformResult> => {
+  // filename is always set by the loaders
+  const isTypeScript =
+    isTypeScriptSource(transformOptions.filename!) ||
+    isTSXSource(transformOptions.filename!);
+
   const babelConfig = buildBabelConfig(transformOptions, {
     includePlugins: customOptions?.includePlugins,
     excludePlugins: customOptions?.excludePlugins,
+    lowerFlowEnums: !isTypeScript,
   });
   const projectRoot = babelConfig.root ?? babelConfig.cwd;
-
-  // filename will be always defined at this point
-  const isTypeScript =
-    isTypeScriptSource(babelConfig.filename!) ||
-    isTSXSource(babelConfig.filename!);
 
   const needsReactNativeParser =
     !isTypeScript &&
@@ -93,8 +115,7 @@ export const transform = async (
 
   let sourceAst: ParseResult | null;
   if (needsReactNativeParser) {
-    // the parser comes from the preset, it also lowers Flow enums that the
-    // preset would otherwise strip before its enum plugin runs
+    // the parser comes from the preset
     sourceAst = await parseReactNativeSource(src, {
       projectRoot: projectRoot ?? process.cwd(),
       parserPath: customOptions?.hermesParserPath,
