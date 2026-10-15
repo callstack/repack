@@ -151,9 +151,12 @@ jobs:
           curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/index.bundle?platform=ios&dev=true&lazy=true&minify=false&modulesOnly=false&runModule=true&app=com.tester.federationV2'
           echo 'Both bundles served; compilers are warm.'
 
+      # pick the newest iOS runtime the runner image actually ships
       - name: Boot simulator
         run: |
-          xcrun simctl create e2e "iPhone 16" latest
+          RT=$(xcrun simctl list runtimes -j | jq -r '.runtimes | map(select(.isAvailable and (.identifier | startswith("com.apple.CoreSimulator.SimRuntime.iOS-")))) | sort_by(.version) | last | .identifier')
+          echo "using $RT"
+          xcrun simctl create e2e "iPhone 16" "$RT"
           xcrun simctl boot e2e
           xcrun simctl bootstatus e2e -b
 
