@@ -131,7 +131,7 @@ jobs:
       - name: Build workspace packages
         run: pnpm --filter tester-federation-v2... build
 
-      # like the android job, minus timeout (no such command on macOS) — the retry counter bounds it
+      # same as android, but macOS has no `timeout` — curl retries instead
       - name: Start dev servers
         working-directory: apps/tester-federation-v2
         env:
@@ -141,7 +141,7 @@ jobs:
           disown
           nohup pnpm start:miniapp > /tmp/miniapp.log 2>&1 &
           disown
-          i=0; until curl -sf localhost:8081/status | grep -q packager-status:running && curl -sf localhost:8082/status | grep -q packager-status:running; do sleep 2; i=$((i+1)); [ "$i" -ge 90 ] && exit 1; done
+          for p in 8081 8082; do curl -sf --retry 90 --retry-delay 2 --retry-all-errors --retry-connrefused -o /dev/null "http://localhost:$p/status"; done
 
       # same trick as android, iOS bundle URLs; the simulator shares localhost so no adb reverse
       - name: Warm both compilers
