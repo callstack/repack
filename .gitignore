@@ -389,3 +389,7 @@ packages/**/docs
 
 # watchman
 .watchman-cookie*
+
+# Checked-in fixture package for the Worklets Bundle Mode integration tests:
+# `react-native-worklets` has to sit in a real node_modules dir for the plugin to resolve it.
+!tests/integration/src/plugins/__fixtures__/**/node_modules/

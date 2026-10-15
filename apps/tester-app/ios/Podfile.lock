@@ -1967,7 +1967,7 @@ PODS:
     - React-Core
     - React-jsi
   - ReactTestApp-Resources (1.0.0-dev)
-  - RNReanimated (4.5.3):
+  - RNReanimated (4.7.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1989,36 +1989,12 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNReanimated/apple (= 4.5.3)
-    - RNReanimated/common (= 4.5.3)
-    - RNReanimated/view (= 4.5.3)
+    - RNReanimated/apple (= 4.7.1)
+    - RNReanimated/common (= 4.7.1)
+    - RNReanimated/view (= 4.7.1)
     - RNWorklets
     - Yoga
-  - RNReanimated/apple (4.5.3):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - RNWorklets
-    - Yoga
-  - RNReanimated/common (4.5.3):
+  - RNReanimated/apple (4.7.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2042,7 +2018,31 @@ PODS:
     - ReactNativeDependencies
     - RNWorklets
     - Yoga
-  - RNReanimated/view (4.5.3):
+  - RNReanimated/common (4.7.1):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - RNWorklets
+    - Yoga
+  - RNReanimated/view (4.7.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2111,7 +2111,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNWorklets (0.11.3):
+  - RNWorklets (0.13.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2133,10 +2133,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNWorklets/apple (= 0.11.3)
-    - RNWorklets/common (= 0.11.3)
+    - RNWorklets/apple (= 0.13.0)
+    - RNWorklets/common (= 0.13.0)
     - Yoga
-  - RNWorklets/apple (0.11.3):
+  - RNWorklets/apple (0.13.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2159,7 +2159,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNWorklets/common (0.11.3):
+  - RNWorklets/common (0.13.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2266,7 +2266,7 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios/ReactCodegen`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
-  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@5.4.5_@expo+config-plugins@57.0.10_typescript@7.0.2__@react-nativ_aa541094f43fc7255af68251f04c4df2/node_modules/@rnx-kit/react-native-host`)"
+  - "ReactNativeHost (from `../../../node_modules/.pnpm/react-native-test-app@5.4.5_@expo+config-plugins@57.0.10_typescript@7.0.2__@react-nativ_ab6209c3f9c75e29d5394060c836236b/node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
   - ReactTestApp-Resources (from `..`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -2436,7 +2436,7 @@ EXTERNAL SOURCES:
   ReactNativeDependencies:
     :podspec: "../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
   ReactNativeHost:
-    :path: "../../../node_modules/.pnpm/react-native-test-app@5.4.5_@expo+config-plugins@57.0.10_typescript@7.0.2__@react-nativ_aa541094f43fc7255af68251f04c4df2/node_modules/@rnx-kit/react-native-host"
+    :path: "../../../node_modules/.pnpm/react-native-test-app@5.4.5_@expo+config-plugins@57.0.10_typescript@7.0.2__@react-nativ_ab6209c3f9c75e29d5394060c836236b/node_modules/@rnx-kit/react-native-host"
   ReactTestApp-DevSupport:
     :path: "../node_modules/react-native-test-app"
   ReactTestApp-Resources:
@@ -2532,9 +2532,9 @@ SPEC CHECKSUMS:
   ReactNativeHost: c49183895850a534a9d58049bf02b3c80a3ebb0c
   ReactTestApp-DevSupport: 55c92a794b09b56e00757e68312c6340d7c520ee
   ReactTestApp-Resources: 8d72c3deef156833760694a288ff334af4d427d7
-  RNReanimated: b79ed3c5b080218e53a52f3b78f908b780c52cb3
+  RNReanimated: 040af535ad498e1ce888757dedf1257cf4e51643
   RNSVG: 6cae8d4082913be2eb43eaec2a456222c42195ed
-  RNWorklets: 0fe6e2e06660726a047dcf7b9567a17d002316c9
+  RNWorklets: 3fcecc6699b4ad79d2b9201b883cc2f4a47e15f0
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
   Yoga: 18b74b3ade30bebc1904004dfaceae1dd02a330a
 

@@ -63,6 +63,25 @@ module.exports = {
 
 This will disable adding now redundant `babel-loader` rules, and defer the transformation to Babel through `babel-swc-loader`.
 
+### Enabling Bundle Mode
+
+To enable [Bundle Mode](https://docs.swmansion.com/react-native-worklets/docs/bundleMode/) update your `babel.config.js` as shown below:
+
+```js title="babel.config.js"
+/** @type {import('react-native-worklets/plugin').PluginOptions} */
+const workletsPluginOptions = {
+  bundleMode: true,
+  strictGlobal: true, // optional, but recommended
+}
+
+module.exports = {
+  presets: ["module:@react-native/babel-preset"],
+  plugins: [
+    ['react-native-worklets/plugin', workletsPluginOptions],
+  ],
+};
+```
+
 
 ## Usage with Reanimated 3
 
