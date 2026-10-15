@@ -204,12 +204,13 @@ function createFixtureProject(
     fs.writeFileSync(path.join(flowLibRoot, file), content);
   }
   linkPackage(projectRoot, 'flow-lib', flowLibRoot);
-  for (const name of [
+  linkPackage(
+    projectRoot,
     '@react-native/babel-plugin-codegen',
-    '@babel/plugin-syntax-typescript',
-  ]) {
-    linkPackage(projectRoot, name, resolvePresetPackage(name));
-  }
+    resolvePresetPackage('@react-native/babel-plugin-codegen')
+  );
+  // '@babel/plugin-syntax-typescript' is intentionally not linked: Re.Pack
+  // resolves it from its own dependencies, as with isolated (e.g. pnpm) installs.
   // Webpack needs a resolvable SWC to exercise the SWC path instead of Babel.
   linkPackage(projectRoot, '@swc/core', swcRoot);
   linkPackage(projectRoot, '@swc/helpers', swcHelpersRoot);
