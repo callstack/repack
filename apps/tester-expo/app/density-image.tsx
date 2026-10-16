@@ -30,7 +30,7 @@ export default function DensityImageRoute() {
         testID="density-image"
       />
       <Text testID="density-scale">
-        Selected density scale: {resolvedImage.scale}
+        Selected density scale: {resolvedImage?.scale}
       </Text>
       <Text testID="device-density-scale">
         Device density scale: {PixelRatio.get()}
