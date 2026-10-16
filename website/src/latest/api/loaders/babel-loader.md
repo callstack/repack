@@ -2,6 +2,8 @@
 
 The `BabelLoader` runs Babel transformations for JavaScript and TypeScript sources in React Native projects. For JavaScript and Flow-typed files, it selects the parser used by your installed `@react-native/babel-preset`: `flow-parser` when declared by the preset, otherwise `hermes-parser` from the preset's syntax plugin. TypeScript and TSX files use Babel's standard parser.
 
+Flow enums are lowered to [`flow-enums-runtime`](https://www.npmjs.com/package/flow-enums-runtime), resolved from your project or from `react-native`, in every Flow file with or without an `@flow` pragma. `@react-native/babel-preset` strips enums before its own enum plugin runs, so the loader runs the preset's `babel-plugin-transform-flow-enums` ahead of the preset.
+
 :::info How this loader differs from babel-loader 
 
 There are two similarly named loaders: `@callstack/repack/babel-loader` (this loader) and `babel-loader` from npm. This loader is tailored for Re.Pack and aims for Metro parity, so the same Babel config used in Metro works as-is in Re.Pack. It automatically selects the React Native parser for JS/JSX and Flow, and Babel's parser for TypeScript and TSX.
@@ -34,7 +36,7 @@ Optional path to the React Native parser module. This overrides automatic parser
 ### hermesParserOverrides
 
 - Type: `HermesParserOverrides`
-- Default: `{ babel: true, reactRuntimeTarget: '19' }`
+- Default: `{ babel: true, reactRuntimeTarget }`, where `reactRuntimeTarget` follows the project's `react` version (`'18'` before React 19, `'19'` otherwise)
 
 Overrides passed to the selected React Native parser when parsing non-TypeScript files. The option name is retained for backward compatibility and also applies to `flow-parser`.
 
