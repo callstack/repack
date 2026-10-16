@@ -58,7 +58,7 @@ function getJSCTransformOptions(
   return {
     react: {
       runtime: jsxRuntime,
-      // when omitted, `RepackPlugin` sets it from the build mode
+      // when omitted, Rspack's builtin:swc-loader sets it from `mode`
       ...(development !== undefined && { development }),
       importSource,
     },
@@ -113,7 +113,7 @@ interface MakeSwcLoaderConfigOptions {
 
   /**
    * Whether to apply JSX development transforms (`jsxDEV`, `__source`, `__self`).
-   * Defaults to the build `mode`, set by `RepackPlugin`.
+   * Defaults to the build `mode` (set by Rspack's `builtin:swc-loader` when omitted).
    * See SWC `jsc.transform.react.development`:
    * https://swc.rs/docs/configuration/compilation#jsctransformreactdevelopment
    */
@@ -147,7 +147,7 @@ interface MakeSwcLoaderConfigOptions {
  * @param options.jsx Whether to enable JSX parsing and transformation
  * @param options.externalHelpers Whether to use external helpers for transformations (equivalent of `@babel/runtime`)
  * @param options.jsxRuntime The JSX runtime to use ('automatic' for React 17+ new JSX transform or 'classic' for traditional JSX transform)
- * @param options.development Whether to apply JSX development transforms (defaults to the build `mode`, set by `RepackPlugin`)
+ * @param options.development Whether to apply JSX development transforms (defaults to the build `mode`, set by Rspack's `builtin:swc-loader`)
  * @param options.disableImportExportTransform Whether to disable transformation of import/export statements
  * @param options.importSource The source module for JSX runtime imports (defaults to 'react')
  * @param options.lazyImports Enable lazy loading for all imports or specific modules
