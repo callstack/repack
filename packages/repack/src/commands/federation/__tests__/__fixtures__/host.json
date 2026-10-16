@@ -1,0 +1,64 @@
+{
+  "manifestVersion": 1,
+  "id": "shell",
+  "name": "shell",
+  "metaData": {
+    "name": "shell",
+    "globalName": "shell",
+    "type": "host",
+    "buildInfo": { "buildVersion": "abc1234", "buildName": "shell" },
+    "publicPath": "auto"
+  },
+  "shared": [
+    {
+      "name": "react",
+      "version": "19.0.0",
+      "singleton": true,
+      "eager": true,
+      "requiredVersion": "^19.0.0"
+    },
+    {
+      "name": "react-native",
+      "version": "0.79.2",
+      "singleton": true,
+      "eager": true,
+      "requiredVersion": "~0.79.2"
+    },
+    {
+      "name": "zustand",
+      "version": "5.0.3",
+      "singleton": true,
+      "eager": false,
+      "requiredVersion": "^5.0.0"
+    }
+  ],
+  "remotes": [
+    {
+      "federationContainerName": "store",
+      "moduleName": "store",
+      "alias": "store",
+      "entry": "http://localhost:5001/store.container.js"
+    }
+  ],
+  "exposes": [],
+  "reactNative": {
+    "version": "0.79.2",
+    "platforms": ["ios", "android"],
+    "nativeModules": [
+      {
+        "package": "react-native-reanimated",
+        "version": "3.17.1",
+        "turboModule": true,
+        "confidence": "static"
+      },
+      {
+        "package": "react-native-gesture-handler",
+        "version": "2.24.0",
+        "turboModule": false,
+        "confidence": "static"
+      }
+    ],
+    "dynamicImportDetected": false,
+    "note": "Native module list covers statically imported modules."
+  }
+}

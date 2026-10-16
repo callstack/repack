@@ -1,0 +1,132 @@
+# federation-doctor
+
+`federation-doctor` compares a host's [federation manifest](/docs/features/federation-manifest) against the manifests of its remotes and reports the drift that causes runtime crashes in multi-app Module Federation setups: singleton version mismatches, conflicting `requiredVersion` ranges, `singleton`/`eager` disagreements, and native modules a remote uses that the host does not declare.
+
+It is designed to run as a CI gate: deterministic flags, human-readable output by default, `--format json` for machines, and an exit code that fails the job.
+
+## Usage
+
+Both the host and each remote are manifest sources: a `.json` file, a directory containing `repack-federation-manifest.json` (for example a build output directory), or an `http(s)` URL. Remotes were deployed somewhere; hosts usually have a local build.
+
+import { PackageManagerTabs } from '@theme';
+
+<PackageManagerTabs command={{
+  npm: 'npm run react-native federation-doctor --host ./build --remotes http://localhost:8082,https://cdn.example.com/catalog',
+  yarn: 'yarn react-native federation-doctor --host ./build --remotes http://localhost:8082,https://cdn.example.com/catalog',
+  pnpm: 'pnpm react-native federation-doctor --host ./build --remotes http://localhost:8082,https://cdn.example.com/catalog',
+  bun: 'bun react-native federation-doctor --host ./build --remotes http://localhost:8082,https://cdn.example.com/catalog',
+}} />
+
+Examples:
+
+```bash
+# host from a local build, remotes from running dev servers / CDNs
+npx react-native federation-doctor \
+  --host ./build \
+  --remotes http://localhost:8082,https://cdn.example.com/catalog/
+
+# local manifest files for every app
+npx react-native federation-doctor \
+  --host ./shell/build \
+  --remotes ./store/build,./catalog/build/repack-federation-manifest.json
+
+# machine-readable output
+npx react-native federation-doctor --host ./build --remotes http://localhost:8082 --format json
+
+# do not fail on remotes that ship no manifest yet
+npx react-native federation-doctor --host ./build --remotes http://localhost:8082 --allow-missing-manifests
+```
+
+Each finding carries a severity (`error`, `warning`, `info`), a stable code (for example `SHARED_VERSION_DRIFT`, `MISSING_NATIVE_MODULE`, `MISSING_REMOTE_MANIFEST`), and a message naming the package and the versions in conflict.
+
+## Options
+
+### `--host`
+
+- Type: `string`
+- Required
+
+The host manifest: a `.json` file, a build output directory, or an `http(s)` URL.
+
+### `--remotes`
+
+- Type: `string`
+- Required
+
+Comma-separated list of remote manifest sources. A remote whose manifest does not exist is reported as `MISSING_REMOTE_MANIFEST`; a remote whose manifest exists but is corrupt aborts the run, because its checks cannot be trusted.
+
+### `--format`
+
+- Type: `"json"`
+
+Print findings as JSON (`{ "findings": [{ "severity", "code", "message" }] }`) instead of the aligned text report. Nothing else is written to stdout in this mode.
+
+### `--allow-missing-manifests`
+
+- Type: `boolean`
+
+Downgrade `MISSING_REMOTE_MANIFEST` from error to warning. Use it while rolling the manifest option out to every remote; the check itself still runs and still fails on real drift.
+
+## Exit codes
+
+| Code | Meaning |
+| ---- | ------- |
+| `0` | No errors. Warnings and infos may have been reported. |
+| `1` | Drift found (at least one `error`-severity finding), or a remote has no manifest and `--allow-missing-manifests` was not passed. |
+| `2` | The check could not run: a required option is missing, the host manifest does not exist, or a manifest (host or remote) is corrupt. |
+
+`2` means "you do not have an answer"; `1` means "you have an answer and it is bad". A CI job should treat any non-zero code as failure.
+
+## Honesty rules: degraded and heuristic results
+
+The doctor never claims more certainty than the manifests carry:
+
+- **Heuristic native module lists.** If a manifest was built with dynamic `require()`s in the graph, its `reactNative.nativeModules` list is flagged non-exhaustive and its entries drop to `heuristic` confidence. The doctor then reports missing native modules as warnings to verify (`HEURISTIC_ADVISORY`), not errors — an incomplete list cannot prove absence.
+- **Unknown resolved versions.** A singleton whose resolved version could not be determined is reported as `VERSION_UNKNOWN` (info) with both sides named, for manual verification, instead of passing silently.
+- **Unsupported range syntax.** `requiredVersion` values the doctor cannot evaluate (unions, hyphen ranges, comparators other than `>=`) produce `SHARED_RANGE_UNSUPPORTED` (warning) telling you to check manually, rather than a guessed verdict.
+- **Newer manifest schemas.** A `manifestVersion` newer than the doctor understands is reported (`MANIFEST_VERSION_AHEAD`) and compared best effort.
+
+### Host app project native modules
+
+A remote using a native module that is absent from the host's `nativeModules` is reported as `MISSING_NATIVE_MODULE` (error) — but with a caveat. The host manifest lists native modules found in the module graph through `node_modules`; a module wired up from the host's **app project** (own `ios/`/`android/` sources, not a package) may not appear. The finding message says so: if the host provides this module from its app project rather than `node_modules`, verify it manually. The same asymmetry means a module list from the remote side is equally partial; treat both lists as evidence, not as the app's full native surface.
+
+## GitHub Action example
+
+Gate a PR on host/remote compatibility. The doctor's exit code fails the job; the text report lands in the logs.
+
+```yaml name="federation-doctor.yml"
+name: federation-doctor
+on:
+  pull_request:
+  schedule:
+    - cron: '0 6 * * *' # catch drift shipped by already-deployed remotes
+
+jobs:
+  doctor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      # produce the host manifest (or download it from your CI cache/bucket)
+      - run: npm run bundle:android # any build with `manifest: true` in the MF plugin
+
+      # remotes are checked where they actually live
+      - name: Check host against deployed remotes
+        run: |
+          npx react-native federation-doctor \
+            --host ./build \
+            --remotes https://cdn.example.com/store/,https://cdn.example.com/catalog/ \
+            --format json
+```
+
+The `run` step exits with the doctor's code, so `1` (drift) and `2` (a manifest could not be read) both fail the job. Add `--allow-missing-manifests` during rollout so remotes that do not emit a manifest yet only warn.
+
+## `-h`, `--help`
+
+Display help for command.

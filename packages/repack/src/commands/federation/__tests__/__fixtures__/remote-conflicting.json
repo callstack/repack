@@ -1,0 +1,63 @@
+{
+  "manifestVersion": 1,
+  "id": "store",
+  "name": "store",
+  "metaData": {
+    "name": "store",
+    "globalName": "store",
+    "type": "remote",
+    "buildInfo": { "buildVersion": "9f0e1c2", "buildName": "store" },
+    "remoteEntry": {
+      "name": "store.container.js",
+      "path": "",
+      "type": "var"
+    },
+    "publicPath": "auto"
+  },
+  "shared": [
+    {
+      "name": "react",
+      "version": "19.1.0",
+      "singleton": true,
+      "eager": true,
+      "requiredVersion": "^19.0.0"
+    },
+    {
+      "name": "react-native",
+      "version": "0.79.2",
+      "singleton": true,
+      "eager": false,
+      "requiredVersion": "~0.74.5"
+    },
+    {
+      "name": "zustand",
+      "version": "5.0.3",
+      "singleton": false,
+      "eager": false,
+      "requiredVersion": "^5.0.0"
+    }
+  ],
+  "remotes": [],
+  "exposes": [
+    { "id": "store:Checkout", "name": "Checkout", "path": "./src/Checkout" }
+  ],
+  "reactNative": {
+    "version": "0.79.2",
+    "platforms": ["ios", "android"],
+    "nativeModules": [
+      {
+        "package": "react-native-reanimated",
+        "version": "3.17.1",
+        "turboModule": true,
+        "confidence": "static"
+      },
+      {
+        "package": "react-native-maps",
+        "version": "1.20.1",
+        "turboModule": false,
+        "confidence": "static"
+      }
+    ],
+    "dynamicImportDetected": false
+  }
+}
