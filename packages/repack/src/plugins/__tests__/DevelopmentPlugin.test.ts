@@ -1,4 +1,3 @@
-import { ModuleFederationPlugin as MFPluginRspack } from '@module-federation/enhanced/rspack';
 import type { Compiler, EntryNormalized } from '@rspack/core';
 import { DevelopmentPlugin } from '../DevelopmentPlugin.js';
 import { ModuleFederationPluginV2 } from '../ModuleFederationPluginV2.js';
@@ -46,17 +45,36 @@ const createMockCompiler = (plugins: unknown[]) => {
   };
 };
 
+// Module Federation 2.x loads undici 7, which requires Node >= 20.18.1,
+// so the official plugin can only be loaded on newer Node versions.
+const [nodeMajor, nodeMinor] = process.versions.node.split('.').map(Number);
+const itWithOfficialMF =
+  nodeMajor > 20 || (nodeMajor === 20 && nodeMinor >= 18) ? it : it.skip;
+
+const loadMFPluginRspack = () =>
+  jest.requireActual<typeof import('@module-federation/enhanced/rspack')>(
+    '@module-federation/enhanced/rspack'
+  ).ModuleFederationPlugin;
+
 describe('DevelopmentPlugin', () => {
-  it('should add development entries to the container of an official MF plugin with exposes', () => {
-    const { compiler, getEntryNames } = createMockCompiler([
-      new MFPluginRspack({ name: 'remote', exposes: { './App': './App.js' } }),
-    ]);
-    new DevelopmentPlugin({ platform: 'ios' }).apply(compiler);
+  itWithOfficialMF(
+    'should add development entries to the container of an official MF plugin with exposes',
+    () => {
+      const MFPluginRspack = loadMFPluginRspack();
+      const { compiler, getEntryNames } = createMockCompiler([
+        new MFPluginRspack({
+          name: 'remote',
+          exposes: { './App': './App.js' },
+        }),
+      ]);
+      new DevelopmentPlugin({ platform: 'ios' }).apply(compiler);
 
-    expect(getEntryNames()).toEqual(['main', 'remote']);
-  });
+      expect(getEntryNames()).toEqual(['main', 'remote']);
+    }
+  );
 
-  it('should skip an official MF plugin without exposes', () => {
+  itWithOfficialMF('should skip an official MF plugin without exposes', () => {
+    const MFPluginRspack = loadMFPluginRspack();
     const { compiler, getEntryNames } = createMockCompiler([
       new MFPluginRspack({ name: 'host' }),
     ]);
