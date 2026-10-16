@@ -1,10 +1,10 @@
 # BabelLoader
 
-The `BabelLoader` runs Babel transformations for JavaScript and TypeScript sources in React Native projects. It chooses the parser based on source type: `hermes-parser` for JavaScript and Flow-typed files, and Babel's standard parser for TypeScript files.
+The `BabelLoader` runs Babel transformations for JavaScript and TypeScript sources in React Native projects. For JavaScript and Flow-typed files, it selects the parser used by your installed `@react-native/babel-preset`: `flow-parser` when declared by the preset, otherwise `hermes-parser` from the preset's syntax plugin. TypeScript and TSX files use Babel's standard parser.
 
 :::info How this loader differs from babel-loader 
 
-There are two similarly named loaders: `@callstack/repack/babel-loader` (this loader) and `babel-loader` from npm. This loader is tailored for Re.Pack and aims for Metro parity, so the same Babel config used in Metro works as-is in Re.Pack. It automatically selects the parser by source type (Hermes parser for JS/JSX and Flow, Babel parser for TypeScript).
+There are two similarly named loaders: `@callstack/repack/babel-loader` (this loader) and `babel-loader` from npm. This loader is tailored for Re.Pack and aims for Metro parity, so the same Babel config used in Metro works as-is in Re.Pack. It automatically selects the React Native parser for JS/JSX and Flow, and Babel's parser for TypeScript and TSX.
 
 It is also optimized for parallel transforms. In Rspack, enable [`experiments.parallelLoader`](https://rspack.rs/config/experiments#experimentsparallelloader) to fan out transforms; in webpack, pair it with [`thread-loader`](https://www.npmjs.com/package/thread-loader) to run a worker pool. On projects with heavier Babel pipelines, this often translates into noticeably faster builds.
 
@@ -17,10 +17,8 @@ It is also optimized for parallel transforms. In Rspack, enable [`experiments.pa
 type BabelTransformOptions = import('@babel/core').TransformOptions
 
 type BabelLoaderOptions = BabelTransformOptions & {
-  babel?: boolean;
-  flow?: "all" | "detect";
-  reactRuntimeTarget?: "18" | "19";
-  sourceType?: "module" | "script" | "unambiguous";
+  hermesParserPath?: string;
+  hermesParserOverrides?: HermesParserOverrides;
 };
 ```
 
@@ -31,14 +29,14 @@ All options from the [Babel options documentation](https://babeljs.io/docs/optio
 
 - Type: `string`
 
-Optional path to use for importing `hermes-parser`. By default, the path is obtained automatically.
+Optional path to the React Native parser module. This overrides automatic parser selection, which resolves `@react-native/babel-preset` from Babel's `root` or `cwd` (falling back to `process.cwd()`) and uses the preset's parser dependencies. The option name is retained for backward compatibility and also applies to `flow-parser`.
 
 ### hermesParserOverrides
 
 - Type: `HermesParserOverrides`
 - Default: `{ babel: true, reactRuntimeTarget: '19' }`
 
-Overrides passed to `hermes-parser` when parsing non-TypeScript files.
+Overrides passed to the selected React Native parser when parsing non-TypeScript files. The option name is retained for backward compatibility and also applies to `flow-parser`.
 
 ```ts
 type HermesParserOverrides = {
@@ -52,6 +50,16 @@ type HermesParserOverrides = {
 ## Babel TransformOptions
 
 You can pass any standard Babel options (e.g. `presets`, `plugins`, `overrides`, etc.). Source maps are enabled automatically for application code and disabled for `node_modules` by default.
+
+## Custom Babel rules
+
+For custom rules using npm's `babel-loader`, add `@callstack/repack/babel-plugin-syntax-react-native` to the Babel `plugins` list to select the syntax parser used by the installed React Native preset. The plugin resolves the preset from the directory Babel supplies for the plugin configuration.
+
+```js
+plugins: ["@callstack/repack/babel-plugin-syntax-react-native"]
+```
+
+Re.Pack's `getCodegenTransformRules()` and Reanimated plugin already include this syntax plugin automatically.
 
 ## Example
 
@@ -75,4 +83,3 @@ export default {
   },
 };
 ```
-

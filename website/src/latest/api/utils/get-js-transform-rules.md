@@ -26,6 +26,7 @@ interface GetJsTransformRulesOptions {
     externalHelpers?: boolean;
     importSource?: string;
     jsxRuntime?: "automatic" | "classic";
+    development?: boolean;
     lazyImports?: boolean | string[];
   };
   flow?: {

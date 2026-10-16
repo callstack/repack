@@ -22,7 +22,9 @@ import * as Repack from "@callstack/repack";
 export default (env) => {
   return {
     resolve: {
-      ...Repack.getResolveOptions(),
+      ...Repack.getResolveOptions(env.platform, {
+        enablePackageExports: true,
+      }),
     },
   };
 };
@@ -128,7 +130,7 @@ Re.Pack will resolve to `lib/native.js` because `react-native` has the highest p
 
 :::tip
 
-For more details on how main fields work, see the [resolve.mainFields](https://rspack.dev/config/resolve#resolvemainfields) documentation.
+For more details on how main fields work, see the [resolve.mainFields](https://rspack.rs/config/resolve#resolvemainfields) documentation.
 
 :::
 
@@ -144,7 +146,7 @@ Modern packages use the `exports` field in `package.json` to define entry points
 
 :::caution
 
-Package exports support is **disabled by default** (`enablePackageExports: false`) to maintain backwards compatibility with existing React Native projects. Enable it explicitly if your dependencies require it.
+Package exports support is **disabled by default** (`enablePackageExports: false`) to maintain backwards compatibility with existing React Native projects. React Native 0.87 requires it for `@react-native/asset-utils`, and 0.88 also for `react-native/setup-env` and `react-native/react-private-interface`. Enable it explicitly for React Native 0.87 and newer, or whenever your dependencies require it. The configuration templates used by `@callstack/repack-init` enable it.
 
 :::
 
@@ -294,7 +296,7 @@ When enabling `enablePackageExports`, some packages may resolve differently:
 ## Related documentation
 
 - [getResolveOptions](/api/utils/get-resolve-options) — API reference
-- [Rspack resolve configuration](https://rspack.dev/config/resolve) — Rspack resolver options
+- [Rspack resolve configuration](https://rspack.rs/config/resolve) — Rspack resolver options
 - [webpack resolve configuration](https://webpack.js.org/configuration/resolve/) — webpack resolver options
 - [Code Splitting](/docs/features/code-splitting) — For chunk resolution
 - [Glossary](/docs/resources/glossary) — Terminology reference

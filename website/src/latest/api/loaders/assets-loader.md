@@ -3,7 +3,29 @@
 The `AssetsLoader` processes image and other static assets (video, audio, etc.) in your React Native application. It handles asset extraction, copying files to the appropriate platform-specific output directories, and supports additional features like base64 inlining and conversion into remote assets.
 
 :::info Platform-Specific Output
-By default, extracted asset files are copied to `assets/` directory for iOS and `drawable-*` directories (e.g. `drawable-mdpi`, `drawable-hdpi`, etc.) for Android which matches Metro's asset handling behavior.
+By default, extracted asset files are copied to `assets/` directory for iOS and to Android resource directories for Android, which matches Metro's asset handling behavior.
+:::
+
+### Android resource directories
+
+When bundling for Android without the development server, extracted assets are placed in the following resource directories:
+
+| Asset                                                                                   | Output directory                                               |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Images (`png`, `jpg`, `jpeg`, `gif`, `webp`)                                            | `drawable-*` (e.g. `drawable-mdpi`, `drawable-hdpi`) per scale |
+| Font binaries (`ttf`, `otf`, `ttc`)                                                     | `font` **and** `raw`                                           |
+| XML font families (`<font-family>`)                                                     | `font`                                                         |
+| Other XML files                                                                         | `drawable-*`                                                   |
+| Everything else (other image formats such as `bmp` or `svg`, video, audio, other files) | `raw`                                                          |
+
+`xml` and `ttc` are not included in the default [asset extensions](/api/utils/constants#asset_extensions), so `getAssetTransformRules()` doesn't process them. To bundle them, add a rule that uses the Assets loader for these extensions.
+
+Font binaries are emitted twice: the `font` copy keeps native references such as `@font/...` and `R.font` working, while the `raw` copy lets libraries that load fonts by name at runtime (e.g. [React Native Skia](https://shopify.github.io/react-native-skia/)) find them the same way they do with Metro.
+
+Re.Pack also generates `raw/keep.xml` listing all bundled Android resources. Assets loaded by name from JavaScript are invisible to the resource shrinker, so this file keeps them in the APK when `shrinkResources` is enabled.
+
+:::note
+Development server builds and [remote assets](/docs/guides/remote-assets) are not copied into Android resource directories, so the layout above and `keep.xml` don't apply to them.
 :::
 
 :::tip Guides related to AssetsLoader
@@ -12,6 +34,7 @@ Looking to do more with your assets? Check out the guides on:
 - [Inlining assets as base64 strings](/docs/guides/inline-assets)
 - [Converting to remote assets](/docs/guides/remote-assets)
 - [Adding SVG support](/docs/guides/svg)
+- [Using custom fonts](/docs/guides/fonts)
 
 :::
 

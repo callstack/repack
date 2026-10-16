@@ -1,0 +1,30 @@
+{
+  "cli": {
+    "appVersionSource": "local",
+    "version": ">= 21.4.0"
+  },
+  "build": {
+    "repack-base": {
+      "env": {
+        "EAS_BUILD_DISABLE_BUNDLE_JAVASCRIPT_STEP": "1",
+        "EAS_BUILD_DISABLE_EXPO_DOCTOR_STEP": "1"
+      }
+    },
+    "repack-android": {
+      "extends": "repack-base",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "withoutCredentials": true
+      }
+    },
+    "repack-ios-simulator": {
+      "extends": "repack-base",
+      "distribution": "internal",
+      "ios": {
+        "simulator": true,
+        "withoutCredentials": true
+      }
+    }
+  }
+}

@@ -1,11 +1,11 @@
 {
-  "react-native": "0.84.1",
+  "react-native": "0.87.1",
   "rspack": {
-    "@rspack/core": "^1.7.8",
-    "@swc/helpers": "^0.5.19"
+    "@rspack/core": "^1.7.12",
+    "@swc/helpers": "^0.5.23"
   },
   "webpack": {
-    "terser-webpack-plugin": "^5.4.0",
-    "webpack": "^5.105.4"
+    "terser-webpack-plugin": "^5.6.1",
+    "webpack": "^5.111.1"
   }
 }

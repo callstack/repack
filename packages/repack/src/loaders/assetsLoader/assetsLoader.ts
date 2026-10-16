@@ -15,7 +15,7 @@ export const raw = true;
 
 const testXml = /\.(xml)$/;
 const testMP4 = /\.(mp4)$/;
-const testImages = /\.(png|jpg|gif|webp)$/;
+const testImages = /\.(png|jpg|jpeg|gif|webp)$/;
 const testFonts = /\.(ttf|otf|ttc)$/;
 
 export default async function repackAssetsLoader(
@@ -240,6 +240,20 @@ export default async function repackAssetsLoader(
 
         // Assets are emitted relatively to `output.path`.
         this.emitFile(filename, data ?? '');
+
+        if (
+          platform === 'android' &&
+          path.dirname(filename) === 'font' &&
+          testFonts.test(filename)
+        ) {
+          const rawFilename = path.join('raw', path.basename(filename));
+
+          logger.debug(
+            `Emitting asset ${rawFilename} for request ${resourcePath}`
+          );
+
+          this.emitFile(rawFilename, data ?? '');
+        }
       }
 
       if (options.remote?.enabled) {

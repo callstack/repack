@@ -14,6 +14,7 @@ interface MakeSwcLoaderConfigOptions {
   jsx: boolean;
   externalHelpers?: boolean;
   jsxRuntime?: "automatic" | "classic";
+  development?: boolean;
   disableImportExportTransform?: boolean;
   importSource?: string;
   lazyImports?: boolean | string[];
@@ -57,6 +58,15 @@ See [SWC `jsc.externalHelpers`](https://swc.rs/docs/configuration/compilation#js
 The JSX runtime to use - 'automatic' for React 17+ new JSX transform or 'classic' for traditional JSX transform.
 
 See [SWC `jsc.transform.react.runtime`](https://swc.rs/docs/configuration/compilation#jsctransformreactruntime).
+
+### options.development
+
+- Type: `boolean`
+- Default: the build `mode` when used with Rspack's `builtin:swc-loader`
+
+Whether to apply JSX development transforms (`jsxDEV`, `__source`, `__self`), which give accurate component stacks and "open in editor" during development. When omitted, Rspack's `builtin:swc-loader` sets it from `mode`: `true` in development, `false` in production. With the `automatic` runtime, development builds then import `<importSource>/jsx-dev-runtime`; set it to `false` if your `importSource` doesn't provide one.
+
+See [SWC `jsc.transform.react.development`](https://swc.rs/docs/configuration/compilation#jsctransformreactdevelopment).
 
 ### options.disableImportExportTransform
 

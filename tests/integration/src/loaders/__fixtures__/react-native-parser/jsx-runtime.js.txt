@@ -1,0 +1,4 @@
+// A tiny runtime keeps the JSX result executable without installing React.
+export function jsx(type, props) {
+  return { type, title: props.title };
+}

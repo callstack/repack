@@ -1,0 +1,11 @@
+// @flow
+
+import type { HostComponent, ViewProps } from 'react-native';
+import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+
+type NativeProps = $ReadOnly<{
+  ...ViewProps,
+  title?: string,
+}>;
+
+export default (codegenNativeComponent<NativeProps>('ParserView'): HostComponent<NativeProps>);

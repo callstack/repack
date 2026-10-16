@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 /**
  * Rspack configuration enhanced with Re.Pack defaults for React Native.
  *
- * Learn about Rspack configuration: https://rspack.dev/config/
+ * Learn about Rspack configuration: https://rspack.rs/config/
  * Learn about Re.Pack configuration: https://re-pack.dev/docs/guides/configuration
  */
 
@@ -16,7 +16,7 @@ export default Repack.defineRspackConfig({
   context: __dirname,
   entry: './index.js',
   resolve: {
-    ...Repack.getResolveOptions(),
+    ...Repack.getResolveOptions({ enablePackageExports: true }),
   },
   module: {
     rules: [

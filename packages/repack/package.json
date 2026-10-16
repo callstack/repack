@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack",
-  "version": "5.3.0",
+  "version": "5.4.2",
   "description": "A toolkit to build your React Native application with Rspack or Webpack.",
   "type": "commonjs",
   "main": "./dist/index.js",
@@ -13,6 +13,7 @@
     "./assets-loader": "./dist/loaders/assetsLoader/index.js",
     "./babel-loader": "./dist/loaders/babelLoader/index.js",
     "./babel-swc-loader": "./dist/loaders/babelSwcLoader/index.js",
+    "./babel-plugin-syntax-react-native": "./dist/babelPlugins/syntaxReactNative.js",
     "./flow-loader": "./dist/loaders/flowLoader/index.js",
     "./react-refresh-loader": "./dist/loaders/reactRefreshLoader/index.js",
     "./mf/*": "./mf/*.js",
@@ -55,7 +56,7 @@
   "scripts": {
     "build:js": "babel src --out-dir dist --extensions \".js,.ts\" --ignore \"**/__tests__/**\" --delete-dir-on-start",
     "build:ts": "tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "build": "pnpm run \"/^build:.*/\"",
+    "build": "pnpm run build:js && pnpm run build:ts",
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "archive": "pnpm build && pnpm pack",
@@ -64,6 +65,7 @@
     "clang-format:android": "find android/src/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i"
   },
   "peerDependencies": {
+    "@babel/core": "^7.20.0",
     "@module-federation/enhanced": ">=0.6.10",
     "@rspack/core": ">=1",
     "react-native": ">=0.74",
@@ -81,6 +83,7 @@
     }
   },
   "dependencies": {
+    "@babel/plugin-syntax-typescript": "^7.25.4",
     "@callstack/repack-dev-server": "workspace:*",
     "@discoveryjs/json-ext": "^0.5.7",
     "@rspack/plugin-react-refresh": "1.0.0",
@@ -93,7 +96,7 @@
     "exit-hook": "^4.0.0",
     "flow-remove-types": "^2.277.0",
     "gradient-string": "^2.0.2",
-    "image-size": "^1.2.1",
+    "image-size": "^2.0.4",
     "jsonwebtoken": "^9.0.3",
     "memfs": "^4.11.1",
     "mime-types": "^2.1.35",
@@ -112,8 +115,8 @@
     "@babel/core": "^7.29.7",
     "@babel/plugin-transform-export-namespace-from": "^7.29.7",
     "@babel/plugin-transform-modules-commonjs": "^7.29.7",
-    "@module-federation/enhanced": "0.8.9",
-    "@module-federation/sdk": "0.6.10",
+    "@module-federation/enhanced": "2.9.2",
+    "@module-federation/sdk": "2.9.2",
     "@rspack/core": "catalog:",
     "@swc/helpers": "catalog:",
     "@types/babel__core": "^7.20.5",

@@ -5,25 +5,27 @@
  * @returns Array of module rules
  */
 export function getCodegenTransformRules() {
+  const syntaxTypeScriptPlugin = require.resolve(
+    '@babel/plugin-syntax-typescript'
+  );
+
   return [
     {
       type: 'javascript/auto',
       test: /(?:^|[\\/])(?:Native\w+|(\w+)NativeComponent)\.[jt]sx?$/,
-      // make sure this runs first so that the flow types are intact
-      // since hermes-parser strips all comments
+      // Run before Flow stripping so codegen can read the type definitions.
       use: {
         loader: 'babel-loader',
         options: {
           babelrc: false,
           configFile: false,
           parserOpts: {
-            // hermes-parser strips all comments so the information about flow pragma is lost
-            // assume flow when dealing with JS files as a workaround
+            // Previous transforms may strip the Flow pragma from JS specs.
             flow: 'all',
           },
           plugins: [
-            'babel-plugin-syntax-hermes-parser',
-            ['@babel/plugin-syntax-typescript', false],
+            '@callstack/repack/babel-plugin-syntax-react-native',
+            [syntaxTypeScriptPlugin, false],
             '@react-native/babel-plugin-codegen',
           ],
           // config merging reference: https://babeljs.io/docs/options#pluginpreset-entries
@@ -32,7 +34,7 @@ export function getCodegenTransformRules() {
               test: /\.ts$/,
               plugins: [
                 [
-                  '@babel/plugin-syntax-typescript',
+                  syntaxTypeScriptPlugin,
                   { isTSX: false, allowNamespaces: true },
                 ],
               ],
@@ -41,7 +43,7 @@ export function getCodegenTransformRules() {
               test: /\.tsx$/,
               plugins: [
                 [
-                  '@babel/plugin-syntax-typescript',
+                  syntaxTypeScriptPlugin,
                   { isTSX: true, allowNamespaces: true },
                 ],
               ],

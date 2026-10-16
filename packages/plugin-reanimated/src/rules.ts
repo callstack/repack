@@ -56,7 +56,7 @@ export const createReanimatedModuleRules = (
           loader: '@callstack/repack-plugin-reanimated/loader',
           options: {
             babelPlugins: [
-              'babel-plugin-syntax-hermes-parser',
+              '@callstack/repack/babel-plugin-syntax-react-native',
               [workletsBabelPlugin, pluginOptions],
             ],
           },

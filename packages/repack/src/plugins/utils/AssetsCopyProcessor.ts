@@ -2,8 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { StatsChunk } from '@rspack/core';
 
+const androidResourceRegExp =
+  /^(drawable|raw|font)(?:-[^/]+)?\/([^/]+)\.[^/.]+$/;
+
 export class AssetsCopyProcessor {
   queue: Array<() => Promise<void>> = [];
+  private readonly androidResources = new Set<string>();
 
   constructor(
     public readonly config: {
@@ -140,6 +144,16 @@ export class AssetsCopyProcessor {
       .filter((file) => !/\.(map|bundle\.json)$/.test(file))
       .filter((file) => !/^remote-assets/.test(file));
 
+    if (platform === 'android') {
+      for (const asset of mediaAssets) {
+        const resource = androidResourceRegExp.exec(asset.replace(/\\/g, '/'));
+
+        if (resource) {
+          this.androidResources.add(`@${resource[1]}/${resource[2]}`);
+        }
+      }
+    }
+
     this.queue.push(
       ...mediaAssets.map(
         (asset) => () =>
@@ -191,6 +205,28 @@ export class AssetsCopyProcessor {
         );
       }
     }
+  }
+
+  // Resources loaded by name from JavaScript are invisible to the resource shrinker.
+  // This mirrors Metro's createKeepFileAsync.
+  enqueueAndroidKeepFile() {
+    if (!this.androidResources.size) {
+      return;
+    }
+
+    const keepPath = path.join(this.config.assetsDest, 'raw', 'keep.xml');
+    const resources = [...this.androidResources].sort().join(',');
+
+    this.queue.push(async () => {
+      await this.filesystem.promises.mkdir(path.dirname(keepPath), {
+        recursive: true,
+      });
+
+      await this.filesystem.promises.writeFile(
+        keepPath,
+        `<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="${resources}" />\n`
+      );
+    });
   }
 
   execute() {

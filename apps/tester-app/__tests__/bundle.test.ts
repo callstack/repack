@@ -89,6 +89,7 @@ describe('bundle command', () => {
           'react-native-bundle-output/drawable-mdpi/src_assetstest_localassets_webpack.png',
           'react-native-bundle-output/drawable-xxhdpi/src_assetstest_localassets_webpack.png',
           'react-native-bundle-output/drawable-xhdpi/src_assetstest_localassets_webpack.png',
+          'react-native-bundle-output/raw/keep.xml',
           'remote-assets/assets/src/assetsTest/remoteAssets/webpack.png',
           'remote-assets/assets/src/assetsTest/remoteAssets/webpack@2x.png',
           'remote-assets/assets/src/assetsTest/remoteAssets/webpack@3x.png',
@@ -154,7 +155,7 @@ describe('bundle command', () => {
           const lines = bundle.split('\n').length;
           expect(bundle.length / lines).toBeGreaterThan(1000);
         },
-        60 * 1000
+        120 * 1000
       );
     });
   });

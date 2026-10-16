@@ -1,5 +1,19 @@
 # @callstack/repack-init
 
+## 5.4.2
+
+### Patch Changes
+
+- [#1482](https://github.com/callstack/repack/pull/1482) [`4139cf3`](https://github.com/callstack/repack/commit/4139cf3b9fa5f0f80260bfd0b783621543bf3949) Thanks [@jacekAtCK](https://github.com/jacekAtCK)! - Bootstrap new projects with React Native 0.87.1 and refresh the default bundler dependencies to `@rspack/core@^1.7.12`, `@swc/helpers@^0.5.23`, `webpack@^5.111.1` and `terser-webpack-plugin@^5.6.1`. Generated Rspack and webpack configs now enable package exports (`getResolveOptions({ enablePackageExports: true })`).
+
+## 5.4.1
+
+## 5.4.0
+
+### Patch Changes
+
+- [#1424](https://github.com/callstack/repack/pull/1424) [`8dcc116`](https://github.com/callstack/repack/commit/8dcc116c291fe7fb7eb9f0f6c9640058e83a9c50) Thanks [@jbroma](https://github.com/jbroma)! - Add the unified `@callstack/repack/commands` entry point with automatic bundler detection and a `--bundler` override. Re.Pack Init now uses it, while bundler-specific entry points remain available with deprecation warnings.
+
 ## 5.3.0
 
 ## 5.2.5
