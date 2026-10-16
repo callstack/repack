@@ -5,6 +5,10 @@
  * @returns Array of module rules
  */
 export function getCodegenTransformRules() {
+  const syntaxTypeScriptPlugin = require.resolve(
+    '@babel/plugin-syntax-typescript'
+  );
+
   return [
     {
       type: 'javascript/auto',
@@ -21,7 +25,7 @@ export function getCodegenTransformRules() {
           },
           plugins: [
             '@callstack/repack/babel-plugin-syntax-react-native',
-            ['@babel/plugin-syntax-typescript', false],
+            [syntaxTypeScriptPlugin, false],
             '@react-native/babel-plugin-codegen',
           ],
           // config merging reference: https://babeljs.io/docs/options#pluginpreset-entries
@@ -30,7 +34,7 @@ export function getCodegenTransformRules() {
               test: /\.ts$/,
               plugins: [
                 [
-                  '@babel/plugin-syntax-typescript',
+                  syntaxTypeScriptPlugin,
                   { isTSX: false, allowNamespaces: true },
                 ],
               ],
@@ -39,7 +43,7 @@ export function getCodegenTransformRules() {
               test: /\.tsx$/,
               plugins: [
                 [
-                  '@babel/plugin-syntax-typescript',
+                  syntaxTypeScriptPlugin,
                   { isTSX: true, allowNamespaces: true },
                 ],
               ],

@@ -1,5 +1,6 @@
 import type {
   Compiler as RspackCompiler,
+  RuleSetRules,
   RuleSetUse,
   RuleSetUseItem,
   SwcLoaderOptions,
@@ -154,7 +155,11 @@ export class NativeWindPlugin {
      *
      * TODO made obsolete by the new babel-swc-loader, remove in 6.0
      */
-    compiler.options.module.rules.forEach((rule) => {
+    this.configureRules(compiler.options.module.rules);
+  }
+
+  private configureRules(rules: RuleSetRules | undefined) {
+    rules?.forEach((rule) => {
       if (!rule || typeof rule !== 'object') {
         return;
       }
@@ -168,6 +173,10 @@ export class NativeWindPlugin {
           rule.options as SwcLoaderOptions
         );
       }
+
+      // e.g. `getJsTransformRules` nests its `builtin:swc-loader` rules in `oneOf`
+      this.configureRules(rule.oneOf);
+      this.configureRules(rule.rules);
     });
   }
 }
