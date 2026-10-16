@@ -162,9 +162,11 @@ jobs:
           xcrun simctl bootstatus e2e -b
 
       # pod install generates the Xcode project the workspace points at
+      # ARCHS=arm64: the generic simulator destination otherwise builds arm64 + x86_64 on an arm64-only runner.
+      # It must be a setting override — the runner's Xcode 16.4 rejects `-arch` alongside the destination.
       - name: Build iOS app
         working-directory: apps/tester-federation-v2/ios
-        run: pod install && xcodebuild -workspace ModuleFederationTesterV2.xcworkspace -scheme ReactTestApp -configuration Debug -destination 'generic/platform=iOS Simulator' -arch arm64 -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+        run: pod install && xcodebuild -workspace ModuleFederationTesterV2.xcworkspace -scheme ReactTestApp -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO ARCHS=arm64 build
 
       - name: Run e2e
         working-directory: apps/tester-federation-v2
