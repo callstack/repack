@@ -1,5 +1,33 @@
 # @callstack/repack
 
+## 5.4.3
+
+### Patch Changes
+
+- [#1452](https://github.com/callstack/repack/pull/1452) [`a87b592`](https://github.com/callstack/repack/commit/a87b59247cb9595da7880cb8e8b1c6235cae94c7) Thanks [@elirangoshen](https://github.com/elirangoshen)! - Send only sources carrying an `@flow` pragma through hermes-parser in `babelLoader`, matching
+  `babel-plugin-syntax-hermes-parser` with the React Native preset's default
+  `parseLangTypes: 'flow'`. hermes-parser converts its own AST into a Babel AST, and that conversion
+  is quadratic in the number of sibling nodes, so a single prebuilt minified dependency could add
+  minutes to a build. Set `hermesParserOverrides.flow` to `'all'` to keep parsing every file with
+  hermes-parser.
+
+- [#1483](https://github.com/callstack/repack/pull/1483) [`37c25bb`](https://github.com/callstack/repack/commit/37c25bbb6ba14c0e7c6b628318e29f85038e40f7) Thanks [@CristiCeban](https://github.com/CristiCeban)! - Fix `Cannot find module '@babel/plugin-syntax-typescript'` when bundling TypeScript with `babel-swc-loader` or the codegen rules. Re.Pack passed the plugin to Babel by name, so it only resolved when the project happened to have it installed. With pnpm, builds often worked only through the `NODE_PATH` set by script shims and failed when bundling from Xcode or Gradle.
+  
+  - `@babel/plugin-syntax-typescript` is now a dependency of Re.Pack and is passed to Babel as a resolved path.
+  - `@babel/core` is now declared as a peer dependency, since Re.Pack's loaders import it.
+
+- [#1471](https://github.com/callstack/repack/pull/1471) [`c9dab5d`](https://github.com/callstack/repack/commit/c9dab5d00e4f1c12549c48eba4c432aa638aec99) Thanks [@giaBaoJS](https://github.com/giaBaoJS)! - Fix `DevelopmentPlugin` crashing with `Cannot read properties of undefined (reading 'exposes')` when an official Module Federation plugin (from `@module-federation/enhanced`, or the built-in `container.ModuleFederationPlugin` of Rspack or webpack) is used with the dev server. The check for official plugins read `exposes` from `plugin.config`, which only Re.Pack's own Module Federation plugins have, instead of `plugin._options`.
+
+- [#1484](https://github.com/callstack/repack/pull/1484) [`253d14b`](https://github.com/callstack/repack/commit/253d14bda27e3343aff4d5b01d853e3dfa69de57) Thanks [@whydidoo](https://github.com/whydidoo)! - Keep the options of Module Federation 2.x runtime plugins passed to `ModuleFederationPluginV2` as `[path, options]` in `runtimePlugins`. Such entries were silently dropped before.
+  
+  Fix the typings of the `@callstack/repack/mf/*` runtime plugins with `@module-federation/enhanced` 0.17 and newer, where `FederationRuntimePlugin` and `FederationHost` were renamed to `ModuleFederationRuntimePlugin` and `ModuleFederation`. The types are now derived from the installed runtime, so they work with every supported version.
+
+- [#1486](https://github.com/callstack/repack/pull/1486) [`fd8e33e`](https://github.com/callstack/repack/commit/fd8e33e587e4a2866087aeea266b6f809562a5f2) Thanks [@dannyhw](https://github.com/dannyhw)! - Update `image-size` to v2 and `fastify` to 5.12.5 to resolve security advisories
+
+- [#1493](https://github.com/callstack/repack/pull/1493) [`32c32c0`](https://github.com/callstack/repack/commit/32c32c0660650b559ed61312a9eb29fc5f328235) Thanks [@whydidoo](https://github.com/whydidoo)! - Make SWC JSX development transforms follow the build mode. `getSwcLoaderOptions` (and `getJsTransformRules`) tied `jsc.transform.react.development` to the JSX runtime, so development builds with the default `automatic` runtime emitted `jsx` instead of `jsxDEV` and lost `__source` / `__self`, accurate component stacks and "open in editor", while `classic` production builds kept them. `getSwcLoaderOptions` no longer sets `jsc.transform.react.development` by default, so Rspack's `builtin:swc-loader` derives it from `mode`, and development builds with the `automatic` runtime now import `<importSource>/jsx-dev-runtime`. Both helpers accept a `development` option to override it, e.g. `getJsTransformRules({ swc: { development: false } })` when a custom `importSource` doesn't ship a `jsx-dev-runtime` entry.
+- Updated dependencies [[`44431b3`](https://github.com/callstack/repack/commit/44431b3cea3bca36de9cfb493221f11f3892a1c8), [`fd8e33e`](https://github.com/callstack/repack/commit/fd8e33e587e4a2866087aeea266b6f809562a5f2)]:
+  - @callstack/repack-dev-server@5.4.3
+
 ## 5.4.2
 
 ### Patch Changes
