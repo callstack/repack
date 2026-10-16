@@ -1016,6 +1016,9 @@ importers:
       '@callstack/repack':
         specifier: workspace:*
         version: link:../../packages/repack
+      '@callstack/repack-plugin-nativewind':
+        specifier: workspace:*
+        version: link:../../packages/plugin-nativewind
       '@module-federation/enhanced':
         specifier: 2.0.1
         version: 2.0.1(@rspack/core@1.6.0(@swc/helpers@0.5.23))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)(webpack@5.105.4(@swc/core@1.15.46(@swc/helpers@0.5.23)))
