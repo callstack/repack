@@ -2,9 +2,9 @@
 
 First-class Expo integration for Re.Pack and Rspack.
 
-> This package is private while the Expo v1 release gates are being completed.
-> The documented contract is implemented and validated in this repository, but
-> the package is not published for application use yet.
+> This package is in alpha while the Expo v1 release gates are being completed.
+> Install it from the `alpha` tag (`@callstack/repack-expo@alpha`) and expect
+> breaking changes between releases.
 
 ## Requirements
 
