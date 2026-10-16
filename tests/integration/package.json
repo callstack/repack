@@ -14,6 +14,7 @@
   "devDependencies": {
     "@babel/runtime": "^7.29.7",
     "@callstack/repack": "workspace:*",
+    "@callstack/repack-plugin-nativewind": "workspace:*",
     "@module-federation/enhanced": "2.0.1",
     "@module-federation/enhanced-v15": "npm:@module-federation/enhanced@0.15.0",
     "@module-federation/enhanced-v21": "npm:@module-federation/enhanced@0.21.0",
