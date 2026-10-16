@@ -164,7 +164,7 @@ jobs:
       # pod install generates the Xcode project the workspace points at
       - name: Build iOS app
         working-directory: apps/tester-federation-v2/ios
-        run: pod install && xcodebuild -workspace ModuleFederationTesterV2.xcworkspace -scheme ReactTestApp -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+        run: pod install && xcodebuild -workspace ModuleFederationTesterV2.xcworkspace -scheme ReactTestApp -configuration Debug -destination 'generic/platform=iOS Simulator' -arch arm64 -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
 
       - name: Run e2e
         working-directory: apps/tester-federation-v2
