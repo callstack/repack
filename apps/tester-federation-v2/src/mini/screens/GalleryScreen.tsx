@@ -41,6 +41,7 @@ const Row = ({
 const GalleryScreen = () => {
   return (
     <ScrollView
+      testID="miniapp-gallery"
       contentContainerStyle={styles.contentContainer}
       style={styles.container}
     >
