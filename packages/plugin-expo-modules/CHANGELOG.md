@@ -1,5 +1,9 @@
 # @callstack/repack-plugin-expo-modules
 
+## 5.4.3
+
+No changes in this release.
+
 ## 5.4.2
 
 ## 5.4.1

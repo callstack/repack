@@ -1,5 +1,13 @@
 # @callstack/repack-dev-server
 
+## 5.4.3
+
+### Patch Changes
+
+- [#1495](https://github.com/callstack/repack/pull/1495) [`44431b3`](https://github.com/callstack/repack/commit/44431b3cea3bca36de9cfb493221f11f3892a1c8) Thanks [@dannyhw](https://github.com/dannyhw)! - Fix dev server shutdown hanging on Node 18 with fastify 5.12+ by force-closing open connections on stop
+
+- [#1486](https://github.com/callstack/repack/pull/1486) [`fd8e33e`](https://github.com/callstack/repack/commit/fd8e33e587e4a2866087aeea266b6f809562a5f2) Thanks [@dannyhw](https://github.com/dannyhw)! - Update `image-size` to v2 and `fastify` to 5.12.5 to resolve security advisories
+
 ## 5.4.2
 
 ## 5.4.1
