@@ -21,16 +21,16 @@
     "expo-asset": "catalog:expo58",
     "expo-constants": "catalog:expo58",
     "expo-font": "catalog:expo58",
-    "react": "catalog:expo58",
-    "react-native": "catalog:expo58"
+    "react": "catalog:",
+    "react-native": "catalog:"
   },
   "devDependencies": {
     "@babel/core": "catalog:",
     "@react-native-community/cli": "catalog:testers",
     "@react-native-community/cli-platform-android": "catalog:testers",
     "@react-native-community/cli-platform-ios": "catalog:testers",
-    "@react-native/babel-preset": "catalog:expo58",
-    "@react-native/community-cli-plugin": "catalog:expo58",
+    "@react-native/babel-preset": "catalog:testers",
+    "@react-native/community-cli-plugin": "catalog:testers",
     "@rspack/core": "catalog:",
     "@types/react": "catalog:testers",
     "babel-preset-expo": "catalog:expo58",
