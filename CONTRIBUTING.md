@@ -91,8 +91,36 @@ package version changes and generated changelog entries for the next release.
 
 Review the version numbers and changelog entries in that PR before merging it.
 When the version PR is merged to `main`, the same workflow runs `pnpm release`,
-publishes the packages to npm, pushes the release tags, and creates GitHub
-releases from the generated changelog entries.
+publishes the packages to npm and pushes all package release tags. A separate
+step creates one GitHub release on the main package's tag (for example,
+`@callstack/repack@5.4.2`), named after the shared version. Its notes list all
+packages in the fixed release group and include their nonempty changelog entries
+for that version. Package changelogs and npm publishing are still managed by
+Changesets.
+
+Preview the combined release without network access or credentials:
+
+```sh
+node .github/scripts/create-release.mjs --dry-run
+pnpm test:release
+```
+
+If GitHub release creation fails after all package tags have reached GitHub,
+rerun the failed release job at the same commit. The combined release step also
+runs when Changesets has no new packages to publish. It verifies that all
+fixed-group package tags resolve to `GITHUB_SHA` before creating the release,
+and leaves an existing release untouched. A normal push with no release tags
+at its SHA does not create a release.
+
+This step does not recover npm publications or recreate package tags. If
+publishing or pushing tags failed, check the npm publication status and restore
+the missing release tags at the original release commit before retrying. A
+missing tag or a tag pointing to another commit prevents release creation.
+
+The combined release currently covers the fixed group containing
+`@callstack/repack`. Before adding independently versioned packages to publishing,
+extend the release selection policy; unexpected published packages fail this
+step instead of being silently omitted.
 
 #### Canary releases
 
