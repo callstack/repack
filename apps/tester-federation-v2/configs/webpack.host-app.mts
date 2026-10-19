@@ -2,6 +2,12 @@
 import * as Repack from '@callstack/repack';
 import reactPkg from 'react/package.json' with { type: 'json' };
 import reactNativePkg from 'react-native/package.json' with { type: 'json' };
+import safeAreaPkg from 'react-native-safe-area-context/package.json' with {
+  type: 'json',
+};
+import screensPkg from 'react-native-screens/package.json' with {
+  type: 'json',
+};
 import webpack from 'webpack';
 import pkg from '../package.json' with { type: 'json' };
 
@@ -76,14 +82,14 @@ export default Repack.defineWebpackConfig((env) => {
           'react-native-safe-area-context': {
             singleton: true,
             eager: true,
-            version: pkg.dependencies['react-native-safe-area-context'],
-            requiredVersion: pkg.dependencies['react-native-safe-area-context'],
+            version: safeAreaPkg.version,
+            requiredVersion: safeAreaPkg.version,
           },
           'react-native-screens': {
             singleton: true,
             eager: true,
-            version: pkg.dependencies['react-native-screens'],
-            requiredVersion: pkg.dependencies['react-native-screens'],
+            version: screensPkg.version,
+            requiredVersion: screensPkg.version,
           },
         },
       }),
@@ -95,7 +101,6 @@ export default Repack.defineWebpackConfig((env) => {
         __WITH_PRELOAD__:
           process.env.WITH_PRELOAD === 'true' ||
           process.env.WITH_PRELOAD === '1',
-        __E2E__: process.env.E2E === 'true',
       }),
     ],
   };

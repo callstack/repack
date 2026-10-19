@@ -1,37 +1,42 @@
 name: e2e
 
 on:
-  pull_request_target:
-    types: [opened, reopened, synchronize, labeled, unlabeled]
+  pull_request:
+    paths:
+      - 'apps/tester-federation-v2/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/e2e.yml'
   push:
     branches: [main]
+    paths:
+      - 'apps/tester-federation-v2/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/e2e.yml'
   workflow_dispatch:
 
 # one run per PR; a new push cancels the older one
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name != 'push' }}
 
 # keep it read-only
 permissions:
   contents: read
 
+env:
+  E2E_TELEMETRY_DISABLED: '1'
+
 jobs:
   android:
     name: e2e (Android)
-    # same-repo PRs - always run; forks - run only with the `e2e` label
-    if: >-
-      github.event_name != 'pull_request_target' ||
-      github.event.pull_request.head.repo.full_name == github.repository ||
-      contains(github.event.pull_request.labels.*.name, 'e2e')
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
     steps:
-      - name: Checkout pull request head
+      - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup workspace
         uses: ./.github/actions/setup-pnpm-node
@@ -56,8 +61,6 @@ jobs:
       # nohup/disown: the runner kills step processes at the end. /status wait: RNTA picks its bundle source once, never retries
       - name: Start dev servers
         working-directory: apps/tester-federation-v2
-        env:
-          E2E: 'true'
         run: |
           nohup pnpm start:hostapp > /tmp/hostapp.log 2>&1 &
           disown
@@ -85,6 +88,7 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_7
+          avd-name: e2e
           working-directory: apps/tester-federation-v2
           script: |
             adb shell settings put global hide_error_dialogs 1
@@ -94,8 +98,15 @@ jobs:
             adb reverse --list
             adb reverse --list | grep -q 'tcp:8081' || { echo '::error::adb reverse missing for tcp:8081'; exit 1; }
             adb reverse --list | grep -q 'tcp:8082' || { echo '::error::adb reverse missing for tcp:8082'; exit 1; }
-            adb install -r -g android/app/build/outputs/apk/debug/app-debug.apk
-            pnpm exec e2e run --target android --reporter list,junit; ec=$?; adb logcat -d -v time > .e2e/logcat.txt 2>&1; exit $ec
+            adb install -r -g android/app/build/outputs/apk/debug/app-debug.apk || { echo '::error::adb install failed'; exit 1; }
+            E2E_DEVICE="${ANDROID_SERIAL:-$(adb get-serialno)}" pnpm exec e2e run --target android --reporter list,junit; ec=$?; adb logcat -d -v time > .e2e/logcat.txt 2>&1; exit $ec
+
+      - name: Collect dev server logs
+        if: ${{ !cancelled() }}
+        working-directory: apps/tester-federation-v2
+        run: |
+          mkdir -p .e2e
+          cp /tmp/hostapp.log /tmp/miniapp.log .e2e/
 
       - name: Upload e2e artifacts
         if: ${{ !cancelled() }}
@@ -104,7 +115,7 @@ jobs:
           name: e2e-android
           path: apps/tester-federation-v2/.e2e
           include-hidden-files: true
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 7
 
       - name: Show dev server logs
@@ -114,15 +125,13 @@ jobs:
   # dispatch + main only for now — no PR triggers until this lane has greens
   ios:
     name: e2e (iOS)
-    if: github.event_name != 'pull_request_target'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: macos-15
     timeout-minutes: 45
 
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup workspace
         uses: ./.github/actions/setup-pnpm-node
@@ -135,8 +144,6 @@ jobs:
       # start both dev servers in the background, wait until both answer /status
       - name: Start dev servers
         working-directory: apps/tester-federation-v2
-        env:
-          E2E: 'true'
         run: |
           nohup pnpm start:hostapp > /tmp/hostapp.log 2>&1 &
           disown
@@ -152,26 +159,40 @@ jobs:
           curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/index.bundle?platform=ios&dev=true&lazy=true&minify=false&modulesOnly=false&runModule=true&app=com.tester.federationV2'
           echo 'Both bundles served; compilers are warm.'
 
-      # match the runtime to the default Xcode's SDK (16.4 → iOS 18.x), not just newest available
+      # SIM_RUNTIME_PREFIX is tied to the runner image: macos-15's default Xcode
+      # (16.4) targets iOS 18.x. If the image moves, this check fails every run —
+      # bump the prefix (and SIM_DEVICE) to the new SDK's major.
       - name: Boot simulator
+        env:
+          SIM_RUNTIME_PREFIX: com.apple.CoreSimulator.SimRuntime.iOS-18-
+          SIM_DEVICE: iPhone 16
         run: |
-          RT=$(xcrun simctl list runtimes -j | jq -r '.runtimes | map(select(.isAvailable and (.identifier | startswith("com.apple.CoreSimulator.SimRuntime.iOS-18-")))) | sort_by(.version) | last | .identifier')
+          RT=$(xcrun simctl list runtimes -j | jq -r --arg prefix "$SIM_RUNTIME_PREFIX" '.runtimes | map(select(.isAvailable and (.identifier | startswith($prefix)))) | sort_by(.version) | last | .identifier')
           echo "using $RT"
           [ "$RT" != "null" ] && [ -n "$RT" ]
-          xcrun simctl create e2e "iPhone 16" "$RT"
+          xcrun simctl create e2e "$SIM_DEVICE" "$RT"
           xcrun simctl boot e2e
           xcrun simctl bootstatus e2e -b
 
       # pod install generates the Xcode project the workspace points at
       - name: Build iOS app
         working-directory: apps/tester-federation-v2/ios
-        run: pod install && xcodebuild -workspace ModuleFederationTesterV2.xcworkspace -scheme ReactTestApp -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO ARCHS=arm64 build
+        run: bundle install && bundle exec pod install && xcodebuild -workspace ModuleFederationTesterV2.xcworkspace -scheme ReactTestApp -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO ARCHS=arm64 build
 
       - name: Run e2e
         working-directory: apps/tester-federation-v2
+        env:
+          E2E_DEVICE: e2e
         run: |
           xcrun simctl install booted ios/build/Build/Products/Debug-iphonesimulator/*.app
           pnpm exec e2e run --target ios --reporter list,junit
+
+      - name: Collect dev server logs
+        if: ${{ !cancelled() }}
+        working-directory: apps/tester-federation-v2
+        run: |
+          mkdir -p .e2e
+          cp /tmp/hostapp.log /tmp/miniapp.log .e2e/
 
       - name: Upload e2e artifacts
         if: ${{ !cancelled() }}
@@ -180,7 +201,7 @@ jobs:
           name: e2e-ios
           path: apps/tester-federation-v2/.e2e
           include-hidden-files: true
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 7
 
       - name: Show dev server logs

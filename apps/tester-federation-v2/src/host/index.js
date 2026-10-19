@@ -1,14 +1,10 @@
 import { ScriptManager } from '@callstack/repack/client';
 import { preloadRemote } from '@module-federation/runtime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppRegistry, LogBox } from 'react-native';
+import { AppRegistry } from 'react-native';
 
 import { components } from '../../app.json';
 import App from './App';
-
-if (__E2E__) {
-  LogBox.ignoreAllLogs(true);
-}
 
 if (__WITH_PRELOAD__) {
   // enable caching of scripts in the AsyncStorage
