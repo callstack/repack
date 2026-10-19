@@ -138,7 +138,7 @@ jobs:
         with:
           ruby-version: '3.4'
           bundler-cache: true
-          gemfile: apps/tester-federation-v2/Gemfile
+          working-directory: apps/tester-federation-v2
 
       - name: Setup workspace
         uses: ./.github/actions/setup-pnpm-node
