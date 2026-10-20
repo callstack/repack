@@ -76,6 +76,15 @@ jobs:
           curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/android/index.bundle?platform=android&dev=true&lazy=true&minify=false&app=com.tester.federationV2&modulesOnly=false&runModule=true'
           echo 'Both bundles served; compilers are warm.'
 
+      - name: Check shared versions are real semver
+        run: |
+          for p in 8081 8082; do
+            M=$(curl -sf --retry 3 --retry-delay 2 "http://localhost:$p/android/mf-manifest.json") || { echo "::error::port $p: mf-manifest.json not served"; exit 1; }
+            [ "$(jq '.shared | length' <<<"$M")" -gt 0 ] || { echo "::error::port $p: manifest has no shared entries"; exit 1; }
+            BAD=$(jq -r '.shared[] | select((.version // "") | test("^[0-9]+\\.[0-9]+\\.[0-9]+") | not) | "\(.name): \(.version)"' <<<"$M")
+            [ -z "$BAD" ] || { echo "::error::port $p has non-semver shared versions: $BAD"; exit 1; }
+          done
+
       - name: Build Android app
         working-directory: apps/tester-federation-v2/android
         run: ./gradlew :app:assembleDebug -PreactNativeArchitectures=x86_64
@@ -166,6 +175,15 @@ jobs:
           curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/index.bundle?platform=ios&dev=true&lazy=true&minify=false&modulesOnly=false&runModule=true&app=com.tester.federationV2'
           echo 'Both bundles served; compilers are warm.'
 
+      - name: Check shared versions are real semver
+        run: |
+          for p in 8081 8082; do
+            M=$(curl -sf --retry 3 --retry-delay 2 "http://localhost:$p/ios/mf-manifest.json") || { echo "::error::port $p: mf-manifest.json not served"; exit 1; }
+            [ "$(jq '.shared | length' <<<"$M")" -gt 0 ] || { echo "::error::port $p: manifest has no shared entries"; exit 1; }
+            BAD=$(jq -r '.shared[] | select((.version // "") | test("^[0-9]+\\.[0-9]+\\.[0-9]+") | not) | "\(.name): \(.version)"' <<<"$M")
+            [ -z "$BAD" ] || { echo "::error::port $p has non-semver shared versions: $BAD"; exit 1; }
+          done
+
       # SIM_RUNTIME_PREFIX is tied to the runner image: macos-15's default Xcode
       # (16.4) targets iOS 18.x. If the image moves, this check fails every run —
       # bump the prefix (and SIM_DEVICE) to the new SDK's major.
@@ -200,6 +218,9 @@ jobs:
         run: |
           mkdir -p .e2e
           cp /tmp/hostapp.log /tmp/miniapp.log .e2e/
+          xcrun simctl spawn booted log show --style compact --last 30m \
+            --predicate 'process == "ReactTestApp"' \
+            > .e2e/ios-syslog.txt 2>&1 || true
 
       - name: Upload e2e artifacts
         if: ${{ !cancelled() }}
