@@ -1050,6 +1050,57 @@ describe('ScriptManagerAPI', () => {
 
     spy.mockRestore();
   });
+
+  it('should retry loadScript after resolver failure', async () => {
+    const spy = mockLoadScriptBasedOnFetch();
+
+    const resolver = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('Network request failed'))
+      .mockImplementation(async (scriptId: string) => ({
+        url: Script.getRemoteURL(scriptId),
+      }));
+    ScriptManager.shared.addResolver(resolver);
+
+    await expect(ScriptManager.shared.loadScript('miniApp')).rejects.toThrow(
+      'Network request failed'
+    );
+
+    // should not reuse the rejected promise from the first call
+    await expect(
+      ScriptManager.shared.loadScript('miniApp')
+    ).resolves.toBeUndefined();
+    expect(resolver).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    spy.mockRestore();
+  });
+
+  it('should retry prefetchScript after resolver failure', async () => {
+    const spy = jest.spyOn(NativeScriptManager, 'prefetchScript');
+    spy.mockResolvedValue(null);
+
+    const resolver = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('Network request failed'))
+      .mockImplementation(async (scriptId: string) => ({
+        url: Script.getRemoteURL(scriptId),
+      }));
+    ScriptManager.shared.addResolver(resolver);
+
+    await expect(
+      ScriptManager.shared.prefetchScript('miniApp')
+    ).rejects.toThrow('Network request failed');
+
+    // should not reuse the rejected promise from the first call
+    await expect(
+      ScriptManager.shared.prefetchScript('miniApp')
+    ).resolves.toBeUndefined();
+    expect(resolver).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    spy.mockRestore();
+  });
 });
 
 function mockLoadScriptBasedOnFetch() {
