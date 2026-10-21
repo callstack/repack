@@ -1,12 +1,15 @@
 import {
   type BabelFileResult,
+  createConfigItem,
   loadOptions,
+  loadPartialConfig,
   type ParseResult,
   parseSync,
   type TransformOptions,
   transformFromAstSync,
 } from '@babel/core';
-import type { LoaderContext } from '@rspack/core';
+import type { LoaderContext, RawSourceMap } from '@rspack/core';
+import { getFlowEnumsPlugins } from '../../helpers/resolveReactNativeParser.js';
 import type {
   BabelLoaderOptions,
   BabelPluginOverrides,
@@ -16,7 +19,8 @@ import {
   isIgnoredRepackDeepImport,
   isTSXSource,
   isTypeScriptSource,
-  loadReactNativeParser,
+  normalizeInputSourceMap,
+  parseReactNativeSource,
   shouldUseReactNativeParser,
 } from './utils.js';
 
@@ -24,15 +28,20 @@ export const raw = false;
 
 function buildBabelConfig(
   babelOptions: TransformOptions,
-  { includePlugins, excludePlugins }: BabelPluginOverrides
+  {
+    includePlugins,
+    excludePlugins,
+    lowerFlowEnums,
+  }: BabelPluginOverrides & { lowerFlowEnums: boolean }
 ): TransformOptions {
   const config: TransformOptions = {
     babelrc: true,
     highlightCode: true,
     comments: true,
-    plugins: [],
     sourceType: 'unambiguous',
     ...babelOptions,
+    // a copy: loader options are shared between modules
+    plugins: [...(babelOptions.plugins ?? []), ...(includePlugins ?? [])],
     // output settings
     ast: false,
     code: true,
@@ -42,11 +51,24 @@ function buildBabelConfig(
     minified: false,
   };
 
-  if (includePlugins) {
-    config.plugins!.push(...includePlugins);
+  const partialConfig = loadPartialConfig(config);
+  if (!partialConfig) {
+    throw new Error('Failed to load babel config');
   }
 
-  const babelConfig = loadOptions(config);
+  const { options } = partialConfig;
+  if (lowerFlowEnums) {
+    // top-level plugins run ahead of the preset, which strips enums before
+    // its own enum plugin runs; `root` is resolved by Babel at this point
+    options.plugins = [
+      ...getFlowEnumsPlugins(options.root!).map((plugin) =>
+        createConfigItem(plugin, { type: 'plugin' })
+      ),
+      ...(options.plugins ?? []),
+    ];
+  }
+
+  const babelConfig = loadOptions(options);
   if (!babelConfig) {
     throw new Error('Failed to load babel config');
   }
@@ -75,16 +97,17 @@ export const transform = async (
   transformOptions: TransformOptions,
   customOptions?: CustomTransformOptions
 ): Promise<BabelTransformResult> => {
+  // filename is always set by the loaders
+  const isTypeScript =
+    isTypeScriptSource(transformOptions.filename!) ||
+    isTSXSource(transformOptions.filename!);
+
   const babelConfig = buildBabelConfig(transformOptions, {
     includePlugins: customOptions?.includePlugins,
     excludePlugins: customOptions?.excludePlugins,
+    lowerFlowEnums: !isTypeScript,
   });
   const projectRoot = babelConfig.root ?? babelConfig.cwd;
-
-  // filename will be always defined at this point
-  const isTypeScript =
-    isTypeScriptSource(babelConfig.filename!) ||
-    isTSXSource(babelConfig.filename!);
 
   const needsReactNativeParser =
     !isTypeScript &&
@@ -92,17 +115,12 @@ export const transform = async (
 
   let sourceAst: ParseResult | null;
   if (needsReactNativeParser) {
-    // load the parser dynamically to match the version from preset
-    const parser = await loadReactNativeParser(
-      projectRoot,
-      customOptions?.hermesParserPath
-    );
-
-    sourceAst = parser.parse(src, {
-      babel: true,
-      reactRuntimeTarget: '19',
+    // the parser comes from the preset
+    sourceAst = await parseReactNativeSource(src, {
+      projectRoot: projectRoot ?? process.cwd(),
+      parserPath: customOptions?.hermesParserPath,
       sourceType: babelConfig.sourceType,
-      ...customOptions?.hermesParserOverrides,
+      overrides: customOptions?.hermesParserOverrides,
     });
   } else if (isTypeScript) {
     sourceAst = parseSync(src, babelConfig);
@@ -138,7 +156,7 @@ export const transform = async (
 export default async function babelLoader(
   this: LoaderContext<BabelLoaderOptions>,
   source: string,
-  sourceMap: string | undefined
+  sourceMap: string | RawSourceMap | undefined
 ) {
   this.cacheable();
   const callback = this.async();
@@ -147,7 +165,6 @@ export default async function babelLoader(
   const { hermesParserPath, hermesParserOverrides, ...babelOverrides } =
     options;
 
-  const inputSourceMap = sourceMap ? JSON.parse(sourceMap) : undefined;
   const withSourceMaps = this.resourcePath.match(/node_modules/)
     ? false
     : this.sourceMap;
@@ -160,7 +177,9 @@ export default async function babelLoader(
         filename: this.resourcePath,
         sourceMaps: withSourceMaps,
         sourceFileName: this.resourcePath,
-        inputSourceMap: withSourceMaps ? inputSourceMap : undefined,
+        inputSourceMap: withSourceMaps
+          ? normalizeInputSourceMap(sourceMap)
+          : undefined,
         ...babelOverrides,
       },
       {
