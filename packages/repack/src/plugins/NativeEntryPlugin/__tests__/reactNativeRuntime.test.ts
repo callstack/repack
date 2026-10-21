@@ -5,6 +5,7 @@ import {
   ASSET_REGISTRY_REQUEST,
   getReactNativeAssetRegistryAlias,
   getReactNativeDeepImportAliases,
+  getReactNativeSubpathExportAliases,
   resolveReactNativePolyfills,
 } from '../reactNativeRuntime.js';
 
@@ -112,6 +113,79 @@ describe('resolveReactNativePolyfills', () => {
     expect(getPolyfills()).toEqual(['/abs/error-guard.js']);
   });
 
+  it('falls back through expo and @expo/metro-config in Expo projects', () => {
+    const rn = makeTmp({ 'index.js': '' });
+    const projectRoot = makeTmp({ 'package.json': '{}' });
+    const expoDir = path.join(projectRoot, 'node_modules', 'expo');
+    const expoMetroConfigDir = path.join(
+      expoDir,
+      'node_modules',
+      '@expo',
+      'metro-config'
+    );
+    const polyfillsModule = path.join(projectRoot, 'polyfills.js');
+    fs.writeFileSync(
+      polyfillsModule,
+      "module.exports = () => ['/abs/expo-console.js'];"
+    );
+
+    const getPolyfills = resolveReactNativePolyfills(
+      projectRoot,
+      rn,
+      (req, paths) => {
+        if (req === 'expo/package.json' && paths.includes(projectRoot)) {
+          return path.join(expoDir, 'package.json');
+        }
+        // Resolvable only from expo's directory, not the project root.
+        if (
+          req === '@expo/metro-config/package.json' &&
+          paths.includes(expoDir)
+        ) {
+          return path.join(expoMetroConfigDir, 'package.json');
+        }
+        if (
+          req === '@react-native/js-polyfills' &&
+          paths.includes(expoMetroConfigDir)
+        ) {
+          return polyfillsModule;
+        }
+        throw new Error(`cannot resolve ${req} from ${paths.join(',')}`);
+      }
+    );
+
+    expect(getPolyfills()).toEqual(['/abs/expo-console.js']);
+  });
+
+  it('prefers @react-native/metro-config over the Expo chain', () => {
+    const rn = makeTmp({ 'index.js': '' });
+    const projectRoot = makeTmp({ 'package.json': '{}' });
+    const metroDir = path.join(projectRoot, 'metro-config');
+    const polyfillsModule = path.join(projectRoot, 'polyfills.js');
+    fs.writeFileSync(
+      polyfillsModule,
+      "module.exports = () => ['/abs/metro-console.js'];"
+    );
+
+    const getPolyfills = resolveReactNativePolyfills(
+      projectRoot,
+      rn,
+      (req, paths) => {
+        if (req === '@react-native/metro-config/package.json') {
+          return path.join(metroDir, 'package.json');
+        }
+        if (req === '@react-native/js-polyfills' && paths.includes(metroDir)) {
+          return polyfillsModule;
+        }
+        if (req.startsWith('expo') || req.startsWith('@expo')) {
+          throw new Error('the Expo chain should not be consulted');
+        }
+        throw new Error(`cannot resolve ${req} from ${paths.join(',')}`);
+      }
+    );
+
+    expect(getPolyfills()).toEqual(['/abs/metro-console.js']);
+  });
+
   it('throws a descriptive error when nothing resolves', () => {
     const rn = makeTmp({ 'index.js': '' });
     const projectRoot = makeTmp({ 'package.json': '{}' });
@@ -124,10 +198,15 @@ describe('resolveReactNativePolyfills', () => {
 });
 
 describe('getReactNativeAssetRegistryAlias', () => {
-  it('maps to src/asset-registry on the React Native >= 0.87 layout', () => {
+  it('maps both registry requests to src/asset-registry on the React Native >= 0.87 layout', () => {
     const rn = makeTmp({ 'src/asset-registry.js': 'module.exports = {};' });
     expect(getReactNativeAssetRegistryAlias(rn)).toEqual({
       [`${ASSET_REGISTRY_REQUEST}$`]: path.join(rn, 'src', 'asset-registry'),
+      '@react-native/assets-registry/registry$': path.join(
+        rn,
+        'src',
+        'asset-registry'
+      ),
     });
   });
 
@@ -192,5 +271,72 @@ describe('getReactNativeDeepImportAliases', () => {
       'index.js': '',
     });
     expect(getReactNativeDeepImportAliases(rn)).toBeNull();
+  });
+});
+
+describe('getReactNativeSubpathExportAliases', () => {
+  it('maps explicit subpath exports to their files (React Native >= 0.87)', () => {
+    const rn = makeTmp({
+      'package.json': JSON.stringify({
+        exports: {
+          '.': { types: './types/index.d.ts', default: './index.js' },
+          './Libraries/*': { types: null, default: './Libraries/*.js' },
+          './asset-registry': {
+            types: null,
+            default: './src/asset-registry.js',
+          },
+          './react-private-interface': {
+            types: null,
+            default: './src/react-private-interface.js',
+          },
+          './setup-env': './src/setup-env.js',
+          './legacy-folder/': './src/legacy-folder/',
+          './package.json': './package.json',
+        },
+      }),
+      'src/legacy-folder/index.js': '',
+      'src/asset-registry.js': '',
+      'src/react-private-interface.js': '',
+      'src/setup-env.js': '',
+    });
+
+    expect(getReactNativeSubpathExportAliases(rn)).toEqual({
+      'react-native/asset-registry$': path.join(rn, 'src', 'asset-registry.js'),
+      'react-native/react-private-interface$': path.join(
+        rn,
+        'src',
+        'react-private-interface.js'
+      ),
+      'react-native/setup-env$': path.join(rn, 'src', 'setup-env.js'),
+    });
+  });
+
+  it('returns null when only wildcards, the root and package.json are exported (React Native <= 0.86)', () => {
+    const rn = makeTmp({
+      'package.json': JSON.stringify({
+        exports: {
+          '.': { types: './types/index.d.ts', default: './index.js' },
+          './*': './*.js',
+          './package.json': './package.json',
+        },
+      }),
+    });
+    expect(getReactNativeSubpathExportAliases(rn)).toBeNull();
+  });
+
+  it('skips subpaths whose target file does not exist', () => {
+    const rn = makeTmp({
+      'package.json': JSON.stringify({
+        exports: { './setup-env': './src/setup-env.js' },
+      }),
+    });
+    expect(getReactNativeSubpathExportAliases(rn)).toBeNull();
+  });
+
+  it('returns null when React Native declares no exports map', () => {
+    const rn = makeTmp({
+      'package.json': JSON.stringify({ main: 'index.js' }),
+    });
+    expect(getReactNativeSubpathExportAliases(rn)).toBeNull();
   });
 });
