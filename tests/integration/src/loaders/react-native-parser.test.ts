@@ -664,6 +664,28 @@ describe.each(presets)('React Native %s parser dependencies', (preset) => {
     }
   );
 
+  // projects that worked around the stripped enums add the plugin themselves
+  it.each(loaders)(
+    'keeps Flow enums working when the project already adds the enum plugin with %s',
+    async (loader) => {
+      const projectRoot = path.join(workspaceRoot, preset);
+      const presetRequire = createRequire(
+        require.resolve('@react-native/babel-preset/package.json', {
+          paths: [projectRoot],
+        })
+      );
+      const { Status } = (await bundleWithBabelLoader(
+        loader,
+        'enum-no-pragma.js',
+        '.',
+        {
+          plugins: [presetRequire.resolve('babel-plugin-transform-flow-enums')],
+        }
+      )) as { Status: { members: () => Iterable<unknown> } };
+      expect([...Status.members()]).toEqual(['Active', 'Paused']);
+    }
+  );
+
   it.each(loaders)(
     'wraps components with refs in forwardRef on React 18 with %s',
     async (loader) => {

@@ -80,6 +80,10 @@ const resolveFlowEnumsRuntime = cacheByProjectRoot(
   }
 );
 
+// lets the plugin run alongside a copy the project adds itself, which Babel
+// rejects as a duplicate when neither copy is named
+const FLOW_ENUMS_PLUGIN_NAME = '@callstack/repack/flow-enums';
+
 /**
  * `babel-plugin-transform-flow-enums` from the project's React Native preset,
  * or nothing when the preset isn't installed.
@@ -101,7 +105,7 @@ export const getFlowEnumsPlugins = cacheByProjectRoot(
 
     const runtimePath = resolveFlowEnumsRuntime(projectRoot);
     // the plugin defaults to `require('flow-enums-runtime')`
-    if (!runtimePath) return [pluginPath];
+    if (!runtimePath) return [[pluginPath, {}, FLOW_ENUMS_PLUGIN_NAME]];
 
     return [
       [
@@ -112,6 +116,7 @@ export const getFlowEnumsPlugins = cacheByProjectRoot(
               t.stringLiteral(runtimePath),
             ]),
         },
+        FLOW_ENUMS_PLUGIN_NAME,
       ],
     ];
   }
