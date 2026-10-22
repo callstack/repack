@@ -9,6 +9,7 @@ import {
 import type {
   Diagnostic,
   FederationEvent,
+  FederationEventType,
   FederationInstance,
   FederationRemote,
   FederationSharedPackage,
@@ -251,33 +252,85 @@ const httpStatusOf = (detail?: string) => /HTTP \d{3}/.exec(detail ?? '')?.[0];
 
 const originOf = (url?: string) => /^(https?:\/\/[^/]+)/.exec(url ?? '')?.[1];
 
+/** Events that mean a manifest or remote entry for a URL loaded fine. */
+const LOAD_SUCCESS: ReadonlySet<FederationEventType> = new Set([
+  'afterLoadManifest',
+  'afterLoadEntry',
+]);
+
+const isFailure = (event: FederationEvent) =>
+  !!event.error || event.type === 'loadEntryError';
+
+/**
+ * One diagnostic per failing URL (or request id when MF gave no URL): a
+ * failed manifest is reported by several hooks (errorLoadRemote for the
+ * manifest, afterLoadManifest, errorLoadRemote for the module). Failures
+ * followed by a successful load of the same URL are downgraded to warnings,
+ * since MF retries and the app may have recovered.
+ */
 export const diagnoseFederationEvents = (
   events: FederationEvent[]
 ): Diagnostic[] => {
-  const diagnostics: Diagnostic[] = [];
-  const seen = new Set<string>();
+  const groups = new Map<string, FederationEvent[]>();
   for (const event of events) {
-    if (!event.error && event.type !== 'loadEntryError') continue;
-    const key = `${event.type}:${event.id ?? ''}:${event.remote ?? ''}:${event.url ?? ''}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    const target = event.id ?? event.remote ?? event.url ?? 'unknown';
-    diagnostics.push({
-      severity: 'error',
+    if (!isFailure(event)) continue;
+    const key = event.url ?? event.id ?? event.remote ?? 'unknown';
+    groups.set(key, [...(groups.get(key) ?? []), event]);
+  }
+
+  return Array.from(groups, ([key, failures]): Diagnostic => {
+    // afterLoadManifest carries the HTTP status and the underlying error
+    const root =
+      failures.find((event) => event.type === 'afterLoadManifest') ??
+      failures[0];
+    const last = failures[failures.length - 1];
+    const recovered =
+      !!root.url &&
+      events.some(
+        (event) =>
+          event.seq > last.seq &&
+          event.url === root.url &&
+          LOAD_SUCCESS.has(event.type) &&
+          !isFailure(event)
+      );
+    const hooks = Array.from(new Set(failures.map((event) => event.type)));
+    const requests = Array.from(
+      new Set(
+        failures
+          .map((event) => event.id)
+          .filter((id) => id !== undefined && id !== key)
+      )
+    );
+    const status = failures
+      .map((event) => httpStatusOf(event.detail))
+      .find(Boolean);
+    const error = root.error ?? 'remote entry failed to load';
+
+    return {
+      severity: recovered ? 'warning' : 'error',
       area: 'federation',
-      message: `${event.type} failed for ${target}${event.url ? ` (${event.url})` : ''}: ${event.error ?? 'remote entry failed to load'}`,
-      hint: NETWORK_ERROR.test(event.error ?? '')
-        ? `The device could not reach ${originOf(event.url) ?? 'the remote'}: check that its dev server is running and the port is reachable from the device (Android: adb reverse). get-dev-server with origin=${originOf(event.url) ?? '<remote origin>'} shows whether it is up.`
-        : JSON_ERROR.test(event.error ?? '') && event.url?.includes('.json')
-          ? `The manifest response${httpStatusOf(event.detail) ? ` (${httpStatusOf(event.detail)})` : ''} was not JSON. MF parses the body without checking the HTTP status, so an error page (4xx/5xx, CDN or proxy HTML) shows up as a parse error. Look up the request with get-dev-server origin=${originOf(event.url) ?? '<remote origin>'} --requests failed, or fetch the URL.`
-          : event.type === 'afterLoadManifest'
+      message: `${hooks.join(', ')} failed for ${key}${requests.length ? ` (requested by ${requests.join(', ')})` : ''}: ${error}${recovered ? '. A later load of the same URL succeeded.' : ''}`,
+      hint: NETWORK_ERROR.test(error)
+        ? `The device could not reach ${originOf(root.url) ?? 'the remote'}: check that its dev server is running and the port is reachable from the device (Android: adb reverse). get-dev-server with origin=${originOf(root.url) ?? '<remote origin>'} shows whether it is up.`
+        : JSON_ERROR.test(error) && root.url?.includes('.json')
+          ? `The manifest response${status ? ` (${status})` : ''} was not JSON. MF parses the body without checking the HTTP status, so an error page (4xx/5xx, CDN or proxy HTML) shows up as a parse error. Look up the request with get-dev-server origin=${originOf(root.url) ?? '<remote origin>'} --requests failed, or fetch the URL.`
+          : root.type === 'afterLoadManifest'
             ? 'Check that the remote dev server is running and serves this manifest URL for the current platform.'
             : 'Look up the remote entry URL in the dev server request log and the ScriptManager records for the container.',
-      ref: `federation-event:${event.seq}`,
-    });
-  }
-  return diagnostics;
+      ref: `federation-event:${root.seq}`,
+    };
+  });
 };
+
+/** Instances sharing a scope report the same package problems; keep one. */
+const dedupeDiagnostics = (diagnostics: Diagnostic[]) =>
+  diagnostics.filter(
+    (item, index) =>
+      diagnostics.findIndex(
+        (other) =>
+          other.severity === item.severity && other.message === item.message
+      ) === index
+  );
 
 export const readFederationState = (
   globals: FederationGlobals
@@ -293,13 +346,13 @@ export const readFederationState = (
   const shareScopes =
     runtime === 'v1' ? toSharedPackages(globals.webpackShareScopes) : undefined;
 
-  const diagnostics = [
+  const diagnostics = dedupeDiagnostics([
     ...instances.flatMap((instance) =>
       diagnoseSharedPackages(instance.shared, instance.name)
     ),
     ...(shareScopes ? diagnoseSharedPackages(shareScopes, 'webpack') : []),
     ...diagnoseFederationEvents(globals.events),
-  ];
+  ]);
 
   if (runtime === 'v2' && !globals.runtimePluginInstalled) {
     diagnostics.push({

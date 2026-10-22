@@ -1,4 +1,5 @@
 import { LIMITS } from '../shared/constants.js';
+import { stripAnsi } from '../shared/text.js';
 import type { CompilationIssue } from '../shared/types.js';
 import {
   type DevServerStore,
@@ -51,8 +52,6 @@ export type CompilerLike = {
 
 const MAX_ASSETS = 500;
 const MAX_FILES = 100;
-
-const stripAnsi = (value: string) => value.replace(/\u001b\[[0-9;]*m/g, '');
 
 export const toIssue = (raw: RawIssue): CompilationIssue => {
   if (typeof raw === 'string') {
