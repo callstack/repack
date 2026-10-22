@@ -69,7 +69,9 @@ diagnostic has a `ref` that tells you which tool gives details:
 
 | `ref` | Follow up with |
 | --- | --- |
-| `<script uniqueId>` | `get-script --uniqueId <ref>` |
+| `<script uniqueId>` | `get-script --uniqueId <ref>`, `get-script-manager` |
+| `call:<seq>` | `list-script-calls --uniqueId <id>` |
+| `fault-<n>` / `server-fault-<n>` | `list-faults` (injected by you; not a real bug) |
 | `federation-event:<seq>` | `list-federation-events --errorsOnly true` |
 | `<instance>:<scope>/<pkg>` | `get-federation` |
 | `err-<n>` | `get-error --id <ref>`, then `symbolicate --errorId <ref>` |
@@ -83,13 +85,31 @@ Read-only: `get-overview [--devServer false]`, `list-scripts [--status failed] [
 `get-federation`, `list-federation-events [--type] [--errorsOnly true]`,
 `list-errors [--source global-handler|script-manager|federation]`, `get-error --id`,
 `symbolicate [--stack "<raw stack>"] [--errorId]`,
-`get-dev-server [--origin http://localhost:8082] [--requests failed|all|none]`.
+`get-dev-server [--origin http://localhost:8082] [--requests failed|all|none]`,
+`list-script-calls [--uniqueId] [--method loadScript] [--errorsOnly true]`,
+`get-script-manager`, `list-faults [--origin]`.
 List tools paginate with `--limit` and `--cursor` (take the cursor from `page`).
 
 Actions, to reproduce issues without driving the UI:
 `load-script --scriptId <id> [--caller <id>]`, `prefetch-script`,
 `invalidate-scripts [--scriptIds a,b]`, `load-remote --id Remote/Module [--instance]`,
 `clear [--scope scripts|federation|errors|all]`, `reload`.
+
+Fault injection, to test error handling and recovery without editing app code:
+
+- `inject-script-fault --stage resolve|load [--scriptId x] [--caller y]
+  [--action fail|delay] [--delayMs n] [--times n] [--code c]`: through
+  ScriptManager hooks. `resolve` throws before resolvers run (a resolver that
+  fetches a manifest while offline); `load` throws before the download with
+  `NetworkFailure` (loadScript only).
+- `inject-server-fault --match <substring|/regex/> [--status 503]
+  [--delayMs n] [--drop true] [--times n] [--platform] [--origin]`: on any
+  dev server wrapped with `withRepackDevTools`, including MF remotes. Faulted
+  responses carry `fault` in the request log; dropped connections are logged
+  with `status: 0`.
+- `clear-faults [--id] [--origin]`. Faults stay active until `--times` is
+  used up; always clear them when done, and remember that the overview's
+  `faults` diagnostics mean failures you caused yourself.
 
 ### Dev-server endpoints (curl, no app needed)
 
@@ -99,6 +119,8 @@ Actions, to reproduce issues without driving the UI:
   diagnostics.
 - `GET /repack-devtools/compilation?platform=android`: one compilation in full.
 - `POST /repack-devtools/clear`: empties the request log.
+- `GET|POST|DELETE /repack-devtools/faults[?id=]`: list, add (JSON body like
+  `inject-server-fault`) or remove server faults.
 
 Every MF dev server has its own endpoint (host and each mini app).
 `builds: 0` with `status: compiling` means that platform was never requested.
@@ -112,6 +134,21 @@ matched or the resolver threw; `load` = download or evaluation;
 diagnostic lists emitted assets with similar names. If the record shows
 `source: cache`, call `invalidate-scripts` and `load-script` again to tell
 cache problems from server problems.
+
+**Retry / recovery after a failure.** Inject the failure once
+(`inject-script-fault --stage resolve --scriptId X --times 1`, or
+`inject-server-fault --match X --status 503 --times 1`), call `load-script`
+twice, then `list-script-calls --uniqueId X`. A healthy retry shows
+`resolverRan: true` on the second call. `resolverRan: false` with
+`joined: rejected load` means ScriptManager returned the stored failure
+instead of trying again; `get-script-manager` then lists that promise as
+`rejected` (issue #1506). The same check works for prefetch-then-load and for
+concurrent callers (`joined: pending ...` is expected deduplication).
+
+**Resolver and cache behaviour.** `get-script-manager` lists resolvers with
+priorities, taps per hook and cache entries. `list-script-calls` tells how
+often resolvers really ran versus calls served from a stored promise; compare
+with the dev server request log to see what was actually downloaded.
 
 **Module Federation.** `get-federation` shows each host instance's remotes
 (`loaded`), shared packages per scope with every registered version, who
@@ -141,6 +178,17 @@ answers 400 "Cannot infer platform" when none carries a platform (query
 `symbolicate --errorId`.
 
 ## Gotchas
+
+- **Agent tool calls time out after about 30 s**: a `load-script` that waits
+  on a long injected delay times out on the agent side while the app keeps
+  going. Read the outcome afterwards with `list-script-calls`.
+- **`resolverRan` reads as "ScriptManager reached its resolve step during
+  this call".** It is false when an injected `resolve` fault fired (check the
+  `faults` column) and for calls that only joined another attempt (`joined`
+  set).
+- **MF manifest errors hide the HTTP status**: MF parses error pages as JSON,
+  so a 4xx/5xx shows up as `JSON Parse error`. The `afterLoadManifest` event
+  `detail` has `HTTP <status>`.
 
 - **Startup is only captured** when the entry calls
   `installRepackDevTools({ boot: true })` before other code

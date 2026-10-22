@@ -177,6 +177,22 @@ describe('diagnoseFederationEvents', () => {
     expect(diagnostic.hint).toContain('could not reach http://localhost:8082');
   });
 
+  it('explains manifest parse errors caused by error responses', () => {
+    const [diagnostic] = diagnoseFederationEvents([
+      {
+        seq: 1,
+        at: 0,
+        type: 'afterLoadManifest',
+        url: 'http://localhost:8082/android/mf-manifest.json',
+        error: 'JSON Parse error: Unexpected character: I',
+        detail: 'HTTP 503',
+      },
+    ]);
+    expect(diagnostic.hint).toContain('manifest response (HTTP 503)');
+    expect(diagnostic.hint).toContain('without checking the HTTP status');
+    expect(diagnostic.hint).toContain('origin=http://localhost:8082');
+  });
+
   it('reports each distinct failure once', () => {
     const event: FederationEvent = {
       seq: 1,

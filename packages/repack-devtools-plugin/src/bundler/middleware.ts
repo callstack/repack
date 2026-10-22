@@ -1,11 +1,22 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { DEV_SERVER_ROUTE, LIMITS } from '../shared/constants.js';
-import type { DevServerState } from '../shared/types.js';
+import { isFailedRequest, NO_RESPONSE_STATUS } from '../shared/requests.js';
+import type {
+  DevServerState,
+  Diagnostic,
+  ServerFault,
+} from '../shared/types.js';
 import {
   diagnoseCompilations,
   diagnoseRequests,
   getRequestPlatform,
 } from './diagnostics.js';
+import {
+  addServerFault,
+  applyServerFault,
+  FAULT_HEADER,
+  parseServerFault,
+} from './faults.js';
 import {
   type DevServerStore,
   getDevServerStore,
@@ -44,11 +55,91 @@ export const getDevServerState = (
     startedAt: store.startedAt,
     compilations,
     requests: store.requests,
+    faults: store.faults,
     diagnostics: [
+      ...diagnoseServerFaults(store.faults),
       ...diagnoseCompilations(compilations),
       ...diagnoseRequests(store.requests, compilations),
     ],
   };
+};
+
+const describeServerFault = (fault: ServerFault) =>
+  [
+    fault.drop ? 'drop connection' : undefined,
+    fault.status !== undefined ? `status ${fault.status}` : undefined,
+    fault.delayMs ? `delay ${fault.delayMs}ms` : undefined,
+    fault.remaining !== undefined ? `${fault.remaining} left` : undefined,
+  ]
+    .filter(Boolean)
+    .join(', ');
+
+const diagnoseServerFaults = (faults: ServerFault[]): Diagnostic[] =>
+  faults
+    .filter((fault) => fault.remaining === undefined || fault.remaining > 0)
+    .map((fault) => ({
+      severity: 'info',
+      area: 'faults',
+      message: `Injected server fault ${fault.id} is active for "${fault.match}" (${describeServerFault(fault)}, ${fault.hits} hit(s)). Failures it causes are not real bugs.`,
+      hint: `Remove it with DELETE ${DEV_SERVER_ROUTE}/faults?id=${fault.id} or the clear-faults tool.`,
+      ref: fault.id,
+    }));
+
+const MAX_BODY_BYTES = 64 * 1024;
+
+const readJsonBody = (req: IncomingMessage) =>
+  new Promise<unknown>((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let size = 0;
+    req.on('data', (chunk: Buffer) => {
+      size += chunk.length;
+      if (size > MAX_BODY_BYTES) {
+        reject(new Error('Request body too large.'));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on('end', () => {
+      try {
+        resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}'));
+      } catch {
+        reject(new Error('Request body is not valid JSON.'));
+      }
+    });
+    req.on('error', reject);
+  });
+
+const handleFaults = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  params: URLSearchParams,
+  store: DevServerStore
+) => {
+  if (req.method === 'GET') return sendJson(res, 200, store.faults);
+  if (req.method === 'DELETE') {
+    const id = params.get('id');
+    const before = store.faults.length;
+    store.faults = id ? store.faults.filter((fault) => fault.id !== id) : [];
+    return sendJson(res, 200, { removed: before - store.faults.length });
+  }
+  if (req.method === 'POST') {
+    readJsonBody(req).then(
+      (body) => {
+        const fault = parseServerFault(body, store);
+        if (typeof fault === 'string') {
+          return sendJson(res, 400, { error: fault });
+        }
+        return sendJson(res, 201, addServerFault(store, fault));
+      },
+      (error: unknown) =>
+        sendJson(res, 400, {
+          error: error instanceof Error ? error.message : String(error),
+        })
+    );
+    return;
+  }
+  return sendJson(res, 405, { error: 'Use GET, POST or DELETE.' });
 };
 
 const sendJson = (res: ServerResponse, status: number, body: unknown) => {
@@ -59,9 +150,10 @@ const sendJson = (res: ServerResponse, status: number, body: unknown) => {
 };
 
 /**
- * Serves `GET <route>/state`, `GET <route>/compilation?platform=` and
- * `POST <route>/clear`, so agents can read bundler state with curl even when
- * the app is not running.
+ * Serves `GET <route>/state`, `GET <route>/compilation?platform=`,
+ * `POST <route>/clear` and `GET|POST|DELETE <route>/faults`, so agents can
+ * read bundler state and inject faults with curl even when the app is not
+ * running.
  */
 export const createStateMiddleware = (): Middleware => {
   const middleware: Middleware = (req, res, next) => {
@@ -71,6 +163,7 @@ export const createStateMiddleware = (): Middleware => {
     const params = new URLSearchParams(query);
     const store = getDevServerStore();
 
+    if (path === '/faults') return handleFaults(req, res, params, store);
     if (req.method === 'POST' && path === '/clear') {
       store.requests.length = 0;
       return sendJson(res, 200, { cleared: 'requests' });
@@ -84,7 +177,7 @@ export const createStateMiddleware = (): Middleware => {
         ...state,
         requests:
           requests === 'failed'
-            ? state.requests.filter((request) => request.status >= 400)
+            ? state.requests.filter(isFailedRequest)
             : requests === 'none'
               ? []
               : state.requests,
@@ -103,8 +196,26 @@ export const createStateMiddleware = (): Middleware => {
       return sendJson(res, 200, compilation);
     }
     return sendJson(res, 404, {
-      error: `Unknown route. Use ${DEV_SERVER_ROUTE}/state, ${DEV_SERVER_ROUTE}/compilation?platform=<platform> or POST ${DEV_SERVER_ROUTE}/clear.`,
+      error: `Unknown route. Use ${DEV_SERVER_ROUTE}/state, ${DEV_SERVER_ROUTE}/compilation?platform=<platform>, ${DEV_SERVER_ROUTE}/faults or POST ${DEV_SERVER_ROUTE}/clear.`,
     });
+  };
+  middleware.__repackDevTools = true;
+  return middleware;
+};
+
+const faultOf = (res: ServerResponse) => {
+  const header = res.getHeader(FAULT_HEADER);
+  return typeof header === 'string' ? header : undefined;
+};
+
+const isTooling = (url: string) =>
+  IGNORED.some((prefix) => url.startsWith(prefix));
+
+/** Applies injected server faults; must run after the request log. */
+export const createFaultMiddleware = (): Middleware => {
+  const middleware: Middleware = (req, res, next) => {
+    if (isTooling(req.url ?? '')) return next();
+    applyServerFault(req, res, next);
   };
   middleware.__repackDevTools = true;
   return middleware;
@@ -158,9 +269,9 @@ export const createRequestLogMiddleware = (): Middleware => {
       },
     });
 
-    res.once('finish', () => {
+    const log = (finished: boolean) => {
       try {
-        const status = res.statusCode;
+        const status = finished ? res.statusCode : NO_RESPONSE_STATUS;
         pushRequest(getDevServerStore(), {
           at: startedAt,
           method: req.method ?? 'GET',
@@ -168,6 +279,7 @@ export const createRequestLogMiddleware = (): Middleware => {
           status,
           durationMs: Date.now() - startedAt,
           platform: getRequestPlatform(url),
+          fault: faultOf(res),
           userAgent: req.headers['user-agent'],
           responseBody:
             status >= 400 && chunks.length
@@ -177,6 +289,11 @@ export const createRequestLogMiddleware = (): Middleware => {
       } catch {
         // logging must never break a response
       }
+    };
+    res.once('finish', () => log(true));
+    // dropped or aborted before a response was sent: no `finish` event
+    res.once('close', () => {
+      if (!res.writableFinished) log(false);
     });
     next();
   };

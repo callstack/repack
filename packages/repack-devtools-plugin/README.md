@@ -9,9 +9,13 @@ the workspace.
   request log, errors and symbolication.
 - **Agent tools** (`rozenite agent callstack/repack-devtools <tool>`), the
   same data plus actions (`load-script`, `load-remote`, `invalidate-scripts`,
-  `symbolicate`, `reload`, …), with computed diagnostics in `get-overview`.
+  `symbolicate`, `reload`, …), a trace of every ScriptManager call
+  (`list-script-calls`), ScriptManager internals (`get-script-manager`), and
+  fault injection in the app and on dev servers (`inject-script-fault`,
+  `inject-server-fault`), with computed diagnostics in `get-overview`.
 - **Dev-server endpoints**: `GET /repack-devtools/state`,
-  `GET /repack-devtools/compilation?platform=…`, `POST /repack-devtools/clear`.
+  `GET /repack-devtools/compilation?platform=…`, `POST /repack-devtools/clear`,
+  `GET|POST|DELETE /repack-devtools/faults`.
 
 Usage, tool reference and debugging playbooks:
 [`.agents/skills/repack-debug-runtime`](../../.agents/skills/repack-debug-runtime/SKILL.md).

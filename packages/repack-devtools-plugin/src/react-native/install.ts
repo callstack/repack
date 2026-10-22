@@ -6,6 +6,7 @@ import {
   readGlobal,
   readString,
 } from '../shared/guards';
+import { attachCallTracer } from './callTracer';
 import { attachGlobalErrorHandler } from './errorRecorder';
 import {
   createRepackDevToolsRuntimePlugin,
@@ -57,7 +58,7 @@ export type InstallOptions = {
 };
 
 /**
- * Starts recording ScriptManager events, uncaught errors and Module
+ * Starts recording ScriptManager events and calls, uncaught errors and Module
  * Federation lifecycle events. Safe to call more than once; call it at the
  * top of the app entry file to capture startup.
  */
@@ -66,6 +67,7 @@ export const installRepackDevTools = (options: InstallOptions = {}) => {
   if (options.boot) store.bootRecording = true;
   try {
     attachScriptManager(ScriptManager.shared);
+    attachCallTracer(ScriptManager.shared);
   } catch {
     // ScriptManager is unavailable outside Re.Pack bundles
   }

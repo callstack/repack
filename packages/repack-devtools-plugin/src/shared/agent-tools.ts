@@ -12,10 +12,15 @@ import type {
   Overview,
   RecordedError,
   RecordedErrorSource,
+  ScriptCall,
+  ScriptCallMethod,
   ScriptEvent,
   ScriptEventType,
+  ScriptFault,
+  ScriptManagerState,
   ScriptRecord,
   ScriptStatus,
+  ServerFault,
   SymbolicationResult,
 } from './types';
 
@@ -79,6 +84,21 @@ export type ScriptEventRow = {
   detail: string;
 };
 
+export type ScriptCallRow = {
+  seq: number;
+  at: number;
+  method: ScriptCallMethod;
+  uniqueId: string;
+  outcome: ScriptCall['outcome'];
+  durationMs: number | null;
+  resolverRan: boolean;
+  /** `<pending|fulfilled|rejected> <load|prefetch>` when an earlier attempt was reused. */
+  joined: string;
+  events: string;
+  error: string;
+  faults: string;
+};
+
 export type ErrorRow = {
   id: string;
   at: number;
@@ -119,6 +139,45 @@ export type ListFederationEventsResult = {
   total: number;
 };
 
+export type ListScriptCallsArgs = PageArgs & {
+  uniqueId?: string;
+  method?: ScriptCallMethod;
+  errorsOnly?: boolean;
+};
+export type ListScriptCallsResult = {
+  items: ScriptCallRow[];
+  page: PageEnvelope;
+  total: number;
+};
+
+export type InjectScriptFaultArgs = {
+  stage: 'resolve' | 'load';
+  scriptId?: string;
+  caller?: string;
+  action?: 'fail' | 'delay';
+  message?: string;
+  code?: string;
+  delayMs?: number;
+  times?: number;
+};
+
+export type InjectServerFaultArgs = {
+  match: string;
+  origin?: string;
+  method?: string;
+  platform?: string;
+  status?: number;
+  body?: string;
+  delayMs?: number;
+  drop?: boolean;
+  times?: number;
+};
+
+export type FaultList = {
+  app: ScriptFault[];
+  servers: Array<{ origin: string; faults: ServerFault[]; error?: string }>;
+};
+
 export type ListErrorsArgs = PageArgs & { source?: RecordedErrorSource };
 export type ListErrorsResult = {
   items: ErrorRow[];
@@ -141,6 +200,7 @@ const SCRIPT_STATUSES: ScriptStatus[] = [
   'resolving',
   'resolved',
   'prefetching',
+  'prefetched',
   'loading',
   'loaded',
   'failed',
@@ -307,6 +367,181 @@ export const repackDevToolsToolDefinitions = {
           description:
             'Comma-separated cache keys (unique ids). Omit to invalidate everything.',
         },
+      },
+    },
+  }),
+
+  listScriptCalls: definePaginatedAgentToolContract<
+    ListScriptCallsArgs,
+    ListScriptCallsResult
+  >({
+    name: 'list-script-calls',
+    description:
+      'Every loadScript/prefetchScript/invalidateScripts call into ScriptManager.shared (app code, chunk runtime, MF, devtools actions) with outcome and duration. `resolverRan=false` plus a `joined` earlier attempt means ScriptManager returned a stored promise instead of trying again; use it to check retry, dedup and cache behaviour.',
+    readOnly: true,
+    idempotent: true,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        uniqueId: {
+          type: 'string',
+          description: 'Unique id (`<caller>_<scriptId>`) or bare script id.',
+        },
+        method: {
+          type: 'string',
+          enum: ['loadScript', 'prefetchScript', 'invalidateScripts'],
+        },
+        errorsOnly: { type: 'boolean' },
+        ...pageProperties,
+      },
+    },
+    pagination: {
+      kind: 'cursor',
+      fields: [
+        'seq',
+        'at',
+        'method',
+        'uniqueId',
+        'outcome',
+        'durationMs',
+        'resolverRan',
+        'joined',
+        'events',
+        'error',
+        'faults',
+      ],
+      defaultFields: [
+        'seq',
+        'method',
+        'uniqueId',
+        'outcome',
+        'durationMs',
+        'resolverRan',
+        'joined',
+        'error',
+        'faults',
+      ],
+      meta: ['total'],
+    },
+  }),
+
+  getScriptManager: defineAgentToolContract<undefined, ScriptManagerState>({
+    name: 'get-script-manager',
+    description:
+      'ScriptManager internals: stored load/prefetch promises with their state (a stored rejected promise is returned to every later call), registered resolvers with priorities, taps per hook, locator cache entries and whether storage is set. Diagnostics flag stored rejected promises.',
+    readOnly: true,
+    idempotent: true,
+    inputSchema: { type: 'object', properties: {} },
+  }),
+
+  injectScriptFault: defineAgentToolContract<
+    InjectScriptFaultArgs,
+    ScriptFault
+  >({
+    name: 'inject-script-fault',
+    description:
+      'Make ScriptManager fail or stall for matching scripts, through its hooks, to test error handling and recovery without changing app code. `resolve` throws before resolvers run (like a resolver that fetches a manifest and goes offline); `load` throws before the download, with code NetworkFailure by default (loadScript only, not prefetchScript). Faults stay active until `times` hits are used or clear-faults is called.',
+    readOnly: false,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        stage: { type: 'string', enum: ['resolve', 'load'] },
+        scriptId: {
+          type: 'string',
+          description: 'Exact script id; omit to match every script.',
+        },
+        caller: { type: 'string' },
+        action: {
+          type: 'string',
+          enum: ['fail', 'delay'],
+          description: 'Default fail. With delayMs, fail waits first.',
+        },
+        message: { type: 'string' },
+        code: { type: 'string' },
+        delayMs: { type: 'number' },
+        times: {
+          type: 'number',
+          description: 'Number of matching calls to affect; omit for all.',
+        },
+      },
+      required: ['stage'],
+    },
+  }),
+
+  injectServerFault: defineAgentToolContract<
+    InjectServerFaultArgs,
+    ServerFault
+  >({
+    name: 'inject-server-fault',
+    description:
+      'Make a dev server answer matching requests with an error status, a delay, or a dropped connection, to test how the app handles failing chunk, asset, MF manifest or remote entry downloads. Works for any dev server wrapped with withRepackDevTools (pass `origin` for MF remotes). Responses it produces are marked with `fault` in the request log.',
+    readOnly: false,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        match: {
+          type: 'string',
+          description:
+            'Substring of the request URL, or a /regex/ (e.g. "/miniapp/" or "/mf-manifest\\.json/").',
+        },
+        origin: {
+          type: 'string',
+          description:
+            'Dev server origin; defaults to the server that served the app.',
+        },
+        method: { type: 'string' },
+        platform: { type: 'string' },
+        status: { type: 'number', description: 'HTTP status to answer with.' },
+        body: { type: 'string' },
+        delayMs: {
+          type: 'number',
+          description: 'Wait before answering (or before serving normally).',
+        },
+        drop: {
+          type: 'boolean',
+          description: 'Destroy the connection without a response.',
+        },
+        times: {
+          type: 'number',
+          description: 'Number of matching requests to affect; omit for all.',
+        },
+      },
+      required: ['match'],
+    },
+  }),
+
+  listFaults: defineAgentToolContract<{ origin?: string }, FaultList>({
+    name: 'list-faults',
+    description:
+      'Active injected faults in the app and on the dev server (plus `origin` if given), with hit counts.',
+    readOnly: true,
+    idempotent: true,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        origin: {
+          type: 'string',
+          description: 'Additional dev server origin to query.',
+        },
+      },
+    },
+  }),
+
+  clearFaults: defineAgentToolContract<
+    { id?: string; origin?: string },
+    { removed: number }
+  >({
+    name: 'clear-faults',
+    description:
+      'Remove injected faults from the app and the dev server (plus `origin` if given). Pass `id` to remove one.',
+    readOnly: false,
+    destructive: true,
+    idempotent: true,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        origin: { type: 'string' },
       },
     },
   }),

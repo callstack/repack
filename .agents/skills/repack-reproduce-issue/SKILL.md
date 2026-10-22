@@ -46,6 +46,9 @@ an integration test or a `pnpm bundle:<platform>` run is faster and deterministi
    `cd android && ./gradlew assembleDebug`, or `pnpm ios` for the simulator.
 4. Make the minimal code/config change in the tester that triggers the bug.
    Keep it as a separate commit so it can be dropped or turned into a test.
+   For failure and recovery bugs (offline, flaky CDN, 5xx, timeouts, a
+   resolver that throws) try `inject-script-fault` / `inject-server-fault`
+   first: they need no app change and work on every tester.
 5. Trigger it. Prefer agent tools over UI driving:
    `load-script`, `prefetch-script`, `invalidate-scripts`, `load-remote`,
    `reload`. When the bug needs UI interaction, drive the device with

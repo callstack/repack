@@ -245,6 +245,9 @@ export const diagnoseSharedPackages = (
 };
 
 const NETWORK_ERROR = /Network request failed|ECONNREFUSED|Failed to fetch/i;
+const JSON_ERROR = /JSON Parse error|Unexpected token|is not valid JSON/i;
+
+const httpStatusOf = (detail?: string) => /HTTP \d{3}/.exec(detail ?? '')?.[0];
 
 const originOf = (url?: string) => /^(https?:\/\/[^/]+)/.exec(url ?? '')?.[1];
 
@@ -265,9 +268,11 @@ export const diagnoseFederationEvents = (
       message: `${event.type} failed for ${target}${event.url ? ` (${event.url})` : ''}: ${event.error ?? 'remote entry failed to load'}`,
       hint: NETWORK_ERROR.test(event.error ?? '')
         ? `The device could not reach ${originOf(event.url) ?? 'the remote'}: check that its dev server is running and the port is reachable from the device (Android: adb reverse). get-dev-server with origin=${originOf(event.url) ?? '<remote origin>'} shows whether it is up.`
-        : event.type === 'afterLoadManifest'
-          ? 'Check that the remote dev server is running and serves this manifest URL for the current platform.'
-          : 'Look up the remote entry URL in the dev server request log and the ScriptManager records for the container.',
+        : JSON_ERROR.test(event.error ?? '') && event.url?.includes('.json')
+          ? `The manifest response${httpStatusOf(event.detail) ? ` (${httpStatusOf(event.detail)})` : ''} was not JSON. MF parses the body without checking the HTTP status, so an error page (4xx/5xx, CDN or proxy HTML) shows up as a parse error. Look up the request with get-dev-server origin=${originOf(event.url) ?? '<remote origin>'} --requests failed, or fetch the URL.`
+          : event.type === 'afterLoadManifest'
+            ? 'Check that the remote dev server is running and serves this manifest URL for the current platform.'
+            : 'Look up the remote entry URL in the dev server request log and the ScriptManager records for the container.',
       ref: `federation-event:${event.seq}`,
     });
   }

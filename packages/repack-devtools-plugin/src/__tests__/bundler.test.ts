@@ -7,6 +7,7 @@ import {
 } from '../bundler/collector';
 import { diagnoseRequests, getRequestPlatform } from '../bundler/diagnostics';
 import {
+  createFaultMiddleware,
   createRequestLogMiddleware,
   createStateMiddleware,
   getDevServerState,
@@ -224,6 +225,108 @@ describe('middlewares', () => {
     );
     expect(unknownPlatform.status).toBe(404);
   });
+
+  const addFault = async (fault: Record<string, unknown>) => {
+    const response = await fetch(`${origin}/repack-devtools/faults`, {
+      method: 'POST',
+      body: JSON.stringify(fault),
+    });
+    return { status: response.status, body: await response.json() };
+  };
+
+  const stack = () => [
+    createStateMiddleware(),
+    createRequestLogMiddleware(),
+    createFaultMiddleware(),
+  ];
+
+  it('answers matching requests with an injected status a limited number of times', async () => {
+    await listen(stack());
+
+    const added = await addFault({
+      match: '/miniapp/',
+      status: 503,
+      times: 1,
+      platform: 'ios',
+    });
+    expect(added.status).toBe(201);
+    expect(added.body).toMatchObject({ id: 'server-fault-1', remaining: 1 });
+
+    const android = await fetch(`${origin}/miniapp/a.bundle?platform=android`);
+    expect(android.status).toBe(200);
+    const faulted = await fetch(`${origin}/miniapp/a.bundle?platform=ios`);
+    expect(faulted.status).toBe(503);
+    expect(await faulted.text()).toContain('Injected fault server-fault-1');
+    const recovered = await fetch(`${origin}/miniapp/a.bundle?platform=ios`);
+    expect(recovered.status).toBe(200);
+
+    const state = getDevServerState();
+    expect(state.requests.map((request) => request.fault)).toEqual([
+      undefined,
+      'server-fault-1',
+      undefined,
+    ]);
+    expect(state.faults[0]).toMatchObject({ hits: 1, remaining: 0 });
+    // used up: no longer reported as active
+    expect(state.diagnostics.map((item) => item.ref)).not.toContain(
+      'server-fault-1'
+    );
+  });
+
+  it('logs dropped connections and reports active faults', async () => {
+    await listen(stack());
+    await addFault({ match: '/\\.bundle$/', drop: true });
+
+    await expect(fetch(`${origin}/index.bundle`)).rejects.toThrow();
+    // tooling routes are never faulted
+    const state = await fetch(`${origin}/repack-devtools/state`);
+    expect(state.status).toBe(200);
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    const { requests, diagnostics } = getDevServerState();
+    expect(requests).toEqual([
+      expect.objectContaining({
+        url: '/index.bundle',
+        status: 0,
+        fault: 'server-fault-1',
+      }),
+    ]);
+    expect(diagnostics.map((item) => item.area)).toEqual(['faults', 'faults']);
+    expect(diagnostics[1].message).toContain('connection dropped');
+  });
+
+  it('delays requests and serves them normally', async () => {
+    await listen(stack());
+    await addFault({ match: 'slow', delayMs: 40 });
+    const startedAt = Date.now();
+    const response = await fetch(`${origin}/slow.bundle`);
+    expect(response.status).toBe(200);
+    expect(Date.now() - startedAt).toBeGreaterThanOrEqual(35);
+  });
+
+  it('validates, lists and removes faults', async () => {
+    await listen(stack());
+    expect(await addFault({ status: 500 })).toMatchObject({ status: 400 });
+    expect(await addFault({ match: 'x' })).toMatchObject({ status: 400 });
+    expect(await addFault({ match: 'x', status: 42 })).toMatchObject({
+      status: 400,
+    });
+    await addFault({ match: 'a', status: 500 });
+    await addFault({ match: 'b', status: 500 });
+
+    const list = await (await fetch(`${origin}/repack-devtools/faults`)).json();
+    expect(list).toHaveLength(2);
+
+    const removeOne = await fetch(
+      `${origin}/repack-devtools/faults?id=${list[0].id}`,
+      { method: 'DELETE' }
+    );
+    expect(await removeOne.json()).toEqual({ removed: 1 });
+    const removeAll = await fetch(`${origin}/repack-devtools/faults`, {
+      method: 'DELETE',
+    });
+    expect(await removeAll.json()).toEqual({ removed: 1 });
+  });
 });
 
 describe('withRepackDevTools', () => {
@@ -246,9 +349,9 @@ describe('withRepackDevTools', () => {
     expect(start.plugins?.[0]).toBeInstanceOf(RepackDevToolsCollectorPlugin);
     const setup = start.devServer?.setupMiddlewares;
     const once = setup?.(['builtin'], {}) ?? [];
-    expect(once).toHaveLength(4);
-    expect(once.slice(2)).toEqual(['builtin', 'user']);
-    expect(setup?.(once, {})).toHaveLength(5);
+    expect(once).toHaveLength(5);
+    expect(once.slice(3)).toEqual(['builtin', 'user']);
+    expect(setup?.(once, {})).toHaveLength(6);
     expect(getDevServerStore().port).toBe(8091);
   });
 

@@ -1,3 +1,4 @@
+import { isFailedRequest, NO_RESPONSE_STATUS } from '../shared/requests.js';
 import type {
   DevServerRequest,
   Diagnostic,
@@ -65,7 +66,7 @@ export const diagnoseRequests = (
 ): Diagnostic[] => {
   const groups = new Map<string, DevServerRequest[]>();
   for (const request of requests) {
-    if (request.status < 400) continue;
+    if (!isFailedRequest(request)) continue;
     const key = `${request.method} ${pathname(request.url)} ${request.status}`;
     const group = groups.get(key) ?? [];
     group.push(request);
@@ -80,6 +81,17 @@ export const diagnoseRequests = (
     const times = group.length > 1 ? ` (${group.length}x)` : '';
     const body = firstLine(latest.responseBody);
     const ref = `request:${latest.seq}`;
+
+    if (latest.fault) {
+      diagnostics.push({
+        severity: 'info',
+        area: 'faults',
+        message: `${latest.status === NO_RESPONSE_STATUS ? `${latest.method} ${pathname(latest.url)} (connection dropped)` : key}${times}: produced by injected fault ${latest.fault}.`,
+        hint: 'Check how the app handled it (list-script-calls, list-errors), not why the server failed.',
+        ref,
+      });
+      continue;
+    }
 
     if (
       latest.status === 404 &&
@@ -104,6 +116,17 @@ export const diagnoseRequests = (
             ? `Emitted ${platform} assets with a similar name: ${similar.join(', ')}. Compare the resolver URL with output.filename/chunkFilename and the extraChunks config.`
             : `No ${platform} asset with a similar name was emitted; the chunk may belong to another compilation (MF remote dev server) or was never built.`
           : `No compilation for platform "${platform ?? 'unknown'}" has run on this server.`,
+        ref,
+      });
+      continue;
+    }
+
+    if (latest.status === NO_RESPONSE_STATUS) {
+      diagnostics.push({
+        severity: 'error',
+        area: 'dev-server',
+        message: `${latest.method} ${pathname(latest.url)}${times}: the connection closed before the dev server sent a response.`,
+        hint: 'The client gave up (timeout) or the server crashed mid-request; check the dev server output.',
         ref,
       });
       continue;
