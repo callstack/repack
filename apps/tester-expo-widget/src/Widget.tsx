@@ -64,10 +64,11 @@ export default function Widget({
 }: {
   recoveryAttempt?: number;
 }) {
-  const resolvedImage = useMemo(
-    () => Image.resolveAssetSource(widgetDensityImage),
-    []
-  );
+  const resolvedImage = useMemo(() => {
+    const source = Image.resolveAssetSource(widgetDensityImage);
+    if (!source) throw new Error('The widget density image is not registered');
+    return source;
+  }, []);
   const imageSource = useMemo(() => {
     const separator = resolvedImage.uri.includes('?') ? '&' : '?';
     return {

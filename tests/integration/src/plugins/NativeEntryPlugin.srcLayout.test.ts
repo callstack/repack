@@ -11,6 +11,7 @@ const _dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURE = path.join(_dirname, '__fixtures__', 'react-native-src-layout');
 const ASSET_REGISTRY_ALIAS_KEY = 'react-native/Libraries/Image/AssetRegistry$';
 const SRC_PRIVATE_ALIAS_KEY = 'react-native/src/private';
+const SETUP_ENV_ALIAS_KEY = 'react-native/setup-env$';
 
 let projectRoot: string | undefined;
 
@@ -113,6 +114,11 @@ describe('NativeEntryPlugin - React Native 0.87 src layout', () => {
     expect(aliasKeys.indexOf(ASSET_REGISTRY_ALIAS_KEY)).toBeLessThan(
       aliasKeys.indexOf('react-native')
     );
+    // Libraries that still import the standalone registry package share the
+    // same registry instance.
+    expect(alias['@react-native/assets-registry/registry$']).toBe(
+      path.join(FIXTURE, 'src', 'asset-registry')
+    );
 
     // Run manually: the harness configures no JS loaders, so repack's own runtime
     // entries (InitializeScriptManager/ScriptManager) emit unrelated ESM parse
@@ -173,5 +179,68 @@ describe('NativeEntryPlugin - React Native 0.87 src layout', () => {
       )
     ).toEqual([]);
     expect(code).toContain('__SRC_LAYOUT_FEATURE_FLAGS__');
+  });
+
+  it('resolves subpath exports with package exports disabled and react-native aliased to its directory', async () => {
+    projectRoot = makeProjectRoot();
+    // Mirrors Expo SDK 58: `expo` imports `react-native/setup-env`, an entry point
+    // React Native only declares in its exports map, while
+    // `@callstack/repack-expo` aliases `react-native` to its directory.
+    const virtualPlugin = await createVirtualModulePlugin({
+      './index.js':
+        "require('react-native/setup-env');" +
+        'globalThis.__APP_ENTRY__ = true;',
+    });
+
+    const compiler = await createCompiler({
+      context: projectRoot,
+      mode: 'development',
+      devtool: false,
+      entry: './index.js',
+      resolve: {
+        alias: { 'react-native': FIXTURE },
+      },
+      output: { path: '/out' },
+      plugins: [new plugins.NativeEntryPlugin({}), virtualPlugin],
+    });
+
+    const alias = compiler.options.resolve.alias;
+    if (!alias || Array.isArray(alias)) {
+      throw new Error('expected resolve.alias to be an object');
+    }
+    const aliasKeys = Object.keys(alias);
+    expect(alias[SETUP_ENV_ALIAS_KEY]).toBe(
+      path.join(FIXTURE, 'src', 'setup-env.js')
+    );
+    expect(aliasKeys.indexOf(SETUP_ENV_ALIAS_KEY)).toBeLessThan(
+      aliasKeys.indexOf('react-native')
+    );
+
+    const { errorMessages, code } = await compileCollectingErrors(compiler);
+    expect(errorMessages.filter((m) => /setup-env/i.test(m))).toEqual([]);
+    expect(code).toContain('__SRC_LAYOUT_SETUP_ENV__');
+  });
+
+  it('keeps a user alias for a React Native subpath export', async () => {
+    projectRoot = makeProjectRoot();
+    const shim = path.join(projectRoot, 'setup-env-shim.js');
+    const compiler = await createCompiler({
+      context: projectRoot,
+      mode: 'development',
+      devtool: false,
+      entry: './index.js',
+      resolve: {
+        alias: { 'react-native': FIXTURE, 'react-native/setup-env': shim },
+      },
+      output: { path: '/out' },
+      plugins: [new plugins.NativeEntryPlugin({})],
+    });
+
+    const alias = compiler.options.resolve.alias;
+    if (!alias || Array.isArray(alias)) {
+      throw new Error('expected resolve.alias to be an object');
+    }
+    expect(alias[SETUP_ENV_ALIAS_KEY]).toBeUndefined();
+    expect(alias['react-native/setup-env']).toBe(shim);
   });
 });
