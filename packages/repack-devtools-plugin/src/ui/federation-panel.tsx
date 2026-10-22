@@ -1,7 +1,6 @@
 import {
   Badge,
   Button,
-  DataTable,
   type DataTableColumn,
   Input,
   PluginShell,
@@ -13,13 +12,15 @@ import type {
   FederationSharedPackage,
 } from '../shared/types';
 import {
+  Clip,
   Detail,
   Diagnostics,
   formatTime,
   Header,
-  Mono,
   Notice,
+  NoWrap,
   Section,
+  Table,
 } from './components';
 import { useAppData } from './useDevToolsData';
 import '@rozenite/ui/styles.css';
@@ -33,14 +34,14 @@ const remoteColumns: DataTableColumn<RemoteRow>[] = [
     id: 'name',
     header: 'Remote',
     accessorFn: (row) => row.alias ?? row.name,
-    cell: ({ row }) => <Mono>{row.original.alias ?? row.original.name}</Mono>,
+    cell: ({ row }) => <Clip>{row.original.alias ?? row.original.name}</Clip>,
   },
   {
     id: 'entry',
     header: 'Entry',
     accessorFn: (row) => row.entry ?? row.version ?? '',
     cell: ({ row }) => (
-      <Mono>{row.original.entry ?? row.original.version}</Mono>
+      <Clip width="xl">{row.original.entry ?? row.original.version}</Clip>
     ),
   },
   {
@@ -66,11 +67,11 @@ const sharedColumns: DataTableColumn<SharedRow>[] = [
     id: 'name',
     header: 'Package',
     accessorFn: (row) => row.name,
-    cell: ({ row }) => <Mono>{row.original.name}</Mono>,
+    cell: ({ row }) => <Clip width="lg">{row.original.name}</Clip>,
   },
   {
     id: 'versions',
-    header: 'Versions (provider)',
+    header: 'Versions',
     accessorFn: (row) =>
       row.versions
         .map(
@@ -78,6 +79,11 @@ const sharedColumns: DataTableColumn<SharedRow>[] = [
             `${version.version}${version.from ? ` (${version.from})` : ''}${version.loaded ? ' ✓' : ''}`
         )
         .join(', '),
+    cell: ({ getValue }) => (
+      <Clip width="md" mono={false}>
+        {String(getValue())}
+      </Clip>
+    ),
   },
   {
     id: 'requiredVersion',
@@ -87,6 +93,11 @@ const sharedColumns: DataTableColumn<SharedRow>[] = [
         .map((version) => version.requiredVersion)
         .filter(Boolean)
         .join(', '),
+    cell: ({ getValue }) => (
+      <Clip width="sm" mono={false}>
+        {String(getValue())}
+      </Clip>
+    ),
   },
   {
     id: 'singleton',
@@ -101,14 +112,16 @@ const eventColumns: DataTableColumn<FederationEvent>[] = [
     id: 'at',
     header: 'Time',
     accessorFn: (row) => row.at,
-    cell: ({ row }) => formatTime(row.original.at),
+    cell: ({ row }) => <NoWrap>{formatTime(row.original.at)}</NoWrap>,
   },
   {
     id: 'type',
     header: 'Hook',
     accessorFn: (row) => row.type,
     cell: ({ row }) => (
-      <span className={row.original.error ? 'text-danger' : undefined}>
+      <span
+        className={`whitespace-nowrap ${row.original.error ? 'text-danger' : ''}`}
+      >
         {row.original.type}
       </span>
     ),
@@ -117,18 +130,29 @@ const eventColumns: DataTableColumn<FederationEvent>[] = [
     id: 'id',
     header: 'Request',
     accessorFn: (row) => row.id ?? '',
-    cell: ({ row }) => <Mono>{row.original.id}</Mono>,
+    cell: ({ row }) => <Clip width="md">{row.original.id}</Clip>,
   },
   {
     id: 'url',
     header: 'URL / version',
     accessorFn: (row) => row.url ?? row.version ?? '',
-    cell: ({ row }) => <Mono>{row.original.url ?? row.original.version}</Mono>,
+    cell: ({ row }) => (
+      <Clip width="md">{row.original.url ?? row.original.version}</Clip>
+    ),
   },
   {
     id: 'error',
-    header: 'Error',
+    header: 'Error / detail',
     accessorFn: (row) => row.error ?? row.detail ?? '',
+    cell: ({ row }) => (
+      <Clip
+        width="md"
+        mono={false}
+        className={row.original.error ? 'text-danger' : ''}
+      >
+        {row.original.error ?? row.original.detail}
+      </Clip>
+    ),
   },
 ];
 
@@ -210,23 +234,27 @@ export default function FederationPanel() {
           <Notice>No Module Federation runtime detected in this app.</Notice>
         ) : null}
         <Diagnostics items={federation?.diagnostics ?? []} />
-        <Section title="Load a remote module">
-          <div className="flex flex-wrap items-center gap-2">
-            <Input
-              size="sm"
-              placeholder="Remote/Module, e.g. MiniApp/MiniAppNavigator"
-              value={requestId}
-              onChange={(event) => setRequestId(event.target.value)}
-            />
-            <Button
-              size="sm"
-              disabled={!rpc || !requestId.includes('/')}
-              onClick={loadRemote}
-            >
-              Load
-            </Button>
-          </div>
-        </Section>
+        {federation?.runtime === 'none' ? null : (
+          <Section title="Load a remote module">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="w-80 max-w-full">
+                <Input
+                  size="sm"
+                  placeholder="Remote/Module, e.g. MiniApp/MiniAppNavigator"
+                  value={requestId}
+                  onChange={(event) => setRequestId(event.target.value)}
+                />
+              </div>
+              <Button
+                size="sm"
+                disabled={!rpc || !requestId.includes('/')}
+                onClick={loadRemote}
+              >
+                Load
+              </Button>
+            </div>
+          </Section>
+        )}
         {result ? (
           <Detail
             title="Result"
@@ -235,7 +263,7 @@ export default function FederationPanel() {
           />
         ) : null}
         <Section title={`Remotes (${remotes.length})`}>
-          <DataTable
+          <Table
             ariaLabel="Remotes"
             columns={remoteColumns}
             data={remotes}
@@ -245,7 +273,7 @@ export default function FederationPanel() {
           />
         </Section>
         <Section title={`Shared (${shared.length})`}>
-          <DataTable
+          <Table
             ariaLabel="Shared packages"
             columns={sharedColumns}
             data={shared}
@@ -261,19 +289,23 @@ export default function FederationPanel() {
             onClose={() => setSelected(null)}
           />
         ) : null}
-        <Section title="Runtime events">
-          <DataTable
-            ariaLabel="Federation events"
-            columns={eventColumns}
-            data={[...(snapshot?.federationEvents ?? [])].reverse()}
-            getRowId={(row) => String(row.seq)}
-            onRowClick={setSelected}
-            emptyMessage={
-              federation?.runtimePluginInstalled
-                ? 'No federation events yet.'
-                : 'Events need the repack-devtools MF runtime plugin.'
-            }
-          />
+        <Section
+          title={`Runtime events (${snapshot?.federationEvents.length ?? 0})`}
+        >
+          <div className="max-h-[60vh] overflow-y-auto">
+            <Table
+              ariaLabel="Federation events"
+              columns={eventColumns}
+              data={[...(snapshot?.federationEvents ?? [])].reverse()}
+              getRowId={(row) => String(row.seq)}
+              onRowClick={setSelected}
+              emptyMessage={
+                federation?.runtimePluginInstalled
+                  ? 'No federation events yet.'
+                  : 'Events need the repack-devtools MF runtime plugin.'
+              }
+            />
+          </div>
         </Section>
       </PluginShell.Body>
     </PluginShell>

@@ -1,6 +1,5 @@
 import {
   Button,
-  DataTable,
   type DataTableColumn,
   PluginShell,
   Textarea,
@@ -8,12 +7,16 @@ import {
 import { useState } from 'react';
 import type { RecordedError, SymbolicationResult } from '../shared/types';
 import {
+  Clip,
   Diagnostics,
   formatTime,
   Header,
   Mono,
   Notice,
+  NoWrap,
+  Reveal,
   Section,
+  Table,
 } from './components';
 import { useAppData } from './useDevToolsData';
 import '@rozenite/ui/styles.css';
@@ -23,19 +26,24 @@ const errorColumns: DataTableColumn<RecordedError>[] = [
     id: 'at',
     header: 'Time',
     accessorFn: (row) => row.at,
-    cell: ({ row }) => formatTime(row.original.at),
+    cell: ({ row }) => <NoWrap>{formatTime(row.original.at)}</NoWrap>,
   },
   {
     id: 'source',
     header: 'Source',
     accessorFn: (row) => `${row.source}${row.isFatal ? ' (fatal)' : ''}`,
+    cell: ({ getValue }) => <NoWrap>{String(getValue())}</NoWrap>,
   },
   {
     id: 'message',
     header: 'Message',
     accessorFn: (row) => row.message,
+    // long MF messages embed JSON and URLs; keep rows to a few lines
     cell: ({ row }) => (
-      <span>
+      <span
+        className="line-clamp-3 [overflow-wrap:anywhere]"
+        title={row.original.message}
+      >
         {row.original.name ? `${row.original.name}: ` : ''}
         {row.original.message}
       </span>
@@ -45,7 +53,7 @@ const errorColumns: DataTableColumn<RecordedError>[] = [
     id: 'ref',
     header: 'Ref',
     accessorFn: (row) => row.ref ?? '',
-    cell: ({ row }) => <Mono>{row.original.ref}</Mono>,
+    cell: ({ row }) => <Clip>{row.original.ref}</Clip>,
   },
 ];
 
@@ -66,11 +74,11 @@ const Symbolication = ({ result }: { result: SymbolicationResult }) => (
     </div>
     <Diagnostics items={result.diagnostics} />
     {result.codeFrame ? (
-      <pre className="overflow-auto rounded border border-border p-2 text-[11px]">
+      <pre className="max-h-64 overflow-auto rounded border border-border p-2 text-[11px]">
         {result.codeFrame.content}
       </pre>
     ) : null}
-    <div className="flex flex-col gap-1 font-mono text-[11px]">
+    <div className="flex flex-col gap-1 font-mono text-[11px] [overflow-wrap:anywhere]">
       {result.frames.map((frame, index) => (
         <div
           // biome-ignore lint/suspicious/noArrayIndexKey: stack frames are an immutable, ordered snapshot; position is their identity
@@ -136,7 +144,7 @@ export default function ErrorsPanel() {
         {!connected ? <Notice>Waiting for the app to connect…</Notice> : null}
         {error ? <Notice>{error}</Notice> : null}
         <Section title={`Errors (${snapshot?.errors.length ?? 0})`}>
-          <DataTable
+          <Table
             ariaLabel="Errors"
             columns={errorColumns}
             data={[...(snapshot?.errors ?? [])].reverse()}
@@ -171,7 +179,7 @@ export default function ErrorsPanel() {
               </>
             }
           >
-            <pre className="overflow-auto text-[11px] whitespace-pre-wrap">
+            <pre className="max-h-80 overflow-auto text-[11px] whitespace-pre-wrap [overflow-wrap:anywhere]">
               {selected.stack ?? selected.message}
             </pre>
           </Section>
@@ -197,9 +205,12 @@ export default function ErrorsPanel() {
           />
         </Section>
         {result ? (
-          <Section title="Symbolication result">
-            <Symbolication result={result} />
-          </Section>
+          // keyed so a new result scrolls into view again
+          <Reveal key={result.frames.length + (result.status ?? 0)}>
+            <Section title="Symbolication result">
+              <Symbolication result={result} />
+            </Section>
+          </Reveal>
         ) : null}
       </PluginShell.Body>
     </PluginShell>
