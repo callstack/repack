@@ -1,0 +1,68 @@
+import type {
+  ErrorRow,
+  FederationEventRow,
+  ScriptEventRow,
+  ScriptRow,
+} from '../shared/agent-tools';
+import type {
+  FederationEvent,
+  RecordedError,
+  ScriptEvent,
+  ScriptRecord,
+} from '../shared/types';
+
+export const toScriptRow = (record: ScriptRecord): ScriptRow => ({
+  uniqueId: record.uniqueId,
+  scriptId: record.scriptId,
+  caller: record.caller ?? '',
+  status: record.status,
+  source:
+    record.locator?.fetch === undefined
+      ? ''
+      : record.locator.fetch
+        ? 'download'
+        : 'cache',
+  url: record.locator?.url ?? '',
+  loadCount: record.loadCount,
+  resolveMs: record.resolveMs ?? null,
+  loadMs: record.loadMs ?? null,
+  error: record.error
+    ? [record.error.stage, record.error.code, record.error.nativeMessage]
+        .filter(Boolean)
+        .join(': ')
+    : '',
+});
+
+export const toScriptEventRow = (event: ScriptEvent): ScriptEventRow => ({
+  seq: event.seq,
+  at: event.at,
+  type: event.type,
+  uniqueId: event.uniqueId ?? '',
+  url: event.url ?? '',
+  detail: event.detail ?? '',
+});
+
+export const toFederationEventRow = (
+  event: FederationEvent
+): FederationEventRow => ({
+  seq: event.seq,
+  at: event.at,
+  type: event.type,
+  instance: event.instance ?? '',
+  id: event.id ?? '',
+  remote: event.remote ?? '',
+  url: event.url ?? '',
+  version: event.version ?? '',
+  error: event.error ?? '',
+  detail: event.detail ?? '',
+});
+
+export const toErrorRow = (error: RecordedError): ErrorRow => ({
+  id: error.id,
+  at: error.at,
+  source: error.source,
+  name: error.name ?? '',
+  message: error.message,
+  isFatal: Boolean(error.isFatal),
+  ref: error.ref ?? '',
+});

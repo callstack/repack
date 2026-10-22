@@ -23,6 +23,8 @@ All development is done directly on GitHub, and all work is public.
 
 To get extra [Rozenite](https://www.rozenite.dev) panels (network activity, plus navigation and storage in the Module Federation hosts) in React Native DevTools while testing, start a tester app's dev server with `WITH_ROZENITE=true`, e.g. `WITH_ROZENITE=true pnpm start`.
 
+This also enables the workspace-only Re.Pack DevTools plugin (`packages/repack-devtools-plugin`): panels for ScriptManager, Module Federation, the dev server and symbolication, the same data as `rozenite agent callstack/repack-devtools` tools, and `GET /repack-devtools/state` on every dev server. The `repack-debug-runtime` and `repack-reproduce-issue` skills in `.agents/skills` describe how to use them.
+
 ### Commit message convention
 
 We follow the [conventional commits specification](https://www.conventionalcommits.org/en) for our commit messages:

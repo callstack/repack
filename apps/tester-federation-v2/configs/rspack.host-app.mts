@@ -1,8 +1,11 @@
+import { createRequire } from 'node:module';
 import * as Repack from '@callstack/repack';
 import rspack from '@rspack/core';
 import reactPkg from 'react/package.json' with { type: 'json' };
 import reactNativePkg from 'react-native/package.json' with { type: 'json' };
 import pkg from '../package.json' with { type: 'json' };
+
+const require = createRequire(import.meta.url);
 
 export default Repack.defineRspackConfig((env) => {
   const { mode, context, platform } = env;
@@ -47,6 +50,16 @@ export default Repack.defineRspackConfig((env) => {
       }),
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'HostApp',
+        // Records MF lifecycle events from container start-up; without it the
+        // devtools register their runtime plugin from the app entry instead.
+        runtimePlugins:
+          mode === 'development' && process.env.WITH_ROZENITE === 'true'
+            ? [
+                require.resolve(
+                  '@callstack/repack-devtools-plugin/mf-runtime-plugin'
+                ),
+              ]
+            : [],
         filename: 'HostApp.container.js.bundle',
         remotes: {
           MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
