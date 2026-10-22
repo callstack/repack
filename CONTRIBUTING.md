@@ -6,7 +6,7 @@ We want this community to be friendly and respectful to each other. Please read 
 
 ## Requirements
 
-- Node 20+ (although Node 18 is still supported but has now reached EOL)
+- Node 24 (the exact version is pinned in `mise.toml`)
 - pnpm 8 (use it via `corepack install`)
 
 ## Our Development Process
