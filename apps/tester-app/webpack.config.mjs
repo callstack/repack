@@ -2,11 +2,12 @@ import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
+import { withRozenite } from '@rozenite/repack';
 import TerserPlugin from 'terser-webpack-plugin';
 
 const dirname = Repack.getDirname(import.meta.url);
 
-export default Repack.defineWebpackConfig((env) => {
+const config = Repack.defineWebpackConfig((env) => {
   const {
     mode = 'development',
     context = dirname,
@@ -132,4 +133,8 @@ export default Repack.defineWebpackConfig((env) => {
       new NativeWindPlugin(),
     ],
   };
+});
+
+export default withRozenite(config, {
+  enabled: process.env.WITH_ROZENITE === 'true',
 });

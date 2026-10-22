@@ -1,3 +1,4 @@
+import { useNetworkActivityDevTools } from '@rozenite/network-activity-plugin';
 import { Appearance } from 'react-native';
 
 // nativewind styles
@@ -16,6 +17,8 @@ import { SectionContainer } from './ui/SectionContainer';
 Appearance.setColorScheme('light');
 
 const App = () => {
+  useNetworkActivityDevTools();
+
   return (
     <AppContainer>
       <SectionContainer>
