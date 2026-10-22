@@ -49,6 +49,7 @@
     "@react-native/community-cli-plugin": "catalog:testers",
     "@react-native/metro-config": "catalog:testers",
     "@react-native/typescript-config": "catalog:testers",
+    "@callstack/repack-devtools-plugin": "workspace:*",
     "@rozenite/network-activity-plugin": "catalog:testers",
     "@rozenite/react-navigation-plugin": "catalog:testers",
     "@rozenite/repack": "catalog:testers",
@@ -66,6 +67,7 @@
     "postcss-loader": "^8.1.1",
     "react-native-test-app": "catalog:testers",
     "tailwindcss": "^3.4.17",
+    "rozenite": "catalog:testers",
     "terser-webpack-plugin": "catalog:",
     "typescript": "catalog:",
     "webpack": "catalog:"

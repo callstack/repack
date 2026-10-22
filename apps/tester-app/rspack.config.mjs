@@ -139,7 +139,17 @@ const config = Repack.defineRspackConfig((env) => {
   };
 });
 
-// Rozenite is only loaded with WITH_ROZENITE=true (see CONTRIBUTING.md).
-export default withDevTools
-  ? (await import('@rozenite/repack')).withRozenite(config, { enabled: true })
-  : config;
+// Rozenite and the Re.Pack DevTools plugin are only loaded with
+// WITH_ROZENITE=true (see CONTRIBUTING.md).
+let exportedConfig = config;
+if (withDevTools) {
+  const { withRozenite } = await import('@rozenite/repack');
+  const { withRepackDevTools } = await import(
+    '@callstack/repack-devtools-plugin/bundler'
+  );
+  exportedConfig = withRozenite(withRepackDevTools(config, { enabled: true }), {
+    enabled: true,
+  });
+}
+
+export default exportedConfig;

@@ -1,3 +1,7 @@
+import {
+  installRepackDevTools,
+  useRepackDevTools,
+} from '@callstack/repack-devtools-plugin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { NavigationContainerRefWithCurrent } from '@react-navigation/native';
 import {
@@ -16,12 +20,14 @@ const storages = [
 ];
 
 export function startDevTools() {
+  installRepackDevTools({ boot: true });
   withOnBootNetworkActivityRecording();
 }
 
 export function useDevTools(
   navigationRef: NavigationContainerRefWithCurrent<ReactNavigation.RootParamList>
 ) {
+  useRepackDevTools();
   useNetworkActivityDevTools();
   useReactNavigationDevTools({ ref: navigationRef });
   useRozeniteStoragePlugin({ storages });
