@@ -163,8 +163,9 @@ describe('middlewares', () => {
           }
           if (req.url?.startsWith('/missing')) {
             res.statusCode = 404;
+            // Body split across write() and end() to check both are captured.
             res.write('Cannot GET ');
-            res.end(req.url);
+            res.end('missing chunk');
             return;
           }
           res.end('ok');
@@ -203,7 +204,7 @@ describe('middlewares', () => {
     expect(all.requests[1]).toMatchObject({
       status: 404,
       platform: 'ios',
-      responseBody: 'Cannot GET /missing/chunk.bundle?platform=ios',
+      responseBody: 'Cannot GET missing chunk',
     });
     expect(all.requests[0].responseBody).toBeUndefined();
 
