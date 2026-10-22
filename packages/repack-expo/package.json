@@ -1,6 +1,6 @@
 {
   "name": "@callstack/repack-expo",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "First-class Expo integration for Re.Pack and Rspack",
   "author": "Callstack",
   "license": "MIT",
@@ -9,7 +9,6 @@
     "type": "git",
     "url": "https://github.com/callstack/repack.git"
   },
-  "private": true,
   "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -41,6 +40,10 @@
     "expo",
     "config-plugin"
   ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "engineStrict": true,
   "engines": {
     "node": ">=20.19"
