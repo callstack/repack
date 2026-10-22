@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import * as Repack from '@callstack/repack';
 import { ExpoPlugin } from '@callstack/repack-expo/rspack';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
+import { withRozenite } from '@rozenite/repack';
 
 const require = createRequire(import.meta.url);
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
@@ -18,7 +19,7 @@ const SHARED_SINGLETONS = [
   'expo-font',
 ];
 
-export default (env) => {
+const config = (env) => {
   const {
     mode = 'development',
     platform = process.env.PLATFORM,
@@ -64,3 +65,10 @@ export default (env) => {
     ],
   };
 };
+
+export default withRozenite(config, {
+  enabled: process.env.WITH_ROZENITE === 'true',
+  // Re.Pack serves DevTools through React Native's dev-middleware, not the copy
+  // bundled with Expo's CLI, so Rozenite has to patch that one.
+  projectType: 'react-native-cli',
+});
