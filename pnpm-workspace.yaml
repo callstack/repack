@@ -88,3 +88,7 @@ catalogs:
     "react-native-safe-area-context": "5.10.1"
     "react-native-screens": "4.30.0"
     "react-native-worklets": "0.13.0"
+    "@rozenite/network-activity-plugin": "2.5.0"
+    "@rozenite/react-navigation-plugin": "2.5.0"
+    "@rozenite/repack": "2.5.0"
+    "@rozenite/storage-plugin": "2.5.0"
