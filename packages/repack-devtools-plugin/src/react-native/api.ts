@@ -1,5 +1,6 @@
 import { Federated, ScriptManager } from '@callstack/repack/client';
 import { DevSettings } from 'react-native';
+import type { FaultList, InjectServerFaultArgs } from '../shared/agent-tools';
 import { DEV_SERVER_ROUTE } from '../shared/constants';
 import {
   callMethod,
@@ -8,8 +9,10 @@ import {
   isRecord,
   readArray,
   readGlobal,
+  readNumber,
   readString,
 } from '../shared/guards';
+import { isFailedRequest } from '../shared/requests';
 import type {
   DevServerState,
   DevServerSummary,
@@ -17,17 +20,29 @@ import type {
   FederationState,
   Overview,
   RecordedError,
+  ScriptCall,
+  ScriptCallMethod,
   ScriptEvent,
+  ScriptFault,
   ScriptRecord,
   ScriptStatus,
+  ServerFault,
   SymbolicationResult,
 } from '../shared/types';
+import { diagnoseScriptCalls } from './callTracer';
 import {
   getAppInfo,
   getDevServerOrigin,
   getFederationGlobals,
 } from './environment';
+import {
+  clearScriptFaults,
+  injectScriptFault,
+  listScriptFaults,
+  type ScriptFaultInput,
+} from './faults';
 import { readFederationState } from './federation/state';
+import { inspectScriptManager } from './scriptManagerInspector';
 import { type ClearScope, clearStore, describeError, getStore } from './store';
 import { symbolicateStack } from './symbolication';
 
@@ -81,6 +96,139 @@ export const listScriptEvents = (
       (filter.since === undefined || event.at >= filter.since) &&
       (!filter.uniqueId || event.uniqueId === filter.uniqueId)
   );
+
+export const listScriptCalls = (
+  filter: {
+    uniqueId?: string;
+    method?: ScriptCallMethod;
+    errorsOnly?: boolean;
+  } = {}
+): ScriptCall[] =>
+  getStore().scriptCalls.filter(
+    (call) =>
+      (!filter.uniqueId ||
+        call.uniqueId === filter.uniqueId ||
+        call.scriptId === filter.uniqueId ||
+        call.scriptIds?.includes(filter.uniqueId)) &&
+      (!filter.method || call.method === filter.method) &&
+      (!filter.errorsOnly || call.outcome === 'error')
+  );
+
+export const getScriptManagerState = () =>
+  inspectScriptManager(ScriptManager.shared);
+
+const describeScriptFault = (fault: ScriptFault) =>
+  [
+    fault.action,
+    fault.code,
+    fault.delayMs ? `delay ${fault.delayMs}ms` : undefined,
+    fault.remaining !== undefined ? `${fault.remaining} left` : undefined,
+  ]
+    .filter(Boolean)
+    .join(', ');
+
+const diagnoseScriptFaults = (faults: ScriptFault[]): Diagnostic[] =>
+  faults
+    .filter((fault) => fault.remaining === undefined || fault.remaining > 0)
+    .map((fault) => ({
+      severity: 'info',
+      area: 'faults',
+      message: `Injected ${fault.stage} fault ${fault.id} is active for ${fault.scriptId ? `"${fault.scriptId}"` : 'every script'} (${describeScriptFault(fault)}, ${fault.hits} hit(s)). Failures it causes are not real bugs.`,
+      hint: 'Remove it with clear-faults.',
+      ref: fault.id,
+    }));
+
+export const injectAppFault = (input: ScriptFaultInput) =>
+  injectScriptFault(ScriptManager.shared, input);
+
+const requireOrigin = (origin = getDevServerOrigin()) => {
+  if (!origin) throw new Error('Dev server origin is unknown.');
+  return origin;
+};
+
+const readErrorBody = async (response: Response) => {
+  const body: unknown = await response.json().catch(() => undefined);
+  return readString(body, 'error') ?? `HTTP ${response.status}`;
+};
+
+const isServerFault = (value: unknown): value is ServerFault =>
+  readString(value, 'id') !== undefined &&
+  readString(value, 'match') !== undefined &&
+  readNumber(value, 'hits') !== undefined;
+
+const faultsUrl = (origin: string) => `${origin}${DEV_SERVER_ROUTE}/faults`;
+
+export const injectServerFault = async ({
+  origin,
+  ...fault
+}: InjectServerFaultArgs): Promise<ServerFault> => {
+  const url = faultsUrl(requireOrigin(origin));
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(fault),
+  });
+  if (!response.ok) {
+    throw new Error(`${url}: ${await readErrorBody(response)}`);
+  }
+  const body: unknown = await response.json();
+  if (!isServerFault(body)) {
+    throw new Error(`${url} returned an unexpected payload.`);
+  }
+  return body;
+};
+
+/** The app's dev server plus `origin`, without duplicates. */
+const faultOrigins = (origin?: string) =>
+  Array.from(
+    new Set([getDevServerOrigin(), origin].filter((item) => item !== undefined))
+  );
+
+export const listFaults = async (origin?: string): Promise<FaultList> => ({
+  app: listScriptFaults(),
+  servers: await Promise.all(
+    faultOrigins(origin).map(async (item) => {
+      try {
+        const response = await fetch(faultsUrl(item));
+        if (!response.ok) {
+          return {
+            origin: item,
+            faults: [],
+            error: await readErrorBody(response),
+          };
+        }
+        const body: unknown = await response.json();
+        return {
+          origin: item,
+          faults: Array.isArray(body) ? body.filter(isServerFault) : [],
+        };
+      } catch (error) {
+        return {
+          origin: item,
+          faults: [],
+          error: describeError(error).message,
+        };
+      }
+    })
+  ),
+});
+
+export const clearFaults = async (id?: string, origin?: string) => {
+  let removed = clearScriptFaults(id);
+  const query = id ? `?id=${encodeURIComponent(id)}` : '';
+  for (const item of faultOrigins(origin)) {
+    try {
+      const response = await fetch(`${faultsUrl(item)}${query}`, {
+        method: 'DELETE',
+      });
+      const body: unknown = await response.json();
+      removed += readNumber(body, 'removed') ?? 0;
+    } catch {
+      // an unreachable server has no faults to clear
+    }
+  }
+  return { removed };
+};
 
 export const listErrors = (
   filter: { source?: RecordedError['source'] } = {}
@@ -174,9 +322,7 @@ const summarizeDevServer = async (
           errors: compilation.errorCount,
           warnings: compilation.warningCount,
         })),
-        failedRequests: state.requests.filter(
-          (request) => request.status >= 400
-        ).length,
+        failedRequests: state.requests.filter(isFailedRequest).length,
       },
       diagnostics: state.diagnostics,
     };
@@ -203,13 +349,18 @@ export const getOverview = async (
   const app = getAppInfo();
   const scripts = Array.from(store.scripts.values());
   const federation = getFederation();
-  const devServer =
+  const [devServer, scriptManager] = await Promise.all([
     options.devServer === false
-      ? { diagnostics: [] }
-      : await summarizeDevServer(app.devServer);
+      ? summarizeDevServer(undefined)
+      : summarizeDevServer(app.devServer),
+    getScriptManagerState().catch(() => undefined),
+  ]);
 
   const diagnostics: Diagnostic[] = [
+    ...diagnoseScriptFaults(store.faults),
     ...diagnoseScripts(scripts),
+    ...(scriptManager?.diagnostics ?? []),
+    ...diagnoseScriptCalls(store.scriptCalls),
     ...federation.diagnostics,
     ...store.errors
       .filter((error) => error.isFatal)
@@ -246,6 +397,7 @@ export const getOverview = async (
       failedScripts: scripts.filter((record) => record.status === 'failed')
         .length,
       scriptEvents: store.scriptEvents.length,
+      scriptCalls: store.scriptCalls.length,
       federationEvents: store.federationEvents.length,
       errors: store.errors.length,
     },

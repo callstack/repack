@@ -12,6 +12,7 @@ export const DEV_SERVER_STORE_GLOBAL = '__REPACK_DEVTOOLS_DEV_SERVER_STORE__';
 
 export const LIMITS = {
   scriptEvents: 500,
+  scriptCalls: 300,
   federationEvents: 500,
   errors: 100,
   devServerRequests: 300,

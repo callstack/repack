@@ -1,5 +1,6 @@
 import { RepackDevToolsCollectorPlugin } from './collector.js';
 import {
+  createFaultMiddleware,
   createRequestLogMiddleware,
   createStateMiddleware,
 } from './middleware.js';
@@ -78,7 +79,8 @@ export const withRepackDevTools = <
           if (!result.some(isDevToolsMiddleware)) {
             result.unshift(
               createStateMiddleware(),
-              createRequestLogMiddleware()
+              createRequestLogMiddleware(),
+              createFaultMiddleware()
             );
           }
           return result;

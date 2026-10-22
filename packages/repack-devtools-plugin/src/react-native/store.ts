@@ -3,7 +3,9 @@ import { isRecord, readGlobal, readString } from '../shared/guards';
 import type {
   FederationEvent,
   RecordedError,
+  ScriptCall,
   ScriptEvent,
+  ScriptFault,
   ScriptRecord,
 } from '../shared/types';
 
@@ -14,6 +16,9 @@ export type DevToolsStore = {
   seq: number;
   scripts: Map<string, ScriptRecord>;
   scriptEvents: ScriptEvent[];
+  scriptCalls: ScriptCall[];
+  /** Active ScriptManager faults (see `faults.ts`). */
+  faults: ScriptFault[];
   federationEvents: FederationEvent[];
   errors: RecordedError[];
   listeners: Set<() => void>;
@@ -21,6 +26,8 @@ export type DevToolsStore = {
     scriptManager: boolean;
     errorHandler: boolean;
     runtimePlugin: boolean;
+    callTracer: boolean;
+    faultHooks: boolean;
     federationInstances: Set<unknown>;
   };
 };
@@ -33,6 +40,8 @@ const createStore = (): DevToolsStore => ({
   seq: 0,
   scripts: new Map(),
   scriptEvents: [],
+  scriptCalls: [],
+  faults: [],
   federationEvents: [],
   errors: [],
   listeners: new Set(),
@@ -40,6 +49,8 @@ const createStore = (): DevToolsStore => ({
     scriptManager: false,
     errorHandler: false,
     runtimePlugin: false,
+    callTracer: false,
+    faultHooks: false,
     federationInstances: new Set(),
   },
 });
@@ -53,7 +64,10 @@ const isDevToolsStore = (value: unknown): value is DevToolsStore =>
   isRecord(value) &&
   value.scripts instanceof Map &&
   value.listeners instanceof Set &&
-  Array.isArray(value.errors);
+  Array.isArray(value.errors) &&
+  // stores created by an older copy of the plugin lack newer fields
+  Array.isArray(value.scriptCalls) &&
+  Array.isArray(value.faults);
 
 export const getStore = (): DevToolsStore => {
   const existing = readGlobal(STORE_GLOBAL);
@@ -113,6 +127,7 @@ export const clearStore = (scope: ClearScope = 'all') => {
   if (scope === 'all' || scope === 'scripts') {
     store.scripts.clear();
     store.scriptEvents.length = 0;
+    store.scriptCalls.length = 0;
   }
   if (scope === 'all' || scope === 'federation') {
     store.federationEvents.length = 0;
