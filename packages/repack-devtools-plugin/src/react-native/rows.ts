@@ -1,12 +1,14 @@
 import type {
   ErrorRow,
   FederationEventRow,
+  ScriptCallRow,
   ScriptEventRow,
   ScriptRow,
 } from '../shared/agent-tools';
 import type {
   FederationEvent,
   RecordedError,
+  ScriptCall,
   ScriptEvent,
   ScriptRecord,
 } from '../shared/types';
@@ -40,6 +42,22 @@ export const toScriptEventRow = (event: ScriptEvent): ScriptEventRow => ({
   uniqueId: event.uniqueId ?? '',
   url: event.url ?? '',
   detail: event.detail ?? '',
+});
+
+export const toScriptCallRow = (call: ScriptCall): ScriptCallRow => ({
+  seq: call.seq,
+  at: call.startedAt,
+  method: call.method,
+  uniqueId: call.uniqueId ?? call.scriptIds?.join(',') ?? '',
+  outcome: call.outcome,
+  durationMs: call.durationMs ?? null,
+  resolverRan: call.resolverRan,
+  joined: call.joined
+    ? `${call.joined.state} ${call.joined.isPrefetch ? 'prefetch' : 'load'}`
+    : '',
+  events: call.events.join(','),
+  error: call.error ?? '',
+  faults: call.faults.join(','),
 });
 
 export const toFederationEventRow = (

@@ -6,7 +6,8 @@ export type DiagnosticArea =
   | 'errors'
   | 'dev-server'
   | 'compilation'
-  | 'symbolication';
+  | 'symbolication'
+  | 'faults';
 
 /**
  * A finding computed from the recorded data. Agents should start from these:
@@ -25,6 +26,7 @@ export type ScriptStatus =
   | 'resolving'
   | 'resolved'
   | 'prefetching'
+  | 'prefetched'
   | 'loading'
   | 'loaded'
   | 'failed'
@@ -94,6 +96,106 @@ export type ScriptEvent = {
   caller?: string;
   url?: string;
   detail?: string;
+};
+
+export type ScriptCallMethod =
+  | 'loadScript'
+  | 'prefetchScript'
+  | 'invalidateScripts';
+
+export type PromiseState = 'pending' | 'fulfilled' | 'rejected' | 'unknown';
+
+/**
+ * One call into `ScriptManager.shared` (from app code, the webpack chunk
+ * runtime, MF or the devtools actions).
+ */
+export type ScriptCall = {
+  seq: number;
+  method: ScriptCallMethod;
+  scriptId?: string;
+  caller?: string;
+  uniqueId?: string;
+  /** `invalidateScripts` only. */
+  scriptIds?: string[];
+  startedAt: number;
+  endedAt?: number;
+  durationMs?: number;
+  outcome: 'pending' | 'ok' | 'error';
+  error?: string;
+  /**
+   * A load/prefetch for the same unique id was already stored in
+   * ScriptManager when the call started, so ScriptManager returned (or
+   * awaited) it instead of starting a new attempt.
+   */
+  joined?: { isPrefetch: boolean; state: PromiseState; ageMs?: number };
+  /** ScriptManager event types emitted for this unique id while the call ran. */
+  events: ScriptEventType[];
+  /** Whether resolvers ran during the call (a `resolving` event was emitted). */
+  resolverRan: boolean;
+  /** Injected faults that fired during the call. */
+  faults: string[];
+};
+
+export type StoredScriptPromise = {
+  uniqueId: string;
+  isPrefetch: boolean;
+  state: PromiseState;
+  error?: string;
+  ageMs?: number;
+};
+
+/** Internal ScriptManager state, read from its (TypeScript-protected) fields. */
+export type ScriptManagerState = {
+  available: boolean;
+  /** In-flight or stored load/prefetch promises (`scriptsPromises`). */
+  promises: StoredScriptPromise[];
+  /** Registered resolvers, highest priority first. */
+  resolvers: Array<{ key: string; priority: string | number }>;
+  /** Number of taps per ScriptManager hook (`ScriptManager.shared.hooks`). */
+  hooks: Record<string, number>;
+  storage: boolean;
+  /** Locator cache, keyed by unique id (persisted when storage is set). */
+  cache: Array<{ uniqueId: string; url?: string; query?: string }>;
+  diagnostics: Diagnostic[];
+};
+
+export type FaultStage = 'resolve' | 'load';
+
+/** A fault injected into ScriptManager through its hooks. */
+export type ScriptFault = {
+  id: string;
+  stage: FaultStage;
+  /** Exact script id; omit to match every script. */
+  scriptId?: string;
+  caller?: string;
+  /** `fail` throws, `delay` only waits `delayMs`; `fail` with `delayMs` waits, then throws. */
+  action: 'fail' | 'delay';
+  message: string;
+  /** Error `code`, e.g. `NetworkFailure` like native loading errors. */
+  code?: string;
+  delayMs?: number;
+  /** Remaining hits; omit for unlimited. */
+  remaining?: number;
+  hits: number;
+  createdAt: number;
+};
+
+/** A fault injected into dev-server responses. */
+export type ServerFault = {
+  id: string;
+  /** Substring of the request URL, or `/regex/`. */
+  match: string;
+  method?: string;
+  platform?: string;
+  /** Respond with this status instead of serving the request. */
+  status?: number;
+  body?: string;
+  delayMs?: number;
+  /** Destroy the socket without a response (like a dropped connection). */
+  drop?: boolean;
+  remaining?: number;
+  hits: number;
+  createdAt: number;
 };
 
 export type FederationEventType =
@@ -236,6 +338,7 @@ export type Overview = {
     scripts: number;
     failedScripts: number;
     scriptEvents: number;
+    scriptCalls: number;
     federationEvents: number;
     errors: number;
   };
@@ -301,6 +404,8 @@ export type DevServerRequest = {
   userAgent?: string;
   /** Response body for failed requests, truncated. */
   responseBody?: string;
+  /** Id of the injected server fault that produced this response. */
+  fault?: string;
 };
 
 export type DevServerState = {
@@ -309,5 +414,6 @@ export type DevServerState = {
   startedAt: number;
   compilations: PlatformCompilation[];
   requests: DevServerRequest[];
+  faults: ServerFault[];
   diagnostics: Diagnostic[];
 };

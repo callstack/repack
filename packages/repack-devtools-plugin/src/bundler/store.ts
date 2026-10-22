@@ -1,6 +1,10 @@
 import { DEV_SERVER_STORE_GLOBAL, LIMITS } from '../shared/constants.js';
 import { isRecord, readGlobal } from '../shared/guards.js';
-import type { DevServerRequest, PlatformCompilation } from '../shared/types.js';
+import type {
+  DevServerRequest,
+  PlatformCompilation,
+  ServerFault,
+} from '../shared/types.js';
 
 export type DevServerStore = {
   startedAt: number;
@@ -8,17 +12,19 @@ export type DevServerStore = {
   seq: number;
   compilations: Map<string, PlatformCompilation>;
   requests: DevServerRequest[];
+  faults: ServerFault[];
 };
+
+const isDevServerStore = (value: unknown): value is DevServerStore =>
+  isRecord(value) &&
+  value.compilations instanceof Map &&
+  Array.isArray(value.requests) &&
+  Array.isArray(value.faults);
 
 /**
  * One store per dev server process. Re.Pack runs every platform compiler in
  * the same process, so they all record here.
  */
-const isDevServerStore = (value: unknown): value is DevServerStore =>
-  isRecord(value) &&
-  value.compilations instanceof Map &&
-  Array.isArray(value.requests);
-
 export const getDevServerStore = (): DevServerStore => {
   const existing = readGlobal(DEV_SERVER_STORE_GLOBAL);
   if (isDevServerStore(existing)) return existing;
@@ -27,6 +33,7 @@ export const getDevServerStore = (): DevServerStore => {
     seq: 0,
     compilations: new Map(),
     requests: [],
+    faults: [],
   };
   Reflect.set(globalThis, DEV_SERVER_STORE_GLOBAL, store);
   return store;

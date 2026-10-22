@@ -1,4 +1,5 @@
 import { LIMITS } from '../../shared/constants';
+import { readNumber } from '../../shared/guards';
 import type { FederationEvent } from '../../shared/types';
 import {
   describeError,
@@ -218,8 +219,11 @@ export const createRepackDevToolsRuntimePlugin = () => {
       error?: unknown;
       cached?: boolean;
       recovered?: boolean;
+      /** The fetch Response; MF parses it without checking `ok`. */
+      response?: unknown;
       origin?: Origin;
     }) {
+      const status = readNumber(args.response, 'status');
       recordFederationEvent({
         type: 'afterLoadManifest',
         instance: instanceName(args.origin),
@@ -227,6 +231,7 @@ export const createRepackDevToolsRuntimePlugin = () => {
         url: args.manifestUrl,
         error: errorMessage(args.error),
         detail: [
+          status !== undefined ? `HTTP ${status}` : undefined,
           args.cached ? 'cached' : undefined,
           args.recovered ? 'recovered' : undefined,
         ]

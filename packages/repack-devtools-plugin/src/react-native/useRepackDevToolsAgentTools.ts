@@ -6,14 +6,21 @@ import {
   REPACK_DEVTOOLS_AGENT_PLUGIN_ID as pluginId,
   repackDevToolsToolDefinitions as tools,
 } from '../shared/agent-tools';
+import { isFailedRequest } from '../shared/requests';
 import {
   clear,
+  clearFaults,
   fetchDevServerState,
   getFederation,
   getOverview,
   getScript,
+  getScriptManagerState,
+  injectAppFault,
+  injectServerFault,
   invalidateScripts,
   listErrors,
+  listFaults,
+  listScriptCalls,
   listScriptEvents,
   listScripts,
   loadRemote,
@@ -25,6 +32,7 @@ import {
 import {
   toErrorRow,
   toFederationEventRow,
+  toScriptCallRow,
   toScriptEventRow,
   toScriptRow,
 } from './rows';
@@ -107,6 +115,55 @@ export const useRepackDevToolsAgentTools = () => {
 
   useRozenitePluginAgentTool({
     pluginId,
+    tool: tools.listScriptCalls,
+    handler: ({ uniqueId, method, errorsOnly, limit, cursor } = {}) => {
+      const rows = listScriptCalls({ uniqueId, method, errorsOnly }).map(
+        toScriptCallRow
+      );
+      return {
+        ...paginateArray(rows, {
+          keyOf: (row) => String(row.seq),
+          limit,
+          cursor,
+          scope: `${uniqueId ?? ''}|${method ?? ''}|${errorsOnly ?? ''}`,
+        }),
+        total: rows.length,
+      };
+    },
+  });
+
+  useRozenitePluginAgentTool({
+    pluginId,
+    tool: tools.getScriptManager,
+    handler: () => getScriptManagerState(),
+  });
+
+  useRozenitePluginAgentTool({
+    pluginId,
+    tool: tools.injectScriptFault,
+    handler: (args) => injectAppFault(args),
+  });
+
+  useRozenitePluginAgentTool({
+    pluginId,
+    tool: tools.injectServerFault,
+    handler: (args) => injectServerFault(args),
+  });
+
+  useRozenitePluginAgentTool({
+    pluginId,
+    tool: tools.listFaults,
+    handler: ({ origin } = {}) => listFaults(origin),
+  });
+
+  useRozenitePluginAgentTool({
+    pluginId,
+    tool: tools.clearFaults,
+    handler: ({ id, origin } = {}) => clearFaults(id, origin),
+  });
+
+  useRozenitePluginAgentTool({
+    pluginId,
     tool: tools.getFederation,
     handler: () => getFederation(),
   });
@@ -184,7 +241,7 @@ export const useRepackDevToolsAgentTools = () => {
             ? state.requests
             : requests === 'none'
               ? []
-              : state.requests.filter((request) => request.status >= 400),
+              : state.requests.filter(isFailedRequest),
       };
     },
   });

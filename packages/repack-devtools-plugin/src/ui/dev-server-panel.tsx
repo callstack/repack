@@ -5,6 +5,7 @@ import {
   PluginShell,
 } from '@rozenite/ui';
 import { useState } from 'react';
+import { isFailedRequest, NO_RESPONSE_STATUS } from '../shared/requests';
 import type {
   CompilationIssue,
   DevServerRequest,
@@ -37,8 +38,12 @@ const requestColumns: DataTableColumn<DevServerRequest>[] = [
     header: 'Status',
     accessorFn: (row) => row.status,
     cell: ({ row }) => (
-      <span className={row.original.status >= 400 ? 'text-danger' : undefined}>
-        {row.original.status}
+      <span
+        className={isFailedRequest(row.original) ? 'text-danger' : undefined}
+      >
+        {row.original.status === NO_RESPONSE_STATUS
+          ? 'closed'
+          : row.original.status}
       </span>
     ),
   },
@@ -54,6 +59,13 @@ const requestColumns: DataTableColumn<DevServerRequest>[] = [
     header: 'Time',
     accessorFn: (row) => row.durationMs,
     cell: ({ row }) => formatMs(row.original.durationMs),
+  },
+  {
+    id: 'fault',
+    header: 'Fault',
+    accessorFn: (row) => row.fault ?? '',
+    cell: ({ row }) =>
+      row.original.fault ? <Mono>{row.original.fault}</Mono> : null,
   },
 ];
 
