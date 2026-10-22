@@ -1,21 +1,17 @@
-import {
-  Button,
-  DataTable,
-  type DataTableColumn,
-  Input,
-  PluginShell,
-} from '@rozenite/ui';
+import { Button, type DataTableColumn, Input, PluginShell } from '@rozenite/ui';
 import { useState } from 'react';
 import type { ScriptEvent, ScriptRecord } from '../shared/types';
 import {
+  Clip,
   Detail,
   formatMs,
   formatTime,
   Header,
-  Mono,
   Notice,
+  NoWrap,
   Section,
   StatusBadge,
+  Table,
 } from './components';
 import { useAppData } from './useDevToolsData';
 import '@rozenite/ui/styles.css';
@@ -25,7 +21,7 @@ const scriptColumns: DataTableColumn<ScriptRecord>[] = [
     id: 'uniqueId',
     header: 'Script',
     accessorFn: (row) => row.uniqueId,
-    cell: ({ row }) => <Mono>{row.original.uniqueId}</Mono>,
+    cell: ({ row }) => <Clip>{row.original.uniqueId}</Clip>,
   },
   {
     id: 'status',
@@ -47,13 +43,7 @@ const scriptColumns: DataTableColumn<ScriptRecord>[] = [
     id: 'loadMs',
     header: 'Load',
     accessorFn: (row) => row.loadMs ?? -1,
-    cell: ({ row }) => formatMs(row.original.loadMs),
-  },
-  {
-    id: 'url',
-    header: 'URL',
-    accessorFn: (row) => row.locator?.url ?? '',
-    cell: ({ row }) => <Mono>{row.original.locator?.url}</Mono>,
+    cell: ({ row }) => <NoWrap>{formatMs(row.original.loadMs)}</NoWrap>,
   },
   {
     id: 'error',
@@ -61,14 +51,20 @@ const scriptColumns: DataTableColumn<ScriptRecord>[] = [
     accessorFn: (row) => row.error?.nativeMessage ?? row.error?.message ?? '',
     cell: ({ row }) =>
       row.original.error ? (
-        <span className="text-danger">
-          {[row.original.error.stage, row.original.error.code]
+        <Clip mono={false} className="text-danger">
+          {`${[row.original.error.stage, row.original.error.code]
             .filter(Boolean)
-            .join(' ')}
-          {': '}
-          {row.original.error.nativeMessage ?? row.original.error.message}
-        </span>
+            .join(
+              ' '
+            )}: ${row.original.error.nativeMessage ?? row.original.error.message}`}
+        </Clip>
       ) : null,
+  },
+  {
+    id: 'url',
+    header: 'URL',
+    accessorFn: (row) => row.locator?.url ?? '',
+    cell: ({ row }) => <Clip>{row.original.locator?.url}</Clip>,
   },
 ];
 
@@ -77,16 +73,34 @@ const eventColumns: DataTableColumn<ScriptEvent>[] = [
     id: 'at',
     header: 'Time',
     accessorFn: (row) => row.at,
-    cell: ({ row }) => formatTime(row.original.at),
+    cell: ({ row }) => <NoWrap>{formatTime(row.original.at)}</NoWrap>,
   },
-  { id: 'type', header: 'Event', accessorFn: (row) => row.type },
+  {
+    id: 'type',
+    header: 'Event',
+    accessorFn: (row) => row.type,
+    cell: ({ row }) => (
+      <span className={row.original.type === 'error' ? 'text-danger' : ''}>
+        {row.original.type}
+      </span>
+    ),
+  },
   {
     id: 'uniqueId',
     header: 'Script',
     accessorFn: (row) => row.uniqueId ?? '',
-    cell: ({ row }) => <Mono>{row.original.uniqueId}</Mono>,
+    cell: ({ row }) => <Clip>{row.original.uniqueId}</Clip>,
   },
-  { id: 'detail', header: 'Detail', accessorFn: (row) => row.detail ?? '' },
+  {
+    id: 'detail',
+    header: 'Detail',
+    accessorFn: (row) => row.detail ?? '',
+    cell: ({ row }) => (
+      <Clip width="xl" mono={false}>
+        {row.original.detail}
+      </Clip>
+    ),
+  },
 ];
 
 export default function ScriptsPanel() {
@@ -139,18 +153,22 @@ export default function ScriptsPanel() {
         {error ? <Notice>{error}</Notice> : null}
         <Section title="Load a script">
           <div className="flex flex-wrap items-center gap-2">
-            <Input
-              size="sm"
-              placeholder="scriptId (chunk name)"
-              value={scriptId}
-              onChange={(event) => setScriptId(event.target.value)}
-            />
-            <Input
-              size="sm"
-              placeholder="caller (optional)"
-              value={caller}
-              onChange={(event) => setCaller(event.target.value)}
-            />
+            <div className="w-56 max-w-full">
+              <Input
+                size="sm"
+                placeholder="scriptId (chunk name)"
+                value={scriptId}
+                onChange={(event) => setScriptId(event.target.value)}
+              />
+            </div>
+            <div className="w-56 max-w-full">
+              <Input
+                size="sm"
+                placeholder="caller (optional)"
+                value={caller}
+                onChange={(event) => setCaller(event.target.value)}
+              />
+            </div>
             <Button
               size="sm"
               disabled={!rpc || !scriptId}
@@ -190,7 +208,7 @@ export default function ScriptsPanel() {
           />
         ) : null}
         <Section title={`Scripts (${snapshot?.scripts.length ?? 0})`}>
-          <DataTable
+          <Table
             ariaLabel="Scripts"
             columns={scriptColumns}
             data={snapshot?.scripts ?? []}
@@ -215,7 +233,7 @@ export default function ScriptsPanel() {
           />
         ) : null}
         <Section title="Events">
-          <DataTable
+          <Table
             ariaLabel="ScriptManager events"
             columns={eventColumns}
             data={[...(snapshot?.scriptEvents ?? [])].reverse()}

@@ -72,6 +72,32 @@ describe('readFederationState', () => {
     );
   });
 
+  it('reports a problem in a scope shared by several instances once', () => {
+    const shareScopeMap = {
+      default: {
+        react: {
+          '19.2.0': shared('19.2.0', 'HostApp', true),
+          '18.3.1': shared('18.3.1', 'MiniApp', true),
+        },
+      },
+    };
+    const state = readFederationState({
+      federation: {
+        __INSTANCES__: [
+          { name: 'HostApp', shareScopeMap },
+          { name: 'MiniApp', shareScopeMap },
+        ],
+      },
+      runtimePluginInstalled: true,
+      events: [],
+    });
+    expect(
+      state.diagnostics.filter((item) =>
+        item.message.startsWith('Singleton "react" is loaded')
+      )
+    ).toHaveLength(1);
+  });
+
   it('flags a loaded shared version that misses a required range', () => {
     const state = readFederationState({
       federation: {
@@ -191,6 +217,54 @@ describe('diagnoseFederationEvents', () => {
     expect(diagnostic.hint).toContain('manifest response (HTTP 503)');
     expect(diagnostic.hint).toContain('without checking the HTTP status');
     expect(diagnostic.hint).toContain('origin=http://localhost:8082');
+  });
+
+  it('reports one failure per URL and notes a later successful load', () => {
+    const url = 'http://localhost:8082/android/mf-manifest.json';
+    const error = 'JSON Parse error: Unexpected character: I';
+    const failures: FederationEvent[] = [
+      { seq: 1, at: 0, type: 'errorLoadRemote', id: url, url, error },
+      {
+        seq: 2,
+        at: 0,
+        type: 'afterLoadManifest',
+        remote: 'MiniApp',
+        url,
+        error,
+        detail: 'HTTP 503',
+      },
+      {
+        seq: 3,
+        at: 0,
+        type: 'errorLoadRemote',
+        id: 'MiniApp/MiniAppNavigator',
+        url,
+        error: 'Failed to get manifest. #RUNTIME-003',
+      },
+    ];
+    const [failed, ...rest] = diagnoseFederationEvents(failures);
+    expect(rest).toEqual([]);
+    expect(failed).toMatchObject({
+      severity: 'error',
+      ref: 'federation-event:2',
+    });
+    expect(failed.message).toContain('errorLoadRemote, afterLoadManifest');
+    expect(failed.message).toContain('requested by MiniApp/MiniAppNavigator');
+    expect(failed.hint).toContain('(HTTP 503)');
+
+    const [recovered] = diagnoseFederationEvents([
+      ...failures,
+      {
+        seq: 4,
+        at: 0,
+        type: 'afterLoadManifest',
+        remote: 'MiniApp',
+        url,
+        detail: 'HTTP 200',
+      },
+    ]);
+    expect(recovered.severity).toBe('warning');
+    expect(recovered.message).toContain('later load of the same URL succeeded');
   });
 
   it('reports each distinct failure once', () => {

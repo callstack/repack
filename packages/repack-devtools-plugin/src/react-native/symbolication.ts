@@ -6,6 +6,7 @@ import {
   readNumber,
   readString,
 } from '../shared/guards';
+import { stripAnsi } from '../shared/text';
 import type {
   Diagnostic,
   SourceMapCheck,
@@ -113,7 +114,8 @@ const toCodeFrame = (value: unknown): SymbolicationResult['codeFrame'] => {
   return content === undefined
     ? undefined
     : {
-        content,
+        // Metro-style code frames are coloured for terminals
+        content: stripAnsi(content),
         fileName: readString(value, 'fileName'),
         location: getProp(value, 'location'),
       };
