@@ -1,9 +1,4 @@
-import {
-  Button,
-  DataTable,
-  type DataTableColumn,
-  PluginShell,
-} from '@rozenite/ui';
+import { Button, type DataTableColumn, PluginShell } from '@rozenite/ui';
 import { useState } from 'react';
 import { isFailedRequest, NO_RESPONSE_STATUS } from '../shared/requests';
 import type {
@@ -12,16 +7,19 @@ import type {
   PlatformCompilation,
 } from '../shared/types';
 import {
+  Clip,
+  Collapsible,
   Detail,
   Diagnostics,
   formatBytes,
   formatMs,
   formatTime,
   Header,
-  Mono,
   Notice,
+  NoWrap,
   Section,
   StatusBadge,
+  Table,
 } from './components';
 import { useDevServerData } from './useDevToolsData';
 import '@rozenite/ui/styles.css';
@@ -31,7 +29,7 @@ const requestColumns: DataTableColumn<DevServerRequest>[] = [
     id: 'at',
     header: 'Time',
     accessorFn: (row) => row.at,
-    cell: ({ row }) => formatTime(row.original.at),
+    cell: ({ row }) => <NoWrap>{formatTime(row.original.at)}</NoWrap>,
   },
   {
     id: 'status',
@@ -39,7 +37,7 @@ const requestColumns: DataTableColumn<DevServerRequest>[] = [
     accessorFn: (row) => row.status,
     cell: ({ row }) => (
       <span
-        className={isFailedRequest(row.original) ? 'text-danger' : undefined}
+        className={`whitespace-nowrap ${isFailedRequest(row.original) ? 'text-danger' : ''}`}
       >
         {row.original.status === NO_RESPONSE_STATUS
           ? 'closed'
@@ -52,20 +50,23 @@ const requestColumns: DataTableColumn<DevServerRequest>[] = [
     id: 'url',
     header: 'URL',
     accessorFn: (row) => row.url,
-    cell: ({ row }) => <Mono>{row.original.url}</Mono>,
+    cell: ({ row }) => <Clip width="xl">{row.original.url}</Clip>,
   },
   {
     id: 'durationMs',
-    header: 'Time',
+    header: 'Duration',
     accessorFn: (row) => row.durationMs,
-    cell: ({ row }) => formatMs(row.original.durationMs),
+    cell: ({ row }) => <NoWrap>{formatMs(row.original.durationMs)}</NoWrap>,
   },
   {
     id: 'fault',
     header: 'Fault',
     accessorFn: (row) => row.fault ?? '',
-    cell: ({ row }) =>
-      row.original.fault ? <Mono>{row.original.fault}</Mono> : null,
+    cell: ({ row }) => (
+      <span className="font-mono text-xs whitespace-nowrap">
+        {row.original.fault}
+      </span>
+    ),
   },
 ];
 
@@ -74,13 +75,13 @@ const assetColumns: DataTableColumn<PlatformCompilation['assets'][number]>[] = [
     id: 'name',
     header: 'Asset',
     accessorFn: (row) => row.name,
-    cell: ({ row }) => <Mono>{row.original.name}</Mono>,
+    cell: ({ row }) => <Clip width="xl">{row.original.name}</Clip>,
   },
   {
     id: 'size',
     header: 'Size',
     accessorFn: (row) => row.size,
-    cell: ({ row }) => formatBytes(row.original.size),
+    cell: ({ row }) => <NoWrap>{formatBytes(row.original.size)}</NoWrap>,
   },
   {
     id: 'chunks',
@@ -89,42 +90,77 @@ const assetColumns: DataTableColumn<PlatformCompilation['assets'][number]>[] = [
   },
 ];
 
+const firstLine = (text: string) =>
+  text
+    .split('\n')
+    .map((line) => line.trim())
+    .find(Boolean) ?? text;
+
+const issueSummary = (issue: CompilationIssue) => {
+  const location = [issue.moduleName ?? issue.file, issue.loc]
+    .filter(Boolean)
+    .join(':');
+  // the message usually repeats the location on its first line
+  const message = issue.message
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(
+      (line) => line && !line.startsWith('../') && !line.startsWith('./')
+    );
+  return [firstLine(message.join('\n') || issue.message), location]
+    .filter(Boolean)
+    .join(' · ');
+};
+
 const Issues = ({
   title,
   issues,
+  tone,
 }: {
   title: string;
   issues: CompilationIssue[];
+  tone: 'danger' | 'warning';
 }) =>
   issues.length === 0 ? null : (
-    <div className="flex flex-col gap-2">
-      <div className="text-xs font-semibold">{title}</div>
+    <div className="flex flex-col gap-1">
+      <div className="text-xs font-semibold">
+        {title} ({issues.length})
+      </div>
       {issues.map((issue, index) => (
-        <pre
+        <Collapsible
           // biome-ignore lint/suspicious/noArrayIndexKey: issues are an immutable, ordered snapshot; position is their identity
           key={`${issue.file ?? ''}-${index}`}
-          className="overflow-auto rounded border border-border p-2 text-[11px] whitespace-pre-wrap"
+          summary={issueSummary(issue)}
+          tone={tone}
+          // errors stop the build, so show the first one in full
+          defaultOpen={tone === 'danger' && index === 0}
         >
           {[issue.moduleName ?? issue.file, issue.loc]
             .filter(Boolean)
             .join(':')}
           {issue.moduleName || issue.file ? '\n' : ''}
           {issue.message}
-        </pre>
+        </Collapsible>
       ))}
     </div>
   );
+
+/** The store starts every platform as `compiling`; with no build it was never requested. */
+const compilationStatus = (compilation: PlatformCompilation) =>
+  compilation.builds === 0 && compilation.status === 'compiling'
+    ? 'not requested'
+    : compilation.status;
 
 const Compilation = ({ compilation }: { compilation: PlatformCompilation }) => (
   <Section
     title={
       <span className="flex items-center gap-2">
         {compilation.platform}
-        <StatusBadge status={compilation.status} />
+        <StatusBadge status={compilationStatus(compilation)} />
       </span>
     }
   >
-    <div className="mb-2 text-xs text-muted-foreground">
+    <div className="mb-2 text-xs text-muted-foreground [overflow-wrap:anywhere]">
       {compilation.builds} build(s)
       {compilation.durationMs !== undefined
         ? ` · last ${formatMs(compilation.durationMs)}`
@@ -138,15 +174,21 @@ const Compilation = ({ compilation }: { compilation: PlatformCompilation }) => (
         : ''}
     </div>
     <div className="flex flex-col gap-3">
-      <Issues title="Errors" issues={compilation.errors} />
-      <Issues title="Warnings" issues={compilation.warnings} />
-      <DataTable
-        ariaLabel={`${compilation.platform} assets`}
-        columns={assetColumns}
-        data={compilation.assets}
-        getRowId={(row) => row.name}
-        emptyMessage="No assets emitted yet."
-      />
+      <Issues tone="danger" title="Errors" issues={compilation.errors} />
+      <Issues tone="warning" title="Warnings" issues={compilation.warnings} />
+      {compilation.assets.length > 0 ? (
+        <details>
+          <summary className="cursor-pointer text-xs font-semibold">
+            Assets ({compilation.assets.length})
+          </summary>
+          <Table
+            ariaLabel={`${compilation.platform} assets`}
+            columns={assetColumns}
+            data={compilation.assets}
+            getRowId={(row) => row.name}
+          />
+        </details>
+      ) : null}
     </div>
   </Section>
 );
@@ -175,23 +217,17 @@ export default function DevServerPanel() {
       <PluginShell.Body>
         {error ? <Notice>{error}</Notice> : null}
         <Diagnostics items={state?.diagnostics ?? []} />
-        {state?.compilations.map((compilation) => (
-          <Compilation key={compilation.platform} compilation={compilation} />
-        ))}
-        {state && state.compilations.length === 0 ? (
-          <Notice>
-            No compilation yet. Request a bundle from a device to start one.
-          </Notice>
-        ) : null}
         <Section title={`Requests (${state?.requests.length ?? 0})`}>
-          <DataTable
-            ariaLabel="Dev server requests"
-            columns={requestColumns}
-            data={[...(state?.requests ?? [])].reverse()}
-            getRowId={(row) => String(row.seq)}
-            onRowClick={setSelected}
-            emptyMessage="No requests recorded."
-          />
+          <div className="max-h-[50vh] overflow-y-auto">
+            <Table
+              ariaLabel="Dev server requests"
+              columns={requestColumns}
+              data={[...(state?.requests ?? [])].reverse()}
+              getRowId={(row) => String(row.seq)}
+              onRowClick={setSelected}
+              emptyMessage="No requests recorded."
+            />
+          </div>
         </Section>
         {selected ? (
           <Detail
@@ -199,6 +235,14 @@ export default function DevServerPanel() {
             data={selected}
             onClose={() => setSelected(null)}
           />
+        ) : null}
+        {state?.compilations.map((compilation) => (
+          <Compilation key={compilation.platform} compilation={compilation} />
+        ))}
+        {state && state.compilations.length === 0 ? (
+          <Notice>
+            No compilation yet. Request a bundle from a device to start one.
+          </Notice>
         ) : null}
       </PluginShell.Body>
     </PluginShell>

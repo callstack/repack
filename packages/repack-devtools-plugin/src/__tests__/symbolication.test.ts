@@ -100,7 +100,9 @@ describe('symbolicateStack', () => {
                 column: 1,
               },
             ],
-            codeFrame: { content: '> 12 | throw new Error()' },
+            codeFrame: {
+              content: '\u001b[31m> 12 |\u001b[39m throw new Error()',
+            },
           });
         }
         return response(404, 'Not found');
@@ -114,7 +116,7 @@ describe('symbolicateStack', () => {
     expect(posted).toEqual([{ stack: [parsed[0], parsed[2], parsed[3]] }]);
     expect(result.frames[1].symbolicated).toBeUndefined();
     expect(result.frames[3].symbolicated?.file).toBe('/app/src/Async.tsx');
-    expect(result.codeFrame?.content).toContain('throw');
+    expect(result.codeFrame?.content).toBe('> 12 | throw new Error()');
     expect(result.frames.map((frame) => frame.unmapped)).toEqual([
       false,
       false,
