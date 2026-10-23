@@ -39,6 +39,8 @@
     "@react-native-community/cli-platform-ios": "catalog:testers",
     "@react-native/babel-preset": "catalog:testers",
     "@react-native/community-cli-plugin": "catalog:testers",
+    "@rozenite/network-activity-plugin": "catalog:testers",
+    "@rozenite/repack": "catalog:testers",
     "@rspack/core": "catalog:",
     "@types/react": "catalog:testers",
     "babel-preset-expo": "catalog:expo58",

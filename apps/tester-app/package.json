@@ -44,6 +44,8 @@
     "@react-native/babel-preset": "catalog:testers",
     "@react-native/metro-config": "catalog:testers",
     "@react-native/typescript-config": "catalog:testers",
+    "@rozenite/network-activity-plugin": "catalog:testers",
+    "@rozenite/repack": "catalog:testers",
     "@rsdoctor/rspack-plugin": "1.6.4",
     "@rspack/core": "catalog:",
     "@svgr/webpack": "^8.1.0",
