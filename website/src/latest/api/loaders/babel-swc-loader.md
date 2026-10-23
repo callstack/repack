@@ -7,6 +7,8 @@ SWC can be provided either by Rspack (via its built-in integration) or by instal
 
 For JavaScript and Flow-typed files, the loader selects the parser used by your installed `@react-native/babel-preset`: `flow-parser` when declared by the preset, otherwise `hermes-parser` from the preset's syntax plugin. TypeScript and TSX files use Babel's standard parser.
 
+Flow enums are lowered to [`flow-enums-runtime`](https://www.npmjs.com/package/flow-enums-runtime), resolved from your project or from `react-native`, in every Flow file with or without an `@flow` pragma. `@react-native/babel-preset` strips enums before its own enum plugin runs, so the loader runs the preset's `babel-plugin-transform-flow-enums` ahead of the preset.
+
 :::danger Heads up!
 Do not use `@callstack/repack/babel-swc-loader` together with `getJSTransformRules`. They overlap in functionality and will duplicate transforms when combined in one configuration. It might often result in code that's malformed and won't execute properly in the target mobile environment.
 :::
@@ -83,7 +85,7 @@ Optional path to the React Native parser module. This overrides automatic parser
 ### hermesParserOverrides
 
 - Type: `HermesParserOverrides`
-- Default: `{ babel: true, reactRuntimeTarget: '19' }`
+- Default: `{ babel: true, reactRuntimeTarget }`, where `reactRuntimeTarget` follows the project's `react` version (`'18'` before React 19, `'19'` otherwise)
 
 Overrides passed to the selected React Native parser when parsing non-TypeScript files. The option name is retained for backward compatibility and also applies to `flow-parser`.
 

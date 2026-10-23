@@ -1,14 +1,7 @@
 import * as Repack from '@callstack/repack';
 import rspack from '@rspack/core';
-import reactPkg from 'react/package.json' with { type: 'json' };
-import reactNativePkg from 'react-native/package.json' with { type: 'json' };
-import safeAreaPkg from 'react-native-safe-area-context/package.json' with {
-  type: 'json',
-};
-import screensPkg from 'react-native-screens/package.json' with {
-  type: 'json',
-};
-import pkg from '../package.json' with { type: 'json' };
+
+import { buildSharedSingletons } from './sharedSingletons.mts';
 
 export default Repack.defineRspackConfig((env) => {
   const { mode, context, platform } = env;
@@ -55,44 +48,7 @@ export default Repack.defineRspackConfig((env) => {
           './MiniAppNavigator': './src/mini/navigation/MainNavigator',
         },
         dts: false,
-        shared: {
-          react: {
-            singleton: true,
-            eager: false,
-            version: reactPkg.version,
-            requiredVersion: reactPkg.version,
-          },
-          'react-native': {
-            singleton: true,
-            eager: false,
-            version: reactNativePkg.version,
-            requiredVersion: reactNativePkg.version,
-          },
-          '@react-navigation/native': {
-            singleton: true,
-            eager: false,
-            version: pkg.dependencies['@react-navigation/native'],
-            requiredVersion: pkg.dependencies['@react-navigation/native'],
-          },
-          '@react-navigation/native-stack': {
-            singleton: true,
-            eager: false,
-            version: pkg.dependencies['@react-navigation/native-stack'],
-            requiredVersion: pkg.dependencies['@react-navigation/native-stack'],
-          },
-          'react-native-safe-area-context': {
-            singleton: true,
-            eager: false,
-            version: safeAreaPkg.version,
-            requiredVersion: safeAreaPkg.version,
-          },
-          'react-native-screens': {
-            singleton: true,
-            eager: false,
-            version: screensPkg.version,
-            requiredVersion: screensPkg.version,
-          },
-        },
+        shared: buildSharedSingletons(false),
       }),
       // silence missing @react-native-masked-view optionally required by @react-navigation/elements
       new rspack.IgnorePlugin({

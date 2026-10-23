@@ -17,10 +17,10 @@
     "@callstack/repack": "workspace:*",
     "@callstack/repack-expo": "workspace:*",
     "@module-federation/enhanced": "catalog:testers",
-    "expo": "catalog:expo57",
-    "expo-asset": "catalog:expo57",
-    "expo-constants": "catalog:expo57",
-    "expo-font": "catalog:expo57",
+    "expo": "catalog:expo58",
+    "expo-asset": "catalog:expo58",
+    "expo-constants": "catalog:expo58",
+    "expo-font": "catalog:expo58",
     "react": "catalog:",
     "react-native": "catalog:"
   },
@@ -33,7 +33,7 @@
     "@react-native/community-cli-plugin": "catalog:testers",
     "@rspack/core": "catalog:",
     "@types/react": "catalog:testers",
-    "babel-preset-expo": "catalog:expo57",
+    "babel-preset-expo": "catalog:expo58",
     "typescript": "catalog:"
   }
 }
