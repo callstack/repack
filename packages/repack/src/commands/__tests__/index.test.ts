@@ -3,6 +3,8 @@ import { createBoundCommands } from '../index.js';
 import type { BundleArguments, CliConfig, StartArguments } from '../types.js';
 
 jest.mock('../bundle.js');
+jest.mock('../federationDoctor.js');
+jest.mock('../federationManifest.js');
 jest.mock('../start.js');
 
 const cliConfig: CliConfig = {

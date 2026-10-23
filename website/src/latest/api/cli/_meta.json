@@ -11,6 +11,16 @@
   },
   {
     "type": "file",
+    "name": "federation-manifest",
+    "label": "Federation manifest"
+  },
+  {
+    "type": "file",
+    "name": "federation-doctor",
+    "label": "Federation doctor"
+  },
+  {
+    "type": "file",
     "name": "init",
     "label": "Init"
   }
