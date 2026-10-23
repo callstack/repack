@@ -4,16 +4,24 @@ import {
 } from '@react-navigation/native-stack';
 import { StyleSheet } from 'react-native';
 
+import AsyncChunkScreen from '../screens/AsyncChunkScreen';
 import DetailScreen from '../screens/DetailScreen';
 import HomeScreen from '../screens/HomeScreen';
 import HostAssetsScreen from '../screens/HostAssetsScreen';
 import MiniAppScreen from '../screens/MiniAppScreen';
+import MiniappInstallScreen from '../screens/MiniappInstallScreen';
+import RemoteChunkScreen from '../screens/RemoteChunkScreen';
+import RuntimeEventsScreen from '../screens/RuntimeEventsScreen';
 
 export type MainStackParamList = {
   Home: undefined;
   Detail: undefined;
   HostAssets: undefined;
   MiniApp: undefined;
+  RuntimeEvents: undefined;
+  AsyncChunk: undefined;
+  RemoteChunk: undefined;
+  MiniappInstall: undefined;
 };
 
 export type MainStackNavigationProp =
@@ -54,6 +62,10 @@ const MainNavigator = () => {
         component={MiniAppScreen}
         options={{ headerStyle: { backgroundColor: '#FF9F00' } }}
       />
+      <Main.Screen name="RuntimeEvents" component={RuntimeEventsScreen} />
+      <Main.Screen name="AsyncChunk" component={AsyncChunkScreen} />
+      <Main.Screen name="RemoteChunk" component={RemoteChunkScreen} />
+      <Main.Screen name="MiniappInstall" component={MiniappInstallScreen} />
     </Main.Navigator>
   );
 };

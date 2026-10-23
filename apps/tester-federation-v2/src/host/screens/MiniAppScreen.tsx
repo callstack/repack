@@ -34,15 +34,20 @@ const FallbackComponent = () => (
 
 const MiniAppScreen = () => {
   return (
-    <ErrorBoundary>
-      <React.Suspense fallback={<FallbackComponent />}>
-        <MiniAppNavigator />
-      </React.Suspense>
-    </ErrorBoundary>
+    <View testID="gallery-screen" style={styles.screen}>
+      <ErrorBoundary>
+        <React.Suspense fallback={<FallbackComponent />}>
+          <MiniAppNavigator />
+        </React.Suspense>
+      </ErrorBoundary>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',

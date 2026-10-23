@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 const DetailScreen = () => {
   return (
-    <View testID="detail-screen" style={styles.container}>
+    <View testID="details-screen" style={styles.container}>
       <Text style={styles.label}>DetailScreen</Text>
     </View>
   );

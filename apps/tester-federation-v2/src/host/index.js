@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppRegistry } from 'react-native';
 
 import { components } from '../../app.json';
+import './setup';
 import App from './App';
 
 if (__WITH_PRELOAD__) {

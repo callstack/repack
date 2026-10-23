@@ -40,6 +40,10 @@ export default Repack.defineWebpackConfig((env) => {
       new Repack.RepackPlugin({
         extraChunks: [
           {
+            include: /.+local.+/,
+            type: 'local',
+          },
+          {
             include: /.*/,
             type: 'remote',
             outputPath: `build/host-app/${platform}/output-remote`,

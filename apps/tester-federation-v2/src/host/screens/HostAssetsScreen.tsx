@@ -75,6 +75,7 @@ const AssetRow = ({
 const HostAssetsScreen = () => {
   return (
     <FlatList
+      testID="host-assets-screen"
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.contentContainer}
       data={data}
