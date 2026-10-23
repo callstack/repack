@@ -1,5 +1,6 @@
 import path from 'node:path';
 import * as Repack from '@callstack/repack';
+import { withRepackDevTools } from '@callstack/repack-devtools-plugin/bundler';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import { withRozenite } from '@rozenite/repack';
@@ -136,6 +137,11 @@ const config = Repack.defineRspackConfig((env) => {
   };
 });
 
-export default withRozenite(config, {
-  enabled: process.env.WITH_ROZENITE === 'true',
-});
+const withDevTools = process.env.WITH_ROZENITE === 'true';
+
+export default withRozenite(
+  withRepackDevTools(config, { enabled: withDevTools }),
+  {
+    enabled: withDevTools,
+  }
+);

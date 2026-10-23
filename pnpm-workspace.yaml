@@ -92,3 +92,4 @@ catalogs:
     "@rozenite/react-navigation-plugin": "2.5.0"
     "@rozenite/repack": "2.5.0"
     "@rozenite/storage-plugin": "2.5.0"
+    "rozenite": "2.5.0"

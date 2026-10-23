@@ -2,6 +2,7 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as Repack from '@callstack/repack';
+import { withRepackDevTools } from '@callstack/repack-devtools-plugin/bundler';
 import { ExpoPlugin } from '@callstack/repack-expo/rspack';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import { withRozenite } from '@rozenite/repack';
@@ -66,9 +67,14 @@ const config = (env) => {
   };
 };
 
-export default withRozenite(config, {
-  enabled: process.env.WITH_ROZENITE === 'true',
-  // Re.Pack serves DevTools through React Native's dev-middleware, not the copy
-  // bundled with Expo's CLI, so Rozenite has to patch that one.
-  projectType: 'react-native-cli',
-});
+const withDevTools = process.env.WITH_ROZENITE === 'true';
+
+export default withRozenite(
+  withRepackDevTools(config, { enabled: withDevTools }),
+  {
+    enabled: withDevTools,
+    // Re.Pack serves DevTools through React Native's dev-middleware, not the copy
+    // bundled with Expo's CLI, so Rozenite has to patch that one.
+    projectType: 'react-native-cli',
+  }
+);

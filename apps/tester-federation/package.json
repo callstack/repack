@@ -35,6 +35,7 @@
     "@react-native/babel-preset": "catalog:testers",
     "@react-native/metro-config": "catalog:testers",
     "@react-native/typescript-config": "catalog:testers",
+    "@callstack/repack-devtools-plugin": "workspace:*",
     "@rozenite/network-activity-plugin": "catalog:testers",
     "@rozenite/react-navigation-plugin": "catalog:testers",
     "@rozenite/repack": "catalog:testers",
@@ -45,6 +46,7 @@
     "@types/jest": "^29.5.13",
     "@types/react": "catalog:testers",
     "react-native-test-app": "catalog:testers",
+    "rozenite": "catalog:testers",
     "terser-webpack-plugin": "catalog:",
     "typescript": "catalog:",
     "webpack": "catalog:"

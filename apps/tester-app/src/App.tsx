@@ -1,3 +1,4 @@
+import { useRepackDevTools } from '@callstack/repack-devtools-plugin';
 import { useNetworkActivityDevTools } from '@rozenite/network-activity-plugin';
 import { Appearance } from 'react-native';
 
@@ -18,6 +19,7 @@ Appearance.setColorScheme('light');
 
 const App = () => {
   useNetworkActivityDevTools();
+  useRepackDevTools();
 
   return (
     <AppContainer>

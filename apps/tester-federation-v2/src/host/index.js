@@ -1,4 +1,5 @@
 import { ScriptManager } from '@callstack/repack/client';
+import { installRepackDevTools } from '@callstack/repack-devtools-plugin';
 import { preloadRemote } from '@module-federation/runtime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { withOnBootNetworkActivityRecording } from '@rozenite/network-activity-plugin';
@@ -7,6 +8,7 @@ import { AppRegistry } from 'react-native';
 import { components } from '../../app.json';
 import App from './App';
 
+installRepackDevTools({ boot: true });
 withOnBootNetworkActivityRecording();
 
 if (__WITH_PRELOAD__) {

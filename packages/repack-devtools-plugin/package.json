@@ -1,0 +1,75 @@
+{
+  "name": "@callstack/repack-devtools-plugin",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Rozenite DevTools panels and agent tools for debugging Re.Pack apps: ScriptManager, Module Federation, dev server compilation and symbolication",
+  "license": "MIT",
+  "homepage": "https://github.com/callstack/repack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callstack/repack.git"
+  },
+  "type": "module",
+  "files": [
+    "dist",
+    "!dist/**/*.tsbuildinfo"
+  ],
+  "main": "./dist/react-native/cjs/react-native.js",
+  "module": "./dist/react-native/react-native.js",
+  "types": "./dist/react-native/react-native.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/react-native/react-native.d.ts",
+      "import": "./dist/react-native/react-native.js",
+      "require": "./dist/react-native/cjs/react-native.js"
+    },
+    "./package.json": "./package.json",
+    "./sdk": {
+      "types": "./dist/sdk/sdk.d.ts",
+      "default": "./dist/sdk/sdk.js"
+    },
+    "./bundler": {
+      "types": "./dist/bundler/bundler.d.ts",
+      "default": "./dist/bundler/bundler.js"
+    },
+    "./mf-runtime-plugin": {
+      "types": "./dist/react-native/src/react-native/federation/runtimePlugin.d.ts",
+      "import": "./dist/react-native/src/react-native/federation/runtimePlugin.js",
+      "require": "./dist/react-native/cjs/src/react-native/federation/runtimePlugin.js"
+    }
+  },
+  "scripts": {
+    "build": "node scripts/rozenite.mjs build && tsc -p tsconfig.bundler.json",
+    "dev": "node scripts/rozenite.mjs dev",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.bundler.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@rozenite/agent-bridge": "2.5.0",
+    "@rozenite/agent-shared": "2.5.0",
+    "@rozenite/plugin-bridge": "2.5.0",
+    "@rozenite/ui": "2.5.0"
+  },
+  "devDependencies": {
+    "@callstack/repack": "workspace:*",
+    "@rozenite/vite-plugin": "2.5.0",
+    "@swc/helpers": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:testers",
+    "@types/react-dom": "^19.2.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-native-web": "^0.21.4",
+    "rozenite": "catalog:testers",
+    "typescript": "catalog:",
+    "typescript-5": "npm:typescript@~5.9.3",
+    "vite": "^7.3.1",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@callstack/repack": "workspace:*",
+    "react": "*",
+    "react-native": "*"
+  }
+}
