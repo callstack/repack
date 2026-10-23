@@ -2,7 +2,7 @@ import { Writable } from 'node:stream';
 import util from 'node:util';
 import middie from '@fastify/middie';
 import fastifySensible from '@fastify/sensible';
-import Fastify from 'fastify';
+import Fastify, { LogController } from 'fastify';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import apiPlugin from './plugins/api/apiPlugin.js';
 import compilerPlugin from './plugins/compiler/compilerPlugin.js';
@@ -32,7 +32,12 @@ export async function createServer(config: Server.Config) {
     // to `server.close()`, which only closes them on Node 19+. Force-closing
     // keeps `stop()` from hanging on Node 18.
     forceCloseConnections: true,
-    disableRequestLogging: options.disableRequestLogging,
+    // The top-level `disableRequestLogging` option is deprecated (FSTDEP023).
+    // `LogController` only gates per-request log lines; everything else still
+    // goes through the `logger` stream below.
+    logController: new LogController({
+      disableRequestLogging: options.disableRequestLogging,
+    }),
     logger: {
       level: 'trace',
       stream: new Writable({
