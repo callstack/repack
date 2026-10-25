@@ -1,5 +1,11 @@
 # @callstack/repack-plugin-nativewind
 
+## 5.4.3
+
+### Patch Changes
+
+- [#1494](https://github.com/callstack/repack/pull/1494) [`87db9a1`](https://github.com/callstack/repack/commit/87db9a17886140185787acb4f2f26b1d22b69d9d) Thanks [@whydidoo](https://github.com/whydidoo)! - Configure the NativeWind JSX import source for `builtin:swc-loader` rules nested in `oneOf` or `rules`, such as the ones from `getJsTransformRules`. Previously only top-level rules were updated, so JSX kept importing from `react`.
+
 ## 5.4.2
 
 ## 5.4.1

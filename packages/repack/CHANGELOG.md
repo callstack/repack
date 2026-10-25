@@ -1,5 +1,46 @@
 # @callstack/repack
 
+## 5.4.3
+
+### Patch Changes
+
+- [#1492](https://github.com/callstack/repack/pull/1492) [`6536826`](https://github.com/callstack/repack/commit/653682647b9c71fd9e3dbbb29705eedf08a8d7c6) Thanks [@whydidoo](https://github.com/whydidoo)! - Fix Flow enums disappearing in `babel-loader` and `babel-swc-loader`: `@react-native/babel-preset` strips enum declarations before its enum plugin runs, leaving references such as React Native's `VirtualViewMode.cast()` undefined at runtime. Both loaders now run the preset's `babel-plugin-transform-flow-enums` ahead of the preset, so enums are lowered to `flow-enums-runtime` (resolved from the project or from `react-native`) in every Flow file, with or without an `@flow` pragma. Flow `component` declarations are also lowered for the project's React version instead of always targeting React 19 (`hermesParserOverrides.reactRuntimeTarget` still takes precedence).
+
+- [#1452](https://github.com/callstack/repack/pull/1452) [`a87b592`](https://github.com/callstack/repack/commit/a87b59247cb9595da7880cb8e8b1c6235cae94c7) Thanks [@elirangoshen](https://github.com/elirangoshen)! - Send only sources carrying an `@flow` pragma through hermes-parser in `babelLoader`, matching
+  `babel-plugin-syntax-hermes-parser` with the React Native preset's default
+  `parseLangTypes: 'flow'`. hermes-parser converts its own AST into a Babel AST, and that conversion
+  is quadratic in the number of sibling nodes, so a single prebuilt minified dependency could add
+  minutes to a build. Set `hermesParserOverrides.flow` to `'all'` to keep parsing every file with
+  hermes-parser.
+
+- [#1492](https://github.com/callstack/repack/pull/1492) [`6536826`](https://github.com/callstack/repack/commit/653682647b9c71fd9e3dbbb29705eedf08a8d7c6) Thanks [@whydidoo](https://github.com/whydidoo)! - Fix `babel-loader` and `babel-swc-loader` failing with `SyntaxError: "[object Object]" is not valid JSON` when a previous loader passes its source map as an object, e.g. `flow-loader` (for lowered Flow syntax or with `pretty: true`) or the stock `babel-loader` used by `getCodegenTransformRules`. Both loaders now accept serialized and object source maps.
+
+- [#1483](https://github.com/callstack/repack/pull/1483) [`37c25bb`](https://github.com/callstack/repack/commit/37c25bbb6ba14c0e7c6b628318e29f85038e40f7) Thanks [@CristiCeban](https://github.com/CristiCeban)! - Fix `Cannot find module '@babel/plugin-syntax-typescript'` when bundling TypeScript with `babel-swc-loader` or the codegen rules. Re.Pack passed the plugin to Babel by name, so it only resolved when the project happened to have it installed. With pnpm, builds often worked only through the `NODE_PATH` set by script shims and failed when bundling from Xcode or Gradle.
+  
+  - `@babel/plugin-syntax-typescript` is now a dependency of Re.Pack and is passed to Babel as a resolved path.
+  - `@babel/core` is now declared as a peer dependency, since Re.Pack's loaders import it.
+
+- [#1471](https://github.com/callstack/repack/pull/1471) [`c9dab5d`](https://github.com/callstack/repack/commit/c9dab5d00e4f1c12549c48eba4c432aa638aec99) Thanks [@giaBaoJS](https://github.com/giaBaoJS)! - Fix `DevelopmentPlugin` crashing with `Cannot read properties of undefined (reading 'exposes')` when an official Module Federation plugin (from `@module-federation/enhanced`, or the built-in `container.ModuleFederationPlugin` of Rspack or webpack) is used with the dev server. The check for official plugins read `exposes` from `plugin.config`, which only Re.Pack's own Module Federation plugins have, instead of `plugin._options`.
+
+- [#1492](https://github.com/callstack/repack/pull/1492) [`6536826`](https://github.com/callstack/repack/commit/653682647b9c71fd9e3dbbb29705eedf08a8d7c6) Thanks [@whydidoo](https://github.com/whydidoo)! - Fix `flow-loader`, and with it `getJsTransformRules`, emitting invalid JavaScript for Flow `component` and `hook` declarations, enums and `match` expressions, which React Native ships since 0.81. Files using them are now compiled with the project's React Native parser (`hermes-parser` or `flow-parser`), `babel-plugin-transform-flow-enums` and `@babel/plugin-transform-flow-strip-types`, while other files still go through `flow-remove-types`. Lowered enums use `flow-enums-runtime`, resolved from the project or from `react-native`. `component` declarations follow the project's React version (`ref` as a prop on React 19, `forwardRef` on React 18). Also fix `flow-loader` crashing under webpack with `Maximum call stack size exceeded`.
+
+- [#1484](https://github.com/callstack/repack/pull/1484) [`253d14b`](https://github.com/callstack/repack/commit/253d14bda27e3343aff4d5b01d853e3dfa69de57) Thanks [@whydidoo](https://github.com/whydidoo)! - Keep the options of Module Federation 2.x runtime plugins passed to `ModuleFederationPluginV2` as `[path, options]` in `runtimePlugins`. Such entries were silently dropped before.
+  
+  Fix the typings of the `@callstack/repack/mf/*` runtime plugins with `@module-federation/enhanced` 0.17 and newer, where `FederationRuntimePlugin` and `FederationHost` were renamed to `ModuleFederationRuntimePlugin` and `ModuleFederation`. The types are now derived from the installed runtime, so they work with every supported version.
+
+- [#1502](https://github.com/callstack/repack/pull/1502) [`aed9c75`](https://github.com/callstack/repack/commit/aed9c75bacd2837c695aa2416fd369d6e7a293be) Thanks [@whydidoo](https://github.com/whydidoo)! - Fix bundling Expo SDK 58 (React Native 0.88) projects:
+  
+  - React Native's explicit subpath exports (`react-native/setup-env`, `react-native/react-private-interface`, `react-native/asset-registry` and `react-native/unstable-internals-do-not-use`) now resolve even when `react-native` is aliased to its directory, as `@callstack/repack-expo` does, or when package exports are disabled. This fixes `Cannot find module 'react-native/react-private-interface'` and `'react-native/setup-env'`. React Native 0.87 and newer still need `enablePackageExports: true` for `@react-native/asset-utils`.
+  - `@react-native/assets-registry/registry`, still imported by libraries such as `react-native-svg` 15.15 and earlier, now maps to React Native's own asset registry on React Native 0.87 and newer, so assets register in a single registry.
+  - React Native polyfills are now also resolved through `expo` and `@expo/metro-config` on React Native 0.87 and newer. This fixes `Unable to locate React Native polyfills` in Expo projects, including with pnpm, without adding `@react-native/js-polyfills` by hand. React Native 0.86 and earlier keep using `rn-get-polyfills.js`.
+  - When `react-native` isn't aliased, it is now resolved from the project rather than from Re.Pack's own location.
+
+- [#1486](https://github.com/callstack/repack/pull/1486) [`fd8e33e`](https://github.com/callstack/repack/commit/fd8e33e587e4a2866087aeea266b6f809562a5f2) Thanks [@dannyhw](https://github.com/dannyhw)! - Update `image-size` to v2 and `fastify` to 5.12.5 to resolve security advisories
+
+- [#1493](https://github.com/callstack/repack/pull/1493) [`32c32c0`](https://github.com/callstack/repack/commit/32c32c0660650b559ed61312a9eb29fc5f328235) Thanks [@whydidoo](https://github.com/whydidoo)! - Make SWC JSX development transforms follow the build mode. `getSwcLoaderOptions` (and `getJsTransformRules`) tied `jsc.transform.react.development` to the JSX runtime, so development builds with the default `automatic` runtime emitted `jsx` instead of `jsxDEV` and lost `__source` / `__self`, accurate component stacks and "open in editor", while `classic` production builds kept them. `getSwcLoaderOptions` no longer sets `jsc.transform.react.development` by default, so Rspack's `builtin:swc-loader` derives it from `mode`, and development builds with the `automatic` runtime now import `<importSource>/jsx-dev-runtime`. Both helpers accept a `development` option to override it, e.g. `getJsTransformRules({ swc: { development: false } })` when a custom `importSource` doesn't ship a `jsx-dev-runtime` entry.
+- Updated dependencies [[`e0b86ba`](https://github.com/callstack/repack/commit/e0b86ba64453a53e2fcbbba126ea8297ffe612cb), [`44431b3`](https://github.com/callstack/repack/commit/44431b3cea3bca36de9cfb493221f11f3892a1c8), [`fd8e33e`](https://github.com/callstack/repack/commit/fd8e33e587e4a2866087aeea266b6f809562a5f2)]:
+  - @callstack/repack-dev-server@5.4.3
+
 ## 5.4.2
 
 ### Patch Changes
