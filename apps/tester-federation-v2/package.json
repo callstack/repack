@@ -9,7 +9,9 @@
     "pods:update": "(cd ios && bundle install && bundle exec pod update)",
     "start:hostapp": "react-native webpack-start --config config.host-app.mts",
     "start:miniapp": "react-native webpack-start --config config.mini-app.mts --port 8082",
-    "start:expo-host-widget": "react-native webpack-start --config config.expo-host-widget.mts --port 8083"
+    "start:expo-host-widget": "react-native webpack-start --config config.expo-host-widget.mts --port 8083",
+    "e2e": "pnpm exec e2e run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@callstack/repack": "workspace:*",
@@ -25,6 +27,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
+    "@e2e-dev/mobile": "catalog:testers",
     "@react-native-community/cli": "catalog:testers",
     "@react-native-community/cli-platform-android": "catalog:testers",
     "@react-native-community/cli-platform-ios": "catalog:testers",
@@ -36,7 +39,9 @@
     "@rspack/core": "catalog:",
     "@swc/helpers": "catalog:",
     "@types/jest": "^29.5.13",
+    "@types/node": "catalog:",
     "@types/react": "catalog:testers",
+    "e2e": "catalog:testers",
     "react-native-test-app": "catalog:testers",
     "terser-webpack-plugin": "catalog:",
     "typescript": "catalog:",
