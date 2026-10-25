@@ -96,6 +96,40 @@ export const startCommandOptions = [
   },
 ];
 
+export const federationManifestCommandOptions = [
+  {
+    name: '--source <path>',
+    description:
+      'Federation manifest to inspect: a .json file, a directory containing repack-federation-manifest.json, or an http(s) URL. Also accepted as the first positional argument',
+  },
+  {
+    name: '--json',
+    description: 'Print the raw manifest as JSON to stdout',
+  },
+];
+
+export const federationDoctorCommandOptions = [
+  {
+    name: '--host <source>',
+    description:
+      'Host manifest source: a .json file, a build output directory containing repack-federation-manifest.json, or an http(s) URL',
+  },
+  {
+    name: '--remotes <list>',
+    description:
+      'Comma-separated list of remote manifest sources (same shapes as --host)',
+  },
+  {
+    name: '--format <format>',
+    description: 'Output format: "json" prints machine-readable findings',
+  },
+  {
+    name: '--allow-missing-manifests',
+    description:
+      'Report remotes without a manifest as warnings instead of errors',
+  },
+];
+
 export const bundleCommandOptions = [
   {
     name: '--entry-file <path>',
