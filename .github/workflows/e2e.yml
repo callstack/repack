@@ -41,7 +41,7 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-pnpm-node
         with:
-          node-version: '24.18.0'
+          node-version: '24.22.1'
 
       - name: Setup Java
         uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # tag=v6.0.1
@@ -152,7 +152,7 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-pnpm-node
         with:
-          node-version: '24.18.0'
+          node-version: '24.22.1'
 
       - name: Build workspace packages
         run: pnpm --filter tester-federation-v2... build
