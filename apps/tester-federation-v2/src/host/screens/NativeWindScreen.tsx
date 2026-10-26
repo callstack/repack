@@ -22,9 +22,12 @@ const NativeWindScreen = () => {
   const [containerWidth, setContainerWidth] = React.useState(0);
   const [boxWidth, setBoxWidth] = React.useState(0);
 
-  const handleContainerLayout = React.useCallback((event: LayoutChangeEvent) => {
-    setContainerWidth(Math.round(event.nativeEvent.layout.width));
-  }, []);
+  const handleContainerLayout = React.useCallback(
+    (event: LayoutChangeEvent) => {
+      setContainerWidth(Math.round(event.nativeEvent.layout.width));
+    },
+    []
+  );
 
   return (
     <ScrollView

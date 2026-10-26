@@ -1,5 +1,5 @@
+import type React from 'react';
 import { Text } from 'react-native';
-import React from 'react';
 
 const variantStyles = {
   default: 'rounded',
