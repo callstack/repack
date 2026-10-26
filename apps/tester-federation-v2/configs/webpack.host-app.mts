@@ -1,5 +1,7 @@
 // @ts-check
 import * as Repack from '@callstack/repack';
+import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
+import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import webpack from 'webpack';
 
 import { buildSharedSingletons } from './sharedSingletons.mts';
@@ -29,6 +31,9 @@ export default Repack.defineWebpackConfig((env) => {
       ],
     },
     plugins: [
+      new NativeWindPlugin({
+        cssInteropOptions: { inlineRem: 16 },
+      }),
       // @ts-expect-error
       new Repack.RepackPlugin({
         extraChunks: [
@@ -62,6 +67,7 @@ export default Repack.defineWebpackConfig((env) => {
           process.env.WITH_PRELOAD === 'true' ||
           process.env.WITH_PRELOAD === '1',
       }),
+      new ReanimatedPlugin({ unstable_disableTransform: true }),
     ],
   };
 });

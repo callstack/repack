@@ -43,7 +43,19 @@ export const FEATURES: Feature[] = [
     key: 'miniapp-install',
     name: 'Mini-app install',
     group: 'Chunks',
-    screen: 'MiniappInstall',
+    screen: 'MiniAppInstall',
+  },
+  {
+    key: 'nativewind',
+    name: 'NativeWind',
+    group: 'Plugins',
+    screen: 'NativeWind',
+  },
+  {
+    key: 'reanimated',
+    name: 'Reanimated',
+    group: 'Plugins',
+    screen: 'Reanimated',
   },
 ];
 

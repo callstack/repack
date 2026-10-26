@@ -9,7 +9,9 @@ import DetailScreen from '../screens/DetailScreen';
 import HomeScreen from '../screens/HomeScreen';
 import HostAssetsScreen from '../screens/HostAssetsScreen';
 import MiniAppScreen from '../screens/MiniAppScreen';
-import MiniappInstallScreen from '../screens/MiniappInstallScreen';
+import MiniAppInstallScreen from '../screens/MiniAppInstallScreen.tsx';
+import NativeWindScreen from '../screens/NativeWindScreen';
+import ReanimatedScreen from '../screens/ReanimatedScreen';
 import RemoteChunkScreen from '../screens/RemoteChunkScreen';
 import RuntimeEventsScreen from '../screens/RuntimeEventsScreen';
 
@@ -21,7 +23,9 @@ export type MainStackParamList = {
   RuntimeEvents: undefined;
   AsyncChunk: undefined;
   RemoteChunk: undefined;
-  MiniappInstall: undefined;
+  MiniAppInstall: undefined;
+  NativeWind: undefined;
+  Reanimated: undefined;
 };
 
 export type MainStackNavigationProp =
@@ -38,7 +42,9 @@ const MainNavigator = () => {
         headerBackTitle: 'Back',
         headerLargeTitle: true,
         headerStyle: styles.header,
+        headerLargeStyle: styles.largeHeader,
         headerTitleStyle: styles.headerTitle,
+        headerLargeTitleStyle: styles.largeTitle,
         headerTintColor: 'rgba(255,255,255,1)',
       }}
     >
@@ -65,7 +71,9 @@ const MainNavigator = () => {
       <Main.Screen name="RuntimeEvents" component={RuntimeEventsScreen} />
       <Main.Screen name="AsyncChunk" component={AsyncChunkScreen} />
       <Main.Screen name="RemoteChunk" component={RemoteChunkScreen} />
-      <Main.Screen name="MiniappInstall" component={MiniappInstallScreen} />
+      <Main.Screen name="MiniAppInstall" component={MiniAppInstallScreen} />
+      <Main.Screen name="NativeWind" component={NativeWindScreen} />
+      <Main.Screen name="Reanimated" component={ReanimatedScreen} />
     </Main.Navigator>
   );
 };
@@ -76,6 +84,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#FFFFFF', // White text
+  },
+  largeHeader: {
+    backgroundColor: 'transparent',
+  },
+  largeTitle: {
+    color: '#2C3E50',
   },
   hostAssetsLargeHeader: {
     backgroundColor: 'transparent',

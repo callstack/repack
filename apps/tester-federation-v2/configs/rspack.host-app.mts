@@ -1,4 +1,6 @@
 import * as Repack from '@callstack/repack';
+import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
+import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import rspack from '@rspack/core';
 
 import { buildSharedSingletons } from './sharedSingletons.mts';
@@ -35,6 +37,9 @@ export default Repack.defineRspackConfig((env) => {
       ],
     },
     plugins: [
+      new NativeWindPlugin({
+        cssInteropOptions: { inlineRem: 16 },
+      }),
       new Repack.RepackPlugin({
         extraChunks: [
           {
@@ -66,6 +71,7 @@ export default Repack.defineRspackConfig((env) => {
           process.env.WITH_PRELOAD === 'true' ||
           process.env.WITH_PRELOAD === '1',
       }),
+      new ReanimatedPlugin({ unstable_disableTransform: true }),
     ],
   };
 });

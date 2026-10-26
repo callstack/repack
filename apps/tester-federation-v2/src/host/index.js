@@ -1,11 +1,18 @@
 import { ScriptManager } from '@callstack/repack/client';
 import { preloadRemote } from '@module-federation/runtime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppRegistry } from 'react-native';
+import { AppRegistry, LogBox } from 'react-native';
 
+import '../../global.css';
 import { components } from '../../app.json';
 import './setup';
 import App from './App';
+
+// NativeWind's runtime reads RN's deprecated ImageBackground getter during boot
+// to register className support (react-native-css-interop components.js), even
+// though this app never uses the component. The warning toast covers Home's
+// last row and steals taps from the e2e suite.
+LogBox.ignoreLogs(['ImageBackground is deprecated']);
 
 if (__WITH_PRELOAD__) {
   // enable caching of scripts in the AsyncStorage

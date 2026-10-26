@@ -3,11 +3,11 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import MiniAppSection from '../features/miniapp/MiniAppSection';
 import Report from '../ui/Report';
 
-const MiniappInstallScreen = () => {
+const MiniAppInstallScreen = () => {
   const [invalidated, setInvalidated] = React.useState(false);
 
   return (
-<ScrollView
+    <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.content}
     >
@@ -33,4 +33,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MiniappInstallScreen;
+export default MiniAppInstallScreen;
