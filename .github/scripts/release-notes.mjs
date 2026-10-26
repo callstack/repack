@@ -1,5 +1,6 @@
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const mainPackage = '@callstack/repack';
 
@@ -35,7 +36,7 @@ export function generateReleaseNotes(packages) {
   const main = packages.find((pkg) => pkg.name === mainPackage);
   if (!main) throw new Error(`Missing ${mainPackage} in the release group`);
 
-  const sections = [];
+  const changes = { Major: new Set(), Minor: new Set(), Patch: new Set() };
   for (const pkg of packages) {
     if (pkg.version !== main.version) {
       throw new Error(
@@ -48,19 +49,26 @@ export function generateReleaseNotes(packages) {
     } catch (error) {
       throw new Error(`${pkg.name}: ${error.message}`, { cause: error });
     }
-    if (entry) sections.push(`## ${pkg.name}@${pkg.version}\n\n${entry}`);
+    const sections = entry.split(/^### (Major|Minor|Patch) Changes\s*$/m);
+    for (let index = 1; index < sections.length; index += 2) {
+      for (const item of sections[index + 1].split(/(?=^- )/m)) {
+        const note = item.trim();
+        if (note && !note.startsWith('- Updated dependencies')) {
+          changes[sections[index]].add(note);
+        }
+      }
+    }
   }
 
-  return {
-    name: main.version,
-    tag_name: `${main.name}@${main.version}`,
-    prerelease: main.version.includes('-'),
-    body: [
-      '## Packages',
-      packages.map((pkg) => `- \`${pkg.name}@${pkg.version}\``).join('\n'),
-      ...sections,
-    ].join('\n\n'),
-  };
+  return [
+    '## Packages',
+    packages.map((pkg) => `- \`${pkg.name}@${pkg.version}\``).join('\n'),
+    ...Object.entries(changes)
+      .filter(([, notes]) => notes.size)
+      .map(
+        ([type, notes]) => `## ${type} Changes\n\n${[...notes].join('\n\n')}`
+      ),
+  ].join('\n\n');
 }
 
 export async function readRelease(root) {
@@ -94,5 +102,19 @@ export async function readRelease(root) {
       };
     })
   );
-  return { packages, release: generateReleaseNotes(packages) };
+  return generateReleaseNotes(packages);
+}
+
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
+  try {
+    console.log(
+      await readRelease(fileURLToPath(new URL('../../', import.meta.url)))
+    );
+  } catch (error) {
+    console.error(error.message);
+    process.exitCode = 1;
+  }
 }

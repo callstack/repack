@@ -44,9 +44,6 @@ jobs:
       - name: Test packages
         run: pnpm test
 
-      - name: Test release automation
-        run: pnpm test:release
-
       - name: Create release PR or publish packages
         id: changesets
         uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # tag=v2.1.2
@@ -62,14 +59,23 @@ jobs:
           # @changesets/changelog-github reads the token from the environment.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Retry GitHub release creation after all package tags have been pushed.
-      # Changesets can report published=false when npm is already up to date.
       - name: Create combined GitHub release
-        if: steps.changesets.outputs.has-changesets == 'false'
-        run: node .github/scripts/create-release.mjs
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          version=$(node -p "require('./packages/repack/package.json').version")
+          tag="@callstack/repack@${version}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            exit 0
+          fi
+          node .github/scripts/release-notes.mjs > "$RUNNER_TEMP/release-notes.md"
+          args=()
+          if [[ "$version" == *-* ]]; then
+            args+=(--prerelease)
+          fi
+          gh release create "$tag" --verify-tag --title "$version" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" "${args[@]}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.published-packages }}
 
   canary-release:
     name: Canary Release

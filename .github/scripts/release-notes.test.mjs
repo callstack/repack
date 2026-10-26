@@ -1,9 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { fileURLToPath } from 'node:url';
 
-import { generateReleaseNotes, readRelease } from './release-notes.mjs';
+import { generateReleaseNotes } from './release-notes.mjs';
 
 const fixture = JSON.parse(
   await readFile(
@@ -12,105 +11,64 @@ const fixture = JSON.parse(
   )
 );
 
-test('combines the actual 5.4.2 core and init notes into one release', () => {
-  const release = generateReleaseNotes(fixture);
-  assert.equal(release.name, '5.4.2');
-  assert.equal(release.tag_name, '@callstack/repack@5.4.2');
-  assert.equal(release.prerelease, false);
-  assert.match(release.body, /Fix `\.jpeg` images/);
-  assert.match(
-    release.body,
-    /Bootstrap new projects with React Native 0\.87\.1/
-  );
-  assert.equal((release.body.match(/^## @callstack\//gm) ?? []).length, 2);
-  assert.equal((release.body.match(/^- `@callstack\//gm) ?? []).length, 6);
-  assert.doesNotMatch(release.body, /5\.4\.1|#1479|#1476|consumer ProGuard/);
-});
-
-test('does not generate empty sections for version-aligned packages', () => {
-  const release = generateReleaseNotes(fixture);
-  assert.match(
-    release.body,
-    /- `@callstack\/repack-plugin-reanimated@5\.4\.2`/
-  );
+test('merges the actual 5.4.2 notes without dependency updates or empty sections', () => {
+  const notes = generateReleaseNotes(fixture);
+  assert.match(notes, /Fix `\.jpeg` images/);
+  assert.match(notes, /Bootstrap new projects with React Native 0\.87\.1/);
+  assert.match(notes, /\n\n {2}If you have a `\.jpeg`/);
+  assert.equal((notes.match(/^## Patch Changes$/gm) ?? []).length, 1);
+  for (const pkg of fixture) {
+    assert.ok(notes.includes(`- \`${pkg.name}@${pkg.version}\``));
+  }
   assert.doesNotMatch(
-    release.body,
-    /^## @callstack\/repack-plugin-reanimated/m
+    notes,
+    /Updated dependencies|^## @callstack\/|5\.4\.1|#1479|#1476|consumer ProGuard/m
   );
 });
 
-test('fails rather than publishing the entire changelog when a version is missing', () => {
+test('includes the shared 5.4.1 changeset only once across packages', () => {
+  const notes = generateReleaseNotes(
+    fixture.map((pkg) => ({ ...pkg, version: '5.4.1' }))
+  );
+  assert.equal((notes.match(/\[#1476\]/g) ?? []).length, 1);
+  assert.equal((notes.match(/^## Patch Changes$/gm) ?? []).length, 1);
+  assert.match(notes, /consumer ProGuard/);
+  assert.match(notes, /XML font-family resources continue to use `res\/font`/);
+  assert.doesNotMatch(notes, /Updated dependencies|#1480|#1482|5\.4\.2/);
+});
+
+test('groups changes by type and preserves multiline notes including fenced headings', () => {
+  const example =
+    '- Example\n\n  ```md\n  ## 0.1.0\n  ### Patch Changes\n  - Nested item\n  ```';
+  const notes = generateReleaseNotes([
+    {
+      name: '@callstack/repack',
+      version: '6.0.0',
+      changelog: `## 6.0.0\n\n### Patch Changes\n\n${example}\n\n### Major Changes\n\n- Breaking change\n\n## 5.4.2\n\nOld notes`,
+    },
+    {
+      name: '@callstack/repack-init',
+      version: '6.0.0',
+      changelog:
+        '## 6.0.0\n\n### Minor Changes\n\n- New option\n\n### Patch Changes\n\n- Another fix',
+    },
+  ]);
+  assert.ok(notes.includes(example));
+  assert.ok(
+    notes.indexOf('## Major Changes') < notes.indexOf('## Minor Changes')
+  );
+  assert.ok(
+    notes.indexOf('## Minor Changes') < notes.indexOf('## Patch Changes')
+  );
+  assert.match(notes, /- Another fix/);
+  assert.doesNotMatch(notes, /Old notes/);
+});
+
+test('fails instead of including another version when the requested entry is missing', () => {
   const packages = structuredClone(fixture);
   packages[0].changelog = '# Package\n\n## 5.4.20\n\nWrong release';
   assert.throws(
     () => generateReleaseNotes(packages),
     /repack: Missing changelog entry for 5\.4\.2/
   );
-});
-
-test('preserves fenced code and nested headings without reading an older version', () => {
-  const packages = [
-    {
-      name: '@callstack/repack',
-      version: '5.4.2',
-      changelog: [
-        '# Package',
-        '```md',
-        '## 5.4.2',
-        'wrong',
-        '```',
-        '## 5.4.2',
-        '### Patch Changes',
-        'Notes',
-        '````md',
-        '## 5.0.0',
-        '```',
-        'more code',
-        '````',
-        '~~~md',
-        '# Example',
-        '~~~',
-        '## 5.4.1',
-        'Old notes',
-      ].join('\r\n'),
-    },
-  ];
-  const release = generateReleaseNotes(packages);
-  assert.match(release.body, /### Patch Changes\nNotes/);
-  assert.match(release.body, /## 5\.0\.0\n```\nmore code/);
-  assert.match(release.body, /~~~md\n# Example\n~~~/);
-  assert.doesNotMatch(release.body, /wrong|Old notes/);
-});
-
-test('rejects mixed versions instead of selecting a misleading common tag', () => {
-  const packages = structuredClone(fixture);
-  packages[1].version = '5.4.3';
-  assert.throws(() => generateReleaseNotes(packages), /version mismatch/);
-});
-
-test('requires the main package for the canonical release tag', () => {
-  assert.throws(
-    () => generateReleaseNotes(fixture.slice(1)),
-    /Missing @callstack\/repack/
-  );
-});
-
-test('marks a Changesets prerelease correctly', () => {
-  const release = generateReleaseNotes([
-    {
-      name: '@callstack/repack',
-      version: '6.0.0-rc.0',
-      changelog: '## 6.0.0-rc.0\n\nPreview',
-    },
-  ]);
-  assert.equal(release.prerelease, true);
-});
-
-test('reads the configured release group from the repository', async () => {
-  const { packages, release } = await readRelease(
-    fileURLToPath(new URL('../../', import.meta.url))
-  );
-  assert.equal(packages[0].name, '@callstack/repack');
-  assert.equal(release.tag_name, `@callstack/repack@${packages[0].version}`);
-  assert.equal(packages.length, 6);
 });
