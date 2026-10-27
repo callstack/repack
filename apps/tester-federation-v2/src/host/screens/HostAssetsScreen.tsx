@@ -7,70 +7,117 @@ import {
   View,
 } from 'react-native';
 
-const assets = [
+import Report from '../ui/Report';
+
+type AssetItem = {
+  key: string;
+  title: string;
+  subtitle: string;
+  source: ImageRequireSource;
+  report?: 'mode' | 'full';
+  compact?: boolean;
+};
+
+const data: AssetItem[] = [
   {
+    key: 'pic-1',
+    title: 'Host asset 1',
+    subtitle:
+      'Loaded from the host app bundle to test inline asset size limits',
     source: require('../assets/pic_1.jpg'),
-    status: 'Inlined',
-    size: '89,400 bytes',
+    report: 'mode',
   },
   {
+    key: 'pic-2',
+    title: 'Host asset 2',
+    subtitle:
+      'Loaded from the host app bundle to test inline asset size limits',
     source: require('../assets/pic_2.jpg'),
-    status: 'Emitted',
-    size: '121,569 bytes',
+    report: 'mode',
   },
   {
-    source: require('../assets/pic_3.jpg'),
-    status: 'Inlined',
-    size: '59,862 bytes',
+    key: 'local',
+    title: 'Local fixture',
+    subtitle: 'Assets loader without inline options, always emitted as a file',
+    source: require('../assets/localAssets/webpack.png'),
+    report: 'full',
+    compact: true,
+  },
+  {
+    key: 'inline',
+    title: 'Inline fixture',
+    subtitle:
+      'Assets loader with inline enabled, always inlined into the bundle',
+    source: require('../assets/inlineAssets/webpack.png'),
+    report: 'full',
+    compact: true,
   },
 ];
 
-const data = assets.map((asset, index) => ({
-  title: `Host asset ${index + 1}`,
-  ...asset,
-}));
+const AssetRow = ({ item }: { item: AssetItem }) => {
+  const resolved = Image.resolveAssetSource(item.source) as {
+    uri: string;
+    scale: number;
+  };
+  const isInline = resolved.uri.startsWith('data:');
+  const status = isInline ? 'Inlined' : 'Emitted';
 
-const AssetRow = ({
-  title,
-  source,
-  status,
-  size,
-}: {
-  title: string;
-  source: ImageRequireSource;
-  status: string;
-  size: string;
-}) => (
-  <View style={styles.row}>
-    <Image source={source} style={styles.image} />
-    <View style={styles.titleContainer}>
-      <View style={styles.titleRow}>
-        <Text style={styles.title}>{title}</Text>
-        <View
-          style={[
-            styles.badge,
-            status === 'Inlined' ? styles.inlineBadge : styles.emittedBadge,
-          ]}
-        >
-          <Text
+  return (
+    <View style={styles.row}>
+      <Image
+        accessibilityIgnoresInvertColors
+        source={item.source}
+        style={item.compact ? styles.fixtureImage : styles.image}
+      />
+      <View style={styles.titleContainer}>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>{item.title}</Text>
+          <View
             style={[
-              styles.badgeText,
-              status === 'Inlined'
-                ? styles.inlineBadgeText
-                : styles.emittedBadgeText,
+              styles.badge,
+              isInline ? styles.inlineBadge : styles.emittedBadge,
             ]}
           >
-            {status}
-          </Text>
+            <Text
+              style={[
+                styles.badgeText,
+                isInline ? styles.inlineBadgeText : styles.emittedBadgeText,
+              ]}
+            >
+              {status}
+            </Text>
+          </View>
         </View>
+        {item.report ? (
+          <View style={styles.reports}>
+            <Report
+              testID={`host-asset-${item.key}-mode-report`}
+              name="mode"
+              value={status}
+            />
+            {item.report === 'full' ? (
+              <>
+                <Report
+                  testID={`host-asset-${item.key}-scale-report`}
+                  name="scale"
+                  value={resolved.scale}
+                />
+                <Report
+                  testID={`host-asset-${item.key}-uri-report`}
+                  name="uri"
+                  value={
+                    isInline ? `${resolved.uri.slice(0, 48)}…` : resolved.uri
+                  }
+                />
+              </>
+            ) : null}
+          </View>
+        ) : null}
+        <Text style={styles.subtitle}>{item.subtitle}</Text>
       </View>
-      <Text style={styles.size}>{size}</Text>
-      <Text style={styles.subtitle}>
-        Loaded from the host app bundle to test inline asset size limits
-      </Text>
     </View>
-  </View>
-);
+  );
+};
 
 const HostAssetsScreen = () => {
   return (
@@ -79,15 +126,8 @@ const HostAssetsScreen = () => {
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.contentContainer}
       data={data}
-      keyExtractor={(item) => item.title}
-      renderItem={({ item }) => (
-        <AssetRow
-          title={item.title}
-          source={item.source}
-          status={item.status}
-          size={item.size}
-        />
-      )}
+      keyExtractor={(item) => item.key}
+      renderItem={({ item }) => <AssetRow item={item} />}
       style={styles.container}
     />
   );
@@ -117,6 +157,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 250,
     resizeMode: 'cover',
+  },
+  fixtureImage: {
+    width: '100%',
+    height: 96,
+    resizeMode: 'contain',
   },
   titleContainer: {
     padding: 15,
@@ -154,9 +199,8 @@ const styles = StyleSheet.create({
   emittedBadgeText: {
     color: '#9A5A00',
   },
-  size: {
-    color: '#7F8C8D',
-    fontSize: 13,
+  reports: {
+    marginTop: 5,
     marginBottom: 5,
   },
   subtitle: {

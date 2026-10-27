@@ -9,4 +9,27 @@ test('Host Assets screen renders', async ({ app, screen }) => {
   await screen.scrollUntilVisible(entry);
   await entry.tap();
   await expect(screen.getByTestId('host-assets-screen')).toBeVisible();
+
+  const pic1Mode = screen.getByTestId('host-asset-pic-1-mode-report');
+  const pic2Mode = screen.getByTestId('host-asset-pic-2-mode-report');
+  const localMode = screen.getByTestId('host-asset-local-mode-report');
+const inlineMode = screen.getByTestId('host-asset-inline-mode-report');
+  const localUri = screen.getByTestId('host-asset-local-uri-report');
+
+  await screen.scrollUntilVisible(pic1Mode);
+  await expect(pic1Mode).toHaveText('mode: Inlined');
+  await screen.scrollUntilVisible(pic2Mode);
+  await expect(pic2Mode).toHaveText('mode: Emitted');
+  await screen.scrollUntilVisible(localMode);
+  await expect(localMode).toHaveText('mode: Emitted');
+  await screen.scrollUntilVisible(inlineMode);
+  await expect(inlineMode).toHaveText('mode: Inlined');
+
+  await screen.scrollUntilVisible(localUri);
+  const uriText = (await localUri.textContent()) ?? '';
+  const assetUrl = uriText.replace('uri: ', '');
+  expect(assetUrl).toMatch(/^http:\/\/localhost:8081\//);
+
+  const response = await fetch(assetUrl);
+  expect(response.status).toBe(200);
 });

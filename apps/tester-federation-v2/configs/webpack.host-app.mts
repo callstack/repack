@@ -1,4 +1,5 @@
 // @ts-check
+import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
@@ -27,7 +28,27 @@ export default Repack.defineWebpackConfig((env) => {
           use: '@callstack/repack/babel-swc-loader',
           type: 'javascript/auto',
         },
-        ...Repack.getAssetTransformRules(),
+        {
+          test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
+          exclude: [
+            path.join(context, 'src/host/assets/localAssets'),
+            path.join(context, 'src/host/assets/inlineAssets'),
+          ],
+          use: '@callstack/repack/assets-loader',
+        },
+        {
+          test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
+          include: [path.join(context, 'src/host/assets/localAssets')],
+          use: '@callstack/repack/assets-loader',
+        },
+        {
+          test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
+          include: [path.join(context, 'src/host/assets/inlineAssets')],
+          use: {
+            loader: '@callstack/repack/assets-loader',
+            options: { inline: true },
+          },
+        },
       ],
     },
     plugins: [
