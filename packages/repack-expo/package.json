@@ -54,7 +54,7 @@
     "hermes-parser": "^0.36.0"
   },
   "peerDependencies": {
-    "@callstack/repack": "workspace:^",
+    "@callstack/repack": "^5.4.2 || ^6.0.0",
     "@rspack/core": ">=1",
     "expo": ">=56"
   },
