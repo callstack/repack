@@ -13,7 +13,7 @@ test('Host Assets screen renders', async ({ app, screen }) => {
   const pic1Mode = screen.getByTestId('host-asset-pic-1-mode-report');
   const pic2Mode = screen.getByTestId('host-asset-pic-2-mode-report');
   const localMode = screen.getByTestId('host-asset-local-mode-report');
-const inlineMode = screen.getByTestId('host-asset-inline-mode-report');
+  const inlineMode = screen.getByTestId('host-asset-inline-mode-report');
   const localUri = screen.getByTestId('host-asset-local-uri-report');
 
   await screen.scrollUntilVisible(pic1Mode);
