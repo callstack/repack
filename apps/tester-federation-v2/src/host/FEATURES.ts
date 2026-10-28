@@ -1,9 +1,4 @@
-export type FeatureGroup =
-  | 'Mini Apps'
-  | 'Navigation'
-  | 'Runtime'
-  | 'Chunks'
-  | 'Plugins';
+export type FeatureGroup = 'Mini Apps' | 'Runtime' | 'Chunks' | 'Plugins';
 
 export type Feature = {
   key: string;
@@ -14,7 +9,6 @@ export type Feature = {
 
 export const FEATURES: Feature[] = [
   { key: 'gallery', name: 'Gallery', group: 'Mini Apps', screen: 'MiniApp' },
-  { key: 'details', name: 'Detail', group: 'Navigation', screen: 'Detail' },
   {
     key: 'host-assets',
     name: 'Host assets',
@@ -60,7 +54,6 @@ export const FEATURES: Feature[] = [
 ];
 
 export const FEATURE_GROUPS: FeatureGroup[] = [
-  'Navigation',
   'Runtime',
   'Mini Apps',
   'Chunks',

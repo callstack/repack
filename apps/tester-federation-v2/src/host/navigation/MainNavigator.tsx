@@ -5,7 +5,6 @@ import {
 import { StyleSheet } from 'react-native';
 
 import AsyncChunkScreen from '../screens/AsyncChunkScreen';
-import DetailScreen from '../screens/DetailScreen';
 import HomeScreen from '../screens/HomeScreen';
 import HostAssetsScreen from '../screens/HostAssetsScreen';
 import MiniAppInstallScreen from '../screens/MiniAppInstallScreen.tsx';
@@ -17,7 +16,6 @@ import RuntimeEventsScreen from '../screens/RuntimeEventsScreen';
 
 export type MainStackParamList = {
   Home: undefined;
-  Detail: undefined;
   HostAssets: undefined;
   MiniApp: undefined;
   RuntimeEvents: undefined;
@@ -49,7 +47,6 @@ const MainNavigator = () => {
       }}
     >
       <Main.Screen name="Home" component={HomeScreen} />
-      <Main.Screen name="Detail" component={DetailScreen} />
       <Main.Screen
         name="HostAssets"
         component={HostAssetsScreen}
