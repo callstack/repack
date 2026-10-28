@@ -5,7 +5,7 @@ import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import webpack from 'webpack';
 
-// @ts-ignore
+// @ts-expect-error
 import { buildSharedSingletons } from './sharedSingletons.mts';
 
 export default Repack.defineWebpackConfig((env) => {
