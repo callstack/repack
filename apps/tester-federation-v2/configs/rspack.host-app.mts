@@ -4,6 +4,7 @@ import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import rspack from '@rspack/core';
 
+// @ts-ignore
 import { buildSharedSingletons } from './sharedSingletons.mts';
 
 export default Repack.defineRspackConfig((env) => {
@@ -32,7 +33,9 @@ export default Repack.defineRspackConfig((env) => {
           type: 'javascript/auto',
         },
         {
-          test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
+          test: Repack.getAssetExtensionsRegExp(
+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+          ),
           exclude: [
             path.join(context, 'src/host/assets/localAssets'),
             path.join(context, 'src/host/assets/inlineAssets'),
@@ -43,12 +46,25 @@ export default Repack.defineRspackConfig((env) => {
           },
         },
         {
-          test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
+          test: /\.svg$/,
+          use: [
+            {
+              loader: '@svgr/webpack',
+              options: { native: true, dimensions: false },
+            },
+          ],
+        },
+        {
+          test: Repack.getAssetExtensionsRegExp(
+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+          ),
           include: [path.join(context, 'src/host/assets/localAssets')],
           use: '@callstack/repack/assets-loader',
         },
         {
-          test: Repack.getAssetExtensionsRegExp(Repack.ASSET_EXTENSIONS),
+          test: Repack.getAssetExtensionsRegExp(
+            Repack.ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
+          ),
           include: [path.join(context, 'src/host/assets/inlineAssets')],
           use: {
             loader: '@callstack/repack/assets-loader',

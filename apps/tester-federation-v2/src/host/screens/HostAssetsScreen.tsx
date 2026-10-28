@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react';
 import {
   FlatList,
   Image,
@@ -7,16 +8,25 @@ import {
   View,
 } from 'react-native';
 
+import RepackLogo from '../assets/repack-logo.svg';
 import Report from '../ui/Report';
 
-type AssetItem = {
-  key: string;
-  title: string;
-  subtitle: string;
-  source: ImageRequireSource;
-  report?: 'mode' | 'full';
-  compact?: boolean;
-};
+type SvgComponentType = ComponentType<{
+  width?: number | string;
+  height?: number | string;
+}>;
+
+type BaseItem = { key: string; title: string; subtitle: string };
+
+type AssetItem = BaseItem &
+  (
+    | {
+        source: ImageRequireSource;
+        report: 'mode' | 'full';
+        compact?: boolean;
+      }
+    | { SvgComponent: SvgComponentType; report: 'svg' }
+  );
 
 const data: AssetItem[] = [
   {
@@ -52,9 +62,58 @@ const data: AssetItem[] = [
     report: 'full',
     compact: true,
   },
+  {
+    key: 'svg',
+    title: 'SVG via svgr',
+    subtitle:
+      'Imported as a React component by @svgr/webpack, not as a bitmap asset',
+    SvgComponent: RepackLogo,
+    report: 'svg',
+  },
 ];
 
+const SvgRow = ({
+  SvgComponent,
+  item,
+}: {
+  SvgComponent: SvgComponentType;
+  item: BaseItem;
+}) => (
+  <View style={styles.row}>
+    <View style={styles.svgContainer}>
+      <SvgComponent width={96} height={96} />
+    </View>
+    <View style={styles.titleContainer}>
+      <View style={styles.titleRow}>
+        <Text style={styles.title}>{item.title}</Text>
+        <View style={[styles.badge, styles.inlineBadge]}>
+          <Text style={[styles.badgeText, styles.inlineBadgeText]}>
+            Component
+          </Text>
+        </View>
+      </View>
+      <View style={styles.reports}>
+        <Report
+          testID="host-asset-svg-render-report"
+          name="svg"
+          value="rendered"
+        />
+      </View>
+      <Text style={styles.subtitle}>{item.subtitle}</Text>
+    </View>
+  </View>
+);
+
+type BitmapItem = Extract<AssetItem, { source: ImageRequireSource }>;
+
 const AssetRow = ({ item }: { item: AssetItem }) => {
+  if (item.report === 'svg') {
+    return <SvgRow SvgComponent={item.SvgComponent} item={item} />;
+  }
+  return <BitmapRow item={item} />;
+};
+
+const BitmapRow = ({ item }: { item: BitmapItem }) => {
   const resolved = Image.resolveAssetSource(item.source) as {
     uri: string;
     scale: number;
@@ -162,6 +221,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 96,
     resizeMode: 'contain',
+  },
+  svgContainer: {
+    height: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F0F4FA',
   },
   titleContainer: {
     padding: 15,

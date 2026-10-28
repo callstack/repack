@@ -31,6 +31,7 @@
     "react-native-reanimated": "catalog:testers",
     "react-native-safe-area-context": "catalog:testers",
     "react-native-screens": "catalog:testers",
+    "react-native-svg": "15.15.5",
     "react-native-worklets": "catalog:testers",
     "tailwind-merge": "^3.5.0"
   },
@@ -48,6 +49,7 @@
     "@react-native/typescript-config": "catalog:testers",
     "@rsdoctor/rspack-plugin": "1.6.4",
     "@rspack/core": "catalog:",
+    "@svgr/webpack": "^8.1.0",
     "@swc/helpers": "catalog:",
     "@types/jest": "^29.5.13",
     "@types/node": "catalog:",
