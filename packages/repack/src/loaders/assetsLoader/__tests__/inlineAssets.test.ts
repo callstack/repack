@@ -24,8 +24,8 @@ function evaluateInlinedAsset(code: string, pixelRatio: number) {
   return module.exports;
 }
 
-// assets are sorted by scale in ascending order, as in the assets loader
-const assets: Asset[] = [0.75, 1, 1.5, 2, 3].map((scale) => ({
+// out of order on purpose, `inlineAssets` must not rely on the caller sorting them
+const assets: Asset[] = [2, 0.75, 3, 1.5, 1].map((scale) => ({
   data: Buffer.from(`star@${scale}x`),
   dimensions: { width: 10, height: 10 },
   filename: `star@${scale}x.png`,
