@@ -4,10 +4,9 @@ import type { Configuration as RspackConfiguration } from '@rspack/core';
 import * as colorette from 'colorette';
 import type { Configuration as WebpackConfiguration } from 'webpack';
 
-type RspackCacheOptions = NonNullable<
-  RspackConfiguration['experiments']
->['cache'];
-type WebpackCacheOptions = WebpackConfiguration['cache'];
+type CacheOptions =
+  | RspackConfiguration['cache']
+  | WebpackConfiguration['cache'];
 
 function getDefaultCacheDirectory(
   bundler: 'rspack' | 'webpack',
@@ -22,68 +21,27 @@ function getCustomCacheDirectory(candidate: string, rootDir: string): string {
   return path.resolve(rootDir, candidate);
 }
 
-function getRspackCachePaths(
+function getCachePath(
+  bundler: 'rspack' | 'webpack',
   rootDir: string,
-  cacheConfigs: RspackCacheOptions[]
-): Set<string> {
-  const cachePaths = new Set<string>();
-
-  for (const cacheConfig of cacheConfigs) {
-    if (
-      typeof cacheConfig === 'object' &&
-      'storage' in cacheConfig &&
-      cacheConfig.storage?.directory
-    ) {
-      const candidateDir = cacheConfig.storage.directory;
-      cachePaths.add(getCustomCacheDirectory(candidateDir, rootDir));
-    } else {
-      cachePaths.add(getDefaultCacheDirectory('rspack', rootDir));
+  cacheConfig: CacheOptions
+): string {
+  if (typeof cacheConfig === 'object') {
+    // Rspack `type: 'persistent'`
+    if ('storage' in cacheConfig && cacheConfig.storage?.directory) {
+      return getCustomCacheDirectory(cacheConfig.storage.directory, rootDir);
     }
-  }
-
-  return cachePaths;
-}
-
-function getWebpackCachePaths(
-  rootDir: string,
-  cacheConfigs: WebpackCacheOptions[]
-): Set<string> {
-  const cachePaths = new Set<string>();
-
-  for (const cacheConfig of cacheConfigs) {
-    if (
-      typeof cacheConfig === 'object' &&
-      'cacheLocation' in cacheConfig &&
-      cacheConfig.cacheLocation
-    ) {
+    // `type: 'filesystem'` (webpack, Rspack with `experiments.newCache`)
+    if ('cacheLocation' in cacheConfig && cacheConfig.cacheLocation) {
       const candidateDir = path.dirname(cacheConfig.cacheLocation);
-      cachePaths.add(getCustomCacheDirectory(candidateDir, rootDir));
-    } else if (
-      typeof cacheConfig === 'object' &&
-      'cacheDirectory' in cacheConfig &&
-      cacheConfig.cacheDirectory
-    ) {
-      const candidateDir = cacheConfig.cacheDirectory;
-      cachePaths.add(getCustomCacheDirectory(candidateDir, rootDir));
-    } else {
-      cachePaths.add(getDefaultCacheDirectory('webpack', rootDir));
+      return getCustomCacheDirectory(candidateDir, rootDir);
+    }
+    if ('cacheDirectory' in cacheConfig && cacheConfig.cacheDirectory) {
+      return getCustomCacheDirectory(cacheConfig.cacheDirectory, rootDir);
     }
   }
-
-  return cachePaths;
+  return getDefaultCacheDirectory(bundler, rootDir);
 }
-
-export function resetPersistentCache(config: {
-  bundler: 'rspack';
-  rootDir: string;
-  cacheConfigs: RspackCacheOptions[];
-}): void;
-
-export function resetPersistentCache(config: {
-  bundler: 'webpack';
-  rootDir: string;
-  cacheConfigs: WebpackCacheOptions[];
-}): void;
 
 export function resetPersistentCache({
   bundler,
@@ -92,12 +50,13 @@ export function resetPersistentCache({
 }: {
   bundler: 'rspack' | 'webpack';
   rootDir: string;
-  cacheConfigs: unknown;
+  cacheConfigs: CacheOptions[];
 }) {
-  const cachePaths =
-    bundler === 'rspack'
-      ? getRspackCachePaths(rootDir, cacheConfigs as RspackCacheOptions[])
-      : getWebpackCachePaths(rootDir, cacheConfigs as WebpackCacheOptions[]);
+  const cachePaths = new Set(
+    cacheConfigs.map((cacheConfig) =>
+      getCachePath(bundler, rootDir, cacheConfig)
+    )
+  );
 
   const warn = (msg: string) => console.warn(colorette.yellow(msg));
 

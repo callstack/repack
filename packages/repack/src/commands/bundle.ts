@@ -84,19 +84,11 @@ export async function bundle(
   }
 
   if (args.resetCache) {
-    if (bundler === 'rspack') {
-      resetPersistentCache({
-        bundler: 'rspack',
-        rootDir: cliConfig.root,
-        cacheConfigs: [config.experiments?.cache],
-      });
-    } else {
-      resetPersistentCache({
-        bundler: 'webpack',
-        rootDir: cliConfig.root,
-        cacheConfigs: [config.cache],
-      });
-    }
+    resetPersistentCache({
+      bundler,
+      rootDir: cliConfig.root,
+      cacheConfigs: [config.cache],
+    });
   }
 
   // Dynamic import of bundler engine — both are optional peer dependencies

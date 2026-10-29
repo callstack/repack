@@ -238,10 +238,7 @@ function getBabelLoaderUse(
     options:
       loader === 'babel-loader'
         ? { root: projectRoot, ...babelOptions }
-        : {
-            hideParallelModeWarning: true,
-            babelOverrides: { cwd: projectRoot, ...babelOptions },
-          },
+        : { babelOverrides: { cwd: projectRoot, ...babelOptions } },
   };
 }
 
@@ -832,10 +829,7 @@ describe.each(['unsupported-preset', 'missing-flow-parser'])(
                 options:
                   loader === 'babel-loader'
                     ? babelOptions
-                    : {
-                        hideParallelModeWarning: true,
-                        babelOverrides: babelOptions,
-                      },
+                    : { babelOverrides: babelOptions },
               };
 
         await expect(

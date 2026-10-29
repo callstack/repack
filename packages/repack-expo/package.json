@@ -52,7 +52,7 @@
   },
   "peerDependencies": {
     "@callstack/repack": "workspace:^",
-    "@rspack/core": ">=1",
+    "@rspack/core": ">=2",
     "expo": ">=56"
   },
   "devDependencies": {

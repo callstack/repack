@@ -1,12 +1,8 @@
 import type { TransformOptions } from '@babel/core';
-import type {
-  LoaderContext,
-  RawSourceMap,
-  SwcLoaderOptions,
-} from '@rspack/core';
+import type { LoaderContext, RawSourceMap } from '@rspack/core';
 import { transform } from '../babelLoader/babelLoader.js';
 import { normalizeInputSourceMap } from '../babelLoader/utils.js';
-import type { BabelSwcLoaderOptions } from './options.js';
+import type { BabelSwcLoaderOptions, SwcConfig } from './options.js';
 import {
   addSwcComplementaryTransforms,
   getSupportedSwcConfigurableTransforms,
@@ -14,10 +10,8 @@ import {
   getSupportedSwcNormalTransforms,
 } from './swc.js';
 import {
-  checkParallelModeAvailable,
   getExtraBabelPlugins,
   getProjectBabelConfig,
-  getProjectRootPath,
   getSwcParserConfig,
   lazyGetSwc,
 } from './utils.js';
@@ -34,7 +28,7 @@ export function partitionTransforms(
   let configurableTransforms: string[] = [];
   let customTransforms: string[] = [];
 
-  let swcConfig: SwcLoaderOptions = {
+  let swcConfig: SwcConfig = {
     jsc: {
       parser: getSwcParserConfig(filename),
       transform: { react: { useBuiltins: true } },
@@ -63,7 +57,7 @@ export function partitionTransforms(
 }
 
 export interface BuildFinalSwcConfigOptions {
-  swcConfig: SwcLoaderOptions;
+  swcConfig: SwcConfig;
   includedSwcTransforms: string[];
   lazyImports: boolean | string[];
   sourceType: 'module' | 'script' | undefined;
@@ -71,7 +65,7 @@ export interface BuildFinalSwcConfigOptions {
 
 export function buildFinalSwcConfig(
   options: BuildFinalSwcConfigOptions
-): SwcLoaderOptions {
+): SwcConfig {
   const { swcConfig, includedSwcTransforms, lazyImports, sourceType } = options;
   return {
     ...swcConfig,
@@ -104,15 +98,10 @@ export default async function babelSwcLoader(
 ) {
   this.cacheable();
   const callback = this.async();
-  const logger = this.getLogger('BabelSwcLoader');
   const options = this.getOptions();
 
-  if (!options.hideParallelModeWarning) {
-    checkParallelModeAvailable(this, logger);
-  }
-
   const lazyImports = options.lazyImports ?? false;
-  const projectRoot = getProjectRootPath(this);
+  const projectRoot = this.rootContext;
 
   const withSourceMaps = this.resourcePath.match(/node_modules/)
     ? false
@@ -171,7 +160,7 @@ export default async function babelSwcLoader(
       filename: this.resourcePath,
       configFile: false,
       swcrc: false,
-      root: projectRoot ?? babelConfig.root ?? undefined,
+      root: projectRoot,
       minify: false,
       sourceMaps: withSourceMaps,
       inputSourceMap: withSourceMaps
