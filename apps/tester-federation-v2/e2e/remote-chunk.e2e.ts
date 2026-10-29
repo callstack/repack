@@ -14,17 +14,17 @@ test('prefetch, load, and invalidate the host remote chunk', async ({
   await expect(screen.getByTestId('remote-chunk-screen')).toBeVisible();
 
   await screen.getByTestId('remote-chunk-prefetch-button').tap();
-  await expect(screen.getByTestId('remote-chunk-prefetched-report')).toHaveText(
-    'prefetched: true'
-  );
+  await expect(
+    screen.getByTestId('remote-chunk-prefetch-button')
+  ).toBeDisabled();
 
   await screen.getByTestId('remote-chunk-load-button').tap();
   await expect(screen.getByTestId('remote-chunk-content')).toBeVisible();
 
   await screen.getByTestId('remote-chunk-invalidate-button').tap();
-  await expect(
-    screen.getByTestId('remote-chunk-invalidated-report')
-  ).toHaveText('invalidated: true');
   await expect(screen.getByTestId('remote-chunk-content')).toBeHidden();
   await expect(screen.getByTestId('remote-chunk-load-button')).toBeVisible();
+  await expect(
+    screen.getByTestId('remote-chunk-prefetch-button')
+  ).toBeEnabled();
 });

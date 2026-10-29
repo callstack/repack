@@ -34,7 +34,7 @@ const FallbackComponent = () => (
 
 const MiniAppScreen = () => {
   return (
-    <View testID="gallery-screen" style={styles.screen}>
+    <View style={styles.screen}>
       <ErrorBoundary>
         <React.Suspense fallback={<FallbackComponent />}>
           <MiniAppNavigator />

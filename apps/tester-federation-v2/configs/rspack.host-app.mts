@@ -80,7 +80,7 @@ export default Repack.defineRspackConfig((env) => {
       new Repack.RepackPlugin({
         extraChunks: [
           {
-            include: /.+local.+/,
+            include: /^host-async-local$/,
             type: 'local',
           },
           {

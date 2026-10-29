@@ -1,12 +1,8 @@
 import { ScriptManager } from '@callstack/repack/client';
 import * as React from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+
+import ActionButton from '../../ui/ActionButton';
 
 const RemoteChunkId = 'remote';
 
@@ -20,26 +16,19 @@ const Fallback = () => (
   </View>
 );
 
-type Props = {
-  onPrefetched: () => void;
-  onInvalidated: () => void;
-};
-
-const RemoteChunkSection = ({ onPrefetched, onInvalidated }: Props) => {
+const RemoteChunkSection = () => {
   const [isPrefetched, setIsPrefetched] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
   const prefetch = async () => {
     await ScriptManager.shared.prefetchScript(RemoteChunkId);
     setIsPrefetched(true);
-    onPrefetched();
   };
 
   const invalidate = async () => {
     await ScriptManager.shared.invalidateScripts([RemoteChunkId]);
     setIsLoaded(false);
     setIsPrefetched(false);
-    onInvalidated();
   };
 
   return (
@@ -50,34 +39,25 @@ const RemoteChunkSection = ({ onPrefetched, onInvalidated }: Props) => {
         </React.Suspense>
       ) : (
         <View style={styles.actions}>
-          <TouchableOpacity
+          <ActionButton
             testID="remote-chunk-prefetch-button"
-            style={[styles.button, isPrefetched && styles.buttonDisabled]}
+            label={isPrefetched ? 'Prefetched' : 'Prefetch chunk'}
             disabled={isPrefetched}
             onPress={prefetch}
-          >
-            <Text style={styles.buttonText}>
-              {isPrefetched ? 'Prefetched' : 'Prefetch chunk'}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          />
+          <ActionButton
             testID="remote-chunk-load-button"
-            style={styles.button}
+            label="Load chunk"
             onPress={() => setIsLoaded(true)}
-          >
-            <Text style={styles.buttonText}>Load chunk</Text>
-          </TouchableOpacity>
+          />
         </View>
       )}
-      <TouchableOpacity
+      <ActionButton
         testID="remote-chunk-invalidate-button"
-        style={[styles.button, styles.secondaryButton]}
+        label="Invalidate"
+        variant="secondary"
         onPress={invalidate}
-      >
-        <Text style={[styles.buttonText, styles.secondaryButtonText]}>
-          Invalidate
-        </Text>
-      </TouchableOpacity>
+      />
     </View>
   );
 };
@@ -93,27 +73,6 @@ const styles = StyleSheet.create({
   },
   fallback: {
     paddingVertical: 24,
-  },
-  button: {
-    alignSelf: 'stretch',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    backgroundColor: 'rgba(56, 30, 114, 1)',
-  },
-  secondaryButton: {
-    backgroundColor: '#d8cbe8',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  secondaryButtonText: {
-    color: '#200a12',
-  },
-  buttonDisabled: {
-    opacity: 0.5,
   },
 });
 

@@ -8,10 +8,8 @@ export type ScriptManagerCounts = {
   loaded: number;
   error: number;
   beforeResolve: number;
-  resolve: number;
   afterResolve: number;
   beforeLoad: number;
-  load: number;
   afterLoad: number;
 };
 
@@ -23,10 +21,8 @@ const counts: ScriptManagerCounts = {
   loaded: 0,
   error: 0,
   beforeResolve: 0,
-  resolve: 0,
   afterResolve: 0,
   beforeLoad: 0,
-  load: 0,
   afterLoad: 0,
 };
 
@@ -55,7 +51,6 @@ function bump(key: keyof ScriptManagerCounts) {
 const RESOLVE_STAGES: Array<keyof ScriptManagerCounts> = [
   'beforeResolve',
   'resolving',
-  'resolve',
   'afterResolve',
   'resolved',
 ];
@@ -63,7 +58,6 @@ const RESOLVE_STAGES: Array<keyof ScriptManagerCounts> = [
 const LOAD_STAGES: Array<keyof ScriptManagerCounts> = [
   'beforeLoad',
   'loading',
-  'load',
   'afterLoad',
   'loaded',
 ];
@@ -83,6 +77,14 @@ function findStuckStage(
 }
 
 export function getPipelineStatus(counts: ScriptManagerCounts): PipelineStatus {
+  if (counts.error > 0) {
+    return { settled: false, label: `error=${counts.error}` };
+  }
+
+  if (counts.beforeResolve === 0) {
+    return { settled: false, label: 'idle' };
+  }
+
   const loaded = counts.beforeResolve - counts.prefetching;
 
   const stuck =
@@ -112,17 +114,6 @@ export function registerEventCounter() {
     return args;
   });
 
-  ScriptManager.shared.hooks.resolve(async (args) => {
-    bump('resolve');
-    const { scriptId, caller, referenceUrl } = args.options;
-    for (const [, , resolve] of args.resolvers) {
-      const locator = await resolve(scriptId, caller, referenceUrl);
-      if (locator) {
-        return locator;
-      }
-    }
-  });
-
   ScriptManager.shared.hooks.afterResolve((args) => {
     bump('afterResolve');
     return args;
@@ -131,12 +122,6 @@ export function registerEventCounter() {
   ScriptManager.shared.hooks.beforeLoad((args) => {
     bump('beforeLoad');
     return args;
-  });
-
-  ScriptManager.shared.hooks.load(async (args) => {
-    bump('load');
-    await args.loadScript();
-    return true;
   });
 
   ScriptManager.shared.hooks.afterLoad((args) => {

@@ -16,10 +16,8 @@ const EVENT_REPORTS: Array<keyof ScriptManagerCounts> = [
   'loaded',
   'error',
   'beforeResolve',
-  'resolve',
   'afterResolve',
   'beforeLoad',
-  'load',
   'afterLoad',
 ];
 

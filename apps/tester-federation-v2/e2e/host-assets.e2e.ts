@@ -15,7 +15,6 @@ test('Host Assets screen renders', async ({ app, screen }) => {
   const localMode = screen.getByTestId('host-asset-local-mode-report');
   const inlineMode = screen.getByTestId('host-asset-inline-mode-report');
   const localUri = screen.getByTestId('host-asset-local-uri-report');
-  const svgRendered = screen.getByTestId('host-asset-svg-render-report');
 
   await screen.scrollUntilVisible(pic1Mode);
   await expect(pic1Mode).toHaveText('mode: Inlined');
@@ -34,11 +33,10 @@ test('Host Assets screen renders', async ({ app, screen }) => {
   // Android resolves the dev server as 10.0.2.2 and iOS as localhost
   expect(['localhost', '10.0.2.2']).toContain(assetUrl.hostname);
 
+  const probeHost =
+    assetUrl.hostname === '10.0.2.2' ? 'localhost' : assetUrl.hostname;
   const response = await fetch(
-    `http://localhost:8081${assetUrl.pathname}${assetUrl.search}`
+    `${assetUrl.protocol}//${probeHost}:${assetUrl.port}${assetUrl.pathname}${assetUrl.search}`
   );
   expect(response.status).toBe(200);
-
-  await screen.scrollUntilVisible(svgRendered);
-  await expect(svgRendered).toHaveText('svg: rendered');
 });

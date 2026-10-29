@@ -21,7 +21,7 @@ minors. Both are pinned without a caret in the `testers` catalog of
 | `apps/tester-federation-v2/e2e/*.e2e.ts` | One file per feature |
 | `apps/tester-federation-v2/e2e.config.ts` | Targets, `retries: 0`, `workers: 1` |
 | `apps/tester-federation-v2/src/host/FEATURES.ts` | Registry Home renders; one entry = one button + one route |
-| `apps/tester-federation-v2/src/host/ui/Report.tsx` | The one widget screens use to report a value |
+| `apps/tester-federation-v2/src/host/ui/` | `Report.tsx` (the one widget screens use to report a value), `ActionButton.tsx` (the button screens share) |
 | `apps/tester-federation-v2/src/host/setup.ts` | The chunk resolver and the event counters the tests read |
 | `.github/workflows/e2e.yml` | Android job (PRs) + iOS job (main, dispatch) |
 
@@ -86,13 +86,13 @@ restarts the app), so nothing accumulates between tests.
 | File | What a red run means | Re.Pack surface |
 | --- | --- | --- |
 | `gallery` | the MiniApp remote fails to install/load/render | MF2 container load over `localhost:8082` |
-| `runtime-events` | the resolve/load chain or the hook chain is broken; one test drives it via Gallery, then reads counters + a computed `pipeline: settled` row | the 4 lifecycle `ScriptManager` events + all 6 hooks — `prefetching`/`error` are counted too but only feed the pipeline row — via a tapped-but-delegating registration in `setup.ts` |
+| `runtime-events` | the resolve/load chain or the hook chain is broken; one test drives it via Gallery, then reads counters + a computed `pipeline: settled` row | all 6 `ScriptManager` events + the 4 non-owning hooks, counted by a registration in `setup.ts`; each of the 8 driving rows asserts `≥ 1`, `error: 0` is asserted, and `prefetching`/`error` feed the pipeline row |
 | `async-chunk` | a host-owned async chunk no longer loads through `ScriptManager` | `import()` + `extraChunks` + the allowlist resolver |
 | `remote-chunk` | the raw prefetch → load → `invalidateScripts` cycle broke | `ScriptManager.prefetchScript` / `invalidateScripts` on host remote chunks |
 | `miniapp-install` | install / show / hide / uninstall of a host mini-app chunk broke | same APIs, second lifecycle; also proves invalidate resets the UI state |
-| `host-assets` | asset rules no longer produce what they claim: inline gate (pic-1 87 KB in, pic-2 119 KB out), folder rules (`localAssets` emitted despite being small, `inlineAssets` inlined), the emitted URI is servable (fetch → 200), and `.svg` renders as a component | `assets-loader` (inline gate, per-folder rules), served asset route, `@svgr/webpack` rule |
+| `host-assets` | asset rules no longer produce what they claim: inline gate (pic-1 87 KB in, pic-2 119 KB out), folder rules (`localAssets` emitted despite being small, `inlineAssets` inlined), the emitted URI is servable (fetch → 200, port and query string taken from the reported URI, never hardcoded). The `.svg` row asserts nothing, and that is honest: svgr compiles at build time, so a broken rule reddens the whole app at boot, before any assert could run | `assets-loader` (inline gate, per-folder rules), served asset route, `@svgr/webpack` rule |
 | `nativewind` | CSS stopped computing: `padding-applied: 16` and `calc-width: 248` are layout numbers, not text checks; dark mode is asserted as a full round-trip | `NativeWindPlugin` + the host-scoped JSX retag |
-| `reanimated` | the worklet transform broke — an untransformed worklet never updates the width row (`100 → 150 → 200 → 100`) | `ReanimatedPlugin`, top-level worklets transform |
+| `reanimated` | the worklet pipeline broke — the width row (`100 → 150 → 200 → 100`) is a shared value driven through `useAnimatedStyle` + `useAnimatedReaction` + `scheduleOnRN` (from `react-native-worklets` — reanimated's `runOnJS` re-export is deprecated), so it only moves if user worklets execute; an untransformed worklet throws at boot | the babel `react-native-worklets/plugin` transform; `ReanimatedPlugin`'s `unstable_disableTransform` only suppresses its own rules, which the new babel-swc-loader makes obsolete |
 
 Every row on a screen must own a distinct way to fail. That rule deleted the
 third host bitmap fixture (`pic_3.jpg`, 58 KB): under the same 90 KB gate as
@@ -199,6 +199,20 @@ before tests start.
 
 ## Traps worth remembering
 
+- **Tapping `ScriptManager.hooks.resolve`/`hooks.load` replaces the built-in
+  loop**, not decorates it — a counter tap that returns `undefined` makes the
+  manager resolve nothing. Counters only tap the 4 non-owning hooks; the events
+  cover what `resolve`/`load` would have.
+- **`extraChunks.include` is matched against chunk names and the numeric chunk
+  id** (`OutputPlugin` flattens both), so an unanchored regex like
+  `/.+local.+/` can route by id accident and a near-miss like it against
+  `host-async-local` silently falls to the catch-all remote rule. The rule is
+  `/^host-async-local$/`.
+- **The ignored LogBox string is load-bearing**: NativeWind's runtime reads RN's
+  deprecated `ImageBackground` getter at boot
+  (`react-native-css-interop/components.js`) though no screen uses it, and the
+  toast covers Home's last row and steals taps. A NativeWind upgrade can change
+  the wording; the toast reappearing is the symptom.
 - **The shared `babel.config.js` serves all three compilations** (host, mini,
   expo widget — all set `env.context` to the app root). A host-only JSX retag
   goes in `overrides` with a regex (string `test` resolves against the CLI cwd);

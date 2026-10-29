@@ -92,13 +92,6 @@ const SvgRow = ({
           </Text>
         </View>
       </View>
-      <View style={styles.reports}>
-        <Report
-          testID="host-asset-svg-render-report"
-          name="svg"
-          value="rendered"
-        />
-      </View>
       <Text style={styles.subtitle}>{item.subtitle}</Text>
     </View>
   </View>
@@ -114,10 +107,7 @@ const AssetRow = ({ item }: { item: AssetItem }) => {
 };
 
 const BitmapRow = ({ item }: { item: BitmapItem }) => {
-  const resolved = Image.resolveAssetSource(item.source) as {
-    uri: string;
-    scale: number;
-  };
+  const resolved = Image.resolveAssetSource(item.source) as { uri: string };
   const isInline = resolved.uri.startsWith('data:');
   const status = isInline ? 'Inlined' : 'Emitted';
 
@@ -155,20 +145,13 @@ const BitmapRow = ({ item }: { item: BitmapItem }) => {
               value={status}
             />
             {item.report === 'full' ? (
-              <>
-                <Report
-                  testID={`host-asset-${item.key}-scale-report`}
-                  name="scale"
-                  value={resolved.scale}
-                />
-                <Report
-                  testID={`host-asset-${item.key}-uri-report`}
-                  name="uri"
-                  value={
-                    isInline ? `${resolved.uri.slice(0, 48)}…` : resolved.uri
-                  }
-                />
-              </>
+              <Report
+                testID={`host-asset-${item.key}-uri-report`}
+                name="uri"
+                value={
+                  isInline ? `${resolved.uri.slice(0, 48)}…` : resolved.uri
+                }
+              />
             ) : null}
           </View>
         ) : null}

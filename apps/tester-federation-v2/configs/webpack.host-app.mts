@@ -37,7 +37,10 @@ export default Repack.defineWebpackConfig((env) => {
             path.join(context, 'src/host/assets/localAssets'),
             path.join(context, 'src/host/assets/inlineAssets'),
           ],
-          use: '@callstack/repack/assets-loader',
+          use: {
+            loader: '@callstack/repack/assets-loader',
+            options: { inline: true, maxInlineSize: 90 * 1024 },
+          },
         },
         {
           test: /\.svg$/,
@@ -74,7 +77,7 @@ export default Repack.defineWebpackConfig((env) => {
       new Repack.RepackPlugin({
         extraChunks: [
           {
-            include: /.+local.+/,
+            include: /^host-async-local$/,
             type: 'local',
           },
           {

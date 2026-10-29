@@ -8,10 +8,7 @@ import { components } from '../../app.json';
 import './setup';
 import App from './App';
 
-// NativeWind's runtime reads RN's deprecated ImageBackground getter during boot
-// to register className support (react-native-css-interop components.js), even
-// though this app never uses the component. The warning toast covers Home's
-// last row and steals taps from the e2e suite.
+// the toast covers Home's last row and steals taps from the e2e suite
 LogBox.ignoreLogs(['ImageBackground is deprecated']);
 
 if (__WITH_PRELOAD__) {

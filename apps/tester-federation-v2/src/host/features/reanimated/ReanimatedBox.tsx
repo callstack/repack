@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { Button, StyleSheet, View } from 'react-native';
-import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
 const BASE_WIDTH = 100;
 
@@ -12,21 +18,34 @@ export default function ReanimatedBox({
   const width = useSharedValue<number>(BASE_WIDTH);
   const target = React.useRef(BASE_WIDTH);
 
+  const boxStyle = useAnimatedStyle(() => {
+    'worklet';
+    return { width: width.value };
+  });
+
+  useAnimatedReaction(
+    () => width.value,
+    (_previous, next) => {
+      'worklet';
+      if (next !== null) {
+        scheduleOnRN(onWidthChange, Math.round(next));
+      }
+    }
+  );
+
   const handlePress = () => {
     target.current += 50;
     width.value = withSpring(target.current);
-    onWidthChange(target.current);
   };
 
   const handleReset = () => {
     target.current = BASE_WIDTH;
     width.value = withSpring(target.current);
-    onWidthChange(target.current);
   };
 
   return (
     <View style={styles.container}>
-      <Animated.View testID="reanimated-box" style={{ ...styles.box, width }} />
+      <Animated.View testID="reanimated-box" style={[styles.box, boxStyle]} />
       <View style={styles.buttons}>
         <Button
           testID="reanimated-click-button"

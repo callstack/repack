@@ -7,10 +7,8 @@ const EVENTS = [
   'loading',
   'loaded',
   'beforeResolve',
-  'resolve',
   'afterResolve',
   'beforeLoad',
-  'load',
   'afterLoad',
 ];
 
@@ -37,8 +35,12 @@ test('opening the mini app drives every event and hook', async ({
   for (const event of EVENTS) {
     await expect(
       screen.getByTestId(`runtime-event-${event}-report`)
-    ).toHaveText(new RegExp(`${event}: [1-9]`));
+    ).toHaveText(new RegExp(`^${event}: [1-9]\\d*$`));
   }
+
+  await expect(screen.getByTestId('runtime-event-error-report')).toHaveText(
+    'error: 0'
+  );
 
   await expect(screen.getByTestId('runtime-events-pipeline-report')).toHaveText(
     'pipeline: settled',

@@ -1,14 +1,12 @@
 import { ScriptManager } from '@callstack/repack/client';
 import * as React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import ActionButton from '../../ui/ActionButton';
 
 const MiniAppChunkId = 'miniapp';
 
-type Props = {
-  onInvalidated: () => void;
-};
-
-const MiniAppSection = ({ onInvalidated }: Props) => {
+const MiniAppSection = () => {
   const [isInstalled, setIsInstalled] = React.useState(false);
   const [isVisible, setIsVisible] = React.useState(false);
   const [MiniAppComponent, setMiniAppComponent] = React.useState<
@@ -26,47 +24,30 @@ const MiniAppSection = ({ onInvalidated }: Props) => {
     setMiniAppComponent(undefined);
     setIsInstalled(false);
     setIsVisible(false);
-    onInvalidated();
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
+      <ActionButton
         testID="miniapp-install-button"
-        style={[styles.button, isInstalled && styles.buttonDisabled]}
+        label="Install"
         disabled={isInstalled}
         onPress={install}
-      >
-        <Text style={styles.buttonText}>Install</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
+      />
+      <ActionButton
         testID="miniapp-uninstall-button"
-        style={[
-          styles.button,
-          styles.secondaryButton,
-          !isInstalled && styles.buttonDisabled,
-        ]}
+        label="Remove"
+        variant="secondary"
         disabled={!isInstalled}
         onPress={uninstall}
-      >
-        <Text style={[styles.buttonText, styles.secondaryButtonText]}>
-          Remove
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
+      />
+      <ActionButton
         testID="miniapp-toggle-button"
-        style={[
-          styles.button,
-          styles.secondaryButton,
-          !isInstalled && styles.buttonDisabled,
-        ]}
+        label={isVisible ? 'Hide' : 'Show'}
+        variant="secondary"
         disabled={!isInstalled}
         onPress={() => setIsVisible((visible) => !visible)}
-      >
-        <Text style={[styles.buttonText, styles.secondaryButtonText]}>
-          {isVisible ? 'Hide' : 'Show'}
-        </Text>
-      </TouchableOpacity>
+      />
       {isInstalled && isVisible && MiniAppComponent ? (
         <MiniAppComponent />
       ) : null}
@@ -79,27 +60,6 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     paddingVertical: 12,
     gap: 8,
-  },
-  button: {
-    alignSelf: 'stretch',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    backgroundColor: 'rgba(56, 30, 114, 1)',
-  },
-  secondaryButton: {
-    backgroundColor: '#d8cbe8',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  secondaryButtonText: {
-    color: '#200a12',
-  },
-  buttonDisabled: {
-    opacity: 0.5,
   },
 });
 
