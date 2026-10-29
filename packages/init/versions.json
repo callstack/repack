@@ -1,7 +1,7 @@
 {
   "react-native": "0.87.1",
   "rspack": {
-    "@rspack/core": "^1.7.12",
+    "@rspack/core": "^2.2.8",
     "@swc/helpers": "^0.5.23"
   },
   "webpack": {

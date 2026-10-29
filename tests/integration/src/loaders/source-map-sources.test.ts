@@ -87,9 +87,6 @@ async function getSourceMapSources(loader: (typeof LOADERS)[number]) {
             loader: require.resolve(`@callstack/repack/${loader}`),
             options: {
               hermesParserPath: require.resolve('hermes-parser'),
-              ...(loader === 'babel-swc-loader' && {
-                hideParallelModeWarning: true,
-              }),
             },
           },
         },
@@ -101,7 +98,11 @@ async function getSourceMapSources(loader: (typeof LOADERS)[number]) {
   const sourceMap = JSON.parse(
     volume.readFileSync('/out/main.js.map', 'utf-8') as string
   );
-  return sourceMap.sources as string[];
+  // Rspack 2 joins `[absolute-resource-path]` onto the context without
+  // resolving it, e.g. `<context>/../../node_modules/...`
+  return (sourceMap.sources as string[]).map((source) =>
+    path.isAbsolute(source) ? path.normalize(source) : source
+  );
 }
 
 // Webpack, and Rspack when Babel writes the loader map, used to prepend the

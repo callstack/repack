@@ -1,146 +1,109 @@
-# Dual Rspack 1.x/2.x Support — Technical Design
+# Rspack 2 Support (Re.Pack 6) — Technical Design
 
-A single `@callstack/repack` release supports both `@rspack/core` majors.
-The source **compiles against Rspack 2 types** and **runs against both
-majors**, branching at runtime on the installed major. Behavior for
-Rspack 1 and webpack users is unchanged.
+Re.Pack 6 supports `@rspack/core` 2 only (peer `>=2`). There is no runtime
+branching on the Rspack major: options Rspack 2 renamed or moved are mapped
+directly, and the Rspack 1 workarounds are gone. webpack support is
+unchanged.
 
-## Version detection
+An earlier revision of this design kept Rspack 1 working next to Rspack 2
+(runtime major detection, a Node guard, lazy command loading, a two-tier
+legacy-cache warning, a React Refresh restructure). Re.Pack 6 already
+requires Node `>=22.12`, which meets Rspack 2's floor, and dropping Rspack 1
+removed the need for the rest.
 
-`src/helpers/rspackVersion.ts` resolves `@rspack/core/package.json` instead
-of importing the package:
+## Loading the ESM-only core
 
-- `@rspack/core@2` is pure ESM — a CJS `require('@rspack/core')` throws
-  `ERR_REQUIRE_ESM` on Node < 20.19, so detection must not load the package;
-- `@rspack/core` is an optional peer dependency and may be absent entirely
-  (webpack-only projects).
-
-`getRspackVersion` / `getRspackMajorVersion` / `isRspack2` take an optional
-project-context directory for resolution. `getRspackMajorVersionFromCompiler`
-serves plugin contexts via `compiler.webpack.rspackVersion` (returns `null`
-for webpack compilers).
-
-`@rspack/core` is otherwise loaded with a plain `import` — the published
-package carries no workspace- or monorepo-aware resolution logic.
-
-## Node compatibility
-
-Rspack 2 requires Node `^20.19.0 || >=22.12.0`; Re.Pack's `engines` stays
-`>=18` because Rspack 1 and webpack setups are unaffected. Instead of a hard
-floor, `commands/rspack/ensureNodeCompat.ts` raises a clear error when
-Rspack 2 is detected on an unsupported Node. The rspack commands are
-lazy-loaded inside the command handlers so the guard runs before anything
-touches `@rspack/core`.
-
-Re.Pack's compiled CJS keeps working against the ESM-only core on supported
-Node versions via `require(esm)`: Rspack 2 uses the `module.exports`
-ESM-interop convention, so CJS consumers receive the callable `rspack`
-function with all named exports attached (`core.rspack === core`) — a shape
-identical to v1.
+`@rspack/core@2` is pure ESM. Re.Pack's compiled CJS keeps loading it with a
+plain `require`/`import` through Node's `require(esm)`, which every Node
+version Re.Pack 6 supports has. Rspack 2 uses the `module.exports` interop
+convention, so CJS consumers get the same shape as with v1.
 
 ## Config generation
 
-- `experiments.parallelLoader` is emitted only under Rspack 1. Rspack 2
-  removed the global flag (parallel loading is stable and opt-in per rule
-  via `use[].parallel`), so the loader's parallel-mode warning probe is
-  also skipped under v2 — running non-parallel there is a valid choice,
-  not a misconfiguration.
-- `module.parser.javascript.exportsPresence` is set to `'auto'` under
-  Rspack 2. The upstream default changed from `'warn'` to `'error'`, which
-  breaks builds on technically-invalid imports inside `node_modules` — a
-  common occurrence in the React Native ecosystem that Metro tolerates.
-  Users can override this in their project config.
+- `getRepackConfig` no longer emits `experiments.parallelLoader`, which
+  Rspack 2 removed. Parallel loading is opted into per rule with
+  `use[].parallel`, as the templates already do. The babel-swc-loader's
+  "parallelLoader enabled but rule not parallel" warning, and its
+  `hideParallelModeWarning` option, were removed with it.
+- `getRepackConfig` sets `module.parser.javascript.exportsPresence: 'auto'`
+  for Rspack. Rspack 2 changed the default to `'error'`, which fails builds
+  on missing-export imports that React Native itself ships (for example
+  `React.unstable_Activity` in `renderApplication.js`). Users can override
+  it.
+- `REPACK_EXPERIMENTAL_CACHE` sets top-level `cache: { type: 'persistent' }`.
+  Rspack 2 moved the cache config there from `experiments.cache` and
+  silently ignores the old key.
+- The Rspack minimizer is always Terser. The SWC minimizer special case for
+  Rspack 1.4.11 was removed.
 
-## Persistent cache
+## Persistent cache reset
 
-Rspack 2 moved the persistent cache configuration from `experiments.cache`
-to top-level `cache` (same shape) and **silently ignores** the legacy key.
+`resetPersistentCache` reads top-level `cache` for both bundlers and derives
+the directory from whichever shape is set: Rspack `storage.directory`,
+`cacheLocation`/`cacheDirectory` for `type: 'filesystem'` (webpack, or
+Rspack with `experiments.newCache`), or the bundler's default
+`node_modules/.cache/<bundler>`.
 
-- `getRspackCacheConfigs` collects the cache configuration from **both**
-  locations, so `--reset-cache` clears every candidate directory regardless
-  of which major the config was written for (with both keys set, the wrong
-  cache would otherwise survive a reset under v2).
-- Under Rspack 2 with `experiments.cache` set, `warnLegacyRspackCacheConfig`
-  emits a one-time warning pointing at the top-level option — unless the
-  same config already sets a top-level persistent cache (then the leftover
-  legacy key is inert and no warning fires). The config is left untouched —
-  migration is the user's action.
+## Loaders
+
+- Rspack 2 passes parallel loaders a correct `rootContext` and a
+  `_compiler.rspack` with `experiments.swc`, so the babel-swc-loader uses
+  them directly. The `rootContext === context` workaround and the
+  `@rspack/core` resolution fallback were removed; webpack still falls back
+  to `@swc/core` from the project.
+- `assetsLoader` reads through small promise wrappers typed against
+  Rspack's `InputFileSystem`. `util.promisify` picks the wrong overload of
+  the v2 `readdir`/`readFile` types.
+
+## Source maps
+
+Rspack 2 builds `absoluteResourcePath` by joining the context and the
+relative path without resolving it (`<context>/../../node_modules/...`).
+`SourceMapPlugin` normalizes it for the absolute source names it emits
+without a dev server. The dev server names (`[projectRoot^N]/...`) are
+derived from `resourcePath` and are unaffected.
+
+Rspack 2 also percent-encodes the resource path of the Module Federation
+runtime `data:` module. `@callstack/repack-expo`'s source map fix matches the
+encoded form when it renames that source to
+`webpack://module-federation/virtual-runtime-<hash>.js`.
+
+## Stats
+
+Rspack 2's `stats.toJson()` leaves out assets, chunks, chunk groups,
+entrypoints and modules unless asked for, even with `preset: 'normal'`.
+`normalizeStatsOptions` falls back to requesting them explicitly when the
+project has no stats config, so `bundle --json` writes the same shape as
+before. Any preset or stats config the user sets is passed through as is.
+
+## Profiling
+
+Published Rspack 2 binaries don't include the perfetto trace layer, so
+`RSPACK_PROFILE` defaults to `RSPACK_TRACE_LAYER=logger`. There is a single
+profile handler; the pre-1.4 one was removed.
 
 ## React Refresh
 
-`DevelopmentPlugin` branches on the compiler's major:
-
-- **Rspack ≥ 2**: applies the official `@rspack/plugin-react-refresh@^2`
-  (an optional peer dependency — installed by v2 users alongside
-  `@rspack/core@2`) with `injectEntry: false`, `forceEnable: true`, and
-  `reactRefreshLoader: '@callstack/repack/react-refresh-loader'`. The
-  package is ESM-only with a named export, so it is loaded lazily inside
-  the version branch.
-- **Rspack 1 and webpack**: manual wiring against client runtime files
-  vendored at `packages/repack/vendor/react-refresh/` (adapted from
-  upstream plugin v2.0.2, MIT, with a LICENSE/provenance file). The
-  `vendor/` directory ships as-is via `package.json#files` and is excluded
-  from linting and the babel build. The refresh loader rule excludes the
-  vendored runtime files themselves (mirroring the official plugin's
-  self-exclusion) so they are never re-processed in symlinked-workspace
-  layouts. There is no dependency on `@rspack/plugin-react-refresh@1`.
-
-## Tracing / profiling
-
-Published Rspack 2 binaries do not include the perfetto trace layer, so
-`--trace-*` profiling defaults to the `'logger'` layer under v2
-(`commands/rspack/profile/profile-2.ts`); Rspack 1 behavior is unchanged.
-
-## Module Federation v1
-
-No changes required. Rspack's delegated `ModuleFederationPluginV1` does not
-use `@module-federation/runtime-tools` under either major - only the
-enhanced MF 1.5 plugin (`container.ModuleFederationPlugin`) resolves it,
-and that plugin raises its own actionable install error. (An earlier
-revision of this design added a resolvability pre-check to
-`ModuleFederationPluginV1.apply`; it was dropped after verification -
-see the evidence on PR #1400.)
+Unchanged. The pinned `@rspack/plugin-react-refresh@1.0.0` has no
+`@rspack/core` dependency, and `DevelopmentPlugin` keeps using its
+`deprecated_runtimePaths`.
 
 ## Types
 
-The `@rspack/core` devDependency is `^2`, so type-only imports check against
-v2 while the runtime object may be either major. Notable v2 type
-accommodations:
-
-- `SwcLoaderOptions` became a union discriminated on `detectSyntax`, which
-  cannot be spread-and-reassembled; internal helpers operate on a local
-  non-union `SwcConfig` alias (Re.Pack never sets `detectSyntax`).
-- `builtin:swc-loader`-only options (`rspackExperiments`, `transformImport`,
-  `collectTypeScriptInfo`, `detectSyntax`) are split off before calling the
-  raw SWC `transformSync` API.
-- One documented cast in `commands/rspack/start.ts`: Re.Pack's `devServer`
-  type augmentation and Rspack 2's bundled `DevServer` type are structurally
-  incompatible solely because each pulls `proxy` types from a different copy
-  of http-proxy-middleware. `bundle.ts` avoids the cast by destructuring
-  `devServer` off (unused when bundling).
+- `SwcLoaderOptions` is a union on `detectSyntax`. The babel-swc-loader works
+  on a non-union `SwcConfig` (`detectSyntax?: false` with a full `jsc`),
+  since it always sets `jsc.parser` itself.
+- `compiler.options.devServer` is `false | DevServer`, narrowed before
+  reading `hot`.
 
 ## Testing
 
-- **Unit tests run under both majors.** Jest's sandboxed CJS runtime cannot
-  load the ESM-only v2 core, so a custom test environment
-  (`jest.environment.js`) loads it outside the sandbox and a
-  `moduleNameMapper` bridge exposes it to suites. The environment is
-  parameterized on `RSPACK_MAJOR`: v2 via `await import('@rspack/core')`,
-  v1 via `require` of the aliased `@rspack/core-v1` devDependency.
-  `pnpm test:rspack1` runs the v1 lane; a lane-guard test asserts the loaded
-  major matches the requested one.
-- **Built-dist smoke suite** (`tests/rspack-compat`) asserts the behavior
-  matrix above against the packed dist under both majors — the failure modes
-  specific to this design (require(esm) interop, loader resolution, refresh
-  runtime source selection) only reproduce against the built output in a
-  real project layout.
-- **Tester apps**: `apps/tester-app` runs Rspack 2 (full feature surface).
-  `apps/tester-app-rspack1` is a standalone app *outside* the pnpm
-  workspace with Re.Pack installed from a packed tarball — required because
-  in-workspace apps always resolve Re.Pack's own `@rspack/core` devDependency
-  (v2) regardless of their manifest pin, and the published package
-  deliberately carries no workspace-aware resolution.
-- **CI**: the unit suite runs under both majors on Linux and Windows (the
-  require(esm) loading path and version-helper filesystem resolution are
-  Windows-sensitive); Node 18/20 lanes run the Rspack 1 lane only, per the
-  v2 Node floor.
+- Jest can't load the ESM-only core inside its sandbox.
+  `packages/repack/jest.environment.js` imports it outside the sandbox and
+  `jest.rspack-core-bridge.js` maps `@rspack/core` onto it.
+- Integration snapshots and markers follow Rspack 2's output: runtime
+  module banners are `// repack/polyfills` instead of
+  `// webpack/runtime/repack/polyfills`, and module factories use method
+  shorthand. With MF v2, the polyfills runtime module now comes before
+  `embed_federation_runtime`. MF still initializes inside
+  `__webpack_require__.x()`, after the polyfills.
