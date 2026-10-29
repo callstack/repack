@@ -1,6 +1,5 @@
-import type fs from 'node:fs';
 import path from 'node:path';
-import util from 'node:util';
+import type { InputFileSystem } from '@rspack/core';
 import { SCALABLE_ASSETS, SCALABLE_RESOLUTIONS } from '../../utils/index.js';
 import { convertToRemoteAssets } from './convertToRemoteAssets.js';
 import { extractAssets } from './extractAssets.js';
@@ -9,7 +8,23 @@ import { type AssetLoaderContext, getOptions } from './options.js';
 import type { Asset } from './types.js';
 import { collectScales, getAssetDimensions, getScaleNumber } from './utils.js';
 
-type AsyncFS = (typeof fs)['promises'];
+function readDir(fs: InputFileSystem, dir: string) {
+  return new Promise<string[]>((resolve, reject) => {
+    fs.readdir(dir, (error, files) => {
+      if (error) reject(error);
+      else resolve(files ?? []);
+    });
+  });
+}
+
+function readFile(fs: InputFileSystem, file: string) {
+  return new Promise<Buffer>((resolve, reject) => {
+    fs.readFile(file, (error, data) => {
+      if (error || !data) reject(error ?? new Error(`Failed to read ${file}`));
+      else resolve(data);
+    });
+  });
+}
 
 export const raw = true;
 
@@ -30,8 +45,8 @@ export default async function repackAssetsLoader(
   const isDev = !!this._compiler.options.devServer;
   const platform = options.platform ?? (this._compiler.options.name as string);
 
-  const readDirAsync: AsyncFS['readdir'] = util.promisify(this.fs.readdir);
-  const readFileAsync: AsyncFS['readFile'] = util.promisify(this.fs.readFile);
+  const readDirAsync = (dir: string) => readDir(this.fs, dir);
+  const readFileAsync = (file: string) => readFile(this.fs, file);
 
   logger.debug(`Processing asset ${this.resourcePath}`);
 

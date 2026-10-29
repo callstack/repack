@@ -93,19 +93,11 @@ export async function start(
   process.stdout.write(logo(packageJson.version, bundlerLabel));
 
   if (args.resetCache) {
-    if (bundler === 'rspack') {
-      resetPersistentCache({
-        bundler: 'rspack',
-        rootDir: cliConfig.root,
-        cacheConfigs: configs.map((config) => config.experiments?.cache),
-      });
-    } else {
-      resetPersistentCache({
-        bundler: 'webpack',
-        rootDir: cliConfig.root,
-        cacheConfigs: configs.map((config) => config.cache),
-      });
-    }
+    resetPersistentCache({
+      bundler,
+      rootDir: cliConfig.root,
+      cacheConfigs: configs.map((config) => config.cache),
+    });
   }
 
   if (bundler === 'rspack' && process.env.RSPACK_PROFILE) {

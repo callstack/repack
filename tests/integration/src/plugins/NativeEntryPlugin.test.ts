@@ -138,8 +138,8 @@ function extractModuleIdByMarker(code: string, marker: string): string {
     if (moduleBody.includes(marker)) return moduleId;
   }
 
-  const rspackModuleRegex =
-    /\n([^\s:\n]+):\s*\(function\s*\([^)]*\)\s*\{([\s\S]*?)\n\}\),/g;
+  // Rspack 2 emits module factories as methods: `id(module, exports) {`
+  const rspackModuleRegex = /\n([^\s:\n(]+)\([^)]*\)\s*\{([\s\S]*?)\n\},/g;
   for (const match of code.matchAll(rspackModuleRegex)) {
     const moduleId = normalizeModuleId(match[1]);
     const moduleBody = match[2];
@@ -150,7 +150,7 @@ function extractModuleIdByMarker(code: string, marker: string): string {
 }
 
 function extractRuntimePolyfillRequireIds(code: string): string[] {
-  const runtimeStart = code.indexOf('runtime/repack/polyfills');
+  const runtimeStart = code.indexOf('repack/polyfills');
   expect(runtimeStart).toBeGreaterThan(-1);
   const startupStart = code.indexOf('// startup', runtimeStart);
   expect(startupStart).toBeGreaterThan(runtimeStart);
@@ -168,7 +168,7 @@ function getStartupSection(code: string): string {
 }
 
 function getRuntimeAndStartupSnippet(code: string): string {
-  const runtimeStart = code.indexOf('runtime/repack/polyfills');
+  const runtimeStart = code.indexOf('repack/polyfills');
   expect(runtimeStart).toBeGreaterThan(-1);
   return code.slice(runtimeStart, runtimeStart + 900);
 }
@@ -210,7 +210,7 @@ describe('NativeEntryPlugin', () => {
 
       // Polyfills runtime module IIFE executes before inline startup entries
       expectBundleOrder(code, [
-        'webpack/runtime/repack/polyfills',
+        'repack/polyfills',
         'Load entry module and return exports',
       ]);
 
@@ -342,13 +342,13 @@ describe('NativeEntryPlugin', () => {
 
         if (bundlerType === 'rspack') {
           // Rspack MF v2 wraps startup via embed_federation_runtime:
-          //   1. embed_federation_runtime saves original __webpack_require__.x and wraps it
-          //   2. repack/polyfills IIFE executes (polyfills loaded immediately)
+          //   1. repack/polyfills IIFE executes (polyfills loaded immediately)
+          //   2. embed_federation_runtime saves original __webpack_require__.x and wraps it
           //   3. __webpack_require__.x() called → MF init → original startup (polyfills are cache hits)
           expect(code).toContain('embed_federation_runtime');
           expectBundleOrder(code, [
+            'repack/polyfills',
             'embed_federation_runtime',
-            'webpack/runtime/repack/polyfills',
             '__webpack_require__.x()',
           ]);
         } else {
@@ -356,10 +356,7 @@ describe('NativeEntryPlugin', () => {
           //   1. repack/polyfills IIFE executes (polyfills loaded immediately)
           //   2. Inline startup begins: federation entry, then polyfills (cache hits), then app
           expect(code).toContain('.federation/entry');
-          expectBundleOrder(code, [
-            'webpack/runtime/repack/polyfills',
-            '.federation/entry',
-          ]);
+          expectBundleOrder(code, ['repack/polyfills', '.federation/entry']);
         }
 
         expect(normalizeBundle(code)).toMatchSnapshot();
