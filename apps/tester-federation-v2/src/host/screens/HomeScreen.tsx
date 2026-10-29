@@ -13,6 +13,7 @@ const HomeScreen = () => {
           Explore the host app and its features
         </Text>
         <TouchableOpacity
+          testID="home-details-button"
           style={styles.button}
           onPress={() => navigation.navigate('Detail')}
         >
@@ -29,6 +30,7 @@ const HomeScreen = () => {
         <Text style={styles.sectionTitle}>Mini Apps</Text>
         <View style={styles.miniAppContainer}>
           <TouchableOpacity
+            testID="home-gallery-button"
             style={[styles.miniAppButton, styles.galleryButton]}
             onPress={() => navigation.navigate('MiniApp')}
           >
