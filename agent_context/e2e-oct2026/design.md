@@ -179,6 +179,7 @@ knowing about:
 | `nohup` + `disown` | the runner kills the step's process group at step end |
 | install + run inside the emulator action's `script` | the action kills the emulator when the step ends |
 | ANR-dialog clear loop before the run | a launcher "isn't responding" dialog swallows every tap; `hide_error_dialogs` does not suppress it |
+| `settings put global reduced_motion 0` | a fresh emulator ships "Reduce motion" on; Reanimated logs a dev-mode warning once at boot, its LogBox toast covers Home's last row and can steal taps from the bottom-most button |
 | `include-hidden-files: true` on artifacts | `upload-artifact` matching zero files for the dot-dir `.e2e` and still reporting success |
 | `if: ${{ !cancelled() }}` on artifacts | losing evidence from a test that failed then passed |
 | always tail the server logs | they live outside `.e2e` and are the only evidence that survives a broken upload |
