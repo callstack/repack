@@ -120,13 +120,21 @@ only succeed if Home came back.
   currently shows is not — it hides which branch actually ran.
 - **Timeouts: defaults first.** Test 120 s, assertion 5 s, `scrollUntilVisible`
   30 s. An extension needs a named physical cause and belongs at the assert — a
-  test-level number hides which step stalled. Exactly three overrides survive,
-  all measured: 45 s on `miniapp-gallery` in `gallery` and
-  `runtime-events` (each file pays the manifest + container + chunk chain
-  itself), and 30 s on
-  `pipeline: settled` (the load chain's own ceiling is `Script.DEFAULT_TIMEOUT`). Note rspack compiles the
-  whole graph in one run: lazy chunks are memory files the moment the main bundle
-  is served, so chunk asserts are network + execute, never "compile waits".
+  test-level number hides which step stalled. The overrides:
+  **30 s on the boot anchor (`home-screen` after `app.open()`) in every file** —
+  `app.open()` returns when the window draws, not when the first frame renders;
+  after that the app still downloads and evaluates the whole dev bundle, which
+  on a cold process takes over 10 s on the CI Android emulator (an emulated
+  device sharing a small runner with the dev servers) and only a few seconds on
+  the iOS simulator, which runs natively on the host CPU. A test that follows a
+  warm run can pass at 5 s, so the default hides the problem until a run starts
+  cold; 30 s covers the cold boot at twice the measured worst case. 45 s on
+  `miniapp-gallery` in `gallery` and `runtime-events` (each file pays the
+  manifest + container + chunk chain itself); 30 s on `pipeline: settled` (the
+  load chain's own ceiling is `Script.DEFAULT_TIMEOUT`). Note rspack compiles
+  the whole graph in one run: lazy chunks are memory files the moment the main
+  bundle is served, so chunk asserts are network + execute, never "compile
+  waits".
 - **testIDs:** `home-<feature>-button`, `<feature>-screen`,
   `<feature>-<thing>-report`, `<feature>-<verb>-button`.
 - **Assert app state, never the absence of a warning.**

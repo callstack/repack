@@ -3,7 +3,9 @@ import { expect } from 'e2e';
 
 test('Host Assets screen renders', async ({ app, screen }) => {
   await app.open();
-  await expect(screen.getByTestId('home-screen')).toBeVisible();
+  await expect(screen.getByTestId('home-screen')).toBeVisible({
+    timeout: 30_000,
+  });
 
   const entry = screen.getByTestId('home-host-assets-button');
   await screen.scrollUntilVisible(entry);

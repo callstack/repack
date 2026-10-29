@@ -3,7 +3,9 @@ import { expect } from 'e2e';
 
 test('Reanimated spring tracks taps and reset', async ({ app, screen }) => {
   await app.open();
-  await expect(screen.getByTestId('home-screen')).toBeVisible();
+  await expect(screen.getByTestId('home-screen')).toBeVisible({
+    timeout: 30_000,
+  });
 
   const entry = screen.getByTestId('home-reanimated-button');
   await screen.scrollUntilVisible(entry);

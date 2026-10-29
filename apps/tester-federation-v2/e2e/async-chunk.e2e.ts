@@ -6,7 +6,9 @@ test('Async chunk loads through ScriptManager and renders', async ({
   screen,
 }) => {
   await app.open();
-  await expect(screen.getByTestId('home-screen')).toBeVisible();
+  await expect(screen.getByTestId('home-screen')).toBeVisible({
+    timeout: 30_000,
+  });
 
   const entry = screen.getByTestId('home-async-chunk-button');
   await screen.scrollUntilVisible(entry);

@@ -17,7 +17,9 @@ test('opening the mini app drives every event and hook', async ({
   screen,
 }) => {
   await app.open();
-  await expect(screen.getByTestId('home-screen')).toBeVisible();
+  await expect(screen.getByTestId('home-screen')).toBeVisible({
+    timeout: 30_000,
+  });
 
   const gallery = screen.getByTestId('home-gallery-button');
   await screen.scrollUntilVisible(gallery);

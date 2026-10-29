@@ -6,7 +6,9 @@ test('prefetch, load, and invalidate the host remote chunk', async ({
   screen,
 }) => {
   await app.open();
-  await expect(screen.getByTestId('home-screen')).toBeVisible();
+  await expect(screen.getByTestId('home-screen')).toBeVisible({
+    timeout: 30_000,
+  });
 
   const entry = screen.getByTestId('home-remote-chunk-button');
   await screen.scrollUntilVisible(entry);

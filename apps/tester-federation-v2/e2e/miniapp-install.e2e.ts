@@ -6,7 +6,9 @@ test('install, show, and remove the host mini-app chunk', async ({
   screen,
 }) => {
   await app.open();
-  await expect(screen.getByTestId('home-screen')).toBeVisible();
+  await expect(screen.getByTestId('home-screen')).toBeVisible({
+    timeout: 30_000,
+  });
 
   const entry = screen.getByTestId('home-miniapp-install-button');
   await screen.scrollUntilVisible(entry);

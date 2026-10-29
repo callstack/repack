@@ -6,7 +6,9 @@ test('NativeWind styles render, respond and switch to dark', async ({
   screen,
 }) => {
   await app.open();
-  await expect(screen.getByTestId('home-screen')).toBeVisible();
+  await expect(screen.getByTestId('home-screen')).toBeVisible({
+    timeout: 30_000,
+  });
 
   const entry = screen.getByTestId('home-nativewind-button');
   await screen.scrollUntilVisible(entry);
