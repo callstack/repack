@@ -91,15 +91,15 @@ function repackFederationPluginAliases(source: string): {
   v2: Set<string>;
 } {
   const aliases = {
-    v1: new Set(['ModuleFederationPlugin', 'ModuleFederationPluginV1']),
-    v2: new Set(['ModuleFederationPluginV2']),
+    v1: new Set(['ModuleFederationPluginV1']),
+    v2: new Set(['ModuleFederationPlugin', 'ModuleFederationPluginV2']),
   };
   for (const match of source.matchAll(
     /(ModuleFederationPlugin(?:V[12])?)\s*(?:as\s+|:\s*)([A-Za-z_$][\w$]*)/g
   )) {
     const importedName = match[1] as string;
     const alias = match[2] as string;
-    const version = importedName === 'ModuleFederationPluginV2' ? 'v2' : 'v1';
+    const version = importedName === 'ModuleFederationPluginV1' ? 'v1' : 'v2';
     const otherVersion = version === 'v2' ? 'v1' : 'v2';
     aliases[otherVersion].delete(alias);
     aliases[version].add(alias);
