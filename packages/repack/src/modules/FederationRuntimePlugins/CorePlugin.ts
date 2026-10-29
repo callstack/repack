@@ -1,7 +1,7 @@
+import type { ModuleFederationRuntimePlugin } from '@module-federation/enhanced/runtime';
 import type * as RepackClient from '../ScriptManager/index.js';
-import type { MFRuntimePlugin } from './types.js';
 
-const RepackCorePlugin: () => MFRuntimePlugin = () => ({
+const RepackCorePlugin: () => ModuleFederationRuntimePlugin = () => ({
   name: 'repack-core-plugin',
   loadEntry: async ({ remoteInfo }) => {
     const client = require('../ScriptManager/index.js') as typeof RepackClient;

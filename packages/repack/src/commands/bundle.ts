@@ -11,7 +11,6 @@ import {
 } from './common/index.js';
 import type {
   BundleArguments,
-  Bundler,
   CliConfig,
   ConfigurationObject,
 } from './types.js';
@@ -52,21 +51,13 @@ interface BundleStats {
  * @param _ Original, non-parsed arguments that were provided when running this command.
  * @param cliConfig Configuration object containing platform and project settings.
  * @param args Parsed command line arguments.
- * @param forcedBundler Optional bundler override from deprecated entry points.
  */
 export async function bundle(
   _: string[],
   cliConfig: CliConfig,
-  args: BundleArguments,
-  forcedBundler?: Bundler
+  args: BundleArguments
 ) {
-  const bundler =
-    forcedBundler ??
-    detectBundler(
-      cliConfig.root,
-      args.config ?? args.webpackConfig,
-      args.bundler
-    );
+  const bundler = detectBundler(cliConfig.root, args.config, args.bundler);
 
   const [config] = await makeCompilerConfig<ConfigurationObject>({
     args: args,
