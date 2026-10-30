@@ -13,6 +13,7 @@
     "lint:ci": "biome check",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "bench": "pnpm --filter perf-benchmark run bench",
     "version-packages": "pnpm changeset version && pnpm lint",
     "version-packages:canary": "pnpm changeset version --snapshot canary && pnpm lint",
     "release": "pnpm changeset publish",

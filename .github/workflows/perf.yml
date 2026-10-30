@@ -1,0 +1,104 @@
+name: Performance
+
+# On-demand check, independent of the regular CI checks: it never runs on its
+# own. Trigger it by adding the `perf` label to a PR, or from the Actions tab
+# (optionally with a PR number). Head and base are benchmarked side by side on
+# the same runner and the report is written to the job summary.
+on:
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: PR to benchmark against its base (leave empty to benchmark the selected branch)
+        required: false
+      base_ref:
+        description: Ref to compare the selected branch against (ignored when a PR number is given)
+        default: main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || inputs.pr_number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    name: Bundle size, time & memory
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'perf'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      # Base and head are checked out side by side with identical path depth,
+      # so neither sits inside the other's `node_modules` resolution chain.
+      - name: Checkout head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+        with:
+          path: head
+          fetch-depth: 0
+          ref: ${{ inputs.pr_number && format('refs/pull/{0}/merge', inputs.pr_number) || '' }}
+
+      # For a PR, head is its merge commit and base is that commit's first
+      # parent, so exactly the PR's changes are measured.
+      - name: Resolve base
+        id: base
+        working-directory: head
+        env:
+          IS_PR: ${{ github.event_name == 'pull_request' || inputs.pr_number != '' }}
+          BASE_REF: ${{ inputs.base_ref || 'main' }}
+        run: |
+          if [ "$IS_PR" = "true" ]; then
+            sha=$(git rev-parse HEAD^1)
+          else
+            git fetch origin "$BASE_REF"
+            sha=$(git merge-base HEAD FETCH_HEAD)
+          fi
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout base
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+        with:
+          path: base
+          ref: ${{ steps.base.outputs.sha }}
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # tag=v4.1.0
+        with:
+          package_json_file: head/package.json
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # tag=v4.4.0
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: |
+            head/pnpm-lock.yaml
+            base/pnpm-lock.yaml
+
+      - name: Install dependencies (head)
+        working-directory: head
+        run: pnpm install --frozen-lockfile
+
+      - name: Install dependencies (base)
+        working-directory: base
+        run: pnpm install --frozen-lockfile
+
+      # Builds both checkouts, then runs head and base builds interleaved.
+      # Fails on a 🔴 regression; it is not a required check.
+      - name: Run benchmarks
+        run: >
+          node head/tests/perf/src/bench.mjs
+          --head head
+          --base base
+          --runs 5
+          --out perf-results
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # tag=v4.6.2
+        with:
+          name: perf-results
+          path: |
+            perf-results/results.json
+            perf-results/report.md
