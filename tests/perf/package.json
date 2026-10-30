@@ -1,0 +1,14 @@
+{
+  "name": "perf-benchmark",
+  "version": "0.0.1",
+  "description": "Performance regression benchmarks for @callstack/repack",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "bench": "node src/bench.mjs",
+    "bench:compare": "node src/bench.mjs --base-ref origin/main"
+  }
+}

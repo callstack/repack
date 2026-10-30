@@ -1,0 +1,46 @@
+{
+  "name": "bench-expo",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Neutral Expo Router app for benchmarking Re.Pack against Metro",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "react-native webpack-start",
+    "start:metro": "expo start",
+    "bundle:ios": "react-native bundle --platform ios --dev false --entry-file index.js --bundle-output build/repack/main.jsbundle",
+    "bundle:ios:metro": "expo export:embed --platform ios --dev false --bundle-output build/metro/main.jsbundle --assets-dest build/metro",
+    "generate": "node ../../tests/perf/src/generate-screens.mjs expo .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@callstack/repack": "workspace:*",
+    "@callstack/repack-expo": "workspace:*",
+    "@callstack/repack-plugin-reanimated": "workspace:*",
+    "expo": "catalog:expo58",
+    "expo-asset": "catalog:expo58",
+    "expo-constants": "catalog:expo58",
+    "expo-font": "catalog:expo58",
+    "expo-linking": "catalog:expo58",
+    "expo-router": "catalog:expo58",
+    "expo-status-bar": "catalog:expo58",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "react-native-gesture-handler": "catalog:expo58",
+    "react-native-reanimated": "catalog:testers",
+    "react-native-safe-area-context": "catalog:testers",
+    "react-native-screens": "catalog:testers",
+    "react-native-worklets": "catalog:testers"
+  },
+  "devDependencies": {
+    "@babel/core": "catalog:",
+    "@react-native-community/cli": "catalog:testers",
+    "@react-native-community/cli-platform-android": "catalog:testers",
+    "@react-native-community/cli-platform-ios": "catalog:testers",
+    "@react-native/babel-preset": "catalog:testers",
+    "@react-native/community-cli-plugin": "catalog:testers",
+    "@rspack/core": "catalog:",
+    "@types/react": "catalog:testers",
+    "babel-preset-expo": "catalog:expo58",
+    "typescript": "catalog:"
+  }
+}
