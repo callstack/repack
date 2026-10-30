@@ -98,11 +98,10 @@ jobs:
           arch: x86_64
           profile: pixel_7
           avd-name: e2e
+          disable-animations: false
           working-directory: apps/tester-federation-v2
           script: |
             adb shell settings put global hide_error_dialogs 1
-            # a fresh emulator ships reduced motion on; Reanimated warns about it in dev and the LogBox toast steals taps
-            adb shell settings put global reduced_motion 0
             for i in 1 2 3; do adb shell "uiautomator dump /sdcard/d.xml >/dev/null && grep -q aerr_ /sdcard/d.xml" && { echo 'ANR dialog on screen, clearing it'; adb shell am force-stop com.google.android.apps.nexuslauncher; }; sleep 2; done
             adb reverse tcp:8081 tcp:8081
             adb reverse tcp:8082 tcp:8082
