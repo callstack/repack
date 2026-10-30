@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react';
 import {
   FlatList,
   Image,
@@ -7,86 +8,167 @@ import {
   View,
 } from 'react-native';
 
-const assets = [
+import RepackLogo from '../assets/repack-logo.svg';
+import Report from '../ui/Report';
+
+type SvgComponentType = ComponentType<{
+  width?: number | string;
+  height?: number | string;
+}>;
+
+type BaseItem = { key: string; title: string; subtitle: string };
+
+type AssetItem = BaseItem &
+  (
+    | {
+        kind: 'bitmap';
+        source: ImageRequireSource;
+        showUri?: boolean;
+        compact?: boolean;
+      }
+    | { kind: 'svg'; SvgComponent: SvgComponentType }
+  );
+
+const data: AssetItem[] = [
   {
+    key: 'pic-1',
+    title: 'Host asset 1',
+    subtitle:
+      'Loaded from the host app bundle to test inline asset size limits',
+    kind: 'bitmap',
     source: require('../assets/pic_1.jpg'),
-    status: 'Inlined',
-    size: '89,400 bytes',
   },
   {
+    key: 'pic-2',
+    title: 'Host asset 2',
+    subtitle:
+      'Loaded from the host app bundle to test inline asset size limits',
+    kind: 'bitmap',
     source: require('../assets/pic_2.jpg'),
-    status: 'Emitted',
-    size: '121,569 bytes',
   },
   {
-    source: require('../assets/pic_3.jpg'),
-    status: 'Inlined',
-    size: '59,862 bytes',
+    key: 'local',
+    title: 'Local fixture',
+    subtitle: 'Assets loader without inline options, always emitted as a file',
+    kind: 'bitmap',
+    source: require('../assets/localAssets/webpack.png'),
+    showUri: true,
+    compact: true,
+  },
+  {
+    key: 'inline',
+    title: 'Inline fixture',
+    subtitle:
+      'Assets loader with inline enabled, always inlined into the bundle',
+    kind: 'bitmap',
+    source: require('../assets/inlineAssets/webpack.png'),
+    showUri: true,
+    compact: true,
+  },
+  {
+    key: 'svg',
+    title: 'SVG via svgr',
+    subtitle:
+      'Imported as a React component by @svgr/webpack, not as a bitmap asset',
+    kind: 'svg',
+    SvgComponent: RepackLogo,
   },
 ];
 
-const data = assets.map((asset, index) => ({
-  title: `Host asset ${index + 1}`,
-  ...asset,
-}));
-
-const AssetRow = ({
-  title,
-  source,
-  status,
-  size,
+const SvgRow = ({
+  SvgComponent,
+  item,
 }: {
-  title: string;
-  source: ImageRequireSource;
-  status: string;
-  size: string;
+  SvgComponent: SvgComponentType;
+  item: BaseItem;
 }) => (
   <View style={styles.row}>
-    <Image source={source} style={styles.image} />
+    <View style={styles.svgContainer}>
+      <SvgComponent width={96} height={96} />
+    </View>
     <View style={styles.titleContainer}>
       <View style={styles.titleRow}>
-        <Text style={styles.title}>{title}</Text>
-        <View
-          style={[
-            styles.badge,
-            status === 'Inlined' ? styles.inlineBadge : styles.emittedBadge,
-          ]}
-        >
-          <Text
-            style={[
-              styles.badgeText,
-              status === 'Inlined'
-                ? styles.inlineBadgeText
-                : styles.emittedBadgeText,
-            ]}
-          >
-            {status}
+        <Text style={styles.title}>{item.title}</Text>
+        <View style={[styles.badge, styles.inlineBadge]}>
+          <Text style={[styles.badgeText, styles.inlineBadgeText]}>
+            Component
           </Text>
         </View>
       </View>
-      <Text style={styles.size}>{size}</Text>
-      <Text style={styles.subtitle}>
-        Loaded from the host app bundle to test inline asset size limits
-      </Text>
+      <Text style={styles.subtitle}>{item.subtitle}</Text>
     </View>
   </View>
 );
 
+type BitmapItem = Extract<AssetItem, { kind: 'bitmap' }>;
+
+const AssetRow = ({ item }: { item: AssetItem }) => {
+  if (item.kind === 'svg') {
+    return <SvgRow SvgComponent={item.SvgComponent} item={item} />;
+  }
+  return <BitmapRow item={item} />;
+};
+
+const BitmapRow = ({ item }: { item: BitmapItem }) => {
+  const resolved = Image.resolveAssetSource(item.source) as { uri: string };
+  const isInline = resolved.uri.startsWith('data:');
+  const status = isInline ? 'Inlined' : 'Emitted';
+
+  return (
+    <View style={styles.row}>
+      <Image
+        accessibilityIgnoresInvertColors
+        source={item.source}
+        style={item.compact ? styles.fixtureImage : styles.image}
+      />
+      <View style={styles.titleContainer}>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>{item.title}</Text>
+          <View
+            style={[
+              styles.badge,
+              isInline ? styles.inlineBadge : styles.emittedBadge,
+            ]}
+          >
+            <Text
+              style={[
+                styles.badgeText,
+                isInline ? styles.inlineBadgeText : styles.emittedBadgeText,
+              ]}
+            >
+              {status}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.reports}>
+          <Report
+            testID={`host-asset-${item.key}-mode-report`}
+            name="mode"
+            value={status}
+          />
+          {item.showUri ? (
+            <Report
+              testID={`host-asset-${item.key}-uri-report`}
+              name="uri"
+              value={isInline ? `${resolved.uri.slice(0, 48)}…` : resolved.uri}
+            />
+          ) : null}
+        </View>
+        <Text style={styles.subtitle}>{item.subtitle}</Text>
+      </View>
+    </View>
+  );
+};
+
 const HostAssetsScreen = () => {
   return (
     <FlatList
+      testID="host-assets-screen"
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.contentContainer}
       data={data}
-      keyExtractor={(item) => item.title}
-      renderItem={({ item }) => (
-        <AssetRow
-          title={item.title}
-          source={item.source}
-          status={item.status}
-          size={item.size}
-        />
-      )}
+      keyExtractor={(item) => item.key}
+      renderItem={({ item }) => <AssetRow item={item} />}
       style={styles.container}
     />
   );
@@ -116,6 +198,17 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 250,
     resizeMode: 'cover',
+  },
+  fixtureImage: {
+    width: '100%',
+    height: 96,
+    resizeMode: 'contain',
+  },
+  svgContainer: {
+    height: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F0F4FA',
   },
   titleContainer: {
     padding: 15,
@@ -153,9 +246,8 @@ const styles = StyleSheet.create({
   emittedBadgeText: {
     color: '#9A5A00',
   },
-  size: {
-    color: '#7F8C8D',
-    fontSize: 13,
+  reports: {
+    marginTop: 5,
     marginBottom: 5,
   },
   subtitle: {
