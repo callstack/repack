@@ -64,3 +64,43 @@ Add an entry to `FIXTURES` in `src/config.mjs`. The config file must honour
 `TEST_WEBPACK_OUTPUT_DIR` for `output.path` (see
 `apps/tester-app/__tests__/configs/`). A fixture that doesn't exist in the base
 checkout yet is reported for head only.
+
+## Competitor benchmark
+
+`src/competitors.mjs` compares Re.Pack with other React Native bundlers. Each
+comparison uses one neutral app that both bundlers build without changes:
+
+| App | Competitor | Re.Pack setup |
+| --- | --- | --- |
+| `apps/bench-expo` (Expo Router) | Metro via Expo CLI, optionally with Expo's experimental tree shaking | `repack-expo` |
+| `apps/bench-bare` (plain React Native) | Metro via the React Native CLI (`@react-native/metro-config` defaults) | the `repack-init` template config |
+
+It is not a regression gate. It produces the numbers for comparing bundlers and
+for finding performance wins.
+
+```sh
+node src/competitors.mjs --scales 0,1000,3000 --runs 3
+node src/competitors.mjs --variants bare-metro,bare-repack --scales 1000
+```
+
+- **Variants:** `expo-metro`, `expo-metro-treeshake`, `expo-repack`,
+  `expo-repack-cache`, `bare-metro`, `bare-repack`, `bare-repack-cache`. The
+  `-cache` variants enable Rspack's persistent cache, which Metro has on by
+  default.
+- **Scales:** `src/generate-screens.mjs` adds the same generated screens and
+  components to each app (Expo Router routes or a static screen list). The
+  harness removes them afterwards.
+- **Per scale and variant:** cold builds (all caches cleared) and warm builds,
+  each measuring wall time, CPU time and process-tree peak RSS. It also
+  measures bundle raw/gzip/brotli size, Hermes bytecode size, async chunks and
+  module count.
+- **Dev servers** (`expo-metro`, `expo-repack`, `bare-metro`, `bare-repack`):
+  cold start until the first development bundle is served, then
+  edit-to-updated-bundle latency.
+- **Output:** results are written to `results/competitors/results.json`.
+
+Metro's `--reset-cache` does not give a cold build when run twice in a row, so
+the harness deletes Metro's cache directories in the OS temp dir (`metro-cache`,
+`metro-file-map-*`) before every cold run. In `apps/bench-bare`, Metro watches
+only the monorepo's root `node_modules`, not the whole repo, so it doesn't
+crawl unrelated apps.

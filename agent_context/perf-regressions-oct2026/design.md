@@ -67,9 +67,47 @@ use loose thresholds with noise controls for time and memory.**
   ~1.2 GB main process), most likely from parallel loader workers scaling with
   CPU count.
 
+## Competitor benchmark
+
+`tests/perf/src/competitors.mjs` compares Re.Pack with other bundlers at 0 /
+1,000 / 3,000 generated screens (`tests/perf/src/generate-screens.mjs`):
+
+- `apps/bench-expo`: Metro via Expo CLI (optionally with Expo's experimental
+  tree shaking) vs Re.Pack with `repack-expo`.
+- `apps/bench-bare`: Metro via the React Native CLI vs Re.Pack with the
+  `repack-init` template config.
+- Planned: One (Vite native mode), pending a feasibility spike.
+
+Expo app results from Oct 2026 (M4 Pro, iOS):
+
+- **Re.Pack ahead:** JS 16–17% smaller, Hermes bytecode 12–13% smaller, ~3×
+  less CPU per build, edit-to-bundle 1.5–2.5× faster, dev server memory 37–62%
+  lower.
+- **Metro ahead:**
+  - Cold builds are 1.3–1.9× faster in wall time (Metro keeps ~8–9 cores busy,
+    Re.Pack ~1.7).
+  - Warm builds are 2.4–3.6× faster.
+  - Dev server start is 1.3–2.0× faster.
+  - Peak memory is lower at 3,000 screens.
+
+Pitfalls:
+
+- Metro's `--reset-cache` only resets once, so the harness deletes Metro's
+  temp-dir caches.
+- Metro in `CI=1` mode doesn't watch files, so dev servers run without it.
+- In a monorepo, Expo serves `/.expo/.virtual-metro-entry.bundle`.
+- Bare Metro needs `watchFolders` for pnpm's root `node_modules`; watching the
+  whole repo made cold builds ~70% slower (8.7 s vs 5.1 s), which would be
+  unfair to Metro.
+- Early smoke runs: on the bare app Re.Pack builds faster than Metro (3.0 s vs
+  6.8 s cold at 100 screens) and starts its dev server faster (1.6 s vs 5.2 s),
+  the opposite of the Expo app. The Expo integration's overhead is a lead
+  for performance work.
+
 ## Not covered yet
 
-- Dev server startup, rebuild latency and development-mode bundles.
+- Dev server startup, rebuild latency and development-mode bundles in the
+  per-PR gate (only the competitor benchmark measures them).
 - Module Federation testers.
 - Instruction-count benchmarks (CodSpeed simulation) for low-noise timing of
   JS hot paths; needs CodSpeed set up for the org.
