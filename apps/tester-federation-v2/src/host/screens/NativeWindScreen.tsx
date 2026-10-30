@@ -12,7 +12,7 @@ import ComponentWithVariants from '../features/nativewind/ComponentWithVariants'
 import CustomComponent from '../features/nativewind/CustomComponent';
 import DarkMode from '../features/nativewind/DarkMode';
 import FuncsDirs from '../features/nativewind/FuncsDirs';
-import Responsive from '../features/nativewind/Responsive';
+import PaddingProbe from '../features/nativewind/PaddingProbe';
 import Reusables from '../features/nativewind/Reusables';
 import Report from '../ui/Report';
 
@@ -38,7 +38,7 @@ const NativeWindScreen = () => {
       <View style={styles.container}>
         <View className="gap-4 p-2" onLayout={handleContainerLayout}>
           <Basic />
-          <Responsive onWidth={setBoxWidth} />
+          <PaddingProbe onWidth={setBoxWidth} />
           <CustomComponent className="bg-green-600" />
           <ComponentWithVariants variant="primary" />
           <Reusables />

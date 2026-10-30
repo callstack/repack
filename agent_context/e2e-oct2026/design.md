@@ -20,9 +20,10 @@ minors. Both are pinned without a caret in the `testers` catalog of
 | --- | --- |
 | `apps/tester-federation-v2/e2e/*.e2e.ts` | One file per feature |
 | `apps/tester-federation-v2/e2e.config.ts` | Targets, `retries: 0`, `workers: 1` |
-| `apps/tester-federation-v2/src/host/FEATURES.ts` | Registry Home renders; one entry = one button + one route |
+| `apps/tester-federation-v2/src/host/FEATURES.ts` | Registry Home renders; one entry = one button. Routes stay hand-listed in `MainNavigator.tsx`; `screen` is typed against them |
 | `apps/tester-federation-v2/src/host/ui/` | `Report.tsx` (the one widget screens use to report a value), `ActionButton.tsx` (the button screens share) |
-| `apps/tester-federation-v2/src/host/setup.ts` | The chunk resolver and the event counters the tests read |
+| `apps/tester-federation-v2/src/host/setup.ts` | The chunk resolver; registers the event counters |
+| `apps/tester-federation-v2/src/host/features/runtime/events.ts` | The event counters the tests read |
 | `.github/workflows/e2e.yml` | Android job (PRs) + iOS job (main, dispatch) |
 
 `e2e`'s default glob is `tests/**/*.e2e.ts`; this app keeps specs under `e2e/`,
@@ -48,9 +49,9 @@ Needs Node `^22.22.3 || >=24.8.0` (CI pins 24.22.1). The app must be installed
 
 **Warm the platform bundle before the first run**, on a fresh server:
 `curl 'localhost:8081/index.bundle?platform=android&dev=true&lazy=true&…'` (the
-iOS job's shape is in the workflow). A cold first launch spends over 5 s
-compiling, the `home-screen` anchor times out, and the failure looks like a
-broken app. This bites locally and in CI equally.
+iOS job's shape is in the workflow). A cold first launch compiles before it can
+boot, that compile eats the `home-screen` anchor's budget, and the failure looks
+like a broken app. This bites locally and in CI equally.
 
 ## How the app gets under test
 
@@ -86,12 +87,12 @@ restarts the app), so nothing accumulates between tests.
 | File | What a red run means | Re.Pack surface |
 | --- | --- | --- |
 | `gallery` | the MiniApp remote fails to install/load/render | MF2 container load over `localhost:8082` |
-| `runtime-events` | the resolve/load chain or the hook chain is broken; one test drives it via Gallery, then reads counters + a computed `pipeline: settled` row | all 6 `ScriptManager` events + the 4 non-owning hooks, counted by a registration in `setup.ts`; each of the 8 driving rows asserts `≥ 1`, `error: 0` is asserted, and `prefetching`/`error` feed the pipeline row |
-| `async-chunk` | a host-owned async chunk no longer loads through `ScriptManager` | `import()` + `extraChunks` + the allowlist resolver |
-| `remote-chunk` | the raw prefetch → load → `invalidateScripts` cycle broke | `ScriptManager.prefetchScript` / `invalidateScripts` on host remote chunks |
-| `miniapp-install` | install / show / hide / uninstall of a host mini-app chunk broke | same APIs, second lifecycle; also proves invalidate resets the UI state |
+| `runtime-events` | the resolve/load chain or the hook chain is broken; one test drives it via Gallery, then reads counters + a computed `pipeline: settled` row | all 6 `ScriptManager` events + the 4 non-owning hooks, counted in `features/runtime/events.ts`; each of the 8 driving rows asserts `≥ 1`, `error: 0` is asserted, and `prefetching`/`error` feed the pipeline row |
+| `async-chunk` | a host-owned async chunk no longer loads through `ScriptManager` | `import()` + the allowlist resolver. Not `extraChunks`: `OutputPlugin` is off under a dev server and the resolver's `__DEV__` branch sends every chunk to it, so the `local` rule never runs in this Debug lane |
+| `remote-chunk` | the prefetch → load cycle broke, or `invalidateScripts` threw | `ScriptManager.prefetchScript` / `invalidateScripts` on host remote chunks. The asserts after invalidate read UI state the screen sets itself, so an invalidate that resolves but clears nothing stays green |
+| `miniapp-install` | install / show / hide / uninstall of a host mini-app chunk broke | same APIs, second lifecycle; same invalidate gap as `remote-chunk` |
 | `host-assets` | asset rules no longer produce what they claim: inline gate (pic-1 87 KB in, pic-2 119 KB out), folder rules (`localAssets` emitted despite being small, `inlineAssets` inlined), the emitted URI is servable (fetch → 200, port and query string taken from the reported URI, never hardcoded). The `.svg` row asserts nothing, and that is honest: svgr compiles at build time, so a broken rule reddens the whole app at boot, before any assert could run | `assets-loader` (inline gate, per-folder rules), served asset route, `@svgr/webpack` rule |
-| `nativewind` | CSS stopped computing: `padding-applied: 16` and `calc-width: 248` are layout numbers, not text checks; dark mode is asserted as a full round-trip | `NativeWindPlugin` + the host-scoped JSX retag |
+| `nativewind` | CSS stopped computing: `padding-applied: 16` and `calc-width: 248` are layout numbers, not text checks. The dark-mode round trip reads NativeWind's `useColorScheme()` state, not a resolved `dark:` style, and assumes the device starts in light appearance | `NativeWindPlugin` + the host-scoped JSX retag |
 | `reanimated` | the worklet pipeline broke — the width row (`100 → 150 → 200 → 100`) is a shared value driven through `useAnimatedStyle` + `useAnimatedReaction` + `scheduleOnRN` (from `react-native-worklets` — reanimated's `runOnJS` re-export is deprecated), so it only moves if user worklets execute; an untransformed worklet throws at boot | the babel `react-native-worklets/plugin` transform; `ReanimatedPlugin`'s `unstable_disableTransform` only suppresses its own rules, which the new babel-swc-loader makes obsolete |
 
 Every row on a screen must own a distinct way to fail. That rule deleted the
@@ -194,7 +195,7 @@ before tests start.
 
 | Symptom | Cause | Fix |
 | --- | --- | --- |
-| `home-screen` never visible, first test of the day | cold dev-server compile blowing the 5 s budget on first launch | warm the platform bundle (curl, above) |
+| `home-screen` never visible, first test of the day | cold dev-server compile eating the boot anchor's budget on first launch | warm the platform bundle (curl, above) |
 | `home-screen` never visible, screenshot is the status bar / launcher | something owns the screen: ANR dialog, toast | the workflow's ANR clear; locally dismiss and rerun |
 | taps do nothing, screen dump says "unchanged" | a toast covers the control — CI screens are ~15 % smaller than devices, so it may not reproduce locally | screenshot proves it; suppress the warning at its source, never with `ignoreAllLogs` |
 | everything passes on iOS, fails on Android only | the local emulator is `arm64-v8a`, docs habit is `-PreactNativeArchitectures=x86_64` → `INSTALL_FAILED_NO_MATCHING_ABIS`; or a restored AVD snapshot rolled the APK back | build for `arm64-v8a`; compare `dumpsys package <id>` `lastUpdateTime` against the APK on disk |
@@ -210,10 +211,11 @@ before tests start.
   manager resolve nothing. Counters only tap the 4 non-owning hooks; the events
   cover what `resolve`/`load` would have.
 - **`extraChunks.include` is matched against chunk names and the numeric chunk
-  id** (`OutputPlugin` flattens both), so an unanchored regex like
-  `/.+local.+/` can route by id accident and a near-miss like it against
-  `host-async-local` silently falls to the catch-all remote rule. The rule is
-  `/^host-async-local$/`.
+  id** (`OutputPlugin` flattens both). An unanchored pattern can catch other
+  chunks whose names contain it, and a near-miss like `/.+local.+/` does not
+  match `host-async-local` at all, so the chunk silently falls to the catch-all
+  remote rule. The rule is `/^host-async-local$/`. It only applies to builds
+  without a dev server; the e2e lane does not exercise it.
 - **The ignored LogBox string is load-bearing**: NativeWind's runtime reads RN's
   deprecated `ImageBackground` getter at boot
   (`react-native-css-interop/components.js`) though no screen uses it, and the

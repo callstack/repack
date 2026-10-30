@@ -21,11 +21,12 @@ type BaseItem = { key: string; title: string; subtitle: string };
 type AssetItem = BaseItem &
   (
     | {
+        kind: 'bitmap';
         source: ImageRequireSource;
-        report: 'mode' | 'full';
+        showUri?: boolean;
         compact?: boolean;
       }
-    | { SvgComponent: SvgComponentType; report: 'svg' }
+    | { kind: 'svg'; SvgComponent: SvgComponentType }
   );
 
 const data: AssetItem[] = [
@@ -34,23 +35,24 @@ const data: AssetItem[] = [
     title: 'Host asset 1',
     subtitle:
       'Loaded from the host app bundle to test inline asset size limits',
+    kind: 'bitmap',
     source: require('../assets/pic_1.jpg'),
-    report: 'mode',
   },
   {
     key: 'pic-2',
     title: 'Host asset 2',
     subtitle:
       'Loaded from the host app bundle to test inline asset size limits',
+    kind: 'bitmap',
     source: require('../assets/pic_2.jpg'),
-    report: 'mode',
   },
   {
     key: 'local',
     title: 'Local fixture',
     subtitle: 'Assets loader without inline options, always emitted as a file',
+    kind: 'bitmap',
     source: require('../assets/localAssets/webpack.png'),
-    report: 'full',
+    showUri: true,
     compact: true,
   },
   {
@@ -58,8 +60,9 @@ const data: AssetItem[] = [
     title: 'Inline fixture',
     subtitle:
       'Assets loader with inline enabled, always inlined into the bundle',
+    kind: 'bitmap',
     source: require('../assets/inlineAssets/webpack.png'),
-    report: 'full',
+    showUri: true,
     compact: true,
   },
   {
@@ -67,8 +70,8 @@ const data: AssetItem[] = [
     title: 'SVG via svgr',
     subtitle:
       'Imported as a React component by @svgr/webpack, not as a bitmap asset',
+    kind: 'svg',
     SvgComponent: RepackLogo,
-    report: 'svg',
   },
 ];
 
@@ -97,10 +100,10 @@ const SvgRow = ({
   </View>
 );
 
-type BitmapItem = Extract<AssetItem, { source: ImageRequireSource }>;
+type BitmapItem = Extract<AssetItem, { kind: 'bitmap' }>;
 
 const AssetRow = ({ item }: { item: AssetItem }) => {
-  if (item.report === 'svg') {
+  if (item.kind === 'svg') {
     return <SvgRow SvgComponent={item.SvgComponent} item={item} />;
   }
   return <BitmapRow item={item} />;
@@ -137,24 +140,20 @@ const BitmapRow = ({ item }: { item: BitmapItem }) => {
             </Text>
           </View>
         </View>
-        {item.report ? (
-          <View style={styles.reports}>
+        <View style={styles.reports}>
+          <Report
+            testID={`host-asset-${item.key}-mode-report`}
+            name="mode"
+            value={status}
+          />
+          {item.showUri ? (
             <Report
-              testID={`host-asset-${item.key}-mode-report`}
-              name="mode"
-              value={status}
+              testID={`host-asset-${item.key}-uri-report`}
+              name="uri"
+              value={isInline ? `${resolved.uri.slice(0, 48)}…` : resolved.uri}
             />
-            {item.report === 'full' ? (
-              <Report
-                testID={`host-asset-${item.key}-uri-report`}
-                name="uri"
-                value={
-                  isInline ? `${resolved.uri.slice(0, 48)}…` : resolved.uri
-                }
-              />
-            ) : null}
-          </View>
-        ) : null}
+          ) : null}
+        </View>
         <Text style={styles.subtitle}>{item.subtitle}</Text>
       </View>
     </View>

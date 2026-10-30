@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type LayoutChangeEvent, Text, View } from 'react-native';
 
-export default function Responsive({
+export default function PaddingProbe({
   onWidth,
 }: {
   onWidth: (width: number) => void;
@@ -15,12 +15,12 @@ export default function Responsive({
 
   return (
     <View
-      testID="nativewind-responsive-box"
+      testID="nativewind-padding-box"
       onLayout={handleLayout}
       className="p-2 bg-orange-500"
     >
-      <Text testID="nativewind-responsive-text" className="text-white">
-        Padding shrinks this box
+      <Text testID="nativewind-padding-text" className="text-white">
+        The container's padding narrows this box
       </Text>
     </View>
   );

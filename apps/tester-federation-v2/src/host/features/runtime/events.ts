@@ -1,30 +1,23 @@
 import { ScriptManager } from '@callstack/repack/client';
 
-export type ScriptManagerCounts = {
-  resolving: number;
-  resolved: number;
-  prefetching: number;
-  loading: number;
-  loaded: number;
-  error: number;
-  beforeResolve: number;
-  afterResolve: number;
-  beforeLoad: number;
-  afterLoad: number;
-};
+export const EVENT_NAMES = [
+  'resolving',
+  'resolved',
+  'prefetching',
+  'loading',
+  'loaded',
+  'error',
+  'beforeResolve',
+  'afterResolve',
+  'beforeLoad',
+  'afterLoad',
+] as const;
 
-const counts: ScriptManagerCounts = {
-  resolving: 0,
-  resolved: 0,
-  prefetching: 0,
-  loading: 0,
-  loaded: 0,
-  error: 0,
-  beforeResolve: 0,
-  afterResolve: 0,
-  beforeLoad: 0,
-  afterLoad: 0,
-};
+export type ScriptManagerCounts = Record<(typeof EVENT_NAMES)[number], number>;
+
+const counts = Object.fromEntries(
+  EVENT_NAMES.map((name) => [name, 0])
+) as ScriptManagerCounts;
 
 const listeners = new Set<(counts: ScriptManagerCounts) => void>();
 
@@ -101,30 +94,44 @@ export function getPipelineStatus(counts: ScriptManagerCounts): PipelineStatus {
   };
 }
 
+function countEvent(event: keyof ScriptManagerCounts) {
+  return (...args: unknown[]) => {
+    console.debug(`ScriptManagerEvent:${event}`, ...args);
+    bump(event);
+  };
+}
+
 export function registerEventCounter() {
-  ScriptManager.shared.on('resolving', () => bump('resolving'));
-  ScriptManager.shared.on('resolved', () => bump('resolved'));
-  ScriptManager.shared.on('prefetching', () => bump('prefetching'));
-  ScriptManager.shared.on('loading', () => bump('loading'));
-  ScriptManager.shared.on('loaded', () => bump('loaded'));
-  ScriptManager.shared.on('error', () => bump('error'));
+  ScriptManager.shared.on('resolving', countEvent('resolving'));
+  ScriptManager.shared.on('resolved', countEvent('resolved'));
+  ScriptManager.shared.on('prefetching', countEvent('prefetching'));
+  ScriptManager.shared.on('loading', countEvent('loading'));
+  ScriptManager.shared.on('loaded', countEvent('loaded'));
+  ScriptManager.shared.on('error', countEvent('error'));
+  ScriptManager.shared.on('invalidated', (scriptIds) => {
+    console.debug('ScriptManagerEvent:invalidated', scriptIds);
+  });
 
   ScriptManager.shared.hooks.beforeResolve((args) => {
+    console.debug('ScriptManager.shared.hooks.beforeResolve', args.options);
     bump('beforeResolve');
     return args;
   });
 
   ScriptManager.shared.hooks.afterResolve((args) => {
+    console.debug('ScriptManager.shared.hooks.afterResolve', args.options);
     bump('afterResolve');
     return args;
   });
 
   ScriptManager.shared.hooks.beforeLoad((args) => {
+    console.debug('ScriptManager.shared.hooks.beforeLoad', args.options);
     bump('beforeLoad');
     return args;
   });
 
   ScriptManager.shared.hooks.afterLoad((args) => {
+    console.debug('ScriptManager.shared.hooks.afterLoad', args.options);
     bump('afterLoad');
     return args;
   });

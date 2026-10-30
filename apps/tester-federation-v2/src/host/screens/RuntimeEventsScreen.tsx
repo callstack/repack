@@ -1,25 +1,13 @@
 import * as React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import {
+  EVENT_NAMES,
   getPipelineStatus,
   readEventCounts,
   type ScriptManagerCounts,
   subscribeEventCounts,
 } from '../features/runtime/events';
 import Report from '../ui/Report';
-
-const EVENT_REPORTS: Array<keyof ScriptManagerCounts> = [
-  'resolving',
-  'resolved',
-  'prefetching',
-  'loading',
-  'loaded',
-  'error',
-  'beforeResolve',
-  'afterResolve',
-  'beforeLoad',
-  'afterLoad',
-];
 
 const RuntimeEventsScreen = () => {
   const [counts, setCounts] = React.useState<ScriptManagerCounts>(() =>
@@ -34,7 +22,7 @@ const RuntimeEventsScreen = () => {
       contentContainerStyle={styles.content}
     >
       <View testID="runtime-events-screen" style={styles.container}>
-        {EVENT_REPORTS.map((event) => (
+        {EVENT_NAMES.map((event) => (
           <Report
             key={event}
             testID={`runtime-event-${event}-report`}

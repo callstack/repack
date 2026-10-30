@@ -1,4 +1,11 @@
-export type FeatureGroup = 'Mini Apps' | 'Runtime' | 'Chunks' | 'Plugins';
+export const FEATURE_GROUPS = [
+  'Runtime',
+  'Mini Apps',
+  'Chunks',
+  'Plugins',
+] as const;
+
+export type FeatureGroup = (typeof FEATURE_GROUPS)[number];
 
 export type Feature = {
   key: string;
@@ -51,11 +58,4 @@ export const FEATURES: Feature[] = [
     group: 'Plugins',
     screen: 'Reanimated',
   },
-];
-
-export const FEATURE_GROUPS: FeatureGroup[] = [
-  'Runtime',
-  'Mini Apps',
-  'Chunks',
-  'Plugins',
 ];
