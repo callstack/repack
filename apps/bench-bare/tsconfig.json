@@ -1,0 +1,9 @@
+{
+  "extends": "@react-native/typescript-config",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["**/node_modules"],
+  "compilerOptions": {
+    // The base config adds Jest's types; this app has no tests.
+    "types": ["react-native"]
+  }
+}

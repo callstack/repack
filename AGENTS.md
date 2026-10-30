@@ -25,6 +25,8 @@ Re.Pack is a toolkit for building and developing React Native applications with 
 - `apps/tester-app/`: Primary manual/integration validation app.
 - `apps/tester-federation/`: Module Federation v1 validation app.
 - `apps/tester-federation-v2/`: Module Federation v2 validation app.
+- `apps/bench-expo/`, `apps/bench-bare/`: Neutral apps for benchmarking Re.Pack
+  against Metro (`tests/perf/src/competitors.mjs`).
 
 ### Tests
 
