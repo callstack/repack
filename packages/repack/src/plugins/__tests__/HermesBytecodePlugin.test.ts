@@ -20,11 +20,11 @@ jest.mock('node:fs', () => ({
 
 jest.mock('execa');
 
-function createCompilation(files: string[]) {
-  return {
-    outputOptions: { path: 'output/path/' },
-    getAssets: () => files.map((name) => ({ name })),
-  };
+function emitAssets(files: string[]) {
+  const [, onAssetEmitted] = compilerMock.hooks.assetEmitted.tap.mock.calls[0];
+  for (const file of files) {
+    onAssetEmitted(file, { outputPath: 'output/path/' });
+  }
 }
 
 const compilerMock = {
@@ -35,6 +35,9 @@ const compilerMock = {
     },
   },
   hooks: {
+    assetEmitted: {
+      tap: jest.fn(),
+    },
     afterEmit: {
       tapPromise: jest.fn(),
     },
@@ -96,9 +99,8 @@ describe('HermesBytecodePlugin', () => {
       await new Promise<void>((resolve, reject) => {
         compilerMock.hooks.afterEmit.tapPromise.mockImplementationOnce(
           (_, callback) => {
-            callback(createCompilation(['example.bundle']))
-              .then(resolve)
-              .catch(reject);
+            emitAssets(['example.bundle']);
+            callback().then(resolve).catch(reject);
           }
         );
         pluginInstance.apply(compilerMock as unknown as Compiler);
@@ -134,9 +136,8 @@ describe('HermesBytecodePlugin', () => {
       await new Promise<void>((resolve, reject) => {
         compilerMock.hooks.afterEmit.tapPromise.mockImplementationOnce(
           (_, callback) => {
-            callback(createCompilation(['example.bundle']))
-              .then(resolve)
-              .catch(reject);
+            emitAssets(['example.bundle']);
+            callback().then(resolve).catch(reject);
           }
         );
         pluginInstance.apply(compilerMock as unknown as Compiler);
@@ -165,15 +166,8 @@ describe('HermesBytecodePlugin', () => {
     await new Promise<void>((resolve, reject) => {
       compilerMock.hooks.afterEmit.tapPromise.mockImplementationOnce(
         (_, callback) => {
-          callback(
-            createCompilation([
-              'a.chunk.bundle',
-              'b.chunk.bundle',
-              'index.bundle',
-            ])
-          )
-            .then(resolve)
-            .catch(reject);
+          emitAssets(['a.chunk.bundle', 'b.chunk.bundle', 'index.bundle']);
+          callback().then(resolve).catch(reject);
         }
       );
       pluginInstance.apply(compilerMock as unknown as Compiler);
@@ -184,6 +178,39 @@ describe('HermesBytecodePlugin', () => {
 
     expect(execaMock).toHaveBeenCalledTimes(2);
     expect(execaNodeMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('ignores unchanged assets on rebuild', async () => {
+    const pluginInstance = new HermesBytecodePlugin({
+      enabled: true,
+      test: /\.(js)?bundle$/,
+      exclude: /index.bundle$/,
+      reactNativePath: 'path/to/react-native',
+      hermesCLIPath: 'path/to/hermesc',
+    });
+
+    const fsMock = fs.promises as jest.Mocked<typeof fs.promises>;
+    fsMock.access.mockResolvedValue();
+
+    pluginInstance.apply(compilerMock as unknown as Compiler);
+    const [, afterEmit] = compilerMock.hooks.afterEmit.tapPromise.mock.calls[0];
+
+    emitAssets(['a.chunk.bundle', 'b.chunk.bundle']);
+    await afterEmit();
+
+    emitAssets(['b.chunk.bundle']);
+    await afterEmit();
+
+    const execaMock = execa as jest.MockedFunction<typeof execa>;
+    const transformedBundles = execaMock.mock.calls.map(([, args]) =>
+      (args as string[]).at(-1)
+    );
+
+    expect(transformedBundles).toEqual([
+      path.join('output/path/', 'a.chunk.bundle'),
+      path.join('output/path/', 'b.chunk.bundle'),
+      path.join('output/path/', 'b.chunk.bundle'),
+    ]);
   });
 
   describe('getHermesCLIPath', () => {

@@ -105,29 +105,39 @@ export class HermesBytecodePlugin {
     const hermesCLIPath =
       this.config.hermesCLIPath || getHermesCLIPath(reactNativePath);
 
-    // Run once every asset is on disk: a chunk's `.map` can still be unwritten when its own
+    const emittedAssets = new Map<string, string>();
+
+    // Only assets written in this compilation: on rebuilds in the same process, unchanged
+    // assets are not re-emitted and are already bytecode on disk.
+    compiler.hooks.assetEmitted.tap(
+      'RepackHermesBytecodePlugin',
+      (file, { outputPath }) => {
+        const shouldTransformAsset =
+          compiler.webpack.ModuleFilenameHelpers.matchObject(
+            {
+              test: this.config.test,
+              include: this.config.include,
+              exclude: this.config.exclude,
+            },
+            file
+          );
+
+        if (shouldTransformAsset) {
+          emittedAssets.set(file, outputPath);
+        }
+      }
+    );
+
+    // Transform once every asset is on disk: a chunk's `.map` can still be unwritten when its own
     // `assetEmitted` fires, which made hermesc run without source maps and skipped composition.
     compiler.hooks.afterEmit.tapPromise(
-      'RepackHermesBytecodePlugin',
-      async (compilation) => {
-        const outputPath = compilation.outputOptions.path as string;
+      { name: 'RepackHermesBytecodePlugin', stage: -100 },
+      async () => {
+        const assets = Array.from(emittedAssets);
+        emittedAssets.clear();
 
         await Promise.all(
-          compilation.getAssets().map(async ({ name: file }) => {
-            const shouldTransformAsset =
-              compiler.webpack.ModuleFilenameHelpers.matchObject(
-                {
-                  test: this.config.test,
-                  include: this.config.include,
-                  exclude: this.config.exclude,
-                },
-                file
-              );
-
-            if (!shouldTransformAsset) {
-              return;
-            }
-
+          assets.map(async ([file, outputPath]) => {
             const bundlePath = path.join(outputPath, file);
             const sourceMapPath = `${bundlePath}.map`;
             const useSourceMaps = await fs.promises
