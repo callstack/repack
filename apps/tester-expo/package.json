@@ -10,7 +10,8 @@
     "repack:android": "expo run:android --no-bundler",
     "repack:release:android": "repack-expo build --platform android",
     "repack:release:ios": "repack-expo build --platform ios",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "e2e": "pnpm exec e2e run"
   },
   "dependencies": {
     "@callstack/repack": "workspace:*",
@@ -34,14 +35,17 @@
   },
   "devDependencies": {
     "@babel/core": "catalog:",
+    "@e2e-dev/mobile": "catalog:testers",
     "@react-native-community/cli": "catalog:testers",
     "@react-native-community/cli-platform-android": "catalog:testers",
     "@react-native-community/cli-platform-ios": "catalog:testers",
     "@react-native/babel-preset": "catalog:testers",
     "@react-native/community-cli-plugin": "catalog:testers",
     "@rspack/core": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:testers",
     "babel-preset-expo": "catalog:expo58",
+    "e2e": "catalog:testers",
     "typescript": "catalog:",
     "ws": "^8.21.1"
   }

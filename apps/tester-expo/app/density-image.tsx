@@ -1,55 +1,44 @@
-import { Link } from 'expo-router';
 import { useState } from 'react';
-import { Image, PixelRatio, StyleSheet, Text, View } from 'react-native';
+import { Image, PixelRatio, StyleSheet } from 'react-native';
+import type { LoadState } from '../ui/LoadState';
+import Report from '../ui/Report';
+import Screen from '../ui/Screen';
 
 const densityImage = require('../assets/images/density.png');
 
 export default function DensityImageRoute() {
   const resolvedImage = Image.resolveAssetSource(densityImage);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
+  const [load, setLoad] = useState<LoadState>('loading');
 
   return (
-    <View style={styles.container}>
-      {imageLoaded && !imageError ? (
-        <Text testID="density-image-ready">
-          Density-aware bundled image loaded
-        </Text>
-      ) : null}
-      {imageError ? (
-        <Text testID="density-image-error">
-          Density-aware bundled image failed to load
-        </Text>
-      ) : null}
+    <Screen testID="density-image-screen">
+      <Report testID="density-image-load-report" name="image" value={load} />
+      <Report
+        testID="density-image-scale-report"
+        name="scale"
+        value={resolvedImage?.scale}
+      />
+      <Report
+        testID="density-image-pixel-ratio-report"
+        name="pixel ratio"
+        value={PixelRatio.get()}
+      />
       <Image
         accessibilityLabel="Density-aware Rspack logo"
-        onError={() => setImageError(true)}
-        onLoad={() => setImageLoaded(true)}
+        onError={() => setLoad('error')}
+        onLoad={() => setLoad('loaded')}
         source={densityImage}
         style={styles.image}
         testID="density-image"
       />
-      <Text testID="density-scale">
-        Selected density scale: {resolvedImage?.scale}
-      </Text>
-      <Text testID="device-density-scale">
-        Device density scale: {PixelRatio.get()}
-      </Text>
-      <Link href="/">Back home</Link>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flex: 1,
-    gap: 16,
-    justifyContent: 'center',
-    padding: 24,
-  },
   image: {
     height: 48,
+    marginHorizontal: 12,
     width: 48,
   },
 });

@@ -1,0 +1,238 @@
+name: e2e (Expo)
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'website/**'
+      - '**/*.md'
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'website/**'
+      - '**/*.md'
+  workflow_dispatch:
+
+# one run per PR; a new push cancels the older one
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
+# keep it read-only
+permissions:
+  contents: read
+
+env:
+  E2E_TELEMETRY_DISABLED: '1'
+
+jobs:
+  android:
+    name: e2e-expo (Android)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-pnpm-node
+        with:
+          node-version: '24.22.1'
+
+      - name: Setup Java
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # tag=v6.0.1
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Build workspace packages
+        run: pnpm --filter tester-expo... --filter tester-expo-widget... --filter tester-federation-v2... build
+
+      # android/ is generated, never committed
+      - name: Generate native project
+        run: pnpm --filter tester-expo exec expo prebuild --platform android --no-install
+
+      # nohup/disown: the runner kills step processes at the end
+      - name: Start dev servers
+        run: |
+          nohup pnpm --filter tester-expo repack:start > /tmp/host.log 2>&1 &
+          disown
+          nohup pnpm --filter tester-expo-widget repack:start:remote > /tmp/expo-widget.log 2>&1 &
+          disown
+          nohup pnpm --filter tester-federation-v2 start:expo-host-widget > /tmp/ordinary-widget.log 2>&1 &
+          disown
+          timeout 180 sh -c 'until [ "$(curl -sf localhost:8081/status)" = "packager-status:running" ] && [ "$(curl -sf localhost:8082/status)" = "packager-status:running" ] && [ "$(curl -sf localhost:8083/status)" = "packager-status:running" ]; do sleep 2; done'
+
+      # ask for the bundles now so the servers compile them — they only build on first request
+      - name: Warm all compilers
+        run: |
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8081/index.bundle?platform=android&dev=true&lazy=true&minify=false&app=com.callstack.repackexpo&modulesOnly=false&runModule=true'
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/android/mf-manifest.json'
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8083/android/mf-manifest.json'
+          echo 'All three served; compilers are warm.'
+
+      - name: Check shared versions are real semver
+        run: |
+          for p in 8081 8082; do
+            M=$(curl -sf --retry 3 --retry-delay 2 "http://localhost:$p/android/mf-manifest.json") || { echo "::error::port $p: mf-manifest.json not served"; exit 1; }
+            [ "$(jq '.shared | length' <<<"$M")" -gt 0 ] || { echo "::error::port $p: manifest has no shared entries"; exit 1; }
+            BAD=$(jq -r '.shared[] | select((.version // "") | test("^[0-9]+\\.[0-9]+\\.[0-9]+") | not) | "\(.name): \(.version)"' <<<"$M")
+            [ -z "$BAD" ] || { echo "::error::port $p has non-semver shared versions: $BAD"; exit 1; }
+          done
+
+      - name: Build Android app
+        working-directory: apps/tester-expo/android
+        run: ./gradlew :app:assembleDebug -PreactNativeArchitectures=x86_64
+
+      # expose dev servers to the emulator, install the APK, run the tests
+      - name: Run e2e on an emulator
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # tag=v2.38.0
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          avd-name: e2e
+          disable-animations: false
+          working-directory: apps/tester-expo
+          script: |
+            adb shell settings put global hide_error_dialogs 1
+            for i in 1 2 3; do adb shell "uiautomator dump /sdcard/d.xml >/dev/null && grep -q aerr_ /sdcard/d.xml" && { echo 'ANR dialog on screen, clearing it'; adb shell am force-stop com.google.android.apps.nexuslauncher; }; sleep 2; done
+            adb reverse tcp:8081 tcp:8081
+            adb reverse tcp:8082 tcp:8082
+            adb reverse tcp:8083 tcp:8083
+            adb reverse --list
+            adb reverse --list | grep -q 'tcp:8081' || { echo '::error::adb reverse missing for tcp:8081'; exit 1; }
+            adb reverse --list | grep -q 'tcp:8082' || { echo '::error::adb reverse missing for tcp:8082'; exit 1; }
+            adb reverse --list | grep -q 'tcp:8083' || { echo '::error::adb reverse missing for tcp:8083'; exit 1; }
+            adb install -r -g android/app/build/outputs/apk/debug/app-debug.apk || { echo '::error::adb install failed'; exit 1; }
+            E2E_DEVICE="${ANDROID_SERIAL:-$(adb get-serialno)}" pnpm exec e2e run --target android --reporter list,junit; ec=$?; adb logcat -d -v time > .e2e/logcat.txt 2>&1; exit $ec
+
+      - name: Collect dev server logs
+        if: ${{ !cancelled() }}
+        working-directory: apps/tester-expo
+        run: |
+          mkdir -p .e2e
+          cp /tmp/host.log /tmp/expo-widget.log /tmp/ordinary-widget.log .e2e/
+
+      - name: Upload e2e artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # tag=v7.0.1
+        with:
+          name: e2e-expo-android
+          path: apps/tester-expo/.e2e
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Show dev server logs
+        if: ${{ !cancelled() }}
+        run: tail -n 80 /tmp/host.log /tmp/expo-widget.log /tmp/ordinary-widget.log
+
+  # main + dispatch only
+  ios:
+    name: e2e-expo (iOS)
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-pnpm-node
+        with:
+          node-version: '24.22.1'
+
+      - name: Build workspace packages
+        run: pnpm --filter tester-expo... --filter tester-expo-widget... --filter tester-federation-v2... build
+
+      - name: Start dev servers
+        run: |
+          nohup pnpm --filter tester-expo repack:start > /tmp/host.log 2>&1 &
+          disown
+          nohup pnpm --filter tester-expo-widget repack:start:remote > /tmp/expo-widget.log 2>&1 &
+          disown
+          nohup pnpm --filter tester-federation-v2 start:expo-host-widget > /tmp/ordinary-widget.log 2>&1 &
+          disown
+          for p in 8081 8082 8083; do curl -sf --retry 90 --retry-delay 2 --retry-all-errors --retry-connrefused -o /dev/null "http://localhost:$p/status"; done
+
+      - name: Warm all compilers
+        run: |
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8081/index.bundle?platform=ios&dev=true&lazy=true&minify=false&app=com.callstack.repackexpo&modulesOnly=false&runModule=true'
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/ios/mf-manifest.json'
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8083/ios/mf-manifest.json'
+          echo 'All three served; compilers are warm.'
+
+      - name: Check shared versions are real semver
+        run: |
+          for p in 8081 8082; do
+            M=$(curl -sf --retry 3 --retry-delay 2 "http://localhost:$p/ios/mf-manifest.json") || { echo "::error::port $p: mf-manifest.json not served"; exit 1; }
+            [ "$(jq '.shared | length' <<<"$M")" -gt 0 ] || { echo "::error::port $p: manifest has no shared entries"; exit 1; }
+            BAD=$(jq -r '.shared[] | select((.version // "") | test("^[0-9]+\\.[0-9]+\\.[0-9]+") | not) | "\(.name): \(.version)"' <<<"$M")
+            [ -z "$BAD" ] || { echo "::error::port $p has non-semver shared versions: $BAD"; exit 1; }
+          done
+
+      # SIM_RUNTIME_PREFIX is tied to the runner image
+      - name: Boot simulator
+        env:
+          SIM_RUNTIME_PREFIX: com.apple.CoreSimulator.SimRuntime.iOS-18-
+          SIM_DEVICE: iPhone 16
+        run: |
+          RT=$(xcrun simctl list runtimes -j | jq -r --arg prefix "$SIM_RUNTIME_PREFIX" '.runtimes | map(select(.isAvailable and (.identifier | startswith($prefix)))) | sort_by(.version) | last | .identifier')
+          echo "using $RT"
+          [ "$RT" != "null" ] && [ -n "$RT" ]
+          xcrun simctl create e2e "$SIM_DEVICE" "$RT"
+          xcrun simctl boot e2e
+          xcrun simctl bootstatus e2e -b
+
+      # ios/ is generated, never committed
+      - name: Generate native project
+        run: pnpm --filter tester-expo exec expo prebuild --platform ios --no-install
+
+      # CocoaPods needs a UTF-8 locale
+      - name: Build iOS app
+        working-directory: apps/tester-expo/ios
+        env:
+          LANG: en_US.UTF-8
+          LC_ALL: en_US.UTF-8
+        run: pod install && xcodebuild -workspace RepackExpoTester.xcworkspace -scheme RepackExpoTester -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO ARCHS=arm64 build
+
+      - name: Run e2e
+        working-directory: apps/tester-expo
+        env:
+          E2E_DEVICE: e2e
+        run: |
+          xcrun simctl install booted ios/build/Build/Products/Debug-iphonesimulator/*.app
+          pnpm exec e2e run --target ios --reporter list,junit
+
+      - name: Collect dev server logs
+        if: ${{ !cancelled() }}
+        working-directory: apps/tester-expo
+        run: |
+          mkdir -p .e2e
+          cp /tmp/host.log /tmp/expo-widget.log /tmp/ordinary-widget.log .e2e/
+          xcrun simctl spawn booted log show --style compact --last 30m \
+            --predicate 'process == "RepackExpoTester"' \
+            > .e2e/ios-syslog.txt 2>&1 || true
+
+      - name: Upload e2e artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # tag=v7.0.1
+        with:
+          name: e2e-expo-ios
+          path: apps/tester-expo/.e2e
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Show dev server logs
+        if: ${{ !cancelled() }}
+        run: tail -n 80 /tmp/host.log /tmp/expo-widget.log /tmp/ordinary-widget.log
