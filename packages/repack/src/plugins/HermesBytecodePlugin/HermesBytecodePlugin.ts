@@ -105,9 +105,13 @@ export class HermesBytecodePlugin {
     const hermesCLIPath =
       this.config.hermesCLIPath || getHermesCLIPath(reactNativePath);
 
-    compiler.hooks.assetEmitted.tapPromise(
-      { name: 'RepackHermesBytecodePlugin', stage: 10 },
-      async (file, { outputPath }) => {
+    const emittedAssets = new Map<string, string>();
+
+    // Only assets written in this compilation: on rebuilds in the same process, unchanged
+    // assets are not re-emitted and are already bytecode on disk.
+    compiler.hooks.assetEmitted.tap(
+      'RepackHermesBytecodePlugin',
+      (file, { outputPath }) => {
         const shouldTransformAsset =
           compiler.webpack.ModuleFilenameHelpers.matchObject(
             {
@@ -118,37 +122,53 @@ export class HermesBytecodePlugin {
             file
           );
 
-        if (!shouldTransformAsset) {
-          return;
+        if (shouldTransformAsset) {
+          emittedAssets.set(file, outputPath);
         }
+      }
+    );
 
-        const bundlePath = path.join(outputPath, file);
-        const sourceMapPath = `${bundlePath}.map`;
-        const useSourceMaps = await fs.promises
-          .access(sourceMapPath)
-          .then(() => true)
-          .catch(() => false);
+    // Transform once every asset is on disk: a chunk's `.map` can still be unwritten when its own
+    // `assetEmitted` fires, which made hermesc run without source maps and skipped composition.
+    compiler.hooks.afterEmit.tapPromise(
+      { name: 'RepackHermesBytecodePlugin', stage: -100 },
+      async () => {
+        const assets = Array.from(emittedAssets);
+        emittedAssets.clear();
 
-        logger.debug(`Starting hermes compilation for asset: ${bundlePath}`);
+        await Promise.all(
+          assets.map(async ([file, outputPath]) => {
+            const bundlePath = path.join(outputPath, file);
+            const sourceMapPath = `${bundlePath}.map`;
+            const useSourceMaps = await fs.promises
+              .access(sourceMapPath)
+              .then(() => true)
+              .catch(() => false);
 
-        const { sourceMap: hermesSourceMapPath } =
-          await transformBundleToHermesBytecode({
-            hermesCLIPath,
-            useSourceMaps,
-            bundlePath,
-          });
+            logger.debug(
+              `Starting hermes compilation for asset: ${bundlePath}`
+            );
 
-        logger.info(`Asset transformed: ${file}`);
+            const { sourceMap: hermesSourceMapPath } =
+              await transformBundleToHermesBytecode({
+                hermesCLIPath,
+                useSourceMaps,
+                bundlePath,
+              });
 
-        if (useSourceMaps) {
-          await composeSourceMaps({
-            reactNativePath,
-            packagerMapPath: sourceMapPath,
-            compilerMapPath: hermesSourceMapPath,
-          });
+            logger.info(`Asset transformed: ${file}`);
 
-          logger.info(`Asset sourceMap transformed: ${file}.map`);
-        }
+            if (useSourceMaps) {
+              await composeSourceMaps({
+                reactNativePath,
+                packagerMapPath: sourceMapPath,
+                compilerMapPath: hermesSourceMapPath,
+              });
+
+              logger.info(`Asset sourceMap transformed: ${file}.map`);
+            }
+          })
+        );
       }
     );
   }
