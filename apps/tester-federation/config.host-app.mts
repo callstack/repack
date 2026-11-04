@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type * as Repack from '@callstack/repack';
-import { withRozenite } from '@rozenite/repack';
 
 import rspackConfig from './configs/rspack.host-app.mts';
 import webpackConfig from './configs/webpack.host-app.mts';
@@ -17,6 +16,7 @@ const config = (env: Repack.EnvOptions) => {
   return useWebpack ? webpackConfig(env) : rspackConfig(env);
 };
 
-export default withRozenite(config, {
-  enabled: process.env.WITH_ROZENITE === 'true',
-});
+// Rozenite is only loaded with WITH_ROZENITE=true (see CONTRIBUTING.md).
+export default process.env.WITH_ROZENITE === 'true'
+  ? (await import('@rozenite/repack')).withRozenite(config, { enabled: true })
+  : config;

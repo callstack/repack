@@ -2,8 +2,10 @@ import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
-import { withRozenite } from '@rozenite/repack';
 import TerserPlugin from 'terser-webpack-plugin';
+import webpack from 'webpack';
+
+const withDevTools = process.env.WITH_ROZENITE === 'true';
 
 const dirname = Repack.getDirname(import.meta.url);
 
@@ -131,10 +133,12 @@ const config = Repack.defineWebpackConfig((env) => {
       }),
       new ReanimatedPlugin(),
       new NativeWindPlugin(),
+      new webpack.DefinePlugin({ __WITH_ROZENITE__: withDevTools }),
     ],
   };
 });
 
-export default withRozenite(config, {
-  enabled: process.env.WITH_ROZENITE === 'true',
-});
+// Rozenite is only loaded with WITH_ROZENITE=true (see CONTRIBUTING.md).
+export default withDevTools
+  ? (await import('@rozenite/repack')).withRozenite(config, { enabled: true })
+  : config;

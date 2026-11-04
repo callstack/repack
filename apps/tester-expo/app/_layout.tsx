@@ -1,8 +1,8 @@
-import { useNetworkActivityDevTools } from '@rozenite/network-activity-plugin';
 import { Stack } from 'expo-router';
+import { useDevTools } from '../components/rozenite';
 
 export default function RootLayout() {
-  useNetworkActivityDevTools();
+  useDevTools();
 
   return <Stack />;
 }

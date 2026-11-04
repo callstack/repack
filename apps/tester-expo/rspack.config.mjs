@@ -4,9 +4,10 @@ import { fileURLToPath } from 'node:url';
 import * as Repack from '@callstack/repack';
 import { ExpoPlugin } from '@callstack/repack-expo/rspack';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
-import { withRozenite } from '@rozenite/repack';
+import { DefinePlugin } from '@rspack/core';
 
 const require = createRequire(import.meta.url);
+const withDevTools = process.env.WITH_ROZENITE === 'true';
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 // Must match the widget's shared list. Versions come from the installed
@@ -44,6 +45,7 @@ const config = (env) => {
     plugins: [
       new ReanimatedPlugin({ unstable_disableTransform: true }),
       new ExpoPlugin({ platform }),
+      new DefinePlugin({ __WITH_ROZENITE__: withDevTools }),
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'ExpoHost',
         dts: false,
@@ -66,9 +68,12 @@ const config = (env) => {
   };
 };
 
-export default withRozenite(config, {
-  enabled: process.env.WITH_ROZENITE === 'true',
-  // Re.Pack serves DevTools through React Native's dev-middleware, not the copy
-  // bundled with Expo's CLI, so Rozenite has to patch that one.
-  projectType: 'react-native-cli',
-});
+// Rozenite is only loaded with WITH_ROZENITE=true (see CONTRIBUTING.md).
+export default withDevTools
+  ? (await import('@rozenite/repack')).withRozenite(config, {
+      enabled: true,
+      // Re.Pack serves DevTools through React Native's dev-middleware, not the
+      // copy bundled with Expo's CLI, so Rozenite has to patch that one.
+      projectType: 'react-native-cli',
+    })
+  : config;
