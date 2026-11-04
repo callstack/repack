@@ -28,6 +28,21 @@ describe('setupStatsWriter', () => {
       expect(result).toHaveProperty('preset', 'none');
     });
 
+    it.each([
+      ['undefined', undefined],
+      ['empty', {}],
+    ])(
+      'should include assets, chunks and modules if options are %s',
+      (_, options) => {
+        const result = normalizeStatsOptions(options);
+        expect(result).toMatchObject({
+          assets: true,
+          chunks: true,
+          modules: true,
+        });
+      }
+    );
+
     it('should return options as is if no preset is provided', () => {
       const options = { custom: 'value' };
       const result = normalizeStatsOptions(options);
