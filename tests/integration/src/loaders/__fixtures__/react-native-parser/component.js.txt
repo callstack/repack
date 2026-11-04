@@ -1,0 +1,5 @@
+// @flow
+
+export component Greeting(name: string, excited?: boolean = false) {
+  return { greeting: `Hello ${name}${excited ? '!' : ''}` };
+}

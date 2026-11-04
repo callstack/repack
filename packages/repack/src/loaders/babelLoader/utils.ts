@@ -1,15 +1,22 @@
-import type { ParseResult } from '@babel/core';
+import type { ParseResult, TransformOptions } from '@babel/core';
+import type { RawSourceMap } from '@rspack/core';
 import { importDefaultESM } from '../../helpers/index.js';
-import { resolveReactNativeParser } from '../../helpers/resolveReactNativeParser.js';
+import {
+  resolveReactNativeParser,
+  resolveReactRuntimeTarget,
+} from '../../helpers/resolveReactNativeParser.js';
+import type { HermesParserOverrides } from './options.js';
 
 interface ReactNativeParser {
   parse: (
     src: string,
     opts: {
       babel: boolean;
-      flow?: 'all' | 'detect';
-      reactRuntimeTarget: string;
-      sourceType: 'script' | 'module' | 'unambiguous' | null | undefined;
+      flow?: HermesParserOverrides['flow'];
+      reactRuntimeTarget: NonNullable<
+        HermesParserOverrides['reactRuntimeTarget']
+      >;
+      sourceType: HermesParserOverrides['sourceType'] | null;
     }
   ) => ParseResult;
 }
@@ -22,6 +29,17 @@ export function isTypeScriptSource(fileName: string) {
 
 export function isTSXSource(fileName: string) {
   return !!fileName && fileName.endsWith('.tsx');
+}
+
+/**
+ * Previous loaders pass their source map either serialized or as an object
+ * (e.g. `flow-loader`, Babel), while Babel expects an object.
+ */
+export function normalizeInputSourceMap(
+  sourceMap: string | RawSourceMap | undefined
+): TransformOptions['inputSourceMap'] {
+  if (!sourceMap) return undefined;
+  return typeof sourceMap === 'string' ? JSON.parse(sourceMap) : sourceMap;
 }
 
 /**
@@ -58,6 +76,41 @@ export async function loadReactNativeParser(
       { cause }
     );
   }
+}
+
+/**
+ * Parses a Flow source with the project's React Native parser into a Babel AST.
+ *
+ * The parser lowers Flow syntax that has no Babel plugin (e.g. `component`
+ * declarations); enums are left for `babel-plugin-transform-flow-enums` and
+ * type annotations for `@babel/plugin-transform-flow-strip-types`.
+ */
+export async function parseReactNativeSource(
+  src: string,
+  {
+    projectRoot,
+    parserPath,
+    flow,
+    sourceType = 'unambiguous',
+    overrides,
+  }: {
+    projectRoot: string;
+    parserPath?: string;
+    flow?: HermesParserOverrides['flow'];
+    sourceType?: HermesParserOverrides['sourceType'] | null;
+    overrides?: HermesParserOverrides;
+  }
+): Promise<ParseResult> {
+  const parser = await loadReactNativeParser(projectRoot, parserPath);
+
+  return parser.parse(src, {
+    babel: true,
+    // the parser rejects `flow: undefined`
+    ...(flow && { flow }),
+    reactRuntimeTarget: resolveReactRuntimeTarget(projectRoot),
+    sourceType,
+    ...overrides,
+  });
 }
 
 const IGNORED_REPACK_FILENAMES = [

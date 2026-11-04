@@ -8,6 +8,7 @@
     "./Libraries/*": "./Libraries/*.js",
     "./Libraries/*.js": "./Libraries/*.js",
     "./asset-registry": "./src/asset-registry.js",
+    "./setup-env": "./src/setup-env.js",
     "./package.json": "./package.json"
   }
 }

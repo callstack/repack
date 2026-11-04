@@ -23,7 +23,7 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-pnpm-node
         with:
-          node-version: '24'
+          node-version: '24.22.1'
 
       - name: Lint
         run: pnpm lint:ci
@@ -37,7 +37,7 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-pnpm-node
         with:
-          node-version: '24'
+          node-version: '24.22.1'
 
       - name: Type check
         run: pnpm typecheck
@@ -52,7 +52,7 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-pnpm-node
         with:
-          node-version: '24'
+          node-version: '24.22.1'
 
       - name: Run tests
         run: pnpm test

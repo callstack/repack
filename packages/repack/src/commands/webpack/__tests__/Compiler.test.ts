@@ -1,4 +1,5 @@
 import type { EventEmitter } from 'node:events';
+import path from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { fs, vol } from 'memfs';
 import type { Reporter } from '../../../logging/types.js';
@@ -109,6 +110,9 @@ describe('getSource', () => {
     await expect(
       createCompiler().getSource('src/index.js', 'ios')
     ).resolves.toBe('source under the project root');
-    expect(readFile).toHaveBeenCalledWith('/project/src/index.js', 'utf8');
+    expect(readFile).toHaveBeenCalledWith(
+      path.join('/project', 'src/index.js'),
+      'utf8'
+    );
   });
 });

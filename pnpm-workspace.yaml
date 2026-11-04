@@ -51,37 +51,42 @@ catalog:
   "typescript": ^7.0.2
   # Held: 5.106+ removes a webpack internal needed by @module-federation/enhanced <2.4.0.
   "webpack": ~5.105.0
-  "react": "19.2.8"
-  "react-native": "0.86.3"
+  "react": "19.3.0"
+  "react-dom": "19.3.0"
+  "react-native": "0.88.0"
   "vitest": ^4.1.11
 
 catalogs:
-  # Expo-only packages. Libraries shared with the other testers come from the
-  # `testers` catalog, so some are newer than Expo SDK 57's recommended pins.
-  expo57:
-    "babel-preset-expo": ~57.0.13
-    "expo": ~57.0.26
-    "expo-asset": ~57.0.18
-    "expo-constants": ~57.0.20
-    "expo-font": ~57.0.4
-    "expo-linking": ~57.0.11
-    "expo-router": ~57.0.24
-    "expo-status-bar": ~57.0.1
-    "react-native-gesture-handler": ~2.32.0
+  # Expo-only packages. React, React Native and the libraries shared with the
+  # other testers come from the default and `testers` catalogs, which follow
+  # Expo SDK 58's recommended pins.
+  expo58:
+    "babel-preset-expo": ~58.0.17
+    "expo": ~58.0.13
+    "expo-asset": ~58.0.16
+    "expo-constants": ~58.0.12
+    "expo-font": ~58.0.8
+    "expo-linking": ~58.0.13
+    "expo-router": ~58.0.22
+    "expo-status-bar": ~58.0.3
+    "react-native-gesture-handler": ~3.3.0
   testers:
+    "e2e": 0.19.0
+    "@e2e-dev/mobile": 0.11.0
     "@types/react": ^19.2.0
-    # Held: 5.4.5 is the newest release, and it caps react-native at <0.87.
-    "react-native-test-app": 5.4.5
+    "react-native-test-app": 5.4.14
     "@module-federation/enhanced": "2.9.2"
     "@module-federation/runtime": "2.9.2"
     "@react-native-async-storage/async-storage": "3.1.1"
-    "@react-native/babel-preset": "0.86.3"
-    "@react-native/community-cli-plugin": "0.86.3"
-    "@react-native/typescript-config": "0.86.3"
+    "@react-native/babel-preset": "0.88.0"
+    "@react-native/community-cli-plugin": "0.88.0"
+    # React Native >= 0.87 resolves its polyfills through @react-native/metro-config.
+    "@react-native/metro-config": "0.88.0"
+    "@react-native/typescript-config": "0.88.0"
     "@react-native-community/cli": "20.2.0"
     "@react-native-community/cli-platform-android": "20.2.0"
     "@react-native-community/cli-platform-ios": "20.2.0"
-    "react-native-reanimated": "4.5.3"
-    "react-native-safe-area-context": "5.8.0"
-    "react-native-screens": "4.26.2"
-    "react-native-worklets": "0.11.3"
+    "react-native-reanimated": "4.7.1"
+    "react-native-safe-area-context": "5.10.1"
+    "react-native-screens": "4.30.0"
+    "react-native-worklets": "0.13.0"

@@ -24,7 +24,7 @@ export const optionsSchema: Schema = {
 export function getOptions(
   loaderContext: LoaderContext<FlowLoaderOptions>
 ): FlowLoaderOptions {
-  const options = loaderContext.getOptions(loaderContext) || {};
+  const options = loaderContext.getOptions() || {};
 
   validate(optionsSchema, options, { name: 'repackFlowLoader' });
 

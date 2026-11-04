@@ -1,0 +1,6 @@
+// @flow
+import * as React from 'react';
+
+export component Field(label: string, ref: React.RefSetter<mixed>) {
+  return { label, ref };
+}

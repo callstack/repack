@@ -1,0 +1,237 @@
+name: e2e
+
+on:
+  pull_request:
+    paths:
+      - 'apps/tester-federation-v2/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/e2e.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/tester-federation-v2/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/e2e.yml'
+  workflow_dispatch:
+
+# one run per PR; a new push cancels the older one
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
+# keep it read-only
+permissions:
+  contents: read
+
+env:
+  E2E_TELEMETRY_DISABLED: '1'
+
+jobs:
+  android:
+    name: e2e (Android)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-pnpm-node
+        with:
+          node-version: '24.22.1'
+
+      - name: Setup Java
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # tag=v6.0.1
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Build workspace packages
+        run: pnpm --filter tester-federation-v2... build
+
+      # nohup/disown: the runner kills step processes at the end. /status wait: RNTA picks its bundle source once, never retries
+      - name: Start dev servers
+        working-directory: apps/tester-federation-v2
+        run: |
+          nohup pnpm start:hostapp > /tmp/hostapp.log 2>&1 &
+          disown
+          nohup pnpm start:miniapp > /tmp/miniapp.log 2>&1 &
+          disown
+          timeout 180 sh -c 'until [ "$(curl -sf localhost:8081/status)" = "packager-status:running" ] && [ "$(curl -sf localhost:8082/status)" = "packager-status:running" ]; do sleep 2; done'
+
+      # ask for the bundles now so the servers compile them — they only build on first request
+      - name: Warm both compilers
+        working-directory: apps/tester-federation-v2
+        run: |
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8081/android/index.bundle?platform=android&dev=true&lazy=true&minify=false&app=com.tester.federationV2&modulesOnly=false&runModule=true'
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/android/index.bundle?platform=android&dev=true&lazy=true&minify=false&app=com.tester.federationV2&modulesOnly=false&runModule=true'
+          echo 'Both bundles served; compilers are warm.'
+
+      - name: Check shared versions are real semver
+        run: |
+          for p in 8081 8082; do
+            M=$(curl -sf --retry 3 --retry-delay 2 "http://localhost:$p/android/mf-manifest.json") || { echo "::error::port $p: mf-manifest.json not served"; exit 1; }
+            [ "$(jq '.shared | length' <<<"$M")" -gt 0 ] || { echo "::error::port $p: manifest has no shared entries"; exit 1; }
+            BAD=$(jq -r '.shared[] | select((.version // "") | test("^[0-9]+\\.[0-9]+\\.[0-9]+") | not) | "\(.name): \(.version)"' <<<"$M")
+            [ -z "$BAD" ] || { echo "::error::port $p has non-semver shared versions: $BAD"; exit 1; }
+          done
+
+      - name: Build Android app
+        working-directory: apps/tester-federation-v2/android
+        run: ./gradlew :app:assembleDebug -PreactNativeArchitectures=x86_64
+
+      # expose dev servers to the emulator, install the APK, run the tests
+      - name: Run e2e on an emulator
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # tag=v2.38.0
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          avd-name: e2e
+          working-directory: apps/tester-federation-v2
+          script: |
+            adb shell settings put global hide_error_dialogs 1
+            for i in 1 2 3; do adb shell "uiautomator dump /sdcard/d.xml >/dev/null && grep -q aerr_ /sdcard/d.xml" && { echo 'ANR dialog on screen, clearing it'; adb shell am force-stop com.google.android.apps.nexuslauncher; }; sleep 2; done
+            adb reverse tcp:8081 tcp:8081
+            adb reverse tcp:8082 tcp:8082
+            adb reverse --list
+            adb reverse --list | grep -q 'tcp:8081' || { echo '::error::adb reverse missing for tcp:8081'; exit 1; }
+            adb reverse --list | grep -q 'tcp:8082' || { echo '::error::adb reverse missing for tcp:8082'; exit 1; }
+            adb install -r -g android/app/build/outputs/apk/debug/app-debug.apk || { echo '::error::adb install failed'; exit 1; }
+            E2E_DEVICE="${ANDROID_SERIAL:-$(adb get-serialno)}" pnpm exec e2e run --target android --reporter list,junit; ec=$?; adb logcat -d -v time > .e2e/logcat.txt 2>&1; exit $ec
+
+      - name: Collect dev server logs
+        if: ${{ !cancelled() }}
+        working-directory: apps/tester-federation-v2
+        run: |
+          mkdir -p .e2e
+          cp /tmp/hostapp.log /tmp/miniapp.log .e2e/
+
+      - name: Upload e2e artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # tag=v7.0.1
+        with:
+          name: e2e-android
+          path: apps/tester-federation-v2/.e2e
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Show dev server logs
+        if: ${{ !cancelled() }}
+        run: tail -n 80 /tmp/hostapp.log /tmp/miniapp.log
+
+  # dispatch + main only for now — no PR triggers until this lane has greens
+  ios:
+    name: e2e (iOS)
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@651ff0d62c5c79bed6d53ec518387aae20e72c1a # tag=v1.329.0
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+          working-directory: apps/tester-federation-v2
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-pnpm-node
+        with:
+          node-version: '24.22.1'
+
+      - name: Build workspace packages
+        run: pnpm --filter tester-federation-v2... build
+
+      # start both dev servers in the background, wait until both answer /status
+      - name: Start dev servers
+        working-directory: apps/tester-federation-v2
+        run: |
+          nohup pnpm start:hostapp > /tmp/hostapp.log 2>&1 &
+          disown
+          nohup pnpm start:miniapp > /tmp/miniapp.log 2>&1 &
+          disown
+          for p in 8081 8082; do curl -sf --retry 90 --retry-delay 2 --retry-all-errors --retry-connrefused -o /dev/null "http://localhost:$p/status"; done
+
+      # ask for the iOS bundles now so the servers compile them — they only build on first request
+      - name: Warm both compilers
+        working-directory: apps/tester-federation-v2
+        run: |
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8081/index.bundle?platform=ios&dev=true&lazy=true&minify=false&modulesOnly=false&runModule=true&app=com.tester.federationV2'
+          curl -sf --max-time 300 -o /dev/null 'http://localhost:8082/index.bundle?platform=ios&dev=true&lazy=true&minify=false&modulesOnly=false&runModule=true&app=com.tester.federationV2'
+          echo 'Both bundles served; compilers are warm.'
+
+      - name: Check shared versions are real semver
+        run: |
+          for p in 8081 8082; do
+            M=$(curl -sf --retry 3 --retry-delay 2 "http://localhost:$p/ios/mf-manifest.json") || { echo "::error::port $p: mf-manifest.json not served"; exit 1; }
+            [ "$(jq '.shared | length' <<<"$M")" -gt 0 ] || { echo "::error::port $p: manifest has no shared entries"; exit 1; }
+            BAD=$(jq -r '.shared[] | select((.version // "") | test("^[0-9]+\\.[0-9]+\\.[0-9]+") | not) | "\(.name): \(.version)"' <<<"$M")
+            [ -z "$BAD" ] || { echo "::error::port $p has non-semver shared versions: $BAD"; exit 1; }
+          done
+
+      # SIM_RUNTIME_PREFIX is tied to the runner image: macos-15's default Xcode
+      # (16.4) targets iOS 18.x. If the image moves, this check fails every run —
+      # bump the prefix (and SIM_DEVICE) to the new SDK's major.
+      - name: Boot simulator
+        env:
+          SIM_RUNTIME_PREFIX: com.apple.CoreSimulator.SimRuntime.iOS-18-
+          SIM_DEVICE: iPhone 16
+        run: |
+          RT=$(xcrun simctl list runtimes -j | jq -r --arg prefix "$SIM_RUNTIME_PREFIX" '.runtimes | map(select(.isAvailable and (.identifier | startswith($prefix)))) | sort_by(.version) | last | .identifier')
+          echo "using $RT"
+          [ "$RT" != "null" ] && [ -n "$RT" ]
+          xcrun simctl create e2e "$SIM_DEVICE" "$RT"
+          xcrun simctl boot e2e
+          xcrun simctl bootstatus e2e -b
+
+      # pod install generates the Xcode project the workspace points at
+      - name: Build iOS app
+        working-directory: apps/tester-federation-v2/ios
+        run: bundle install && bundle exec pod install && xcodebuild -workspace ModuleFederationTesterV2.xcworkspace -scheme ReactTestApp -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO ARCHS=arm64 build
+
+      - name: Run e2e
+        working-directory: apps/tester-federation-v2
+        env:
+          E2E_DEVICE: e2e
+        run: |
+          xcrun simctl install booted ios/build/Build/Products/Debug-iphonesimulator/*.app
+          pnpm exec e2e run --target ios --reporter list,junit
+
+      - name: Collect dev server logs
+        if: ${{ !cancelled() }}
+        working-directory: apps/tester-federation-v2
+        run: |
+          mkdir -p .e2e
+          cp /tmp/hostapp.log /tmp/miniapp.log .e2e/
+          xcrun simctl spawn booted log show --style compact --last 30m \
+            --predicate 'process == "ReactTestApp"' \
+            > .e2e/ios-syslog.txt 2>&1 || true
+
+      - name: Upload e2e artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # tag=v7.0.1
+        with:
+          name: e2e-ios
+          path: apps/tester-federation-v2/.e2e
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Show dev server logs
+        if: ${{ !cancelled() }}
+        run: tail -n 80 /tmp/hostapp.log /tmp/miniapp.log

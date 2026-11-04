@@ -22,6 +22,10 @@ describe('bundle command', () => {
       bundler: 'rspack',
       configFile: './rspack.config.mjs',
     },
+    {
+      bundler: 'rspack-swc',
+      configFile: './rspack.swc.config.mjs',
+    },
   ])('using $bundler', ({ bundler, configFile }) => {
     const bundleCommand = commands.find((command) => command.name === 'bundle');
     if (!bundleCommand) throw new Error('bundle command not found');

@@ -1,6 +1,6 @@
 # getFlowTransformRules
 
-A helper function that generates `module.rules` configuration for handling Flow type annotations in JavaScript files. The rules use `@callstack/repack/flow-loader` to remove Flow types from the code before other processing.
+A helper function that generates `module.rules` configuration for handling Flow type annotations in JavaScript files. The rules use `@callstack/repack/flow-loader` to remove Flow types from the code before other processing, including Flow `component` and `hook` declarations, enums and `match` expressions used by React Native 0.81+ (see [how `flow-loader` handles them](/api/loaders/flow-loader)).
 
 :::info
 This helper function is a part of [`getJsTransformRules`](/api/utils/get-js-transform-rules).

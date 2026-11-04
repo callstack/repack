@@ -1,0 +1,11 @@
+// @flow
+
+export class Store {
+  declare kind: string;
+  count: number;
+}
+
+// a hook sends the file to the React Native parser
+export hook useStore(): Store {
+  return new Store();
+}

@@ -1,6 +1,11 @@
 import type { TransformOptions } from '@babel/core';
-import type { LoaderContext, SwcLoaderOptions } from '@rspack/core';
+import type {
+  LoaderContext,
+  RawSourceMap,
+  SwcLoaderOptions,
+} from '@rspack/core';
 import { transform } from '../babelLoader/babelLoader.js';
+import { normalizeInputSourceMap } from '../babelLoader/utils.js';
 import type { BabelSwcLoaderOptions } from './options.js';
 import {
   addSwcComplementaryTransforms,
@@ -18,7 +23,6 @@ import {
 } from './utils.js';
 
 type BabelTransform = [string, Record<string, any> | undefined];
-type InputSourceMap = TransformOptions['inputSourceMap'];
 
 export const raw = false;
 
@@ -96,7 +100,7 @@ export function buildFinalSwcConfig(
 export default async function babelSwcLoader(
   this: LoaderContext<BabelSwcLoaderOptions>,
   source: string,
-  sourceMap: string | undefined
+  sourceMap: string | RawSourceMap | undefined
 ) {
   this.cacheable();
   const callback = this.async();
@@ -107,9 +111,6 @@ export default async function babelSwcLoader(
     checkParallelModeAvailable(this, logger);
   }
 
-  const inputSourceMap: InputSourceMap = sourceMap
-    ? JSON.parse(sourceMap)
-    : undefined;
   const lazyImports = options.lazyImports ?? false;
   const projectRoot = getProjectRootPath(this);
 
@@ -117,17 +118,19 @@ export default async function babelSwcLoader(
     ? false
     : this.sourceMap;
 
-  const baseBabelConfig: TransformOptions = {
-    caller: { name: '@callstack/repack' },
-    root: projectRoot,
-    filename: this.resourcePath,
-    sourceMaps: withSourceMaps,
-    sourceFileName: this.resourcePath,
-    inputSourceMap: withSourceMaps ? inputSourceMap : undefined,
-    ...options.babelOverrides,
-  };
-
   try {
+    const baseBabelConfig: TransformOptions = {
+      caller: { name: '@callstack/repack' },
+      root: projectRoot,
+      filename: this.resourcePath,
+      sourceMaps: withSourceMaps,
+      sourceFileName: this.resourcePath,
+      inputSourceMap: withSourceMaps
+        ? normalizeInputSourceMap(sourceMap)
+        : undefined,
+      ...options.babelOverrides,
+    };
+
     const swc = await lazyGetSwc(this);
     // if swc is not available, use babel to transform everything
     if (!swc) {

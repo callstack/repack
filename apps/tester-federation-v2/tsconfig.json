@@ -4,6 +4,7 @@
   "exclude": ["**/node_modules", "**/Pods"],
   "compilerOptions": {
     "module": "ES2020", // for dynamic imports
+    "types": ["jest", "node"],
     "paths": {
       "*": ["./@mf-types/*"]
     }

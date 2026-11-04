@@ -62,3 +62,6 @@ yarn-error.log
 
 # MF
 **/@mf-types
+
+# e2e
+.e2e/

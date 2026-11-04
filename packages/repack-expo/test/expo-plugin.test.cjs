@@ -79,16 +79,17 @@ test('uses the ExpoModulesPlugin constructor name expected by Re.Pack CLI valida
   assert.equal(new ExpoPlugin().constructor.name, 'ExpoModulesPlugin');
 });
 
-function createPackage(packageRoot, name, version) {
+function createPackage(packageRoot, name, version, fields = {}) {
   fs.mkdirSync(packageRoot, { recursive: true });
   fs.writeFileSync(
     path.join(packageRoot, 'package.json'),
-    JSON.stringify({ name, version })
+    JSON.stringify({ name, version, ...fields })
   );
 }
 
 function createProject({
   main = 'index.js',
+  reactNativeDependsOnAssetsRegistry = true,
   rootAssetsRegistryVersion,
   routerRoot = 'app',
 } = {}) {
@@ -104,21 +105,32 @@ function createProject({
     'node_modules',
     'react-native'
   );
-  createPackage(reactNativeRoot, 'react-native', '0.86.2');
+  createPackage(
+    reactNativeRoot,
+    'react-native',
+    reactNativeDependsOnAssetsRegistry ? '0.86.2' : '0.88.0',
+    {
+      dependencies: reactNativeDependsOnAssetsRegistry
+        ? { '@react-native/assets-registry': '0.86.2' }
+        : {},
+    }
+  );
   fs.writeFileSync(
     path.join(reactNativeRoot, 'rn-get-polyfills.js'),
     'module.exports = () => [];'
   );
-  createPackage(
-    path.join(
-      reactNativeRoot,
-      'node_modules',
-      '@react-native',
-      'assets-registry'
-    ),
-    '@react-native/assets-registry',
-    '0.86.2'
-  );
+  if (reactNativeDependsOnAssetsRegistry) {
+    createPackage(
+      path.join(
+        reactNativeRoot,
+        'node_modules',
+        '@react-native',
+        'assets-registry'
+      ),
+      '@react-native/assets-registry',
+      '0.86.2'
+    );
+  }
   if (rootAssetsRegistryVersion) {
     createPackage(
       path.join(
@@ -624,6 +636,26 @@ test('resolves React Native and its matching assets registry from the project ru
       )
     ).version,
     '0.84.1'
+  );
+});
+
+test('does not alias a hoisted assets registry React Native no longer depends on', () => {
+  const projectRoot = createProject({
+    reactNativeDependsOnAssetsRegistry: false,
+    rootAssetsRegistryVersion: '0.86.3',
+  });
+  const plugin = createUnitExpoPlugin();
+  const compiler = createCompiler({ plugins: [plugin], projectRoot });
+
+  plugin.apply(compiler);
+
+  assert.equal(
+    compiler.options.resolve.alias['react-native'],
+    path.join(projectRoot, 'node_modules', 'react-native')
+  );
+  assert.equal(
+    '@react-native/assets-registry' in compiler.options.resolve.alias,
+    false
   );
 });
 

@@ -6,6 +6,7 @@ import { makePolyfillsRuntimeModule } from './PolyfillsRuntimeModule.js';
 import {
   getReactNativeAssetRegistryAlias,
   getReactNativeDeepImportAliases,
+  getReactNativeSubpathExportAliases,
   resolveReactNativePolyfills,
 } from './reactNativeRuntime.js';
 
@@ -21,7 +22,8 @@ export class NativeEntryPlugin {
   constructor(private config: NativeEntryPluginConfig) {}
 
   private getReactNativePath(
-    candidate: Exclude<ResolveAlias, false>[string] | undefined
+    candidate: Exclude<ResolveAlias, false>[string] | undefined,
+    context: string
   ) {
     let reactNativePath: string | undefined;
     if (typeof candidate === 'string') {
@@ -32,7 +34,13 @@ export class NativeEntryPlugin {
       reactNativePath = candidates[0];
     }
     if (!reactNativePath) {
-      reactNativePath = require.resolve('react-native');
+      // Prefer the project's React Native over the copy next to Repack, which
+      // can differ in monorepos that mix React Native versions.
+      try {
+        reactNativePath = require.resolve('react-native', { paths: [context] });
+      } catch {
+        reactNativePath = require.resolve('react-native');
+      }
     }
 
     return path.extname(reactNativePath)
@@ -49,7 +57,8 @@ export class NativeEntryPlugin {
     const reactNativePath = this.getReactNativePath(
       compiler.options.resolve.alias
         ? compiler.options.resolve.alias?.['react-native']
-        : undefined
+        : undefined,
+      compiler.context
     );
 
     const getReactNativePolyfills = resolveReactNativePolyfills(
@@ -66,11 +75,21 @@ export class NativeEntryPlugin {
     // specific key is consulted.
     // `getReactNativeDeepImportAliases` likewise remaps `react-native/src/private`
     // to disk so first-party packages' deep imports keep resolving once package
-    // exports are enabled (RN 0.87 dropped the `./src/*` export wildcard).
-    const reactNativeAliases = {
-      ...getReactNativeAssetRegistryAlias(reactNativePath),
-      ...getReactNativeDeepImportAliases(reactNativePath),
-    };
+    // exports are enabled (RN 0.87 dropped the `./src/*` export wildcard), and
+    // `getReactNativeSubpathExportAliases` maps explicit subpath exports such as
+    // `react-native/setup-env` to their files under `src/`. A request the user
+    // already aliases (with or without `$`) keeps the user's target.
+    const userAlias = compiler.options.resolve.alias || {};
+    const reactNativeAliases = Object.fromEntries(
+      Object.entries({
+        ...getReactNativeAssetRegistryAlias(reactNativePath),
+        ...getReactNativeDeepImportAliases(reactNativePath),
+        ...getReactNativeSubpathExportAliases(reactNativePath),
+      }).filter(([key]) => {
+        const request = key.replace(/\$$/, '');
+        return !(request in userAlias) && !(`${request}$` in userAlias);
+      })
+    );
     if (Object.keys(reactNativeAliases).length > 0) {
       compiler.options.resolve.alias = {
         ...reactNativeAliases,

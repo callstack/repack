@@ -16,6 +16,8 @@ interface GetJsTransformRulesOptions {
     importSource?: string;
     /** The JSX runtime to use ('automatic' for React 17+ new JSX transform or 'classic' for traditional JSX transform) */
     jsxRuntime?: 'automatic' | 'classic';
+    /** Whether to apply JSX development transforms (defaults to the build `mode`, set by Rspack's `builtin:swc-loader`) */
+    development?: boolean;
     /** Enable lazy loading for all imports or specific modules */
     lazyImports?: boolean | string[];
   };
