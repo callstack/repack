@@ -23,8 +23,12 @@ Design: [`agent_context/repack-devtools-oct2026`](../../agent_context/repack-dev
 
 ## Setup in an app
 
+The tester apps load it only with `WITH_ROZENITE=true`: app code goes in the
+tester's `rozenitePlugins.ts` (required behind the `__WITH_ROZENITE__` define)
+and configs import the bundler entry dynamically. See `CONTRIBUTING.md`.
+
 ```js
-// index.js: first, so startup is recorded
+// rozenitePlugins.ts, called first from index.js so startup is recorded
 import { installRepackDevTools } from '@callstack/repack-devtools-plugin';
 installRepackDevTools({ boot: true });
 
@@ -35,11 +39,13 @@ useRepackDevTools();
 
 ```js
 // rspack.config.mjs / webpack.config.mjs
-import { withRepackDevTools } from '@callstack/repack-devtools-plugin/bundler';
-import { withRozenite } from '@rozenite/repack';
-
-const enabled = process.env.WITH_ROZENITE === 'true';
-export default withRozenite(withRepackDevTools(config, { enabled }), { enabled });
+let exportedConfig = config;
+if (process.env.WITH_ROZENITE === 'true') {
+  const { withRozenite } = await import('@rozenite/repack');
+  const { withRepackDevTools } = await import('@callstack/repack-devtools-plugin/bundler');
+  exportedConfig = withRozenite(withRepackDevTools(config, { enabled: true }), { enabled: true });
+}
+export default exportedConfig;
 ```
 
 For Module Federation 2, optionally add the runtime plugin so events are
@@ -50,6 +56,8 @@ runtimePlugins: [require.resolve('@callstack/repack-devtools-plugin/mf-runtime-p
 ```
 
 ## Development
+
+Building needs Node 20.19+; on older Node `build` prints a warning and skips.
 
 ```sh
 pnpm --filter @callstack/repack-devtools-plugin build      # stop dev servers first

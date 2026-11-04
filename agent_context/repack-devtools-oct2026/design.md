@@ -138,9 +138,18 @@ bundle two React Native copies. `tsconfig.json` maps `react-native` types for
 
 ## Tester integration
 
-All four testers depend on it (`workspace:*`), call
-`installRepackDevTools({ boot: true })` in the entry (not tester-expo, whose
-entry is `expo-router/entry`) and `useRepackDevTools()` in the root, and wrap
-configs with `withRepackDevTools` behind `WITH_ROZENITE=true`, including MF
-mini-app configs. tester-federation-v2's host also adds the runtime plugin
-through `runtimePlugins` in development.
+All four testers depend on it (`workspace:*`). Everything is gated by
+`WITH_ROZENITE=true` so default dev runs and E2E builds never load it:
+
+- Configs `await import()` `withRepackDevTools` (and `withRozenite`) only when
+  the flag is set, including MF mini-app configs.
+- App code calls `startDevTools()` / `useDevTools()` from the tester's
+  `rozenite.ts`, which `require`s `rozenitePlugins.ts` only when the
+  `__WITH_ROZENITE__` define is true, so the bundler drops it otherwise.
+  `rozenitePlugins.ts` calls `installRepackDevTools({ boot: true })` (not in
+  tester-expo, whose entry is `expo-router/entry`) and `useRepackDevTools()`.
+- tester-federation-v2's host adds the runtime plugin through
+  `runtimePlugins` in development with the flag set.
+
+The build needs Node 20.19+ (Rozenite, Vite 7); `scripts/build.mjs` skips it on
+older Node, which only the Node 18 test matrix uses. Tests run from source.
