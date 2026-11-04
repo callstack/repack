@@ -52,11 +52,30 @@ jobs:
           publish-script: pnpm release
           commit-message: 'chore: changeset version'
           pr-title: 'chore: changeset version'
-          create-github-releases: true
+          create-github-releases: false
+          push-git-tags: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           # @changesets/changelog-github reads the token from the environment.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create combined GitHub release
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          version=$(node -p "require('./packages/repack/package.json').version")
+          tag="@callstack/repack@${version}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            exit 0
+          fi
+          node .github/scripts/release-notes.mjs > "$RUNNER_TEMP/release-notes.md"
+          args=()
+          if [[ "$version" == *-* ]]; then
+            args+=(--prerelease)
+          fi
+          gh release create "$tag" --verify-tag --title "$version" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" "${args[@]}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   canary-release:
     name: Canary Release
