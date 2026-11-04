@@ -141,6 +141,9 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: macos-15
     timeout-minutes: 45
+    # expo-modules-jsi needs Swift 6.2; the image's default Xcode 16.4 has 6.1
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
 
     steps:
       - name: Checkout
@@ -180,11 +183,11 @@ jobs:
             [ -z "$BAD" ] || { echo "::error::port $p has non-semver shared versions: $BAD"; exit 1; }
           done
 
-      # SIM_RUNTIME_PREFIX is tied to the runner image
+      # SIM_RUNTIME_PREFIX is tied to the Xcode picked in DEVELOPER_DIR
       - name: Boot simulator
         env:
-          SIM_RUNTIME_PREFIX: com.apple.CoreSimulator.SimRuntime.iOS-18-
-          SIM_DEVICE: iPhone 16
+          SIM_RUNTIME_PREFIX: com.apple.CoreSimulator.SimRuntime.iOS-26-
+          SIM_DEVICE: iPhone 17 Pro
         run: |
           RT=$(xcrun simctl list runtimes -j | jq -r --arg prefix "$SIM_RUNTIME_PREFIX" '.runtimes | map(select(.isAvailable and (.identifier | startswith($prefix)))) | sort_by(.version) | last | .identifier')
           echo "using $RT"

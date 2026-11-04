@@ -365,6 +365,10 @@ compiles the whole platform.
 - **CocoaPods needs a UTF-8 locale.** Without `LANG=en_US.UTF-8` it crashes
   while printing its own error report. The system CocoaPods works; no `Gemfile`
   (unlike MF2).
+- **The iOS job needs Xcode 26.** `expo-modules-jsi` builds a Swift package
+  with `swift-tools-version: 6.2`; `macos-15`'s default Xcode 16.4 has Swift
+  6.1 and fails with "Could not resolve package dependencies". The job sets
+  `DEVELOPER_DIR` to Xcode 26.3, which matches local, and boots an iOS 26 simulator.
 - **`fast-refresh` is the only test that edits a source file.** A run killed
   before `finally` leaves `components/FastRefreshLeaf.tsx` changed — check
   `git status` locally.
