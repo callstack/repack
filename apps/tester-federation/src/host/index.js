@@ -1,12 +1,12 @@
 import { Federated, ScriptManager } from '@callstack/repack/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { withOnBootNetworkActivityRecording } from '@rozenite/network-activity-plugin';
 import { AppRegistry, Platform } from 'react-native';
 
 import { components } from '../../app.json';
 import App from './App';
+import { startDevTools } from './rozenite';
 
-withOnBootNetworkActivityRecording();
+startDevTools();
 
 ScriptManager.shared.setStorage(AsyncStorage);
 

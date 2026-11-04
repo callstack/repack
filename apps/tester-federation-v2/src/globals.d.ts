@@ -6,3 +6,4 @@ declare module 'MiniApp/MiniAppNavigator' {
   const MiniAppNavigator: ComponentType;
   export default MiniAppNavigator;
 }
+declare const __WITH_ROZENITE__: boolean;
