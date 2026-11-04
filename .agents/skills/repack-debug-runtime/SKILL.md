@@ -20,7 +20,8 @@ exposes them two ways:
 - **Dev-server side** (works without an app, even when the bundle fails to
   build): `curl <origin>/repack-devtools/state`
 
-Both are wired into every tester app behind `WITH_ROZENITE=true`. Never touch
+Both are wired into every tester app behind `WITH_ROZENITE=true`; without it
+nothing is loaded or bundled. Never touch
 ports or devices you did not start: other sessions often own `8081` and
 `emulator-5554`.
 

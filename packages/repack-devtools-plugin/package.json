@@ -39,7 +39,7 @@
     }
   },
   "scripts": {
-    "build": "node scripts/rozenite.mjs build && tsc -p tsconfig.bundler.json",
+    "build": "node scripts/build.mjs",
     "dev": "node scripts/rozenite.mjs dev",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.bundler.json --noEmit",
     "test": "vitest run"
