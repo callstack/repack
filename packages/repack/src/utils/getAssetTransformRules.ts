@@ -58,6 +58,14 @@ interface GetAssetTransformRulesOptions {
    * - 'uri': Loads SVGs as inline URIs to be used with SvgUri from react-native-svg
    */
   svg?: SvgType;
+
+  /**
+   * Whether to load `.json` files as raw text instead of parsing them at build time.
+   * When enabled, JSON files are emitted as a string and parsed at runtime with `JSON.parse('...')`.
+   *
+   * @defaultValue true
+   */
+  enableRawJson?: boolean;
 }
 
 /**
@@ -68,6 +76,7 @@ interface GetAssetTransformRulesOptions {
  * @param options.maxInlineSize Maximum asset file size in bytes to inline as base64 URIs (requires inline: true); larger assets are extracted as separate files
  * @param options.remote Configuration for remote asset loading with publicPath and optional assetPath function
  * @param options.svg Determines how SVG files should be processed ('svgr', 'xml', or 'uri')
+ * @param options.enableRawJson Whether to load `.json` files as raw text parsed at runtime with `JSON.parse` (defaults to true)
  *
  * @returns Array of webpack/rspack rules for transforming assets
  */
@@ -76,6 +85,7 @@ export function getAssetTransformRules({
   maxInlineSize,
   remote,
   svg,
+  enableRawJson = true,
 }: GetAssetTransformRulesOptions = {}) {
   const extensions = svg
     ? ASSET_EXTENSIONS.filter((ext) => ext !== 'svg')
@@ -89,6 +99,14 @@ export function getAssetTransformRules({
     : undefined;
 
   const rules = [];
+
+  if (enableRawJson) {
+    rules.push({
+      test: /\.json$/,
+      type: 'json',
+      generator: { JSONParse: false },
+    });
+  }
 
   rules.push({
     test: getAssetExtensionsRegExp(extensions),

@@ -22,6 +22,7 @@ interface GetAssetTransformRulesOptions {
     }) => string;
   };
   svg?: "svgr" | "xml" | "uri" | { type: "svgr", options: Record<string, any> };
+  enableRawJson?: boolean;
 }
 ```
 
@@ -96,6 +97,17 @@ Allows to configure additional options to `@svgr/webpack`. The full list of avai
 :::tip
 Learn more about using SVG in the [SVG guide](/docs/guides/svg).
 :::
+
+### options.enableRawJson
+
+- Type: `boolean`
+- Default: `true`
+
+Whether to load `.json` files as raw text instead of parsing them at build time.
+
+When enabled (the default), a rule with `type: "json"` and `generator: { JSONParse: false }` is added, so the bundled JSON is emitted as a string and parsed at runtime with `JSON.parse('...')`. This keeps the bundle smaller for large JSON files, since the parsed object is not inlined into the bundle.
+
+Set it to `false` to disable the rule and let the bundler parse `.json` files at build time.
 
 ## Example
 
