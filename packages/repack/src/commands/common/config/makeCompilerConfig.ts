@@ -27,11 +27,7 @@ export async function makeCompilerConfig<C extends ConfigurationObject>(
 ): Promise<C[]> {
   const { args, bundler, command, rootDir, reactNativePath } = options;
   // discover location of project config
-  const configPath = getConfigFilePath(
-    bundler,
-    rootDir,
-    args.config ?? args.webpackConfig
-  );
+  const configPath = getConfigFilePath(bundler, rootDir, args.config);
 
   // get env options for backwards compatibility with 4.X configs
   // injected as first argument to config functions

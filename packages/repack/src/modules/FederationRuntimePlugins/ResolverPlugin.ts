@@ -1,7 +1,10 @@
+import type {
+  ModuleFederation,
+  ModuleFederationRuntimePlugin,
+} from '@module-federation/enhanced/runtime';
 import type { ScriptLocator } from '../ScriptManager/index.js';
-import type { MFInstance, MFRuntimePlugin } from './types.js';
 
-type MFRemote = Parameters<MFInstance['registerRemotes']>[0][0];
+type MFRemote = Parameters<ModuleFederation['registerRemotes']>[0][0];
 
 export type RepackResolverPluginConfiguration =
   | Omit<ScriptLocator, 'url'>
@@ -84,7 +87,7 @@ const registerResolver = async (
 
 const RepackResolverPlugin: (
   config?: RepackResolverPluginConfiguration
-) => MFRuntimePlugin = (config) => ({
+) => ModuleFederationRuntimePlugin = (config) => ({
   name: 'repack-resolver-plugin',
   registerRemote: (args) => {
     registerResolver(args.remote, config);

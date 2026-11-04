@@ -236,7 +236,7 @@ export function runDoctor(options: DoctorOptions = {}): DoctorResult {
       diagnostics.push(
         error(
           'MODULE_FEDERATION_V1_UNSUPPORTED',
-          'Expo integration supports Module Federation v2 only.',
+          'ModuleFederationPluginV1 was removed in Re.Pack 6; only Module Federation v2 is supported.',
           'Replace the active federation plugin with Repack.plugins.ModuleFederationPluginV2.'
         )
       );

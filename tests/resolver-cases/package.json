@@ -13,6 +13,7 @@
     "enhanced-resolve": "^5.18.1",
     "memfs": "^4.11.1",
     "typescript": "catalog:",
+    "vite": "catalog:",
     "vitest": "catalog:"
   }
 }
