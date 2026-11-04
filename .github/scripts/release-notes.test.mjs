@@ -72,3 +72,59 @@ test('fails instead of including another version when the requested entry is mis
     /repack: Missing changelog entry for 5\.4\.2/
   );
 });
+
+test('keeps headings and unclosed fences written inside a changeset', () => {
+  const notes = generateReleaseNotes([
+    {
+      name: '@callstack/repack',
+      version: '6.0.0',
+      changelog: [
+        '## 6.0.0',
+        '',
+        '### Major Changes',
+        '',
+        '- Breaking change',
+        '',
+        '  # Overview',
+        '',
+        '  ## Migration',
+        '',
+        '  Update your config',
+        '',
+        '- Unclosed example',
+        '',
+        '  ```js',
+        '  const a = 1;',
+        '',
+        '- Last change',
+        '',
+        '## 5.4.2',
+        '',
+        '### Patch Changes',
+        '',
+        '- Old notes',
+      ].join('\n'),
+    },
+  ]);
+  assert.match(notes, /## Migration\n\n {2}Update your config/);
+  assert.match(notes, /- Last change/);
+  assert.doesNotMatch(notes, /5\.4\.2|Old notes/);
+});
+
+test('lists a changeset once under its highest change type', () => {
+  const notes = generateReleaseNotes([
+    {
+      name: '@callstack/repack',
+      version: '6.0.0',
+      changelog: '## 6.0.0\n\n### Patch Changes\n\n- Shared change',
+    },
+    {
+      name: '@callstack/repack-init',
+      version: '6.0.0',
+      changelog: '## 6.0.0\n\n### Minor Changes\n\n- Shared change',
+    },
+  ]);
+  assert.equal((notes.match(/- Shared change/g) ?? []).length, 1);
+  assert.match(notes, /## Minor Changes\n\n- Shared change/);
+  assert.doesNotMatch(notes, /## Patch Changes/);
+});

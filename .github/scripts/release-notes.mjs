@@ -5,27 +5,21 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const mainPackage = '@callstack/repack';
 
 function changelogEntry(changelog, version) {
+  // Changesets writes version headings at column 0 and indents every
+  // continuation line of a changeset by two spaces, so a column-0 `## ` can
+  // only be a version heading, even inside fenced code or after a heading
+  // written in a changeset.
   const content = [];
   let found = false;
-  let fence;
 
   for (const line of changelog.split(/\r?\n/)) {
-    const marker = /^ {0,3}(`{3,}|~{3,})/.exec(line)?.[1];
-    if (fence) {
-      if (new RegExp(`^ {0,3}${fence[0]}{${fence.length},}\\s*$`).test(line)) {
-        fence = undefined;
-      }
-    } else if (marker) {
-      fence = marker;
-    } else {
-      const heading = /^ {0,3}(#{1,2})\s+(.+?)\s*#*\s*$/.exec(line);
-      if (heading) {
-        if (found) break;
-        found = heading[1] === '##' && heading[2] === version;
-        continue;
-      }
+    const heading = /^## (.+?)\s*$/.exec(line);
+    if (heading) {
+      if (found) break;
+      found = heading[1] === version;
+    } else if (found) {
+      content.push(line);
     }
-    if (found) content.push(line);
   }
 
   if (!found) throw new Error(`Missing changelog entry for ${version}`);
@@ -36,7 +30,10 @@ export function generateReleaseNotes(packages) {
   const main = packages.find((pkg) => pkg.name === mainPackage);
   if (!main) throw new Error(`Missing ${mainPackage} in the release group`);
 
-  const changes = { Major: new Set(), Minor: new Set(), Patch: new Set() };
+  // A changeset can bump packages by different types, so list each note once
+  // under the highest type it appears with.
+  const types = ['Major', 'Minor', 'Patch'];
+  const changes = new Map();
   for (const pkg of packages) {
     if (pkg.version !== main.version) {
       throw new Error(
@@ -53,8 +50,14 @@ export function generateReleaseNotes(packages) {
     for (let index = 1; index < sections.length; index += 2) {
       for (const item of sections[index + 1].split(/(?=^- )/m)) {
         const note = item.trim();
-        if (note && !note.startsWith('- Updated dependencies')) {
-          changes[sections[index]].add(note);
+        const type = sections[index];
+        const current = changes.get(note);
+        if (
+          note &&
+          !note.startsWith('- Updated dependencies') &&
+          (!current || types.indexOf(type) < types.indexOf(current))
+        ) {
+          changes.set(note, type);
         }
       }
     }
@@ -63,11 +66,13 @@ export function generateReleaseNotes(packages) {
   return [
     '## Packages',
     packages.map((pkg) => `- \`${pkg.name}@${pkg.version}\``).join('\n'),
-    ...Object.entries(changes)
-      .filter(([, notes]) => notes.size)
-      .map(
-        ([type, notes]) => `## ${type} Changes\n\n${[...notes].join('\n\n')}`
-      ),
+    ...types
+      .map((type) => [
+        type,
+        [...changes].filter(([, t]) => t === type).map(([note]) => note),
+      ])
+      .filter(([, notes]) => notes.length)
+      .map(([type, notes]) => `## ${type} Changes\n\n${notes.join('\n\n')}`),
   ].join('\n\n');
 }
 
