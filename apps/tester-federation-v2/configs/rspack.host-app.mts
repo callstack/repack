@@ -58,6 +58,7 @@ export default Repack.defineRspackConfig((env) => {
         resourceRegExp: /^@react-native-masked-view/,
       }),
       new rspack.DefinePlugin({
+        __WITH_ROZENITE__: process.env.WITH_ROZENITE === 'true',
         __WITH_PRELOAD__:
           process.env.WITH_PRELOAD === 'true' ||
           process.env.WITH_PRELOAD === '1',

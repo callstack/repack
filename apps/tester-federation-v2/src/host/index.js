@@ -1,13 +1,13 @@
 import { ScriptManager } from '@callstack/repack/client';
 import { preloadRemote } from '@module-federation/runtime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { withOnBootNetworkActivityRecording } from '@rozenite/network-activity-plugin';
 import { AppRegistry } from 'react-native';
 
 import { components } from '../../app.json';
 import App from './App';
+import { startDevTools } from './rozenite';
 
-withOnBootNetworkActivityRecording();
+startDevTools();
 
 if (__WITH_PRELOAD__) {
   // enable caching of scripts in the AsyncStorage
