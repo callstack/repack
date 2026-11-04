@@ -17,7 +17,6 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "@callstack/repack-expo",
     "tester-app",
     "tester-expo",
     "tester-expo-widget",
