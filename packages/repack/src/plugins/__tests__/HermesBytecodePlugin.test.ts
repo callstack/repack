@@ -4,12 +4,13 @@ import path from 'node:path';
 import { type Compiler, ModuleFilenameHelpers } from '@rspack/core';
 import execa from 'execa';
 import { HermesBytecodePlugin } from '../HermesBytecodePlugin/index.js';
-import { getHermesCLIPath } from '../HermesBytecodePlugin/utils/getHermesCLIPath.js';
 
 jest.mock('node:fs', () => ({
   __esModule: true,
   default: {
     existsSync: jest.fn(),
+    realpathSync: jest.fn(),
+    statSync: jest.fn(),
     promises: {
       access: jest.fn(),
       rename: jest.fn(),
@@ -213,29 +214,96 @@ describe('HermesBytecodePlugin', () => {
     ]);
   });
 
-  describe('getHermesCLIPath', () => {
-    const reactNativePath = 'path/to/react-native';
+  describe('hermesc lookup', () => {
+    const reactNativePath = path.resolve('/project/node_modules/react-native');
+    const config = {
+      enabled: true,
+      test: /\.(js)?bundle$/,
+      exclude: /index.bundle$/,
+      reactNativePath,
+    };
 
-    it('returns new hermes-compiler path when it exists', () => {
+    beforeEach(() => {
       jest.spyOn(os, 'platform').mockReturnValue('darwin');
-      jest.mocked(fs.existsSync).mockReturnValue(true);
-
-      const hermesPath = getHermesCLIPath(reactNativePath);
-
-      expect(hermesPath).toBe(
-        path.normalize('path/to/hermes-compiler/hermesc/osx-bin/hermesc')
-      );
+      const fsMock = fs.promises as jest.Mocked<typeof fs.promises>;
+      fsMock.access.mockRejectedValue(new Error('File not found'));
     });
 
-    it('falls back to legacy hermesc path when hermes-compiler does not exist', () => {
-      jest.spyOn(os, 'platform').mockReturnValue('darwin');
-      jest.mocked(fs.existsSync).mockReturnValue(false);
+    it('uses hermesCLIPath without looking up hermesc', async () => {
+      const pluginInstance = new HermesBytecodePlugin({
+        ...config,
+        hermesCLIPath: 'path/to/hermesc',
+      });
 
-      const hermesPath = getHermesCLIPath(reactNativePath);
+      pluginInstance.apply(compilerMock as unknown as Compiler);
+      const [, afterEmit] =
+        compilerMock.hooks.afterEmit.tapPromise.mock.calls[0];
 
-      expect(hermesPath).toBe(
-        path.normalize('path/to/react-native/sdks/hermesc/osx-bin/hermesc')
+      emitAssets(['a.chunk.bundle']);
+      await afterEmit();
+
+      expect(fs.existsSync).not.toHaveBeenCalled();
+      expect(jest.mocked(execa).mock.calls[0][0]).toBe('path/to/hermesc');
+    });
+
+    it('does not look up hermesc until a matching asset is emitted', async () => {
+      const pluginInstance = new HermesBytecodePlugin(config);
+
+      expect(() =>
+        pluginInstance.apply(compilerMock as unknown as Compiler)
+      ).not.toThrow();
+      const [, afterEmit] =
+        compilerMock.hooks.afterEmit.tapPromise.mock.calls[0];
+
+      emitAssets(['index.bundle', 'image.png']);
+      await expect(afterEmit()).resolves.toBeUndefined();
+
+      expect(fs.existsSync).not.toHaveBeenCalled();
+      expect(execa).not.toHaveBeenCalled();
+    });
+
+    it('fails the emit with the checked paths when hermesc is not found', async () => {
+      const pluginInstance = new HermesBytecodePlugin(config);
+
+      pluginInstance.apply(compilerMock as unknown as Compiler);
+      const [, afterEmit] =
+        compilerMock.hooks.afterEmit.tapPromise.mock.calls[0];
+
+      emitAssets(['a.chunk.bundle']);
+      const error = await afterEmit().catch((e: Error) => e);
+
+      expect(error).toBeInstanceOf(Error);
+      expect(error.message).toContain('Could not find the Hermes compiler');
+      expect(error.message).toContain(
+        path.join(reactNativePath, 'sdks/hermesc/osx-bin/hermesc')
       );
+      expect(execa).not.toHaveBeenCalled();
+    });
+
+    it('looks up hermesc once and reuses it', async () => {
+      jest.mocked(fs.existsSync).mockReturnValue(true);
+      const pluginInstance = new HermesBytecodePlugin(config);
+
+      pluginInstance.apply(compilerMock as unknown as Compiler);
+      const [, afterEmit] =
+        compilerMock.hooks.afterEmit.tapPromise.mock.calls[0];
+
+      emitAssets(['a.chunk.bundle', 'b.chunk.bundle']);
+      await afterEmit();
+      emitAssets(['c.chunk.bundle']);
+      await afterEmit();
+
+      const hermesCompilerPath = path.join(
+        reactNativePath,
+        '..',
+        'hermes-compiler/hermesc/osx-bin/hermesc'
+      );
+      expect(fs.existsSync).toHaveBeenCalledTimes(1);
+      expect(jest.mocked(execa).mock.calls.map(([file]) => file)).toEqual([
+        hermesCompilerPath,
+        hermesCompilerPath,
+        hermesCompilerPath,
+      ]);
     });
   });
 });
