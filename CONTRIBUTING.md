@@ -91,8 +91,39 @@ package version changes and generated changelog entries for the next release.
 
 Review the version numbers and changelog entries in that PR before merging it.
 When the version PR is merged to `main`, the same workflow runs `pnpm release`,
-publishes the packages to npm, pushes the release tags, and creates GitHub
-releases from the generated changelog entries.
+publishes the packages to npm and pushes all package release tags. A separate
+step creates one GitHub release on the main package's tag (for example,
+`@callstack/repack@5.4.2`), named after the shared version. Its notes list all
+packages in the fixed release group and merge their changelog entries by change
+type, without duplicate entries or dependency update bullets. Package changelogs
+and npm publishing are still managed by Changesets. Existing GitHub releases
+are left untouched.
+
+Preview the combined notes without network access or credentials:
+
+```sh
+node .github/scripts/release-notes.mjs
+pnpm test:release
+```
+
+The GitHub release step runs only when Changesets publishes packages. If it
+fails after npm publication, rerunning the workflow may not retry that step,
+because there are no new packages to publish. To create the missing GitHub
+release manually, check out the original release commit, confirm the packages
+are published and their release tags exist, then run:
+
+```sh
+version=$(node -p "require('./packages/repack/package.json').version")
+tag="@callstack/repack@${version}"
+node .github/scripts/release-notes.mjs > /tmp/repack-release-notes.md
+gh release create "$tag" --verify-tag --title "$version" \
+  --notes-file /tmp/repack-release-notes.md
+```
+
+For a prerelease version, add `--prerelease` to the `gh release create` command.
+This requires an authenticated GitHub CLI with permission to create releases.
+It does not recover npm publications or recreate package tags. The combined
+release covers the fixed group containing `@callstack/repack`.
 
 #### Canary releases
 
