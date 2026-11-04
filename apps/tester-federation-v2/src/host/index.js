@@ -5,6 +5,9 @@ import { AppRegistry } from 'react-native';
 
 import { components } from '../../app.json';
 import App from './App';
+import { startDevTools } from './rozenite';
+
+startDevTools();
 
 if (__WITH_PRELOAD__) {
   // enable caching of scripts in the AsyncStorage
