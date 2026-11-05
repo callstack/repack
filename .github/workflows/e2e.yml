@@ -49,6 +49,20 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # Gradle dependencies and the wrapper come from the Actions cache instead of Maven Central on
+      # every run: Central intermittently answers 404 for artifacts that exist, which Gradle doesn't
+      # retry. The lockfile pins react-native (and its Gradle plugin); on a key miss the newest
+      # entry is restored and only new dependencies are downloaded. Saved from main only.
+      - name: Restore Gradle cache
+        id: gradle-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # tag=v6.1.0
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'apps/tester-federation-v2/android/**/*.gradle', 'apps/tester-federation-v2/android/gradle.properties', 'apps/tester-federation-v2/android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -88,6 +102,23 @@ jobs:
       - name: Build Android app
         working-directory: apps/tester-federation-v2/android
         run: ./gradlew :app:assembleDebug -PreactNativeArchitectures=x86_64
+
+      # stop the daemon and drop lock files so the saved Gradle User Home is consistent
+      - name: Stop Gradle before caching
+        if: github.ref == 'refs/heads/main' && steps.gradle-cache.outputs.cache-hit != 'true'
+        working-directory: apps/tester-federation-v2/android
+        run: |
+          ./gradlew --stop
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock ~/.gradle/caches/modules-2/gc.properties
+
+      - name: Save Gradle cache
+        if: github.ref == 'refs/heads/main' && steps.gradle-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # tag=v6.1.0
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ steps.gradle-cache.outputs.cache-primary-key }}
 
       # expose dev servers to the emulator, install the APK, run the tests
       - name: Run e2e on an emulator
