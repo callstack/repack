@@ -8,6 +8,8 @@ import {
   useState,
 } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
+import Report from '../ui/Report';
+import Screen from '../ui/Screen';
 
 type ExpoWidgetComponent = ComponentType<{ recoveryAttempt?: number }>;
 
@@ -120,17 +122,16 @@ export function ErrorBoundary({ error }: ErrorBoundaryProps) {
 
 export default function WidgetRoute() {
   return (
-    <View style={styles.container}>
-      <Text testID="expo-widget-route-ready">Expo federated widget route</Text>
-      <Text testID="expo-host-public-environment">
-        Host public environment:{' '}
-        {process.env.EXPO_PUBLIC_FEDERATION_OWNER ?? 'missing'}
-      </Text>
+    <Screen testID="expo-widget-screen">
+      <Report
+        testID="expo-widget-host-env-report"
+        name="host env"
+        value={process.env.EXPO_PUBLIC_FEDERATION_OWNER ?? 'missing'}
+      />
       <WidgetRecoveryBoundary>
         {(attempt) => <ExpoWidgetAttempt attempt={attempt} key={attempt} />}
       </WidgetRecoveryBoundary>
-      <Link href="/">Back home</Link>
-    </View>
+    </Screen>
   );
 }
 

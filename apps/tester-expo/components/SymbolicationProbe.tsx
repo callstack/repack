@@ -1,28 +1,31 @@
-import { Button } from 'react-native';
-
-declare global {
-  var __REPACK_ANDROID_SYMBOLICATION_STACK__: string | undefined;
-}
+import { useState } from 'react';
+import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStack';
+import symbolicateStackTrace from 'react-native/Libraries/Core/Devtools/symbolicateStackTrace';
 
 function throwSymbolicationProbeError() {
-  throw new Error('EXPO_ANDROID_SYMBOLICATION_SENTINEL');
+  throw new Error('EXPO_SYMBOLICATION_SENTINEL');
 }
 
-function captureSymbolicationStack() {
+async function symbolicateProbeError() {
   try {
     throwSymbolicationProbeError();
   } catch (error) {
-    globalThis.__REPACK_ANDROID_SYMBOLICATION_STACK__ =
-      error instanceof Error ? error.stack : undefined;
+    const { stack } = await symbolicateStackTrace(
+      parseErrorStack((error as Error).stack)
+    );
+    return `${stack[0].file}:${stack[0].lineNumber}`;
   }
+  return 'nothing thrown';
 }
 
-export default function SymbolicationProbe() {
-  return (
-    <Button
-      testID="symbolication-probe"
-      title="Capture symbolication stack"
-      onPress={captureSymbolicationStack}
-    />
-  );
+export function useSymbolicationProbe() {
+  const [frame, setFrame] = useState<string>();
+
+  const probe = () => {
+    symbolicateProbeError().then(setFrame, (error: Error) =>
+      setFrame(`failed: ${error.message}`)
+    );
+  };
+
+  return { frame, probe };
 }

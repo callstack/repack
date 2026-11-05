@@ -1,7 +1,10 @@
 // @ts-check
 import * as Repack from '@callstack/repack';
+import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
+import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import webpack from 'webpack';
 
+import { buildHostAssetRules } from './hostAssetRules.mts';
 import { buildSharedSingletons } from './sharedSingletons.mts';
 
 export default Repack.defineWebpackConfig((env) => {
@@ -25,13 +28,19 @@ export default Repack.defineWebpackConfig((env) => {
           use: '@callstack/repack/babel-swc-loader',
           type: 'javascript/auto',
         },
-        ...Repack.getAssetTransformRules(),
+        ...buildHostAssetRules(context!),
       ],
     },
     plugins: [
-      // @ts-expect-error
+      new NativeWindPlugin({
+        cssInteropOptions: { inlineRem: 16 },
+      }),
       new Repack.RepackPlugin({
         extraChunks: [
+          {
+            include: /^host-async-local$/,
+            type: 'local',
+          },
           {
             include: /.*/,
             type: 'remote',
@@ -39,7 +48,6 @@ export default Repack.defineWebpackConfig((env) => {
           },
         ],
       }),
-      // @ts-expect-error
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'HostApp',
         filename: 'HostApp.container.js.bundle',
@@ -58,6 +66,7 @@ export default Repack.defineWebpackConfig((env) => {
           process.env.WITH_PRELOAD === 'true' ||
           process.env.WITH_PRELOAD === '1',
       }),
+      new ReanimatedPlugin({ unstable_disableTransform: true }),
     ],
   };
 });
