@@ -350,6 +350,14 @@ in git), a third server and `adb reverse tcp:8083`. The semver check runs on
 8083 says `*` by design. The remotes warm on `mf-manifest.json` — any request
 compiles the whole platform.
 
+The Android job keeps `~/.gradle` in the Actions cache, so Gradle does not
+download its dependencies from Maven Central on every run. Central sometimes
+answers 404 for artifacts that exist, and Gradle does not retry a 404. Only
+`main` runs save the cache; PR runs only restore it. The restore runs after
+`expo prebuild`, because the key hashes files in the generated `android/`. The
+key prefix is `gradle-expo-`, so after a lockfile change the fallback is an
+older Expo copy, not another job's copy that lacks the Expo libraries.
+
 ### Traps
 
 - **RN 0.88 turns the first warning into a toast** ("Open debugger to view

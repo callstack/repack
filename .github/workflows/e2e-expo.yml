@@ -58,6 +58,18 @@ jobs:
       - name: Generate native project
         run: pnpm --filter tester-expo exec expo prebuild --platform android --no-install
 
+      # Gradle dependencies come from the Actions cache, not Maven Central (it sometimes answers 404
+      # for artifacts that exist). After prebuild: the key hashes files in android/
+      - name: Restore Gradle cache
+        id: gradle-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # tag=v6.1.0
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-expo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'apps/tester-expo/android/**/*.gradle', 'apps/tester-expo/android/gradle.properties', 'apps/tester-expo/android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-expo-${{ runner.os }}-
+
       # nohup/disown: the runner kills step processes at the end
       - name: Start dev servers
         run: |
@@ -89,6 +101,23 @@ jobs:
       - name: Build Android app
         working-directory: apps/tester-expo/android
         run: ./gradlew :app:assembleDebug -PreactNativeArchitectures=x86_64
+
+      # stop the daemon and drop lock files so the saved Gradle User Home is consistent
+      - name: Stop Gradle before caching
+        if: github.ref == 'refs/heads/main' && steps.gradle-cache.outputs.cache-hit != 'true'
+        working-directory: apps/tester-expo/android
+        run: |
+          ./gradlew --stop
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock ~/.gradle/caches/modules-2/gc.properties
+
+      - name: Save Gradle cache
+        if: github.ref == 'refs/heads/main' && steps.gradle-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # tag=v6.1.0
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ steps.gradle-cache.outputs.cache-primary-key }}
 
       # expose dev servers to the emulator, install the APK, run the tests
       - name: Run e2e on an emulator
