@@ -345,7 +345,9 @@ describe('assetLoader', () => {
 
     it.each([
       { preferredScale: 1 },
+      { preferredScale: 1.5 },
       { preferredScale: 2 },
+      { preferredScale: 2.625 },
       { preferredScale: 3 },
     ])('with scales ($preferredScale)', async ({ preferredScale }) => {
       const { code, volume } = await compileBundle(
