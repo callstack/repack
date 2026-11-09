@@ -109,7 +109,10 @@ export function getReactNativeVirtualModules(
           };
         }
         static pickScale(scales, pixelRatio) {
-          return scales[pixelRatio - 1];
+          for (var i = 0; i < scales.length; i++) {
+            if (scales[i] >= pixelRatio) return scales[i];
+          }
+          return scales[scales.length - 1] || 1;
         }
       };`,
   };
