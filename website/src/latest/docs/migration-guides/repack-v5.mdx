@@ -1,6 +1,6 @@
 # Migrating from Re.Pack 5
 
-Re.Pack 6 raises the minimum supported versions of Node.js, React Native, Module Federation and Reanimated, and removes APIs that were deprecated in Re.Pack 5.
+Re.Pack 6 raises the minimum supported versions of Node.js, React Native, Rspack, Module Federation and Reanimated, and removes APIs that were deprecated in Re.Pack 5.
 
 ## Update dependencies in `package.json`
 
@@ -21,12 +21,45 @@ Update the Re.Pack plugins you use (`@callstack/repack-plugin-*`) to the same ma
 | ----------------------------- | ----------- | --------- |
 | Node.js                       | `>=18`      | `>=22.12` |
 | React Native                  | `>=0.74`    | `>=0.82`  |
+| `@rspack/core`                | `>=1`       | `>=2`     |
 | `@module-federation/enhanced` | `>=0.6.10`  | `>=2.0.0` |
 | `react-native-reanimated`     | `>=3`       | `>=4`     |
 
 ## The legacy architecture is no longer supported
 
 React Native 0.82 removed the legacy architecture, so Re.Pack's native module is now built only as a TurboModule. If your app still sets `newArchEnabled=false`, migrate it to the [New Architecture](https://reactnative.dev/architecture/landing-page) before upgrading.
+
+## Rspack 2 is required
+
+Re.Pack 6 supports Rspack 2 only. webpack projects are not affected. Update `@rspack/core` along with `@swc/helpers`, which Rspack 2 needs at `^0.5.23`:
+
+```diff
+{
+  "devDependencies": {
+-    "@rspack/core": "^1.0.0",
++    "@rspack/core": "^2.0.0",
+-    "@swc/helpers": "^0.5.13"
++    "@swc/helpers": "^0.5.23"
+  }
+}
+```
+
+Read Rspack's [Upgrading from v1 to v2](https://rspack.rs/guide/migration/rspack_1.x) guide for changes to your own config. The ones that most often affect React Native projects:
+
+- `experiments.parallelLoader` was removed, and Re.Pack no longer sets it. Loaders run in parallel when their rule sets [`parallel: true`](https://rspack.rs/config/module-rules#rulesuseparallel), as the Re.Pack templates already do. The `hideParallelModeWarning` option of `@callstack/repack/babel-swc-loader` was removed together with the warning.
+- `experiments.cache` moved to the top-level `cache` option. Move a persistent cache config there; `--reset-cache` reads it from the new location, and `REPACK_EXPERIMENTAL_CACHE` sets it there too.
+
+  ```diff
+  - experiments: {
+  -   cache: { type: 'persistent' },
+  - },
+  + cache: { type: 'persistent' },
+  ```
+
+Re.Pack also adjusts two Rspack 2 defaults for you:
+
+- `module.parser.javascript.exportsPresence` is set to `'auto'`, so imports of missing exports, which some React Native libraries ship, are warnings instead of build errors. Override it in your config to make them errors again.
+- `RSPACK_PROFILE` traces to the `logger` layer by default, because published Rspack 2 binaries don't include the `perfetto` layer.
 
 ## Package exports are enabled by default
 

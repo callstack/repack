@@ -38,10 +38,9 @@ allowBuilds:
 
 catalog:
   "@babel/core": ^7.29.7
-  # Pinned: 1.6.2+ breaks MF v2 polyfill ordering; 1.6.4+ fails typecheck.
-  "@rspack/core": 1.6.0
+  "@rspack/core": ^2.2.8
   "@rslib/core": ^1.0.3
-  "@swc/helpers": ~0.5.17
+  "@swc/helpers": ^0.5.23
   "@types/node": ^22.20.5
   "terser-webpack-plugin": ^5.6.1
   "typescript": ^7.0.2

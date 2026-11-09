@@ -14,7 +14,7 @@ Do not use `@callstack/repack/babel-swc-loader` together with `getJSTransformRul
 :::
 
 :::tip Maximizing performance
-For optimal performance, enable Rspack’s parallel transforms with [`experiments.parallelLoader`](https://rspack.rs/config/experiments#experimentsparallelloader). This allows for transformations to run in parallel through worker threads managed by Rspack.
+For optimal performance, set [`parallel: true`](https://rspack.rs/config/module-rules#rulesuseparallel) on the loader rule in Rspack. This allows for transformations to run in parallel through worker threads managed by Rspack.
 :::
 
 :::details How does this loader work?
@@ -35,7 +35,6 @@ type BabelOverrides = TransformOptions;
 type SwcOverrides = Options;
 
 type BabelSwcLoaderOptions = {
-  hideParallelModeWarning?: boolean;
   lazyImports?: boolean | string[];
   babelOverrides?: BabelOverrides;
   swcOverrides?: SwcOverrides;
@@ -97,13 +96,6 @@ type HermesParserOverrides = {
   sourceType?: "module" | "script" | "unambiguous";
 };
 ```
-
-### hideParallelModeWarning
-
-- Type: `boolean`
-- Default: `false`
-
-Hide the warning about Rspack `experiments.parallelLoader` when the rule isn't marked `parallel: true`.
 
 ## Example
 

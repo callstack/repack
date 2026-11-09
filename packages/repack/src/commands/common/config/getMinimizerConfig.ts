@@ -1,4 +1,3 @@
-import semver from 'semver';
 import type TerserPlugin from 'terser-webpack-plugin';
 import { importDefaultESM } from '../../../helpers/index.js';
 
@@ -57,37 +56,6 @@ async function getTerserConfig(rootDir: string) {
   });
 }
 
-// use SwcJsMinimizerRspackPlugin for Rspack 1.4.11
-// Rspack 1.5.0 broke the minimizer again, pending a fix
-function shouldUseTerserForRspack(rspackVersion: string): boolean {
-  const version = semver.coerce(rspackVersion) ?? '0.0.0';
-  return !semver.eq(version, '1.4.11');
-}
-
-async function getWebpackMinimizer(rootDir: string) {
+export async function getMinimizerConfig(rootDir: string) {
   return [await getTerserConfig(rootDir)];
-}
-
-async function getRspackMinimizer(rootDir: string) {
-  const rspack = await import('@rspack/core');
-  return [
-    shouldUseTerserForRspack(rspack.rspackVersion)
-      ? await getTerserConfig(rootDir)
-      : new rspack.SwcJsMinimizerRspackPlugin({
-          test: /\.(js)?bundle(\?.*)?$/i,
-          extractComments: false,
-          minimizerOptions: {
-            format: { comments: false },
-          },
-        }),
-  ];
-}
-
-export async function getMinimizerConfig(
-  bundler: 'rspack' | 'webpack',
-  rootDir: string
-) {
-  return bundler === 'rspack'
-    ? getRspackMinimizer(rootDir)
-    : getWebpackMinimizer(rootDir);
 }
