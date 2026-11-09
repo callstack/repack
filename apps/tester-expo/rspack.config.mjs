@@ -68,12 +68,20 @@ const config = (env) => {
   };
 };
 
-// Rozenite is only loaded with WITH_ROZENITE=true (see CONTRIBUTING.md).
-export default withDevTools
-  ? (await import('@rozenite/repack')).withRozenite(config, {
-      enabled: true,
-      // Re.Pack serves DevTools through React Native's dev-middleware, not the
-      // copy bundled with Expo's CLI, so Rozenite has to patch that one.
-      projectType: 'react-native-cli',
-    })
-  : config;
+// Rozenite and the Re.Pack DevTools plugin are only loaded with
+// WITH_ROZENITE=true (see CONTRIBUTING.md).
+let exportedConfig = config;
+if (withDevTools) {
+  const { withRozenite } = await import('@rozenite/repack');
+  const { withRepackDevTools } = await import(
+    '@callstack/repack-devtools-plugin/bundler'
+  );
+  exportedConfig = withRozenite(withRepackDevTools(config, { enabled: true }), {
+    enabled: true,
+    // Re.Pack serves DevTools through React Native's dev-middleware, not the
+    // copy bundled with Expo's CLI, so Rozenite has to patch that one.
+    projectType: 'react-native-cli',
+  });
+}
+
+export default exportedConfig;
