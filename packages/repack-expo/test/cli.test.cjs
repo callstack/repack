@@ -190,6 +190,33 @@ test('detects an aliased Module Federation v2 plugin', () => {
   assert.equal(result.ok, true, JSON.stringify(result.diagnostics));
 });
 
+test('treats the ModuleFederationPlugin alias as Module Federation v2', () => {
+  const cases = [
+    {
+      federationImport: "import * as Repack from '@callstack/repack';",
+      federationPlugin:
+        "new Repack.plugins.ModuleFederationPlugin({ name: 'Host' })",
+    },
+    {
+      federationImport: [
+        "import * as Repack from '@callstack/repack';",
+        'const { ModuleFederationPlugin: FederationPlugin } = Repack.plugins;',
+      ].join('\n'),
+      federationPlugin: "new FederationPlugin({ name: 'Host' })",
+    },
+  ];
+
+  for (const testCase of cases) {
+    const projectRoot = createProject();
+    assert.equal(runInit({ projectRoot }).ok, true);
+    writeRspackConfig(projectRoot, testCase);
+
+    const result = runDoctor({ projectRoot });
+
+    assert.equal(result.ok, true, JSON.stringify(result.diagnostics));
+  }
+});
+
 test('doctor rejects unsupported active federation shapes with stable diagnostics', () => {
   const cases = [
     {
@@ -197,12 +224,6 @@ test('doctor rejects unsupported active federation shapes with stable diagnostic
       federationImport: "import * as Repack from '@callstack/repack';",
       federationPlugin:
         "new Repack.plugins.ModuleFederationPluginV1({ name: 'Widget' })",
-    },
-    {
-      code: 'MODULE_FEDERATION_V1_UNSUPPORTED',
-      federationImport: "import * as Repack from '@callstack/repack';",
-      federationPlugin:
-        "new Repack.plugins.ModuleFederationPlugin({ name: 'Widget' })",
     },
     {
       code: 'MODULE_FEDERATION_V1_UNSUPPORTED',
@@ -214,7 +235,7 @@ test('doctor rejects unsupported active federation shapes with stable diagnostic
       code: 'MODULE_FEDERATION_V1_UNSUPPORTED',
       federationImport: [
         "import * as Repack from '@callstack/repack';",
-        'const { ModuleFederationPlugin: LegacyFederationPlugin } = Repack.plugins;',
+        'const { ModuleFederationPluginV1: LegacyFederationPlugin } = Repack.plugins;',
       ].join('\n'),
       federationPlugin: "new LegacyFederationPlugin({ name: 'Widget' })",
     },

@@ -35,28 +35,10 @@ target_include_directories(
         "${REACT_NATIVE_DIR}/ReactCommon/callinvoker"
         "${REACT_NATIVE_DIR}/ReactAndroid/src/main/jni/react/turbomodule"
 )
-# REACT_NATIVE_MERGED_SO is not set properly
-# use version check instead
-if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
-        target_link_libraries(
-                ${PACKAGE_NAME}
-                ReactAndroid::reactnative
-        )
-else()
-        target_link_libraries(
-                ${PACKAGE_NAME}
-                ReactAndroid::reactnativejni
-        )
-endif()
-
 target_link_libraries(
         ${PACKAGE_NAME}
+        ReactAndroid::reactnative
         android
         fbjni::fbjni
         ReactAndroid::jsi
 )
-
-# Enable Android 16kb native library alignment
-if(CMAKE_ANDROID_NDK_VERSION VERSION_LESS "27")
-        target_link_options(${PACKAGE_NAME} PRIVATE "-Wl,-z,max-page-size=16384")
-endif()

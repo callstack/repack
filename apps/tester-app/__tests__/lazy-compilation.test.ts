@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import rspackCommands from '@callstack/repack/commands/rspack';
+import commands from '@callstack/repack/commands';
 import { MultiCompiler } from '@rspack/core';
 import getPort from 'get-port';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -11,9 +11,7 @@ let port: number;
 let stopServer: (() => Promise<void>) | undefined;
 
 describe('lazy compilation', () => {
-  const startCommand = rspackCommands.find(
-    (command) => command.name === 'start'
-  );
+  const startCommand = commands.find((command) => command.name === 'start');
   if (!startCommand) throw new Error('start command not found');
 
   const getStats = (platform: string) =>
@@ -37,7 +35,7 @@ describe('lazy compilation', () => {
       // No `platform` arg — both ios and android are configured,
       // which enables the lazy compilation watchRun gate mechanism.
       logFile: path.join(TMP_DIR, 'server.log'),
-      webpackConfig: path.join(__dirname, 'configs', './rspack.config.mjs'),
+      config: path.join(__dirname, 'configs', './rspack.config.mjs'),
     };
 
     // @ts-expect-error
