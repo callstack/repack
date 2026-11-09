@@ -202,6 +202,9 @@ export class LoggerPlugin {
       }
       this.reporter.flush();
       this.reporter.stop();
+      // Registering this listener disables Node's default exit code 1 for uncaught errors.
+      // Set it explicitly instead of calling `process.exit` so pending output is flushed.
+      process.exitCode = 1;
     });
 
     process.on('exit', () => {
