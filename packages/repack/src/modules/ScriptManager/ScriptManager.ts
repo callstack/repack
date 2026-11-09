@@ -576,7 +576,9 @@ export class ScriptManager extends EventEmitter {
 
       // prefetch is not execute the script so we need to run loadScript if promise is for prefetch
       if (isPrefetch) {
-        await this.scriptsPromises[uniqueId];
+        // prefetch only warms up the native cache, so its failure must not
+        // fail this load - wait for it to settle and load the script anyway
+        await this.scriptsPromises[uniqueId].catch(() => undefined);
       } else {
         return this.scriptsPromises[uniqueId];
       }
