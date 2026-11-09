@@ -31,7 +31,12 @@ export function inlineAssets({
     {} as Record<string, URISource>
   );
 
-  const scales = JSON.stringify(Object.keys(sourceSet).map(Number));
+  // `pickScale` expects scales in ascending order. They are sorted here rather
+  // than read with `Object.keys`, which lists integer keys (1, 2, 3) before
+  // fractional ones (0.75, 1.5).
+  const scales = JSON.stringify(
+    assets.map(({ scale }) => scale).sort((a, b) => a - b)
+  );
 
   /**
    * To enable scale resolution in runtime we need to import PixelRatio & AssetSourceResolver
