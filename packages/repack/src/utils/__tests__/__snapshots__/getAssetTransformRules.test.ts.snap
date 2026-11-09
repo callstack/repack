@@ -3,6 +3,13 @@
 exports[`getAssetTransformRules should add SVGR rule when svg="svgr" 1`] = `
 [
   {
+    "generator": {
+      "JSONParse": false,
+    },
+    "test": /\\\\\\.json\\$/,
+    "type": "json",
+  },
+  {
     "test": /\\\\\\.\\(bmp\\|gif\\|jpg\\|jpeg\\|png\\|psd\\|webp\\|tiff\\|m4v\\|mov\\|mp4\\|mpeg\\|mpg\\|webm\\|aac\\|aiff\\|caf\\|m4a\\|mp3\\|wav\\|html\\|pdf\\|yaml\\|yml\\|otf\\|ttf\\|zip\\|obj\\)\\$/,
     "use": {
       "loader": "@callstack/repack/assets-loader",
@@ -28,6 +35,13 @@ exports[`getAssetTransformRules should add SVGR rule when svg="svgr" 1`] = `
 exports[`getAssetTransformRules should add URI rule when svg="uri" 1`] = `
 [
   {
+    "generator": {
+      "JSONParse": false,
+    },
+    "test": /\\\\\\.json\\$/,
+    "type": "json",
+  },
+  {
     "test": /\\\\\\.\\(bmp\\|gif\\|jpg\\|jpeg\\|png\\|psd\\|webp\\|tiff\\|m4v\\|mov\\|mp4\\|mpeg\\|mpg\\|webm\\|aac\\|aiff\\|caf\\|m4a\\|mp3\\|wav\\|html\\|pdf\\|yaml\\|yml\\|otf\\|ttf\\|zip\\|obj\\)\\$/,
     "use": {
       "loader": "@callstack/repack/assets-loader",
@@ -48,6 +62,13 @@ exports[`getAssetTransformRules should add URI rule when svg="uri" 1`] = `
 exports[`getAssetTransformRules should add XML rule when svg="xml" 1`] = `
 [
   {
+    "generator": {
+      "JSONParse": false,
+    },
+    "test": /\\\\\\.json\\$/,
+    "type": "json",
+  },
+  {
     "test": /\\\\\\.\\(bmp\\|gif\\|jpg\\|jpeg\\|png\\|psd\\|webp\\|tiff\\|m4v\\|mov\\|mp4\\|mpeg\\|mpg\\|webm\\|aac\\|aiff\\|caf\\|m4a\\|mp3\\|wav\\|html\\|pdf\\|yaml\\|yml\\|otf\\|ttf\\|zip\\|obj\\)\\$/,
     "use": {
       "loader": "@callstack/repack/assets-loader",
@@ -67,6 +88,13 @@ exports[`getAssetTransformRules should add XML rule when svg="xml" 1`] = `
 
 exports[`getAssetTransformRules should include additional options for SVGR 1`] = `
 [
+  {
+    "generator": {
+      "JSONParse": false,
+    },
+    "test": /\\\\\\.json\\$/,
+    "type": "json",
+  },
   {
     "test": /\\\\\\.\\(bmp\\|gif\\|jpg\\|jpeg\\|png\\|psd\\|webp\\|tiff\\|m4v\\|mov\\|mp4\\|mpeg\\|mpg\\|webm\\|aac\\|aiff\\|caf\\|m4a\\|mp3\\|wav\\|html\\|pdf\\|yaml\\|yml\\|otf\\|ttf\\|zip\\|obj\\)\\$/,
     "use": {
@@ -91,8 +119,31 @@ exports[`getAssetTransformRules should include additional options for SVGR 1`] =
 ]
 `;
 
+exports[`getAssetTransformRules should omit the raw JSON rule when enableRawJson is false 1`] = `
+[
+  {
+    "test": /\\\\\\.\\(bmp\\|gif\\|jpg\\|jpeg\\|png\\|psd\\|svg\\|webp\\|tiff\\|m4v\\|mov\\|mp4\\|mpeg\\|mpg\\|webm\\|aac\\|aiff\\|caf\\|m4a\\|mp3\\|wav\\|html\\|pdf\\|yaml\\|yml\\|otf\\|ttf\\|zip\\|obj\\)\\$/,
+    "use": {
+      "loader": "@callstack/repack/assets-loader",
+      "options": {
+        "inline": undefined,
+        "maxInlineSize": undefined,
+        "remote": undefined,
+      },
+    },
+  },
+]
+`;
+
 exports[`getAssetTransformRules should return default asset transform rules when no options provided 1`] = `
 [
+  {
+    "generator": {
+      "JSONParse": false,
+    },
+    "test": /\\\\\\.json\\$/,
+    "type": "json",
+  },
   {
     "test": /\\\\\\.\\(bmp\\|gif\\|jpg\\|jpeg\\|png\\|psd\\|svg\\|webp\\|tiff\\|m4v\\|mov\\|mp4\\|mpeg\\|mpg\\|webm\\|aac\\|aiff\\|caf\\|m4a\\|mp3\\|wav\\|html\\|pdf\\|yaml\\|yml\\|otf\\|ttf\\|zip\\|obj\\)\\$/,
     "use": {
@@ -110,6 +161,13 @@ exports[`getAssetTransformRules should return default asset transform rules when
 exports[`getAssetTransformRules should return rules with inline option when provided 1`] = `
 [
   {
+    "generator": {
+      "JSONParse": false,
+    },
+    "test": /\\\\\\.json\\$/,
+    "type": "json",
+  },
+  {
     "test": /\\\\\\.\\(bmp\\|gif\\|jpg\\|jpeg\\|png\\|psd\\|svg\\|webp\\|tiff\\|m4v\\|mov\\|mp4\\|mpeg\\|mpg\\|webm\\|aac\\|aiff\\|caf\\|m4a\\|mp3\\|wav\\|html\\|pdf\\|yaml\\|yml\\|otf\\|ttf\\|zip\\|obj\\)\\$/,
     "use": {
       "loader": "@callstack/repack/assets-loader",
@@ -126,6 +184,13 @@ exports[`getAssetTransformRules should return rules with inline option when prov
 exports[`getAssetTransformRules should return rules with maxInlineSize option when provided 1`] = `
 [
   {
+    "generator": {
+      "JSONParse": false,
+    },
+    "test": /\\\\\\.json\\$/,
+    "type": "json",
+  },
+  {
     "test": /\\\\\\.\\(bmp\\|gif\\|jpg\\|jpeg\\|png\\|psd\\|svg\\|webp\\|tiff\\|m4v\\|mov\\|mp4\\|mpeg\\|mpg\\|webm\\|aac\\|aiff\\|caf\\|m4a\\|mp3\\|wav\\|html\\|pdf\\|yaml\\|yml\\|otf\\|ttf\\|zip\\|obj\\)\\$/,
     "use": {
       "loader": "@callstack/repack/assets-loader",
@@ -141,6 +206,13 @@ exports[`getAssetTransformRules should return rules with maxInlineSize option wh
 
 exports[`getAssetTransformRules should return rules with remote options when provided 1`] = `
 [
+  {
+    "generator": {
+      "JSONParse": false,
+    },
+    "test": /\\\\\\.json\\$/,
+    "type": "json",
+  },
   {
     "test": /\\\\\\.\\(bmp\\|gif\\|jpg\\|jpeg\\|png\\|psd\\|svg\\|webp\\|tiff\\|m4v\\|mov\\|mp4\\|mpeg\\|mpg\\|webm\\|aac\\|aiff\\|caf\\|m4a\\|mp3\\|wav\\|html\\|pdf\\|yaml\\|yml\\|otf\\|ttf\\|zip\\|obj\\)\\$/,
     "use": {
