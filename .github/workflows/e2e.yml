@@ -131,6 +131,9 @@ jobs:
           avd-name: e2e
           working-directory: apps/tester-federation-v2
           script: |
+            adb root && adb wait-for-device
+            adb shell setprop metro.host localhost
+            [ "$(adb shell getprop metro.host)" = "localhost" ] || { echo '::error::metro.host not set'; exit 1; }
             adb shell settings put global hide_error_dialogs 1
             for i in 1 2 3; do adb shell "uiautomator dump /sdcard/d.xml >/dev/null && grep -q aerr_ /sdcard/d.xml" && { echo 'ANR dialog on screen, clearing it'; adb shell am force-stop com.google.android.apps.nexuslauncher; }; sleep 2; done
             adb reverse tcp:8081 tcp:8081
