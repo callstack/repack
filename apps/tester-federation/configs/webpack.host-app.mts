@@ -27,6 +27,9 @@ export default Repack.defineWebpackConfig((env) => {
       ],
     },
     plugins: [
+      new webpack.DefinePlugin({
+        __WITH_ROZENITE__: process.env.WITH_ROZENITE === 'true',
+      }),
       // @ts-expect-error
       new Repack.RepackPlugin({
         extraChunks: [

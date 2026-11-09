@@ -4,6 +4,9 @@ import { AppRegistry, Platform } from 'react-native';
 
 import { components } from '../../app.json';
 import App from './App';
+import { startDevTools } from './rozenite';
+
+startDevTools();
 
 ScriptManager.shared.setStorage(AsyncStorage);
 

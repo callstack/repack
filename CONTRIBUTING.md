@@ -21,6 +21,10 @@ All development is done directly on GitHub, and all work is public.
 2. Run `pnpm install` to install & set up the development environment.
 3. Do the changes you want and test them out in the TesterApp (`apps/tester-app`) before sending a pull request.
 
+To get extra [Rozenite](https://www.rozenite.dev) panels (network activity, plus navigation and storage in the Module Federation hosts) in React Native DevTools while testing, start a tester app's dev server with `WITH_ROZENITE=true`, e.g. `WITH_ROZENITE=true pnpm start`.
+
+Without the flag, nothing Rozenite-related is loaded by the dev server or bundled into the app, so default runs and E2E tests are unaffected. Keep it that way when adding a plugin: import it only from the tester's `rozenitePlugins.ts`, which is required only when `__WITH_ROZENITE__` is true.
+
 ### Commit message convention
 
 We follow the [conventional commits specification](https://www.conventionalcommits.org/en) for our commit messages:
