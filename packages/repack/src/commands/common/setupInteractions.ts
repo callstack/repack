@@ -40,6 +40,8 @@ export function setupInteractions(
 
   readline.emitKeypressEvents(process.stdin);
   process.stdin.setRawMode(true);
+  // Raw mode makes Ctrl+C arrive only as stream data, so a paused stream would swallow it.
+  process.stdin.resume();
 
   // graceful shutdown
   process.on('SIGINT', () => {
