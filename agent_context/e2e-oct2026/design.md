@@ -89,8 +89,8 @@ restarts the app), so nothing accumulates between tests.
 | `gallery` | the MiniApp remote fails to install/load/render | MF2 container load over `localhost:8082` |
 | `runtime-events` | the resolve/load chain or the hook chain is broken; one test drives it via Gallery, then reads counters + a computed `pipeline: settled` row | all 6 `ScriptManager` events + the 4 non-owning hooks, counted in `features/runtime/events.ts`; each of the 8 driving rows asserts `≥ 1`, `error: 0` is asserted, and `prefetching`/`error` feed the pipeline row |
 | `async-chunk` | a host-owned async chunk no longer loads through `ScriptManager` | `import()` + the allowlist resolver. Not `extraChunks`: `OutputPlugin` is off under a dev server and the resolver's `__DEV__` branch sends every chunk to it, so the `local` rule never runs in this Debug lane |
-| `remote-chunk` | the prefetch → load cycle broke, or `invalidateScripts` threw | `ScriptManager.prefetchScript` / `invalidateScripts` on host remote chunks. The asserts after invalidate read UI state the screen sets itself, so an invalidate that resolves but clears nothing stays green |
-| `miniapp-install` | install / show / hide / uninstall of a host mini-app chunk broke | same APIs, second lifecycle; same invalidate gap as `remote-chunk` |
+| `remote-chunk` | the prefetch → load cycle broke, or `invalidateScripts` threw | `ScriptManager.prefetchScript` / `invalidateScripts` on host remote chunks. The asserts after Clear cache read UI state the screen sets itself, so an invalidate that resolves but clears nothing stays green. After the first load the button reads "Load from memory": `React.lazy` never asks `ScriptManager` again |
+| `miniapp-install` | a host mini-app chunk no longer installs via `import()`, or `invalidateScripts` threw | same APIs, second lifecycle; same invalidate gap as `remote-chunk`. After the first install the button reads "Show from memory" |
 | `host-assets` | asset rules no longer produce what they claim: inline gate (pic-1 87 KB in, pic-2 119 KB out), folder rules (`localAssets` emitted despite being small, `inlineAssets` inlined), the emitted URI is servable (fetch → 200, port and query string taken from the reported URI, never hardcoded). The `.svg` row asserts nothing, and that is honest: svgr compiles at build time, so a broken rule reddens the whole app at boot, before any assert could run | `assets-loader` (inline gate, per-folder rules), served asset route, `@svgr/webpack` rule |
 | `nativewind` | CSS stopped computing: `padding-applied: 16` and `calc-width: 248` are layout numbers, not text checks. The dark-mode round trip reads NativeWind's `useColorScheme()` state, not a resolved `dark:` style, and assumes the device starts in light appearance | `NativeWindPlugin` + the host-scoped JSX retag |
 | `reanimated` | the worklet pipeline broke — the width row (`100 → 150 → 200 → 100`) is a shared value driven through `useAnimatedStyle` + `useAnimatedReaction` + `scheduleOnRN` (from `react-native-worklets` — reanimated's `runOnJS` re-export is deprecated), so it only moves if user worklets execute; an untransformed worklet throws at boot | the babel `react-native-worklets/plugin` transform; `ReanimatedPlugin`'s `unstable_disableTransform` only suppresses its own rules, which the new babel-swc-loader makes obsolete |
@@ -206,6 +206,13 @@ before tests start.
 
 ## Traps worth remembering
 
+- **A chunk that already ran stays in memory until the app restarts.**
+  `import()` and `React.lazy` check the runtime's loaded-chunks list first and
+  never ask `ScriptManager` again; `invalidateScripts` clears only
+  `ScriptManager`'s cache and the downloaded file, for the next start. Only
+  `prefetchScript`/`loadScript` called directly reach `ScriptManager` again.
+  The Remote chunk and Mini-app install screens label their later loads "from
+  memory" for this reason.
 - **Tapping `ScriptManager.hooks.resolve`/`hooks.load` replaces the built-in
   loop**, not decorates it — a counter tap that returns `undefined` makes the
   manager resolve nothing. Counters only tap the 4 non-owning hooks; the events

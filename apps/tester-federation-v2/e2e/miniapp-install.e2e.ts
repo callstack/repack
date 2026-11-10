@@ -1,7 +1,7 @@
 import { test } from '@e2e-dev/mobile';
 import { expect } from 'e2e';
 
-test('install, show, and remove the host mini-app chunk', async ({
+test('install the host mini-app chunk and clear its cache', async ({
   app,
   screen,
 }) => {
@@ -16,19 +16,9 @@ test('install, show, and remove the host mini-app chunk', async ({
   await expect(screen.getByTestId('miniapp-install-screen')).toBeVisible();
 
   await screen.getByTestId('miniapp-install-button').tap();
-  await expect(screen.getByTestId('miniapp-install-button')).toBeDisabled();
-
-  await screen.getByTestId('miniapp-toggle-button').tap();
   await expect(screen.getByTestId('miniapp-install-content')).toBeVisible();
 
-  await screen.getByTestId('miniapp-toggle-button').tap();
-  await expect(screen.getByTestId('miniapp-install-content')).toBeHidden();
-
-  await screen.getByTestId('miniapp-toggle-button').tap();
-  await expect(screen.getByTestId('miniapp-install-content')).toBeVisible();
-
-  await screen.getByTestId('miniapp-uninstall-button').tap();
+  await screen.getByTestId('miniapp-clear-cache-button').tap();
   await expect(screen.getByTestId('miniapp-install-content')).toBeHidden();
   await expect(screen.getByTestId('miniapp-install-button')).toBeEnabled();
-  await expect(screen.getByTestId('miniapp-toggle-button')).toBeDisabled();
 });
