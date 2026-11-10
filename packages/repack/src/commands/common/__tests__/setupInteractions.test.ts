@@ -30,6 +30,7 @@ describe('setupInteractions', () => {
       },
       stdin: {
         setRawMode: jest.fn(),
+        resume: jest.fn(),
         on: jest.fn(),
       },
       stdout: {
@@ -83,6 +84,19 @@ describe('setupInteractions', () => {
       'keypress',
       expect.any(Function)
     );
+  });
+
+  it('should resume stdin so keypresses are delivered after it was paused', () => {
+    setupInteractions(
+      {},
+      {
+        logger: mockLogger,
+        process: mockProcess,
+        readline: mockReadline,
+      }
+    );
+
+    expect(mockProcess.stdin.resume).toHaveBeenCalledTimes(1);
   });
 
   it('should handle ctrl+c and ctrl+z keypresses', () => {

@@ -1,0 +1,32 @@
+[
+  {
+    "name": "@callstack/repack",
+    "version": "5.4.2",
+    "changelog": "# @callstack/repack\n\n## 5.4.2\n\n### Patch Changes\n\n- [#1480](https://github.com/callstack/repack/pull/1480) [`166388b`](https://github.com/callstack/repack/commit/166388b76fc4641f15cd63d3e96aec9d7e582c84) Thanks [@CristiCeban](https://github.com/CristiCeban)! - Fix `.jpeg` images not showing in Android release builds. They were emitted to `raw` instead of `drawable-*`, where React Native looks for them.\n\n  If you have a `.jpeg` and a `.png`/`.jpg`/`.gif`/`.webp` image with the same name in the same directory (e.g. `logo.png` and `logo.jpeg`), rename one of them. Both now resolve to the same Android drawable resource name, and the build fails with a duplicate resources error.\n\n- Updated dependencies []:\n  - @callstack/repack-dev-server@5.4.2\n\n## 5.4.1\n\n### Patch Changes\n\n- [#1479](https://github.com/callstack/repack/pull/1479) [`811a6d8`](https://github.com/callstack/repack/commit/811a6d84ed09ad83f4395c85218e055e7e9abf91) Thanks [@CristiCeban](https://github.com/CristiCeban)! - Ship consumer ProGuard rules for the Android library so release builds with R8 (`minifyEnabled true`) no longer fail with missing `com.google.errorprone.annotations` classes referenced by `nimbus-jose-jwt`.\n\n- [#1476](https://github.com/callstack/repack/pull/1476) [`5bb41f0`](https://github.com/callstack/repack/commit/5bb41f045f43d935fc79b153f889a1195a0f19ad) Thanks [@whydidoo](https://github.com/whydidoo)! - Support React Native 0.88's Flow parser in Babel loaders, native component codegen, and Reanimated transforms while retaining Hermes parser compatibility with older React Native presets.\n\n- [#1473](https://github.com/callstack/repack/pull/1473) [`f9326a0`](https://github.com/callstack/repack/commit/f9326a0a5fcc7de753190fc7576b91320498dfa8) Thanks [@whydidoo](https://github.com/whydidoo)! - Emit an additional `res/raw` copy of bundled Android font binaries so Metro-compatible consumers such as Skia can load them by name. Preserve the existing `res/font` output for native `@font/...`, `R.font`, and XML font-family references. Generate `res/raw/keep.xml` for bundled Android resources so resource shrinking preserves both font copies and other assets loaded by name at runtime.\n\n  XML font-family resources continue to use `res/font`. Asset metadata and iOS, development-server, inline, and remote-loader output paths are unchanged.\n\n- Updated dependencies []:\n  - @callstack/repack-dev-server@5.4.1\n\n"
+  },
+  {
+    "name": "@callstack/repack-dev-server",
+    "version": "5.4.2",
+    "changelog": "# @callstack/repack-dev-server\n\n## 5.4.2\n\n## 5.4.1\n\n"
+  },
+  {
+    "name": "@callstack/repack-init",
+    "version": "5.4.2",
+    "changelog": "# @callstack/repack-init\n\n## 5.4.2\n\n### Patch Changes\n\n- [#1482](https://github.com/callstack/repack/pull/1482) [`4139cf3`](https://github.com/callstack/repack/commit/4139cf3b9fa5f0f80260bfd0b783621543bf3949) Thanks [@jacekAtCK](https://github.com/jacekAtCK)! - Bootstrap new projects with React Native 0.87.1 and refresh the default bundler dependencies to `@rspack/core@^1.7.12`, `@swc/helpers@^0.5.23`, `webpack@^5.111.1` and `terser-webpack-plugin@^5.6.1`. Generated Rspack and webpack configs now enable package exports (`getResolveOptions({ enablePackageExports: true })`).\n\n## 5.4.1\n\n"
+  },
+  {
+    "name": "@callstack/repack-plugin-reanimated",
+    "version": "5.4.2",
+    "changelog": "# @callstack/repack-plugin-reanimated\n\n## 5.4.2\n\n## 5.4.1\n\n### Patch Changes\n\n- [#1476](https://github.com/callstack/repack/pull/1476) [`5bb41f0`](https://github.com/callstack/repack/commit/5bb41f045f43d935fc79b153f889a1195a0f19ad) Thanks [@whydidoo](https://github.com/whydidoo)! - Support React Native 0.88's Flow parser in Babel loaders, native component codegen, and Reanimated transforms while retaining Hermes parser compatibility with older React Native presets.\n\n"
+  },
+  {
+    "name": "@callstack/repack-plugin-nativewind",
+    "version": "5.4.2",
+    "changelog": "# @callstack/repack-plugin-nativewind\n\n## 5.4.2\n\n## 5.4.1\n\n"
+  },
+  {
+    "name": "@callstack/repack-plugin-expo-modules",
+    "version": "5.4.2",
+    "changelog": "# @callstack/repack-plugin-expo-modules\n\n## 5.4.2\n\n## 5.4.1\n\n"
+  }
+]
