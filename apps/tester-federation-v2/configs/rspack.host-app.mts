@@ -1,6 +1,9 @@
 import * as Repack from '@callstack/repack';
+import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
+import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import rspack from '@rspack/core';
 
+import { buildHostAssetRules } from './hostAssetRules.mts';
 import { buildSharedSingletons } from './sharedSingletons.mts';
 
 export default Repack.defineRspackConfig((env) => {
@@ -28,15 +31,19 @@ export default Repack.defineRspackConfig((env) => {
           },
           type: 'javascript/auto',
         },
-        ...Repack.getAssetTransformRules({
-          inline: true,
-          maxInlineSize: 90 * 1024,
-        }),
+        ...buildHostAssetRules(context!),
       ],
     },
     plugins: [
+      new NativeWindPlugin({
+        cssInteropOptions: { inlineRem: 16 },
+      }),
       new Repack.RepackPlugin({
         extraChunks: [
+          {
+            include: /^host-async-local$/,
+            type: 'local',
+          },
           {
             include: /.*/,
             type: 'remote',
@@ -62,6 +69,7 @@ export default Repack.defineRspackConfig((env) => {
           process.env.WITH_PRELOAD === 'true' ||
           process.env.WITH_PRELOAD === '1',
       }),
+      new ReanimatedPlugin({ unstable_disableTransform: true }),
     ],
   };
 });

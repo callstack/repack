@@ -1,39 +1,25 @@
-import { type ErrorBoundaryProps, Link } from 'expo-router';
+import type { ErrorBoundaryProps } from 'expo-router';
 import { lazy, Suspense } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text } from 'react-native';
+import Report from '../ui/Report';
+import Screen from '../ui/Screen';
 
 const LazyCard = lazy(() => import('../components/LazyCard.local'));
 
 export function ErrorBoundary({ error }: ErrorBoundaryProps) {
   return (
-    <View style={styles.container} testID="lazy-route-error">
-      <Text testID="lazy-route-ready">Lazy component route failed</Text>
-      <Text selectable testID="lazy-route-error-message">
-        Unable to load the local async chunk: {error.message}
-      </Text>
-      <Link href="/">Back home</Link>
-    </View>
+    <Screen testID="lazy-screen">
+      <Report testID="lazy-error-report" name="error" value={error.message} />
+    </Screen>
   );
 }
 
 export default function LazyRoute() {
   return (
-    <View style={styles.container}>
-      <Text testID="lazy-route-ready">Lazy component route</Text>
+    <Screen testID="lazy-screen">
       <Suspense fallback={<Text testID="lazy-loading">Loading chunk…</Text>}>
         <LazyCard />
       </Suspense>
-      <Link href="/">Back home</Link>
-    </View>
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flex: 1,
-    gap: 16,
-    justifyContent: 'center',
-    padding: 24,
-  },
-});
