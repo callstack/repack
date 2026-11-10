@@ -5,7 +5,10 @@ import type {
   SwcLoaderOptions,
 } from '@rspack/core';
 import { transform } from '../babelLoader/babelLoader.js';
-import { normalizeInputSourceMap } from '../babelLoader/utils.js';
+import {
+  getBabelCaller,
+  normalizeInputSourceMap,
+} from '../babelLoader/utils.js';
 import type { BabelSwcLoaderOptions } from './options.js';
 import {
   addSwcComplementaryTransforms,
@@ -120,7 +123,7 @@ export default async function babelSwcLoader(
 
   try {
     const baseBabelConfig: TransformOptions = {
-      caller: { name: '@callstack/repack' },
+      caller: getBabelCaller(this),
       root: projectRoot,
       filename: this.resourcePath,
       sourceMaps: withSourceMaps,
@@ -142,7 +145,11 @@ export default async function babelSwcLoader(
       return;
     }
 
-    const babelConfig = getProjectBabelConfig(this.resourcePath, projectRoot);
+    const babelConfig = getProjectBabelConfig(
+      this.resourcePath,
+      projectRoot,
+      baseBabelConfig.caller
+    );
     const detectedBabelTransforms =
       babelConfig.plugins?.map((p) => [p.key, p.options] as BabelTransform) ??
       [];

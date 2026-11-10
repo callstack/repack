@@ -107,7 +107,7 @@ export class RepackPlugin {
       __DEV__: JSON.stringify(compiler.options.mode === 'development'),
     }).apply(compiler);
 
-    new BabelPlugin().apply(compiler);
+    new BabelPlugin({ platform }).apply(compiler);
 
     new OutputPlugin({
       platform,

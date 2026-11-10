@@ -1,4 +1,4 @@
-import { loadOptions } from '@babel/core';
+import { loadOptions, type TransformOptions } from '@babel/core';
 import type Rspack from '@rspack/core';
 import type {
   experiments,
@@ -22,9 +22,13 @@ export function isTSXSource(fileName: string) {
   return !!fileName && fileName.endsWith('.tsx');
 }
 
-export function getProjectBabelConfig(filename: string, projectRoot?: string) {
+export function getProjectBabelConfig(
+  filename: string,
+  projectRoot?: string,
+  caller: TransformOptions['caller'] = { name: '@callstack/repack' }
+) {
   const babelConfig = loadOptions({
-    caller: { name: '@callstack/repack' },
+    caller,
     filename,
     root: projectRoot,
   });
