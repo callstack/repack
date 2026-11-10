@@ -91,7 +91,10 @@ export class Script {
       headers[key.toLowerCase()] = value;
     });
 
-    const uniqueId = Script.getScriptUniqueId(key.scriptId, key.caller);
+    const baseId = Script.getScriptUniqueId(key.scriptId, key.caller);
+    const uniqueId = locator.cacheKey
+      ? `${baseId}@${locator.cacheKey}`
+      : baseId;
 
     let body: NormalizedScriptLocator['body'];
     if (locator.body instanceof FormData) {

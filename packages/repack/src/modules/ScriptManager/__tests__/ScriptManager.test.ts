@@ -193,6 +193,44 @@ describe('ScriptManagerAPI', () => {
     expect(script.locator.uniqueId).toEqual('src_App_js');
   });
 
+  it('should append cacheKey to uniqueId', async () => {
+    ScriptManager.shared.addResolver(async (scriptId) => ({
+      url: Script.getRemoteURL(`http://domain.ext/v1/${scriptId}`),
+      cacheKey: 'v1',
+    }));
+
+    const script = await ScriptManager.shared.resolveScript(
+      'src_App_js',
+      'main'
+    );
+    expect(script.locator.uniqueId).toEqual('main_src_App_js@v1');
+  });
+
+  it('should keep a separate cache entry for each cacheKey', async () => {
+    const cache = new FakeCache();
+    ScriptManager.shared.setStorage(cache);
+
+    let version = 'v1';
+    ScriptManager.shared.addResolver(async (scriptId) => ({
+      url: Script.getRemoteURL(`http://domain.ext/${version}/${scriptId}`),
+      cacheKey: version,
+    }));
+
+    await ScriptManager.shared.loadScript('src_App_js', 'main');
+
+    version = 'v2';
+    const v2 = await ScriptManager.shared.resolveScript('src_App_js', 'main');
+    expect(v2.locator.uniqueId).toEqual('main_src_App_js@v2');
+    expect(v2.locator.fetch).toBe(true);
+
+    await ScriptManager.shared.loadScript('src_App_js', 'main');
+
+    version = 'v1';
+    const v1 = await ScriptManager.shared.resolveScript('src_App_js', 'main');
+    expect(v1.locator.uniqueId).toEqual('main_src_App_js@v1');
+    expect(v1.locator.fetch).toBe(false);
+  });
+
   it('should resolve with url only', async () => {
     const cache = new FakeCache();
 
