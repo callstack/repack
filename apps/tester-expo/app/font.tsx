@@ -1,49 +1,35 @@
 import { useFonts } from 'expo-font';
-import { Link } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
+import Report from '../ui/Report';
+import Screen from '../ui/Screen';
 
 export default function FontRoute() {
   const [fontsLoaded, fontError] = useFonts({
     ExpoFixture: require('../assets/fonts/material-symbols-regular.ttf'),
   });
 
-  if (fontError) {
-    return (
-      <View style={styles.container}>
-        <Text testID="font-error">Font error: {fontError.message}</Text>
-      </View>
-    );
-  }
-
-  if (!fontsLoaded) {
-    return (
-      <View style={styles.container}>
-        <Text testID="font-loading">Loading bundled font…</Text>
-      </View>
-    );
-  }
+  const state = fontError
+    ? `error: ${fontError.message}`
+    : fontsLoaded
+      ? 'loaded'
+      : 'loading';
 
   return (
-    <View style={styles.container}>
-      <Text>Bundled font loaded by expo-font:</Text>
-      <Text style={styles.fixtureFont} testID="font-ready">
-        home
-      </Text>
-      <Link href="/">Back home</Link>
-    </View>
+    <Screen testID="font-screen">
+      <Report testID="font-load-report" name="font" value={state} />
+      {fontsLoaded ? (
+        <Text style={styles.fixtureFont} testID="font-ready">
+          home
+        </Text>
+      ) : null}
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flex: 1,
-    gap: 16,
-    justifyContent: 'center',
-    padding: 24,
-  },
   fixtureFont: {
     fontFamily: 'ExpoFixture',
     fontSize: 32,
+    paddingHorizontal: 12,
   },
 });
