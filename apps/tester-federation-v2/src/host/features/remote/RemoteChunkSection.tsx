@@ -3,6 +3,7 @@ import * as React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import ActionButton from '../../ui/ActionButton';
+import ErrorBoundary from '../../ui/ErrorBoundary';
 
 const RemoteChunkId = 'remote';
 
@@ -43,9 +44,11 @@ const RemoteChunkSection = () => {
   return (
     <View style={styles.container}>
       {isLoaded ? (
-        <React.Suspense fallback={<Fallback />}>
-          <Remote />
-        </React.Suspense>
+        <ErrorBoundary testID="remote-chunk-error-report">
+          <React.Suspense fallback={<Fallback />}>
+            <Remote />
+          </React.Suspense>
+        </ErrorBoundary>
       ) : (
         <View style={styles.actions}>
           <ActionButton

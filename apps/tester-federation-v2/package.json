@@ -9,6 +9,8 @@
     "pods:update": "(cd ios && bundle install && bundle exec pod update)",
     "start:hostapp": "react-native webpack-start --config config.host-app.mts",
     "start:miniapp": "react-native webpack-start --config config.mini-app.mts --port 8082",
+    "start:hostapp:webpack": "USE_WEBPACK=1 react-native webpack-start --config config.host-app.mts --bundler webpack",
+    "start:miniapp:webpack": "USE_WEBPACK=1 react-native webpack-start --config config.mini-app.mts --port 8082 --bundler webpack",
     "start:expo-host-widget": "react-native webpack-start --config config.expo-host-widget.mts --port 8083",
     "e2e": "pnpm exec e2e run",
     "typecheck": "tsc --noEmit"

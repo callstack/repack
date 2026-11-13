@@ -23,6 +23,7 @@ ScriptManager.shared.addResolver(async (scriptId) => {
     };
   }
 
+  // release builds are out of scope for the e2e lane; nothing serves :9999 yet
   return {
     url: Script.getRemoteURL(`http://localhost:9999/${scriptId}`),
   };

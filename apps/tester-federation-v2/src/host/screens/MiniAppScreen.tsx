@@ -1,30 +1,9 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+
+import ErrorBoundary from '../ui/ErrorBoundary';
 
 const MiniAppNavigator = React.lazy(() => import('MiniApp/MiniAppNavigator'));
-
-class ErrorBoundary extends React.Component<
-  React.PropsWithChildren,
-  { hasError: boolean }
-> {
-  state = { hasError: false };
-
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <View style={styles.container}>
-          <Text>Failed to load Mini App</Text>
-        </View>
-      );
-    }
-
-    return this.props.children;
-  }
-}
 
 const FallbackComponent = () => (
   <View style={styles.container}>
@@ -35,7 +14,7 @@ const FallbackComponent = () => (
 const MiniAppScreen = () => {
   return (
     <View style={styles.screen}>
-      <ErrorBoundary>
+      <ErrorBoundary testID="miniapp-error-report">
         <React.Suspense fallback={<FallbackComponent />}>
           <MiniAppNavigator />
         </React.Suspense>

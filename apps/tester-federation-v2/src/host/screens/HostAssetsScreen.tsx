@@ -110,8 +110,8 @@ const AssetRow = ({ item }: { item: AssetItem }) => {
 };
 
 const BitmapRow = ({ item }: { item: BitmapItem }) => {
-  const resolved = Image.resolveAssetSource(item.source) as { uri: string };
-  const isInline = resolved.uri.startsWith('data:');
+  const uri = Image.resolveAssetSource(item.source)?.uri ?? '';
+  const isInline = uri.startsWith('data:');
   const status = isInline ? 'Inlined' : 'Emitted';
 
   return (
@@ -150,7 +150,7 @@ const BitmapRow = ({ item }: { item: BitmapItem }) => {
             <Report
               testID={`host-asset-${item.key}-uri-report`}
               name="uri"
-              value={isInline ? `${resolved.uri.slice(0, 48)}…` : resolved.uri}
+              value={isInline ? `${uri.slice(0, 48)}…` : uri}
             />
           ) : null}
         </View>

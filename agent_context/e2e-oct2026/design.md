@@ -47,6 +47,15 @@ Pin `E2E_DEVICE` — unset, the engine takes every booted device of the platform
 Needs Node `^22.22.3 || >=24.8.0` (CI pins 24.22.1). The app must be installed
 (`pnpm android` / `pnpm ios`).
 
+Put the device in light appearance first, as CI does — `nativewind` asserts
+`color-scheme: light` before it toggles: `adb shell cmd uimode night no` /
+`xcrun simctl ui booted appearance light`.
+
+To run the suite against webpack, start the servers with
+`pnpm start:hostapp:webpack` and `pnpm start:miniapp:webpack`. `USE_WEBPACK=1`
+alone is not enough: `webpack-start` picks the engine from the config filename,
+falls back to Rspack, and runs the webpack config inside it.
+
 **Warm the platform bundle before the first run**, on a fresh server:
 `curl 'localhost:8081/index.bundle?platform=android&dev=true&lazy=true&…'` (the
 iOS job's shape is in the workflow). A cold first launch compiles before it can
@@ -71,8 +80,9 @@ fallback bundle. Three consequences are load-bearing:
 - **8082 must be reachable as `localhost` from the device.** The remote URL is
   baked into the bundle as `http://localhost:8082/…` and Repack's
   `__PUBLIC_HOST__` rewrite covers asset public paths and HMR only, never Module
-  Federation remote URLs. The device needs `adb reverse tcp:8081 tcp:8082`; locally
-  the servers do this at startup, CI does it explicitly.
+  Federation remote URLs. The device needs `adb reverse tcp:8081 tcp:8081` and
+  `adb reverse tcp:8082 tcp:8082`; locally the servers do this at startup, CI
+  does it explicitly.
 
 Re.Pack builds a platform lazily, on that platform's first asset request, so
 "`/status` answers" has never meant "bundle is built". That is why the workflow
@@ -90,15 +100,24 @@ restarts the app), so nothing accumulates between tests.
 | `runtime-events` | the resolve/load chain or the hook chain is broken; one test drives it via Gallery, then reads counters + a computed `pipeline: settled` row | all 6 `ScriptManager` events + the 4 non-owning hooks, counted in `features/runtime/events.ts`; each of the 8 driving rows asserts `≥ 1`, `error: 0` is asserted, and `prefetching`/`error` feed the pipeline row |
 | `async-chunk` | a host-owned async chunk no longer loads through `ScriptManager` | `import()` + the allowlist resolver. Not `extraChunks`: `OutputPlugin` is off under a dev server and the resolver's `__DEV__` branch sends every chunk to it, so the `local` rule never runs in this Debug lane |
 | `remote-chunk` | the prefetch → load cycle broke, or `invalidateScripts` threw | `ScriptManager.prefetchScript` / `invalidateScripts` on host remote chunks. The asserts after Clear cache read UI state the screen sets itself, so an invalidate that resolves but clears nothing stays green. After the first load the button reads "Load from memory": `React.lazy` never asks `ScriptManager` again |
-| `miniapp-install` | a host mini-app chunk no longer installs via `import()`, or `invalidateScripts` threw | same APIs, second lifecycle; same invalidate gap as `remote-chunk`. After the first install the button reads "Show from memory" |
+| `miniapp-install` | a host mini-app chunk no longer installs via `import()`, or `invalidateScripts` threw | same APIs as `remote-chunk`, so it overlaps it (see below); same invalidate gap. After the first install the button reads "Show from memory" |
 | `host-assets` | asset rules no longer produce what they claim: inline gate (pic-1 87 KB in, pic-2 119 KB out), folder rules (`localAssets` emitted despite being small, `inlineAssets` inlined), the emitted URI is servable (fetch → 200, port and query string taken from the reported URI, never hardcoded). The `.svg` row asserts nothing, and that is honest: svgr compiles at build time, so a broken rule reddens the whole app at boot, before any assert could run | `assets-loader` (inline gate, per-folder rules), served asset route, `@svgr/webpack` rule |
-| `nativewind` | CSS stopped computing: `padding-applied: 16` and `calc-width: 248` are layout numbers, not text checks. The dark-mode round trip reads NativeWind's `useColorScheme()` state, not a resolved `dark:` style, and assumes the device starts in light appearance | `NativeWindPlugin` + the host-scoped JSX retag |
+| `nativewind` | CSS stopped computing: `padding-applied: 16` and `calc-width: 248` are layout numbers, not text checks. The dark-mode round trip reads NativeWind's `useColorScheme()` state, not a resolved `dark:` style, and needs the device in light appearance, which CI pins (`cmd uimode night no` / `simctl ui … appearance light`) | `NativeWindPlugin` + the host-scoped JSX retag |
 | `reanimated` | the worklet pipeline broke — the width row (`100 → 150 → 200 → 100`) is a shared value driven through `useAnimatedStyle` + `useAnimatedReaction` + `scheduleOnRN` (from `react-native-worklets` — reanimated's `runOnJS` re-export is deprecated), so it only moves if user worklets execute; an untransformed worklet throws at boot | the babel `react-native-worklets/plugin` transform; `ReanimatedPlugin`'s `unstable_disableTransform` only suppresses its own rules, which the new babel-swc-loader makes obsolete |
 
 Every row on a screen must own a distinct way to fail. That rule deleted the
 third host bitmap fixture (`pic_3.jpg`, 58 KB): under the same 90 KB gate as
 `pic_1`, so it could only ever fail where `pic_1` already fails. The same rule is
 the filter for any future row.
+
+One known exception: `async-chunk`, `remote-chunk` and `miniapp-install` all load
+through `import()` and the same `__DEV__` branch of the `setup.ts` resolver, so a
+break there turns all three red at once. `async-chunk` still owns its own failure
+(the only chunk that loads by itself, with its own allowlist entry), and so does
+`remote-chunk` (the only `prefetchScript` call). `miniapp-install` owns nothing
+`remote-chunk` doesn't (`import()` + `invalidateScripts` + content visible); it
+stays as the manual install / clear-cache demo, and its spec keeps that screen
+from silently breaking.
 
 Navigation is not a subject of its own. The navigator is react-native-screens —
 upstream code with upstream tests — and a broken one reddens every test at its
