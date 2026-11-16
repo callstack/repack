@@ -1,5 +1,13 @@
 # @callstack/repack
 
+## 5.4.4
+
+### Patch Changes
+
+- [#1505](https://github.com/callstack/repack/pull/1505) [`a09c630`](https://github.com/callstack/repack/commit/a09c6307c0573eb387c516408b5e2692a6cc33d6) Thanks [@RaphaelFakhri](https://github.com/RaphaelFakhri)! - Pass scales of inlined assets to `AssetSourceResolver.pickScale` in ascending order. Previously, assets with fractional scales such as `@1.5x` resolved to the wrong variant, for example the `@1.5x` image on a device with a pixel ratio of 3.5.
+- Updated dependencies []:
+  - @callstack/repack-dev-server@5.4.4
+
 ## 5.4.3
 
 ### Patch Changes
