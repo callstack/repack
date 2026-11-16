@@ -1,14 +1,17 @@
 import { ScriptManager } from '@callstack/repack/client';
 import * as React from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import ActionButton from '../../ui/ActionButton';
+import ErrorBoundary from '../../ui/ErrorBoundary';
 
 const RemoteChunkId = 'remote';
 
 const Remote = React.lazy(
   () => import(/* webpackChunkName: "remote" */ './Remote')
 );
+
+let loadedThisSession = false;
 
 const Fallback = () => (
   <View style={styles.fallback}>
@@ -19,13 +22,20 @@ const Fallback = () => (
 const RemoteChunkSection = () => {
   const [isPrefetched, setIsPrefetched] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(false);
+  const [inMemory, setInMemory] = React.useState(loadedThisSession);
 
   const prefetch = async () => {
     await ScriptManager.shared.prefetchScript(RemoteChunkId);
     setIsPrefetched(true);
   };
 
-  const invalidate = async () => {
+  const load = () => {
+    loadedThisSession = true;
+    setInMemory(true);
+    setIsLoaded(true);
+  };
+
+  const clearCache = async () => {
     await ScriptManager.shared.invalidateScripts([RemoteChunkId]);
     setIsLoaded(false);
     setIsPrefetched(false);
@@ -34,9 +44,11 @@ const RemoteChunkSection = () => {
   return (
     <View style={styles.container}>
       {isLoaded ? (
-        <React.Suspense fallback={<Fallback />}>
-          <Remote />
-        </React.Suspense>
+        <ErrorBoundary testID="remote-chunk-error-report">
+          <React.Suspense fallback={<Fallback />}>
+            <Remote />
+          </React.Suspense>
+        </ErrorBoundary>
       ) : (
         <View style={styles.actions}>
           <ActionButton
@@ -47,17 +59,22 @@ const RemoteChunkSection = () => {
           />
           <ActionButton
             testID="remote-chunk-load-button"
-            label="Load chunk"
-            onPress={() => setIsLoaded(true)}
+            label={inMemory ? 'Load from memory' : 'Load chunk'}
+            onPress={load}
           />
         </View>
       )}
       <ActionButton
-        testID="remote-chunk-invalidate-button"
-        label="Invalidate"
+        testID="remote-chunk-clear-cache-button"
+        label="Clear cache"
         variant="secondary"
-        onPress={invalidate}
+        onPress={clearCache}
       />
+      <Text style={styles.note}>
+        Code stays in memory until the app restarts. Clear cache only affects
+        the next start. Prefetch after Clear cache downloads again, for the next
+        start.
+      </Text>
     </View>
   );
 };
@@ -73,6 +90,10 @@ const styles = StyleSheet.create({
   },
   fallback: {
     paddingVertical: 24,
+  },
+  note: {
+    fontSize: 13,
+    color: '#6b5a60',
   },
 });
 

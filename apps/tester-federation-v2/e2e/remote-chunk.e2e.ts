@@ -23,7 +23,7 @@ test('prefetch, load, and invalidate the host remote chunk', async ({
   await screen.getByTestId('remote-chunk-load-button').tap();
   await expect(screen.getByTestId('remote-chunk-content')).toBeVisible();
 
-  await screen.getByTestId('remote-chunk-invalidate-button').tap();
+  await screen.getByTestId('remote-chunk-clear-cache-button').tap();
   await expect(screen.getByTestId('remote-chunk-content')).toBeHidden();
   await expect(screen.getByTestId('remote-chunk-load-button')).toBeVisible();
   await expect(

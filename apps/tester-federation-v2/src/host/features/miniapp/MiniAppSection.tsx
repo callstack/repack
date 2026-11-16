@@ -1,56 +1,51 @@
 import { ScriptManager } from '@callstack/repack/client';
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import ActionButton from '../../ui/ActionButton';
 
 const MiniAppChunkId = 'miniapp';
 
+let loadedThisSession = false;
+
 const MiniAppSection = () => {
-  const [isInstalled, setIsInstalled] = React.useState(false);
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [inMemory, setInMemory] = React.useState(loadedThisSession);
   const [MiniAppComponent, setMiniAppComponent] = React.useState<
     React.ComponentType | undefined
   >(undefined);
 
   const install = async () => {
     const bundle = await import(/* webpackChunkName: "miniapp" */ './MiniApp');
+    loadedThisSession = true;
+    setInMemory(true);
     setMiniAppComponent(() => bundle.default);
-    setIsInstalled(true);
   };
 
-  const uninstall = async () => {
+  const clearCache = async () => {
     await ScriptManager.shared.invalidateScripts([MiniAppChunkId]);
     setMiniAppComponent(undefined);
-    setIsInstalled(false);
-    setIsVisible(false);
   };
 
   return (
     <View style={styles.container}>
       <ActionButton
         testID="miniapp-install-button"
-        label="Install"
-        disabled={isInstalled}
+        label={inMemory ? 'Show from memory' : 'Install'}
+        disabled={MiniAppComponent !== undefined}
         onPress={install}
       />
       <ActionButton
-        testID="miniapp-uninstall-button"
-        label="Remove"
+        testID="miniapp-clear-cache-button"
+        label="Clear cache"
         variant="secondary"
-        disabled={!isInstalled}
-        onPress={uninstall}
+        disabled={MiniAppComponent === undefined}
+        onPress={clearCache}
       />
-      <ActionButton
-        testID="miniapp-toggle-button"
-        label={isVisible ? 'Hide' : 'Show'}
-        variant="secondary"
-        disabled={!isInstalled}
-        onPress={() => setIsVisible((visible) => !visible)}
-      />
-      {isInstalled && isVisible && MiniAppComponent ? (
-        <MiniAppComponent />
-      ) : null}
+      <Text style={styles.note}>
+        Code stays in memory until the app restarts. Clear cache only affects
+        the next start.
+      </Text>
+      {MiniAppComponent ? <MiniAppComponent /> : null}
     </View>
   );
 };
@@ -60,6 +55,10 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     paddingVertical: 12,
     gap: 8,
+  },
+  note: {
+    fontSize: 13,
+    color: '#6b5a60',
   },
 });
 

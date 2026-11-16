@@ -7,7 +7,7 @@ import { StyleSheet } from 'react-native';
 import AsyncChunkScreen from '../screens/AsyncChunkScreen';
 import HomeScreen from '../screens/HomeScreen';
 import HostAssetsScreen from '../screens/HostAssetsScreen';
-import MiniAppInstallScreen from '../screens/MiniAppInstallScreen.tsx';
+import MiniAppInstallScreen from '../screens/MiniAppInstallScreen';
 import MiniAppScreen from '../screens/MiniAppScreen';
 import NativeWindScreen from '../screens/NativeWindScreen';
 import ReanimatedScreen from '../screens/ReanimatedScreen';

@@ -25,11 +25,9 @@ export default function ReanimatedBox({
 
   useAnimatedReaction(
     () => width.value,
-    (_previous, next) => {
+    (current) => {
       'worklet';
-      if (next !== null) {
-        scheduleOnRN(onWidthChange, Math.round(next));
-      }
+      scheduleOnRN(onWidthChange, Math.round(current));
     }
   );
 

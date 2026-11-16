@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+import ErrorBoundary from '../../ui/ErrorBoundary';
+
 const AsyncLocal = React.lazy(
   () => import(/* webpackChunkName: "host-async-local" */ './Async.local')
 );
@@ -14,9 +16,11 @@ const Fallback = () => (
 const AsyncChunkSection = () => {
   return (
     <View style={styles.container}>
-      <React.Suspense fallback={<Fallback />}>
-        <AsyncLocal />
-      </React.Suspense>
+      <ErrorBoundary testID="async-chunk-error-report">
+        <React.Suspense fallback={<Fallback />}>
+          <AsyncLocal />
+        </React.Suspense>
+      </ErrorBoundary>
     </View>
   );
 };
