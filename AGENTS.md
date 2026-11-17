@@ -25,12 +25,30 @@ Re.Pack is a toolkit for building and developing React Native applications with 
 - `apps/tester-app/`: Primary manual/integration validation app.
 - `apps/tester-federation/`: Module Federation v1 validation app.
 - `apps/tester-federation-v2/`: Module Federation v2 validation app.
+- `apps/bench-expo/`, `apps/bench-bare/`: Neutral apps for benchmarking Re.Pack
+  against Metro (`tests/perf/src/competitors.mjs`).
 
 ### Tests
 
 - `tests/integration/`: Integration-level automated coverage.
 - `tests/metro-compat/`: Metro compatibility behavior coverage.
 - `tests/resolver-cases/`: Resolver behavior and edge-case coverage.
+- `tests/perf/`: Bundle size, build time and memory benchmarks (CI: `perf.yml`).
+
+### Performance
+
+Changes to bundling code (`packages/repack/src/{loaders,plugins,modules,commands}`,
+plugin packages, bundler config defaults) can regress bundle size, build time
+or memory. Before opening a PR for such a change, run
+`pnpm bench --base-ref origin/main` (narrow with `--fixtures rspack/ios --runs 3`
+while iterating) and read `tests/perf/results/report.md`:
+
+- 🔴 must be fixed, or justified in the PR description if intended.
+- 🟡 should be explained in the PR description.
+- Treat "made the build output nondeterministic" as a bug.
+
+The same check runs in CI only on demand (add the `perf` label to a PR, or run
+the `Performance` workflow manually); it is not part of the regular CI checks.
 
 ## Agent Context
 

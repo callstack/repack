@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Repack Expo Bench",
+    "slug": "repack-expo-bench",
+    "scheme": "repackbench",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "updates": {
+      "enabled": false
+    },
+    "plugins": ["expo-router", "@callstack/repack-expo"],
+    "ios": {
+      "bundleIdentifier": "com.callstack.repackbench"
+    },
+    "android": {
+      "package": "com.callstack.repackbench"
+    }
+  }
+}

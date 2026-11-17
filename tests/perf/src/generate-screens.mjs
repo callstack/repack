@@ -1,0 +1,224 @@
+// Generates synthetic screens to benchmark bundlers at larger app sizes. Both
+// benchmark apps get the same screens and components; only the way screens
+// are wired in differs:
+//
+// - expo: routes in app/generated, picked up by Expo Router's require.context.
+// - bare: screens in src/generated/screens, imported statically by
+//   src/generated/index.ts (the app renders them from that list).
+//
+// Usage: node generate-screens.mjs <expo|bare> <appDir> <screenCount>
+import fs from 'node:fs';
+import path from 'node:path';
+
+const pad = (n) => String(n).padStart(5, '0');
+
+function componentSource(i) {
+  return `import { memo, useMemo } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+export interface Card${pad(i)}Props {
+  title: string;
+  values: number[];
+  onPress?: (id: number) => void;
+}
+
+function Card${pad(i)}({ title, values, onPress }: Card${pad(i)}Props) {
+  const summary = useMemo(() => {
+    const total = values.reduce((sum, value) => sum + value, 0);
+    const max = values.length ? Math.max(...values) : 0;
+    return { total, max, average: values.length ? total / values.length : 0 };
+  }, [values]);
+
+  return (
+    <Pressable onPress={() => onPress?.(${i})} style={styles.card}>
+      <Text style={styles.title}>{title}</Text>
+      <View style={styles.row}>
+        <Text>Total: {summary.total}</Text>
+        <Text>Max: {summary.max}</Text>
+        <Text>Avg: {summary.average.toFixed(2)}</Text>
+      </View>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: { borderRadius: 12, padding: ${8 + (i % 8)}, backgroundColor: '#${(0x100000 + i * 997).toString(16).slice(-6)}' },
+  title: { fontSize: ${14 + (i % 6)}, fontWeight: '600' },
+  row: { flexDirection: 'row', gap: 8, marginTop: 4 },
+});
+
+export default memo(Card${pad(i)});
+`;
+}
+
+function screenSource(i, componentCount, flavor) {
+  const a = i % componentCount;
+  const b = (i * 7 + 3) % componentCount;
+  const imports =
+    flavor === 'expo'
+      ? `import { Link } from 'expo-router';
+import { useCallback, useReducer, useState } from 'react';
+import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import CardA from '../../components/generated/Card${pad(a)}';
+import CardB from '../../components/generated/Card${pad(b)}';`
+      : `import { useCallback, useReducer, useState } from 'react';
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import CardA from '../components/Card${pad(a)}';
+import CardB from '../components/Card${pad(b)}';`;
+  const signature =
+    flavor === 'expo'
+      ? `export default function Screen${pad(i)}() {`
+      : `export default function Screen${pad(i)}({ onBack }: { onBack: () => void }) {`;
+  const back =
+    flavor === 'expo'
+      ? '<Link href="/">Back home</Link>'
+      : '<Pressable onPress={onBack}><Text>Back home</Text></Pressable>';
+
+  return `${imports}
+
+type Item = { id: number; label: string; values: number[] };
+type Action = { type: 'add'; label: string } | { type: 'remove'; id: number };
+
+function reducer(state: Item[], action: Action): Item[] {
+  switch (action.type) {
+    case 'add':
+      return [
+        ...state,
+        {
+          id: state.length + ${i},
+          label: action.label,
+          values: Array.from({ length: ${3 + (i % 5)} }, (_, n) => n * ${1 + (i % 9)}),
+        },
+      ];
+    case 'remove':
+      return state.filter((item) => item.id !== action.id);
+  }
+}
+
+${signature}
+  const [query, setQuery] = useState('');
+  const [items, dispatch] = useReducer(reducer, []);
+  const visible = items.filter((item) =>
+    item.label.toLowerCase().includes(query.toLowerCase())
+  );
+  const remove = useCallback((id: number) => dispatch({ type: 'remove', id }), []);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.heading}>Screen ${i}</Text>
+      <TextInput
+        placeholder="Filter"
+        value={query}
+        onChangeText={setQuery}
+        onSubmitEditing={() => dispatch({ type: 'add', label: query || 'Item ${i}' })}
+        style={styles.input}
+      />
+      <FlatList
+        data={visible}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item, index }) =>
+          index % 2 ? (
+            <CardA title={item.label} values={item.values} onPress={remove} />
+          ) : (
+            <CardB title={item.label} values={item.values} onPress={remove} />
+          )
+        }
+      />
+      ${back}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: ${12 + (i % 12)}, gap: 12 },
+  heading: { fontSize: 22, fontWeight: '700' },
+  input: { borderWidth: 1, borderRadius: 8, padding: 8 },
+});
+`;
+}
+
+/** Index of the bare app's screens. With 0 screens this matches the committed file. */
+function bareIndexSource(count) {
+  if (count === 0) {
+    return `// Generated by tests/perf/src/generate-screens.mjs. Empty until screens are
+// generated for a benchmark run.
+import type { ComponentType } from 'react';
+
+export const screens: ComponentType<{ onBack: () => void }>[] = [];
+`;
+  }
+  const imports = Array.from(
+    { length: count },
+    (_, i) => `import Screen${pad(i)} from './screens/Screen${pad(i)}';`
+  ).join('\n');
+  const list = Array.from(
+    { length: count },
+    (_, i) => `  Screen${pad(i)},`
+  ).join('\n');
+  return `// Generated by tests/perf/src/generate-screens.mjs.
+import type { ComponentType } from 'react';
+${imports}
+
+export const screens: ComponentType<{ onBack: () => void }>[] = [
+${list}
+];
+`;
+}
+
+export function generateScreens(flavor, appDir, count) {
+  const layout =
+    flavor === 'expo'
+      ? {
+          screensDir: path.join(appDir, 'app/generated'),
+          componentsDir: path.join(appDir, 'components/generated'),
+          screenFile: (i) => `screen-${pad(i)}.tsx`,
+        }
+      : {
+          screensDir: path.join(appDir, 'src/generated/screens'),
+          componentsDir: path.join(appDir, 'src/generated/components'),
+          screenFile: (i) => `Screen${pad(i)}.tsx`,
+        };
+
+  for (const dir of [layout.screensDir, layout.componentsDir]) {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+  if (flavor === 'bare') {
+    fs.writeFileSync(
+      path.join(appDir, 'src/generated/index.ts'),
+      bareIndexSource(count)
+    );
+  }
+  if (count === 0) return;
+
+  const componentCount = Math.max(1, Math.ceil(count / 4));
+  fs.mkdirSync(layout.screensDir, { recursive: true });
+  fs.mkdirSync(layout.componentsDir, { recursive: true });
+  for (let i = 0; i < componentCount; i++) {
+    fs.writeFileSync(
+      path.join(layout.componentsDir, `Card${pad(i)}.tsx`),
+      componentSource(i)
+    );
+  }
+  for (let i = 0; i < count; i++) {
+    fs.writeFileSync(
+      path.join(layout.screensDir, layout.screenFile(i)),
+      screenSource(i, componentCount, flavor)
+    );
+  }
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const [flavor, appDir, count = '0'] = process.argv.slice(2);
+  if (flavor !== 'expo' && flavor !== 'bare') {
+    throw new Error('Usage: generate-screens.mjs <expo|bare> <appDir> <count>');
+  }
+  generateScreens(flavor, path.resolve(appDir), Number(count));
+  console.log(`Generated ${count} ${flavor} screens in ${appDir}`);
+}

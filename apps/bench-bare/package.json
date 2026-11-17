@@ -1,0 +1,32 @@
+{
+  "name": "bench-bare",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Neutral bare React Native app for benchmarking Re.Pack against plain Metro",
+  "scripts": {
+    "start": "react-native start",
+    "start:metro": "BENCH_BUNDLER=metro react-native start",
+    "bundle:ios": "react-native bundle --platform ios --dev false --entry-file index.js --bundle-output build/repack/main.jsbundle",
+    "bundle:ios:metro": "BENCH_BUNDLER=metro react-native bundle --platform ios --dev false --entry-file index.js --bundle-output build/metro/main.jsbundle --assets-dest build/metro",
+    "generate": "node ../../tests/perf/src/generate-screens.mjs bare .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "catalog:",
+    "react-native": "catalog:"
+  },
+  "devDependencies": {
+    "@babel/core": "catalog:",
+    "@callstack/repack": "workspace:*",
+    "@react-native-community/cli": "catalog:testers",
+    "@react-native-community/cli-platform-android": "catalog:testers",
+    "@react-native-community/cli-platform-ios": "catalog:testers",
+    "@react-native/babel-preset": "catalog:testers",
+    "@react-native/metro-config": "catalog:testers",
+    "@react-native/typescript-config": "catalog:testers",
+    "@rspack/core": "catalog:",
+    "@swc/helpers": "catalog:",
+    "@types/react": "catalog:testers",
+    "typescript": "catalog:"
+  }
+}

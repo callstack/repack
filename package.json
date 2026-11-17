@@ -14,6 +14,7 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:release": "node --test .github/scripts/*.test.mjs",
+    "bench": "pnpm --filter perf-benchmark run bench",
     "version-packages": "pnpm changeset version && pnpm lint",
     "version-packages:canary": "pnpm changeset version --snapshot canary && pnpm lint",
     "release": "pnpm changeset publish",

@@ -1,0 +1,4 @@
+build/
+.expo/
+app/generated/
+components/generated/
