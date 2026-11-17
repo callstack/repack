@@ -18,14 +18,17 @@ async function symbolicateProbeError() {
   return 'nothing thrown';
 }
 
+type ProbeResult = { name: 'frame' | 'error'; value: string };
+
 export function useSymbolicationProbe() {
-  const [frame, setFrame] = useState<string>();
+  const [result, setResult] = useState<ProbeResult>();
 
   const probe = () => {
-    symbolicateProbeError().then(setFrame, (error: Error) =>
-      setFrame(`failed: ${error.message}`)
+    symbolicateProbeError().then(
+      (value) => setResult({ name: 'frame', value }),
+      (error: Error) => setResult({ name: 'error', value: error.message })
     );
   };
 
-  return { frame, probe };
+  return { result, probe };
 }

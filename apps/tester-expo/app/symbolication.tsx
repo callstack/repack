@@ -4,21 +4,22 @@ import Report from '../ui/Report';
 import Screen from '../ui/Screen';
 
 export default function SymbolicationRoute() {
-  const { frame, probe } = useSymbolicationProbe();
+  const { result, probe } = useSymbolicationProbe();
+  const symbolicated = result?.name === 'frame';
 
   return (
     <Screen testID="symbolication-screen">
       <ActionButton
         testID="symbolication-probe-button"
-        label={frame ? 'Symbolicated' : 'Symbolicate a stack trace'}
-        disabled={frame !== undefined}
+        label={symbolicated ? 'Symbolicated' : 'Symbolicate a stack trace'}
+        disabled={symbolicated}
         onPress={probe}
       />
-      {frame && (
+      {result && (
         <Report
           testID="symbolication-frame-report"
-          name="frame"
-          value={frame}
+          name={result.name}
+          value={result.value}
         />
       )}
     </Screen>
