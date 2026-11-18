@@ -12,7 +12,10 @@ import {
   readNumber,
   readString,
 } from '../shared/guards';
-import { getRemoteDevServerOrigins } from '../shared/origins';
+import {
+  getRemoteDevServerOrigins,
+  type RemoteOrigin,
+} from '../shared/origins';
 import { isFailedRequest } from '../shared/requests';
 import type {
   DevServerState,
@@ -281,38 +284,58 @@ export const diagnoseScripts = (
   return diagnostics;
 };
 
+/** The origin answered, but not with Re.Pack DevTools state (e.g. a CDN). */
+class NotADevToolsServerError extends Error {}
+
 export const fetchDevServerState = async (
-  origin = getDevServerOrigin()
+  origin = getDevServerOrigin(),
+  timeoutMs?: number
 ): Promise<DevServerState> => {
   if (!origin) throw new Error('Dev server origin is unknown.');
+  const controller = timeoutMs ? new AbortController() : undefined;
+  const timer = controller
+    ? setTimeout(() => controller.abort(), timeoutMs)
+    : undefined;
   let response: Response;
   try {
-    response = await fetch(`${origin}${DEV_SERVER_ROUTE}/state`);
+    response = await fetch(`${origin}${DEV_SERVER_ROUTE}/state`, {
+      signal: controller?.signal,
+    });
   } catch (error) {
     throw new Error(
       `Dev server ${origin} is not reachable from the device (${String(error)}). Is it running, and is the port forwarded (adb reverse)?`
     );
+  } finally {
+    clearTimeout(timer);
   }
   if (!response.ok) {
-    throw new Error(
+    throw new NotADevToolsServerError(
       `${origin}${DEV_SERVER_ROUTE}/state responded with ${response.status}. Is the config wrapped with withRepackDevTools?`
     );
   }
-  const body: unknown = await response.json();
+  const body: unknown = await response.json().catch(() => undefined);
   if (!isDevServerState(body)) {
-    throw new Error(
+    throw new NotADevToolsServerError(
       `${origin}${DEV_SERVER_ROUTE}/state returned an unexpected payload.`
     );
   }
   return body;
 };
 
+type DevServerProbe = {
+  summary?: DevServerSummary;
+  diagnostics: Diagnostic[];
+  /** Set when the origin answered without DevTools state. */
+  notADevToolsServer?: boolean;
+};
+
 const summarizeDevServer = async (
-  origin: string | undefined
-): Promise<{ summary?: DevServerSummary; diagnostics: Diagnostic[] }> => {
+  origin: string | undefined,
+  timeoutMs?: number
+): Promise<DevServerProbe> => {
   if (!origin) return { diagnostics: [] };
   try {
-    const state = await fetchDevServerState(origin);
+    const state = await fetchDevServerState(origin, timeoutMs);
     return {
       summary: {
         origin,
@@ -337,8 +360,33 @@ const summarizeDevServer = async (
         failedRequests: 0,
       },
       diagnostics: [],
+      notADevToolsServer: error instanceof NotADevToolsServerError,
     };
   }
+};
+
+const REMOTE_DEV_SERVER_TIMEOUT_MS = 3000;
+
+/**
+ * Script origins that answered without DevTools state (CDNs, static hosts).
+ * Skipped for the rest of this JS runtime. Origins that did not answer are
+ * retried, since a mini app's dev server may simply not be started yet.
+ */
+const notDevToolsOrigins = new Set<string>();
+
+/**
+ * MF remote origins are always reported, unreachable or not. Other script
+ * origins are reported only when they serve DevTools state, so a CDN is not
+ * listed as an unreachable dev server.
+ */
+const summarizeRemoteDevServer = async ({
+  origin,
+  mfRemote,
+}: RemoteOrigin): Promise<DevServerProbe> => {
+  const probe = await summarizeDevServer(origin, REMOTE_DEV_SERVER_TIMEOUT_MS);
+  if (mfRemote || probe.summary?.reachable) return probe;
+  if (probe.notADevToolsServer) notDevToolsOrigins.add(origin);
+  return { diagnostics: [] };
 };
 
 const SEVERITY_ORDER = { error: 0, warning: 1, info: 2 } as const;
@@ -353,12 +401,17 @@ export const getOverview = async (
   const remoteOrigins =
     options.devServer === false
       ? []
-      : getRemoteDevServerOrigins(federation, scripts, app.devServer);
+      : getRemoteDevServerOrigins(
+          federation,
+          scripts,
+          app.devServer,
+          notDevToolsOrigins
+        );
   const [devServer, remoteDevServers, scriptManager] = await Promise.all([
     options.devServer === false
       ? summarizeDevServer(undefined)
       : summarizeDevServer(app.devServer),
-    Promise.all(remoteOrigins.map(summarizeDevServer)),
+    Promise.all(remoteOrigins.map(summarizeRemoteDevServer)),
     getScriptManagerState().catch(() => undefined),
   ]);
 

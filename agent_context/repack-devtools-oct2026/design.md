@@ -22,7 +22,10 @@ The halves are joined by the app: `get-overview` and `get-dev-server` fetch
 and bundler diagnostics. `get-overview` also queries every other origin that
 MF remote entries or ScriptManager script URLs point at (e.g. a mini app's
 dev server on :8082; at most 5) and merges their diagnostics prefixed with
-`[origin]`, so a broken remote build shows up next to the failed load. The dev-server half also works alone (curl). That is
+`[origin]`, so a broken remote build shows up next to the failed load. MF
+remote origins are always reported; other script origins only when they
+serve DevTools state, and ones that answer without it (CDNs) are not probed
+again in that JS runtime. Remote probes time out after 3 s. The dev-server half also works alone (curl). That is
 the only option when the bundle does not build.
 
 ## App side

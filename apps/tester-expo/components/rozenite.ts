@@ -4,4 +4,5 @@
 const plugins: typeof import('./rozenitePlugins') | undefined =
   __WITH_ROZENITE__ ? require('./rozenitePlugins') : undefined;
 
+export const startDevTools = plugins?.startDevTools ?? (() => {});
 export const useDevTools = plugins?.useDevTools ?? (() => {});

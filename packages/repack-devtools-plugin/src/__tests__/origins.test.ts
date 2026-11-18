@@ -24,12 +24,18 @@ describe('getRemoteDevServerOrigins', () => {
       [
         { locator: { url: 'http://localhost:8081/android/chunk.bundle' } },
         { locator: { url: 'http://localhost:8083/android/remote.bundle' } },
+        { locator: { url: 'http://localhost:8082/android/chunk.bundle' } },
+        { locator: { url: 'https://cdn.example.com/chunk.bundle' } },
         { locator: { url: 'file:///data/local/chunk.bundle' } },
         {},
       ],
-      'http://localhost:8081'
+      'http://localhost:8081',
+      new Set(['https://cdn.example.com'])
     );
-    expect(origins).toEqual(['http://localhost:8082', 'http://localhost:8083']);
+    expect(origins).toEqual([
+      { origin: 'http://localhost:8082', mfRemote: true },
+      { origin: 'http://localhost:8083', mfRemote: false },
+    ]);
   });
 
   it('only accepts http(s) URLs', () => {
