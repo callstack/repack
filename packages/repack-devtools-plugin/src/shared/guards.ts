@@ -31,6 +31,17 @@ export const readBoolean = (value: unknown, key: string) => {
   return typeof prop === 'boolean' ? prop : undefined;
 };
 
+/**
+ * Reads a boolean flag that may also be encoded as `1`/`0`, as Rspack writes
+ * Module Federation share flags (`singleton: 1`, `eager: 1`).
+ */
+export const readFlag = (value: unknown, key: string) => {
+  const prop = getProp(value, key);
+  if (typeof prop === 'boolean') return prop;
+  if (prop === 1 || prop === 0) return prop === 1;
+  return undefined;
+};
+
 export const readArray = (value: unknown, key: string): unknown[] => {
   const prop = getProp(value, key);
   return Array.isArray(prop) ? prop : [];

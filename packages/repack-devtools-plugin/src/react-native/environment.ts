@@ -6,6 +6,7 @@ import {
   TurboModuleRegistry,
 } from 'react-native';
 import { getProp, readGlobal, readString } from '../shared/guards';
+import { toOrigin } from '../shared/origins';
 import type { AppInfo } from '../shared/types';
 import type { FederationGlobals } from './federation/state';
 import { getStore } from './store';
@@ -43,12 +44,6 @@ export const getBundleUrl = (): string | undefined => {
   } catch {
     return undefined;
   }
-};
-
-const toOrigin = (url: string | undefined) => {
-  if (!url || !/^https?:\/\//.test(url)) return undefined;
-  const match = /^(https?:\/\/[^/]+)/.exec(url);
-  return match?.[1];
 };
 
 /**

@@ -145,8 +145,22 @@ const handleFaults = (
 const sendJson = (res: ServerResponse, status: number, body: unknown) => {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.end(JSON.stringify(body));
+};
+
+/**
+ * True for a browser request sent from a page this dev server did not serve.
+ * The panels are same-origin, and the app and CLI tools send no `Origin`, so
+ * only another site (e.g. a page open in the developer's browser) is refused.
+ */
+const isCrossOrigin = (req: IncomingMessage) => {
+  const origin = req.headers.origin;
+  if (!origin) return false;
+  try {
+    return new URL(origin).host !== req.headers.host;
+  } catch {
+    return true;
+  }
 };
 
 /**
@@ -163,6 +177,11 @@ export const createStateMiddleware = (): Middleware => {
     const params = new URLSearchParams(query);
     const store = getDevServerStore();
 
+    if (req.method !== 'GET' && req.method !== 'HEAD' && isCrossOrigin(req)) {
+      return sendJson(res, 403, {
+        error: `Cross-origin ${req.method} to ${DEV_SERVER_ROUTE} is not allowed.`,
+      });
+    }
     if (path === '/faults') return handleFaults(req, res, params, store);
     if (req.method === 'POST' && path === '/clear') {
       store.requests.length = 0;

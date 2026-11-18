@@ -21,16 +21,33 @@ describe('satisfiesRange', () => {
     expect(satisfiesRange(version, range)).toBe(expected);
   });
 
-  it('returns undefined for ranges it does not understand', () => {
-    expect(satisfiesRange('1.0.0', '1.x || 2.x')).toBeUndefined();
-  });
+  it.each([
+    ['1.0.0', '1.x || 2.x'],
+    ['19.2.0', '1.x'],
+    ['1.2.9', '1.2.x'],
+    ['1.2.9', '~1.2.*'],
+    ['1.2.3', '1.2.3-alpha'],
+    ['1.2.9', '1.2'],
+    ['0.5.0', '^0'],
+  ])(
+    'returns undefined for %s against %s, which it does not model',
+    (version, range) => {
+      expect(satisfiesRange(version, range)).toBeUndefined();
+    }
+  );
 });
 
-const shared = (version: string, from: string, loaded: boolean) => ({
+// The shape Rspack's share runtime module emits: flags are `1`, not `true`.
+const shared = (
+  version: string,
+  from: string,
+  loaded: boolean,
+  shareConfig: Record<string, unknown> = {}
+) => ({
   version,
   from,
   loaded: loaded ? 1 : undefined,
-  shareConfig: { singleton: true, requiredVersion: '^19.0.0' },
+  shareConfig: { singleton: 1, requiredVersion: '^19.0.0', ...shareConfig },
 });
 
 describe('readFederationState', () => {
@@ -120,6 +137,52 @@ describe('readFederationState', () => {
     });
     expect(state.diagnostics.map((item) => item.message)).toContain(
       '"react" 18.3.1 (from MiniApp) is loaded but HostApp requires ^19.0.0.'
+    );
+  });
+
+  it('reads numeric eager, singleton and strictVersion flags', () => {
+    const state = readFederationState({
+      federation: {
+        __INSTANCES__: [
+          {
+            name: 'HostApp',
+            shareScopeMap: {
+              default: {
+                react: {
+                  '18.3.1': shared('18.3.1', 'MiniApp', true, { eager: 1 }),
+                  '19.2.0': shared('19.2.0', 'HostApp', false, {
+                    singleton: 0,
+                    strictVersion: 1,
+                  }),
+                },
+              },
+            },
+          },
+        ],
+      },
+      runtimePluginInstalled: true,
+      events: [],
+    });
+    expect(state.instances[0].shared[0].versions).toEqual([
+      expect.objectContaining({
+        version: '18.3.1',
+        eager: true,
+        singleton: true,
+        strictVersion: undefined,
+      }),
+      expect.objectContaining({
+        version: '19.2.0',
+        eager: undefined,
+        singleton: false,
+        strictVersion: true,
+      }),
+    ]);
+    expect(state.diagnostics).toContainEqual(
+      expect.objectContaining({
+        severity: 'error',
+        message:
+          '"react" 18.3.1 (from MiniApp) is loaded but HostApp requires ^19.0.0.',
+      })
     );
   });
 

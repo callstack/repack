@@ -22,8 +22,9 @@ const isDevServerStore = (value: unknown): value is DevServerStore =>
   Array.isArray(value.faults);
 
 /**
- * One store per dev server process. Re.Pack runs every platform compiler in
- * the same process, so they all record here.
+ * One store per thread. Rspack compilers run in the dev server's thread and
+ * record here directly; webpack workers forward their compilations to it
+ * (see workerSync.ts).
  */
 export const getDevServerStore = (): DevServerStore => {
   const existing = readGlobal(DEV_SERVER_STORE_GLOBAL);

@@ -5,6 +5,7 @@ import {
   createStateMiddleware,
 } from './middleware.js';
 import { getDevServerStore } from './store.js';
+import { subscribeToWorkerCompilations } from './workerSync.js';
 
 type EnvLike = {
   platform?: string;
@@ -56,6 +57,7 @@ export const withRepackDevTools = <
 
     const store = getDevServerStore();
     store.port = env.devServer.port ?? store.port;
+    subscribeToWorkerCompilations(store);
     const userSetupMiddlewares = resolved.devServer?.setupMiddlewares;
 
     return {

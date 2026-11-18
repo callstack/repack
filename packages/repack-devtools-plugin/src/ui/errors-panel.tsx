@@ -109,13 +109,20 @@ export default function ErrorsPanel() {
   const [selected, setSelected] = useState<RecordedError | null>(null);
   const [stack, setStack] = useState('');
   const [result, setResult] = useState<SymbolicationResult | null>(null);
+  const [symbolicateError, setSymbolicateError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const symbolicate = async (params: { stack?: string; errorId?: string }) => {
     if (!rpc) return;
     setBusy(true);
+    setSymbolicateError(null);
     try {
       setResult(await rpc.method('symbolicate').invoke(params));
+    } catch (cause) {
+      setResult(null);
+      setSymbolicateError(
+        `Symbolication failed: ${cause instanceof Error ? cause.message : String(cause)}`
+      );
     } finally {
       setBusy(false);
     }
@@ -204,6 +211,7 @@ export default function ErrorsPanel() {
             onChange={(event) => setStack(event.target.value)}
           />
         </Section>
+        {symbolicateError ? <Notice>{symbolicateError}</Notice> : null}
         {result ? (
           // keyed so a new result scrolls into view again
           <Reveal key={result.frames.length + (result.status ?? 0)}>

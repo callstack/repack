@@ -19,7 +19,10 @@ Agent workflows live in the `repack-debug-runtime` and
 
 The halves are joined by the app: `get-overview` and `get-dev-server` fetch
 `<devServer>/repack-devtools/state` from the device, so one call returns app
-and bundler diagnostics. The dev-server half also works alone (curl). That is
+and bundler diagnostics. `get-overview` also queries every other origin that
+MF remote entries or ScriptManager script URLs point at (e.g. a mini app's
+dev server on :8082; at most 5) and merges their diagnostics prefixed with
+`[origin]`, so a broken remote build shows up next to the failed load. The dev-server half also works alone (curl). That is
 the only option when the bundle does not build.
 
 ## App side
@@ -93,8 +96,22 @@ the only option when the bundle does not build.
 function). It only changes configs evaluated with `env.devServer` (never
 `bundle`), adds `RepackDevToolsCollectorPlugin({ platform })`, and prepends
 the state and request-log middlewares through `devServer.setupMiddlewares`.
-Middlewares are marked `__repackDevTools` so they are added once. The
-request log captures the first 4 KB of failed responses (the dev server's
+Middlewares are marked `__repackDevTools` so they are added once.
+
+Webpack: Re.Pack builds each platform in a worker thread that evaluates the
+config again, so the collector there has its own store. Workers publish each
+compilation snapshot on a `node:worker_threads` `BroadcastChannel`
+(`bundler/workerSync.ts`) and the main thread, which serves the endpoints,
+copies it into its store. A channel rather than `parentPort` because Re.Pack's
+worker message handler treats unknown events as a build start. Rspack runs
+every compiler in the main thread, so this is a no-op there.
+
+The endpoints send no CORS headers, and `POST`/`DELETE` requests whose
+`Origin` is not the dev server itself get 403. Panels are same-origin and the
+app and CLI send no `Origin`, so this only stops other web pages from injecting
+faults or clearing state through the developer's browser.
+
+The request log captures the first 4 KB of failed responses (the dev server's
 explanation) and skips tooling paths. Diagnostics compare 404'd asset URLs
 with the platform's emitted asset names.
 

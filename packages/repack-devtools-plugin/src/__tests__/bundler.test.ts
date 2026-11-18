@@ -15,6 +15,11 @@ import {
 } from '../bundler/middleware';
 import { getCompilation, getDevServerStore } from '../bundler/store';
 import { withRepackDevTools } from '../bundler/withRepackDevTools';
+import {
+  closeWorkerSync,
+  publishCompilation,
+  subscribeToWorkerCompilations,
+} from '../bundler/workerSync';
 import { DEV_SERVER_STORE_GLOBAL } from '../shared/constants';
 import { isDevServerState } from '../shared/guards';
 
@@ -97,6 +102,37 @@ describe('collector', () => {
       },
     });
     expect(Array.from(taps.keys())).toEqual(['watchRun', 'invalid', 'done']);
+  });
+});
+
+describe('workerSync', () => {
+  afterEach(() => closeWorkerSync());
+
+  it('copies compilations published by webpack workers into the main store', async () => {
+    const main = getDevServerStore();
+    subscribeToWorkerCompilations(main, true);
+
+    // what a webpack worker's collector holds in its own store
+    const workerCompilation = {
+      ...getCompilation(
+        {
+          startedAt: 0,
+          seq: 0,
+          compilations: new Map(),
+          requests: [],
+          faults: [],
+        },
+        'android'
+      ),
+      status: 'ok' as const,
+      builds: 1,
+    };
+    publishCompilation(workerCompilation, true); // main thread: ignored
+    publishCompilation(workerCompilation, false);
+
+    await expect
+      .poll(() => main.compilations.get('android'))
+      .toMatchObject({ status: 'ok', builds: 1 });
   });
 });
 
@@ -302,6 +338,35 @@ describe('middlewares', () => {
     const response = await fetch(`${origin}/slow.bundle`);
     expect(response.status).toBe(200);
     expect(Date.now() - startedAt).toBeGreaterThanOrEqual(35);
+  });
+
+  it('refuses cross-origin changes and sends no CORS header', async () => {
+    await listen(stack());
+    const fault = JSON.stringify({ match: '/', drop: true });
+
+    const crossOrigin = await fetch(`${origin}/repack-devtools/faults`, {
+      method: 'POST',
+      headers: { Origin: 'http://evil.example' },
+      body: fault,
+    });
+    expect(crossOrigin.status).toBe(403);
+    const crossOriginClear = await fetch(`${origin}/repack-devtools/clear`, {
+      method: 'POST',
+      headers: { Origin: 'http://localhost:1' },
+    });
+    expect(crossOriginClear.status).toBe(403);
+    expect(getDevServerStore().faults).toEqual([]);
+
+    const sameOrigin = await fetch(`${origin}/repack-devtools/faults`, {
+      method: 'DELETE',
+      headers: { Origin: origin },
+    });
+    expect(sameOrigin.status).toBe(200);
+    const state = await fetch(`${origin}/repack-devtools/state`, {
+      headers: { Origin: 'http://evil.example' },
+    });
+    expect(state.status).toBe(200);
+    expect(state.headers.get('access-control-allow-origin')).toBeNull();
   });
 
   it('validates, lists and removes faults', async () => {

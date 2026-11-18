@@ -12,6 +12,7 @@ import {
   readNumber,
   readString,
 } from '../shared/guards';
+import { getRemoteDevServerOrigins } from '../shared/origins';
 import { isFailedRequest } from '../shared/requests';
 import type {
   DevServerState,
@@ -349,10 +350,15 @@ export const getOverview = async (
   const app = getAppInfo();
   const scripts = Array.from(store.scripts.values());
   const federation = getFederation();
-  const [devServer, scriptManager] = await Promise.all([
+  const remoteOrigins =
+    options.devServer === false
+      ? []
+      : getRemoteDevServerOrigins(federation, scripts, app.devServer);
+  const [devServer, remoteDevServers, scriptManager] = await Promise.all([
     options.devServer === false
       ? summarizeDevServer(undefined)
       : summarizeDevServer(app.devServer),
+    Promise.all(remoteOrigins.map(summarizeDevServer)),
     getScriptManagerState().catch(() => undefined),
   ]);
 
@@ -374,6 +380,12 @@ export const getOverview = async (
         })
       ),
     ...devServer.diagnostics,
+    ...remoteDevServers.flatMap(({ summary, diagnostics: remote }) =>
+      remote.map((diagnostic) => ({
+        ...diagnostic,
+        message: `[${summary?.origin}] ${diagnostic.message}`,
+      }))
+    ),
   ];
 
   if (!store.bootRecording) {
@@ -404,6 +416,9 @@ export const getOverview = async (
     federationRuntime: federation.runtime,
     diagnostics,
     devServer: devServer.summary,
+    remoteDevServers: remoteDevServers.flatMap(({ summary }) =>
+      summary ? [summary] : []
+    ),
   };
 };
 
@@ -467,9 +482,17 @@ export const loadRemote = (id: string, instanceName?: string) =>
       const instance = instanceName
         ? instances.find((item) => readString(item, 'name') === instanceName)
         : instances[0];
+      const available = instances
+        .map((item) => readString(item, 'name') ?? '(unnamed)')
+        .join(', ');
+      if (instanceName && instance === undefined) {
+        throw new Error(
+          `No MF instance named "${instanceName}". Available: ${available}`
+        );
+      }
       if (typeof getProp(instance, 'loadRemote') !== 'function') {
         throw new Error(
-          `No MF instance named "${instanceName}". Available: ${instances.map((item) => readString(item, 'name')).join(', ')}`
+          `MF instance "${readString(instance, 'name') ?? '(unnamed)'}" has no loadRemote method. Available: ${available}`
         );
       }
       exports = await callMethod(instance, 'loadRemote', [id]);

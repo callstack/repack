@@ -2,7 +2,7 @@ import {
   getProp,
   isRecord,
   readArray,
-  readBoolean,
+  readFlag,
   readString,
   toStringArray,
 } from '../../shared/guards';
@@ -44,8 +44,9 @@ const compare = (a: number[], b: number[]) => {
 
 /**
  * Small semver range check covering the forms MF configs use in practice
- * (`*`, exact, `^`, `~`, `>=`). Returns `undefined` for anything else, so
- * unknown ranges never produce false positives.
+ * (`*`, exact, `^`, `~`, `>=`). Returns `undefined` for anything else
+ * (partial versions, wildcards like `1.x`, prereleases, compound ranges), so unknown ranges
+ * never produce false positives.
  */
 export const satisfiesRange = (
   version: string,
@@ -56,10 +57,12 @@ export const satisfiesRange = (
   const parsedVersion = parseVersion(version);
   if (!parsedVersion) return undefined;
   const operator = /^(\^|~|>=|=)?/.exec(trimmed)?.[1] ?? '';
-  const parsedRange = parseVersion(trimmed.slice(operator.length));
-  if (!parsedRange || /\s|\|\||<|>(?!=)/.test(trimmed.slice(operator.length))) {
-    return undefined;
-  }
+  const operand = trimmed.slice(operator.length);
+  // Only full `x.y.z` operands: partial versions (`1.2`, `^0`) and wildcards
+  // (`1.x`) have range semantics this check does not model.
+  if (!/^v?\d+\.\d+\.\d+$/.test(operand)) return undefined;
+  const parsedRange = parseVersion(operand);
+  if (!parsedRange) return undefined;
   const cmp = compare(parsedVersion, parsedRange);
   switch (operator) {
     case '':
@@ -113,12 +116,10 @@ const toSharedPackages = (
               version: readString(entry, 'version') ?? version,
               from: readString(entry, 'from'),
               loaded: Boolean(getProp(entry, 'loaded')),
-              eager:
-                readBoolean(entry, 'eager') ??
-                readBoolean(shareConfig, 'eager'),
-              singleton: readBoolean(shareConfig, 'singleton'),
+              eager: readFlag(entry, 'eager') ?? readFlag(shareConfig, 'eager'),
+              singleton: readFlag(shareConfig, 'singleton'),
               requiredVersion: readRequiredVersion(shareConfig),
-              strictVersion: readBoolean(shareConfig, 'strictVersion'),
+              strictVersion: readFlag(shareConfig, 'strictVersion'),
               useIn: toStringArray(getProp(entry, 'useIn')),
             };
           }

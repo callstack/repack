@@ -145,18 +145,12 @@ const Issues = ({
     </div>
   );
 
-/** The store starts every platform as `compiling`; with no build it was never requested. */
-const compilationStatus = (compilation: PlatformCompilation) =>
-  compilation.builds === 0 && compilation.status === 'compiling'
-    ? 'not requested'
-    : compilation.status;
-
 const Compilation = ({ compilation }: { compilation: PlatformCompilation }) => (
   <Section
     title={
       <span className="flex items-center gap-2">
         {compilation.platform}
-        <StatusBadge status={compilationStatus(compilation)} />
+        <StatusBadge status={compilation.status} />
       </span>
     }
   >

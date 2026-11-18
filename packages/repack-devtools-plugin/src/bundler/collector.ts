@@ -6,6 +6,7 @@ import {
   getCompilation,
   getDevServerStore,
 } from './store.js';
+import { publishCompilation } from './workerSync.js';
 
 type Tap<TArgs extends unknown[]> = {
   tap(name: string, callback: (...args: TArgs) => void): void;
@@ -130,15 +131,20 @@ export class RepackDevToolsCollectorPlugin {
   apply(compiler: CompilerLike) {
     const name = 'RepackDevToolsCollectorPlugin';
     const { platform } = this.options;
+    const publish = () =>
+      publishCompilation(getCompilation(getDevServerStore(), platform));
     compiler.hooks.watchRun.tap(name, (watching) => {
       recordBuildStart(getDevServerStore(), platform, watching);
+      publish();
     });
     compiler.hooks.invalid.tap(name, () => {
       getCompilation(getDevServerStore(), platform).status = 'compiling';
+      publish();
     });
     compiler.hooks.done.tap(name, (stats) => {
       try {
         recordBuildDone(getDevServerStore(), platform, stats);
+        publish();
       } catch {
         // never fail the build because of devtools
       }

@@ -345,6 +345,8 @@ export type Overview = {
   federationRuntime: FederationState['runtime'];
   diagnostics: Diagnostic[];
   devServer?: DevServerSummary;
+  /** Other dev servers the app loaded MF remotes or scripts from. */
+  remoteDevServers?: DevServerSummary[];
 };
 
 export type DevServerSummary = {

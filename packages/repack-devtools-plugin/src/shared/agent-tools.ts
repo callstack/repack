@@ -211,7 +211,7 @@ export const repackDevToolsToolDefinitions = {
   getOverview: defineAgentToolContract<{ devServer?: boolean }, Overview>({
     name: 'get-overview',
     description:
-      'Start here. App/dev-server info, record counts and a severity-sorted list of diagnostics across ScriptManager, Module Federation, uncaught errors, compilation and dev-server requests. Each diagnostic has a `ref` to fetch details with the other tools.',
+      'Start here. App/dev-server info, record counts and a severity-sorted list of diagnostics across ScriptManager, Module Federation, uncaught errors, compilation and dev-server requests. Also summarizes the dev servers of MF remotes and other script origins (`remoteDevServers`); their diagnostics are prefixed with `[origin]`. Each diagnostic has a `ref` to fetch details with the other tools.',
     readOnly: true,
     idempotent: true,
     inputSchema: {
@@ -220,7 +220,7 @@ export const repackDevToolsToolDefinitions = {
         devServer: {
           type: 'boolean',
           description:
-            'Also query the dev server state endpoint (default true).',
+            'Also query the state endpoint of the app dev server and of remote dev servers (default true).',
         },
       },
     },

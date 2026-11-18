@@ -65,7 +65,9 @@ pnpm exec rozenite agent session stop --port 8091             # when done
 
 **Always start with `get-overview`.** It returns app info (platform, RN
 version, bundle URL, public path, dev server), record counts, and
-severity-sorted `diagnostics` merged from the app and the dev server. Every
+severity-sorted `diagnostics` merged from the app, its dev server and the dev
+servers of MF remotes (those are prefixed with `[origin]`; see
+`remoteDevServers` for their compile status). Every
 diagnostic has a `ref` that tells you which tool gives details:
 
 | `ref` | Follow up with |
