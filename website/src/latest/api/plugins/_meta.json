@@ -26,6 +26,11 @@
   },
   {
     "type": "file",
+    "name": "sentry-debug-id",
+    "label": "SentryDebugIdPlugin"
+  },
+  {
+    "type": "file",
     "name": "internal",
     "label": "Internal plugins"
   }
