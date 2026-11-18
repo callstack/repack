@@ -576,19 +576,29 @@ export class ScriptManager extends EventEmitter {
 
       // prefetch is not execute the script so we need to run loadScript if promise is for prefetch
       if (isPrefetch) {
-        await this.scriptsPromises[uniqueId];
+        // prefetch only warms up the native cache, so its failure must not
+        // fail this load - wait for it to settle and load the script anyway
+        await this.scriptsPromises[uniqueId].catch(() => undefined);
       } else {
         return this.scriptsPromises[uniqueId];
       }
     }
 
     const loadProcess = async () => {
-      let script = await this.resolveScript(
-        options.scriptId,
-        options.caller,
-        options.webpackContext,
-        options.referenceUrl
-      );
+      let script: Script;
+      try {
+        script = await this.resolveScript(
+          options.scriptId,
+          options.caller,
+          options.webpackContext,
+          options.referenceUrl
+        );
+      } catch (error) {
+        // resolving failed - remove the rejected promise so that
+        // subsequent calls can retry instead of reusing this failure
+        delete this.scriptsPromises[uniqueId];
+        throw error;
+      }
 
       try {
         if (this.hookMap.beforeLoad.isUsed()) {
@@ -708,12 +718,20 @@ export class ScriptManager extends EventEmitter {
       return this.scriptsPromises[uniqueId];
     }
     const loadProcess = async () => {
-      const script = await this.resolveScript(
-        scriptId,
-        caller,
-        webpackContext,
-        referenceUrl
-      );
+      let script: Script;
+      try {
+        script = await this.resolveScript(
+          scriptId,
+          caller,
+          webpackContext,
+          referenceUrl
+        );
+      } catch (error) {
+        // resolving failed - remove the rejected promise so that
+        // subsequent calls can retry instead of reusing this failure
+        delete this.scriptsPromises[uniqueId];
+        throw error;
+      }
 
       try {
         this.emit('prefetching', script.toObject());
