@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist/bundler",
+    "lib": ["ES2022"]
+  },
+  "files": ["bundler.ts"],
+  "include": [
+    "src/bundler/**/*",
+    "src/shared/constants.ts",
+    "src/shared/types.ts",
+    "src/shared/guards.ts"
+  ],
+  "exclude": ["src/**/__tests__/**"]
+}
