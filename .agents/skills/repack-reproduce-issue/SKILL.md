@@ -28,8 +28,9 @@ read its config before touching ours.
 | --- | --- |
 | Async/remote chunks, ScriptManager, assets, NativeWind, Reanimated | `apps/tester-app` |
 | Module Federation v1 (`Federated`, `ModuleFederationPluginV1`) | `apps/tester-federation` |
-| Module Federation v2, manifests, `preloadRemote`, runtime plugins | `apps/tester-federation-v2` |
+| Module Federation v2, manifests, `preloadRemote`, runtime plugins; NativeWind, Reanimated, assets or chunks inside an MF host/remote | `apps/tester-federation-v2` (has the E2E suite) |
 | Expo modules / expo-router / `@callstack/repack-expo` | `apps/tester-expo` |
+| Expo as a Module Federation remote (`@callstack/repack-expo` widget) | `apps/tester-expo-widget` |
 | Pure bundling/resolution, no device needed | `tests/integration`, `tests/resolver-cases`, `tests/metro-compat` |
 
 Prefer a no-device reproduction when the bug is in compilation or resolution:
@@ -78,8 +79,15 @@ reporter's repro.
 
 1. Fix in `packages/`, not in the tester (shipped code must not depend on
    monorepo layout).
-2. Add a regression test next to the code (`vitest` in the package) or in
-   `tests/integration`. It must fail without the fix.
+2. Add a regression test. It must fail without the fix. Pick the lowest
+   layer that shows the bug:
+   - unit test next to the code: `jest` in `packages/repack`, `vitest` in
+     `packages/dev-server` and `packages/repack-devtools-plugin`;
+   - compilation/resolution: `tests/integration` or `tests/resolver-cases`
+     (`vitest`), Metro parity in `tests/metro-compat` (`jest`);
+   - runtime behaviour on a device: an E2E spec in
+     `apps/tester-federation-v2/e2e/*.e2e.ts` (`@e2e-dev/mobile`, run with
+     `pnpm e2e`; see `agent_context/e2e-oct2026/design.md`).
 3. Re-run the reproduction: the diagnostic is gone and the feature works on
    device. Run the package tests plus `pnpm typecheck` and `pnpm lint`.
 4. Add a changeset for published packages (`pnpm changeset`).
