@@ -2,6 +2,7 @@ import path from 'node:path';
 import * as Repack from '@callstack/repack';
 import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
 import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
+import { DefinePlugin } from '@rspack/core';
 
 // Rsdoctor (through rslog) throws on import under Node < 20, so only load it
 // when it's actually enabled to keep the Node 18 test matrix working.
@@ -9,9 +10,11 @@ const { RsdoctorRspackPlugin } = process.env.RSDOCTOR
   ? await import('@rsdoctor/rspack-plugin')
   : {};
 
+const withDevTools = process.env.WITH_ROZENITE === 'true';
+
 const dirname = Repack.getDirname(import.meta.url);
 
-export default Repack.defineRspackConfig((env) => {
+const config = Repack.defineRspackConfig((env) => {
   const {
     mode = 'development',
     context = dirname,
@@ -130,7 +133,13 @@ export default Repack.defineRspackConfig((env) => {
         unstable_disableTransform: true,
       }),
       new NativeWindPlugin({ cssInteropOptions: { inlineRem: 16 } }),
+      new DefinePlugin({ __WITH_ROZENITE__: withDevTools }),
       process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
     ].filter(Boolean),
   };
 });
+
+// Rozenite is only loaded with WITH_ROZENITE=true (see CONTRIBUTING.md).
+export default withDevTools
+  ? (await import('@rozenite/repack')).withRozenite(config, { enabled: true })
+  : config;

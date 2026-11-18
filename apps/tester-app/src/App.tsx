@@ -9,6 +9,7 @@ import { MiniAppsContainer } from './miniapp/MiniAppsContainer';
 import { NativeWindView } from './nativewind/NativeWindView';
 import { ReanimatedBox } from './reanimated/ReanimatedBox';
 import { RemoteContainer } from './remoteChunks/RemoteContainer';
+import { useDevTools } from './rozenite';
 import { AppContainer } from './ui/AppContainer';
 import { Section } from './ui/Section';
 import { SectionContainer } from './ui/SectionContainer';
@@ -16,6 +17,8 @@ import { SectionContainer } from './ui/SectionContainer';
 Appearance.setColorScheme('light');
 
 const App = () => {
+  useDevTools();
+
   return (
     <AppContainer>
       <SectionContainer>

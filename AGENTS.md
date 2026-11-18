@@ -26,6 +26,8 @@ Re.Pack is a toolkit for building and developing React Native applications with 
 - `apps/tester-federation/`: Module Federation v1 validation app.
 - `apps/tester-federation-v2/`: Module Federation v2 validation app.
 
+Rozenite DevTools in the tester apps are opt-in (`WITH_ROZENITE=true`); keep plugin imports in each tester's `rozenitePlugins.ts` so default and E2E runs never load them (see `CONTRIBUTING.md`).
+
 ### Tests
 
 - `tests/integration/`: Integration-level automated coverage.
