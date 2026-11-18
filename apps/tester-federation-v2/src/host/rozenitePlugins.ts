@@ -10,7 +10,8 @@ import {
   useRozeniteStoragePlugin,
 } from '@rozenite/storage-plugin';
 
-// ScriptManager caches remote scripts in AsyncStorage (see index.js).
+// ScriptManager caches remote scripts in AsyncStorage only when the host runs
+// with WITH_PRELOAD=true (see index.js); otherwise this store stays empty.
 const storages = [
   createAsyncStorageAdapter({ storages: { ScriptManager: AsyncStorage } }),
 ];
