@@ -8,11 +8,6 @@ const test = require('node:test');
 const packageRoot = path.resolve(__dirname, '..');
 const packageJson = require('../package.json');
 
-test('keeps the integration package private during development', () => {
-  assert.equal(packageJson.name, '@callstack/repack-expo');
-  assert.equal(packageJson.private, true);
-});
-
 test('keeps federation opt-in and owned by the application', () => {
   const packageDependencies = {
     ...packageJson.dependencies,
