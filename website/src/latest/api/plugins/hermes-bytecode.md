@@ -67,7 +67,13 @@ Excludes all modules that match this condition and will match against the absolu
 - Type: `string`
 - Default: `undefined`
 
-Path to the Hermes command-line tool. If not specified, the plugin will try to find it automatically.
+Path to the Hermes command-line tool. If not specified, the plugin looks for the `hermesc` binary shipped with React Native when the first matching asset is transformed:
+
+1. `hermes-compiler` next to `react-native` (React Native 0.82 and newer).
+2. `react-native/sdks/hermesc` (React Native older than 0.82).
+3. `hermes-compiler` next to the symlink-resolved `react-native` (e.g. pnpm), or resolved from `react-native`'s `node_modules` hierarchy.
+
+If `reactNativePath` is not set and `<context>/node_modules/react-native` doesn't exist, `react-native` is also resolved from the project context for this lookup. If no binary is found, the build fails with an error listing every path that was checked.
 
 ### reactNativePath
 

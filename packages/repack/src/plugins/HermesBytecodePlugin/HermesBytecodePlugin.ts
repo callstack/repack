@@ -102,8 +102,19 @@ export class HermesBytecodePlugin {
       this.config.reactNativePath ||
       path.join(compiler.context, 'node_modules', 'react-native');
 
-    const hermesCLIPath =
-      this.config.hermesCLIPath || getHermesCLIPath(reactNativePath);
+    // Resolved on the first transformed asset, so that builds which emit no matching
+    // assets don't fail when hermesc can't be found.
+    let resolvedHermesCLIPath = this.config.hermesCLIPath;
+    const resolveHermesCLIPath = () => {
+      resolvedHermesCLIPath ||= getHermesCLIPath(reactNativePath, {
+        // `compiler.context/node_modules/react-native` may not exist, e.g. when
+        // react-native is hoisted to the monorepo root.
+        resolveReactNativeFrom: this.config.reactNativePath
+          ? undefined
+          : compiler.context,
+      });
+      return resolvedHermesCLIPath;
+    };
 
     const emittedAssets = new Map<string, string>();
 
@@ -135,6 +146,12 @@ export class HermesBytecodePlugin {
       async () => {
         const assets = Array.from(emittedAssets);
         emittedAssets.clear();
+
+        if (assets.length === 0) {
+          return;
+        }
+
+        const hermesCLIPath = resolveHermesCLIPath();
 
         await Promise.all(
           assets.map(async ([file, outputPath]) => {

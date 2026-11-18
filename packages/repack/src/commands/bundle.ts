@@ -21,7 +21,7 @@ import type {
  * Both rspack() and webpack() return objects satisfying this shape.
  * Defined here because both bundlers are optional peer dependencies.
  */
-interface BundleCompiler {
+export interface BundleCompiler {
   run(callback: (error: Error | null, stats?: BundleStats) => void): void;
   watch(
     options: Record<string, unknown>,
@@ -37,7 +37,7 @@ interface BundleCompiler {
  * Minimal stats interface for the bundle command.
  * Both rspack and webpack Stats objects satisfy this shape.
  */
-interface BundleStats {
+export interface BundleStats {
   hasErrors(): boolean;
   compilation?: { errors?: unknown[] };
   toJson(options: unknown): Record<string, unknown>;
@@ -118,48 +118,73 @@ export async function bundle(
     compiler = webpack(config) as BundleCompiler;
   }
 
-  return new Promise<void>((resolve) => {
-    const errorHandler = async (error: Error | null, stats?: BundleStats) => {
-      if (error) {
-        throw new CLIError(error.message);
-      }
+  const errorHandler = async (error: Error | null, stats?: BundleStats) => {
+    if (error) {
+      throw new CLIError(error.message);
+    }
 
-      if (stats?.hasErrors()) {
-        stats.compilation?.errors?.forEach((e) => {
-          console.error(e);
+    if (stats?.hasErrors()) {
+      stats.compilation?.errors?.forEach((e) => {
+        console.error(e);
+      });
+      process.exit(2);
+    }
+
+    if (args.json && stats !== undefined) {
+      const statsOptions = normalizeStatsOptions(
+        compiler.options.stats,
+        args.stats
+      );
+
+      const statsJson = stats.toJson(statsOptions);
+
+      try {
+        await writeStats(statsJson, {
+          filepath: args.json,
+          rootDir: compiler.context,
         });
-        process.exit(2);
+      } catch (e) {
+        throw new CLIError(String(e));
       }
+    }
+  };
 
-      if (args.json && stats !== undefined) {
-        const statsOptions = normalizeStatsOptions(
-          compiler.options.stats,
-          args.stats
-        );
+  return runCompiler(compiler, {
+    watch: args.watch,
+    watchOptions: config.watchOptions,
+    onResult: errorHandler,
+  });
+}
 
-        const statsJson = stats.toJson(statsOptions);
-
-        try {
-          await writeStats(statsJson, {
-            filepath: args.json,
-            rootDir: compiler.context,
-          });
-        } catch (e) {
-          throw new CLIError(String(e));
-        }
-      }
-    };
-
-    if (args.watch) {
+/**
+ * Runs (or watches) the compiler. The returned promise settles with `onResult`
+ * of the run, so a failed build rejects and the CLI exits with a non-zero code.
+ * In watch mode it resolves when watching stops, or rejects on the first failure.
+ */
+export function runCompiler(
+  compiler: BundleCompiler,
+  {
+    watch,
+    watchOptions,
+    onResult,
+  }: {
+    watch?: boolean;
+    watchOptions?: Record<string, unknown>;
+    onResult: (error: Error | null, stats?: BundleStats) => Promise<void>;
+  }
+) {
+  return new Promise<void>((resolve, reject) => {
+    if (watch) {
       compiler.hooks.watchClose.tap('bundle', resolve);
-      compiler.watch(config.watchOptions ?? {}, errorHandler);
+      compiler.watch(watchOptions ?? {}, (error, stats) => {
+        onResult(error, stats).catch(reject);
+      });
     } else {
-      compiler.run((error: Error | null, stats?: BundleStats) => {
+      compiler.run((error, stats) => {
         // make cache work: https://webpack.js.org/api/node/#run
-        compiler.close(async (closeErr: Error | null) => {
+        compiler.close((closeErr) => {
           if (closeErr) console.error(closeErr);
-          await errorHandler(error, stats);
-          resolve();
+          onResult(error, stats).then(resolve, reject);
         });
       });
     }
