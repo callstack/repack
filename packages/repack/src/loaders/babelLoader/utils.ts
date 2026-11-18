@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import type { ParseResult, TransformOptions } from '@babel/core';
 import type { RawSourceMap } from '@rspack/core';
 import { importDefaultESM } from '../../helpers/index.js';
@@ -124,4 +126,89 @@ const IGNORED_REPACK_PATHS_REGEX = new RegExp(
 
 export function isIgnoredRepackDeepImport(filename: string): boolean {
   return IGNORED_REPACK_PATHS_REGEX.test(filename);
+}
+
+interface BabelCallerSource {
+  context?: string | null;
+  rootContext?: string;
+  /** Custom value set by BabelPlugin through `options.loader`. */
+  repack?: unknown;
+  _compiler?: { options?: { name?: string } };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function getPlatform(loaderContext: BabelCallerSource): string | undefined {
+  // set by BabelPlugin through `options.loader`, the only channel that also
+  // reaches loaders running in Rspack's parallel mode
+  if (isRecord(loaderContext.repack)) {
+    const { platform } = loaderContext.repack;
+    if (typeof platform === 'string') return platform;
+  }
+  // without the plugin, fall back to the compiler name used as the platform
+  return loaderContext._compiler?.options?.name;
+}
+
+interface BabelRuntime {
+  babelRuntimeModuleName: string;
+  enableBabelRuntime: string;
+}
+
+const babelRuntimeCache = new Map<string, BabelRuntime | null>();
+
+/**
+ * Finds the project's `@babel/runtime` and returns its location and version.
+ * `@babel/plugin-transform-runtime` assumes version 7.0.0 when it's not told
+ * otherwise and inlines every newer helper into each file that uses it.
+ * A version is only safe to target alongside the module it describes,
+ * so both are returned as a pair.
+ */
+export function getBabelRuntime(projectRoot: string): BabelRuntime | null {
+  const cached = babelRuntimeCache.get(projectRoot);
+  if (cached !== undefined) return cached;
+
+  let babelRuntime: BabelRuntime | null = null;
+  try {
+    const manifestPath = require.resolve('@babel/runtime/package.json', {
+      paths: [projectRoot],
+    });
+    const manifest: unknown = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    if (isRecord(manifest) && typeof manifest.version === 'string') {
+      babelRuntime = {
+        babelRuntimeModuleName: path.dirname(manifestPath),
+        enableBabelRuntime: manifest.version,
+      };
+    }
+  } catch {
+    // @babel/runtime is not installed, let the preset use its defaults
+  }
+
+  babelRuntimeCache.set(projectRoot, babelRuntime);
+  return babelRuntime;
+}
+
+/**
+ * Caller data for Babel, mirroring what Metro passes to
+ * `@react-native/babel-preset`. Without it the preset falls back to defaults:
+ * no `Platform.OS` / `Platform.select` inlining and no `@babel/runtime` version.
+ * Presets that don't read these keys ignore them.
+ */
+export function getBabelCaller(loaderContext: BabelCallerSource) {
+  const platform = getPlatform(loaderContext);
+  // parallel loaders in Rspack had a bug where rootContext
+  // was the same as context, so we only trust it when they differ
+  const projectRoot =
+    loaderContext.rootContext &&
+    loaderContext.rootContext !== loaderContext.context
+      ? loaderContext.rootContext
+      : process.cwd();
+  const babelRuntime = getBabelRuntime(projectRoot);
+
+  return {
+    name: '@callstack/repack',
+    ...(platform ? { platform, inlinePlatform: true } : null),
+    ...babelRuntime,
+  };
 }

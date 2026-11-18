@@ -27,4 +27,34 @@ describe('BabelPlugin', () => {
       'babel-loader': [expect.any(String)],
     });
   });
+
+  it('exposes the platform to loaders through options.loader', () => {
+    compilerMock.options.loader = { existing: true };
+    new BabelPlugin({ platform: 'ios' }).apply(
+      compilerMock as unknown as Compiler
+    );
+
+    expect(compilerMock.options.loader).toEqual({
+      existing: true,
+      repack: { platform: 'ios' },
+    });
+  });
+
+  it('falls back to the compiler name as the platform', () => {
+    const compiler = {
+      options: { name: 'android' } as Compiler['options'],
+    };
+    new BabelPlugin().apply(compiler as unknown as Compiler);
+
+    expect(compiler.options.loader).toEqual({
+      repack: { platform: 'android' },
+    });
+  });
+
+  it('leaves options.loader untouched when the platform is unknown', () => {
+    const compiler = { options: {} as Compiler['options'] };
+    new BabelPlugin().apply(compiler as unknown as Compiler);
+
+    expect(compiler.options.loader).toBeUndefined();
+  });
 });

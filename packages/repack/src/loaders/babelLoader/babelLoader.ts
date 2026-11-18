@@ -16,6 +16,7 @@ import type {
   CustomTransformOptions,
 } from './options.js';
 import {
+  getBabelCaller,
   isIgnoredRepackDeepImport,
   isTSXSource,
   isTypeScriptSource,
@@ -173,7 +174,7 @@ export default async function babelLoader(
     const result = await transform(
       source,
       {
-        caller: { name: '@callstack/repack' },
+        caller: getBabelCaller(this),
         filename: this.resourcePath,
         sourceMaps: withSourceMaps,
         sourceFileName: this.resourcePath,
