@@ -389,3 +389,6 @@ packages/**/docs
 
 # watchman
 .watchman-cookie*
+
+# Rozenite plugin build intermediates
+.rozenite/

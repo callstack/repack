@@ -10,8 +10,23 @@ const __dirname = path.dirname(__filename);
 
 const useWebpack = Boolean(process.env.USE_WEBPACK);
 
-export default (env: Repack.EnvOptions) => {
+const config = (env: Repack.EnvOptions) => {
   env.context = __dirname;
 
   return useWebpack ? webpackConfig(env) : rspackConfig(env);
 };
+
+// Rozenite and the Re.Pack DevTools plugin are only loaded with
+// WITH_ROZENITE=true (see CONTRIBUTING.md).
+let exportedConfig = config;
+if (process.env.WITH_ROZENITE === 'true') {
+  const { withRozenite } = await import('@rozenite/repack');
+  const { withRepackDevTools } = await import(
+    '@callstack/repack-devtools-plugin/bundler'
+  );
+  exportedConfig = withRozenite(withRepackDevTools(config, { enabled: true }), {
+    enabled: true,
+  });
+}
+
+export default exportedConfig;

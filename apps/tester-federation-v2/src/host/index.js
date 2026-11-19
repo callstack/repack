@@ -7,9 +7,12 @@ import '../../global.css';
 import { components } from '../../app.json';
 import './setup';
 import App from './App';
+import { startDevTools } from './rozenite';
 
 // the toast covers Home's last row and steals taps from the e2e suite
 LogBox.ignoreLogs(['ImageBackground is deprecated']);
+
+startDevTools();
 
 if (__WITH_PRELOAD__) {
   // enable caching of scripts in the AsyncStorage
