@@ -21,6 +21,12 @@ All development is done directly on GitHub, and all work is public.
 2. Run `pnpm install` to install & set up the development environment.
 3. Do the changes you want and test them out in the TesterApp (`apps/tester-app`) before sending a pull request.
 
+To get extra [Rozenite](https://www.rozenite.dev) panels (network activity, plus navigation and storage in the Module Federation hosts) in React Native DevTools while testing, start a tester app's dev server with `WITH_ROZENITE=true`, e.g. `WITH_ROZENITE=true pnpm start`. In `tester-federation-v2`, the Storage panel shows ScriptManager's script cache only when the host also runs with `WITH_PRELOAD=true` (e.g. `WITH_ROZENITE=true WITH_PRELOAD=true pnpm start:hostapp`), since the cache is enabled only in that mode.
+
+This also enables the workspace-only Re.Pack DevTools plugin (`packages/repack-devtools-plugin`): panels for ScriptManager, Module Federation, the dev server and symbolication, the same data as `rozenite agent callstack/repack-devtools` tools, and `GET /repack-devtools/state` on every dev server. The `repack-debug-runtime` and `repack-reproduce-issue` skills in `.agents/skills` describe how to use them.
+
+Without the flag, nothing Rozenite-related is loaded by the dev server or bundled into the app, so default runs and E2E tests are unaffected. Keep it that way when adding a plugin: import it only from the tester's `rozenitePlugins.ts`, which is required only when `__WITH_ROZENITE__` is true.
+
 ### Commit message convention
 
 We follow the [conventional commits specification](https://www.conventionalcommits.org/en) for our commit messages:
@@ -91,8 +97,39 @@ package version changes and generated changelog entries for the next release.
 
 Review the version numbers and changelog entries in that PR before merging it.
 When the version PR is merged to `main`, the same workflow runs `pnpm release`,
-publishes the packages to npm, pushes the release tags, and creates GitHub
-releases from the generated changelog entries.
+publishes the packages to npm and pushes all package release tags. A separate
+step creates one GitHub release on the main package's tag (for example,
+`@callstack/repack@5.4.2`), named after the shared version. Its notes list all
+packages in the fixed release group and merge their changelog entries by change
+type, without duplicate entries or dependency update bullets. Package changelogs
+and npm publishing are still managed by Changesets. Existing GitHub releases
+are left untouched.
+
+Preview the combined notes without network access or credentials:
+
+```sh
+node .github/scripts/release-notes.mjs
+pnpm test:release
+```
+
+The GitHub release step runs only when Changesets publishes packages. If it
+fails after npm publication, rerunning the workflow may not retry that step,
+because there are no new packages to publish. To create the missing GitHub
+release manually, check out the original release commit, confirm the packages
+are published and their release tags exist, then run:
+
+```sh
+version=$(node -p "require('./packages/repack/package.json').version")
+tag="@callstack/repack@${version}"
+node .github/scripts/release-notes.mjs > /tmp/repack-release-notes.md
+gh release create "$tag" --verify-tag --title "$version" \
+  --notes-file /tmp/repack-release-notes.md
+```
+
+For a prerelease version, add `--prerelease` to the `gh release create` command.
+This requires an authenticated GitHub CLI with permission to create releases.
+It does not recover npm publications or recreate package tags. The combined
+release covers the fixed group containing `@callstack/repack`.
 
 #### Canary releases
 

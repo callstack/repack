@@ -56,3 +56,6 @@ jobs:
 
       - name: Run tests
         run: pnpm test
+
+      - name: Test release notes
+        run: pnpm test:release

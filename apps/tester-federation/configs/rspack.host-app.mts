@@ -32,6 +32,9 @@ export default Repack.defineRspackConfig((env) => {
       ],
     },
     plugins: [
+      new rspack.DefinePlugin({
+        __WITH_ROZENITE__: process.env.WITH_ROZENITE === 'true',
+      }),
       new Repack.RepackPlugin({
         extraChunks: [
           {

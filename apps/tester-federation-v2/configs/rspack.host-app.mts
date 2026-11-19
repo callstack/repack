@@ -1,7 +1,13 @@
+import { createRequire } from 'node:module';
 import * as Repack from '@callstack/repack';
+import { NativeWindPlugin } from '@callstack/repack-plugin-nativewind';
+import { ReanimatedPlugin } from '@callstack/repack-plugin-reanimated';
 import rspack from '@rspack/core';
 
+import { buildHostAssetRules } from './hostAssetRules.mts';
 import { buildSharedSingletons } from './sharedSingletons.mts';
+
+const require = createRequire(import.meta.url);
 
 export default Repack.defineRspackConfig((env) => {
   const { mode, context, platform } = env;
@@ -28,15 +34,19 @@ export default Repack.defineRspackConfig((env) => {
           },
           type: 'javascript/auto',
         },
-        ...Repack.getAssetTransformRules({
-          inline: true,
-          maxInlineSize: 90 * 1024,
-        }),
+        ...buildHostAssetRules(context!),
       ],
     },
     plugins: [
+      new NativeWindPlugin({
+        cssInteropOptions: { inlineRem: 16 },
+      }),
       new Repack.RepackPlugin({
         extraChunks: [
+          {
+            include: /^host-async-local$/,
+            type: 'local',
+          },
           {
             include: /.*/,
             type: 'remote',
@@ -46,6 +56,16 @@ export default Repack.defineRspackConfig((env) => {
       }),
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'HostApp',
+        // Records MF lifecycle events from container start-up; without it the
+        // devtools register their runtime plugin from the app entry instead.
+        runtimePlugins:
+          mode === 'development' && process.env.WITH_ROZENITE === 'true'
+            ? [
+                require.resolve(
+                  '@callstack/repack-devtools-plugin/mf-runtime-plugin'
+                ),
+              ]
+            : [],
         filename: 'HostApp.container.js.bundle',
         remotes: {
           MiniApp: `MiniApp@http://localhost:8082/${platform}/mf-manifest.json`,
@@ -58,10 +78,12 @@ export default Repack.defineRspackConfig((env) => {
         resourceRegExp: /^@react-native-masked-view/,
       }),
       new rspack.DefinePlugin({
+        __WITH_ROZENITE__: process.env.WITH_ROZENITE === 'true',
         __WITH_PRELOAD__:
           process.env.WITH_PRELOAD === 'true' ||
           process.env.WITH_PRELOAD === '1',
       }),
+      new ReanimatedPlugin({ unstable_disableTransform: true }),
     ],
   };
 });

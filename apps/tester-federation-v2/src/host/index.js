@@ -1,10 +1,18 @@
 import { ScriptManager } from '@callstack/repack/client';
 import { preloadRemote } from '@module-federation/runtime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppRegistry } from 'react-native';
+import { AppRegistry, LogBox } from 'react-native';
 
+import '../../global.css';
 import { components } from '../../app.json';
+import './setup';
 import App from './App';
+import { startDevTools } from './rozenite';
+
+// the toast covers Home's last row and steals taps from the e2e suite
+LogBox.ignoreLogs(['ImageBackground is deprecated']);
+
+startDevTools();
 
 if (__WITH_PRELOAD__) {
   // enable caching of scripts in the AsyncStorage
