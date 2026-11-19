@@ -19,14 +19,22 @@ interface CompileOptions {
   context?: string;
 }
 
-async function compile({
-  bundler = 'rspack',
-  mode = 'production',
-  filename = '[name].bundle',
-  entries = { index: "console.log('hello');" },
-  plugin = new SentryDebugIdPlugin(),
-  context = fs.mkdtempSync(path.join(os.tmpdir(), 'sentry-debug-id-')),
-}: CompileOptions = {}) {
+async function compile(options: CompileOptions = {}) {
+  // An explicit `mode: undefined` leaves mode unset, so the bundler default applies.
+  const mode = 'mode' in options ? options.mode : 'production';
+  return compileWithMode(mode, options);
+}
+
+async function compileWithMode(
+  mode: CompileOptions['mode'],
+  {
+    bundler = 'rspack',
+    filename = '[name].bundle',
+    entries = { index: "console.log('hello');" },
+    plugin = new SentryDebugIdPlugin(),
+    context = fs.mkdtempSync(path.join(os.tmpdir(), 'sentry-debug-id-')),
+  }: CompileOptions
+) {
   const outputPath = path.join(context, 'out');
   for (const [name, code] of Object.entries(entries)) {
     fs.writeFileSync(path.join(context, `${name}.js`), code);
@@ -34,7 +42,7 @@ async function compile({
 
   const config = {
     context,
-    mode,
+    ...(mode && { mode }),
     devtool: 'source-map' as const,
     entry: Object.fromEntries(
       Object.keys(entries).map((name) => [name, `./${name}.js`])
@@ -144,6 +152,28 @@ describe('SentryDebugIdPlugin', () => {
     expect(bundle).not.toContain('//# debugId=');
     expect(sourceMap.debugId).toBeUndefined();
   });
+
+  it.each(['rspack', 'webpack'] as const)(
+    'treats an unset mode as production with %s',
+    async (bundler) => {
+      // Given a config without `mode`, which both bundlers default to production
+      // webpack's devtool only emits maps for `.js` files.
+      const filename = bundler === 'webpack' ? '[name].js' : '[name].bundle';
+      const { read, cleanup } = await compile({
+        bundler,
+        filename,
+        mode: undefined,
+      });
+
+      // When the bundle is read back
+      const { sourceMap, debugId } = read(filename.replace('[name]', 'index'));
+      cleanup();
+
+      // Then it still gets a Debug ID that matches its map
+      expect(debugId).toBeDefined();
+      expect(sourceMap.debugId).toBe(debugId);
+    }
+  );
 
   it('works with webpack', async () => {
     const { read, cleanup } = await compile({
