@@ -1,6 +1,7 @@
 import { type ErrorBoundaryProps, Link } from 'expo-router';
 import { lazy, Suspense } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Screen from '../ui/Screen';
 
 const OrdinaryWidget = lazy(() => import('OrdinaryWidget/Widget'));
 
@@ -16,17 +17,13 @@ export function ErrorBoundary({ error }: ErrorBoundaryProps) {
 
 export default function OrdinaryWidgetRoute() {
   return (
-    <View style={styles.container}>
-      <Text testID="ordinary-widget-route-ready">
-        Ordinary Re.Pack widget route
-      </Text>
+    <Screen testID="ordinary-widget-screen">
       <Suspense
         fallback={<Text testID="ordinary-widget-loading">Loading widget…</Text>}
       >
         <OrdinaryWidget />
       </Suspense>
-      <Link href="/">Back home</Link>
-    </View>
+    </Screen>
   );
 }
 

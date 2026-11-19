@@ -407,6 +407,9 @@ importers:
       '@callstack/repack-devtools-plugin':
         specifier: workspace:*
         version: link:../../packages/repack-devtools-plugin
+      '@e2e-dev/mobile':
+        specifier: catalog:testers
+        version: 0.11.0(e2e@0.19.0)
       '@react-native-community/cli':
         specifier: catalog:testers
         version: 20.2.0(typescript@7.0.2)
@@ -431,12 +434,18 @@ importers:
       '@rspack/core':
         specifier: 'catalog:'
         version: 1.6.0(@swc/helpers@0.5.23)
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.19.43
       '@types/react':
         specifier: catalog:testers
         version: 19.2.17
       babel-preset-expo:
         specifier: catalog:expo58
         version: 58.0.17(@babel/core@7.29.7)(@babel/runtime@7.29.7)(expo@58.0.13)(react-refresh@0.19.0)
+      e2e:
+        specifier: catalog:testers
+        version: 0.19.0
       rozenite:
         specifier: catalog:testers
         version: 2.5.0

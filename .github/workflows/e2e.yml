@@ -2,18 +2,14 @@ name: e2e
 
 on:
   pull_request:
-    paths:
-      - 'apps/tester-federation-v2/**'
-      - 'packages/**'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/e2e.yml'
+    paths-ignore:
+      - 'website/**'
+      - '**/*.md'
   push:
     branches: [main]
-    paths:
-      - 'apps/tester-federation-v2/**'
-      - 'packages/**'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/e2e.yml'
+    paths-ignore:
+      - 'website/**'
+      - '**/*.md'
   workflow_dispatch:
 
 # one run per PR; a new push cancels the older one

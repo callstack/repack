@@ -1,13 +1,19 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "types": ["node"]
   },
   "include": [
     "app/**/*.ts",
     "app/**/*.tsx",
     "components/**/*.ts",
     "components/**/*.tsx",
+    "ui/**/*.ts",
+    "ui/**/*.tsx",
+    "FEATURES.ts",
+    "e2e/**/*.ts",
+    "e2e.config.ts",
     "types/**/*.d.ts",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"

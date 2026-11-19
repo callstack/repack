@@ -1,24 +1,15 @@
 import Constants from 'expo-constants';
-import { Link } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import Report from '../ui/Report';
+import Screen from '../ui/Screen';
 
 export default function DetailsRoute() {
   return (
-    <View style={styles.container}>
-      <Text testID="expo-module-ready">
-        Expo runtime: {Constants.expoVersion ?? 'development build'}
-      </Text>
-      <Link href="/">Back home</Link>
-    </View>
+    <Screen testID="expo-module-screen">
+      <Report
+        testID="expo-module-app-name-report"
+        name="app name"
+        value={Constants.expoConfig?.name ?? 'missing'}
+      />
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flex: 1,
-    gap: 16,
-    justifyContent: 'center',
-    padding: 24,
-  },
-});

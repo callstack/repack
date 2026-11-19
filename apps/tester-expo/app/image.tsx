@@ -1,68 +1,63 @@
 import { Asset } from 'expo-asset';
-import { Link } from 'expo-router';
 import { useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
+import type { LoadState } from '../ui/LoadState';
+import Report from '../ui/Report';
+import Screen from '../ui/Screen';
 
 const packagedImage = require('../assets/images/repack.png');
 const packagedAsset = Asset.fromModule(packagedImage);
 const monorepoImage = require('../../../tests/integration/src/loaders/__fixtures__/assets/logo.png');
 const monorepoAsset = Asset.fromModule(monorepoImage);
 
+const assetLabel = (state: LoadState, asset: Asset) =>
+  state === 'loaded' ? `${asset.name}.${asset.type}` : state;
+
 export default function ImageRoute() {
-  const [appLocalImageLoaded, setAppLocalImageLoaded] = useState(false);
-  const [monorepoImageLoaded, setMonorepoImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState<string>();
-  const imagesLoaded =
-    appLocalImageLoaded && monorepoImageLoaded && !imageError;
+  const [local, setLocal] = useState<LoadState>('loading');
+  const [monorepo, setMonorepo] = useState<LoadState>('loading');
 
   return (
-    <View style={styles.container}>
-      {imagesLoaded ? (
-        <Text testID="image-ready">
-          Expo assets loaded: {packagedAsset.name}.{packagedAsset.type} and{' '}
-          monorepo {monorepoAsset.name}.{monorepoAsset.type}
-        </Text>
-      ) : null}
-      {imageError ? <Text testID="image-error">{imageError}</Text> : null}
+    <Screen testID="image-screen">
+      <Report
+        testID="image-local-report"
+        name="local"
+        value={assetLabel(local, packagedAsset)}
+      />
       <Image
         accessibilityLabel="Re.Pack logo from the application bundle"
-        onError={() =>
-          setImageError((error) => error ?? 'App-local image failed to load')
-        }
-        onLoad={() => setAppLocalImageLoaded(true)}
+        onError={() => setLocal('error')}
+        onLoad={() => setLocal('loaded')}
         source={packagedImage}
         style={styles.logo}
         testID="app-local-image"
       />
+      <Report
+        testID="image-monorepo-report"
+        name="monorepo"
+        value={assetLabel(monorepo, monorepoAsset)}
+      />
       <Image
         accessibilityLabel="Logo from a monorepo source fixture"
-        onError={() =>
-          setImageError((error) => error ?? 'Monorepo image failed to load')
-        }
-        onLoad={() => setMonorepoImageLoaded(true)}
+        onError={() => setMonorepo('error')}
+        onLoad={() => setMonorepo('loaded')}
         source={monorepoImage}
         style={styles.monorepoLogo}
         testID="monorepo-image"
       />
-      <Link href="/">Back home</Link>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flex: 1,
-    gap: 16,
-    justifyContent: 'center',
-    padding: 24,
-  },
   logo: {
     height: 30,
+    marginHorizontal: 12,
     width: 147,
   },
   monorepoLogo: {
     height: 64,
+    marginHorizontal: 12,
     width: 64,
   },
 });
