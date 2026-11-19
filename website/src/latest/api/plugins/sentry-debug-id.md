@@ -1,13 +1,13 @@
 # SentryDebugId Plugin
 
-This plugin stamps a [Sentry](https://sentry.io) Debug ID into the bundle and its source map.
+This plugin stamps a [Sentry](https://sentry.io) Debug ID into the bundle and its source map, and adds a `//# debugId=` comment to the bundle.
 
 A Debug ID is a UUID present in both artifacts. The Sentry SDK reports it with every event, and Sentry uses it to pair a JS stack trace with the source map that resolves it. Without it, symbolication falls back to matching on `release` and `dist`, which only works when the values used at upload time match the ones the SDK reports at runtime.
 
 For Metro, `@sentry/react-native` provides this through `createSentryMetroSerializer`. This plugin is the Re.Pack counterpart.
 
 :::info Why `@sentry/webpack-plugin` is not enough
-`@sentry/webpack-plugin` injects Debug IDs through a `BannerPlugin` whose `include` only matches `.js`-like filenames, so it skips React Native bundle names such as `index.bundle`. It also writes the Debug ID only into the source map copy it uploads, never into the emitted asset, which is what `@sentry/react-native`'s Gradle and Xcode upload scripts read.
+`@sentry/webpack-plugin` only processes `.js`-like filenames, so it skips React Native bundle names such as `index.bundle` and their source maps. `@sentry/react-native`'s Gradle and Xcode upload scripts read the Debug ID from the emitted source map, so without it symbolication fails silently.
 
 You can use both plugins together: this one handles the Debug ID, `@sentry/webpack-plugin` handles release creation and upload.
 :::
@@ -19,14 +19,16 @@ const Repack = require("@callstack/repack");
 
 module.exports = {
   plugins: [
-    new Repack.SentryDebugIdPlugin({
+    new Repack.plugins.SentryDebugIdPlugin({
       // options
     }),
   ],
 };
 ```
 
-Debug IDs are only useful for release builds, so you will usually add the plugin for production compilations only.
+The plugin only runs when `mode` is `production`, since Debug IDs are only useful for release builds.
+
+The Debug ID is derived from the bundle content, so the same input always gets the same ID. When [`HermesBytecodePlugin`](/api/plugins/hermes-bytecode) compiles a bundle to bytecode, the Debug ID is carried over to the composed source map.
 
 ## Options
 

@@ -1,6 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import execa from 'execa';
+import {
+  addDebugIdToSourceMap,
+  getSourceMapDebugId,
+} from '../../utils/sourceMapDebugId.js';
 
 /**
  * {@link composeSourceMaps} options.
@@ -33,10 +37,27 @@ export const composeSourceMaps = async ({
   const composedSourceMapPath = packagerMapPath + '.composed';
 
   try {
+    // `compose-source-maps.js` writes a fresh map without the Debug ID, and the packager map is
+    // removed below, so carry the id over to the composed map.
+    const debugId = getSourceMapDebugId(
+      await fs.promises.readFile(packagerMapPath, 'utf-8')
+    );
+
     await execa.node(
       path.join(reactNativePath, 'scripts', 'compose-source-maps.js'),
       [packagerMapPath, compilerMapPath, '-o', composedSourceMapPath]
     );
+
+    if (debugId) {
+      const composedSourceMap = await fs.promises.readFile(
+        composedSourceMapPath,
+        'utf-8'
+      );
+      await fs.promises.writeFile(
+        composedSourceMapPath,
+        addDebugIdToSourceMap(composedSourceMap, debugId)
+      );
+    }
 
     // Remove intermediate files
     await fs.promises.unlink(packagerMapPath);

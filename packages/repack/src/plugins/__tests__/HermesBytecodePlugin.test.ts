@@ -4,6 +4,7 @@ import path from 'node:path';
 import { type Compiler, ModuleFilenameHelpers } from '@rspack/core';
 import execa from 'execa';
 import { HermesBytecodePlugin } from '../HermesBytecodePlugin/index.js';
+import { composeSourceMaps } from '../HermesBytecodePlugin/utils/composeSourceMaps.js';
 import { getHermesCLIPath } from '../HermesBytecodePlugin/utils/getHermesCLIPath.js';
 
 jest.mock('node:fs', () => ({
@@ -12,8 +13,10 @@ jest.mock('node:fs', () => ({
     existsSync: jest.fn(),
     promises: {
       access: jest.fn(),
+      readFile: jest.fn(),
       rename: jest.fn(),
       unlink: jest.fn(),
+      writeFile: jest.fn(),
     },
   },
 }));
@@ -144,6 +147,42 @@ describe('HermesBytecodePlugin', () => {
       );
       expect(execaMock).toHaveBeenCalledTimes(1);
       expect(execaMock.mock.calls[0][0]).toEqual('path/to/hermesc');
+    });
+  });
+
+  describe('composeSourceMaps', () => {
+    const options = {
+      reactNativePath: 'path/to/react-native',
+      packagerMapPath: 'output/path/example.bundle.map',
+      compilerMapPath: 'output/path/example.bundle.hbc.map',
+    };
+
+    it('carries the Debug ID over to the composed source map', async () => {
+      const debugId = '3f1c2d4e-5a6b-4c7d-8e9f-0a1b2c3d4e5f';
+      const fsMock = fs.promises as jest.Mocked<typeof fs.promises>;
+      fsMock.readFile
+        .mockResolvedValueOnce(`{"version":3,"debugId":"${debugId}"}`)
+        .mockResolvedValueOnce('{"version":3}');
+
+      await composeSourceMaps(options);
+
+      expect(fsMock.writeFile).toHaveBeenCalledWith(
+        `${options.packagerMapPath}.composed`,
+        `{"version":3,"debugId":"${debugId}","debug_id":"${debugId}"}`
+      );
+      expect(fsMock.rename).toHaveBeenCalledWith(
+        `${options.packagerMapPath}.composed`,
+        options.packagerMapPath
+      );
+    });
+
+    it('leaves the composed source map alone without a Debug ID', async () => {
+      const fsMock = fs.promises as jest.Mocked<typeof fs.promises>;
+      fsMock.readFile.mockResolvedValueOnce('{"version":3}');
+
+      await composeSourceMaps(options);
+
+      expect(fsMock.writeFile).not.toHaveBeenCalled();
     });
   });
 
