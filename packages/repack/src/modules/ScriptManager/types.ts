@@ -103,6 +103,20 @@ export interface ScriptLocator {
   cache?: boolean;
 
   /**
+   * Optional key that gives the script its own cache entry and its own file on the device.
+   *
+   * By default, a script is cached under an id made of its caller and script id only, so
+   * a new version of the script (e.g. one with a different `url`) replaces the previous one.
+   * When `cacheKey` is set, it is appended to that id (`<caller>_<scriptId>@<cacheKey>`),
+   * so each key keeps its own cached copy. Use it to keep several versions of the same
+   * script on the device, e.g. by passing a release id or a content hash.
+   *
+   * The key becomes a part of a file name on the device, so it must not contain `/`.
+   * To remove one cached copy, pass the full id (with the key) to `invalidateScripts`.
+   */
+  cacheKey?: string;
+
+  /**
    * Flag to enable script's code-signature verification. By default set to `none`
    *
    * `strict` means that the script's code-signature will be verfied regardless of the signature being present in the bundle

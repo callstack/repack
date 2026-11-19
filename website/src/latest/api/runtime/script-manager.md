@@ -278,6 +278,23 @@ ScriptManager.shared.hooks.afterResolve(async (args) => {
 });
 ```
 
+### Keeping several versions of a script on the device
+
+By default, a script is cached under its caller and script id, so a new version replaces the previous one on the device. Set `cacheKey` to give each version its own cached copy, for example to load the previous version again without a network call:
+
+```js
+ScriptManager.shared.hooks.afterResolve(async (args) => {
+  // e.g. https://cdn.example.com/my-remote/1.4.0/src_App_js.chunk.bundle
+  const version = getVersionFromUrl(args.locator.url);
+  if (version) {
+    args.locator.cacheKey = version;
+  }
+  return args;
+});
+```
+
+The script is then cached as `<caller>_<scriptId>@<cacheKey>`. Pass that id to `invalidateScripts` to remove one version.
+
 ### Override script locator URL after resolution
 
 ```js
