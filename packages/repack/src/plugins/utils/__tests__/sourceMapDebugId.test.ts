@@ -27,6 +27,32 @@ describe('sourceMapDebugId', () => {
     });
   });
 
+  it('overwrites an existing Debug ID instead of adding duplicate keys', () => {
+    const sourceMap = `{"version":3,"debugId":"old","mappings":"AAAA"}`;
+
+    const stamped = addDebugIdToSourceMap(sourceMap, DEBUG_ID);
+
+    expect(stamped.match(/"debugId"/g)).toHaveLength(1);
+    expect(stamped.match(/"debug_id"/g)).toHaveLength(1);
+    expect(JSON.parse(stamped)).toEqual({
+      version: 3,
+      debugId: DEBUG_ID,
+      mappings: 'AAAA',
+      debug_id: DEBUG_ID,
+    });
+  });
+
+  it('leaves a Debug ID inside sourcesContent untouched when stamping', () => {
+    const sourceMap = JSON.stringify({
+      sourcesContent: [`const map = {"debugId": "old"};`],
+    });
+
+    const stamped = JSON.parse(addDebugIdToSourceMap(sourceMap, DEBUG_ID));
+
+    expect(stamped.sourcesContent).toEqual([`const map = {"debugId": "old"};`]);
+    expect(stamped.debugId).toBe(DEBUG_ID);
+  });
+
   it('throws when the source map is not a JSON object', () => {
     expect(() => addDebugIdToSourceMap('', DEBUG_ID)).toThrow();
   });
