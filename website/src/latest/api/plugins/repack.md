@@ -180,3 +180,16 @@ module.exports = {
   ],
 };
 ```
+
+### jsonParse
+
+- Type: `boolean`
+- Default: `undefined`
+
+Sets [`module.generator.json.JSONParse`](https://rspack.rs/config/module-generator). With `false`, `.json` files are bundled as JS objects instead of `JSON.parse('...')` calls. This makes `require` of large JSON faster on Hermes in release builds, but makes gzipped bundles bigger, JSON load slower in development and `hermesc` use more memory. Best used for production only:
+
+```js
+new Repack.RepackPlugin({ jsonParse: mode !== "production" });
+```
+
+Needs Rspack 1.3+ or webpack 5.99+, otherwise it is ignored with a warning. A `JSONParse` value set in your config wins.
