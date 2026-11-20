@@ -2,6 +2,7 @@ export * from './BabelPlugin.js';
 export * from './CodeSigningPlugin/index.js';
 export * from './DevelopmentPlugin.js';
 export * from './HermesBytecodePlugin/index.js';
+export * from './JsonParsePlugin.js';
 export * from './LoggerPlugin.js';
 export * from './ManifestPlugin.js';
 export * from './ModuleFederationPlugin.js';

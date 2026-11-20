@@ -2,6 +2,7 @@ import type { Compiler as RspackCompiler } from '@rspack/core';
 import type { Compiler as WebpackCompiler } from 'webpack';
 import { BabelPlugin } from './BabelPlugin.js';
 import { DevelopmentPlugin } from './DevelopmentPlugin.js';
+import { JsonParsePlugin } from './JsonParsePlugin.js';
 import { LoggerPlugin, type LoggerPluginConfig } from './LoggerPlugin.js';
 import { NativeEntryPlugin } from './NativeEntryPlugin/index.js';
 import { OutputPlugin, type OutputPluginConfig } from './OutputPlugin/index.js';
@@ -42,6 +43,12 @@ export interface RepackPluginConfig {
    * Refer to {@link OutputPluginConfig.extraChunks} for more details.
    */
   extraChunks?: OutputPluginConfig['extraChunks'];
+
+  /**
+   * Sets `module.generator.json.JSONParse`. `false` bundles `.json` files as JS objects,
+   * which is faster on Hermes in release builds. Needs Rspack 1.3+ or webpack 5.99+.
+   */
+  jsonParse?: boolean;
 }
 
 /**
@@ -126,6 +133,10 @@ export class RepackPlugin {
     new DevelopmentPlugin({ platform }).apply(compiler);
 
     new SourceMapPlugin({ platform }).apply(compiler);
+
+    if (this.config.jsonParse !== undefined) {
+      new JsonParsePlugin(this.config.jsonParse).apply(compiler);
+    }
 
     if (typeof this.config.logger === 'object') {
       new LoggerPlugin({

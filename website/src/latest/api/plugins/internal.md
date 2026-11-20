@@ -16,6 +16,10 @@ On the React Native 0.87 layout the plugin also prepends resolve aliases: `react
 
 ## RepackTargetPlugin
 
+## JsonParsePlugin
+
+Plugin that sets `module.generator.json.JSONParse`. `RepackPlugin` uses it for the [`jsonParse`](/api/plugins/repack#jsonparse) option. It does nothing when `JSONParse` is already set in the config, and prints a warning instead on Rspack older than 1.3.0 or webpack older than 5.99.0.
+
 ## BabelPlugin
 
 Plugin that adds `babel-loader` fallback to resolveLoader configuration. This ensures babel-loader can be resolved regardless of the package manager used, as some package managers (like `pnpm`) require loaders to be direct dependencies rather than allowing them to be resolved through nested dependencies.
