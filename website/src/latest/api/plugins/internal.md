@@ -23,3 +23,13 @@ Plugin that adds `babel-loader` fallback to resolveLoader configuration. This en
 ## CodegenPlugin
 
 Plugin that handles React Native Codegen transforms required by the new architecture. It adds a `babel-loader` rule for processing Native components and modules, similar to how it's done in `@react-native/babel-preset`.
+
+## SourceMapPlugin
+
+Plugin that generates source maps for bundles and chunks based on the `devtool` option. When the dev server is running, `sources` point to the dev server so React Native DevTools can open them. Otherwise, for example with the `bundle` command, `sources` contain absolute paths to the files, unless you set `output.devtoolModuleFilenameTemplate`. Use it to keep build machine paths out of release source maps:
+
+```js
+output: {
+  devtoolModuleFilenameTemplate: "[resource-path]",
+}
+```

@@ -82,13 +82,16 @@ export class SourceMapPlugin {
       return;
     }
 
-    let moduleFilenameTemplateHandler: ModuleFilenameTemplateFn;
+    let moduleFilenameTemplateHandler: ModuleFilenameTemplate;
     if (compiler.options.devServer) {
       const host = compiler.options.devServer.host;
       const port = compiler.options.devServer.port;
       const namespace = `http://${host}:${port}`;
       moduleFilenameTemplateHandler = (info: ModuleFilenameTemplateFnCtx) =>
         devToolsmoduleFilenameTemplate(namespace, info);
+    } else if (compiler.options.output.devtoolModuleFilenameTemplate) {
+      moduleFilenameTemplateHandler =
+        compiler.options.output.devtoolModuleFilenameTemplate;
     } else {
       moduleFilenameTemplateHandler = (info: ModuleFilenameTemplateFnCtx) =>
         defaultModuleFilenameTemplateHandler('', info);
@@ -104,8 +107,6 @@ export class SourceMapPlugin {
     const devtoolNamespace =
       compiler.options.output.devtoolNamespace ??
       compiler.options.output.uniqueName;
-    // const devtoolModuleFilenameTemplate =
-    //   compiler.options.output.devtoolModuleFilenameTemplate;
     const devtoolFallbackModuleFilenameTemplate =
       compiler.options.output.devtoolFallbackModuleFilenameTemplate;
 
